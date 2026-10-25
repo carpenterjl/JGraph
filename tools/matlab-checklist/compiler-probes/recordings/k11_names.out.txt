@@ -1,0 +1,1211 @@
+k11t2	ok
+k11t2.files	buildresult.json | includedSupportPackages.txt | k11t2lib.c | k11t2lib.ctf | k11t2lib.exports | k11t2lib.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+k11t2.k11t2lib.c	149 lines
+  |LIB_k11t2lib_C_API 
+  |bool MW_CALL_CONV mlxK11t2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11t2", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11t2lib_C_API 
+  |bool MW_CALL_CONV mlfK11t2(int nargout, mxArray** y, mxArray* _U4b, mxArray* _U4c, 
+  |                           mxArray* c)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11t2", nargout, 1, 3, y, _U4b, _U4c, c);
+  |}
+  |
+  |
+k11t2.k11t2lib.h	62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11t2lib_C_API 
+  |bool MW_CALL_CONV mlxK11t2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11t2lib_C_API bool MW_CALL_CONV mlfK11t2(int nargout, mxArray** y, mxArray* _U4b, mxArray* _U4c, mxArray* c);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+k11t3	ok
+k11t3.files	buildresult.json | includedSupportPackages.txt | k11t3lib.c | k11t3lib.ctf | k11t3lib.exports | k11t3lib.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+k11t3.k11t3lib.c	149 lines
+  |LIB_k11t3lib_C_API 
+  |bool MW_CALL_CONV mlxK11t3(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11t3", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11t3lib_C_API 
+  |bool MW_CALL_CONV mlfK11t3(int nargout, mxArray** a, mxArray** b, mxArray* _U4b, mxArray* 
+  |                           x, mxArray* _U4c)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11t3", nargout, 2, 3, a, b, _U4b, x, _U4c);
+  |}
+  |
+  |
+k11t3.k11t3lib.h	62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11t3lib_C_API 
+  |bool MW_CALL_CONV mlxK11t3(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11t3lib_C_API bool MW_CALL_CONV mlfK11t3(int nargout, mxArray** a, mxArray** b, mxArray* _U4b, mxArray* x, mxArray* _U4c);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+k11cpp	ok
+k11cpp.files	buildresult.json | includedSupportPackages.txt | k11cpplib.c | k11cpplib.ctf | k11cpplib.exports | k11cpplib.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+k11cpp.k11cpplib.c	152 lines
+  |LIB_k11cpplib_C_API 
+  |bool MW_CALL_CONV mlxK11cpp(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11cpp", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11cpplib_C_API 
+  |bool MW_CALL_CONV mlfK11cpp(int nargout, mxArray** new, mxArray** this, mxArray* class0, 
+  |                            mxArray* delete, mxArray* template, mxArray* bool0, mxArray* 
+  |                            true0, mxArray* namespace, mxArray* operator, mxArray* 
+  |                            private)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11cpp", nargout, 2, 8, new, this, class0, delete, template, bool0, true0, namespace, operator, private);
+  |}
+  |
+  |
+k11cpp.k11cpplib.h	62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cpplib_C_API 
+  |bool MW_CALL_CONV mlxK11cpp(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cpplib_C_API bool MW_CALL_CONV mlfK11cpp(int nargout, mxArray** new, mxArray** this, mxArray* class0, mxArray* delete, mxArray* template, mxArray* bool0, mxArray* true0, mxArray* namespace, mxArray* operator, mxArray* private);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+k11cw1	ok
+k11cw1.files	buildresult.json | includedSupportPackages.txt | k11cw1lib.c | k11cw1lib.ctf | k11cw1lib.exports | k11cw1lib.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+k11cw1.k11cw1lib.c	151 lines
+  |LIB_k11cw1lib_C_API 
+  |bool MW_CALL_CONV mlxK11cw1(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11cw1", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11cw1lib_C_API 
+  |bool MW_CALL_CONV mlfK11cw1(int nargout, mxArray** auto0, mxArray** register0, mxArray* 
+  |                            signed0, mxArray* unsigned0, mxArray* short0, mxArray* 
+  |                            float0, mxArray* void0, mxArray* const0)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11cw1", nargout, 2, 6, auto0, register0, signed0, unsigned0, short0, float0, void0, const0);
+  |}
+  |
+  |
+k11cw1.k11cw1lib.h	62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cw1lib_C_API 
+  |bool MW_CALL_CONV mlxK11cw1(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cw1lib_C_API bool MW_CALL_CONV mlfK11cw1(int nargout, mxArray** auto0, mxArray** register0, mxArray* signed0, mxArray* unsigned0, mxArray* short0, mxArray* float0, mxArray* void0, mxArray* const0);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+k11cw2	ok
+k11cw2.files	buildresult.json | includedSupportPackages.txt | k11cw2lib.c | k11cw2lib.ctf | k11cw2lib.exports | k11cw2lib.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+k11cw2.k11cw2lib.c	151 lines
+  |LIB_k11cw2lib_C_API 
+  |bool MW_CALL_CONV mlxK11cw2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11cw2", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11cw2lib_C_API 
+  |bool MW_CALL_CONV mlfK11cw2(int nargout, mxArray** static0, mxArray** extern0, mxArray* 
+  |                            union0, mxArray* enum0, mxArray* goto0, mxArray* typedef0, 
+  |                            mxArray* sizeof0, mxArray* volatile0)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11cw2", nargout, 2, 6, static0, extern0, union0, enum0, goto0, typedef0, sizeof0, volatile0);
+  |}
+  |
+  |
+k11cw2.k11cw2lib.h	62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cw2lib_C_API 
+  |bool MW_CALL_CONV mlxK11cw2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cw2lib_C_API bool MW_CALL_CONV mlfK11cw2(int nargout, mxArray** static0, mxArray** extern0, mxArray* union0, mxArray* enum0, mxArray* goto0, mxArray* typedef0, mxArray* sizeof0, mxArray* volatile0);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+k11cw3	ok
+k11cw3.files	buildresult.json | includedSupportPackages.txt | k11cw3lib.c | k11cw3lib.ctf | k11cw3lib.exports | k11cw3lib.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+k11cw3.k11cw3lib.c	151 lines
+  |LIB_k11cw3lib_C_API 
+  |bool MW_CALL_CONV mlxK11cw3(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11cw3", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11cw3lib_C_API 
+  |bool MW_CALL_CONV mlfK11cw3(int nargout, mxArray** default0, mxArray** inline0, mxArray* 
+  |                            restrict, mxArray* NULL0, mxArray* mxArray, mxArray* size_t, 
+  |                            mxArray* main, mxArray* MW_CALL_CONV)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11cw3", nargout, 2, 6, default0, inline0, restrict, NULL0, mxArray, size_t, main, MW_CALL_CONV);
+  |}
+  |
+  |
+k11cw3.k11cw3lib.h	62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cw3lib_C_API 
+  |bool MW_CALL_CONV mlxK11cw3(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cw3lib_C_API bool MW_CALL_CONV mlfK11cw3(int nargout, mxArray** default0, mxArray** inline0, mxArray* restrict, mxArray* NULL0, mxArray* mxArray, mxArray* size_t, mxArray* main, mxArray* MW_CALL_CONV);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+k11cw4	ok
+k11cw4.files	buildresult.json | includedSupportPackages.txt | k11cw4lib.c | k11cw4lib.ctf | k11cw4lib.exports | k11cw4lib.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+k11cw4.k11cw4lib.c	151 lines
+  |LIB_k11cw4lib_C_API 
+  |bool MW_CALL_CONV mlxK11cw4(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11cw4", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11cw4lib_C_API 
+  |bool MW_CALL_CONV mlfK11cw4(int nargout, mxArray** nlhs, mxArray** plhs, mxArray* nrhs, 
+  |                            mxArray* prhs, mxArray* mclFeval, mxArray* mclMlfFeval, 
+  |                            mxArray* x_in1, mxArray* varargin)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11cw4", nargout, 2, -6, nlhs, plhs, nrhs, prhs, mclFeval, mclMlfFeval, x_in1, varargin);
+  |}
+  |
+  |
+k11cw4.k11cw4lib.h	62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cw4lib_C_API 
+  |bool MW_CALL_CONV mlxK11cw4(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cw4lib_C_API bool MW_CALL_CONV mlfK11cw4(int nargout, mxArray** nlhs, mxArray** plhs, mxArray* nrhs, mxArray* prhs, mxArray* mclFeval, mxArray* mclMlfFeval, mxArray* x_in1, mxArray* varargin);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+k11same2	ok
+k11same2.files	buildresult.json | includedSupportPackages.txt | k11same2lib.c | k11same2lib.ctf | k11same2lib.exports | k11same2lib.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+k11same2.k11same2lib.c	150 lines
+  |LIB_k11same2lib_C_API 
+  |bool MW_CALL_CONV mlxK11same2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11same2", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11same2lib_C_API 
+  |bool MW_CALL_CONV mlfK11same2(int nargout, mxArray** a, mxArray** b, mxArray* b_in1, 
+  |                              mxArray* a_in1)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11same2", nargout, 2, 2, a, b, b_in1, a_in1);
+  |}
+  |
+  |
+k11same2.k11same2lib.h	62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11same2lib_C_API 
+  |bool MW_CALL_CONV mlxK11same2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11same2lib_C_API bool MW_CALL_CONV mlfK11same2(int nargout, mxArray** a, mxArray** b, mxArray* b_in1, mxArray* a_in1);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+k11same3	ok
+k11same3.files	buildresult.json | includedSupportPackages.txt | k11same3lib.c | k11same3lib.ctf | k11same3lib.exports | k11same3lib.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+k11same3.k11same3lib.c	150 lines
+  |LIB_k11same3lib_C_API 
+  |bool MW_CALL_CONV mlxK11same3(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11same3", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11same3lib_C_API 
+  |bool MW_CALL_CONV mlfK11same3(int nargout, mxArray** x, mxArray** y, mxArray* x_in1, 
+  |                              mxArray* y_in1, mxArray* z)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11same3", nargout, 2, 3, x, y, x_in1, y_in1, z);
+  |}
+  |
+  |
+k11same3.k11same3lib.h	62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11same3lib_C_API 
+  |bool MW_CALL_CONV mlxK11same3(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11same3lib_C_API bool MW_CALL_CONV mlfK11same3(int nargout, mxArray** x, mxArray** y, mxArray* x_in1, mxArray* y_in1, mxArray* z);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+k11same4	ok
+k11same4.files	buildresult.json | includedSupportPackages.txt | k11same4lib.c | k11same4lib.ctf | k11same4lib.exports | k11same4lib.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+k11same4.k11same4lib.c	149 lines
+  |LIB_k11same4lib_C_API 
+  |bool MW_CALL_CONV mlxK11same4(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11same4", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11same4lib_C_API 
+  |bool MW_CALL_CONV mlfK11same4(int nargout, mxArray** x, mxArray* x_in2, mxArray* x_in1)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11same4", nargout, 1, 2, x, x_in2, x_in1);
+  |}
+  |
+  |
+k11same4.k11same4lib.h	62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11same4lib_C_API 
+  |bool MW_CALL_CONV mlxK11same4(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11same4lib_C_API bool MW_CALL_CONV mlfK11same4(int nargout, mxArray** x, mxArray* x_in2, mxArray* x_in1);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+k11nargin	ok
+k11nargin.files	buildresult.json | includedSupportPackages.txt | k11narginlib.c | k11narginlib.ctf | k11narginlib.exports | k11narginlib.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+k11nargin.k11narginlib.c	150 lines
+  |LIB_k11narginlib_C_API 
+  |bool MW_CALL_CONV mlxK11nargin(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11nargin", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11narginlib_C_API 
+  |bool MW_CALL_CONV mlfK11nargin(int nargout, mxArray** varargout, mxArray* nargin, 
+  |                               mxArray* nargout)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11nargin", nargout, -1, 2, varargout, nargin, nargout);
+  |}
+  |
+  |
+k11nargin.k11narginlib.h	62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11narginlib_C_API 
+  |bool MW_CALL_CONV mlxK11nargin(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11narginlib_C_API bool MW_CALL_CONV mlfK11nargin(int nargout, mxArray** varargout, mxArray* nargin, mxArray* nargout);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+long	ok
+long.files	buildresult.json | includedSupportPackages.txt | k11long.c | k11long.ctf | k11long.exports | k11long.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+long.k11long.c	418 lines
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w48xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, mxArray 
+  |                                                                      *plhs[], int nrhs, 
+  |                                                                      mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11w48xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nlhs, 
+  |                  plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w49xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, mxArray 
+  |                                                                       *plhs[], int nrhs, 
+  |                                                                       mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11w49xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nlhs, 
+  |                  plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w50xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, mxArray 
+  |                                                                        *plhs[], int 
+  |                                                                        nrhs, mxArray 
+  |                                                                        *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11w50xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", 
+  |                  nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w51xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, 
+  |                                                                         mxArray *plhs[], 
+  |                                                                         int nrhs, 
+  |                                                                         mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11w51xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", 
+  |                  nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w52xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, 
+  |                                                                          mxArray 
+  |                                                                          *plhs[], int 
+  |                                                                          nrhs, mxArray 
+  |                                                                          *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11w52xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", 
+  |                  nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w53xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, 
+  |                                                                           mxArray 
+  |                                                                           *plhs[], int 
+  |                                                                           nrhs, mxArray 
+  |                                                                           *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11w53xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", 
+  |                  nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w54xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, 
+  |                                                                            mxArray 
+  |                                                                            *plhs[], int 
+  |                                                                            nrhs, mxArray 
+  |                                                                            *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11w54xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", 
+  |                  nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w55xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, 
+  |                                                                             mxArray 
+  |                                                                             *plhs[], int 
+  |                                                                             nrhs, 
+  |                                                                             mxArray 
+  |                                                                             *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11w55xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", 
+  |                  nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w56xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, 
+  |                                                                              mxArray 
+  |                                                                              *plhs[], 
+  |                                                                              int nrhs, 
+  |                                                                              mxArray 
+  |                                                                              *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, 
+  |                  "k11w56xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nlhs, plhs, 
+  |                  nrhs, prhs);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w57xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, 
+  |                                                                               mxArray 
+  |                                                                               *plhs[], 
+  |                                                                               int nrhs, 
+  |                                                                               mxArray 
+  |                                                                               *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, 
+  |                  "k11w57xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nlhs, 
+  |                  plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w58xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, 
+  |                                                                                mxArray 
+  |                                                                                *plhs[], 
+  |                                                                                int nrhs, 
+  |                                                                                mxArray 
+  |                                                                                *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, 
+  |                  "k11w58xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nlhs, 
+  |                  plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w59xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int 
+  |                                                                                 nlhs, 
+  |                                                                                 mxArray 
+  |                                                                                 *plhs[], 
+  |                                                                                 int 
+  |                                                                                 nrhs, 
+  |                                                                                 mxArray 
+  |                                                                                 *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, 
+  |                  "k11w59xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nlhs, 
+  |                  plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w60xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int 
+  |                                                                                  nlhs, 
+  |                                                                                  mxArray 
+  |                                                                                  *plhs[], 
+  |                                                                                  int 
+  |                                                                                  nrhs, 
+  |                                                                                  mxArray 
+  |                                                                                  *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, 
+  |                  "k11w60xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nlhs, 
+  |                  plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlfK11w48xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, 
+  |                                                                      mxArray** out, 
+  |                                                                      mxArray* in)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11w48xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nargout, 1, 1, out, in);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlfK11w49xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, 
+  |                                                                       mxArray** out, 
+  |                                                                       mxArray* in)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11w49xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nargout, 1, 1, out, in);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlfK11w50xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, 
+  |                                                                        mxArray** out, 
+  |                                                                        mxArray* in)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11w50xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nargout, 1, 1, out, in);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlfK11w51xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, 
+  |                                                                         mxArray** out, 
+  |                                                                         mxArray* in)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11w51xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nargout, 1, 1, out, in);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlfK11w52xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, 
+  |                                                                          mxArray** out, 
+  |                                                                          mxArray* in)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11w52xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nargout, 1, 1, out, in);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlfK11w53xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, 
+  |                                                                           mxArray** out, 
+  |                                                                           mxArray* in)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11w53xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nargout, 1, 1, out, in);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlfK11w54xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, 
+  |                                                                            mxArray** 
+  |                                                                            out, mxArray* 
+  |                                                                            in)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11w54xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nargout, 1, 1, out, in);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlfK11w55xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, 
+  |                                                                             mxArray** 
+  |                                                                             out, 
+  |                                                                             mxArray* in)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11w55xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nargout, 1, 1, out, in);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlfK11w56xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int 
+  |                                                                              nargout, 
+  |                                                                              mxArray** 
+  |                                                                              out, 
+  |                                                                              mxArray* in)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11w56xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nargout, 1, 1, out, in);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlfK11w57xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int 
+  |                                                                               nargout, 
+  |                                                                               mxArray** 
+  |                                                                               out, 
+  |                                                                               mxArray* 
+  |                                                                               in)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11w57xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nargout, 1, 1, out, in);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlfK11w58xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int 
+  |                                                                                nargout, 
+  |                                                                                mxArray** 
+  |                                                                                out, 
+  |                                                                                mxArray* 
+  |                                                                                in)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11w58xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nargout, 1, 1, out, in);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlfK11w59xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int 
+  |                                                                                 nargout, 
+  |                                                                                 mxArray** 
+  |                                                                                 out, 
+  |                                                                                 mxArray* 
+  |                                                                                 in)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11w59xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nargout, 1, 1, out, in);
+  |}
+  |
+  |LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlfK11w60xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int 
+  |                                                                                  nargout, 
+  |                                                                                  mxArray** 
+  |                                                                                  out, 
+  |                                                                                  mxArray* 
+  |                                                                                  in)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11w60xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", nargout, 1, 1, out, in);
+  |}
+  |
+  |
+long.k11long.h	188 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w48xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, mxArray 
+  |                                                                      *plhs[], int nrhs, 
+  |                                                                      mxArray *prhs[]);
+  |
+  |extern LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w49xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, mxArray 
+  |                                                                       *plhs[], int nrhs, 
+  |                                                                       mxArray *prhs[]);
+  |
+  |extern LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w50xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, mxArray 
+  |                                                                        *plhs[], int 
+  |                                                                        nrhs, mxArray 
+  |                                                                        *prhs[]);
+  |
+  |extern LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w51xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, 
+  |                                                                         mxArray *plhs[], 
+  |                                                                         int nrhs, 
+  |                                                                         mxArray *prhs[]);
+  |
+  |extern LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w52xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, 
+  |                                                                          mxArray 
+  |                                                                          *plhs[], int 
+  |                                                                          nrhs, mxArray 
+  |                                                                          *prhs[]);
+  |
+  |extern LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w53xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, 
+  |                                                                           mxArray 
+  |                                                                           *plhs[], int 
+  |                                                                           nrhs, mxArray 
+  |                                                                           *prhs[]);
+  |
+  |extern LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w54xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, 
+  |                                                                            mxArray 
+  |                                                                            *plhs[], int 
+  |                                                                            nrhs, mxArray 
+  |                                                                            *prhs[]);
+  |
+  |extern LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w55xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, 
+  |                                                                             mxArray 
+  |                                                                             *plhs[], int 
+  |                                                                             nrhs, 
+  |                                                                             mxArray 
+  |                                                                             *prhs[]);
+  |
+  |extern LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w56xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, 
+  |                                                                              mxArray 
+  |                                                                              *plhs[], 
+  |                                                                              int nrhs, 
+  |                                                                              mxArray 
+  |                                                                              *prhs[]);
+  |
+  |extern LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w57xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, 
+  |                                                                               mxArray 
+  |                                                                               *plhs[], 
+  |                                                                               int nrhs, 
+  |                                                                               mxArray 
+  |                                                                               *prhs[]);
+  |
+  |extern LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w58xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nlhs, 
+  |                                                                                mxArray 
+  |                                                                                *plhs[], 
+  |                                                                                int nrhs, 
+  |                                                                                mxArray 
+  |                                                                                *prhs[]);
+  |
+  |extern LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w59xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int 
+  |                                                                                 nlhs, 
+  |                                                                                 mxArray 
+  |                                                                                 *plhs[], 
+  |                                                                                 int 
+  |                                                                                 nrhs, 
+  |                                                                                 mxArray 
+  |                                                                                 *prhs[]);
+  |
+  |extern LIB_k11long_C_API 
+  |bool MW_CALL_CONV mlxK11w60xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int 
+  |                                                                                  nlhs, 
+  |                                                                                  mxArray 
+  |                                                                                  *plhs[], 
+  |                                                                                  int 
+  |                                                                                  nrhs, 
+  |                                                                                  mxArray 
+  |                                                                                  *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11long_C_API bool MW_CALL_CONV mlfK11w48xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, mxArray** out, mxArray* in);
+  |
+  |extern LIB_k11long_C_API bool MW_CALL_CONV mlfK11w49xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, mxArray** out, mxArray* in);
+  |
+  |extern LIB_k11long_C_API bool MW_CALL_CONV mlfK11w50xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, mxArray** out, mxArray* in);
+  |
+  |extern LIB_k11long_C_API bool MW_CALL_CONV mlfK11w51xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, mxArray** out, mxArray* in);
+  |
+  |extern LIB_k11long_C_API bool MW_CALL_CONV mlfK11w52xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, mxArray** out, mxArray* in);
+  |
+  |extern LIB_k11long_C_API bool MW_CALL_CONV mlfK11w53xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, mxArray** out, mxArray* in);
+  |
+  |extern LIB_k11long_C_API bool MW_CALL_CONV mlfK11w54xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, mxArray** out, mxArray* in);
+  |
+  |extern LIB_k11long_C_API bool MW_CALL_CONV mlfK11w55xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, mxArray** out, mxArray* in);
+  |
+  |extern LIB_k11long_C_API bool MW_CALL_CONV mlfK11w56xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, mxArray** out, mxArray* in);
+  |
+  |extern LIB_k11long_C_API bool MW_CALL_CONV mlfK11w57xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, mxArray** out, mxArray* in);
+  |
+  |extern LIB_k11long_C_API bool MW_CALL_CONV mlfK11w58xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, mxArray** out, mxArray* in);
+  |
+  |extern LIB_k11long_C_API bool MW_CALL_CONV mlfK11w59xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, mxArray** out, mxArray* in);
+  |
+  |extern LIB_k11long_C_API bool MW_CALL_CONV mlfK11w60xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx(int nargout, mxArray** out, mxArray* in);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+o_W	ERR Compiler:compiler:COM_ERR_MULTIPLE_COMPONENT_NAMES | Error: Multiple component names. Processing "-W" switch. Component name "k11o" already specified via "-o".
+o_W.files	
+W_W	ok
+W_W.files	buildresult.json | includedSupportPackages.txt | k11b.c | k11b.ctf | k11b.exports | k11b.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+W_W.k11b.c	149 lines
+  |LIB_k11b_C_API 
+  |bool MW_CALL_CONV mlxK11t2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11t2", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11b_C_API 
+  |bool MW_CALL_CONV mlfK11t2(int nargout, mxArray** y, mxArray* _U4b, mxArray* _U4c, 
+  |                           mxArray* c)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11t2", nargout, 1, 3, y, _U4b, _U4c, c);
+  |}
+  |
+  |
+W_W.k11b.h	62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11b_C_API 
+  |bool MW_CALL_CONV mlxK11t2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11b_C_API bool MW_CALL_CONV mlfK11t2(int nargout, mxArray** y, mxArray* _U4b, mxArray* _U4c, mxArray* c);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+W_extra	ok
+W_extra.files	buildresult.json | includedSupportPackages.txt | k11x.c | k11x.ctf | k11x.exports | k11x.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+W_extra.k11x.c	149 lines
+  |LIB_k11x_C_API 
+  |bool MW_CALL_CONV mlxK11t2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11t2", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11x_C_API 
+  |bool MW_CALL_CONV mlfK11t2(int nargout, mxArray** y, mxArray* _U4b, mxArray* _U4c, 
+  |                           mxArray* c)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11t2", nargout, 1, 3, y, _U4b, _U4c, c);
+  |}
+  |
+  |
+W_extra.k11x.h	62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11x_C_API 
+  |bool MW_CALL_CONV mlxK11t2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11x_C_API bool MW_CALL_CONV mlfK11t2(int nargout, mxArray** y, mxArray* _U4b, mxArray* _U4c, mxArray* c);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+W_ver_extra	ok
+W_ver_extra.files	buildresult.json | includedSupportPackages.txt | k11y.c | k11y.ctf | k11y.exports | k11y.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+W_ver_extra.k11y.c	149 lines
+  |LIB_k11y_C_API 
+  |bool MW_CALL_CONV mlxK11t2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11t2", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11y_C_API 
+  |bool MW_CALL_CONV mlfK11t2(int nargout, mxArray** y, mxArray* _U4b, mxArray* _U4c, 
+  |                           mxArray* c)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11t2", nargout, 1, 3, y, _U4b, _U4c, c);
+  |}
+  |
+  |
+W_ver_extra.k11y.h	62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11y_C_API 
+  |bool MW_CALL_CONV mlxK11t2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11y_C_API bool MW_CALL_CONV mlfK11t2(int nargout, mxArray** y, mxArray* _U4b, mxArray* _U4c, mxArray* c);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+l_W	ok
+l_W.files	buildresult.json | includedSupportPackages.txt | k11t2.c | k11t2.ctf | k11t2.exports | k11t2.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+l_W.k11t2.c	149 lines
+  |LIB_k11t2_C_API 
+  |bool MW_CALL_CONV mlxK11t2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11t2", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11t2_C_API 
+  |bool MW_CALL_CONV mlfK11t2(int nargout, mxArray** y, mxArray* _U4b, mxArray* _U4c, 
+  |                           mxArray* c)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11t2", nargout, 1, 3, y, _U4b, _U4c, c);
+  |}
+  |
+  |
+l_W.k11t2.h	62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11t2_C_API 
+  |bool MW_CALL_CONV mlxK11t2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11t2_C_API bool MW_CALL_CONV mlfK11t2(int nargout, mxArray** y, mxArray* _U4b, mxArray* _U4c, mxArray* c);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+W_l	ok
+W_l.files	buildresult.json | includedSupportPackages.txt | k11t2.c | k11t2.ctf | k11t2.exports | k11t2.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+W_l.k11t2.c	149 lines
+  |LIB_k11t2_C_API 
+  |bool MW_CALL_CONV mlxK11t2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11t2", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11t2_C_API 
+  |bool MW_CALL_CONV mlfK11t2(int nargout, mxArray** y, mxArray* _U4b, mxArray* _U4c, 
+  |                           mxArray* c)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11t2", nargout, 1, 3, y, _U4b, _U4c, c);
+  |}
+  |
+  |
+W_l.k11t2.h	62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11t2_C_API 
+  |bool MW_CALL_CONV mlxK11t2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11t2_C_API bool MW_CALL_CONV mlfK11t2(int nargout, mxArray** y, mxArray* _U4b, mxArray* _U4c, mxArray* c);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+m_W	ok
+m_W.files	buildresult.json | includedSupportPackages.txt | k11t2.c | k11t2.ctf | k11t2.exports | k11t2.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+m_W.k11t2.c	149 lines
+  |LIB_k11t2_C_API 
+  |bool MW_CALL_CONV mlxK11t2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11t2", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11t2_C_API 
+  |bool MW_CALL_CONV mlfK11t2(int nargout, mxArray** y, mxArray* _U4b, mxArray* _U4c, 
+  |                           mxArray* c)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11t2", nargout, 1, 3, y, _U4b, _U4c, c);
+  |}
+  |
+  |
+m_W.k11t2.h	62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11t2_C_API 
+  |bool MW_CALL_CONV mlxK11t2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11t2_C_API bool MW_CALL_CONV mlfK11t2(int nargout, mxArray** y, mxArray* _U4b, mxArray* _U4c, mxArray* c);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+longlib	ok
+longlib.files	buildresult.json | includedSupportPackages.txt | k11_a_library_name_long_enough_to_break_the_general_functions.c | k11_a_library_name_long_enough_to_break_the_general_functions.ctf | k11_a_library_name_long_enough_to_break_the_general_functions.exports | k11_a_library_name_long_enough_to_break_the_general_functions.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+longlib.k11_a_library_name_long_enough_to_break_the_general_functions.c	152 lines
+  |#define EXPORTING_k11_a_library_name_long_enough_to_break_the_general_functions 1
+  |#include "k11_a_library_name_long_enough_to_break_the_general_functions.h"
+  |
+  |static HMCRINSTANCE _mcr_inst = NULL; /* don't use nullptr; this may be either C or C++ */
+  |
+  |#if defined( _MSC_VER) || defined(__LCC__) || defined(__MINGW64__)
+  |#ifdef __LCC__
+  |#undef EXTERN_C
+  |#endif
+  |#define NOMINMAX
+  |#include <windows.h>
+  |#undef interface
+  |
+  |static char path_to_dll[_MAX_PATH];
+  |
+  |BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, void *pv)
+  |{
+  |    if (dwReason == DLL_PROCESS_ATTACH)
+  |    {
+  |        if (GetModuleFileName(hInstance, path_to_dll, _MAX_PATH) == 0)
+  |            return FALSE;
+  |    }
+  |    else if (dwReason == DLL_PROCESS_DETACH)
+  |    {
+  |    }
+  |    return TRUE;
+  |}
+  |#endif
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |static int mclDefaultPrintHandler(const char *s)
+  |{
+  |    return mclWrite(1 /* stdout */, s, sizeof(char)*strlen(s));
+  |}
+  |
+  |#ifdef __cplusplus
+  |} /* End extern C block */
+  |#endif
+  |
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |static int mclDefaultErrorHandler(const char *s)
+  |{
+  |    int written = 0;
+  |    size_t len = 0;
+  |    len = strlen(s);
+  |    written = mclWrite(2 /* stderr */, s, sizeof(char)*len);
+  |    if (len > 0 && s[ len-1 ] != '\n')
+  |        written += mclWrite(2 /* stderr */, "\n", sizeof(char));
+  |    return written;
+  |}
+  |
+  |#ifdef __cplusplus
+  |} /* End extern C block */
+  |#endif
+  |
+  |/* This symbol is defined in shared libraries. Define it here
+  | * (to nothing) in case this isn't a shared library. 
+  | */
+  |#ifndef LIB_k11_a_library_name_long_enough_to_break_the_general_functions_C_API
+  |#define LIB_k11_a_library_name_long_enough_to_break_the_general_functions_C_API /* No special import/export declaration */
+  |#endif
+  |
+  |LIB_k11_a_library_name_long_enough_to_break_the_general_functions_C_API 
+  |bool MW_CALL_CONV k11_a_library_name_long_enough_to_break_the_general_functionsInitializeWithHandlers(
+  |    mclOutputHandlerFcn error_handler,
+  |    mclOutputHandlerFcn print_handler)
+  |{
+  |    int bResult = 0;
+  |    if (_mcr_inst)
+  |        return true;
+  |    if (!mclmcrInitialize())
+  |        return false;
+  |    if (!GetModuleFileName(GetModuleHandle("k11_a_library_name_long_enough_to_break_the_general_functions"), path_to_dll, _MAX_PATH))
+  |        return false;
+  |    {
+  |        mclCtfStream ctfStream = 
+  |            mclGetEmbeddedCtfStream(path_to_dll);
+  |        if (ctfStream) {
+  |            bResult = mclInitializeComponentInstanceEmbedded(&_mcr_inst,
+  |                                                             error_handler, 
+  |                                                             print_handler,
+  |                                                             ctfStream,
+  |                                                             NULL);
+  |            mclDestroyStream(ctfStream);
+  |        } else {
+  |            bResult = 0;
+  |        }
+  |    }  
+  |    if (!bResult)
+  |    return false;
+  |    return true;
+  |}
+  |
+  |LIB_k11_a_library_name_long_enough_to_break_the_general_functions_C_API 
+  |bool MW_CALL_CONV k11_a_library_name_long_enough_to_break_the_general_functionsInitialize(void)
+  |{
+  |    return 
+  |                                                                                         k11_a_library_name_long_enough_to_break_the_general_functionsInitializeWithHandlers(mclDefaultErrorHandler, 
+  |                                                                                         mclDefaultPrintHandler);
+  |}
+  |
+  |LIB_k11_a_library_name_long_enough_to_break_the_general_functions_C_API 
+  |void MW_CALL_CONV k11_a_library_name_long_enough_to_break_the_general_functionsTerminate(void)
+  |{
+  |    if (_mcr_inst)
+  |        mclTerminateInstance(&_mcr_inst);
+  |}
+  |
+  |LIB_k11_a_library_name_long_enough_to_break_the_general_functions_C_API 
+  |void MW_CALL_CONV k11_a_library_name_long_enough_to_break_the_general_functionsPrintStackTrace(void) 
+  |{
+  |    char** stackTrace;
+  |    int stackDepth = mclGetStackTrace(&stackTrace);
+  |    int i;
+  |    for(i=0; i<stackDepth; i++)
+  |    {
+  |        mclWrite(2 /* stderr */, stackTrace[i], sizeof(char)*strlen(stackTrace[i]));
+  |        mclWrite(2 /* stderr */, "\n", sizeof(char)*strlen("\n"));
+  |    }
+  |    mclFreeStackTrace(&stackTrace, stackDepth);
+  |}
+  |
+  |
+  |LIB_k11_a_library_name_long_enough_to_break_the_general_functions_C_API 
+  |bool MW_CALL_CONV mlxK11t2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11t2", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11_a_library_name_long_enough_to_break_the_general_functions_C_API 
+  |bool MW_CALL_CONV mlfK11t2(int nargout, mxArray** y, mxArray* _U4b, mxArray* _U4c, 
+  |                           mxArray* c)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11t2", nargout, 1, 3, y, _U4b, _U4c, c);
+  |}
+  |
+  |
+longlib.k11_a_library_name_long_enough_to_break_the_general_functions.h	63 lines
+  |/* GENERAL LIBRARY FUNCTIONS -- START */
+  |
+  |extern LIB_k11_a_library_name_long_enough_to_break_the_general_functions_C_API 
+  |bool MW_CALL_CONV k11_a_library_name_long_enough_to_break_the_general_functionsInitializeWithHandlers(
+  |       mclOutputHandlerFcn error_handler, 
+  |       mclOutputHandlerFcn print_handler);
+  |
+  |extern LIB_k11_a_library_name_long_enough_to_break_the_general_functions_C_API 
+  |bool MW_CALL_CONV k11_a_library_name_long_enough_to_break_the_general_functionsInitialize(void);
+  |extern LIB_k11_a_library_name_long_enough_to_break_the_general_functions_C_API 
+  |void MW_CALL_CONV k11_a_library_name_long_enough_to_break_the_general_functionsTerminate(void);
+  |
+  |extern LIB_k11_a_library_name_long_enough_to_break_the_general_functions_C_API 
+  |void MW_CALL_CONV k11_a_library_name_long_enough_to_break_the_general_functionsPrintStackTrace(void);
+  |
+  |/* GENERAL LIBRARY FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11_a_library_name_long_enough_to_break_the_general_functions_C_API 
+  |bool MW_CALL_CONV mlxK11t2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11_a_library_name_long_enough_to_break_the_general_functions_C_API bool MW_CALL_CONV mlfK11t2(int nargout, mxArray** y, mxArray* _U4b, mxArray* _U4c, mxArray* c);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |

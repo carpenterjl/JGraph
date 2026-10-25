@@ -311,8 +311,11 @@ $outTask = $proc.StandardOutput.ReadToEndAsync()
 $errTask = $proc.StandardError.ReadToEndAsync()
 $timedOut = -not $proc.WaitForExit($TimeoutSeconds * 1000)
 if ($timedOut) {
-    & taskkill.exe /PID $proc.Id /T /F 2>&1 | Out-Null
-    [void]$proc.WaitForExit(10000)
+    # taskkill can refuse a child the job already holds (stage K11: "could not be terminated"); its
+    # complaint must not end this script before the transcript is written, so it is caught, and the
+    # child is ended directly if it is still there.
+    try { & taskkill.exe /PID $proc.Id /T /F 2>&1 | Out-Null } catch { }
+    if (-not $proc.WaitForExit(10000)) { try { $proc.Kill() } catch { }; [void]$proc.WaitForExit(10000) }
 }
 $seconds = $watch.Elapsed.TotalSeconds
 $stdout = ($outTask.Result -replace "`r`n", "`n").TrimEnd("`n")

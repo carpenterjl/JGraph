@@ -1,0 +1,70 @@
+CHK|class|compiler.build.CSharedLibraryOptions|exact
+CHK|props|EmbedArchive LibraryVersion FunctionFiles DebugBuild LibraryName AdditionalFiles AutoDetectDataFiles ExternalEncryptionKey ObfuscateArchive SecretsManifest SupportPackages Verbose OutputDir|exact
+CHK|name|k11f|exact
+CHK|getname|k11f|exact
+CHK|outdir|.\k11fcSharedLibrary|exact
+CHK|version|1.0.0.0|exact
+CHK|embed|on|exact
+CHK|debug|off|exact
+CHK|files|k11f.m|exact
+CHK|files_size|double [1 2] 1 1|exact
+CHK|packages|autodetect|exact
+CHK|two_files|k11g.m k11f.m|exact
+CHK|two_name|k11g|exact
+CHK|given_name|.\K11NamedcSharedLibrary|exact
+CHK|partial_name|P|exact
+CHK|none|MATLAB:narginchk:notEnoughInputs / Not enough input arguments.|exact
+CHK|missing|Compiler:utils:shared:cannotFindFile / Cannot find file: / / k11nosuch.m|exact
+CHK|not_code|Compiler:clishared:badExtension / Expected 'FunctionFiles' to have one of the following extensions: / / .mexw64 / .mlapp / .mlx / .p / .m|exact
+CHK|number|MATLAB:invalidType / Expected FunctionFiles to be one of these types: / / char, string, cell / / Instead its type was double.|exact
+CHK|empty_cell|MATLAB:expectedNonempty / Expected FunctionFiles to be nonempty.|exact
+CHK|unknown_nv|MATLAB:InputParser:UnmatchedParameter / 'Nonsense' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|ambiguous_nv|MATLAB:InputParser:AmbiguousParameter / 'Library' matches multiple parameter names: 'LibraryName', 'LibraryVersion'. To avoid ambiguity, specify the complete name of the parameter.|exact
+CHK|odd_nv|MATLAB:InputParser:ParamMissingValue / No value was given for 'LibraryName'. Name-value pair arguments require a name followed by a value.|exact
+CHK|set_name_spaced|a b|exact
+CHK|set_name_digit|1abc|exact
+CHK|set_name_dash|a-b|exact
+CHK|set_name_string|char|exact
+CHK|set_name_slash|Compiler:clishared:badProperty / Invalid 'LibraryName': 'a/b'|exact
+CHK|set_name_colon|Compiler:clishared:badProperty / Invalid 'LibraryName': 'a:b'|exact
+CHK|set_name_empty|MATLAB:validators:mustBeNonzeroLengthText / Value must be text with one or more characters.|exact
+CHK|set_name_number|MATLAB:invalidType / Expected LibraryName to be one of these types: / / char, string / / Instead its type was double.|exact
+CHK|set_version_text|abc|exact
+CHK|set_version_empty|MATLAB:validators:mustBeNonzeroLengthText / Value must be text with one or more characters.|exact
+CHK|set_version_number|MATLAB:invalidType / Expected LibraryVersion to be one of these types: / / char, string / / Instead its type was double.|exact
+CHK|set_embed_zero|off|exact
+CHK|set_embed_bad|MATLAB:validation:UnableToConvert / Error setting property 'EmbedArchive' of class 'compiler.build.CSharedLibraryOptions'. 'maybe' is invalid. Value must be 'off' or 'on'.|exact
+CHK|set_debug_two|on|exact
+CHK|set_files_missing|Compiler:utils:shared:cannotFindFile / Cannot find file: / / k11nosuch.m|exact
+CHK|set_files_text|Compiler:clishared:badExtension / Expected 'FunctionFiles' to have one of the following extensions: / / .mexw64 / .mlapp / .mlx / .p / .m|exact
+CHK|set_files_empty|MATLAB:expectedNonempty / Expected FunctionFiles to be nonempty.|exact
+CHK|set_outdir_bad|Compiler:clishared:badProperty / Invalid 'OutputDir': 'out<1>'|exact
+CHK|mcc_badname|Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME / Illegal output name: 'k11-bad' / (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_') / warn / files |exact
+CHK|mcc_digitname|Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME / Illegal output name: '1k11' / (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_') / warn / files |exact
+CHK|mcc_emptyname|Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME / Illegal output name: '' / (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_') / warn / files |exact
+CHK|mcc_badversion|Compiler:compiler:COM_ERR_INVALID_VERSION / Version string "x.y" is invalid. Use at most four integers (0 to 65534), separated by ".", to specify the version. / warn / files |exact
+CHK|mcc_lib_o|Compiler:compiler:COM_ERR_MULTIPLE_COMPONENT_NAMES / Error: Multiple component names. Processing "-o" switch. Component name "k11w" already specified via "-W". / warn / files |exact
+CHK|mcc_o_lib|Compiler:compiler:COM_ERR_MULTIPLE_COMPONENT_NAMES / Error: Multiple component names. Processing "-W" switch. Component name "k11other" already specified via "-o". / warn / files |exact
+CHK|mcc_exe|Compiler:compiler:COM_ERR_WRAPPER_TARGET_MISMATCH / Error: The wrapper type specified with -W switch doesn't match with the target type specified with -T switch. / warn / files |exact
+CHK|mcc_nofiles|Compiler:compiler:COM_ERR_NO_FILES_SPECIFIED / Error: No source files were specified (-? for help). / warn / files |exact
+CHK|mcc_ell|no error / warn / files buildresult.json includedSupportPackages.txt k11f.c k11f.ctf k11f.exports k11f.h mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt|exact
+CHK|mcc_ell_o|no error / warn / files buildresult.json includedSupportPackages.txt k11named.c k11named.ctf k11named.exports k11named.h mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt|exact
+CHK|mcc_W_W|no error / warn / files buildresult.json includedSupportPackages.txt k11b.c k11b.ctf k11b.exports k11b.h mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt|exact
+CHK|mcc_ell_W|no error / warn / files buildresult.json includedSupportPackages.txt k11f.c k11f.ctf k11f.exports k11f.h mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt|exact
+CHK|mcc_W_extra|no error / warn / files buildresult.json includedSupportPackages.txt k11x.c k11x.ctf k11x.exports k11x.h mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt|exact
+CHK|mcc_dash_c|no error / warn / files buildresult.json includedSupportPackages.txt k11c.c k11c.ctf k11c.exports k11c.h mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt|exact
+CHK|mcc_codegen_C|no error / warn / files buildresult.json includedSupportPackages.txt k11s.c k11s.ctf k11s.exports k11s.h mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt|exact
+CHK|gen_main|no error / warn / files buildresult.json includedSupportPackages.txt k11gen.c k11gen.ctf k11gen.exports k11gen.h mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt|exact
+CHK|gen_h_mlx|bool MW_CALL_CONV mlxK11f(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]); / bool MW_CALL_CONV mlxK11g(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]); / bool MW_CALL_CONV mlxK11same(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]); / bool MW_CALL_CONV mlxK11tilde(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]); / bool MW_CALL_CONV mlxK11words(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]); / bool MW_CALL_CONV mlxK11script(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]); / bool MW_CALL_CONV mlxK11cls(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);|exact
+CHK|gen_h_mlf|extern LIB_k11gen_C_API bool MW_CALL_CONV mlfK11f(int nargout, mxArray** a, mxArray** b, mxArray* x, mxArray* varargin); / extern LIB_k11gen_C_API bool MW_CALL_CONV mlfK11g(); / extern LIB_k11gen_C_API bool MW_CALL_CONV mlfK11same(int nargout, mxArray** x, mxArray* x_in1); / extern LIB_k11gen_C_API bool MW_CALL_CONV mlfK11tilde(int nargout, mxArray** y, mxArray* _U4b, mxArray* b, mxArray* _U4c); / extern LIB_k11gen_C_API bool MW_CALL_CONV mlfK11words(int nargout, mxArray** int0, mxArray** long0, mxArray* char0, mxArray* NULL0, mxArray* class0, mxArray* bool0); / extern LIB_k11gen_C_API bool MW_CALL_CONV mlfK11script(); / extern LIB_k11gen_C_API bool MW_CALL_CONV mlfK11cls(int nargout, mxArray** varargout, mxArray* varargin);|exact
+CHK|gen_h_general|bool MW_CALL_CONV k11genInitializeWithHandlers( / bool MW_CALL_CONV k11genInitialize(void); / void MW_CALL_CONV k11genTerminate(void); / void MW_CALL_CONV k11genPrintStackTrace(void);|exact
+CHK|gen_c_calls|return mclWrite(1 /* stdout */, s, sizeof(char)*strlen(s)); / return mclFeval(_mcr_inst, "k11f", nlhs, plhs, nrhs, prhs); / return mclFeval(_mcr_inst, "k11g", nlhs, plhs, nrhs, prhs); / return mclFeval(_mcr_inst, "k11same", nlhs, plhs, nrhs, prhs); / return mclFeval(_mcr_inst, "k11tilde", nlhs, plhs, nrhs, prhs); / return mclFeval(_mcr_inst, "k11words", nlhs, plhs, nrhs, prhs); / return mclFeval(_mcr_inst, "k11script", nlhs, plhs, nrhs, prhs); / return mclFeval(_mcr_inst, "k11cls", nlhs, plhs, nrhs, prhs); / return mclMlfFeval(_mcr_inst, "k11f", nargout, 2, -2, a, b, x, varargin); / return mclMlfFeval(_mcr_inst, "k11g", 0, 0, 0); / return mclMlfFeval(_mcr_inst, "k11same", nargout, 1, 1, x, x_in1); / return mclMlfFeval(_mcr_inst, "k11tilde", nargout, 1, 3, y, _U4b, b, _U4c); / return mclMlfFeval(_mcr_inst, "k11words", nargout, 2, 4, int0, long0, char0, NULL0, class0, bool0); / return mclMlfFeval(_mcr_inst, "k11script", 0, 0, 0); / return mclMlfFeval(_mcr_inst, "k11cls", nargout, -1, -1, varargout, varargin);|exact
+CHK|gen_c_init|mclGetEmbeddedCtfStream(path_to_dll); / bResult = mclInitializeComponentInstanceEmbedded(&_mcr_inst,|exact
+CHK|gen_exports|k11genInitialize / k11genInitializeWithHandlers / k11genTerminate / k11genPrintStackTrace / mlxK11f / mlfK11f / mlxK11g / mlfK11g / mlxK11same / mlfK11same / mlxK11tilde / mlfK11tilde / mlxK11words / mlfK11words / mlxK11script / mlfK11script / mlxK11cls / mlfK11cls|exact
+CHK|gen_c_separate|if (!GetModuleFileName(GetModuleHandle("k11s"), path_to_dll, _MAX_PATH)) / bResult = mclInitializeComponentInstanceNonEmbeddedStandalone(&_mcr_inst, / "k11s", / LibTarget,|exact
+CHK|gen_cpp_words|no error / warn / files buildresult.json includedSupportPackages.txt k11cppl.c k11cppl.ctf k11cppl.exports k11cppl.h mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt / extern LIB_k11cppl_C_API bool MW_CALL_CONV mlfK11cpp(int nargout, mxArray** new, mxArray** this, mxArray* delete, mxArray* nargout);|div=ADR0267|diverges|no error / warn / files buildresult.json includedSupportPackages.txt k11cppl.c k11cppl.ctf k11cppl.exports k11cppl.h mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt / extern LIB_k11cppl_C_API bool MW_CALL_CONV mlfK11cpp(int nargout, mxArray** new0, mxArray** this0, mxArray* delete0, mxArray* nargout0);
+CHK|api_wrong_options|Compiler:clishared:wrongOptionsObject / 'compiler.build.StandaloneApplicationOptions' is not a valid options object for this function. Use 'compiler.build.CSharedLibraryOptions' instead.|exact
+CHK|api_no_args|MATLAB:narginchk:notEnoughInputs / Not enough input arguments.|exact
+CHK|api_two_out|MATLAB:nargoutchk:tooManyOutputs / Too many output arguments.|exact
+CHK|api_extra|MATLAB:narginchk:tooManyInputs / Too many input arguments.|exact
+CHK|api_badname|Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME / Illegal output name: 'a b' / (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')|exact

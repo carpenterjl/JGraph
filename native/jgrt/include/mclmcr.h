@@ -17,6 +17,16 @@
 /* A component's archive, found but not yet opened. */
 typedef struct mclCtfStream_tag *mclCtfStream;
 
+/* What a component was built as, as a library built with its archive beside it names itself (stage K11). */
+typedef enum
+{
+    ExeTarget,
+    LibTarget,
+    MexTarget,
+    SfunTarget,
+    AnyTarget
+} mccTargetType;
+
 /* Prepares the runtime's library for use. Answers true; calling it again does nothing. */
 JGRT_API bool mclmcrInitialize(void);
 
@@ -43,6 +53,19 @@ JGRT_API bool mclInitializeComponentInstanceCtfFileToCache(HMCRINSTANCE *inst,
                                                           mclOutputHandlerFcn error_handler,
                                                           mclOutputHandlerFcn print_handler,
                                                           const char *ctfFileLocation);
+
+/*
+ * The same, from component_name.ctf in the folder of the file path_to_component: what a library
+ * built with mcc -C calls, its archive written beside it (stage K11). ttype and session_key are
+ * accepted and unused.
+ */
+JGRT_API bool mclInitializeComponentInstanceNonEmbeddedStandalone(HMCRINSTANCE *inst,
+                                                                 const char *path_to_component,
+                                                                 const char *component_name,
+                                                                 mccTargetType ttype,
+                                                                 mclOutputHandlerFcn error_handler,
+                                                                 mclOutputHandlerFcn print_handler,
+                                                                 const char *session_key);
 
 /* Retires an instance and sets *inst to NULL; the component's session lasts until the runtime ends. */
 JGRT_API bool mclTerminateInstance(HMCRINSTANCE *inst);

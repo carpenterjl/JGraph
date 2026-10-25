@@ -20,6 +20,9 @@ public enum MccTarget
 
     /// <summary>A .NET assembly for the MWArray API: <c>-W dotnet:</c> (stage K8).</summary>
     DotNet,
+
+    /// <summary>A C shared library: <c>-W lib:</c> or <c>-l</c> (stage K11).</summary>
+    CLibrary,
 }
 
 /// <summary>
@@ -40,16 +43,19 @@ public sealed record DotNetWrapper(string AssemblyName, string ClassName, string
     public bool DataApi { get; init; }
 }
 
-/// <summary>How far a standalone build goes, as <c>-T</c> says (k7_switches).</summary>
+/// <summary>
+/// How far a build goes, as <c>-T</c> says (k7_switches, k11_build). A C shared library reads the
+/// same words as its own stages (<see cref="MccCommandLine.LibraryStage"/>).
+/// </summary>
 public enum MccLink
 {
-    /// <summary><c>-T link:exe</c>, the default: the program with its archive.</summary>
+    /// <summary><c>-T link:exe</c>, the default: the program with its archive; <c>link:lib</c>, the library.</summary>
     Program,
 
-    /// <summary><c>-T compile:exe</c>: the program, its archive written beside it.</summary>
+    /// <summary><c>-T compile:exe</c>: the program, its archive written beside it; <c>compile:lib</c>, the object file.</summary>
     ProgramBesideArchive,
 
-    /// <summary><c>-T codegen</c>: the archive alone, no program.</summary>
+    /// <summary><c>-T codegen</c>: the archive alone, no program; for a library, its source as well.</summary>
     ArchiveOnly,
 }
 
@@ -69,7 +75,8 @@ public enum MccLink
 /// <item>switches a standalone build ignores: with R2025b's warning (<c>-g -G -M -f -c</c>) or without
 /// (<c>-b -S -u -H -P -Y -A all</c>);</item>
 /// <item>every <c>-W</c> target checked as R2025b checks it, then refused as one JGraph does not build
-/// yet, or does not build at all (section 10 of the plan);</item>
+/// yet, or does not build at all (section 10 of the plan); <c>-W dotnet:</c> built since stage K8, and
+/// <c>-W lib:</c> and <c>-l</c> since stage K11 with their name, version, <c>-T</c>, <c>-c</c> and <c>-g</c>;</item>
 /// <item>the encryption switches <c>-s</c>, <c>-k</c>, <c>-J</c> refused, by the decision of 2026-10-24.</item>
 /// </list>
 /// </summary>
@@ -136,6 +143,14 @@ public sealed class MccCommandLine
 
     /// <summary>How far the build goes, <c>-T</c>.</summary>
     public MccLink Link { get; private set; }
+
+    /// <summary>How far a C shared library build goes: <see cref="Link"/>'s stage, <c>-c</c> as <c>-T codegen</c>.</summary>
+    public CLibraryStage LibraryStage => Link switch
+    {
+        MccLink.ArchiveOnly => CLibraryStage.Codegen,
+        MccLink.ProgramBesideArchive => CLibraryStage.Compile,
+        _ => CLibraryStage.Link,
+    };
 
     /// <summary>The component's name, <c>-W main:name</c>; the main file's when not given.</summary>
     public string? ComponentName { get; private set; }
@@ -263,6 +278,8 @@ public sealed class MccCommandLine
         var words = new List<string>(args);
         var depth = new List<int>(Enumerable.Repeat(0, words.Count));
         string? wrapperKind = null;
+        string? libraryName = null;
+        bool shorthand = false;
         string[] wrapperParts = [];
         string? link = null;
         bool codegenSwitch = false;
@@ -397,20 +414,37 @@ public sealed class MccCommandLine
                     wrapperKind = "main";
                     wrapperParts = [];
                     link = "link:exe";
+                    shorthand = true;
                     break;
                 case "-e":
                     line.Target = MccTarget.Windowed;
                     wrapperKind = "WinMain";
                     wrapperParts = [];
                     link = "link:exe";
+                    shorthand = true;
                     break;
                 case "-l":
                     wrapperKind = "lib";
                     wrapperParts = [];
                     link = "link:lib";
+                    line.Target = MccTarget.CLibrary;
+                    shorthand = true;
                     break;
                 case "-W":
                     (wrapperKind, wrapperParts) = line.Wrapper(value!);
+
+                    // A library's name is a component name, as -o's is: one after the other is refused,
+                    // though a second -W lib: names the library again (k11_build: lib_o; k11_names: o_W, W_W).
+                    if (wrapperKind == "lib")
+                    {
+                        if (line.OutputName is { } named)
+                        {
+                            throw MultipleNames("-W", named, "-o");
+                        }
+
+                        libraryName = line.ComponentName;
+                    }
+
                     break;
                 case "-T":
                     link = value!;
@@ -421,10 +455,9 @@ public sealed class MccCommandLine
 
                     break;
                 case "-o":
-                    if (line.OutputName is { } first)
+                    if ((line.OutputName ?? libraryName) is { } first)
                     {
-                        throw Refuse("COM_ERR_MULTIPLE_COMPONENT_NAMES",
-                            $"Error: Multiple component names. Processing \"-o\" switch. Component name \"{first}\" already specified via \"-o\".");
+                        throw MultipleNames("-o", first, line.OutputName is null ? "-W" : "-o");
                     }
 
                     line.OutputName = value;
@@ -531,7 +564,7 @@ public sealed class MccCommandLine
         }
 
         bool standalone = wrapperKind is "main" or "WinMain";
-        if (standalone && link is not null && link.Split(':').Contains("lib"))
+        if (link is not null && link.Split(':').Contains(standalone ? "lib" : wrapperKind == "lib" ? "exe" : "\0"))
         {
             throw Refuse("COM_ERR_WRAPPER_TARGET_MISMATCH",
                 "Error: The wrapper type specified with -W switch doesn't match with the target type specified with -T switch.");
@@ -549,6 +582,20 @@ public sealed class MccCommandLine
             // -g is a .NET build's debug switch, not one a standalone build ignores (k8_build: debug).
             line.DebugBuild = line.IgnoredSwitches.Remove("g");
             line.IgnoredSwitches.RemoveAll(static s => s == "g");
+        }
+        else if (wrapperKind == "lib")
+        {
+            // A C library's -g is its debug build, and -c its -T codegen, neither warned about (k11_build:
+            // debug, dashc); with -l, -m or -e anywhere, -W lib:'s name gives way to -o's or the first
+            // file's (k11_names: l_W, W_l, m_W).
+            line.Target = MccTarget.CLibrary;
+            line.ComponentName = shorthand ? null : libraryName;
+            line.DebugBuild = line.IgnoredSwitches.Remove("g");
+            line.IgnoredSwitches.RemoveAll(static s => s == "g");
+            if (line.IgnoredSwitches.RemoveAll(static s => s == "c") > 0)
+            {
+                link = "codegen";
+            }
         }
         else if (!standalone)
         {
@@ -645,12 +692,24 @@ public sealed class MccCommandLine
         switch (kind)
         {
             case "lib":
-                if (name.Length == 0)
+                // lib:name[,version=v] (stage K11; k11_build: badname, digitname, badversion).
+                if (!IsOutputName(name))
                 {
                     throw Refuse("COM_ERR_ILLEGAL_OUTPUT_NAME",
-                        "Illegal output name: '' \n (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')");
+                        $"Illegal output name: '{name}' \n (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')");
                 }
 
+                foreach (string part in parts.Skip(1))
+                {
+                    if (part.StartsWith("version=", StringComparison.Ordinal))
+                    {
+                        string text = part["version=".Length..];
+                        Version = ProgramVersion.Parse(text) ?? throw Refuse("COM_ERR_INVALID_VERSION", ProgramVersion.Refusal(text));
+                    }
+                }
+
+                Target = MccTarget.CLibrary;
+                ComponentName = name;
                 break;
             case "cpplib":
                 if (name.Length == 0)
@@ -840,6 +899,11 @@ public sealed class MccCommandLine
 
     private static MccException Refuse(string id, string text) => new(Prefix + id, text);
 
+    /// <summary>R2025b's refusal of a second component name (resources/Compiler/en/compiler.xml).</summary>
+    private static MccException MultipleNames(string processing, string first, string via) =>
+        Refuse("COM_ERR_MULTIPLE_COMPONENT_NAMES",
+            $"Error: Multiple component names. Processing \"{processing}\" switch. Component name \"{first}\" already specified via \"{via}\".");
+
     /// <summary>
     /// <c>mcc -?</c> and <c>mcc</c> alone: JGraph's own help, in R2025b's order (the switches every target
     /// reads, then each target's command), naming what JGraph's mcc builds and what it does not yet.
@@ -865,9 +929,14 @@ public sealed class MccCommandLine
         + "  beside the program, -r <icon> and -h <helpFile> set its icon and its -? text, -j stores the code\n"
         + "  as P-files, -R <option> sets a runtime option, -K keeps what a failed build wrote, -T codegen\n"
         + "  writes the archive alone, and -W main:<name>,runtime=bundled copies the runtime beside the program.\n\n"
+        + "  A .NET assembly, for the MWArray API or with api=matlab-data the MATLAB Data API\n"
+        + "  mcc -W 'dotnet:<assembly>,<class>' <file.m>\n\n"
+        + "  A C shared library, compiled with Microsoft Visual C++\n"
+        + "  mcc -W lib:<name>[,version=<v>] <file.m> [moreFiles...]    or    mcc -l <file.m>\n"
+        + "  -C writes the archive beside the library, -g builds it for debugging, -T compile:lib stops at the\n"
+        + "  object file and -T codegen (or -c) at the generated source.\n\n"
         + "JGraph does not build these yet\n"
-        + "  C or C++ shared library      mcc -W lib:<name> <file.m>      mcc -W cpplib:<name> <file.m>\n"
-        + "  .NET assembly                mcc -W 'dotnet:<assembly>,<class>' <file.m>\n"
+        + "  C++ shared library           mcc -W cpplib:<name> <file.m>\n"
         + "  Python package               mcc -W python:<package> <file.m>\n"
         + "  Production Server archive    mcc -W CTF:<archive> -U <file.m>\n"
         + "  Excel add-in                 mcc -W 'excel:<addin>,<class>' -b <file.m>\n\n"

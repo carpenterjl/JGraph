@@ -36,6 +36,7 @@ internal static partial class JgsBuiltinClasses
         ComponentContainer => ComponentContainerDeclaration(interpreter),
         StandaloneOptions => StandaloneOptionsDeclaration(interpreter),
         DotNetOptions => DotNetOptionsDeclaration(interpreter),
+        CLibraryOptions => CLibraryOptionsDeclaration(interpreter),
         BuildResults => BuildResultsDeclaration(),
         RuntimeDependencies => RuntimeDependenciesDeclaration(),
         _ => null,

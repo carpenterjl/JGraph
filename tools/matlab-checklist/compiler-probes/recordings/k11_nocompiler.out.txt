@@ -1,0 +1,10 @@
+mcc	start
+Supported compiler not detected. You can install the MinGW-w64 C/C++ compiler, which also requires installation of the Windows 10 SDK. Both are freely available. Visit https://www.mathworks.com/matlabcentral/answers/355476-how-can-i-install-mingw-compiler-for-use-with-windows-10-sdk-kit. For more options, visit https://www.mathworks.com/support/compilers. 
+mcc	ERR Compiler:compiler:COM_SYSTEM_ERROR | The following command: / ""<MATLABROOT>\bin\mbuild"  -client mbuild -O -output "k11nc" -I"<W>\nc\mcc" "<W>\nc\mcc\k11nc.c"  DEFFILE"=""<W>\nc\mcc\k11nc.def""" DEFFDELIM"="",""" QUOTEDDEFFILE"="\"\""<W>\nc\mcc\k11nc.def"\"\""" LINKEXPORT"=""/DLL /def:\"$DEFFILE\"""" LDEXT"="".dll""" LDTYPE"="" -shared -static""" MTCMDLINE"=""mt -outputresource:$EXE;2 -manifest $MANIFEST""" -outdir "<W>\nc\mcc"" / failed with error code -1.
+mcc.files	k11nc.def
+codegen	ok
+codegen.files	buildresult.json | includedSupportPackages.txt | k11cg.c | k11cg.ctf | k11cg.exports | k11cg.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+api	start
+Supported compiler not detected. You can install the MinGW-w64 C/C++ compiler, which also requires installation of the Windows 10 SDK. Both are freely available. Visit https://www.mathworks.com/matlabcentral/answers/355476-how-can-i-install-mingw-compiler-for-use-with-windows-10-sdk-kit. For more options, visit https://www.mathworks.com/support/compilers. 
+api	ERR Compiler:compiler:COM_SYSTEM_ERROR | The following command: / ""<MATLABROOT>\bin\mbuild"  -client mbuild -O -output "k11plain" -I"<W>\nc\api" "<W>\nc\api\k11plain.c"  DEFFILE"=""<W>\nc\api\k11plain.def""" DEFFDELIM"="",""" QUOTEDDEFFILE"="\"\""<W>\nc\api\k11plain.def"\"\""" LINKEXPORT"=""/DLL /def:\"$DEFFILE\"""" LDEXT"="".dll""" LDTYPE"="" -shared -static""" MTCMDLINE"=""mt -outputresource:$EXE;2 -manifest $MANIFEST""" -outdir "<W>\nc\api"" / failed with error code -1.
+api.files	k11plain.def

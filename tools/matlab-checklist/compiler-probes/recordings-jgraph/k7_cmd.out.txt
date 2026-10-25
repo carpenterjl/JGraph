@@ -22,9 +22,14 @@ SECONDS	0.3
   OUT|  beside the program, -r <icon> and -h <helpFile> set its icon and its -? text, -j stores the code
   OUT|  as P-files, -R <option> sets a runtime option, -K keeps what a failed build wrote, -T codegen
   OUT|  writes the archive alone, and -W main:<name>,runtime=bundled copies the runtime beside the program.
+  OUT|  A .NET assembly, for the MWArray API or with api=matlab-data the MATLAB Data API
+  OUT|  mcc -W 'dotnet:<assembly>,<class>' <file.m>
+  OUT|  A C shared library, compiled with Microsoft Visual C++
+  OUT|  mcc -W lib:<name>[,version=<v>] <file.m> [moreFiles...]    or    mcc -l <file.m>
+  OUT|  -C writes the archive beside the library, -g builds it for debugging, -T compile:lib stops at the
+  OUT|  object file and -T codegen (or -c) at the generated source.
   OUT|JGraph does not build these yet
-  OUT|  C or C++ shared library      mcc -W lib:<name> <file.m>      mcc -W cpplib:<name> <file.m>
-  OUT|  .NET assembly                mcc -W 'dotnet:<assembly>,<class>' <file.m>
+  OUT|  C++ shared library           mcc -W cpplib:<name> <file.m>
   OUT|  Python package               mcc -W python:<package> <file.m>
   OUT|  Production Server archive    mcc -W CTF:<archive> -U <file.m>
   OUT|  Excel add-in                 mcc -W 'excel:<addin>,<class>' -b <file.m>
@@ -53,9 +58,14 @@ SECONDS	0.3
   OUT|  beside the program, -r <icon> and -h <helpFile> set its icon and its -? text, -j stores the code
   OUT|  as P-files, -R <option> sets a runtime option, -K keeps what a failed build wrote, -T codegen
   OUT|  writes the archive alone, and -W main:<name>,runtime=bundled copies the runtime beside the program.
+  OUT|  A .NET assembly, for the MWArray API or with api=matlab-data the MATLAB Data API
+  OUT|  mcc -W 'dotnet:<assembly>,<class>' <file.m>
+  OUT|  A C shared library, compiled with Microsoft Visual C++
+  OUT|  mcc -W lib:<name>[,version=<v>] <file.m> [moreFiles...]    or    mcc -l <file.m>
+  OUT|  -C writes the archive beside the library, -g builds it for debugging, -T compile:lib stops at the
+  OUT|  object file and -T codegen (or -c) at the generated source.
   OUT|JGraph does not build these yet
-  OUT|  C or C++ shared library      mcc -W lib:<name> <file.m>      mcc -W cpplib:<name> <file.m>
-  OUT|  .NET assembly                mcc -W 'dotnet:<assembly>,<class>' <file.m>
+  OUT|  C++ shared library           mcc -W cpplib:<name> <file.m>
   OUT|  Python package               mcc -W python:<package> <file.m>
   OUT|  Production Server archive    mcc -W CTF:<archive> -U <file.m>
   OUT|  Excel add-in                 mcc -W 'excel:<addin>,<class>' -b <file.m>
@@ -64,21 +74,21 @@ CASE	build
 RUN	mcc -m k7_hello.m {D}
 EXIT	0
 SECONDS	0.4
-FILES	buildresult.json (102) | includedSupportPackages.txt (0) | k7_hello.exe (301000) | mccExcludedFiles.log (90) | readme.txt (778) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+FILES	buildresult.json (102) | includedSupportPackages.txt (0) | k7_hello.exe (301003) | mccExcludedFiles.log (90) | readme.txt (778) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 CASE	build_verbose
 RUN	mcc -v -m k7_hello.m {D}
 EXIT	0
-SECONDS	0.4
+SECONDS	0.5
   OUT|Compiler version: JGraph 0.2.3 (R2025b)
   OUT|Analyzing file dependencies. 
   OUT|Parsing file "<W>\src\k7_hello.m"
   OUT|	(referenced from command line).
   OUT|Generating file "<W>\cmd\build_verbose\readme.txt".
-FILES	buildresult.json (102) | includedSupportPackages.txt (0) | k7_hello.exe (301002) | mccExcludedFiles.log (90) | readme.txt (778) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+FILES	buildresult.json (102) | includedSupportPackages.txt (0) | k7_hello.exe (301003) | mccExcludedFiles.log (90) | readme.txt (778) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 CASE	missing_file
 RUN	mcc -m k7_nosuch.m {D}
 EXIT	1
-SECONDS	0.3
+SECONDS	0.4
   ERR|{Could not find the MATLAB file 'k7_nosuch.m' on the MATLAB path.
   ERR|} 
   ERR|ERROR: JGraph error Exit Status: 0x00000001
@@ -105,21 +115,21 @@ CASE	single_quotes
 RUN	mcc -W 'main:k7q' -T link:exe k7_hello.m {D}
 EXIT	0
 SECONDS	0.4
-FILES	buildresult.json (102) | includedSupportPackages.txt (0) | k7_hello.exe (300985) | mccExcludedFiles.log (90) | readme.txt (778) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+FILES	buildresult.json (102) | includedSupportPackages.txt (0) | k7_hello.exe (300987) | mccExcludedFiles.log (90) | readme.txt (778) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 CASE	double_quotes
 RUN	mcc -W "main:k7dq" -T link:exe k7_hello.m {D}
 EXIT	0
-SECONDS	0.4
-FILES	buildresult.json (102) | includedSupportPackages.txt (0) | k7_hello.exe (300991) | mccExcludedFiles.log (90) | readme.txt (778) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+SECONDS	0.5
+FILES	buildresult.json (102) | includedSupportPackages.txt (0) | k7_hello.exe (300995) | mccExcludedFiles.log (90) | readme.txt (778) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 CASE	license_Y
 RUN	mcc -Y k7_license.dat -m k7_hello.m {D}
 EXIT	0
 SECONDS	0.4
-FILES	buildresult.json (102) | includedSupportPackages.txt (0) | k7_hello.exe (301001) | mccExcludedFiles.log (90) | readme.txt (778) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+FILES	buildresult.json (102) | includedSupportPackages.txt (0) | k7_hello.exe (301002) | mccExcludedFiles.log (90) | readme.txt (778) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 CASE	warn_list
 RUN	mcc -w list
 EXIT	0
-SECONDS	0.3
+SECONDS	0.4
   OUT|Warning table (for use with -w enable:/disable:/error:). Format is as follows: 
   OUT|"<WARNING IDENTIFIER>" is <STATUS>, and corresponds to the message: <TEXT> 
   OUT|--------------------------------------------------------------------------------
@@ -147,18 +157,18 @@ SECONDS	0.3
 CASE	startup_warn
 RUN	mcc -m startup\k7_start.m {D}
 EXIT	0
-SECONDS	0.4
+SECONDS	0.5
   OUT|[Warning: Your deployed application may fail because file or folder paths
   OUT|not present in the deployed environment may be included in your MATLAB startup
   OUT|file. Use the MATLAB function "isdeployed" in your MATLAB startup file to
   OUT|determine the appropriate execution environment when including file and folder
   OUT|paths, and recompile your application.
   OUT|] 
-FILES	buildresult.json (102) | includedSupportPackages.txt (0) | k7_start.exe (301268) | mccExcludedFiles.log (90) | readme.txt (778) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+FILES	buildresult.json (102) | includedSupportPackages.txt (0) | k7_start.exe (301272) | mccExcludedFiles.log (90) | readme.txt (778) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 CASE	startup_error
 RUN	mcc -w error -m startup\k7_start.m {D}
 EXIT	1
-SECONDS	0.3
+SECONDS	0.4
   OUT|[Warning: Your deployed application may fail because file or folder paths
   OUT|not present in the deployed environment may be included in your MATLAB startup
   OUT|file. Use the MATLAB function "isdeployed" in your MATLAB startup file to

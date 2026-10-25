@@ -3,48 +3,10 @@ CASE	mcc.obs_E_alone
   status
     R2025b: ERR Compiler:compiler:COM_ERROR_UNKNOWN | fl:filesystem:PathNotFound
     JGraph: ERR JGraph:mcc:optionNotBuilt | JGraph's mcc does not read -E files.
-CASE	mcc.l
-  status
-    R2025b: ok
-    JGraph: ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
-  .files
-    R2025b: buildresult.json | includedSupportPackages.txt | k7_hello.c | k7_hello.def | k7_hello.dll | k7_hello.exp | k7_hello.exports | k7_hello.h | k7_hello.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
-    JGraph: 
-CASE	mcc.l_o
-  status
-    R2025b: ok
-    JGraph: ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
-  .files
-    R2025b: buildresult.json | includedSupportPackages.txt | k7lo.c | k7lo.def | k7lo.dll | k7lo.exp | k7lo.exports | k7lo.h | k7lo.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
-    JGraph: 
 CASE	mcc.T_compile_lib
-  status
-    R2025b: ok
-    JGraph: ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
   .files
     R2025b: buildresult.json | includedSupportPackages.txt | k7cl.c | k7cl.def | k7cl.exports | k7cl.h | k7cl.obj | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
-    JGraph: 
-CASE	mcc.W_lib_extra
-  status
-    R2025b: ok
-    JGraph: ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
-  .files
-    R2025b: buildresult.json | includedSupportPackages.txt | k7a.c | k7a.def | k7a.dll | k7a.exp | k7a.exports | k7a.h | k7a.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
-    JGraph: 
-CASE	mcc.W_lib_toomany
-  status
-    R2025b: ok
-    JGraph: ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
-  .files
-    R2025b: a.c | a.def | a.dll | a.exp | a.exports | a.h | a.lib | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
-    JGraph: 
-CASE	mcc.W_dotnet_noclass
-  status
-    R2025b: ok
-    JGraph: ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a .NET assembly (-W dotnet) yet.
-  .files
-    R2025b: buildresult.json | includedSupportPackages.txt | k7asm.cs | k7asm.dll | k7asm.xml | k7asmNative.cs | k7asmNative.dll | k7asmNative.xml | k7asmVersion.cs | k7asm_overview.html | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
-    JGraph: 
+    JGraph: buildresult.json | includedSupportPackages.txt | k7cl.c | k7cl.ctf | k7cl.def | k7cl.exports | k7cl.h | k7cl.obj | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
 CASE	mcc.W_java_noclass
   status
     R2025b: ERR Compiler:compiler:COM_SYSTEM_ERROR_WITH_DETAILS | The following command: / "javac -classpath "<MATLABROOT>\toolbox\javabuilder\jar\javabuilder.jar" -d "<W>\b\W_java_noclass\classes" "<W>\b\W_java_noclass\k7pkg\k7pkg.java" "<W>\b\W_java_noclass\k7pkg\K7pkgMCRFactory.java" "<W>\b\W_java_noclass\k7pkg\k7pkgRemote.java" "<W>\b\W_java_noclass\k7pkg\package-info.java"" / failed with error code 1. / This may occur if Java is not installed, or incorrectly installed, or not on the system path, / or if the environment variable JAVA_HOME is set to an incorrect value.
@@ -85,14 +47,7 @@ CASE	mcc.w_excl_error
   .warn
     R2025b: Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "<MATLABROOT>/toolbox/matlab/codetools/edit.m"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
     JGraph: Compiler:compiler:COM_WARN_EXCLUDED_FILE | Excluded "edit"; reason: The file or function is non-deployable and has been excluded from packaging. Either remove the file or function from your code, or use the MATLAB function "isdeployed" to ensure the function is not invoked in the deployed component. Then you can suppress this warning by using the %#exclude pragma.
-CASE	mcc.B_csharedlib
-  status
-    R2025b: ok
-    JGraph: ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a C shared library (-W lib) yet.
-  .files
-    R2025b: buildresult.json | includedSupportPackages.txt | k7blib.c | k7blib.def | k7blib.dll | k7blib.exp | k7blib.exports | k7blib.h | k7blib.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
-    JGraph: 
-15 of 140 cases differ
+9 of 140 cases differ
 == k7_more
 CASE	mcc.matlab_error
   status
@@ -187,9 +142,14 @@ CASE	no_args
       OUT|  beside the program, -r <icon> and -h <helpFile> set its icon and its -? text, -j stores the code
       OUT|  as P-files, -R <option> sets a runtime option, -K keeps what a failed build wrote, -T codegen
       OUT|  writes the archive alone, and -W main:<name>,runtime=bundled copies the runtime beside the program.
+      OUT|  A .NET assembly, for the MWArray API or with api=matlab-data the MATLAB Data API
+      OUT|  mcc -W 'dotnet:<assembly>,<class>' <file.m>
+      OUT|  A C shared library, compiled with Microsoft Visual C++
+      OUT|  mcc -W lib:<name>[,version=<v>] <file.m> [moreFiles...]    or    mcc -l <file.m>
+      OUT|  -C writes the archive beside the library, -g builds it for debugging, -T compile:lib stops at the
+      OUT|  object file and -T codegen (or -c) at the generated source.
       OUT|JGraph does not build these yet
-      OUT|  C or C++ shared library      mcc -W lib:<name> <file.m>      mcc -W cpplib:<name> <file.m>
-      OUT|  .NET assembly                mcc -W 'dotnet:<assembly>,<class>' <file.m>
+      OUT|  C++ shared library           mcc -W cpplib:<name> <file.m>
       OUT|  Python package               mcc -W python:<package> <file.m>
       OUT|  Production Server archive    mcc -W CTF:<archive> -U <file.m>
       OUT|  Excel add-in                 mcc -W 'excel:<addin>,<class>' -b <file.m>
@@ -275,9 +235,14 @@ CASE	question
       OUT|  beside the program, -r <icon> and -h <helpFile> set its icon and its -? text, -j stores the code
       OUT|  as P-files, -R <option> sets a runtime option, -K keeps what a failed build wrote, -T codegen
       OUT|  writes the archive alone, and -W main:<name>,runtime=bundled copies the runtime beside the program.
+      OUT|  A .NET assembly, for the MWArray API or with api=matlab-data the MATLAB Data API
+      OUT|  mcc -W 'dotnet:<assembly>,<class>' <file.m>
+      OUT|  A C shared library, compiled with Microsoft Visual C++
+      OUT|  mcc -W lib:<name>[,version=<v>] <file.m> [moreFiles...]    or    mcc -l <file.m>
+      OUT|  -C writes the archive beside the library, -g builds it for debugging, -T compile:lib stops at the
+      OUT|  object file and -T codegen (or -c) at the generated source.
       OUT|JGraph does not build these yet
-      OUT|  C or C++ shared library      mcc -W lib:<name> <file.m>      mcc -W cpplib:<name> <file.m>
-      OUT|  .NET assembly                mcc -W 'dotnet:<assembly>,<class>' <file.m>
+      OUT|  C++ shared library           mcc -W cpplib:<name> <file.m>
       OUT|  Python package               mcc -W python:<package> <file.m>
       OUT|  Production Server archive    mcc -W CTF:<archive> -U <file.m>
       OUT|  Excel add-in                 mcc -W 'excel:<addin>,<class>' -b <file.m>

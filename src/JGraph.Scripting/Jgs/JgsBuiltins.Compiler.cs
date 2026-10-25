@@ -20,6 +20,7 @@ internal static partial class JgsBuiltins
     [
         "mcc", "compiler.build.standaloneApplication", "compiler.build.standaloneWindowsApplication",
         "compiler.build.StandaloneApplicationOptions", "compiler.build.dotNETAssembly", "compiler.build.DotNETAssemblyOptions",
+        "compiler.build.cSharedLibrary", "compiler.build.CSharedLibraryOptions",
     ];
 
     /// <summary>The functions whose use makes mcc warn that secrets come from the machine the program runs on.</summary>
@@ -168,11 +169,17 @@ internal static partial class JgsBuiltins
             return classes[at].Files;
         }
 
+        // A C library exports each file named, in order (stage K11).
+        var exported = new List<string>();
         foreach (string given in command.Files)
         {
-            if (AddRoot(given) is { } root && command.DotNet is { } wrapper)
+            if (AddRoot(given) is { } root)
             {
-                ClassFiles(wrapper.ClassName).Add(root);
+                exported.Add(root);
+                if (command.DotNet is { } wrapper)
+                {
+                    ClassFiles(wrapper.ClassName).Add(root);
+                }
             }
         }
 
@@ -201,7 +208,7 @@ internal static partial class JgsBuiltins
 
         // A startup.m beside the main is compiled in with it, and runs before it (K0's startup, k7_switches' w_start).
         string startup = Path.Combine(Path.GetDirectoryName(roots[0])!, "startup.m");
-        if (command.Target != MccTarget.DotNet && File.Exists(startup) && !roots.Contains(startup, StringComparer.OrdinalIgnoreCase))
+        if ((command.Target is MccTarget.Console or MccTarget.Windowed) && File.Exists(startup) && !roots.Contains(startup, StringComparer.OrdinalIgnoreCase))
         {
             roots.Add(startup);
         }
@@ -328,6 +335,11 @@ internal static partial class JgsBuiltins
         if (command.DotNet is { } assembly)
         {
             return DotNetBuild(command, assembly, classes, main, report, folder, here, words, line, col, host);
+        }
+
+        if (command.Target == MccTarget.CLibrary)
+        {
+            return CLibraryBuild(command, exported, main, report, folder, here, words, line, col, host);
         }
 
         CtfBuild build = CtfLayout.FromReport(component, main, report, rootFolder: here) with

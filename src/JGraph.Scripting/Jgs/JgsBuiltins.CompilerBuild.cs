@@ -55,6 +55,7 @@ internal static partial class JgsBuiltins
         }
 
         RegisterDotNetBuild(env, interpreter, host);
+        RegisterCLibraryBuild(env, interpreter, host);
     }
 
     // --- The options -----------------------------------------------------------------------
@@ -168,25 +169,8 @@ internal static partial class JgsBuiltins
         return options;
     }
 
-    /// <summary>The property a name-value name means, as inputParser matches it: exactly, or by a unique start, either case.</summary>
-    private static string OptionName(string asked, int line, int col)
-    {
-        string? exact = JgsBuiltinClasses.StandaloneOptionNames.FirstOrDefault(n => n.Equals(asked, StringComparison.OrdinalIgnoreCase));
-        if (exact is not null)
-        {
-            return exact;
-        }
-
-        string[] starts = [.. JgsBuiltinClasses.StandaloneOptionNames.Where(n => asked.Length > 0 && n.StartsWith(asked, StringComparison.OrdinalIgnoreCase))];
-        return starts.Length switch
-        {
-            1 => starts[0],
-            0 => throw new JgsRuntimeException(line, col, "MATLAB:InputParser:UnmatchedParameter",
-                $"'{asked}' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function."),
-            _ => throw new JgsRuntimeException(line, col, "MATLAB:InputParser:AmbiguousParam",
-                $"Expected '{asked}' to match one of these values:\n\n{string.Join(", ", starts)}\n\nThe input, '{asked}', matched more than one valid value."),
-        };
-    }
+    /// <summary>The property a name-value name means, as inputParser matches it (<see cref="ParameterName"/>).</summary>
+    private static string OptionName(string asked, int line, int col) => ParameterName(asked, JgsBuiltinClasses.StandaloneOptionNames, line, col);
 
     /// <summary>
     /// Sets <paramref name="name"/> on <paramref name="options"/> (which is the copy a set method

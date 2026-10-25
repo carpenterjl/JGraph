@@ -1,0 +1,430 @@
+== api\k11plaincSharedLibrary\k11plain.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== api_files\k11plain.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== api_named\K11Named.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	3.1.0.0
+    fixed.ProductVersion	3.1.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	3.1.0.0
+    string.ProductVersion	3.1.0.0
+    var.Translation	000004b0
+== api_pfile\k11plain.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== api_separate\K11Sep.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== clash\k11clash.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== classdef\k11cls.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== cwords\k11cwords.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== debug\k11dbg.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== ell\k11plain.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== ell_o\k11named.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== fnname\k11plain.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== main\k11lib.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== noT\k11noT.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== pcode\k11j.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== pfile\k11p.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== same\k11same.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== script\k11script.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== separate\k11sep.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== tilde\k11tilde.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== twice\k11tw.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== verbose\k11v.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.0.0.0
+    fixed.ProductVersion	1.0.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.0.0.0
+    string.ProductVersion	1.0.0.0
+    var.Translation	000004b0
+== version\k11ver.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	2.5.0.0
+    fixed.ProductVersion	2.5.0.0
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	2.5.0.0
+    string.ProductVersion	2.5.0.0
+    var.Translation	000004b0
+== version4\k11ver4.dll
+  machine	0x8664
+  subsystem	windows-gui
+  sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+  overlay.starts	PK zip
+  certificate	no
+  import	jgrt.dll
+  import	KERNEL32.dll
+  resource	VERSION 1 lang 0: 320 bytes
+    fixed.FileVersion	1.2.3.4
+    fixed.ProductVersion	1.2.3.4
+    fixed.FileFlags	0x0
+    fixed.FileOS	0x40004
+    fixed.FileType	0x2
+    table	000004B0
+    string.FileVersion	1.2.3.4
+    string.ProductVersion	1.2.3.4
+    var.Translation	000004b0

@@ -1,0 +1,1470 @@
+k11_build: 167 of 191 keys agree; 24 recorded divergences, 0 unexplained
+k11_names: 70 of 78 keys agree; 8 recorded divergences, 0 unexplained
+k11_client: 193 of 193 cases agree; 0 recorded divergences, 0 unexplained
+k11_client standard error: 25 lines, the same
+k11_feval_separate: 609 of 674 cases agree; 65 recorded divergences, 0 unexplained (stage K10's client on JGraph's generated library)
+k11_feval_interleaved: 609 of 674 cases agree; 65 recorded divergences, 0 unexplained (stage K10's client on JGraph's generated library)
+pe: 320 of 527 facts agree; 207 recorded divergences, 0 unexplained
+
+k11_build main.readme
+  R2025b: CRLF 49, ends with newline 1
+  |k11lib C Shared Library
+  |
+  |1. Prerequisites for Deployment
+  |
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |
+  |    >>mcrinstaller
+  |
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |
+  |For
+  JGraph: CRLF 30, ends with newline 1
+  |k11lib C Shared Library
+  |
+  |1. Prerequisites for Deployment
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed, with its runtime\win64 folder
+  |on the PATH, where a program finds jgrt.dll, the native bridge the library calls.
+  |A program built against the library compiles with the runtime's include folder and
+  |links with k11lib.lib and the runtime's lib\win64\jgrt.lib (on the computer that
+  |builds it, JGraph's extern\include and extern\lib\win64\microsoft hold the same).
+  |
+  |2. Files to Deploy and Package
+  |
+  |
+  |Files to Package
+  |======
+  recorded: readme.txt and GettingStarted.html are in JGraph's words, for the JGraph Runtime
+
+k11_build compile.files
+  R2025b: buildresult.json | includedSupportPackages.txt | k11cmp.c | k11cmp.def | k11cmp.exports | k11cmp.h | k11cmp.obj | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+  JGraph: buildresult.json | includedSupportPackages.txt | k11cmp.c | k11cmp.ctf | k11cmp.def | k11cmp.exports | k11cmp.h | k11cmp.obj | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+  recorded: -T compile:lib writes the archive beside the object file, which R2025b's does not write at all
+
+k11_build clash
+  R2025b: ERR Compiler:compiler:COM_SYSTEM_ERROR | The following command: / ""<MATLABROOT>\bin\mbuild"  -client mbuild -O -output "k11clash" -I"<W>\b\clash" "<W>\b\clash\k11clash.c"  DEFFILE"=""<W>\b\clash\k11clash.def""" DEFFDELIM"="",""" QUOTEDDEFFILE"="\"\""<W>\b\clash\k11clash.def"\"\""" LINKEXPORT"=""/DLL /def:\"$DEFFILE\"""" LDEXT"="".dll""" LDTYPE"="" -shared -static""" MTCMDLINE"=""mt -outputresource:$EXE;2 -manifest $MANIFEST""" -outdir "<W>\b\clash"" / failed with error code -1.
+  JGraph: ok
+  recorded: an argument named nargout is renamed nargout0 so the library compiles; R2025b's wrapper declares nargout twice and its build fails
+
+k11_build clash.files
+  R2025b: k11clash.def
+  JGraph: buildresult.json | includedSupportPackages.txt | k11clash.c | k11clash.def | k11clash.dll | k11clash.exp | k11clash.exports | k11clash.h | k11clash.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+  recorded: an argument named nargout is renamed nargout0 so the library compiles; R2025b's wrapper declares nargout twice and its build fails
+
+k11_build clash.h
+  R2025b: missing
+  JGraph: CRLF 61, ends with newline 1
+  |/*
+  | * Date: <DATE>
+  | * Arguments:
+  | * <ARGUMENTS>
+  | */
+  |
+  |#ifndef k11clash_h
+  |#define k11clash_h 1
+  |
+  |#if defined(__cplusplus) && !defined(mclmcrrt_h) && defined(__linux__)
+  |#  pragma implementation "mclmcrrt.h"
+  |#endif
+  |#include "mclmcrrt.h"
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |/* This symbol is defined in shared libraries. Define it here
+  | * (to nothing) in case this isn't a shared library.
+  | */
+  |#ifndef LIB_k11clash_C_API
+  |#define LIB_k11clash_C_API /* No special import/export declarati
+  recorded: an argument named nargout is renamed nargout0 so the library compiles; R2025b's wrapper declares nargout twice and its build fails
+
+k11_build clash.c
+  R2025b: missing
+  JGraph: CRLF 148, ends with newline 1
+  |/*
+  | * Date: <DATE>
+  | * Arguments:
+  | * <ARGUMENTS>
+  | */
+  |
+  |#define EXPORTING_k11clash 1
+  |#include "k11clash.h"
+  |
+  |static HMCRINSTANCE _mcr_inst = NULL; /* don't use nullptr; this may be either C or C++ */
+  |
+  |#if defined( _MSC_VER) || defined(__LCC__) || defined(__MINGW64__)
+  |#ifdef __LCC__
+  |#undef EXTERN_C
+  |#endif
+  |#define NOMINMAX
+  |#include <windows.h>
+  |#undef interface
+  |
+  |static char path_to_dll[_MAX_PATH];
+  |
+  |BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, void *pv)
+  |{
+  |    if (dwReason == DLL_PROCESS_AT
+  recorded: an argument named nargout is renamed nargout0 so the library compiles; R2025b's wrapper declares nargout twice and its build fails
+
+k11_build verbose.printed
+  R2025b: |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies.
+  |Parsing file "<W>\b\src\k11plain.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\verbose\k11v.h".
+  |Generating file "<W>\b\verbose\k11v.c".
+  |Generating file "<W>\b\verbose\k11v.exports".
+  |Generating file "<W>\b\verbose\readme.txt".
+  |Executing command: ""<MATLABROOT>\bin\mbuild"  -client mbuild -O -v -output "k11v" -I"<W>\b\verbose" "<W>\b\verbose\k11v.c"  DEFFILE"=""<W>\b\verbose\k11v.def""" DEFFDELIM"="",""" QUOTEDDEFFILE"="\"\""<W>\b\verbose\k11v.def"\"\""" LINKEXPORT"=""/DLL /def:\"$DEFFILE\"""" LDEX
+  JGraph: |Compiler version: JGraph 0.2.3 (R2025b)
+  |Analyzing file dependencies.
+  |Parsing file "<W>\b\src\k11plain.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\verbose\k11v.h".
+  |Generating file "<W>\b\verbose\k11v.c".
+  |Generating file "<W>\b\verbose\k11v.exports".
+  |Generating file "<W>\b\verbose\readme.txt".
+  |Building with 'Microsoft Visual C++ 2022 (C)'.
+  |cl /c /MT /Zc:__cplusplus /Zp8 /GR /W3 /EHsc- /Zc:wchar_t- /nologo /O2 /DNDEBUG /DMATLAB_DEFAULT_RELEASE=R2017b /D_CRT_SECURE_NO_DEPRECATE /I"<W>\b\verbose" /I"<JGRAPH>\extern\include" "<W>\b\verbose\k11v.c" /Fo"<TEMP
+  recorded: what a build prints past mbuild's 'Building with' line is JGraph's own: its compiler's command lines, not mbuild's search
+
+k11_build opts.default
+  R2025b: CSharedLibraryOptions with properties:
+               EmbedArchive: on
+             LibraryVersion: '1.0.0.0'
+              FunctionFiles: {'<W>\b\src\k11plain.m'}
+                 DebugBuild: off
+                LibraryName: 'k11plain'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '.\k11plaincSharedLibrary'
+  JGraph: CSharedLibraryOptions with properties:
+      EmbedArchive: on
+      LibraryVersion: '1.0.0.0'
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: off
+      LibraryName: 'k11plain'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '.\k11plaincSharedLibrary'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k11_build api_default.results
+  R2025b: Results with properties:
+                    BuildType: 'cSharedLibrary'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cSharedLibrary'
+      Files: {4×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k11_build api_default.Options
+  R2025b: CSharedLibraryOptions with properties:
+               EmbedArchive: on
+             LibraryVersion: '1.0.0.0'
+              FunctionFiles: {'<W>\b\src\k11plain.m'}
+                 DebugBuild: off
+                LibraryName: 'k11plain'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '.\k11plaincSharedLibrary'
+  JGraph: CSharedLibraryOptions with properties:
+      EmbedArchive: on
+      LibraryVersion: '1.0.0.0'
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: off
+      LibraryName: 'k11plain'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '.\k11plaincSharedLibrary'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k11_build api_default.gettingstarted
+  R2025b: CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <title>Getting Started with the k11plain C Shared Library</title>
+  |        <style type="text/css">
+  |            .rtcContent { padding: 20px; }
+  |            .S0 {padding:0 61px 2px 0; margin-bottom: 16px; border-bottom: 1px solid #cbcbcb; background-position: right 6px; background-repeat: no-repeat; background-size: 58px; color: #c45400; font: normal normal 22px/1.136 Arial,Helvetica,sans-serif; }
+  |            .S1 { margin: 2px 10px 9px 4px; padding: 0px; line-height: 21px; min-height: 0px; white-space: pr
+  JGraph: CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |<head>
+  |<meta charset="utf-8">
+  |<title>Getting started with the k11plain C shared library</title>
+  |</head>
+  |<body>
+  |<h1>Getting started with the k11plain C shared library</h1>
+  |<ol>
+  |<li>Install the JGraph Runtime 0.2.3, or set JGRAPH_RUNTIME_ROOT to its folder, and put its runtime\win64 folder on the PATH.</li>
+  |<li>Compile a program with the runtime's include folder and link it with k11plain.lib and jgrt.lib:
+  |<pre>cl /I "%JGRAPH_RUNTIME_ROOT%\include" driverApplication.c k11plain.lib "%JGRAPH_RUNTIME_ROOT%\lib\win
+  recorded: readme.txt and GettingStarted.html are in JGraph's words, for the JGraph Runtime
+
+k11_build api_default.readme
+  R2025b: CRLF 49, ends with newline 1
+  |k11plain C Shared Library
+  |
+  |1. Prerequisites for Deployment
+  |
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |
+  |    >>mcrinstaller
+  |
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |
+  |F
+  JGraph: CRLF 30, ends with newline 1
+  |k11plain C Shared Library
+  |
+  |1. Prerequisites for Deployment
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed, with its runtime\win64 folder
+  |on the PATH, where a program finds jgrt.dll, the native bridge the library calls.
+  |A program built against the library compiles with the runtime's include folder and
+  |links with k11plain.lib and the runtime's lib\win64\jgrt.lib (on the computer that
+  |builds it, JGraph's extern\include and extern\lib\win64\microsoft hold the same).
+  |
+  |2. Files to Deploy and Package
+  |
+  |
+  |Files to Package
+  |==
+  recorded: readme.txt and GettingStarted.html are in JGraph's words, for the JGraph Runtime
+
+k11_build opts.named
+  R2025b: CSharedLibraryOptions with properties:
+               EmbedArchive: on
+             LibraryVersion: '3.1'
+              FunctionFiles: {2×1 cell}
+                 DebugBuild: off
+                LibraryName: 'K11Named'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: on
+                  OutputDir: '<W>\b\api_named'
+  JGraph: CSharedLibraryOptions with properties:
+      EmbedArchive: on
+      LibraryVersion: '3.1'
+      FunctionFiles: {2×1 cell}
+      DebugBuild: off
+      LibraryName: 'K11Named'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: on
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k11_build api_named.printed
+  R2025b: |mcc -W 'lib:K11Named,version=3.1' -T link:lib -d <W>\b\api_named -v -Z autodetect <W>\b\src\k11plain.m <W>\b\src\k11Mixed.m
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies.
+  |Parsing file "<W>\b\src\k11plain.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k11Mixed.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\api_named\K11Named.h".
+  |Generating file "<W>\b\api_named\K11Named.c".
+  |Generating file "<W>\b\api_named\K11Named.exports".
+  |Generating file "<W>\b\api_named\readme.txt".
+  |Executing command: ""<MATLABROOT>\bin\mbuild"  -clien
+  JGraph: |mcc -W 'lib:K11Named,version=3.1' -T link:lib -d <W>\b\api_named -v -Z autodetect <W>\b\src\k11plain.m <W>\b\src\k11Mixed.m
+  |Compiler version: JGraph 0.2.3 (R2025b)
+  |Analyzing file dependencies.
+  |Parsing file "<W>\b\src\k11plain.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k11Mixed.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\api_named\K11Named.h".
+  |Generating file "<W>\b\api_named\K11Named.c".
+  |Generating file "<W>\b\api_named\K11Named.exports".
+  |Generating file "<W>\b\api_named\readme.txt".
+  |Building with 'Microsoft Visual C++ 2022 (C)'
+  recorded: what a build prints past mbuild's 'Building with' line is JGraph's own: its compiler's command lines, not mbuild's search
+
+k11_build api_named.results
+  R2025b: Results with properties:
+                    BuildType: 'cSharedLibrary'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cSharedLibrary'
+      Files: {4×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k11_build api_named.Options
+  R2025b: CSharedLibraryOptions with properties:
+               EmbedArchive: on
+             LibraryVersion: '3.1'
+              FunctionFiles: {2×1 cell}
+                 DebugBuild: off
+                LibraryName: 'K11Named'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: on
+                  OutputDir: '<W>\b\api_named'
+  JGraph: CSharedLibraryOptions with properties:
+      EmbedArchive: on
+      LibraryVersion: '3.1'
+      FunctionFiles: {2×1 cell}
+      DebugBuild: off
+      LibraryName: 'K11Named'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: on
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k11_build api_separate.printed
+  R2025b: |mcc -W 'lib:K11Sep,version=1.0.0.0' -T link:lib -d <W>\b\api_separate -v -Z autodetect -g -C <W>\b\src\k11plain.m
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies.
+  |Parsing file "<W>\b\src\k11plain.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\api_separate\K11Sep.h".
+  |Generating file "<W>\b\api_separate\K11Sep.c".
+  |Generating file "<W>\b\api_separate\K11Sep.exports".
+  |Generating file "<W>\b\api_separate\readme.txt".
+  |Executing command: ""<MATLABROOT>\bin\mbuild"  -client mbuild -g -v -output "K11Sep" -I"<W>\b\api_separate" "<W>\b\api_separate\K11S
+  JGraph: |mcc -W 'lib:K11Sep,version=1.0.0.0' -T link:lib -d <W>\b\api_separate -v -Z autodetect -g -C <W>\b\src\k11plain.m
+  |Compiler version: JGraph 0.2.3 (R2025b)
+  |Analyzing file dependencies.
+  |Parsing file "<W>\b\src\k11plain.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\api_separate\K11Sep.h".
+  |Generating file "<W>\b\api_separate\K11Sep.c".
+  |Generating file "<W>\b\api_separate\K11Sep.exports".
+  |Generating file "<W>\b\api_separate\readme.txt".
+  |Building with 'Microsoft Visual C++ 2022 (C)'.
+  |cl /c /MT /Zc:__cplusplus /Zp8 /GR /W3 /EHsc- /Zc:wchar_t- /nologo /Z7 /DM
+  recorded: what a build prints past mbuild's 'Building with' line is JGraph's own: its compiler's command lines, not mbuild's search
+
+k11_build api_separate.results
+  R2025b: Results with properties:
+                    BuildType: 'cSharedLibrary'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cSharedLibrary'
+      Files: {4×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k11_build api_separate.Options
+  R2025b: CSharedLibraryOptions with properties:
+               EmbedArchive: off
+             LibraryVersion: '1.0.0.0'
+              FunctionFiles: {'<W>\b\src\k11plain.m'}
+                 DebugBuild: on
+                LibraryName: 'K11Sep'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: on
+                  OutputDir: '<W>\b\api_separate'
+  JGraph: CSharedLibraryOptions with properties:
+      EmbedArchive: off
+      LibraryVersion: '1.0.0.0'
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: on
+      LibraryName: 'K11Sep'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: on
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k11_build api_files.printed
+  R2025b: |mcc -W 'lib:k11plain,version=1.0.0.0' -T link:lib -d <W>\b\api_files -v -X -a <W>\b\src\k11sub.m -Z none <W>\b\src\k11plain.m
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies.
+  |Parsing file "<W>\b\src\k11plain.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\api_files\k11plain.h".
+  |Generating file "<W>\b\api_files\k11plain.c".
+  |Generating file "<W>\b\api_files\k11plain.exports".
+  |Generating file "<W>\b\api_files\readme.txt".
+  |Executing command: ""<MATLABROOT>\bin\mbuild"  -client mbuild -O -v -output "k11plain" -I"<W>\b\api_files" "<W>\b\api_files\k1
+  JGraph: |mcc -W 'lib:k11plain,version=1.0.0.0' -T link:lib -d <W>\b\api_files -v -X -a <W>\b\src\k11sub.m -Z none <W>\b\src\k11plain.m
+  |Compiler version: JGraph 0.2.3 (R2025b)
+  |Analyzing file dependencies.
+  |Parsing file "<W>\b\src\k11plain.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\api_files\k11plain.h".
+  |Generating file "<W>\b\api_files\k11plain.c".
+  |Generating file "<W>\b\api_files\k11plain.exports".
+  |Generating file "<W>\b\api_files\readme.txt".
+  |Building with 'Microsoft Visual C++ 2022 (C)'.
+  |cl /c /MT /Zc:__cplusplus /Zp8 /GR /W3 /EHsc- /Zc:wchar_t- /nologo /
+  recorded: what a build prints past mbuild's 'Building with' line is JGraph's own: its compiler's command lines, not mbuild's search
+
+k11_build api_files.results
+  R2025b: Results with properties:
+                    BuildType: 'cSharedLibrary'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cSharedLibrary'
+      Files: {4×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k11_build api_files.Options
+  R2025b: CSharedLibraryOptions with properties:
+               EmbedArchive: on
+             LibraryVersion: '1.0.0.0'
+              FunctionFiles: {'<W>\b\src\k11plain.m'}
+                 DebugBuild: off
+                LibraryName: 'k11plain'
+            AdditionalFiles: {'<W>\b\src\k11sub.m'}
+        AutoDetectDataFiles: off
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'none'}
+                    Verbose: on
+                  OutputDir: '<W>\b\api_files'
+  JGraph: CSharedLibraryOptions with properties:
+      EmbedArchive: on
+      LibraryVersion: '1.0.0.0'
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: off
+      LibraryName: 'k11plain'
+      AdditionalFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      AutoDetectDataFiles: off
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'none'}
+      Verbose: on
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k11_build api_pfile.results
+  R2025b: Results with properties:
+                    BuildType: 'cSharedLibrary'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cSharedLibrary'
+      Files: {4×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k11_build api_pfile.Options
+  R2025b: CSharedLibraryOptions with properties:
+               EmbedArchive: on
+             LibraryVersion: '1.0.0.0'
+              FunctionFiles: {'<W>\b\pfile\k11plain.p'}
+                 DebugBuild: off
+                LibraryName: 'k11plain'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\api_pfile'
+  JGraph: CSharedLibraryOptions with properties:
+      EmbedArchive: on
+      LibraryVersion: '1.0.0.0'
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: off
+      LibraryName: 'k11plain'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k11_build clash.printed
+  R2025b: (missing)
+  JGraph: |Building with 'Microsoft Visual C++ 2022 (C)'.
+  recorded: an argument named nargout is renamed nargout0 so the library compiles; R2025b's wrapper declares nargout twice and its build fails
+
+k11_names k11cpp.k11cpplib.c
+  R2025b: 152 lines
+  |LIB_k11cpplib_C_API
+  |bool MW_CALL_CONV mlxK11cpp(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11cpp", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11cpplib_C_API
+  |bool MW_CALL_CONV mlfK11cpp(int nargout, mxArray** new, mxArray** this, mxArray* class0,
+  |                            mxArray* delete, mxArray* template, mxArray* bool0, mxArray*
+  |                            true0, mxArray* namespace, mxArray* operator, mxArray*
+  |                            private)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11cpp", nargout, 2, 8,
+  JGraph: 149 lines
+  |LIB_k11cpplib_C_API
+  |bool MW_CALL_CONV mlxK11cpp(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11cpp", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11cpplib_C_API
+  |bool MW_CALL_CONV mlfK11cpp()
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11cpp", 0, 0, 0);
+  |}
+  |
+  |
+  recorded: JGraph cannot read a function whose argument is named true (open item 205), so its wrappers take no arguments
+
+k11_names k11cpp.k11cpplib.h
+  R2025b: 62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cpplib_C_API
+  |bool MW_CALL_CONV mlxK11cpp(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cpplib_C_API bool MW_CALL_CONV mlfK11cpp(int nargout, mxArray** new, mxArray** this, mxArray* class0, mxArray* delete, mxArray* template, mxArray* bool0, mxArray* true0, mxArray* namespace, mxArray* opera
+  JGraph: 62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cpplib_C_API
+  |bool MW_CALL_CONV mlxK11cpp(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cpplib_C_API bool MW_CALL_CONV mlfK11cpp();
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+  |
+  recorded: JGraph cannot read a function whose argument is named true (open item 205), so its wrappers take no arguments
+
+k11_names k11cw3.k11cw3lib.c
+  R2025b: 151 lines
+  |LIB_k11cw3lib_C_API
+  |bool MW_CALL_CONV mlxK11cw3(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11cw3", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11cw3lib_C_API
+  |bool MW_CALL_CONV mlfK11cw3(int nargout, mxArray** default0, mxArray** inline0, mxArray*
+  |                            restrict, mxArray* NULL0, mxArray* mxArray, mxArray* size_t,
+  |                            mxArray* main, mxArray* MW_CALL_CONV)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11cw3", nargout, 2, 6, default0, inline0, restrict, NULL0, mxArray, size_t, mai
+  JGraph: 151 lines
+  |LIB_k11cw3lib_C_API
+  |bool MW_CALL_CONV mlxK11cw3(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11cw3", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11cw3lib_C_API
+  |bool MW_CALL_CONV mlfK11cw3(int nargout, mxArray** default0, mxArray** inline0, mxArray*
+  |                            restrict0, mxArray* NULL0, mxArray* mxArray0, mxArray*
+  |                            size_t, mxArray* main, mxArray* MW_CALL_CONV0)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11cw3", nargout, 2, 6, default0, inline0, restrict0, NULL0, mxArray0, size_t
+  recorded: restrict, mxArray and MW_CALL_CONV are renamed with a 0 so the library compiles; R2025b keeps them and its source does not
+
+k11_names k11cw3.k11cw3lib.h
+  R2025b: 62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cw3lib_C_API
+  |bool MW_CALL_CONV mlxK11cw3(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cw3lib_C_API bool MW_CALL_CONV mlfK11cw3(int nargout, mxArray** default0, mxArray** inline0, mxArray* restrict, mxArray* NULL0, mxArray* mxArray, mxArray* size_t, mxArray* main, mxArray* MW_CALL_CONV);
+  
+  JGraph: 62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cw3lib_C_API
+  |bool MW_CALL_CONV mlxK11cw3(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cw3lib_C_API bool MW_CALL_CONV mlfK11cw3(int nargout, mxArray** default0, mxArray** inline0, mxArray* restrict0, mxArray* NULL0, mxArray* mxArray0, mxArray* size_t, mxArray* main, mxArray* MW_CALL_CONV0);
+  recorded: restrict, mxArray and MW_CALL_CONV are renamed with a 0 so the library compiles; R2025b keeps them and its source does not
+
+k11_names k11cw4.k11cw4lib.c
+  R2025b: 151 lines
+  |LIB_k11cw4lib_C_API
+  |bool MW_CALL_CONV mlxK11cw4(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11cw4", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11cw4lib_C_API
+  |bool MW_CALL_CONV mlfK11cw4(int nargout, mxArray** nlhs, mxArray** plhs, mxArray* nrhs,
+  |                            mxArray* prhs, mxArray* mclFeval, mxArray* mclMlfFeval,
+  |                            mxArray* x_in1, mxArray* varargin)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11cw4", nargout, 2, -6, nlhs, plhs, nrhs, prhs, mclFeval, mclMlfFeval, x_in1, varargin);
+  JGraph: 151 lines
+  |LIB_k11cw4lib_C_API
+  |bool MW_CALL_CONV mlxK11cw4(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11cw4", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11cw4lib_C_API
+  |bool MW_CALL_CONV mlfK11cw4(int nargout, mxArray** nlhs, mxArray** plhs, mxArray* nrhs,
+  |                            mxArray* prhs, mxArray* mclFeval, mxArray* mclMlfFeval0,
+  |                            mxArray* x_in1, mxArray* varargin)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11cw4", nargout, 2, -6, nlhs, plhs, nrhs, prhs, mclFeval, mclMlfFeval0, x_in1, varargin
+  recorded: an argument named mclMlfFeval is renamed with a 0 so the wrapper's call compiles; R2025b keeps it
+
+k11_names k11cw4.k11cw4lib.h
+  R2025b: 62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cw4lib_C_API
+  |bool MW_CALL_CONV mlxK11cw4(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cw4lib_C_API bool MW_CALL_CONV mlfK11cw4(int nargout, mxArray** nlhs, mxArray** plhs, mxArray* nrhs, mxArray* prhs, mxArray* mclFeval, mxArray* mclMlfFeval, mxArray* x_in1, mxArray* varargin);
+  |
+  |#ifd
+  JGraph: 62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cw4lib_C_API
+  |bool MW_CALL_CONV mlxK11cw4(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cw4lib_C_API bool MW_CALL_CONV mlfK11cw4(int nargout, mxArray** nlhs, mxArray** plhs, mxArray* nrhs, mxArray* prhs, mxArray* mclFeval, mxArray* mclMlfFeval0, mxArray* x_in1, mxArray* varargin);
+  |
+  |#if
+  recorded: an argument named mclMlfFeval is renamed with a 0 so the wrapper's call compiles; R2025b keeps it
+
+k11_names k11nargin.k11narginlib.c
+  R2025b: 150 lines
+  |LIB_k11narginlib_C_API
+  |bool MW_CALL_CONV mlxK11nargin(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11nargin", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11narginlib_C_API
+  |bool MW_CALL_CONV mlfK11nargin(int nargout, mxArray** varargout, mxArray* nargin,
+  |                               mxArray* nargout)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11nargin", nargout, -1, 2, varargout, nargin, nargout);
+  |}
+  |
+  |
+  JGraph: 150 lines
+  |LIB_k11narginlib_C_API
+  |bool MW_CALL_CONV mlxK11nargin(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11nargin", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11narginlib_C_API
+  |bool MW_CALL_CONV mlfK11nargin(int nargout, mxArray** varargout, mxArray* nargin,
+  |                               mxArray* nargout0)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11nargin", nargout, -1, 2, varargout, nargin, nargout0);
+  |}
+  |
+  |
+  recorded: an argument named nargout is renamed nargout0 beside the wrapper's own nargout; R2025b declares nargout twice
+
+k11_names k11nargin.k11narginlib.h
+  R2025b: 62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11narginlib_C_API
+  |bool MW_CALL_CONV mlxK11nargin(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11narginlib_C_API bool MW_CALL_CONV mlfK11nargin(int nargout, mxArray** varargout, mxArray* nargin, mxArray* nargout);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR US
+  JGraph: 62 lines
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11narginlib_C_API
+  |bool MW_CALL_CONV mlxK11nargin(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11narginlib_C_API bool MW_CALL_CONV mlfK11nargin(int nargout, mxArray** varargout, mxArray* nargin, mxArray* nargout0);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR U
+  recorded: an argument named nargout is renamed nargout0 beside the wrapper's own nargout; R2025b declares nargout twice
+
+k11_feval_separate [safe] echo.int64
+  R2025b: int64(14) [1x2] n=2 es=8 is=numeric,int64 {-9223372036854775808 9223372036854775807}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\n-9223372036854775808 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k11_feval_separate [safe] info.int64
+  R2025b: int64 [1 2] [-9223372036854775808 9223372036854775807]
+  JGraph: (call failed)  [after ERR<<Error using k10info\n-9223372036854775808 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k11_feval_separate [safe] echo.uint64
+  R2025b: uint64(15) [1x2] n=2 es=8 is=numeric,uint64 {0 18446744073709551615}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\n18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k11_feval_separate [safe] info.uint64
+  R2025b: uint64 [1 2] [0 18446744073709551615]
+  JGraph: (call failed)  [after ERR<<Error using k10info\n18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k11_feval_separate [safe] echo.uint64.odd
+  R2025b: uint64(15) [1x1] n=1 es=8 is=numeric,scalar,uint64 {9007199254740993}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\n9007199254740993 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k11_feval_separate [safe] info.uint64.odd
+  R2025b: uint64 [1 1] 9007199254740993
+  JGraph: (call failed)  [after ERR<<Error using k10info\n9007199254740993 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k11_feval_separate [safe] echo.sparse
+  R2025b: double(6) [3x3] n=9 es=8 is=numeric,sparse,double nzmax=3 jc=[0 1 2 2] ir=[0 2] {5 6}
+  JGraph: double(6) [3x3] n=9 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2 2] ir=[0 2] {5 6}
+  recorded: a sparse array passed through keeps no spare room (nzmax): JGraph's sparse arrays hold exactly their nonzeros
+
+k11_feval_separate [safe] echo.sparse.complex
+  R2025b: double(6) [2x2] n=4 es=8 is=numeric,sparse,complex,double nzmax=2 jc=[0 2 2] ir=[0 1] {(1,1) (2,0)}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\nJGraph has no complex sparse arrays: pass the real and imaginary parts apart.\n\n>>]
+  recorded: JGraph has no complex sparse arrays
+
+k11_feval_separate [safe] info.sparse.complex
+  R2025b: double [2 2] complex sparse [1+1i 2 0 0]
+  JGraph: (call failed)  [after ERR<<Error using k10info\nJGraph has no complex sparse arrays: pass the real and imaginary parts apart.\n\n>>]
+  recorded: JGraph has no complex sparse arrays
+
+k11_feval_separate [safe] echo.sparse.logical
+  R2025b: logical(3) [2x2] n=4 es=1 is=logical,sparse nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  JGraph: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k11_feval_separate [safe] info.sparse.logical
+  R2025b: logical [2 2] sparse [true false false true]
+  JGraph: double [2 2] sparse [1 0 0 1]
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k11_feval_separate [safe] echo.complex.int8
+  R2025b: int8(8) [1x1] n=1 es=1 is=numeric,complex,scalar,int8 {(3,-1)}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\nJGraph keeps no complex int8 array: pass it as a complex double or single one.\n\n>>]
+  recorded: JGraph keeps no complex integer arrays
+
+k11_feval_separate [safe] info.complex.int8
+  R2025b: int8 [1 1] complex 3-1i
+  JGraph: (call failed)  [after ERR<<Error using k10info\nJGraph keeps no complex int8 array: pass it as a complex double or single one.\n\n>>]
+  recorded: JGraph keeps no complex integer arrays
+
+k11_feval_separate [safe] echo.complex.zeroimag
+  R2025b: double(6) [1x2] n=2 es=8 is=numeric,complex,double {(4,0) (0,0)}
+  JGraph: double(6) [1x2] n=2 es=8 is=numeric,double {4 0}
+  recorded: JGraph keeps an element with no imaginary part as a real number
+
+k11_feval_separate [safe] info.complex.zeroimag
+  R2025b: double [1 2] complex [4 0]
+  JGraph: double [1 2] [4 0]
+  recorded: JGraph keeps an element with no imaginary part as a real number
+
+k11_feval_separate [safe] make.int64
+  R2025b: int64(14) [1x2] n=2 es=8 is=numeric,int64 {-9223372036854775808 9223372036854775807}
+  JGraph: double(6) [1x2] n=2 es=8 is=numeric,double {-9.2233720368547758e+18 9.2233720368547758e+18}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_separate [safe] make.int64.info
+  R2025b: int64 [1 2] [-9223372036854775808 9223372036854775807]
+  JGraph: double [1 2] [-9.2233720368547758e+18 9.2233720368547758e+18]
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_separate [safe] make.int64.echo
+  R2025b: int64(14) [1x2] n=2 es=8 is=numeric,int64 {-9223372036854775808 9223372036854775807}
+  JGraph: double(6) [1x2] n=2 es=8 is=numeric,double {-9.2233720368547758e+18 9.2233720368547758e+18}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_separate [safe] make.int64.echo.info
+  R2025b: int64 [1 2] [-9223372036854775808 9223372036854775807]
+  JGraph: double [1 2] [-9.2233720368547758e+18 9.2233720368547758e+18]
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_separate [safe] make.int64.dup
+  R2025b: int64(14) [1x2] n=2 es=8 is=numeric,int64 {-9223372036854775808 9223372036854775807}
+  JGraph: double(6) [1x2] n=2 es=8 is=numeric,double {-9.2233720368547758e+18 9.2233720368547758e+18}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_separate [safe] make.int64.dup.info
+  R2025b: int64 [1 2] [-9223372036854775808 9223372036854775807]
+  JGraph: double [1 2] [-9.2233720368547758e+18 9.2233720368547758e+18]
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_separate [safe] make.uint64
+  R2025b: uint64(15) [1x1] n=1 es=8 is=numeric,scalar,uint64 {18446744073709551615}
+  JGraph: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1.8446744073709552e+19}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_separate [safe] make.uint64.info
+  R2025b: uint64 [1 1] 18446744073709551615
+  JGraph: double [1 1] 1.8446744073709552e+19
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_separate [safe] make.uint64.echo
+  R2025b: uint64(15) [1x1] n=1 es=8 is=numeric,scalar,uint64 {18446744073709551615}
+  JGraph: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1.8446744073709552e+19}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_separate [safe] make.uint64.echo.info
+  R2025b: uint64 [1 1] 18446744073709551615
+  JGraph: double [1 1] 1.8446744073709552e+19
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_separate [safe] make.uint64.dup
+  R2025b: uint64(15) [1x1] n=1 es=8 is=numeric,scalar,uint64 {18446744073709551615}
+  JGraph: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1.8446744073709552e+19}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_separate [safe] make.uint64.dup.info
+  R2025b: uint64 [1 1] 18446744073709551615
+  JGraph: double [1 1] 1.8446744073709552e+19
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_separate [safe] make.complexint
+  R2025b: int16(10) [1x2] n=2 es=2 is=numeric,complex,int16 {(1,2) (3,0)}
+  JGraph: (call failed)  [after ERR<<int16 expects a number or numeric array, but got a complex.\n\nError in k10make (line 26)\n\n>>]
+  recorded: JGraph keeps no complex integer arrays
+
+k11_feval_separate [safe] make.complexint.info
+  R2025b: int16 [1 2] complex [1+2i 3]
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k11_feval_separate [safe] make.complexint.echo
+  R2025b: int16(10) [1x2] n=2 es=2 is=numeric,complex,int16 {(1,2) (3,0)}
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k11_feval_separate [safe] make.complexint.echo.info
+  R2025b: int16 [1 2] complex [1+2i 3]
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k11_feval_separate [safe] make.complexint.dup
+  R2025b: int16(10) [1x2] n=2 es=2 is=numeric,complex,int16 {(1,2) (3,0)}
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k11_feval_separate [safe] make.complexint.dup.info
+  R2025b: int16 [1 2] complex [1+2i 3]
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k11_feval_separate [safe] make.sparsecomplex
+  R2025b: double(6) [2x2] n=4 es=8 is=numeric,sparse,complex,double nzmax=2 jc=[0 2 2] ir=[0 1] {(1,1) (2,0)}
+  JGraph: (call failed)  [after ERR<<sparse expects an array of numbers, but element 0 was a complex number \x97 take abs(), real(), or imag() first.\n\nError in k10make (line 47)\n\n>>]
+  recorded: JGraph has no complex sparse arrays
+
+k11_feval_separate [safe] make.sparsecomplex.info
+  R2025b: double [2 2] complex sparse [1+1i 2 0 0]
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k11_feval_separate [safe] make.sparsecomplex.echo
+  R2025b: double(6) [2x2] n=4 es=8 is=numeric,sparse,complex,double nzmax=2 jc=[0 2 2] ir=[0 1] {(1,1) (2,0)}
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k11_feval_separate [safe] make.sparsecomplex.echo.info
+  R2025b: double [2 2] complex sparse [1+1i 2 0 0]
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k11_feval_separate [safe] make.sparsecomplex.dup
+  R2025b: double(6) [2x2] n=4 es=8 is=numeric,sparse,complex,double nzmax=2 jc=[0 2 2] ir=[0 1] {(1,1) (2,0)}
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k11_feval_separate [safe] make.sparsecomplex.dup.info
+  R2025b: double [2 2] complex sparse [1+1i 2 0 0]
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k11_feval_separate [safe] make.sparselogical
+  R2025b: logical(3) [2x2] n=4 es=1 is=logical,sparse nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  JGraph: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k11_feval_separate [safe] make.sparselogical.info
+  R2025b: logical [2 2] sparse [true false false true]
+  JGraph: double [2 2] sparse [1 0 0 1]
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k11_feval_separate [safe] make.sparselogical.echo
+  R2025b: logical(3) [2x2] n=4 es=1 is=logical,sparse nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  JGraph: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k11_feval_separate [safe] make.sparselogical.echo.info
+  R2025b: logical [2 2] sparse [true false false true]
+  JGraph: double [2 2] sparse [1 0 0 1]
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k11_feval_separate [safe] make.sparselogical.dup
+  R2025b: logical(3) [2x2] n=4 es=1 is=logical,sparse nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  JGraph: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k11_feval_separate [safe] make.sparselogical.dup.info
+  R2025b: logical [2 2] sparse [true false false true]
+  JGraph: double [2 2] sparse [1 0 0 1]
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k11_feval_separate [safe] make.map.info
+  R2025b: containers.Map [2 1]
+  JGraph: containers.Map [1 1]
+  recorded: size of a containers.Map is [1 1] in JGraph, [Count 1] in R2025b (open item 200)
+
+k11_feval_separate [safe] make.map.echo.info
+  R2025b: containers.Map [2 1]
+  JGraph: containers.Map [1 1]
+  recorded: size of a containers.Map is [1 1] in JGraph, [Count 1] in R2025b (open item 200)
+
+k11_feval_separate [safe] make.map.dup.info
+  R2025b: containers.Map [2 1]
+  JGraph: containers.Map [1 1]
+  recorded: size of a containers.Map is [1 1] in JGraph, [Count 1] in R2025b (open item 200)
+
+k11_feval_separate [safe] make.structstring
+  R2025b: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=string(48) [1x1] n=1 es=0 is=scalar,opaque; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  JGraph: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=char(4) [1x4] n=4 es=2 is=char 'text'; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k11_feval_separate [safe] make.structstring.info
+  R2025b: struct [1 1] <s,f> {s=string [1 1] "text"; f=function_handle [1 1] cos}
+  JGraph: struct [1 1] <s,f> {s=char [1 4] [116 101 120 116]; f=function_handle [1 1] cos}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k11_feval_separate [safe] make.structstring.echo
+  R2025b: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=string(48) [1x1] n=1 es=0 is=scalar,opaque; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  JGraph: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=char(4) [1x4] n=4 es=2 is=char 'text'; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k11_feval_separate [safe] make.structstring.echo.info
+  R2025b: struct [1 1] <s,f> {s=string [1 1] "text"; f=function_handle [1 1] cos}
+  JGraph: struct [1 1] <s,f> {s=char [1 4] [116 101 120 116]; f=function_handle [1 1] cos}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k11_feval_separate [safe] make.structstring.dup
+  R2025b: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=string(48) [1x1] n=1 es=0 is=scalar,opaque; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  JGraph: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=char(4) [1x4] n=4 es=2 is=char 'text'; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k11_feval_separate [safe] make.structstring.dup.info
+  R2025b: struct [1 1] <s,f> {s=string [1 1] "text"; f=function_handle [1 1] cos}
+  JGraph: struct [1 1] <s,f> {s=char [1 4] [116 101 120 116]; f=function_handle [1 1] cos}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k11_feval_separate [safe] object.isclass.k10obj
+  R2025b: 0
+  JGraph: 1
+  recorded: mxIsClass answers true for an object's own class; R2025b's answers false (ADR 0266)
+
+k11_feval_separate [safe] value.dup.set.original
+  R2025b: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {10}
+  JGraph: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {9}
+  recorded: mxDuplicateArray of a value object is a copy; R2025b's shares the original (ADR 0266)
+
+k11_feval_separate [risky 1]
+  R2025b: crashed (EXIT	-1073741819 (0xC0000005))
+  JGraph: answered
+  recorded: R2025b's runtime ends the process here; JGraph's refuses or answers NULL (ADR 0266)
+
+k11_feval_separate [risky 4]
+  R2025b: crashed (EXIT	-1073741819 (0xC0000005))
+  JGraph: answered
+  recorded: R2025b's runtime ends the process here; JGraph's refuses or answers NULL (ADR 0266)
+
+k11_feval_separate [risky 5] risky.negative.nlhs.ok
+  R2025b: 0  [after risky 5 | ERR<<Caught "std::exception" Exception message is:\nvector too long\n>>]
+  JGraph: 0  [after risky 5 | ERR<<Error using k10echo\nThe number of outputs asked for, -1, cannot be negative.\n\n>>]
+  recorded: a negative output count is refused in JGraph's words; R2025b's reports a C++ 'vector too long' (ADR 0266)
+
+k11_feval_separate [risky 9]
+  R2025b: crashed (EXIT	-1073741819 (0xC0000005))
+  JGraph: answered
+  recorded: R2025b's runtime ends the process here; JGraph's refuses or answers NULL (ADR 0266)
+
+k11_feval_separate [risky 10]
+  R2025b: crashed (EXIT	-1073741819 (0xC0000005))
+  JGraph: answered
+  recorded: R2025b's runtime ends the process here; JGraph's refuses or answers NULL (ADR 0266)
+
+k11_feval_separate [risky 11] risky.struct.invalidname.info
+  R2025b: (call failed)  [after risky 11 | ERR<<Invalid field name: '1bad'.\n\nError in k10info>describe (line 35)\n\nError in k10info (line 4)\n\n>>]
+  JGraph: struct [1 1] <1bad> {1bad=double [1 1] 1}  [after risky 11]
+  recorded: a field read by a name MATLAB could not write ('1bad') is refused by R2025b, read by JGraph (open item 202)
+
+k11_feval_separate [risky 12] risky.struct.duplicate.info
+  R2025b: struct [1 1] <a,a> {a=double [0 0] []; a=double [0 0] []}  [after risky 12]
+  JGraph: (call failed)  [after risky 12 | ERR<<Error using k10info\nA struct passed in has the field name 'a' twice; JGraph's structs, like MATLAB's, hold each name once.\n\n>>]
+  recorded: a struct with one field name twice is refused; R2025b passes it in (ADR 0266)
+
+k11_feval_separate [risky 12] risky.struct.echo.ok
+  R2025b: 1
+  JGraph: 0  [after ERR<<Error using k10echo\nA struct passed in has the field name 'a' twice; JGraph's structs, like MATLAB's, hold each name once.\n\n>>]
+  recorded: a struct with one field name twice is refused; R2025b passes it in (ADR 0266)
+
+k11_feval_separate [risky 12] risky.struct.echo
+  R2025b: struct(2) [1x1] n=1 es=8 is=struct,scalar <a,a> {a=NULL; a=double(6) [0x0] n=0 es=8 is=numeric,empty,double {data NULL}}
+  JGraph: NULL
+  recorded: a struct with one field name twice is refused; R2025b passes it in (ADR 0266)
+
+k11_feval_interleaved [safe] echo.int64
+  R2025b: int64(14) [1x2] n=2 es=8 is=numeric,int64 {-9223372036854775808 9223372036854775807}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\n-9223372036854775808 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k11_feval_interleaved [safe] info.int64
+  R2025b: int64 [1 2] [-9223372036854775808 9223372036854775807]
+  JGraph: (call failed)  [after ERR<<Error using k10info\n-9223372036854775808 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k11_feval_interleaved [safe] echo.uint64
+  R2025b: uint64(15) [1x2] n=2 es=8 is=numeric,uint64 {0 18446744073709551615}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\n18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k11_feval_interleaved [safe] info.uint64
+  R2025b: uint64 [1 2] [0 18446744073709551615]
+  JGraph: (call failed)  [after ERR<<Error using k10info\n18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k11_feval_interleaved [safe] echo.uint64.odd
+  R2025b: uint64(15) [1x1] n=1 es=8 is=numeric,scalar,uint64 {9007199254740993}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\n9007199254740993 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k11_feval_interleaved [safe] info.uint64.odd
+  R2025b: uint64 [1 1] 9007199254740993
+  JGraph: (call failed)  [after ERR<<Error using k10info\n9007199254740993 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k11_feval_interleaved [safe] echo.sparse
+  R2025b: double(6) [3x3] n=9 es=8 is=numeric,sparse,double nzmax=3 jc=[0 1 2 2] ir=[0 2] {5 6}
+  JGraph: double(6) [3x3] n=9 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2 2] ir=[0 2] {5 6}
+  recorded: a sparse array passed through keeps no spare room (nzmax): JGraph's sparse arrays hold exactly their nonzeros
+
+k11_feval_interleaved [safe] echo.sparse.complex
+  R2025b: double(6) [2x2] n=4 es=16 is=numeric,sparse,complex,double nzmax=2 jc=[0 2 2] ir=[0 1] {(1,1) (2,0)}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\nJGraph has no complex sparse arrays: pass the real and imaginary parts apart.\n\n>>]
+  recorded: JGraph has no complex sparse arrays
+
+k11_feval_interleaved [safe] info.sparse.complex
+  R2025b: double [2 2] complex sparse [1+1i 2 0 0]
+  JGraph: (call failed)  [after ERR<<Error using k10info\nJGraph has no complex sparse arrays: pass the real and imaginary parts apart.\n\n>>]
+  recorded: JGraph has no complex sparse arrays
+
+k11_feval_interleaved [safe] echo.sparse.logical
+  R2025b: logical(3) [2x2] n=4 es=1 is=logical,sparse nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  JGraph: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k11_feval_interleaved [safe] info.sparse.logical
+  R2025b: logical [2 2] sparse [true false false true]
+  JGraph: double [2 2] sparse [1 0 0 1]
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k11_feval_interleaved [safe] echo.complex.int8
+  R2025b: int8(8) [1x1] n=1 es=2 is=numeric,complex,scalar,int8 {(3,-1)}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\nJGraph keeps no complex int8 array: pass it as a complex double or single one.\n\n>>]
+  recorded: JGraph keeps no complex integer arrays
+
+k11_feval_interleaved [safe] info.complex.int8
+  R2025b: int8 [1 1] complex 3-1i
+  JGraph: (call failed)  [after ERR<<Error using k10info\nJGraph keeps no complex int8 array: pass it as a complex double or single one.\n\n>>]
+  recorded: JGraph keeps no complex integer arrays
+
+k11_feval_interleaved [safe] echo.complex.zeroimag
+  R2025b: double(6) [1x2] n=2 es=16 is=numeric,complex,double {(4,0) (0,0)}
+  JGraph: double(6) [1x2] n=2 es=8 is=numeric,double {4 0}
+  recorded: JGraph keeps an element with no imaginary part as a real number
+
+k11_feval_interleaved [safe] info.complex.zeroimag
+  R2025b: double [1 2] complex [4 0]
+  JGraph: double [1 2] [4 0]
+  recorded: JGraph keeps an element with no imaginary part as a real number
+
+k11_feval_interleaved [safe] make.int64
+  R2025b: int64(14) [1x2] n=2 es=8 is=numeric,int64 {-9223372036854775808 9223372036854775807}
+  JGraph: double(6) [1x2] n=2 es=8 is=numeric,double {-9.2233720368547758e+18 9.2233720368547758e+18}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_interleaved [safe] make.int64.info
+  R2025b: int64 [1 2] [-9223372036854775808 9223372036854775807]
+  JGraph: double [1 2] [-9.2233720368547758e+18 9.2233720368547758e+18]
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_interleaved [safe] make.int64.echo
+  R2025b: int64(14) [1x2] n=2 es=8 is=numeric,int64 {-9223372036854775808 9223372036854775807}
+  JGraph: double(6) [1x2] n=2 es=8 is=numeric,double {-9.2233720368547758e+18 9.2233720368547758e+18}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_interleaved [safe] make.int64.echo.info
+  R2025b: int64 [1 2] [-9223372036854775808 9223372036854775807]
+  JGraph: double [1 2] [-9.2233720368547758e+18 9.2233720368547758e+18]
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_interleaved [safe] make.int64.dup
+  R2025b: int64(14) [1x2] n=2 es=8 is=numeric,int64 {-9223372036854775808 9223372036854775807}
+  JGraph: double(6) [1x2] n=2 es=8 is=numeric,double {-9.2233720368547758e+18 9.2233720368547758e+18}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_interleaved [safe] make.int64.dup.info
+  R2025b: int64 [1 2] [-9223372036854775808 9223372036854775807]
+  JGraph: double [1 2] [-9.2233720368547758e+18 9.2233720368547758e+18]
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_interleaved [safe] make.uint64
+  R2025b: uint64(15) [1x1] n=1 es=8 is=numeric,scalar,uint64 {18446744073709551615}
+  JGraph: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1.8446744073709552e+19}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_interleaved [safe] make.uint64.info
+  R2025b: uint64 [1 1] 18446744073709551615
+  JGraph: double [1 1] 1.8446744073709552e+19
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_interleaved [safe] make.uint64.echo
+  R2025b: uint64(15) [1x1] n=1 es=8 is=numeric,scalar,uint64 {18446744073709551615}
+  JGraph: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1.8446744073709552e+19}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_interleaved [safe] make.uint64.echo.info
+  R2025b: uint64 [1 1] 18446744073709551615
+  JGraph: double [1 1] 1.8446744073709552e+19
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_interleaved [safe] make.uint64.dup
+  R2025b: uint64(15) [1x1] n=1 es=8 is=numeric,scalar,uint64 {18446744073709551615}
+  JGraph: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1.8446744073709552e+19}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_interleaved [safe] make.uint64.dup.info
+  R2025b: uint64 [1 1] 18446744073709551615
+  JGraph: double [1 1] 1.8446744073709552e+19
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k11_feval_interleaved [safe] make.complexint
+  R2025b: int16(10) [1x2] n=2 es=4 is=numeric,complex,int16 {(1,2) (3,0)}
+  JGraph: (call failed)  [after ERR<<int16 expects a number or numeric array, but got a complex.\n\nError in k10make (line 26)\n\n>>]
+  recorded: JGraph keeps no complex integer arrays
+
+k11_feval_interleaved [safe] make.complexint.info
+  R2025b: int16 [1 2] complex [1+2i 3]
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k11_feval_interleaved [safe] make.complexint.echo
+  R2025b: int16(10) [1x2] n=2 es=4 is=numeric,complex,int16 {(1,2) (3,0)}
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k11_feval_interleaved [safe] make.complexint.echo.info
+  R2025b: int16 [1 2] complex [1+2i 3]
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k11_feval_interleaved [safe] make.complexint.dup
+  R2025b: int16(10) [1x2] n=2 es=4 is=numeric,complex,int16 {(1,2) (3,0)}
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k11_feval_interleaved [safe] make.complexint.dup.info
+  R2025b: int16 [1 2] complex [1+2i 3]
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k11_feval_interleaved [safe] make.sparsecomplex
+  R2025b: double(6) [2x2] n=4 es=16 is=numeric,sparse,complex,double nzmax=2 jc=[0 2 2] ir=[0 1] {(1,1) (2,0)}
+  JGraph: (call failed)  [after ERR<<sparse expects an array of numbers, but element 0 was a complex number \x97 take abs(), real(), or imag() first.\n\nError in k10make (line 47)\n\n>>]
+  recorded: JGraph has no complex sparse arrays
+
+k11_feval_interleaved [safe] make.sparsecomplex.info
+  R2025b: double [2 2] complex sparse [1+1i 2 0 0]
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k11_feval_interleaved [safe] make.sparsecomplex.echo
+  R2025b: double(6) [2x2] n=4 es=16 is=numeric,sparse,complex,double nzmax=2 jc=[0 2 2] ir=[0 1] {(1,1) (2,0)}
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k11_feval_interleaved [safe] make.sparsecomplex.echo.info
+  R2025b: double [2 2] complex sparse [1+1i 2 0 0]
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k11_feval_interleaved [safe] make.sparsecomplex.dup
+  R2025b: double(6) [2x2] n=4 es=16 is=numeric,sparse,complex,double nzmax=2 jc=[0 2 2] ir=[0 1] {(1,1) (2,0)}
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k11_feval_interleaved [safe] make.sparsecomplex.dup.info
+  R2025b: double [2 2] complex sparse [1+1i 2 0 0]
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k11_feval_interleaved [safe] make.sparselogical
+  R2025b: logical(3) [2x2] n=4 es=1 is=logical,sparse nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  JGraph: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k11_feval_interleaved [safe] make.sparselogical.info
+  R2025b: logical [2 2] sparse [true false false true]
+  JGraph: double [2 2] sparse [1 0 0 1]
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k11_feval_interleaved [safe] make.sparselogical.echo
+  R2025b: logical(3) [2x2] n=4 es=1 is=logical,sparse nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  JGraph: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k11_feval_interleaved [safe] make.sparselogical.echo.info
+  R2025b: logical [2 2] sparse [true false false true]
+  JGraph: double [2 2] sparse [1 0 0 1]
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k11_feval_interleaved [safe] make.sparselogical.dup
+  R2025b: logical(3) [2x2] n=4 es=1 is=logical,sparse nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  JGraph: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k11_feval_interleaved [safe] make.sparselogical.dup.info
+  R2025b: logical [2 2] sparse [true false false true]
+  JGraph: double [2 2] sparse [1 0 0 1]
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k11_feval_interleaved [safe] make.map.info
+  R2025b: containers.Map [2 1]
+  JGraph: containers.Map [1 1]
+  recorded: size of a containers.Map is [1 1] in JGraph, [Count 1] in R2025b (open item 200)
+
+k11_feval_interleaved [safe] make.map.echo.info
+  R2025b: containers.Map [2 1]
+  JGraph: containers.Map [1 1]
+  recorded: size of a containers.Map is [1 1] in JGraph, [Count 1] in R2025b (open item 200)
+
+k11_feval_interleaved [safe] make.map.dup.info
+  R2025b: containers.Map [2 1]
+  JGraph: containers.Map [1 1]
+  recorded: size of a containers.Map is [1 1] in JGraph, [Count 1] in R2025b (open item 200)
+
+k11_feval_interleaved [safe] make.structstring
+  R2025b: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=string(48) [1x1] n=1 es=0 is=scalar,opaque; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  JGraph: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=char(4) [1x4] n=4 es=2 is=char 'text'; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k11_feval_interleaved [safe] make.structstring.info
+  R2025b: struct [1 1] <s,f> {s=string [1 1] "text"; f=function_handle [1 1] cos}
+  JGraph: struct [1 1] <s,f> {s=char [1 4] [116 101 120 116]; f=function_handle [1 1] cos}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k11_feval_interleaved [safe] make.structstring.echo
+  R2025b: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=string(48) [1x1] n=1 es=0 is=scalar,opaque; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  JGraph: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=char(4) [1x4] n=4 es=2 is=char 'text'; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k11_feval_interleaved [safe] make.structstring.echo.info
+  R2025b: struct [1 1] <s,f> {s=string [1 1] "text"; f=function_handle [1 1] cos}
+  JGraph: struct [1 1] <s,f> {s=char [1 4] [116 101 120 116]; f=function_handle [1 1] cos}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k11_feval_interleaved [safe] make.structstring.dup
+  R2025b: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=string(48) [1x1] n=1 es=0 is=scalar,opaque; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  JGraph: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=char(4) [1x4] n=4 es=2 is=char 'text'; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k11_feval_interleaved [safe] make.structstring.dup.info
+  R2025b: struct [1 1] <s,f> {s=string [1 1] "text"; f=function_handle [1 1] cos}
+  JGraph: struct [1 1] <s,f> {s=char [1 4] [116 101 120 116]; f=function_handle [1 1] cos}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k11_feval_interleaved [safe] object.isclass.k10obj
+  R2025b: 0
+  JGraph: 1
+  recorded: mxIsClass answers true for an object's own class; R2025b's answers false (ADR 0266)
+
+k11_feval_interleaved [safe] value.dup.set.original
+  R2025b: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {10}
+  JGraph: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {9}
+  recorded: mxDuplicateArray of a value object is a copy; R2025b's shares the original (ADR 0266)
+
+k11_feval_interleaved [risky 1]
+  R2025b: crashed (EXIT	-1073741819 (0xC0000005))
+  JGraph: answered
+  recorded: R2025b's runtime ends the process here; JGraph's refuses or answers NULL (ADR 0266)
+
+k11_feval_interleaved [risky 4]
+  R2025b: crashed (EXIT	-1073741819 (0xC0000005))
+  JGraph: answered
+  recorded: R2025b's runtime ends the process here; JGraph's refuses or answers NULL (ADR 0266)
+
+k11_feval_interleaved [risky 5] risky.negative.nlhs.ok
+  R2025b: 0  [after risky 5 | ERR<<Caught "std::exception" Exception message is:\nvector too long\n>>]
+  JGraph: 0  [after risky 5 | ERR<<Error using k10echo\nThe number of outputs asked for, -1, cannot be negative.\n\n>>]
+  recorded: a negative output count is refused in JGraph's words; R2025b's reports a C++ 'vector too long' (ADR 0266)
+
+k11_feval_interleaved [risky 9]
+  R2025b: crashed (EXIT	-1073741819 (0xC0000005))
+  JGraph: answered
+  recorded: R2025b's runtime ends the process here; JGraph's refuses or answers NULL (ADR 0266)
+
+k11_feval_interleaved [risky 10]
+  R2025b: crashed (EXIT	-1073741819 (0xC0000005))
+  JGraph: answered
+  recorded: R2025b's runtime ends the process here; JGraph's refuses or answers NULL (ADR 0266)
+
+k11_feval_interleaved [risky 11] risky.struct.invalidname.info
+  R2025b: (call failed)  [after risky 11 | ERR<<Invalid field name: '1bad'.\n\nError in k10info>describe (line 35)\n\nError in k10info (line 4)\n\n>>]
+  JGraph: struct [1 1] <1bad> {1bad=double [1 1] 1}  [after risky 11]
+  recorded: a field read by a name MATLAB could not write ('1bad') is refused by R2025b, read by JGraph (open item 202)
+
+k11_feval_interleaved [risky 12] risky.struct.duplicate.info
+  R2025b: struct [1 1] <a,a> {a=double [0 0] []; a=double [0 0] []}  [after risky 12]
+  JGraph: (call failed)  [after risky 12 | ERR<<Error using k10info\nA struct passed in has the field name 'a' twice; JGraph's structs, like MATLAB's, hold each name once.\n\n>>]
+  recorded: a struct with one field name twice is refused; R2025b passes it in (ADR 0266)
+
+k11_feval_interleaved [risky 12] risky.struct.echo.ok
+  R2025b: 1
+  JGraph: 0  [after ERR<<Error using k10echo\nA struct passed in has the field name 'a' twice; JGraph's structs, like MATLAB's, hold each name once.\n\n>>]
+  recorded: a struct with one field name twice is refused; R2025b passes it in (ADR 0266)
+
+k11_feval_interleaved [risky 12] risky.struct.echo
+  R2025b: struct(2) [1x1] n=1 es=8 is=struct,scalar <a,a> {a=NULL; a=double(6) [0x0] n=0 es=8 is=numeric,empty,double {data NULL}}
+  JGraph: NULL
+  recorded: a struct with one field name twice is refused; R2025b passes it in (ADR 0266)

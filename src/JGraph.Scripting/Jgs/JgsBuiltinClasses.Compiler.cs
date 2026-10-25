@@ -33,6 +33,19 @@ internal static partial class JgsBuiltinClasses
     /// <summary>Where a name given for <c>AssemblyName</c> is kept (R2025b's UserProvidedAssemblyName).</summary>
     public const string GivenAssemblyName = "UserProvidedAssemblyName";
 
+    /// <summary>The C shared library options class (stage K11).</summary>
+    public const string CLibraryOptions = "compiler.build.CSharedLibraryOptions";
+
+    /// <summary>The C library options' public properties, in the order R2025b lists them (k11_build: opts.default).</summary>
+    public static readonly string[] CLibraryOptionNames =
+    [
+        "EmbedArchive", "LibraryVersion", "FunctionFiles", "DebugBuild", "LibraryName", "AdditionalFiles", "AutoDetectDataFiles",
+        "ExternalEncryptionKey", "ObfuscateArchive", "SecretsManifest", "SupportPackages", "Verbose", "OutputDir",
+    ];
+
+    /// <summary>Where a name given for <c>LibraryName</c> is kept (R2025b's UserProvidedLibraryName).</summary>
+    public const string GivenLibraryName = "UserProvidedLibraryName";
+
     /// <summary>R2025b's InterfaceManager: the interface, its version and EmbedArchive, kept together because setting one warns about the others.</summary>
     public const string InterfaceValue = "InterfaceManagerInterface";
 
@@ -177,6 +190,55 @@ internal static partial class JgsBuiltinClasses
         }
 
         return new ClassdefStmt(DotNetOptions, isHandle: false, properties, methods)
+        {
+            Dialect = JgsDialect.Matlab,
+            Superclasses = [],
+        };
+    }
+
+    /// <summary>
+    /// <c>compiler.build.CSharedLibraryOptions</c> (stage K11): R2025b's properties in its order, the
+    /// library's name and output folder dependent on what was given, each set checked by
+    /// <see cref="JgsBuiltins.SetCLibraryOption"/>, and its hidden <c>getName</c>.
+    /// </summary>
+    private static ClassdefStmt CLibraryOptionsDeclaration(Interpreter interpreter)
+    {
+        var properties = new List<ClassProperty>();
+        var methods = new List<ClassMethod>();
+        foreach (string name in CLibraryOptionNames)
+        {
+            bool derived = name is "LibraryName" or "OutputDir";
+            properties.Add(new ClassProperty(new ArgumentSpec(name, null, null, [], new PreEvaluated(JgsBuiltins.CLibraryOptionDefault(name))),
+                Constant: false, Dependent: derived));
+            string captured = name;
+            methods.Add(Setter(name, (copy, value, line, col) => JgsBuiltins.SetCLibraryOption(interpreter, copy, captured, value, line, col)));
+            if (derived)
+            {
+                methods.Add(new ClassMethod(new FnStmt("get." + name, ["obj"], [], ["value"]) { Dialect = JgsDialect.Matlab }, Static: false)
+                {
+                    Native = new BuiltinFunction("get." + name, (args, line, col) => JgsBuiltins.CLibraryOptionDerived(captured, args[0].AsObject)),
+                });
+            }
+        }
+
+        methods.Add(new ClassMethod(new FnStmt("getName", ["obj"], [], ["name"]) { Dialect = JgsDialect.Matlab }, Static: false)
+        {
+            Hidden = true,
+            Native = new BuiltinFunction("getName", (args, line, col) => JgsBuiltins.CLibraryOptionDerived("LibraryName", args[0].AsObject)),
+        });
+
+        var hidden = new MemberAccess(MemberAccessKind.Protected);
+        foreach (string field in new[] { GivenLibraryName, GivenOutputDir })
+        {
+            properties.Add(new ClassProperty(new ArgumentSpec(field, null, null, [], new PreEvaluated(JgsValue.Str(""))), Constant: false)
+            {
+                GetAccess = hidden,
+                SetAccess = hidden,
+                Hidden = true,
+            });
+        }
+
+        return new ClassdefStmt(CLibraryOptions, isHandle: false, properties, methods)
         {
             Dialect = JgsDialect.Matlab,
             Superclasses = [],

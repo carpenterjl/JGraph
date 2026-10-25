@@ -117,8 +117,8 @@ public sealed class MccSwitchesTests : IDisposable
         Assert.Equal("Compiler:compiler:COM_ERROR_MISSING_U_WITH_W_CTF", Refused("-W", "CTF:k7ctf", "k7_hello.m").Identifier);
         Assert.Equal("Error: Missing \"-C\" option to compile Spark component \n", Refused("-W", "spark:k7sp,2", "k7_hello.m").Message);
 
-        // What passes R2025b's checks is a target JGraph builds later, or never.
-        Assert.Equal("JGraph:mcc:targetNotBuilt", Refused("-l", "k7_hello.m").Identifier);
+        // What passes R2025b's checks is a target JGraph builds later, or never; -l and -W lib are stage K11's (ADR 0267).
+        Assert.Equal(MccTarget.CLibrary, Parse("-l", "k7_hello.m").Target);
         // .NET's MWArray API is stage K8's (ADR 0264): a class named after the assembly, framework 4.0;
         // the MATLAB Data API is K9's (ADR 0265), and remoting is out of scope.
         Assert.Equal(new DotNetWrapper("k7asm", "k7asm", "4.0", null), Parse("-W", "dotnet:k7asm", "k7_hello.m").DotNet);
@@ -189,7 +189,9 @@ public sealed class MccSwitchesTests : IDisposable
         }
 
         Assert.Equal(MccTarget.Console, MccCommandLine.Parse(["-B", "macro_option_m", "k7_hello.m"], _folder).Target);
-        Assert.Equal("JGraph:mcc:targetNotBuilt", Assert.Throws<MccException>(() => MccCommandLine.Parse(["-B", "csharedlib:k7blib", "k7_hello.m"], _folder)).Identifier);
+        MccCommandLine bundled = MccCommandLine.Parse(["-B", "csharedlib:k7blib", "k7_hello.m"], _folder);
+        Assert.Equal((MccTarget.CLibrary, "k7blib", CLibraryStage.Link), (bundled.Target, bundled.ComponentName, bundled.LibraryStage));
+        Assert.Equal("JGraph:mcc:targetNotBuilt", Assert.Throws<MccException>(() => MccCommandLine.Parse(["-B", "cpplib:k7bc", "k7_hello.m"], _folder)).Identifier);
     }
 
     [Fact]

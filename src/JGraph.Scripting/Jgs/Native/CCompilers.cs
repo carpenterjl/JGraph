@@ -265,6 +265,46 @@ internal static class CCompilers
         return exit == 0 ? new Preprocessed(true, output, errors) : new Preprocessed(false, "", errors.Trim());
     }
 
+    /// <summary>
+    /// The MSVC a C shared library is built with (stage K11): the preferred compiler when it is MSVC,
+    /// else the first MSVC found; null when none is found.
+    /// </summary>
+    public static CCompiler? SelectedMsvc()
+    {
+        IReadOnlyList<CCompiler> found = Discover();
+        string? preferred = Preferred;
+        if (!string.IsNullOrEmpty(preferred)
+            && found.FirstOrDefault(c => c.IsMsvc && string.Equals(c.Id, preferred, StringComparison.OrdinalIgnoreCase)) is { } chosen)
+        {
+            return chosen;
+        }
+
+        return found.FirstOrDefault(static c => c.IsMsvc);
+    }
+
+    /// <summary>
+    /// Runs one of <paramref name="compiler"/>'s tools (<c>cl.exe</c>, <c>link.exe</c>) from
+    /// <paramref name="folder"/> in the compiler's environment, and answers its exit code and what it
+    /// wrote to either stream.
+    /// </summary>
+    public static (int Exit, string Output) RunTool(CCompiler compiler, string tool, string arguments, string folder)
+    {
+        IReadOnlyDictionary<string, string>? environment = null;
+        string executable;
+        if (compiler.Executable.EndsWith(".bat", StringComparison.OrdinalIgnoreCase))
+        {
+            environment = MsvcEnvironment(compiler);
+            executable = FindIn(environment, tool) ?? tool;
+        }
+        else
+        {
+            executable = Path.Combine(Path.GetDirectoryName(compiler.Executable)!, tool);
+        }
+
+        (int exit, string output, string errors) = Run(executable, arguments, folder, environment, TimeSpan.FromMinutes(10));
+        return (exit, output + errors);
+    }
+
     /// <summary><c>vcvars64.bat</c>'s environment, captured once per process and compiler.</summary>
     private static IReadOnlyDictionary<string, string> MsvcEnvironment(CCompiler compiler) =>
         Environments.GetOrAdd(compiler.Id, _ =>

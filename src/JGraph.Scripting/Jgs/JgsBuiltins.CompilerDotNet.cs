@@ -249,8 +249,12 @@ internal static partial class JgsBuiltins
         return options;
     }
 
-    /// <summary>The property a name-value name means, as inputParser matches it: exactly, or by a unique start, either case.</summary>
-    private static string ParameterName(string asked, IReadOnlyList<string> names, int line, int col)
+    /// <summary>
+    /// The property a name-value name means, as inputParser matches it: exactly, or by a unique start,
+    /// either case; a start of several names refused in its words, the names sorted (k11_build:
+    /// opts.ambiguous.nv).
+    /// </summary>
+    internal static string ParameterName(string asked, IReadOnlyList<string> names, int line, int col)
     {
         string? exact = names.FirstOrDefault(n => n.Equals(asked, StringComparison.OrdinalIgnoreCase));
         if (exact is not null)
@@ -258,14 +262,15 @@ internal static partial class JgsBuiltins
             return exact;
         }
 
-        string[] starts = [.. names.Where(n => asked.Length > 0 && n.StartsWith(asked, StringComparison.OrdinalIgnoreCase))];
+        string[] starts = [.. names.Where(n => asked.Length > 0 && n.StartsWith(asked, StringComparison.OrdinalIgnoreCase)).Order(StringComparer.OrdinalIgnoreCase)];
         return starts.Length switch
         {
             1 => starts[0],
             0 => throw new JgsRuntimeException(line, col, "MATLAB:InputParser:UnmatchedParameter",
                 $"'{asked}' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function."),
-            _ => throw new JgsRuntimeException(line, col, "MATLAB:InputParser:AmbiguousParam",
-                $"Expected '{asked}' to match one of these values:\n\n{string.Join(", ", starts)}\n\nThe input, '{asked}', matched more than one valid value."),
+            _ => throw new JgsRuntimeException(line, col, "MATLAB:InputParser:AmbiguousParameter",
+                $"'{asked}' matches multiple parameter names: {string.Join(", ", starts.Select(static s => "'" + s + "'"))}. "
+                + "To avoid ambiguity, specify the complete name of the parameter."),
         };
     }
 

@@ -2,11 +2,7 @@
  * MATLAB Compiler: 25.2 (R2025b)
  * Date: <DATE>
  * Arguments:
- * "-B""macro_default""-W""lib:k10lib""-T""link:lib""-d""<HOME>\AppData\
- * Local\Temp\claude\D--EE-Projects-JGraph-JGraph\0bce8303-f80f-4010-b035-d2edbb
- * 754408\scratchpad\k10\b\lib""-v""k10addtwo.m""k10echo.m""k10err.m""k10info.m"
- * "k10make.m""k10mixed.m""k10nargs.m""k10none.m""k10obj.m""k10print.m""k10quiet
- * .m""k10two.m""k10val.m"
+ * <ARGUMENTS>
  */
 
 #define EXPORTING_k10lib 1

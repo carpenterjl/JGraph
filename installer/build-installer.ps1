@@ -86,7 +86,12 @@ $anchors = @(
     # The native bridge (stage K10, ADR 0266): jgrt.dll beside the engine, where a C program with
     # this folder on its PATH finds it, and the runtimeconfig it starts .NET with.
     "jgrt.dll",
-    "jgrt.runtimeconfig.json"
+    "jgrt.runtimeconfig.json",
+
+    # mcc -W lib (stage K11, ADR 0267): the headers a C shared library and its clients compile
+    # against and the import library they link with, where MATLAB keeps its own.
+    "extern\include\mclmcrrt.h",
+    "extern\lib\win64\microsoft\jgrt.lib"
 )
 foreach ($anchor in $anchors) {
     if (-not (Test-Path (Join-Path $staging $anchor))) {

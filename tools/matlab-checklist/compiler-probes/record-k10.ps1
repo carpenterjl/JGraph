@@ -41,6 +41,8 @@ $skipped = $Skip -split ','
 $models = [ordered]@{ separate = '/DMATLAB_DEFAULT_RELEASE=R2017b'; interleaved = '/DMATLAB_MEXCMD_RELEASE=R2018a' }
 
 function Tokens([string] $text) {
+    # The generated header's argument list, cut into lines of 77 with its paths split, replaced whole (stage K11).
+    $text = [regex]::Replace($text, '(?m)^(?<p>(?:  \|)?) \* Arguments:(?<nl>\r?\n)(?:\k<p> \* (?!/)[^\r\n]*\r?\n)+', '${p} * Arguments:${nl}${p} * <ARGUMENTS>${nl}')
     $tokens = @(@($WorkRoot, '<W>'), @($MatlabRoot, '<MATLABROOT>'), @($repoRoot, '<REPO>'),
         @([System.IO.Path]::GetTempPath().TrimEnd('\'), '<TEMP>'), @($env:USERPROFILE, '<HOME>'))
     $tokens += @($tokens | ForEach-Object { , @($_[0].Replace('\', '/'), $_[1]) })

@@ -312,12 +312,14 @@ public static class StandaloneProgram
     }
 
     /// <summary>
-    /// The version resource R2025b writes (k6_pe): the version as the file's and the product's, in
-    /// the fixed part and as the two strings of one language-neutral Unicode table.
+    /// The version resource R2025b writes (k6_pe, k11_pe): the version as the file's and the product's,
+    /// in the fixed part and as the two strings of one language-neutral Unicode table. The file's type
+    /// is a program's (VFT_APP) or, for a library, <paramref name="fileType"/>, where R2025b writes 0.
     /// </summary>
-    internal static byte[] VersionBlock(ProgramVersion version)
+    internal static byte[] VersionBlock(ProgramVersion version, uint fileType = 1)
     {
-        var strings = new VersionNode("000004b0", 1, null,
+        // The string table's key in R2025b's capitals (k6_pe, k11_pe: 000004B0), which Windows reads in either case.
+        var strings = new VersionNode("000004B0", 1, null,
         [
             VersionNode.Text("FileVersion", version.ToString()),
             VersionNode.Text("ProductVersion", version.ToString()),
@@ -325,7 +327,7 @@ public static class StandaloneProgram
         uint ms = ((uint)version.Major << 16) | (uint)version.Minor;
         uint ls = ((uint)version.Build << 16) | (uint)version.Revision;
         var fixedInfo = new byte[52];
-        uint[] fields = [0xFEEF04BD, 0x00010000, ms, ls, ms, ls, 0x3F, 0, 0x40004, 1, 0, 0, 0];
+        uint[] fields = [0xFEEF04BD, 0x00010000, ms, ls, ms, ls, 0x3F, 0, 0x40004, fileType, 0, 0, 0];
         for (int i = 0; i < fields.Length; i++)
         {
             BitConverter.TryWriteBytes(fixedInfo.AsSpan(4 * i), fields[i]);

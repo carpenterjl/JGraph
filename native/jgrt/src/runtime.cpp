@@ -528,6 +528,22 @@ bool mclInitializeComponentInstanceCtfFileToCache(HMCRINSTANCE* inst, mclOutputH
     return OpenInstance(inst, error_handler, print_handler, FullPath(FromAnsi(ctfFileLocation)));
 }
 
+// What a library built with mcc -C calls: its archive is <component_name>.ctf beside the library
+// (stage K11, k11_build: separate).
+bool mclInitializeComponentInstanceNonEmbeddedStandalone(HMCRINSTANCE* inst, const char* path_to_component, const char* component_name,
+    mccTargetType ttype, mclOutputHandlerFcn error_handler, mclOutputHandlerFcn print_handler, const char* session_key)
+{
+    (void)ttype;
+    (void)session_key;
+    if (path_to_component == nullptr || component_name == nullptr)
+    {
+        return false;
+    }
+
+    return OpenInstance(inst, error_handler, print_handler,
+        FullPath(FolderOf(FromAnsi(path_to_component)) + L"\\" + FromAnsi(component_name) + L".ctf"));
+}
+
 bool mclTerminateInstance(HMCRINSTANCE* inst)
 {
     if (inst == nullptr)

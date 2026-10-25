@@ -1,0 +1,2394 @@
+main	ok
+main.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+main.seconds	13.9
+main.files	buildresult.json | includedSupportPackages.txt | k11lib.c | k11lib.def | k11lib.dll | k11lib.exp | k11lib.exports | k11lib.h | k11lib.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+main.h	5504 chars, CRLF 131, ends with newline 1
+  |/*
+  | * MATLAB Compiler: 25.2 (R2025b)
+  | * Date: <DATE>
+  | * Arguments:
+  | * <ARGUMENTS>
+  | */
+  |
+  |#ifndef k11lib_h
+  |#define k11lib_h 1
+  |
+  |#if defined(__cplusplus) && !defined(mclmcrrt_h) && defined(__linux__)
+  |#  pragma implementation "mclmcrrt.h"
+  |#endif
+  |#include "mclmcrrt.h"
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |/* This symbol is defined in shared libraries. Define it here
+  | * (to nothing) in case this isn't a shared library. 
+  | */
+  |#ifndef LIB_k11lib_C_API 
+  |#define LIB_k11lib_C_API /* No special import/export declaration */
+  |#endif
+  |
+  |/* GENERAL LIBRARY FUNCTIONS -- START */
+  |
+  |extern LIB_k11lib_C_API 
+  |bool MW_CALL_CONV k11libInitializeWithHandlers(
+  |       mclOutputHandlerFcn error_handler, 
+  |       mclOutputHandlerFcn print_handler);
+  |
+  |extern LIB_k11lib_C_API 
+  |bool MW_CALL_CONV k11libInitialize(void);
+  |extern LIB_k11lib_C_API 
+  |void MW_CALL_CONV k11libTerminate(void);
+  |
+  |extern LIB_k11lib_C_API 
+  |void MW_CALL_CONV k11libPrintStackTrace(void);
+  |
+  |/* GENERAL LIBRARY FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11plain(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |extern LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11Mixed(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |extern LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11upper(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |extern LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11_under(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |extern LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11long(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |extern LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11wide(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |extern LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11_a_function_name_long_enough_to_make_generated_lines_wrap(int 
+  |                                                                                  nlhs, 
+  |                                                                                  mxArray 
+  |                                                                                  *plhs[], 
+  |                                                                                  int 
+  |                                                                                  nrhs, 
+  |                                                                                  mxArray 
+  |                                                                                  *prhs[]);
+  |
+  |extern LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11sub(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |extern LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11noparen(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |extern LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11outonly(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |extern LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11varin(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |extern LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11quiet(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |extern LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11fail(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11lib_C_API bool MW_CALL_CONV mlfK11plain(int nargout, mxArray** y, mxArray* x);
+  |
+  |extern LIB_k11lib_C_API bool MW_CALL_CONV mlfK11Mixed(int nargout, mxArray** a, mxArray** b, mxArray* p, mxArray* q);
+  |
+  |extern LIB_k11lib_C_API bool MW_CALL_CONV mlfK11upper(int nargout, mxArray** r, mxArray* s);
+  |
+  |extern LIB_k11lib_C_API bool MW_CALL_CONV mlfK11_under(int nargout, mxArray** o, mxArray* i);
+  |
+  |extern LIB_k11lib_C_API bool MW_CALL_CONV mlfK11long(int nargout, mxArray** first_output, mxArray** second_output, mxArray** third_output, mxArray* alpha_input, mxArray* beta_input, mxArray* gamma_input, mxArray* delta_input, mxArray* epsilon_input);
+  |
+  |extern LIB_k11lib_C_API bool MW_CALL_CONV mlfK11wide(int nargout, mxArray** o1, mxArray** o2, mxArray** o3, mxArray** o4, mxArray** varargout, mxArray* i1, mxArray* i2, mxArray* i3, mxArray* i4, mxArray* i5, mxArray* i6, mxArray* i7, mxArray* i8, mxArray* varargin);
+  |
+  |extern LIB_k11lib_C_API bool MW_CALL_CONV mlfK11_a_function_name_long_enough_to_make_generated_lines_wrap(int nargout, mxArray** result, mxArray* value);
+  |
+  |extern LIB_k11lib_C_API bool MW_CALL_CONV mlfK11sub(int nargout, mxArray** y, mxArray* x);
+  |
+  |extern LIB_k11lib_C_API bool MW_CALL_CONV mlfK11noparen();
+  |
+  |extern LIB_k11lib_C_API bool MW_CALL_CONV mlfK11outonly(int nargout, mxArray** a, mxArray** varargout);
+  |
+  |extern LIB_k11lib_C_API bool MW_CALL_CONV mlfK11varin(mxArray* varargin);
+  |
+  |extern LIB_k11lib_C_API bool MW_CALL_CONV mlfK11quiet();
+  |
+  |extern LIB_k11lib_C_API bool MW_CALL_CONV mlfK11fail(mxArray* message);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+main.c	10233 chars, CRLF 315, ends with newline 1
+  |/*
+  | * MATLAB Compiler: 25.2 (R2025b)
+  | * Date: <DATE>
+  | * Arguments:
+  | * <ARGUMENTS>
+  | */
+  |
+  |#define EXPORTING_k11lib 1
+  |#include "k11lib.h"
+  |
+  |static HMCRINSTANCE _mcr_inst = NULL; /* don't use nullptr; this may be either C or C++ */
+  |
+  |#if defined( _MSC_VER) || defined(__LCC__) || defined(__MINGW64__)
+  |#ifdef __LCC__
+  |#undef EXTERN_C
+  |#endif
+  |#define NOMINMAX
+  |#include <windows.h>
+  |#undef interface
+  |
+  |static char path_to_dll[_MAX_PATH];
+  |
+  |BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, void *pv)
+  |{
+  |    if (dwReason == DLL_PROCESS_ATTACH)
+  |    {
+  |        if (GetModuleFileName(hInstance, path_to_dll, _MAX_PATH) == 0)
+  |            return FALSE;
+  |    }
+  |    else if (dwReason == DLL_PROCESS_DETACH)
+  |    {
+  |    }
+  |    return TRUE;
+  |}
+  |#endif
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |static int mclDefaultPrintHandler(const char *s)
+  |{
+  |    return mclWrite(1 /* stdout */, s, sizeof(char)*strlen(s));
+  |}
+  |
+  |#ifdef __cplusplus
+  |} /* End extern C block */
+  |#endif
+  |
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |static int mclDefaultErrorHandler(const char *s)
+  |{
+  |    int written = 0;
+  |    size_t len = 0;
+  |    len = strlen(s);
+  |    written = mclWrite(2 /* stderr */, s, sizeof(char)*len);
+  |    if (len > 0 && s[ len-1 ] != '\n')
+  |        written += mclWrite(2 /* stderr */, "\n", sizeof(char));
+  |    return written;
+  |}
+  |
+  |#ifdef __cplusplus
+  |} /* End extern C block */
+  |#endif
+  |
+  |/* This symbol is defined in shared libraries. Define it here
+  | * (to nothing) in case this isn't a shared library. 
+  | */
+  |#ifndef LIB_k11lib_C_API
+  |#define LIB_k11lib_C_API /* No special import/export declaration */
+  |#endif
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV k11libInitializeWithHandlers(
+  |    mclOutputHandlerFcn error_handler,
+  |    mclOutputHandlerFcn print_handler)
+  |{
+  |    int bResult = 0;
+  |    if (_mcr_inst)
+  |        return true;
+  |    if (!mclmcrInitialize())
+  |        return false;
+  |    if (!GetModuleFileName(GetModuleHandle("k11lib"), path_to_dll, _MAX_PATH))
+  |        return false;
+  |    {
+  |        mclCtfStream ctfStream = 
+  |            mclGetEmbeddedCtfStream(path_to_dll);
+  |        if (ctfStream) {
+  |            bResult = mclInitializeComponentInstanceEmbedded(&_mcr_inst,
+  |                                                             error_handler, 
+  |                                                             print_handler,
+  |                                                             ctfStream,
+  |                                                             NULL);
+  |            mclDestroyStream(ctfStream);
+  |        } else {
+  |            bResult = 0;
+  |        }
+  |    }  
+  |    if (!bResult)
+  |    return false;
+  |    return true;
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV k11libInitialize(void)
+  |{
+  |    return k11libInitializeWithHandlers(mclDefaultErrorHandler, mclDefaultPrintHandler);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |void MW_CALL_CONV k11libTerminate(void)
+  |{
+  |    if (_mcr_inst)
+  |        mclTerminateInstance(&_mcr_inst);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |void MW_CALL_CONV k11libPrintStackTrace(void) 
+  |{
+  |    char** stackTrace;
+  |    int stackDepth = mclGetStackTrace(&stackTrace);
+  |    int i;
+  |    for(i=0; i<stackDepth; i++)
+  |    {
+  |        mclWrite(2 /* stderr */, stackTrace[i], sizeof(char)*strlen(stackTrace[i]));
+  |        mclWrite(2 /* stderr */, "\n", sizeof(char)*strlen("\n"));
+  |    }
+  |    mclFreeStackTrace(&stackTrace, stackDepth);
+  |}
+  |
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11plain(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11plain", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11Mixed(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11Mixed", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11upper(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "K11upper", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11_under(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11_under", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11long(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11long", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11wide(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11wide", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11_a_function_name_long_enough_to_make_generated_lines_wrap(int 
+  |                                                                                  nlhs, 
+  |                                                                                  mxArray 
+  |                                                                                  *plhs[], 
+  |                                                                                  int 
+  |                                                                                  nrhs, 
+  |                                                                                  mxArray 
+  |                                                                                  *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, 
+  |                  "k11_a_function_name_long_enough_to_make_generated_lines_wrap", nlhs, 
+  |                  plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11sub(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11sub", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11noparen(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11noparen", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11outonly(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11outonly", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11varin(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11varin", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11quiet(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11quiet", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlxK11fail(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11fail", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlfK11plain(int nargout, mxArray** y, mxArray* x)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11plain", nargout, 1, 1, y, x);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlfK11Mixed(int nargout, mxArray** a, mxArray** b, mxArray* p, mxArray* 
+  |                              q)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11Mixed", nargout, 2, 2, a, b, p, q);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlfK11upper(int nargout, mxArray** r, mxArray* s)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "K11upper", nargout, 1, 1, r, s);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlfK11_under(int nargout, mxArray** o, mxArray* i)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11_under", nargout, 1, 1, o, i);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlfK11long(int nargout, mxArray** first_output, mxArray** 
+  |                             second_output, mxArray** third_output, mxArray* alpha_input, 
+  |                             mxArray* beta_input, mxArray* gamma_input, mxArray* 
+  |                             delta_input, mxArray* epsilon_input)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11long", nargout, 3, 5, first_output, second_output, third_output, alpha_input, beta_input, gamma_input, delta_input, epsilon_input);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlfK11wide(int nargout, mxArray** o1, mxArray** o2, mxArray** o3, 
+  |                             mxArray** o4, mxArray** varargout, mxArray* i1, mxArray* i2, 
+  |                             mxArray* i3, mxArray* i4, mxArray* i5, mxArray* i6, mxArray* 
+  |                             i7, mxArray* i8, mxArray* varargin)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11wide", nargout, -5, -9, o1, o2, o3, o4, varargout, i1, i2, i3, i4, i5, i6, i7, i8, varargin);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlfK11_a_function_name_long_enough_to_make_generated_lines_wrap(int 
+  |                                                                                  nargout, 
+  |                                                                                  mxArray** 
+  |                                                                                  result, 
+  |                                                                                  mxArray* 
+  |                                                                                  value)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11_a_function_name_long_enough_to_make_generated_lines_wrap", nargout, 1, 1, result, value);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlfK11sub(int nargout, mxArray** y, mxArray* x)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11sub", nargout, 1, 1, y, x);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlfK11noparen()
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11noparen", 0, 0, 0);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlfK11outonly(int nargout, mxArray** a, mxArray** varargout)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11outonly", nargout, -2, 0, a, varargout);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlfK11varin(mxArray* varargin)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11varin", 0, 0, -1, varargin);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlfK11quiet()
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11quiet", 0, 0, 0);
+  |}
+  |
+  |LIB_k11lib_C_API 
+  |bool MW_CALL_CONV mlfK11fail(mxArray* message)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11fail", 0, 0, 1, message);
+  |}
+  |
+main.def	557 chars, CRLF 33, ends with newline 1
+  |LIBRARY k11lib
+  |EXPORTS
+  |k11libInitialize
+  |k11libInitializeWithHandlers
+  |k11libTerminate
+  |k11libPrintStackTrace
+  |mlxK11plain
+  |mlfK11plain
+  |mlxK11Mixed
+  |mlfK11Mixed
+  |mlxK11upper
+  |mlfK11upper
+  |mlxK11_under
+  |mlfK11_under
+  |mlxK11long
+  |mlfK11long
+  |mlxK11wide
+  |mlfK11wide
+  |mlxK11_a_function_name_long_enough_to_make_generated_lines_wrap
+  |mlfK11_a_function_name_long_enough_to_make_generated_lines_wrap
+  |mlxK11sub
+  |mlfK11sub
+  |mlxK11noparen
+  |mlfK11noparen
+  |mlxK11outonly
+  |mlfK11outonly
+  |mlxK11varin
+  |mlfK11varin
+  |mlxK11quiet
+  |mlfK11quiet
+  |mlxK11fail
+  |mlfK11fail
+  |
+main.exports	532 chars, CRLF 31, ends with newline 1
+  |k11libInitialize
+  |k11libInitializeWithHandlers
+  |k11libTerminate
+  |k11libPrintStackTrace
+  |mlxK11plain
+  |mlfK11plain
+  |mlxK11Mixed
+  |mlfK11Mixed
+  |mlxK11upper
+  |mlfK11upper
+  |mlxK11_under
+  |mlfK11_under
+  |mlxK11long
+  |mlfK11long
+  |mlxK11wide
+  |mlfK11wide
+  |mlxK11_a_function_name_long_enough_to_make_generated_lines_wrap
+  |mlfK11_a_function_name_long_enough_to_make_generated_lines_wrap
+  |mlxK11sub
+  |mlfK11sub
+  |mlxK11noparen
+  |mlfK11noparen
+  |mlxK11outonly
+  |mlfK11outonly
+  |mlxK11varin
+  |mlfK11varin
+  |mlxK11quiet
+  |mlfK11quiet
+  |mlxK11fail
+  |mlfK11fail
+  |
+main.readme	1394 chars, CRLF 49, ends with newline 1
+  |k11lib C Shared Library
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that MATLAB Runtime(R2025b) is installed.   
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |  
+  |    >>mcrinstaller
+  |      
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer. 
+  |
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b 
+  |from the following link on the MathWorks website:
+  |
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |   
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see 
+  |"Distribute Applications" in the MATLAB Compiler SDK documentation  
+  |in the MathWorks Documentation Center.
+  |
+  |2. Files to Deploy and Package
+  |
+  |
+  |Files to Package
+  |================
+  |-k11lib.dll
+  |-k11lib.h
+  |-k11lib.lib
+  |-MCRInstaller.exe 
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your 
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file
+  |
+  |
+  |3. Definitions
+  |
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+  |
+  |
+  |
+  |
+ell	ok
+ell.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+ell.seconds	5.1
+ell.files	buildresult.json | includedSupportPackages.txt | k11plain.c | k11plain.def | k11plain.dll | k11plain.exp | k11plain.exports | k11plain.h | k11plain.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+ell_o	ok
+ell_o.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+ell_o.seconds	5.0
+ell_o.files	buildresult.json | includedSupportPackages.txt | k11named.c | k11named.def | k11named.dll | k11named.exp | k11named.exports | k11named.h | k11named.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+lib_o	ERR Compiler:compiler:COM_ERR_MULTIPLE_COMPONENT_NAMES | Error: Multiple component names. Processing "-o" switch. Component name "k11w" already specified via "-W".
+lib_o.seconds	0.0
+lib_o.files	
+version	ok
+version.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+version.seconds	5.0
+version.files	buildresult.json | includedSupportPackages.txt | k11ver.c | k11ver.def | k11ver.dll | k11ver.exp | k11ver.exports | k11ver.h | k11ver.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+version4	ok
+version4.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+version4.seconds	5.0
+version4.files	buildresult.json | includedSupportPackages.txt | k11ver4.c | k11ver4.def | k11ver4.dll | k11ver4.exp | k11ver4.exports | k11ver4.h | k11ver4.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+badversion	ERR Compiler:compiler:COM_ERR_INVALID_VERSION | Version string "x.y" is invalid. Use at most four integers (0 to 65534), separated by ".", to specify the version.
+badversion.seconds	0.0
+badversion.files	
+separate	ok
+separate.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+separate.seconds	5.0
+separate.files	buildresult.json | includedSupportPackages.txt | k11sep.c | k11sep.ctf | k11sep.def | k11sep.dll | k11sep.exp | k11sep.exports | k11sep.h | k11sep.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+debug	ok
+debug.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+debug.seconds	5.0
+debug.files	buildresult.json | includedSupportPackages.txt | k11dbg.c | k11dbg.def | k11dbg.dll | k11dbg.exp | k11dbg.exports | k11dbg.h | k11dbg.lib | k11dbg.pdb | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+codegen	ok
+codegen.seconds	2.6
+codegen.files	buildresult.json | includedSupportPackages.txt | k11cg.c | k11cg.ctf | k11cg.exports | k11cg.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+codegen.h	1802 chars, CRLF 61, ends with newline 1
+  |/*
+  | * MATLAB Compiler: 25.2 (R2025b)
+  | * Date: <DATE>
+  | * Arguments:
+  | * <ARGUMENTS>
+  | */
+  |
+  |#ifndef k11cg_h
+  |#define k11cg_h 1
+  |
+  |#if defined(__cplusplus) && !defined(mclmcrrt_h) && defined(__linux__)
+  |#  pragma implementation "mclmcrrt.h"
+  |#endif
+  |#include "mclmcrrt.h"
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |/* This symbol is defined in shared libraries. Define it here
+  | * (to nothing) in case this isn't a shared library. 
+  | */
+  |#ifndef LIB_k11cg_C_API 
+  |#define LIB_k11cg_C_API /* No special import/export declaration */
+  |#endif
+  |
+  |/* GENERAL LIBRARY FUNCTIONS -- START */
+  |
+  |extern LIB_k11cg_C_API 
+  |bool MW_CALL_CONV k11cgInitializeWithHandlers(
+  |       mclOutputHandlerFcn error_handler, 
+  |       mclOutputHandlerFcn print_handler);
+  |
+  |extern LIB_k11cg_C_API 
+  |bool MW_CALL_CONV k11cgInitialize(void);
+  |extern LIB_k11cg_C_API 
+  |void MW_CALL_CONV k11cgTerminate(void);
+  |
+  |extern LIB_k11cg_C_API 
+  |void MW_CALL_CONV k11cgPrintStackTrace(void);
+  |
+  |/* GENERAL LIBRARY FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cg_C_API 
+  |bool MW_CALL_CONV mlxK11plain(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cg_C_API bool MW_CALL_CONV mlfK11plain(int nargout, mxArray** y, mxArray* x);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+codegen.c	3951 chars, CRLF 147, ends with newline 1
+  |/*
+  | * MATLAB Compiler: 25.2 (R2025b)
+  | * Date: <DATE>
+  | * Arguments:
+  | * <ARGUMENTS>
+  | */
+  |
+  |#define EXPORTING_k11cg 1
+  |#include "k11cg.h"
+  |
+  |static HMCRINSTANCE _mcr_inst = NULL; /* don't use nullptr; this may be either C or C++ */
+  |
+  |#if defined( _MSC_VER) || defined(__LCC__) || defined(__MINGW64__)
+  |#ifdef __LCC__
+  |#undef EXTERN_C
+  |#endif
+  |#define NOMINMAX
+  |#include <windows.h>
+  |#undef interface
+  |
+  |static char path_to_dll[_MAX_PATH];
+  |
+  |BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, void *pv)
+  |{
+  |    if (dwReason == DLL_PROCESS_ATTACH)
+  |    {
+  |        if (GetModuleFileName(hInstance, path_to_dll, _MAX_PATH) == 0)
+  |            return FALSE;
+  |    }
+  |    else if (dwReason == DLL_PROCESS_DETACH)
+  |    {
+  |    }
+  |    return TRUE;
+  |}
+  |#endif
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |static int mclDefaultPrintHandler(const char *s)
+  |{
+  |    return mclWrite(1 /* stdout */, s, sizeof(char)*strlen(s));
+  |}
+  |
+  |#ifdef __cplusplus
+  |} /* End extern C block */
+  |#endif
+  |
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |static int mclDefaultErrorHandler(const char *s)
+  |{
+  |    int written = 0;
+  |    size_t len = 0;
+  |    len = strlen(s);
+  |    written = mclWrite(2 /* stderr */, s, sizeof(char)*len);
+  |    if (len > 0 && s[ len-1 ] != '\n')
+  |        written += mclWrite(2 /* stderr */, "\n", sizeof(char));
+  |    return written;
+  |}
+  |
+  |#ifdef __cplusplus
+  |} /* End extern C block */
+  |#endif
+  |
+  |/* This symbol is defined in shared libraries. Define it here
+  | * (to nothing) in case this isn't a shared library. 
+  | */
+  |#ifndef LIB_k11cg_C_API
+  |#define LIB_k11cg_C_API /* No special import/export declaration */
+  |#endif
+  |
+  |LIB_k11cg_C_API 
+  |bool MW_CALL_CONV k11cgInitializeWithHandlers(
+  |    mclOutputHandlerFcn error_handler,
+  |    mclOutputHandlerFcn print_handler)
+  |{
+  |    int bResult = 0;
+  |    if (_mcr_inst)
+  |        return true;
+  |    if (!mclmcrInitialize())
+  |        return false;
+  |    if (!GetModuleFileName(GetModuleHandle("k11cg"), path_to_dll, _MAX_PATH))
+  |        return false;
+  |    {
+  |        mclCtfStream ctfStream = 
+  |            mclGetEmbeddedCtfStream(path_to_dll);
+  |        if (ctfStream) {
+  |            bResult = mclInitializeComponentInstanceEmbedded(&_mcr_inst,
+  |                                                             error_handler, 
+  |                                                             print_handler,
+  |                                                             ctfStream,
+  |                                                             NULL);
+  |            mclDestroyStream(ctfStream);
+  |        } else {
+  |            bResult = 0;
+  |        }
+  |    }  
+  |    if (!bResult)
+  |    return false;
+  |    return true;
+  |}
+  |
+  |LIB_k11cg_C_API 
+  |bool MW_CALL_CONV k11cgInitialize(void)
+  |{
+  |    return k11cgInitializeWithHandlers(mclDefaultErrorHandler, mclDefaultPrintHandler);
+  |}
+  |
+  |LIB_k11cg_C_API 
+  |void MW_CALL_CONV k11cgTerminate(void)
+  |{
+  |    if (_mcr_inst)
+  |        mclTerminateInstance(&_mcr_inst);
+  |}
+  |
+  |LIB_k11cg_C_API 
+  |void MW_CALL_CONV k11cgPrintStackTrace(void) 
+  |{
+  |    char** stackTrace;
+  |    int stackDepth = mclGetStackTrace(&stackTrace);
+  |    int i;
+  |    for(i=0; i<stackDepth; i++)
+  |    {
+  |        mclWrite(2 /* stderr */, stackTrace[i], sizeof(char)*strlen(stackTrace[i]));
+  |        mclWrite(2 /* stderr */, "\n", sizeof(char)*strlen("\n"));
+  |    }
+  |    mclFreeStackTrace(&stackTrace, stackDepth);
+  |}
+  |
+  |
+  |LIB_k11cg_C_API 
+  |bool MW_CALL_CONV mlxK11plain(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11plain", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11cg_C_API 
+  |bool MW_CALL_CONV mlfK11plain(int nargout, mxArray** y, mxArray* x)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11plain", nargout, 1, 1, y, x);
+  |}
+  |
+codegen.def	missing
+compile	ok
+compile.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+compile.seconds	4.9
+compile.files	buildresult.json | includedSupportPackages.txt | k11cmp.c | k11cmp.def | k11cmp.exports | k11cmp.h | k11cmp.obj | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+dashc	ok
+dashc.seconds	2.6
+dashc.files	buildresult.json | includedSupportPackages.txt | k11c.c | k11c.ctf | k11c.exports | k11c.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+noT	ok
+noT.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+noT.seconds	5.0
+noT.files	buildresult.json | includedSupportPackages.txt | k11noT.c | k11noT.def | k11noT.dll | k11noT.exp | k11noT.exports | k11noT.h | k11noT.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+exeT	ERR Compiler:compiler:COM_ERR_WRAPPER_TARGET_MISMATCH | Error: The wrapper type specified with -W switch doesn't match with the target type specified with -T switch.
+exeT.seconds	0.0
+exeT.files	
+fnname	ok
+fnname.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+fnname.seconds	4.9
+fnname.files	buildresult.json | includedSupportPackages.txt | k11plain.c | k11plain.def | k11plain.dll | k11plain.exp | k11plain.exports | k11plain.h | k11plain.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+badname	ERR Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME | Illegal output name: 'k11-bad'  /  (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')
+badname.seconds	0.0
+badname.files	
+digitname	ERR Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME | Illegal output name: '1k11'  /  (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')
+digitname.seconds	0.0
+digitname.files	
+pcode	ok
+pcode.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+pcode.seconds	5.0
+pcode.files	buildresult.json | includedSupportPackages.txt | k11j.c | k11j.def | k11j.dll | k11j.exp | k11j.exports | k11j.h | k11j.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+[Warning: Directory already exists.] 
+[> In probe_k11_build (line 75)] 
+pfile	ok
+pfile.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+pfile.seconds	4.9
+pfile.files	buildresult.json | includedSupportPackages.txt | k11p.c | k11p.def | k11p.dll | k11p.exp | k11p.exports | k11p.h | k11p.lib | k11plain.p | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+same	ok
+same.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+same.seconds	5.0
+same.files	buildresult.json | includedSupportPackages.txt | k11same.c | k11same.def | k11same.dll | k11same.exp | k11same.exports | k11same.h | k11same.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+same.h	1831 chars, CRLF 61, ends with newline 1
+  |/*
+  | * MATLAB Compiler: 25.2 (R2025b)
+  | * Date: <DATE>
+  | * Arguments:
+  | * <ARGUMENTS>
+  | */
+  |
+  |#ifndef k11same_h
+  |#define k11same_h 1
+  |
+  |#if defined(__cplusplus) && !defined(mclmcrrt_h) && defined(__linux__)
+  |#  pragma implementation "mclmcrrt.h"
+  |#endif
+  |#include "mclmcrrt.h"
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |/* This symbol is defined in shared libraries. Define it here
+  | * (to nothing) in case this isn't a shared library. 
+  | */
+  |#ifndef LIB_k11same_C_API 
+  |#define LIB_k11same_C_API /* No special import/export declaration */
+  |#endif
+  |
+  |/* GENERAL LIBRARY FUNCTIONS -- START */
+  |
+  |extern LIB_k11same_C_API 
+  |bool MW_CALL_CONV k11sameInitializeWithHandlers(
+  |       mclOutputHandlerFcn error_handler, 
+  |       mclOutputHandlerFcn print_handler);
+  |
+  |extern LIB_k11same_C_API 
+  |bool MW_CALL_CONV k11sameInitialize(void);
+  |extern LIB_k11same_C_API 
+  |void MW_CALL_CONV k11sameTerminate(void);
+  |
+  |extern LIB_k11same_C_API 
+  |void MW_CALL_CONV k11samePrintStackTrace(void);
+  |
+  |/* GENERAL LIBRARY FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11same_C_API 
+  |bool MW_CALL_CONV mlxK11same(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11same_C_API bool MW_CALL_CONV mlfK11same(int nargout, mxArray** x, mxArray* x_in1);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+same.c	3986 chars, CRLF 147, ends with newline 1
+  |/*
+  | * MATLAB Compiler: 25.2 (R2025b)
+  | * Date: <DATE>
+  | * Arguments:
+  | * <ARGUMENTS>
+  | */
+  |
+  |#define EXPORTING_k11same 1
+  |#include "k11same.h"
+  |
+  |static HMCRINSTANCE _mcr_inst = NULL; /* don't use nullptr; this may be either C or C++ */
+  |
+  |#if defined( _MSC_VER) || defined(__LCC__) || defined(__MINGW64__)
+  |#ifdef __LCC__
+  |#undef EXTERN_C
+  |#endif
+  |#define NOMINMAX
+  |#include <windows.h>
+  |#undef interface
+  |
+  |static char path_to_dll[_MAX_PATH];
+  |
+  |BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, void *pv)
+  |{
+  |    if (dwReason == DLL_PROCESS_ATTACH)
+  |    {
+  |        if (GetModuleFileName(hInstance, path_to_dll, _MAX_PATH) == 0)
+  |            return FALSE;
+  |    }
+  |    else if (dwReason == DLL_PROCESS_DETACH)
+  |    {
+  |    }
+  |    return TRUE;
+  |}
+  |#endif
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |static int mclDefaultPrintHandler(const char *s)
+  |{
+  |    return mclWrite(1 /* stdout */, s, sizeof(char)*strlen(s));
+  |}
+  |
+  |#ifdef __cplusplus
+  |} /* End extern C block */
+  |#endif
+  |
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |static int mclDefaultErrorHandler(const char *s)
+  |{
+  |    int written = 0;
+  |    size_t len = 0;
+  |    len = strlen(s);
+  |    written = mclWrite(2 /* stderr */, s, sizeof(char)*len);
+  |    if (len > 0 && s[ len-1 ] != '\n')
+  |        written += mclWrite(2 /* stderr */, "\n", sizeof(char));
+  |    return written;
+  |}
+  |
+  |#ifdef __cplusplus
+  |} /* End extern C block */
+  |#endif
+  |
+  |/* This symbol is defined in shared libraries. Define it here
+  | * (to nothing) in case this isn't a shared library. 
+  | */
+  |#ifndef LIB_k11same_C_API
+  |#define LIB_k11same_C_API /* No special import/export declaration */
+  |#endif
+  |
+  |LIB_k11same_C_API 
+  |bool MW_CALL_CONV k11sameInitializeWithHandlers(
+  |    mclOutputHandlerFcn error_handler,
+  |    mclOutputHandlerFcn print_handler)
+  |{
+  |    int bResult = 0;
+  |    if (_mcr_inst)
+  |        return true;
+  |    if (!mclmcrInitialize())
+  |        return false;
+  |    if (!GetModuleFileName(GetModuleHandle("k11same"), path_to_dll, _MAX_PATH))
+  |        return false;
+  |    {
+  |        mclCtfStream ctfStream = 
+  |            mclGetEmbeddedCtfStream(path_to_dll);
+  |        if (ctfStream) {
+  |            bResult = mclInitializeComponentInstanceEmbedded(&_mcr_inst,
+  |                                                             error_handler, 
+  |                                                             print_handler,
+  |                                                             ctfStream,
+  |                                                             NULL);
+  |            mclDestroyStream(ctfStream);
+  |        } else {
+  |            bResult = 0;
+  |        }
+  |    }  
+  |    if (!bResult)
+  |    return false;
+  |    return true;
+  |}
+  |
+  |LIB_k11same_C_API 
+  |bool MW_CALL_CONV k11sameInitialize(void)
+  |{
+  |    return k11sameInitializeWithHandlers(mclDefaultErrorHandler, mclDefaultPrintHandler);
+  |}
+  |
+  |LIB_k11same_C_API 
+  |void MW_CALL_CONV k11sameTerminate(void)
+  |{
+  |    if (_mcr_inst)
+  |        mclTerminateInstance(&_mcr_inst);
+  |}
+  |
+  |LIB_k11same_C_API 
+  |void MW_CALL_CONV k11samePrintStackTrace(void) 
+  |{
+  |    char** stackTrace;
+  |    int stackDepth = mclGetStackTrace(&stackTrace);
+  |    int i;
+  |    for(i=0; i<stackDepth; i++)
+  |    {
+  |        mclWrite(2 /* stderr */, stackTrace[i], sizeof(char)*strlen(stackTrace[i]));
+  |        mclWrite(2 /* stderr */, "\n", sizeof(char)*strlen("\n"));
+  |    }
+  |    mclFreeStackTrace(&stackTrace, stackDepth);
+  |}
+  |
+  |
+  |LIB_k11same_C_API 
+  |bool MW_CALL_CONV mlxK11same(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11same", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11same_C_API 
+  |bool MW_CALL_CONV mlfK11same(int nargout, mxArray** x, mxArray* x_in1)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11same", nargout, 1, 1, x, x_in1);
+  |}
+  |
+same.def	144 chars, CRLF 9, ends with newline 1
+  |LIBRARY k11same
+  |EXPORTS
+  |k11sameInitialize
+  |k11sameInitializeWithHandlers
+  |k11sameTerminate
+  |k11samePrintStackTrace
+  |mlxK11same
+  |mlfK11same
+  |
+tilde	ok
+tilde.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+tilde.seconds	5.0
+tilde.files	buildresult.json | includedSupportPackages.txt | k11tilde.c | k11tilde.def | k11tilde.dll | k11tilde.exp | k11tilde.exports | k11tilde.h | k11tilde.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+tilde.h	1861 chars, CRLF 61, ends with newline 1
+  |/*
+  | * MATLAB Compiler: 25.2 (R2025b)
+  | * Date: <DATE>
+  | * Arguments:
+  | * <ARGUMENTS>
+  | */
+  |
+  |#ifndef k11tilde_h
+  |#define k11tilde_h 1
+  |
+  |#if defined(__cplusplus) && !defined(mclmcrrt_h) && defined(__linux__)
+  |#  pragma implementation "mclmcrrt.h"
+  |#endif
+  |#include "mclmcrrt.h"
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |/* This symbol is defined in shared libraries. Define it here
+  | * (to nothing) in case this isn't a shared library. 
+  | */
+  |#ifndef LIB_k11tilde_C_API 
+  |#define LIB_k11tilde_C_API /* No special import/export declaration */
+  |#endif
+  |
+  |/* GENERAL LIBRARY FUNCTIONS -- START */
+  |
+  |extern LIB_k11tilde_C_API 
+  |bool MW_CALL_CONV k11tildeInitializeWithHandlers(
+  |       mclOutputHandlerFcn error_handler, 
+  |       mclOutputHandlerFcn print_handler);
+  |
+  |extern LIB_k11tilde_C_API 
+  |bool MW_CALL_CONV k11tildeInitialize(void);
+  |extern LIB_k11tilde_C_API 
+  |void MW_CALL_CONV k11tildeTerminate(void);
+  |
+  |extern LIB_k11tilde_C_API 
+  |void MW_CALL_CONV k11tildePrintStackTrace(void);
+  |
+  |/* GENERAL LIBRARY FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11tilde_C_API 
+  |bool MW_CALL_CONV mlxK11tilde(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11tilde_C_API bool MW_CALL_CONV mlfK11tilde(int nargout, mxArray** y, mxArray* _U4b, mxArray* b);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+tilde.c	4022 chars, CRLF 147, ends with newline 1
+  |/*
+  | * MATLAB Compiler: 25.2 (R2025b)
+  | * Date: <DATE>
+  | * Arguments:
+  | * <ARGUMENTS>
+  | */
+  |
+  |#define EXPORTING_k11tilde 1
+  |#include "k11tilde.h"
+  |
+  |static HMCRINSTANCE _mcr_inst = NULL; /* don't use nullptr; this may be either C or C++ */
+  |
+  |#if defined( _MSC_VER) || defined(__LCC__) || defined(__MINGW64__)
+  |#ifdef __LCC__
+  |#undef EXTERN_C
+  |#endif
+  |#define NOMINMAX
+  |#include <windows.h>
+  |#undef interface
+  |
+  |static char path_to_dll[_MAX_PATH];
+  |
+  |BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, void *pv)
+  |{
+  |    if (dwReason == DLL_PROCESS_ATTACH)
+  |    {
+  |        if (GetModuleFileName(hInstance, path_to_dll, _MAX_PATH) == 0)
+  |            return FALSE;
+  |    }
+  |    else if (dwReason == DLL_PROCESS_DETACH)
+  |    {
+  |    }
+  |    return TRUE;
+  |}
+  |#endif
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |static int mclDefaultPrintHandler(const char *s)
+  |{
+  |    return mclWrite(1 /* stdout */, s, sizeof(char)*strlen(s));
+  |}
+  |
+  |#ifdef __cplusplus
+  |} /* End extern C block */
+  |#endif
+  |
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |static int mclDefaultErrorHandler(const char *s)
+  |{
+  |    int written = 0;
+  |    size_t len = 0;
+  |    len = strlen(s);
+  |    written = mclWrite(2 /* stderr */, s, sizeof(char)*len);
+  |    if (len > 0 && s[ len-1 ] != '\n')
+  |        written += mclWrite(2 /* stderr */, "\n", sizeof(char));
+  |    return written;
+  |}
+  |
+  |#ifdef __cplusplus
+  |} /* End extern C block */
+  |#endif
+  |
+  |/* This symbol is defined in shared libraries. Define it here
+  | * (to nothing) in case this isn't a shared library. 
+  | */
+  |#ifndef LIB_k11tilde_C_API
+  |#define LIB_k11tilde_C_API /* No special import/export declaration */
+  |#endif
+  |
+  |LIB_k11tilde_C_API 
+  |bool MW_CALL_CONV k11tildeInitializeWithHandlers(
+  |    mclOutputHandlerFcn error_handler,
+  |    mclOutputHandlerFcn print_handler)
+  |{
+  |    int bResult = 0;
+  |    if (_mcr_inst)
+  |        return true;
+  |    if (!mclmcrInitialize())
+  |        return false;
+  |    if (!GetModuleFileName(GetModuleHandle("k11tilde"), path_to_dll, _MAX_PATH))
+  |        return false;
+  |    {
+  |        mclCtfStream ctfStream = 
+  |            mclGetEmbeddedCtfStream(path_to_dll);
+  |        if (ctfStream) {
+  |            bResult = mclInitializeComponentInstanceEmbedded(&_mcr_inst,
+  |                                                             error_handler, 
+  |                                                             print_handler,
+  |                                                             ctfStream,
+  |                                                             NULL);
+  |            mclDestroyStream(ctfStream);
+  |        } else {
+  |            bResult = 0;
+  |        }
+  |    }  
+  |    if (!bResult)
+  |    return false;
+  |    return true;
+  |}
+  |
+  |LIB_k11tilde_C_API 
+  |bool MW_CALL_CONV k11tildeInitialize(void)
+  |{
+  |    return k11tildeInitializeWithHandlers(mclDefaultErrorHandler, mclDefaultPrintHandler);
+  |}
+  |
+  |LIB_k11tilde_C_API 
+  |void MW_CALL_CONV k11tildeTerminate(void)
+  |{
+  |    if (_mcr_inst)
+  |        mclTerminateInstance(&_mcr_inst);
+  |}
+  |
+  |LIB_k11tilde_C_API 
+  |void MW_CALL_CONV k11tildePrintStackTrace(void) 
+  |{
+  |    char** stackTrace;
+  |    int stackDepth = mclGetStackTrace(&stackTrace);
+  |    int i;
+  |    for(i=0; i<stackDepth; i++)
+  |    {
+  |        mclWrite(2 /* stderr */, stackTrace[i], sizeof(char)*strlen(stackTrace[i]));
+  |        mclWrite(2 /* stderr */, "\n", sizeof(char)*strlen("\n"));
+  |    }
+  |    mclFreeStackTrace(&stackTrace, stackDepth);
+  |}
+  |
+  |
+  |LIB_k11tilde_C_API 
+  |bool MW_CALL_CONV mlxK11tilde(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11tilde", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11tilde_C_API 
+  |bool MW_CALL_CONV mlfK11tilde(int nargout, mxArray** y, mxArray* _U4b, mxArray* b)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11tilde", nargout, 1, 2, y, _U4b, b);
+  |}
+  |
+tilde.def	151 chars, CRLF 9, ends with newline 1
+  |LIBRARY k11tilde
+  |EXPORTS
+  |k11tildeInitialize
+  |k11tildeInitializeWithHandlers
+  |k11tildeTerminate
+  |k11tildePrintStackTrace
+  |mlxK11tilde
+  |mlfK11tilde
+  |
+cwords	ok
+cwords.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+cwords.seconds	5.0
+cwords.files	buildresult.json | includedSupportPackages.txt | k11cwords.c | k11cwords.def | k11cwords.dll | k11cwords.exp | k11cwords.exports | k11cwords.h | k11cwords.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+cwords.h	1925 chars, CRLF 61, ends with newline 1
+  |/*
+  | * MATLAB Compiler: 25.2 (R2025b)
+  | * Date: <DATE>
+  | * Arguments:
+  | * <ARGUMENTS>
+  | */
+  |
+  |#ifndef k11cwords_h
+  |#define k11cwords_h 1
+  |
+  |#if defined(__cplusplus) && !defined(mclmcrrt_h) && defined(__linux__)
+  |#  pragma implementation "mclmcrrt.h"
+  |#endif
+  |#include "mclmcrrt.h"
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |/* This symbol is defined in shared libraries. Define it here
+  | * (to nothing) in case this isn't a shared library. 
+  | */
+  |#ifndef LIB_k11cwords_C_API 
+  |#define LIB_k11cwords_C_API /* No special import/export declaration */
+  |#endif
+  |
+  |/* GENERAL LIBRARY FUNCTIONS -- START */
+  |
+  |extern LIB_k11cwords_C_API 
+  |bool MW_CALL_CONV k11cwordsInitializeWithHandlers(
+  |       mclOutputHandlerFcn error_handler, 
+  |       mclOutputHandlerFcn print_handler);
+  |
+  |extern LIB_k11cwords_C_API 
+  |bool MW_CALL_CONV k11cwordsInitialize(void);
+  |extern LIB_k11cwords_C_API 
+  |void MW_CALL_CONV k11cwordsTerminate(void);
+  |
+  |extern LIB_k11cwords_C_API 
+  |void MW_CALL_CONV k11cwordsPrintStackTrace(void);
+  |
+  |/* GENERAL LIBRARY FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cwords_C_API 
+  |bool MW_CALL_CONV mlxK11cwords(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cwords_C_API bool MW_CALL_CONV mlfK11cwords(int nargout, mxArray** int0, mxArray** long0, mxArray* char0, mxArray* double0, mxArray* struct0);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+cwords.c	4192 chars, CRLF 149, ends with newline 1
+  |/*
+  | * MATLAB Compiler: 25.2 (R2025b)
+  | * Date: <DATE>
+  | * Arguments:
+  | * <ARGUMENTS>
+  | */
+  |
+  |#define EXPORTING_k11cwords 1
+  |#include "k11cwords.h"
+  |
+  |static HMCRINSTANCE _mcr_inst = NULL; /* don't use nullptr; this may be either C or C++ */
+  |
+  |#if defined( _MSC_VER) || defined(__LCC__) || defined(__MINGW64__)
+  |#ifdef __LCC__
+  |#undef EXTERN_C
+  |#endif
+  |#define NOMINMAX
+  |#include <windows.h>
+  |#undef interface
+  |
+  |static char path_to_dll[_MAX_PATH];
+  |
+  |BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, void *pv)
+  |{
+  |    if (dwReason == DLL_PROCESS_ATTACH)
+  |    {
+  |        if (GetModuleFileName(hInstance, path_to_dll, _MAX_PATH) == 0)
+  |            return FALSE;
+  |    }
+  |    else if (dwReason == DLL_PROCESS_DETACH)
+  |    {
+  |    }
+  |    return TRUE;
+  |}
+  |#endif
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |static int mclDefaultPrintHandler(const char *s)
+  |{
+  |    return mclWrite(1 /* stdout */, s, sizeof(char)*strlen(s));
+  |}
+  |
+  |#ifdef __cplusplus
+  |} /* End extern C block */
+  |#endif
+  |
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |static int mclDefaultErrorHandler(const char *s)
+  |{
+  |    int written = 0;
+  |    size_t len = 0;
+  |    len = strlen(s);
+  |    written = mclWrite(2 /* stderr */, s, sizeof(char)*len);
+  |    if (len > 0 && s[ len-1 ] != '\n')
+  |        written += mclWrite(2 /* stderr */, "\n", sizeof(char));
+  |    return written;
+  |}
+  |
+  |#ifdef __cplusplus
+  |} /* End extern C block */
+  |#endif
+  |
+  |/* This symbol is defined in shared libraries. Define it here
+  | * (to nothing) in case this isn't a shared library. 
+  | */
+  |#ifndef LIB_k11cwords_C_API
+  |#define LIB_k11cwords_C_API /* No special import/export declaration */
+  |#endif
+  |
+  |LIB_k11cwords_C_API 
+  |bool MW_CALL_CONV k11cwordsInitializeWithHandlers(
+  |    mclOutputHandlerFcn error_handler,
+  |    mclOutputHandlerFcn print_handler)
+  |{
+  |    int bResult = 0;
+  |    if (_mcr_inst)
+  |        return true;
+  |    if (!mclmcrInitialize())
+  |        return false;
+  |    if (!GetModuleFileName(GetModuleHandle("k11cwords"), path_to_dll, _MAX_PATH))
+  |        return false;
+  |    {
+  |        mclCtfStream ctfStream = 
+  |            mclGetEmbeddedCtfStream(path_to_dll);
+  |        if (ctfStream) {
+  |            bResult = mclInitializeComponentInstanceEmbedded(&_mcr_inst,
+  |                                                             error_handler, 
+  |                                                             print_handler,
+  |                                                             ctfStream,
+  |                                                             NULL);
+  |            mclDestroyStream(ctfStream);
+  |        } else {
+  |            bResult = 0;
+  |        }
+  |    }  
+  |    if (!bResult)
+  |    return false;
+  |    return true;
+  |}
+  |
+  |LIB_k11cwords_C_API 
+  |bool MW_CALL_CONV k11cwordsInitialize(void)
+  |{
+  |    return k11cwordsInitializeWithHandlers(mclDefaultErrorHandler, 
+  |                                         mclDefaultPrintHandler);
+  |}
+  |
+  |LIB_k11cwords_C_API 
+  |void MW_CALL_CONV k11cwordsTerminate(void)
+  |{
+  |    if (_mcr_inst)
+  |        mclTerminateInstance(&_mcr_inst);
+  |}
+  |
+  |LIB_k11cwords_C_API 
+  |void MW_CALL_CONV k11cwordsPrintStackTrace(void) 
+  |{
+  |    char** stackTrace;
+  |    int stackDepth = mclGetStackTrace(&stackTrace);
+  |    int i;
+  |    for(i=0; i<stackDepth; i++)
+  |    {
+  |        mclWrite(2 /* stderr */, stackTrace[i], sizeof(char)*strlen(stackTrace[i]));
+  |        mclWrite(2 /* stderr */, "\n", sizeof(char)*strlen("\n"));
+  |    }
+  |    mclFreeStackTrace(&stackTrace, stackDepth);
+  |}
+  |
+  |
+  |LIB_k11cwords_C_API 
+  |bool MW_CALL_CONV mlxK11cwords(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11cwords", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11cwords_C_API 
+  |bool MW_CALL_CONV mlfK11cwords(int nargout, mxArray** int0, mxArray** long0, mxArray* 
+  |                               char0, mxArray* double0, mxArray* struct0)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11cwords", nargout, 2, 3, int0, long0, char0, double0, struct0);
+  |}
+  |
+cwords.def	158 chars, CRLF 9, ends with newline 1
+  |LIBRARY k11cwords
+  |EXPORTS
+  |k11cwordsInitialize
+  |k11cwordsInitializeWithHandlers
+  |k11cwordsTerminate
+  |k11cwordsPrintStackTrace
+  |mlxK11cwords
+  |mlfK11cwords
+  |
+clash	ERR Compiler:compiler:COM_SYSTEM_ERROR | The following command: / ""<MATLABROOT>\bin\mbuild"  -client mbuild -O -output "k11clash" -I"<W>\b\clash" "<W>\b\clash\k11clash.c"  DEFFILE"=""<W>\b\clash\k11clash.def""" DEFFDELIM"="",""" QUOTEDDEFFILE"="\"\""<W>\b\clash\k11clash.def"\"\""" LINKEXPORT"=""/DLL /def:\"$DEFFILE\"""" LDEXT"="".dll""" LDTYPE"="" -shared -static""" MTCMDLINE"=""mt -outputresource:$EXE;2 -manifest $MANIFEST""" -outdir "<W>\b\clash"" / failed with error code -1.
+clash.seconds	4.8
+clash.files	k11clash.def
+clash.h	missing
+clash.c	missing
+clash.def	151 chars, CRLF 9, ends with newline 1
+  |LIBRARY k11clash
+  |EXPORTS
+  |k11clashInitialize
+  |k11clashInitializeWithHandlers
+  |k11clashTerminate
+  |k11clashPrintStackTrace
+  |mlxK11clash
+  |mlfK11clash
+  |
+script	ok
+script.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+script.seconds	5.0
+script.files	buildresult.json | includedSupportPackages.txt | k11script.c | k11script.def | k11script.dll | k11script.exp | k11script.exports | k11script.h | k11script.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+script.h	1829 chars, CRLF 61, ends with newline 1
+  |/*
+  | * MATLAB Compiler: 25.2 (R2025b)
+  | * Date: <DATE>
+  | * Arguments:
+  | * <ARGUMENTS>
+  | */
+  |
+  |#ifndef k11script_h
+  |#define k11script_h 1
+  |
+  |#if defined(__cplusplus) && !defined(mclmcrrt_h) && defined(__linux__)
+  |#  pragma implementation "mclmcrrt.h"
+  |#endif
+  |#include "mclmcrrt.h"
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |/* This symbol is defined in shared libraries. Define it here
+  | * (to nothing) in case this isn't a shared library. 
+  | */
+  |#ifndef LIB_k11script_C_API 
+  |#define LIB_k11script_C_API /* No special import/export declaration */
+  |#endif
+  |
+  |/* GENERAL LIBRARY FUNCTIONS -- START */
+  |
+  |extern LIB_k11script_C_API 
+  |bool MW_CALL_CONV k11scriptInitializeWithHandlers(
+  |       mclOutputHandlerFcn error_handler, 
+  |       mclOutputHandlerFcn print_handler);
+  |
+  |extern LIB_k11script_C_API 
+  |bool MW_CALL_CONV k11scriptInitialize(void);
+  |extern LIB_k11script_C_API 
+  |void MW_CALL_CONV k11scriptTerminate(void);
+  |
+  |extern LIB_k11script_C_API 
+  |void MW_CALL_CONV k11scriptPrintStackTrace(void);
+  |
+  |/* GENERAL LIBRARY FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11script_C_API 
+  |bool MW_CALL_CONV mlxK11script(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11script_C_API bool MW_CALL_CONV mlfK11script();
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+script.c	4019 chars, CRLF 148, ends with newline 1
+  |/*
+  | * MATLAB Compiler: 25.2 (R2025b)
+  | * Date: <DATE>
+  | * Arguments:
+  | * <ARGUMENTS>
+  | */
+  |
+  |#define EXPORTING_k11script 1
+  |#include "k11script.h"
+  |
+  |static HMCRINSTANCE _mcr_inst = NULL; /* don't use nullptr; this may be either C or C++ */
+  |
+  |#if defined( _MSC_VER) || defined(__LCC__) || defined(__MINGW64__)
+  |#ifdef __LCC__
+  |#undef EXTERN_C
+  |#endif
+  |#define NOMINMAX
+  |#include <windows.h>
+  |#undef interface
+  |
+  |static char path_to_dll[_MAX_PATH];
+  |
+  |BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, void *pv)
+  |{
+  |    if (dwReason == DLL_PROCESS_ATTACH)
+  |    {
+  |        if (GetModuleFileName(hInstance, path_to_dll, _MAX_PATH) == 0)
+  |            return FALSE;
+  |    }
+  |    else if (dwReason == DLL_PROCESS_DETACH)
+  |    {
+  |    }
+  |    return TRUE;
+  |}
+  |#endif
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |static int mclDefaultPrintHandler(const char *s)
+  |{
+  |    return mclWrite(1 /* stdout */, s, sizeof(char)*strlen(s));
+  |}
+  |
+  |#ifdef __cplusplus
+  |} /* End extern C block */
+  |#endif
+  |
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |static int mclDefaultErrorHandler(const char *s)
+  |{
+  |    int written = 0;
+  |    size_t len = 0;
+  |    len = strlen(s);
+  |    written = mclWrite(2 /* stderr */, s, sizeof(char)*len);
+  |    if (len > 0 && s[ len-1 ] != '\n')
+  |        written += mclWrite(2 /* stderr */, "\n", sizeof(char));
+  |    return written;
+  |}
+  |
+  |#ifdef __cplusplus
+  |} /* End extern C block */
+  |#endif
+  |
+  |/* This symbol is defined in shared libraries. Define it here
+  | * (to nothing) in case this isn't a shared library. 
+  | */
+  |#ifndef LIB_k11script_C_API
+  |#define LIB_k11script_C_API /* No special import/export declaration */
+  |#endif
+  |
+  |LIB_k11script_C_API 
+  |bool MW_CALL_CONV k11scriptInitializeWithHandlers(
+  |    mclOutputHandlerFcn error_handler,
+  |    mclOutputHandlerFcn print_handler)
+  |{
+  |    int bResult = 0;
+  |    if (_mcr_inst)
+  |        return true;
+  |    if (!mclmcrInitialize())
+  |        return false;
+  |    if (!GetModuleFileName(GetModuleHandle("k11script"), path_to_dll, _MAX_PATH))
+  |        return false;
+  |    {
+  |        mclCtfStream ctfStream = 
+  |            mclGetEmbeddedCtfStream(path_to_dll);
+  |        if (ctfStream) {
+  |            bResult = mclInitializeComponentInstanceEmbedded(&_mcr_inst,
+  |                                                             error_handler, 
+  |                                                             print_handler,
+  |                                                             ctfStream,
+  |                                                             NULL);
+  |            mclDestroyStream(ctfStream);
+  |        } else {
+  |            bResult = 0;
+  |        }
+  |    }  
+  |    if (!bResult)
+  |    return false;
+  |    return true;
+  |}
+  |
+  |LIB_k11script_C_API 
+  |bool MW_CALL_CONV k11scriptInitialize(void)
+  |{
+  |    return k11scriptInitializeWithHandlers(mclDefaultErrorHandler, 
+  |                                         mclDefaultPrintHandler);
+  |}
+  |
+  |LIB_k11script_C_API 
+  |void MW_CALL_CONV k11scriptTerminate(void)
+  |{
+  |    if (_mcr_inst)
+  |        mclTerminateInstance(&_mcr_inst);
+  |}
+  |
+  |LIB_k11script_C_API 
+  |void MW_CALL_CONV k11scriptPrintStackTrace(void) 
+  |{
+  |    char** stackTrace;
+  |    int stackDepth = mclGetStackTrace(&stackTrace);
+  |    int i;
+  |    for(i=0; i<stackDepth; i++)
+  |    {
+  |        mclWrite(2 /* stderr */, stackTrace[i], sizeof(char)*strlen(stackTrace[i]));
+  |        mclWrite(2 /* stderr */, "\n", sizeof(char)*strlen("\n"));
+  |    }
+  |    mclFreeStackTrace(&stackTrace, stackDepth);
+  |}
+  |
+  |
+  |LIB_k11script_C_API 
+  |bool MW_CALL_CONV mlxK11script(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11script", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11script_C_API 
+  |bool MW_CALL_CONV mlfK11script()
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11script", 0, 0, 0);
+  |}
+  |
+script.def	158 chars, CRLF 9, ends with newline 1
+  |LIBRARY k11script
+  |EXPORTS
+  |k11scriptInitialize
+  |k11scriptInitializeWithHandlers
+  |k11scriptTerminate
+  |k11scriptPrintStackTrace
+  |mlxK11script
+  |mlfK11script
+  |
+classdef	ok
+classdef.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+classdef.seconds	5.2
+classdef.files	buildresult.json | includedSupportPackages.txt | k11cls.c | k11cls.def | k11cls.dll | k11cls.exp | k11cls.exports | k11cls.h | k11cls.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+classdef.h	1828 chars, CRLF 61, ends with newline 1
+  |/*
+  | * MATLAB Compiler: 25.2 (R2025b)
+  | * Date: <DATE>
+  | * Arguments:
+  | * <ARGUMENTS>
+  | */
+  |
+  |#ifndef k11cls_h
+  |#define k11cls_h 1
+  |
+  |#if defined(__cplusplus) && !defined(mclmcrrt_h) && defined(__linux__)
+  |#  pragma implementation "mclmcrrt.h"
+  |#endif
+  |#include "mclmcrrt.h"
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |/* This symbol is defined in shared libraries. Define it here
+  | * (to nothing) in case this isn't a shared library. 
+  | */
+  |#ifndef LIB_k11cls_C_API 
+  |#define LIB_k11cls_C_API /* No special import/export declaration */
+  |#endif
+  |
+  |/* GENERAL LIBRARY FUNCTIONS -- START */
+  |
+  |extern LIB_k11cls_C_API 
+  |bool MW_CALL_CONV k11clsInitializeWithHandlers(
+  |       mclOutputHandlerFcn error_handler, 
+  |       mclOutputHandlerFcn print_handler);
+  |
+  |extern LIB_k11cls_C_API 
+  |bool MW_CALL_CONV k11clsInitialize(void);
+  |extern LIB_k11cls_C_API 
+  |void MW_CALL_CONV k11clsTerminate(void);
+  |
+  |extern LIB_k11cls_C_API 
+  |void MW_CALL_CONV k11clsPrintStackTrace(void);
+  |
+  |/* GENERAL LIBRARY FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cls_C_API 
+  |bool MW_CALL_CONV mlxK11cls(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+  |
+  |/* C INTERFACE -- MLX WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
+  |
+  |extern LIB_k11cls_C_API bool MW_CALL_CONV mlfK11cls(int nargout, mxArray** varargout, mxArray* varargin);
+  |
+  |#ifdef __cplusplus
+  |}
+  |#endif
+  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
+  |
+  |#endif
+classdef.c	3992 chars, CRLF 147, ends with newline 1
+  |/*
+  | * MATLAB Compiler: 25.2 (R2025b)
+  | * Date: <DATE>
+  | * Arguments:
+  | * <ARGUMENTS>
+  | */
+  |
+  |#define EXPORTING_k11cls 1
+  |#include "k11cls.h"
+  |
+  |static HMCRINSTANCE _mcr_inst = NULL; /* don't use nullptr; this may be either C or C++ */
+  |
+  |#if defined( _MSC_VER) || defined(__LCC__) || defined(__MINGW64__)
+  |#ifdef __LCC__
+  |#undef EXTERN_C
+  |#endif
+  |#define NOMINMAX
+  |#include <windows.h>
+  |#undef interface
+  |
+  |static char path_to_dll[_MAX_PATH];
+  |
+  |BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, void *pv)
+  |{
+  |    if (dwReason == DLL_PROCESS_ATTACH)
+  |    {
+  |        if (GetModuleFileName(hInstance, path_to_dll, _MAX_PATH) == 0)
+  |            return FALSE;
+  |    }
+  |    else if (dwReason == DLL_PROCESS_DETACH)
+  |    {
+  |    }
+  |    return TRUE;
+  |}
+  |#endif
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |static int mclDefaultPrintHandler(const char *s)
+  |{
+  |    return mclWrite(1 /* stdout */, s, sizeof(char)*strlen(s));
+  |}
+  |
+  |#ifdef __cplusplus
+  |} /* End extern C block */
+  |#endif
+  |
+  |#ifdef __cplusplus
+  |extern "C" { // sbcheck:ok:extern_c
+  |#endif
+  |
+  |static int mclDefaultErrorHandler(const char *s)
+  |{
+  |    int written = 0;
+  |    size_t len = 0;
+  |    len = strlen(s);
+  |    written = mclWrite(2 /* stderr */, s, sizeof(char)*len);
+  |    if (len > 0 && s[ len-1 ] != '\n')
+  |        written += mclWrite(2 /* stderr */, "\n", sizeof(char));
+  |    return written;
+  |}
+  |
+  |#ifdef __cplusplus
+  |} /* End extern C block */
+  |#endif
+  |
+  |/* This symbol is defined in shared libraries. Define it here
+  | * (to nothing) in case this isn't a shared library. 
+  | */
+  |#ifndef LIB_k11cls_C_API
+  |#define LIB_k11cls_C_API /* No special import/export declaration */
+  |#endif
+  |
+  |LIB_k11cls_C_API 
+  |bool MW_CALL_CONV k11clsInitializeWithHandlers(
+  |    mclOutputHandlerFcn error_handler,
+  |    mclOutputHandlerFcn print_handler)
+  |{
+  |    int bResult = 0;
+  |    if (_mcr_inst)
+  |        return true;
+  |    if (!mclmcrInitialize())
+  |        return false;
+  |    if (!GetModuleFileName(GetModuleHandle("k11cls"), path_to_dll, _MAX_PATH))
+  |        return false;
+  |    {
+  |        mclCtfStream ctfStream = 
+  |            mclGetEmbeddedCtfStream(path_to_dll);
+  |        if (ctfStream) {
+  |            bResult = mclInitializeComponentInstanceEmbedded(&_mcr_inst,
+  |                                                             error_handler, 
+  |                                                             print_handler,
+  |                                                             ctfStream,
+  |                                                             NULL);
+  |            mclDestroyStream(ctfStream);
+  |        } else {
+  |            bResult = 0;
+  |        }
+  |    }  
+  |    if (!bResult)
+  |    return false;
+  |    return true;
+  |}
+  |
+  |LIB_k11cls_C_API 
+  |bool MW_CALL_CONV k11clsInitialize(void)
+  |{
+  |    return k11clsInitializeWithHandlers(mclDefaultErrorHandler, mclDefaultPrintHandler);
+  |}
+  |
+  |LIB_k11cls_C_API 
+  |void MW_CALL_CONV k11clsTerminate(void)
+  |{
+  |    if (_mcr_inst)
+  |        mclTerminateInstance(&_mcr_inst);
+  |}
+  |
+  |LIB_k11cls_C_API 
+  |void MW_CALL_CONV k11clsPrintStackTrace(void) 
+  |{
+  |    char** stackTrace;
+  |    int stackDepth = mclGetStackTrace(&stackTrace);
+  |    int i;
+  |    for(i=0; i<stackDepth; i++)
+  |    {
+  |        mclWrite(2 /* stderr */, stackTrace[i], sizeof(char)*strlen(stackTrace[i]));
+  |        mclWrite(2 /* stderr */, "\n", sizeof(char)*strlen("\n"));
+  |    }
+  |    mclFreeStackTrace(&stackTrace, stackDepth);
+  |}
+  |
+  |
+  |LIB_k11cls_C_API 
+  |bool MW_CALL_CONV mlxK11cls(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
+  |{
+  |    return mclFeval(_mcr_inst, "k11cls", nlhs, plhs, nrhs, prhs);
+  |}
+  |
+  |LIB_k11cls_C_API 
+  |bool MW_CALL_CONV mlfK11cls(int nargout, mxArray** varargout, mxArray* varargin)
+  |{
+  |    return mclMlfFeval(_mcr_inst, "k11cls", nargout, -1, -1, varargout, varargin);
+  |}
+  |
+classdef.def	137 chars, CRLF 9, ends with newline 1
+  |LIBRARY k11cls
+  |EXPORTS
+  |k11clsInitialize
+  |k11clsInitializeWithHandlers
+  |k11clsTerminate
+  |k11clsPrintStackTrace
+  |mlxK11cls
+  |mlfK11cls
+  |
+twice	ok
+twice.printed
+  |[Warning: The file "<W>\b\src\k11plain.m" was repeated on the
+  |command line.
+  |] 
+  |[> In probe_k11_build>quietMcc (line 260)
+  |In probe_k11_build>mccBuild (line 166)
+  |In probe_k11_build (line 76)] 
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+twice.seconds	5.0
+twice.warn	Compiler:compiler:COM_WARN_REPEATED_FILE | The file "<W>\b\src\k11plain.m" was repeated on the command line. / 
+twice.files	buildresult.json | includedSupportPackages.txt | k11tw.c | k11tw.def | k11tw.dll | k11tw.exp | k11tw.exports | k11tw.h | k11tw.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+nofiles	ERR Compiler:compiler:COM_ERR_NO_FILES_SPECIFIED | Error: No source files were specified (-? for help).
+nofiles.seconds	0.0
+nofiles.files	
+verbose	ok
+verbose.printed
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\b\src\k11plain.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\verbose\k11v.h".
+  |Generating file "<W>\b\verbose\k11v.c".
+  |Generating file "<W>\b\verbose\k11v.exports".
+  |Generating file "<W>\b\verbose\readme.txt".
+  |Executing command: ""<MATLABROOT>\bin\mbuild"  -client mbuild -O -v -output "k11v" -I"<W>\b\verbose" "<W>\b\verbose\k11v.c"  DEFFILE"=""<W>\b\verbose\k11v.def""" DEFFDELIM"="",""" QUOTEDDEFFILE"="\"\""<W>\b\verbose\k11v.def"\"\""" LINKEXPORT"=""/DLL /def:\"$DEFFILE\"""" LDEXT"="".dll""" LDTYPE"="" -shared -static""" MTCMDLINE"=""mt -outputresource:$EXE;2 -manifest $MANIFEST""" -outdir "<W>\b\verbose""
+  |Verbose mode is on. 
+  |Found installed compiler 'Microsoft Visual C++ 2022 (C)'. 
+  |	Compiler location: C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\ 
+  |	Options file: <MATLABROOT>\bin\win64\mexopts\msvc2022.xml 
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+  |cl /c -MD -Zc:__cplusplus -Zp8 -GR -W3 -EHsc- -Zc:wchar_t- -nologo -O2 -DNDEBUG /DMATLAB_DEFAULT_RELEASE=R2017b  /DUSE_MEX_CMD   /DMSVC /DIBMPC /D_CRT_SECURE_NO_DEPRECATE -I"<W>\b\verbose"  -I"<MATLABROOT>\extern\include" -I"<MATLABROOT>\extern\include\win64" "<W>\b\verbose\k11v.c" /Fo<TEMP>\mex_<N>\k11v.obj 
+  |k11v.c 
+  | 
+  |link /nologo    /DLL /def:"<W>\b\verbose\k11v.def" <TEMP>\mex_<N>\k11v.obj  /MACHINE:AMD64 /LIBPATH:"<MATLABROOT>\extern\lib\win64\microsoft" mclmcrrt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /out:<W>\b\verbose\k11v.dll 
+  |   Creating library <W>\b\verbose\k11v.lib and object <W>\b\verbose\k11v.exp 
+  | 
+  |if exist "<W>\b\verbose\k11v.ilk" del "<W>\b\verbose\k11v.ilk" 
+verbose.seconds	5.9
+verbose.files	buildresult.json | includedSupportPackages.txt | k11v.c | k11v.def | k11v.dll | k11v.exp | k11v.exports | k11v.h | k11v.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+opts.default
+    CSharedLibraryOptions with properties:
+               EmbedArchive: on
+             LibraryVersion: '1.0.0.0'
+              FunctionFiles: {'<W>\b\src\k11plain.m'}
+                 DebugBuild: off
+                LibraryName: 'k11plain'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '.\k11plaincSharedLibrary'
+opts.default.LibraryName	char [1 8] 'k11plain'
+opts.default.OutputDir	char [1 24] '.\k11plaincSharedLibrary'
+opts.default.getName	char [1 8] 'k11plain'
+opts.default.LibraryVersion	char [1 7] '1.0.0.0'
+opts.default.class.EmbedArchive	char [1 28] 'matlab.lang.OnOffSwitchState'
+opts.default.FunctionFiles	cell [1 1] {char [1 138] '<W>\b\src\k11plain.m'}
+api_default.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+api_default.results
+    Results with properties:
+                    BuildType: 'cSharedLibrary'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+api_default.BuildType	cSharedLibrary
+api_default.Files	<OUT>\k11plain.h | <OUT>\k11plain.dll | <OUT>\k11plain.lib | <OUT>\GettingStarted.html
+api_default.Options
+    CSharedLibraryOptions with properties:
+               EmbedArchive: on
+             LibraryVersion: '1.0.0.0'
+              FunctionFiles: {'<W>\b\src\k11plain.m'}
+                 DebugBuild: off
+                LibraryName: 'k11plain'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '.\k11plaincSharedLibrary'
+api_default.seconds	8.4
+api_default.files	GettingStarted.html | buildresult.json | includedSupportPackages.txt | k11plain.c | k11plain.def | k11plain.dll | k11plain.exp | k11plain.exports | k11plain.h | k11plain.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+api_default.gettingstarted	4023 chars, CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <title>Getting Started with the k11plain C Shared Library</title>
+  |        <style type="text/css">
+  |            .rtcContent { padding: 20px; }
+  |            .S0 {padding:0 61px 2px 0; margin-bottom: 16px; border-bottom: 1px solid #cbcbcb; background-position: right 6px; background-repeat: no-repeat; background-size: 58px; color: #c45400; font: normal normal 22px/1.136 Arial,Helvetica,sans-serif; }
+  |            .S1 { margin: 2px 10px 9px 4px; padding: 0px; line-height: 21px; min-height: 0px; white-space: pre-wrap; color: rgb(0, 0, 0); font-family: Arial, Helvetica, sans-serif; font-style: normal; font-size: 13px; font-weight: normal; text-align: left;  }
+  |            .S1 a { width: 100%; padding: 5px 0; color: #0076a8; text-decoration: none; text-indent: 10px; }
+  |            .S1 a:hover { color: #0C54B6; text-decoration: underline; }
+  |            .S2 {padding-top: 5px; margin-bottom: 8px; color: #404040; font: normal bold 17px/1.35 Arial, Helvetica, sans-serif; border-bottom: 1px solid #ccc;}
+  |            .code {padding: 5px; margin: 0 0 5px; border: 1px solid #d3d3d3; background: #f6f6f6;}
+  |        </style>
+  |    </head>
+  |    <body>
+  |        <div class = rtcContent>
+  |            <h1  class = 'S0'><span>Getting Started with the k11plain C Shared Library</span></h1>
+  |                <div  class = 'S1'><span>The Library Compiler in MATLAB&reg; Compiler SDK&trade; creates C shared libraries that can be integrated with applications written in C. You can use this guide to set up your environment and learn about integrating the library into your application.</span></div>
+  |                <div  class = 'S1'><span></span></div>
+  |            <h2  class = 'S2'><span>Location of Installed C Shared Library Files</span></h2>
+  |                <div  class = 'S1'><span><a href=".">View k11plain Files</a></span></div>
+  |                <div  class = 'S1'><span></span></div>
+  |            <h2  class = 'S2'><span>Prerequisites</span></h2>
+  |                <div  class = 'S1'><span>1. <a href="https://www.mathworks.com/help/compiler/install-the-matlab-runtime.html">Install and Configure the MATLAB Runtime</a></span></div>
+  |                <div  class = 'S1'><span> Complete this step only if you have not installed the MATLAB Runtime while installing the library. </span></div>
+  |                <div  class = 'S1'><span>2. Verify that you have a C compiler installed.</span></div>
+  |                <div  class = 'S1'><span> You can use the mbuild command within MATLAB to verify whether you have a C compiler installed. For more information, see <a href="https://www.mathworks.com/help/compiler_sdk/ml_code/mbuild.html">mbuild</a>.</span></div>
+  |                <div  class = 'S1'><span></span></div>
+  |            <h2  class = 'S2'><span>Compiling C Driver Applications</span></h2>
+  |                <div  class = 'S1'><span>At the system terminal, type:</span></div>
+  |                <div  class = 'code'><pre>mbuild driverApplication.c k11plain.lib</pre></div>
+  |                <div  class = 'S1'><span><a href="https://www.mathworks.com/help/compiler_sdk/ml_code/mbuild.html">Learn more about mbuild</a></span></div>
+  |                <div  class = 'S1'><span></span></div>
+  |            <h2  class = 'S2'><span>Executing C Driver Applications</span></h2>
+  |                <div  class = 'S1'><span>At the system terminal, type:</span></div>
+  |                <div  class = 'code'><pre>driverApplication.exe</pre></div>
+  |                <div  class = 'S1'><span></span></div>
+  |            <h2  class = 'S2'><span>Additional Resources</span></h2>
+  |                <div  class = 'S1'><span><a href="https://www.mathworks.com/help/compiler_sdk/C_shared_libraries.html">C Shared Library Integration</a></span></div>
+  |                <div  class = 'S1'><span></span></div>
+  |                <div  class = 'S1'><span><a href="https://www.mathworks.com/help/matlab/apiref/mxarray.html">C mxArray API</a></span></div>
+  |                <div  class = 'S1'><span></span></div>
+  |        </div>
+  |    <br>
+  |    </body>
+  |</html>
+api_default.readme	1402 chars, CRLF 49, ends with newline 1
+  |k11plain C Shared Library
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that MATLAB Runtime(R2025b) is installed.   
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |  
+  |    >>mcrinstaller
+  |      
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer. 
+  |
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b 
+  |from the following link on the MathWorks website:
+  |
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |   
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see 
+  |"Distribute Applications" in the MATLAB Compiler SDK documentation  
+  |in the MathWorks Documentation Center.
+  |
+  |2. Files to Deploy and Package
+  |
+  |
+  |Files to Package
+  |================
+  |-k11plain.dll
+  |-k11plain.h
+  |-k11plain.lib
+  |-MCRInstaller.exe 
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your 
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file
+  |
+  |
+  |3. Definitions
+  |
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+  |
+  |
+  |
+  |
+opts.named
+    CSharedLibraryOptions with properties:
+               EmbedArchive: on
+             LibraryVersion: '3.1'
+              FunctionFiles: {2×1 cell}
+                 DebugBuild: off
+                LibraryName: 'K11Named'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: on
+                  OutputDir: '<W>\b\api_named'
+api_named.printed
+  |mcc -W 'lib:K11Named,version=3.1' -T link:lib -d <W>\b\api_named -v -Z autodetect <W>\b\src\k11plain.m <W>\b\src\k11Mixed.m
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\b\src\k11plain.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k11Mixed.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\api_named\K11Named.h".
+  |Generating file "<W>\b\api_named\K11Named.c".
+  |Generating file "<W>\b\api_named\K11Named.exports".
+  |Generating file "<W>\b\api_named\readme.txt".
+  |Executing command: ""<MATLABROOT>\bin\mbuild"  -client mbuild -O -v -output "K11Named" -I"<W>\b\api_named" "<W>\b\api_named\K11Named.c"  DEFFILE"=""<W>\b\api_named\K11Named.def""" DEFFDELIM"="",""" QUOTEDDEFFILE"="\"\""<W>\b\api_named\K11Named.def"\"\""" LINKEXPORT"=""/DLL /def:\"$DEFFILE\"""" LDEXT"="".dll""" LDTYPE"="" -shared -static""" MTCMDLINE"=""mt -outputresource:$EXE;2 -manifest $MANIFEST""" -outdir "<W>\b\api_named""
+  |Verbose mode is on. 
+  |Found installed compiler 'Microsoft Visual C++ 2022 (C)'. 
+  |	Compiler location: C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\ 
+  |	Options file: <MATLABROOT>\bin\win64\mexopts\msvc2022.xml 
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+  |cl /c -MD -Zc:__cplusplus -Zp8 -GR -W3 -EHsc- -Zc:wchar_t- -nologo -O2 -DNDEBUG /DMATLAB_DEFAULT_RELEASE=R2017b  /DUSE_MEX_CMD   /DMSVC /DIBMPC /D_CRT_SECURE_NO_DEPRECATE -I"<W>\b\api_named"  -I"<MATLABROOT>\extern\include" -I"<MATLABROOT>\extern\include\win64" "<W>\b\api_named\K11Named.c" /Fo<TEMP>\mex_<N>\K11Named.obj 
+  |K11Named.c 
+  | 
+  |link /nologo    /DLL /def:"<W>\b\api_named\K11Named.def" <TEMP>\mex_<N>\K11Named.obj  /MACHINE:AMD64 /LIBPATH:"<MATLABROOT>\extern\lib\win64\microsoft" mclmcrrt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /out:<W>\b\api_named\K11Named.dll 
+  |   Creating library <W>\b\api_named\K11Named.lib and object <W>\b\api_named\K11Named.exp 
+  | 
+  |if exist "<W>\b\api_named\K11Named.ilk" del "<W>\b\api_named\K11Named.ilk" 
+api_named.results
+    Results with properties:
+                    BuildType: 'cSharedLibrary'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+api_named.BuildType	cSharedLibrary
+api_named.Files	<OUT>\K11Named.h | <OUT>\K11Named.dll | <OUT>\K11Named.lib | <OUT>\GettingStarted.html
+api_named.Options
+    CSharedLibraryOptions with properties:
+               EmbedArchive: on
+             LibraryVersion: '3.1'
+              FunctionFiles: {2×1 cell}
+                 DebugBuild: off
+                LibraryName: 'K11Named'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: on
+                  OutputDir: '<W>\b\api_named'
+api_named.seconds	6.4
+api_named.files	GettingStarted.html | K11Named.c | K11Named.def | K11Named.dll | K11Named.exp | K11Named.exports | K11Named.h | K11Named.lib | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+api_separate.printed
+  |mcc -W 'lib:K11Sep,version=1.0.0.0' -T link:lib -d <W>\b\api_separate -v -Z autodetect -g -C <W>\b\src\k11plain.m
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\b\src\k11plain.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\api_separate\K11Sep.h".
+  |Generating file "<W>\b\api_separate\K11Sep.c".
+  |Generating file "<W>\b\api_separate\K11Sep.exports".
+  |Generating file "<W>\b\api_separate\readme.txt".
+  |Executing command: ""<MATLABROOT>\bin\mbuild"  -client mbuild -g -v -output "K11Sep" -I"<W>\b\api_separate" "<W>\b\api_separate\K11Sep.c"  DEFFILE"=""<W>\b\api_separate\K11Sep.def""" DEFFDELIM"="",""" QUOTEDDEFFILE"="\"\""<W>\b\api_separate\K11Sep.def"\"\""" LINKEXPORT"=""/DLL /def:\"$DEFFILE\"""" LDEXT"="".dll""" LDTYPE"="" -shared -static""" MTCMDLINE"=""mt -outputresource:$EXE;2 -manifest $MANIFEST""" -outdir "<W>\b\api_separate""
+  |Verbose mode is on. 
+  |Found installed compiler 'Microsoft Visual C++ 2022 (C)'. 
+  |	Compiler location: C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\ 
+  |	Options file: <MATLABROOT>\bin\win64\mexopts\msvc2022.xml 
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+  |cl /c -MD -Zc:__cplusplus -Zp8 -GR -W3 -EHsc- -Zc:wchar_t- -nologo /Z7 /DMATLAB_DEFAULT_RELEASE=R2017b  /DUSE_MEX_CMD   /DMSVC /DIBMPC /D_CRT_SECURE_NO_DEPRECATE -I"<W>\b\api_separate"  -I"<MATLABROOT>\extern\include" -I"<MATLABROOT>\extern\include\win64" "<W>\b\api_separate\K11Sep.c" /Fo<TEMP>\mex_<N>\K11Sep.obj 
+  |K11Sep.c 
+  | 
+  |link /nologo   /debug /PDB:"<W>\b\api_separate\K11Sep.pdb" /DLL /def:"<W>\b\api_separate\K11Sep.def" <TEMP>\mex_<N>\K11Sep.obj  /MACHINE:AMD64 /LIBPATH:"<MATLABROOT>\extern\lib\win64\microsoft" mclmcrrt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /out:<W>\b\api_separate\K11Sep.dll 
+  |   Creating library <W>\b\api_separate\K11Sep.lib and object <W>\b\api_separate\K11Sep.exp 
+  | 
+  |if exist "<W>\b\api_separate\K11Sep.ilk" del "<W>\b\api_separate\K11Sep.ilk" 
+api_separate.results
+    Results with properties:
+                    BuildType: 'cSharedLibrary'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+api_separate.BuildType	cSharedLibrary
+api_separate.Files	<OUT>\K11Sep.h | <OUT>\K11Sep.dll | <OUT>\K11Sep.lib | <OUT>\GettingStarted.html
+api_separate.Options
+    CSharedLibraryOptions with properties:
+               EmbedArchive: off
+             LibraryVersion: '1.0.0.0'
+              FunctionFiles: {'<W>\b\src\k11plain.m'}
+                 DebugBuild: on
+                LibraryName: 'K11Sep'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: on
+                  OutputDir: '<W>\b\api_separate'
+api_separate.seconds	6.4
+api_separate.files	GettingStarted.html | K11Sep.c | K11Sep.ctf | K11Sep.def | K11Sep.dll | K11Sep.exp | K11Sep.exports | K11Sep.h | K11Sep.lib | K11Sep.pdb | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+api_files.printed
+  |mcc -W 'lib:k11plain,version=1.0.0.0' -T link:lib -d <W>\b\api_files -v -X -a <W>\b\src\k11sub.m -Z none <W>\b\src\k11plain.m
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\b\src\k11plain.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\api_files\k11plain.h".
+  |Generating file "<W>\b\api_files\k11plain.c".
+  |Generating file "<W>\b\api_files\k11plain.exports".
+  |Generating file "<W>\b\api_files\readme.txt".
+  |Executing command: ""<MATLABROOT>\bin\mbuild"  -client mbuild -O -v -output "k11plain" -I"<W>\b\api_files" "<W>\b\api_files\k11plain.c"  DEFFILE"=""<W>\b\api_files\k11plain.def""" DEFFDELIM"="",""" QUOTEDDEFFILE"="\"\""<W>\b\api_files\k11plain.def"\"\""" LINKEXPORT"=""/DLL /def:\"$DEFFILE\"""" LDEXT"="".dll""" LDTYPE"="" -shared -static""" MTCMDLINE"=""mt -outputresource:$EXE;2 -manifest $MANIFEST""" -outdir "<W>\b\api_files""
+  |Verbose mode is on. 
+  |Found installed compiler 'Microsoft Visual C++ 2022 (C)'. 
+  |	Compiler location: C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\ 
+  |	Options file: <MATLABROOT>\bin\win64\mexopts\msvc2022.xml 
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+  |cl /c -MD -Zc:__cplusplus -Zp8 -GR -W3 -EHsc- -Zc:wchar_t- -nologo -O2 -DNDEBUG /DMATLAB_DEFAULT_RELEASE=R2017b  /DUSE_MEX_CMD   /DMSVC /DIBMPC /D_CRT_SECURE_NO_DEPRECATE -I"<W>\b\api_files"  -I"<MATLABROOT>\extern\include" -I"<MATLABROOT>\extern\include\win64" "<W>\b\api_files\k11plain.c" /Fo<TEMP>\mex_<N>\k11plain.obj 
+  |k11plain.c 
+  | 
+  |link /nologo    /DLL /def:"<W>\b\api_files\k11plain.def" <TEMP>\mex_<N>\k11plain.obj  /MACHINE:AMD64 /LIBPATH:"<MATLABROOT>\extern\lib\win64\microsoft" mclmcrrt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /out:<W>\b\api_files\k11plain.dll 
+  |   Creating library <W>\b\api_files\k11plain.lib and object <W>\b\api_files\k11plain.exp 
+  | 
+  |if exist "<W>\b\api_files\k11plain.ilk" del "<W>\b\api_files\k11plain.ilk" 
+api_files.results
+    Results with properties:
+                    BuildType: 'cSharedLibrary'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+api_files.BuildType	cSharedLibrary
+api_files.Files	<OUT>\k11plain.h | <OUT>\k11plain.dll | <OUT>\k11plain.lib | <OUT>\GettingStarted.html
+api_files.Options
+    CSharedLibraryOptions with properties:
+               EmbedArchive: on
+             LibraryVersion: '1.0.0.0'
+              FunctionFiles: {'<W>\b\src\k11plain.m'}
+                 DebugBuild: off
+                LibraryName: 'k11plain'
+            AdditionalFiles: {'<W>\b\src\k11sub.m'}
+        AutoDetectDataFiles: off
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'none'}
+                    Verbose: on
+                  OutputDir: '<W>\b\api_files'
+api_files.seconds	6.5
+api_files.files	GettingStarted.html | buildresult.json | includedSupportPackages.txt | k11plain.c | k11plain.def | k11plain.dll | k11plain.exp | k11plain.exports | k11plain.h | k11plain.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+api_pfile.printed
+  |Building with 'Microsoft Visual C++ 2022 (C)'. 
+api_pfile.results
+    Results with properties:
+                    BuildType: 'cSharedLibrary'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+api_pfile.BuildType	cSharedLibrary
+api_pfile.Files	<OUT>\k11plain.h | <OUT>\k11plain.dll | <OUT>\k11plain.lib | <OUT>\GettingStarted.html
+api_pfile.Options
+    CSharedLibraryOptions with properties:
+               EmbedArchive: on
+             LibraryVersion: '1.0.0.0'
+              FunctionFiles: {'<W>\b\pfile\k11plain.p'}
+                 DebugBuild: off
+                LibraryName: 'k11plain'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\api_pfile'
+api_pfile.seconds	5.7
+api_pfile.files	GettingStarted.html | buildresult.json | includedSupportPackages.txt | k11plain.c | k11plain.def | k11plain.dll | k11plain.exp | k11plain.exports | k11plain.h | k11plain.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+opts.none	ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+opts.missing	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / k11nosuch.m
+opts.txt	ERR Compiler:clishared:badExtension | Expected 'FunctionFiles' to have one of the following extensions: /  / .mexw64 / .mlapp / .mlx / .p / .m
+opts.number	ERR MATLAB:invalidType | Expected FunctionFiles to be one of these types: /  / char, string, cell /  / Instead its type was double.
+opts.emptycell	ERR MATLAB:expectedNonempty | Expected FunctionFiles to be nonempty.
+opts.unknown.nv	ERR MATLAB:InputParser:UnmatchedParameter | 'Nonsense' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+opts.partial.nv	char [1 1] 'P'
+opts.ambiguous.nv	ERR MATLAB:InputParser:AmbiguousParameter | 'Library' matches multiple parameter names: 'LibraryName', 'LibraryVersion'. To avoid ambiguity, specify the complete name of the parameter.
+opts.odd.nv	ERR MATLAB:InputParser:ParamMissingValue | No value was given for 'LibraryName'. Name-value pair arguments require a name followed by a value.
+opts.cell.LibraryName	char [1 8] 'k11Mixed'
+opts.string.FunctionFiles	cell [1 1] {char [1 138] '<W>\b\src\k11plain.m'}
+opts.pfile	char [1 8] 'k11plain'
+opts.script	char [1 9] 'k11script'
+set.LibraryName.char [1 4] 'k11x'	char [1 4] 'k11x'
+set.LibraryName.char [0 0] ''	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.LibraryName.char [1 3] 'a b'	char [1 3] 'a b'
+set.LibraryName.char [1 4] '1abc'	char [1 4] '1abc'
+set.LibraryName.char [1 3] 'a-b'	char [1 3] 'a-b'
+set.LibraryName.double [1 1] 5	ERR MATLAB:invalidType | Expected LibraryName to be one of these types: /  / char, string /  / Instead its type was double.
+set.LibraryName.string [1 1] [str]	char [1 3] 'str'
+set.LibraryName.char [1 3] 'a/b'	ERR Compiler:clishared:badProperty | Invalid 'LibraryName': 'a/b'
+set.LibraryName.char [1 3] 'a.b'	char [1 3] 'a.b'
+set.LibraryName.char [1 3] 'a:b'	ERR Compiler:clishared:badProperty | Invalid 'LibraryName': 'a:b'
+set.LibraryVersion.char [1 3] '2.0'	char [1 3] '2.0'
+set.LibraryVersion.char [0 0] ''	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.LibraryVersion.double [1 1] 5	ERR MATLAB:invalidType | Expected LibraryVersion to be one of these types: /  / char, string /  / Instead its type was double.
+set.LibraryVersion.char [1 3] 'abc'	char [1 3] 'abc'
+set.LibraryVersion.string [1 1] [3.1.4]	char [1 5] '3.1.4'
+set.EmbedArchive.char [1 3] 'off'	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.off
+set.EmbedArchive.char [1 5] 'maybe'	ERR MATLAB:validation:UnableToConvert | Error setting property 'EmbedArchive' of class 'compiler.build.CSharedLibraryOptions'. 'maybe' is invalid. Value must be 'off' or 'on'.
+set.EmbedArchive.double [1 1] 0	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.off
+set.DebugBuild.char [1 2] 'on'	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.on
+set.DebugBuild.double [1 1] 2	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.on
+set.FunctionFiles.char [1 138] '<W>\b\src\k11Mixed.m'	cell [1 1] {char [1 138] '<W>\b\src\k11Mixed.m'}
+set.FunctionFiles.char [1 11] 'k11nosuch.m'	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / k11nosuch.m
+set.FunctionFiles.char [1 77] '<REPO>\tools\matlab-checklist\compiler-probes\README.md'	ERR Compiler:clishared:badExtension | Expected 'FunctionFiles' to have one of the following extensions: /  / .mexw64 / .mlapp / .mlx / .p / .m
+set.FunctionFiles.cell [0 0] {}	ERR MATLAB:expectedNonempty | Expected FunctionFiles to be nonempty.
+set.FunctionFiles.double [1 1] 5	ERR MATLAB:invalidType | Expected FunctionFiles to be one of these types: /  / char, string, cell /  / Instead its type was double.
+set.FunctionFiles.cell [1 2] {char [1 138] '<W>\b\src\k11plain.m'; char [1 138] '<W>\b\src\k11Mixed.m'}	cell [2 1] {char [1 138] '<W>\b\src\k11plain.m'; char [1 138] '<W>\b\src\k11Mixed.m'}
+set.OutputDir.char [1 6] 'out<1>'	ERR Compiler:clishared:badProperty | Invalid 'OutputDir': 'out<1>'
+set.OutputDir.char [1 6] 'k11out'	char [1 134] '<W>\b\src\k11out'
+set.Verbose.char [1 2] 'on'	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.on
+set.SupportPackages.char [1 4] 'none'	cell [1 1] {char [1 4] 'none'}
+set.AdditionalFiles.char [1 13] 'k11nosuch.txt'	ERR Compiler:utils:shared:cannotFindFileOrFolder | Cannot find file or folder: /  / k11nosuch.txt
+api.wrong.options	ERR Compiler:clishared:wrongOptionsObject | 'compiler.build.StandaloneApplicationOptions' is not a valid options object for this function. Use 'compiler.build.CSharedLibraryOptions' instead.
+api.no.args	ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+api.nargout2	ERR MATLAB:TooManyOutputs | Too many output arguments.
+api.opts.extra	ERR MATLAB:narginchk:tooManyInputs | Too many input arguments.
+api.badname	ERR Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME | Illegal output name: 'a b'  /  (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')
