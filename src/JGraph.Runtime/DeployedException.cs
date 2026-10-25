@@ -20,6 +20,9 @@ public sealed class DeployedException : Exception
         Report = report;
     }
 
+    /// <summary>The messages of the causes the MException carried, in order (stage K8: R2025b's .NET error lists them).</summary>
+    public IReadOnlyList<string> Causes { get; init; } = [];
+
     /// <summary>The MException's identifier, empty when it had none.</summary>
     public string Identifier { get; }
 

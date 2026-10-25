@@ -1641,6 +1641,7 @@ internal sealed class JgsValue
                     ? $"[{held.Rows}×{held.Cols} {held.ObjectClass.Name}]" // an array of objects inside one (open item 116)
                     : $"[1×1 {held.AsObject.Class.Name}]"
                 : held.Type == JgsType.String ? "'" + Truncate(held.AsString) + "'" // a char row, as R2025b shows one
+                : held.AsExternalOrNull() is OnOffSwitchStateValue { States.Length: 1 } state ? (state.AllOn ? "on" : "off") // k8_build: DebugBuild: off
                 : Summary(held) ?? Truncate(held.Display());
             sb.Append("\n    ").Append(property.Spec.Name).Append(": ").Append(shown);
         }
@@ -1648,6 +1649,17 @@ internal sealed class JgsValue
         if (component)
         {
             sb.Append("\n\n  Show all properties");
+        }
+
+        // R2025b's options for a library add the class map as a group of its own (k8_build: main.options).
+        if (instance.Class.Name == JgsBuiltinClasses.DotNetOptions)
+        {
+            sb.Append("\n\n   Class Map Information");
+            foreach ((string cls, IReadOnlyList<string> files) in JgsBuiltins.ClassMapEntries(instance.Fields["ClassMap"]))
+            {
+                sb.Append("\n    ").Append(cls).Append(": ")
+                    .Append(files.Count == 1 ? "{'" + Truncate(files[0]) + "'}" : "{" + files.Count + "×1 cell}");
+            }
         }
 
         return sb.ToString();
@@ -1662,6 +1674,11 @@ internal sealed class JgsValue
     {
         int[] dims = held.Type is JgsType.Cell or JgsType.Struct or JgsType.Table ? JgsBuiltins.SizeDims(held) : [];
         string size = string.Join("×", dims);
+        if (JgsBuiltins.IsKeyedCollection(held) && held.ClassName == JgsBuiltins.MapClassName)
+        {
+            return "[" + held.AsStruct["keys"].AsCell.Length + "×1 containers.Map]"; // a map's size is its count by 1 (k8_build)
+        }
+
         return held.Type switch
         {
             JgsType.Cell when dims is [0, 0] => "{}",

@@ -72,7 +72,12 @@ $anchors = @(
 
     # mcc from a command prompt and mcc -B's bundles (stage K7, ADR 0263).
     "jgmcc.cmd",
-    "toolbox\compiler\bundles\csharedlib"
+    "toolbox\compiler\bundles\csharedlib",
+
+    # mcc -W dotnet (stage K8, ADR 0264): the MWArray API a client references, and .NET 8's
+    # reference assemblies the generated classes compile against where no .NET SDK is installed.
+    "JGraph.MATLAB.NET.Arrays.dll",
+    "toolbox\dotnetbuilder\ref\net8.0\System.Runtime.dll"
 )
 foreach ($anchor in $anchors) {
     if (-not (Test-Path (Join-Path $staging $anchor))) {

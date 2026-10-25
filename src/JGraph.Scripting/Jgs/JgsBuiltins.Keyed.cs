@@ -585,10 +585,30 @@ internal static partial class JgsBuiltins
             fields["ValueType"] = JgsValue.Str(ValueKind(value)); // the first entry settles the kind
         }
 
-        fields["keys"] = JgsValue.Cell([.. KeyCell(map), storedKey]);
-        ReplaceValueCell(map, fields, JgsValue.Cell([.. ValueCell(map), value]));
+        // A containers.Map keeps its keys sorted, so keys and values answer in that order (stage K8:
+        // R2025b's keys(m) is 'Alpha Zeta' after m('Zeta') then m('Alpha')); a dictionary keeps the order of insertion.
+        JgsValue[] held = KeyCell(map);
+        int place = held.Length;
+        if (map.ClassName == MapClassName)
+        {
+            place = 0;
+            while (place < held.Length && CompareKeys(held[place], storedKey) < 0)
+            {
+                place++;
+            }
+        }
+
+        fields["keys"] = JgsValue.Cell([.. held[..place], storedKey, .. held[place..]]);
+        JgsValue[] values = ValueCell(map);
+        ReplaceValueCell(map, fields, JgsValue.Cell([.. values[..place], value, .. values[place..]]));
         fields["Count"] = CountOf(KeyCell(map).Length);
     }
+
+    /// <summary>A Map's key order: text by its characters' codes, numbers by value.</summary>
+    private static int CompareKeys(JgsValue a, JgsValue b) =>
+        IsTextScalar(a) && IsTextScalar(b) ? string.CompareOrdinal(TextOf(a), TextOf(b))
+        : !IsTextScalar(a) && !IsTextScalar(b) ? a.AsNumber.CompareTo(b.AsNumber)
+        : 0;
 
     /// <summary>
     /// Puts a rebuilt value cell into the collection (V10, ADR 0171): the old cell's hold on its

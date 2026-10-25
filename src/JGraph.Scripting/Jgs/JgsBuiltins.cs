@@ -6029,6 +6029,43 @@ internal static partial class JgsBuiltins
     private static List<DirectoryEntry> DirectoryEntries(
         JGraphScriptGlobals host, string name, string query, int line, int col)
     {
+        // A ** folder is every folder below its parent and the parent itself, each listed by the rest
+        // of the pattern in turn, parent first and then down the tree in name order (open item 188;
+        // K7's and K8's probes list a build's files with fullfile(d, '**', '*')).
+        string[] segments = query.Replace('\\', '/').Split('/');
+        int deep = Array.IndexOf(segments, "**");
+        if (deep >= 0)
+        {
+            string root = ResolveFolder(host, string.Join('/', segments[..deep]));
+            string rest = string.Join('/', segments[(deep + 1)..]);
+            var all = new List<DirectoryEntry>();
+            void Walk(string folder)
+            {
+                all.AddRange(DirectoryEntries(host, name, Path.Combine(folder, rest.Length == 0 ? "*" : rest), line, col));
+                IEnumerable<string> below;
+                try
+                {
+                    below = Directory.EnumerateDirectories(folder).Order(StringComparer.Ordinal).ToList();
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                {
+                    return;
+                }
+
+                foreach (string sub in below)
+                {
+                    Walk(sub);
+                }
+            }
+
+            if (Directory.Exists(root))
+            {
+                Walk(root);
+            }
+
+            return all;
+        }
+
         string directory;
         string pattern;
         string leaf = Path.GetFileName(query);

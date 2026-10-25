@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Stage K8's client of a K8 .NET assembly. record-k8.ps1 builds it with -p:K8Out=<the folder
+       probe_k8_build wrote> against R2025b's MWArray.dll; run-k8.ps1 builds a copy whose using lines
+       name JGraph's namespaces, with -p:JGraph=true, -p:K8Out=<JGraph's build> and -p:JGraphArrays=<its dll>. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <PlatformTarget>x64</PlatformTarget>
+    <CETCompat>false</CETCompat>
+    <MatlabRoot Condition="'$(MatlabRoot)' == ''">C:\Program Files\MATLAB\R2025b</MatlabRoot>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(JGraph)' != 'true'">
+    <Reference Include="MWArray">
+      <HintPath>$(MatlabRoot)\toolbox\dotnetbuilder\bin\win64\netstandard2.0\MWArray.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(JGraph)' == 'true'">
+    <Reference Include="JGraph.MATLAB.NET.Arrays">
+      <HintPath>$(JGraphArrays)</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="K8">
+      <HintPath>$(K8Out)\K8.dll</HintPath>
+    </Reference>
+    <Reference Include="K8Native">
+      <HintPath>$(K8Out)\K8Native.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

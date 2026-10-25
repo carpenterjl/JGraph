@@ -17,6 +17,8 @@
     <InternalsVisibleTo Include="JGraph.Tests" />
     <!-- The window host (stage K5) implements IRuntimeDesktop and is found by name at run time. -->
     <InternalsVisibleTo Include="JGraph.Runtime.Desktop" />
+    <!-- The MWArray API (stage K8) reads a component's signatures and the runtime's options. -->
+    <InternalsVisibleTo Include="JGraph.MATLAB.NET.Arrays" />
   </ItemGroup>
 
   <ItemGroup>

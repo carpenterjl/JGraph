@@ -26,6 +26,7 @@ public enum RuntimeLocationSource
 /// <item><term><c>include</c></term><description>The C and C++ headers (stages K11, K12).</description></item>
 /// <item><term><c>python</c></term><description>The <c>matlab</c> array module and the package runtime (stage K13).</description></item>
 /// <item><term><c>launchers\win64</c></term><description>The console and windowed launcher templates <c>mcc -m</c> and <c>-e</c> copy (stage K6).</description></item>
+/// <item><term><c>toolbox\dotnetbuilder\bin\win64\net8.0</c></term><description>The MWArray API alone, as a .NET client references it (stage K8), where R2025b keeps MWArray.dll.</description></item>
 /// </list>
 /// It lives with the build side (moved from <c>JGraph.Runtime</c> in stage K6): a build looks here
 /// for the runtime a program carries with it, and the runtime looks here for itself.

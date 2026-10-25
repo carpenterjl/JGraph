@@ -19,7 +19,7 @@ internal static partial class JgsBuiltins
     internal static IReadOnlyList<string> CompilerBuiltinNames { get; } =
     [
         "mcc", "compiler.build.standaloneApplication", "compiler.build.standaloneWindowsApplication",
-        "compiler.build.StandaloneApplicationOptions",
+        "compiler.build.StandaloneApplicationOptions", "compiler.build.dotNETAssembly", "compiler.build.DotNETAssemblyOptions",
     ];
 
     /// <summary>The functions whose use makes mcc warn that secrets come from the machine the program runs on.</summary>
@@ -111,7 +111,7 @@ internal static partial class JgsBuiltins
         // The main and any other file named: as written, or by name on the path; a file named twice
         // warned about and taken once, and anything but code refused without -a (k7_switches).
         var roots = new List<string>();
-        foreach (string given in command.Files)
+        string? AddRoot(string given)
         {
             string? found = DependencyRoot(given, interpreter, host);
             if (found is null || !File.Exists(found))
@@ -146,10 +146,51 @@ internal static partial class JgsBuiltins
             if (roots.Contains(found, StringComparer.OrdinalIgnoreCase))
             {
                 McWarn("Compiler:compiler:COM_WARN_REPEATED_FILE", $"The file \"{found}\" was repeated on the command line.\n");
-                continue;
+                return null;
             }
 
             roots.Add(found);
+            return found;
+        }
+
+        // A .NET assembly's classes (stage K8): the -W class takes the files named alone, and each
+        // class{Name:file,...} its own, a class named twice taking both lists (k8_build: mcc_classes).
+        var classes = new List<(string Name, List<string> Files)>();
+        List<string> ClassFiles(string name)
+        {
+            int at = classes.FindIndex(c => c.Name == name);
+            if (at < 0)
+            {
+                classes.Add((name, []));
+                at = classes.Count - 1;
+            }
+
+            return classes[at].Files;
+        }
+
+        foreach (string given in command.Files)
+        {
+            if (AddRoot(given) is { } root && command.DotNet is { } wrapper)
+            {
+                ClassFiles(wrapper.ClassName).Add(root);
+            }
+        }
+
+        if (command.DotNet is { } dotNet)
+        {
+            // The -W class is made even with no file of its own (k8_build: mcc_classonly has First.cs).
+            _ = ClassFiles(dotNet.ClassName);
+
+            foreach ((string name, List<string> given) in command.Classes)
+            {
+                foreach (string file in given)
+                {
+                    if (AddRoot(file) is { } root)
+                    {
+                        ClassFiles(name).Add(root);
+                    }
+                }
+            }
         }
 
         // The ignored switches are warned about once the files are found (k7_switches: M_end warned of nothing).
@@ -160,7 +201,7 @@ internal static partial class JgsBuiltins
 
         // A startup.m beside the main is compiled in with it, and runs before it (K0's startup, k7_switches' w_start).
         string startup = Path.Combine(Path.GetDirectoryName(roots[0])!, "startup.m");
-        if (File.Exists(startup) && !roots.Contains(startup, StringComparer.OrdinalIgnoreCase))
+        if (command.Target != MccTarget.DotNet && File.Exists(startup) && !roots.Contains(startup, StringComparer.OrdinalIgnoreCase))
         {
             roots.Add(startup);
         }
@@ -192,7 +233,7 @@ internal static partial class JgsBuiltins
             additional.Add(path);
         }
 
-        string component = command.ComponentName ?? Path.GetFileNameWithoutExtension(main);
+        string component = command.DotNet?.ShortName ?? command.ComponentName ?? Path.GetFileNameWithoutExtension(main);
         string program = command.OutputName ?? Path.GetFileNameWithoutExtension(main);
         if (!MccCommandLine.IsOutputName(program))
         {
@@ -252,6 +293,11 @@ internal static partial class JgsBuiltins
             McWarn("Compiler:compiler:COM_WARN_CONFIG_SECRETS_FOR_DESKTOP",
                 $"Your app reads secret keys with '{secret}'. A JGraph program reads each one from the environment variable of the same name "
                 + "on the computer it runs on: set those variables there. JGraph's mcc does not embed secrets in the archive (-J).\n");
+        }
+
+        if (command.DotNet is { } assembly)
+        {
+            return DotNetBuild(command, assembly, classes, main, report, folder, here, words, line, col, host);
         }
 
         CtfBuild build = CtfLayout.FromReport(component, main, report, rootFolder: here) with
@@ -336,5 +382,116 @@ internal static partial class JgsBuiltins
         }
 
         return new MccBuild(files, manifest.Uuid);
+    }
+
+    /// <summary>
+    /// <c>-W dotnet:</c> (stage K8): the archive with every class's functions public, and the assembly
+    /// <see cref="DotNetAssembly"/> writes, each function's inputs, outputs and help line read from its file.
+    /// </summary>
+    private static MccBuild DotNetBuild(MccCommandLine command, DotNetWrapper wrapper, List<(string Name, List<string> Files)> classes,
+        string main, DependencyReport report, string folder, string here, IReadOnlyList<string> words, int line, int col, JGraphScriptGlobals host)
+    {
+        var dotNetClasses = classes.Select(c => new DotNetClass(c.Name, [.. c.Files.Select(DotNetFunctionOf)])).ToList();
+        CtfBuild build = CtfLayout.FromReport(wrapper.ShortName, main, report, rootFolder: here) with
+        {
+            TargetType = CtfTargetType.DotNetAssembly,
+            RuntimeOptions = command.RuntimeOptions,
+            MainFunction = null,
+            PublicFunctions =
+            [
+                .. dotNetClasses.SelectMany(static c => c.Functions).Select(f =>
+                    new CtfFunction(f.Name, CtfLayout.ArchivePath(f.File, here, wrapper.ShortName), f.Inputs, f.Outputs)),
+            ],
+        };
+        if (command.PCode)
+        {
+            build = JgsPcode.PcodeBuild(build);
+        }
+
+        var options = new DotNetAssemblyOptions
+        {
+            OutputFolder = folder,
+            Wrapper = wrapper,
+            Classes = dotNetClasses,
+            Version = command.Version,
+            EmbedArchive = !command.SeparateArchive,
+            Debug = command.DebugBuild,
+            MccArguments = words,
+        };
+        if (command.Verbose)
+        {
+            foreach (DotNetClass cls in dotNetClasses)
+            {
+                host.WriteOut($"Generating file \"{Path.Combine(folder, cls.Name + "Native.cs")}\".\n");
+            }
+
+            foreach (DotNetClass cls in dotNetClasses)
+            {
+                host.WriteOut($"Generating file \"{Path.Combine(folder, cls.Name + ".cs")}\".\n");
+            }
+
+            host.WriteOut($"Generating file \"{Path.Combine(folder, "readme.txt")}\".\n");
+        }
+
+        IReadOnlyList<string> files;
+        CtfManifest manifest;
+        try
+        {
+            (files, manifest) = DotNetAssembly.Write(build, options);
+        }
+        catch (MccException refused)
+        {
+            throw new JgsRuntimeException(line, col, refused.Identifier, refused.Message);
+        }
+        catch (Exception ex) when (ex is FileNotFoundException or IOException or UnauthorizedAccessException)
+        {
+            throw new JgsRuntimeException(line, col, "JGraph:mcc:buildFailed", $"The assembly could not be written: {ex.Message}");
+        }
+
+        BuildLogs.WriteAll(folder, report, file => CtfLayout.ArchivePath(file, here, wrapper.ShortName).Replace('/', '\\'));
+        return new MccBuild(files, manifest.Uuid);
+    }
+
+    /// <summary>A function file's name, inputs, outputs and help line, as the generated classes declare and document it.</summary>
+    private static DotNetFunction DotNetFunctionOf(string file)
+    {
+        string text = File.ReadAllText(file);
+        string name = Path.GetFileNameWithoutExtension(file);
+        IReadOnlyList<string> inputs = [];
+        IReadOnlyList<string> outputs = [];
+        try
+        {
+            if (Parser.Parse(text, file, JgsDialect.Matlab).OfType<FnStmt>().FirstOrDefault() is { } declared)
+            {
+                inputs = declared.Parameters;
+                outputs = declared.Outputs;
+            }
+        }
+        catch (JgsException)
+        {
+            // A file that does not parse is refused when it is called; its methods take no arguments.
+        }
+
+        // The help's first line: the first comment after the declaration, its % and blanks dropped.
+        string h1 = string.Empty;
+        bool declaration = false;
+        foreach (string raw in text.Split('\n'))
+        {
+            string trimmed = raw.Trim();
+            if (!declaration)
+            {
+                declaration = trimmed.StartsWith("function", StringComparison.Ordinal);
+                continue;
+            }
+
+            if (trimmed.StartsWith('%'))
+            {
+                h1 = trimmed.TrimStart('%').Trim();
+            }
+
+            break;
+        }
+
+        return new DotNetFunction(name, inputs, outputs, h1, file);
     }
 }

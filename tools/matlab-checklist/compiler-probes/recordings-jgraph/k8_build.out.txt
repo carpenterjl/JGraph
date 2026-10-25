@@ -1,0 +1,317 @@
+main.options
+  DotNETAssemblyOptions with properties:
+      ClassMap: [2×1 containers.Map]
+      DebugBuild: off
+      EnableRemoting: off
+      FrameworkVersion: '5.0'
+      SampleGenerationFiles: {}
+      StrongNameKeyFile: ''
+      AssemblyName: 'K8'
+      AssemblyVersion: '1.0.0.0'
+      EmbedArchive: on
+      Interface: 'mwarray'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: on
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+     Class Map Information
+      K8Class: {7×1 cell}
+      K8Other: {'<TEMP>\claude\D--EE-Projects-J...'}
+main.printed
+  |mcc -W 'dotnet:K8,api=mwarray,K8Class,5.0,Private,local,version=1.0.0.0' -T link:lib -d <W>\b\dn\K8 -v -Z autodetect 'class{K8Class:<W>\b\src\k8args.m,<W>\b\src\k8echo.m,<W>\b\src\k8err.m,<W>\b\src\k8make.m,<W>\b\src\k8quiet.m,<W>\b\src\k8show.m,<W>\b\src\k8vout.m}' class{K8Other:<W>\b\src\k8other.m}
+  |Compiler version: JGraph 0.2.3 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\b\src\k8args.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k8echo.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k8err.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k8make.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k8quiet.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k8show.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k8vout.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k8other.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\dn\K8\K8ClassNative.cs".
+  |Generating file "<W>\b\dn\K8\K8OtherNative.cs".
+  |Generating file "<W>\b\dn\K8\K8Class.cs".
+  |Generating file "<W>\b\dn\K8\K8Other.cs".
+  |Generating file "<W>\b\dn\K8\readme.txt".
+main.results
+  Results with properties:
+      BuildType: 'dotNETAssembly'
+      Files: {4×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+main.BuildType	dotNETAssembly
+main.Files	<OUT>\K8.dll | <OUT>\K8Native.dll | <OUT>\K8_overview.html | <OUT>\GettingStarted.html
+main.files	GettingStarted.html | K8.csproj | K8.dll | K8.xml | K8Class.cs | K8ClassNative.cs | K8Native.csproj | K8Native.dll | K8Native.xml | K8Other.cs | K8OtherNative.cs | K8_overview.html | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+main.seconds	1.3
+main.readme	1103 chars, CRLF 32, ends with newline 1
+  |K8 MATLAB .NET Assembly (.NET Component)
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |The JGraph Runtime 0.2.3 must be installed on the computer the assembly runs on,
+  |or its folder named by the JGRAPH_RUNTIME_ROOT environment variable. Clients run on .NET 8 or later.
+  |
+  |2. Files to Deploy and Package
+  |
+  |-K8.dll
+  |   -contains the generated component using MWArray API. 
+  |-K8Native.dll
+  |   -contains the generated component using native API.
+  |-JGraph.MATLAB.NET.Arrays.dll
+  |   -the MWArray classes, from the JGraph Runtime's toolbox\dotnetbuilder\bin\win64\net8.0 folder.
+  |-This readme file
+  |
+  |
+  |Auto-generated Documentation Templates:
+  |
+  |K8_overview.html - the classes, their functions, and how a client calls them.
+  |
+  |K8.xml - the code comments of the K8 classes and methods.
+  |
+  |3. Resources
+  |
+  |The MWArray classes keep MathWorks' names under the JGraph.MATLAB.NET namespaces: a client written
+  |for MATLAB's assembly changes its using lines from MathWorks.MATLAB.NET to JGraph.MATLAB.NET.
+  |
+  |4. Definitions
+  |
+  |The JGraph Runtime is the engine a built component runs on, installed once per JGraph version.
+default.options
+  DotNETAssemblyOptions with properties:
+      ClassMap: [1×1 containers.Map]
+      DebugBuild: off
+      EnableRemoting: off
+      FrameworkVersion: '4.0'
+      SampleGenerationFiles: {}
+      StrongNameKeyFile: ''
+      AssemblyName: 'example.k8echo'
+      AssemblyVersion: '1.0.0.0'
+      EmbedArchive: on
+      Interface: 'mwarray'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '.\k8echodotNETAssembly'
+     Class Map Information
+      k8echoClass: {'<TEMP>\claude\D--EE-Projects-J...'}
+default.AssemblyName	char [1 14] 'example.k8echo'
+default.OutputDir	char [1 22] '.\k8echodotNETAssembly'
+default.ClassMap.keys	cell [1 1] {char [1 11] 'k8echoClass'}
+default.getName	char [1 6] 'k8echo'
+named.ClassMap.keys	cell [1 1] {char [1 5] 'Named'}
+named.ClassMap.values	cell [2 1] {char [1 138] '<W>\b\src\k8make.m'; char [1 138] '<W>\b\src\k8echo.m'}
+dotted.getName	char [1 3] 'K8n'
+dotted.OutputDir	char [1 19] '.\K8ndotNETAssembly'
+framework4.printed
+  |mcc -W 'dotnet:K8f,api=mwarray,k8echoClass,4.0,Private,local,version=1.0.0.0' -T link:lib -d <W>\b\framework4 -v -Z autodetect class{k8echoClass:<W>\b\src\k8echo.m}
+  |Compiler version: JGraph 0.2.3 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\b\src\k8echo.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\framework4\k8echoClassNative.cs".
+  |Generating file "<W>\b\framework4\k8echoClass.cs".
+  |Generating file "<W>\b\framework4\readme.txt".
+framework4.results
+  Results with properties:
+      BuildType: 'dotNETAssembly'
+      Files: {4×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+framework4.BuildType	dotNETAssembly
+framework4.Files	<OUT>\K8f.dll | <OUT>\K8fNative.dll | <OUT>\K8f_overview.html | <OUT>\GettingStarted.html
+framework4.files	GettingStarted.html | K8f.dll | K8f.xml | K8fNative.dll | K8fNative.xml | K8fVersion.cs | K8f_overview.html | buildresult.json | includedSupportPackages.txt | k8echoClass.cs | k8echoClassNative.cs | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+framework4.seconds	0.1
+separate.printed
+  |mcc -W 'dotnet:K8s,api=mwarray,k8echoClass,5.0,Private,local,version=1.0.0.0' -T link:lib -d <W>\b\separate -v -Z autodetect -C class{k8echoClass:<W>\b\src\k8echo.m}
+  |Compiler version: JGraph 0.2.3 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\b\src\k8echo.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\separate\k8echoClassNative.cs".
+  |Generating file "<W>\b\separate\k8echoClass.cs".
+  |Generating file "<W>\b\separate\readme.txt".
+separate.results
+  Results with properties:
+      BuildType: 'dotNETAssembly'
+      Files: {5×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+separate.BuildType	dotNETAssembly
+separate.Files	<OUT>\K8s.dll | <OUT>\K8sNative.dll | <OUT>\K8s_overview.html | <OUT>\K8s.ctf | <OUT>\GettingStarted.html
+separate.files	GettingStarted.html | K8s.csproj | K8s.ctf | K8s.dll | K8s.xml | K8sNative.csproj | K8sNative.dll | K8sNative.xml | K8s_overview.html | buildresult.json | includedSupportPackages.txt | k8echoClass.cs | k8echoClassNative.cs | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+separate.seconds	0.1
+dotted.printed
+  |mcc -W 'dotnet:Org.Group.K8n,api=mwarray,k8echoClass,5.0,Private,local,version=1.0.0.0' -T link:lib -d <W>\b\dotted -v -Z autodetect class{k8echoClass:<W>\b\src\k8echo.m}
+  |Compiler version: JGraph 0.2.3 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\b\src\k8echo.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\dotted\k8echoClassNative.cs".
+  |Generating file "<W>\b\dotted\k8echoClass.cs".
+  |Generating file "<W>\b\dotted\readme.txt".
+dotted.results
+  Results with properties:
+      BuildType: 'dotNETAssembly'
+      Files: {4×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+dotted.BuildType	dotNETAssembly
+dotted.Files	<OUT>\K8n.dll | <OUT>\K8nNative.dll | <OUT>\K8n_overview.html | <OUT>\GettingStarted.html
+dotted.files	GettingStarted.html | K8n.csproj | K8n.dll | K8n.xml | K8nNative.csproj | K8nNative.dll | K8nNative.xml | K8n_overview.html | buildresult.json | includedSupportPackages.txt | k8echoClass.cs | k8echoClassNative.cs | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+dotted.seconds	0.1
+debug.printed
+  |mcc -W 'dotnet:K8d,api=mwarray,k8echoClass,5.0,Private,local,version=1.0.0.0' -T link:lib -d <W>\b\debug -v -Z autodetect -g class{k8echoClass:<W>\b\src\k8echo.m}
+  |Compiler version: JGraph 0.2.3 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\b\src\k8echo.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\debug\k8echoClassNative.cs".
+  |Generating file "<W>\b\debug\k8echoClass.cs".
+  |Generating file "<W>\b\debug\readme.txt".
+debug.results
+  Results with properties:
+      BuildType: 'dotNETAssembly'
+      Files: {4×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+debug.BuildType	dotNETAssembly
+debug.Files	<OUT>\K8d.dll | <OUT>\K8dNative.dll | <OUT>\K8d_overview.html | <OUT>\GettingStarted.html
+debug.files	GettingStarted.html | K8d.csproj | K8d.dll | K8d.pdb | K8d.xml | K8dNative.csproj | K8dNative.dll | K8dNative.pdb | K8dNative.xml | K8d_overview.html | buildresult.json | includedSupportPackages.txt | k8echoClass.cs | k8echoClassNative.cs | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+debug.seconds	0.1
+remoting	ERR JGraph:compiler:targetOutOfScope | JGraph does not build remotable .NET assemblies ('EnableRemoting', 'on'): .NET 8 has no remoting.
+remoting.seconds	0.0
+version.printed
+  |mcc -W 'dotnet:K8v,api=mwarray,k8echoClass,5.0,Private,local,version=2.3.4' -T link:lib -d <W>\b\version -v -Z autodetect class{k8echoClass:<W>\b\src\k8echo.m}
+  |Compiler version: JGraph 0.2.3 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\b\src\k8echo.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\version\k8echoClassNative.cs".
+  |Generating file "<W>\b\version\k8echoClass.cs".
+  |Generating file "<W>\b\version\readme.txt".
+version.results
+  Results with properties:
+      BuildType: 'dotNETAssembly'
+      Files: {4×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.DotNETAssemblyOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+version.BuildType	dotNETAssembly
+version.Files	<OUT>\K8v.dll | <OUT>\K8vNative.dll | <OUT>\K8v_overview.html | <OUT>\GettingStarted.html
+version.files	GettingStarted.html | K8v.csproj | K8v.dll | K8v.xml | K8vNative.csproj | K8vNative.dll | K8vNative.xml | K8v_overview.html | buildresult.json | includedSupportPackages.txt | k8echoClass.cs | k8echoClassNative.cs | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+version.seconds	0.1
+badversion	ERR Compiler:compiler:COM_ERR_INVALID_VERSION | Version string "1.x" is invalid. Use at most four integers (0 to 65534), separated by ".", to specify the version.
+badversion.seconds	0.0
+framework6	ERR Compiler:compiler:COM_ERR_NET_VERSION_INVALID | The .NET version is set to an unsupported value. Set the .NET version to "4.0" if targeting the .NET 4.x Framework. For .NET 5.0 and later, use "5.0".
+framework6.seconds	0.0
+mcc_plain	ok ()
+mcc_plain.files	K8m.csproj | K8m.dll | K8m.xml | K8mClass.cs | K8mClassNative.cs | K8mNative.csproj | K8mNative.dll | K8mNative.xml | K8m_overview.html | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+mcc_api	ok ()
+mcc_api.files	K8a.csproj | K8a.dll | K8a.xml | K8aClass.cs | K8aClassNative.cs | K8aNative.csproj | K8aNative.dll | K8aNative.xml | K8a_overview.html | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+mcc_noclass	ok ()
+mcc_noclass.files	K8n.cs | K8n.dll | K8n.xml | K8nNative.cs | K8nNative.dll | K8nNative.xml | K8nVersion.cs | K8n_overview.html | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+mcc_nameonly	ok ()
+mcc_nameonly.files	K8o.cs | K8o.csproj | K8o.dll | K8o.xml | K8oNative.cs | K8oNative.csproj | K8oNative.dll | K8oNative.xml | K8o_overview.html | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+mcc_classes	ok ()
+mcc_classes.files	First.cs | FirstNative.cs | K8c.csproj | K8c.dll | K8c.xml | K8cNative.csproj | K8cNative.dll | K8cNative.xml | K8c_overview.html | Second.cs | SecondNative.cs | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+mcc_classonly	ok ()
+mcc_classonly.files	First.cs | FirstNative.cs | K8k.csproj | K8k.dll | K8k.xml | K8kNative.csproj | K8kNative.dll | K8kNative.xml | K8k_overview.html | Second.cs | SecondNative.cs | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+mcc_separate	ok ()
+mcc_separate.files	K8p.csproj | K8p.ctf | K8p.dll | K8p.xml | K8pClass.cs | K8pClassNative.cs | K8pNative.csproj | K8pNative.dll | K8pNative.xml | K8p_overview.html | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+mcc_notarget	ok ()
+mcc_notarget.files	K8t.csproj | K8t.dll | K8t.xml | K8tClass.cs | K8tClassNative.cs | K8tNative.csproj | K8tNative.dll | K8tNative.xml | K8t_overview.html | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+mcc_exe	ok ()
+mcc_exe.files	K8e.csproj | K8e.dll | K8e.xml | K8eClass.cs | K8eClassNative.cs | K8eNative.csproj | K8eNative.dll | K8eNative.xml | K8e_overview.html | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+mcc_fw40	ok ()
+mcc_fw40.files	K8q.dll | K8q.xml | K8qClass.cs | K8qClassNative.cs | K8qNative.dll | K8qNative.xml | K8qVersion.cs | K8q_overview.html | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+mcc_badkey	ERR Compiler:compiler:COM_ERR_SNK_FILE_NOT_EXIST | Strong name key file "nosuch.snk" does not exist.
+mcc_remote	ERR JGraph:mcc:targetOutOfScope | JGraph does not build remotable .NET assemblies (-W dotnet:...,remote): .NET 8 has no remoting.
+mcc_badlocal	ok ()
+mcc_badlocal.files	K8w.csproj | K8w.dll | K8w.xml | K8wClass.cs | K8wClassNative.cs | K8wNative.csproj | K8wNative.dll | K8wNative.xml | K8w_overview.html | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+mcc_mda	ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a .NET assembly for the MATLAB Data API (-W dotnet:...,api=matlab-data) yet.
+opts.none	ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+opts.missing	ERR Compiler:utils:shared:cannotFindFileOrFolder | Cannot find file or folder: /  / k8nosuch.m
+opts.txt	ERR Compiler:clishared:badExtension | Expected 'Files and Folders' to have one of the following extensions: /  / .mexw64 / .mlapp / .mlx / .p / .m
+opts.number	ERR MATLAB:invalidType | Expected input number 1 to be one of these types: /  / containers.Map, char, string, cell /  / Instead its type was double.
+opts.map.classname	ERR Compiler:clishared:badUseOfClassName | The value of 'ClassName' is invalid. Cannot specify 'ClassName' when the first input is a 'containers.Map'.
+opts.classname.empty	ERR MATLAB:validators:mustBeNonzeroLengthText | The value of 'ClassName' is invalid. Value must be text with one or more characters.
+opts.classmap.nv	ERR Compiler:clishared:doNotSetRequiredPropByNVPair | Cannot specify 'ClassMap' as a name-value pair.
+opts.unknown.nv	ERR MATLAB:InputParser:UnmatchedParameter | 'Nonsense' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+opts.partial.nv	char [1 1] 'P'
+opts.odd.nv	ERR MATLAB:InputParser:ParamMissingValue | No value was given for 'AssemblyName'. Name-value pair arguments require a name followed by a value.
+opts.map.empty	ERR MATLAB:expectedNonempty | Expected input number 1 to be nonempty.
+opts.map.doublekeys	ERR MATLAB:expectedNonempty | Expected input number 1 to be nonempty.
+opts.map.spacedkey	ERR Compiler:clishared:noWhiteSpaceInProperty | 'ClassMap Key' cannot contain any white space characters.
+opts.map.missingfile	ERR Compiler:utils:shared:cannotFindFileOrFolder | Cannot find file or folder: /  / k8nosuch.m
+opts.map.charvalue	cell [1 1] {char [1 1] 'A'}
+set.FrameworkVersion.char [0 0] ''	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.FrameworkVersion.double [1 1] 4	ERR MATLAB:invalidType | Expected FrameworkVersion to be one of these types: /  / char, string /  / Instead its type was double.
+set.FrameworkVersion.char [1 3] '6.0'	char [1 3] '6.0'
+set.FrameworkVersion.string [1 1] [5.0]	char [1 3] '5.0'
+set.AssemblyName.char [1 3] 'a b'	char [1 3] 'a b'
+set.AssemblyName.char [1 3] 'a/b'	ERR Compiler:clishared:badProperty | Invalid 'AssemblyName': 'a/b'
+set.AssemblyName.char [0 0] ''	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.AssemblyName.char [1 3] 'a:b'	ERR Compiler:clishared:badProperty | Invalid 'AssemblyName': 'a:b'
+set.AssemblyName.char [1 5] 'x.y.z'	char [1 5] 'x.y.z'
+set.AssemblyName.double [1 1] 5	ERR MATLAB:invalidType | Expected AssemblyName to be one of these types: /  / char, string /  / Instead its type was double.
+set.Interface.char [1 7] 'MWARRAY'	char [1 7] 'mwarray'
+set.Interface.char [1 3] 'bad'	ERR MATLAB:validators:mustBeMember | Value must be a member of this set: /     'matlab-data' /     'mwarray' / 
+set.Interface.char [0 0] ''	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.Interface.char [1 11] 'matlab-data'	char [1 11] 'matlab-data'
+set.Interface.char [1 11] 'matlab-data'.warn	Compiler:build:shared:badInterfaceEmbedArchivePair | An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+set.AssemblyVersion.char [1 3] '1.2'	char [1 3] '1.2'
+set.AssemblyVersion.char [0 0] ''	char [0 0] ''
+set.AssemblyVersion.double [1 1] 5	ERR MATLAB:invalidType | Expected AssemblyVersion to be one of these types: /  / char, string /  / Instead its type was double.
+set.AssemblyVersion.string [1 1] [3]	char [1 1] '3'
+set.EmbedArchive.char [1 3] 'off'	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.off
+set.EmbedArchive.char [1 5] 'maybe'	ERR MATLAB:validation:UnableToConvert | Error setting property 'EmbedArchive' of class 'compiler.internal.build.InterfaceManager'. 'maybe' is invalid. Value must be 'off' or 'on'.
+set.EmbedArchive.double [1 1] 0	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.off
+set.StrongNameKeyFile.char [1 11] 'missing.snk'	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / missing.snk
+set.StrongNameKeyFile.char [0 0] ''	char [0 0] ''
+set.StrongNameKeyFile.string [1 1] []	char [0 0] ''
+set.EnableRemoting.char [1 2] 'on'	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.on
+set.EnableRemoting.double [1 1] 2	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.on
+set.DebugBuild.double [1 1] 1	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.on
+set.DebugBuild.char [1 3] 'yes'	ERR MATLAB:validation:UnableToConvert | Error setting property 'DebugBuild' of class 'compiler.build.DotNETAssemblyOptions'. 'yes' is invalid. Value must be 'off' or 'on'.
+set.SampleGenerationFiles.char [1 10] 'k8nosuch.m'	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / k8nosuch.m
+set.SampleGenerationFiles.cell [0 0] {}	cell [0 0] {}
+set.ClassMap.double [1 1] 5	ERR MATLAB:invalidType | Expected ClassMap to be one of these types: /  / containers.Map /  / Instead its type was double.
+set.OutputDir.char [1 6] 'out<1>'	ERR Compiler:clishared:badProperty | Invalid 'OutputDir': 'out<1>'
+set.Verbose.char [1 2] 'on'	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.on
+mda.EmbedArchive	matlab.lang.OnOffSwitchState [1 1] matlab.lang.OnOffSwitchState.on
+mda.AssemblyVersion	char [0 0] ''
+mda.classname	cell [1 1] {char [1 1] 'C'}
+mda.classname.warn	Compiler:build:shared:badInterfaceClassNamePair | The property "ClassName" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either do not specify a "ClassName", or use 'mwarray' for the "Interface" property.
+mda.version	char [1 3] '1.0'
+mda.version.warn	Compiler:build:shared:badInterfaceEmbedArchivePair | An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+api.wrong.options	ERR Compiler:clishared:wrongOptionsObject | 'compiler.build.StandaloneApplicationOptions' is not a valid options object for this function. Use 'compiler.build.DotNETAssemblyOptions' instead.
+api.no.args	ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+api.nargout2	ERR MATLAB:TooManyOutputs | Too many output arguments.
+
+STDERR	Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+STDERR	Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+STDERR	Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.
+STDERR	Warning: The property "ClassName" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either do not specify a "ClassName", or use 'mwarray' for the "Interface" property.
+STDERR	Warning: An 'on' value of "EmbedArchive" will be ignored when using an "Interface" value of 'matlab-data'. To avoid this warning, either set "EmbedArchive" to 'off', or use 'mwarray' for the "Interface" property.

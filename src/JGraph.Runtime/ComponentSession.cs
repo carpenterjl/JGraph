@@ -84,7 +84,10 @@ internal sealed class ComponentSession
             [
                 .. (runtime?.Frames ?? []).Select(static f => new DeployedStackFrame(JgsDeployedMain.Shown(f), f.File, f.Line)),
             ];
-            throw new DeployedException(runtime?.Identifier ?? string.Empty, error.Message, stack, JgsDeployedMain.Report(error), error);
+            throw new DeployedException(runtime?.Identifier ?? string.Empty, error.Message, stack, JgsDeployedMain.Report(error), error)
+            {
+                Causes = JgsDeployedMain.Causes(runtime),
+            };
         }
 
         // A call asked for no outputs answers none, whatever ans the function left.

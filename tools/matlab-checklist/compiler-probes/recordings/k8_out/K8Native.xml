@@ -1,0 +1,705 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>K8Native</name>
+    </assembly>
+    <members>
+        <member name="T:K8Native.K8Class">
+            <summary>
+            The K8Class class provides a CLS compliant, Object (native) interface to the MATLAB
+            functions contained in the files:
+            <newpara></newpara>
+            <TEMP>\claude\D--EE-Projects-JGraph-JGraph\0bce8303-f80f-
+            4010-b035-d2edbb754408\scratchpad\k8rec\b\src\k8args.m
+            <newpara></newpara>
+            <TEMP>\claude\D--EE-Projects-JGraph-JGraph\0bce8303-f80f-
+            4010-b035-d2edbb754408\scratchpad\k8rec\b\src\k8echo.m
+            <newpara></newpara>
+            <TEMP>\claude\D--EE-Projects-JGraph-JGraph\0bce8303-f80f-
+            4010-b035-d2edbb754408\scratchpad\k8rec\b\src\k8err.m
+            <newpara></newpara>
+            <TEMP>\claude\D--EE-Projects-JGraph-JGraph\0bce8303-f80f-
+            4010-b035-d2edbb754408\scratchpad\k8rec\b\src\k8make.m
+            <newpara></newpara>
+            <TEMP>\claude\D--EE-Projects-JGraph-JGraph\0bce8303-f80f-
+            4010-b035-d2edbb754408\scratchpad\k8rec\b\src\k8quiet.m
+            <newpara></newpara>
+            <TEMP>\claude\D--EE-Projects-JGraph-JGraph\0bce8303-f80f-
+            4010-b035-d2edbb754408\scratchpad\k8rec\b\src\k8show.m
+            <newpara></newpara>
+            <TEMP>\claude\D--EE-Projects-JGraph-JGraph\0bce8303-f80f-
+            4010-b035-d2edbb754408\scratchpad\k8rec\b\src\k8vout.m
+            </summary>
+            <remarks>
+            @Version 1.0
+            </remarks>
+        </member>
+        <member name="M:K8Native.K8Class.#cctor">
+            <summary internal= "true">
+            The static constructor instantiates and initializes the MATLAB Runtime instance.
+            </summary>
+        </member>
+        <member name="M:K8Native.K8Class.#ctor">
+            <summary>
+            Constructs a new instance of the K8Class class.
+            </summary>
+        </member>
+        <member name="M:K8Native.K8Class.Finalize">
+            <summary internal= "true">
+            Class destructor called by the CLR garbage collector.
+            </summary>
+        </member>
+        <member name="M:K8Native.K8Class.Dispose">
+            <summary>
+            Frees the native resources associated with this object
+            </summary>
+        </member>
+        <member name="M:K8Native.K8Class.Dispose(System.Boolean)">
+            <summary internal= "true">
+            Internal dispose function
+            </summary>
+        </member>
+        <member name="M:K8Native.K8Class.k8args">
+             <summary>
+             Provides a single output, 0-input Objectinterface to the k8args MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8ARGS Count the arguments given; the second output is the last argument.
+             </remarks>
+             <returns>An Object containing the first output argument.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8args(System.Object)">
+             <summary>
+             Provides a single output, 1-input Objectinterface to the k8args MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8ARGS Count the arguments given; the second output is the last argument.
+             </remarks>
+             <param name="first">Input argument #1</param>
+             <returns>An Object containing the first output argument.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8args(System.Object,System.Object)">
+             <summary>
+             Provides a single output, 2-input Objectinterface to the k8args MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8ARGS Count the arguments given; the second output is the last argument.
+             </remarks>
+             <param name="first">Input argument #1</param>
+             <param name="second">Input argument #2</param>
+             <returns>An Object containing the first output argument.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8args(System.Object,System.Object,System.Object[])">
+             <summary>
+             Provides a single output, 3-input Objectinterface to the k8args MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8ARGS Count the arguments given; the second output is the last argument.
+             </remarks>
+             <param name="first">Input argument #1</param>
+             <param name="second">Input argument #2</param>
+             <param name="varargin">Array of Objects representing the input arguments 3
+             through varargin.length+2</param>
+             <returns>An Object containing the first output argument.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8args(System.Int32)">
+             <summary>
+             Provides the standard 0-input Object interface to the k8args MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8ARGS Count the arguments given; the second output is the last argument.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8args(System.Int32,System.Object)">
+             <summary>
+             Provides the standard 1-input Object interface to the k8args MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8ARGS Count the arguments given; the second output is the last argument.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <param name="first">Input argument #1</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8args(System.Int32,System.Object,System.Object)">
+             <summary>
+             Provides the standard 2-input Object interface to the k8args MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8ARGS Count the arguments given; the second output is the last argument.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <param name="first">Input argument #1</param>
+             <param name="second">Input argument #2</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8args(System.Int32,System.Object,System.Object,System.Object[])">
+             <summary>
+             Provides the standard 3-input Object interface to the k8args MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8ARGS Count the arguments given; the second output is the last argument.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <param name="first">Input argument #1</param>
+             <param name="second">Input argument #2</param>
+             <param name="varargin">Array of Objects representing the input arguments 3
+             through varargin.length+2</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8args(System.Int32,System.Object[]@,System.Object[],System.Object[])">
+             <summary>
+             Provides an interface for the k8args function in which the input and output
+             arguments are specified as an array of Objects.
+             </summary>
+             <remarks>
+             This method will allocate and return by reference the output argument
+             array.<newpara></newpara>
+             M-Documentation:
+             K8ARGS Count the arguments given; the second output is the last argument.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return</param>
+             <param name= "argsOut">Array of Object output arguments</param>
+             <param name= "argsIn">Array of Object input arguments</param>
+             <param name= "varArgsIn">Array of Object representing variable input
+             arguments</param>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8echo">
+             <summary>
+             Provides a single output, 0-input Objectinterface to the k8echo MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8ECHO Return the argument and a line saying what it arrived as.
+             </remarks>
+             <returns>An Object containing the first output argument.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8echo(System.Object)">
+             <summary>
+             Provides a single output, 1-input Objectinterface to the k8echo MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8ECHO Return the argument and a line saying what it arrived as.
+             </remarks>
+             <param name="x">Input argument #1</param>
+             <returns>An Object containing the first output argument.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8echo(System.Int32)">
+             <summary>
+             Provides the standard 0-input Object interface to the k8echo MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8ECHO Return the argument and a line saying what it arrived as.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8echo(System.Int32,System.Object)">
+             <summary>
+             Provides the standard 1-input Object interface to the k8echo MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8ECHO Return the argument and a line saying what it arrived as.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <param name="x">Input argument #1</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8echo(System.Int32,System.Object[]@,System.Object[],System.Object[])">
+             <summary>
+             Provides an interface for the k8echo function in which the input and output
+             arguments are specified as an array of Objects.
+             </summary>
+             <remarks>
+             This method will allocate and return by reference the output argument
+             array.<newpara></newpara>
+             M-Documentation:
+             K8ECHO Return the argument and a line saying what it arrived as.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return</param>
+             <param name= "argsOut">Array of Object output arguments</param>
+             <param name= "argsIn">Array of Object input arguments</param>
+             <param name= "varArgsIn">Array of Object representing variable input
+             arguments</param>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8err">
+             <summary>
+             Provides a void output, 0-input Objectinterface to the k8err MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8ERR Raise the error asked for, for the client to see how it arrives.
+             </remarks>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8err(System.Object)">
+             <summary>
+             Provides a void output, 1-input Objectinterface to the k8err MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8ERR Raise the error asked for, for the client to see how it arrives.
+             </remarks>
+             <param name="kind">Input argument #1</param>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8err(System.Int32)">
+             <summary>
+             Provides the standard 0-input Object interface to the k8err MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8ERR Raise the error asked for, for the client to see how it arrives.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8err(System.Int32,System.Object)">
+             <summary>
+             Provides the standard 1-input Object interface to the k8err MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8ERR Raise the error asked for, for the client to see how it arrives.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <param name="kind">Input argument #1</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8err(System.Int32,System.Object[]@,System.Object[],System.Object[])">
+             <summary>
+             Provides an interface for the k8err function in which the input and output
+             arguments are specified as an array of Objects.
+             </summary>
+             <remarks>
+             This method will allocate and return by reference the output argument
+             array.<newpara></newpara>
+             M-Documentation:
+             K8ERR Raise the error asked for, for the client to see how it arrives.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return</param>
+             <param name= "argsOut">Array of Object output arguments</param>
+             <param name= "argsIn">Array of Object input arguments</param>
+             <param name= "varArgsIn">Array of Object representing variable input
+             arguments</param>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8make">
+             <summary>
+             Provides a single output, 0-input Objectinterface to the k8make MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8MAKE Return a value of the kind asked for, for the client to read back.
+             </remarks>
+             <returns>An Object containing the first output argument.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8make(System.Object)">
+             <summary>
+             Provides a single output, 1-input Objectinterface to the k8make MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8MAKE Return a value of the kind asked for, for the client to read back.
+             </remarks>
+             <param name="kind">Input argument #1</param>
+             <returns>An Object containing the first output argument.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8make(System.Int32)">
+             <summary>
+             Provides the standard 0-input Object interface to the k8make MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8MAKE Return a value of the kind asked for, for the client to read back.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8make(System.Int32,System.Object)">
+             <summary>
+             Provides the standard 1-input Object interface to the k8make MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8MAKE Return a value of the kind asked for, for the client to read back.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <param name="kind">Input argument #1</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8make(System.Int32,System.Object[]@,System.Object[],System.Object[])">
+             <summary>
+             Provides an interface for the k8make function in which the input and output
+             arguments are specified as an array of Objects.
+             </summary>
+             <remarks>
+             This method will allocate and return by reference the output argument
+             array.<newpara></newpara>
+             M-Documentation:
+             K8MAKE Return a value of the kind asked for, for the client to read back.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return</param>
+             <param name= "argsOut">Array of Object output arguments</param>
+             <param name= "argsIn">Array of Object input arguments</param>
+             <param name= "varArgsIn">Array of Object representing variable input
+             arguments</param>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8quiet">
+             <summary>
+             Provides a single output, 0-input Objectinterface to the k8quiet MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8QUIET Turn the beep off and say what it was.
+             </remarks>
+             <returns>An Object containing the first output argument.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8quiet(System.Int32)">
+             <summary>
+             Provides the standard 0-input Object interface to the k8quiet MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8QUIET Turn the beep off and say what it was.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8quiet(System.Int32,System.Object[]@,System.Object[],System.Object[])">
+             <summary>
+             Provides an interface for the k8quiet function in which the input and output
+             arguments are specified as an array of Objects.
+             </summary>
+             <remarks>
+             This method will allocate and return by reference the output argument
+             array.<newpara></newpara>
+             M-Documentation:
+             K8QUIET Turn the beep off and say what it was.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return</param>
+             <param name= "argsOut">Array of Object output arguments</param>
+             <param name= "argsIn">Array of Object input arguments</param>
+             <param name= "varArgsIn">Array of Object representing variable input
+             arguments</param>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8show">
+             <summary>
+             Provides a void output, 0-input Objectinterface to the k8show MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8SHOW Display the argument; no outputs.
+             </remarks>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8show(System.Object)">
+             <summary>
+             Provides a void output, 1-input Objectinterface to the k8show MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8SHOW Display the argument; no outputs.
+             </remarks>
+             <param name="x">Input argument #1</param>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8show(System.Int32)">
+             <summary>
+             Provides the standard 0-input Object interface to the k8show MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8SHOW Display the argument; no outputs.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8show(System.Int32,System.Object)">
+             <summary>
+             Provides the standard 1-input Object interface to the k8show MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8SHOW Display the argument; no outputs.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <param name="x">Input argument #1</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8show(System.Int32,System.Object[]@,System.Object[],System.Object[])">
+             <summary>
+             Provides an interface for the k8show function in which the input and output
+             arguments are specified as an array of Objects.
+             </summary>
+             <remarks>
+             This method will allocate and return by reference the output argument
+             array.<newpara></newpara>
+             M-Documentation:
+             K8SHOW Display the argument; no outputs.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return</param>
+             <param name= "argsOut">Array of Object output arguments</param>
+             <param name= "argsIn">Array of Object input arguments</param>
+             <param name= "varArgsIn">Array of Object representing variable input
+             arguments</param>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8vout">
+             <summary>
+             Provides a void output, 0-input Objectinterface to the k8vout MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8VOUT Answer as many outputs as asked for: output k is k, the last says nargin
+             and nargout.
+             </remarks>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8vout(System.Object[])">
+             <summary>
+             Provides a void output, 1-input Objectinterface to the k8vout MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8VOUT Answer as many outputs as asked for: output k is k, the last says nargin
+             and nargout.
+             </remarks>
+             <param name="varargin">Array of Objects representing the input arguments 1
+             through varargin.length</param>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8vout(System.Int32)">
+             <summary>
+             Provides the standard 0-input Object interface to the k8vout MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8VOUT Answer as many outputs as asked for: output k is k, the last says nargin
+             and nargout.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8vout(System.Int32,System.Object[])">
+             <summary>
+             Provides the standard 1-input Object interface to the k8vout MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8VOUT Answer as many outputs as asked for: output k is k, the last says nargin
+             and nargout.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <param name="varargin">Array of Objects representing the input arguments 1
+             through varargin.length</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Class.k8vout(System.Int32,System.Object[]@,System.Object[],System.Object[])">
+             <summary>
+             Provides an interface for the k8vout function in which the input and output
+             arguments are specified as an array of Objects.
+             </summary>
+             <remarks>
+             This method will allocate and return by reference the output argument
+             array.<newpara></newpara>
+             M-Documentation:
+             K8VOUT Answer as many outputs as asked for: output k is k, the last says nargin
+             and nargout.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return</param>
+             <param name= "argsOut">Array of Object output arguments</param>
+             <param name= "argsIn">Array of Object input arguments</param>
+             <param name= "varArgsIn">Array of Object representing variable input
+             arguments</param>
+            
+        </member>
+        <member name="M:K8Native.K8Class.WaitForFiguresToDie">
+             <summary>
+             This method will cause a MATLAB figure window to behave as a modal dialog box.
+             The method will not return until all the figure windows associated with this
+             component have been closed.
+             </summary>
+             <remarks>
+             An application should only call this method when required to keep the
+             MATLAB figure window from disappearing.  Other techniques, such as calling
+             Console.ReadLine() from the application should be considered where
+             possible.</remarks>
+            
+        </member>
+        <member name="T:K8Native.K8Other">
+            <summary>
+            The K8Other class provides a CLS compliant, Object (native) interface to the MATLAB
+            functions contained in the files:
+            <newpara></newpara>
+            <TEMP>\claude\D--EE-Projects-JGraph-JGraph\0bce8303-f80f-
+            4010-b035-d2edbb754408\scratchpad\k8rec\b\src\k8other.m
+            </summary>
+            <remarks>
+            @Version 1.0
+            </remarks>
+        </member>
+        <member name="M:K8Native.K8Other.#cctor">
+            <summary internal= "true">
+            The static constructor instantiates and initializes the MATLAB Runtime instance.
+            </summary>
+        </member>
+        <member name="M:K8Native.K8Other.#ctor">
+            <summary>
+            Constructs a new instance of the K8Other class.
+            </summary>
+        </member>
+        <member name="M:K8Native.K8Other.Finalize">
+            <summary internal= "true">
+            Class destructor called by the CLR garbage collector.
+            </summary>
+        </member>
+        <member name="M:K8Native.K8Other.Dispose">
+            <summary>
+            Frees the native resources associated with this object
+            </summary>
+        </member>
+        <member name="M:K8Native.K8Other.Dispose(System.Boolean)">
+            <summary internal= "true">
+            Internal dispose function
+            </summary>
+        </member>
+        <member name="M:K8Native.K8Other.k8other">
+             <summary>
+             Provides a single output, 0-input Objectinterface to the k8other MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8OTHER The second class's one function: twice its argument.
+             </remarks>
+             <returns>An Object containing the first output argument.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Other.k8other(System.Object)">
+             <summary>
+             Provides a single output, 1-input Objectinterface to the k8other MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8OTHER The second class's one function: twice its argument.
+             </remarks>
+             <param name="a">Input argument #1</param>
+             <returns>An Object containing the first output argument.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Other.k8other(System.Int32)">
+             <summary>
+             Provides the standard 0-input Object interface to the k8other MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8OTHER The second class's one function: twice its argument.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Other.k8other(System.Int32,System.Object)">
+             <summary>
+             Provides the standard 1-input Object interface to the k8other MATLAB function.
+             </summary>
+             <remarks>
+             M-Documentation:
+             K8OTHER The second class's one function: twice its argument.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return.</param>
+             <param name="a">Input argument #1</param>
+             <returns>An Array of length "numArgsOut" containing the output
+             arguments.</returns>
+            
+        </member>
+        <member name="M:K8Native.K8Other.k8other(System.Int32,System.Object[]@,System.Object[],System.Object[])">
+             <summary>
+             Provides an interface for the k8other function in which the input and output
+             arguments are specified as an array of Objects.
+             </summary>
+             <remarks>
+             This method will allocate and return by reference the output argument
+             array.<newpara></newpara>
+             M-Documentation:
+             K8OTHER The second class's one function: twice its argument.
+             </remarks>
+             <param name="numArgsOut">The number of output arguments to return</param>
+             <param name= "argsOut">Array of Object output arguments</param>
+             <param name= "argsIn">Array of Object input arguments</param>
+             <param name= "varArgsIn">Array of Object representing variable input
+             arguments</param>
+            
+        </member>
+        <member name="M:K8Native.K8Other.WaitForFiguresToDie">
+             <summary>
+             This method will cause a MATLAB figure window to behave as a modal dialog box.
+             The method will not return until all the figure windows associated with this
+             component have been closed.
+             </summary>
+             <remarks>
+             An application should only call this method when required to keep the
+             MATLAB figure window from disappearing.  Other techniques, such as calling
+             Console.ReadLine() from the application should be considered where
+             possible.</remarks>
+            
+        </member>
+    </members>
+</doc>

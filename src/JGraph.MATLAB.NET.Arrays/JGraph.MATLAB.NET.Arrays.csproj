@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The MWArray API for .NET (compiler and SDK plan, stage K8; decision KD3): MathWorks' class and
+    member names from R2025b's MWArray.dll (reflected in sdk_probe/mwarray_v40.txt) under JGraph's
+    namespaces, so a client of a .NET assembly R2025b built ports to JGraph's build by changing its
+    using lines. JGraph.MATLAB.NET.Arrays holds the MWArray classes, .native the native API's, and
+    JGraph.MATLAB.NET.Utility MWMCR, which the generated classes call through to a component of the
+    JGraph Runtime. A client references this assembly and finds the runtime the way a program does
+    (JGRAPH_RUNTIME_ROOT, then the installer's registry key, then its own folder).
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.MATLAB.NET.Arrays</RootNamespace>
+    <!-- The API is MathWorks', written before nullable references: its members take and answer null as theirs do. -->
+    <Nullable>disable</Nullable>
+    <Description>The MWArray API for .NET assemblies built by JGraph's mcc: MathWorks' classes and members under JGraph namespaces.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="JGraph.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Runtime\JGraph.Runtime.csproj" />
+  </ItemGroup>
+
+</Project>

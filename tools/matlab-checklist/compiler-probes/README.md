@@ -1,4 +1,4 @@
-# Compiler and SDK probes (stages K0-K7)
+# Compiler and SDK probes (stages K0-K8)
 
 Recordings of what R2025b's MATLAB Compiler builds and what the programs it builds do when run,
 for the compiler and SDK plan (`docs/plans/compiler-and-sdk-plan.md`, stage K0). Later stages
@@ -62,7 +62,12 @@ and runs them only when they are named; tell the user before running one.
 | `src/k7/`, `probe_k7_switches.m`, `probe_k7_more.m` | Stage K7's mains (`k7_hello`, `k7_excl` naming an excluded function, `startup/k7_start` with a `startup.m` beside it) and 188 mcc calls, each into a folder of its own: the obsolete switches, the ones a standalone build ignores, letters read as switches, the syntax's refusals, `-T`'s forms, every `-W` target's checks, `-B` bundles, `-w` over the startup, repeated-file and ignored-switch warnings and its table, `-K`, `-I`, `-R`, `-Z`, and MATLAB's own warning state (stage K7, ADR 0263). |
 | `record-k7.ps1` | Runs the two probes under `matlab -batch -noFigureWindows`, then R2025b's `bin\mcc.bat` from cmd.exe in the probe's source folder (standard output, standard error, exit code, time); writes `recordings/k7_switches.out.txt`, `k7_more.out.txt` and `k7_cmd.out.txt`. Nothing built is run and no window is shown. |
 | `run-k7.ps1`, `compare-k7.py` | The same probes under JGraph's `jgraph -batch` and the same command-line cases through `jgmcc.cmd`; writes `recordings-jgraph/k7_*.out.txt` and `k7_differences.txt`, each case whose outcome, warning or files differ (JGraph's files listed from the disk, as its `dir` does not search `**`). |
-| `recordings-jgraph/` | JGraph's recordings of K0's cases, K6's and K7's, with the same tokens, and the lines that differ from R2025b's. |
+| `src/k8/`, `probe_k8_build.m` | Stage K8's component (`k8echo`, `k8make` with 38 kinds of value, `k8err` with seven errors, `k8vout`, `k8args`, `k8show`, `k8quiet`, and a second class's `k8other`) and its builds: the main one (two classes, .NET 5.0) and 7 more through `compiler.build.dotNETAssembly`, 14 `mcc -W dotnet:` forms, and 60 of `compiler.build.DotNETAssemblyOptions`' checks (stage K8, ADR 0264). |
+| `src/k8client/` | A C# client of about 470 cases over the MWArray API and the K8 assembly: construction, element access, conversions, `ToString`, the native API, errors. Built against R2025b's `MWArray.dll`, or, with its three `using` lines turned to `JGraph.MATLAB.NET`, against JGraph's build. |
+| `probe_k8_disp.m` | What R2025b's `disp` prints for 120 values under `format short`, line by line between `\|` marks: the display an MWArray's `ToString` answers. |
+| `record-k8.ps1` | Runs `probe_k8_build` under `matlab -batch -noFigureWindows`, copies the main build's generated text into `recordings/k8_out` (paths and date as tokens), then builds and runs `k8client` through `run-quiet.ps1`; writes `recordings/k8_build.out.txt` and `k8_client.out.txt`. |
+| `run-k8.ps1`, `compare-k8.py` | The build probe unchanged under JGraph's `jgraph -batch` (a published runtime's, or the CLI's with a stand-in runtime), then `k8client` against JGraph's build, referencing only the runtime's `toolbox\dotnetbuilder\bin\win64\net8.0\JGraph.MATLAB.NET.Arrays.dll`; writes `recordings-jgraph/k8_*.out.txt` and `k8_differences.txt`. |
+| `recordings-jgraph/` | JGraph's recordings of K0's cases, K6's, K7's and K8's, with the same tokens, and the lines that differ from R2025b's. |
 | `src/` | The probe programs. `k0_try`/`k0_do` print `key<TAB>value` or `ERR id \| message`, then any warning. |
 | `recordings/` | The recordings. Machine paths are tokens: `<CACHE>`, `<BUILD>`, `<RUN>`, `<TEMP>`, `<MATLABROOT>`, `<HOME>`, `<REPO>`, and each of them without its drive as `<...-NODRIVE>`. The `[1 N]` sizes printed for path values still depend on the machine. |
 | `research-2026-10-21/` | Sources from the plan's research session: the SDK client programs (C, C++, .NET MWArray, .NET Data API, Python) for stages K8-K13, the `mps.json` probes and their output for K14, and the options probes. |
@@ -85,6 +90,9 @@ powershell -File ..\..\..\installer\publish-runtime.ps1 -Output <a runtime scrat
 powershell -File run-k6.ps1 -WorkRoot <a ninth scratch> -Runtime <the runtime scratch> -Mlapp <eighth>\b\src\mlapp\k6_app.mlapp
 powershell -File record-k7.ps1 -WorkRoot <a tenth scratch>              # about 30 min: 188 builds and refusals
 powershell -File run-k7.ps1 -WorkRoot <an eleventh scratch>             # JGraph's CLI Debug build; about 15 s
+powershell -File record-k8.ps1 -WorkRoot <a twelfth scratch>            # about 3 min: 22 builds, the client
+matlab -batch "probe_k8_disp" -noFigureWindows > recordings/k8_disp.out.txt
+powershell -File run-k8.ps1 -WorkRoot <a thirteenth scratch> -Runtime <the runtime scratch> -Jgraph <the runtime scratch>\bin\win64\jgraph.exe
 ```
 
 `run-quiet.ps1` gives a program an empty stdin. Until stage K1 it held a UTF-8 byte order mark,

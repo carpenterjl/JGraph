@@ -221,7 +221,20 @@ internal static partial class JgsBuiltins
         // integer constructors, and isfloat is true for everything else numeric.
         Predicate("isfloat", static v => IsNumericValue(v) && !v.NumericClass.IsInteger());
         Predicate("isinteger", static v => v.NumericClass.IsInteger());
-        Predicate("isreal", static v => !HasComplexPart(v));
+        // In the MATLAB dialect anything but a number, a char or a logical is not real, as R2025b
+        // answers for a cell, struct, string, function handle, table, datetime or categorical (stage K8).
+        // It keeps a string argument a string, which a predicate would see as char.
+        env.Builtins.Register("isreal", JgsValue.Function(new BuiltinFunction("isreal", (args, line, col) =>
+        {
+            Arity("isreal", args, 1, line, col);
+            JgsValue v = args[0];
+            return JgsValue.Bool(!HasComplexPart(v)
+                && (!dialect.IsMatlab || ClassOf(v, JgsDialect.Matlab) is "char" or "logical" or "double" or "single"
+                    or "int8" or "uint8" or "int16" or "uint16" or "int32" or "uint32" or "int64" or "uint64"));
+        })
+        {
+            KeepsStringArguments = true,
+        }));
         // A struct is asked by extent like a cell, because since M65 it has one: a struct array is a
         // struct value that is not a 1-by-1, and answering isscalar for it would be the old lie in a
         // new place.

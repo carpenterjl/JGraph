@@ -1,0 +1,611 @@
+client: 456 of 472 cases agree
+printed lines: differ
+standard error: differs
+build: 114 of 133 keys agree
+
+num.complex.index
+  R2025b: MWNumericArray 1x1 Double complex <<0.0000 + 0.0000i>>
+  JGraph: MWNumericArray 1x1 Double complex <<2.0000 + 4.0000i>>
+
+num.complex.index.imag
+  R2025b: MWNumericArray 1x1 Double <<0>>
+  JGraph: MWNumericArray 1x1 Double <<4>>
+
+char.unicode
+  R2025b: MWCharArray 1x2 Character <<�>>
+  JGraph: MWCharArray 1x2 Character <<�?>>
+
+struct.badname
+  R2025b: MWStructArray 1x1 Structure <<1bad: []>>
+  JGraph: THREW System.ArgumentException: '1bad' is not a valid field name: a field name starts with a letter and holds letters, digits and underscores.
+
+struct.dupname
+  R2025b: MWStructArray 1x1 Structure <<    a: []\n    a: []>>
+  JGraph: THREW System.ArgumentException: The field name 'a' is given twice: a struct's field names must be distinct.
+
+num.index.set.int32
+  R2025b: MWNumericArray 1x2 Int32 <<1   2>>
+  JGraph: MWNumericArray 1x2 Int32 <<1   3>>
+
+num.index.set.complex
+  R2025b: MWNumericArray 1x2 Double <<1     2>>
+  JGraph: MWNumericArray 1x2 Double complex <<1.0000 + 0.0000i   1.0000 + 1.0000i>>
+
+make.int8
+  R2025b: THREW System.ArgumentOutOfRangeException: Exception of type 'System.ArgumentOutOfRangeException' was thrown. (Parameter 'numArgsOut')
+  JGraph: MWNumericArray 1x3 Int8 <<-5      0    127>>
+
+make.uint16
+  R2025b: THREW System.ArgumentOutOfRangeException: Exception of type 'System.ArgumentOutOfRangeException' was thrown. (Parameter 'numArgsOut')
+  JGraph: MWNumericArray 1x1 UInt16 <<7>>
+
+make.uint32
+  R2025b: THREW System.ArgumentOutOfRangeException: Exception of type 'System.ArgumentOutOfRangeException' was thrown. (Parameter 'numArgsOut')
+  JGraph: MWNumericArray 1x1 UInt32 <<4000000000>>
+
+make.uint64
+  R2025b: THREW System.ArgumentOutOfRangeException: Exception of type 'System.ArgumentOutOfRangeException' was thrown. (Parameter 'numArgsOut')
+  JGraph: MWNumericArray 1x1 UInt64 <<9>>
+
+make.sparselogical
+  R2025b: MWLogicalArray 2x2 Logical <<   (1,1)      1\n   (2,2)      1>>
+  JGraph: MWNumericArray 2x2 Double sparse <<   (1,1)        1\n   (2,2)        1>>
+
+make.int8.toarray
+  R2025b: THREW System.ArgumentOutOfRangeException: Exception of type 'System.ArgumentOutOfRangeException' was thrown. (Parameter 'numArgsOut')
+  JGraph: System.SByte[,] [1,3] {-5, 0, 127}
+
+native.make.int8
+  R2025b: THREW System.ArgumentOutOfRangeException: Exception of type 'System.ArgumentOutOfRangeException' was thrown. (Parameter 'numArgsOut')
+  JGraph: THREW System.IO.InvalidDataException: Data type unsupported by MATLAB .NET Assembly for output
+
+native.make.uint64
+  R2025b: THREW System.ArgumentOutOfRangeException: Exception of type 'System.ArgumentOutOfRangeException' was thrown. (Parameter 'numArgsOut')
+  JGraph: THREW System.IO.InvalidDataException: Data type unsupported by MATLAB .NET Assembly for output
+
+native.make.sparse
+  R2025b: System.Double[,] [3,2] {5, 0, 0, 0, 0, 6}
+  JGraph: System.Double[,] [3,3] {5, 0, 0, 0, 0, 0, 0, 6, 0}
+
+printed lines
+  R2025b: k8show: double |      1     2 | k8show: char | text
+  JGraph: k8show: double | [1, 2] | k8show: char | text
+
+standard error
+  R2025b: Error using k8make (line 42) | No kind nothing. |  |  | Error using k8make | Too many output arguments. |  |  | Error using k8make | Too many input arguments. |  |  | Not enough input arguments. |  | Error in k8make (line 3) |  |  | Not enough input arguments. |  | Error in k8make (line 3) |  |  | Error using k8args | Too many output arguments. |  |  | Error using k8show | Too many output arguments. |  |  | Error using k8err (line 5) | A probe error with a number 3. |  |  | Error using k8err (line 7) | A probe error without an identifier. |  |  | Error using k8err (line 9) | First line. | Second line. |  |  | Error using k8err>inner (line 27) | Raised in a local function. |  | Error in k8err (line 11) |  |  | Unrecognized function or variable 'k8_no_such_function'. |  | Error in k8err (line 13) |  |  | Error using k8err (line 17) | The outer error. |  | Caused by: |     The inner cause. |  |  | Index exceeds the number of array elements. Index must not exceed 3. |  | Error in k8err (line 20) |  |  | Error using k8err (line 5) | A probe error with a number 3. |  |  | Error using k8echo | Too many input arguments. |  |  | Error using k8echo | Too many input arguments. |  |  | Error using k8err (line 5) | A probe error with a number 3. |  |  | Error using k8make | Too many output arguments.
+  JGraph: Error using k8make (line 42) | No kind nothing. |  |  | Error using k8make | Too many output arguments. |  |  | Error using k8make | Too many input arguments. |  |  | Not enough input arguments. |  | Error in k8make (line 3) |  |  | Not enough input arguments. |  | Error in k8make (line 3) |  |  | Error using k8args | Too many output arguments. |  |  | Error using k8show | Too many output arguments. |  |  | Error using k8err (line 5) | A probe error with a number 3. |  |  | Error using k8err (line 7) | A probe error without an identifier. |  |  | Error using k8err (line 9) | First line. | Second line. |  |  | Error using k8err>inner (line 27) | Raised in a local function. |  | Error in k8err (line 11) |  |  | Undefined function 'k8_no_such_function' for input arguments of type 'double'. |  | Error in k8err (line 13) |  |  | Error using k8err (line 17) | The outer error. |  | Caused by: |     The inner cause. |  |  | Index exceeds the number of array elements. Index must not exceed 3. |  | Error in k8err (line 20) |  |  | Error using k8err (line 5) | A probe error with a number 3. |  |  | Error using k8echo | Too many input arguments. |  |  | Error using k8echo | Too many input arguments. |  |  | Error using k8err (line 5) | A probe error with a number 3. |  |  | Error using k8make | Too many output arguments.
+
+build main.options
+  R2025b: 
+DotNETAssemblyOptions with properties:
+ClassMap: [2×1 containers.Map]
+DebugBuild: off
+EnableRemoting: off
+FrameworkVersion: '5.0'
+SampleGenerationFiles: {}
+StrongNameKeyFile: ''
+AssemblyName: 'K8'
+AssemblyVersion: '1.0.0.0'
+EmbedArchive: on
+Interface: 'mwarray'
+AdditionalFiles: {}
+AutoDetectDataFiles: on
+ExternalEncryptionKey: [0×0 struct]
+ObfuscateArchive: off
+SecretsManifest: ''
+SupportPackages: {'autodetect'}
+Verbose: on
+OutputDir: '<W>\b\dn\K8'
+Class Map Information
+K8Class: {7×1 cell}
+K8Other: {'<W>\b\src\k8other.m'}
+  JGraph: 
+DotNETAssemblyOptions with properties:
+ClassMap: [2×1 containers.Map]
+DebugBuild: off
+EnableRemoting: off
+FrameworkVersion: '5.0'
+SampleGenerationFiles: {}
+StrongNameKeyFile: ''
+AssemblyName: 'K8'
+AssemblyVersion: '1.0.0.0'
+EmbedArchive: on
+Interface: 'mwarray'
+AdditionalFiles: {}
+AutoDetectDataFiles: on
+ExternalEncryptionKey: [0×0 struct]
+ObfuscateArchive: off
+SecretsManifest: ''
+SupportPackages: {'autodetect'}
+Verbose: on
+OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+Class Map Information
+K8Class: {7×1 cell}
+K8Other: {'<TEMP>\claude\D--EE-Projects-J...'}
+
+build main.printed
+  R2025b: 
+|mcc -W 'dotnet:K8,api=mwarray,K8Class,5.0,Private,local,version=1.0.0.0' -T link:lib -d <W>\b\dn\K8 -v -Z autodetect 'class{K8Class:<W>\b\src\k8args.m,<W>\b\src\k8echo.m,<W>\b\src\k8err.m,<W>\b\src\k8make.m,<W>\b\src\k8quiet.m,<W>\b\src\k8show.m,<W>\b\src\k8vout.m}' class{K8Other:<W>\b\src\k8other.m}
+|Compiler version: 25.2 (R2025b)
+|Analyzing file dependencies.
+|Parsing file "<W>\b\src\k8args.m"
+| (referenced from command line).
+|Parsing file "<W>\b\src\k8echo.m"
+| (referenced from command line).
+|Parsing file "<W>\b\src\k8err.m"
+| (referenced from command line).
+|Parsing file "<W>\b\src\k8make.m"
+| (referenced from command line).
+|Parsing file "<W>\b\src\k8quiet.m"
+| (referenced from command line).
+|Parsing file "<W>\b\src\k8show.m"
+| (referenced from command line).
+|Parsing file "<W>\b\src\k8vout.m"
+| (referenced from command line).
+|Parsing file "<W>\b\src\k8other.m"
+| (referenced from command line).
+|Generating file "<W>\b\dn\K8\K8ClassNative.cs".
+|Generating file "<W>\b\dn\K8\K8OtherNative.cs".
+|Generating file "<W>\b\dn\K8\K8Class.cs".
+|Generating file "<W>\b\dn\K8\K8Other.cs".
+|Generating file "<W>\b\dn\K8\readme.txt".
+|Executing command: ""C:\Program Files\dotnet\dotnet.exe" build --nologo -v q -c Release -o "<W>\b\dn\K8" "<W>\b\dn\K8\K8.csproj""
+|
+|Build succeeded.
+| 0 Warning(s)
+| 0 Error(s)
+|
+|Time Elapsed 00:00:02.09
+|Executing command: ""C:\Program Files\dotnet\dotnet.exe" build --nologo -v q -c Release -o "<W>\b\dn\K8" "<W>\b\dn\K8\K8Native.csproj""
+|
+|Build succeeded.
+| 0 Warning(s)
+| 0 Error(s)
+|
+|Time Elapsed 00:00:01.09
+  JGraph: 
+|mcc -W 'dotnet:K8,api=mwarray,K8Class,5.0,Private,local,version=1.0.0.0' -T link:lib -d <W>\b\dn\K8 -v -Z autodetect 'class{K8Class:<W>\b\src\k8args.m,<W>\b\src\k8echo.m,<W>\b\src\k8err.m,<W>\b\src\k8make.m,<W>\b\src\k8quiet.m,<W>\b\src\k8show.m,<W>\b\src\k8vout.m}' class{K8Other:<W>\b\src\k8other.m}
+|Compiler version: JGraph 0.2.3 (R2025b)
+|Analyzing file dependencies.
+|Parsing file "<W>\b\src\k8args.m"
+| (referenced from command line).
+|Parsing file "<W>\b\src\k8echo.m"
+| (referenced from command line).
+|Parsing file "<W>\b\src\k8err.m"
+| (referenced from command line).
+|Parsing file "<W>\b\src\k8make.m"
+| (referenced from command line).
+|Parsing file "<W>\b\src\k8quiet.m"
+| (referenced from command line).
+|Parsing file "<W>\b\src\k8show.m"
+| (referenced from command line).
+|Parsing file "<W>\b\src\k8vout.m"
+| (referenced from command line).
+|Parsing file "<W>\b\src\k8other.m"
+| (referenced from command line).
+|Generating file "<W>\b\dn\K8\K8ClassNative.cs".
+|Generating file "<W>\b\dn\K8\K8OtherNative.cs".
+|Generating file "<W>\b\dn\K8\K8Class.cs".
+|Generating file "<W>\b\dn\K8\K8Other.cs".
+|Generating file "<W>\b\dn\K8\readme.txt".
+
+build main.readme
+  R2025b: 3052 chars, CRLF 75, ends with newline 1
+|K8 MATLAB .NET Assembly (.NET Component)
+|
+|1. Prerequisites for Deployment
+|
+|Verify that MATLAB Runtime(R2025b) is installed.
+|If not, you can run the MATLAB Runtime installer.
+|To find its location, enter
+|
+| >>mcrinstaller
+|
+|at the MATLAB prompt.
+|NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+|
+|Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+|from the following link on the MathWorks website:
+|
+| https://www.mathworks.com/products/compiler/mcr/index.html
+|
+|For more information about the MATLAB Runtime and the MATLAB Runtime installer, see
+|"Distribute Applications" in the MATLAB Compiler SDK documentation
+|in the MathWorks Documentation Center.
+|
+|2. Files to Deploy and Package
+|
+|-K8.dll
+| -contains the generated component using MWArray API.
+|-K8Native.dll
+| -contains the generated component using native API.
+|-This readme file
+| Note: if end users are unable to download the MATLAB Runtime using the
+| instructions in the previous section, include it when building your
+| component by clicking the "Runtime included in package" link in the
+| Deployment Tool.
+|
+|
+|Auto-generated Documentation Templates:
+|
+|MWArray.xml - This file contains the code comments for the MWArray data conversion
+| classes and their methods. This file can be found in either the component
+| distrib directory or in
+| <mcr_root>*\toolbox\dotnetbuilder\bin\win64\v5.0
+|
+|K8_overview.html - HTML overview documentation file for the generated component. It
+| contains the requirements for accessing the component and for
+| generating arguments using the MWArray class hierarchy.
+|
+|K8.xml - This file contains the code comments for the K8 component classes and methods.
+| Using a third party documentation tool, this file can be combined with
+| either or both of the previous files to generate online documentation
+| for the K8 component.
+|
+|3. Resources
+|
+|To learn more about: See:
+|===================================================================
+|MWArray classes <matlab_root>*\help\toolbox\
+| dotnetbuilder\MWArrayAPI\
+| MWArrayAPI.chm
+|Examples of .NET Web Applications Web Deployment in the MATLAB
+| .NET Assembly documentation in the
+| MathWorks Documentation Center
+|
+|
+|4. Definitions
+|
+|For information on deployment terminology, go to
+|https://www.mathworks.com/help and select MATLAB Compiler >
+|Getting Started > About Application Deployment >
+|Deployment Product Terms in the MathWorks Documentation
+|Center.
+|
+|* NOTE: <mcr_root> is the directory where the MATLAB Runtime is installed on the target
+| machine.
+| <matlab_root> is the directory where MATLAB is installed on the target machine.
+|
+  JGraph: 1103 chars, CRLF 32, ends with newline 1
+|K8 MATLAB .NET Assembly (.NET Component)
+|
+|1. Prerequisites for Deployment
+|
+|The JGraph Runtime 0.2.3 must be installed on the computer the assembly runs on,
+|or its folder named by the JGRAPH_RUNTIME_ROOT environment variable. Clients run on .NET 8 or later.
+|
+|2. Files to Deploy and Package
+|
+|-K8.dll
+| -contains the generated component using MWArray API.
+|-K8Native.dll
+| -contains the generated component using native API.
+|-JGraph.MATLAB.NET.Arrays.dll
+| -the MWArray classes, from the JGraph Runtime's toolbox\dotnetbuilder\bin\win64\net8.0 folder.
+|-This readme file
+|
+|
+|Auto-generated Documentation Templates:
+|
+|K8_overview.html - the classes, their functions, and how a client calls them.
+|
+|K8.xml - the code comments of the K8 classes and methods.
+|
+|3. Resources
+|
+|The MWArray classes keep MathWorks' names under the JGraph.MATLAB.NET namespaces: a client written
+|for MATLAB's assembly changes its using lines from MathWorks.MATLAB.NET to JGraph.MATLAB.NET.
+|
+|4. Definitions
+|
+|The JGraph Runtime is the engine a built component runs on, installed once per JGraph version.
+
+build default.options
+  R2025b: 
+DotNETAssemblyOptions with properties:
+ClassMap: [1×1 containers.Map]
+DebugBuild: off
+EnableRemoting: off
+FrameworkVersion: '4.0'
+SampleGenerationFiles: {}
+StrongNameKeyFile: ''
+AssemblyName: 'example.k8echo'
+AssemblyVersion: '1.0.0.0'
+EmbedArchive: on
+Interface: 'mwarray'
+AdditionalFiles: {}
+AutoDetectDataFiles: on
+ExternalEncryptionKey: [0×0 struct]
+ObfuscateArchive: off
+SecretsManifest: ''
+SupportPackages: {'autodetect'}
+Verbose: off
+OutputDir: '.\k8echodotNETAssembly'
+Class Map Information
+k8echoClass: {'<W>\b\src\k8echo.m'}
+  JGraph: 
+DotNETAssemblyOptions with properties:
+ClassMap: [1×1 containers.Map]
+DebugBuild: off
+EnableRemoting: off
+FrameworkVersion: '4.0'
+SampleGenerationFiles: {}
+StrongNameKeyFile: ''
+AssemblyName: 'example.k8echo'
+AssemblyVersion: '1.0.0.0'
+EmbedArchive: on
+Interface: 'mwarray'
+AdditionalFiles: {}
+AutoDetectDataFiles: on
+ExternalEncryptionKey: [0×0 struct]
+ObfuscateArchive: off
+SecretsManifest: ''
+SupportPackages: {'autodetect'}
+Verbose: off
+OutputDir: '.\k8echodotNETAssembly'
+Class Map Information
+k8echoClass: {'<TEMP>\claude\D--EE-Projects-J...'}
+
+build framework4.printed
+  R2025b: 
+|mcc -W 'dotnet:K8f,api=mwarray,k8echoClass,4.0,Private,local,version=1.0.0.0' -T link:lib -d <W>\b\framework4 -v -Z autodetect class{k8echoClass:<W>\b\src\k8echo.m}
+|Compiler version: 25.2 (R2025b)
+|Analyzing file dependencies.
+|Parsing file "<W>\b\src\k8echo.m"
+| (referenced from command line).
+|Generating file "<W>\b\framework4\k8echoClassNative.cs".
+|Generating file "<W>\b\framework4\k8echoClass.cs".
+|Generating file "<W>\b\framework4\readme.txt".
+|Executing command: C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /nologo /optimize /doc:"<W>\b\framework4\K8f.xml" /t:library /r:"<MATLABROOT>\toolbox\dotnetbuilder\bin\win64\v4.0\MWArray.dll" /resource:"<W>\b\framework4\K8f.ctf" /define:__IN_MCC /out:"<W>\b\framework4\K8f.dll" "<W>\b\framework4\k8echoClass.cs" "<W>\b\framework4\K8fVersion.cs"
+|Executing command: C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /nologo /optimize /doc:"<W>\b\framework4\K8fNative.xml" /t:library /r:"<MATLABROOT>\toolbox\dotnetbuilder\bin\win64\v4.0\MWArray.dll" /resource:"<W>\b\framework4\K8f.ctf" /define:__IN_MCC /out:"<W>\b\framework4\K8fNative.dll" "<W>\b\framework4\k8echoClassNative.cs" "<W>\b\framework4\K8fVersion.cs"
+  JGraph: 
+|mcc -W 'dotnet:K8f,api=mwarray,k8echoClass,4.0,Private,local,version=1.0.0.0' -T link:lib -d <W>\b\framework4 -v -Z autodetect class{k8echoClass:<W>\b\src\k8echo.m}
+|Compiler version: JGraph 0.2.3 (R2025b)
+|Analyzing file dependencies.
+|Parsing file "<W>\b\src\k8echo.m"
+| (referenced from command line).
+|Generating file "<W>\b\framework4\k8echoClassNative.cs".
+|Generating file "<W>\b\framework4\k8echoClass.cs".
+|Generating file "<W>\b\framework4\readme.txt".
+
+build separate.printed
+  R2025b: 
+|mcc -W 'dotnet:K8s,api=mwarray,k8echoClass,5.0,Private,local,version=1.0.0.0' -T link:lib -d <W>\b\separate -v -Z autodetect -C class{k8echoClass:<W>\b\src\k8echo.m}
+|Compiler version: 25.2 (R2025b)
+|Analyzing file dependencies.
+|Parsing file "<W>\b\src\k8echo.m"
+| (referenced from command line).
+|Generating file "<W>\b\separate\k8echoClassNative.cs".
+|Generating file "<W>\b\separate\k8echoClass.cs".
+|Generating file "<W>\b\separate\readme.txt".
+|Executing command: ""C:\Program Files\dotnet\dotnet.exe" build --nologo -v q -c Release -o "<W>\b\separate" "<W>\b\separate\K8s.csproj""
+|
+|Build succeeded.
+| 0 Warning(s)
+| 0 Error(s)
+|
+|Time Elapsed 00:00:01.07
+|Executing command: ""C:\Program Files\dotnet\dotnet.exe" build --nologo -v q -c Release -o "<W>\b\separate" "<W>\b\separate\K8sNative.csproj""
+|
+|Build succeeded.
+| 0 Warning(s)
+| 0 Error(s)
+|
+|Time Elapsed 00:00:01.10
+  JGraph: 
+|mcc -W 'dotnet:K8s,api=mwarray,k8echoClass,5.0,Private,local,version=1.0.0.0' -T link:lib -d <W>\b\separate -v -Z autodetect -C class{k8echoClass:<W>\b\src\k8echo.m}
+|Compiler version: JGraph 0.2.3 (R2025b)
+|Analyzing file dependencies.
+|Parsing file "<W>\b\src\k8echo.m"
+| (referenced from command line).
+|Generating file "<W>\b\separate\k8echoClassNative.cs".
+|Generating file "<W>\b\separate\k8echoClass.cs".
+|Generating file "<W>\b\separate\readme.txt".
+
+build dotted.printed
+  R2025b: 
+|mcc -W 'dotnet:Org.Group.K8n,api=mwarray,k8echoClass,5.0,Private,local,version=1.0.0.0' -T link:lib -d <W>\b\dotted -v -Z autodetect class{k8echoClass:<W>\b\src\k8echo.m}
+|Compiler version: 25.2 (R2025b)
+|Analyzing file dependencies.
+|Parsing file "<W>\b\src\k8echo.m"
+| (referenced from command line).
+|Generating file "<W>\b\dotted\k8echoClassNative.cs".
+|Generating file "<W>\b\dotted\k8echoClass.cs".
+|Generating file "<W>\b\dotted\readme.txt".
+|Executing command: ""C:\Program Files\dotnet\dotnet.exe" build --nologo -v q -c Release -o "<W>\b\dotted" "<W>\b\dotted\K8n.csproj""
+|
+|Build succeeded.
+| 0 Warning(s)
+| 0 Error(s)
+|
+|Time Elapsed 00:00:01.08
+|Executing command: ""C:\Program Files\dotnet\dotnet.exe" build --nologo -v q -c Release -o "<W>\b\dotted" "<W>\b\dotted\K8nNative.csproj""
+|
+|Build succeeded.
+| 0 Warning(s)
+| 0 Error(s)
+|
+|Time Elapsed 00:00:01.07
+  JGraph: 
+|mcc -W 'dotnet:Org.Group.K8n,api=mwarray,k8echoClass,5.0,Private,local,version=1.0.0.0' -T link:lib -d <W>\b\dotted -v -Z autodetect class{k8echoClass:<W>\b\src\k8echo.m}
+|Compiler version: JGraph 0.2.3 (R2025b)
+|Analyzing file dependencies.
+|Parsing file "<W>\b\src\k8echo.m"
+| (referenced from command line).
+|Generating file "<W>\b\dotted\k8echoClassNative.cs".
+|Generating file "<W>\b\dotted\k8echoClass.cs".
+|Generating file "<W>\b\dotted\readme.txt".
+
+build debug.printed
+  R2025b: 
+|mcc -W 'dotnet:K8d,api=mwarray,k8echoClass,5.0,Private,local,version=1.0.0.0' -T link:lib -d <W>\b\debug -v -Z autodetect -g class{k8echoClass:<W>\b\src\k8echo.m}
+|Compiler version: 25.2 (R2025b)
+|Analyzing file dependencies.
+|Parsing file "<W>\b\src\k8echo.m"
+| (referenced from command line).
+|Generating file "<W>\b\debug\k8echoClassNative.cs".
+|Generating file "<W>\b\debug\k8echoClass.cs".
+|Generating file "<W>\b\debug\readme.txt".
+|Executing command: ""C:\Program Files\dotnet\dotnet.exe" build --nologo -v q -c Debug -o "<W>\b\debug" "<W>\b\debug\K8d.csproj""
+|
+|Build succeeded.
+| 0 Warning(s)
+| 0 Error(s)
+|
+|Time Elapsed 00:00:01.14
+|Executing command: ""C:\Program Files\dotnet\dotnet.exe" build --nologo -v q -c Debug -o "<W>\b\debug" "<W>\b\debug\K8dNative.csproj""
+|
+|Build succeeded.
+| 0 Warning(s)
+| 0 Error(s)
+|
+|Time Elapsed 00:00:01.13
+  JGraph: 
+|mcc -W 'dotnet:K8d,api=mwarray,k8echoClass,5.0,Private,local,version=1.0.0.0' -T link:lib -d <W>\b\debug -v -Z autodetect -g class{k8echoClass:<W>\b\src\k8echo.m}
+|Compiler version: JGraph 0.2.3 (R2025b)
+|Analyzing file dependencies.
+|Parsing file "<W>\b\src\k8echo.m"
+| (referenced from command line).
+|Generating file "<W>\b\debug\k8echoClassNative.cs".
+|Generating file "<W>\b\debug\k8echoClass.cs".
+|Generating file "<W>\b\debug\readme.txt".
+
+build remoting.printed
+  R2025b: 
+|mcc -W 'dotnet:K8r,api=mwarray,k8echoClass,5.0,Private,remote,version=1.0.0.0' -T link:lib -d <W>\b\remoting -v -Z autodetect class{k8echoClass:<W>\b\src\k8echo.m}
+|Compiler version: 25.2 (R2025b)
+|Analyzing file dependencies.
+|Parsing file "<W>\b\src\k8echo.m"
+| (referenced from command line).
+|Generating file "<W>\b\remoting\k8echoClassNative.cs".
+|Generating file "<W>\b\remoting\k8echoClass.cs".
+|Generating file "<W>\b\remoting\Ik8echoClassNative.cs".
+|Generating file "<W>\b\remoting\Ik8echoClass.cs".
+|Generating file "<W>\b\remoting\readme.txt".
+|Executing command: ""C:\Program Files\dotnet\dotnet.exe" build --nologo -v q -c Release -o "<W>\b\remoting" "<W>\b\remoting\IK8r.csproj""
+|<W>\b\remoting\Ik8echoClass.cs(8,20): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClass' [<W>\b\remoting\IK8r.csproj]
+|<W>\b\remoting\Ik8echoClass.cs(12,13): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClass.k8echo()' [<W>\b\remoting\IK8r.csproj]
+|<W>\b\remoting\Ik8echoClass.cs(14,13): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClass.k8echo(MWArray)' [<W>\b\remoting\IK8r.csproj]
+|<W>\b\remoting\Ik8echoClass.cs(16,15): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClass.k8echo(int)' [<W>\b\remoting\IK8r.csproj]
+|<W>\b\remoting\Ik8echoClass.cs(18,15): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClass.k8echo(int, MWArray)' [<W>\b\remoting\IK8r.csproj]
+|
+|Build succeeded.
+|
+|<W>\b\remoting\Ik8echoClass.cs(8,20): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClass' [<W>\b\remoting\IK8r.csproj]
+|<W>\b\remoting\Ik8echoClass.cs(12,13): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClass.k8echo()' [<W>\b\remoting\IK8r.csproj]
+|<W>\b\remoting\Ik8echoClass.cs(14,13): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClass.k8echo(MWArray)' [<W>\b\remoting\IK8r.csproj]
+|<W>\b\remoting\Ik8echoClass.cs(16,15): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClass.k8echo(int)' [<W>\b\remoting\IK8r.csproj]
+|<W>\b\remoting\Ik8echoClass.cs(18,15): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClass.k8echo(int, MWArray)' [<W>\b\remoting\IK8r.csproj]
+| 5 Warning(s)
+| 0 Error(s)
+|
+|Time Elapsed 00:00:01.06
+|Executing command: ""C:\Program Files\dotnet\dotnet.exe" build --nologo -v q -c Release -o "<W>\b\remoting" "<W>\b\remoting\K8r.csproj""
+|
+|Build succeeded.
+| 0 Warning(s)
+| 0 Error(s)
+|
+|Time Elapsed 00:00:01.11
+|Executing command: ""C:\Program Files\dotnet\dotnet.exe" build --nologo -v q -c Release -o "<W>\b\remoting" "<W>\b\remoting\IK8rNative.csproj""
+|<W>\b\remoting\Ik8echoClassNative.cs(5,20): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClassNative' [<W>\b\remoting\IK8rNative.csproj]
+|<W>\b\remoting\Ik8echoClassNative.cs(9,12): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClassNative.k8echo()' [<W>\b\remoting\IK8rNative.csproj]
+|<W>\b\remoting\Ik8echoClassNative.cs(11,12): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClassNative.k8echo(object)' [<W>\b\remoting\IK8rNative.csproj]
+|<W>\b\remoting\Ik8echoClassNative.cs(13,14): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClassNative.k8echo(int)' [<W>\b\remoting\IK8rNative.csproj]
+|<W>\b\remoting\Ik8echoClassNative.cs(15,14): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClassNative.k8echo(int, object)' [<W>\b\remoting\IK8rNative.csproj]
+|
+|Build succeeded.
+|
+|<W>\b\remoting\Ik8echoClassNative.cs(5,20): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClassNative' [<W>\b\remoting\IK8rNative.csproj]
+|<W>\b\remoting\Ik8echoClassNative.cs(9,12): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClassNative.k8echo()' [<W>\b\remoting\IK8rNative.csproj]
+|<W>\b\remoting\Ik8echoClassNative.cs(11,12): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClassNative.k8echo(object)' [<W>\b\remoting\IK8rNative.csproj]
+|<W>\b\remoting\Ik8echoClassNative.cs(13,14): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClassNative.k8echo(int)' [<W>\b\remoting\IK8rNative.csproj]
+|<W>\b\remoting\Ik8echoClassNative.cs(15,14): warning CS1591: Missing XML comment for publicly visible type or member 'Ik8echoClassNative.k8echo(int, object)' [<W>\b\remoting\IK8rNative.csproj]
+| 5 Warning(s)
+| 0 Error(s)
+|
+|Time Elapsed 00:00:01.09
+|Executing command: ""C:\Program Files\dotnet\dotnet.exe" build --nologo -v q -c Release -o "<W>\b\remoting" "<W>\b\remoting\K8rNative.csproj""
+|
+|Build succeeded.
+| 0 Warning(s)
+| 0 Error(s)
+|
+|Time Elapsed 00:00:01.11
+  JGraph: (missing)
+
+build remoting.results
+  R2025b: 
+Results with properties:
+BuildType: 'dotNETAssembly'
+Files: {6×1 cell}
+IncludedSupportPackages: {}
+Options: [1×1 compiler.build.DotNETAssemblyOptions]
+RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: (missing)
+
+build remoting.BuildType
+  R2025b: dotNETAssembly
+  JGraph: (missing)
+
+build remoting.Files
+  R2025b: <OUT>\K8r.dll | <OUT>\K8rNative.dll | <OUT>\K8r_overview.html | <OUT>\IK8r.dll | <OUT>\IK8rNative.dll | <OUT>\GettingStarted.html
+  JGraph: (missing)
+
+build remoting.files
+  R2025b: GettingStarted.html | IK8r.csproj | IK8r.dll | IK8r.xml | IK8rNative.csproj | IK8rNative.dll | IK8rNative.xml | Ik8echoClass.cs | Ik8echoClassNative.cs | K8r.csproj | K8r.dll | K8r.xml | K8rNative.csproj | K8rNative.dll | K8rNative.xml | K8r_overview.html | buildresult.json | includedSupportPackages.txt | k8echoClass.cs | k8echoClassNative.cs | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+  JGraph: (missing)
+
+build version.printed
+  R2025b: 
+|mcc -W 'dotnet:K8v,api=mwarray,k8echoClass,5.0,Private,local,version=2.3.4' -T link:lib -d <W>\b\version -v -Z autodetect class{k8echoClass:<W>\b\src\k8echo.m}
+|Compiler version: 25.2 (R2025b)
+|Analyzing file dependencies.
+|Parsing file "<W>\b\src\k8echo.m"
+| (referenced from command line).
+|Generating file "<W>\b\version\k8echoClassNative.cs".
+|Generating file "<W>\b\version\k8echoClass.cs".
+|Generating file "<W>\b\version\readme.txt".
+|Executing command: ""C:\Program Files\dotnet\dotnet.exe" build --nologo -v q -c Release -o "<W>\b\version" "<W>\b\version\K8v.csproj""
+|
+|Build succeeded.
+| 0 Warning(s)
+| 0 Error(s)
+|
+|Time Elapsed 00:00:01.07
+|Executing command: ""C:\Program Files\dotnet\dotnet.exe" build --nologo -v q -c Release -o "<W>\b\version" "<W>\b\version\K8vNative.csproj""
+|
+|Build succeeded.
+| 0 Warning(s)
+| 0 Error(s)
+|
+|Time Elapsed 00:00:01.06
+  JGraph: 
+|mcc -W 'dotnet:K8v,api=mwarray,k8echoClass,5.0,Private,local,version=2.3.4' -T link:lib -d <W>\b\version -v -Z autodetect class{k8echoClass:<W>\b\src\k8echo.m}
+|Compiler version: JGraph 0.2.3 (R2025b)
+|Analyzing file dependencies.
+|Parsing file "<W>\b\src\k8echo.m"
+| (referenced from command line).
+|Generating file "<W>\b\version\k8echoClassNative.cs".
+|Generating file "<W>\b\version\k8echoClass.cs".
+|Generating file "<W>\b\version\readme.txt".
+
+build mcc_exe.files
+  R2025b: K8e.ctf | K8e.dll | K8eClass.cs | K8eClassNative.cs | K8e_overview.html | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+  JGraph: K8e.csproj | K8e.dll | K8e.xml | K8eClass.cs | K8eClassNative.cs | K8eNative.csproj | K8eNative.dll | K8eNative.xml | K8e_overview.html | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+
+build mcc_remote
+  R2025b: ok ()
+  JGraph: ERR JGraph:mcc:targetOutOfScope | JGraph does not build remotable .NET assemblies (-W dotnet:...,remote): .NET 8 has no remoting.
+
+build mcc_remote.files
+  R2025b: IK8z.csproj | IK8z.dll | IK8z.xml | IK8zClass.cs | IK8zClassNative.cs | IK8zNative.csproj | IK8zNative.dll | IK8zNative.xml | K8z.csproj | K8z.dll | K8z.xml | K8zClass.cs | K8zClassNative.cs | K8zNative.csproj | K8zNative.dll | K8zNative.xml | K8z_overview.html | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+  JGraph: (missing)
+
+build mcc_mda
+  R2025b: ok (Build succeeded.  /     1 Warning(s)  /     0 Error(s)  /   / Time Elapsed 00:00:01.47)
+  JGraph: ERR JGraph:mcc:targetNotBuilt | JGraph's mcc does not build a .NET assembly for the MATLAB Data API (-W dotnet:...,api=matlab-data) yet.
+
+build mcc_mda.files
+  R2025b: K8g.csproj | K8g.ctf | K8g.deps.json | K8g.dll | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | strongly_typed_interface\k8echo.cs | unresolvedSymbols.txt
+  JGraph: (missing)

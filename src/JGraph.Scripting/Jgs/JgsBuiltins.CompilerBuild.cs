@@ -53,6 +53,8 @@ internal static partial class JgsBuiltins
                 },
             }));
         }
+
+        RegisterDotNetBuild(env, interpreter, host);
     }
 
     // --- The options -----------------------------------------------------------------------

@@ -1,0 +1,24 @@
+<Project Sdk = "Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<OutputType>library</OutputType>
+		<DebugType>None</DebugType>
+		<Optimize>true</Optimize>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+		<CopyReferenceAssemblies>false</CopyReferenceAssemblies>
+		<DefineConstants>$(DefineConstants); __IN_MCC</DefineConstants>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+		<Version>1.0.0.0</Version>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove = "*.cs" />
+		<Compile Include = "K8Class.cs" />
+		<Compile Include = "K8Other.cs" />
+		<EmbeddedResource Include = "K8.ctf" />
+		<Reference Include = "<MATLABROOT>\toolbox\dotnetbuilder\bin\win64\netstandard2.0\MWArray.dll">
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+</Project>

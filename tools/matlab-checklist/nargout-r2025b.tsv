@@ -306,6 +306,8 @@ comet	0	2
 comet3	0	2
 compan	1	2
 compass	1	2
+compiler.build.dotNETAssembly	-1	0
+compiler.build.DotNETAssemblyOptions	1	8
 compiler.build.standaloneApplication	-1	0
 compiler.build.StandaloneApplicationOptions	1	8
 compiler.build.standaloneWindowsApplication	-1	0

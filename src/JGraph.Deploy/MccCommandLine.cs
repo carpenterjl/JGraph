@@ -17,6 +17,24 @@ public enum MccTarget
 
     /// <summary>A windowed program: <c>-e</c>, or <c>-W WinMain:</c>.</summary>
     Windowed,
+
+    /// <summary>A .NET assembly for the MWArray API: <c>-W dotnet:</c> (stage K8).</summary>
+    DotNet,
+}
+
+/// <summary>
+/// <c>-W dotnet:assembly[,api=...],class,framework,security,local|remote[,version=v]</c> as R2025b's
+/// DotNetWriter writes it and its mcc reads it (k8_build): an empty class is the assembly's last name, an
+/// empty framework 4.0, a security other than <c>Private</c> a strong-name key file.
+/// </summary>
+/// <param name="AssemblyName">The assembly's name, which is also its namespace (<c>Org.Group.K8n</c>).</param>
+/// <param name="ClassName">The class the files not named in a <c>class{}</c> go into.</param>
+/// <param name="Framework">The .NET version written, <c>4.0</c> or <c>5.0</c>.</param>
+/// <param name="KeyFile">The strong-name key file, or null for a private assembly.</param>
+public sealed record DotNetWrapper(string AssemblyName, string ClassName, string Framework, string? KeyFile)
+{
+    /// <summary>The assembly's own name: the last part of a dotted one, as its dll is named.</summary>
+    public string ShortName => AssemblyName[(AssemblyName.LastIndexOf('.') + 1)..];
 }
 
 /// <summary>How far a standalone build goes, as <c>-T</c> says (k7_switches).</summary>
@@ -197,6 +215,15 @@ public sealed class MccCommandLine
     /// <summary>The files, in order: the main first.</summary>
     public List<string> Files { get; } = [];
 
+    /// <summary><c>-W dotnet:</c>'s parts, for a .NET assembly.</summary>
+    public DotNetWrapper? DotNet { get; private set; }
+
+    /// <summary>A library's <c>class{Name:file,file}</c> arguments, in order: each class and its files.</summary>
+    public List<(string Name, List<string> Files)> Classes { get; } = [];
+
+    /// <summary><c>-g</c> for a library: a debug build, with its symbols.</summary>
+    public bool DebugBuild { get; private set; }
+
     /// <summary>Whether the build only prints something: help, the trace help or the warning table.</summary>
     public bool PrintsOnly => ShowHelp || ShowTraceHelp || Warnings.List;
 
@@ -244,7 +271,16 @@ public sealed class MccCommandLine
             string arg = words[i];
             if (arg.Length < 2 || arg[0] != '-')
             {
-                line.Files.Add(arg);
+                // class{Name:file,file} names a library class and its files (R2025b's ClassMapWriter).
+                if (Regex.Match(arg, "^class\\{([^:}]*):(.*)\\}$") is { Success: true } classed)
+                {
+                    line.Classes.Add((classed.Groups[1].Value, [.. classed.Groups[2].Value.Split(',', StringSplitOptions.RemoveEmptyEntries)]));
+                }
+                else
+                {
+                    line.Files.Add(arg);
+                }
+
                 line.Processed.Add(arg);
                 continue;
             }
@@ -498,12 +534,20 @@ public sealed class MccCommandLine
                 "Error: The wrapper type specified with -W switch doesn't match with the target type specified with -T switch.");
         }
 
-        if (line.Files.Count == 0)
+        if (line.Files.Count == 0 && line.Classes.Count == 0)
         {
             throw Refuse("COM_ERR_NO_FILES_SPECIFIED", "Error: No source files were specified (-? for help).");
         }
 
-        if (!standalone)
+        if (wrapperKind == "dotnet")
+        {
+            line.DotNetTarget(wrapperParts, currentFolder);
+
+            // -g is a .NET build's debug switch, not one a standalone build ignores (k8_build: debug).
+            line.DebugBuild = line.IgnoredSwitches.Remove("g");
+            line.IgnoredSwitches.RemoveAll(static s => s == "g");
+        }
+        else if (!standalone)
         {
             OtherTarget(wrapperKind, wrapperParts, mpsSwitch, separateSwitch);
         }
@@ -670,6 +714,62 @@ public sealed class MccCommandLine
         {
             throw Refuse("COM_ERR_ILLEGAL_COMPONENT_NAME", "Error: Component name invalid or unspecified (specify with -n or -W).");
         }
+    }
+
+    /// <summary>
+    /// <c>-W dotnet:</c>'s parts once the command line is read (k8_build): the MWArray API built, the
+    /// MATLAB Data API stage K9's, remoting refused, a key file that is not there R2025b's refusal.
+    /// </summary>
+    private void DotNetTarget(string[] parts, string? currentFolder)
+    {
+        string name = parts[0];
+        int at = 1;
+        string api = "";
+        if (parts.Length > 1 && parts[1].StartsWith("api=", StringComparison.Ordinal))
+        {
+            api = parts[1]["api=".Length..];
+            at = 2;
+        }
+
+        string Part(int offset) => parts.Length > at + offset ? parts[at + offset] : "";
+        string className = Part(0);
+        string framework = Part(1);
+        string security = Part(2);
+        string locality = Part(3);
+        foreach (string part in parts.Skip(at + 4))
+        {
+            if (part.StartsWith("version=", StringComparison.Ordinal))
+            {
+                string text = part["version=".Length..];
+                Version = ProgramVersion.Parse(text) ?? throw Refuse("COM_ERR_INVALID_VERSION", ProgramVersion.Refusal(text));
+            }
+        }
+
+        if (api == "matlab-data")
+        {
+            throw new MccException("JGraph:mcc:targetNotBuilt",
+                "JGraph's mcc does not build a .NET assembly for the MATLAB Data API (-W dotnet:...,api=matlab-data) yet.");
+        }
+
+        if (locality == "remote")
+        {
+            throw new MccException("JGraph:mcc:targetOutOfScope",
+                "JGraph does not build remotable .NET assemblies (-W dotnet:...,remote): .NET 8 has no remoting.");
+        }
+
+        string? keyFile = null;
+        if (security.Length > 0 && security != "Private")
+        {
+            keyFile = currentFolder is null || Path.IsPathRooted(security) ? security : Path.Combine(currentFolder, security);
+            if (!File.Exists(keyFile))
+            {
+                throw Refuse("COM_ERR_SNK_FILE_NOT_EXIST", $"Strong name key file \"{security}\" does not exist.");
+            }
+        }
+
+        var wrapper = new DotNetWrapper(name, "", framework.Length == 0 ? "4.0" : framework, keyFile);
+        DotNet = wrapper with { ClassName = className.Length == 0 ? wrapper.ShortName : className };
+        Target = MccTarget.DotNet;
     }
 
     /// <summary>A library or server target, once the command line is read: R2025b's last checks, then JGraph's refusal.</summary>

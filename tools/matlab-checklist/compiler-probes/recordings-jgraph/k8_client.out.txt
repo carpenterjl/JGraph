@@ -1,0 +1,563 @@
+BUILD	exit 0
+  construct	ok
+  quiet	MWCharArray 1x2 Character <<on>>
+  mcr.initialized	System.Boolean True
+  mcr.isinitialized	System.Boolean True
+  num.empty.ctor	MWNumericArray 0x0 Double <<[]>>
+  num.double	MWNumericArray 1x1 Double <<1>>
+  num.double.frac	MWNumericArray 1x1 Double <<2.5000>>
+  num.int	MWNumericArray 1x1 Double <<3>>
+  num.int.notdouble	MWNumericArray 1x1 Int32 <<3>>
+  num.int.double	MWNumericArray 1x1 Double <<3>>
+  num.byte	MWNumericArray 1x1 Double <<5>>
+  num.byte.notdouble	MWNumericArray 1x1 UInt8 <<5>>
+  num.short	MWNumericArray 1x1 Double <<7>>
+  num.short.notdouble	MWNumericArray 1x1 Int16 <<7>>
+  num.long	MWNumericArray 1x1 Double <<9>>
+  num.long.notdouble	MWNumericArray 1x1 Int64 <<9>>
+  num.float	MWNumericArray 1x1 Double <<2.5000>>
+  num.float.notdouble	MWNumericArray 1x1 Single <<2.5000>>
+  num.complex	MWNumericArray 1x1 Double complex <<1.0000 + 2.0000i>>
+  num.complex.int	MWNumericArray 1x1 Double complex <<3.0000 + 4.0000i>>
+  num.complex.int.notdouble	MWNumericArray 1x1 Int32 complex <<3 +   4i>>
+  num.rows.double	MWNumericArray 2x3 Double <<     1     2     3\n     4     5     6>>
+  num.rows.double.colmajor	MWNumericArray 2x3 Double <<     1     3     5\n     2     4     6>>
+  num.rows.double.rowmajor	MWNumericArray 2x3 Double <<     1     2     3\n     4     5     6>>
+  num.rows.double.complex	MWNumericArray 1x2 Double complex <<1.0000 + 3.0000i   2.0000 + 4.0000i>>
+  num.rows.int	MWNumericArray 2x2 Double <<     1     2\n     3     4>>
+  num.rows.int.notdouble	MWNumericArray 2x2 Int32 <<   1   2\n   3   4>>
+  num.rows.int.colmajor	MWNumericArray 2x2 Int32 <<   1   3\n   2   4>>
+  num.rows.byte	MWNumericArray 1x3 Double <<1     2   255>>
+  num.rows.byte.notdouble	MWNumericArray 1x3 UInt8 <<1     2   255>>
+  num.rows.short.notdouble	MWNumericArray 1x2 Int16 <<-1    2>>
+  num.rows.long.notdouble	MWNumericArray 1x2 Int64 <<-1    2>>
+  num.rows.float.notdouble	MWNumericArray 1x2 Single <<1.5000    2.0000>>
+  num.rows.short	MWNumericArray 1x2 Double <<-1     2>>
+  num.rows.wrongcount	THREW System.ArgumentException: The data array must have (row * columns) elements (Parameter 'realData')
+  num.array.vector	MWNumericArray 1x3 Double <<1     2     3>>
+  num.array.matrix	MWNumericArray 2x3 Double <<     1     2     3\n     4     5     6>>
+  num.array.3d	MWNumericArray 2x2x2 Double <<(:,:,1) =\n\n     1     2\n     3     4\n\n\n(:,:,2) =\n\n     5     6\n     7     8>>
+  num.array.int	MWNumericArray 1x2 Double <<0     0>>
+  num.array.int.notdouble	MWNumericArray 1x2 Int32 <<1   2>>
+  num.array.int.matrix.notdouble.colmajor	MWNumericArray 2x2 Int32 <<   1   3\n   2   4>>
+  num.array.sbyte	THREW System.ArgumentException: The data array type is invalid
+  num.array.sbyte.notdouble	THREW System.ArgumentException: The data array type is invalid
+  num.array.ushort.notdouble	THREW System.ArgumentException: The data array type is invalid
+  num.array.uint.notdouble	THREW System.ArgumentException: The data array type is invalid
+  num.array.ulong.notdouble	THREW System.ArgumentException: The data array type is invalid
+  num.array.complex	MWNumericArray 1x2 Double complex <<1.0000 + 3.0000i   2.0000 + 4.0000i>>
+  num.array.string	THREW System.ArgumentException: The data array type is invalid
+  num.array.empty	MWNumericArray 1x0 Double <<[]>>
+  num.dims	MWNumericArray 2x3 Double <<     0     0     0\n     0     0     0>>
+  num.dims.3d	MWNumericArray 2x1x2 Double <<(:,:,1) =\n\n     0\n     0\n\n\n(:,:,2) =\n\n     0\n     0>>
+  num.complexity.real	MWNumericArray 2x2 Double <<     0     0\n     0     0>>
+  num.complexity.complex	MWNumericArray 1x2 Double complex <<0.0000 + 0.0000i   0.0000 + 0.0000i>>
+  num.complexity.int16	MWNumericArray 1x2 Int16 <<0   0>>
+  num.complexity.int16.complex	MWNumericArray 1x2 Int16 complex <<0 +   0i   0 +   0i>>
+  num.type.single	MWNumericArray 0x1 Single <<[]>>
+  num.type.uint64	MWNumericArray 0x1 UInt64 <<[]>>
+  num.implicit.int	MWNumericArray 1x1 Double <<5>>
+  num.implicit.double	MWNumericArray 1x1 Double <<2.5000>>
+  num.implicit.byte	MWNumericArray 1x1 UInt8 <<4>>
+  num.implicit.long	MWNumericArray 1x1 Int64 <<4>>
+  num.implicit.float	MWNumericArray 1x1 Single <<1.5000>>
+  num.implicit.short	MWNumericArray 1x1 Int16 <<3>>
+  num.implicit.doubles	MWNumericArray 1x2 Double <<1     2>>
+  num.implicit.ints	MWNumericArray 1x2 Double <<1     2>>
+  num.implicit.bytes	MWNumericArray 1x2 UInt8 <<1   2>>
+  num.implicit.floats	MWNumericArray 1x2 Single <<1     2>>
+  num.implicit.array	MWNumericArray 2x2 Double <<     1     2\n     3     4>>
+  num.static.empty	MWNumericArray 0x0 Double <<[]>>
+  num.static.inf	MWNumericArray 1x1 Double <<Inf>>
+  num.static.nan	MWNumericArray 1x1 Double <<NaN>>
+  num.static.eps	System.Double 2.220446049250313E-16
+  num.sparse	MWNumericArray 3x2 Double sparse <<   (1,1)        5\n   (3,2)        6>>
+  num.sparse.sized	MWNumericArray 3x3 Double sparse <<   (1,1)        5\n   (3,2)        6>>
+  num.sparse.complex	MWNumericArray 1x2 Double complex sparse <<(1,2)      5.0000 + 1.0000i>>
+  num.sparse.alloc	MWNumericArray 2x2 Double sparse <<All zero>>
+  num.mixed.display	MWNumericArray 1x3 Double <<   1.0e+03 *\n\n    0.0010    0.0025    1.0000>>
+  num.large.display	MWNumericArray 1x1 Double <<1.2346e+05>>
+  num.small.display	MWNumericArray 1x2 Double <<0.0000    1.0000>>
+  num.inf.display	MWNumericArray 1x3 Double <<Inf  -Inf   NaN>>
+  num.negative.display	MWNumericArray 1x2 Double <<-1     2>>
+  num.column.display	MWNumericArray 3x1 Double <<     1\n     2\n     3>>
+  num.int.matrix.display	MWNumericArray 2x2 Int32 <<     1    20\n   300     4>>
+  num.flags	THREW System.Exception: Value must be a scalar
+  num.flags.int32	System.String "IsDouble=False IsFloat=False IsInteger=True IsByte=False IsShort=False IsLong=False"
+  num.flags.nan	System.String "IsNaN=True IsInfinity=False"
+  num.props	System.String "NumberofDimensions=2 NumberOfElements=6 IsEmpty=False IsNumericArray=True IsCharArray=False IsCellArray=False IsStructArray=False IsLogicalArray=False IsStringArray=False ArrayType=Numeric"
+  num.index.1.2	MWNumericArray 1x1 Double <<2>>
+  num.index.2.3	MWNumericArray 1x1 Double <<6>>
+  num.index.linear.4	MWNumericArray 1x1 Double <<5>>
+  num.index.0	THREW System.Exception: Invalid index
+  num.index.out	THREW System.Exception: Invalid index
+  num.index.out.2d	THREW System.Exception: Invalid index
+  num.index.three	THREW System.Exception: Invalid index
+  num.set.1.1	ok
+  num.after.set	MWNumericArray 2x3 Double <<    10     2     3\n     4     5     6>>
+  num.set.grow	THREW System.Exception: Invalid index
+  num.after.grow	MWNumericArray 2x3 Double <<    10     2     3\n     4     5     6>>
+  num.toarray	System.Double[,] [2,3] {10, 2, 3, 4, 5, 6}
+  num.toarray.real	System.Double[,] [2,3] {10, 2, 3, 4, 5, 6}
+  num.tovector	System.Double[] [6] {10, 4, 2, 5, 3, 6}
+  num.complex.toarray	THREW System.IO.InvalidDataException: Data type unsupported by MATLAB .NET Assembly for output
+  num.complex.toarray.imag	System.Double[,] [1,2] {3, 4}
+  num.complex.tovector.imag	System.Double[] [2] {3, 4}
+  num.complex.index	MWNumericArray 1x1 Double complex <<2.0000 + 4.0000i>>
+  num.complex.index.imag	MWNumericArray 1x1 Double <<4>>
+  num.complex.set.imag	ok
+  num.complex.after.set	MWNumericArray 1x2 Double complex <<1.0000 + 9.0000i   2.0000 + 4.0000i>>
+  num.int8.toarray	THREW System.ArgumentException: The data array type is invalid
+  num.int32.toarray	System.Int32[,] [2,2] {1, 2, 3, 4}
+  num.3d.toarray	System.Double[,,] [2,2,2] {1, 2, 3, 4, 5, 6, 7, 8}
+  num.empty.toarray	System.Double[,] [0,0] {}
+  num.toemptyvector	System.Double[] [0] {}
+  num.scalar.double	System.Double 2.5
+  num.scalar.int	System.Int32 2
+  num.scalar.int.neg	System.Int32 -2
+  num.scalar.byte	THREW System.ApplicationException: Unexpected error - Invalid numeric array data type
+  num.scalar.short	THREW System.ApplicationException: Unexpected error - Invalid numeric array data type
+  num.scalar.long	THREW System.ApplicationException: Unexpected error - Invalid numeric array data type
+  num.scalar.float	THREW System.ApplicationException: Unexpected error - Invalid numeric array data type
+  num.scalar.of.row	System.Double 1
+  num.scalar.of.complex	System.Double 1
+  num.scalar.of.int32	THREW System.ApplicationException: Unexpected error - Invalid numeric array data type
+  num.cast.double	System.Double 4.5
+  num.cast.int	System.Int32 4
+  num.cast.byte	THREW System.ApplicationException: Unexpected error - Invalid numeric array data type
+  num.cast.of.row	System.Double 1
+  num.equals.same	System.Boolean True
+  num.equals.other	System.Boolean False
+  num.equals.class	System.Boolean False
+  num.clone	System.String "MWNumericArray 1x2 Double <<1     2>> / MWNumericArray 1x2 Double <<9     2>>"
+  num.dispose	System.Boolean True
+  num.after.dispose	THREW System.ObjectDisposedException: Invalid access to disposed object\nObject name: 'JGraph.MATLAB.Arrays.MWArray'.
+  char.empty	MWCharArray 0x0 Character <<>>
+  char.string	MWCharArray 1x5 Character <<hello>>
+  char.emptystring	MWCharArray 0x0 Character <<>>
+  char.char	MWCharArray 1x1 Character <<x>>
+  char.chars	MWCharArray 1x2 Character <<ab>>
+  char.strings	MWCharArray 2x2 Character <<ab\ncd>>
+  char.strings.ragged	MWCharArray 2x3 Character <<a  \nbcd>>
+  char.array	MWCharArray 2x2 Character <<ab\ncd>>
+  char.array.strings	MWCharArray 2x2 Character <<xy\nz >>
+  char.dims	MWCharArray 2x3 Character <<   \n   >>
+  char.implicit	MWCharArray 1x4 Character <<text>>
+  char.static.empty	MWCharArray 0x0 Character <<>>
+  char.index.1.2	MWCharArray 1x1 Character <<b>>
+  char.index.linear.2	MWCharArray 1x1 Character <<c>>
+  char.toarray	System.Char[,] [2,2] {'a', 'b', 'c', 'd'}
+  char.tostrings	System.String[] [2] {"ab", "cd"}
+  char.row.tostrings	System.String[] [1] {"row"}
+  char.cast	System.Char 'q'
+  char.cast.of.row	System.Char 'q'
+  char.set	ok
+  char.after.set	MWCharArray 2x2 Character <<zb\ncd>>
+  char.unicode	MWCharArray 1x2 Character <<�?>>
+  char.equals	System.Boolean True
+  logical.empty	MWLogicalArray 0x0 Logical <<[]>>
+  logical.true	MWLogicalArray 1x1 Logical <<1>>
+  logical.false	MWLogicalArray 1x1 Logical <<0>>
+  logical.size	MWLogicalArray 2x2 Logical <<   0   0\n   0   0>>
+  logical.dims	MWLogicalArray 1x3 Logical <<0   0   0>>
+  logical.rows	MWLogicalArray 2x2 Logical <<   1   0\n   0   0>>
+  logical.rows.colmajor	MWLogicalArray 2x2 Logical <<   1   0\n   0   0>>
+  logical.rows.rowmajor	MWLogicalArray 2x2 Logical <<   1   0\n   0   0>>
+  logical.array	MWLogicalArray 2x2 Logical <<   1   0\n   0   0>>
+  logical.array.vector	MWLogicalArray 1x3 Logical <<1   0   1>>
+  logical.implicit	MWLogicalArray 1x1 Logical <<1>>
+  logical.static.empty	MWLogicalArray 0x0 Logical <<[]>>
+  logical.isscalar	System.String "False True"
+  logical.index	MWLogicalArray 1x1 Logical <<0>>
+  logical.tovector	System.Boolean[] [4] {True, False, False, True}
+  logical.toarray	System.Boolean[,] [2,2] {True, False, False, True}
+  logical.cast	System.Boolean True
+  logical.cast.of.matrix	System.Boolean False
+  logical.sparse	MWLogicalArray 2x2 Logical <<   (1,1)      1\n   (2,2)      1>>
+  logical.sparse.alloc	MWLogicalArray 2x3 Logical <<All zero>>
+  logical.set	ok
+  logical.after.set	MWLogicalArray 2x2 Logical <<   1   1\n   0   1>>
+  cell.empty	MWCellArray 0x0 Cell <<[]>>
+  cell.size	MWCellArray 1x2 Cell <<[]    []>>
+  cell.dims	MWCellArray 2x1x2 Cell <<(:,:,1) = \n\n    []\n    []\n\n\n(:,:,2) = \n\n    []\n    []>>
+  cell.strings	MWCellArray 2x1 Cell <<    'ab'\n    'cd'>>
+  cell.static.empty	MWCellArray 0x0 Cell <<[]>>
+  cell.set.1	ok
+  cell.set.2	ok
+  cell.set.3	ok
+  cell.after.set	MWCellArray 1x3 Cell <<[5]    'two'    [2x2 double]>>
+  cell.get.1	MWNumericArray 1x1 Double <<5>>
+  cell.get.2	MWCharArray 1x3 Character <<two>>
+  cell.get.linear.3	MWNumericArray 2x2 Double <<     3     4\n     5     6>>
+  cell.get.out	THREW System.Exception: Invalid index
+  cell.toarray	System.Object[,] [1,3] {System.Double[,] [1,1] {5}, System.Char[,] [1,3] {'t', 'w', 'o'}, System.Double[,] [2,2] {3, 4, 5, 6}}
+  cell.nested	MWCellArray 1x1 Cell <<{1x1 cell}>>
+  cell.unset.element	MWNumericArray 0x0 Double <<[]>>
+  struct.empty	MWStructArray 0x0 Structure <<[]>>
+  struct.fields	MWStructArray 1x1 Structure <<    a: []\n    b: []>>
+  struct.array	MWStructArray 1x2 Structure <<  1x2 struct array with fields:\n\n    a>>
+  struct.dims	MWStructArray 2x2 Structure <<  2x2 struct array with fields:\n\n    x>>
+  struct.nofields	MWStructArray 1x1 Structure <<struct with no fields.>>
+  struct.badname	THREW System.ArgumentException: '1bad' is not a valid field name: a field name starts with a letter and holds letters, digits and underscores.
+  struct.dupname	THREW System.ArgumentException: The field name 'a' is given twice: a struct's field names must be distinct.
+  struct.defs	MWStructArray 1x1 Structure <<    a: 1\n    b: 'text'>>
+  struct.static.empty	MWStructArray 0x0 Structure <<[]>>
+  struct.set.a	ok
+  struct.set.b.2	ok
+  struct.set.a.2	ok
+  struct.after.set	MWStructArray 1x2 Structure <<  1x2 struct array with fields:\n\n    a\n    b>>
+  struct.get.a	MWNumericArray 1x1 Double <<5>>
+  struct.get.a.2	MWNumericArray 1x2 Double <<1     2>>
+  struct.get.b.1	MWNumericArray 0x0 Double <<[]>>
+  struct.get.missing	THREW System.ArgumentException: The specified field was not found
+  struct.getfield.a	MWNumericArray 1x1 Double <<5>>
+  struct.getfield.b.2	THREW System.ArgumentException: The specified dimensions are invalid
+  struct.isfield	System.String "True False"
+  struct.fieldnames	System.String[] [2] {"a", "b"}
+  struct.numberoffields	System.Int32 2
+  struct.setfield.new	ok
+  struct.after.setfield	System.String[] [3] {"a", "b", "c"}
+  struct.removefield	MWStructArray 1x2 Structure <<  1x2 struct array with fields:\n\n    a\n    c>>
+  struct.after.removefield	System.String[] [2] {"a", "c"}
+  struct.index.element	THREW System.Exception: Operation is not supported on specified MATLAB array type
+  struct.toarray	System.Object[,,] [2,1,2] {System.Double[,] [1,1] {5}, System.Double[,] [1,2] {1, 2}, System.Double[,] [1,1] {7}, System.Double[,] [0,0] {}}
+  struct.scalar	MWStructArray 1x1 Structure <<     name: 'probe'\n    value: [1 2 3]>>
+  string.empty	MWStringArray 0x0 String <<null>>
+  string.strings	MWStringArray 1x2 String <<System.String[]>>
+  string.dims	MWStringArray 1x2 String <<System.String[]>>
+  string.null	MWStringArray 1x2 String <<System.String[]>>
+  string.implicit	MWStringArray 1x1 String <<one>>
+  string.implicit.array	MWStringArray 1x2 String <<System.String[]>>
+  string.static.empty	MWStringArray 0x0 String <<null>>
+  string.index	System.String "y"
+  string.toarray	System.String[] [2] {"x", "y"}
+  string.cast	System.String "solo"
+  string.cast.of.row	THREW System.ArgumentException: Failed to cast to string <- System.ApplicationException: Not a scalar mxArray
+  string.cast.array	System.String[] [2] {"x", "y"}
+  string.set	ok
+  string.after.set	MWStringArray 1x2 String <<System.String[]>>
+  string.setarray	ok
+  string.after.setarray	MWStringArray 1x2 String <<System.String[]>>
+  array.implicit.string	MWCharArray 1x1 Character <<s>>
+  array.implicit.double	MWNumericArray 1x1 Double <<3>>
+  index.implicit.ints	MWNumericArray 1x2 Double <<1     2>>
+  index.implicit.int	MWIndexArray 1x1 Index <<4>>
+  index.implicit.longs	MWNumericArray 1x2 Double <<1     2>>
+  index.implicit.shorts	MWNumericArray 1x2 Double <<1     2>>
+  index.implicit.bytes	MWNumericArray 1x2 Double <<1     2>>
+  object.empty	MWObjectArray 1x1 NativeObjArray <<System.Object>>
+  object.static.empty	MWObjectArray 1x1 NativeObjArray <<System.Object>>
+  array.convert.native	System.Object[] [3] {System.Double[] [2] {1, 2}, "ab", True}
+  array.convert.native.matrix	System.Object[] [1] {System.Double[,] [2,2] {1, 2, 3, 4}}
+  array.convert.native.mismatch	THREW System.ArgumentException: Cannot convert MWArray to requested type <- System.ApplicationException: Cannot convert from MWCharArray[,] to System.Double
+  logical.rows.asym	MWLogicalArray 2x2 Logical <<   1   1\n   0   0>>
+  logical.rows.asym.true	MWLogicalArray 2x2 Logical <<   1   0\n   1   0>>
+  logical.rows.asym.false	MWLogicalArray 2x2 Logical <<   1   1\n   0   0>>
+  logical.array.asym	MWLogicalArray 2x2 Logical <<   1   1\n   0   0>>
+  logical.tovector.asym	System.Boolean[] [4] {True, False, True, False}
+  num.rows.complex.colmajor	MWNumericArray 2x2 Double complex <<   1.0000 + 5.0000i   3.0000 + 7.0000i\n   2.0000 + 6.0000i   4.0000 + 8.0000i>>
+  num.rows.complex.default	MWNumericArray 2x2 Double complex <<   1.0000 + 5.0000i   2.0000 + 6.0000i\n   3.0000 + 7.0000i   4.0000 + 8.0000i>>
+  num.array.complex.matrix	MWNumericArray 2x2 Double complex <<   1.0000 + 5.0000i   2.0000 + 6.0000i\n   3.0000 + 7.0000i   4.0000 + 8.0000i>>
+  num.array.int.matrix	MWNumericArray 2x2 Double <<     1     2\n     3     4>>
+  num.array.float	MWNumericArray 1x2 Double <<1.5000    2.0000>>
+  num.array.float.notdouble	MWNumericArray 1x2 Single <<1.5000    2.0000>>
+  num.array.byte	MWNumericArray 1x2 Double <<1     2>>
+  num.array.long	MWNumericArray 1x2 Double <<1     2>>
+  num.array.short.notdouble	MWNumericArray 1x2 Int16 <<1   2>>
+  num.array.bool	THREW System.ArgumentException: The data array type is invalid
+  num.complex.toarray.real	System.Double[,] [1,2] {1, 2}
+  num.complex.tovector.real	System.Double[] [2] {1, 2}
+  num.int32.index	MWNumericArray 1x1 Int32 <<3>>
+  num.int32.scalar.integer	System.Int32 7
+  num.long.scalar.long	System.Int64 7
+  num.single.scalar.float	System.Single 1.5
+  num.byte.scalar.byte	System.Byte 7
+  num.short.scalar.short	System.Int16 7
+  num.cast.long	System.Int64 7
+  num.cast.float	System.Single 1.5
+  num.cast.short	System.Int16 7
+  num.uint8.display	MWNumericArray 2x2 UInt8 <<     1    20\n   200     4>>
+  num.single.matrix.display	MWNumericArray 2x2 Single <<    1.5000    2.0000\n    3.0000    4.0000>>
+  num.negative.matrix.display	MWNumericArray 2x2 Double <<   -1.5000    2.0000\n    3.0000    4.0000>>
+  num.index.set.int32	MWNumericArray 1x2 Int32 <<1   3>>
+  num.index.set.mwarray	MWNumericArray 1x2 Double <<1     5>>
+  num.index.set.matrix	MWNumericArray 1x2 Double <<1     5>>
+  num.index.set.complex	MWNumericArray 1x2 Double complex <<1.0000 + 0.0000i   1.0000 + 1.0000i>>
+  struct.getfield.b.1	MWNumericArray 1x2 Double <<1     2>>
+  struct.getfield.b.0	MWNumericArray 1x1 Double <<5>>
+  struct.item.a.1.2	MWNumericArray 1x2 Double <<1     2>>
+  struct.item.a.3	THREW System.ArgumentException: The specified dimensions are invalid
+  struct.set.out	THREW System.ArgumentException: The specified dimensions are invalid
+  cell.mixed	MWCellArray 2x6 Cell <<  Columns 1 through 5\n\n    [ 1]    [               3]    [1x1 opaque]    [1x1 struct]          {}\n    'ab'    [1.0000 + 2.0000i]    [2x2 char  ]    [         1]    [2.5000]\n\n  Column 6\n\n    [1x5 double ]\n    [1x2 logical]>>
+  cell.column.numbers	MWCellArray 2x1 Cell <<    [      1]\n    [22.5000]>>
+  cell.row.long	MWCellArray 1x2 Cell <<[1x2 double]    [123456]>>
+  cell.empty.strings	MWCellArray 1x2 Cell <<''    [1x1 opaque]>>
+  struct.mixed	MWStructArray 1x1 Structure <<      logic: 1\n        int: 3\n        str: [1x1 opaque]\n      inner: [1x1 struct]\n        cel: {[5]  'two'  [2x2 double]}\n        row: [1 2.5000]\n      chars: [2x2 char]\n       cplx: 1.0000 + 2.0000i\n         sp: 1\n    longrow: [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 . ] (1x25 double)\n        col: [2x1 double]>>
+  string.scalar.display	MWStringArray 1x1 String <<only>>
+  string.missing.scalar	MWStringArray 1x1 String <<null>>
+  string.index.missing	null
+  char.from.null	THREW System.NullReferenceException: Object reference not set to an instance of an object.
+  num.equals.object	System.Boolean False
+  cell.equals	System.Boolean True
+  num.tostring.after.clone	System.Boolean True
+  num.longrow	MWNumericArray 1x30 Double <<  Columns 1 through 13\n\n     1     2     3     4     5     6     7     8     9    10    11    12    13\n\n  Columns 14 through 26\n\n    14    15    16    17    18    19    20    21    22    23    24    25    26\n\n  Columns 27 through 30\n\n    27    28    29    30>>
+  num.longfrac	MWNumericArray 1x20 Double <<  Columns 1 through 7\n\n    0.3333    0.6667    1.0000    1.3333    1.6667    2.0000    2.3333\n\n  Columns 8 through 14\n\n    2.6667    3.0000    3.3333    3.6667    4.0000    4.3333    4.6667\n\n  Columns 15 through 20\n\n    5.0000    5.3333    5.6667    6.0000    6.3333    6.6667>>
+  num.longmatrix	MWNumericArray 2x15 Double <<  Columns 1 through 13\n\n     1     2     3     4     5     6     7     8     9    10    11    12    13\n    16    17    18    19    20    21    22    23    24    25    26    27    28\n\n  Columns 14 through 15\n\n    14    15\n    29    30>>
+  logical.longrow	MWLogicalArray 1x45 Logical <<  Columns 1 through 19\n\n   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1\n\n  Columns 20 through 38\n\n   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1\n\n  Columns 39 through 45\n\n   1   1   1   1   1   1   1>>
+  cell.longrow	MWCellArray 1x14 Cell <<  Columns 1 through 11\n\n    [1]    [2]    [3]    [4]    [5]    [6]    [7]    [8]    [9]    [10]    [11]\n\n  Columns 12 through 14\n\n    [12]    [13]    [14]>>
+  echo.double	System.String "MWNumericArray 1x1 Double <<2.5000>> as double [1 1]"
+  echo.int	System.String "MWNumericArray 1x1 Double <<3>> as double [1 1]"
+  echo.int32	System.String "MWNumericArray 1x1 Int32 <<3>> as int32 [1 1]"
+  echo.byte	System.String "MWNumericArray 1x1 UInt8 <<5>> as uint8 [1 1]"
+  echo.byte.default	System.String "MWNumericArray 1x1 Double <<5>> as double [1 1]"
+  echo.int8	THREW System.ArgumentException: The data array type is invalid
+  echo.int64	System.String "MWNumericArray 1x1 Int64 <<9>> as int64 [1 1]"
+  echo.single	System.String "MWNumericArray 1x1 Single <<1.5000>> as single [1 1]"
+  echo.complex	System.String "MWNumericArray 1x1 Double complex <<1.0000 + 2.0000i>> as double complex [1 1]"
+  echo.matrix	System.String "MWNumericArray 2x3 Double <<     1     2     3\n     4     5     6>> as double [2 3]"
+  echo.3d	System.String "MWNumericArray 2x2x2 Double <<(:,:,1) =\n\n     1     2\n     3     4\n\n\n(:,:,2) =\n\n     5     6\n     7     8>> as double [2 2 2]"
+  echo.empty	System.String "MWNumericArray 0x0 Double <<[]>> as double [0 0]"
+  echo.sparse	System.String "MWNumericArray 3x3 Double sparse <<   (1,1)        5\n   (3,2)        6>> as double sparse [3 3]"
+  echo.char	System.String "MWCharArray 1x5 Character <<hello>> as char [1 5]"
+  echo.charmatrix	System.String "MWCharArray 2x2 Character <<ab\ncd>> as char [2 2]"
+  echo.emptychar	System.String "MWCharArray 0x0 Character <<>> as char [0 0]"
+  echo.logical	System.String "MWLogicalArray 1x2 Logical <<1   0>> as logical [1 2]"
+  echo.cell	System.String "MWCellArray 1x3 Cell <<[5]    'two'    [2x2 double]>> as cell complex [1 3]"
+  echo.struct	System.String "MWStructArray 1x2 Structure <<  1x2 struct array with fields:\n\n    a\n    c>> as struct complex [1 2]"
+  echo.string	System.String "MWStringArray 1x2 String <<System.String[]>> as string complex [1 2]"
+  echo.string.null	System.String "MWStringArray 1x2 String <<System.String[]>> as string complex [1 2]"
+  echo.implicit.double	System.String "MWNumericArray 1x1 Double <<4>> as double [1 1]"
+  echo.implicit.string	System.String "MWCharArray 1x3 Character <<abc>> as char [1 3]"
+  echo.disposed	THREW System.ObjectDisposedException: Invalid access to disposed object\nObject name: 'JGraph.MATLAB.Arrays.MWArray'.
+  echo.null	THREW System.ArgumentNullException: Invalid Null Argument <- System.Exception: Exception of type 'System.Exception' was thrown.
+  make.double	MWNumericArray 1x1 Double <<2.5000>>
+  make.row	MWNumericArray 1x3 Double <<1     2     3>>
+  make.matrix	MWNumericArray 2x3 Double <<     1     2     3\n     4     5     6>>
+  make.nd	MWNumericArray 2x2x2 Double <<(:,:,1) =\n\n     1     3\n     2     4\n\n\n(:,:,2) =\n\n     5     7\n     6     8>>
+  make.empty	MWNumericArray 0x0 Double <<[]>>
+  make.empty03	MWNumericArray 0x3 Double <<[]>>
+  make.single	MWNumericArray 1x2 Single <<1.5000    2.5000>>
+  make.int8	MWNumericArray 1x3 Int8 <<-5      0    127>>
+  make.uint8	MWNumericArray 2x2 UInt8 <<   1   2\n   3   4>>
+  make.int16	MWNumericArray 1x1 Int16 <<-7>>
+  make.uint16	MWNumericArray 1x1 UInt16 <<7>>
+  make.int32	MWNumericArray 1x3 Int32 <<1   2   3>>
+  make.uint32	MWNumericArray 1x1 UInt32 <<4000000000>>
+  make.int64	MWNumericArray 1x1 Int64 <<-9>>
+  make.uint64	MWNumericArray 1x1 UInt64 <<9>>
+  make.complex	MWNumericArray 1x2 Double complex <<1.0000 + 2.0000i   3.0000 - 4.0000i>>
+  make.complexscalar	MWNumericArray 1x1 Double complex <<1.0000 - 1.0000i>>
+  make.logical	MWLogicalArray 1x3 Logical <<1   0   1>>
+  make.logicalscalar	MWLogicalArray 1x1 Logical <<1>>
+  make.char	MWCharArray 1x5 Character <<hello>>
+  make.charmatrix	MWCharArray 2x3 Character <<abc\ndef>>
+  make.emptychar	MWCharArray 0x0 Character <<>>
+  make.cell	MWCellArray 1x3 Cell <<[1]    'two'    [2x2 double]>>
+  make.nestedcell	MWCellArray 1x2 Cell <<{1x1 cell}    {}>>
+  make.struct	MWStructArray 1x1 Structure <<     name: 'probe'\n    value: [1 2 3]>>
+  make.structarray	MWStructArray 1x3 Structure <<  1x3 struct array with fields:\n\n    a>>
+  make.emptystruct	MWStructArray 0x0 Structure <<[]>>
+  make.string	MWStringArray 1x1 String <<alpha>>
+  make.strings	MWStringArray 1x2 String <<System.String[]>>
+  make.stringmissing	MWStringArray 1x2 String <<System.String[]>>
+  make.sparse	MWNumericArray 3x3 Double sparse <<   (1,1)        5\n   (3,2)        6>>
+  make.sparselogical	MWNumericArray 2x2 Double sparse <<   (1,1)        1\n   (2,2)        1>>
+  make.inf	MWNumericArray 1x3 Double <<Inf  -Inf   NaN>>
+  make.pi	MWNumericArray 1x1 Double <<3.1416>>
+  make.large	MWNumericArray 1x1 Double <<1.2346e+05>>
+  make.small	MWNumericArray 1x2 Double <<0.0000    1.0000>>
+  make.mixed	MWNumericArray 1x3 Double <<   1.0e+03 *\n\n    0.0010    0.0025    1.0000>>
+  make.handle	MWArray 1x1 Array <<\topaque>>
+  make.uint8.toarray	System.Byte[,] [2,2] {1, 2, 3, 4}
+  make.int8.toarray	System.SByte[,] [1,3] {-5, 0, 127}
+  make.int64.scalar	System.Int64 -9
+  make.complex.toarray	System.Double[,] [1,2] {2, -4}
+  make.cell.element.3	MWNumericArray 2x2 Double <<     3     4\n     5     6>>
+  make.struct.name	MWCharArray 1x5 Character <<probe>>
+  make.structarray.a.2	MWNumericArray 1x1 Double <<2>>
+  make.strings.toarray	System.String[] [2] {"alpha", "beta"}
+  make.strings.missing.toarray	System.String[] [2] {null, "x"}
+  make.charmatrix.toarray	System.Char[,] [2,3] {'a', 'b', 'c', 'd', 'e', 'f'}
+  make.logical.toarray	System.Boolean[,] [1,3] {True, False, True}
+  make.unknown	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nNo kind nothing.\nError in => k8make.m at line 42.\n\n... Matlab M-code Stack Trace ...\n    at\nfile <W>\cache_client\0.2.3\K8_9420\K8\k8make.m, name k8make, line 42.
+  make.nargout.0	MWArray[] [0] {}
+  make.nargout.1	MWArray[] [1] {MWNumericArray 1x1 Double <<2.5000>>}
+  make.nargout.2	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nToo many output arguments..
+  make.nargout.neg	THREW System.ArgumentOutOfRangeException: Argument must be non-negative (Parameter 'numArgsOut')
+  make.ref	MWArray[] [1] {MWNumericArray 1x3 Double <<1     2     3>>}
+  make.ref.toomany.in	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nToo many input arguments..
+  make.ref.given	MWArray[] [1] {MWNumericArray 1x3 Double <<1     2     3>>}
+  make.ref.null.in	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nNot enough input arguments.\nError in => k8make.m at line 3.\n\n... Matlab M-code Stack Trace ...\n    at\nfile <W>\cache_client\0.2.3\K8_9420\K8\k8make.m, name k8make, line 3.
+  make.noargs	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nNot enough input arguments.\nError in => k8make.m at line 3.\n\n... Matlab M-code Stack Trace ...\n    at\nfile <W>\cache_client\0.2.3\K8_9420\K8\k8make.m, name k8make, line 3.
+  vout.0	MWArray[] [0] {}
+  vout.1	MWArray[] [1] {MWCharArray 1x18 Character <<nargin=0 nargout=1>>}
+  vout.3	MWArray[] [3] {MWNumericArray 1x1 Double <<1>>, MWNumericArray 1x1 Double <<2>>, MWCharArray 1x18 Character <<nargin=2 nargout=3>>}
+  vout.single	ok
+  vout.params	ok
+  vout.ref	MWArray[] [2] {MWNumericArray 1x1 Double <<1>>, MWCharArray 1x18 Character <<nargin=1 nargout=2>>}
+  args.0	MWCharArray 1x18 Character <<nargin=0 nargout=1>>
+  args.1	MWCharArray 1x18 Character <<nargin=1 nargout=1>>
+  args.2	MWCharArray 1x18 Character <<nargin=2 nargout=1>>
+  args.4	MWCharArray 1x18 Character <<nargin=4 nargout=1>>
+  args.n2.4	MWArray[] [2] {MWCharArray 1x18 Character <<nargin=4 nargout=2>>, MWNumericArray 1x1 Double <<4>>}
+  args.n3	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nToo many output arguments..
+  k8show: double
+  [1, 2]
+  show.single	ok
+  k8show: char
+  text
+  show.nargout.0	MWArray[] [0] {}
+  show.nargout.1	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nToo many output arguments..
+  err.id	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nA probe error with a number 3.\nError in => k8err.m at line 5.\n\n... Matlab M-code Stack Trace ...\n    at\nfile <W>\cache_client\0.2.3\K8_9420\K8\k8err.m, name k8err, line 5.
+  err.noid	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nA probe error without an identifier.\nError in => k8err.m at line 7.\n\n... Matlab M-code Stack Trace ...\n    at\nfile <W>\cache_client\0.2.3\K8_9420\K8\k8err.m, name k8err, line 7.
+  err.lines	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nFirst line.\nSecond line.\nError in => k8err.m at line 9.\n\n... Matlab M-code Stack Trace ...\n    at\nfile <W>\cache_client\0.2.3\K8_9420\K8\k8err.m, name k8err, line 9.
+  err.nested	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nRaised in a local function.\nError in => k8err.m at line 11.\n\n... Matlab M-code Stack Trace ...\n    at\nfile <W>\cache_client\0.2.3\K8_9420\K8\k8err.m, name inner, line 27.\n    at\nfile <W>\cache_client\0.2.3\K8_9420\K8\k8err.m, name k8err, line 11.
+  err.undefined	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nUndefined function 'k8_no_such_function' for input arguments of type 'double'.\nError in => k8err.m at line 13.\n\n... Matlab M-code Stack Trace ...\n    at\nfile <W>\cache_client\0.2.3\K8_9420\K8\k8err.m, name k8err, line 13.
+  err.cause	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nThe outer error.\nThe inner cause.\nError in => k8err.m at line 17.\n\n... Matlab M-code Stack Trace ...\n    at\nfile <W>\cache_client\0.2.3\K8_9420\K8\k8err.m, name k8err, line 17.
+  err.index	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nIndex exceeds the number of array elements. Index must not exceed 3.\nError in => k8err.m at line 20.\n\n... Matlab M-code Stack Trace ...\n    at\nfile <W>\cache_client\0.2.3\K8_9420\K8\k8err.m, name k8err, line 20.
+  err.nargout.0	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nA probe error with a number 3.\nError in => k8err.m at line 5.\n\n... Matlab M-code Stack Trace ...\n    at\nfile <W>\cache_client\0.2.3\K8_9420\K8\k8err.m, name k8err, line 5.
+  echo.too.many.in	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nToo many input arguments..
+  other	MWNumericArray 1x1 Double <<42>>
+  native.construct	ok
+  native.echo.double	System.String "System.Double[,] [1,1] {2.5} as System.Char[,]"
+  native.echo.int	System.String "System.Int32[,] [1,1] {3} as System.Char[,]"
+  native.echo.byte	System.String "System.Byte[,] [1,1] {3} as System.Char[,]"
+  native.echo.sbyte	THREW System.IO.InvalidDataException: Data type unsupported by MATLAB .NET Assembly
+  native.echo.short	System.String "System.Int16[,] [1,1] {3} as System.Char[,]"
+  native.echo.long	System.String "System.Int64[,] [1,1] {3} as System.Char[,]"
+  native.echo.float	System.String "System.Single[,] [1,1] {1.5} as System.Char[,]"
+  native.echo.bool	System.String "System.Boolean[,] [1,1] {True} as System.Char[,]"
+  native.echo.char	System.String "System.Char[,] [1,1] {'c'} as System.Char[,]"
+  native.echo.string	System.String "System.Char[,] [1,4] {'t', 'e', 'x', 't'} as System.Char[,]"
+  native.echo.doubles	System.String "System.Double[,] [1,3] {1, 2, 3} as System.Char[,]"
+  native.echo.matrix	System.String "System.Double[,] [2,2] {1, 2, 3, 4} as System.Char[,]"
+  native.echo.ints	System.String "System.Int32[,] [1,2] {1, 2} as System.Char[,]"
+  native.echo.bools	System.String "System.Boolean[,] [1,2] {True, False} as System.Char[,]"
+  native.echo.strings	System.String "System.Char[,] [2,2] {'a', ' ', 'b', 'c'} as System.Char[,]"
+  native.echo.chars	System.String "System.Char[,] [1,2] {'a', 'b'} as System.Char[,]"
+  native.echo.objects	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nToo many input arguments..
+  native.echo.struct	System.String "native.MWStructArray <<1x1 struct array with fields:\n\ta>> as System.Char[,]"
+  native.echo.cell	System.String "native.MWCellArray <<1x2 cell array>> as System.Char[,]"
+  native.echo.null	THREW System.NullReferenceException: Object reference not set to an instance of an object.
+  native.echo.mwarray	System.String "System.Double[,] [1,1] {2} as System.Char[,]"
+  native.make.double	System.Double[,] [1,1] {2.5}
+  native.make.row	System.Double[,] [1,3] {1, 2, 3}
+  native.make.matrix	System.Double[,] [2,3] {1, 2, 3, 4, 5, 6}
+  native.make.nd	System.Double[,,] [2,2,2] {1, 3, 2, 4, 5, 7, 6, 8}
+  native.make.empty	System.Double[,] [0,0] {}
+  native.make.single	System.Single[,] [1,2] {1.5, 2.5}
+  native.make.int8	THREW System.IO.InvalidDataException: Data type unsupported by MATLAB .NET Assembly for output
+  native.make.uint8	System.Byte[,] [2,2] {1, 2, 3, 4}
+  native.make.int16	System.Int16[,] [1,1] {-7}
+  native.make.int32	System.Int32[,] [1,3] {1, 2, 3}
+  native.make.int64	System.Int64[,] [1,1] {-9}
+  native.make.uint64	THREW System.IO.InvalidDataException: Data type unsupported by MATLAB .NET Assembly for output
+  native.make.complex	THREW System.IO.InvalidDataException: Data type unsupported by MATLAB .NET Assembly for output
+  native.make.logical	System.Boolean[,] [1,3] {True, False, True}
+  native.make.logicalscalar	System.Boolean[,] [1,1] {True}
+  native.make.char	System.Char[,] [1,5] {'h', 'e', 'l', 'l', 'o'}
+  native.make.charmatrix	System.Char[,] [2,3] {'a', 'b', 'c', 'd', 'e', 'f'}
+  native.make.emptychar	System.Char[,] [0,0] {}
+  native.make.cell	native.MWCellArray <<1x3 cell array>>
+  native.make.struct	native.MWStructArray <<1x1 struct array with fields:\n\tname\n\tvalue>>
+  native.make.structarray	native.MWStructArray <<1x3 struct array with fields:\n\ta>>
+  native.make.string	System.String[] [1] {"alpha"}
+  native.make.strings	System.String[] [2] {"alpha", "beta"}
+  native.make.sparse	System.Double[,] [3,3] {5, 0, 0, 0, 0, 0, 0, 6, 0}
+  native.make.handle	THREW System.IO.InvalidDataException: Data type unsupported by MATLAB .NET Assembly for conversion to array
+  native.struct.field	System.Char[,] [1,5] {'p', 'r', 'o', 'b', 'e'}
+  native.struct.fieldnames	System.String[] [2] {"name", "value"}
+  native.cell.element	System.Double[,] [2,2] {3, 4, 5, 6}
+  native.vout.3	System.Object[] [3] {System.Double[,] [1,1] {1}, System.Double[,] [1,1] {2}, System.Char[,] [1,18] {'n', 'a', 'r', 'g', 'i', 'n', '=', '1', ' ', 'n', 'a', 'r', 'g', 'o', 'u', 't', '=', '3'}}
+  native.err	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nA probe error with a number 3.\nError in => k8err.m at line 5.\n\n... Matlab M-code Stack Trace ...\n    at\nfile <W>\cache_client\0.2.3\K8_9420\K8\k8err.m, name k8err, line 5.
+  native.make.nargout.2	THREW System.Exception: ... MWMCR::EvaluateFunction error ... \nToo many output arguments..
+  native.struct.new	native.MWStructArray <<1x1 struct array with fields:\n\tq>>
+  native.cell.new	native.MWCellArray <<1x2 cell array>>
+  after.dispose.call	MWNumericArray 1x1 Double <<2.5000>>
+  end	
+  STDERR	Error using k8make (line 42)
+  STDERR	No kind nothing.
+  STDERR	
+  STDERR	
+  STDERR	Error using k8make
+  STDERR	Too many output arguments.
+  STDERR	
+  STDERR	
+  STDERR	Error using k8make
+  STDERR	Too many input arguments.
+  STDERR	
+  STDERR	
+  STDERR	Not enough input arguments.
+  STDERR	
+  STDERR	Error in k8make (line 3)
+  STDERR	
+  STDERR	
+  STDERR	Not enough input arguments.
+  STDERR	
+  STDERR	Error in k8make (line 3)
+  STDERR	
+  STDERR	
+  STDERR	Error using k8args
+  STDERR	Too many output arguments.
+  STDERR	
+  STDERR	
+  STDERR	Error using k8show
+  STDERR	Too many output arguments.
+  STDERR	
+  STDERR	
+  STDERR	Error using k8err (line 5)
+  STDERR	A probe error with a number 3.
+  STDERR	
+  STDERR	
+  STDERR	Error using k8err (line 7)
+  STDERR	A probe error without an identifier.
+  STDERR	
+  STDERR	
+  STDERR	Error using k8err (line 9)
+  STDERR	First line.
+  STDERR	Second line.
+  STDERR	
+  STDERR	
+  STDERR	Error using k8err>inner (line 27)
+  STDERR	Raised in a local function.
+  STDERR	
+  STDERR	Error in k8err (line 11)
+  STDERR	
+  STDERR	
+  STDERR	Undefined function 'k8_no_such_function' for input arguments of type 'double'.
+  STDERR	
+  STDERR	Error in k8err (line 13)
+  STDERR	
+  STDERR	
+  STDERR	Error using k8err (line 17)
+  STDERR	The outer error.
+  STDERR	
+  STDERR	Caused by:
+  STDERR	    The inner cause.
+  STDERR	
+  STDERR	
+  STDERR	Index exceeds the number of array elements. Index must not exceed 3.
+  STDERR	
+  STDERR	Error in k8err (line 20)
+  STDERR	
+  STDERR	
+  STDERR	Error using k8err (line 5)
+  STDERR	A probe error with a number 3.
+  STDERR	
+  STDERR	
+  STDERR	Error using k8echo
+  STDERR	Too many input arguments.
+  STDERR	
+  STDERR	
+  STDERR	Error using k8echo
+  STDERR	Too many input arguments.
+  STDERR	
+  STDERR	
+  STDERR	Error using k8err (line 5)
+  STDERR	A probe error with a number 3.
+  STDERR	
+  STDERR	
+  STDERR	Error using k8make
+  STDERR	Too many output arguments.
+  EXIT	0
+  SECONDS	1.2

@@ -26,7 +26,11 @@ public sealed class Component : IDisposable
         Name = manifest.ComponentName;
         Uuid = manifest.Uuid;
         Functions = [.. manifest.PublicFunctions.Select(static f => f.Name)];
+        Signatures = manifest.PublicFunctions;
     }
+
+    /// <summary>The public functions' inputs and outputs, as the manifest records them (stage K8: the MWArray API's varargin).</summary>
+    internal IReadOnlyList<CtfFunction> Signatures { get; }
 
     /// <summary>The component's name.</summary>
     public string Name { get; }
@@ -166,6 +170,9 @@ public sealed class Component : IDisposable
             }
         }
     }
+
+    /// <summary>Whether this handle has been retired.</summary>
+    internal bool IsDisposed => _disposed;
 
     /// <summary>Retires this handle; the archive's session goes on for any other handle on it.</summary>
     public void Dispose() => _disposed = true;

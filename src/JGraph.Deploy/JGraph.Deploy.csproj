@@ -21,6 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Stage K8: a .NET assembly's generated classes are compiled in process, where R2025b runs csc or the .NET SDK. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.9.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Stage K2's probe_k2_names: each name's products and file in R2025b, and the files mcc leaves out. -->
     <EmbeddedResource Include="..\..\tools\matlab-checklist\compiler-probes\recordings\k2_names.out.txt" LogicalName="JGraph.Deploy.r2025b-names.tsv" />
   </ItemGroup>
@@ -36,5 +41,14 @@
     <!-- Stage K7: mcc -B's bundle files, under R2025b's names. -->
     <None Include="Bundles\*" Link="toolbox\compiler\bundles\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+
+  <!-- Stage K8: the generated classes are compiled against .NET 8's reference assemblies, so a client
+       compiles against them; carried beside JGraph from the targeting pack this project builds with. -->
+  <Target Name="CarryReferenceAssemblies" AfterTargets="ResolveTargetingPackAssets">
+    <ItemGroup>
+      <None Include="@(Reference)" Condition="'%(Reference.FrameworkReferenceName)' == 'Microsoft.NETCore.App'"
+            Link="toolbox\dotnetbuilder\ref\net8.0\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    </ItemGroup>
+  </Target>
 
 </Project>

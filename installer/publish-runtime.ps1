@@ -63,13 +63,24 @@ foreach ($template in "jglaunch-console.exe", "jglaunch-gui.exe") {
     Copy-Item (Join-Path $root "native\win-x64\launchers\$template") (Join-Path $Output "launchers\win64\$template")
 }
 
+# The MWArray API a .NET client references (stage K8), alone in a folder as R2025b keeps MWArray.dll
+# in toolbox\dotnetbuilder\bin\win64: a client's build then copies it and nothing else, and it loads
+# the engine from bin\win64 at run time.
+$dotnetbuilder = Join-Path $Output "toolbox\dotnetbuilder\bin\win64\net8.0"
+New-Item -ItemType Directory -Force $dotnetbuilder | Out-Null
+foreach ($file in "JGraph.MATLAB.NET.Arrays.dll", "JGraph.MATLAB.NET.Arrays.xml") {
+    Copy-Item (Join-Path $bin $file) (Join-Path $dotnetbuilder $file)
+}
+
 $marker = @{ version = $version; release = "25.2" } | ConvertTo-Json
 [System.IO.File]::WriteAllText((Join-Path $Output "jgraph-runtime.json"), $marker, (New-Object System.Text.UTF8Encoding($false)))
 
 # What the runtime cannot work without; a missing one means the publish layout changed.
 foreach ($anchor in "jgraph.exe", "JGraph.Runtime.dll", "JGraph.Runtime.Desktop.dll", "JGraph.Controls.dll", "JGraph.Scripting.dll",
     "JGraph.Deploy.dll", "native\libopenblas.dll", "jglaunch.dll", "jglaunch.runtimeconfig.json",
-    "launchers\win64\jglaunch-console.exe", "toolbox\compiler\packagingResources\default_splash.png") {
+    "launchers\win64\jglaunch-console.exe", "toolbox\compiler\packagingResources\default_splash.png",
+    # The MWArray API a .NET client of a component loads from here (stage K8, ADR 0264).
+    "JGraph.MATLAB.NET.Arrays.dll") {
     if (-not (Test-Path (Join-Path $bin $anchor))) {
         throw "The runtime is missing 'bin\win64\$anchor' - the publish layout changed; fix before shipping."
     }
@@ -77,6 +88,7 @@ foreach ($anchor in "jgraph.exe", "JGraph.Runtime.dll", "JGraph.Runtime.Desktop.
 foreach ($template in "jglaunch-console.exe", "jglaunch-gui.exe") {
     if (-not (Test-Path (Join-Path $Output "launchers\win64\$template"))) { throw "The runtime is missing 'launchers\win64\$template'." }
 }
+if (-not (Test-Path (Join-Path $dotnetbuilder "JGraph.MATLAB.NET.Arrays.dll"))) { throw "The runtime is missing the MWArray API for clients." }
 
 # WPF itself must stay out (decision KO5): it comes from the Windows desktop framework of a process
 # that has one, and the headless part of the runtime, which keeps Linux possible, never loads it.

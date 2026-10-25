@@ -200,7 +200,7 @@ internal static class JgsDeployedMain
     }
 
     /// <summary>The messages of the causes a thrown MException carried, or none.</summary>
-    private static string[] Causes(JgsRuntimeException? error)
+    internal static string[] Causes(JgsRuntimeException? error)
     {
         if (error?.Carried is not JgsValue { Type: JgsType.Struct } thrown
             || !thrown.AsStruct.TryGetValue("cause", out JgsValue? held) || held.Type != JgsType.Cell)

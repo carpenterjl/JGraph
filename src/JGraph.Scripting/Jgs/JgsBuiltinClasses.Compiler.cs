@@ -19,6 +19,29 @@ internal static partial class JgsBuiltinClasses
     /// <summary>The runtime dependencies class.</summary>
     public const string RuntimeDependencies = "compiler.runtime.Dependencies";
 
+    /// <summary>The .NET assembly options class (stage K8).</summary>
+    public const string DotNetOptions = "compiler.build.DotNETAssemblyOptions";
+
+    /// <summary>The .NET options' public properties, in the order R2025b lists them (k8_build: main.options).</summary>
+    public static readonly string[] DotNetOptionNames =
+    [
+        "ClassMap", "DebugBuild", "EnableRemoting", "FrameworkVersion", "SampleGenerationFiles", "StrongNameKeyFile", "AssemblyName",
+        "AssemblyVersion", "EmbedArchive", "Interface", "AdditionalFiles", "AutoDetectDataFiles", "ExternalEncryptionKey", "ObfuscateArchive",
+        "SecretsManifest", "SupportPackages", "Verbose", "OutputDir",
+    ];
+
+    /// <summary>Where a name given for <c>AssemblyName</c> is kept (R2025b's UserProvidedAssemblyName).</summary>
+    public const string GivenAssemblyName = "UserProvidedAssemblyName";
+
+    /// <summary>R2025b's InterfaceManager: the interface, its version and EmbedArchive, kept together because setting one warns about the others.</summary>
+    public const string InterfaceValue = "InterfaceManagerInterface";
+
+    /// <summary>The interface manager's version: <c>AssemblyVersion</c>.</summary>
+    public const string InterfaceVersion = "InterfaceManagerVersion";
+
+    /// <summary>The interface manager's <c>EmbedArchive</c>.</summary>
+    public const string InterfaceEmbed = "InterfaceManagerEmbedArchive";
+
     /// <summary>The options' public properties, in the order R2025b lists them (k6_build, api_m.options).</summary>
     public static readonly string[] StandaloneOptionNames =
     [
@@ -83,6 +106,10 @@ internal static partial class JgsBuiltinClasses
 
     /// <summary><c>obj.Name = value</c>: the value checked, in a copy of the object, as a value class's set method answers.</summary>
     private static ClassMethod Setter(string name, Interpreter interpreter) =>
+        Setter(name, (copy, value, line, col) => JgsBuiltins.SetStandaloneOption(interpreter, copy, name, value, line, col));
+
+    /// <summary>A set method that checks and stores through <paramref name="set"/>, in a copy of the object.</summary>
+    private static ClassMethod Setter(string name, Action<JgsObject, JgsValue, int, int> set) =>
         new(new FnStmt("set." + name, ["obj", "value"], [], ["obj"]) { Dialect = JgsDialect.Matlab }, Static: false)
         {
             Native = new BuiltinFunction("set." + name, (args, line, col) =>
@@ -93,13 +120,68 @@ internal static partial class JgsBuiltinClasses
                 }
 
                 JgsObject copy = Copied(args[0].AsObject);
-                JgsBuiltins.SetStandaloneOption(interpreter, copy, name, args[1], line, col);
+                set(copy, args[1], line, col);
                 return JgsValue.Object(copy);
             })
             {
                 KeepsStringArguments = true,
             },
         };
+
+    /// <summary>
+    /// <c>compiler.build.DotNETAssemblyOptions</c> (stage K8): R2025b's properties in its order, the
+    /// assembly name, version, EmbedArchive, interface and output folder dependent on what was given,
+    /// each set checked by <see cref="JgsBuiltins.SetDotNetOption"/>.
+    /// </summary>
+    private static ClassdefStmt DotNetOptionsDeclaration(Interpreter interpreter)
+    {
+        var properties = new List<ClassProperty>();
+        var methods = new List<ClassMethod>();
+        foreach (string name in DotNetOptionNames)
+        {
+            bool derived = name is "AssemblyName" or "AssemblyVersion" or "EmbedArchive" or "Interface" or "OutputDir";
+            properties.Add(new ClassProperty(new ArgumentSpec(name, null, null, [], new PreEvaluated(JgsBuiltins.DotNetOptionDefault(name))),
+                Constant: false, Dependent: derived));
+            string captured = name;
+            methods.Add(Setter(name, (copy, value, line, col) =>
+                JgsBuiltins.SetDotNetOption(interpreter, interpreter.Host as JGraphScriptGlobals, copy, captured, value, line, col)));
+            if (derived)
+            {
+                methods.Add(new ClassMethod(new FnStmt("get." + name, ["obj"], [], ["value"]) { Dialect = JgsDialect.Matlab }, Static: false)
+                {
+                    Native = new BuiltinFunction("get." + name, (args, line, col) => JgsBuiltins.DotNetOptionDerived(captured, args[0].AsObject)),
+                });
+            }
+        }
+
+        // R2025b's hidden getName: the assembly name's last part, which names the dll and the output folder.
+        methods.Add(new ClassMethod(new FnStmt("getName", ["obj"], [], ["name"]) { Dialect = JgsDialect.Matlab }, Static: false)
+        {
+            Hidden = true,
+            Native = new BuiltinFunction("getName", (args, line, col) => JgsValue.Str(JgsBuiltins.DotNetShortName(args[0].AsObject))),
+        });
+
+        var hidden = new MemberAccess(MemberAccessKind.Protected);
+        foreach ((string field, JgsValue initial) in new[]
+        {
+            (GivenAssemblyName, JgsValue.Str("")), (GivenOutputDir, JgsValue.Str("")), (InterfaceValue, JgsValue.Str("mwarray")),
+            (InterfaceVersion, JgsValue.Str("")), (InterfaceEmbed, OnOffSwitchStateValue.Of(true)),
+        })
+        {
+            properties.Add(new ClassProperty(new ArgumentSpec(field, null, null, [], new PreEvaluated(initial)), Constant: false)
+            {
+                GetAccess = hidden,
+                SetAccess = hidden,
+                Hidden = true,
+            });
+        }
+
+        return new ClassdefStmt(DotNetOptions, isHandle: false, properties, methods)
+        {
+            Dialect = JgsDialect.Matlab,
+            Superclasses = [],
+        };
+    }
 
     /// <summary>A value object's copy, every field shared, for a set method to change.</summary>
     internal static JgsObject Copied(JgsObject source)
