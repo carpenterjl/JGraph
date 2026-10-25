@@ -267,6 +267,37 @@ public static class JgRuntime
     }
 
     /// <summary>
+    /// Runs <paramref name="work"/> on the engine thread with <paramref name="session"/> made live,
+    /// after the calls queued before it: the native bridge's reads and writes of an object a call
+    /// returned to C (stage K10), which knows the session that made it and not a component handle.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The runtime, and the session with it, has ended.</exception>
+    internal static T RunIn<T>(ComponentSession session, Func<T> work)
+    {
+        EngineThread? engine;
+        lock (Gate)
+        {
+            engine = _engine;
+        }
+
+        if (engine is null)
+        {
+            throw new InvalidOperationException("The JGraph Runtime is not running.");
+        }
+
+        return engine.Run(() =>
+        {
+            if (!Sessions.ContainsValue(session))
+            {
+                throw new InvalidOperationException("The component that made the value has ended.");
+            }
+
+            Activate(session);
+            return work();
+        }).GetAwaiter().GetResult();
+    }
+
+    /// <summary>
     /// Shows <paramref name="owner"/>'s figure in its window, finding the window host the first time
     /// (stage K5). Engine thread, from the session's show. Nothing is shown where there is no host.
     /// </summary>

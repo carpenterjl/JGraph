@@ -11,7 +11,20 @@
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>JGraph.Runtime</RootNamespace>
     <Description>The JGraph Runtime: opens deployable archives and calls their functions from .NET, on one engine thread, with a lossless value model.</Description>
+    <!-- The native bridge's entry points (stage K10) read and make mxArrays through pointers. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
+  <!--
+    The native bridge (stage K10, native/jgrt): jgrt.dll, prebuilt and checked in, and the
+    runtimeconfig it starts .NET with, beside this assembly in every output, so a C program can load
+    jgrt.dll from the engine's own folder (an application carrying the runtime, the tests) as well as
+    from an installed runtime's runtime\win64, where publish-runtime.ps1 also puts it.
+  -->
+  <ItemGroup>
+    <None Include="..\..\native\win-x64\jgrt\jgrt.dll" Link="jgrt.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="..\..\native\jgrt\jgrt.runtimeconfig.json" Link="jgrt.runtimeconfig.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="JGraph.Tests" />

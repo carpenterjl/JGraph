@@ -1,0 +1,64 @@
+function v = k10make(kind)
+%K10MAKE Return a value of the kind asked for, for the C client to read back as an mxArray.
+switch kind
+    case 'double', v = 2.5;
+    case 'row', v = [1 2 3];
+    case 'matrix', v = [1 2 3; 4 5 6];
+    case 'nd', v = reshape(1:8, 2, 2, 2);
+    case 'nd1', v = zeros(2, 1, 3);
+    case 'empty', v = [];
+    case 'empty03', v = zeros(0, 3);
+    case 'empty10', v = zeros(1, 0);
+    case 'negzero', v = -0;
+    case 'specials', v = [Inf -Inf NaN];
+    case 'single', v = single([1.5 2.5]);
+    case 'int8', v = int8([-128 0 127]);
+    case 'uint8', v = uint8([1 2; 3 4]);
+    case 'int16', v = int16(-7);
+    case 'uint16', v = uint16(65535);
+    case 'int32', v = int32([-2147483648 2147483647]);
+    case 'uint32', v = uint32(4000000000);
+    case 'int64', v = [intmin('int64') intmax('int64')];
+    case 'uint64', v = intmax('uint64');
+    case 'complex', v = [1+2i, 3-4i];
+    case 'complexscalar', v = 1-1i;
+    case 'complexsingle', v = single(2+3i);
+    case 'complexint', v = int16([1+2i 3]);
+    case 'logical', v = [true false true];
+    case 'logicalscalar', v = true;
+    case 'char', v = 'hello';
+    case 'charmatrix', v = ['abc'; 'def'];
+    case 'emptychar', v = '';
+    case 'charnd', v = reshape('abcdefgh', 2, 2, 2);
+    case 'unicode', v = char([97 233 8364 55357 56832]);
+    case 'cell', v = {1, 'two', [3 4; 5 6]};
+    case 'nestedcell', v = {{1}, {}};
+    case 'emptycell', v = {};
+    case 'cell03', v = cell(0, 3);
+    case 'struct', v = struct('name', 'probe', 'value', [1 2 3]);
+    case 'structarray', v = struct('a', {1, 2, 3});
+    case 'struct2x2', v = repmat(struct('p', 1, 'q', 'x'), 2, 2);
+    case 'emptystruct', v = struct([]);
+    case 'nofields', v = struct();
+    case 'string', v = "alpha";
+    case 'strings', v = ["alpha"; "beta"];
+    case 'stringmissing', v = string(missing);
+    case 'sparse', v = sparse([1 3], [1 2], [5 6], 3, 3);
+    case 'sparsecomplex', v = sparse([1 2], [1 1], [1+1i 2], 2, 2);
+    case 'sparselogical', v = sparse([true false; false true]);
+    case 'sparseempty', v = sparse(2, 3);
+    case 'handle', v = @sin;
+    case 'anonymous', v = @(x) x + 1;
+    case 'object', v = k10obj(7);
+    case 'value', v = k10val(3);
+    case 'table', v = table([1; 2], {'a'; 'b'}, 'VariableNames', {'n', 's'});
+    case 'datetime', v = datetime(2026, 10, 25, 12, 0, 0);
+    case 'duration', v = hours(1.5);
+    case 'categorical', v = categorical({'lo', 'hi', 'lo'});
+    case 'map', v = containers.Map({'a', 'b'}, {1, 2});
+    case 'dictionary', v = dictionary(["a" "b"], [1 2]);
+    case 'cellstring', v = {"inside", 'char'};
+    case 'structstring', v = struct('s', "text", 'f', @cos);
+    otherwise, error('k10:kind', 'No kind %s.', kind);
+end
+end

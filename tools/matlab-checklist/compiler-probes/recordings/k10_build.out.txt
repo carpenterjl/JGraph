@@ -1,0 +1,254 @@
+Compiler version: 25.2 (R2025b)
+Analyzing file dependencies. 
+Parsing file "<W>\b\src\k10addtwo.m"
+	(referenced from command line).
+Parsing file "<W>\b\src\k10echo.m"
+	(referenced from command line).
+Parsing file "<W>\b\src\k10err.m"
+	(referenced from command line).
+Parsing file "<W>\b\src\k10info.m"
+	(referenced from command line).
+Parsing file "<W>\b\src\k10make.m"
+	(referenced from command line).
+Parsing file "<W>\b\src\k10mixed.m"
+	(referenced from command line).
+Parsing file "<W>\b\src\k10nargs.m"
+	(referenced from command line).
+Parsing file "<W>\b\src\k10none.m"
+	(referenced from command line).
+Parsing file "<W>\b\src\k10obj.m"
+	(referenced from command line).
+Parsing file "<W>\b\src\k10print.m"
+	(referenced from command line).
+Parsing file "<W>\b\src\k10quiet.m"
+	(referenced from command line).
+Parsing file "<W>\b\src\k10two.m"
+	(referenced from command line).
+Parsing file "<W>\b\src\k10val.m"
+	(referenced from command line).
+Generating file "<W>\b\lib\k10lib.h".
+Generating file "<W>\b\lib\k10lib.c".
+Generating file "<W>\b\lib\k10lib.exports".
+Generating file "<W>\b\lib\readme.txt".
+Executing command: ""<MATLABROOT>\bin\mbuild"  -client mbuild -O -v -output "k10lib" -I"<W>\b\lib" "<W>\b\lib\k10lib.c"  DEFFILE"=""<W>\b\lib\k10lib.def""" DEFFDELIM"="",""" QUOTEDDEFFILE"="\"\""<W>\b\lib\k10lib.def"\"\""" LINKEXPORT"=""/DLL /def:\"$DEFFILE\"""" LDEXT"="".dll""" LDTYPE"="" -shared -static""" MTCMDLINE"=""mt -outputresource:$EXE;2 -manifest $MANIFEST""" -outdir "<W>\b\lib""
+Verbose mode is on. 
+No MEX options file identified; looking for an implicit selection. 
+... Looking for compiler 'Intel Parallel Studio XE 2020 with Microsoft Visual Studio 2017 (C)' ... 
+... Looking for environment variable 'ICPP_COMPILER20' ...No. 
+Did not find installed compiler 'Intel Parallel Studio XE 2020 with Microsoft Visual Studio 2017 (C)'. 
+... Looking for compiler 'Intel Parallel Studio XE 2020 with Microsoft Visual Studio 2019 (C)' ... 
+... Looking for environment variable 'ICPP_COMPILER20' ...No. 
+Did not find installed compiler 'Intel Parallel Studio XE 2020 with Microsoft Visual Studio 2019 (C)'. 
+... Looking for compiler 'Intel oneAPI 2021 with Microsoft Visual Studio 2017 (C)' ... 
+... Looking for environment variable 'ONEAPI_ROOT' ...No. 
+Did not find installed compiler 'Intel oneAPI 2021 with Microsoft Visual Studio 2017 (C)'. 
+... Looking for compiler 'Intel oneAPI 2021 with Microsoft Visual Studio 2019 (C)' ... 
+... Looking for environment variable 'ONEAPI_ROOT' ...No. 
+Did not find installed compiler 'Intel oneAPI 2021 with Microsoft Visual Studio 2019 (C)'. 
+... Looking for compiler 'Intel oneAPI 2022 with Microsoft Visual Studio 2017 (C)' ... 
+... Looking for environment variable 'ONEAPI_ROOT' ...No. 
+Did not find installed compiler 'Intel oneAPI 2022 with Microsoft Visual Studio 2017 (C)'. 
+... Looking for compiler 'Intel oneAPI 2022 with Microsoft Visual Studio 2019 (C)' ... 
+... Looking for environment variable 'ONEAPI_ROOT' ...No. 
+Did not find installed compiler 'Intel oneAPI 2022 with Microsoft Visual Studio 2019 (C)'. 
+... Looking for compiler 'Intel oneAPI 2022 with Microsoft Visual Studio 2022 (C)' ... 
+... Looking for environment variable 'ONEAPI_ROOT' ...No. 
+Did not find installed compiler 'Intel oneAPI 2022 with Microsoft Visual Studio 2022 (C)'. 
+... Looking for compiler 'Intel oneAPI 2023 with Microsoft Visual Studio 2019 (C)' ... 
+... Looking for environment variable 'ONEAPI_ROOT' ...No. 
+Did not find installed compiler 'Intel oneAPI 2023 with Microsoft Visual Studio 2019 (C)'. 
+... Looking for compiler 'Intel oneAPI 2023 with Microsoft Visual Studio 2022 (C)' ... 
+... Looking for environment variable 'ONEAPI_ROOT' ...No. 
+Did not find installed compiler 'Intel oneAPI 2023 with Microsoft Visual Studio 2022 (C)'. 
+... Looking for compiler 'Intel oneAPI 2024 with Microsoft Visual Studio 2019 (C)' ... 
+... Looking for environment variable 'ONEAPI_ROOT' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for folder 'C:\Program Files (x86)\Intel\oneAPI' ...No. 
+Did not find installed compiler 'Intel oneAPI 2024 with Microsoft Visual Studio 2019 (C)'. 
+... Looking for compiler 'Intel oneAPI 2024 with Microsoft Visual Studio 2022 (C)' ... 
+... Looking for environment variable 'ONEAPI_ROOT' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for folder 'C:\Program Files (x86)\Intel\oneAPI' ...No. 
+Did not find installed compiler 'Intel oneAPI 2024 with Microsoft Visual Studio 2022 (C)'. 
+... Looking for compiler 'Intel oneAPI 2025 with Microsoft Visual Studio 2019 (C)' ... 
+... Looking for environment variable 'ONEAPI_ROOT' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for folder 'C:\Program Files (x86)\Intel\oneAPI' ...No. 
+Did not find installed compiler 'Intel oneAPI 2025 with Microsoft Visual Studio 2019 (C)'. 
+... Looking for compiler 'Intel oneAPI 2025 with Microsoft Visual Studio 2022 (C)' ... 
+... Looking for environment variable 'ONEAPI_ROOT' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for folder 'C:\Program Files (x86)\Intel\oneAPI' ...No. 
+Did not find installed compiler 'Intel oneAPI 2025 with Microsoft Visual Studio 2022 (C)'. 
+... Looking for compiler 'MinGW64 Compiler (C)' ... 
+... Looking for environment variable 'MW_MINGW64_LOC' ...No. 
+Did not find installed compiler 'MinGW64 Compiler (C)'. 
+... Looking for compiler 'Microsoft Visual C++ 2017 (C)' ... 
+... Looking for registry setting 'HKLM\SOFTWARE\Microsoft\VisualStudio\SxS\VS7' 15.0 ...No. 
+... Looking for registry setting 'HKCU\SOFTWARE\Microsoft\VisualStudio\SxS\VS7' 15.0 ...No. 
+... Looking for registry setting 'HKLM\SOFTWARE\Wow6432Node\Microsoft\VisualStudio\SxS\VS7' 15.0 ...No. 
+... Looking for registry setting 'HKCU\SOFTWARE\Wow6432Node\Microsoft\VisualStudio\SxS\VS7' 15.0 ...No. 
+Did not find installed compiler 'Microsoft Visual C++ 2017 (C)'. 
+... Looking for compiler 'Microsoft Visual C++ 2019 (C)' ... 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[16.0,17.0)" -products Microsoft.VisualStudio.Product.Enterprise -property installationPath -format value' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[16.0,17.0)" -products Microsoft.VisualStudio.Product.Professional -property installationPath -format value' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[16.0,17.0)" -products Microsoft.VisualStudio.Product.Community -property installationPath -format value' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[16.0,17.0)" -products Microsoft.VisualStudio.Product.BuildTools -property installationPath -format value' ...No. 
+Did not find installed compiler 'Microsoft Visual C++ 2019 (C)'. 
+... Looking for compiler 'Microsoft Visual C++ 2022 (C)' ... 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17.0,18.0)" -products Microsoft.VisualStudio.Product.Enterprise -property installationPath -format value' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17.0,18.0)" -products Microsoft.VisualStudio.Product.Professional -property installationPath -format value' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17.0,18.0)" -products Microsoft.VisualStudio.Product.Community -property installationPath -format value' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17.0,18.0)" -products Microsoft.VisualStudio.Product.BuildTools -property installationPath -format value' ...Yes ('C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools'). 
+... Executing command 'set "vcroot=C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools"&for /f "delims= " %a in ('type "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\Microsoft.VCToolsVersion.default.txt"') do @if exist "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\%a\bin\HostX64\x64\cl.exe" call echo %vcroot%' ...Yes ('C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools'). 
+... Looking for registry setting 'HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v10.0' InstallationFolder ...No. 
+... Looking for registry setting 'HKCU\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v10.0' InstallationFolder ...No. 
+... Looking for registry setting 'HKLM\SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v10.0' InstallationFolder ...Yes ('C:\Program Files (x86)\Windows Kits\10\'). 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17.0,18.0)" -products Microsoft.VisualStudio.Product.Enterprise -property installationPath -format value' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17.0,18.0)" -products Microsoft.VisualStudio.Product.Professional -property installationPath -format value' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17.0,18.0)" -products Microsoft.VisualStudio.Product.Community -property installationPath -format value' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17.0,18.0)" -products Microsoft.VisualStudio.Product.BuildTools -property installationPath -format value' ...Yes ('C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools'). 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17.0,18.0)" -products Microsoft.VisualStudio.Product.Enterprise -property installationPath -format value' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17.0,18.0)" -products Microsoft.VisualStudio.Product.Professional -property installationPath -format value' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17.0,18.0)" -products Microsoft.VisualStudio.Product.Community -property installationPath -format value' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17.0,18.0)" -products Microsoft.VisualStudio.Product.BuildTools -property installationPath -format value' ...Yes ('C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools'). 
+... Executing command 'set "vcroot=C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools"&for /f "delims= " %a in ('type "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\Microsoft.VCToolsVersion.default.txt"') do @if exist "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\%a\bin\HostX64\x64\cl.exe" call echo %vcroot%\VC\Tools\MSVC\%a' ...Yes ('C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207'). 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17.0,18.0)" -products Microsoft.VisualStudio.Product.Enterprise -property installationPath -format value' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17.0,18.0)" -products Microsoft.VisualStudio.Product.Professional -property installationPath -format value' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17.0,18.0)" -products Microsoft.VisualStudio.Product.Community -property installationPath -format value' ...No. 
+... Looking for environment variable 'ProgramFiles(x86)' ...Yes ('C:\Program Files (x86)'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe' ...Yes. 
+... Executing command '"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version "[17.0,18.0)" -products Microsoft.VisualStudio.Product.BuildTools -property installationPath -format value' ...Yes ('C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools'). 
+... Looking for file 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvarsall.bat' ...Yes. 
+... Looking for folder 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build' ...Yes. 
+... Looking for registry setting 'HKLM\SOFTWARE\Wow6432Node\Microsoft\Windows Kits\Installed Roots' KitsRoot10 ...Yes ('C:\Program Files (x86)\Windows Kits\10\'). 
+... Looking for registry setting 'HKLM\SOFTWARE\Wow6432Node\Microsoft\Windows Kits\Installed Roots' KitsRoot10 ...Yes ('C:\Program Files (x86)\Windows Kits\10\'). 
+... Executing command 'echo off&set "sdkversion="&(for /f %a IN ('dir "C:\Program Files (x86)\Windows Kits\10\include\" /b /ad-h /on') do ( @if exist "C:\Program Files (x86)\Windows Kits\10\include\%a\ucrt\" set "sdkversion=%a" ))&call echo %sdkversion%' ...Yes ('10.0.26100.0'). 
+Found installed compiler 'Microsoft Visual C++ 2022 (C)'. 
+Set PATH = C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64\;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\IDE\VC\vcpackages;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\IDE;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools;C:\Program Files (x86)\Windows Kits\10\\Bin\10.0.26100.0\x64;C:\Program Files (x86)\Windows Kits\10\\Bin\10.0.26100.0\x86;C:\Program Files (x86)\Windows Kits\10\\Bin\x64;C:\Program Files (x86)\Windows Kits\10\\Bin\x86;;<MATLABROOT>\bin\win64;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files\dotnet\;C:\Program Files\PuTTY\;C:\Program Files\Microsoft SQL Server\170\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\Git\cmd;<MATLABROOT>\runtime\win64;<MATLABROOT>\bin;C:\Program Files\MATLAB\R2021b\bin;C:\Program Files\JGraph\;C:\Program Files\nodejs\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin\;C:\Program Files\IVI Foundation\VISA\Win64\Bin\;<HOME>\AppData\Local\Programs\Python\Python312\Scripts\;<HOME>\AppData\Local\Programs\Python\Python312\;<HOME>\AppData\Local\Programs\Python\Launcher\;<HOME>\AppData\Local\Microsoft\WindowsApps;<HOME>\.dotnet\tools;<HOME>\AppData\Local\GitHubDesktop\bin;<HOME>\AppData\Local\Programs\Microsoft VS Code\bin;<HOME>\AppData\Local\CodeAnalyzer\bin;<HOME>\.local\bin;<HOME>\AppData\Roaming\npm;<HOME>\AppData\Local\Unity\bin;<HOME>\AppData\Local\Programs\Python\Python312;C:\Program Files\nodejs;C:\Program Files\Git\mingw64\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin 
+Set INCLUDE = C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\include;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\atlmfc\include;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\ucrt;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\shared;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\um;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\winrt;<MATLABROOT>\extern\include; 
+Set LIB = C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\lib\x64;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\atlmfc\lib\x64;C:\Program Files (x86)\Windows Kits\10\\Lib\10.0.26100.0\ucrt\x64;C:\Program Files (x86)\Windows Kits\10\\lib\10.0.26100.0\um\x64;<MATLABROOT>\lib\win64; 
+Set LIBPATH = C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\lib\x64;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\atlmfc\lib\x64; 
+Options file details 
+------------------------------------------------------------------- 
+	Compiler location: C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\ 
+	Options file: <MATLABROOT>\bin\win64\mexopts\msvc2022.xml 
+	CMDLINE100 : cl /c -MD -Zc:__cplusplus -Zp8 -GR -W3 -EHsc- -Zc:wchar_t- -nologo -O2 -DNDEBUG /DMATLAB_DEFAULT_RELEASE=R2017b  /DUSE_MEX_CMD   /DMSVC /DIBMPC /D_CRT_SECURE_NO_DEPRECATE -I"<W>\b\lib"  -I"<MATLABROOT>\extern\include" -I"<MATLABROOT>\extern\include\win64" "<W>\b\lib\k10lib.c" /Fo<TEMP>\mex_399442710626652_27040\k10lib.obj 
+	CMDLINE200 : link /nologo    /DLL /def:"<W>\b\lib\k10lib.def" <TEMP>\mex_399442710626652_27040\k10lib.obj  /MACHINE:AMD64 /LIBPATH:"<MATLABROOT>\extern\lib\win64\microsoft" mclmcrrt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /out:<W>\b\lib\k10lib.dll 
+	CMDLINE300 : if exist "<W>\b\lib\k10lib.ilk" del "<W>\b\lib\k10lib.ilk" 
+	COMPILER : cl 
+	COMPFLAGS : -MD -Zc:__cplusplus -Zp8 -GR -W3 -EHsc- -Zc:wchar_t- -nologo 
+	COMPDEFINES : /DMATLAB_DEFAULT_RELEASE=R2017b  /DUSE_MEX_CMD   /DMSVC /DIBMPC /D_CRT_SECURE_NO_DEPRECATE 
+	MATLABMEX :  
+	OPTIMFLAGS : -O2 -DNDEBUG 
+	INCLUDE : -I"<W>\b\lib"  -I"<MATLABROOT>\extern\include" -I"<MATLABROOT>\extern\include\win64" 
+	DEBUGFLAGS : /Z7 
+	LINKER : link 
+	LINKFLAGS : /nologo  
+	LINKTYPE :  
+	LINKEXPORT : /DLL /def:"<W>\b\lib\k10lib.def" 
+	LINKEXPORTVER :  
+	LINKLIBS : /MACHINE:AMD64 /LIBPATH:"<MATLABROOT>\extern\lib\win64\microsoft" mclmcrrt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib 
+	LINKDEBUGFLAGS : /debug /PDB:"<W>\b\lib\k10lib.pdb" 
+	LINKOPTIMFLAGS :  
+	OBJEXT : .obj 
+	LDEXT : .dll 
+	SETENV : set COMPILER=cl 
+                set COMPFLAGS=/c -MD -Zc:__cplusplus -Zp8 -GR -W3 -EHsc- -Zc:wchar_t- -nologo /DMATLAB_DEFAULT_RELEASE=R2017b  /DUSE_MEX_CMD   /DMSVC /DIBMPC /D_CRT_SECURE_NO_DEPRECATE  
+                set OPTIMFLAGS=-O2 -DNDEBUG 
+                set DEBUGFLAGS=/Z7 
+                set LINKER=link 
+                set LINKFLAGS=/nologo  /export:%ENTRYPOINT%  /MACHINE:AMD64 /LIBPATH:"<MATLABROOT>\extern\lib\win64\microsoft" mclmcrrt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /DLL /def:"<W>\b\lib\k10lib.def" 
+                set LINKDEBUGFLAGS=/debug /PDB:"%OUTDIR%%MEX_NAME%.dll.pdb" 
+                set NAME_OUTPUT=/out:"%OUTDIR%%MEX_NAME%%MEX_EXT%" 
+	VCROOT : C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools 
+	SDKROOT : C:\Program Files (x86)\Windows Kits\10\ 
+	VSINSTALLDIR : C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools 
+	VCINSTALLDIR : C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207 
+	VCVARSALLDIR : C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build 
+	KITSROOT : C:\Program Files (x86)\Windows Kits\10\ 
+	SDKVERSION : 10.0.26100.0 
+	MATLABROOT : <MATLABROOT> 
+	ARCH : win64 
+	SRC : "<W>\b\lib\k10lib.c" 
+	OBJ : <TEMP>\mex_399442710626652_27040\k10lib.obj 
+	OBJS : <TEMP>\mex_399442710626652_27040\k10lib.obj  
+	SRCROOT : <W>\b\lib\k10lib 
+	DEF : <TEMP>\mex_399442710626652_27040\k10lib.def 
+	EXP : "<W>\b\lib\k10lib.exp" 
+	LIB : "<W>\b\lib\k10lib.lib" 
+	EXE : <W>\b\lib\k10lib.dll 
+	ILK : "<W>\b\lib\k10lib.ilk" 
+	TEMPNAME : <W>\b\lib\k10lib 
+	EXEDIR : <W>\b\lib\ 
+	EXENAME : k10lib 
+	MANIFEST : "<W>\b\lib\k10lib.dll.manifest" 
+	DEFFDELIM : , 
+	DEFFILE : <W>\b\lib\k10lib.def 
+	LDTYPE :  -shared -static 
+	MTCMDLINE : mt -outputresource:<W>\b\lib\k10lib.dll;2 -manifest "<W>\b\lib\k10lib.dll.manifest" 
+	QUOTEDDEFFILE : "<W>\b\lib\k10lib.def" 
+	OPTIM : -O2 -DNDEBUG 
+	LINKOPTIM :  
+------------------------------------------------------------------- 
+Building with 'Microsoft Visual C++ 2022 (C)'. 
+cl /c -MD -Zc:__cplusplus -Zp8 -GR -W3 -EHsc- -Zc:wchar_t- -nologo -O2 -DNDEBUG /DMATLAB_DEFAULT_RELEASE=R2017b  /DUSE_MEX_CMD   /DMSVC /DIBMPC /D_CRT_SECURE_NO_DEPRECATE -I"<W>\b\lib"  -I"<MATLABROOT>\extern\include" -I"<MATLABROOT>\extern\include\win64" "<W>\b\lib\k10lib.c" /Fo<TEMP>\mex_399442710626652_27040\k10lib.obj 
+k10lib.c 
+ 
+link /nologo    /DLL /def:"<W>\b\lib\k10lib.def" <TEMP>\mex_399442710626652_27040\k10lib.obj  /MACHINE:AMD64 /LIBPATH:"<MATLABROOT>\extern\lib\win64\microsoft" mclmcrrt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /out:<W>\b\lib\k10lib.dll 
+   Creating library <W>\b\lib\k10lib.lib and object <W>\b\lib\k10lib.exp 
+ 
+if exist "<W>\b\lib\k10lib.ilk" del "<W>\b\lib\k10lib.ilk" 
+build	ok
+build.seconds	26.8
+file	buildresult.json
+file	includedSupportPackages.txt
+file	k10lib.c
+file	k10lib.def
+file	k10lib.dll
+file	k10lib.exp
+file	k10lib.exports
+file	k10lib.h
+file	k10lib.lib
+file	mccExcludedFiles.log
+file	readme.txt
+file	requiredMCRProducts.txt
+file	unresolvedSymbols.txt

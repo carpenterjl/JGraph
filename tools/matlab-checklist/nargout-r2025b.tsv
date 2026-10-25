@@ -320,6 +320,7 @@ cond	1	2
 condeig	3	2
 condest	2	2
 coneplot	1	2
+configureDictionary	1	5
 confusionmat	2	2
 conj	1	5
 conndef	1	2
@@ -1104,6 +1105,7 @@ kaiser	1	2
 kaiserord	4	2
 KDTreeSearcher	1	2
 KernelDistribution	ERR:MATLAB:narginout:notValidMfile	0
+keyHash	1	5
 keys	ERR:MATLAB:narginout:notValidMfile	0
 kmeans	ERR:MATLAB:narginout:notValidMfile	0
 kmedoids	ERR:MATLAB:narginout:notValidMfile	0
@@ -1355,6 +1357,7 @@ mvtcdf	ERR:MATLAB:narginout:notValidMfile	0
 mvtpdf	ERR:MATLAB:narginout:notValidMfile	0
 mvtrnd	ERR:MATLAB:narginout:notValidMfile	0
 NakagamiDistribution	ERR:MATLAB:narginout:notValidMfile	0
+namedargs2cell	1	5
 namelengthmax	1	5
 nancov	ERR:MATLAB:narginout:notValidMfile	0
 nanmax	ERR:MATLAB:narginout:notValidMfile	0

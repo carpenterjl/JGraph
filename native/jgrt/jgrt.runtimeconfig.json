@@ -1,0 +1,20 @@
+{
+  "runtimeOptions": {
+    "tfm": "net8.0",
+    "frameworks": [
+      {
+        "name": "Microsoft.NETCore.App",
+        "version": "8.0.0"
+      },
+      {
+        "name": "Microsoft.WindowsDesktop.App",
+        "version": "8.0.0"
+      }
+    ],
+    "//": "What jgrt.dll starts .NET with in a C program's process (compiler and SDK plan, stage K10): the Windows desktop framework, so a component can show its figures and apps, and the collector .NET gives any program by default, the engine being a guest in another's process.",
+    "configProperties": {
+      "System.Reflection.Metadata.MetadataUpdater.IsSupported": false,
+      "CSWINRT_USE_WINDOWS_UI_XAML_PROJECTIONS": false
+    }
+  }
+}

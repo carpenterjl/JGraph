@@ -16,6 +16,13 @@ public interface IScriptOutput
     void WriteError(string text);
 
     /// <summary>
+    /// Writes error text a script wrote itself (<c>fprintf(2, ...)</c>), which carries its own line
+    /// ends. The default writes it as a line, as sinks always have; a sink that hands text on as it
+    /// was written (a C program's error handler, stage K10) writes it unchanged.
+    /// </summary>
+    void WriteErrorText(string text) => WriteError(text);
+
+    /// <summary>
     /// Clears the sink's display (<c>clc</c>). The default is a no-op so sinks with nothing to clear —
     /// null sinks, batch stdout, recorders — need not care; a console panel overrides it.
     /// </summary>

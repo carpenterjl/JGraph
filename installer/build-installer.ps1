@@ -81,7 +81,12 @@ $anchors = @(
 
     # mcc -W dotnet:...,api=matlab-data (stage K9, ADR 0265): the MATLAB Data API the
     # strongly typed interface compiles against and a client references.
-    "JGraph.MATLAB.Runtime.dll"
+    "JGraph.MATLAB.Runtime.dll",
+
+    # The native bridge (stage K10, ADR 0266): jgrt.dll beside the engine, where a C program with
+    # this folder on its PATH finds it, and the runtimeconfig it starts .NET with.
+    "jgrt.dll",
+    "jgrt.runtimeconfig.json"
 )
 foreach ($anchor in $anchors) {
     if (-not (Test-Path (Join-Path $staging $anchor))) {

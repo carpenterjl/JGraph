@@ -60,6 +60,14 @@
 .PARAMETER CheckOnly
     Resolve the imports and stop.
 
+.PARAMETER PathFirst
+    Folders put first on the child's PATH, before R2025b's runtime: a JGraph Runtime's runtime\win64
+    for a C program that loads jgrt.dll (stage K10).
+
+.PARAMETER NoMatlabRuntime
+    Leave R2025b's runtime\win64 and bin\win64 off the child's PATH, so a program that should not
+    need them shows it.
+
 .EXAMPLE
     powershell -File run-quiet.ps1 -Exe out\hello\hello.exe -Arguments 1,two,'three four'
 #>
@@ -74,7 +82,9 @@ param(
     [int] $TimeoutSeconds = 300,
     [string] $OutFile,
     [switch] $AllowWindowed,
-    [switch] $CheckOnly
+    [switch] $CheckOnly,
+    [string[]] $PathFirst = @(),
+    [switch] $NoMatlabRuntime
 )
 
 $ErrorActionPreference = 'Stop'
@@ -228,8 +238,8 @@ $exePath = (Resolve-Path -LiteralPath $Exe).Path
 $exeDir = Split-Path -Parent $exePath
 if (-not $WorkingDirectory) { $WorkingDirectory = $exeDir }
 
-$runtimeDirs = @((Join-Path $MatlabRoot 'runtime\win64'), (Join-Path $MatlabRoot 'bin\win64'))
-$childPath = (($runtimeDirs + @($env:Path -split ';')) | Where-Object { $_ }) -join ';'
+$runtimeDirs = if ($NoMatlabRuntime) { @() } else { @((Join-Path $MatlabRoot 'runtime\win64'), (Join-Path $MatlabRoot 'bin\win64')) }
+$childPath = ((@($PathFirst) + $runtimeDirs + @($env:Path -split ';')) | Where-Object { $_ }) -join ';'
 
 $lines = New-Object System.Collections.Generic.List[string]
 function Say([string] $s) { $script:lines.Add($s); Write-Host $s }

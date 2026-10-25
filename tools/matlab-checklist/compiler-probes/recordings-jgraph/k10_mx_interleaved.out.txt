@@ -1,0 +1,412 @@
+== safe
+  model: interleaved
+  create.double2x3: double(6) [2x3] n=6 es=8 is=numeric,double {0 0 0 0 0 0}
+  create.double0x0: double(6) [0x0] n=0 es=8 is=numeric,empty,double {data NULL}
+  create.double0x3: double(6) [0x3] n=0 es=8 is=numeric,empty,double {data NULL}
+  create.double3x0: double(6) [3x0] n=0 es=8 is=numeric,empty,double {data NULL}
+  create.scalar: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {2.5}
+  create.negzero: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {-0}
+  create.complex2x2: double(6) [2x2] n=4 es=16 is=numeric,complex,double {(0,0) (0,0) (0,0) (0,0)}
+  create.numeric.6: double(6) [1x2] n=2 es=8 is=numeric,double {0 0}
+  create.numericz.6: double(6) [1x2] n=2 es=16 is=numeric,complex,double {(0,0) (0,0)}
+  create.numeric.7: single(7) [1x2] n=2 es=4 is=numeric,single {0 0}
+  create.numericz.7: single(7) [1x2] n=2 es=8 is=numeric,complex,single {(0,0) (0,0)}
+  create.numeric.8: int8(8) [1x2] n=2 es=1 is=numeric,int8 {0 0}
+  create.numericz.8: int8(8) [1x2] n=2 es=2 is=numeric,complex,int8 {(0,0) (0,0)}
+  create.numeric.9: uint8(9) [1x2] n=2 es=1 is=numeric,uint8 {0 0}
+  create.numericz.9: uint8(9) [1x2] n=2 es=2 is=numeric,complex,uint8 {(0,0) (0,0)}
+  create.numeric.10: int16(10) [1x2] n=2 es=2 is=numeric,int16 {0 0}
+  create.numericz.10: int16(10) [1x2] n=2 es=4 is=numeric,complex,int16 {(0,0) (0,0)}
+  create.numeric.11: uint16(11) [1x2] n=2 es=2 is=numeric,uint16 {0 0}
+  create.numericz.11: uint16(11) [1x2] n=2 es=4 is=numeric,complex,uint16 {(0,0) (0,0)}
+  create.numeric.12: int32(12) [1x2] n=2 es=4 is=numeric,int32 {0 0}
+  create.numericz.12: int32(12) [1x2] n=2 es=8 is=numeric,complex,int32 {(0,0) (0,0)}
+  create.numeric.13: uint32(13) [1x2] n=2 es=4 is=numeric,uint32 {0 0}
+  create.numericz.13: uint32(13) [1x2] n=2 es=8 is=numeric,complex,uint32 {(0,0) (0,0)}
+  create.numeric.14: int64(14) [1x2] n=2 es=8 is=numeric,int64 {0 0}
+  create.numericz.14: int64(14) [1x2] n=2 es=16 is=numeric,complex,int64 {(0,0) (0,0)}
+  create.numeric.15: uint64(15) [1x2] n=2 es=8 is=numeric,uint64 {0 0}
+  create.numericz.15: uint64(15) [1x2] n=2 es=16 is=numeric,complex,uint64 {(0,0) (0,0)}
+  create.nd234: double(6) [2x3x4] n=24 es=8 is=numeric,double
+  create.nd2311: double(6) [2x3] n=6 es=8 is=numeric,double
+  create.nd213: int8(8) [2x1x3] n=6 es=1 is=numeric,int8
+  create.nd031: double(6) [0x3] n=0 es=8 is=numeric,empty,double
+  create.nd1: double(6) [4x1] n=4 es=8 is=numeric,double
+  create.nd0: double(6) [0x0] n=0 es=8 is=numeric,empty,double
+  create.nd502: uint16(11) [5x0x2] n=0 es=2 is=numeric,empty,uint16
+  create.nd111: double(6) [1x1] n=1 es=8 is=numeric,scalar,double
+  create.nd122z: single(7) [1x2x2] n=4 es=8 is=numeric,complex,single {(0,0) (0,0) (0,0) (0,0)}
+  create.uninit2x2: double(6) [2x2] n=4 es=8 is=numeric,double
+  create.uninit222: int8(8) [2x2x2] n=8 es=1 is=numeric,int8
+  create.true: logical(3) [1x1] n=1 es=1 is=logical,scalar,logicalscalar,true {1}
+  create.false: logical(3) [1x1] n=1 es=1 is=logical,scalar,logicalscalar {0}
+  create.logical2x2: logical(3) [2x2] n=4 es=1 is=logical {0 0 0 0}
+  create.logical122: logical(3) [1x2x2] n=4 es=1 is=logical {0 0 0 0}
+  create.string: char(4) [1x5] n=5 es=2 is=char 'hello'
+  create.emptystring: char(4) [0x0] n=0 es=2 is=char,empty '' chars NULL
+  create.nchars: char(4) [1x3] n=3 es=2 is=char 'abc'
+  create.utf8: char(4) [1x4] n=4 es=2 is=char 'caf\u00E9'
+  create.latin1: char(4) [1x4] n=4 es=2 is=char 'caf\u00E9'
+  create.charmatrix: char(4) [3x3] n=9 es=2 is=char 'abe\u0000cf\u0000d\u0000'
+  create.charmatrix1: char(4) [1x1] n=1 es=2 is=char,scalar 'a'
+  create.charmatrix0: char(4) [0x0] n=0 es=2 is=char,empty '' chars NULL
+  create.chararray23: char(4) [2x3] n=6 es=2 is=char '\u0000\u0000\u0000\u0000\u0000\u0000'
+  create.chararray122: char(4) [1x2x2] n=4 es=2 is=char '\u0000\u0000\u0000\u0000'
+  create.chararray1: char(4) [1x1] n=1 es=2 is=char,scalar '\u0000'
+  create.cell2x2: cell(1) [2x2] n=4 es=8 is=cell {NULL; NULL; NULL; NULL}
+  create.cell0x0: cell(1) [0x0] n=0 es=8 is=cell,empty {}
+  create.cell122: cell(1) [1x2x2] n=4 es=8 is=cell {NULL; NULL; NULL; NULL}
+  create.cellnd0: cell(1) [0x1] n=0 es=8 is=cell,empty {}
+  create.struct1x2: struct(2) [1x2] n=2 es=8 is=struct <a,b> {a=NULL; b=NULL; a=NULL; b=NULL}
+  create.struct0fields: struct(2) [1x1] n=1 es=8 is=struct,scalar <> {}
+  create.struct0x0: struct(2) [0x0] n=0 es=8 is=struct,empty <a,b> {}
+  create.structarray23: struct(2) [2x3] n=6 es=8 is=struct <x> {x=NULL; x=NULL; x=NULL; x=NULL; x=NULL; x=NULL}
+  create.sparse: double(6) [3x3] n=9 es=8 is=numeric,sparse,double nzmax=4 jc=[0 0 0 0] ir=[] {}
+  create.sparse0: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=1 jc=[0 0 0] ir=[] {}
+  create.sparsez: double(6) [2x2] n=4 es=16 is=numeric,sparse,complex,double nzmax=2 jc=[0 0 0] ir=[] {}
+  create.sparselogical: logical(3) [2x3] n=6 es=1 is=logical,sparse nzmax=2 jc=[0 0 0 0] ir=[] {}
+  query.M: 2
+  query.N: 12
+  query.numel: 24
+  query.ndims: 3
+  query.sub3: 23
+  query.sub2: 5
+  query.sub1: 3
+  query.sub4: 23
+  scalar.int8: -3
+  scalar.char: 65
+  scalar.logical: 1
+  scalar.empty: 0
+  scalar.uint64max: 1.8446744073709552e+19
+  scalar.single: 1.5
+  scalar.row: 4
+  scalar.complex: 7
+  scalar.sparse: 9
+  scalar.cell: 0
+  scalar.struct: 0
+  isclass.double: 1
+  isclass.Double: 0
+  isclass.numeric: 0
+  isclass.float: 0
+  isclass.single: 0
+  isclass.int8.integer: 0
+  isclass.int8.int8: 1
+  isclass.cell: 1
+  isclass.struct: 1
+  isclass.char: 1
+  isclass.logical: 1
+  isclass.sparse.double: 1
+  const.nan: NaN
+  const.inf: Inf
+  const.eps: 2.2204460492503131e-16
+  const.isnan: 1
+  const.isinf: 1
+  const.isfinite.big: 1
+  const.isfinite.inf: 0
+  const.isfinite.nan: 0
+  const.isnan.one: 0
+  es.cell: cell(1) [1x1] n=1 es=8 is=cell,scalar
+  es.struct: struct(2) [1x1] n=1 es=8 is=struct,scalar
+  es.sparse: double(6) [2x2] n=4 es=8 is=numeric,sparse,double
+  es.sparselogical: logical(3) [2x2] n=4 es=1 is=logical,sparse
+  es.int32z: int32(12) [1x1] n=1 es=8 is=numeric,complex,scalar,int32
+  es.char: char(4) [1x1] n=1 es=2 is=char,scalar
+  string.tostring: hello
+  string.toutf8: hello
+  string.get3.result: 1
+  string.get3: he
+  string.get5.result: 1
+  string.get5: hell
+  string.get6.result: 0
+  string.get6: hello
+  string.get1.result: 1
+  string.get1: 
+  string.nchars3: helZZZZZZZZZZZZ
+  string.nchars8: hello
+  string.matrix.tostring: abe
+  string.matrix.get.result: 0
+  string.matrix.get: abe
+  string.utf8.tostring: caf\xE9
+  string.utf8.toutf8: caf\xC3\xA9
+  string.utf8.get.result: 0
+  string.utf8.get: caf\xE9
+  string.wide: char(4) [1x5] n=5 es=2 is=char 'c\u00E9\u20AC\uD83D\uDE00'
+  string.wide.tostring: c\xE9\x80\x1A
+  string.wide.toutf8: c\xC3\xA9\xE2\x82\xAC\xF0\x9F\x98\x80
+  string.wide.get.result: 0
+  string.wide.get: c\xE9\x80\x1A
+  string.double.tostring: (null)
+  string.double.toutf8: (null)
+  string.double.get.result: 1
+  string.double.get: ZZZZZZZZZZZZZZZ
+  string.empty.tostring: 
+  string.empty.get.result: 0
+  string.empty.get: 
+  string.long.n: 300
+  struct.nfields: 2
+  struct.name0: a
+  struct.name1: b
+  struct.number.b: 1
+  struct.number.c: -1
+  struct.number.A: -1
+  struct.get.unset: NULL
+  struct.get.set: char(4) [1x1] n=1 es=2 is=char,scalar 'x'
+  struct.get.nosuch: NULL
+  struct.after.set: struct(2) [1x2] n=2 es=8 is=struct <a,b> {a=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; b=NULL; a=NULL; b=char(4) [1x1] n=1 es=2 is=char,scalar 'x'}
+  struct.add.c: 2
+  struct.add.a: 0
+  struct.add.long: 3
+  struct.add.63: 4
+  struct.after.add: struct(2) [1x2] n=2 es=8 is=struct <a,b,c,a234567890123456789012345678901234567890123456789012345678901234,b23456789012345678901234567890123456789012345678901234567890123> {a=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; b=NULL; c=NULL; a234567890123456789012345678901234567890123456789012345678901234=NULL; b23456789012345678901234567890123456789012345678901234567890123=NULL; a=NULL; b=char(4) [1x1] n=1 es=2 is=char,scalar 'x'; c=NULL; a234567890123456789012345678901234567890123456789012345678901234=NULL; b23456789012345678901234567890123456789012345678901234567890123=NULL}
+  struct.after.remove: struct(2) [1x2] n=2 es=8 is=struct <b,c,a234567890123456789012345678901234567890123456789012345678901234,b23456789012345678901234567890123456789012345678901234567890123> {b=NULL; c=NULL; a234567890123456789012345678901234567890123456789012345678901234=NULL; b23456789012345678901234567890123456789012345678901234567890123=NULL; b=char(4) [1x1] n=1 es=2 is=char,scalar 'x'; c=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {3}; a234567890123456789012345678901234567890123456789012345678901234=NULL; b23456789012345678901234567890123456789012345678901234567890123=NULL}
+  struct.dup: struct(2) [1x2] n=2 es=8 is=struct <b,c,a234567890123456789012345678901234567890123456789012345678901234,b23456789012345678901234567890123456789012345678901234567890123> {b=NULL; c=NULL; a234567890123456789012345678901234567890123456789012345678901234=NULL; b23456789012345678901234567890123456789012345678901234567890123=NULL; b=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {42}; c=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {3}; a234567890123456789012345678901234567890123456789012345678901234=NULL; b23456789012345678901234567890123456789012345678901234567890123=NULL}
+  struct.original: struct(2) [1x2] n=2 es=8 is=struct <b,c,a234567890123456789012345678901234567890123456789012345678901234,b23456789012345678901234567890123456789012345678901234567890123> {b=NULL; c=NULL; a234567890123456789012345678901234567890123456789012345678901234=NULL; b23456789012345678901234567890123456789012345678901234567890123=NULL; b=char(4) [1x1] n=1 es=2 is=char,scalar 'x'; c=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {3}; a234567890123456789012345678901234567890123456789012345678901234=NULL; b23456789012345678901234567890123456789012345678901234567890123=NULL}
+  cell.set: cell(1) [1x3] n=3 es=8 is=cell {double(6) [1x1] n=1 es=8 is=numeric,scalar,double {5}; NULL; char(4) [1x1] n=1 es=2 is=char,scalar 'z'}
+  cell.get.unset: NULL
+  cell.dup: cell(1) [1x3] n=3 es=8 is=cell {double(6) [1x1] n=1 es=8 is=numeric,scalar,double {6}; NULL; char(4) [1x1] n=1 es=2 is=char,scalar 'z'}
+  cell.original: cell(1) [1x3] n=3 es=8 is=cell {double(6) [1x1] n=1 es=8 is=numeric,scalar,double {5}; NULL; char(4) [1x1] n=1 es=2 is=char,scalar 'z'}
+  cell.nested: cell(1) [1x1] n=1 es=8 is=cell,scalar {cell(1) [1x3] n=3 es=8 is=cell {double(6) [1x1] n=1 es=8 is=numeric,scalar,double {5}; NULL; char(4) [1x1] n=1 es=2 is=char,scalar 'z'}}
+  cell.nested.dup: cell(1) [1x1] n=1 es=8 is=cell,scalar {cell(1) [1x3] n=3 es=8 is=cell {double(6) [1x1] n=1 es=8 is=numeric,scalar,double {5}; NULL; char(4) [1x1] n=1 es=2 is=char,scalar 'z'}}
+  reshape.mn: double(6) [2x3] n=6 es=8 is=numeric,double {1 2 3 4 5 6}
+  reshape.dims16.result: 0
+  reshape.dims16: double(6) [1x6] n=6 es=8 is=numeric,double {1 2 3 4 5 6}
+  reshape.dims123.result: 0
+  reshape.dims123: double(6) [1x2x3] n=6 es=8 is=numeric,double {1 2 3 4 5 6}
+  reshape.dims611.result: 0
+  reshape.dims611: double(6) [6x1] n=6 es=8 is=numeric,double {1 2 3 4 5 6}
+  reshape.dims6.result: 0
+  reshape.dims6: double(6) [6x1] n=6 es=8 is=numeric,double {1 2 3 4 5 6}
+  reshape.setmn32: double(6) [3x2] n=6 es=8 is=numeric,double {1 2 3 4 5 6}
+  reshape.setn.nd: double(6) [1x6] n=6 es=8 is=numeric,double
+  data.setdoubles.result: 1
+  data.setpr: double(6) [1x3] n=3 es=8 is=numeric,double {1 2 3}
+  data.setdata: int32(12) [2x1] n=2 es=4 is=numeric,int32 {-1 4}
+  data.makecomplex.result: 1
+  data.makecomplex: double(6) [1x2] n=2 es=16 is=numeric,complex,double {(1,0) (2,0)}
+  data.makecomplex.again: 1
+  data.makereal.result: 1
+  data.makereal: double(6) [1x2] n=2 es=8 is=numeric,double {1 2}
+  data.makereal.again: 1
+  data.getdoubles.real: double(6) [1x2] n=2 es=8 is=numeric,double {1 2}
+  data.getcomplexdoubles.real.null: 1
+  data.makecomplex.char: 0
+  data.getdoubles.int8.null: 1
+  data.getint8s.int8.null: 0
+  data.makecomplex.int8: 1
+  data.int8.complex: int8(8) [1x2] n=2 es=2 is=numeric,complex,int8 {(0,0) (0,0)}
+  data.getcomplexint8s.null: 0
+  data.getdoubles.complex.null: 1
+  data.getdoubles.logical.null: 1
+  data.setcomplexdoubles.result: 1
+  data.setcomplexdoubles: double(6) [1x2] n=2 es=16 is=numeric,complex,double {(1,2) (3,4)}
+  memory.calloc.zero: 1
+  memory.realloc.kept: 9
+  memory.free.null: 1
+  memory.destroy.null: 1
+  done
+  EXIT	0
+  SECONDS	0.2
+== risky 1
+  model: interleaved
+  risky 1
+  risky.getcell.range: NULL
+  risky 1: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 2
+  model: interleaved
+  risky 2
+  risky.getfield.range: NULL
+  risky 2: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 3
+  model: interleaved
+  risky 3
+  risky.setcell.range: cell(1) [1x1] n=1 es=8 is=cell,scalar {NULL}
+  risky 3: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 4
+  model: interleaved
+  risky 4
+  risky.getfieldbynumber.range: NULL
+  risky 4: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 5
+  model: interleaved
+  risky 5
+  risky.struct.duplicate: struct(2) [1x1] n=1 es=8 is=struct,scalar <a,a> {a=NULL; a=NULL}
+  risky 5: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 6
+  model: interleaved
+  risky 6
+  risky.struct.invalid: struct(2) [1x1] n=1 es=8 is=struct,scalar <1bad> {1bad=NULL}
+  risky 6: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 7
+  model: interleaved
+  risky 7
+  risky.addfield.invalid: 2
+  risky.addfield.invalid.after: struct(2) [1x1] n=1 es=8 is=struct,scalar <a,b,1bad> {a=NULL; b=NULL; 1bad=NULL}
+  risky 7: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 8
+  model: interleaved
+  risky 8
+  risky.numeric.cellclass: cell(1) [2x2] n=4 es=8 is=cell {NULL; NULL; NULL; NULL}
+  risky 8: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 9
+  model: interleaved
+  risky 9
+  risky.numeric.logicalclass: logical(3) [1x2] n=2 es=1 is=logical {0 0}
+  risky 9: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 10
+  model: interleaved
+  risky 10
+  risky.numeric.charclass: char(4) [1x2] n=2 es=2 is=char '\u0000\u0000'
+  risky 10: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 11
+  model: interleaved
+  risky 11
+  risky.getpr.int8.null: 0
+  risky 11: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 12
+  model: interleaved
+  risky 12
+  risky.getpr.complex.null: 1
+  risky 12: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 13
+  model: interleaved
+  risky 13
+  risky.setdims.grow.result: 0
+  risky.setdims.grow: double(6) [4x4] n=16 es=8 is=numeric,double
+  risky 13: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 14
+  model: interleaved
+  risky 14
+  risky.setfield.nosuch: struct(2) [1x1] n=1 es=8 is=struct,scalar <a,b> {a=NULL; b=NULL}
+  risky 14: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 15
+  model: interleaved
+  risky 15
+  risky.fieldname.range: (null)
+  risky 15: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 16
+  model: interleaved
+  risky 16
+  risky.nfields.double: 0
+  risky.fieldnumber.double: -1
+  risky 16: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 17
+  model: interleaved
+  risky 17
+  risky.getcell.double: NULL
+  risky 17: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 18
+  model: interleaved
+  risky 18
+  risky.getfield.double: NULL
+  risky 18: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 19
+  model: interleaved
+  risky 19
+  risky.removefield.range: struct(2) [1x1] n=1 es=8 is=struct,scalar <a,b> {a=NULL; b=NULL}
+  risky 19: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 20
+  model: interleaved
+  risky 20
+  risky.struct.spaced: struct(2) [1x1] n=1 es=8 is=struct,scalar <a b> {a b=NULL}
+  risky 20: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 21
+  model: interleaved
+  risky 21
+  risky.setfieldbynumber.range: struct(2) [1x1] n=1 es=8 is=struct,scalar <a,b> {a=NULL; b=NULL}
+  risky 21: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 22
+  model: interleaved
+  risky 22
+  risky.duplicate.null: NULL
+  risky 22: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 23
+  model: interleaved
+  risky 23
+  risky.getlogicals.char.null: 0
+  risky 23: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 24
+  model: interleaved
+  risky 24
+  risky.getchars.double.null: 0
+  risky 24: returned
+  done
+  EXIT	0
+  SECONDS	0.1
+== risky 25
+  model: interleaved
+  risky 25
+  risky.getir.full.null: 1
+  risky.getnzmax.full: 0
+  risky 25: returned
+  done
+  EXIT	0
+  SECONDS	0.1

@@ -757,7 +757,8 @@ internal sealed class JgsClass
         ArgumentsSignature? signature = declaration.Signature is { DeclaresInputs: true } declared ? declared : null;
         if (arguments.Count > fixedCount && !variadic && signature is null)
         {
-            throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs", "Too many input arguments.");
+            // The report names the class, as R2025b's does: "Error using k10obj" (stage K10, k10_feval mlf.obj).
+            throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs", "Too many input arguments.") { UsingName = Name };
         }
 
         foreach (JgsClass super in _supers)

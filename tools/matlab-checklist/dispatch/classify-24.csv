@@ -1,0 +1,4 @@
+name,kind,method_classes
+configureDictionary,builtin,
+keyHash,builtin,categorical;codistributed;datetime;duration;tabular;tall
+namedargs2cell,builtin,

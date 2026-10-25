@@ -111,7 +111,14 @@ internal static class JgsDeployedMain
     /// the frame that raised it, the message, a blank line, its causes, an <c>Error in</c> line and a
     /// blank one for every frame it unwound through, and its identifier last.
     /// </summary>
-    internal static string Report(JgsException error)
+    internal static string Report(JgsException error) => Report(error, handler: false);
+
+    /// <summary>
+    /// <see cref="Report(JgsException)"/>, or with <paramref name="handler"/> the report R2025b's
+    /// runtime hands a C shared library's error handler (stage K10, k10_feval): the same lines
+    /// without the identifier, ending in their blank line.
+    /// </summary>
+    internal static string Report(JgsException error, bool handler)
     {
         var report = new StringBuilder();
         var runtime = error as JgsRuntimeException;
@@ -145,6 +152,11 @@ internal static class JgsDeployedMain
             report.Append("Error in ").Append(Shown(frames[i])).Append(" (line ").Append(frames[i].Line).Append(")\n\n");
         }
 
+        if (handler)
+        {
+            return report.ToString();
+        }
+
         if (runtime is { Identifier.Length: > 0 })
         {
             report.Append(runtime.Identifier).Append('\n');
@@ -154,7 +166,7 @@ internal static class JgsDeployedMain
     }
 
     /// <summary>
-    /// Writes <see cref="Report"/> to standard error, or hands it to a sink that keeps a log
+    /// Writes <see cref="Report(JgsException)"/> to standard error, or hands it to a sink that keeps a log
     /// (<c>-logfile</c>, stage K4): R2025b's log takes the report without its identifier line.
     /// </summary>
     internal static void WriteReport(IScriptOutput output, JgsException error)

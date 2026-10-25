@@ -1,0 +1,120 @@
+== plain
+  mode: plain
+  proxy.initialize: 1
+  proxy.initialize.again: 1
+  before.initialized: 0
+  before.logfile: 
+  first.initialize: 1
+  first.initialized: 1
+  first.logfile: 
+  second.initialize: 0
+  second.initialized: 1
+  second.logfile: 
+  terminate: 1
+  after.initialized: 1
+  third.initialize: 0
+  third.initialized: 1
+  third.logfile: 
+  terminate.again: 1
+  done
+  EXIT	0
+  SECONDS	1.3
+== noproxy
+  mode: noproxy
+  noproxy.initialize: 1
+  noproxy.initialized: 1
+  noproxy.logfile: 
+  terminate: 1
+  done
+  EXIT	0
+  SECONDS	1.2
+== before
+  mode: before
+  proxy.initialize: 1
+  proxy.initialize.again: 1
+  before.scalar: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {3}
+  init.initialize: 1
+  init.initialized: 1
+  init.logfile: 
+  after.scalar: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {3}
+  terminate: 1
+  terminated.string: char(4) [1x15] n=15 es=2 is=char 'after terminate'
+  done
+  EXIT	0
+  SECONDS	1.3
+== options
+  mode: options
+  proxy.initialize: 1
+  proxy.initialize.again: 1
+  options.initialize: 1
+  options.initialized: 1
+  options.logfile: 
+  terminate: 1
+  done
+  EXIT	0
+  SECONDS	1.2
+== logfile <W>\clients\k10app.log
+  mode: logfile
+  proxy.initialize: 1
+  proxy.initialize.again: 1
+  logfile.initialize: 1
+  logfile.initialized: 1
+  logfile.logfile: ><W>\clients\k10app.log
+  a line the client prints
+  terminate: 1
+  logfile.text: (no file)
+  done
+  EXIT	0
+  SECONDS	1.2
+== split <W>\clients\k10split.log
+  mode: split
+  proxy.initialize: 1
+  proxy.initialize.again: 1
+  split.initialize: 1
+  split.initialized: 1
+  split.logfile: 
+  terminate: 1
+  split.text: (no file)
+  done
+  EXIT	0
+  SECONDS	1.2
+== startmsg
+  mode: startmsg
+  proxy.initialize: 1
+  proxy.initialize.again: 1
+  startmsg.initialize: 1
+  startmsg.initialized: 1
+  startmsg.logfile: 
+  terminate: 1
+  done
+  EXIT	0
+  SECONDS	1.2
+== unknown
+  mode: unknown
+  proxy.initialize: 1
+  proxy.initialize.again: 1
+  unknown.initialize: 1
+  unknown.initialized: 1
+  unknown.logfile: 
+  terminate: 1
+  done
+  EXIT	0
+  SECONDS	1.2
+== runmain a b c 
+  mode: runmain
+  proxy.initialize: 1
+  proxy.initialize.again: 1
+  runmain.initialize: 1
+  runmain.initialized: 1
+  runmain.logfile: 
+  runmain.argc: 4
+  runmain.argv0: (program)
+  runmain.argv1: a
+  runmain.argv2: b c
+  runmain.argv3: 
+  runmain.initialized: 1
+  runmain.result: 7
+  terminate: 1
+  done
+  EXIT	0
+  SECONDS	1.2

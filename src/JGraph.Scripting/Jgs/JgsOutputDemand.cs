@@ -36,11 +36,13 @@ internal static class JgsOutputDemand
             return;
         }
 
+        // The report names the callee, a function's as a built-in's: "Error using k10two" (stage K10,
+        // measured in R2025b's desktop and its C runtime alike).
         bool builtin = Underlying(callee) is BuiltinFunction { IsMatlabFile: false };
         throw new JgsRuntimeException(
             line, column, builtin ? "MATLAB:maxlhs" : "MATLAB:TooManyOutputs", "Too many output arguments.")
         {
-            UsingName = builtin ? callee.Name : null,
+            UsingName = callee.Name,
         };
     }
 

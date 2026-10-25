@@ -43,10 +43,13 @@ internal sealed class ComponentSession
     /// for the call when they are given (the MATLAB Data API's <c>RunOptions</c>, stage K9). Engine thread.
     /// </summary>
     internal JgsValue[] CallEngine(
-        string function, int nargout, IReadOnlyList<JgsValue> arguments, TextWriter? output, TextWriter? error, CancellationToken cancellationToken)
+        string function, int nargout, IReadOnlyList<JgsValue> arguments, TextWriter? output, TextWriter? error, CancellationToken cancellationToken,
+        bool rawErrors = false)
     {
         (TextWriter? Out, TextWriter? Err) previous = _output.Writers;
+        bool wasRaw = _output.RawErrors;
         _output.Writers = (output, error);
+        _output.RawErrors = rawErrors;
         try
         {
             return _session.CallFunction(function, arguments, nargout, cancellationToken);
@@ -58,6 +61,7 @@ internal sealed class ComponentSession
         finally
         {
             _output.Writers = previous;
+            _output.RawErrors = wasRaw;
         }
     }
 
@@ -141,12 +145,32 @@ internal sealed class ComponentSession
 /// <summary>
 /// A component session's output: the runtime's console, or for one call the writers a MATLAB Data API
 /// client gave in its <c>RunOptions</c> (stage K9) - standard output to the first, warnings and
-/// standard error to the second.
+/// standard error to the second - or a C program's print and error handlers (stage K10).
 /// </summary>
 internal sealed class RoutedOutput(IScriptOutput console) : IScriptOutput
 {
     /// <summary>The writers of the call running now, or nulls for the console.</summary>
     public (TextWriter? Out, TextWriter? Err) Writers { get; set; }
+
+    /// <summary>
+    /// Whether the call's error writer takes a script's own error text as it was written: a C
+    /// program's error handler gets <c>fprintf(2, 'x\n')</c> as <c>x\n</c> (k10_feval print), where
+    /// a .NET client's writer gets the line R2025b's .NET runtime makes of it (k9_client).
+    /// </summary>
+    public bool RawErrors { get; set; }
+
+    public void WriteErrorText(string text)
+    {
+        if (RawErrors && Writers.Err is { } writer)
+        {
+            writer.Write(text);
+            writer.Flush();
+        }
+        else
+        {
+            WriteError(text);
+        }
+    }
 
     public void Write(string text)
     {

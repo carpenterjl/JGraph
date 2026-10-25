@@ -6,8 +6,9 @@
 #   <root>\bin\win64\            the engine, jgraph.exe and JGraph.Runtime.dll, published ReadyToRun, the
 #                                window host, JGraph.Runtime.Desktop.dll (stage K5), and jglaunch.dll, what
 #                                a standalone program's launcher starts (stage K6)
-#   <root>\runtime\win64\        the native bridge (stage K10)
-#   <root>\include\              the C and C++ headers (stages K11, K12)
+#   <root>\runtime\win64\        the native bridge, jgrt.dll, which a C program finds on its PATH (stage K10)
+#   <root>\include\              the C headers (stage K10; mclmcrrt.h and what it includes) and the C++ ones (K12)
+#   <root>\lib\win64\            jgrt.lib, what a C program links with (stage K10)
 #   <root>\python\               the matlab module (stage K13)
 #   <root>\launchers\win64\      the launcher templates mcc -m and -e copy (stage K6)
 #
@@ -54,9 +55,17 @@ dotnet publish (Join-Path $root "src\JGraph.Runtime.Launch") -c $Configuration -
     -p:PublishReadyToRun=$readyToRun -o $bin --nologo
 if ($LASTEXITCODE -ne 0) { throw "dotnet publish of the program entry failed." }
 
-foreach ($folder in "runtime\win64", "include", "python", "launchers\win64") {
+foreach ($folder in "runtime\win64", "include", "lib\win64", "python", "launchers\win64") {
     New-Item -ItemType Directory -Force (Join-Path $Output $folder) | Out-Null
 }
+
+# The native bridge (stage K10; native\jgrt, checked in prebuilt): jgrt.dll in runtime\win64, which a
+# C program has on its PATH and which finds the engine in bin\win64 from there, its headers and its
+# import library. The copy beside the engine in bin\win64 (JGraph.Runtime's own output) stays: an
+# application carrying the engine loads it from there.
+Copy-Item (Join-Path $bin "jgrt.dll") (Join-Path $Output "runtime\win64\jgrt.dll")
+Copy-Item (Join-Path $root "native\jgrt\include\*.h") (Join-Path $Output "include")
+Copy-Item (Join-Path $root "native\win-x64\jgrt\jgrt.lib") (Join-Path $Output "lib\win64\jgrt.lib")
 
 # The launcher templates mcc -m and -e copy (stage K6; native\jglaunch, checked in prebuilt).
 foreach ($template in "jglaunch-console.exe", "jglaunch-gui.exe") {
@@ -90,7 +99,9 @@ foreach ($anchor in "jgraph.exe", "JGraph.Runtime.dll", "JGraph.Runtime.Desktop.
     # The MWArray API a .NET client of a component loads from here (stage K8, ADR 0264).
     "JGraph.MATLAB.NET.Arrays.dll",
     # The MATLAB Data API the same client loads from here (stage K9, ADR 0265).
-    "JGraph.MATLAB.Runtime.dll") {
+    "JGraph.MATLAB.Runtime.dll",
+    # The native bridge beside the engine, and the runtimeconfig it starts .NET with (stage K10, ADR 0266).
+    "jgrt.dll", "jgrt.runtimeconfig.json") {
     if (-not (Test-Path (Join-Path $bin $anchor))) {
         throw "The runtime is missing 'bin\win64\$anchor' - the publish layout changed; fix before shipping."
     }
@@ -100,6 +111,9 @@ foreach ($template in "jglaunch-console.exe", "jglaunch-gui.exe") {
 }
 if (-not (Test-Path (Join-Path $dotnetbuilder "JGraph.MATLAB.NET.Arrays.dll"))) { throw "The runtime is missing the MWArray API for clients." }
 if (-not (Test-Path (Join-Path $dataApi "JGraph.MATLAB.Runtime.dll"))) { throw "The runtime is missing the MATLAB Data API for clients." }
+foreach ($native in "runtime\win64\jgrt.dll", "include\mclmcrrt.h", "include\matrix.h", "lib\win64\jgrt.lib") {
+    if (-not (Test-Path (Join-Path $Output $native))) { throw "The runtime is missing '$native', the native bridge's." }
+}
 
 # WPF itself must stay out (decision KO5): it comes from the Windows desktop framework of a process
 # that has one, and the headless part of the runtime, which keeps Linux possible, never loads it.

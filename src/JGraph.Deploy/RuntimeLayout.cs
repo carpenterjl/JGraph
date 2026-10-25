@@ -22,8 +22,9 @@ public enum RuntimeLocationSource
 /// <list type="table">
 /// <item><term><c>jgraph-runtime.json</c></term><description>The marker: the JGraph version and the release it follows.</description></item>
 /// <item><term><c>bin\win64</c></term><description>The engine: <c>jgraph.exe</c>, this library and everything they load.</description></item>
-/// <item><term><c>runtime\win64</c></term><description>The native bridge the C, C++, Python and Excel targets load (stage K10).</description></item>
-/// <item><term><c>include</c></term><description>The C and C++ headers (stages K11, K12).</description></item>
+/// <item><term><c>runtime\win64</c></term><description>The native bridge, <c>jgrt.dll</c>, the C, C++, Python and Excel targets load (stage K10).</description></item>
+/// <item><term><c>include</c></term><description>The C headers, <c>mclmcrrt.h</c> and what it includes (stage K10), and the C++ ones (stage K12).</description></item>
+/// <item><term><c>lib\win64</c></term><description><c>jgrt.lib</c>, which a C program links with (stage K10).</description></item>
 /// <item><term><c>python</c></term><description>The <c>matlab</c> array module and the package runtime (stage K13).</description></item>
 /// <item><term><c>launchers\win64</c></term><description>The console and windowed launcher templates <c>mcc -m</c> and <c>-e</c> copy (stage K6).</description></item>
 /// <item><term><c>toolbox\dotnetbuilder\bin\win64\net8.0</c></term><description>The MWArray API alone, as a .NET client references it (stage K8), where R2025b keeps MWArray.dll.</description></item>
@@ -73,6 +74,9 @@ public sealed class RuntimeLayout
 
     /// <summary>The C and C++ headers.</summary>
     public string IncludeFolder => Path.Combine(Root, "include");
+
+    /// <summary>The import library a C program links with.</summary>
+    public string LibraryFolder => Path.Combine(Root, "lib", Platform);
 
     /// <summary>The Python modules.</summary>
     public string PythonFolder => Path.Combine(Root, "python");

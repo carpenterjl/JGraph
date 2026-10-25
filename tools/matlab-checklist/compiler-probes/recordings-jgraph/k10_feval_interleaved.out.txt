@@ -1,0 +1,790 @@
+== safe
+  initialize: 1
+  initialize.again: 1
+  quiet.ok: 1
+  model: interleaved
+  in.scalar: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {2.5}
+  echo.scalar: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {2.5}
+  info.scalar: double [1 1] 2.5
+  in.row: double(6) [1x3] n=3 es=8 is=numeric,double {1 2 3}
+  echo.row: double(6) [1x3] n=3 es=8 is=numeric,double {1 2 3}
+  info.row: double [1 3] [1 2 3]
+  in.matrix: double(6) [2x3] n=6 es=8 is=numeric,double {1 2 3 4 5 6}
+  echo.matrix: double(6) [2x3] n=6 es=8 is=numeric,double {1 2 3 4 5 6}
+  info.matrix: double [2 3] [1 2 3 4 5 6]
+  in.nd.int16: int16(10) [2x2x2] n=8 es=2 is=numeric,int16 {1 -2 3 -4 5 -6 7 -8}
+  echo.nd.int16: int16(10) [2x2x2] n=8 es=2 is=numeric,int16 {1 -2 3 -4 5 -6 7 -8}
+  info.nd.int16: int16 [2 2 2] [1 -2 3 -4 5 -6 7 -8]
+  in.complex: double(6) [1x2] n=2 es=16 is=numeric,complex,double {(1,2) (3,-4)}
+  echo.complex: double(6) [1x2] n=2 es=16 is=numeric,complex,double {(1,2) (3,-4)}
+  info.complex: double [1 2] complex [1+2i 3-4i]
+  in.int8: int8(8) [1x2] n=2 es=1 is=numeric,int8 {-128 127}
+  echo.int8: int8(8) [1x2] n=2 es=1 is=numeric,int8 {-128 127}
+  info.int8: int8 [1 2] [-128 127]
+  in.uint8: uint8(9) [1x2] n=2 es=1 is=numeric,uint8 {0 255}
+  echo.uint8: uint8(9) [1x2] n=2 es=1 is=numeric,uint8 {0 255}
+  info.uint8: uint8 [1 2] [0 255]
+  in.int16: int16(10) [1x2] n=2 es=2 is=numeric,int16 {-32768 32767}
+  echo.int16: int16(10) [1x2] n=2 es=2 is=numeric,int16 {-32768 32767}
+  info.int16: int16 [1 2] [-32768 32767]
+  in.uint16: uint16(11) [1x2] n=2 es=2 is=numeric,uint16 {0 65535}
+  echo.uint16: uint16(11) [1x2] n=2 es=2 is=numeric,uint16 {0 65535}
+  info.uint16: uint16 [1 2] [0 65535]
+  in.int32: int32(12) [1x2] n=2 es=4 is=numeric,int32 {-2147483648 2147483647}
+  echo.int32: int32(12) [1x2] n=2 es=4 is=numeric,int32 {-2147483648 2147483647}
+  info.int32: int32 [1 2] [-2147483648 2147483647]
+  in.uint32: uint32(13) [1x2] n=2 es=4 is=numeric,uint32 {0 4294967295}
+  echo.uint32: uint32(13) [1x2] n=2 es=4 is=numeric,uint32 {0 4294967295}
+  info.uint32: uint32 [1 2] [0 4294967295]
+  in.int64: int64(14) [1x2] n=2 es=8 is=numeric,int64 {-9223372036854775808 9223372036854775807}
+  ERR<<Error using k10echo\n-9223372036854775808 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\n\n>>
+  echo.int64: (call failed)
+  ERR<<Error using k10info\n-9223372036854775808 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\n\n>>
+  info.int64: (call failed)
+  in.uint64: uint64(15) [1x2] n=2 es=8 is=numeric,uint64 {0 18446744073709551615}
+  ERR<<Error using k10echo\n18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>
+  echo.uint64: (call failed)
+  ERR<<Error using k10info\n18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>
+  info.uint64: (call failed)
+  in.uint64.odd: uint64(15) [1x1] n=1 es=8 is=numeric,scalar,uint64 {9007199254740993}
+  ERR<<Error using k10echo\n9007199254740993 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>
+  echo.uint64.odd: (call failed)
+  ERR<<Error using k10info\n9007199254740993 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>
+  info.uint64.odd: (call failed)
+  in.single: single(7) [1x2] n=2 es=4 is=numeric,single {1.5 -0.25}
+  echo.single: single(7) [1x2] n=2 es=4 is=numeric,single {1.5 -0.25}
+  info.single: single [1 2] [1.5 -0.25]
+  in.logical: logical(3) [1x3] n=3 es=1 is=logical {1 0 1}
+  echo.logical: logical(3) [1x3] n=3 es=1 is=logical {1 0 1}
+  info.logical: logical [1 3] [true false true]
+  in.true: logical(3) [1x1] n=1 es=1 is=logical,scalar,logicalscalar,true {1}
+  echo.true: logical(3) [1x1] n=1 es=1 is=logical,scalar,logicalscalar,true {1}
+  info.true: logical [1 1] true
+  in.char: char(4) [1x5] n=5 es=2 is=char 'hello'
+  echo.char: char(4) [1x5] n=5 es=2 is=char 'hello'
+  info.char: char [1 5] [104 101 108 108 111]
+  in.charmatrix: char(4) [3x3] n=9 es=2 is=char 'abe\u0000cf\u0000d\u0000'
+  echo.charmatrix: char(4) [3x3] n=9 es=2 is=char 'abe\u0000cf\u0000d\u0000'
+  info.charmatrix: char [3 3] [97 98 101 0 99 102 0 100 0]
+  in.emptychar: char(4) [0x0] n=0 es=2 is=char,empty '' chars NULL
+  echo.emptychar: char(4) [0x0] n=0 es=2 is=char,empty '' chars NULL
+  info.emptychar: char [0 0] zeros(1,0)
+  in.wide: char(4) [1x5] n=5 es=2 is=char 'c\u00E9\u20AC\uD83D\uDE00'
+  echo.wide: char(4) [1x5] n=5 es=2 is=char 'c\u00E9\u20AC\uD83D\uDE00'
+  info.wide: char [1 5] [99 233 8364 55357 56832]
+  in.cell.null: cell(1) [1x3] n=3 es=8 is=cell {double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; char(4) [1x3] n=3 es=2 is=char 'two'; NULL}
+  echo.cell.null: cell(1) [1x3] n=3 es=8 is=cell {double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; char(4) [1x3] n=3 es=2 is=char 'two'; double(6) [0x0] n=0 es=8 is=numeric,empty,double {data NULL}}
+  info.cell.null: cell [1 3] {double [1 1] 1; char [1 3] [116 119 111]; double [0 0] []}
+  in.cell.nested: cell(1) [1x1] n=1 es=8 is=cell,scalar {cell(1) [1x1] n=1 es=8 is=cell,scalar {double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}}}
+  echo.cell.nested: cell(1) [1x1] n=1 es=8 is=cell,scalar {cell(1) [1x1] n=1 es=8 is=cell,scalar {double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}}}
+  info.cell.nested: cell [1 1] {cell [1 1] {double [1 1] 1}}
+  in.struct.null: struct(2) [1x2] n=2 es=8 is=struct <a,b> {a=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; b=NULL; a=NULL; b=char(4) [1x1] n=1 es=2 is=char,scalar 'x'}
+  echo.struct.null: struct(2) [1x2] n=2 es=8 is=struct <a,b> {a=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; b=double(6) [0x0] n=0 es=8 is=numeric,empty,double {data NULL}; a=double(6) [0x0] n=0 es=8 is=numeric,empty,double {data NULL}; b=char(4) [1x1] n=1 es=2 is=char,scalar 'x'}
+  info.struct.null: struct [1 2] <a,b> {a=double [1 1] 1; b=double [0 0] []; a=double [0 0] []; b=char [1 1] 120}
+  in.struct.nofields: struct(2) [1x1] n=1 es=8 is=struct,scalar <> {}
+  echo.struct.nofields: struct(2) [1x1] n=1 es=8 is=struct,scalar <> {}
+  info.struct.nofields: struct [1 1] <> {}
+  in.struct.empty: struct(2) [0x0] n=0 es=8 is=struct,empty <a> {}
+  echo.struct.empty: struct(2) [0x0] n=0 es=8 is=struct,empty <a> {}
+  info.struct.empty: struct [0 0] <a> {}
+  in.sparse: double(6) [3x3] n=9 es=8 is=numeric,sparse,double nzmax=3 jc=[0 1 2 2] ir=[0 2] {5 6}
+  echo.sparse: double(6) [3x3] n=9 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2 2] ir=[0 2] {5 6}
+  info.sparse: double [3 3] sparse [5 0 0 0 0 6 0 0 0]
+  in.sparse.complex: double(6) [2x2] n=4 es=16 is=numeric,sparse,complex,double nzmax=2 jc=[0 2 2] ir=[0 1] {(1,1) (2,0)}
+  ERR<<Error using k10echo\nJGraph has no complex sparse arrays: pass the real and imaginary parts apart.\n\n>>
+  echo.sparse.complex: (call failed)
+  ERR<<Error using k10info\nJGraph has no complex sparse arrays: pass the real and imaginary parts apart.\n\n>>
+  info.sparse.complex: (call failed)
+  in.sparse.logical: logical(3) [2x2] n=4 es=1 is=logical,sparse nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  echo.sparse.logical: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  info.sparse.logical: double [2 2] sparse [1 0 0 1]
+  in.empty: double(6) [0x0] n=0 es=8 is=numeric,empty,double {data NULL}
+  echo.empty: double(6) [0x0] n=0 es=8 is=numeric,empty,double {data NULL}
+  info.empty: double [0 0] []
+  in.empty03: double(6) [0x3] n=0 es=8 is=numeric,empty,double {data NULL}
+  echo.empty03: double(6) [0x3] n=0 es=8 is=numeric,empty,double {data NULL}
+  info.empty03: double [0 3] []
+  in.empty10: double(6) [1x0] n=0 es=8 is=numeric,empty,double {data NULL}
+  echo.empty10: double(6) [1x0] n=0 es=8 is=numeric,empty,double {data NULL}
+  info.empty10: double [1 0] []
+  in.specials: double(6) [1x3] n=3 es=8 is=numeric,double {NaN -Inf -0}
+  echo.specials: double(6) [1x3] n=3 es=8 is=numeric,double {NaN -Inf -0}
+  info.specials: double [1 3] [NaN -Inf 0]
+  in.cell.empty: cell(1) [0x0] n=0 es=8 is=cell,empty {}
+  echo.cell.empty: cell(1) [0x0] n=0 es=8 is=cell,empty {}
+  info.cell.empty: cell [0 0] {}
+  in.cell.1x0: cell(1) [1x0] n=0 es=8 is=cell,empty {}
+  echo.cell.1x0: cell(1) [1x0] n=0 es=8 is=cell,empty {}
+  info.cell.1x0: cell [1 0] {}
+  in.trailing: double(6) [2x1] n=2 es=8 is=numeric,double {0 0}
+  echo.trailing: double(6) [2x1] n=2 es=8 is=numeric,double {0 0}
+  info.trailing: double [2 1] [0 0]
+  in.false: logical(3) [1x1] n=1 es=1 is=logical,scalar,logicalscalar {0}
+  echo.false: logical(3) [1x1] n=1 es=1 is=logical,scalar,logicalscalar {0}
+  info.false: logical [1 1] false
+  in.complex.int8: int8(8) [1x1] n=1 es=2 is=numeric,complex,scalar,int8 {(3,-1)}
+  ERR<<Error using k10echo\nJGraph keeps no complex int8 array: pass it as a complex double or single one.\n\n>>
+  echo.complex.int8: (call failed)
+  ERR<<Error using k10info\nJGraph keeps no complex int8 array: pass it as a complex double or single one.\n\n>>
+  info.complex.int8: (call failed)
+  in.complex.zeroimag: double(6) [1x2] n=2 es=16 is=numeric,complex,double {(4,0) (0,0)}
+  echo.complex.zeroimag: double(6) [1x2] n=2 es=8 is=numeric,double {4 0}
+  info.complex.zeroimag: double [1 2] [4 0]
+  in.char.empty.nd: char(4) [0x2x0] n=0 es=2 is=char,empty '' chars NULL
+  echo.char.empty.nd: char(4) [0x2x0] n=0 es=2 is=char,empty '' chars NULL
+  info.char.empty.nd: char [0 2 0] zeros(1,0)
+  make.double: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {2.5}
+  make.double.info: double [1 1] 2.5
+  make.double.echo: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {2.5}
+  make.double.echo.info: double [1 1] 2.5
+  make.double.dup: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {2.5}
+  make.double.dup.info: double [1 1] 2.5
+  make.row: double(6) [1x3] n=3 es=8 is=numeric,double {1 2 3}
+  make.row.info: double [1 3] [1 2 3]
+  make.row.echo: double(6) [1x3] n=3 es=8 is=numeric,double {1 2 3}
+  make.row.echo.info: double [1 3] [1 2 3]
+  make.row.dup: double(6) [1x3] n=3 es=8 is=numeric,double {1 2 3}
+  make.row.dup.info: double [1 3] [1 2 3]
+  make.matrix: double(6) [2x3] n=6 es=8 is=numeric,double {1 4 2 5 3 6}
+  make.matrix.info: double [2 3] [1 4 2 5 3 6]
+  make.matrix.echo: double(6) [2x3] n=6 es=8 is=numeric,double {1 4 2 5 3 6}
+  make.matrix.echo.info: double [2 3] [1 4 2 5 3 6]
+  make.matrix.dup: double(6) [2x3] n=6 es=8 is=numeric,double {1 4 2 5 3 6}
+  make.matrix.dup.info: double [2 3] [1 4 2 5 3 6]
+  make.nd: double(6) [2x2x2] n=8 es=8 is=numeric,double {1 2 3 4 5 6 7 8}
+  make.nd.info: double [2 2 2] [1 2 3 4 5 6 7 8]
+  make.nd.echo: double(6) [2x2x2] n=8 es=8 is=numeric,double {1 2 3 4 5 6 7 8}
+  make.nd.echo.info: double [2 2 2] [1 2 3 4 5 6 7 8]
+  make.nd.dup: double(6) [2x2x2] n=8 es=8 is=numeric,double {1 2 3 4 5 6 7 8}
+  make.nd.dup.info: double [2 2 2] [1 2 3 4 5 6 7 8]
+  make.nd1: double(6) [2x1x3] n=6 es=8 is=numeric,double {0 0 0 0 0 0}
+  make.nd1.info: double [2 1 3] [0 0 0 0 0 0]
+  make.nd1.echo: double(6) [2x1x3] n=6 es=8 is=numeric,double {0 0 0 0 0 0}
+  make.nd1.echo.info: double [2 1 3] [0 0 0 0 0 0]
+  make.nd1.dup: double(6) [2x1x3] n=6 es=8 is=numeric,double {0 0 0 0 0 0}
+  make.nd1.dup.info: double [2 1 3] [0 0 0 0 0 0]
+  make.empty: double(6) [0x0] n=0 es=8 is=numeric,empty,double {data NULL}
+  make.empty.info: double [0 0] []
+  make.empty.echo: double(6) [0x0] n=0 es=8 is=numeric,empty,double {data NULL}
+  make.empty.echo.info: double [0 0] []
+  make.empty.dup: double(6) [0x0] n=0 es=8 is=numeric,empty,double {data NULL}
+  make.empty.dup.info: double [0 0] []
+  make.empty03: double(6) [0x3] n=0 es=8 is=numeric,empty,double {data NULL}
+  make.empty03.info: double [0 3] []
+  make.empty03.echo: double(6) [0x3] n=0 es=8 is=numeric,empty,double {data NULL}
+  make.empty03.echo.info: double [0 3] []
+  make.empty03.dup: double(6) [0x3] n=0 es=8 is=numeric,empty,double {data NULL}
+  make.empty03.dup.info: double [0 3] []
+  make.empty10: double(6) [1x0] n=0 es=8 is=numeric,empty,double {data NULL}
+  make.empty10.info: double [1 0] []
+  make.empty10.echo: double(6) [1x0] n=0 es=8 is=numeric,empty,double {data NULL}
+  make.empty10.echo.info: double [1 0] []
+  make.empty10.dup: double(6) [1x0] n=0 es=8 is=numeric,empty,double {data NULL}
+  make.empty10.dup.info: double [1 0] []
+  make.negzero: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {-0}
+  make.negzero.info: double [1 1] 0
+  make.negzero.echo: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {-0}
+  make.negzero.echo.info: double [1 1] 0
+  make.negzero.dup: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {-0}
+  make.negzero.dup.info: double [1 1] 0
+  make.specials: double(6) [1x3] n=3 es=8 is=numeric,double {Inf -Inf NaN}
+  make.specials.info: double [1 3] [Inf -Inf NaN]
+  make.specials.echo: double(6) [1x3] n=3 es=8 is=numeric,double {Inf -Inf NaN}
+  make.specials.echo.info: double [1 3] [Inf -Inf NaN]
+  make.specials.dup: double(6) [1x3] n=3 es=8 is=numeric,double {Inf -Inf NaN}
+  make.specials.dup.info: double [1 3] [Inf -Inf NaN]
+  make.single: single(7) [1x2] n=2 es=4 is=numeric,single {1.5 2.5}
+  make.single.info: single [1 2] [1.5 2.5]
+  make.single.echo: single(7) [1x2] n=2 es=4 is=numeric,single {1.5 2.5}
+  make.single.echo.info: single [1 2] [1.5 2.5]
+  make.single.dup: single(7) [1x2] n=2 es=4 is=numeric,single {1.5 2.5}
+  make.single.dup.info: single [1 2] [1.5 2.5]
+  make.int8: int8(8) [1x3] n=3 es=1 is=numeric,int8 {-128 0 127}
+  make.int8.info: int8 [1 3] [-128 0 127]
+  make.int8.echo: int8(8) [1x3] n=3 es=1 is=numeric,int8 {-128 0 127}
+  make.int8.echo.info: int8 [1 3] [-128 0 127]
+  make.int8.dup: int8(8) [1x3] n=3 es=1 is=numeric,int8 {-128 0 127}
+  make.int8.dup.info: int8 [1 3] [-128 0 127]
+  make.uint8: uint8(9) [2x2] n=4 es=1 is=numeric,uint8 {1 3 2 4}
+  make.uint8.info: uint8 [2 2] [1 3 2 4]
+  make.uint8.echo: uint8(9) [2x2] n=4 es=1 is=numeric,uint8 {1 3 2 4}
+  make.uint8.echo.info: uint8 [2 2] [1 3 2 4]
+  make.uint8.dup: uint8(9) [2x2] n=4 es=1 is=numeric,uint8 {1 3 2 4}
+  make.uint8.dup.info: uint8 [2 2] [1 3 2 4]
+  make.int16: int16(10) [1x1] n=1 es=2 is=numeric,scalar,int16 {-7}
+  make.int16.info: int16 [1 1] -7
+  make.int16.echo: int16(10) [1x1] n=1 es=2 is=numeric,scalar,int16 {-7}
+  make.int16.echo.info: int16 [1 1] -7
+  make.int16.dup: int16(10) [1x1] n=1 es=2 is=numeric,scalar,int16 {-7}
+  make.int16.dup.info: int16 [1 1] -7
+  make.uint16: uint16(11) [1x1] n=1 es=2 is=numeric,scalar,uint16 {65535}
+  make.uint16.info: uint16 [1 1] 65535
+  make.uint16.echo: uint16(11) [1x1] n=1 es=2 is=numeric,scalar,uint16 {65535}
+  make.uint16.echo.info: uint16 [1 1] 65535
+  make.uint16.dup: uint16(11) [1x1] n=1 es=2 is=numeric,scalar,uint16 {65535}
+  make.uint16.dup.info: uint16 [1 1] 65535
+  make.int32: int32(12) [1x2] n=2 es=4 is=numeric,int32 {-2147483648 2147483647}
+  make.int32.info: int32 [1 2] [-2147483648 2147483647]
+  make.int32.echo: int32(12) [1x2] n=2 es=4 is=numeric,int32 {-2147483648 2147483647}
+  make.int32.echo.info: int32 [1 2] [-2147483648 2147483647]
+  make.int32.dup: int32(12) [1x2] n=2 es=4 is=numeric,int32 {-2147483648 2147483647}
+  make.int32.dup.info: int32 [1 2] [-2147483648 2147483647]
+  make.uint32: uint32(13) [1x1] n=1 es=4 is=numeric,scalar,uint32 {4000000000}
+  make.uint32.info: uint32 [1 1] 4000000000
+  make.uint32.echo: uint32(13) [1x1] n=1 es=4 is=numeric,scalar,uint32 {4000000000}
+  make.uint32.echo.info: uint32 [1 1] 4000000000
+  make.uint32.dup: uint32(13) [1x1] n=1 es=4 is=numeric,scalar,uint32 {4000000000}
+  make.uint32.dup.info: uint32 [1 1] 4000000000
+  make.int64: double(6) [1x2] n=2 es=8 is=numeric,double {-9.2233720368547758e+18 9.2233720368547758e+18}
+  make.int64.info: double [1 2] [-9.2233720368547758e+18 9.2233720368547758e+18]
+  make.int64.echo: double(6) [1x2] n=2 es=8 is=numeric,double {-9.2233720368547758e+18 9.2233720368547758e+18}
+  make.int64.echo.info: double [1 2] [-9.2233720368547758e+18 9.2233720368547758e+18]
+  make.int64.dup: double(6) [1x2] n=2 es=8 is=numeric,double {-9.2233720368547758e+18 9.2233720368547758e+18}
+  make.int64.dup.info: double [1 2] [-9.2233720368547758e+18 9.2233720368547758e+18]
+  make.uint64: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1.8446744073709552e+19}
+  make.uint64.info: double [1 1] 1.8446744073709552e+19
+  make.uint64.echo: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1.8446744073709552e+19}
+  make.uint64.echo.info: double [1 1] 1.8446744073709552e+19
+  make.uint64.dup: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1.8446744073709552e+19}
+  make.uint64.dup.info: double [1 1] 1.8446744073709552e+19
+  make.complex: double(6) [1x2] n=2 es=16 is=numeric,complex,double {(1,2) (3,-4)}
+  make.complex.info: double [1 2] complex [1+2i 3-4i]
+  make.complex.echo: double(6) [1x2] n=2 es=16 is=numeric,complex,double {(1,2) (3,-4)}
+  make.complex.echo.info: double [1 2] complex [1+2i 3-4i]
+  make.complex.dup: double(6) [1x2] n=2 es=16 is=numeric,complex,double {(1,2) (3,-4)}
+  make.complex.dup.info: double [1 2] complex [1+2i 3-4i]
+  make.complexscalar: double(6) [1x1] n=1 es=16 is=numeric,complex,scalar,double {(1,-1)}
+  make.complexscalar.info: double [1 1] complex 1-1i
+  make.complexscalar.echo: double(6) [1x1] n=1 es=16 is=numeric,complex,scalar,double {(1,-1)}
+  make.complexscalar.echo.info: double [1 1] complex 1-1i
+  make.complexscalar.dup: double(6) [1x1] n=1 es=16 is=numeric,complex,scalar,double {(1,-1)}
+  make.complexscalar.dup.info: double [1 1] complex 1-1i
+  make.complexsingle: single(7) [1x1] n=1 es=8 is=numeric,complex,scalar,single {(2,3)}
+  make.complexsingle.info: single [1 1] complex 2+3i
+  make.complexsingle.echo: single(7) [1x1] n=1 es=8 is=numeric,complex,scalar,single {(2,3)}
+  make.complexsingle.echo.info: single [1 1] complex 2+3i
+  make.complexsingle.dup: single(7) [1x1] n=1 es=8 is=numeric,complex,scalar,single {(2,3)}
+  make.complexsingle.dup.info: single [1 1] complex 2+3i
+  ERR<<int16 expects a number or numeric array, but got a complex.\n\nError in k10make (line 26)\n\n>>
+  make.complexint: (call failed)
+  make.logical: logical(3) [1x3] n=3 es=1 is=logical {1 0 1}
+  make.logical.info: logical [1 3] [true false true]
+  make.logical.echo: logical(3) [1x3] n=3 es=1 is=logical {1 0 1}
+  make.logical.echo.info: logical [1 3] [true false true]
+  make.logical.dup: logical(3) [1x3] n=3 es=1 is=logical {1 0 1}
+  make.logical.dup.info: logical [1 3] [true false true]
+  make.logicalscalar: logical(3) [1x1] n=1 es=1 is=logical,scalar,logicalscalar,true {1}
+  make.logicalscalar.info: logical [1 1] true
+  make.logicalscalar.echo: logical(3) [1x1] n=1 es=1 is=logical,scalar,logicalscalar,true {1}
+  make.logicalscalar.echo.info: logical [1 1] true
+  make.logicalscalar.dup: logical(3) [1x1] n=1 es=1 is=logical,scalar,logicalscalar,true {1}
+  make.logicalscalar.dup.info: logical [1 1] true
+  make.char: char(4) [1x5] n=5 es=2 is=char 'hello'
+  make.char.info: char [1 5] [104 101 108 108 111]
+  make.char.echo: char(4) [1x5] n=5 es=2 is=char 'hello'
+  make.char.echo.info: char [1 5] [104 101 108 108 111]
+  make.char.dup: char(4) [1x5] n=5 es=2 is=char 'hello'
+  make.char.dup.info: char [1 5] [104 101 108 108 111]
+  make.charmatrix: char(4) [2x3] n=6 es=2 is=char 'adbecf'
+  make.charmatrix.info: char [2 3] [97 100 98 101 99 102]
+  make.charmatrix.echo: char(4) [2x3] n=6 es=2 is=char 'adbecf'
+  make.charmatrix.echo.info: char [2 3] [97 100 98 101 99 102]
+  make.charmatrix.dup: char(4) [2x3] n=6 es=2 is=char 'adbecf'
+  make.charmatrix.dup.info: char [2 3] [97 100 98 101 99 102]
+  make.emptychar: char(4) [0x0] n=0 es=2 is=char,empty '' chars NULL
+  make.emptychar.info: char [0 0] zeros(1,0)
+  make.emptychar.echo: char(4) [0x0] n=0 es=2 is=char,empty '' chars NULL
+  make.emptychar.echo.info: char [0 0] zeros(1,0)
+  make.emptychar.dup: char(4) [0x0] n=0 es=2 is=char,empty '' chars NULL
+  make.emptychar.dup.info: char [0 0] zeros(1,0)
+  make.charnd: char(4) [2x2x2] n=8 es=2 is=char 'abcdefgh'
+  make.charnd.info: char [2 2 2] [97 98 99 100 101 102 103 104]
+  make.charnd.echo: char(4) [2x2x2] n=8 es=2 is=char 'abcdefgh'
+  make.charnd.echo.info: char [2 2 2] [97 98 99 100 101 102 103 104]
+  make.charnd.dup: char(4) [2x2x2] n=8 es=2 is=char 'abcdefgh'
+  make.charnd.dup.info: char [2 2 2] [97 98 99 100 101 102 103 104]
+  make.unicode: char(4) [1x5] n=5 es=2 is=char 'a\u00E9\u20AC\uD83D\uDE00'
+  make.unicode.info: char [1 5] [97 233 8364 55357 56832]
+  make.unicode.echo: char(4) [1x5] n=5 es=2 is=char 'a\u00E9\u20AC\uD83D\uDE00'
+  make.unicode.echo.info: char [1 5] [97 233 8364 55357 56832]
+  make.unicode.dup: char(4) [1x5] n=5 es=2 is=char 'a\u00E9\u20AC\uD83D\uDE00'
+  make.unicode.dup.info: char [1 5] [97 233 8364 55357 56832]
+  make.cell: cell(1) [1x3] n=3 es=8 is=cell {double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; char(4) [1x3] n=3 es=2 is=char 'two'; double(6) [2x2] n=4 es=8 is=numeric,double {3 5 4 6}}
+  make.cell.info: cell [1 3] {double [1 1] 1; char [1 3] [116 119 111]; double [2 2] [3 5 4 6]}
+  make.cell.echo: cell(1) [1x3] n=3 es=8 is=cell {double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; char(4) [1x3] n=3 es=2 is=char 'two'; double(6) [2x2] n=4 es=8 is=numeric,double {3 5 4 6}}
+  make.cell.echo.info: cell [1 3] {double [1 1] 1; char [1 3] [116 119 111]; double [2 2] [3 5 4 6]}
+  make.cell.dup: cell(1) [1x3] n=3 es=8 is=cell {double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; char(4) [1x3] n=3 es=2 is=char 'two'; double(6) [2x2] n=4 es=8 is=numeric,double {3 5 4 6}}
+  make.cell.dup.info: cell [1 3] {double [1 1] 1; char [1 3] [116 119 111]; double [2 2] [3 5 4 6]}
+  make.nestedcell: cell(1) [1x2] n=2 es=8 is=cell {cell(1) [1x1] n=1 es=8 is=cell,scalar {double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}}; cell(1) [0x0] n=0 es=8 is=cell,empty {}}
+  make.nestedcell.info: cell [1 2] {cell [1 1] {double [1 1] 1}; cell [0 0] {}}
+  make.nestedcell.echo: cell(1) [1x2] n=2 es=8 is=cell {cell(1) [1x1] n=1 es=8 is=cell,scalar {double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}}; cell(1) [0x0] n=0 es=8 is=cell,empty {}}
+  make.nestedcell.echo.info: cell [1 2] {cell [1 1] {double [1 1] 1}; cell [0 0] {}}
+  make.nestedcell.dup: cell(1) [1x2] n=2 es=8 is=cell {cell(1) [1x1] n=1 es=8 is=cell,scalar {double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}}; cell(1) [0x0] n=0 es=8 is=cell,empty {}}
+  make.nestedcell.dup.info: cell [1 2] {cell [1 1] {double [1 1] 1}; cell [0 0] {}}
+  make.emptycell: cell(1) [0x0] n=0 es=8 is=cell,empty {}
+  make.emptycell.info: cell [0 0] {}
+  make.emptycell.echo: cell(1) [0x0] n=0 es=8 is=cell,empty {}
+  make.emptycell.echo.info: cell [0 0] {}
+  make.emptycell.dup: cell(1) [0x0] n=0 es=8 is=cell,empty {}
+  make.emptycell.dup.info: cell [0 0] {}
+  make.cell03: cell(1) [0x3] n=0 es=8 is=cell,empty {}
+  make.cell03.info: cell [0 3] {}
+  make.cell03.echo: cell(1) [0x3] n=0 es=8 is=cell,empty {}
+  make.cell03.echo.info: cell [0 3] {}
+  make.cell03.dup: cell(1) [0x3] n=0 es=8 is=cell,empty {}
+  make.cell03.dup.info: cell [0 3] {}
+  make.struct: struct(2) [1x1] n=1 es=8 is=struct,scalar <name,value> {name=char(4) [1x5] n=5 es=2 is=char 'probe'; value=double(6) [1x3] n=3 es=8 is=numeric,double {1 2 3}}
+  make.struct.info: struct [1 1] <name,value> {name=char [1 5] [112 114 111 98 101]; value=double [1 3] [1 2 3]}
+  make.struct.echo: struct(2) [1x1] n=1 es=8 is=struct,scalar <name,value> {name=char(4) [1x5] n=5 es=2 is=char 'probe'; value=double(6) [1x3] n=3 es=8 is=numeric,double {1 2 3}}
+  make.struct.echo.info: struct [1 1] <name,value> {name=char [1 5] [112 114 111 98 101]; value=double [1 3] [1 2 3]}
+  make.struct.dup: struct(2) [1x1] n=1 es=8 is=struct,scalar <name,value> {name=char(4) [1x5] n=5 es=2 is=char 'probe'; value=double(6) [1x3] n=3 es=8 is=numeric,double {1 2 3}}
+  make.struct.dup.info: struct [1 1] <name,value> {name=char [1 5] [112 114 111 98 101]; value=double [1 3] [1 2 3]}
+  make.structarray: struct(2) [1x3] n=3 es=8 is=struct <a> {a=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; a=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {2}; a=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {3}}
+  make.structarray.info: struct [1 3] <a> {a=double [1 1] 1; a=double [1 1] 2; a=double [1 1] 3}
+  make.structarray.echo: struct(2) [1x3] n=3 es=8 is=struct <a> {a=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; a=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {2}; a=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {3}}
+  make.structarray.echo.info: struct [1 3] <a> {a=double [1 1] 1; a=double [1 1] 2; a=double [1 1] 3}
+  make.structarray.dup: struct(2) [1x3] n=3 es=8 is=struct <a> {a=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; a=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {2}; a=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {3}}
+  make.structarray.dup.info: struct [1 3] <a> {a=double [1 1] 1; a=double [1 1] 2; a=double [1 1] 3}
+  make.struct2x2: struct(2) [2x2] n=4 es=8 is=struct <p,q> {p=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; q=char(4) [1x1] n=1 es=2 is=char,scalar 'x'; p=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; q=char(4) [1x1] n=1 es=2 is=char,scalar 'x'; p=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; q=char(4) [1x1] n=1 es=2 is=char,scalar 'x'; p=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; q=char(4) [1x1] n=1 es=2 is=char,scalar 'x'}
+  make.struct2x2.info: struct [2 2] <p,q> {p=double [1 1] 1; q=char [1 1] 120; p=double [1 1] 1; q=char [1 1] 120; p=double [1 1] 1; q=char [1 1] 120; p=double [1 1] 1; q=char [1 1] 120}
+  make.struct2x2.echo: struct(2) [2x2] n=4 es=8 is=struct <p,q> {p=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; q=char(4) [1x1] n=1 es=2 is=char,scalar 'x'; p=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; q=char(4) [1x1] n=1 es=2 is=char,scalar 'x'; p=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; q=char(4) [1x1] n=1 es=2 is=char,scalar 'x'; p=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; q=char(4) [1x1] n=1 es=2 is=char,scalar 'x'}
+  make.struct2x2.echo.info: struct [2 2] <p,q> {p=double [1 1] 1; q=char [1 1] 120; p=double [1 1] 1; q=char [1 1] 120; p=double [1 1] 1; q=char [1 1] 120; p=double [1 1] 1; q=char [1 1] 120}
+  make.struct2x2.dup: struct(2) [2x2] n=4 es=8 is=struct <p,q> {p=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; q=char(4) [1x1] n=1 es=2 is=char,scalar 'x'; p=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; q=char(4) [1x1] n=1 es=2 is=char,scalar 'x'; p=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; q=char(4) [1x1] n=1 es=2 is=char,scalar 'x'; p=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}; q=char(4) [1x1] n=1 es=2 is=char,scalar 'x'}
+  make.struct2x2.dup.info: struct [2 2] <p,q> {p=double [1 1] 1; q=char [1 1] 120; p=double [1 1] 1; q=char [1 1] 120; p=double [1 1] 1; q=char [1 1] 120; p=double [1 1] 1; q=char [1 1] 120}
+  make.emptystruct: struct(2) [0x0] n=0 es=8 is=struct,empty <> {}
+  make.emptystruct.info: struct [0 0] <> {}
+  make.emptystruct.echo: struct(2) [0x0] n=0 es=8 is=struct,empty <> {}
+  make.emptystruct.echo.info: struct [0 0] <> {}
+  make.emptystruct.dup: struct(2) [0x0] n=0 es=8 is=struct,empty <> {}
+  make.emptystruct.dup.info: struct [0 0] <> {}
+  make.nofields: struct(2) [1x1] n=1 es=8 is=struct,scalar <> {}
+  make.nofields.info: struct [1 1] <> {}
+  make.nofields.echo: struct(2) [1x1] n=1 es=8 is=struct,scalar <> {}
+  make.nofields.echo.info: struct [1 1] <> {}
+  make.nofields.dup: struct(2) [1x1] n=1 es=8 is=struct,scalar <> {}
+  make.nofields.dup.info: struct [1 1] <> {}
+  make.string: string(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.string.info: string [1 1] "alpha"
+  make.string.echo: string(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.string.echo.info: string [1 1] "alpha"
+  make.string.dup: string(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.string.dup.info: string [1 1] "alpha"
+  make.strings: string(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.strings.info: string [2 1] "alpha","beta"
+  make.strings.echo: string(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.strings.echo.info: string [2 1] "alpha","beta"
+  make.strings.dup: string(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.strings.dup.info: string [2 1] "alpha","beta"
+  make.stringmissing: string(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.stringmissing.info: string [1 1] ""
+  make.stringmissing.echo: string(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.stringmissing.echo.info: string [1 1] ""
+  make.stringmissing.dup: string(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.stringmissing.dup.info: string [1 1] ""
+  make.sparse: double(6) [3x3] n=9 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2 2] ir=[0 2] {5 6}
+  make.sparse.info: double [3 3] sparse [5 0 0 0 0 6 0 0 0]
+  make.sparse.echo: double(6) [3x3] n=9 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2 2] ir=[0 2] {5 6}
+  make.sparse.echo.info: double [3 3] sparse [5 0 0 0 0 6 0 0 0]
+  make.sparse.dup: double(6) [3x3] n=9 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2 2] ir=[0 2] {5 6}
+  make.sparse.dup.info: double [3 3] sparse [5 0 0 0 0 6 0 0 0]
+  ERR<<sparse expects an array of numbers, but element 0 was a complex number \x97 take abs(), real(), or imag() first.\n\nError in k10make (line 47)\n\n>>
+  make.sparsecomplex: (call failed)
+  make.sparselogical: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  make.sparselogical.info: double [2 2] sparse [1 0 0 1]
+  make.sparselogical.echo: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  make.sparselogical.echo.info: double [2 2] sparse [1 0 0 1]
+  make.sparselogical.dup: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  make.sparselogical.dup.info: double [2 2] sparse [1 0 0 1]
+  make.sparseempty: double(6) [2x3] n=6 es=8 is=numeric,sparse,double nzmax=1 jc=[0 0 0 0] ir=[] {}
+  make.sparseempty.info: double [2 3] sparse [0 0 0 0 0 0]
+  make.sparseempty.echo: double(6) [2x3] n=6 es=8 is=numeric,sparse,double nzmax=1 jc=[0 0 0 0] ir=[] {}
+  make.sparseempty.echo.info: double [2 3] sparse [0 0 0 0 0 0]
+  make.sparseempty.dup: double(6) [2x3] n=6 es=8 is=numeric,sparse,double nzmax=1 jc=[0 0 0 0] ir=[] {}
+  make.sparseempty.dup.info: double [2 3] sparse [0 0 0 0 0 0]
+  make.handle: function_handle(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.handle.info: function_handle [1 1] sin
+  make.handle.echo: function_handle(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.handle.echo.info: function_handle [1 1] sin
+  make.handle.dup: function_handle(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.handle.dup.info: function_handle [1 1] sin
+  make.anonymous: function_handle(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.anonymous.info: function_handle [1 1] @(x)x+1
+  make.anonymous.echo: function_handle(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.anonymous.echo.info: function_handle [1 1] @(x)x+1
+  make.anonymous.dup: function_handle(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.anonymous.dup.info: function_handle [1 1] @(x)x+1
+  make.object: k10obj(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.object.info: k10obj [1 1]
+  make.object.echo: k10obj(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.object.echo.info: k10obj [1 1]
+  make.object.dup: k10obj(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.object.dup.info: k10obj [1 1]
+  make.value: k10val(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.value.info: k10val [1 1]
+  make.value.echo: k10val(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.value.echo.info: k10val [1 1]
+  make.value.dup: k10val(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.value.dup.info: k10val [1 1]
+  make.table: table(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.table.info: table [2 2]
+  make.table.echo: table(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.table.echo.info: table [2 2]
+  make.table.dup: table(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.table.dup.info: table [2 2]
+  make.datetime: datetime(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.datetime.info: datetime [1 1]
+  make.datetime.echo: datetime(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.datetime.echo.info: datetime [1 1]
+  make.datetime.dup: datetime(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.datetime.dup.info: datetime [1 1]
+  make.duration: duration(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.duration.info: duration [1 1]
+  make.duration.echo: duration(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.duration.echo.info: duration [1 1]
+  make.duration.dup: duration(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.duration.dup.info: duration [1 1]
+  make.categorical: categorical(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.categorical.info: categorical [1 3]
+  make.categorical.echo: categorical(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.categorical.echo.info: categorical [1 3]
+  make.categorical.dup: categorical(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.categorical.dup.info: categorical [1 3]
+  make.map: containers.Map(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.map.info: containers.Map [1 1]
+  make.map.echo: containers.Map(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.map.echo.info: containers.Map [1 1]
+  make.map.dup: containers.Map(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.map.dup.info: containers.Map [1 1]
+  make.dictionary: dictionary(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.dictionary.info: dictionary [1 1]
+  make.dictionary.echo: dictionary(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.dictionary.echo.info: dictionary [1 1]
+  make.dictionary.dup: dictionary(48) [1x1] n=1 es=0 is=scalar,opaque
+  make.dictionary.dup.info: dictionary [1 1]
+  make.cellstring: cell(1) [1x2] n=2 es=8 is=cell {string(48) [1x1] n=1 es=0 is=scalar,opaque; char(4) [1x4] n=4 es=2 is=char 'char'}
+  make.cellstring.info: cell [1 2] {string [1 1] "inside"; char [1 4] [99 104 97 114]}
+  make.cellstring.echo: cell(1) [1x2] n=2 es=8 is=cell {string(48) [1x1] n=1 es=0 is=scalar,opaque; char(4) [1x4] n=4 es=2 is=char 'char'}
+  make.cellstring.echo.info: cell [1 2] {string [1 1] "inside"; char [1 4] [99 104 97 114]}
+  make.cellstring.dup: cell(1) [1x2] n=2 es=8 is=cell {string(48) [1x1] n=1 es=0 is=scalar,opaque; char(4) [1x4] n=4 es=2 is=char 'char'}
+  make.cellstring.dup.info: cell [1 2] {string [1 1] "inside"; char [1 4] [99 104 97 114]}
+  make.structstring: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=char(4) [1x4] n=4 es=2 is=char 'text'; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  make.structstring.info: struct [1 1] <s,f> {s=char [1 4] [116 101 120 116]; f=function_handle [1 1] cos}
+  make.structstring.echo: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=char(4) [1x4] n=4 es=2 is=char 'text'; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  make.structstring.echo.info: struct [1 1] <s,f> {s=char [1 4] [116 101 120 116]; f=function_handle [1 1] cos}
+  make.structstring.dup: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=char(4) [1x4] n=4 es=2 is=char 'text'; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  make.structstring.dup.info: struct [1 1] <s,f> {s=char [1 4] [116 101 120 116]; f=function_handle [1 1] cos}
+  object: k10obj(48) [1x1] n=1 es=0 is=scalar,opaque
+  object.isclass.k10obj: 1
+  object.isclass.handle: 0
+  object.get.Value: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {7}
+  object.get.Label: char(4) [1x6] n=6 es=2 is=char 'object'
+  object.set.Value: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {11}
+  object.set.info: k10obj [1 1]
+  object.dup.set.original: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {12}
+  value: k10val(48) [1x1] n=1 es=0 is=scalar,opaque
+  value.set.Value: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {9}
+  value.set.info: k10val [1 1]
+  value.dup.set.original: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {9}
+  value.dup.set.dup: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {10}
+  struct.getproperty: NULL
+  two.nlhs0.ok: 1
+  two.nlhs0.out0: NULL
+  two.nlhs0.out1: NULL
+  two.nlhs0.out2: NULL
+  two.nlhs1.ok: 1
+  two.nlhs1.out0: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {3}
+  two.nlhs1.out1: NULL
+  two.nlhs1.out2: NULL
+  two.nlhs2.ok: 1
+  two.nlhs2.out0: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {3}
+  two.nlhs2.out1: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {6}
+  two.nlhs2.out2: NULL
+  ERR<<Error using k10two\nToo many output arguments.\n\n>>
+  two.nlhs3.ok: 0
+  two.nlhs3.out0: NULL
+  two.nlhs3.out1: NULL
+  two.nlhs3.out2: NULL
+  nargs.0.0.ok: 1
+  nargs.0.0.out0: NULL
+  nargs.0.0.out1: NULL
+  nargs.0.1.ok: 1
+  nargs.0.1.out0: NULL
+  nargs.0.1.out1: NULL
+  nargs.0.2.ok: 1
+  nargs.0.2.out0: NULL
+  nargs.0.2.out1: NULL
+  nargs.1.0.ok: 1
+  nargs.1.0.out0: double(6) [1x3] n=3 es=8 is=numeric,double {0 1 1}
+  nargs.1.0.out1: NULL
+  nargs.1.1.ok: 1
+  nargs.1.1.out0: double(6) [1x3] n=3 es=8 is=numeric,double {1 1 1}
+  nargs.1.1.out1: NULL
+  nargs.1.2.ok: 1
+  nargs.1.2.out0: double(6) [1x3] n=3 es=8 is=numeric,double {2 1 1}
+  nargs.1.2.out1: NULL
+  nargs.2.0.ok: 1
+  nargs.2.0.out0: double(6) [1x3] n=3 es=8 is=numeric,double {0 2 1}
+  nargs.2.0.out1: double(6) [1x3] n=3 es=8 is=numeric,double {0 2 2}
+  nargs.2.1.ok: 1
+  nargs.2.1.out0: double(6) [1x3] n=3 es=8 is=numeric,double {1 2 1}
+  nargs.2.1.out1: double(6) [1x3] n=3 es=8 is=numeric,double {1 2 2}
+  nargs.2.2.ok: 1
+  nargs.2.2.out0: double(6) [1x3] n=3 es=8 is=numeric,double {2 2 1}
+  nargs.2.2.out1: double(6) [1x3] n=3 es=8 is=numeric,double {2 2 2}
+  OUT<<k10none got double\n>>
+  none.nlhs0.ok: 1
+  none.nlhs0.out0: NULL
+  ERR<<Error using k10none\nToo many output arguments.\n\n>>
+  none.nlhs1.ok: 0
+  none.nlhs1.out0: NULL
+  ERR<<Error using k10addtwo\nToo many input arguments.\n\n>>
+  addtwo.three.ok: 0
+  addtwo.three.depth: 0
+  addtwo.three.lastmessage: Too many input arguments.
+  ERR<<Not enough input arguments.\n\nError in k10addtwo (line 3)\n\n>>
+  addtwo.one.ok: 0
+  addtwo.one.out0: NULL
+  addtwo.one.depth: 1
+  addtwo.one.frame0: file <W>\\cache\\0.2.3\\k10lib0\\k10lib\\k10addtwo.m, name k10addtwo, line 3.
+  addtwo.one.lastmessage: Not enough input arguments.\nError in => k10addtwo.m at line 3
+  mlf.two.1.ok: 1
+  mlf.two.1.a: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {3}
+  mlf.two.1.b: NULL
+  mlf.two.1s.ok: 1
+  mlf.two.1s.b.kept: 1
+  mlf.two.1s.b: char(4) [1x8] n=8 es=2 is=char 'sentinel'
+  mlf.two.2.ok: 1
+  mlf.two.2.a: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {3}
+  mlf.two.2.b: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {6}
+  mlf.addtwo.0.ok: 1
+  mlf.addtwo.0.c: NULL
+  mlf.addtwo.1.ok: 1
+  mlf.addtwo.1.c: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {6}
+  mlf.nargs.2.ok: 1
+  mlf.nargs.2.vout: cell(1) [1x2] n=2 es=8 is=cell {double(6) [1x3] n=3 es=8 is=numeric,double {3 2 1}; double(6) [1x3] n=3 es=8 is=numeric,double {3 2 2}}
+  mlf.nargs.0.ok: 1
+  mlf.nargs.0.vout: NULL
+  mlf.nargs.none.ok: 1
+  mlf.nargs.none.vout: cell(1) [1x1] n=1 es=8 is=cell,scalar {double(6) [1x3] n=3 es=8 is=numeric,double {0 1 1}}
+  mlf.echo.1.ok: 1
+  mlf.echo.1.vout: cell(1) [1x1] n=1 es=8 is=cell,scalar {double(6) [1x1] n=1 es=8 is=numeric,scalar,double {3}}
+  mlf.mixed.3.ok: 1
+  mlf.mixed.3.a: double(6) [1x3] n=3 es=8 is=numeric,double {4 3 3}
+  mlf.mixed.3.vout: cell(1) [1x2] n=2 es=8 is=cell {double(6) [1x1] n=1 es=8 is=numeric,scalar,double {3}; double(6) [1x1] n=1 es=8 is=numeric,scalar,double {6}}
+  mlf.mixed.1.ok: 1
+  mlf.mixed.1.a: double(6) [1x3] n=3 es=8 is=numeric,double {1 1 0}
+  mlf.mixed.1.vout: NULL
+  ERR<<Error using k10obj\nToo many input arguments.\n\n>>
+  mlf.obj.ok: 0
+  mlf.obj.vout: NULL
+  mixed.mlx.ok: 1
+  mixed.mlx.out0: double(6) [1x3] n=3 es=8 is=numeric,double {2 3 1}
+  mixed.mlx.out1: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {3}
+  mixed.mlx.out2: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {6}
+  err.id: calling
+  ERR<<Error using k10err (line 5)\nA probe error with a number 3.\n\n>>
+  err.id.ok: 0
+  err.id.depth: 1
+  err.id.frame0: file <W>\\cache\\0.2.3\\k10lib0\\k10lib\\k10err.m, name k10err, line 5.
+  err.id.lastmessage: A probe error with a number 3.\nError in => k10err.m at line 5
+  err.noid: calling
+  ERR<<Error using k10err (line 7)\nA probe error without an identifier.\n\n>>
+  err.noid.ok: 0
+  err.noid.depth: 1
+  err.noid.frame0: file <W>\\cache\\0.2.3\\k10lib0\\k10lib\\k10err.m, name k10err, line 7.
+  err.noid.lastmessage: A probe error without an identifier.\nError in => k10err.m at line 7
+  err.lines: calling
+  ERR<<Error using k10err (line 9)\nFirst line.\nSecond line.\n\n>>
+  err.lines.ok: 0
+  err.lines.depth: 1
+  err.lines.frame0: file <W>\\cache\\0.2.3\\k10lib0\\k10lib\\k10err.m, name k10err, line 9.
+  err.lines.lastmessage: First line.\nSecond line.\nError in => k10err.m at line 9
+  err.nested: calling
+  ERR<<Error using k10err>inner (line 27)\nRaised in a local function.\n\nError in k10err (line 11)\n\n>>
+  err.nested.ok: 0
+  err.nested.depth: 2
+  err.nested.frame0: file <W>\\cache\\0.2.3\\k10lib0\\k10lib\\k10err.m, name inner, line 27.
+  err.nested.frame1: file <W>\\cache\\0.2.3\\k10lib0\\k10lib\\k10err.m, name k10err, line 11.
+  err.nested.lastmessage: Raised in a local function.\nError in => k10err.m at line 11
+  err.cause: calling
+  ERR<<Error using k10err (line 15)\nThe outer error.\n\nCaused by:\n    The inner cause.\n\n>>
+  err.cause.ok: 0
+  err.cause.depth: 1
+  err.cause.frame0: file <W>\\cache\\0.2.3\\k10lib0\\k10lib\\k10err.m, name k10err, line 15.
+  err.cause.lastmessage: The outer error.\nThe inner cause.\nError in => k10err.m at line 15
+  err.undefined: calling
+  ERR<<Undefined function 'k10_no_such_function' for input arguments of type 'double'.\n\nError in k10err (line 17)\n\n>>
+  err.undefined.ok: 0
+  err.undefined.depth: 1
+  err.undefined.frame0: file <W>\\cache\\0.2.3\\k10lib0\\k10lib\\k10err.m, name k10err, line 17.
+  err.undefined.lastmessage: Undefined function 'k10_no_such_function' for input arguments of type 'double'.\nError in => k10err.m at line 17
+  err.index: calling
+  ERR<<Index exceeds the number of array elements. Index must not exceed 3.\n\nError in k10err (line 20)\n\n>>
+  err.index.ok: 0
+  err.index.depth: 1
+  err.index.frame0: file <W>\\cache\\0.2.3\\k10lib0\\k10lib\\k10err.m, name k10err, line 20.
+  err.index.lastmessage: Index exceeds the number of array elements. Index must not exceed 3.\nError in => k10err.m at line 20
+  printstack: next
+  print: calling
+  OUT<<line 4\n>>
+  OUT<<no newline>>
+  OUT<< then the rest\n>>
+  OUT<<4\n>>
+  OUT<<[1, 2, 3]\n>>
+  OUT<<x = 8\n>>
+  OUT<<Warning: a warning about 4\n>>
+  ERR<<to standard error\n>>
+  OUT<<two\nlines\n>>
+  print.ok: 1
+  done
+  STDERR	file <W>\cache\0.2.3\k10lib0\k10lib\k10err.m, name k10err, line 20.
+  EXIT	0
+  SECONDS	0.4
+== risky 1
+  initialize: 1
+  initialize.again: 1
+  quiet.ok: 1
+  model: interleaved
+  risky 1
+  ERR<<Error using k10info\nInput argument 1 is NULL; pass an mxArray, an empty one for [].\n\n>>
+  risky.nullinput.ok: 0
+  risky.nullinput.out: NULL
+  risky 1: returned
+  done
+  EXIT	0
+  SECONDS	0.2
+== risky 2
+  initialize: 1
+  initialize.again: 1
+  quiet.ok: 1
+  model: interleaved
+  risky 2
+  risky.afterterminate.ok: 0
+  risky.afterterminate.out: NULL
+  risky 2: returned
+  done
+  EXIT	0
+  SECONDS	0.2
+== risky 3
+  initialize: 1
+  initialize.again: 1
+  quiet.ok: 1
+  model: interleaved
+  risky 3
+  risky.reinitialize: 1
+  risky 3: returned
+  done
+  EXIT	0
+  SECONDS	0.2
+== risky 4
+  initialize: 1
+  initialize.again: 1
+  quiet.ok: 1
+  model: interleaved
+  risky 4
+  ERR<<Error using k10addtwo\nInput argument 1 is NULL; pass an mxArray, an empty one for [].\n\n>>
+  risky.mlf.nullinput.ok: 0
+  risky.mlf.nullinput.out: NULL
+  risky 4: returned
+  done
+  EXIT	0
+  SECONDS	0.2
+== risky 5
+  initialize: 1
+  initialize.again: 1
+  quiet.ok: 1
+  model: interleaved
+  risky 5
+  ERR<<Error using k10echo\nThe number of outputs asked for, -1, cannot be negative.\n\n>>
+  risky.negative.nlhs.ok: 0
+  risky.negative.nlhs.out: NULL
+  risky 5: returned
+  done
+  EXIT	0
+  SECONDS	0.2
+== risky 6
+  initialize: 1
+  initialize.again: 1
+  quiet.ok: 1
+  model: interleaved
+  risky 6
+  risky.mlf.nulloutput.ok: 1
+  risky 6: returned
+  done
+  EXIT	0
+  SECONDS	0.2
+== risky 7
+  initialize: 1
+  initialize.again: 1
+  quiet.ok: 1
+  model: interleaved
+  risky 7
+  risky.mlf.varargin.notcell.ok: 1
+  risky.mlf.varargin.notcell.out: cell(1) [1x1] n=1 es=8 is=cell,scalar {double(6) [1x3] n=3 es=8 is=numeric,double {1 1 1}}
+  risky 7: returned
+  done
+  EXIT	0
+  SECONDS	0.2
+== risky 8
+  initialize: 1
+  initialize.again: 1
+  quiet.ok: 1
+  model: interleaved
+  risky 8
+  ERR<<Index exceeds the number of array elements. Index must not exceed 1.\n\nError in k10echo (line 3)\n\n>>
+  risky.mlx.nlhs.too.many.ok: 0
+  risky.mlx.nlhs.too.many.out1: NULL
+  risky 8: returned
+  done
+  EXIT	0
+  SECONDS	0.2
+== risky 9
+  initialize: 1
+  initialize.again: 1
+  quiet.ok: 1
+  model: interleaved
+  risky 9
+  risky.getproperty.Nope: NULL
+  risky 9: returned
+  done
+  EXIT	0
+  SECONDS	0.2
+== risky 10
+  initialize: 1
+  initialize.again: 1
+  quiet.ok: 1
+  model: interleaved
+  risky 10
+  risky.getproperty.Hidden: NULL
+  risky 10: returned
+  done
+  EXIT	0
+  SECONDS	0.2
+== risky 11
+  initialize: 1
+  initialize.again: 1
+  quiet.ok: 1
+  model: interleaved
+  risky 11
+  risky.struct.invalidname.info: struct [1 1] <1bad> {1bad=double [1 1] 1}
+  risky.struct.echo.ok: 1
+  risky.struct.echo: struct(2) [1x1] n=1 es=8 is=struct,scalar <1bad> {1bad=double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1}}
+  risky 11: returned
+  done
+  EXIT	0
+  SECONDS	0.2
+== risky 12
+  initialize: 1
+  initialize.again: 1
+  quiet.ok: 1
+  model: interleaved
+  risky 12
+  ERR<<Error using k10info\nA struct passed in has the field name 'a' twice; JGraph's structs, like MATLAB's, hold each name once.\n\n>>
+  risky.struct.duplicate.info: (call failed)
+  ERR<<Error using k10echo\nA struct passed in has the field name 'a' twice; JGraph's structs, like MATLAB's, hold each name once.\n\n>>
+  risky.struct.echo.ok: 0
+  risky.struct.echo: NULL
+  risky 12: returned
+  done
+  EXIT	0
+  SECONDS	0.2

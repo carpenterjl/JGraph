@@ -300,7 +300,7 @@ public sealed class JGraphScriptGlobals
     }
 
     /// <summary>Writes raw text (no newline) to the error console. Backs Python's redirected stderr.</summary>
-    public void WriteErr(string text) => _context.Output.WriteError(text);
+    public void WriteErr(string text) => _context.Output.WriteErrorText(text);
 
     /// <summary>
     /// Writes a warning line: to the error console, or into <c>evalc</c>'s capture while one runs —

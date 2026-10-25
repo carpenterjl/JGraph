@@ -1,0 +1,670 @@
+k10_mx_separate: 269 of 269 cases agree; 0 recorded divergences, 0 unexplained
+k10_mx_interleaved: 281 of 282 cases agree; 1 recorded divergences, 0 unexplained
+k10_app: 89 of 91 cases agree; 2 recorded divergences, 0 unexplained
+k10_feval_separate: 609 of 674 cases agree; 65 recorded divergences, 0 unexplained
+k10_feval_interleaved: 609 of 674 cases agree; 65 recorded divergences, 0 unexplained
+
+k10_mx_interleaved [risky 12]
+  R2025b: crashed (EXIT	-529697949 (0xE06D7363))
+  JGraph: model: interleaved; risky.getpr.complex.null: 1  [after risky 12]; (end):   [after risky 12: returned | done]
+  recorded: R2025b's runtime ends the process here; JGraph's refuses or answers NULL (ADR 0266)
+
+k10_app [logfile <W>\clients\k10app.log] logfile.logfile
+  R2025b: ><W>\clients\k10app.log
+  JGraph: <W>\clients\k10app.log
+  recorded: the log file's name, without the '>' R2025b puts before it (ADR 0266)
+
+k10_app [logfile <W>\clients\k10app.log] logfile.text
+  R2025b: (no file)
+  JGraph: 
+  recorded: JGraph's runtime makes the log file when it starts; R2025b's when something is written
+
+k10_feval_separate [safe] echo.int64
+  R2025b: int64(14) [1x2] n=2 es=8 is=numeric,int64 {-9223372036854775808 9223372036854775807}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\n-9223372036854775808 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k10_feval_separate [safe] info.int64
+  R2025b: int64 [1 2] [-9223372036854775808 9223372036854775807]
+  JGraph: (call failed)  [after ERR<<Error using k10info\n-9223372036854775808 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k10_feval_separate [safe] echo.uint64
+  R2025b: uint64(15) [1x2] n=2 es=8 is=numeric,uint64 {0 18446744073709551615}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\n18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k10_feval_separate [safe] info.uint64
+  R2025b: uint64 [1 2] [0 18446744073709551615]
+  JGraph: (call failed)  [after ERR<<Error using k10info\n18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k10_feval_separate [safe] echo.uint64.odd
+  R2025b: uint64(15) [1x1] n=1 es=8 is=numeric,scalar,uint64 {9007199254740993}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\n9007199254740993 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k10_feval_separate [safe] info.uint64.odd
+  R2025b: uint64 [1 1] 9007199254740993
+  JGraph: (call failed)  [after ERR<<Error using k10info\n9007199254740993 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k10_feval_separate [safe] echo.sparse
+  R2025b: double(6) [3x3] n=9 es=8 is=numeric,sparse,double nzmax=3 jc=[0 1 2 2] ir=[0 2] {5 6}
+  JGraph: double(6) [3x3] n=9 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2 2] ir=[0 2] {5 6}
+  recorded: a sparse array passed through keeps no spare room (nzmax): JGraph's sparse arrays hold exactly their nonzeros
+
+k10_feval_separate [safe] echo.sparse.complex
+  R2025b: double(6) [2x2] n=4 es=8 is=numeric,sparse,complex,double nzmax=2 jc=[0 2 2] ir=[0 1] {(1,1) (2,0)}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\nJGraph has no complex sparse arrays: pass the real and imaginary parts apart.\n\n>>]
+  recorded: JGraph has no complex sparse arrays
+
+k10_feval_separate [safe] info.sparse.complex
+  R2025b: double [2 2] complex sparse [1+1i 2 0 0]
+  JGraph: (call failed)  [after ERR<<Error using k10info\nJGraph has no complex sparse arrays: pass the real and imaginary parts apart.\n\n>>]
+  recorded: JGraph has no complex sparse arrays
+
+k10_feval_separate [safe] echo.sparse.logical
+  R2025b: logical(3) [2x2] n=4 es=1 is=logical,sparse nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  JGraph: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k10_feval_separate [safe] info.sparse.logical
+  R2025b: logical [2 2] sparse [true false false true]
+  JGraph: double [2 2] sparse [1 0 0 1]
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k10_feval_separate [safe] echo.complex.int8
+  R2025b: int8(8) [1x1] n=1 es=1 is=numeric,complex,scalar,int8 {(3,-1)}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\nJGraph keeps no complex int8 array: pass it as a complex double or single one.\n\n>>]
+  recorded: JGraph keeps no complex integer arrays
+
+k10_feval_separate [safe] info.complex.int8
+  R2025b: int8 [1 1] complex 3-1i
+  JGraph: (call failed)  [after ERR<<Error using k10info\nJGraph keeps no complex int8 array: pass it as a complex double or single one.\n\n>>]
+  recorded: JGraph keeps no complex integer arrays
+
+k10_feval_separate [safe] echo.complex.zeroimag
+  R2025b: double(6) [1x2] n=2 es=8 is=numeric,complex,double {(4,0) (0,0)}
+  JGraph: double(6) [1x2] n=2 es=8 is=numeric,double {4 0}
+  recorded: JGraph keeps an element with no imaginary part as a real number
+
+k10_feval_separate [safe] info.complex.zeroimag
+  R2025b: double [1 2] complex [4 0]
+  JGraph: double [1 2] [4 0]
+  recorded: JGraph keeps an element with no imaginary part as a real number
+
+k10_feval_separate [safe] make.int64
+  R2025b: int64(14) [1x2] n=2 es=8 is=numeric,int64 {-9223372036854775808 9223372036854775807}
+  JGraph: double(6) [1x2] n=2 es=8 is=numeric,double {-9.2233720368547758e+18 9.2233720368547758e+18}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_separate [safe] make.int64.info
+  R2025b: int64 [1 2] [-9223372036854775808 9223372036854775807]
+  JGraph: double [1 2] [-9.2233720368547758e+18 9.2233720368547758e+18]
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_separate [safe] make.int64.echo
+  R2025b: int64(14) [1x2] n=2 es=8 is=numeric,int64 {-9223372036854775808 9223372036854775807}
+  JGraph: double(6) [1x2] n=2 es=8 is=numeric,double {-9.2233720368547758e+18 9.2233720368547758e+18}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_separate [safe] make.int64.echo.info
+  R2025b: int64 [1 2] [-9223372036854775808 9223372036854775807]
+  JGraph: double [1 2] [-9.2233720368547758e+18 9.2233720368547758e+18]
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_separate [safe] make.int64.dup
+  R2025b: int64(14) [1x2] n=2 es=8 is=numeric,int64 {-9223372036854775808 9223372036854775807}
+  JGraph: double(6) [1x2] n=2 es=8 is=numeric,double {-9.2233720368547758e+18 9.2233720368547758e+18}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_separate [safe] make.int64.dup.info
+  R2025b: int64 [1 2] [-9223372036854775808 9223372036854775807]
+  JGraph: double [1 2] [-9.2233720368547758e+18 9.2233720368547758e+18]
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_separate [safe] make.uint64
+  R2025b: uint64(15) [1x1] n=1 es=8 is=numeric,scalar,uint64 {18446744073709551615}
+  JGraph: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1.8446744073709552e+19}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_separate [safe] make.uint64.info
+  R2025b: uint64 [1 1] 18446744073709551615
+  JGraph: double [1 1] 1.8446744073709552e+19
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_separate [safe] make.uint64.echo
+  R2025b: uint64(15) [1x1] n=1 es=8 is=numeric,scalar,uint64 {18446744073709551615}
+  JGraph: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1.8446744073709552e+19}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_separate [safe] make.uint64.echo.info
+  R2025b: uint64 [1 1] 18446744073709551615
+  JGraph: double [1 1] 1.8446744073709552e+19
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_separate [safe] make.uint64.dup
+  R2025b: uint64(15) [1x1] n=1 es=8 is=numeric,scalar,uint64 {18446744073709551615}
+  JGraph: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1.8446744073709552e+19}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_separate [safe] make.uint64.dup.info
+  R2025b: uint64 [1 1] 18446744073709551615
+  JGraph: double [1 1] 1.8446744073709552e+19
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_separate [safe] make.complexint
+  R2025b: int16(10) [1x2] n=2 es=2 is=numeric,complex,int16 {(1,2) (3,0)}
+  JGraph: (call failed)  [after ERR<<int16 expects a number or numeric array, but got a complex.\n\nError in k10make (line 26)\n\n>>]
+  recorded: JGraph keeps no complex integer arrays
+
+k10_feval_separate [safe] make.complexint.info
+  R2025b: int16 [1 2] complex [1+2i 3]
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k10_feval_separate [safe] make.complexint.echo
+  R2025b: int16(10) [1x2] n=2 es=2 is=numeric,complex,int16 {(1,2) (3,0)}
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k10_feval_separate [safe] make.complexint.echo.info
+  R2025b: int16 [1 2] complex [1+2i 3]
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k10_feval_separate [safe] make.complexint.dup
+  R2025b: int16(10) [1x2] n=2 es=2 is=numeric,complex,int16 {(1,2) (3,0)}
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k10_feval_separate [safe] make.complexint.dup.info
+  R2025b: int16 [1 2] complex [1+2i 3]
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k10_feval_separate [safe] make.sparsecomplex
+  R2025b: double(6) [2x2] n=4 es=8 is=numeric,sparse,complex,double nzmax=2 jc=[0 2 2] ir=[0 1] {(1,1) (2,0)}
+  JGraph: (call failed)  [after ERR<<sparse expects an array of numbers, but element 0 was a complex number \x97 take abs(), real(), or imag() first.\n\nError in k10make (line 47)\n\n>>]
+  recorded: JGraph has no complex sparse arrays
+
+k10_feval_separate [safe] make.sparsecomplex.info
+  R2025b: double [2 2] complex sparse [1+1i 2 0 0]
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k10_feval_separate [safe] make.sparsecomplex.echo
+  R2025b: double(6) [2x2] n=4 es=8 is=numeric,sparse,complex,double nzmax=2 jc=[0 2 2] ir=[0 1] {(1,1) (2,0)}
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k10_feval_separate [safe] make.sparsecomplex.echo.info
+  R2025b: double [2 2] complex sparse [1+1i 2 0 0]
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k10_feval_separate [safe] make.sparsecomplex.dup
+  R2025b: double(6) [2x2] n=4 es=8 is=numeric,sparse,complex,double nzmax=2 jc=[0 2 2] ir=[0 1] {(1,1) (2,0)}
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k10_feval_separate [safe] make.sparsecomplex.dup.info
+  R2025b: double [2 2] complex sparse [1+1i 2 0 0]
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k10_feval_separate [safe] make.sparselogical
+  R2025b: logical(3) [2x2] n=4 es=1 is=logical,sparse nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  JGraph: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k10_feval_separate [safe] make.sparselogical.info
+  R2025b: logical [2 2] sparse [true false false true]
+  JGraph: double [2 2] sparse [1 0 0 1]
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k10_feval_separate [safe] make.sparselogical.echo
+  R2025b: logical(3) [2x2] n=4 es=1 is=logical,sparse nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  JGraph: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k10_feval_separate [safe] make.sparselogical.echo.info
+  R2025b: logical [2 2] sparse [true false false true]
+  JGraph: double [2 2] sparse [1 0 0 1]
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k10_feval_separate [safe] make.sparselogical.dup
+  R2025b: logical(3) [2x2] n=4 es=1 is=logical,sparse nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  JGraph: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k10_feval_separate [safe] make.sparselogical.dup.info
+  R2025b: logical [2 2] sparse [true false false true]
+  JGraph: double [2 2] sparse [1 0 0 1]
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k10_feval_separate [safe] make.map.info
+  R2025b: containers.Map [2 1]
+  JGraph: containers.Map [1 1]
+  recorded: size of a containers.Map is [1 1] in JGraph, [Count 1] in R2025b (open item 200)
+
+k10_feval_separate [safe] make.map.echo.info
+  R2025b: containers.Map [2 1]
+  JGraph: containers.Map [1 1]
+  recorded: size of a containers.Map is [1 1] in JGraph, [Count 1] in R2025b (open item 200)
+
+k10_feval_separate [safe] make.map.dup.info
+  R2025b: containers.Map [2 1]
+  JGraph: containers.Map [1 1]
+  recorded: size of a containers.Map is [1 1] in JGraph, [Count 1] in R2025b (open item 200)
+
+k10_feval_separate [safe] make.structstring
+  R2025b: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=string(48) [1x1] n=1 es=0 is=scalar,opaque; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  JGraph: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=char(4) [1x4] n=4 es=2 is=char 'text'; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k10_feval_separate [safe] make.structstring.info
+  R2025b: struct [1 1] <s,f> {s=string [1 1] "text"; f=function_handle [1 1] cos}
+  JGraph: struct [1 1] <s,f> {s=char [1 4] [116 101 120 116]; f=function_handle [1 1] cos}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k10_feval_separate [safe] make.structstring.echo
+  R2025b: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=string(48) [1x1] n=1 es=0 is=scalar,opaque; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  JGraph: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=char(4) [1x4] n=4 es=2 is=char 'text'; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k10_feval_separate [safe] make.structstring.echo.info
+  R2025b: struct [1 1] <s,f> {s=string [1 1] "text"; f=function_handle [1 1] cos}
+  JGraph: struct [1 1] <s,f> {s=char [1 4] [116 101 120 116]; f=function_handle [1 1] cos}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k10_feval_separate [safe] make.structstring.dup
+  R2025b: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=string(48) [1x1] n=1 es=0 is=scalar,opaque; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  JGraph: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=char(4) [1x4] n=4 es=2 is=char 'text'; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k10_feval_separate [safe] make.structstring.dup.info
+  R2025b: struct [1 1] <s,f> {s=string [1 1] "text"; f=function_handle [1 1] cos}
+  JGraph: struct [1 1] <s,f> {s=char [1 4] [116 101 120 116]; f=function_handle [1 1] cos}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k10_feval_separate [safe] object.isclass.k10obj
+  R2025b: 0
+  JGraph: 1
+  recorded: mxIsClass answers true for an object's own class; R2025b's answers false (ADR 0266)
+
+k10_feval_separate [safe] value.dup.set.original
+  R2025b: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {10}
+  JGraph: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {9}
+  recorded: mxDuplicateArray of a value object is a copy; R2025b's shares the original (ADR 0266)
+
+k10_feval_separate [risky 1]
+  R2025b: crashed (EXIT	-1073741819 (0xC0000005))
+  JGraph: initialize: 1; initialize.again: 1; quiet.ok: 1; model: separate; risky.nullinput.ok: 0  [after risky 1 | ERR<<Error using k10info\nInput argument 1 is NULL; pass an mxArray, an empty one for [].\n\n>>]; risky.nullinput.out: NULL; (end):   [after risky 1: returned | done]
+  recorded: R2025b's runtime ends the process here; JGraph's refuses or answers NULL (ADR 0266)
+
+k10_feval_separate [risky 4]
+  R2025b: crashed (EXIT	-1073741819 (0xC0000005))
+  JGraph: initialize: 1; initialize.again: 1; quiet.ok: 1; model: separate; risky.mlf.nullinput.ok: 0  [after risky 4 | ERR<<Error using k10addtwo\nInput argument 1 is NULL; pass an mxArray, an empty one for [].\n\n>>]; risky.mlf.nullinput.out: NULL; (end):   [after risky 4: returned | done]
+  recorded: R2025b's runtime ends the process here; JGraph's refuses or answers NULL (ADR 0266)
+
+k10_feval_separate [risky 5] risky.negative.nlhs.ok
+  R2025b: 0  [after risky 5 | ERR<<Caught "std::exception" Exception message is:\nvector too long\n>>]
+  JGraph: 0  [after risky 5 | ERR<<Error using k10echo\nThe number of outputs asked for, -1, cannot be negative.\n\n>>]
+  recorded: a negative output count is refused in JGraph's words; R2025b's reports a C++ 'vector too long' (ADR 0266)
+
+k10_feval_separate [risky 9]
+  R2025b: crashed (EXIT	-1073741819 (0xC0000005))
+  JGraph: initialize: 1; initialize.again: 1; quiet.ok: 1; model: separate; risky.getproperty.Nope: NULL  [after risky 9]; (end):   [after risky 9: returned | done]
+  recorded: R2025b's runtime ends the process here; JGraph's refuses or answers NULL (ADR 0266)
+
+k10_feval_separate [risky 10]
+  R2025b: crashed (EXIT	-1073741819 (0xC0000005))
+  JGraph: initialize: 1; initialize.again: 1; quiet.ok: 1; model: separate; risky.getproperty.Hidden: NULL  [after risky 10]; (end):   [after risky 10: returned | done]
+  recorded: R2025b's runtime ends the process here; JGraph's refuses or answers NULL (ADR 0266)
+
+k10_feval_separate [risky 11] risky.struct.invalidname.info
+  R2025b: (call failed)  [after risky 11 | ERR<<Invalid field name: '1bad'.\n\nError in k10info>describe (line 35)\n\nError in k10info (line 4)\n\n>>]
+  JGraph: struct [1 1] <1bad> {1bad=double [1 1] 1}  [after risky 11]
+  recorded: a field read by a name MATLAB could not write ('1bad') is refused by R2025b, read by JGraph (open item 202)
+
+k10_feval_separate [risky 12] risky.struct.duplicate.info
+  R2025b: struct [1 1] <a,a> {a=double [0 0] []; a=double [0 0] []}  [after risky 12]
+  JGraph: (call failed)  [after risky 12 | ERR<<Error using k10info\nA struct passed in has the field name 'a' twice; JGraph's structs, like MATLAB's, hold each name once.\n\n>>]
+  recorded: a struct with one field name twice is refused; R2025b passes it in (ADR 0266)
+
+k10_feval_separate [risky 12] risky.struct.echo.ok
+  R2025b: 1
+  JGraph: 0  [after ERR<<Error using k10echo\nA struct passed in has the field name 'a' twice; JGraph's structs, like MATLAB's, hold each name once.\n\n>>]
+  recorded: a struct with one field name twice is refused; R2025b passes it in (ADR 0266)
+
+k10_feval_separate [risky 12] risky.struct.echo
+  R2025b: struct(2) [1x1] n=1 es=8 is=struct,scalar <a,a> {a=NULL; a=double(6) [0x0] n=0 es=8 is=numeric,empty,double {data NULL}}
+  JGraph: NULL
+  recorded: a struct with one field name twice is refused; R2025b passes it in (ADR 0266)
+
+k10_feval_interleaved [safe] echo.int64
+  R2025b: int64(14) [1x2] n=2 es=8 is=numeric,int64 {-9223372036854775808 9223372036854775807}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\n-9223372036854775808 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k10_feval_interleaved [safe] info.int64
+  R2025b: int64 [1 2] [-9223372036854775808 9223372036854775807]
+  JGraph: (call failed)  [after ERR<<Error using k10info\n-9223372036854775808 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k10_feval_interleaved [safe] echo.uint64
+  R2025b: uint64(15) [1x2] n=2 es=8 is=numeric,uint64 {0 18446744073709551615}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\n18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k10_feval_interleaved [safe] info.uint64
+  R2025b: uint64 [1 2] [0 18446744073709551615]
+  JGraph: (call failed)  [after ERR<<Error using k10info\n18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k10_feval_interleaved [safe] echo.uint64.odd
+  R2025b: uint64(15) [1x1] n=1 es=8 is=numeric,scalar,uint64 {9007199254740993}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\n9007199254740993 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k10_feval_interleaved [safe] info.uint64.odd
+  R2025b: uint64 [1 1] 9007199254740993
+  JGraph: (call failed)  [after ERR<<Error using k10info\n9007199254740993 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n\n>>]
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53 (JGraph:interop:int64Precision): a value past it is refused, not rounded
+
+k10_feval_interleaved [safe] echo.sparse
+  R2025b: double(6) [3x3] n=9 es=8 is=numeric,sparse,double nzmax=3 jc=[0 1 2 2] ir=[0 2] {5 6}
+  JGraph: double(6) [3x3] n=9 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2 2] ir=[0 2] {5 6}
+  recorded: a sparse array passed through keeps no spare room (nzmax): JGraph's sparse arrays hold exactly their nonzeros
+
+k10_feval_interleaved [safe] echo.sparse.complex
+  R2025b: double(6) [2x2] n=4 es=16 is=numeric,sparse,complex,double nzmax=2 jc=[0 2 2] ir=[0 1] {(1,1) (2,0)}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\nJGraph has no complex sparse arrays: pass the real and imaginary parts apart.\n\n>>]
+  recorded: JGraph has no complex sparse arrays
+
+k10_feval_interleaved [safe] info.sparse.complex
+  R2025b: double [2 2] complex sparse [1+1i 2 0 0]
+  JGraph: (call failed)  [after ERR<<Error using k10info\nJGraph has no complex sparse arrays: pass the real and imaginary parts apart.\n\n>>]
+  recorded: JGraph has no complex sparse arrays
+
+k10_feval_interleaved [safe] echo.sparse.logical
+  R2025b: logical(3) [2x2] n=4 es=1 is=logical,sparse nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  JGraph: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k10_feval_interleaved [safe] info.sparse.logical
+  R2025b: logical [2 2] sparse [true false false true]
+  JGraph: double [2 2] sparse [1 0 0 1]
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k10_feval_interleaved [safe] echo.complex.int8
+  R2025b: int8(8) [1x1] n=1 es=2 is=numeric,complex,scalar,int8 {(3,-1)}
+  JGraph: (call failed)  [after ERR<<Error using k10echo\nJGraph keeps no complex int8 array: pass it as a complex double or single one.\n\n>>]
+  recorded: JGraph keeps no complex integer arrays
+
+k10_feval_interleaved [safe] info.complex.int8
+  R2025b: int8 [1 1] complex 3-1i
+  JGraph: (call failed)  [after ERR<<Error using k10info\nJGraph keeps no complex int8 array: pass it as a complex double or single one.\n\n>>]
+  recorded: JGraph keeps no complex integer arrays
+
+k10_feval_interleaved [safe] echo.complex.zeroimag
+  R2025b: double(6) [1x2] n=2 es=16 is=numeric,complex,double {(4,0) (0,0)}
+  JGraph: double(6) [1x2] n=2 es=8 is=numeric,double {4 0}
+  recorded: JGraph keeps an element with no imaginary part as a real number
+
+k10_feval_interleaved [safe] info.complex.zeroimag
+  R2025b: double [1 2] complex [4 0]
+  JGraph: double [1 2] [4 0]
+  recorded: JGraph keeps an element with no imaginary part as a real number
+
+k10_feval_interleaved [safe] make.int64
+  R2025b: int64(14) [1x2] n=2 es=8 is=numeric,int64 {-9223372036854775808 9223372036854775807}
+  JGraph: double(6) [1x2] n=2 es=8 is=numeric,double {-9.2233720368547758e+18 9.2233720368547758e+18}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_interleaved [safe] make.int64.info
+  R2025b: int64 [1 2] [-9223372036854775808 9223372036854775807]
+  JGraph: double [1 2] [-9.2233720368547758e+18 9.2233720368547758e+18]
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_interleaved [safe] make.int64.echo
+  R2025b: int64(14) [1x2] n=2 es=8 is=numeric,int64 {-9223372036854775808 9223372036854775807}
+  JGraph: double(6) [1x2] n=2 es=8 is=numeric,double {-9.2233720368547758e+18 9.2233720368547758e+18}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_interleaved [safe] make.int64.echo.info
+  R2025b: int64 [1 2] [-9223372036854775808 9223372036854775807]
+  JGraph: double [1 2] [-9.2233720368547758e+18 9.2233720368547758e+18]
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_interleaved [safe] make.int64.dup
+  R2025b: int64(14) [1x2] n=2 es=8 is=numeric,int64 {-9223372036854775808 9223372036854775807}
+  JGraph: double(6) [1x2] n=2 es=8 is=numeric,double {-9.2233720368547758e+18 9.2233720368547758e+18}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_interleaved [safe] make.int64.dup.info
+  R2025b: int64 [1 2] [-9223372036854775808 9223372036854775807]
+  JGraph: double [1 2] [-9.2233720368547758e+18 9.2233720368547758e+18]
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_interleaved [safe] make.uint64
+  R2025b: uint64(15) [1x1] n=1 es=8 is=numeric,scalar,uint64 {18446744073709551615}
+  JGraph: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1.8446744073709552e+19}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_interleaved [safe] make.uint64.info
+  R2025b: uint64 [1 1] 18446744073709551615
+  JGraph: double [1 1] 1.8446744073709552e+19
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_interleaved [safe] make.uint64.echo
+  R2025b: uint64(15) [1x1] n=1 es=8 is=numeric,scalar,uint64 {18446744073709551615}
+  JGraph: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1.8446744073709552e+19}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_interleaved [safe] make.uint64.echo.info
+  R2025b: uint64 [1 1] 18446744073709551615
+  JGraph: double [1 1] 1.8446744073709552e+19
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_interleaved [safe] make.uint64.dup
+  R2025b: uint64(15) [1x1] n=1 es=8 is=numeric,scalar,uint64 {18446744073709551615}
+  JGraph: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {1.8446744073709552e+19}
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_interleaved [safe] make.uint64.dup.info
+  R2025b: uint64 [1 1] 18446744073709551615
+  JGraph: double [1 1] 1.8446744073709552e+19
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k10_feval_interleaved [safe] make.complexint
+  R2025b: int16(10) [1x2] n=2 es=4 is=numeric,complex,int16 {(1,2) (3,0)}
+  JGraph: (call failed)  [after ERR<<int16 expects a number or numeric array, but got a complex.\n\nError in k10make (line 26)\n\n>>]
+  recorded: JGraph keeps no complex integer arrays
+
+k10_feval_interleaved [safe] make.complexint.info
+  R2025b: int16 [1 2] complex [1+2i 3]
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k10_feval_interleaved [safe] make.complexint.echo
+  R2025b: int16(10) [1x2] n=2 es=4 is=numeric,complex,int16 {(1,2) (3,0)}
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k10_feval_interleaved [safe] make.complexint.echo.info
+  R2025b: int16 [1 2] complex [1+2i 3]
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k10_feval_interleaved [safe] make.complexint.dup
+  R2025b: int16(10) [1x2] n=2 es=4 is=numeric,complex,int16 {(1,2) (3,0)}
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k10_feval_interleaved [safe] make.complexint.dup.info
+  R2025b: int16 [1 2] complex [1+2i 3]
+  JGraph: (missing)
+  recorded: JGraph keeps no complex integer arrays
+
+k10_feval_interleaved [safe] make.sparsecomplex
+  R2025b: double(6) [2x2] n=4 es=16 is=numeric,sparse,complex,double nzmax=2 jc=[0 2 2] ir=[0 1] {(1,1) (2,0)}
+  JGraph: (call failed)  [after ERR<<sparse expects an array of numbers, but element 0 was a complex number \x97 take abs(), real(), or imag() first.\n\nError in k10make (line 47)\n\n>>]
+  recorded: JGraph has no complex sparse arrays
+
+k10_feval_interleaved [safe] make.sparsecomplex.info
+  R2025b: double [2 2] complex sparse [1+1i 2 0 0]
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k10_feval_interleaved [safe] make.sparsecomplex.echo
+  R2025b: double(6) [2x2] n=4 es=16 is=numeric,sparse,complex,double nzmax=2 jc=[0 2 2] ir=[0 1] {(1,1) (2,0)}
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k10_feval_interleaved [safe] make.sparsecomplex.echo.info
+  R2025b: double [2 2] complex sparse [1+1i 2 0 0]
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k10_feval_interleaved [safe] make.sparsecomplex.dup
+  R2025b: double(6) [2x2] n=4 es=16 is=numeric,sparse,complex,double nzmax=2 jc=[0 2 2] ir=[0 1] {(1,1) (2,0)}
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k10_feval_interleaved [safe] make.sparsecomplex.dup.info
+  R2025b: double [2 2] complex sparse [1+1i 2 0 0]
+  JGraph: (missing)
+  recorded: JGraph has no complex sparse arrays
+
+k10_feval_interleaved [safe] make.sparselogical
+  R2025b: logical(3) [2x2] n=4 es=1 is=logical,sparse nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  JGraph: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k10_feval_interleaved [safe] make.sparselogical.info
+  R2025b: logical [2 2] sparse [true false false true]
+  JGraph: double [2 2] sparse [1 0 0 1]
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k10_feval_interleaved [safe] make.sparselogical.echo
+  R2025b: logical(3) [2x2] n=4 es=1 is=logical,sparse nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  JGraph: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k10_feval_interleaved [safe] make.sparselogical.echo.info
+  R2025b: logical [2 2] sparse [true false false true]
+  JGraph: double [2 2] sparse [1 0 0 1]
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k10_feval_interleaved [safe] make.sparselogical.dup
+  R2025b: logical(3) [2x2] n=4 es=1 is=logical,sparse nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  JGraph: double(6) [2x2] n=4 es=8 is=numeric,sparse,double nzmax=2 jc=[0 1 2] ir=[0 1] {1 1}
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k10_feval_interleaved [safe] make.sparselogical.dup.info
+  R2025b: logical [2 2] sparse [true false false true]
+  JGraph: double [2 2] sparse [1 0 0 1]
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k10_feval_interleaved [safe] make.map.info
+  R2025b: containers.Map [2 1]
+  JGraph: containers.Map [1 1]
+  recorded: size of a containers.Map is [1 1] in JGraph, [Count 1] in R2025b (open item 200)
+
+k10_feval_interleaved [safe] make.map.echo.info
+  R2025b: containers.Map [2 1]
+  JGraph: containers.Map [1 1]
+  recorded: size of a containers.Map is [1 1] in JGraph, [Count 1] in R2025b (open item 200)
+
+k10_feval_interleaved [safe] make.map.dup.info
+  R2025b: containers.Map [2 1]
+  JGraph: containers.Map [1 1]
+  recorded: size of a containers.Map is [1 1] in JGraph, [Count 1] in R2025b (open item 200)
+
+k10_feval_interleaved [safe] make.structstring
+  R2025b: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=string(48) [1x1] n=1 es=0 is=scalar,opaque; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  JGraph: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=char(4) [1x4] n=4 es=2 is=char 'text'; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k10_feval_interleaved [safe] make.structstring.info
+  R2025b: struct [1 1] <s,f> {s=string [1 1] "text"; f=function_handle [1 1] cos}
+  JGraph: struct [1 1] <s,f> {s=char [1 4] [116 101 120 116]; f=function_handle [1 1] cos}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k10_feval_interleaved [safe] make.structstring.echo
+  R2025b: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=string(48) [1x1] n=1 es=0 is=scalar,opaque; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  JGraph: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=char(4) [1x4] n=4 es=2 is=char 'text'; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k10_feval_interleaved [safe] make.structstring.echo.info
+  R2025b: struct [1 1] <s,f> {s=string [1 1] "text"; f=function_handle [1 1] cos}
+  JGraph: struct [1 1] <s,f> {s=char [1 4] [116 101 120 116]; f=function_handle [1 1] cos}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k10_feval_interleaved [safe] make.structstring.dup
+  R2025b: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=string(48) [1x1] n=1 es=0 is=scalar,opaque; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  JGraph: struct(2) [1x1] n=1 es=8 is=struct,scalar <s,f> {s=char(4) [1x4] n=4 es=2 is=char 'text'; f=function_handle(48) [1x1] n=1 es=0 is=scalar,opaque}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k10_feval_interleaved [safe] make.structstring.dup.info
+  R2025b: struct [1 1] <s,f> {s=string [1 1] "text"; f=function_handle [1 1] cos}
+  JGraph: struct [1 1] <s,f> {s=char [1 4] [116 101 120 116]; f=function_handle [1 1] cos}
+  recorded: struct('s', "text") keeps a char, not the string, in JGraph (open item 201)
+
+k10_feval_interleaved [safe] object.isclass.k10obj
+  R2025b: 0
+  JGraph: 1
+  recorded: mxIsClass answers true for an object's own class; R2025b's answers false (ADR 0266)
+
+k10_feval_interleaved [safe] value.dup.set.original
+  R2025b: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {10}
+  JGraph: double(6) [1x1] n=1 es=8 is=numeric,scalar,double {9}
+  recorded: mxDuplicateArray of a value object is a copy; R2025b's shares the original (ADR 0266)
+
+k10_feval_interleaved [risky 1]
+  R2025b: crashed (EXIT	-1073741819 (0xC0000005))
+  JGraph: initialize: 1; initialize.again: 1; quiet.ok: 1; model: interleaved; risky.nullinput.ok: 0  [after risky 1 | ERR<<Error using k10info\nInput argument 1 is NULL; pass an mxArray, an empty one for [].\n\n>>]; risky.nullinput.out: NULL; (end):   [after risky 1: returned | done]
+  recorded: R2025b's runtime ends the process here; JGraph's refuses or answers NULL (ADR 0266)
+
+k10_feval_interleaved [risky 4]
+  R2025b: crashed (EXIT	-1073741819 (0xC0000005))
+  JGraph: initialize: 1; initialize.again: 1; quiet.ok: 1; model: interleaved; risky.mlf.nullinput.ok: 0  [after risky 4 | ERR<<Error using k10addtwo\nInput argument 1 is NULL; pass an mxArray, an empty one for [].\n\n>>]; risky.mlf.nullinput.out: NULL; (end):   [after risky 4: returned | done]
+  recorded: R2025b's runtime ends the process here; JGraph's refuses or answers NULL (ADR 0266)
+
+k10_feval_interleaved [risky 5] risky.negative.nlhs.ok
+  R2025b: 0  [after risky 5 | ERR<<Caught "std::exception" Exception message is:\nvector too long\n>>]
+  JGraph: 0  [after risky 5 | ERR<<Error using k10echo\nThe number of outputs asked for, -1, cannot be negative.\n\n>>]
+  recorded: a negative output count is refused in JGraph's words; R2025b's reports a C++ 'vector too long' (ADR 0266)
+
+k10_feval_interleaved [risky 9]
+  R2025b: crashed (EXIT	-1073741819 (0xC0000005))
+  JGraph: initialize: 1; initialize.again: 1; quiet.ok: 1; model: interleaved; risky.getproperty.Nope: NULL  [after risky 9]; (end):   [after risky 9: returned | done]
+  recorded: R2025b's runtime ends the process here; JGraph's refuses or answers NULL (ADR 0266)
+
+k10_feval_interleaved [risky 10]
+  R2025b: crashed (EXIT	-1073741819 (0xC0000005))
+  JGraph: initialize: 1; initialize.again: 1; quiet.ok: 1; model: interleaved; risky.getproperty.Hidden: NULL  [after risky 10]; (end):   [after risky 10: returned | done]
+  recorded: R2025b's runtime ends the process here; JGraph's refuses or answers NULL (ADR 0266)
+
+k10_feval_interleaved [risky 11] risky.struct.invalidname.info
+  R2025b: (call failed)  [after risky 11 | ERR<<Invalid field name: '1bad'.\n\nError in k10info>describe (line 35)\n\nError in k10info (line 4)\n\n>>]
+  JGraph: struct [1 1] <1bad> {1bad=double [1 1] 1}  [after risky 11]
+  recorded: a field read by a name MATLAB could not write ('1bad') is refused by R2025b, read by JGraph (open item 202)
+
+k10_feval_interleaved [risky 12] risky.struct.duplicate.info
+  R2025b: struct [1 1] <a,a> {a=double [0 0] []; a=double [0 0] []}  [after risky 12]
+  JGraph: (call failed)  [after risky 12 | ERR<<Error using k10info\nA struct passed in has the field name 'a' twice; JGraph's structs, like MATLAB's, hold each name once.\n\n>>]
+  recorded: a struct with one field name twice is refused; R2025b passes it in (ADR 0266)
+
+k10_feval_interleaved [risky 12] risky.struct.echo.ok
+  R2025b: 1
+  JGraph: 0  [after ERR<<Error using k10echo\nA struct passed in has the field name 'a' twice; JGraph's structs, like MATLAB's, hold each name once.\n\n>>]
+  recorded: a struct with one field name twice is refused; R2025b passes it in (ADR 0266)
+
+k10_feval_interleaved [risky 12] risky.struct.echo
+  R2025b: struct(2) [1x1] n=1 es=8 is=struct,scalar <a,a> {a=NULL; a=double(6) [0x0] n=0 es=8 is=numeric,empty,double {data NULL}}
+  JGraph: NULL
+  recorded: a struct with one field name twice is refused; R2025b passes it in (ADR 0266)

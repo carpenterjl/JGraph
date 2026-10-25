@@ -449,9 +449,13 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
         if (arguments.Count > fixedCount && !variadic)
         {
             // R2025b's refusal for a function written in MATLAB (U7, measured: a function's is
-            // TooManyInputs and a class method's maxrhs, with one sentence between them).
+            // TooManyInputs and a class method's maxrhs, with one sentence between them), its report
+            // naming the function: "Error using k10addtwo" (stage K10, measured).
             throw _declaration.Dialect.MatlabFunctions
                 ? new JgsRuntimeException(line, column, Owner is null ? "MATLAB:TooManyInputs" : "MATLAB:maxrhs", "Too many input arguments.")
+                {
+                    UsingName = Name,
+                }
                 : new JgsRuntimeException(line, column,
                     $"Function '{Name}' expects {parameters.Count} argument(s) but got {arguments.Count}.");
         }
