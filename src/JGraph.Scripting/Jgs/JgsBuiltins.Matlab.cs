@@ -163,8 +163,9 @@ internal static partial class JgsBuiltins
             // Through the shared helper rather than a test of its own (M64). The two had drifted:
             // this one asked whether the elements were numbers, which a datetime's milliseconds are,
             // so isnumeric(datetime) answered true where class(datetime) said 'datetime'. That is the
-            // same disagreement islogical and class were made to share a helper over.
-            return JgsValue.Bool(IsNumericValue(args[0]));
+            // same disagreement islogical and class were made to share a helper over. A logical is not
+            // numeric (R2025b: isnumeric(true) is false; k14_mps_json's x_true), though arithmetic takes it.
+            return JgsValue.Bool(IsNumericValue(args[0]) && !IsLogicalValue(args[0]));
         });
 
         Define("ischar", (args, line, col) =>

@@ -22,6 +22,8 @@ internal static partial class JgsBuiltins
         "compiler.build.StandaloneApplicationOptions", "compiler.build.dotNETAssembly", "compiler.build.DotNETAssemblyOptions",
         "compiler.build.cSharedLibrary", "compiler.build.CSharedLibraryOptions", "compiler.build.cppSharedLibrary",
         "compiler.build.CppSharedLibraryOptions", "compiler.build.pythonPackage", "compiler.build.PythonPackageOptions",
+        "compiler.build.productionServerArchive", "compiler.build.ProductionServerArchiveOptions",
+        "mps.json.encode", "mps.json.decode", "mps.json.encoderequest", "mps.json.decoderesponse",
     ];
 
     /// <summary>The functions whose use makes mcc warn that secrets come from the machine the program runs on.</summary>
@@ -71,6 +73,12 @@ internal static partial class JgsBuiltins
         }
         catch (MccException refused)
         {
+            // A routes file's fault is a warning before the refusal (k14_build: mcc_routes_*).
+            if (refused.WarningFirst is { } first)
+            {
+                Warn(host, first.Identifier, first.Text);
+            }
+
             throw new JgsRuntimeException(line, col, refused.Identifier, refused.Message);
         }
 
@@ -90,6 +98,12 @@ internal static partial class JgsBuiltins
         foreach (string note in command.Notes)
         {
             host.WriteOut(note + "\n");
+        }
+
+        // What reading the line warned about: a discovery file without its schema version (k14_build: mcc_disc_noschema).
+        foreach ((string identifier, string text) in command.ParseWarnings)
+        {
+            Warn(host, identifier, text);
         }
 
         // mcc's warnings, through -w: shown unless it hides them (and MATLAB's own warning state
@@ -376,6 +390,11 @@ internal static partial class JgsBuiltins
         if (command.Target == MccTarget.PythonPackage)
         {
             return PythonPackageBuild(command, exported, main, report, folder, here, line, col, host);
+        }
+
+        if (command.Target == MccTarget.ProductionServerArchive)
+        {
+            return ProductionServerBuild(command, exported, main, report, folder, here, line, col, host);
         }
 
         if (command.Target == MccTarget.CLibrary)

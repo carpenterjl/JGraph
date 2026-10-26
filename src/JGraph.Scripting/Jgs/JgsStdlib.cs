@@ -358,22 +358,57 @@ internal static class JgsStdlib
         // what order the fields were added in, only that both sides name the same set.
         if (left.Type == JgsType.Struct && right.Type == JgsType.Struct)
         {
-            Dictionary<string, JgsValue> mine = left.AsStruct;
-            Dictionary<string, JgsValue> yours = right.AsStruct;
-            if (mine.Count != yours.Count)
+            bool FieldsEqual(Dictionary<string, JgsValue> mine, Dictionary<string, JgsValue> yours)
             {
-                return false;
-            }
-
-            foreach (KeyValuePair<string, JgsValue> field in mine)
-            {
-                if (!yours.TryGetValue(field.Key, out JgsValue? other) || !DeepEquals(field.Value, other, nanEqual))
+                if (mine.Count != yours.Count)
                 {
                     return false;
                 }
+
+                foreach (KeyValuePair<string, JgsValue> field in mine)
+                {
+                    if (!yours.TryGetValue(field.Key, out JgsValue? other) || !DeepEquals(field.Value, other, nanEqual))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
             }
 
-            return true;
+            // A struct array is equal to another of its shape, element by element; a scalar struct is a
+            // 1-by-1 one. struct() and struct([]) differ by shape (R2025b: isequal is false; k14_mps_json's e_sa_0x0).
+            if (left.IsStructArray || right.IsStructArray)
+            {
+                if (!left.Dims.SequenceEqual(right.Dims))
+                {
+                    return false;
+                }
+
+                Dictionary<string, JgsValue>[] these = left.IsStructArray ? left.AsStructArray.Elements : [left.AsStruct];
+                Dictionary<string, JgsValue>[] those = right.IsStructArray ? right.AsStructArray.Elements : [right.AsStruct];
+                if (these.Length != those.Length)
+                {
+                    return false;
+                }
+
+                if (these.Length == 0)
+                {
+                    return left.AsStructArray.FieldNames.ToHashSet(StringComparer.Ordinal).SetEquals(right.AsStructArray.FieldNames);
+                }
+
+                for (int i = 0; i < these.Length; i++)
+                {
+                    if (!FieldsEqual(these[i], those[i]))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return FieldsEqual(left.AsStruct, right.AsStruct);
         }
 
         if (left.Type == JgsType.Image && right.Type == JgsType.Image)

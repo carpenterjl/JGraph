@@ -314,6 +314,12 @@ compiler.build.dotNETAssembly	-1	0
 compiler.build.DotNETAssemblyOptions	1	8
 compiler.build.pythonPackage	-1	0
 compiler.build.PythonPackageOptions	1	8
+mps.json.encode	1	0
+mps.json.decode	ERR:MATLAB:narginout:notValidMfile	0
+mps.json.encoderequest	1	0
+mps.json.decoderesponse	1	0
+compiler.build.productionServerArchive	-1	0
+compiler.build.ProductionServerArchiveOptions	1	8
 compiler.build.standaloneApplication	-1	0
 compiler.build.StandaloneApplicationOptions	1	8
 compiler.build.standaloneWindowsApplication	-1	0

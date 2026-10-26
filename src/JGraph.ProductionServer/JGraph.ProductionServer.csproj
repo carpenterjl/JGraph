@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The JGraph Production Server, jgraph-mps (compiler and SDK plan, stage K14): the server that
+    deploys the archives in an instance's auto_deploy folder and answers MATLAB Production Server's
+    synchronous REST requests, POST /<archive>/<function> with JSON, over Kestrel (decision KO6).
+    Each request runs on one of a pool of worker processes, each a JGraph Runtime host (this same
+    program started with the word "worker"), so a function's hang or crash takes one worker and not
+    the server. Published into the JGraph Runtime's bin\win64 beside jgraph.exe.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>jgraph-mps</AssemblyName>
+    <RootNamespace>JGraph.ProductionServer</RootNamespace>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <Description>The JGraph Production Server: deploys archives built with mcc -W CTF and answers MATLAB Production Server's REST requests for their functions on the JGraph Runtime.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="JGraph.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Runtime\JGraph.Runtime.csproj" />
+  </ItemGroup>
+
+</Project>

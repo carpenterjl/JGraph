@@ -1,0 +1,36 @@
+r_ok	ok
+r_nocomponent	ok
+r_two	ok
+r_noversion	ok
+r_badversion	ok
+r_version_number	ok
+r_nomatch	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "r_nomatch.json" could not be parsed. Please fix errors and run again.
+r_nomatch.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "r_nomatch.json": Required property "match" not found. (at .pathmap[0].match)
+r_badregex	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "r_badregex.json" could not be parsed. Please fix errors and run again.
+r_badregex.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "r_badregex.json": "match" entry has invalid regular expression. (at .pathmap[0].match). reason: regex_error(error_brack): The expression contained mismatched [ and ]. (code=4).
+r_extra	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "r_extra.json" could not be parsed. Please fix errors and run again.
+r_extra.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "r_extra.json": Unknown key(s) detected: [ "extra" ]. Must be one of: [ "match", "webhandler" ]. (at .pathmap[0])
+r_extra_handler	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "r_extra_handler.json" could not be parsed. Please fix errors and run again.
+r_extra_handler.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "r_extra_handler.json": Unknown key(s) detected: [ "other" ]. Must be one of: [ "component", "function" ]. (at .pathmap[0])
+r_nosuchfn	ok
+r_match_number	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "r_match_number.json" could not be parsed. Please fix errors and run again.
+r_match_number.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "r_match_number.json": Required property "match" must be a String. (at .pathmap[0].match)
+r_function_number	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "r_function_number.json" could not be parsed. Please fix errors and run again.
+r_function_number.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "r_function_number.json": Required property "function" must be a String. (at .pathmap[0].function)
+r_handler_text	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "r_handler_text.json" could not be parsed. Please fix errors and run again.
+r_handler_text.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "r_handler_text.json": webhandler entry is not an Object. (at .pathmap[0])
+r_othercomponent	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "r_othercomponent.json" could not be parsed. Please fix errors and run again.
+r_othercomponent.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "r_othercomponent.json": Optional property "component" if present must be the same value as "k14r" . (at .pathmap[0])
+r_array	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "r_array.json" could not be parsed. Please fix errors and run again.
+r_array.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "r_array.json": The top-level JSON value must be an Object.
+r_empty	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "r_empty.json" could not be parsed. Please fix errors and run again.
+r_empty.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "r_empty.json": Required property "pathmap" not found. (at .pathmap)
+r_dup	ok
+api_ok	<W>\r\api_ok\k14r.ctf
+[Warning: While parsing routes file "<W>\r\src\r_ok.json":
+Optional property "component" if present must be the same value as "k14other" . (at .pathmap[0])] 
+[> In compiler.internal.build.builder/Generic/build (line 83)
+In compiler.build.productionServerArchive (line 119)
+In probe_k14_routes (line 62)] 
+api_other	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "<W>\r\src\r_ok.json" could not be parsed. Please fix errors and run again.
+api_other.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "<W>\r\src\r_ok.json": Optional property "component" if present must be the same value as "k14other" . (at .pathmap[0])

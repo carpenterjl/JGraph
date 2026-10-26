@@ -1,0 +1,24 @@
+{
+    "_schemaVersion": "1.1.0",
+    "k14add": {
+        "inputs": [
+            {"name": "a", "type": ["double", "size=1,1"], "purpose": "The first addend."},
+            {"name": "b", "type": ["double"], "purpose": "The second addend."}
+        ],
+        "outputs": [
+            {"name": "c", "type": ["double"], "purpose": "Their sum."}
+        ],
+        "purpose": "Add two values."
+    },
+    "k14multi": {
+        "inputs": [
+            {"name": "x", "type": [], "purpose": ""}
+        ],
+        "outputs": [
+            {"name": "a", "type": [], "purpose": ""},
+            {"name": "b", "type": [], "purpose": ""},
+            {"name": "c", "type": ["char"], "purpose": ""}
+        ],
+        "purpose": "Three outputs of three classes."
+    }
+}

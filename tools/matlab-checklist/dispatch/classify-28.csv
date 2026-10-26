@@ -1,0 +1,7 @@
+name,kind,method_classes
+mps.json.encode,mfile,
+mps.json.decode,other,
+mps.json.encoderequest,mfile,
+mps.json.decoderesponse,mfile,
+compiler.build.productionServerArchive,mfile,
+compiler.build.ProductionServerArchiveOptions,mfile,

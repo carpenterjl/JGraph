@@ -124,7 +124,7 @@ public sealed class MccSwitchesTests : IDisposable
         Assert.Equal(new DotNetWrapper("k7asm", "k7asm", "4.0", null), Parse("-W", "dotnet:k7asm", "k7_hello.m").DotNet);
         Assert.True(Parse("-W", "dotnet:k7asm,api=matlab-data", "k7_hello.m").DotNet!.DataApi);
         Assert.Equal("JGraph:mcc:targetOutOfScope", Refused("-W", "dotnet:k7asm,k7cls,5.0,Private,remote", "k7_hello.m").Identifier);
-        Assert.Equal("JGraph:mcc:targetNotBuilt", Refused("-W", "CTF:k7ctf", "-U", "k7_hello.m").Identifier);
+        Assert.Equal(MccTarget.ProductionServerArchive, Parse("-W", "CTF:k7ctf", "-U", "k7_hello.m").Target); // stage K14 (ADR 0270)
         Assert.Equal("JGraph:mcc:targetOutOfScope", Refused("-W", "java:k7pkg,k7cls", "k7_hello.m").Identifier);
         Assert.Equal("JGraph:mcc:targetOutOfScope", Refused("-W", "hadoop:k7hd", "k7_hello.m").Identifier);
 

@@ -7,6 +7,9 @@ public sealed class MccException(string identifier, string message) : Exception(
 {
     /// <summary>The MException identifier, <c>Compiler:compiler:COM_ERR_*</c> for R2025b's own.</summary>
     public string Identifier { get; } = identifier;
+
+    /// <summary>A warning mcc prints before this refusal, when it does: a routes file's fault comes as one (k14_build: mcc_routes_*).</summary>
+    public (string Identifier, string Text)? WarningFirst { get; init; }
 }
 
 /// <summary>What an <c>mcc</c> build makes.</summary>
@@ -29,6 +32,9 @@ public enum MccTarget
 
     /// <summary>A Python package: <c>-W python:</c> (stage K13).</summary>
     PythonPackage,
+
+    /// <summary>A Production Server archive: <c>-W CTF:</c> with <c>-U</c> (stage K14).</summary>
+    ProductionServerArchive,
 }
 
 /// <summary>Which interfaces <c>-W cpplib:name[,generic|legacy|all]</c> asks for (k12_build: mcc_*).</summary>
@@ -140,7 +146,6 @@ public sealed class MccCommandLine
         ["cpplib"] = ("a C++ shared library", "K12"),
         ["dotnet"] = ("a .NET assembly", "K8"),
         ["python"] = ("a Python package", "K13"),
-        ["CTF"] = ("a Production Server archive", "K14"),
         ["excel"] = ("an Excel add-in", "K17"),
         ["mpsxl"] = ("a Production Server archive for Excel", "K17"),
         ["java"] = ("Java packages", null),
@@ -261,6 +266,27 @@ public sealed class MccCommandLine
     /// <summary>The version <c>-W cpplib:name,generic,version=v</c> or <c>-W python:name,version=v</c> gives, which R2025b warns it ignores; else null.</summary>
     public string? IgnoredVersion { get; private set; }
 
+    /// <summary>The discovery file <c>-W CTF:name,DISCOVERY:file</c> names, read and checked (stage K14), or null.</summary>
+    public FunctionSignatures? Signatures { get; private set; }
+
+    /// <summary>The discovery file's path, or null.</summary>
+    public string? FunctionSignaturesFile { get; private set; }
+
+    /// <summary>The discovery file as the command line named it, for R2025b's messages about it.</summary>
+    public string? FunctionSignaturesGiven => _discoveryGiven;
+
+    /// <summary>The routes file <c>-W CTF:name,ROUTES:file</c> names, read and checked (stage K14), or null.</summary>
+    public RoutesFile? Routes { get; private set; }
+
+    /// <summary>The routes file's path, or null.</summary>
+    public string? RoutesFilePath { get; private set; }
+
+    /// <summary>The warnings reading the command line raised, which mcc prints before it builds (k14_build: mcc_disc_noschema).</summary>
+    public List<(string Identifier, string Text)> ParseWarnings { get; } = [];
+
+    private string? _discoveryGiven;
+    private string? _routesGiven;
+
     /// <summary>A library's <c>class{Name:file,file}</c> arguments, in order: each class and its files.</summary>
     public List<(string Name, List<string> Files)> Classes { get; } = [];
 
@@ -309,6 +335,7 @@ public sealed class MccCommandLine
         string? link = null;
         bool codegenSwitch = false;
         bool mpsSwitch = false;
+        bool mpsAfterWrapper = false;
         bool separateSwitch = false;
 
         for (int i = 0; i < words.Count; i++)
@@ -470,6 +497,12 @@ public sealed class MccCommandLine
 
                         libraryName = line.ComponentName;
                     }
+                    else if (wrapperKind == "CTF")
+                    {
+                        // -o before -W CTF: gives way to the archive's name; after it: refused (k14_build: mcc_ofirst, mcc_o).
+                        libraryName = line.ComponentName;
+                        line.OutputName = null;
+                    }
 
                     break;
                 case "-T":
@@ -498,7 +531,10 @@ public sealed class MccCommandLine
                     separateSwitch = true;
                     break;
                 case "-U":
+                    // -U after -m, -e or another -W is refused (k14_build: mcc_u_m, mcc_u_lib); before one, the
+                    // later wrapper is the target and the archive is separate (k7_switches: U_m, U_e).
                     mpsSwitch = true;
+                    mpsAfterWrapper = wrapperKind is not (null or "CTF");
                     break;
                 case "-r":
                     line.IconFile = value;
@@ -578,6 +614,20 @@ public sealed class MccCommandLine
             && !File.Exists(Path.IsPathRooted(help) ? help : Path.Combine(currentFolder, help)))
         {
             throw Refuse("COM_ERR_HELP_FILE_NOT_EXIST", $"The help file \n  '{help}'\ndoes not exist.");
+        }
+
+        // -U alone builds an archive R2025b names "" (k14_build: mcc_u_alone, a file called .ctf); JGraph
+        // names it after the first file, as -m names a program (ADR 0270).
+        if (wrapperKind is null && mpsSwitch && line.Files.Count > 0)
+        {
+            wrapperKind = "CTF";
+            wrapperParts = [];
+            line.ComponentName = Path.GetFileNameWithoutExtension(line.Files[0]);
+        }
+
+        if (mpsAfterWrapper)
+        {
+            throw Refuse("COM_ERR_INVALID_SWITCH_LIB_OR_STANDALONE", "Error: The option -U is invalid in library or standalone application mode (specify -? for help).");
         }
 
         if (wrapperKind is null)
@@ -665,6 +715,14 @@ public sealed class MccCommandLine
                 separateSwitch = false;
             }
         }
+        else if (wrapperKind == "CTF")
+        {
+            // -T, -C and -g change nothing an archive is made of (k14_build: mcc_codegen, mcc_separate,
+            // mcc_debug; R2025b's -T link:exe builds a program beside it and its -T link:lib fails, ADR 0270).
+            line.ProductionServerTarget(currentFolder, mpsSwitch);
+            line.IgnoredSwitches.RemoveAll(static s => s == "g");
+            link = null;
+        }
         else if (!standalone)
         {
             OtherTarget(wrapperKind, wrapperParts, mpsSwitch, separateSwitch);
@@ -749,6 +807,52 @@ public sealed class MccCommandLine
             }
 
             return (Target == MccTarget.Console ? "main" : "WinMain", parts);
+        }
+
+        if (kind.Equals("CTF", StringComparison.OrdinalIgnoreCase))
+        {
+            // CTF:name[,DISCOVERY:file][,ROUTES:file] (stage K14; k14_build: mcc_*): the name letters, digits
+            // and underscores, any case for the words; the files are looked for once the line is read.
+            if (colon < 0 || parts[0].Length == 0 || !Regex.IsMatch(parts[0], "^[A-Za-z0-9_]+$"))
+            {
+                throw Refuse("COM_ERR_BAD_WRAPPER_SYNTAX", $"The -W option (\"{value}\") is not correctly formed.");
+            }
+
+            ComponentName = parts[0];
+            _discoveryGiven = null;
+            _routesGiven = null;
+            foreach (string part in parts.Skip(1))
+            {
+                int at = part.IndexOf(':', StringComparison.Ordinal);
+                string word = at < 0 ? part : part[..at];
+                string file = at < 0 ? "" : part[(at + 1)..];
+                if (word.Equals("DISCOVERY", StringComparison.OrdinalIgnoreCase) && at >= 0)
+                {
+                    if (_discoveryGiven is not null)
+                    {
+                        throw Refuse("COM_ERR_MPS_MULTIPLE_DISCOVERY", "The MATLAB Production Server discovery option has been specified multiple times.");
+                    }
+
+                    _discoveryGiven = file.Length > 0 ? file
+                        : throw Refuse("COM_ERR_MPS_DISCOVERY_FILE_NOT_SPECIFIED", "The MATLAB Production Server discovery file is not specified after the \"DISCOVERY:\" option.");
+                }
+                else if (word.Equals("ROUTES", StringComparison.OrdinalIgnoreCase) && at >= 0)
+                {
+                    // A second ROUTES: is not refused as a second DISCOVERY: is (mcc_routes_twice): the first one is read.
+                    if (file.Length == 0)
+                    {
+                        throw Refuse("COM_ERR_MPS_ROUTES_FILE_NOT_SPECIFIED", "The MATLAB Production Server routes file is not specified after the \"ROUTES:\" option.");
+                    }
+
+                    _routesGiven ??= file;
+                }
+                else
+                {
+                    throw Refuse("COM_ERR_BAD_WRAPPER_SYNTAX", $"The -W option (\"{part}\") is not correctly formed.");
+                }
+            }
+
+            return ("CTF", parts);
         }
 
         if (!OtherTargets.ContainsKey(kind))
@@ -941,14 +1045,77 @@ public sealed class MccCommandLine
         Target = MccTarget.DotNet;
     }
 
-    /// <summary>A library or server target, once the command line is read: R2025b's last checks, then JGraph's refusal.</summary>
-    private static void OtherTarget(string kind, string[] parts, bool mpsSwitch, bool separateSwitch)
+    /// <summary>
+    /// <c>-W CTF:</c>'s checks once the command line is read (stage K14; k14_build: mcc_nou, mcc_runtime,
+    /// mcc_disc_*, mcc_routes_*): <c>-U</c> required, <c>-R</c> refused, the discovery file found and read
+    /// in R2025b's words, the routes file found and read with its fault as a warning before the refusal.
+    /// </summary>
+    private void ProductionServerTarget(string? currentFolder, bool mpsSwitch)
     {
-        if (kind == "CTF" && !mpsSwitch)
+        if (!mpsSwitch)
         {
             throw Refuse("COM_ERROR_MISSING_U_WITH_W_CTF", "The \"-U\" option must be used when \"-W CTF:\" is specified.");
         }
 
+        if (RuntimeOptions.Count > 0)
+        {
+            throw Refuse("COM_ERR_INVALID_SWITCH_LIB_OR_COMP", "Error: The option -R is invalid in library or component mode (specify -? for help).");
+        }
+
+        Target = MccTarget.ProductionServerArchive;
+        string Within(string path) => currentFolder is null || Path.IsPathRooted(path) ? path : Path.Combine(currentFolder, path);
+        if (_discoveryGiven is { } discovery)
+        {
+            string full = Within(discovery);
+            if (!File.Exists(full))
+            {
+                throw Refuse("COM_ERR_MPS_DISCOVERY_FILE_NOT_FOUND", $"Could not find the MATLAB Production Server discovery file '{discovery}'.");
+            }
+
+            try
+            {
+                Signatures = FunctionSignatures.Read(full);
+            }
+            catch (SignatureException fault)
+            {
+                throw Refuse("COM_ERROR_SIGNATURE_PARSE", $"Error: Function signature file \"{discovery}\" could not be parsed. {fault.Message}");
+            }
+
+            foreach (string warning in Signatures.Warnings)
+            {
+                ParseWarnings.Add((Prefix + "COM_MESG_SIGNATURE_PARSE", $"While parsing function signature file \"{discovery}\": {warning}"));
+            }
+
+            FunctionSignaturesFile = Path.GetFullPath(full);
+        }
+
+        if (_routesGiven is { } routes)
+        {
+            string full = Within(routes);
+            if (!File.Exists(full))
+            {
+                throw Refuse("COM_ERR_MPS_ROUTES_FILE_NOT_FOUND", $"Could not find the MATLAB Production Server routes file '{routes}'.");
+            }
+
+            try
+            {
+                Routes = RoutesFile.Read(full, ComponentName!);
+            }
+            catch (RoutesException fault)
+            {
+                throw new MccException(Prefix + "COM_ERROR_ROUTES_PARSE", $"Error: Routes file \"{routes}\" could not be parsed. Please fix errors and run again.")
+                {
+                    WarningFirst = (Prefix + "COM_MESG_ROUTES_PARSE", $"While parsing routes file \"{routes}\": {fault.Message}"),
+                };
+            }
+
+            RoutesFilePath = Path.GetFullPath(full);
+        }
+    }
+
+    /// <summary>A library or server target, once the command line is read: R2025b's last checks, then JGraph's refusal.</summary>
+    private static void OtherTarget(string kind, string[] parts, bool mpsSwitch, bool separateSwitch)
+    {
         if (kind == "spark" && !separateSwitch)
         {
             throw Refuse("COM_ERR_SPARK_MISSING_OPTION", "Error: Missing \"-C\" option to compile Spark component \n");

@@ -56,7 +56,27 @@ public enum CtfProtection
 /// <param name="File">Its file, relative to the archive's file root, with forward slashes.</param>
 /// <param name="Inputs">Its input parameters, <c>varargin</c> included, in order.</param>
 /// <param name="Outputs">Its outputs, <c>varargout</c> included, in order.</param>
-public sealed record CtfFunction(string Name, string File, IReadOnlyList<string> Inputs, IReadOnlyList<string> Outputs);
+public sealed record CtfFunction(string Name, string File, IReadOnlyList<string> Inputs, IReadOnlyList<string> Outputs)
+{
+    /// <summary>The function's help text from a Production Server discovery file, or null (stage K14; R2025b's <c>help</c> element).</summary>
+    public string? Help { get; init; }
+
+    /// <summary>The function's typed signature from a discovery file, or null (R2025b's <c>signature</c> element).</summary>
+    public CtfSignature? Signature { get; init; }
+}
+
+/// <summary>A parameter as a Production Server discovery file describes it (stage K14).</summary>
+/// <param name="Name">The parameter's name.</param>
+/// <param name="Type">Its MATLAB class, <c>struct:&lt;typedef&gt;</c> for a described struct, or empty when the file gives none.</param>
+/// <param name="Size">Its size as <c>[1,1]</c> or <c>[1,:]</c>, or empty.</param>
+/// <param name="Help">Its purpose, or empty.</param>
+public sealed record CtfSignatureParameter(string Name, string Type, string Size, string Help);
+
+/// <summary>A function's typed inputs and outputs from a discovery file (stage K14).</summary>
+public sealed record CtfSignature(IReadOnlyList<CtfSignatureParameter> Inputs, IReadOnlyList<CtfSignatureParameter> Outputs);
+
+/// <summary>A struct a discovery file describes under <c>_typedefs</c> (stage K14), kept in the manifest for the discovery endpoint.</summary>
+public sealed record CtfTypedef(string Name, string Purpose, IReadOnlyList<CtfSignatureParameter> Fields);
 
 /// <summary>A file in the archive: its place under the file root, its length and its SHA-256.</summary>
 /// <param name="Path">Relative to the file root (<c>fsroot/</c> in the package), with forward slashes.</param>
@@ -145,6 +165,12 @@ public sealed class CtfManifest
     /// <summary>How the code is protected.</summary>
     public CtfProtection Protection { get; init; } = CtfProtection.Open;
 
+    /// <summary>The structs a Production Server discovery file describes (stage K14), for the discovery endpoint.</summary>
+    public IReadOnlyList<CtfTypedef> Typedefs { get; init; } = [];
+
+    private static XElement SignatureParam(CtfSignatureParameter p) =>
+        new("param", new XAttribute("help", p.Help), new XAttribute("name", p.Name), new XAttribute("size", p.Size), new XAttribute("type", p.Type));
+
     /// <summary>A fresh uuid for <paramref name="componentName"/>: the name, an underscore and a GUID, as R2025b makes them.</summary>
     public static string NewUuid(string componentName) => componentName + "_" + Guid.NewGuid().ToString("D");
 
@@ -186,12 +212,34 @@ public sealed class CtfManifest
 
         foreach (CtfFunction function in PublicFunctions)
         {
-            root.Add(new XElement("function",
+            var element = new XElement("function",
                 new XAttribute("id", FunctionId(function.Name)),
                 new XAttribute("file", function.File),
                 new XElement("name", function.Name),
                 new XElement("inputs", function.Inputs.Select(p => new XElement("param", new XAttribute("name", p)))),
-                new XElement("outputs", function.Outputs.Select(p => new XElement("param", new XAttribute("name", p))))));
+                new XElement("outputs", function.Outputs.Select(p => new XElement("param", new XAttribute("name", p)))));
+            // A Production Server discovery file's help and typed signature, as R2025b's manifest keeps them (stage K14; k14_out: mcc_discovery).
+            if (function.Help is { } help)
+            {
+                element.Add(new XElement("help", help));
+            }
+
+            if (function.Signature is { } signature)
+            {
+                element.Add(new XElement("signature",
+                    new XElement("inputs", signature.Inputs.Select(SignatureParam)),
+                    new XElement("outputs", signature.Outputs.Select(SignatureParam))));
+            }
+
+            root.Add(element);
+        }
+
+        foreach (CtfTypedef typedef in Typedefs)
+        {
+            root.Add(new XElement("typedef",
+                new XAttribute("name", typedef.Name),
+                new XAttribute("purpose", typedef.Purpose),
+                typedef.Fields.Select(SignatureParam)));
         }
 
         foreach (CtfFileEntry file in Files)
@@ -242,11 +290,23 @@ public sealed class CtfManifest
             element.Attribute(name)?.Value ?? throw new InvalidDataException($"The manifest's {element.Name.LocalName} has no {name}.");
 
         var directories = root.Elements("directory").ToDictionary(d => Required(d, "id"), d => Required(d, "path"), StringComparer.Ordinal);
+        CtfSignatureParameter ReadParam(XElement p) =>
+            new(Required(p, "name"), p.Attribute("type")?.Value ?? "", p.Attribute("size")?.Value ?? "", p.Attribute("help")?.Value ?? "");
         var functions = root.Elements("function").Select(f => (Id: Required(f, "id"), Function: new CtfFunction(
             f.Element("name")?.Value ?? throw new InvalidDataException("A manifest function has no name."),
             Required(f, "file"),
             [.. (f.Element("inputs")?.Elements("param") ?? []).Select(p => Required(p, "name"))],
-            [.. (f.Element("outputs")?.Elements("param") ?? []).Select(p => Required(p, "name"))]))).ToList();
+            [.. (f.Element("outputs")?.Elements("param") ?? []).Select(p => Required(p, "name"))])
+        {
+            Help = f.Element("help")?.Value,
+            Signature = f.Element("signature") is { } s
+                ? new CtfSignature(
+                    [.. (s.Element("inputs")?.Elements("param") ?? []).Select(ReadParam)],
+                    [.. (s.Element("outputs")?.Elements("param") ?? []).Select(ReadParam)])
+                : null,
+        })).ToList();
+        var typedefs = root.Elements("typedef").Select(t => new CtfTypedef(
+            Required(t, "name"), t.Attribute("purpose")?.Value ?? "", [.. t.Elements("param").Select(ReadParam)])).ToList();
         var files = root.Elements("file").Select(f => new CtfFileEntry(
             Required(f, "path"),
             long.Parse(Required(f, "length"), NumberStyles.None, CultureInfo.InvariantCulture),
@@ -278,6 +338,7 @@ public sealed class CtfManifest
             WarningState = [.. (configuration.Element("warning-state")?.Elements("option") ?? []).Select(o => o.Value)],
             JGraphVersion = Required(root, "jgraph-version"),
             Protection = ParseProtection(root.Attribute("protection")?.Value ?? "open"),
+            Typedefs = typedefs,
         };
     }
 

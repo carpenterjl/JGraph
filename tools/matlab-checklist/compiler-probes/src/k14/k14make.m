@@ -1,0 +1,61 @@
+function v = k14make(kind)
+%K14MAKE Return a value of the kind asked for, for the server to encode.
+switch kind
+    case 'double', v = 2.5;
+    case 'negzero', v = -0;
+    case 'row', v = [1 2 3];
+    case 'column', v = [1; 2; 3];
+    case 'matrix', v = [1 2 3; 4 5 6];
+    case 'nd', v = reshape(1:24, 2, 3, 4);
+    case 'empty', v = [];
+    case 'empty03', v = zeros(0, 3);
+    case 'single', v = single(1.5);
+    case 'int8', v = int8(-5);
+    case 'int8s', v = int8([-5 0 127]);
+    case 'uint8', v = uint8(200);
+    case 'int32', v = int32(-100000);
+    case 'int64', v = int64(-9007199254740993);
+    case 'uint64', v = uint64(18446744073709551615);
+    case 'complex', v = 1-1i;
+    case 'complexrow', v = [1+2i, 3-4i];
+    case 'complexsingle', v = single(2+3i);
+    case 'logical', v = true;
+    case 'logicals', v = [true false true];
+    case 'char', v = 'hello';
+    case 'charmatrix', v = ['abc'; 'def'];
+    case 'emptychar', v = '';
+    case 'unicode', v = char([955 8364 65]);
+    case 'quote', v = 'a"b\c/d';
+    case 'controls', v = sprintf('a\tb\nc');
+    case 'string', v = "alpha";
+    case 'strings', v = ["alpha", "beta"];
+    case 'stringmissing', v = string(missing);
+    case 'cell', v = {1, 'two', [3 4; 5 6]};
+    case 'cellcol', v = {1; 'two'};
+    case 'nestedcell', v = {{1}, {}};
+    case 'emptycell', v = {};
+    case 'struct', v = struct('name', 'probe', 'value', [1 2 3]);
+    case 'structnested', v = struct('inner', struct('x', 1), 'list', {{1, 'a'}});
+    case 'structarray', v = struct('a', {1, 2, 3});
+    case 'emptystruct', v = struct([]);
+    case 'nofields', v = struct();
+    case 'sparse', v = sparse([1 3], [1 2], [5 6], 3, 3);
+    case 'sparselogical', v = sparse([true false; false true]);
+    case 'inf', v = [Inf -Inf NaN];
+    case 'nan', v = NaN;
+    case 'pi', v = pi;
+    case 'big', v = 1e21;
+    case 'enum', v = matlab.lang.OnOffSwitchState.on;
+    case 'enums', v = [matlab.lang.OnOffSwitchState.on matlab.lang.OnOffSwitchState.off];
+    case 'handle', v = @sin;
+    case 'datetime', v = datetime(2026, 10, 24);
+    case 'datetimeutc', v = datetime(2026, 10, 24, 12, 30, 0, 'TimeZone', 'UTC');
+    case 'table', v = table([1; 2], ["a"; "b"]);
+    case 'map', v = containers.Map({'k'}, {1});
+    case 'categorical', v = categorical({'lo', 'hi'});
+    case 'duration', v = seconds(90);
+    case 'dict', v = dictionary(["a" "b"], [1 2]);
+    case 'large', v = 1:100000;
+    otherwise, error('k14:make', 'No such kind: %s.', kind);
+end
+end

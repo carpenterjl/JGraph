@@ -456,13 +456,11 @@ internal static partial class JgsBuiltins
 
         double[] res = realScalar ? [real.AsNumber] : ToDoubles(name, real, line, col);
         double[] ims = imaginaryScalar ? [imaginary.AsNumber] : ToDoubles(name, imaginary, line, col);
-        int length = Math.Max(res.Length, ims.Length);
-        if (res.Length != length && res.Length != 1)
-        {
-            throw new JgsRuntimeException(line, col, $"{name} cannot pair {res.Length} real parts with {ims.Length} imaginary parts.");
-        }
-
-        if (ims.Length != length && ims.Length != 1)
+        // A scalar spreads over the other side's shape, an empty one included: complex(zeros(0, 2)) is
+        // 0-by-2 (k14_mps_json: c_empty); two arrays must be of one size.
+        JgsValue shape = realScalar ? imaginary : real;
+        int length = realScalar ? ims.Length : res.Length;
+        if (!realScalar && !imaginaryScalar && res.Length != ims.Length)
         {
             throw new JgsRuntimeException(line, col, $"{name} cannot pair {res.Length} real parts with {ims.Length} imaginary parts.");
         }
@@ -470,10 +468,10 @@ internal static partial class JgsBuiltins
         var result = new JgsValue[length];
         for (int i = 0; i < length; i++)
         {
-            result[i] = JgsValue.ComplexNum(new Complex(res[res.Length == 1 ? 0 : i], ims[ims.Length == 1 ? 0 : i]));
+            result[i] = JgsValue.ComplexNum(new Complex(res[realScalar ? 0 : i], ims[imaginaryScalar ? 0 : i]));
         }
 
-        return JgsValue.Array(result);
+        return length == 1 && !shape.IsNd && shape.Rows == 1 && shape.Cols == 1 ? result[0] : JgsMatrix.FromElementsDims(result, shape.Dims);
     }
 
     // --- Integer arithmetic -----------------------------------------------------------------------

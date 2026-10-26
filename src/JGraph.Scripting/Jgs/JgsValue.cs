@@ -1710,12 +1710,11 @@ internal sealed class JgsValue
         };
     }
 
-    /// <summary>One line of a property's value, shortened when it is longer than a display wants.</summary>
-    private static string Truncate(string text)
-    {
-        string line = text.ReplaceLineEndings(" ");
-        return line.Length <= 60 ? line : string.Concat(line.AsSpan(0, 57), "...");
-    }
+    /// <summary>
+    /// One line of a property's value. R2025b shows the whole text (k14_production_server_archive's
+    /// display row: a 1-by-1 cell holding an 85-character path, whole), so nothing is cut here.
+    /// </summary>
+    private static string Truncate(string text) => text.ReplaceLineEndings(" ");
 
     /// <summary>Formats a sparse matrix the way MATLAB does: one <c>(r,c)  v</c> line per nonzero.</summary>
     private static string FormatSparse(JGraph.Numerics.Sparse.CscMatrix matrix)

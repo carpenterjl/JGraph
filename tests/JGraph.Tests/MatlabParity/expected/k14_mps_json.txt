@@ -1,0 +1,1098 @@
+CHK|n_01|0|exact
+CHK|n_02|-0|exact
+CHK|n_03|1|exact
+CHK|n_04|-1|exact
+CHK|n_05|5|exact
+CHK|n_06|10|exact
+CHK|n_07|100|exact
+CHK|n_08|1000|exact
+CHK|n_09|12345|exact
+CHK|n_10|99999|exact
+CHK|n_11|100000|exact
+CHK|n_12|123456|exact
+CHK|n_13|999999|exact
+CHK|n_14|1.0E+6|exact
+CHK|n_15|1.234567E+6|exact
+CHK|n_16|9.999999E+6|exact
+CHK|n_17|1.0E+7|exact
+CHK|n_18|1.2345678E+7|exact
+CHK|n_19|1.23456789E+8|exact
+CHK|n_20|1.0E+9|exact
+CHK|n_21|1.0E+10|exact
+CHK|n_22|1.0E+15|exact
+CHK|n_23|9.007199254740992E+15|exact
+CHK|n_24|9.007199254740994E+15|exact
+CHK|n_25|1.0E+16|exact
+CHK|n_26|1.0E+17|exact
+CHK|n_27|1.0E+20|exact
+CHK|n_28|1.0E+21|exact
+CHK|n_29|1.0E+22|exact
+CHK|n_30|1.0E+23|exact
+CHK|n_31|1.0E+100|exact
+CHK|n_32|1.7976931348623157E+308|exact
+CHK|n_33|0.5|exact
+CHK|n_34|0.25|exact
+CHK|n_35|0.1|exact
+CHK|n_36|0.2|exact
+CHK|n_37|0.30000000000000004|exact
+CHK|n_38|0.33333333333333331|exact
+CHK|n_39|0.66666666666666663|exact
+CHK|n_40|0.1|exact
+CHK|n_41|0.01|exact
+CHK|n_42|0.001|exact
+CHK|n_43|0.0001|exact
+CHK|n_44|1E-5|exact
+CHK|n_45|1E-6|exact
+CHK|n_46|1E-7|exact
+CHK|n_47|1.5E-7|exact
+CHK|n_48|1E-10|exact
+CHK|n_49|1E-300|exact
+CHK|n_50|4.94065645841247E-324|exact
+CHK|n_51|2.2250738585072014E-308|exact
+CHK|n_52|123.456|exact
+CHK|n_53|1234.5678|exact
+CHK|n_54|123456.789|exact
+CHK|n_55|1.234567891E+6|exact
+CHK|n_56|0.000123456789|exact
+CHK|n_57|100.5|exact
+CHK|n_58|1.0000005E+6|exact
+CHK|n_59|3.14159|exact
+CHK|n_60|3.1415926535897931|exact
+CHK|n_61|2.7182818284590451|exact
+CHK|n_62|1.4142135623730951|exact
+CHK|n_63|-3.1415926535897931|exact
+CHK|n_64|100000.1|exact
+CHK|n_65|65536|exact
+CHK|n_66|0.14285714285714285|exact
+CHK|n_67|1E-15|exact
+CHK|n_68|0.30000000000000004|exact
+CHK|n_69|7.0000000000000009|exact
+CHK|n_70|1.2345678901234567|exact
+CHK|n_71|9.87654321E+15|exact
+CHK|n_72|2.5E-5|exact
+CHK|n_73|1.234E-5|exact
+CHK|n_74|-1.23456789E+8|exact
+CHK|n_75|-1E-7|exact
+CHK|n_76|1.0000001E+7|exact
+CHK|n_77|1.23456789E+7|exact
+CHK|n_78|1.0E+300|exact
+CHK|n_79|1.5E+300|exact
+CHK|s_01|{"mwdata":[3.14159274],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|s_02|{"mwdata":[0.1],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|s_03|{"mwdata":[1.0E+10],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|s_04|{"mwdata":[1.23456792E+8],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|s_05|{"mwdata":[1E-10],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|s_06|{"mwdata":[3],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|s_07|{"mwdata":[1.6777216E+7],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|s_08|{"mwdata":[1.0E+21],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|s_09|{"mwdata":[1.4013E-45],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|s_10|{"mwdata":[3.402823466E+38],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|s_11|{"mwdata":[0.5],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|s_12|{"mwdata":[1234.5],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|s_13|{"mwdata":[1.0E+6],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|s_14|{"mwdata":[1.0E+7],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|s_15|{"mwdata":[999999],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|i_01|{"mwdata":[-128],"mwsize":[1,1],"mwtype":"int8"}|exact
+CHK|i_02|{"mwdata":[127],"mwsize":[1,1],"mwtype":"int8"}|exact
+CHK|i_03|{"mwdata":[255],"mwsize":[1,1],"mwtype":"uint8"}|exact
+CHK|i_04|{"mwdata":[32767],"mwsize":[1,1],"mwtype":"int16"}|exact
+CHK|i_05|{"mwdata":[65535],"mwsize":[1,1],"mwtype":"uint16"}|exact
+CHK|i_06|{"mwdata":[-2147483648],"mwsize":[1,1],"mwtype":"int32"}|exact
+CHK|i_07|{"mwdata":[4294967295],"mwsize":[1,1],"mwtype":"uint32"}|exact
+CHK|i_08|{"mwdata":[-9223372036854775808],"mwsize":[1,1],"mwtype":"int64"}|div=ADR0270|diverges|-9.2233720368547758E+18
+CHK|i_09|{"mwdata":[9223372036854775807],"mwsize":[1,1],"mwtype":"int64"}|div=ADR0270|diverges|9.2233720368547758E+18
+CHK|i_10|{"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|1.8446744073709552E+19
+CHK|i_11|{"mwdata":[-9007199254740993],"mwsize":[1,1],"mwtype":"int64"}|div=ADR0270|diverges|{"mwdata":[-9007199254740992],"mwsize":[1,1],"mwtype":"int64"}
+CHK|i_12|{"mwdata":[0],"mwsize":[1,1],"mwtype":"int64"}|exact
+CHK|i_13|{"mwdata":[0],"mwsize":[1,1],"mwtype":"uint64"}|exact
+CHK|i_14|{"mwdata":[0],"mwsize":[1,1],"mwtype":"int32"}|exact
+CHK|n_nan|{"mwdata":"NaN"}|exact
+CHK|n_inf|{"mwdata":"Inf"}|exact
+CHK|n_ninf|{"mwdata":"-Inf"}|exact
+CHK|n_nan_obj|{"mwdata":"NaN"}|exact
+CHK|n_nan_large|{"mwdata":["NaN"],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|n_nan_large_obj|{"mwdata":[{"mwdata":"NaN"}],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|n_row_nan_obj|[[1,{"mwdata":"NaN"},{"mwdata":"Inf"},{"mwdata":"-Inf"}]]|exact
+CHK|n_row_nan_large_obj|{"mwdata":[1,{"mwdata":"NaN"},{"mwdata":"Inf"},{"mwdata":"-Inf"}],"mwsize":[1,4],"mwtype":"double"}|exact
+CHK|n_single_nan|{"mwdata":["NaN","Inf"],"mwsize":[1,2],"mwtype":"single"}|exact
+CHK|n_single_nan_obj|{"mwdata":[{"mwdata":"NaN"},{"mwdata":"Inf"}],"mwsize":[1,2],"mwtype":"single"}|exact
+CHK|n_complex_nan|{"mwcomplex":true,"mwdata":["NaN","Inf"],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|n_complex_nan_obj|{"mwcomplex":true,"mwdata":[{"mwdata":"NaN"},{"mwdata":"Inf"}],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|n_sparse_nan|{"mwdata":[[0],[0],["NaN"]],"mwsize":[1,2],"mwsparse":true,"mwtype":"double"}|exact
+CHK|n_sparse_nan_obj|{"mwdata":[[0],[0],[{"mwdata":"NaN"}]],"mwsize":[1,2],"mwsparse":true,"mwtype":"double"}|exact
+CHK|n_struct_nan|{"a":{"mwdata":"NaN"}}|exact
+CHK|n_struct_nan_obj|{"a":{"mwdata":"NaN"}}|exact
+CHK|n_cell_nan|{"mwdata":[{"mwdata":"NaN"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|n_datetime_nat_ts|{"mwdata":{"TimeStamp":{"mwdata":"NaN"}},"mwmetadata":{"Format":"dd-MMM-uuuu HH:mm:ss","TimeZone":""},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|e_d_scalar_small|5|exact
+CHK|e_d_scalar_large|{"mwdata":[5],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|e_d_scalar_round|double [1 1] eq=1 / double [1 1] eq=1|exact
+CHK|e_d_row_small|[[1,2,3]]|exact
+CHK|e_d_row_large|{"mwdata":[1,2,3],"mwsize":[1,3],"mwtype":"double"}|exact
+CHK|e_d_row_round|double [1 3] eq=1 / double [1 3] eq=1|exact
+CHK|e_d_col_small|[1,2,3]|exact
+CHK|e_d_col_large|{"mwdata":[1,2,3],"mwsize":[3,1],"mwtype":"double"}|exact
+CHK|e_d_col_round|double [3 1] eq=1 / double [3 1] eq=1|exact
+CHK|e_d_2x3_small|[[1,2,3],[4,5,6]]|exact
+CHK|e_d_2x3_large|{"mwdata":[1,4,2,5,3,6],"mwsize":[2,3],"mwtype":"double"}|exact
+CHK|e_d_2x3_round|double [2 3] eq=1 / double [2 3] eq=1|exact
+CHK|e_d_2x2x2_small|[[[1,5],[3,7]],[[2,6],[4,8]]]|exact
+CHK|e_d_2x2x2_large|{"mwdata":[1,2,3,4,5,6,7,8],"mwsize":[2,2,2],"mwtype":"double"}|exact
+CHK|e_d_2x2x2_round|double [2 2 2] eq=1 / double [2 2 2] eq=1|exact
+CHK|e_d_1x1x3_small|[[[1,2,3]]]|exact
+CHK|e_d_1x1x3_large|{"mwdata":[1,2,3],"mwsize":[1,1,3],"mwtype":"double"}|exact
+CHK|e_d_1x1x3_round|double [1 1 3] eq=1 / double [1 1 3] eq=1|exact
+CHK|e_d_2x1x1_small|[1,2]|exact
+CHK|e_d_2x1x1_large|{"mwdata":[1,2],"mwsize":[2,1],"mwtype":"double"}|exact
+CHK|e_d_2x1x1_round|double [2 1] eq=1 / double [2 1] eq=1|exact
+CHK|e_d_0x0_small|[]|exact
+CHK|e_d_0x0_large|{"mwdata":[],"mwsize":[0,0],"mwtype":"double"}|exact
+CHK|e_d_0x0_round|double [0 0] eq=1 / double [0 0] eq=1|exact
+CHK|e_d_1x0_small|{"mwdata":[],"mwsize":[1,0],"mwtype":"double"}|exact
+CHK|e_d_1x0_large|{"mwdata":[],"mwsize":[1,0],"mwtype":"double"}|exact
+CHK|e_d_1x0_round|double [1 0] eq=1 / double [1 0] eq=1|exact
+CHK|e_d_0x3_small|{"mwdata":[],"mwsize":[0,3],"mwtype":"double"}|exact
+CHK|e_d_0x3_large|{"mwdata":[],"mwsize":[0,3],"mwtype":"double"}|exact
+CHK|e_d_0x3_round|double [0 3] eq=1 / double [0 3] eq=1|exact
+CHK|e_d_0x0x2_small|{"mwdata":[],"mwsize":[0,0,2],"mwtype":"double"}|exact
+CHK|e_d_0x0x2_large|{"mwdata":[],"mwsize":[0,0,2],"mwtype":"double"}|exact
+CHK|e_d_0x0x2_round|double [0 0 2] eq=1 / double [0 0 2] eq=1|exact
+CHK|e_d_neg0_small|[[-0,0]]|exact
+CHK|e_d_neg0_large|{"mwdata":[-0,0],"mwsize":[1,2],"mwtype":"double"}|exact
+CHK|e_d_neg0_round|double [1 2] eq=1 / double [1 2] eq=1|exact
+CHK|e_c_scalar_small|{"mwcomplex":true,"mwdata":[1,2],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|e_c_scalar_large|{"mwcomplex":true,"mwdata":[1,2],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|e_c_scalar_round|double [1 1] eq=1 / double [1 1] eq=1|exact
+CHK|e_c_row_small|{"mwcomplex":true,"mwdata":[1,2,3,-4],"mwsize":[1,2],"mwtype":"double"}|exact
+CHK|e_c_row_large|{"mwcomplex":true,"mwdata":[1,2,3,-4],"mwsize":[1,2],"mwtype":"double"}|exact
+CHK|e_c_row_round|double [1 2] eq=1 / double [1 2] eq=1|exact
+CHK|e_c_2x2_small|{"mwcomplex":true,"mwdata":[1,2,0,5,3,-4,6,0],"mwsize":[2,2],"mwtype":"double"}|exact
+CHK|e_c_2x2_large|{"mwcomplex":true,"mwdata":[1,2,0,5,3,-4,6,0],"mwsize":[2,2],"mwtype":"double"}|exact
+CHK|e_c_2x2_round|double [2 2] eq=1 / double [2 2] eq=1|exact
+CHK|e_c_zero_imag_small|{"mwcomplex":true,"mwdata":[1,0],"mwsize":[1,1],"mwtype":"double"}|div=ADR0270|diverges|1
+CHK|e_c_zero_imag_large|{"mwcomplex":true,"mwdata":[1,0],"mwsize":[1,1],"mwtype":"double"}|div=ADR0270|diverges|{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}
+CHK|e_c_zero_imag_round|double [1 1] eq=1 / double [1 1] eq=1|exact
+CHK|e_c_empty_small|{"mwcomplex":true,"mwdata":[],"mwsize":[0,2],"mwtype":"double"}|div=ADR0270|diverges|{"mwdata":[],"mwsize":[0,2],"mwtype":"double"}
+CHK|e_c_empty_large|{"mwcomplex":true,"mwdata":[],"mwsize":[0,2],"mwtype":"double"}|div=ADR0270|diverges|{"mwdata":[],"mwsize":[0,2],"mwtype":"double"}
+CHK|e_c_empty_round|double [0 2] eq=1 / double [0 2] eq=1|exact
+CHK|e_c_single_small|{"mwcomplex":true,"mwdata":[1,2],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|e_c_single_large|{"mwcomplex":true,"mwdata":[1,2],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|e_c_single_round|single [1 1] eq=1 / single [1 1] eq=1|exact
+CHK|e_c_int16_small|{"mwcomplex":true,"mwdata":[3,4],"mwsize":[1,1],"mwtype":"int16"}|div=ADR0270|diverges|""
+CHK|e_c_int16_large|{"mwcomplex":true,"mwdata":[3,4],"mwsize":[1,1],"mwtype":"int16"}|div=ADR0270|diverges|{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}
+CHK|e_c_int16_round|int16 [1 1] eq=1 / int16 [1 1] eq=1|div=ADR0270|diverges|char [0 0] eq=1 / char [0 0] eq=1
+CHK|e_c_nan_small|{"mwcomplex":true,"mwdata":["NaN",1],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|e_c_nan_large|{"mwcomplex":true,"mwdata":["NaN",1],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|e_c_nan_round|MPS:MATLAB:JSON:DecodeInvalidFloatingElem : Invalid value for type double. Value must be a JSON number or one of the following values: "NaN", "Inf", "-Inf", {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}.|exact
+CHK|e_f_single_small|{"mwdata":[1.5,2],"mwsize":[1,2],"mwtype":"single"}|exact
+CHK|e_f_single_large|{"mwdata":[1.5,2],"mwsize":[1,2],"mwtype":"single"}|exact
+CHK|e_f_single_round|single [1 2] eq=1 / single [1 2] eq=1|exact
+CHK|e_f_int8_small|{"mwdata":[-1,2],"mwsize":[1,2],"mwtype":"int8"}|exact
+CHK|e_f_int8_large|{"mwdata":[-1,2],"mwsize":[1,2],"mwtype":"int8"}|exact
+CHK|e_f_int8_round|int8 [1 2] eq=1 / int8 [1 2] eq=1|exact
+CHK|e_f_uint8_small|{"mwdata":[200],"mwsize":[1,1],"mwtype":"uint8"}|exact
+CHK|e_f_uint8_large|{"mwdata":[200],"mwsize":[1,1],"mwtype":"uint8"}|exact
+CHK|e_f_uint8_round|uint8 [1 1] eq=1 / uint8 [1 1] eq=1|exact
+CHK|e_f_int32_2x2_small|{"mwdata":[1,3,2,4],"mwsize":[2,2],"mwtype":"int32"}|exact
+CHK|e_f_int32_2x2_large|{"mwdata":[1,3,2,4],"mwsize":[2,2],"mwtype":"int32"}|exact
+CHK|e_f_int32_2x2_round|int32 [2 2] eq=1 / int32 [2 2] eq=1|exact
+CHK|e_f_int64_big_small|{"mwdata":[9007199254740993],"mwsize":[1,1],"mwtype":"int64"}|div=ADR0270|diverges|{"mwdata":[9007199254740992],"mwsize":[1,1],"mwtype":"int64"}
+CHK|e_f_int64_big_large|{"mwdata":[9007199254740993],"mwsize":[1,1],"mwtype":"int64"}|div=ADR0270|diverges|{"mwdata":[9007199254740992],"mwsize":[1,1],"mwtype":"int64"}
+CHK|e_f_int64_big_round|int64 [1 1] eq=1 / int64 [1 1] eq=1|exact
+CHK|e_f_uint64_max_small|{"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|1.8446744073709552E+19
+CHK|e_f_uint64_max_large|{"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|{"mwdata":[1.8446744073709552E+19],"mwsize":[1,1],"mwtype":"double"}
+CHK|e_f_uint64_max_round|uint64 [1 1] eq=1 / uint64 [1 1] eq=1|div=ADR0270|diverges|double [1 1] eq=1 / double [1 1] eq=1
+CHK|e_f_int8_3d_small|{"mwdata":[1,2,3,4,5,6,7,8],"mwsize":[2,2,2],"mwtype":"int8"}|exact
+CHK|e_f_int8_3d_large|{"mwdata":[1,2,3,4,5,6,7,8],"mwsize":[2,2,2],"mwtype":"int8"}|exact
+CHK|e_f_int8_3d_round|int8 [2 2 2] eq=1 / int8 [2 2 2] eq=1|exact
+CHK|e_f_int8_empty_small|{"mwdata":[],"mwsize":[0,1],"mwtype":"int8"}|exact
+CHK|e_f_int8_empty_large|{"mwdata":[],"mwsize":[0,1],"mwtype":"int8"}|exact
+CHK|e_f_int8_empty_round|int8 [0 1] eq=1 / int8 [0 1] eq=1|exact
+CHK|e_l_scalar_small|true|exact
+CHK|e_l_scalar_large|{"mwdata":[true],"mwsize":[1,1],"mwtype":"logical"}|exact
+CHK|e_l_scalar_round|logical [1 1] eq=1 / logical [1 1] eq=1|exact
+CHK|e_l_row_small|[[true,false,true]]|exact
+CHK|e_l_row_large|{"mwdata":[true,false,true],"mwsize":[1,3],"mwtype":"logical"}|exact
+CHK|e_l_row_round|logical [1 3] eq=1 / logical [1 3] eq=1|exact
+CHK|e_l_2x2_small|[[true,false],[false,true]]|exact
+CHK|e_l_2x2_large|{"mwdata":[true,false,false,true],"mwsize":[2,2],"mwtype":"logical"}|exact
+CHK|e_l_2x2_round|logical [2 2] eq=1 / logical [2 2] eq=1|exact
+CHK|e_l_0x0_small|{"mwdata":[],"mwsize":[0,0],"mwtype":"logical"}|exact
+CHK|e_l_0x0_large|{"mwdata":[],"mwsize":[0,0],"mwtype":"logical"}|exact
+CHK|e_l_0x0_round|logical [0 0] eq=1 / logical [0 0] eq=1|exact
+CHK|e_l_3d_small|[[[true,true]]]|exact
+CHK|e_l_3d_large|{"mwdata":[true,true],"mwsize":[1,1,2],"mwtype":"logical"}|exact
+CHK|e_l_3d_round|logical [1 1 2] eq=1 / logical [1 1 2] eq=1|exact
+CHK|e_ch_row_small|"hello"|exact
+CHK|e_ch_row_large|{"mwdata":["hello"],"mwsize":[1,5],"mwtype":"char"}|exact
+CHK|e_ch_row_round|char [1 5] eq=1 / char [1 5] eq=1|exact
+CHK|e_ch_2x3_small|{"mwdata":["adbecf"],"mwsize":[2,3],"mwtype":"char"}|exact
+CHK|e_ch_2x3_large|{"mwdata":["adbecf"],"mwsize":[2,3],"mwtype":"char"}|exact
+CHK|e_ch_2x3_round|char [2 3] eq=1 / char [2 3] eq=1|exact
+CHK|e_ch_empty_small|""|exact
+CHK|e_ch_empty_large|{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}|exact
+CHK|e_ch_empty_round|char [0 0] eq=1 / char [0 0] eq=1|exact
+CHK|e_ch_1x0_small|{"mwdata":[""],"mwsize":[1,0],"mwtype":"char"}|exact
+CHK|e_ch_1x0_large|{"mwdata":[""],"mwsize":[1,0],"mwtype":"char"}|exact
+CHK|e_ch_1x0_round|char [1 0] eq=1 / char [1 0] eq=1|exact
+CHK|e_ch_0x1_small|{"mwdata":[""],"mwsize":[0,1],"mwtype":"char"}|exact
+CHK|e_ch_0x1_large|{"mwdata":[""],"mwsize":[0,1],"mwtype":"char"}|exact
+CHK|e_ch_0x1_round|char [0 1] eq=1 / char [0 1] eq=1|exact
+CHK|e_ch_quote_small|"a\"b\\c"|exact
+CHK|e_ch_quote_large|{"mwdata":["a\"b\\c"],"mwsize":[1,5],"mwtype":"char"}|exact
+CHK|e_ch_quote_round|char [1 5] eq=1 / char [1 5] eq=1|exact
+CHK|e_ch_slash_small|"a\/b"|exact
+CHK|e_ch_slash_large|{"mwdata":["a\/b"],"mwsize":[1,3],"mwtype":"char"}|exact
+CHK|e_ch_slash_round|char [1 3] eq=1 / char [1 3] eq=1|exact
+CHK|e_ch_controls_small|"a\tb\nc\rd\be\ff"|exact
+CHK|e_ch_controls_large|{"mwdata":["a\tb\nc\rd\be\ff"],"mwsize":[1,11],"mwtype":"char"}|exact
+CHK|e_ch_controls_round|char [1 11] eq=1 / char [1 11] eq=1|exact
+CHK|e_ch_ctl1_small|"\u0001\u001f"|exact
+CHK|e_ch_ctl1_large|{"mwdata":["\u0001\u001f"],"mwsize":[1,3],"mwtype":"char"}|exact
+CHK|e_ch_ctl1_round|char [1 3] eq=1 / char [1 3] eq=1|exact
+CHK|e_ch_col_small|{"mwdata":["ab"],"mwsize":[2,1],"mwtype":"char"}|exact
+CHK|e_ch_col_large|{"mwdata":["ab"],"mwsize":[2,1],"mwtype":"char"}|exact
+CHK|e_ch_col_round|char [2 1] eq=1 / char [2 1] eq=1|exact
+CHK|e_ch_2x2x2_small|{"mwdata":["abcdefgh"],"mwsize":[2,2,2],"mwtype":"char"}|exact
+CHK|e_ch_2x2x2_large|{"mwdata":["abcdefgh"],"mwsize":[2,2,2],"mwtype":"char"}|exact
+CHK|e_ch_2x2x2_round|char [2 2 2] eq=1 / char [2 2 2] eq=1|div=ADR0270|diverges|MPS:MATLAB:JSON:DecodeInvalidMWSize : JGraph holds a char array of two dimensions; R2025b holds more.
+CHK|e_ch_nul_small|"a\u0000b"|exact
+CHK|e_ch_nul_large|{"mwdata":["a\u0000b"],"mwsize":[1,3],"mwtype":"char"}|exact
+CHK|e_ch_nul_round|char [1 3] eq=1 / char [1 3] eq=1|exact
+CHK|e_ch_space_small|" "|exact
+CHK|e_ch_space_large|{"mwdata":[" "],"mwsize":[1,1],"mwtype":"char"}|exact
+CHK|e_ch_space_round|char [1 1] eq=1 / char [1 1] eq=1|exact
+CHK|e_st_scalar_small|{"mwdata":["abc"],"mwsize":[1,1],"mwtype":"string"}|exact
+CHK|e_st_scalar_large|{"mwdata":["abc"],"mwsize":[1,1],"mwtype":"string"}|exact
+CHK|e_st_scalar_round|string [1 1] eq=1 / string [1 1] eq=1|exact
+CHK|e_st_row_small|{"mwdata":["a","bc"],"mwsize":[1,2],"mwtype":"string"}|exact
+CHK|e_st_row_large|{"mwdata":["a","bc"],"mwsize":[1,2],"mwtype":"string"}|exact
+CHK|e_st_row_round|string [1 2] eq=1 / string [1 2] eq=1|exact
+CHK|e_st_2x2_small|{"mwdata":["a","c","b","d"],"mwsize":[2,2],"mwtype":"string"}|exact
+CHK|e_st_2x2_large|{"mwdata":["a","c","b","d"],"mwsize":[2,2],"mwtype":"string"}|exact
+CHK|e_st_2x2_round|string [2 2] eq=1 / string [2 2] eq=1|exact
+CHK|e_st_missing_small|{"mwdata":[{"mwdata":"missing"}],"mwsize":[1,1],"mwtype":"string"}|exact
+CHK|e_st_missing_large|{"mwdata":[{"mwdata":"missing"}],"mwsize":[1,1],"mwtype":"string"}|exact
+CHK|e_st_missing_round|string [1 1] eq=1 / string [1 1] eq=1|exact
+CHK|e_st_mixed_missing_small|{"mwdata":["a",{"mwdata":"missing"},"c"],"mwsize":[1,3],"mwtype":"string"}|exact
+CHK|e_st_mixed_missing_large|{"mwdata":["a",{"mwdata":"missing"},"c"],"mwsize":[1,3],"mwtype":"string"}|exact
+CHK|e_st_mixed_missing_round|string [1 3] eq=1 / string [1 3] eq=1|exact
+CHK|e_st_empty_small|{"mwdata":[""],"mwsize":[1,1],"mwtype":"string"}|exact
+CHK|e_st_empty_large|{"mwdata":[""],"mwsize":[1,1],"mwtype":"string"}|exact
+CHK|e_st_empty_round|string [1 1] eq=1 / string [1 1] eq=1|exact
+CHK|e_st_0x0_small|{"mwdata":[],"mwsize":[0,0],"mwtype":"string"}|exact
+CHK|e_st_0x0_large|{"mwdata":[],"mwsize":[0,0],"mwtype":"string"}|exact
+CHK|e_st_0x0_round|string [0 0] eq=1 / string [0 0] eq=1|exact
+CHK|e_st_1x0_small|{"mwdata":[],"mwsize":[1,0],"mwtype":"string"}|exact
+CHK|e_st_1x0_large|{"mwdata":[],"mwsize":[1,0],"mwtype":"string"}|exact
+CHK|e_st_1x0_round|string [1 0] eq=1 / string [1 0] eq=1|exact
+CHK|e_st_col_small|{"mwdata":["a","b"],"mwsize":[2,1],"mwtype":"string"}|exact
+CHK|e_st_col_large|{"mwdata":["a","b"],"mwsize":[2,1],"mwtype":"string"}|exact
+CHK|e_st_col_round|string [2 1] eq=1 / string [2 1] eq=1|exact
+CHK|e_st_quote_small|{"mwdata":["a\"b\\c"],"mwsize":[1,1],"mwtype":"string"}|exact
+CHK|e_st_quote_large|{"mwdata":["a\"b\\c"],"mwsize":[1,1],"mwtype":"string"}|exact
+CHK|e_st_quote_round|string [1 1] eq=1 / string [1 1] eq=1|exact
+CHK|e_cl_row_small|{"mwdata":[1,"a",true],"mwsize":[1,3],"mwtype":"cell"}|exact
+CHK|e_cl_row_large|{"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":["a"],"mwsize":[1,1],"mwtype":"char"},{"mwdata":[true],"mwsize":[1,1],"mwtype":"logical"}],"mwsize":[1,3],"mwtype":"cell"}|exact
+CHK|e_cl_row_round|cell [1 3] eq=1 / cell [1 3] eq=1|exact
+CHK|e_cl_col_small|{"mwdata":[1,"a"],"mwsize":[2,1],"mwtype":"cell"}|exact
+CHK|e_cl_col_large|{"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":["a"],"mwsize":[1,1],"mwtype":"char"}],"mwsize":[2,1],"mwtype":"cell"}|exact
+CHK|e_cl_col_round|cell [2 1] eq=1 / cell [2 1] eq=1|exact
+CHK|e_cl_2x2_small|{"mwdata":[1,3,2,4],"mwsize":[2,2],"mwtype":"cell"}|exact
+CHK|e_cl_2x2_large|{"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[3],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[4],"mwsize":[1,1],"mwtype":"double"}],"mwsize":[2,2],"mwtype":"cell"}|exact
+CHK|e_cl_2x2_round|cell [2 2] eq=1 / cell [2 2] eq=1|exact
+CHK|e_cl_empty_small|{"mwdata":[],"mwsize":[0,0],"mwtype":"cell"}|exact
+CHK|e_cl_empty_large|{"mwdata":[],"mwsize":[0,0],"mwtype":"cell"}|exact
+CHK|e_cl_empty_round|cell [0 0] eq=1 / cell [0 0] eq=1|exact
+CHK|e_cl_1x0_small|{"mwdata":[],"mwsize":[1,0],"mwtype":"cell"}|exact
+CHK|e_cl_1x0_large|{"mwdata":[],"mwsize":[1,0],"mwtype":"cell"}|exact
+CHK|e_cl_1x0_round|cell [1 0] eq=1 / cell [1 0] eq=1|exact
+CHK|e_cl_nested_small|{"mwdata":[{"mwdata":[1,2],"mwsize":[1,2],"mwtype":"cell"},{"mwdata":["x"],"mwsize":[1,1],"mwtype":"cell"}],"mwsize":[1,2],"mwtype":"cell"}|exact
+CHK|e_cl_nested_large|{"mwdata":[{"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"}],"mwsize":[1,2],"mwtype":"cell"},{"mwdata":[{"mwdata":["x"],"mwsize":[1,1],"mwtype":"char"}],"mwsize":[1,1],"mwtype":"cell"}],"mwsize":[1,2],"mwtype":"cell"}|exact
+CHK|e_cl_nested_round|cell [1 2] eq=1 / cell [1 2] eq=1|exact
+CHK|e_cl_of_empty_small|{"mwdata":[[]],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|e_cl_of_empty_large|{"mwdata":[{"mwdata":[],"mwsize":[0,0],"mwtype":"double"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|e_cl_of_empty_round|cell [1 1] eq=1 / cell [1 1] eq=1|exact
+CHK|e_cl_of_empty_cell_small|{"mwdata":[{"mwdata":[],"mwsize":[0,0],"mwtype":"cell"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|e_cl_of_empty_cell_large|{"mwdata":[{"mwdata":[],"mwsize":[0,0],"mwtype":"cell"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|e_cl_of_empty_cell_round|cell [1 1] eq=1 / cell [1 1] eq=1|exact
+CHK|e_cl_3d_small|{"mwdata":[1,2,3,4],"mwsize":[1,2,2],"mwtype":"cell"}|exact
+CHK|e_cl_3d_large|{"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[3],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[4],"mwsize":[1,1],"mwtype":"double"}],"mwsize":[1,2,2],"mwtype":"cell"}|exact
+CHK|e_cl_3d_round|cell [1 2 2] eq=1 / cell [1 2 2] eq=1|exact
+CHK|e_cl_struct_small|{"mwdata":[{"a":1}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|e_cl_struct_large|{"mwdata":[{"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|e_cl_struct_round|cell [1 1] eq=1 / cell [1 1] eq=1|exact
+CHK|e_cl_string_small|{"mwdata":[{"mwdata":["s"],"mwsize":[1,1],"mwtype":"string"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|e_cl_string_large|{"mwdata":[{"mwdata":["s"],"mwsize":[1,1],"mwtype":"string"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|e_cl_string_round|cell [1 1] eq=1 / cell [1 1] eq=1|exact
+CHK|e_cl_nan_small|{"mwdata":[{"mwdata":"NaN"},{"mwdata":"Inf"}],"mwsize":[1,2],"mwtype":"cell"}|exact
+CHK|e_cl_nan_large|{"mwdata":[{"mwdata":["NaN"],"mwsize":[1,1],"mwtype":"double"},{"mwdata":["Inf"],"mwsize":[1,1],"mwtype":"double"}],"mwsize":[1,2],"mwtype":"cell"}|exact
+CHK|e_cl_nan_round|cell [1 2] eq=1 / cell [1 2] eq=1|exact
+CHK|e_sa_scalar_small|{"a":1,"b":"x"}|exact
+CHK|e_sa_scalar_large|{"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}],"b":[{"mwdata":["x"],"mwsize":[1,1],"mwtype":"char"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|e_sa_scalar_round|struct [1 1] eq=1 / struct [1 1] eq=1|exact
+CHK|e_sa_1x2_small|{"mwdata":{"a":[1,2]},"mwsize":[1,2],"mwtype":"struct"}|exact
+CHK|e_sa_1x2_large|{"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,2],"mwtype":"struct"}|exact
+CHK|e_sa_1x2_round|struct [1 2] eq=1 / struct [1 2] eq=1|exact
+CHK|e_sa_2x1_small|{"mwdata":{"a":[1,2]},"mwsize":[2,1],"mwtype":"struct"}|exact
+CHK|e_sa_2x1_large|{"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[2,1],"mwtype":"struct"}|exact
+CHK|e_sa_2x1_round|struct [2 1] eq=1 / struct [2 1] eq=1|exact
+CHK|e_sa_2x2_small|{"mwdata":{"a":[1,3,2,4]},"mwsize":[2,2],"mwtype":"struct"}|exact
+CHK|e_sa_2x2_large|{"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[3],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[4],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[2,2],"mwtype":"struct"}|exact
+CHK|e_sa_2x2_round|struct [2 2] eq=1 / struct [2 2] eq=1|exact
+CHK|e_sa_nofields_small|{}|exact
+CHK|e_sa_nofields_large|{"mwdata":{},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|e_sa_nofields_round|struct [1 1] eq=1 / struct [1 1] eq=1|exact
+CHK|e_sa_0x0_small|{}|exact
+CHK|e_sa_0x0_large|{"mwdata":{},"mwsize":[0,0],"mwtype":"struct"}|exact
+CHK|e_sa_0x0_round|struct [1 1] eq=0 / struct [0 0] eq=1|exact
+CHK|e_sa_0x1_small|{"mwdata":{"a":[]},"mwsize":[0,0],"mwtype":"struct"}|exact
+CHK|e_sa_0x1_large|{"mwdata":{"a":[]},"mwsize":[0,0],"mwtype":"struct"}|exact
+CHK|e_sa_0x1_round|struct [0 0] eq=1 / struct [0 0] eq=1|exact
+CHK|e_sa_nofields_1x2_small|{"mwdata":{},"mwsize":[1,2],"mwtype":"struct"}|exact
+CHK|e_sa_nofields_1x2_large|{"mwdata":{},"mwsize":[1,2],"mwtype":"struct"}|exact
+CHK|e_sa_nofields_1x2_round|struct [1 2] eq=1 / struct [1 2] eq=1|exact
+CHK|e_sa_nested_small|{"s":{"t":[[1,2]]}}|exact
+CHK|e_sa_nested_large|{"mwdata":{"s":[{"mwdata":{"t":[{"mwdata":[1,2],"mwsize":[1,2],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|e_sa_nested_round|struct [1 1] eq=1 / struct [1 1] eq=1|exact
+CHK|e_sa_nested_array_small|{"mwdata":{"a":[{"b":1},{"b":2}]},"mwsize":[1,2],"mwtype":"struct"}|exact
+CHK|e_sa_nested_array_large|{"mwdata":{"a":[{"mwdata":{"b":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"},{"mwdata":{"b":[{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}]},"mwsize":[1,2],"mwtype":"struct"}|exact
+CHK|e_sa_nested_array_round|struct [1 2] eq=1 / struct [1 2] eq=1|exact
+CHK|e_sa_matrix_small|{"m":[[1,2],[3,4]]}|exact
+CHK|e_sa_matrix_large|{"mwdata":{"m":[{"mwdata":[1,3,2,4],"mwsize":[2,2],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|e_sa_matrix_round|struct [1 1] eq=1 / struct [1 1] eq=1|exact
+CHK|e_sa_cell_small|{"c":{"mwdata":[1,"a"],"mwsize":[1,2],"mwtype":"cell"}}|exact
+CHK|e_sa_cell_large|{"mwdata":{"c":[{"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":["a"],"mwsize":[1,1],"mwtype":"char"}],"mwsize":[1,2],"mwtype":"cell"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|e_sa_cell_round|struct [1 1] eq=1 / struct [1 1] eq=1|exact
+CHK|e_sa_string_small|{"s":{"mwdata":["str"],"mwsize":[1,1],"mwtype":"string"}}|div=ADR0270|diverges|{"s":"str"}
+CHK|e_sa_string_large|{"mwdata":{"s":[{"mwdata":["str"],"mwsize":[1,1],"mwtype":"string"}]},"mwsize":[1,1],"mwtype":"struct"}|div=ADR0270|diverges|{"mwdata":{"s":[{"mwdata":["str"],"mwsize":[1,3],"mwtype":"char"}]},"mwsize":[1,1],"mwtype":"struct"}
+CHK|e_sa_string_round|struct [1 1] eq=1 / struct [1 1] eq=1|exact
+CHK|e_sa_logical_small|{"l":[[true,false]]}|exact
+CHK|e_sa_logical_large|{"mwdata":{"l":[{"mwdata":[true,false],"mwsize":[1,2],"mwtype":"logical"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|e_sa_logical_round|struct [1 1] eq=1 / struct [1 1] eq=1|exact
+CHK|e_sa_empty_field_small|{"e":[]}|exact
+CHK|e_sa_empty_field_large|{"mwdata":{"e":[{"mwdata":[],"mwsize":[0,0],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|e_sa_empty_field_round|struct [1 1] eq=1 / struct [1 1] eq=1|exact
+CHK|e_sa_order_small|{"Mid":3,"alpha":2,"zeta":1}|exact
+CHK|e_sa_order_large|{"mwdata":{"Mid":[{"mwdata":[3],"mwsize":[1,1],"mwtype":"double"}],"alpha":[{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"}],"zeta":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|e_sa_order_round|struct [1 1] eq=1 / struct [1 1] eq=1|exact
+CHK|e_sa_3d_small|{"mwdata":{"a":[1,1]},"mwsize":[1,1,2],"mwtype":"struct"}|exact
+CHK|e_sa_3d_large|{"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1,2],"mwtype":"struct"}|exact
+CHK|e_sa_3d_round|struct [1 1 2] eq=1 / struct [1 1 2] eq=1|exact
+CHK|e_sp_2x2_small|{"mwdata":[[0,1],[0,1],[1,2]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}|exact
+CHK|e_sp_2x2_large|{"mwdata":[[0,1],[0,1],[1,2]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}|exact
+CHK|e_sp_2x2_round|double [2 2] eq=1 / double [2 2] eq=1|exact
+CHK|e_sp_3x4_small|{"mwdata":[[1],[2],[7]],"mwsize":[3,4],"mwsparse":true,"mwtype":"double"}|exact
+CHK|e_sp_3x4_large|{"mwdata":[[1],[2],[7]],"mwsize":[3,4],"mwsparse":true,"mwtype":"double"}|exact
+CHK|e_sp_3x4_round|double [3 4] eq=1 / double [3 4] eq=1|exact
+CHK|e_sp_two_small|{"mwdata":[[0,2],[1,3],[5,6]],"mwsize":[3,4],"mwsparse":true,"mwtype":"double"}|exact
+CHK|e_sp_two_large|{"mwdata":[[0,2],[1,3],[5,6]],"mwsize":[3,4],"mwsparse":true,"mwtype":"double"}|exact
+CHK|e_sp_two_round|double [3 4] eq=1 / double [3 4] eq=1|exact
+CHK|e_sp_logical_small|{"mwdata":[[1,0],[0,1]],"mwsize":[2,2],"mwsparse":true,"mwtype":"logical"}|div=ADR0270|diverges|{"mwdata":[[1,0],[0,1],[1,1]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}
+CHK|e_sp_logical_large|{"mwdata":[[1,0],[0,1]],"mwsize":[2,2],"mwsparse":true,"mwtype":"logical"}|div=ADR0270|diverges|{"mwdata":[[1,0],[0,1],[1,1]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}
+CHK|e_sp_logical_round|logical [2 2] eq=1 / logical [2 2] eq=1|div=ADR0270|diverges|double [2 2] eq=1 / double [2 2] eq=1
+CHK|e_sp_complex_small|{"mwcomplex":true,"mwdata":[[0,1],[0,1],[1,2,3,0]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}|div=ADR0270|diverges|""
+CHK|e_sp_complex_large|{"mwcomplex":true,"mwdata":[[0,1],[0,1],[1,2,3,0]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}|div=ADR0270|diverges|{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}
+CHK|e_sp_complex_round|double [2 2] eq=1 / double [2 2] eq=1|div=ADR0270|diverges|char [0 0] eq=1 / char [0 0] eq=1
+CHK|e_sp_empty_small|{"mwdata":[[],[],[]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}|exact
+CHK|e_sp_empty_large|{"mwdata":[[],[],[]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}|exact
+CHK|e_sp_empty_round|double [2 2] eq=1 / double [2 2] eq=1|exact
+CHK|e_sp_0x0_small|{"mwdata":[[],[],[]],"mwsize":[0,0],"mwsparse":true,"mwtype":"double"}|exact
+CHK|e_sp_0x0_large|{"mwdata":[[],[],[]],"mwsize":[0,0],"mwsparse":true,"mwtype":"double"}|exact
+CHK|e_sp_0x0_round|double [0 0] eq=1 / double [0 0] eq=1|exact
+CHK|e_sp_col_order_small|{"mwdata":[[1,0],[0,1],[4,3]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}|exact
+CHK|e_sp_col_order_large|{"mwdata":[[1,0],[0,1],[4,3]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}|exact
+CHK|e_sp_col_order_round|double [2 2] eq=1 / double [2 2] eq=1|exact
+CHK|e_sp_neg_small|{"mwdata":[[0,0],[0,2],[-1.5,2]],"mwsize":[1,3],"mwsparse":true,"mwtype":"double"}|exact
+CHK|e_sp_neg_large|{"mwdata":[[0,0],[0,2],[-1.5,2]],"mwsize":[1,3],"mwsparse":true,"mwtype":"double"}|exact
+CHK|e_sp_neg_round|double [1 3] eq=1 / double [1 3] eq=1|exact
+CHK|e_en_scalar_small|{"mwdata":["on"],"mwsize":[1,1],"mwtype":"matlab.lang.OnOffSwitchState"}|exact
+CHK|e_en_scalar_large|{"mwdata":["on"],"mwsize":[1,1],"mwtype":"matlab.lang.OnOffSwitchState"}|exact
+CHK|e_en_scalar_round|matlab.lang.OnOffSwitchState [1 1] eq=1 / matlab.lang.OnOffSwitchState [1 1] eq=1|exact
+CHK|e_en_row_small|{"mwdata":["on","off"],"mwsize":[1,2],"mwtype":"matlab.lang.OnOffSwitchState"}|exact
+CHK|e_en_row_large|{"mwdata":["on","off"],"mwsize":[1,2],"mwtype":"matlab.lang.OnOffSwitchState"}|exact
+CHK|e_en_row_round|matlab.lang.OnOffSwitchState [1 2] eq=1 / matlab.lang.OnOffSwitchState [1 2] eq=1|exact
+CHK|e_en_2x2_small|{"mwdata":["off","off","off","off"],"mwsize":[2,2],"mwtype":"matlab.lang.OnOffSwitchState"}|exact
+CHK|e_en_2x2_large|{"mwdata":["off","off","off","off"],"mwsize":[2,2],"mwtype":"matlab.lang.OnOffSwitchState"}|exact
+CHK|e_en_2x2_round|matlab.lang.OnOffSwitchState [2 2] eq=1 / matlab.lang.OnOffSwitchState [2 2] eq=1|exact
+CHK|e_en_empty_small|{"mwdata":[],"mwsize":[0,0],"mwtype":"matlab.lang.OnOffSwitchState"}|exact
+CHK|e_en_empty_large|{"mwdata":[],"mwsize":[0,0],"mwtype":"matlab.lang.OnOffSwitchState"}|exact
+CHK|e_en_empty_round|MPS:MATLAB:JSON:DecodeInvalidMWType : Unsupported "mwtype": "matlab.lang.OnOffSwitchState is not supported.".|exact
+CHK|e_dt_scalar_small|{"mwdata":{"TimeStamp":1.5779232E+12},"mwmetadata":{"Format":"dd-MMM-uuuu","TimeZone":""},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|e_dt_scalar_large|{"mwdata":{"TimeStamp":{"mwdata":[1.5779232E+12],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu"],"mwsize":[1,11],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|e_dt_scalar_round|datetime [1 1] eq=1 / datetime [1 1] eq=1|exact
+CHK|e_dt_time_small|{"mwdata":{"TimeStamp":1.577934245E+12},"mwmetadata":{"Format":"dd-MMM-uuuu HH:mm:ss","TimeZone":""},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|e_dt_time_large|{"mwdata":{"TimeStamp":{"mwdata":[1.577934245E+12],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu HH:mm:ss"],"mwsize":[1,20],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|e_dt_time_round|datetime [1 1] eq=1 / datetime [1 1] eq=1|exact
+CHK|e_dt_row_small|{"mwdata":{"TimeStamp":[[1.5778368E+12,1.5779232E+12]]},"mwmetadata":{"Format":"dd-MMM-uuuu","TimeZone":""},"mwsize":[1,2],"mwtype":"datetime"}|exact
+CHK|e_dt_row_large|{"mwdata":{"TimeStamp":{"mwdata":[1.5778368E+12,1.5779232E+12],"mwsize":[1,2],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu"],"mwsize":[1,11],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,2],"mwtype":"datetime"}|exact
+CHK|e_dt_row_round|datetime [1 2] eq=1 / datetime [1 2] eq=1|exact
+CHK|e_dt_nat_small|{"mwdata":{"TimeStamp":{"mwdata":"NaN"}},"mwmetadata":{"Format":"dd-MMM-uuuu HH:mm:ss","TimeZone":""},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|e_dt_nat_large|{"mwdata":{"TimeStamp":{"mwdata":["NaN"],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu HH:mm:ss"],"mwsize":[1,20],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|e_dt_nat_round|datetime [1 1] eq=1 / datetime [1 1] eq=1|exact
+CHK|e_dt_utc_small|{"mwdata":{"TimeStamp":1.5778368E+12},"mwmetadata":{"Format":"dd-MMM-uuuu","TimeZone":"UTC"},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|e_dt_utc_large|{"mwdata":{"TimeStamp":{"mwdata":[1.5778368E+12],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu"],"mwsize":[1,11],"mwtype":"char"},"TimeZone":{"mwdata":["UTC"],"mwsize":[1,3],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|e_dt_utc_round|datetime [1 1] eq=1 / datetime [1 1] eq=1|exact
+CHK|e_dt_zone_small|{"mwdata":{"TimeStamp":1.5936192E+12},"mwmetadata":{"Format":"dd-MMM-uuuu HH:mm:ss","TimeZone":"America\/New_York"},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|e_dt_zone_large|{"mwdata":{"TimeStamp":{"mwdata":[1.5936192E+12],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu HH:mm:ss"],"mwsize":[1,20],"mwtype":"char"},"TimeZone":{"mwdata":["America\/New_York"],"mwsize":[1,16],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|e_dt_zone_round|datetime [1 1] eq=1 / datetime [1 1] eq=1|exact
+CHK|e_dt_format_small|{"mwdata":{"TimeStamp":1.5779232E+12},"mwmetadata":{"Format":"uuuu\/MM\/dd","TimeZone":""},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|e_dt_format_large|{"mwdata":{"TimeStamp":{"mwdata":[1.5779232E+12],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["uuuu\/MM\/dd"],"mwsize":[1,10],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|e_dt_format_round|datetime [1 1] eq=1 / datetime [1 1] eq=1|exact
+CHK|e_dt_empty_small|{"mwdata":{"TimeStamp":{"mwdata":[],"mwsize":[0,1],"mwtype":"double"}},"mwmetadata":{"Format":"dd-MMM-uuuu HH:mm:ss","TimeZone":""},"mwsize":[0,1],"mwtype":"datetime"}|exact
+CHK|e_dt_empty_large|{"mwdata":{"TimeStamp":{"mwdata":[],"mwsize":[0,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu HH:mm:ss"],"mwsize":[1,20],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[0,1],"mwtype":"datetime"}|exact
+CHK|e_dt_empty_round|datetime [0 1] eq=1 / datetime [0 1] eq=1|exact
+CHK|e_dt_ms_small|{"mwdata":{"TimeStamp":1.5779232005E+12},"mwmetadata":{"Format":"dd-MMM-uuuu HH:mm:ss","TimeZone":""},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|e_dt_ms_large|{"mwdata":{"TimeStamp":{"mwdata":[1.5779232005E+12],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu HH:mm:ss"],"mwsize":[1,20],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|e_dt_ms_round|datetime [1 1] eq=1 / datetime [1 1] eq=1|exact
+CHK|e_dt_2x2_small|{"mwdata":{"TimeStamp":[[1.5779232E+12,1.5779232E+12],[1.5779232E+12,1.5779232E+12]]},"mwmetadata":{"Format":"dd-MMM-uuuu","TimeZone":""},"mwsize":[2,2],"mwtype":"datetime"}|exact
+CHK|e_dt_2x2_large|{"mwdata":{"TimeStamp":{"mwdata":[1.5779232E+12,1.5779232E+12,1.5779232E+12,1.5779232E+12],"mwsize":[2,2],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu"],"mwsize":[1,11],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[2,2],"mwtype":"datetime"}|exact
+CHK|e_dt_2x2_round|datetime [2 2] eq=1 / datetime [2 2] eq=1|exact
+CHK|e_dt_struct_small|{"when":{"mwdata":{"TimeStamp":1.5779232E+12},"mwmetadata":{"Format":"dd-MMM-uuuu","TimeZone":""},"mwsize":[1,1],"mwtype":"datetime"}}|exact
+CHK|e_dt_struct_large|{"mwdata":{"when":[{"mwdata":{"TimeStamp":{"mwdata":[1.5779232E+12],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu"],"mwsize":[1,11],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|e_dt_struct_round|struct [1 1] eq=1 / struct [1 1] eq=1|exact
+CHK|e_dt_cell_small|{"mwdata":[{"mwdata":{"TimeStamp":1.5779232E+12},"mwmetadata":{"Format":"dd-MMM-uuuu","TimeZone":""},"mwsize":[1,1],"mwtype":"datetime"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|e_dt_cell_large|{"mwdata":[{"mwdata":{"TimeStamp":{"mwdata":[1.5779232E+12],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu"],"mwsize":[1,11],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|e_dt_cell_round|cell [1 1] eq=1 / cell [1 1] eq=1|exact
+CHK|e_u_fh_small|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_fh_small_msg|function_handle objects not supported|exact
+CHK|e_u_fh_large|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_fh_large_msg|function_handle objects not supported|exact
+CHK|e_u_fh_round|MPS:MATLAB:JSON:EncodeUnsupportedType : function_handle objects not supported|exact
+CHK|e_u_fh_anon_small|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_fh_anon_small_msg|function_handle objects not supported|exact
+CHK|e_u_fh_anon_large|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_fh_anon_large_msg|function_handle objects not supported|exact
+CHK|e_u_fh_anon_round|MPS:MATLAB:JSON:EncodeUnsupportedType : function_handle objects not supported|exact
+CHK|e_u_table_small|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_table_small_msg|table objects not supported|exact
+CHK|e_u_table_large|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_table_large_msg|table objects not supported|exact
+CHK|e_u_table_round|MPS:MATLAB:JSON:EncodeUnsupportedType : table objects not supported|exact
+CHK|e_u_map_small|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_map_small_msg|containers.Map objects not supported|exact
+CHK|e_u_map_large|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_map_large_msg|containers.Map objects not supported|exact
+CHK|e_u_map_round|MPS:MATLAB:JSON:EncodeUnsupportedType : containers.Map objects not supported|exact
+CHK|e_u_categorical_small|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_categorical_small_msg|categorical objects not supported|exact
+CHK|e_u_categorical_large|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_categorical_large_msg|categorical objects not supported|exact
+CHK|e_u_categorical_round|MPS:MATLAB:JSON:EncodeUnsupportedType : categorical objects not supported|exact
+CHK|e_u_dictionary_small|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_dictionary_small_msg|dictionary objects not supported|exact
+CHK|e_u_dictionary_large|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_dictionary_large_msg|dictionary objects not supported|exact
+CHK|e_u_dictionary_round|MPS:MATLAB:JSON:EncodeUnsupportedType : dictionary objects not supported|exact
+CHK|e_u_duration_small|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_duration_small_msg|duration objects not supported|exact
+CHK|e_u_duration_large|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_duration_large_msg|duration objects not supported|exact
+CHK|e_u_duration_round|MPS:MATLAB:JSON:EncodeUnsupportedType : duration objects not supported|exact
+CHK|e_u_calendar_small|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_calendar_small_msg|calendarDuration objects not supported|exact
+CHK|e_u_calendar_large|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_calendar_large_msg|calendarDuration objects not supported|exact
+CHK|e_u_calendar_round|MPS:MATLAB:JSON:EncodeUnsupportedType : calendarDuration objects not supported|exact
+CHK|e_u_timetable_small|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_timetable_small_msg|timetable objects not supported|exact
+CHK|e_u_timetable_large|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_timetable_large_msg|timetable objects not supported|exact
+CHK|e_u_timetable_round|MPS:MATLAB:JSON:EncodeUnsupportedType : timetable objects not supported|exact
+CHK|e_u_cell_table_small|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_cell_table_small_msg|table objects not supported|exact
+CHK|e_u_cell_table_large|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_cell_table_large_msg|table objects not supported|exact
+CHK|e_u_cell_table_round|MPS:MATLAB:JSON:EncodeUnsupportedType : table objects not supported|exact
+CHK|e_u_struct_fh_small|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_struct_fh_small_msg|struct objects not supported|exact
+CHK|e_u_struct_fh_large|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_struct_fh_large_msg|struct objects not supported|exact
+CHK|e_u_struct_fh_round|MPS:MATLAB:JSON:EncodeUnsupportedType : struct objects not supported|exact
+CHK|e_u_string_in_cell_fh_small|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_string_in_cell_fh_small_msg|cell objects not supported|exact
+CHK|e_u_string_in_cell_fh_large|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_string_in_cell_fh_large_msg|cell objects not supported|exact
+CHK|e_u_string_in_cell_fh_round|MPS:MATLAB:JSON:EncodeUnsupportedType : cell objects not supported|exact
+CHK|e_u_inputparser_small|MPS:MATLAB:JSON:EncodeUnsupportedType : inputParser objects not supported|div=ADR0270|diverges|MPS:MATLAB:JSON:EncodeUnsupportedType : MException objects not supported
+CHK|e_u_inputparser_large|MPS:MATLAB:JSON:EncodeUnsupportedType : inputParser objects not supported|div=ADR0270|diverges|MPS:MATLAB:JSON:EncodeUnsupportedType : MException objects not supported
+CHK|e_u_inputparser_round|MPS:MATLAB:JSON:EncodeUnsupportedType : inputParser objects not supported|div=ADR0270|diverges|MPS:MATLAB:JSON:EncodeUnsupportedType : MException objects not supported
+CHK|e_u_mexception_small|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_mexception_small_msg|MException objects not supported|exact
+CHK|e_u_mexception_large|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|e_u_mexception_large_msg|MException objects not supported|exact
+CHK|e_u_mexception_round|MPS:MATLAB:JSON:EncodeUnsupportedType : MException objects not supported|exact
+CHK|e_unicode_small|[34 945 946 8364 34]|exact
+CHK|e_unicode_large|[123 34 109 119 100 97 116 97 34 58 91 34 945 946 8364 34 93 44 34 109 119 115 105 122 101 34 58 91 49 44 51 93 44 34 109 119 116 121 112 101 34 58 34 99 104 97 114 34 125]|exact
+CHK|e_unicode_string|[123 34 109 119 100 97 116 97 34 58 91 34 233 8364 34 93 44 34 109 119 115 105 122 101 34 58 91 49 44 49 93 44 34 109 119 116 121 112 101 34 58 34 115 116 114 105 110 103 34 125]|exact
+CHK|e_unicode_surrogate|[34 55357 56832 34]|exact
+CHK|e_unicode_round|char [1 3] eq=1 / char [1 3] eq=1|exact
+CHK|e_unicode_class|char|exact
+CHK|e_string_in|{"mwdata":["x"],"mwsize":[1,1],"mwtype":"string"}|exact
+CHK|p_scalar_small|0>5|exact
+CHK|p_scalar_large|0>{ / 4>"mwdata":[ / 8>5 / 4>], / 4>"mwsize":[ / 8>1, / 8>1 / 4>], / 4>"mwtype":"double" / 0>}|exact
+CHK|p_row_small|0>[ / 4>[ / 8>1, / 8>2 / 4>] / 0>]|exact
+CHK|p_row_large|0>{ / 4>"mwdata":[ / 8>1, / 8>2 / 4>], / 4>"mwsize":[ / 8>1, / 8>2 / 4>], / 4>"mwtype":"double" / 0>}|exact
+CHK|p_2x2_small|0>[ / 4>[ / 8>1, / 8>2 / 4>], / 4>[ / 8>3, / 8>4 / 4>] / 0>]|exact
+CHK|p_2x2_large|0>{ / 4>"mwdata":[ / 8>1, / 8>3, / 8>2, / 8>4 / 4>], / 4>"mwsize":[ / 8>2, / 8>2 / 4>], / 4>"mwtype":"double" / 0>}|exact
+CHK|p_struct_small|0>{ / 4>"a":[ / 8>[ / 12>1, / 12>2 / 8>] / 4>], / 4>"b":"x" / 0>}|exact
+CHK|p_struct_large|0>{ / 4>"mwdata":{ / 8>"a":[ / 12>{ / 16>"mwdata":[ / 20>1, / 20>2 / 16>], / 16>"mwsize":[ / 20>1, / 20>2 / 16>], / 16>"mwtype":"double" / 12>} / 8>], / 8>"b":[ / 12>{ / 16>"mwdata":[ / 20>"x" / 16>], / 16>"mwsize":[ / 20>1, / 20>1 / 16>], / 16>"mwtype":"char" / 12>} / 8>] / 4>}, / 4>"mwsize":[ / 8>1, / 8>1 / 4>], / 4>"mwtype":"struct" / 0>}|exact
+CHK|p_nested_small|0>{ / 4>"s":{ / 8>"t":{ / 12>"mwdata":[ / 16>1, / 16>"a" / 12>], / 12>"mwsize":[ / 16>1, / 16>2 / 12>], / 12>"mwtype":"cell" / 8>} / 4>} / 0>}|exact
+CHK|p_nested_large|0>{ / 4>"mwdata":{ / 8>"s":[ / 12>{ / 16>"mwdata":{ / 20>"t":[ / 24>{ / 28>"mwdata":[ / 32>{ / 36>"mwdata":[ / 40>1 / 36>], / 36>"mwsize":[ / 40>1, / 40>1 / 36>], / 36>"mwtype":"double" / 32>}, / 32>{ / 36>"mwdata":[ / 40>"a" / 36>], / 36>"mwsize":[ / 40>1, / 40>1 / 36>], / 36>"mwtype":"char" / 32>} / 28>], / 28>"mwsize":[ / 32>1, / 32>2 / 28>], / 28>"mwtype":"cell" / 24>} / 20>] / 16>}, / 16>"mwsize":[ / 20>1, / 20>1 / 16>], / 16>"mwtype":"struct" / 12>} / 8>] / 4>}, / 4>"mwsize":[ / 8>1, / 8>1 / 4>], / 4>"mwtype":"struct" / 0>}|exact
+CHK|p_cell_small|0>{ / 4>"mwdata":[ / 8>1, / 8>{ / 12>"mwdata":[ / 16>2, / 16>3 / 12>], / 12>"mwsize":[ / 16>1, / 16>2 / 12>], / 12>"mwtype":"cell" / 8>} / 4>], / 4>"mwsize":[ / 8>1, / 8>2 / 4>], / 4>"mwtype":"cell" / 0>}|exact
+CHK|p_cell_large|0>{ / 4>"mwdata":[ / 8>{ / 12>"mwdata":[ / 16>1 / 12>], / 12>"mwsize":[ / 16>1, / 16>1 / 12>], / 12>"mwtype":"double" / 8>}, / 8>{ / 12>"mwdata":[ / 16>{ / 20>"mwdata":[ / 24>2 / 20>], / 20>"mwsize":[ / 24>1, / 24>1 / 20>], / 20>"mwtype":"double" / 16>}, / 16>{ / 20>"mwdata":[ / 24>3 / 20>], / 20>"mwsize":[ / 24>1, / 24>1 / 20>], / 20>"mwtype":"double" / 16>} / 12>], / 12>"mwsize":[ / 16>1, / 16>2 / 12>], / 12>"mwtype":"cell" / 8>} / 4>], / 4>"mwsize":[ / 8>1, / 8>2 / 4>], / 4>"mwtype":"cell" / 0>}|exact
+CHK|p_empty_small|0>[]|exact
+CHK|p_empty_large|0>{ / 4>"mwdata":[ ], / 4>"mwsize":[ / 8>0, / 8>0 / 4>], / 4>"mwtype":"double" / 0>}|exact
+CHK|p_emptystruct_small|0>{}|exact
+CHK|p_emptystruct_large|0>{ / 4>"mwdata":{ }, / 4>"mwsize":[ / 8>1, / 8>1 / 4>], / 4>"mwtype":"struct" / 0>}|exact
+CHK|p_emptycell_small|0>{ / 4>"mwdata":[ ], / 4>"mwsize":[ / 8>0, / 8>0 / 4>], / 4>"mwtype":"cell" / 0>}|exact
+CHK|p_emptycell_large|0>{ / 4>"mwdata":[ ], / 4>"mwsize":[ / 8>0, / 8>0 / 4>], / 4>"mwtype":"cell" / 0>}|exact
+CHK|p_string_small|0>{ / 4>"mwdata":[ / 8>"abc" / 4>], / 4>"mwsize":[ / 8>1, / 8>1 / 4>], / 4>"mwtype":"string" / 0>}|exact
+CHK|p_string_large|0>{ / 4>"mwdata":[ / 8>"abc" / 4>], / 4>"mwsize":[ / 8>1, / 8>1 / 4>], / 4>"mwtype":"string" / 0>}|exact
+CHK|p_sparse_small|0>{ / 4>"mwdata":[ / 8>[ / 12>0, / 12>1 / 8>], / 8>[ / 12>0, / 12>1 / 8>], / 8>[ / 12>1, / 12>2 / 8>] / 4>], / 4>"mwsize":[ / 8>2, / 8>2 / 4>], / 4>"mwsparse":true, / 4>"mwtype":"double" / 0>}|exact
+CHK|p_sparse_large|0>{ / 4>"mwdata":[ / 8>[ / 12>0, / 12>1 / 8>], / 8>[ / 12>0, / 12>1 / 8>], / 8>[ / 12>1, / 12>2 / 8>] / 4>], / 4>"mwsize":[ / 8>2, / 8>2 / 4>], / 4>"mwsparse":true, / 4>"mwtype":"double" / 0>}|exact
+CHK|p_complex_small|0>{ / 4>"mwcomplex":true, / 4>"mwdata":[ / 8>1, / 8>2 / 4>], / 4>"mwsize":[ / 8>1, / 8>1 / 4>], / 4>"mwtype":"double" / 0>}|exact
+CHK|p_complex_large|0>{ / 4>"mwcomplex":true, / 4>"mwdata":[ / 8>1, / 8>2 / 4>], / 4>"mwsize":[ / 8>1, / 8>1 / 4>], / 4>"mwtype":"double" / 0>}|exact
+CHK|p_nan_small|0>[ / 4>[ / 8>1, / 8>{ / 12>"mwdata":"NaN" / 8>} / 4>] / 0>]|exact
+CHK|p_nan_large|0>{ / 4>"mwdata":[ / 8>1, / 8>"NaN" / 4>], / 4>"mwsize":[ / 8>1, / 8>2 / 4>], / 4>"mwtype":"double" / 0>}|exact
+CHK|p_struct_array_small|0>{ / 4>"mwdata":{ / 8>"a":[ / 12>1, / 12>2 / 8>] / 4>}, / 4>"mwsize":[ / 8>1, / 8>2 / 4>], / 4>"mwtype":"struct" / 0>}|exact
+CHK|p_struct_array_large|0>{ / 4>"mwdata":{ / 8>"a":[ / 12>{ / 16>"mwdata":[ / 20>1 / 16>], / 16>"mwsize":[ / 20>1, / 20>1 / 16>], / 16>"mwtype":"double" / 12>}, / 12>{ / 16>"mwdata":[ / 20>2 / 16>], / 16>"mwsize":[ / 20>1, / 20>1 / 16>], / 16>"mwtype":"double" / 12>} / 8>] / 4>}, / 4>"mwsize":[ / 8>1, / 8>2 / 4>], / 4>"mwtype":"struct" / 0>}|exact
+CHK|p_char_small|0>"x"|exact
+CHK|p_char_large|0>{ / 4>"mwdata":[ / 8>"x" / 4>], / 4>"mwsize":[ / 8>1, / 8>1 / 4>], / 4>"mwtype":"char" / 0>}|exact
+CHK|p_logical_small|0>[ / 4>[ / 8>true, / 8>false / 4>] / 0>]|exact
+CHK|p_logical_large|0>{ / 4>"mwdata":[ / 8>true, / 8>false / 4>], / 4>"mwsize":[ / 8>1, / 8>2 / 4>], / 4>"mwtype":"logical" / 0>}|exact
+CHK|p_nan_obj|0>[ / 4>[ / 8>1, / 8>{ / 12>"mwdata":"NaN" / 8>} / 4>] / 0>]|exact
+CHK|p_class|char|exact
+CHK|o_none|MATLAB:minrhs|exact
+CHK|o_none_msg|Not enough input arguments.|exact
+CHK|o_format_bad|MATLAB:unrecognizedStringChoice|exact
+CHK|o_format_bad_msg|The value of 'Format' is invalid. Expected input to match one of these values: 'small', 'large' The input, 'tiny', did not match any of the valid values.|exact
+CHK|o_format_upper|{"mwdata":[1,2],"mwsize":[1,2],"mwtype":"double"}|exact
+CHK|o_format_prefix|{"mwdata":[1,2],"mwsize":[1,2],"mwtype":"double"}|exact
+CHK|o_format_prefix_s|[[1,2]]|exact
+CHK|o_format_string|{"mwdata":[1,2],"mwsize":[1,2],"mwtype":"double"}|exact
+CHK|o_format_number|MATLAB:unrecognizedStringChoice|exact
+CHK|o_format_number_msg|The value of 'Format' is invalid. Expected input to match one of these values: 'small', 'large' The input did not match any of the valid values.|exact
+CHK|o_format_empty|MATLAB:unrecognizedStringChoice|exact
+CHK|o_format_empty_msg|The value of 'Format' is invalid. Expected input to match one of these values: 'small', 'large' The input, '', did not match any of the valid values.|exact
+CHK|o_nan_bad|MATLAB:unrecognizedStringChoice|exact
+CHK|o_nan_bad_msg|The value of 'NanInfType' is invalid. Expected input to match one of these values: 'string', 'object' The input, 'text', did not match any of the valid values.|exact
+CHK|o_nan_upper|{"mwdata":"NaN"}|exact
+CHK|o_nan_prefix|{"mwdata":"NaN"}|exact
+CHK|o_nan_case|{"mwdata":"NaN"}|exact
+CHK|o_nan_fullcase|{"mwdata":"NaN"}|exact
+CHK|o_pretty_number|MATLAB:assertion:failed|exact
+CHK|o_pretty_number_msg|The value of 'PrettyPrint' is invalid. Assertion failed.|exact
+CHK|o_pretty_text|MATLAB:assertion:failed|exact
+CHK|o_pretty_text_msg|The value of 'PrettyPrint' is invalid. Assertion failed.|exact
+CHK|o_pretty_vector|MATLAB:assertion:failed|exact
+CHK|o_pretty_vector_msg|The value of 'PrettyPrint' is invalid. Assertion failed.|exact
+CHK|o_pretty_false|[[1,2]]|exact
+CHK|o_unknown|MATLAB:InputParser:UnmatchedParameter|exact
+CHK|o_unknown_msg|'Indent' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|o_missing_value|MATLAB:InputParser:ParamMissingValue|exact
+CHK|o_missing_value_msg|No value was given for 'Format'. Name-value pair arguments require a name followed by a value.|exact
+CHK|o_name_number|MATLAB:InputParser:ParamMustBeChar|exact
+CHK|o_name_number_msg|Expected a string scalar or character vector for the parameter name.|exact
+CHK|o_prefix_name|{"mwdata":[1,2],"mwsize":[1,2],"mwtype":"double"}|exact
+CHK|o_twice|[[1,2]]|exact
+CHK|o_decode_none|MATLAB:minrhs|exact
+CHK|o_decode_none_msg|Not enough input arguments.|exact
+CHK|o_decode_two|MATLAB:maxrhs|exact
+CHK|o_decode_two_msg|Too many input arguments.|exact
+CHK|o_decode_number|MATLAB:checkSyntacticWarnings:MustBeStringScalarOrCharacterVector|exact
+CHK|o_decode_number_msg|All input arguments must be string scalars or character vectors.|exact
+CHK|o_decode_cell|MATLAB:checkSyntacticWarnings:MustBeStringScalarOrCharacterVector|exact
+CHK|o_decode_cell_msg|All input arguments must be string scalars or character vectors.|exact
+CHK|o_decode_string|double [1 2] real=1 sparse=0 {"mwdata":[1,2],"mwsize":[1,2],"mwtype":"double"}|exact
+CHK|o_decode_stringarray|MATLAB:checkSyntacticWarnings:MustBeStringScalarOrCharacterVector|exact
+CHK|o_decode_stringarray_msg|All input arguments must be string scalars or character vectors.|exact
+CHK|o_decode_charmatrix|double [1 1] 56|exact
+CHK|o_decode_empty|MPS:MATLAB:JSON:DecodeIncomplete|exact
+CHK|o_decode_empty_msg|JSON syntax error at line 1, column 0 (character 0): Unexpected end of text. ^|exact
+CHK|o_decode_missing|MATLAB:checkSyntacticWarnings:MustBeStringScalarOrCharacterVector|exact
+CHK|o_decode_missing_msg|All input arguments must be string scalars or character vectors.|exact
+CHK|o_decode_class|double|exact
+CHK|o_decode_nargout|ERR MATLAB:narginout:notValidMfile|div=ADR0270|diverges|1
+CHK|o_encode_nargout|double [1 1] 1|exact
+CHK|o_request_nargout|double [1 1] 1|exact
+CHK|o_response_nargout|double [1 1] 1|exact
+CHK|x_5|double [1 1] real=1 sparse=0 {"mwdata":[5],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_neg|double [1 1] real=1 sparse=0 {"mwdata":[-5],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_frac|double [1 1] real=1 sparse=0 {"mwdata":[1.5],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_exp|double [1 1] real=1 sparse=0 {"mwdata":[100],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_exp_lower|double [1 1] real=1 sparse=0 {"mwdata":[0.01],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_exp_plus|double [1 1] real=1 sparse=0 {"mwdata":[100],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_exp_big|double [1 1] real=1 sparse=0 {"mwdata":["Inf"],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_exp_negbig|double [1 1] real=1 sparse=0 {"mwdata":["-Inf"],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_denormal|double [1 1] real=1 sparse=0 {"mwdata":[4.94065645841247E-324],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_tiny|double [1 1] real=1 sparse=0 {"mwdata":[0],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_neg0|double [1 1] real=1 sparse=0 {"mwdata":[-0],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_long|double [1 1] real=1 sparse=0 {"mwdata":[1.2345678901234567E+19],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_long_frac|double [1 1] real=1 sparse=0 {"mwdata":[0.12345678901234568],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_zero|double [1 1] real=1 sparse=0 {"mwdata":[0],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_leadzero|double [1 1] real=1 sparse=0 {"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_dotstart|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_dotstart_msg|JSON syntax error at line 1, column 0 (character 0): Unexpected value. .5 ^|exact
+CHK|x_plus|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_plus_msg|JSON syntax error at line 1, column 0 (character 0): Unexpected value. +1 ^|exact
+CHK|x_hex|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_hex_msg|JSON syntax error at line 1, column 1 (character 1): Unexpected value. 0x10 ^|exact
+CHK|x_dotend|MPS:MATLAB:JSON:DecodeIncomplete|exact
+CHK|x_dotend_msg|JSON syntax error at line 1, column 2 (character 2): Unexpected end of text. 1. ^|exact
+CHK|x_dotexp|MPS:MATLAB:JSON:DecodeNumberInvalidFractionalComponent|exact
+CHK|x_dotexp_msg|JSON syntax error at line 1, column 2 (character 2): Fractional component after decimal is invalid. 1.e5 ^|exact
+CHK|x_expend|MPS:MATLAB:JSON:DecodeIncomplete|exact
+CHK|x_expend_msg|JSON syntax error at line 1, column 2 (character 2): Unexpected end of text. 1e ^|exact
+CHK|x_expsign|MPS:MATLAB:JSON:DecodeIncomplete|exact
+CHK|x_expsign_msg|JSON syntax error at line 1, column 3 (character 3): Unexpected end of text. 1e+ ^|exact
+CHK|x_expdot|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_expdot_msg|JSON syntax error at line 1, column 3 (character 3): Unexpected value. 1e1.5 ^|exact
+CHK|x_nan_word|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_nan_word_msg|JSON syntax error at line 1, column 0 (character 0): Unexpected value. NaN ^|exact
+CHK|x_inf_word|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_inf_word_msg|JSON syntax error at line 1, column 0 (character 0): Unexpected value. Infinity ^|exact
+CHK|x_true|logical [1 1] {"mwdata":[true],"mwsize":[1,1],"mwtype":"logical"}|exact
+CHK|x_false|logical [1 1] {"mwdata":[false],"mwsize":[1,1],"mwtype":"logical"}|exact
+CHK|x_tru|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_tru_msg|JSON syntax error at line 1, column 0 (character 0): Unexpected value. tru ^|exact
+CHK|x_True|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_True_msg|JSON syntax error at line 1, column 0 (character 0): Unexpected value. True ^|exact
+CHK|x_null|MPS:MATLAB:JSON:DecodeInvalidMWType|exact
+CHK|x_null_msg|Unsupported "mwtype": "Input value is either foundation::json::Undefined or foundation::json::Null. The value cannot be converted to MATLAB Data Array.".|exact
+CHK|x_nul|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_nul_msg|JSON syntax error at line 1, column 0 (character 0): Unexpected value. nul ^|exact
+CHK|x_empty_arr|double [0 0] real=1 sparse=0 {"mwdata":[],"mwsize":[0,0],"mwtype":"double"}|exact
+CHK|x_arr_1|double [1 1] real=1 sparse=0 {"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_arr_123|double [3 1] real=1 sparse=0 {"mwdata":[1,2,3],"mwsize":[3,1],"mwtype":"double"}|exact
+CHK|x_arr_row|double [1 3] real=1 sparse=0 {"mwdata":[1,2,3],"mwsize":[1,3],"mwtype":"double"}|exact
+CHK|x_arr_col|double [3 1] real=1 sparse=0 {"mwdata":[1,2,3],"mwsize":[3,1],"mwtype":"double"}|exact
+CHK|x_arr_2x2|double [2 2] real=1 sparse=0 {"mwdata":[1,3,2,4],"mwsize":[2,2],"mwtype":"double"}|exact
+CHK|x_arr_3d|double [2 2 2] real=1 sparse=0 {"mwdata":[1,5,3,7,2,6,4,8],"mwsize":[2,2,2],"mwtype":"double"}|exact
+CHK|x_arr_1x1x1|double [1 1] real=1 sparse=0 {"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_arr_4d|double [1 1 1 2] real=1 sparse=0 {"mwdata":[1,2],"mwsize":[1,1,1,2],"mwtype":"double"}|exact
+CHK|x_arr_1x1x2|double [1 1 2] real=1 sparse=0 {"mwdata":[1,2],"mwsize":[1,1,2],"mwtype":"double"}|exact
+CHK|x_arr_empty_in|MPS:MATLAB:JSON:DecodeMismatchedMWSize|exact
+CHK|x_arr_empty_in_msg|Number of elements in "mwdata" does not match "mwsize" specified.|exact
+CHK|x_arr_empty_in2|MPS:MATLAB:JSON:DecodeMismatchedMWSize|exact
+CHK|x_arr_empty_in2_msg|Number of elements in "mwdata" does not match "mwsize" specified.|exact
+CHK|x_arr_empty_deep|MPS:MATLAB:JSON:DecodeMismatchedMWSize|exact
+CHK|x_arr_empty_deep_msg|Number of elements in "mwdata" does not match "mwsize" specified.|exact
+CHK|x_arr_ragged|MPS:MATLAB:JSON:DecodeArrayInconsistentSizes|exact
+CHK|x_arr_ragged_msg|Nested arrays in small notation of the same depth must have consistent sizes.|exact
+CHK|x_arr_ragged2|MPS:MATLAB:JSON:DecodeArrayInconsistentSizes|exact
+CHK|x_arr_ragged2_msg|Nested arrays in small notation of the same depth must have consistent sizes.|exact
+CHK|x_arr_depths|MPS:MATLAB:JSON:DecodeArrayInconsistentDepths|exact
+CHK|x_arr_depths_msg|Nested arrays in small notation must have consistent depths.|exact
+CHK|x_arr_depths2|MPS:MATLAB:JSON:DecodeArrayInconsistentDepths|exact
+CHK|x_arr_depths2_msg|Nested arrays in small notation must have consistent depths.|exact
+CHK|x_arr_mixed|MPS:MATLAB:JSON:DecodeArrayInconsistentTypes|exact
+CHK|x_arr_mixed_msg|Array in small notation cannot have multiple types. Use only double or only char values.|exact
+CHK|x_arr_mixed_bool|MPS:MATLAB:JSON:DecodeArrayInconsistentTypes|exact
+CHK|x_arr_mixed_bool_msg|Array in small notation cannot have multiple types. Use only logical or only double values.|exact
+CHK|x_arr_mixed_bool2|MPS:MATLAB:JSON:DecodeArrayInconsistentTypes|exact
+CHK|x_arr_mixed_bool2_msg|Array in small notation cannot have multiple types. Use only double or only logical values.|exact
+CHK|x_arr_bool|logical [2 1] {"mwdata":[true,false],"mwsize":[2,1],"mwtype":"logical"}|exact
+CHK|x_arr_bool_row|logical [1 2] {"mwdata":[true,false],"mwsize":[1,2],"mwtype":"logical"}|exact
+CHK|x_arr_bool_2x2|logical [2 2] {"mwdata":[true,false,false,true],"mwsize":[2,2],"mwtype":"logical"}|exact
+CHK|x_arr_strings|MPS:MATLAB:JSON:DecodeInvalidArrayElemType|exact
+CHK|x_arr_strings_msg|Arrays in small notation must contain JSON numbers, JSON booleans, or values {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}|exact
+CHK|x_arr_string1|MPS:MATLAB:JSON:DecodeInvalidArrayElemType|exact
+CHK|x_arr_string1_msg|Arrays in small notation must contain JSON numbers, JSON booleans, or values {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}|exact
+CHK|x_arr_null|MPS:MATLAB:JSON:DecodeInvalidArrayElemType|exact
+CHK|x_arr_null_msg|Arrays in small notation must contain JSON numbers, JSON booleans, or values {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}|exact
+CHK|x_arr_nan|double [1 1] real=1 sparse=0 {"mwdata":["NaN"],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_arr_nan_row|double [1 2] real=1 sparse=0 {"mwdata":["Inf",2],"mwsize":[1,2],"mwtype":"double"}|exact
+CHK|x_arr_nan_str|MPS:MATLAB:JSON:DecodeArrayInconsistentTypes|exact
+CHK|x_arr_nan_str_msg|Array in small notation cannot have multiple types. Use only double or only char values.|exact
+CHK|x_arr_nan_bool|MPS:MATLAB:JSON:DecodeArrayInconsistentTypes|exact
+CHK|x_arr_nan_bool_msg|Array in small notation cannot have multiple types. Use only double or only logical values.|exact
+CHK|x_arr_nan_obj_bad|MPS:MATLAB:JSON:DecodeInvalidArrayElemType|exact
+CHK|x_arr_nan_obj_bad_msg|Arrays in small notation must contain JSON numbers, JSON booleans, or values {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}|exact
+CHK|x_arr_nan_obj_extra|double [1 1] real=1 sparse=0 {"mwdata":["NaN"],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|x_arr_objs|MPS:MATLAB:JSON:DecodeInvalidArrayElemType|exact
+CHK|x_arr_objs_msg|Arrays in small notation must contain JSON numbers, JSON booleans, or values {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}|exact
+CHK|x_arr_objs2|MPS:MATLAB:JSON:DecodeInvalidArrayElemType|exact
+CHK|x_arr_objs2_msg|Arrays in small notation must contain JSON numbers, JSON booleans, or values {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}|exact
+CHK|x_arr_trailing|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_arr_trailing_msg|JSON syntax error at line 1, column 3 (character 3): Unexpected value. [1,] ^|exact
+CHK|x_arr_leading|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_arr_leading_msg|JSON syntax error at line 1, column 1 (character 1): Unexpected value. [,1] ^|exact
+CHK|x_arr_unclosed|MPS:MATLAB:JSON:DecodeIncomplete|exact
+CHK|x_arr_unclosed_msg|JSON syntax error at line 1, column 4 (character 4): Unexpected end of text. [1,2 ^|exact
+CHK|x_arr_space|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_arr_space_msg|JSON syntax error at line 1, column 0 (character 0): Unexpected value. [ 1 , 2 ] ^|exact
+CHK|x_arr_newline|double [2 1] real=1 sparse=0 {"mwdata":[1,2],"mwsize":[2,1],"mwtype":"double"}|exact
+CHK|x_str|char [1 3] {"mwdata":["abc"],"mwsize":[1,3],"mwtype":"char"}|exact
+CHK|x_str_empty|char [0 0] {"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}|exact
+CHK|x_str_nan|char [1 3] {"mwdata":["NaN"],"mwsize":[1,3],"mwtype":"char"}|exact
+CHK|x_str_escapes|char [1 17] {"mwdata":["a\nb\tc\"d\\e\/f\bg\fh\ri"],"mwsize":[1,17],"mwtype":"char"}|exact
+CHK|x_str_unicode|char [1 2] [123 34 109 119 100 97 116 97 34 58 91 34 65 233 34 93 44 34 109 119 115 105 122 101 34 58 91 49 44 50 93 44 34 109 119 116 121 112 101 34 58 34 99 104 97 114 34 125]|exact
+CHK|x_str_unicode_bad|MPS:MATLAB:JSON:DecodeIncomplete|exact
+CHK|x_str_unicode_bad_msg|JSON syntax error at line 1, column 1 (character 1): Unexpected end of text. "\u12" ^|exact
+CHK|x_str_unicode_bad2|MPS:MATLAB:JSON:DecodeCharInvalidUnicodeEscape|exact
+CHK|x_str_unicode_bad2_msg|JSON syntax error at line 1, column 1 (character 1): Unicode escape sequence is invalid. "\uZZZZ" ^|exact
+CHK|x_str_escape_bad|MPS:MATLAB:JSON:DecodeCharInvalidEscape|exact
+CHK|x_str_escape_bad_msg|JSON syntax error at line 1, column 1 (character 1): Escape character is invalid. "\q" ^|exact
+CHK|x_str_surrogate|char [1 2] [123 34 109 119 100 97 116 97 34 58 91 34 55357 56832 34 93 44 34 109 119 115 105 122 101 34 58 91 49 44 50 93 44 34 109 119 116 121 112 101 34 58 34 99 104 97 114 34 125]|exact
+CHK|x_str_lone_surrogate|MPS:MATLAB:JSON:DecodeIncomplete|exact
+CHK|x_str_lone_surrogate_msg|JSON syntax error at line 1, column 1 (character 1): Unexpected end of text. "\ud83d" ^|exact
+CHK|x_str_unclosed|MPS:MATLAB:JSON:DecodeIncomplete|exact
+CHK|x_str_unclosed_msg|JSON syntax error at line 1, column 4 (character 4): Unexpected end of text. "abc ^|exact
+CHK|x_str_raw_newline|char [1 3] {"mwdata":["a\nb"],"mwsize":[1,3],"mwtype":"char"}|exact
+CHK|x_str_raw_tab|char [1 3] {"mwdata":["a\tb"],"mwsize":[1,3],"mwtype":"char"}|exact
+CHK|x_str_control|char [1 3] {"mwdata":["a\u0001b"],"mwsize":[1,3],"mwtype":"char"}|exact
+CHK|x_obj_empty|struct [1 1] {"mwdata":{},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|x_obj|struct [1 1] {"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}],"b":[{"mwdata":["x"],"mwsize":[1,1],"mwtype":"char"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|x_obj_nested|struct [1 1] {"mwdata":{"a":[{"mwdata":[1,2],"mwsize":[2,1],"mwtype":"double"}],"b":[{"mwdata":{"c":[{"mwdata":[true],"mwsize":[1,1],"mwtype":"logical"}]},"mwsize":[1,1],"mwtype":"struct"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|x_obj_arrays|struct [1 1] {"mwdata":{"a":[{"mwdata":[1,3,2,4],"mwsize":[2,2],"mwtype":"double"}],"b":[{"mwdata":[],"mwsize":[0,0],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|x_obj_empty_field|struct [1 1] {"mwdata":{"a":[{"mwdata":[],"mwsize":[0,0],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|x_obj_empty_obj|struct [1 1] {"mwdata":{"a":[{"mwdata":{},"mwsize":[1,1],"mwtype":"struct"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|x_obj_null|MPS:MATLAB:JSON:DecodeNullNotSupported|exact
+CHK|x_obj_null_msg|JSON null not supported. Value must be a JSON string, JSON number, JSON boolean, JSON array, or JSON object.|exact
+CHK|x_obj_dup|struct [1 1] {"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|x_obj_order|struct [1 1] {"mwdata":{"Mid":[{"mwdata":[3],"mwsize":[1,1],"mwtype":"double"}],"alpha":[{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"}],"zeta":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|x_obj_keyword|struct [1 1] {"mwdata":{"end":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|x_obj_nonstring_key|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_obj_nonstring_key_msg|JSON syntax error at line 1, column 1 (character 1): Unexpected value. {1:2} ^|exact
+CHK|x_obj_missing_value|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_obj_missing_value_msg|JSON syntax error at line 1, column 5 (character 5): Unexpected value. {"a":} ^|exact
+CHK|x_obj_missing_colon|MPS:MATLAB:JSON:DecodeObjectNoColonAfterName|exact
+CHK|x_obj_missing_colon_msg|JSON syntax error at line 1, column 5 (character 5): Name in JSON object must be followed by ':'. {"a" 1} ^|exact
+CHK|x_obj_trailing|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_obj_trailing_msg|JSON syntax error at line 1, column 7 (character 7): Unexpected value. {"a":1,} ^|exact
+CHK|x_obj_unclosed|MPS:MATLAB:JSON:DecodeIncomplete|exact
+CHK|x_obj_unclosed_msg|JSON syntax error at line 1, column 6 (character 6): Unexpected end of text. {"a":1 ^|exact
+CHK|x_obj_large_in_small|struct [1 1] {"mwdata":{"a":[{"mwdata":[1,2],"mwsize":[1,2],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|x_obj_large_in_small_struct|struct [1 1] {"mwdata":{"a":[{"mwdata":{"b":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,2],"mwtype":"struct"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|x_obj_nan_in_small|struct [1 1] {"mwdata":{"a":[{"mwdata":["NaN"],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|x_obj_struct_arr|struct [1 2] {"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,2],"mwtype":"struct"}|exact
+CHK|x_trailing_garbage|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_trailing_garbage_msg|JSON syntax error at line 1, column 1 (character 1): Unexpected value. 5 x ^|exact
+CHK|x_two_values|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_two_values_msg|JSON syntax error at line 1, column 1 (character 1): Unexpected value. 5 6 ^|exact
+CHK|x_only_space|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_only_space_msg|JSON syntax error at line 1, column 0 (character 0): Unexpected value. ^|exact
+CHK|x_comment|MPS:MATLAB:JSON:DecodeUnexpectedValue|exact
+CHK|x_comment_msg|JSON syntax error at line 1, column 0 (character 0): Unexpected value. /* c */ 5 ^|exact
+CHK|y_double|double [2 2] real=1 sparse=0 {"mwdata":[1,2,3,4],"mwsize":[2,2],"mwtype":"double"}|exact
+CHK|y_double_3d|double [2 2 2] real=1 sparse=0 {"mwdata":[1,2,3,4,5,6,7,8],"mwsize":[2,2,2],"mwtype":"double"}|exact
+CHK|y_double_scalar|double [1 1] real=1 sparse=0 {"mwdata":[5],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|y_double_bare|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_double_bare_msg|"mwdata" for double arrays must be a JSON array.|exact
+CHK|y_double_empty|double [0 0] real=1 sparse=0 {"mwdata":[],"mwsize":[0,0],"mwtype":"double"}|exact
+CHK|y_double_1x0|double [1 0] real=1 sparse=0 {"mwdata":[],"mwsize":[1,0],"mwtype":"double"}|exact
+CHK|y_double_0x0x2|double [0 0 2] real=1 sparse=0 {"mwdata":[],"mwsize":[0,0,2],"mwtype":"double"}|exact
+CHK|y_double_nan|double [1 3] real=1 sparse=0 {"mwdata":["NaN","Inf","-Inf"],"mwsize":[1,3],"mwtype":"double"}|exact
+CHK|y_double_nan_obj|double [1 2] real=1 sparse=0 {"mwdata":["NaN",1],"mwsize":[1,2],"mwtype":"double"}|exact
+CHK|y_double_nan_lower|MPS:MATLAB:JSON:DecodeInvalidFloatingElem|exact
+CHK|y_double_nan_lower_msg|Invalid value for type double. Value must be a JSON number or one of the following values: "NaN", "Inf", "-Inf", {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}.|exact
+CHK|y_double_text|MPS:MATLAB:JSON:DecodeInvalidFloatingElem|exact
+CHK|y_double_text_msg|Invalid value for type double. Value must be a JSON number or one of the following values: "NaN", "Inf", "-Inf", {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}.|exact
+CHK|y_double_bool|MPS:MATLAB:JSON:DecodeInvalidFloatingElem|exact
+CHK|y_double_bool_msg|Invalid value for type double. Value must be a JSON number or one of the following values: "NaN", "Inf", "-Inf", {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}.|exact
+CHK|y_double_null|MPS:MATLAB:JSON:DecodeInvalidFloatingElem|exact
+CHK|y_double_null_msg|Invalid value for type double. Value must be a JSON number or one of the following values: "NaN", "Inf", "-Inf", {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}.|exact
+CHK|y_double_nested|MPS:MATLAB:JSON:DecodeInvalidFloatingElem|exact
+CHK|y_double_nested_msg|Invalid value for type double. Value must be a JSON number or one of the following values: "NaN", "Inf", "-Inf", {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}.|exact
+CHK|y_double_obj|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_double_obj_msg|"mwdata" for double arrays must be a JSON array.|exact
+CHK|y_double_mismatch|MPS:MATLAB:JSON:DecodeMismatchedMWSize|exact
+CHK|y_double_mismatch_msg|Number of elements in "mwdata" does not match "mwsize" specified.|exact
+CHK|y_double_mismatch2|MPS:MATLAB:JSON:DecodeMismatchedMWSize|exact
+CHK|y_double_mismatch2_msg|Number of elements in "mwdata" does not match "mwsize" specified.|exact
+CHK|y_double_order|double [2 1] real=1 sparse=0 {"mwdata":[1,2],"mwsize":[2,1],"mwtype":"double"}|exact
+CHK|y_double_extra|double [1 3] real=1 sparse=0 {"mwdata":[1,2,3],"mwsize":[1,3],"mwtype":"double"}|exact
+CHK|y_double_no_type|struct [1 1] {"mwdata":{"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}],"mwsize":[{"mwdata":[1,1],"mwsize":[2,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|y_double_no_size|struct [1 1] {"mwdata":{"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}],"mwtype":[{"mwdata":["double"],"mwsize":[1,6],"mwtype":"char"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|y_double_no_data|struct [1 1] {"mwdata":{"mwsize":[{"mwdata":[1,1],"mwsize":[2,1],"mwtype":"double"}],"mwtype":[{"mwdata":["double"],"mwsize":[1,6],"mwtype":"char"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|y_type_only|struct [1 1] {"mwdata":{"mwtype":[{"mwdata":["double"],"mwsize":[1,6],"mwtype":"char"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|y_size_only|struct [1 1] {"mwdata":{"mwsize":[{"mwdata":[1,1],"mwsize":[2,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|y_data_only|struct [1 1] {"mwdata":{"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|y_data_nan_only|double [1 1] real=1 sparse=0 {"mwdata":["NaN"],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|y_data_inf_only|double [1 1] real=1 sparse=0 {"mwdata":["Inf"],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|y_data_ninf_only|double [1 1] real=1 sparse=0 {"mwdata":["-Inf"],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|y_data_other_only|struct [1 1] {"mwdata":{"mwdata":[{"mwdata":["x"],"mwsize":[1,1],"mwtype":"char"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|y_size_text|MPS:MATLAB:JSON:DecodeInvalidPropertyType|exact
+CHK|y_size_text_msg|Property "mwsize" must be a JSON array.|exact
+CHK|y_size_one|MPS:MATLAB:JSON:DecodeInvalidMWSize|exact
+CHK|y_size_one_msg|"mwsize" must be an array of 2 or more positive integers.|exact
+CHK|y_size_neg|MPS:MATLAB:JSON:DecodeInvalidMWSize|exact
+CHK|y_size_neg_msg|"mwsize" must be an array of 2 or more positive integers.|exact
+CHK|y_size_frac|MPS:MATLAB:JSON:DecodeInvalidMWSize|exact
+CHK|y_size_frac_msg|"mwsize" must be an array of 2 or more positive integers.|exact
+CHK|y_size_empty|MPS:MATLAB:JSON:DecodeInvalidMWSize|exact
+CHK|y_size_empty_msg|"mwsize" must be an array of 2 or more positive integers.|exact
+CHK|y_size_bool|MPS:MATLAB:JSON:DecodeInvalidMWSize|exact
+CHK|y_size_bool_msg|"mwsize" must be an array of 2 or more positive integers.|exact
+CHK|y_size_nested|MPS:MATLAB:JSON:DecodeInvalidMWSize|exact
+CHK|y_size_nested_msg|"mwsize" must be an array of 2 or more positive integers.|exact
+CHK|y_size_trailing1|double [1 2] real=1 sparse=0 {"mwdata":[1,2],"mwsize":[1,2],"mwtype":"double"}|exact
+CHK|y_type_number|MPS:MATLAB:JSON:DecodeInvalidPropertyType|exact
+CHK|y_type_number_msg|Property "mwtype" must be a JSON string.|exact
+CHK|y_type_empty|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_type_empty_msg|"mwdata" for arrays must be a object.|exact
+CHK|y_type_case|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_type_case_msg|"mwdata" for Double arrays must be a object.|exact
+CHK|y_type_unknown|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_type_unknown_msg|"mwdata" for nosuchclass_k14 arrays must be a object.|exact
+CHK|y_type_cellword|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_type_cellword_msg|"mwdata" for sparse arrays must be a object.|exact
+CHK|y_complex_number|MPS:MATLAB:JSON:DecodeInvalidPropertyType|exact
+CHK|y_complex_number_msg|Property "mwcomplex" must be a JSON boolean.|exact
+CHK|y_complex_text|MPS:MATLAB:JSON:DecodeInvalidPropertyType|exact
+CHK|y_complex_text_msg|Property "mwcomplex" must be a JSON boolean.|exact
+CHK|y_complex_false|double [1 2] real=1 sparse=0 {"mwdata":[1,2],"mwsize":[1,2],"mwtype":"double"}|exact
+CHK|y_complex_ok|double [1 1] real=0 sparse=0 {"mwcomplex":true,"mwdata":[1,2],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|y_complex_row|double [1 2] real=0 sparse=0 {"mwcomplex":true,"mwdata":[1,2,3,-4],"mwsize":[1,2],"mwtype":"double"}|exact
+CHK|y_complex_odd|MPS:MATLAB:JSON:DecodeIncompleteComplexData|exact
+CHK|y_complex_odd_msg|Unexpected end of complex number data|exact
+CHK|y_complex_short|MPS:MATLAB:JSON:DecodeIncompleteComplexData|exact
+CHK|y_complex_short_msg|Unexpected end of complex number data|exact
+CHK|y_complex_pairs|MPS:MATLAB:JSON:DecodeIncompleteComplexData|exact
+CHK|y_complex_pairs_msg|Unexpected end of complex number data|exact
+CHK|y_complex_nan|MPS:MATLAB:JSON:DecodeInvalidFloatingElem|exact
+CHK|y_complex_nan_msg|Invalid value for type double. Value must be a JSON number or one of the following values: "NaN", "Inf", "-Inf", {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}.|exact
+CHK|y_complex_int8|int8 [1 1] real=0 sparse=0 {"mwcomplex":true,"mwdata":[1,2],"mwsize":[1,1],"mwtype":"int8"}|exact
+CHK|y_complex_logical|MPS:MATLAB:JSON:DecodeMismatchedMWSize|exact
+CHK|y_complex_logical_msg|Number of elements in "mwdata" does not match "mwsize" specified.|exact
+CHK|y_complex_char|char [1 2] {"mwdata":["ab"],"mwsize":[1,2],"mwtype":"char"}|exact
+CHK|y_complex_single|single [1 1] real=0 sparse=0 {"mwcomplex":true,"mwdata":[1,2],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|y_complex_empty|double [0 0] real=0 sparse=0 {"mwcomplex":true,"mwdata":[],"mwsize":[0,0],"mwtype":"double"}|div=ADR0270|diverges|double [0 0] real=1 sparse=0 {"mwdata":[],"mwsize":[0,0],"mwtype":"double"}
+CHK|y_single|single [1 2] real=1 sparse=0 {"mwdata":[1.5,2],"mwsize":[1,2],"mwtype":"single"}|exact
+CHK|y_single_nan|single [1 1] real=1 sparse=0 {"mwdata":["NaN"],"mwsize":[1,1],"mwtype":"single"}|exact
+CHK|y_single_big|MPS:MATLAB:JSON:DecodeInvalidFloatingElem|exact
+CHK|y_single_big_msg|Invalid value for type single. Value must be a JSON number or one of the following values: "NaN", "Inf", "-Inf", {"mwdata":"NaN"}, {"mwdata":"Inf"}, or {"mwdata": "-Inf"}.|exact
+CHK|y_int8|int8 [1 1] real=1 sparse=0 {"mwdata":[1],"mwsize":[1,1],"mwtype":"int8"}|exact
+CHK|y_int8_text|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
+CHK|y_int8_text_msg|Invalid value for type int or uint. Value must be an integral number.|exact
+CHK|y_int8_bool|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
+CHK|y_int8_bool_msg|Invalid value for type int or uint. Value must be an integral number.|exact
+CHK|y_int8_frac|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
+CHK|y_int8_frac_msg|Invalid value for type int or uint. Value must be an integral number.|exact
+CHK|y_int8_over|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
+CHK|y_int8_over_msg|Invalid value for type int8. Value must be an integral number.|exact
+CHK|y_int8_nan|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
+CHK|y_int8_nan_msg|Invalid value for type int or uint. Value must be an integral number.|exact
+CHK|y_int8_nan_obj|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
+CHK|y_int8_nan_obj_msg|Invalid value for type int or uint. Value must be an integral number.|exact
+CHK|y_int8_inf|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
+CHK|y_int8_inf_msg|Invalid value for type int or uint. Value must be an integral number.|exact
+CHK|y_int8_exp|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
+CHK|y_int8_exp_msg|Invalid value for type int or uint. Value must be an integral number.|exact
+CHK|y_int8_neg0|int8 [1 1] real=1 sparse=0 {"mwdata":[0],"mwsize":[1,1],"mwtype":"int8"}|exact
+CHK|y_uint8_300|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
+CHK|y_uint8_300_msg|Invalid value for type uint8. Value must be an integral number.|exact
+CHK|y_uint8_neg|uint8 [1 1] real=1 sparse=0 {"mwdata":[0],"mwsize":[1,1],"mwtype":"uint8"}|exact
+CHK|y_uint8_frac|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
+CHK|y_uint8_frac_msg|Invalid value for type int or uint. Value must be an integral number.|exact
+CHK|y_int32_frac|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
+CHK|y_int32_frac_msg|Invalid value for type int or uint. Value must be an integral number.|exact
+CHK|y_int32_over|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
+CHK|y_int32_over_msg|Invalid value for type int or uint. Value must be an integral number.|exact
+CHK|y_int64_big|int64 [1 1] real=1 sparse=0 {"mwdata":[9007199254740993],"mwsize":[1,1],"mwtype":"int64"}|div=ADR0270|diverges|int64 [1 1] real=1 sparse=0 {"mwdata":[9007199254740992],"mwsize":[1,1],"mwtype":"int64"}
+CHK|y_int64_over|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
+CHK|y_int64_over_msg|Invalid value for type int or uint. Value must be an integral number.|exact
+CHK|y_int64_neg|int64 [1 1] real=1 sparse=0 {"mwdata":[-9223372036854775808],"mwsize":[1,1],"mwtype":"int64"}|exact
+CHK|y_uint64_max|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709549568],"mwsize":[1,1],"mwtype":"uint64"}
+CHK|y_uint64_over|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709549568],"mwsize":[1,1],"mwtype":"uint64"}
+CHK|y_uint64_exp|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
+CHK|y_uint64_exp_msg|Invalid value for type int or uint. Value must be an integral number.|exact
+CHK|y_logical|logical [1 2] {"mwdata":[true,false],"mwsize":[1,2],"mwtype":"logical"}|exact
+CHK|y_logical_empty|logical [0 0] {"mwdata":[],"mwsize":[0,0],"mwtype":"logical"}|exact
+CHK|y_char|char [1 2] {"mwdata":["ab"],"mwsize":[1,2],"mwtype":"char"}|exact
+CHK|y_char_matrix|char [2 3] {"mwdata":["adbecf"],"mwsize":[2,3],"mwtype":"char"}|exact
+CHK|y_char_3d|char [2 2 2] {"mwdata":["abcdefgh"],"mwsize":[2,2,2],"mwtype":"char"}|div=ADR0270|diverges|ERR MPS:MATLAB:JSON:DecodeInvalidMWSize
+CHK|y_char_rows|MPS:MATLAB:JSON:DecodeInvalidCharArrayMWData|exact
+CHK|y_char_rows_msg|"mwdata" for char array must be in the format '["..."]'.|exact
+CHK|y_char_empty|char [0 0] {"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}|exact
+CHK|y_char_1x0|char [1 0] {"mwdata":[""],"mwsize":[1,0],"mwtype":"char"}|exact
+CHK|y_char_unicode|char [1 1] [123 34 109 119 100 97 116 97 34 58 91 34 945 34 93 44 34 109 119 115 105 122 101 34 58 91 49 44 49 93 44 34 109 119 116 121 112 101 34 58 34 99 104 97 114 34 125]|exact
+CHK|y_char_null_in|char [1 3] {"mwdata":["a\u0000b"],"mwsize":[1,3],"mwtype":"char"}|exact
+CHK|y_string|string [1 2] {"mwdata":["a","b"],"mwsize":[1,2],"mwtype":"string"}|exact
+CHK|y_string_1|string [1 1] {"mwdata":["ab"],"mwsize":[1,1],"mwtype":"string"}|exact
+CHK|y_string_missing|string [1 1] {"mwdata":[{"mwdata":"missing"}],"mwsize":[1,1],"mwtype":"string"}|exact
+CHK|y_string_missing_mixed|string [1 2] {"mwdata":["a",{"mwdata":"missing"}],"mwsize":[1,2],"mwtype":"string"}|exact
+CHK|y_string_empty|string [0 0] {"mwdata":[],"mwsize":[0,0],"mwtype":"string"}|exact
+CHK|y_string_2x2|string [2 2] {"mwdata":["a","c","b","d"],"mwsize":[2,2],"mwtype":"string"}|exact
+CHK|y_cell|cell [1 2] {"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":["x"],"mwsize":[1,1],"mwtype":"char"}],"mwsize":[1,2],"mwtype":"cell"}|exact
+CHK|y_cell_small_items|cell [1 2] {"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"}],"mwsize":[1,2],"mwtype":"cell"}|exact
+CHK|y_cell_small_mixed|cell [1 5] {"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":["a"],"mwsize":[1,1],"mwtype":"char"},{"mwdata":[true],"mwsize":[1,1],"mwtype":"logical"},{"mwdata":[1,2],"mwsize":[2,1],"mwtype":"double"},{"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}],"mwsize":[1,5],"mwtype":"cell"}|exact
+CHK|y_cell_nested_small|cell [1 1] {"mwdata":[{"mwdata":[1,2],"mwsize":[2,1],"mwtype":"double"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|y_cell_empty_item|cell [1 1] {"mwdata":[{"mwdata":[],"mwsize":[0,0],"mwtype":"double"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|y_cell_empty|cell [0 0] {"mwdata":[],"mwsize":[0,0],"mwtype":"cell"}|exact
+CHK|y_cell_2x2|cell [2 2] {"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[3],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[4],"mwsize":[1,1],"mwtype":"double"}],"mwsize":[2,2],"mwtype":"cell"}|exact
+CHK|y_struct|struct [1 1] {"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|y_struct_small_fields|struct [1 2] {"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,2],"mwtype":"struct"}|exact
+CHK|y_struct_small_scalar|struct [1 1] {"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|y_struct_empty|struct [1 1] {"mwdata":{},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|y_struct_0x0|struct [0 0] {"mwdata":{},"mwsize":[0,0],"mwtype":"struct"}|exact
+CHK|y_struct_arr_data|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_struct_arr_data_msg|"mwdata" for struct arrays must be a JSON object.|exact
+CHK|y_struct_arr_data2|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_struct_arr_data2_msg|"mwdata" for struct arrays must be a JSON object.|exact
+CHK|y_struct_2x2|struct [2 2] {"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[3],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[2],"mwsize":[1,1],"mwtype":"double"},{"mwdata":[4],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[2,2],"mwtype":"struct"}|exact
+CHK|y_struct_nested|struct [1 1] {"mwdata":{"s":[{"mwdata":{"t":[{"mwdata":[1,2],"mwsize":[1,2],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|y_sparse|double [2 2] real=1 sparse=1 {"mwdata":[[0,1],[0,1],[1,2]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}|exact
+CHK|y_sparse_3x4|double [3 4] real=1 sparse=1 {"mwdata":[[1],[2],[7]],"mwsize":[3,4],"mwsparse":true,"mwtype":"double"}|exact
+CHK|y_sparse_empty|double [2 2] real=1 sparse=1 {"mwdata":[[],[],[]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}|exact
+CHK|y_sparse_logical|logical [2 2] {"mwdata":[[1,0],[0,1]],"mwsize":[2,2],"mwsparse":true,"mwtype":"logical"}|div=ADR0270|diverges|double [2 2] real=1 sparse=1 {"mwdata":[[1,0],[0,1],[1,1]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}
+CHK|y_sparse_complex|double [2 2] real=0 sparse=1 {"mwcomplex":true,"mwdata":[[0,1],[0,1],[1,2,3,0]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}|div=ADR0270|diverges|ERR JGraph:mps:json:complexSparse
+CHK|y_sparse_false|double [1 2] real=1 sparse=0 {"mwdata":[1,2],"mwsize":[1,2],"mwtype":"double"}|exact
+CHK|y_sparse_int8|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
+CHK|y_sparse_int8_msg|Invalid value for type int or uint. Value must be an integral number.|exact
+CHK|y_sparse_char|MPS:MATLAB:JSON:DecodeInvalidCharArrayMWData|exact
+CHK|y_sparse_char_msg|"mwdata" for char array must be in the format '["..."]'.|exact
+CHK|y_enum|matlab.lang.OnOffSwitchState [1 1] {"mwdata":["on"],"mwsize":[1,1],"mwtype":"matlab.lang.OnOffSwitchState"}|exact
+CHK|y_enum_row|matlab.lang.OnOffSwitchState [1 2] {"mwdata":["on","off"],"mwsize":[1,2],"mwtype":"matlab.lang.OnOffSwitchState"}|exact
+CHK|y_enum_bad|MPS:MATLAB:JSON:DecodeInvalidMWType|exact
+CHK|y_enum_bad_msg|Unsupported "mwtype": "Invalid enumeration".|exact
+CHK|y_enum_number|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_enum_number_msg|"mwdata" for matlab.lang.OnOffSwitchState arrays must be a object.|exact
+CHK|y_datetime|datetime [1 1] {"mwdata":{"TimeStamp":{"mwdata":[1.5779232E+12],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu"],"mwsize":[1,11],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|y_datetime_large|datetime [1 1] {"mwdata":{"TimeStamp":{"mwdata":[1.5779232E+12],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu"],"mwsize":[1,11],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|y_datetime_row|datetime [1 2] {"mwdata":{"TimeStamp":{"mwdata":[1.5778368E+12,1.5779232E+12],"mwsize":[1,2],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu"],"mwsize":[1,11],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,2],"mwtype":"datetime"}|exact
+CHK|y_datetime_utc|datetime [1 1] {"mwdata":{"TimeStamp":{"mwdata":[1.5778368E+12],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu"],"mwsize":[1,11],"mwtype":"char"},"TimeZone":{"mwdata":["UTC"],"mwsize":[1,3],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|y_datetime_nat|datetime [1 1] {"mwdata":{"TimeStamp":{"mwdata":["NaN"],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu HH:mm:ss"],"mwsize":[1,20],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|y_datetime_format|datetime [1 1] {"mwdata":{"TimeStamp":{"mwdata":[1.5779232E+12],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["uuuu"],"mwsize":[1,4],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|y_datetime_no_meta|MPS:MATLAB:JSON:DecodeInvalidMWType|exact
+CHK|y_datetime_no_meta_msg|Unsupported "mwtype": "Unable to load serialized datetime array with missing Format".|exact
+CHK|y_datetime_no_zone|datetime [1 1] {"mwdata":{"TimeStamp":{"mwdata":[1.5779232E+12],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["dd-MMM-uuuu"],"mwsize":[1,11],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|y_logical_number|MPS:MATLAB:JSON:DecodeInvalidLogicalElem|exact
+CHK|y_logical_number_msg|Invalid value for type logical. Value must be 'true' or 'false'.|exact
+CHK|y_logical_text|MPS:MATLAB:JSON:DecodeInvalidLogicalElem|exact
+CHK|y_logical_text_msg|Invalid value for type logical. Value must be 'true' or 'false'.|exact
+CHK|y_logical_null|MPS:MATLAB:JSON:DecodeInvalidLogicalElem|exact
+CHK|y_logical_null_msg|Invalid value for type logical. Value must be 'true' or 'false'.|exact
+CHK|y_char_bare|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_char_bare_msg|"mwdata" for char arrays must be a JSON array.|exact
+CHK|y_char_number|MPS:MATLAB:JSON:DecodeInvalidCharArrayMWData|exact
+CHK|y_char_number_msg|"mwdata" for char array must be in the format '["..."]'.|exact
+CHK|y_char_empty_arr|MPS:MATLAB:JSON:DecodeInvalidCharArrayMWData|exact
+CHK|y_char_empty_arr_msg|"mwdata" for char array must be in the format '["..."]'.|exact
+CHK|y_char_short|MPS:MATLAB:JSON:DecodeMismatchedMWSize|exact
+CHK|y_char_short_msg|Number of elements in "mwdata" does not match "mwsize" specified.|exact
+CHK|y_char_long|MPS:MATLAB:JSON:DecodeMismatchedMWSize|exact
+CHK|y_char_long_msg|Number of elements in "mwdata" does not match "mwsize" specified.|exact
+CHK|y_string_bare|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_string_bare_msg|"mwdata" for string arrays must be a JSON array.|exact
+CHK|y_string_number|MPS:MATLAB:JSON:DecodeInvalidMWType|exact
+CHK|y_string_number_msg|Unsupported "mwtype": "invalid conversion: JSON number to JSON object".|exact
+CHK|y_cell_null_item|MPS:MATLAB:JSON:DecodeNullNotSupported|exact
+CHK|y_cell_null_item_msg|JSON null not supported. Value must be a JSON string, JSON number, JSON boolean, JSON array, or JSON object.|exact
+CHK|y_cell_bare|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_cell_bare_msg|"mwdata" for cell arrays must be a JSON array.|exact
+CHK|y_cell_mismatch|MPS:MATLAB:JSON:DecodeMismatchedMWSize|exact
+CHK|y_cell_mismatch_msg|Number of elements in "mwdata" does not match "mwsize" specified.|exact
+CHK|y_struct_bare_field|MPS:MATLAB:JSON:DecodeInvalidMWType|exact
+CHK|y_struct_bare_field_msg|Unsupported "mwtype": "invalid conversion: JSON number to JSON array".|exact
+CHK|y_struct_field_mismatch|MPS:MATLAB:JSON:DecodeMismatchedMWSize|exact
+CHK|y_struct_field_mismatch_msg|Number of elements in "mwdata" does not match "mwsize" specified.|exact
+CHK|y_struct_fields_differ|MPS:MATLAB:JSON:DecodeMismatchedMWSize|exact
+CHK|y_struct_fields_differ_msg|Number of elements in "mwdata" does not match "mwsize" specified.|exact
+CHK|y_struct_0x0_fields|struct [0 0] {"mwdata":{"a":[]},"mwsize":[0,0],"mwtype":"struct"}|exact
+CHK|y_struct_field_text|MPS:MATLAB:JSON:DecodeInvalidMWType|exact
+CHK|y_struct_field_text_msg|Unsupported "mwtype": "invalid conversion: JSON string to JSON array".|exact
+CHK|y_struct_field_null|MPS:MATLAB:JSON:DecodeInvalidMWType|exact
+CHK|y_struct_field_null_msg|Unsupported "mwtype": "invalid conversion: JSON null to JSON array".|exact
+CHK|y_struct_field_empty|struct [1 1] {"mwdata":{"a":[{"mwdata":[],"mwsize":[0,0],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|y_struct_field_nan|struct [1 1] {"mwdata":{"a":[{"mwdata":["NaN"],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|y_enum_empty|MPS:MATLAB:JSON:DecodeInvalidMWType|exact
+CHK|y_enum_empty_msg|Unsupported "mwtype": "matlab.lang.OnOffSwitchState is not supported.".|exact
+CHK|y_datetime_bad_zone|MPS:MATLAB:JSON:DecodeInvalidMWType|exact
+CHK|y_datetime_bad_zone_msg|Unsupported "mwtype": "Unable to load serialized datetime array with invalid value for TimeZone".|exact
+CHK|y_datetime_bad_format|datetime [1 1] {"mwdata":{"TimeStamp":{"mwdata":[1.5779232E+12],"mwsize":[1,1],"mwtype":"double"}},"mwmetadata":{"Format":{"mwdata":["QQQQ-zz"],"mwsize":[1,7],"mwtype":"char"},"TimeZone":{"mwdata":[""],"mwsize":[0,0],"mwtype":"char"}},"mwsize":[1,1],"mwtype":"datetime"}|exact
+CHK|y_datetime_mismatch|MPS:MATLAB:JSON:DecodeMismatchedMWSize|exact
+CHK|y_datetime_mismatch_msg|Number of elements in "mwdata" does not match "mwsize" specified.|exact
+CHK|y_datetime_bad_ts|MPS:MATLAB:JSON:DecodeInvalidMWType|exact
+CHK|y_datetime_bad_ts_msg|Unsupported "mwtype": "Unable to load serialized datetime array with invalid value for TimeStamp".|exact
+CHK|y_datetime_arr_data|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_datetime_arr_data_msg|"mwdata" for datetime arrays must be a object.|exact
+CHK|y_metadata_double|double [1 1] real=1 sparse=0 {"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}|exact
+CHK|y_type_fh|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_type_fh_msg|"mwdata" for function_handle arrays must be a object.|exact
+CHK|y_type_table|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_type_table_msg|"mwdata" for table arrays must be a object.|exact
+CHK|y_type_duration|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_type_duration_msg|"mwdata" for duration arrays must be a object.|exact
+CHK|y_type_map|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_type_map_msg|"mwdata" for containers.Map arrays must be a object.|exact
+CHK|y_type_categorical|MPS:MATLAB:JSON:DecodeInvalidMWType|exact
+CHK|y_type_categorical_msg|Unsupported "mwtype": "Invalid enumeration".|exact
+CHK|y_type_complexword|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
+CHK|y_type_complexword_msg|"mwdata" for complex arrays must be a object.|exact
+CHK|y_type_inputparser|MPS:MATLAB:JSON:DecodeInvalidMWType|exact
+CHK|y_type_inputparser_msg|Unsupported "mwtype": "Invalid enumeration".|exact
+CHK|r_req_default|{"rhs":[[[1,2,3]],"abc"],"nargout":1,"outputFormat":{"mode":"small","nanType":"string"}}|exact
+CHK|r_req_nargout|{"rhs":[[[1,2,3]],"abc"],"nargout":2,"outputFormat":{"mode":"small","nanType":"string"}}|exact
+CHK|r_req_nargout0|{"rhs":[1],"nargout":0,"outputFormat":{"mode":"small","nanType":"string"}}|exact
+CHK|r_req_nargout_frac|{"rhs":[1],"nargout":2.5,"outputFormat":{"mode":"small","nanType":"string"}}|exact
+CHK|r_req_nargout_vec|{"rhs":[1],"nargout":1 2,"outputFormat":{"mode":"small","nanType":"string"}}|exact
+CHK|r_req_nargout_neg|{"rhs":[1],"nargout":-1,"outputFormat":{"mode":"small","nanType":"string"}}|exact
+CHK|r_req_nargout_text|MATLAB:InputParser:ArgumentFailedValidation|exact
+CHK|r_req_nargout_text_msg|The value of 'Nargout' is invalid. It must satisfy the function: isnumeric.|exact
+CHK|r_req_nargout_int|{"rhs":[1],"nargout":3,"outputFormat":{"mode":"small","nanType":"string"}}|exact
+CHK|r_req_nargout_logical|MATLAB:InputParser:ArgumentFailedValidation|exact
+CHK|r_req_nargout_logical_msg|The value of 'Nargout' is invalid. It must satisfy the function: isnumeric.|exact
+CHK|r_req_nargout_empty|{"rhs":[1],"nargout":,"outputFormat":{"mode":"small","nanType":"string"}}|exact
+CHK|r_req_large|{"rhs":[{"mwdata":[1,4,3,2],"mwsize":[2,2],"mwtype":"double"}],"nargout":1,"outputFormat":{"mode":"large","nanType":"object"}}|exact
+CHK|r_req_nan_obj|{"rhs":[{"mwdata":"NaN"}],"nargout":1,"outputFormat":{"mode":"small","nanType":"string"}}|exact
+CHK|r_req_empty|{"rhs":[],"nargout":1,"outputFormat":{"mode":"small","nanType":"string"}}|exact
+CHK|r_req_not_cell|MATLAB:InputParser:ArgumentFailedValidation|exact
+CHK|r_req_not_cell_msg|The value of 'rhs' is invalid. It must satisfy the function: iscell.|exact
+CHK|r_req_struct|MATLAB:InputParser:ArgumentFailedValidation|exact
+CHK|r_req_struct_msg|The value of 'rhs' is invalid. It must satisfy the function: iscell.|exact
+CHK|r_req_none|MATLAB:minrhs|exact
+CHK|r_req_none_msg|Not enough input arguments.|exact
+CHK|r_req_cell_col|{"rhs":[1,2],"nargout":1,"outputFormat":{"mode":"small","nanType":"string"}}|exact
+CHK|r_req_cell_2x2|{"rhs":[1,3],"nargout":1,"outputFormat":{"mode":"small","nanType":"string"}}|exact
+CHK|r_req_nested|{"rhs":[{"mwdata":[1,2],"mwsize":[1,2],"mwtype":"cell"}],"nargout":1,"outputFormat":{"mode":"small","nanType":"string"}}|exact
+CHK|r_req_pretty|0>{"rhs":[[ / 4>[ / 8>1, / 8>2 / 4>] / 0>], / 0>{ / 4>"a":1 / 0>}], / 0>"nargout":1, / 0>"outputFormat":{"mode":"small","nanType":"string"} / 0>}|exact
+CHK|r_req_pretty_large|0>{"rhs":[{ / 4>"mwdata":[ / 8>1, / 8>2 / 4>], / 4>"mwsize":[ / 8>1, / 8>2 / 4>], / 4>"mwtype":"double" / 0>}], / 0>"nargout":3, / 0>"outputFormat":{"mode":"small","nanType":"string"} / 0>}|exact
+CHK|r_req_bad_option|MATLAB:InputParser:UnmatchedParameter|exact
+CHK|r_req_bad_option_msg|'Mode' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|r_req_bad_format|MATLAB:unrecognizedStringChoice|exact
+CHK|r_req_bad_format_msg|The value of 'OutputFormat' is invalid. Expected input to match one of these values: 'small', 'large' The input, 'medium', did not match any of the valid values.|exact
+CHK|r_req_prefix|MATLAB:InputParser:AmbiguousParameter|exact
+CHK|r_req_prefix_msg|'Output' matches multiple parameter names: 'OutputFormat', 'OutputNanInfType'. To avoid ambiguity, specify the complete name of the parameter.|exact
+CHK|r_req_prefix_ambiguous|{"rhs":[1],"nargout":1,"outputFormat":{"mode":"small","nanType":"object"}}|exact
+CHK|r_req_unsupported|MPS:MATLAB:JSON:EncodeUnsupportedType|exact
+CHK|r_req_unsupported_msg|function_handle objects not supported|exact
+CHK|r_req_class|char|exact
+CHK|r_res_lhs|cell [2 1] {"mwdata":[{"mwdata":[1,2,3,4],"mwsize":[1,4],"mwtype":"double"},{"mwdata":["abc"],"mwsize":[1,3],"mwtype":"char"}],"mwsize":[2,1],"mwtype":"cell"}|exact
+CHK|r_res_lhs_large|cell [1 1] {"mwdata":[{"mwdata":[1,2],"mwsize":[1,2],"mwtype":"double"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|r_res_lhs_empty|cell [0 1] {"mwdata":[],"mwsize":[0,1],"mwtype":"cell"}|exact
+CHK|r_res_lhs_scalar|MPS:MATLAB:JSON:DecodeInvalidFevalResponse|exact
+CHK|r_res_lhs_scalar_msg|Text must be in the format {"lhs":[...]} or {"error":{...}}|exact
+CHK|r_res_lhs_obj|MPS:MATLAB:JSON:DecodeInvalidFevalResponse|exact
+CHK|r_res_lhs_obj_msg|Text must be in the format {"lhs":[...]} or {"error":{...}}|exact
+CHK|r_res_lhs_struct_items|cell [2 1] {"mwdata":[{"mwdata":{"a":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"},{"mwdata":{"b":[{"mwdata":[1,2],"mwsize":[2,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}],"mwsize":[2,1],"mwtype":"cell"}|exact
+CHK|r_res_lhs_nan|cell [1 1] {"mwdata":[{"mwdata":["NaN"],"mwsize":[1,1],"mwtype":"double"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|r_res_lhs_extra|cell [1 1] {"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|r_res_lhs_bad_item|MPS:MATLAB:JSON:DecodeArrayInconsistentTypes|exact
+CHK|r_res_lhs_bad_item_msg|Array in small notation cannot have multiple types. Use only double or only char values.|exact
+CHK|r_res_error|struct [1 1] {"mwdata":{"id":[{"mwdata":["a:b"],"mwsize":[1,3],"mwtype":"char"}],"message":[{"mwdata":["boom"],"mwsize":[1,4],"mwtype":"char"}],"stack":[{"mwdata":{"file":[{"mwdata":["f.m"],"mwsize":[1,3],"mwtype":"char"}],"line":[{"mwdata":[3],"mwsize":[1,1],"mwtype":"double"}],"name":[{"mwdata":["f"],"mwsize":[1,1],"mwtype":"char"}]},"mwsize":[1,1],"mwtype":"struct"}],"type":[{"mwdata":["matlaberror"],"mwsize":[1,11],"mwtype":"char"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|r_res_error_stack|struct [1 1] {"mwdata":{"file":[{"mwdata":["f.m"],"mwsize":[1,3],"mwtype":"char"}],"line":[{"mwdata":[3],"mwsize":[1,1],"mwtype":"double"}],"name":[{"mwdata":["f"],"mwsize":[1,1],"mwtype":"char"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|r_res_error_nostack|struct [1 1] {"mwdata":{"id":[{"mwdata":["a:b"],"mwsize":[1,3],"mwtype":"char"}],"message":[{"mwdata":["boom"],"mwsize":[1,4],"mwtype":"char"}],"stack":[{"mwdata":[],"mwsize":[0,0],"mwtype":"double"}],"type":[{"mwdata":["matlaberror"],"mwsize":[1,11],"mwtype":"char"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|r_res_error_min|struct [1 1] {"mwdata":{"message":[{"mwdata":["boom"],"mwsize":[1,4],"mwtype":"char"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|r_res_error_text|char [1 4] {"mwdata":["boom"],"mwsize":[1,4],"mwtype":"char"}|exact
+CHK|r_res_error_both|cell [1 1] {"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|r_res_neither|MPS:MATLAB:JSON:DecodeInvalidFevalResponse|exact
+CHK|r_res_neither_msg|Text must be in the format {"lhs":[...]} or {"error":{...}}|exact
+CHK|r_res_array|MPS:MATLAB:JSON:DecodeInvalidFevalResponse|exact
+CHK|r_res_array_msg|Text must be in the format {"lhs":[...]} or {"error":{...}}|exact
+CHK|r_res_number|MPS:MATLAB:JSON:DecodeInvalidFevalResponse|exact
+CHK|r_res_number_msg|Text must be in the format {"lhs":[...]} or {"error":{...}}|exact
+CHK|r_res_bad_json|MPS:MATLAB:JSON:DecodeIncomplete|exact
+CHK|r_res_bad_json_msg|JSON syntax error at line 1, column 7 (character 7): Unexpected end of text. {"lhs": ^|exact
+CHK|r_res_empty|MPS:MATLAB:JSON:DecodeIncomplete|exact
+CHK|r_res_empty_msg|JSON syntax error at line 1, column 0 (character 0): Unexpected end of text. ^|exact
+CHK|r_res_not_text|MATLAB:checkSyntacticWarnings:MustBeStringScalarOrCharacterVector|exact
+CHK|r_res_not_text_msg|All input arguments must be string scalars or character vectors.|exact
+CHK|r_res_cell|MATLAB:checkSyntacticWarnings:MustBeStringScalarOrCharacterVector|exact
+CHK|r_res_cell_msg|All input arguments must be string scalars or character vectors.|exact
+CHK|r_res_string|cell [1 1] {"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|r_res_none|MATLAB:minrhs|exact
+CHK|r_res_none_msg|Not enough input arguments.|exact
+CHK|r_res_two|MATLAB:TooManyInputs|exact
+CHK|r_res_two_msg|Too many input arguments.|exact

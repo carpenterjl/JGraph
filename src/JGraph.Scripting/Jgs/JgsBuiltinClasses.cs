@@ -39,6 +39,7 @@ internal static partial class JgsBuiltinClasses
         CLibraryOptions => CLibraryOptionsDeclaration(interpreter),
         CppLibraryOptions => CppLibraryOptionsDeclaration(interpreter),
         PythonPackageOptions => PythonPackageOptionsDeclaration(interpreter),
+        ProductionServerArchiveOptions => ProductionServerArchiveOptionsDeclaration(interpreter),
         BuildResults => BuildResultsDeclaration(),
         RuntimeDependencies => RuntimeDependenciesDeclaration(),
         _ => null,

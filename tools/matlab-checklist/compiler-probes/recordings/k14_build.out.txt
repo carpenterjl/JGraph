@@ -1,0 +1,861 @@
+main.options
+    ProductionServerArchiveOptions with properties:
+                ArchiveName: 'k14arch'
+              FunctionFiles: {12×1 cell}
+         FunctionSignatures: ''
+                 RoutesFile: ''
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: on
+                  OutputDir: '<W>\b\main'
+main.printed
+  |mcc -W CTF:k14arch -d <W>\b\main -v -Z autodetect -U <W>\b\src\k14add.m <W>\b\src\k14echo.m <W>\b\src\k14multi.m <W>\b\src\k14err.m <W>\b\src\k14noout.m <W>\b\src\k14print.m <W>\b\src\k14slow.m <W>\b\src\k14nargs.m <W>\b\src\k14state.m <W>\b\src\k14quiet.m <W>\b\src\k14describe.m <W>\b\src\k14make.m
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\b\src\k14add.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k14echo.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k14multi.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k14err.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k14noout.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k14print.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k14slow.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k14nargs.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k14state.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k14quiet.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k14describe.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k14make.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\main\readme.txt".
+main.results
+    Results with properties:
+                    BuildType: 'productionServerArchive'
+                        Files: {'<W>\b\main\k14arch.ctf'}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.ProductionServerArchiveOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+main.BuildType	productionServerArchive
+main.Files	<OUT>\k14arch.ctf
+main.Options.class	compiler.build.ProductionServerArchiveOptions
+main.Options.ArchiveName	k14arch
+main.Options.FunctionSignatures	
+main.Options.RoutesFile	
+main.seconds	7.1
+main.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14arch.ctf | mccExcludedFiles.log (90) | readme.txt (3298) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+main.file.buildresult.json	197 chars, CRLF 6, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"MATLAB Base Runtime", "Optional":"no"},
+  |		{"ID":35054, "DisplayName":"MATLAB Production Server Runtime Addon", "Optional":"no"}
+  |	]
+  |}
+main.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+main.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
+  |Excluded Files
+  |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
+main.file.readme.txt	3298 chars, CRLF 67, ends with newline 1
+  |k14arch for MATLAB Production Server
+  |
+  |Before you can use the functions packaged by the compiler, you need to do the following:
+  |* Deploy k14arch.ctf to a server instance
+  |* Develop a client application to access the functions.
+  |
+  |1. Deploy k14arch.ctf
+  |
+  |1.1 Prerequisites to Deployment
+  |Before you can deploy k14arch.ctf, you need a server instance to host it. The server 
+  |instance must be configured to have access to MATLAB Runtime(R2025b).
+  |* If you do not have a server instance created, see: 
+  |  https://www.mathworks.com/help/mps/server/creating-a-server.html
+  |* If you do not have MATLAB Runtime(R2025b) installed, download the installer from the 
+  |  MATLAB Runtime page at: https://www.mathworks.com/products/compiler/mcr/index.html
+  |* If you need to configure the server instance to use MATLAB Runtime(R2025b), see: 
+  |  https://www.mathworks.com/help/mps/server/customize-the-configuration-file.html
+  |
+  |1.2 k14arch.ctf Deployment
+  |To deploy k14arch.ctf, copy it into the server instance's `auto_deploy` folder. The 
+  |server instance will automatically deploy it and make it available to interested clients.
+  |
+  |2. Develop Client Applications
+  |MATLAB Production Server officially supports the following clients:
+  |* C/C++: https://www.mathworks.com/help/mps/cxx-client-programming.html
+  |* .NET: https://www.mathworks.com/help/mps/dotnet-client-programming.html
+  |* Java: https://www.mathworks.com/help/mps/java-client-programming.html
+  |* Python: https://www.mathworks.com/help/mps/python-client-programming.html
+  |
+  |2.1 C/C++ 
+  |The C/C++ client libraries are located in a platform specific folder at `MPS_INSTALL/client/c`.
+  |The header files are located in `MPS_INSTALL/client/c/include`.
+  |For information about developing C/C++ clients, see: 
+  |* https://www.mathworks.com/help/mps/cxx-client-programming.html
+  |* example code at `MPS_INSTALL/client/c/examples' 
+  |* included C/C++ client documentation at `MPS_INSTALL/client/c/doc/index.html'
+  |
+  |2.2 .NET
+  |The .NET client libraries are located at 
+  |`MPS_INSTALL/client/dotnet/MathWorks.MATLAB.ProductionServer.Client.dll`.
+  |For information about developing .NET clients, see:
+  |* https://www.mathworks.com/help/mps/dotnet-client-programming.html
+  |* example code at `MPS_INSTALL/client/dotnet/examples'
+  |* included .NET client documentation at 
+  |`MPS_INSTALL/client/dotnet/doc/MathWorks.MATLAB.ProductionServer.Client.chm`
+  |
+  |2.3 Java
+  |The Java client libraries are located at `MPS_INSTALL/client/java/mps_client.jar`.
+  |For information about developing Java clients, see:
+  |* https://www.mathworks.com/help/mps/java-client-programming.html
+  |* example code at `MPS_INSTALL/client/java/examples'
+  |* included Javadoc at `MPS_INSTALL/client/java/doc/index.html`
+  |
+  |2.4 Python 
+  |The Python client package includes the following: 
+  |* matlab - a set of classes for creating multi-dimensional MATLAB arrays 
+  |* production_server - API for evaluating functions on a remote MATLAB Production Server 
+  |  instance
+  |
+  |The Python client installer is located in `MPS_INSTALL/client/python`. To install the 
+  |client, go to that folder and execute:
+  | 
+  |python -m pip install .
+  |
+  |For information about developing Python clients, see: 
+  |* https://www.mathworks.com/help/mps/python-client-programming.html
+  |* example code at `MPS_INSTALL/client/python/examples'
+main.file.requiredMCRProducts.txt	12 chars, CRLF 0, ends with newline 0
+  |35010	35054	
+main.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
+  |Path	Symbol	Reason
+defaults.results
+    Results with properties:
+                    BuildType: 'productionServerArchive'
+                        Files: {'<W>\b\defaults\k14add.ctf'}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.ProductionServerArchiveOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+defaults.BuildType	productionServerArchive
+defaults.Files	<OUT>\k14add.ctf
+defaults.Options.class	compiler.build.ProductionServerArchiveOptions
+defaults.Options.ArchiveName	k14add
+defaults.Options.FunctionSignatures	
+defaults.Options.RoutesFile	
+defaults.seconds	3.7
+defaults.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14add.ctf | mccExcludedFiles.log (90) | readme.txt (3292) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+twofiles.results
+    Results with properties:
+                    BuildType: 'productionServerArchive'
+                        Files: {'<W>\b\twofiles\k14add.ctf'}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.ProductionServerArchiveOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+twofiles.BuildType	productionServerArchive
+twofiles.Files	<OUT>\k14add.ctf
+twofiles.Options.class	compiler.build.ProductionServerArchiveOptions
+twofiles.Options.ArchiveName	k14add
+twofiles.Options.FunctionSignatures	
+twofiles.Options.RoutesFile	
+twofiles.seconds	3.7
+twofiles.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14add.ctf | mccExcludedFiles.log (90) | readme.txt (3292) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+signatures.results
+    Results with properties:
+                    BuildType: 'productionServerArchive'
+                        Files: {'<W>\b\signatures\k14sig.ctf'}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.ProductionServerArchiveOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+signatures.BuildType	productionServerArchive
+signatures.Files	<OUT>\k14sig.ctf
+signatures.Options.class	compiler.build.ProductionServerArchiveOptions
+signatures.Options.ArchiveName	k14sig
+signatures.Options.FunctionSignatures	<W>\src\k14sig.json
+signatures.Options.RoutesFile	
+signatures.seconds	3.9
+signatures.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14sig.ctf | mccExcludedFiles.log (90) | readme.txt (3292) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+routes	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "<W>\b\src\k14routes.json" could not be parsed. Please fix errors and run again.
+routes.seconds	0.1
+routes.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "<W>\b\src\k14routes.json": Optional property "component" if present must be the same value as "k14rt" . (at .pathmap[1])
+routes.files	
+both	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "<W>\b\src\k14routes.json" could not be parsed. Please fix errors and run again.
+both.seconds	0.3
+both.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "<W>\b\src\k14routes.json": Optional property "component" if present must be the same value as "k14both" . (at .pathmap[1])
+both.files	
+additional.results
+    Results with properties:
+                    BuildType: 'productionServerArchive'
+                        Files: {'<W>\b\additional\k14ad.ctf'}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.ProductionServerArchiveOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+additional.BuildType	productionServerArchive
+additional.Files	<OUT>\k14ad.ctf
+additional.Options.class	compiler.build.ProductionServerArchiveOptions
+additional.Options.ArchiveName	k14ad
+additional.Options.FunctionSignatures	
+additional.Options.RoutesFile	
+additional.seconds	3.7
+additional.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14ad.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+script.results
+    Results with properties:
+                    BuildType: 'productionServerArchive'
+                        Files: {'<W>\b\script\k14script.ctf'}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.ProductionServerArchiveOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+script.BuildType	productionServerArchive
+script.Files	<OUT>\k14script.ctf
+script.Options.class	compiler.build.ProductionServerArchiveOptions
+script.Options.ArchiveName	k14script
+script.Options.FunctionSignatures	
+script.Options.RoutesFile	
+script.seconds	3.4
+script.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14script.ctf | mccExcludedFiles.log (90) | readme.txt (3310) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+extrafn	ERR CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile | Detected the following issue in the function signature file '<W>\b\src\k14extrafn.json': /  / Function signature "k14multi" was defined but is not contained in the deployed archive. / 
+extrafn.seconds	0.2
+extrafn.files	(no folder)
+typedef.results
+    Results with properties:
+                    BuildType: 'productionServerArchive'
+                        Files: {'<W>\b\typedef\k14td.ctf'}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.ProductionServerArchiveOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+typedef.BuildType	productionServerArchive
+typedef.Files	<OUT>\k14td.ctf
+typedef.Options.class	compiler.build.ProductionServerArchiveOptions
+typedef.Options.ArchiveName	k14td
+typedef.Options.FunctionSignatures	<W>\src\k14typedef.json
+typedef.Options.RoutesFile	
+typedef.seconds	3.8
+typedef.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14td.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+nodata.results
+    Results with properties:
+                    BuildType: 'productionServerArchive'
+                        Files: {'<W>\b\nodata\k14nd.ctf'}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.ProductionServerArchiveOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+nodata.BuildType	productionServerArchive
+nodata.Files	<OUT>\k14nd.ctf
+nodata.Options.class	compiler.build.ProductionServerArchiveOptions
+nodata.Options.ArchiveName	k14nd
+nodata.Options.FunctionSignatures	
+nodata.Options.RoutesFile	
+nodata.seconds	3.5
+nodata.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14nd.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+obfuscate.results
+    Results with properties:
+                    BuildType: 'productionServerArchive'
+                        Files: {'<W>\b\obfuscate\k14ob.ctf'}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.ProductionServerArchiveOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+obfuscate.BuildType	productionServerArchive
+obfuscate.Files	<OUT>\k14ob.ctf
+obfuscate.Options.class	compiler.build.ProductionServerArchiveOptions
+obfuscate.Options.ArchiveName	k14ob
+obfuscate.Options.FunctionSignatures	
+obfuscate.Options.RoutesFile	
+obfuscate.seconds	3.8
+obfuscate.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14ob.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12)
+upper.results
+    Results with properties:
+                    BuildType: 'productionServerArchive'
+                        Files: {'<W>\b\upper\K14Upper.ctf'}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.ProductionServerArchiveOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+upper.BuildType	productionServerArchive
+upper.Files	<OUT>\K14Upper.ctf
+upper.Options.class	compiler.build.ProductionServerArchiveOptions
+upper.Options.ArchiveName	K14Upper
+upper.Options.FunctionSignatures	
+upper.Options.RoutesFile	
+upper.seconds	3.6
+upper.files	K14Upper.ctf | buildresult.json (197) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (3304) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+underscore.results
+    Results with properties:
+                    BuildType: 'productionServerArchive'
+                        Files: {'<W>\b\underscore\_k14u.ctf'}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.ProductionServerArchiveOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+underscore.BuildType	productionServerArchive
+underscore.Files	<OUT>\_k14u.ctf
+underscore.Options.class	compiler.build.ProductionServerArchiveOptions
+underscore.Options.ArchiveName	_k14u
+underscore.Options.FunctionSignatures	
+underscore.Options.RoutesFile	
+underscore.seconds	3.5
+underscore.files	_k14u.ctf | buildresult.json (197) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+digit.results
+    Results with properties:
+                    BuildType: 'productionServerArchive'
+                        Files: {'<W>\b\digit\1k14.ctf'}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.ProductionServerArchiveOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+digit.BuildType	productionServerArchive
+digit.Files	<OUT>\1k14.ctf
+digit.Options.class	compiler.build.ProductionServerArchiveOptions
+digit.Options.ArchiveName	1k14
+digit.Options.FunctionSignatures	
+digit.Options.RoutesFile	
+digit.seconds	3.6
+digit.files	1k14.ctf | buildresult.json (197) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (3280) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+dash	ERR Compiler:compiler:COM_ERR_BAD_WRAPPER_SYNTAX | The -W option ("CTF:k14-d") is not correctly formed.
+dash.seconds	0.1
+dash.files	
+dot	ERR Compiler:compiler:COM_ERR_BAD_WRAPPER_SYNTAX | The -W option ("CTF:k14.d") is not correctly formed.
+dot.seconds	0.0
+dot.files	
+defaults.readme	3292 chars, CRLF 67, ends with newline 1
+  |k14add for MATLAB Production Server
+  |
+  |Before you can use the functions packaged by the compiler, you need to do the following:
+  |* Deploy k14add.ctf to a server instance
+  |* Develop a client application to access the functions.
+  |
+  |1. Deploy k14add.ctf
+  |
+  |1.1 Prerequisites to Deployment
+  |Before you can deploy k14add.ctf, you need a server instance to host it. The server 
+  |instance must be configured to have access to MATLAB Runtime(R2025b).
+  |* If you do not have a server instance created, see: 
+  |  https://www.mathworks.com/help/mps/server/creating-a-server.html
+  |* If you do not have MATLAB Runtime(R2025b) installed, download the installer from the 
+  |  MATLAB Runtime page at: https://www.mathworks.com/products/compiler/mcr/index.html
+  |* If you need to configure the server instance to use MATLAB Runtime(R2025b), see: 
+  |  https://www.mathworks.com/help/mps/server/customize-the-configuration-file.html
+  |
+  |1.2 k14add.ctf Deployment
+  |To deploy k14add.ctf, copy it into the server instance's `auto_deploy` folder. The server 
+  |instance will automatically deploy it and make it available to interested clients.
+  |
+  |2. Develop Client Applications
+  |MATLAB Production Server officially supports the following clients:
+  |* C/C++: https://www.mathworks.com/help/mps/cxx-client-programming.html
+  |* .NET: https://www.mathworks.com/help/mps/dotnet-client-programming.html
+  |* Java: https://www.mathworks.com/help/mps/java-client-programming.html
+  |* Python: https://www.mathworks.com/help/mps/python-client-programming.html
+  |
+  |2.1 C/C++ 
+  |The C/C++ client libraries are located in a platform specific folder at `MPS_INSTALL/client/c`.
+  |The header files are located in `MPS_INSTALL/client/c/include`.
+  |For information about developing C/C++ clients, see: 
+  |* https://www.mathworks.com/help/mps/cxx-client-programming.html
+  |* example code at `MPS_INSTALL/client/c/examples' 
+  |* included C/C++ client documentation at `MPS_INSTALL/client/c/doc/index.html'
+  |
+  |2.2 .NET
+  |The .NET client libraries are located at 
+  |`MPS_INSTALL/client/dotnet/MathWorks.MATLAB.ProductionServer.Client.dll`.
+  |For information about developing .NET clients, see:
+  |* https://www.mathworks.com/help/mps/dotnet-client-programming.html
+  |* example code at `MPS_INSTALL/client/dotnet/examples'
+  |* included .NET client documentation at 
+  |`MPS_INSTALL/client/dotnet/doc/MathWorks.MATLAB.ProductionServer.Client.chm`
+  |
+  |2.3 Java
+  |The Java client libraries are located at `MPS_INSTALL/client/java/mps_client.jar`.
+  |For information about developing Java clients, see:
+  |* https://www.mathworks.com/help/mps/java-client-programming.html
+  |* example code at `MPS_INSTALL/client/java/examples'
+  |* included Javadoc at `MPS_INSTALL/client/java/doc/index.html`
+  |
+  |2.4 Python 
+  |The Python client package includes the following: 
+  |* matlab - a set of classes for creating multi-dimensional MATLAB arrays 
+  |* production_server - API for evaluating functions on a remote MATLAB Production Server 
+  |  instance
+  |
+  |The Python client installer is located in `MPS_INSTALL/client/python`. To install the 
+  |client, go to that folder and execute:
+  | 
+  |python -m pip install .
+  |
+  |For information about developing Python clients, see: 
+  |* https://www.mathworks.com/help/mps/python-client-programming.html
+  |* example code at `MPS_INSTALL/client/python/examples'
+signatures.readme	3292 chars, CRLF 67, ends with newline 1
+  |k14sig for MATLAB Production Server
+  |
+  |Before you can use the functions packaged by the compiler, you need to do the following:
+  |* Deploy k14sig.ctf to a server instance
+  |* Develop a client application to access the functions.
+  |
+  |1. Deploy k14sig.ctf
+  |
+  |1.1 Prerequisites to Deployment
+  |Before you can deploy k14sig.ctf, you need a server instance to host it. The server 
+  |instance must be configured to have access to MATLAB Runtime(R2025b).
+  |* If you do not have a server instance created, see: 
+  |  https://www.mathworks.com/help/mps/server/creating-a-server.html
+  |* If you do not have MATLAB Runtime(R2025b) installed, download the installer from the 
+  |  MATLAB Runtime page at: https://www.mathworks.com/products/compiler/mcr/index.html
+  |* If you need to configure the server instance to use MATLAB Runtime(R2025b), see: 
+  |  https://www.mathworks.com/help/mps/server/customize-the-configuration-file.html
+  |
+  |1.2 k14sig.ctf Deployment
+  |To deploy k14sig.ctf, copy it into the server instance's `auto_deploy` folder. The server 
+  |instance will automatically deploy it and make it available to interested clients.
+  |
+  |2. Develop Client Applications
+  |MATLAB Production Server officially supports the following clients:
+  |* C/C++: https://www.mathworks.com/help/mps/cxx-client-programming.html
+  |* .NET: https://www.mathworks.com/help/mps/dotnet-client-programming.html
+  |* Java: https://www.mathworks.com/help/mps/java-client-programming.html
+  |* Python: https://www.mathworks.com/help/mps/python-client-programming.html
+  |
+  |2.1 C/C++ 
+  |The C/C++ client libraries are located in a platform specific folder at `MPS_INSTALL/client/c`.
+  |The header files are located in `MPS_INSTALL/client/c/include`.
+  |For information about developing C/C++ clients, see: 
+  |* https://www.mathworks.com/help/mps/cxx-client-programming.html
+  |* example code at `MPS_INSTALL/client/c/examples' 
+  |* included C/C++ client documentation at `MPS_INSTALL/client/c/doc/index.html'
+  |
+  |2.2 .NET
+  |The .NET client libraries are located at 
+  |`MPS_INSTALL/client/dotnet/MathWorks.MATLAB.ProductionServer.Client.dll`.
+  |For information about developing .NET clients, see:
+  |* https://www.mathworks.com/help/mps/dotnet-client-programming.html
+  |* example code at `MPS_INSTALL/client/dotnet/examples'
+  |* included .NET client documentation at 
+  |`MPS_INSTALL/client/dotnet/doc/MathWorks.MATLAB.ProductionServer.Client.chm`
+  |
+  |2.3 Java
+  |The Java client libraries are located at `MPS_INSTALL/client/java/mps_client.jar`.
+  |For information about developing Java clients, see:
+  |* https://www.mathworks.com/help/mps/java-client-programming.html
+  |* example code at `MPS_INSTALL/client/java/examples'
+  |* included Javadoc at `MPS_INSTALL/client/java/doc/index.html`
+  |
+  |2.4 Python 
+  |The Python client package includes the following: 
+  |* matlab - a set of classes for creating multi-dimensional MATLAB arrays 
+  |* production_server - API for evaluating functions on a remote MATLAB Production Server 
+  |  instance
+  |
+  |The Python client installer is located in `MPS_INSTALL/client/python`. To install the 
+  |client, go to that folder and execute:
+  | 
+  |python -m pip install .
+  |
+  |For information about developing Python clients, see: 
+  |* https://www.mathworks.com/help/mps/python-client-programming.html
+  |* example code at `MPS_INSTALL/client/python/examples'
+nooutdir.Files	<SRC>\k14addproductionServerArchive\k14add.ctf
+nooutdir.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14add.ctf | mccExcludedFiles.log (90) | readme.txt (3292) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+nooutdir.seconds	3.5
+mcc_default	ok
+mcc_default.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14m.ctf | mccExcludedFiles.log (90) | readme.txt (3280) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_default.seconds	3.0
+mcc_nou	ERR Compiler:compiler:COM_ERROR_MISSING_U_WITH_W_CTF | The "-U" option must be used when "-W CTF:" is specified.
+mcc_nou.files	
+mcc_nou.seconds	0.0
+mcc_noname	ERR Compiler:compiler:COM_ERR_BAD_WRAPPER_SYNTAX | The -W option ("CTF:") is not correctly formed.
+mcc_noname.files	
+mcc_noname.seconds	0.0
+mcc_nocolon	ERR Compiler:compiler:COM_ERR_BAD_WRAPPER_SYNTAX | The -W option ("CTF") is not correctly formed.
+mcc_nocolon.files	
+mcc_nocolon.seconds	0.0
+mcc_lower	ok
+mcc_lower.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14lc.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_lower.seconds	3.0
+mcc_discovery	ok
+mcc_discovery.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14ds.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_discovery.seconds	3.2
+mcc_routes	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "<W>\b\src\k14routes.json" could not be parsed. Please fix errors and run again.
+mcc_routes.files	
+mcc_routes.seconds	0.0
+mcc_routes.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "<W>\b\src\k14routes.json": Optional property "component" if present must be the same value as "k14rt" . (at .pathmap[1])
+mcc_both	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "<W>\b\src\k14routes.json" could not be parsed. Please fix errors and run again.
+mcc_both.files	
+mcc_both.seconds	0.0
+mcc_both.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "<W>\b\src\k14routes.json": Optional property "component" if present must be the same value as "k14bt" . (at .pathmap[1])
+mcc_both_rev	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "<W>\b\src\k14routes.json" could not be parsed. Please fix errors and run again.
+mcc_both_rev.files	
+mcc_both_rev.seconds	0.0
+mcc_both_rev.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "<W>\b\src\k14routes.json": Optional property "component" if present must be the same value as "k14br" . (at .pathmap[1])
+mcc_disc_rel	ok
+mcc_disc_rel.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14dr.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_disc_rel.seconds	3.1
+mcc_disc_missing	ERR Compiler:compiler:COM_ERR_MPS_DISCOVERY_FILE_NOT_FOUND | Could not find the MATLAB Production Server discovery file 'nosuch.json'.
+mcc_disc_missing.files	
+mcc_disc_missing.seconds	0.0
+mcc_disc_nofile	ERR Compiler:compiler:COM_ERR_BAD_WRAPPER_SYNTAX | The -W option ("DISCOVERY") is not correctly formed.
+mcc_disc_nofile.files	
+mcc_disc_nofile.seconds	0.0
+mcc_disc_empty	ERR Compiler:compiler:COM_ERR_MPS_DISCOVERY_FILE_NOT_SPECIFIED | The MATLAB Production Server discovery file is not specified after the "DISCOVERY:" option.
+mcc_disc_empty.files	
+mcc_disc_empty.seconds	0.0
+mcc_disc_notjson	ERR Compiler:compiler:COM_ERROR_SIGNATURE_PARSE | Error: Function signature file "k14notjson.json" could not be parsed. JSON ParserException (E0008): Expected leading '"' character while parsing value of type string (Line 1, Column 12) / 	{"this is": not json / 	            ^
+mcc_disc_notjson.files	
+mcc_disc_notjson.seconds	0.0
+mcc_disc_noschema	ERR Compiler:compiler:COM_ERR_CTF_BUILD_FAILED | Failed to build CTF file: '<W>\b\mcc_disc_noschema\k14dh.ctf'. Details: Error: Function signature file "k14noschema.json" could not be parsed. In function signature "k14add": / Property "inputs" has an invalid number of arguments: 1. Specify 2. / 
+mcc_disc_noschema.files	
+mcc_disc_noschema.seconds	2.7
+mcc_disc_noschema.warn	Compiler:compiler:COM_MESG_SIGNATURE_PARSE | While parsing function signature file "k14noschema.json": Schema version property '_schemaVersion' was not found in the function signatures file.
+mcc_disc_oldschema	ok
+mcc_disc_oldschema.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14do.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_disc_oldschema.seconds	3.1
+mcc_disc_newschema	ERR Compiler:compiler:COM_ERROR_SIGNATURE_PARSE | Error: Function signature file "k14newschema.json" could not be parsed. MATLAB Production Server discovery schema version '9.0.0' is not supported. / 
+mcc_disc_newschema.files	
+mcc_disc_newschema.seconds	0.0
+mcc_disc_badprop	ERR Compiler:compiler:COM_ERROR_SIGNATURE_PARSE | Error: Function signature file "k14badprop.json" could not be parsed. In function signature "k14add": / Property "colour" is not recognized. / 
+mcc_disc_badprop.files	
+mcc_disc_badprop.seconds	0.0
+mcc_disc_badtype	ERR Compiler:compiler:COM_ERROR_SIGNATURE_PARSE | Error: Function signature file "k14badtype.json" could not be parsed. In function signature "k14add": / Property "type" has an invalid value: "nosuchtype". / 
+mcc_disc_badtype.files	
+mcc_disc_badtype.seconds	0.0
+mcc_disc_badsize	ERR Compiler:compiler:COM_ERROR_SIGNATURE_PARSE | Error: Function signature file "k14badsize.json" could not be parsed. In function signature "k14add": / Attribute "size" requires at least 2 values. / 
+mcc_disc_badsize.files	
+mcc_disc_badsize.seconds	0.0
+mcc_disc_wrongcount	ERR Compiler:compiler:COM_ERR_CTF_BUILD_FAILED | Failed to build CTF file: '<W>\b\mcc_disc_wrongcount\k14dc.ctf'. Details: Error: Function signature file "k14wrongcount.json" could not be parsed. In function signature "k14add": / Property "inputs" has an invalid number of arguments: 1. Specify 2. / 
+mcc_disc_wrongcount.files	
+mcc_disc_wrongcount.seconds	2.9
+mcc_disc_nosuchfn	ERR Compiler:compiler:COM_ERR_CTF_BUILD_FAILED | Failed to build CTF file: '<W>\b\mcc_disc_nosuchfn\k14df.ctf'. Details: Error: Function signature file "k14nosuchfn.json" could not be parsed. Function signature "k14nosuch" was defined but is not contained in the deployed archive. / 
+mcc_disc_nosuchfn.files	
+mcc_disc_nosuchfn.seconds	2.7
+mcc_disc_extrafn	ERR Compiler:compiler:COM_ERR_CTF_BUILD_FAILED | Failed to build CTF file: '<W>\b\mcc_disc_extrafn\k14dx.ctf'. Details: Error: Function signature file "k14extrafn.json" could not be parsed. Function signature "k14multi" was defined but is not contained in the deployed archive. / 
+mcc_disc_extrafn.files	
+mcc_disc_extrafn.seconds	2.9
+mcc_disc_typedef	ok
+mcc_disc_typedef.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14dy.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_disc_typedef.seconds	3.1
+mcc_disc_array	ERR Compiler:compiler:COM_ERROR_SIGNATURE_PARSE | Error: Function signature file "k14array.json" could not be parsed. invalid conversion: JSON array to JSON object
+mcc_disc_array.files	
+mcc_disc_array.seconds	0.0
+mcc_disc_emptyobj	ok
+  |[Warning: While parsing function signature file "k14emptyobj.json": Schema version property '_schemaVersion' was not found in the function signatures file.] 
+  |[> In probe_k14_build>quietMcc (line 348)
+  |In probe_k14_build (line 172)] 
+mcc_disc_emptyobj.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14db.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_disc_emptyobj.seconds	3.0
+mcc_disc_emptyobj.warn	Compiler:compiler:COM_MESG_SIGNATURE_PARSE | While parsing function signature file "k14emptyobj.json": Schema version property '_schemaVersion' was not found in the function signatures file.
+mcc_disc_twice	ERR Compiler:compiler:COM_ERR_MPS_MULTIPLE_DISCOVERY | The MATLAB Production Server discovery option has been specified multiple times.
+mcc_disc_twice.files	
+mcc_disc_twice.seconds	0.0
+mcc_routes_missing	ERR Compiler:compiler:COM_ERR_MPS_ROUTES_FILE_NOT_FOUND | Could not find the MATLAB Production Server routes file 'nosuch.json'.
+mcc_routes_missing.files	
+mcc_routes_missing.seconds	0.0
+mcc_routes_nofile	ERR Compiler:compiler:COM_ERR_BAD_WRAPPER_SYNTAX | The -W option ("ROUTES") is not correctly formed.
+mcc_routes_nofile.files	
+mcc_routes_nofile.seconds	0.0
+mcc_routes_empty	ERR Compiler:compiler:COM_ERR_MPS_ROUTES_FILE_NOT_SPECIFIED | The MATLAB Production Server routes file is not specified after the "ROUTES:" option.
+mcc_routes_empty.files	
+mcc_routes_empty.seconds	0.0
+mcc_routes_notjson	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "k14routes_notjson.json" could not be parsed. Please fix errors and run again.
+mcc_routes_notjson.files	
+mcc_routes_notjson.seconds	0.0
+mcc_routes_notjson.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "k14routes_notjson.json": JSON syntax error: status=Unexpected end of input (line: 2, column: 0)
+mcc_routes_noversion	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "k14routes_noversion.json" could not be parsed. Please fix errors and run again.
+mcc_routes_noversion.files	
+mcc_routes_noversion.seconds	0.0
+mcc_routes_noversion.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "k14routes_noversion.json": Optional property "component" if present must be the same value as "k14rv" . (at .pathmap[0])
+mcc_routes_badversion	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "k14routes_badversion.json" could not be parsed. Please fix errors and run again.
+mcc_routes_badversion.files	
+mcc_routes_badversion.seconds	0.0
+mcc_routes_badversion.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "k14routes_badversion.json": Optional property "component" if present must be the same value as "k14rb" . (at .pathmap[0])
+mcc_routes_nopathmap	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "k14routes_nopathmap.json" could not be parsed. Please fix errors and run again.
+mcc_routes_nopathmap.files	
+mcc_routes_nopathmap.seconds	0.0
+mcc_routes_nopathmap.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "k14routes_nopathmap.json": Required property "pathmap" not found. (at .pathmap)
+mcc_routes_emptymap	ok
+mcc_routes_emptymap.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14ry.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_routes_emptymap.seconds	2.9
+mcc_routes_nomatch	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "k14routes_nomatch.json" could not be parsed. Please fix errors and run again.
+mcc_routes_nomatch.files	
+mcc_routes_nomatch.seconds	0.0
+mcc_routes_nomatch.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "k14routes_nomatch.json": Optional property "component" if present must be the same value as "k14ra" . (at .pathmap[0])
+mcc_routes_nohandler	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "k14routes_nohandler.json" could not be parsed. Please fix errors and run again.
+mcc_routes_nohandler.files	
+mcc_routes_nohandler.seconds	0.0
+mcc_routes_nohandler.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "k14routes_nohandler.json": Required property "webhandler" not found. (at .pathmap[0].webhandler)
+mcc_routes_nofunction	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "k14routes_nofunction.json" could not be parsed. Please fix errors and run again.
+mcc_routes_nofunction.files	
+mcc_routes_nofunction.seconds	0.0
+mcc_routes_nofunction.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "k14routes_nofunction.json": Required property "function" not found. (at .pathmap[0].function)
+mcc_routes_extra	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "k14routes_extra.json" could not be parsed. Please fix errors and run again.
+mcc_routes_extra.files	
+mcc_routes_extra.seconds	0.0
+mcc_routes_extra.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "k14routes_extra.json": Optional property "component" if present must be the same value as "k14rx" . (at .pathmap[0])
+mcc_routes_badregex	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "k14routes_badregex.json" could not be parsed. Please fix errors and run again.
+mcc_routes_badregex.files	
+mcc_routes_badregex.seconds	0.0
+mcc_routes_badregex.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "k14routes_badregex.json": Optional property "component" if present must be the same value as "k14rg" . (at .pathmap[0])
+mcc_routes_notarray	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "k14routes_notarray.json" could not be parsed. Please fix errors and run again.
+mcc_routes_notarray.files	
+mcc_routes_notarray.seconds	0.0
+mcc_routes_notarray.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "k14routes_notarray.json": Top-level property "pathmap" must be an array. (at .pathmap).
+mcc_routes_twice	ERR Compiler:compiler:COM_ERROR_ROUTES_PARSE | Error: Routes file "<W>\b\src\k14routes.json" could not be parsed. Please fix errors and run again.
+mcc_routes_twice.files	
+mcc_routes_twice.seconds	0.0
+mcc_routes_twice.warn	Compiler:compiler:COM_MESG_ROUTES_PARSE | While parsing routes file "<W>\b\src\k14routes.json": Optional property "component" if present must be the same value as "k14r2" . (at .pathmap[1])
+mcc_bogus_part	ERR Compiler:compiler:COM_ERR_BAD_WRAPPER_SYNTAX | The -W option ("BOGUS:x") is not correctly formed.
+mcc_bogus_part.files	
+mcc_bogus_part.seconds	0.0
+mcc_extra_part	ERR Compiler:compiler:COM_ERR_BAD_WRAPPER_SYNTAX | The -W option ("extra") is not correctly formed.
+mcc_extra_part.files	
+mcc_extra_part.seconds	0.0
+mcc_version	ERR Compiler:compiler:COM_ERR_BAD_WRAPPER_SYNTAX | The -W option ("version=1.0") is not correctly formed.
+mcc_version.files	
+mcc_version.seconds	0.0
+mcc_u_alone	ok
+mcc_u_alone.files	.ctf | buildresult.json (197) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (3256) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_u_alone.seconds	3.0
+mcc_u_m	ERR Compiler:compiler:COM_ERR_INVALID_SWITCH_LIB_OR_STANDALONE | Error: The option -U is invalid in library or standalone application mode (specify -? for help).
+mcc_u_m.files	
+mcc_u_m.seconds	0.0
+mcc_u_lib	ERR Compiler:compiler:COM_ERR_INVALID_SWITCH_LIB_OR_STANDALONE | Error: The option -U is invalid in library or standalone application mode (specify -? for help).
+mcc_u_lib.files	
+mcc_u_lib.seconds	0.0
+mcc_o	ERR Compiler:compiler:COM_ERR_MULTIPLE_COMPONENT_NAMES | Error: Multiple component names. Processing "-o" switch. Component name "k14on" already specified via "-W".
+mcc_o.files	
+mcc_o.seconds	0.0
+mcc_ofirst	ok
+mcc_ofirst.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14of2.ctf | mccExcludedFiles.log (90) | readme.txt (3292) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_ofirst.seconds	3.3
+mcc_tlib	ERR Compiler:compiler:COM_ERR_NO_FILES_SPECIFIED | Error: No source files were specified (-? for help).
+mcc_tlib.files	
+mcc_tlib.seconds	3.2
+mcc_texe	ok
+mcc_texe.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14te (1123328) | k14te.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_texe.seconds	3.4
+mcc_codegen	ok
+mcc_codegen.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14cg.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_codegen.seconds	3.1
+mcc_separate	ok
+mcc_separate.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14sp.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_separate.seconds	3.1
+mcc_verbose	ok
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\b\src\k14add.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\mcc_verbose\readme.txt".
+mcc_verbose.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14vb.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_verbose.seconds	2.9
+mcc_debug	ok
+mcc_debug.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14db.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_debug.seconds	3.0
+mcc_nodata	ok
+mcc_nodata.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14xd.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_nodata.seconds	3.3
+mcc_additional	ok
+mcc_additional.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14ad.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_additional.seconds	3.2
+mcc_runtime	ERR Compiler:compiler:COM_ERR_INVALID_SWITCH_LIB_OR_COMP | Error: The option -R is invalid in library or component mode (specify -? for help).
+mcc_runtime.files	
+mcc_runtime.seconds	0.0
+mcc_runtime.warn	Compiler:compiler:COM_WARN_OPTION_NOJVM | You have specified '-R -nojvm', which may restrict or eliminate MATLAB graphics functionality at runtime.
+mcc_numeric	ok
+mcc_numeric.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14nm.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_numeric.seconds	2.9
+mcc_twice	ok
+mcc_twice.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14t2.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_twice.seconds	3.1
+mcc_badname	ok
+mcc_badname.files	1bad.ctf | buildresult.json (197) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (3280) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_badname.seconds	3.0
+mcc_dash	ERR Compiler:compiler:COM_ERR_BAD_WRAPPER_SYNTAX | The -W option ("CTF:a-b") is not correctly formed.
+mcc_dash.files	
+mcc_dash.seconds	0.0
+mcc_dot	ERR Compiler:compiler:COM_ERR_BAD_WRAPPER_SYNTAX | The -W option ("CTF:a.b") is not correctly formed.
+mcc_dot.files	
+mcc_dot.seconds	0.0
+mcc_space	ERR Compiler:compiler:COM_ERR_BAD_WRAPPER_SYNTAX | The -W option ("CTF:a b") is not correctly formed.
+mcc_space.files	
+mcc_space.seconds	0.0
+mcc_script	ok
+mcc_script.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14sc.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_script.seconds	3.0
+mcc_nofiles	ERR Compiler:compiler:COM_ERR_NO_FILES_SPECIFIED | Error: No source files were specified (-? for help).
+mcc_nofiles.files	
+mcc_nofiles.seconds	0.0
+mcc_withpython	ERR Compiler:compiler:COM_ERR_INVALID_SWITCH_LIB_OR_STANDALONE | Error: The option -U is invalid in library or standalone application mode (specify -? for help).
+mcc_withpython.files	
+mcc_withpython.seconds	0.0
+mcc_pcode	ok
+mcc_pcode.files	buildresult.json (197) | includedSupportPackages.txt (0) | k14pc.ctf | mccExcludedFiles.log (90) | readme.txt (3286) | requiredMCRProducts.txt (12) | unresolvedSymbols.txt (20)
+mcc_pcode.seconds	3.3
+mcc_default.readme	3280 chars, CRLF 67, ends with newline 1
+  |k14m for MATLAB Production Server
+  |
+  |Before you can use the functions packaged by the compiler, you need to do the following:
+  |* Deploy k14m.ctf to a server instance
+  |* Develop a client application to access the functions.
+  |
+  |1. Deploy k14m.ctf
+  |
+  |1.1 Prerequisites to Deployment
+  |Before you can deploy k14m.ctf, you need a server instance to host it. The server 
+  |instance must be configured to have access to MATLAB Runtime(R2025b).
+  |* If you do not have a server instance created, see: 
+  |  https://www.mathworks.com/help/mps/server/creating-a-server.html
+  |* If you do not have MATLAB Runtime(R2025b) installed, download the installer from the 
+  |  MATLAB Runtime page at: https://www.mathworks.com/products/compiler/mcr/index.html
+  |* If you need to configure the server instance to use MATLAB Runtime(R2025b), see: 
+  |  https://www.mathworks.com/help/mps/server/customize-the-configuration-file.html
+  |
+  |1.2 k14m.ctf Deployment
+  |To deploy k14m.ctf, copy it into the server instance's `auto_deploy` folder. The server 
+  |instance will automatically deploy it and make it available to interested clients.
+  |
+  |2. Develop Client Applications
+  |MATLAB Production Server officially supports the following clients:
+  |* C/C++: https://www.mathworks.com/help/mps/cxx-client-programming.html
+  |* .NET: https://www.mathworks.com/help/mps/dotnet-client-programming.html
+  |* Java: https://www.mathworks.com/help/mps/java-client-programming.html
+  |* Python: https://www.mathworks.com/help/mps/python-client-programming.html
+  |
+  |2.1 C/C++ 
+  |The C/C++ client libraries are located in a platform specific folder at `MPS_INSTALL/client/c`.
+  |The header files are located in `MPS_INSTALL/client/c/include`.
+  |For information about developing C/C++ clients, see: 
+  |* https://www.mathworks.com/help/mps/cxx-client-programming.html
+  |* example code at `MPS_INSTALL/client/c/examples' 
+  |* included C/C++ client documentation at `MPS_INSTALL/client/c/doc/index.html'
+  |
+  |2.2 .NET
+  |The .NET client libraries are located at 
+  |`MPS_INSTALL/client/dotnet/MathWorks.MATLAB.ProductionServer.Client.dll`.
+  |For information about developing .NET clients, see:
+  |* https://www.mathworks.com/help/mps/dotnet-client-programming.html
+  |* example code at `MPS_INSTALL/client/dotnet/examples'
+  |* included .NET client documentation at 
+  |`MPS_INSTALL/client/dotnet/doc/MathWorks.MATLAB.ProductionServer.Client.chm`
+  |
+  |2.3 Java
+  |The Java client libraries are located at `MPS_INSTALL/client/java/mps_client.jar`.
+  |For information about developing Java clients, see:
+  |* https://www.mathworks.com/help/mps/java-client-programming.html
+  |* example code at `MPS_INSTALL/client/java/examples'
+  |* included Javadoc at `MPS_INSTALL/client/java/doc/index.html`
+  |
+  |2.4 Python 
+  |The Python client package includes the following: 
+  |* matlab - a set of classes for creating multi-dimensional MATLAB arrays 
+  |* production_server - API for evaluating functions on a remote MATLAB Production Server 
+  |  instance
+  |
+  |The Python client installer is located in `MPS_INSTALL/client/python`. To install the 
+  |client, go to that folder and execute:
+  | 
+  |python -m pip install .
+  |
+  |For information about developing Python clients, see: 
+  |* https://www.mathworks.com/help/mps/python-client-programming.html
+  |* example code at `MPS_INSTALL/client/python/examples'
+mcc_default.requiredMCRProducts	12 chars, CRLF 0, ends with newline 0
+  |35010	35054	
+mcc_default.mccExcludedFiles	90 chars, CRLF 0, ends with newline 1
+  |Excluded Files
+  |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
+opts.default
+    ProductionServerArchiveOptions with properties:
+                ArchiveName: 'k14add'
+              FunctionFiles: {'<W>\b\src\k14add.m'}
+         FunctionSignatures: ''
+                 RoutesFile: ''
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '.\k14addproductionServerArchive'
+opts.properties	char [1 180] 'ArchiveName FunctionFiles FunctionSignatures RoutesFile AdditionalFiles AutoDetectDataFiles ExternalEncryptionKey ObfuscateArchive SecretsManifest SupportPackages Verbose OutputDir'
+opts.ArchiveName	char [1 6] 'k14add'
+opts.getName	char [1 6] 'k14add'
+opts.OutputDir	char [1 31] '.\k14addproductionServerArchive'
+opts.name.1	char [1 14] 'k14ok -> k14ok'
+opts.name.2	char [1 12] '1abc -> 1abc'
+opts.name.3	char [1 10] 'a-b -> a-b'
+opts.name.4	char [1 10] 'a.b -> a.b'
+opts.name.5	char [1 10] 'a b -> a b'
+opts.name.6	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+opts.name.7	char [1 144] 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa -> aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+opts.name.8	char [1 10] 'K14 -> K14'
+opts.name.9	char [1 8] 'aλ -> aλ'
+opts.name.10	ERR Compiler:clishared:badProperty | Invalid 'ArchiveName': 'a/b'
+opts.name.11	ERR Compiler:clishared:badProperty | Invalid 'ArchiveName': 'a:b'
+opts.name.12	ERR Compiler:clishared:badProperty | Invalid 'ArchiveName': 'a*b'
+opts.name.string	char [1 6] 'k14str'
+opts.name.number	ERR MATLAB:invalidType | Expected ArchiveName to be one of these types: /  / char, string /  / Instead its type was double.
+opts.name.cell	ERR MATLAB:invalidType | Expected ArchiveName to be one of these types: /  / char, string
+opts.named.OutputDir	char [1 33] '.\k14namedproductionServerArchive'
+opts.sig.ok	ERR CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile | Detected the following issue in the function signature file '<W>\b\src\k14sig.json': /  / Function signature "k14multi" was defined but is not contained in the deployed archive. / 
+opts.sig.rel	ERR CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile | Detected the following issue in the function signature file '<W>\b\src\k14sig.json': /  / Function signature "k14multi" was defined but is not contained in the deployed archive. / 
+opts.sig.missing	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / <W>\b\src\nosuch.json
+opts.sig.empty	char [0 0] ''
+opts.sig.emptystring	char [0 0] ''
+opts.sig.number	ERR MATLAB:invalidType | Expected RoutesFile to be one of these types: /  / char, string /  / Instead its type was double.
+opts.sig.cell	ERR MATLAB:invalidType | Expected RoutesFile to be one of these types: /  / char, string
+opts.sig.k14notjson	ERR CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile | Detected the following issue in the function signature file '<W>\b\src\k14notjson.json': /  / JSON ParserException (E0008): Expected leading '"' character while parsing value of type string (Line 1, Column 12) / 	{"this is": not json / 	            ^
+opts.sig.k14noschema	ERR CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile | Detected the following issue in the function signature file '<W>\b\src\k14noschema.json': /  / In function signature "k14add": / Property "inputs" has an invalid number of arguments: 1. Specify 2. / 
+opts.sig.k14oldschema	char [1 23] '<SRC>\k14oldschema.json'
+opts.sig.k14newschema	ERR CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile | Detected the following issue in the function signature file '<W>\b\src\k14newschema.json': /  / MATLAB Production Server discovery schema version '9.0.0' is not supported. / 
+opts.sig.k14badprop	ERR CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile | Detected the following issue in the function signature file '<W>\b\src\k14badprop.json': /  / In function signature "k14add": / Property "colour" is not recognized. / 
+opts.sig.k14badtype	ERR CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile | Detected the following issue in the function signature file '<W>\b\src\k14badtype.json': /  / In function signature "k14add": / Property "type" has an invalid value: "nosuchtype". / 
+opts.sig.k14badsize	ERR CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile | Detected the following issue in the function signature file '<W>\b\src\k14badsize.json': /  / In function signature "k14add": / Attribute "size" requires at least 2 values. / 
+opts.sig.k14wrongcount	ERR CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile | Detected the following issue in the function signature file '<W>\b\src\k14wrongcount.json': /  / In function signature "k14add": / Property "inputs" has an invalid number of arguments: 1. Specify 2. / 
+opts.sig.k14nosuchfn	ERR CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile | Detected the following issue in the function signature file '<W>\b\src\k14nosuchfn.json': /  / Function signature "k14nosuch" was defined but is not contained in the deployed archive. / 
+opts.sig.k14extrafn	ERR CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile | Detected the following issue in the function signature file '<W>\b\src\k14extrafn.json': /  / Function signature "k14multi" was defined but is not contained in the deployed archive. / 
+opts.sig.k14typedef	char [1 21] '<SRC>\k14typedef.json'
+opts.sig.k14array	ERR CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile | Detected the following issue in the function signature file '<W>\b\src\k14array.json': /  / invalid conversion: JSON array to JSON object
+[Warning: Detected the following issue in the function signature file
+'<W>\b\src\k14emptyobj.json':
+
+Schema version property '_schemaVersion' was not found in the function signatures file.
+] 
+[> In compiler.build/ProductionServerArchiveOptions/set.FunctionSignatures (line 172)
+In probe_k14_build>setAndRead (line 252)
+In probe_k14_build>@()strrep(setAndRead(o,'FunctionSignatures',fullfile(src,[sigs{k},'.json'])),[src,filesep],'<SRC>\') (line 214)
+In k0_try (line 5)
+In probe_k14_build (line 214)] 
+opts.sig.k14emptyobj	char [1 22] '<SRC>\k14emptyobj.json'
+opts.sig.k14emptyobj.warn	CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile | Detected the following issue in the function signature file '<W>\b\src\k14emptyobj.json': /  / Schema version property '_schemaVersion' was not found in the function signatures file. / 
+opts.sig.k14routes	ERR CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile | Detected the following issue in the function signature file '<W>\b\src\k14routes.json': /  / Function signature "pathmap" was defined but is not contained in the deployed archive. / 
+opts.sig.twofiles	char [1 17] '<SRC>\k14sig.json'
+opts.sig.twofiles.extrafn	char [1 21] '<SRC>\k14extrafn.json'
+opts.routes.ok	char [1 20] '<SRC>\k14routes.json'
+opts.routes.rel	char [1 20] '<SRC>\k14routes.json'
+opts.routes.missing	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / <W>\b\src\nosuch.json
+opts.routes.empty	char [0 0] ''
+opts.routes.number	ERR MATLAB:invalidType | Expected RoutesFile to be one of these types: /  / char, string /  / Instead its type was double.
+opts.routes.bad	char [1 28] '<SRC>\k14routes_notjson.json'
+opts.routes.sig	char [1 17] '<SRC>\k14sig.json'
+opts.files.bad	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / nosuch.m
+opts.files.txt	ERR Compiler:clishared:badExtension | Expected 'FunctionFiles' to have one of the following extensions: /  / .mexw64 / .mlapp / .mlx / .p / .m
+opts.files.json	ERR Compiler:clishared:badExtension | Expected 'FunctionFiles' to have one of the following extensions: /  / .mexw64 / .mlapp / .mlx / .p / .m
+opts.files.script	char [1 17] '<SRC>\k14script.m'
+opts.files.two	char [1 31] '<SRC>\k14add.m <SRC>\k14multi.m'
+opts.files.folder	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / <W>\b\src
+opts.nv.ambiguous	ERR MATLAB:InputParser:AmbiguousParameter | 'A' matches multiple parameter names: 'AdditionalFiles', 'ArchiveName', 'AutoDetectDataFiles'. To avoid ambiguity, specify the complete name of the parameter.
+opts.nv.prefix	char [1 6] 'k14pre'
+opts.nv.case	char [1 7] 'k14case'
+opts.nv.bogus	ERR MATLAB:InputParser:UnmatchedParameter | 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+opts.nv.odd	ERR MATLAB:InputParser:ParamMissingValue | No value was given for 'ArchiveName'. Name-value pair arguments require a name followed by a value.
+opts.nv.Interface	ERR MATLAB:InputParser:UnmatchedParameter | 'Interface' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+opts.nv.EmbedArchive	ERR MATLAB:InputParser:UnmatchedParameter | 'EmbedArchive' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+opts.nargin	ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+build.nargin	ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+build.opts.and.nv	ERR MATLAB:narginchk:tooManyInputs | Too many input arguments.
+build.bad.nv	ERR MATLAB:InputParser:UnmatchedParameter | 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+build.wrong.opts	ERR Compiler:clishared:wrongOptionsObject | 'compiler.build.PythonPackageOptions' is not a valid options object for this function. Use 'compiler.build.ProductionServerArchiveOptions' instead.
+build.nargout	ERR MATLAB:TooManyOutputs | Too many output arguments.

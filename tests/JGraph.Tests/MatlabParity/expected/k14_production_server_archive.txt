@@ -1,0 +1,127 @@
+CHK|class|compiler.build.ProductionServerArchiveOptions|exact
+CHK|props|ArchiveName FunctionFiles FunctionSignatures RoutesFile AdditionalFiles AutoDetectDataFiles ExternalEncryptionKey ObfuscateArchive SecretsManifest SupportPackages Verbose OutputDir|exact
+CHK|name|k14f|exact
+CHK|getname|k14f|exact
+CHK|outdir|.\k14fproductionServerArchive|exact
+CHK|sig|char|exact
+CHK|sig_size|double [1 2] 0 0|exact
+CHK|routes|char|exact
+CHK|files|k14f.m|exact
+CHK|verbose|off|exact
+CHK|additional|cell|exact
+CHK|support|autodetect|exact
+CHK|two_name|k14g|exact
+CHK|given_name|.\k14namedproductionServerArchive|exact
+CHK|given_getname|k14named|exact
+CHK|nv_prefix|k14pre|exact
+CHK|nv_case|k14case|exact
+CHK|nv_ambiguous|MATLAB:InputParser:AmbiguousParameter / 'A' matches multiple parameter names: 'AdditionalFiles', 'ArchiveName', 'AutoDetectDataFiles'. To avoid ambiguity, specify the complete name of the parameter.|exact
+CHK|script_file|k14s.m|exact
+CHK|display|ProductionServerArchiveOptions with properties: / ArchiveName: 'k14f' / FunctionFiles: {'<src>\k14f.m'} / FunctionSignatures: '' / RoutesFile: '' / AdditionalFiles: {} / AutoDetectDataFiles: on / ExternalEncryptionKey: [0×0 struct] / ObfuscateArchive: off / SecretsManifest: '' / SupportPackages: {'autodetect'} / Verbose: off / OutputDir: '.\k14fproductionServerArchive'|exact
+CHK|none|MATLAB:narginchk:notEnoughInputs / Not enough input arguments.|exact
+CHK|missing|Compiler:utils:shared:cannotFindFile / Cannot find file: / / k14nosuch.m|exact
+CHK|not_code|Compiler:clishared:badExtension / Expected 'FunctionFiles' to have one of the following extensions: / / .mexw64 / .mlapp / .mlx / .p / .m|exact
+CHK|json_file|Compiler:clishared:badExtension / Expected 'FunctionFiles' to have one of the following extensions: / / .mexw64 / .mlapp / .mlx / .p / .m|exact
+CHK|folder|Compiler:utils:shared:cannotFindFile / Cannot find file: / / <src>|exact
+CHK|number|MATLAB:invalidType / Expected FunctionFiles to be one of these types: / / char, string, cell / / Instead its type was double.|exact
+CHK|empty|MATLAB:expectedNonempty / Expected FunctionFiles to be nonempty.|exact
+CHK|bogus_nv|MATLAB:InputParser:UnmatchedParameter / 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|odd_nv|MATLAB:InputParser:ParamMissingValue / No value was given for 'ArchiveName'. Name-value pair arguments require a name followed by a value.|exact
+CHK|embed_nv|MATLAB:InputParser:UnmatchedParameter / 'EmbedArchive' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|too_many|MATLAB:narginchk:tooManyInputs / Too many input arguments.|exact
+CHK|name_1|k14ok|exact
+CHK|name_2|1abc|exact
+CHK|name_3|a-b|exact
+CHK|name_4|a.b|exact
+CHK|name_5|K14|exact
+CHK|name_6|a_b|exact
+CHK|name_7|abc|exact
+CHK|name_space|no error|exact
+CHK|name_tab|Compiler:clishared:noWhiteSpaceInProperty / 'ArchiveName' cannot contain any white space characters.|exact
+CHK|name_empty|MATLAB:validators:mustBeNonzeroLengthText / Value must be text with one or more characters.|exact
+CHK|name_slash|Compiler:clishared:badProperty / Invalid 'ArchiveName': 'a/b'|exact
+CHK|name_backslash|Compiler:clishared:badProperty / Invalid 'ArchiveName': 'a\b'|exact
+CHK|name_colon|Compiler:clishared:badProperty / Invalid 'ArchiveName': 'a:b'|exact
+CHK|name_star|Compiler:clishared:badProperty / Invalid 'ArchiveName': 'a*b'|exact
+CHK|name_string|k14str|exact
+CHK|name_number|MATLAB:invalidType / Expected ArchiveName to be one of these types: / / char, string / / Instead its type was double.|exact
+CHK|name_cell|MATLAB:invalidType / Expected ArchiveName to be one of these types: / / char, string|exact
+CHK|name_matrix|MATLAB:validators:mustBeNonzeroLengthText / Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|name_strings|MATLAB:validators:mustBeTextScalar / Value must be a character vector or string scalar.|exact
+CHK|name_long|aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa|exact
+CHK|sig_ok|sig.json|exact
+CHK|sig_abs|sig.json|exact
+CHK|sig_string|sig.json|exact
+CHK|sig_missing|Compiler:utils:shared:cannotFindFile / Cannot find file: / / <src>\nosuch.json|exact
+CHK|sig_reset|char|exact
+CHK|sig_reset_string|char|exact
+CHK|sig_reset_empty|char|exact
+CHK|sig_number|MATLAB:invalidType / Expected RoutesFile to be one of these types: / / char, string / / Instead its type was double.|exact
+CHK|sig_cell|MATLAB:invalidType / Expected RoutesFile to be one of these types: / / char, string|exact
+CHK|sig_strings|MATLAB:expectedScalartext / Expected RoutesFile to be a non-missing string scalar or character vector.|exact
+CHK|sig_matrix|MATLAB:expectedScalartext / Expected RoutesFile to be a non-missing string scalar or character vector.|exact
+CHK|sig_folder|Compiler:utils:shared:cannotFindFile / Cannot find file: / / <src>|exact
+CHK|sig_notjson|CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_notjson.json': / / JSON ParserException (E0008): Expected leading '"' character while parsing value of type string (Line 1, Column 12) / {"this is": not json / ^|exact
+CHK|sig_noschema|ok <src>\sig_noschema.json / warn CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_noschema.json': / / Schema version property '_schemaVersion' was not found in the function signatures file. / |exact
+CHK|sig_oldschema|ok <src>\sig_oldschema.json|exact
+CHK|sig_newschema|CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_newschema.json': / / MATLAB Production Server discovery schema version '9.0.0' is not supported. / |exact
+CHK|sig_badprop|CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_badprop.json': / / In function signature "k14f": / Property "colour" is not recognized. / |exact
+CHK|sig_badtype|CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_badtype.json': / / In function signature "k14f": / Property "type" has an invalid value: "nosuchtype". / |exact
+CHK|sig_badsize|CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_badsize.json': / / In function signature "k14f": / Attribute "size" requires at least 2 values. / |exact
+CHK|sig_wrongcount|CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_wrongcount.json': / / In function signature "k14f": / Property "inputs" has an invalid number of arguments: 1. Specify 2. / |exact
+CHK|sig_nosuchfn|CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_nosuchfn.json': / / Function signature "k14nosuch" was defined but is not contained in the deployed archive. / |exact
+CHK|sig_extrafn|CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_extrafn.json': / / Function signature "k14g" was defined but is not contained in the deployed archive. / |exact
+CHK|sig_typedef|ok <src>\sig_typedef.json|exact
+CHK|sig_badtypedef|CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_badtypedef.json': / / In function signature "k14f": / struct "nosuch" was referenced but not defined. / |exact
+CHK|sig_array|CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_array.json': / / invalid conversion: JSON array to JSON object|exact
+CHK|sig_empty|ok <src>\sig_empty.json / warn CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_empty.json': / / Schema version property '_schemaVersion' was not found in the function signatures file. / |exact
+CHK|sig_schemaonly|ok <src>\sig_schemaonly.json|exact
+CHK|sig_badname|CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_badname.json': / / In function signature "k14f": / Property "name" has an invalid MATLAB variable name: "1x". / |exact
+CHK|sig_noname|CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_noname.json': / / In function signature "k14f": / Property "name" is missing. / |exact
+CHK|sig_nooutputs|CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_nooutputs.json': / / In function signature "k14f": / Property "outputs" is missing. / |exact
+CHK|sig_inputs_notarray|CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_inputs_notarray.json': / / In function signature "k14f": / Property "inputs" must be of type "JSON array". / |exact
+CHK|sig_size_ok|ok <src>\sig_size_ok.json|exact
+CHK|sig_types|ok <src>\sig_types.json|exact
+CHK|sig_routes_file|CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\routes.json': / / Function signature "pathmap" was defined but is not contained in the deployed archive. / |exact
+CHK|sig_two_extrafn|ok <src>\sig_extrafn.json|exact
+CHK|sig_two_one|ok <src>\sig.json|exact
+CHK|sig_nv|sig.json|exact
+CHK|sig_nv_bad|CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_notjson.json': / / JSON ParserException (E0008): Expected leading '"' character while parsing value of type string (Line 1, Column 12) / {"this is": not json / ^|exact
+CHK|routes_ok|routes.json|exact
+CHK|routes_abs|routes.json|exact
+CHK|routes_bad_content|routes_notjson.json|exact
+CHK|routes_sig|sig.json|exact
+CHK|routes_missing|Compiler:utils:shared:cannotFindFile / Cannot find file: / / <src>\nosuch.json|exact
+CHK|routes_reset|char|exact
+CHK|routes_reset_empty|char|exact
+CHK|routes_number|MATLAB:invalidType / Expected RoutesFile to be one of these types: / / char, string / / Instead its type was double.|exact
+CHK|routes_cell|MATLAB:invalidType / Expected RoutesFile to be one of these types: / / char, string|exact
+CHK|routes_folder|Compiler:utils:shared:cannotFindFile / Cannot find file: / / <src>|exact
+CHK|routes_nv|routes.json|exact
+CHK|verbose_on|on|exact
+CHK|verbose_bad|MATLAB:validation:UnableToConvert / Error setting property 'Verbose' of class 'compiler.internal.build.AllOptions'. 'maybe' is invalid. Value must be 'off' or 'on'.|exact
+CHK|outdir_rel|<src>\out|exact
+CHK|outdir_file|Compiler:build:outputdir:mustBeFolder / The value specified for 'OutputDir': / / <src>\k14f.m / / is not a valid folder path.|exact
+CHK|additional_missing|Compiler:utils:shared:cannotFindFileOrFolder / Cannot find file or folder: / / nosuch.txt|exact
+CHK|additional_ok|k14notes.txt|exact
+CHK|files_set|k14g.m|exact
+CHK|files_set_name|k14g .\k14gproductionServerArchive|exact
+CHK|build_none|MATLAB:narginchk:notEnoughInputs / Not enough input arguments.|exact
+CHK|build_opts_and_nv|MATLAB:narginchk:tooManyInputs / Too many input arguments.|exact
+CHK|build_bad_nv|MATLAB:InputParser:UnmatchedParameter / 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|build_wrong_opts|Compiler:clishared:wrongOptionsObject / 'compiler.build.PythonPackageOptions' is not a valid options object for this function. Use 'compiler.build.ProductionServerArchiveOptions' instead.|exact
+CHK|build_missing|Compiler:utils:shared:cannotFindFile / Cannot find file: / / nosuch.m|exact
+CHK|build_bad_sig|CompilerSDK:ProductionServerArchiveOptions:validateFunctionSignatureFile / Detected the following issue in the function signature file '<src>\sig_notjson.json': / / JSON ParserException (E0008): Expected leading '"' character while parsing value of type string (Line 1, Column 12) / {"this is": not json / ^|exact
+CHK|build_two_out|MATLAB:nargoutchk:tooManyOutputs / Too many output arguments.|exact
+CHK|mcc_nou|Compiler:compiler:COM_ERROR_MISSING_U_WITH_W_CTF / The "-U" option must be used when "-W CTF:" is specified.|exact
+CHK|mcc_noname|Compiler:compiler:COM_ERR_BAD_WRAPPER_SYNTAX / The -W option ("CTF:") is not correctly formed.|exact
+CHK|mcc_nocolon|Compiler:compiler:COM_ERR_BAD_WRAPPER_SYNTAX / The -W option ("CTF") is not correctly formed.|exact
+CHK|mcc_disc_missing|Compiler:compiler:COM_ERR_MPS_DISCOVERY_FILE_NOT_FOUND / Could not find the MATLAB Production Server discovery file 'nosuch.json'.|exact
+CHK|mcc_disc_notjson|Compiler:compiler:COM_ERROR_SIGNATURE_PARSE / Error: Function signature file "sig_notjson.json" could not be parsed. JSON ParserException (E0008): Expected leading '"' character while parsing value of type string (Line 1, Column 12) / {"this is": not json / ^|exact
+CHK|mcc_routes_missing|Compiler:compiler:COM_ERR_MPS_ROUTES_FILE_NOT_FOUND / Could not find the MATLAB Production Server routes file 'nosuch.json'.|exact
+CHK|mcc_routes_twice|Compiler:compiler:COM_ERROR_ROUTES_PARSE / Error: Routes file "routes.json" could not be parsed. Please fix errors and run again.|exact
+CHK|mcc_o|Compiler:compiler:COM_ERR_MULTIPLE_COMPONENT_NAMES / Error: Multiple component names. Processing "-o" switch. Component name "k14on" already specified via "-W".|exact
+CHK|mcc_ofirst|no error: |exact
+CHK|mcc_space|Compiler:compiler:COM_ERR_BAD_WRAPPER_SYNTAX / The -W option ("CTF:a b") is not correctly formed.|exact
+CHK|mcc_nofiles|Compiler:compiler:COM_ERR_NO_FILES_SPECIFIED / Error: No source files were specified (-? for help).|exact
+CHK|mcc_missing_file|Compiler:compiler:COM_ERR_M_FILE_NOT_FOUND / Could not find the MATLAB file 'nosuch.m' on the MATLAB path.|exact

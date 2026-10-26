@@ -36,7 +36,9 @@ if (Test-Path $staging) {
 
 # Both publishes land in ONE folder: jgraph.exe finds JGraph.Application.exe beside itself.
 # Overlapping assemblies are the same net8.0 builds from the same tree, so order is irrelevant.
-foreach ($project in "src\JGraph.Application", "src\JGraph.Cli") {
+# The Production Server (stage K14) lands beside them: framework-dependent on ASP.NET Core's shared
+# framework, which the two programs do not need.
+foreach ($project in "src\JGraph.Application", "src\JGraph.Cli", "src\JGraph.ProductionServer") {
     Write-Host "-- publish $project" -ForegroundColor Cyan
     dotnet publish (Join-Path $root $project) -c $Configuration -r win-x64 --self-contained false -o $staging --nologo
     if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed for $project." }
@@ -100,7 +102,12 @@ $anchors = @(
     # mcc -W python (stage K13, ADR 0269): the matlab module and the package runtime beside the
     # engine, where a package finds them with this folder, jgrt.dll's, on the PATH.
     "python\matlab\__init__.py",
-    "python\matlab_pysdk\runtime\__init__.py"
+    "python\matlab_pysdk\runtime\__init__.py",
+
+    # The Production Server (stage K14, ADR 0270): jgraph-mps new/run/worker, and the runtimeconfig
+    # naming the ASP.NET Core shared framework it runs on.
+    "jgraph-mps.exe",
+    "jgraph-mps.runtimeconfig.json"
 )
 foreach ($anchor in $anchors) {
     if (-not (Test-Path (Join-Path $staging $anchor))) {

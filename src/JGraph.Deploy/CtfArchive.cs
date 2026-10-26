@@ -24,6 +24,9 @@ public sealed record CtfBuild
     /// <summary>Files the build made rather than read (a P-file for <c>mcc -j</c>), by their place under the file root.</summary>
     public IReadOnlyList<(byte[] Contents, string ArchivePath)> MadeFiles { get; init; } = [];
 
+    /// <summary>The structs a Production Server discovery file describes (stage K14).</summary>
+    public IReadOnlyList<CtfTypedef> Typedefs { get; init; } = [];
+
     /// <summary>How the archive's code is stored; <see cref="CtfProtection.PCode"/> when the code files are P-files.</summary>
     public CtfProtection Protection { get; init; } = CtfProtection.Open;
 
@@ -182,6 +185,7 @@ public static class CtfArchiveWriter
             NumericArguments = build.NumericArguments,
             RuntimeOptions = build.RuntimeOptions,
             Protection = build.Protection,
+            Typedefs = build.Typedefs,
         };
 
         using var zip = new ZipArchive(output, ZipArchiveMode.Create, leaveOpen: true, Encoding.UTF8);

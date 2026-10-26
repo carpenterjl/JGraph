@@ -333,6 +333,13 @@ internal static partial class JgsBuiltins
     /// <summary>Converts a dense numeric value to CSC storage, dropping exact zeros.</summary>
     private static CscMatrix CscFromDense(string name, JgsValue value, int line, int col)
     {
+        // An empty input keeps its shape with nothing stored (sparse([]) is 0-by-0; k14's sp_0x0);
+        // RectOf has no row to read a width from.
+        if (value.Type is JgsType.Array or JgsType.String && value.ArrayLength == 0)
+        {
+            return CscMatrix.FromTriplets(JgsMatrix.RowCount(value), JgsMatrix.ColCount(value), []);
+        }
+
         double[,] rect = RectOf(name, value, line, col);
         int rows = rect.GetLength(0);
         int cols = rect.GetLength(1);

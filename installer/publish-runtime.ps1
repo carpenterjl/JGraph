@@ -4,8 +4,9 @@
 #
 #   <root>\jgraph-runtime.json   the marker: the JGraph version and the release it follows
 #   <root>\bin\win64\            the engine, jgraph.exe and JGraph.Runtime.dll, published ReadyToRun, the
-#                                window host, JGraph.Runtime.Desktop.dll (stage K5), and jglaunch.dll, what
-#                                a standalone program's launcher starts (stage K6)
+#                                window host, JGraph.Runtime.Desktop.dll (stage K5), jglaunch.dll, what
+#                                a standalone program's launcher starts (stage K6), and jgraph-mps.exe,
+#                                the Production Server (stage K14)
 #   <root>\runtime\win64\        the native bridge, jgrt.dll, which a C program finds on its PATH (stage K10)
 #   <root>\include\              the C headers (stage K10; mclmcrrt.h and what it includes) and the C++ ones (K12)
 #   <root>\lib\win64\            jgrt.lib, what a C program links with (stage K10)
@@ -48,6 +49,13 @@ if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed." }
 dotnet publish (Join-Path $root "src\JGraph.Runtime.Desktop") -c $Configuration -r win-x64 --self-contained false `
     -p:PublishReadyToRun=$readyToRun -o $bin --nologo
 if ($LASTEXITCODE -ne 0) { throw "dotnet publish of the window host failed." }
+
+# The Production Server (stage K14), jgraph-mps.exe beside the engine: it hosts JGraph.Runtime in its
+# worker processes and answers MATLAB Production Server's requests over ASP.NET Core's Kestrel, so it
+# runs on the ASP.NET Core shared framework (Microsoft.AspNetCore.App 8), which the engine does not need.
+dotnet publish (Join-Path $root "src\JGraph.ProductionServer") -c $Configuration -r win-x64 --self-contained false `
+    -p:PublishReadyToRun=$readyToRun -o $bin --nologo
+if ($LASTEXITCODE -ne 0) { throw "dotnet publish of the Production Server failed." }
 
 # A standalone program's managed entry (stage K6), which its launcher starts through hostfxr: jglaunch.dll,
 # on the Windows desktop framework so a program can show its windows. It publishes no apphost.
@@ -110,7 +118,9 @@ foreach ($anchor in "jgraph.exe", "JGraph.Runtime.dll", "JGraph.Runtime.Desktop.
     # The MATLAB Data API the same client loads from here (stage K9, ADR 0265).
     "JGraph.MATLAB.Runtime.dll",
     # The native bridge beside the engine, and the runtimeconfig it starts .NET with (stage K10, ADR 0266).
-    "jgrt.dll", "jgrt.runtimeconfig.json") {
+    "jgrt.dll", "jgrt.runtimeconfig.json",
+    # The Production Server and the runtimeconfig naming the ASP.NET Core shared framework it runs on (stage K14, ADR 0270).
+    "jgraph-mps.exe", "jgraph-mps.runtimeconfig.json") {
     if (-not (Test-Path (Join-Path $bin $anchor))) {
         throw "The runtime is missing 'bin\win64\$anchor' - the publish layout changed; fix before shipping."
     }

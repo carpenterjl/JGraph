@@ -462,13 +462,29 @@ internal static class JgsJson
         return Layout(x, digits);
     }
 
-    /// <summary>A single, the same way with <c>%.6g</c> and <c>%.9g</c>.</summary>
+    /// <summary>
+    /// A single, the same way with <c>%.6g</c> and <c>%.9g</c>; when nine digits do not read back
+    /// either (<c>realmax('single')</c> rounds up past the largest single and reads as infinity), one
+    /// digit more at a time until they do (k14_mps_json: s_10 is <c>3.402823466E+38</c>).
+    /// </summary>
     internal static string FormatSingle(float x)
     {
+        // The digits are read back as a double and must lie in single's range before they are rounded to it:
+        // realmax('single') is 3.402823466E+38 (ten digits), its nine-digit form 3.40282347E+38 lying past the range (k14: s_10).
+        static bool Reads(string digits, float x)
+        {
+            double read = double.Parse(digits, CultureInfo.InvariantCulture);
+            return Math.Abs(read) <= float.MaxValue && (float)read == x;
+        }
+
         string digits = x.ToString("E5", CultureInfo.InvariantCulture);
-        if (float.Parse(digits, CultureInfo.InvariantCulture) != x)
+        if (!Reads(digits, x))
         {
             digits = x.ToString("E8", CultureInfo.InvariantCulture);
+            for (int precision = 9; precision <= 16 && !Reads(digits, x); precision++)
+            {
+                digits = x.ToString("E" + precision.ToString(CultureInfo.InvariantCulture), CultureInfo.InvariantCulture);
+            }
         }
 
         return Layout(x, digits);

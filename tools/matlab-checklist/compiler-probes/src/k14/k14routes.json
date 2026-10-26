@@ -1,0 +1,13 @@
+{
+    "version": "1.0.0",
+    "pathmap": [
+        {
+            "match": "^/k14/add$",
+            "webhandler": {"component": "k14arch", "function": "k14add"}
+        },
+        {
+            "match": "^/k14/echo/.*",
+            "webhandler": {"component": "k14arch", "function": "k14echo"}
+        }
+    ]
+}

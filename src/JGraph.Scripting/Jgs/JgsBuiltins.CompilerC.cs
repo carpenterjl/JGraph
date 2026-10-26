@@ -340,8 +340,14 @@ internal static partial class JgsBuiltins
             throw InvalidType(name, ["char", "string"], value, line, col);
         }
 
+        // mustBeNonzeroLengthText refuses a char matrix in mustBeText's words under its own identifier (k14: name_matrix).
+        if (value.IsCharMatrix)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeNonzeroLengthText", "Value must be a character vector, string array, or cell array of character vectors.");
+        }
+
         NonzeroLength(value, line, col);
-        if (!(IsTextScalar(value) && !value.IsCharMatrix))
+        if (!IsTextScalar(value))
         {
             throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeTextScalar", "Value must be a character vector or string scalar.");
         }

@@ -69,6 +69,19 @@ internal static partial class JgsBuiltinClasses
     /// <summary>Where a name given for <c>PackageName</c> is kept (R2025b's UserProvidedPackageName).</summary>
     public const string GivenPackageName = "UserProvidedPackageName";
 
+    /// <summary>The Production Server archive options class (stage K14).</summary>
+    public const string ProductionServerArchiveOptions = "compiler.build.ProductionServerArchiveOptions";
+
+    /// <summary>The archive options' public properties, in the order R2025b lists them (k14_production_server_archive: props).</summary>
+    public static readonly string[] ProductionServerArchiveOptionNames =
+    [
+        "ArchiveName", "FunctionFiles", "FunctionSignatures", "RoutesFile", "AdditionalFiles", "AutoDetectDataFiles", "ExternalEncryptionKey",
+        "ObfuscateArchive", "SecretsManifest", "SupportPackages", "Verbose", "OutputDir",
+    ];
+
+    /// <summary>Where a name given for <c>ArchiveName</c> is kept (R2025b's UserProvidedArchiveName).</summary>
+    public const string GivenArchiveName = "UserProvidedArchiveName";
+
     /// <summary>R2025b's InterfaceManager: the interface, its version and EmbedArchive, kept together because setting one warns about the others.</summary>
     public const string InterfaceValue = "InterfaceManagerInterface";
 
@@ -364,6 +377,55 @@ internal static partial class JgsBuiltinClasses
         }
 
         return new ClassdefStmt(PythonPackageOptions, isHandle: false, properties, methods)
+        {
+            Dialect = JgsDialect.Matlab,
+            Superclasses = [],
+        };
+    }
+
+    /// <summary>
+    /// <c>compiler.build.ProductionServerArchiveOptions</c> (stage K14): R2025b's properties in its order,
+    /// the archive's name and output folder dependent on what was given, each set checked by
+    /// <see cref="JgsBuiltins.SetProductionServerOption"/>, and its hidden <c>getName</c>.
+    /// </summary>
+    private static ClassdefStmt ProductionServerArchiveOptionsDeclaration(Interpreter interpreter)
+    {
+        var properties = new List<ClassProperty>();
+        var methods = new List<ClassMethod>();
+        foreach (string name in ProductionServerArchiveOptionNames)
+        {
+            bool derived = name is "ArchiveName" or "OutputDir";
+            properties.Add(new ClassProperty(new ArgumentSpec(name, null, null, [], new PreEvaluated(JgsBuiltins.ProductionServerOptionDefault(name))),
+                Constant: false, Dependent: derived));
+            string captured = name;
+            methods.Add(Setter(name, (copy, value, line, col) => JgsBuiltins.SetProductionServerOption(interpreter, copy, captured, value, line, col)));
+            if (derived)
+            {
+                methods.Add(new ClassMethod(new FnStmt("get." + name, ["obj"], [], ["value"]) { Dialect = JgsDialect.Matlab }, Static: false)
+                {
+                    Native = new BuiltinFunction("get." + name, (args, line, col) => JgsBuiltins.ProductionServerOptionDerived(captured, args[0].AsObject)),
+                });
+            }
+        }
+
+        methods.Add(new ClassMethod(new FnStmt("getName", ["obj"], [], ["name"]) { Dialect = JgsDialect.Matlab }, Static: false)
+        {
+            Hidden = true,
+            Native = new BuiltinFunction("getName", (args, line, col) => JgsBuiltins.ProductionServerOptionDerived("ArchiveName", args[0].AsObject)),
+        });
+
+        var hidden = new MemberAccess(MemberAccessKind.Protected);
+        foreach (string field in new[] { GivenArchiveName, GivenOutputDir })
+        {
+            properties.Add(new ClassProperty(new ArgumentSpec(field, null, null, [], new PreEvaluated(JgsValue.Str(""))), Constant: false)
+            {
+                GetAccess = hidden,
+                SetAccess = hidden,
+                Hidden = true,
+            });
+        }
+
+        return new ClassdefStmt(ProductionServerArchiveOptions, isHandle: false, properties, methods)
         {
             Dialect = JgsDialect.Matlab,
             Superclasses = [],
