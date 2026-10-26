@@ -8,7 +8,7 @@
   open..\pick.ctf	has k9nargs 
   end	paths
   EXIT	0
-  SECONDS	0.5
+  SECONDS	1.0
 == paths cwd and exe
   open.pick.ctf	has k9make k9echo 
   open.missing.ctf	ERR CppSharedLibException | Unable to open file 'missing.ctf'.
@@ -19,7 +19,7 @@
   open..\pick.ctf	has k9make k9echo 
   end	paths
   EXIT	0
-  SECONDS	0.4
+  SECONDS	1.0
 == paths exe only
   open.pick.ctf	has k9echo 
   open.missing.ctf	ERR CppSharedLibException | Unable to open file 'missing.ctf'.
@@ -30,7 +30,7 @@
   open..\pick.ctf	has k9echo 
   end	paths
   EXIT	0
-  SECONDS	0.6
+  SECONDS	1.1
 == paths env names a missing folder
   open.pick.ctf	has k9make k9echo 
   open.missing.ctf	ERR CppSharedLibException | Unable to open file 'missing.ctf'.
@@ -41,4 +41,4 @@
   open..\pick.ctf	has k9make k9echo 
   end	paths
   EXIT	0
-  SECONDS	0.6
+  SECONDS	1.1

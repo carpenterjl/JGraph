@@ -1477,12 +1477,12 @@ k12_client [typed] standard error, JGraph's report
 
 k12_client [twice] lib.two.of.one
   R2025b: ('ERR MATLABExecutionException | MATLAB:matlab_data_array:invalidHandleObjectRef | Invalid HandleObjectRef - Entry not found in the server table | what Invalid HandleObjectRef - Entry not found in the server table | |', ())
-  JGraph: ("k9counter [1 1] (Count=double [1 1] [5], Label=char [1 7] 'counter')", ())
-  recorded: two libraries of one archive share one session, so an object of one is good in the other; R2025b runs each in a session of its own and refuses it (ADR 0268)
+  JGraph: ('ERR MATLABExecutionException |  | A k9counter value can only be passed back to the component that returned it. | what A k9counter value can only be passed back to the component that returned it. | |', ())
+  recorded: each library runs in a session of its own, as R2025b's does (since stage K13, ADR 0269), so an object of one is refused by the other, in JGraph's words and without R2025b's identifier MATLAB:matlab_data_array:invalidHandleObjectRef
 
 k12_client [twice] standard error, R2025b's report
   Invalid HandleObjectRef - Entry not found in the server table
-  recorded: two libraries of one archive share one session in JGraph, so the object is good in the other (ADR 0268)
+  recorded: an object of another library is refused in JGraph's words, which the refusal does not also write to standard error (ADR 0269)
 
 k12_client [outproc] print
   R2025b: ('DOUBLE [1,1] [1] out=line 1\\n     1\\n\\nWarning: a warning about 1\\n> In k9print (line 7)\\n', ())

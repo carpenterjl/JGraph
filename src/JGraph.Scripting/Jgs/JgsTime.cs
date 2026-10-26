@@ -204,7 +204,11 @@ internal static class JgsTime
         return true;
     }
 
-    /// <summary>Reads <c>+HH:mm</c>, <c>-HH:mm</c>, <c>+HH</c> or <c>-HH</c> as an offset.</summary>
+    /// <summary>
+    /// Reads <c>+HH:mm</c>, <c>-HH:mm</c>, <c>+HH</c> or <c>-HH</c> as an offset, and <c>+HH:mm:00</c>, the
+    /// form a datetime from Python crosses in (compiler and SDK plan, stage K13). R2025b reads more
+    /// spellings, seconds among them, and names each <c>+HH:mm</c> (open item 209).
+    /// </summary>
     private static bool TryReadFixedOffset(string text, out TimeSpan offset)
     {
         offset = TimeSpan.Zero;
@@ -215,15 +219,20 @@ internal static class JgsTime
 
         string body = text[1..];
         string[] parts = body.Split(':');
-        if (parts.Length > 2
+        if (parts.Length > 3
             || !int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out int hours))
         {
             return false;
         }
 
         int minutes = 0;
-        if (parts.Length == 2
+        if (parts.Length >= 2
             && !int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out minutes))
+        {
+            return false;
+        }
+
+        if (parts.Length == 3 && parts[2] != "00")
         {
             return false;
         }

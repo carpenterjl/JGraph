@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Getting Started with the k13pkg Python Package</title>
+</head>
+<body>
+<h1>Getting Started with the k13pkg Python Package</h1>
+<ol>
+<li>Install the JGraph Runtime 0.2.3, or set JGRAPH_RUNTIME_ROOT to its folder, or put its runtime\win64 folder on the PATH.</li>
+<li>Install the package from this folder with <code>python -m pip install .</code>, or put this folder on PYTHONPATH.</li>
+<li>In Python, import the package, then the matlab module, and call the functions through the handle <code>initialize()</code> answers:
+<pre>import k13pkg
+import matlab
+handle = k13pkg.initialize()
+result = handle.functionName(matlab.double([1, 2, 3]))
+handle.terminate()</pre></li>
+<li>Run the program: <pre>python driverApplication.py</pre></li>
+</ol>
+</body>
+</html>

@@ -72,6 +72,10 @@ foreach ($folder in "jgraph", "MatlabDataArray") {
 }
 Copy-Item (Join-Path $root "native\win-x64\jgrt\jgrt.lib") (Join-Path $Output "lib\win64\jgrt.lib")
 
+# A Python package's runtime (stage K13): the matlab module, mlexceptions and matlab_pysdk, which a
+# package's __init__.py puts on the module path and which reach the engine through jgrt.dll.
+Copy-Item (Join-Path $root "python\jgraph_runtime\*") (Join-Path $Output "python") -Recurse -Force
+
 # The launcher templates mcc -m and -e copy (stage K6; native\jglaunch, checked in prebuilt).
 foreach ($template in "jglaunch-console.exe", "jglaunch-gui.exe") {
     Copy-Item (Join-Path $root "native\win-x64\launchers\$template") (Join-Path $Output "launchers\win64\$template")
@@ -119,6 +123,10 @@ if (-not (Test-Path (Join-Path $dataApi "JGraph.MATLAB.Runtime.dll"))) { throw "
 foreach ($native in "runtime\win64\jgrt.dll", "include\mclmcrrt.h", "include\matrix.h", "include\MatlabCppSharedLib.hpp",
     "include\jgraph\cpplib.hpp", "include\MatlabDataArray\TypedArray.hpp", "lib\win64\jgrt.lib") {
     if (-not (Test-Path (Join-Path $Output $native))) { throw "The runtime is missing '$native', the native bridge's." }
+}
+foreach ($module in "python\matlab\__init__.py", "python\mlexceptions.py", "python\matlab_pysdk\runtime\__init__.py",
+    "python\matlab_pysdk\runtime\_jgrt.py") {
+    if (-not (Test-Path (Join-Path $Output $module))) { throw "The runtime is missing '$module', a Python package's." }
 }
 
 # WPF itself must stay out (decision KO5): it comes from the Windows desktop framework of a process

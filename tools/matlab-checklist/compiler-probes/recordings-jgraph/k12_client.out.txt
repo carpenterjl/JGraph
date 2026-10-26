@@ -218,7 +218,7 @@
   empty.default	1 n=0 UNKNOWN
   end	local
   EXIT	0
-  SECONDS	0.2
+  SECONDS	0.4
 == calls
   app.start	ok inproc=1
   lib.open	ok
@@ -587,7 +587,7 @@
   STDERR	Error using k9err (line 5)
   STDERR	An error with an identifier: 7.
   EXIT	0
-  SECONDS	6.5
+  SECONDS	8.3
 == typed
   t.describe	double [1 1] [1]
   t.make	DOUBLE [1,3] [1 2 3]
@@ -649,17 +649,17 @@
   STDERR	
   STDERR	feval: 'k9pkg.k9inner' is not a function.
   EXIT	0
-  SECONDS	0.7
+  SECONDS	4.0
 == twice
   first	ok
   second.while.running	ERR CppSharedLibException | MATLABApplication is already initialized.
   second.outproc.while.running	ERR CppSharedLibException | MATLABApplication is already initialized.
   call	DOUBLE [1,1] [1]
-  lib.two.of.one	k9counter [1 1] (Count=double [1 1] [5], Label=char [1 7] 'counter')
+  lib.two.of.one	ERR MATLABExecutionException |  | A k9counter value can only be passed back to the component that returned it. | what A k9counter value can only be passed back to the component that returned it. | |
   after.end	ERR CppSharedLibException | MATLABApplication is already terminated and cannot be reinitialized.
   end	twice
   EXIT	0
-  SECONDS	0.4
+  SECONDS	1.0
 == outproc
   app.start	ok inproc=0
   lib.open	ok
@@ -674,7 +674,7 @@
   STDERR	
   STDERR	to standard error
   EXIT	0
-  SECONDS	0.4
+  SECONDS	0.8
 == runmain
   main.argc	4
   main.argv1	runmain
@@ -682,4 +682,4 @@
   runmain.returned	7
   end	runmain
   EXIT	0
-  SECONDS	0.3
+  SECONDS	0.7

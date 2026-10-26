@@ -1,0 +1,935 @@
+== arrays
+  module.names	double single int8 uint8 int16 uint16 int32 uint32 int64 uint64 logical ShapeError SizeError object
+  class.double	matlab.double mro=['double', 'object'] public=_data _imag _is_complex _real _size buffer_info clone get_bytewise_strides imag itemsize noncomplex real reshape size toarray tomemoryview
+  class.single	matlab.single mro=['single', 'object'] public=_data _imag _is_complex _real _size buffer_info clone get_bytewise_strides imag itemsize noncomplex real reshape size toarray tomemoryview
+  class.int8	matlab.int8 mro=['int8', 'object'] public=_data _imag _is_complex _real _size buffer_info clone get_bytewise_strides imag itemsize noncomplex real reshape size toarray tomemoryview
+  class.uint8	matlab.uint8 mro=['uint8', 'object'] public=_data _imag _is_complex _real _size buffer_info clone get_bytewise_strides imag itemsize noncomplex real reshape size toarray tomemoryview
+  class.int16	matlab.int16 mro=['int16', 'object'] public=_data _imag _is_complex _real _size buffer_info clone get_bytewise_strides imag itemsize noncomplex real reshape size toarray tomemoryview
+  class.uint16	matlab.uint16 mro=['uint16', 'object'] public=_data _imag _is_complex _real _size buffer_info clone get_bytewise_strides imag itemsize noncomplex real reshape size toarray tomemoryview
+  class.int32	matlab.int32 mro=['int32', 'object'] public=_data _imag _is_complex _real _size buffer_info clone get_bytewise_strides imag itemsize noncomplex real reshape size toarray tomemoryview
+  class.uint32	matlab.uint32 mro=['uint32', 'object'] public=_data _imag _is_complex _real _size buffer_info clone get_bytewise_strides imag itemsize noncomplex real reshape size toarray tomemoryview
+  class.int64	matlab.int64 mro=['int64', 'object'] public=_data _imag _is_complex _real _size buffer_info clone get_bytewise_strides imag itemsize noncomplex real reshape size toarray tomemoryview
+  class.uint64	matlab.uint64 mro=['uint64', 'object'] public=_data _imag _is_complex _real _size buffer_info clone get_bytewise_strides imag itemsize noncomplex real reshape size toarray tomemoryview
+  class.logical	matlab.logical mro=['logical', 'object'] public=_data _imag _is_complex _real _size buffer_info clone get_bytewise_strides imag itemsize noncomplex real reshape size toarray tomemoryview
+  class.ShapeError	mlexceptions.ShapeError mro=['ShapeError', 'Exception', 'BaseException', 'object']
+  class.SizeError	mlexceptions.SizeError mro=['SizeError', 'Exception', 'BaseException', 'object']
+  class.names	matlab double double
+  class.hash	None
+  new.none	matlab.double size=(0, 0) matlab.double([])
+  new.emptylist	matlab.double size=(0, 0) matlab.double([])
+  new.emptyrow	matlab.double size=(1, 0) matlab.double([[]])
+  new.emptyrows	matlab.double size=(2, 0) matlab.double([[],[]])
+  new.float	matlab.double size=(1, 1) matlab.double([[1.5]])
+  new.int	matlab.double size=(1, 1) matlab.double([[3.0]])
+  new.bool	matlab.double size=(1, 1) matlab.double([[1.0]])
+  new.complex	ERR TypeError | matlab.double does not accept complex values if 'is_complex' is not set to 'True'.
+  new.str	ERR ValueError | value passed to initializer must be numeric.
+  new.None	matlab.double size=(0, 0) matlab.double([])
+  new.flat	matlab.double size=(1, 3) matlab.double([[1.0,2.0,3.0]])
+  new.row	matlab.double size=(1, 3) matlab.double([[1.0,2.0,3.0]])
+  new.column	matlab.double size=(3, 1) matlab.double([[1.0],[2.0],[3.0]])
+  new.ragged	ERR ValueError | elements of array are of different lengths or types.
+  new.mixednest	ERR ValueError | elements of array are of different lengths or types.
+  new.mixednest2	ERR ValueError | elements of array are of different lengths or types.
+  new.cube	matlab.double size=(2, 2, 2) matlab.double([[[1.0,2.0],[3.0,4.0]],[[5.0,6.0],[7.0,8.0]]])
+  new.tuple	matlab.double size=(1, 3) matlab.double([[1.0,2.0,3.0]])
+  new.tuples	matlab.double size=(2, 2) matlab.double([[1.0,2.0],[3.0,4.0]])
+  new.range	matlab.double size=(1, 3) matlab.double([[0.0,1.0,2.0]])
+  new.generator	ERR TypeError | type does not match.
+  new.arrayd	matlab.double size=(1, 2) matlab.double([[1.5,2.5]])
+  new.arrayi	ERR BufferError | input buffer format ('i') is not compatible with output format ('d'); use a different input or output type
+  new.bytes	ERR BufferError | input buffer format ('B') is not compatible with output format ('d'); use a different input or output type
+  new.bytearray	ERR BufferError | input buffer format ('B') is not compatible with output format ('d'); use a different input or output type
+  new.memoryview	matlab.double size=(1, 2) matlab.double([[1.0,2.0]])
+  new.from.int8	matlab.double size=(1, 2) matlab.double([[1.0,2.0]])
+  new.from.double	matlab.double size=(2, 2) matlab.double([[1.0,2.0],[3.0,4.0]])
+  new.from.row	matlab.double size=(1, 2) matlab.double([[3.0,4.0]])
+  new.bools	matlab.double size=(1, 2) matlab.double([[1.0,0.0]])
+  new.strelement	ERR ValueError | elements of array are of different lengths or types.
+  new.Noneelement	ERR TypeError | value must not be 'None'.
+  new.complexelement	ERR TypeError | matlab.double does not accept complex values if 'is_complex' is not set to 'True'.
+  new.cplx.real	matlab.double size=(1, 2) matlab.double([[(1+0j),(2+0j)]], is_complex=True)
+  new.cplx.mixed	matlab.double size=(1, 2) matlab.double([[(1+2j),(3+0j)]], is_complex=True)
+  new.cplx.matrix	matlab.double size=(2, 2) matlab.double([[(1+2j),(3+0j)],[(4+0j),5j]], is_complex=True)
+  new.cplx.false	ERR TypeError | matlab.double does not accept complex values if 'is_complex' is not set to 'True'.
+  new.cplx.notbool	ERR TypeError | value passed to 'is_complex' must be a bool.
+  new.size	matlab.double size=(2, 3) matlab.double([[0.0,0.0,0.0],[0.0,0.0,0.0]])
+  new.size.cplx	matlab.double size=(2, 2) matlab.double([[0j,0j],[0j,0j]], is_complex=True)
+  new.size.flat23	matlab.double size=(2, 3) matlab.double([[1.0,3.0,5.0],[2.0,4.0,6.0]])
+  new.size.flat32	matlab.double size=(3, 2) matlab.double([[1.0,4.0],[2.0,5.0],[3.0,6.0]])
+  new.size.flatcube	matlab.double size=(2, 2, 2) matlab.double([[[1.0,5.0],[3.0,7.0]],[[2.0,6.0],[4.0,8.0]]])
+  new.size.mismatch	ERR mlexceptions.ShapeError | dimensions of initializer (3) do not match dimensions specified by 'size' (2, 2).
+  new.size.nested	ERR mlexceptions.SizeError | dimensions of initializer (2, 2) do not match dimensions specified by 'size' (4, 1).
+  new.size.nestedsame	matlab.double size=(2, 2) matlab.double([[1.0,2.0],[3.0,4.0]])
+  new.size.list	matlab.double size=(2, 3) matlab.double([[0.0,0.0,0.0],[0.0,0.0,0.0]])
+  new.size.one	matlab.double size=(1, 2) matlab.double([[0.0,0.0]])
+  new.size.zero	matlab.double size=(0, 3) matlab.double([])
+  new.size.negative	ERR ValueError | size cannot contain negative dimensions. Use nonnegative integers for dimensions.
+  new.size.float	ERR TypeError | dimensions must be nonnegative integers.
+  new.size.int	ERR TypeError | value of 'size' must be a sequence.
+  new.size.three	matlab.double size=(2, 3, 4) matlab.double([[[0.0,0.0,0.0,0.0],[0.0,0.0,0.0,0.0],[0.0,0.0,0.0,0.0]],[[0.0,0.0,0.0,0.0],[0.0,0.0,0.0,0.0],[0.0,0.0,0.0,0.0]]])
+  new.size.trailing	matlab.double size=(1, 1) matlab.double([[0.0]])
+  new.size.trailing2	matlab.double size=(2, 3) matlab.double([[0.0,0.0,0.0],[0.0,0.0,0.0]])
+  new.size.empty	ERR ValueError | sequence passed to 'size' must not be empty.
+  new.size.str	ERR TypeError | dimensions must be nonnegative integers.
+  new.positional.size	matlab.double size=(1, 2) matlab.double([[1.0,2.0]])
+  new.positional.cplx	ERR TypeError | more than two positional arguments must not be specified. A third will be treated as 'vector', which must not be specified when an initializer is specified.
+  new.keyword.initializer	matlab.double size=(1, 2) matlab.double([[1.0,2.0]])
+  new.keyword.bogus	ERR TypeError | 'bogus' is an invalid keyword argument for this function
+  new.nan	matlab.double size=(1, 3) matlab.double([[nan,inf,-inf]])
+  new.negzero	matlab.double size=(1, 1) matlab.double([[-0.0]])
+  new.bigint	matlab.double size=(1, 1) matlab.double([[9007199254740992.0]])
+  new.hugeint	ERR OverflowError | Python int too large to convert to C long long
+  new.np.matrix	matlab.double size=(2, 2) matlab.double([[1.0,2.0],[3.0,4.0]])
+  new.np.int32	ERR BufferError | input buffer format ('l') is not compatible with output format ('d'); use a different input or output type
+  new.np.fortran	matlab.double size=(2, 3) matlab.double([[0.0,1.0,2.0],[3.0,4.0,5.0]])
+  new.np.cube	matlab.double size=(2, 2, 2) matlab.double([[[0.0,1.0],[2.0,3.0]],[[4.0,5.0],[6.0,7.0]]])
+  new.np.complex	ERR BufferError | input buffer format ('Zd') is not compatible with output format ('d'); use a different input or output type
+  new.np.complex.flag	matlab.double size=(1, 1) matlab.double([[(1+2j)]], is_complex=True)
+  new.np.scalar	matlab.double size=(1, 1) matlab.double([[2.5]])
+  new.np.scalars	matlab.double size=(1, 2) matlab.double([[1.5,2.0]])
+  new.np.strided	ERR ValueError | ndarray is not contiguous
+  new.np.bool	ERR BufferError | input buffer format ('?') is not compatible with output format ('d'); use a different input or output type
+  int8.ok	matlab.int8 size=(1, 3) matlab.int8([[1,2,3]])
+  int8.limits	matlab.int8 size=(1, 2) matlab.int8([[127,-128]])
+  int8.over	ERR OverflowError | value (128) cannot be stored in a variable of type int8.
+  int8.under	ERR OverflowError | value (-129) cannot be stored in a variable of type int8.
+  int8.fraction	ERR TypeError | matlab.int8 does not accept floating-point values.
+  int8.whole	ERR TypeError | matlab.int8 does not accept floating-point values.
+  int8.nan	ERR TypeError | matlab.int8 does not accept floating-point values.
+  int8.bool	matlab.int8 size=(1, 1) matlab.int8([[1]])
+  int8.complexzero	ERR TypeError | matlab.int8 does not accept complex values if 'is_complex' is not set to 'True'.
+  int8.cplx	matlab.int8 size=(1, 2) matlab.int8([[(1+0j),(2+0j)]], is_complex=True)
+  int8.cplx.values	matlab.int8 size=(1, 1) matlab.int8([[(1+2j)]], is_complex=True)
+  int8.np	matlab.int8 size=(1, 2) matlab.int8([[1,2]])
+  int8.np.wide	ERR BufferError | input buffer format ('q') is not compatible with output format ('b'); use a different input or output type
+  uint8.negative	ERR OverflowError | value (-1) cannot be stored in a variable of type uint8.
+  uint8.max	matlab.uint8 size=(1, 1) matlab.uint8([[255]])
+  uint8.over	ERR OverflowError | value (256) cannot be stored in a variable of type uint8.
+  uint8.bytes	matlab.uint8 size=(1, 2) matlab.uint8([[97,98]])
+  int16.over	ERR OverflowError | value (32768) cannot be stored in a variable of type int16.
+  uint16.max	matlab.uint16 size=(1, 1) matlab.uint16([[65535]])
+  int32.over	ERR OverflowError | value (2147483648) cannot be stored in a variable of type int32.
+  uint32.max	matlab.uint32 size=(1, 1) matlab.uint32([[4294967295]])
+  int64.limits	matlab.int64 size=(1, 2) matlab.int64([[9223372036854775807,-9223372036854775808]])
+  int64.over	ERR OverflowError | Python int too large to convert to C long long
+  uint64.max	matlab.uint64 size=(1, 1) matlab.uint64([[18446744073709551615]])
+  uint64.over	ERR OverflowError | Python int too large to convert to C long long
+  uint64.negative	ERR OverflowError | value (-1) cannot be stored in a variable of type uint64.
+  int64.size	matlab.int64 size=(1, 2) matlab.int64([[0,0]])
+  single.ok	matlab.single size=(1, 2) matlab.single([[1.5,2.25]])
+  single.over	matlab.single size=(1, 1) matlab.single([[inf]])
+  single.round	matlab.single size=(1, 1) matlab.single([[0.10000000149011612]])
+  single.cplx	matlab.single size=(1, 1) matlab.single([[(1+2j)]], is_complex=True)
+  logical.ok	matlab.logical size=(1, 2) matlab.logical([[True,False]])
+  logical.ints	matlab.logical size=(1, 3) matlab.logical([[True,False,True]])
+  logical.fraction	matlab.logical size=(1, 1) matlab.logical([[True]])
+  logical.column	matlab.logical size=(2, 1) matlab.logical([[True],[False]])
+  logical.cplx	ERR TypeError | logical arrays must not be complex.
+  logical.size	matlab.logical size=(2, 2) matlab.logical([[False,False],[False,False]])
+  logical.str	ERR ValueError | value passed to initializer must be numeric.
+  logical.np	matlab.logical size=(1, 2) matlab.logical([[True,False]])
+  attr.size	tuple(int 2, int 3)
+  attr.size.type	tuple
+  attr.itemsize	int 8
+  attr.itemsize.int8	int 1
+  attr.itemsize.int16	int 2
+  attr.itemsize.single	int 4
+  attr.itemsize.logical	int 1
+  attr.itemsize.complex	int 16
+  attr.itemsize.csingle	int 8
+  attr._is_complex	bool False
+  attr._is_complex.c	bool True
+  attr._size	tuple(int 2, int 3)
+  attr._data	matlab.double size=(6,) matlab.double([1.0,4.0,2.0,5.0,3.0,6.0])
+  attr._data.c	ERR ValueError | noncomplex() must not be called on a complex array.
+  attr._real	ERR ValueError | real() and imag() can be called only on a complex array.
+  attr._real.c	matlab.double size=(2,) matlab.double([1.0,3.0])
+  attr._imag.c	matlab.double size=(2,) matlab.double([2.0,-4.0])
+  attr.strides	tuple(int 8, int 16)
+  attr.strides.c	tuple(int 16, int 16)
+  attr.strides.cube	tuple(int 8, int 16, int 48)
+  attr.strides.int16	tuple(int 2, int 4)
+  attr.strides.row	tuple(int 8, int 16)
+  attr.buffer_info.count	int 6
+  attr.buffer_info.count.c	int 2
+  attr.buffer_info.count.row	int 6
+  attr.buffer_info.type	int
+  attr.size.set	ERR AttributeError | attribute 'size' of 'matlab.double' objects is not writable ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  attr.new	ERR AttributeError | 'matlab.double' object has no attribute 'extra' ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  reshape.args	matlab.double size=(3, 2) matlab.double([[1.0,5.0],[4.0,3.0],[2.0,6.0]]) ;; after matlab.double size=(3, 2) matlab.double([[1.0,5.0],[4.0,3.0],[2.0,6.0]])
+  reshape.tuple	matlab.double size=(3, 2) matlab.double([[1.0,5.0],[4.0,3.0],[2.0,6.0]]) ;; after matlab.double size=(3, 2) matlab.double([[1.0,5.0],[4.0,3.0],[2.0,6.0]])
+  reshape.list	matlab.double size=(6, 1) matlab.double([[1.0],[4.0],[2.0],[5.0],[3.0],[6.0]]) ;; after matlab.double size=(6, 1) matlab.double([[1.0],[4.0],[2.0],[5.0],[3.0],[6.0]])
+  reshape.one	ERR ValueError | reshape() must be passed a nonempty sequence of nonnegative integers. ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  reshape.three	matlab.double size=(1, 2, 3) matlab.double([[[1.0,2.0,3.0],[4.0,5.0,6.0]]]) ;; after matlab.double size=(1, 2, 3) matlab.double([[[1.0,2.0,3.0],[4.0,5.0,6.0]]])
+  reshape.trailing	matlab.double size=(6, 1) matlab.double([[1.0],[4.0],[2.0],[5.0],[3.0],[6.0]]) ;; after matlab.double size=(6, 1) matlab.double([[1.0],[4.0],[2.0],[5.0],[3.0],[6.0]])
+  reshape.mismatch	ERR mlexceptions.ShapeError | number of elements specified by arguments to reshape() (8) does not match current number (6). ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  reshape.negative	ERR ValueError | reshape() must be passed a nonempty sequence of nonnegative integers. ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  reshape.float	ERR ValueError | reshape() must be passed a nonempty sequence of nonnegative integers. ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  reshape.none	ERR ValueError | reshape() must be passed a nonempty sequence of nonnegative integers. ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  reshape.empty	matlab.double size=(0, 6) matlab.double([]) ;; after matlab.double size=(0, 6) matlab.double([])
+  reshape.view	ERR RuntimeError | reshape() not supported for a partial array. ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  real.real	ERR ValueError | real() and imag() can be called only on a complex array.
+  imag.real	ERR ValueError | real() and imag() can be called only on a complex array.
+  real.complex	matlab.double size=(2,) matlab.double([1.0,3.0])
+  imag.complex	matlab.double size=(2,) matlab.double([2.0,-4.0])
+  noncomplex.real	matlab.double size=(6,) matlab.double([1.0,4.0,2.0,5.0,3.0,6.0])
+  noncomplex.complex	ERR ValueError | noncomplex() must not be called on a complex array.
+  toarray.real	ERR RuntimeError | toarray() can be called only on a one-dimensional sequence.
+  toarray.complex	ERR RuntimeError | toarray() can be called only on a one-dimensional sequence.
+  toarray.int8	ERR RuntimeError | toarray() can be called only on a one-dimensional sequence.
+  toarray.uint64	ERR RuntimeError | toarray() can be called only on a one-dimensional sequence.
+  toarray.logical	ERR RuntimeError | toarray() can be called only on a one-dimensional sequence.
+  toarray.single	ERR RuntimeError | toarray() can be called only on a one-dimensional sequence.
+  toarray.row	array.array array('d', [4.0, 5.0, 6.0])
+  tomemoryview.real	format='d' itemsize=8 ndim=2 shape=(2, 3) strides=(8, 16) readonly=True c=False f=True nbytes=48 list=[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
+  tomemoryview.complex	ERR NotImplementedError | memoryview: unsupported format Zd
+  tomemoryview.int8	format='b' itemsize=1 ndim=2 shape=(2, 2) strides=(1, 2) readonly=True c=False f=True nbytes=4 list=[[1, 2], [3, 4]]
+  tomemoryview.logical	format='?' itemsize=1 ndim=2 shape=(1, 2) strides=(1, 1) readonly=True c=True f=True nbytes=2 list=[[True, False]]
+  tomemoryview.row	format='d' itemsize=8 ndim=2 shape=(1, 3) strides=(8, 8) readonly=True c=True f=True nbytes=24 list=[[4.0, 5.0, 6.0]]
+  tomemoryview.cube	format='d' itemsize=8 ndim=3 shape=(2, 2, 2) strides=(8, 16, 32) readonly=True c=False f=True nbytes=64 list=[[[1.0, 5.0], [3.0, 7.0]], [[2.0, 6.0], [4.0, 8.0]]]
+  tomemoryview.empty	format='d' itemsize=8 ndim=2 shape=(0, 0) strides=(8, 0) readonly=True c=True f=True nbytes=0 list=[]
+  memoryview.real	format='d' itemsize=8 ndim=2 shape=(2, 3) strides=(8, 16) readonly=True c=False f=True nbytes=48 list=[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
+  memoryview.complex	ERR NotImplementedError | memoryview: unsupported format Zd
+  memoryview.int8	format='b' itemsize=1 ndim=2 shape=(2, 2) strides=(1, 2) readonly=True c=False f=True nbytes=4 list=[[1, 2], [3, 4]]
+  memoryview.uint64	format='Q' itemsize=8 ndim=2 shape=(1, 2) strides=(8, 8) readonly=True c=True f=True nbytes=16 list=[[1, 2]]
+  memoryview.single	format='f' itemsize=4 ndim=2 shape=(1, 2) strides=(4, 4) readonly=True c=True f=True nbytes=8 list=[[1.5, 2.5]]
+  memoryview.logical	format='?' itemsize=1 ndim=2 shape=(1, 2) strides=(1, 1) readonly=True c=True f=True nbytes=2 list=[[True, False]]
+  memoryview.row	format='d' itemsize=8 ndim=2 shape=(1, 3) strides=(8, 8) readonly=True c=True f=True nbytes=24 list=[[4.0, 5.0, 6.0]]
+  memoryview.empty	format='d' itemsize=8 ndim=2 shape=(0, 0) strides=(8, 0) readonly=True c=True f=True nbytes=0 list=[]
+  memoryview.write	ERR TypeError | cannot modify read-only memory ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  tomemoryview.write	ERR TypeError | cannot modify read-only memory ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  clone	matlab.double size=(2, 3) matlab.double([[9.0,2.0,3.0],[4.0,5.0,6.0]]) ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  clone.row	matlab.double size=(1, 3) matlab.double([[4.0,5.0,6.0]])
+  numpy.real	dtype=float64 shape=(2, 3) c=False f=True list=[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
+  numpy.complex	dtype=complex128 shape=(1, 2) c=True f=True list=[[(1+2j), (3-4j)]]
+  numpy.cube	dtype=float64 shape=(2, 2, 2) c=False f=True list=[[[1.0, 5.0], [3.0, 7.0]], [[2.0, 6.0], [4.0, 8.0]]]
+  numpy.int8	dtype=int8 shape=(2, 2) c=False f=True list=[[1, 2], [3, 4]]
+  numpy.logical	dtype=bool shape=(1, 2) c=True f=True list=[[True, False]]
+  numpy.row	dtype=float64 shape=(1, 3) c=True f=True list=[[4.0, 5.0, 6.0]]
+  numpy.shares	ERR ValueError | assignment destination is read-only ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  roundtrip.memoryview	matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  roundtrip.numpy	matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  len	int 2
+  get.0	matlab.double size=(3,) matlab.double([1.0,2.0,3.0])
+  get.1	matlab.double size=(3,) matlab.double([4.0,5.0,6.0])
+  get.2	ERR IndexError | index has an invalid value: 2
+  get.-1	matlab.double size=(3,) matlab.double([4.0,5.0,6.0])
+  get.-3	ERR IndexError | index has an invalid value: -3
+  get.0.1	float 2.0
+  get.0.-1	float 3.0
+  get.0.3	ERR IndexError | index has an invalid value: 3
+  get.tuple	ERR RuntimeError | index is not an integer or slice.
+  get.slice	matlab.double size=(1, 3) matlab.double([[1.0,2.0,3.0]])
+  get.slice.all	matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  get.slice.step	matlab.double size=(1, 3) matlab.double([[1.0,2.0,3.0]])
+  get.colon	ERR RuntimeError | index is not an integer or slice.
+  get.row.slice	matlab.double size=(2,) matlab.double([1.0,2.0])
+  get.row.step	matlab.double size=(2,) matlab.double([1.0,3.0])
+  get.row.reverse	matlab.double size=(3,) matlab.double([3.0,2.0,1.0])
+  get.str	ERR RuntimeError | index is not an integer or slice.
+  get.float	ERR RuntimeError | index is not an integer or slice.
+  get.bool	matlab.double size=(3,) matlab.double([4.0,5.0,6.0])
+  get.np.int	ERR RuntimeError | index is not an integer or slice.
+  iter	list[matlab.double size=(3,) matlab.double([1.0,2.0,3.0]), matlab.double size=(3,) matlab.double([4.0,5.0,6.0])]
+  iter.rows	list[list[float 1.0, float 2.0, float 3.0], list[float 4.0, float 5.0, float 6.0]]
+  iter.type	matlab.MCPyIter
+  flat.len	int 1
+  flat.0	matlab.double size=(3,) matlab.double([1.0,2.0,3.0])
+  flat.0.2	float 3.0
+  flat.1	ERR IndexError | index has an invalid value: 1
+  flat.iter	list[matlab.double size=(3,) matlab.double([1.0,2.0,3.0])]
+  scalar.len	int 1
+  scalar.0	matlab.double size=(1,) matlab.double([5.0])
+  scalar.0.0	float 5.0
+  empty.len	int 0
+  empty.0	ERR IndexError | index has an invalid value: 0
+  empty.iter	list[]
+  empty03.len	int 0
+  empty30.len	int 3
+  empty30.0	matlab.double size=(0,) matlab.double([])
+  cube.len	int 2
+  cube.0	matlab.double size=(2, 2) matlab.double([[1.0,2.0],[3.0,4.0]])
+  cube.1.0.1	float 6.0
+  cube.0.1	matlab.double size=(2,) matlab.double([3.0,4.0])
+  complex.get	complex (1+2j)
+  int8.get	int 2
+  uint64.get	int 18446744073709551615
+  logical.get	bool False
+  single.get	float 1.5
+  single.get.round	float 0.10000000149011612
+  set.element	None ;; after matlab.double size=(2, 3) matlab.double([[1.0,9.0,3.0],[4.0,5.0,6.0]])
+  set.row	None ;; after matlab.double size=(2, 3) matlab.double([[7.0,8.0,9.0],[4.0,5.0,6.0]])
+  set.row.short	ERR ValueError | unable to perform assignment because the left and right sides have a different shape. ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  set.row.scalar	ERR ValueError | unable to perform assignment because the left and right sides have a different shape. ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  set.row.matlab	ERR ValueError | unable to perform assignment because the left and right sides have a different shape. ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  set.str	ERR TypeError | value is not numeric. ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  set.None	ERR TypeError | value must not be 'None'. ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  set.slice	None ;; after matlab.double size=(2, 3) matlab.double([[10.0,11.0,3.0],[4.0,5.0,6.0]])
+  set.slice.short	ERR ValueError | unable to perform assignment because the left and right sides have a different shape. ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  set.view	None ;; after matlab.double size=(2, 3) matlab.double([[99.0,2.0,3.0],[4.0,5.0,6.0]])
+  set.complex.into.real	ERR TypeError | matlab.double does not accept complex values if 'is_complex' is not set to 'True'. ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  set.real.into.complex	None ;; after matlab.double size=(1, 2) matlab.double([[(5+0j),(3-4j)]], is_complex=True)
+  set.int8.over	ERR OverflowError | value (300) cannot be stored in a variable of type int8. ;; after matlab.int8 size=(1, 2) matlab.int8([[1,2]])
+  set.int8.fraction	ERR TypeError | matlab.int8 does not accept floating-point values. ;; after matlab.int8 size=(1, 2) matlab.int8([[1,2]])
+  set.logical.five	None ;; after matlab.logical size=(1, 2) matlab.logical([[True,False]])
+  set.outside	ERR IndexError | index has an invalid value: 5 ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  set.tuple	ERR RuntimeError | index is not an integer or slice. ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  set.flat	None ;; after matlab.double size=(1, 3) matlab.double([[4.0,5.0,6.0]])
+  set.flat.element	None ;; after matlab.double size=(1, 3) matlab.double([[1.0,9.0,3.0]])
+  del.row	ERR RuntimeError | null data pointer. ;; after matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  eq.same	bool True
+  eq.other	bool False
+  eq.list	bool False
+  eq.list2	bool False
+  eq.class	bool False
+  eq.shape	bool False
+  eq.flatrow	bool True
+  eq.row.view	bool False
+  eq.complex	bool True
+  eq.nan	bool False
+  ne.same	bool False
+  lt	ERR NotImplementedError | inequality operators not supported.
+  hash	ERR TypeError | unhashable type: 'double'
+  bool.one	bool True
+  bool.empty	bool False
+  bool.zero	bool True
+  contains	bool False
+  contains.row	bool False
+  add	ERR TypeError | unsupported operand type(s) for +: 'matlab.double' and 'matlab.double'
+  copy	matlab.double size=(1, 2) matlab.double([[9.0,2.0]]) ;; after matlab.double size=(1, 2) matlab.double([[1.0,2.0]])
+  deepcopy	matlab.double size=(1, 2) matlab.double([[9.0,2.0]]) ;; after matlab.double size=(1, 2) matlab.double([[1.0,2.0]])
+  pickle	matlab.double size=(1, 2) matlab.double([[1.0,2.0]])
+  sequence	bool False
+  repr.matrix	matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  repr.empty	matlab.double([])
+  repr.empty03	matlab.double([])
+  repr.scalar	matlab.double([[5.0]])
+  repr.complex	matlab.double([[(1+2j),(3-4j)]], is_complex=True)
+  repr.complexmatrix	matlab.double([[(1+2j),(3+0j)],[(4+0j),5j]], is_complex=True)
+  repr.int8	matlab.int8([[1,-2]])
+  repr.uint64	matlab.uint64([[18446744073709551615]])
+  repr.logical	matlab.logical([[True,False]])
+  repr.single	matlab.single([[0.10000000149011612,1.5]])
+  repr.cube	matlab.double([[[1.0,2.0],[3.0,4.0]],[[5.0,6.0],[7.0,8.0]]])
+  repr.flat	matlab.double([[1.0,2.0,3.0]])
+  repr.view	matlab.double([4.0,5.0,6.0])
+  repr.floats	matlab.double([[0.1,1e+20,1e-07,123456789.0,nan,-inf,-0.0,1e+16,2.5e-300]])
+  repr.long	matlab.double([[0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,12.0,13.0,14.0,15.0,16.0,17.0,18.0,19.0,20.0,21.0,22.0,23.0,24.0,25.0,26.0,27.0,28.0,29.0]])
+  repr.subclass	ERR TypeError | type 'matlab.double' is not an acceptable base type
+  str.matrix	[[1.0,2.0,3.0],[4.0,5.0,6.0]]
+  str.empty	[]
+  str.complex	[[(1+2j),(3-4j)]]
+  str.logical	[[True,False]]
+  str.int8	[[1,-2]]
+  str.cube	[[[1.0,2.0],[3.0,4.0]],[[5.0,6.0],[7.0,8.0]]]
+  str.flat	[[1.0,2.0,3.0]]
+  format	[[1.0,2.0]]|matlab.double([[1.0,2.0]])
+  which.ragged	ValueError shape=False size=False value=True type=False
+  which.mismatch	mlexceptions.ShapeError shape=True size=False value=False type=False
+  which.reshape	mlexceptions.ShapeError shape=True size=False value=False type=False
+  which.setrow	ValueError shape=False size=False value=True type=False
+  which.size	ValueError shape=False size=False value=True type=False
+  which.over	OverflowError shape=False size=False value=False type=False
+  which.str	ValueError shape=False size=False value=True type=False
+  which.index	IndexError shape=False size=False value=False type=False
+  end	arrays
+  EXIT	0
+  SECONDS	0.6
+== calls
+  package.type	matlab_pysdk.runtime.deployablepackage.DeployablePackage
+  package.mro	['DeployablePackage', 'object']
+  package.api	initialize initialize_runtime terminate_runtime
+  handle.public	exit initialize name quit terminate wait_for_figures_to_close
+  function.type	matlab_pysdk.runtime.deployablefunc.DeployableFunc
+  name	str 'k13pkg'
+  dunder	str 'k13pkg'
+  function.sub	str 'k9echo.inner'
+  function.setattr	ERR AttributeError | An attribute cannot be added to a function. 
+  function.repr	<matlab_pysdk.runtime.deployablefunc.DeployableFunc object at 0x<ADDR>>
+  call.float	float 2.5
+  call.int	int 3
+  call.default	float 1.0
+  nargout.0	None
+  nargout.1	float 1.0
+  nargout.2	tuple(float 1.0, float 2.0)
+  nargout.3	tuple(float 1.0, float 2.0, str 'three')
+  nargout.4	ERR matlab_pysdk.runtime.NumberOfOutputArgumentsError | The number of outputs does not match the number specified with the 'nargout' keyword (4).
+  nargout.true	float 1.0
+  nargout.float	ERR TypeError | 'nargout' must be an integer. 
+  nargout.negative	ERR ValueError | 'nargout' must be greater than or equal to 0. 
+  nargout.str	ERR TypeError | 'nargout' must be an integer. 
+  nargout.None	ERR TypeError | 'nargout' must be an integer. 
+  nargout.np	ERR TypeError | 'nargout' must be an integer. 
+  noout.default	ERR matlab_pysdk.runtime.NumberOfOutputArgumentsError | Wrong number of outputs. If not equal to 1, you must specify it with the 'nargout' keyword.  ;; stdout='' ;; stderr='Error using k9noout\nToo many output arguments.\n\n'
+  noout.0	None ;; stdout='noout double [1 1] [1]\n' ;; stderr=''
+  noout.1	ERR matlab_pysdk.runtime.NumberOfOutputArgumentsError | The number of outputs does not match the number specified with the 'nargout' keyword (1). ;; stdout='' ;; stderr='Error using k9noout\nToo many output arguments.\n\n'
+  varargout.3	tuple(float 2.0, float 4.0, float 6.0)
+  varargout.0	None
+  varargout.default	float 2.0
+  varargin.none	str '0: '
+  varargin.three	str "3: double [1 1] [1] | char [1 3] 'two' | cell [1 1] {double [1 1] [3]}"
+  inputs.many	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: Too many input arguments.\n ;; stdout='' ;; stderr='Error using k9echo\nToo many input arguments.\n\n'
+  inputs.none	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \n  File <W>\cache\0.2.3\k13pkg0\k13pkg\k9echo.m, line 3, in k9echo\nNot enough input arguments.\n ;; stdout='' ;; stderr='Not enough input arguments.\n\nError in k9echo (line 3)\n\n'
+  outputs.many	ERR matlab_pysdk.runtime.NumberOfOutputArgumentsError | The number of outputs does not match the number specified with the 'nargout' keyword (2). ;; stdout='' ;; stderr='Error using k9echo\nToo many output arguments.\n\n'
+  kwargs.bogus	ERR TypeError | Invalid keyword arguments: bogus
+  kwargs.two	ERR TypeError | Invalid keyword arguments: alpha, zeta
+  kwargs.nv	ERR TypeError | Invalid keyword arguments: Scale
+  nv.pairs	str '1 2 x'
+  nv.prefix	str '1 3 none'
+  nv.bad	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \n  File <W>\cache\0.2.3\k13pkg0\k13pkg\k9nv.m, line 1, in k9nv\nInvalid argument name 'Nope'. Name must be 'Scale' or 'Label'.\n ;; stdout='' ;; stderr="Error using k9nv (line 1)\nInvalid argument name 'Nope'. Name must be 'Scale' or 'Label'.\n\n"
+  print.capture	float 2.0 ;; stdout='line 1\nline 2\n2\nWarning: a warning about 2\n' ;; stderr='to standard error\n'
+  print.stdout	float 1.0 ;; stdout='line 1\n1\nWarning: a warning about 1\n' ;; stderr=''
+  line 1
+  1
+  Warning: a warning about 1
+  print.stderr	float 1.0 ;; stdout='' ;; stderr='to standard error\n'
+  stdout.notio	ERR TypeError | A StringIO object is required for console output redirection. 
+  stderr.notio	ERR TypeError | A StringIO object is required for console error redirection. 
+  stdout.subclass	float 1.0 ;; stdout='' ;; stderr='to standard error\n'
+  stdout.bytesio	ERR TypeError | A StringIO object is required for console output redirection. 
+  stdout.None	float 1.0 ;; stdout='' ;; stderr=''
+  unknown	ERR SystemError | Error in MATLAB Compiler SDK for Python. Details: An error occurred during evaluation of the function nosuchfunc. Details: Function nosuchfunc not found in Python package.
+  unknown.builtin	ERR SystemError | Error in MATLAB Compiler SDK for Python. Details: An error occurred during evaluation of the function sqrt. Details: Function sqrt not found in Python package.
+  unknown.private	ERR SystemError | Error in MATLAB Compiler SDK for Python. Details: An error occurred during evaluation of the function _k9private. Details: Function _k9private not found in Python package.
+  unknown.dotted	ERR SystemError | Error in MATLAB Compiler SDK for Python. Details: An error occurred during evaluation of the function k9pkg.k9inner. Details: Function k9pkg.k9inner not found in Python package.
+  unknown.method	ERR SystemError | Error in MATLAB Compiler SDK for Python. Details: An error occurred during evaluation of the function norm. Details: Function norm not found in Python package.
+  unknown.nargout	ERR ValueError | 'nargout' must be greater than or equal to 0. 
+  error.plain	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \n  File <W>\cache\0.2.3\k13pkg0\k13pkg\k9err.m, line 4, in k9err\nA plain error.\n ;; stdout='' ;; stderr='Error using k9err (line 4)\nA plain error.\n\n'
+  error.id	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \n  File <W>\cache\0.2.3\k13pkg0\k13pkg\k9err.m, line 5, in k9err\nAn error with an identifier: 7.\n ;; stdout='' ;; stderr='Error using k9err (line 5)\nAn error with an identifier: 7.\n\n'
+  error.nested	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \n  File <W>\cache\0.2.3\k13pkg0\k13pkg\k9err.m, line 18, in k9inner\n\n  File <W>\cache\0.2.3\k13pkg0\k13pkg\k9err.m, line 6, in k9err\nRaised two calls down.\n ;; stdout='' ;; stderr='Error using k9err>k9inner (line 18)\nRaised two calls down.\n\nError in k9err (line 6)\n\n'
+  error.cause	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \n  File <W>\cache\0.2.3\k13pkg0\k13pkg\k9err.m, line 10, in k9err\nThe outer error.\n ;; stdout='' ;; stderr='Error using k9err (line 10)\nThe outer error.\n\nCaused by:\n    The cause.\n\n'
+  error.builtin	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \n  File <W>\cache\0.2.3\k13pkg0\k13pkg\k9err.m, line 11, in k9err\nIncorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication.\n ;; stdout='' ;; stderr='Incorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication.\n\nError in k9err (line 11)\n\n'
+  error.undefined	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \n  File <W>\cache\0.2.3\k13pkg0\k13pkg\k9err.m, line 12, in k9err\nUndefined function 'k9nosuchfunction' for input arguments of type 'double'.\n ;; stdout='' ;; stderr="Undefined function 'k9nosuchfunction' for input arguments of type 'double'.\n\nError in k9err (line 12)\n\n"
+  error.uncaptured.plain	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \n  File <W>\cache\0.2.3\k13pkg0\k13pkg\k9err.m, line 4, in k9err\nA plain error.\n
+  error.uncaptured.id	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \n  File <W>\cache\0.2.3\k13pkg0\k13pkg\k9err.m, line 5, in k9err\nAn error with an identifier: 7.\n
+  error.mro	matlab_pysdk.runtime ['MatlabRuntimeError', 'Exception', 'BaseException', 'object']
+  error.args	tuple(str 'An error occurred when evaluating the result from a function. Details: \n  File <W>\\cache\\0.2.3\\k13pkg0\\k13pkg\\k9err.m, line 5, in k9err\nAn error with an identifier: 7.\n')
+  error.public	add_note args with_traceback
+  error.after	float 5.0
+  object.point	matlab.object <matlab.object object at 0x<ADDR>>
+  object.point.public	size
+  object.point.in	str 'k9point [1 1] (X=double [1 1] [3], Y=double [1 1] [4], Tag=string [1 1] ["pt"])'
+  object.point.echo	str 'k9point [1 1] (X=double [1 1] [3], Y=double [1 1] [4], Tag=string [1 1] ["pt"])'
+  object.point.method	ERR SystemError | Error in MATLAB Compiler SDK for Python. Details: An error occurred during evaluation of the function norm. Details: Function norm not found in Python package.
+  object.point.list	str 'cell [1 2] {k9point [1 1] (X=double [1 1] [3], Y=double [1 1] [4], Tag=string [1 1] ["pt"]); double [1 1] [1]}'
+  object.point.dict	str 'struct [1 1] fields [p] (p=k9point [1 1] (X=double [1 1] [3], Y=double [1 1] [4], Tag=string [1 1] ["pt"]))'
+  object.points	matlab.object <matlab.object object at 0x<ADDR>>
+  object.counter	matlab.object <matlab.object object at 0x<ADDR>>
+  object.counter.in	str "k9counter [1 1] (Count=double [1 1] [5], Label=char [1 7] 'counter')"
+  object.enum	ERR TypeError | conversion of MATLAB data type 29 to Python not supported
+  object.enums	ERR TypeError | conversion of MATLAB data type 29 to Python not supported
+  object.enum.in	ERR TypeError | conversion of MATLAB data type 29 to Python not supported
+  object.handle	matlab.object <matlab.object object at 0x<ADDR>>
+  object.handle.in	str 'function_handle [1 1] sin'
+  object.after	float 1.0
+  end	calls
+  STDERR	TIMES	import 0.08 initialize 0.37
+  STDERR	Error using k9multi
+  STDERR	Too many output arguments.
+  STDERR	
+  STDERR	to standard error
+  STDERR	Error using k9err (line 4)
+  STDERR	A plain error.
+  STDERR	
+  STDERR	Error using k9err (line 5)
+  STDERR	An error with an identifier: 7.
+  STDERR	
+  STDERR	Error using k9err (line 5)
+  STDERR	An error with an identifier: 7.
+  STDERR	
+  STDERR	Error using k9err (line 5)
+  STDERR	An error with an identifier: 7.
+  STDERR	
+  STDERR	Error using k9err (line 5)
+  STDERR	An error with an identifier: 7.
+  EXIT	0
+  SECONDS	1.1
+== convert
+  out.double	float 2.5
+  out.negzero	float -0.0
+  out.row	matlab.double size=(1, 3) matlab.double([[1.0,2.0,3.0]])
+  out.column	matlab.double size=(3, 1) matlab.double([[1.0],[2.0],[3.0]])
+  out.matrix	matlab.double size=(2, 3) matlab.double([[1.0,2.0,3.0],[4.0,5.0,6.0]])
+  out.nd	matlab.double size=(2, 3, 4) matlab.double([[[1.0,7.0,13.0,19.0],[3.0,9.0,15.0,21.0],[5.0,11.0,17.0,23.0]],[[2.0,8.0,14.0,20.0],[4.0,10.0,16.0,22.0],[6.0,12.0,18.0,24.0]]])
+  out.nd4	matlab.double size=(2, 2, 2, 2) matlab.double([[[[1.0,9.0],[5.0,13.0]],[[3.0,11.0],[7.0,15.0]]],[[[2.0,10.0],[6.0,14.0]],[[4.0,12.0],[8.0,16.0]]]])
+  out.trailing	matlab.double size=(1, 3, 2) matlab.double([[[1.0,4.0],[2.0,5.0],[3.0,6.0]]])
+  out.empty	matlab.double size=(0, 0) matlab.double([])
+  out.empty03	matlab.double size=(0, 3) matlab.double([])
+  out.single	float 1.5
+  out.singles	matlab.single size=(1, 2) matlab.single([[1.5,2.5]])
+  out.int8	int -5
+  out.int8s	matlab.int8 size=(1, 3) matlab.int8([[-5,0,127]])
+  out.uint8	int 200
+  out.uint8m	matlab.uint8 size=(2, 2) matlab.uint8([[1,2],[3,4]])
+  out.int16	int -7
+  out.uint16	int 7
+  out.int32	int -100000
+  out.int32s	matlab.int32 size=(1, 3) matlab.int32([[1,2,3]])
+  out.uint32	int 4000000000
+  out.int64	int -9007199254740992
+  out.uint64	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: 1.8446744073709552E+19 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n
+  out.complex	complex (1-1j)
+  out.complexrow	matlab.double size=(1, 2) matlab.double([[(1+2j),(3-4j)]], is_complex=True)
+  out.complexsingle	complex (2+3j)
+  out.complexint8	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \n  File <W>\cache\0.2.3\k13pkg0\k13pkg\k9make.m, line 30, in k9make\nint8 expects a number or numeric array, but got a complex.\n
+  out.logical	bool True
+  out.logicals	matlab.logical size=(1, 3) matlab.logical([[True,False,True]])
+  out.logicalm	matlab.logical size=(2, 2) matlab.logical([[True,False],[False,True]])
+  out.char	str 'hello'
+  out.char1	str 'x'
+  out.charmatrix	ERR ValueError | char arrays returned from MATLAB must be 1-by-N or M-by-1
+  out.emptychar	str ''
+  out.unicode	str 'λ€A'
+  out.string	str 'alpha'
+  out.strings	list[str 'alpha', str 'beta']
+  out.stringm	ERR ValueError | string arrays returned from MATLAB must be 1-by-N or M-by-1
+  out.stringmissing	None
+  out.stringsmissing	list[None, str 'x']
+  out.emptystring	str ''
+  out.stringempty	list[]
+  out.cell	list[float 1.0, str 'two', matlab.double size=(2, 2) matlab.double([[3.0,4.0],[5.0,6.0]])]
+  out.cellcol	list[float 1.0, str 'two']
+  out.cellm	ERR ValueError | cell arrays returned from MATLAB must be 1-by-N or M-by-1
+  out.cellstr	list[str 'one', str 'two']
+  out.cellstrcol	list[str 'one', str 'two']
+  out.nestedcell	list[list[float 1.0], list[]]
+  out.emptycell	list[]
+  out.struct	dict{'name': str 'probe', 'value': matlab.double size=(1, 3) matlab.double([[1.0,2.0,3.0]])}
+  out.structnested	dict{'inner': dict{'x': float 1.0}, 'list': list[float 1.0, str 'a']}
+  out.structarray	ERR ValueError | only a scalar struct can be returned from MATLAB
+  out.structm	ERR ValueError | only a scalar struct can be returned from MATLAB
+  out.emptystruct	ERR ValueError | only a scalar struct can be returned from MATLAB
+  out.nofields	dict{}
+  out.sparse	ERR TypeError | conversion of MATLAB sparse array to Python not supported
+  out.sparselogical	ERR TypeError | conversion of MATLAB sparse array to Python not supported
+  out.sparsecomplex	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \n  File <W>\cache\0.2.3\k13pkg0\k13pkg\k9make.m, line 61, in k9make\nsparse needs numbers, but element (0, 0) was a complex.\n
+  out.inf	matlab.double size=(1, 3) matlab.double([[inf,-inf,nan]])
+  out.nan	float nan
+  out.pi	float 3.141592653589793
+  out.enum	ERR TypeError | conversion of MATLAB data type 29 to Python not supported
+  out.enums	ERR TypeError | conversion of MATLAB data type 29 to Python not supported
+  out.point	matlab.object <matlab.object object at 0x<ADDR>>
+  out.points	matlab.object <matlab.object object at 0x<ADDR>>
+  out.counter	matlab.object <matlab.object object at 0x<ADDR>>
+  out.dict	matlab.dictionary matlab.dictionary({'a': 1.0, 'b': 2.0})
+  out.dictnum	matlab.dictionary matlab.dictionary({1.0: 'x', 2.0: 'y', 3.0: 'z'})
+  out.dictcell	matlab.dictionary matlab.dictionary({'p': 1.0, 'q': 'two'})
+  out.dictempty	matlab.dictionary matlab.dictionary({})
+  out.dictconfigured	matlab.dictionary matlab.dictionary({})
+  out.handle	matlab.object <matlab.object object at 0x<ADDR>>
+  out.datetime	datetime.datetime datetime.datetime(2026, 10, 24, 0, 0)
+  out.table	matlab.object <matlab.object object at 0x<ADDR>>
+  out.map	matlab.object <matlab.object object at 0x<ADDR>>
+  out.categorical	matlab.object <matlab.object object at 0x<ADDR>>
+  out.duration	datetime.timedelta datetime.timedelta(seconds=90)
+  in.float	str 'double [1 1] [1.5]'
+  in.negzero	str 'double [1 1] [-0]'
+  in.nan	str 'double [1 1] [NaN]'
+  in.inf	str 'double [1 1] [Inf]'
+  in.int	str 'int64 [1 1] [3]'
+  in.intneg	str 'int64 [1 1] [-7]'
+  in.int.2^53+1	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: 9007199254740993 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\n
+  in.int.2^62	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: 4611686018427387904 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\n
+  in.int.max	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: 9223372036854775807 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\n
+  in.int.over	ERR OverflowError | int too big to convert
+  in.int.min	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: -9223372036854775808 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\n
+  in.int.under	ERR OverflowError | int too big to convert
+  in.int.huge	ERR OverflowError | int too big to convert
+  in.true	str 'logical [1 1] [1]'
+  in.false	str 'logical [1 1] [0]'
+  in.complex	str 'double [1 1] complex [1+2i]'
+  in.complex.zero	str 'double [1 1] [3]'
+  in.str	str "char [1 5] 'hello'"
+  in.str.empty	str "char [0 0] ''"
+  in.str.unicode	str "char [1 3] 'λ€A'"
+  in.str.astral	str "char [1 2] '😀'"
+  in.str.nul	str "char [1 3] 'a\x00b'"
+  in.str.newline	str "char [1 3] 'a\nb'"
+  in.bytes	str 'uint8 [1 2] [97 98]'
+  in.bytearray	str 'uint8 [1 2] [97 98]'
+  in.memoryview	str 'uint8 [1 2] [97 98]'
+  in.None	ERR TypeError | passing 'None' to MATLAB not supported
+  in.list	str 'cell [1 2] {double [1 1] [1]; double [1 1] [2]}'
+  in.list.ints	str 'cell [1 2] {int64 [1 1] [1]; int64 [1 1] [2]}'
+  in.list.mixed	str "cell [1 3] {double [1 1] [1]; char [1 1] 'a'; logical [1 1] [1]}"
+  in.list.empty	str 'cell [1 0] {}'
+  in.list.nested	str 'cell [1 2] {cell [1 2] {double [1 1] [1]; double [1 1] [2]}; cell [1 2] {double [1 1] [3]; double [1 1] [4]}}'
+  in.list.dicts	str 'cell [1 1] {struct [1 1] fields [a] (a=double [1 1] [1])}'
+  in.list.strs	str "cell [1 2] {char [1 3] 'one'; char [1 3] 'two'}"
+  in.list.None	ERR TypeError | passing 'None' to MATLAB not supported
+  in.tuple	str 'cell [1 2] {double [1 1] [1]; double [1 1] [2]}'
+  in.tuple.empty	str 'cell [1 0] {}'
+  in.tuple.one	str 'cell [1 1] {double [1 1] [1]}'
+  in.dict	str "struct [1 1] fields [a,b] (a=double [1 1] [1], b=char [1 1] 'x')"
+  in.dict.empty	str 'struct [1 1] fields [] ()'
+  in.dict.nested	str 'struct [1 1] fields [s] (s=struct [1 1] fields [t] (t=double [1 1] [1]))'
+  in.dict.intkey	ERR ValueError | field name of Python dict object passed to MATLAB must be a nonempty string
+  in.dict.badname	ERR ValueError | field name is not a valid MATLAB identifier: '1a'
+  in.dict.space	ERR ValueError | field name is not a valid MATLAB identifier: 'a b'
+  in.dict.list	str 'struct [1 1] fields [v] (v=cell [1 2] {double [1 1] [1]; double [1 1] [2]})'
+  in.dict.long	str 'struct [1 1] fields [xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx] (xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=double [1 1] [1])'
+  in.dict.order	str 'struct [1 1] fields [z,a] (z=double [1 1] [1], a=double [1 1] [2])'
+  in.dict.unicode	ERR ValueError | field name is not a valid MATLAB identifier: 'λ'
+  in.dict.None	ERR TypeError | passing 'None' to MATLAB not supported
+  in.set	str 'cell [1 1] {double [1 1] [1]}'
+  in.frozenset	ERR TypeError | conversion of Python data type 'frozenset' to MATLAB not supported
+  in.range	str 'cell [1 3] {int64 [1 1] [0]; int64 [1 1] [1]; int64 [1 1] [2]}'
+  in.lambda	ERR TypeError | conversion of Python data type 'function' to MATLAB not supported
+  in.object	ERR TypeError | conversion of Python data type 'object' to MATLAB not supported
+  in.type	ERR TypeError | conversion of Python data type 'type' to MATLAB not supported
+  in.decimal	ERR TypeError | conversion of Python data type 'decimal.Decimal' to MATLAB not supported
+  in.fraction	ERR TypeError | conversion of Python data type 'fractions.Fraction' to MATLAB not supported
+  in.datetime	str "datetime [1 1] (Format=char [1 28] 'uuuu-MM-dd'T'HH:mm:ss.SSS'Z'', TimeZone=char [0 0] '', Year=double [1 1] [2026], Month=double [1 1] [1], Day=double [1 1] [2], Hour=double [1 1] [3], Minute=double [1 1] [4], Second=double [1 1] [5])"
+  in.m.double	str 'double [2 2] [1 3 2 4]'
+  in.m.double.flat	str 'double [1 3] [1 2 3]'
+  in.m.double.scalar	str 'double [1 1] [5]'
+  in.m.double.empty	str 'double [0 0] []'
+  in.m.double.03	str 'double [0 3] []'
+  in.m.double.cube	str 'double [2 2 2] [1 5 3 7 2 6 4 8]'
+  in.m.double.view	str 'double [1 2] [3 4]'
+  in.m.complex	str 'double [1 2] complex [1+2i 3]'
+  in.m.complex.realvalues	str 'double [1 2] [1 2]'
+  in.m.single	str 'single [1 1] [1.5]'
+  in.m.int8	str 'int8 [1 3] [-5 0 127]'
+  in.m.uint8	str 'uint8 [2 2] [1 3 2 4]'
+  in.m.int16	str 'int16 [1 1] [-7]'
+  in.m.uint16	str 'uint16 [1 1] [7]'
+  in.m.int32	str 'int32 [1 1] [-100000]'
+  in.m.uint32	str 'uint32 [1 1] [4000000000]'
+  in.m.int64	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: -9007199254740993 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\n
+  in.m.int64.small	str 'int64 [1 1] [5]'
+  in.m.uint64	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: 18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n
+  in.m.uint64.small	str 'uint64 [1 1] [5]'
+  in.m.int8.complex	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: JGraph keeps no complex int8 array: pass it as a complex double or single one.\n
+  in.m.single.complex	str 'single [1 1] complex [2+3i]'
+  in.m.logical	str 'logical [1 2] [1 0]'
+  in.m.logical.matrix	str 'logical [2 2] [1 0 0 1]'
+  in.m.list	str "cell [1 2] {double [1 2] [1 2]; char [1 1] 'x'}"
+  in.m.dict	str 'struct [1 1] fields [m] (m=int8 [1 2] [1 2])'
+  in.np.float64	str 'double [1 1] [1.5]'
+  in.np.int32	str 'int32 [1 1] [3]'
+  in.np.bool	str 'logical [1 1] [1]'
+  in.np.array	str 'double [2 2] [1 3 2 4]'
+  in.np.int8s	str 'int8 [1 2] [1 2]'
+  in.np.bools	str 'logical [1 2] [1 0]'
+  in.np.complex	str 'double [1 1] complex [1+2i]'
+  in.np.cube	str 'double [2 2 2] [0 4 2 6 1 5 3 7]'
+  in.np.fortran	str 'double [2 3] [0 3 1 4 2 5]'
+  in.np.strs	ERR RuntimeError | format character not supported: 2
+  in.np.empty	str 'double [0 3] []'
+  in.array.d	str 'double [1 2] [1 2]'
+  in.array.i	str 'int32 [1 2] [1 2]'
+  in.array.b	str 'int8 [1 2] [1 2]'
+  echo.int	int 3
+  echo.int.2^62	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: 4611686018427387904 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\n
+  echo.true	bool True
+  echo.complex	complex (1+2j)
+  echo.str	str 'abc'
+  echo.str.empty	str ''
+  echo.list	list[int 1, str 'a', list[float 2.0]]
+  echo.list.empty	list[]
+  echo.tuple	list[float 1.0, float 2.0]
+  echo.dict	dict{'b': float 1.0, 'a': list[float 2.0, str 'x']}
+  echo.dict.empty	dict{}
+  echo.m.scalar	float 5.0
+  echo.m.int8.scalar	int 7
+  echo.m.logical.scalar	bool True
+  echo.m.flat	matlab.double size=(1, 2) matlab.double([[1.0,2.0]])
+  echo.m.column	matlab.double size=(2, 1) matlab.double([[1.0],[2.0]])
+  echo.m.empty	matlab.double size=(0, 0) matlab.double([])
+  echo.m.complex.scalar	complex (1+2j)
+  echo.m.cube	matlab.double size=(2, 2, 2) matlab.double([[[1.0,2.0],[3.0,4.0]],[[5.0,6.0],[7.0,8.0]]])
+  echo.m.trailing	matlab.double size=(2, 3) matlab.double([[0.0,0.0,0.0],[0.0,0.0,0.0]])
+  echo.m.uint64	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: 18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\n
+  echo.m.single.scalar	float 0.10000000149011612
+  echo.np.array	matlab.double size=(2, 2) matlab.double([[1.0,2.0],[3.0,4.0]])
+  echo.nan	float nan
+  echo.str.unicode	str 'λ€A'
+  echo.str.astral	str '😀'
+  end	convert
+  STDERR	TIMES	import 0.07 initialize 0.37
+  STDERR	int8 expects a number or numeric array, but got a complex.
+  STDERR	
+  STDERR	Error in k9make (line 30)
+  STDERR	
+  STDERR	sparse needs numbers, but element (0, 0) was a complex.
+  STDERR	
+  STDERR	Error in k9make (line 61)
+  EXIT	0
+  SECONDS	1.3
+== background
+  future.type	matlab_pysdk.runtime.futureresult.FutureResult
+  future.public	_call _nlhs _nlhs_given _result _retrieved cancel cancelled done result
+  future.done.early	bool False
+  future.result	float 1.0
+  future.done.late	bool True
+  future.cancelled	bool False
+  future.result.again	float 1.0
+  future.cancel.done	bool False
+  future.cancelled.after	bool False
+  running.cancel	bool True
+  running.cancelled	bool True
+  running.result	ERR matlab_pysdk.runtime.InterruptedError | An error occurred when evaluating the result from a function. Details: The execution of the command was interrupted before the result was obtained.
+  running.waited	int 0
+  running.done	bool True
+  running.cancelled.after	bool True
+  running.after	float 1.0
+  queued.cancel	bool True
+  queued.cancelled	bool True
+  queued.done	bool True
+  queued.result	ERR matlab_pysdk.runtime.CancelledError | An error occurred when evaluating the result from a function. Details: The command was already cancelled.
+  queued.first	float 2.0
+  timeout.short	ERR RuntimeError | Timeout was reached before command completed. 
+  timeout.short.waited	bool True
+  timeout.zero	ERR RuntimeError | Timeout was reached before command completed. 
+  timeout.negative	ERR ValueError | Timeout must be greater than or equal to 0. 
+  timeout.str	ERR TypeError | Timeout should be a length in seconds as an integer or float. 
+  timeout.bool	ERR RuntimeError | Timeout was reached before command completed. 
+  timeout.long	float 2.0
+  stdout.before	str ''
+  stdout.result	float 2.0
+  stdout.after	str 'line 1\nline 2\n2\nWarning: a warning about 2\n'
+  error.result	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \n  File <W>\cache\0.2.3\k13pkg0\k13pkg\k9err.m, line 5, in k9err\nAn error with an identifier: 7.\n
+  error.done	bool True
+  error.again	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \n  File <W>\cache\0.2.3\k13pkg0\k13pkg\k9err.m, line 5, in k9err\nAn error with an identifier: 7.\n
+  nargout	tuple(float 2.0, float 4.0, str 'three')
+  nargout.0	None
+  nargout.wrong	ERR matlab_pysdk.runtime.NumberOfOutputArgumentsError | The number of outputs does not match the number specified with the 'nargout' keyword (4).
+  noout.default	ERR matlab_pysdk.runtime.NumberOfOutputArgumentsError | Wrong number of outputs. If not equal to 1, you must specify it with the 'nargout' keyword. 
+  async	tuple(str 'matlab_pysdk.runtime.futureresult.FutureResult', float 1.0)  WARN DeprecationWarning: The 'async' keyword will be removed in a future release. Use 'background' instead. 
+  async.both	ERR RuntimeError | Use either 'background' or 'async'. 
+  async.notbool	ERR TypeError | 'async' must be boolean (True or False). 
+  background.notbool	ERR TypeError | 'background' must be boolean (True or False). 
+  background.false	float 1.0
+  unknown	ERR SystemError | Error in MATLAB Compiler SDK for Python. Details: An error occurred during evaluation of the function nosuchfunc. Details: Function nosuchfunc not found in Python package.
+  order	list[float 0.0, float 1.0, float 2.0, float 3.0, float 4.0]
+  forget.unfinished	None
+  after	float 2.0
+  end	background
+  STDERR	TIMES	import 0.07 initialize 0.35
+  STDERR	to standard error
+  STDERR	Error using k9err (line 5)
+  STDERR	An error with an identifier: 7.
+  STDERR	
+  STDERR	Error using k9multi
+  STDERR	Too many output arguments.
+  STDERR	
+  STDERR	Error using k9noout
+  STDERR	Too many output arguments.
+  EXIT	0
+  SECONDS	7.2
+== life
+  state.1	float 1.0
+  state.2	float 2.0
+  second.state	float 1.0
+  second.same	bool False
+  first.state	float 3.0
+  figures.none	None
+  terminate	None
+  after.terminate	ERR RuntimeError | k9echo() cannot be called after terminate() has been called on the package k13pkg
+  after.terminate.attr	ERR RuntimeError | k9echo() cannot be called after terminate() has been called on the package k13pkg
+  after.terminate.name	str 'k13pkg'
+  terminate.again	None
+  figures.after.terminate	None
+  second.after	float 2.0
+  exit	None
+  after.exit	ERR RuntimeError | k9echo() cannot be called after terminate() has been called on the package k13pkg
+  third.state	float 1.0
+  quit	None
+  after.quit	ERR RuntimeError | k9echo() cannot be called after terminate() has been called on the package k13pkg
+  fourth.echo	float 4.0
+  runtime.after.initialize	None
+  runtime.after.initialize.nojvm	None
+  fourth.after.runtime	float 5.0
+  del	str 'deleted'
+  terminate_runtime	None
+  after.terminate_runtime	ERR SystemError | The JGraph Runtime has ended in this process: terminate_runtime() was called, and the runtime cannot start again in it.
+  end	life
+  STDERR	TIMES	import 0.08 initialize 0.36
+  EXIT	0
+  SECONDS	0.9
+== extra
+  runtime.names	CancelledError DeployablePackage InterruptedError MatlabExecutionError MatlabRuntimeError NumberOfOutputArgumentsError TimeoutError
+  runtime.class.MatlabRuntimeError	matlab_pysdk.runtime.MatlabRuntimeError mro=['MatlabRuntimeError', 'Exception', 'BaseException', 'object']
+  runtime.class.NumberOfOutputArgumentsError	matlab_pysdk.runtime.NumberOfOutputArgumentsError mro=['NumberOfOutputArgumentsError', 'Exception', 'BaseException', 'object']
+  runtime.class.InterruptedError	matlab_pysdk.runtime.InterruptedError mro=['InterruptedError', 'Exception', 'BaseException', 'object']
+  runtime.class.CancelledError	matlab_pysdk.runtime.CancelledError mro=['CancelledError', 'Exception', 'BaseException', 'object']
+  runtime.class.InitializationError	missing
+  runtime.class.MatlabExecutionError	matlab_pysdk.runtime.MatlabExecutionError mro=['MatlabExecutionError', 'Exception', 'BaseException', 'object']
+  runtime.class.RejectedExecutionError	missing
+  runtime.class.TimeoutError	matlab_pysdk.runtime.TimeoutError mro=['TimeoutError', 'Exception', 'BaseException', 'object']
+  runtime.class.SyntaxError	missing
+  runtime.class.DeployablePackage	matlab_pysdk.runtime.deployablepackage.DeployablePackage mro=['DeployablePackage', 'object']
+  matlab.classes	ShapeError SizeError dictionary double int16 int32 int64 int8 logical object single uint16 uint32 uint64 uint8
+  dict.type	matlab.dictionary mro=['dictionary', 'object']
+  dict.public	clear items keys todict values
+  dict.len	int 2
+  dict.keys	list[str 'a', str 'b']
+  dict.values	list[float 1.0, float 2.0]
+  dict.items	list[tuple(str 'a', float 1.0), tuple(str 'b', float 2.0)]
+  dict.get	float 1.0
+  dict.get.missing	ERR KeyError | 'zz'
+  dict.in	bool True
+  dict.iter	list[str 'a', str 'b']
+  dict.eq	ERR TypeError | comparison of objects of type 'matlab.dictionary' with objects of another type not supported
+  dict.isdict	bool False
+  dict.str	{'a': 1.0, 'b': 2.0}
+  dict.set	None ;; after matlab.dictionary matlab.dictionary({'a': 1.0, 'b': 2.0, 'c': 3.0})
+  dict.back	str 'dictionary [1 1] string->double [["a" "b"]] -> [[1 2]]'
+  dict.echo	matlab.dictionary matlab.dictionary({'a': 1.0, 'b': 2.0})
+  dict.new	matlab.dictionary matlab.dictionary({'x': 1.0})
+  dict.new.in	str 'dictionary [1 1] string->double [["x"]] -> [[1]]'
+  dict.new.empty	matlab.dictionary matlab.dictionary({})
+  dict.num.keys	list[float 1.0, float 2.0, float 3.0]
+  dict.cell.values	list[float 1.0, str 'two']
+  object.size	tuple(int 1, int 2)
+  object.size.one	tuple(int 1, int 1)
+  object.size.handle	tuple(int 1, int 1)
+  object.size.table	tuple(int 1, int 1)
+  object.new	matlab.object <matlab.object object at 0x<ADDR>>
+  object.points.in	str 'k9point [1 2] array of 2'
+  object.table.in	str 'table [2 2] array of 4'
+  object.map.in	str "containers.Map [1 1] (Count=uint64 [1 1] [1], KeyType=char [1 4] 'char', ValueType=char [1 6] 'double')"
+  object.categorical.in	str 'categorical [1 2] array of 2'
+  object.setattr	ERR AttributeError | 'matlab.object' object has no attribute 'X' ;; after matlab.object <matlab.object object at 0x<ADDR>>
+  object.getattr	ERR AttributeError | 'matlab.object' object has no attribute 'X'
+  object.eq	bool True
+  object.list.in	str 'cell [1 2] {k9point [1 1] (X=double [1 1] [3], Y=double [1 1] [4], Tag=string [1 1] ["pt"]); k9counter [1 1] (Count=double [1 1] [5], Label=char [1 7] \'counter\')}'
+  dt.tz.in	str "datetime [1 1] (Format=char [1 28] 'uuuu-MM-dd'T'HH:mm:ss.SSS'Z'', TimeZone=char [1 9] '+00:00:00', Year=double [1 1] [2026], Month=double [1 1] [1], Day=double [1 1] [2], Hour=double [1 1] [3], Minute=double [1 1] [4], Second=double [1 1] [5])"
+  dt.offset.in	str "datetime [1 1] (Format=char [1 28] 'uuuu-MM-dd'T'HH:mm:ss.SSS'Z'', TimeZone=char [1 9] '+02:00:00', Year=double [1 1] [2026], Month=double [1 1] [1], Day=double [1 1] [2], Hour=double [1 1] [3], Minute=double [1 1] [4], Second=double [1 1] [5])"
+  dt.micro.in	str "datetime [1 1] (Format=char [1 28] 'uuuu-MM-dd'T'HH:mm:ss.SSS'Z'', TimeZone=char [0 0] '', Year=double [1 1] [2026], Month=double [1 1] [1], Day=double [1 1] [2], Hour=double [1 1] [3], Minute=double [1 1] [4], Second=double [1 1] [5.1234561000000003])"
+  dt.date.in	ERR TypeError | conversion of Python data type 'datetime.date' to MATLAB not supported
+  dt.time.in	ERR TypeError | conversion of Python data type 'datetime.time' to MATLAB not supported
+  dt.delta.in	str "duration [1 1] (Format=char [1 8] 'hh:mm:ss')"
+  dt.echo	datetime.datetime datetime.datetime(2026, 1, 2, 3, 4, 5, 123456)
+  dt.tz.echo	datetime.datetime datetime.datetime(2026, 1, 2, 3, 4, 5, tzinfo=datetime.timezone.utc)
+  dt.delta.echo	datetime.timedelta datetime.timedelta(days=1, seconds=2, microseconds=3)
+  dt.list.in	str "cell [1 1] {datetime [1 1] (Format=char [1 28] 'uuuu-MM-dd'T'HH:mm:ss.SSS'Z'', TimeZone=char [0 0] '', Year=double [1 1] [2026], Month=double [1 1] [1], Day=double [1 1] [2], Hour=double [1 1] [0], Minute=double [1 1] [0], Second=double [1 1] [0])}"
+  in.dict.tuplekey	ERR ValueError | field name of Python dict object passed to MATLAB must be a nonempty string
+  in.list.matlabs	str 'cell [1 2] {double [1 2] [1 2]; int8 [1 1] [3]}'
+  in.nested.tuple	str 'cell [1 2] {cell [1 2] {double [1 1] [1]; double [1 1] [2]}; cell [1 1] {double [1 1] [3]}}'
+  in.bools	str 'cell [1 2] {logical [1 1] [1]; logical [1 1] [0]}'
+  in.np.uint64	str 'uint64 [1 1] [5]'
+  in.np.float32	str 'single [1 1] [1.5]'
+  in.np.complex64	str 'single [1 1] complex [1+2i]'
+  in.np.2d.int	str 'int64 [2 2] [1 3 2 4]'
+  in.np.0d	str 'double [1 1] [5]'
+  in.np.strided	ERR ValueError | ndarray is not contiguous
+  in.np.object	ERR RuntimeError | format character not supported: O
+  in.bytes.empty	str 'uint8 [0 0] []'
+  in.set.two	str 'cell [1 2] {double [1 1] [1]; double [1 1] [2]}'
+  in.range.list	str 'cell [1 1] {cell [1 2] {int64 [1 1] [0]; int64 [1 1] [1]}}'
+  in.many	str "4: double [1 1] [1] | char [1 1] 'a' | cell [1 1] {double [1 1] [1]} | struct [1 1] fields [k] (k=double [1 1] [2])"
+  in.matlab.view.int	str 'int8 [1 2] [1 2]'
+  in.matlab.scalar.view	str 'double [1 1] [5]'
+  in.empty.row	str 'double [1 0] []'
+  in.logical.scalar	str 'logical [1 1] [1]'
+  error.str	'An error occurred when evaluating the result from a function. Details: \n  File <W>\\cache\\0.2.3\\k13pkg0\\k13pkg\\k9err.m, line 5, in k9err\nAn error with an identifier: 7.\n'
+  error.repr	MatlabRuntimeError('An error occurred when evaluating the result from a function. Details: \n  File <W>\\cache\\0.2.3\\k13pkg0\\k13pkg\\k9err.m, line 5, in k9err\nAn error with an identifier: 7.\n')
+  out.after	float 1.0
+  end	extra
+  STDERR	TIMES	import 0.07 initialize 0.36
+  STDERR	Error using k9err (line 5)
+  STDERR	An error with an identifier: 7.
+  STDERR	
+  STDERR	Error using k9err (line 5)
+  STDERR	An error with an identifier: 7.
+  EXIT	0
+  SECONDS	1.1
+== runtime nojvm
+  runtime.nojvm	None
+  runtime.call	float 1.0
+  end	runtime
+  EXIT	0
+  SECONDS	0.9
+== runtime str
+  runtime.str	ERR SyntaxError | initialize_runtime takes a list or tuple of strings.
+  runtime.call	float 1.0
+  end	runtime
+  EXIT	0
+  SECONDS	0.8
+== runtime tuple
+  runtime.tuple	None
+  runtime.call	float 1.0
+  end	runtime
+  EXIT	0
+  SECONDS	0.9
+== runtime bogus
+  runtime.bogus	None
+  Warning: Unrecognized command line option: bogus.
+  runtime.call	float 1.0
+  end	runtime
+  EXIT	0
+  SECONDS	0.9
+== runtime empty
+  runtime.empty	None
+  runtime.call	float 1.0
+  end	runtime
+  EXIT	0
+  SECONDS	0.9
+== runtime None
+  runtime.None	None
+  runtime.call	float 1.0
+  end	runtime
+  EXIT	0
+  SECONDS	0.9
+== runtime twice
+  runtime.twice.1	None
+  runtime.twice.2	None
+  runtime.call	float 1.0
+  end	runtime
+  EXIT	0
+  SECONDS	0.8
+== runtime number
+  runtime.number	ERR TypeError | Option 0 is not a Python string.
+  runtime.call	float 1.0
+  end	runtime
+  EXIT	0
+  SECONDS	0.8
+== runtime logfile
+  runtime.logfile	None
+  runtime.call	float 1.0
+  runtime.logfile.exists	bool True
+  end	runtime
+  EXIT	0
+  SECONDS	0.9
+== runtime terminate
+  runtime.terminate.first	None
+  runtime.initialize	ERR SystemError | The JGraph Runtime has ended in this process: terminate_runtime() was called, and the runtime cannot start again in it.
+  end	runtime
+  EXIT	0
+  SECONDS	0.4
+== version 3.8
+  version.import	ERR OSError | Python 3.8 is not supported.
+  end	version
+  EXIT	0
+  SECONDS	0.4
+== version 3.9
+  version.import	ok
+  version.call	float 1.0
+  end	version
+  EXIT	0
+  SECONDS	0.9
+== version 3.13
+  version.import	ok  WARN UserWarning: Python versions 3.9, 3.10, 3.11, and 3.12 are supported, but your version of Python is 3.13
+  version.call	float 1.0
+  end	version
+  EXIT	0
+  SECONDS	0.9
+== version 3.14
+  version.import	ok  WARN UserWarning: Python versions 3.9, 3.10, 3.11, and 3.12 are supported, but your version of Python is 3.14
+  version.call	float 1.0
+  end	version
+  EXIT	0
+  SECONDS	0.9
+== version 4.0
+  version.import	ERR OSError | Python 4.0 is not supported.
+  end	version
+  EXIT	0
+  SECONDS	0.4
+== version 2.7
+  version.import	ERR OSError | Python 2.7 is not supported.
+  end	version
+  EXIT	0
+  SECONDS	0.4

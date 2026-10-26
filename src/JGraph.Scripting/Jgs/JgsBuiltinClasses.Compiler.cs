@@ -56,6 +56,19 @@ internal static partial class JgsBuiltinClasses
         "AutoDetectDataFiles", "ExternalEncryptionKey", "ObfuscateArchive", "SecretsManifest", "SupportPackages", "Verbose", "OutputDir",
     ];
 
+    /// <summary>The Python package options class (stage K13).</summary>
+    public const string PythonPackageOptions = "compiler.build.PythonPackageOptions";
+
+    /// <summary>The Python package options' public properties, in the order R2025b lists them (k13_build: opts.properties).</summary>
+    public static readonly string[] PythonPackageOptionNames =
+    [
+        "FunctionFiles", "SampleGenerationFiles", "PackageName", "AdditionalFiles", "AutoDetectDataFiles", "ExternalEncryptionKey",
+        "ObfuscateArchive", "SecretsManifest", "SupportPackages", "Verbose", "OutputDir",
+    ];
+
+    /// <summary>Where a name given for <c>PackageName</c> is kept (R2025b's UserProvidedPackageName).</summary>
+    public const string GivenPackageName = "UserProvidedPackageName";
+
     /// <summary>R2025b's InterfaceManager: the interface, its version and EmbedArchive, kept together because setting one warns about the others.</summary>
     public const string InterfaceValue = "InterfaceManagerInterface";
 
@@ -301,6 +314,56 @@ internal static partial class JgsBuiltinClasses
         }
 
         return new ClassdefStmt(CppLibraryOptions, isHandle: false, properties, methods)
+        {
+            Dialect = JgsDialect.Matlab,
+            Superclasses = [],
+        };
+    }
+
+    /// <summary>
+    /// <c>compiler.build.PythonPackageOptions</c> (stage K13): R2025b's properties in its order, the
+    /// package's name and output folder dependent on what was given, each set checked by
+    /// <see cref="JgsBuiltins.SetPythonPackageOption"/>, and its hidden <c>getName</c>.
+    /// </summary>
+    private static ClassdefStmt PythonPackageOptionsDeclaration(Interpreter interpreter)
+    {
+        var properties = new List<ClassProperty>();
+        var methods = new List<ClassMethod>();
+        foreach (string name in PythonPackageOptionNames)
+        {
+            bool derived = name is "PackageName" or "OutputDir";
+            properties.Add(new ClassProperty(new ArgumentSpec(name, null, null, [], new PreEvaluated(JgsBuiltins.PythonPackageOptionDefault(name))),
+                Constant: false, Dependent: derived));
+            string captured = name;
+            methods.Add(Setter(name, (copy, value, line, col) => JgsBuiltins.SetPythonPackageOption(interpreter, copy, captured, value, line, col)));
+            if (derived)
+            {
+                methods.Add(new ClassMethod(new FnStmt("get." + name, ["obj"], [], ["value"]) { Dialect = JgsDialect.Matlab }, Static: false)
+                {
+                    Native = new BuiltinFunction("get." + name, (args, line, col) => JgsBuiltins.PythonPackageOptionDerived(captured, args[0].AsObject)),
+                });
+            }
+        }
+
+        methods.Add(new ClassMethod(new FnStmt("getName", ["obj"], [], ["name"]) { Dialect = JgsDialect.Matlab }, Static: false)
+        {
+            Hidden = true,
+            Native = new BuiltinFunction("getName", (args, line, col) =>
+                JgsValue.Str(JgsBuiltins.PythonPackageShortName(JgsBuiltins.TextOf(JgsBuiltins.PythonPackageOptionDerived("PackageName", args[0].AsObject))))),
+        });
+
+        var hidden = new MemberAccess(MemberAccessKind.Protected);
+        foreach (string field in new[] { GivenPackageName, GivenOutputDir })
+        {
+            properties.Add(new ClassProperty(new ArgumentSpec(field, null, null, [], new PreEvaluated(JgsValue.Str(""))), Constant: false)
+            {
+                GetAccess = hidden,
+                SetAccess = hidden,
+                Hidden = true,
+            });
+        }
+
+        return new ClassdefStmt(PythonPackageOptions, isHandle: false, properties, methods)
         {
             Dialect = JgsDialect.Matlab,
             Superclasses = [],

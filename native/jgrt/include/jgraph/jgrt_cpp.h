@@ -51,7 +51,14 @@ JGRT_API void jgrtCppStop(void);
 /* Opens the archive at path, a full file name: a library's handle, or 0 with *error saying why. */
 JGRT_API uint64_t jgrtCppOpen(const char16_t *path, char16_t **error);
 
-/* Ends a library's handle. */
+/*
+ * Opens the archive at path for a Python package (stage K13), as jgrtCppOpen opens a library: its
+ * calls take and give a datetime, a duration and a dictionary as values, in forms the package's
+ * runtime (the JGraph Runtime's python folder) reads and writes, rather than as objects.
+ */
+JGRT_API uint64_t jgrtPyOpen(const char16_t *path, char16_t **error);
+
+/* Ends a library's handle, and the session it was opened in. */
 JGRT_API void jgrtCppClose(uint64_t library);
 
 /* Waits until none of the library's figures is on screen. */

@@ -87,6 +87,10 @@ struct JgrtManaged
         void* context, void* write, int output, int error, void* done, wchar_t** refused);
     int (*CppCancel)(uint64_t task, int allowInterrupt);
     void (*CppForget)(uint64_t task);
+
+    // A Python package's instance (stage K13, cpplib.cpp's jgrtPyOpen): a library whose calls take and
+    // give datetimes, durations and dictionaries as values.
+    intptr_t (*PyOpen)(const wchar_t* archive, wchar_t** error);
 };
 
 // What LastError answers.

@@ -382,6 +382,9 @@ internal sealed class NativeInstance(Component component, nint errorHandler, nin
 {
     public Component Component { get; } = component;
 
+    /// <summary>A Python package's instance (stage K13): datetimes, durations and dictionaries cross its calls as values.</summary>
+    public bool Python { get; init; }
+
     public nint ErrorHandler { get; } = errorHandler;
 
     /// <summary>Standard output, as R2025b hands it to the print handler: a piece per write (k10_feval print).</summary>

@@ -50,8 +50,8 @@ KNOWN_CLIENT = [
     (r"^(in|echo)\.complexzero$", "JGraph keeps an element with no imaginary part as a real number"),
     (r"^(in|echo)\.empty03$", "an empty array keeps its shape (0-by-3); R2025b's Data API hands MATLAB 0-by-0 (ADR 0268)"),
     (r"^obj\.across\.libraries$", "an object goes back only to the library that returned it; R2025b's passes it to another library of the application (ADR 0268)"),
-    (r"^lib\.two\.of\.one$", "two libraries of one archive share one session, so an object of one is good in the other; "
-     "R2025b runs each in a session of its own and refuses it (ADR 0268)"),
+    (r"^lib\.two\.of\.one$", "each library runs in a session of its own, as R2025b's does (since stage K13, ADR 0269), so an object of one is "
+     "refused by the other, in JGraph's words and without R2025b's identifier MATLAB:matlab_data_array:invalidHandleObjectRef"),
     (r"^(print|print\.buffers|print\.output\.only|native\.buffers)$", "a value's display is JGraph's own (open item 194), and a deployed warning prints no '> In' line in JGraph (open item 170)"),
     (r"^native\.tuple$", "a char result is taken as text in a typed tuple, as it is alone; R2025b's tuple refuses it (ADR 0268)"),
     (r"^native\.error$", "R2025b's stack has a frame of its own, fevalWithCustomTypeConversion, below the function's (ADR 0268)"),
@@ -80,7 +80,7 @@ KNOWN_REPORTS = [
      "R2025b's stack has a frame of its own, fevalWithCustomTypeConversion, below the function's (ADR 0268)"),
     (r"^Error using clear$", "R2025b's own error as it clears k9color while the runtime ends"),
     (r"^feval: 'k9pkg\.k9inner' is not a function\.$", "JGraph has no packages, so k9pkg.k9inner is not callable by its package name (open item 195)"),
-    (r"^Invalid HandleObjectRef", "two libraries of one archive share one session in JGraph, so the object is good in the other (ADR 0268)"),
+    (r"^Invalid HandleObjectRef", "an object of another library is refused in JGraph's words, which the refusal does not also write to standard error (ADR 0269)"),
 ]
 
 

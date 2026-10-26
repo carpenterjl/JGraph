@@ -402,6 +402,21 @@ public class OwnershipGateTests
         ("JgsBuiltins.CompilerCpp.cs",
          "results.AsObject.Fields[\"BuildType\"] = JgsValue.Str(\"cppSharedLibrary\");",
          "the Results or Dependencies object compiler.build is minting, before anything can hold it (K12)"),
+        ("JgsBuiltins.CompilerPython.cs",
+         "options.Fields[name] = FunctionFileList(value, here, line, col);",
+         "a compiler options object's own field, written by its constructor or setter with a value minted for it (K13)"),
+        ("JgsBuiltins.CompilerPython.cs",
+         "options.Fields[JgsBuiltinClasses.GivenPackageName] = JgsValue.Str(CliName(value, name, line, col));",
+         "a compiler options object's own field, written by its constructor or setter with a value minted for it (K13)"),
+        ("JgsBuiltins.CompilerPython.cs",
+         "options.Fields[name] = EmptyCellValue();",
+         "a compiler options object's own field, written by its constructor or setter with a value minted for it (K13)"),
+        ("JgsBuiltins.CompilerPython.cs",
+         "options.Fields[name] = OptionCellColumn([.. files.Select(Absolute)]);",
+         "a compiler options object's own field, written by its constructor or setter with a value minted for it (K13)"),
+        ("JgsBuiltins.CompilerPython.cs",
+         "results.AsObject.Fields[\"BuildType\"] = JgsValue.Str(\"pythonPackage\");",
+         "the Results or Dependencies object compiler.build is minting, before anything can hold it (K13)"),
     ];
 
     [Fact]

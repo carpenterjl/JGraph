@@ -312,6 +312,8 @@ compiler.build.cSharedLibrary	-1	0
 compiler.build.CSharedLibraryOptions	1	8
 compiler.build.dotNETAssembly	-1	0
 compiler.build.DotNETAssemblyOptions	1	8
+compiler.build.pythonPackage	-1	0
+compiler.build.PythonPackageOptions	1	8
 compiler.build.standaloneApplication	-1	0
 compiler.build.StandaloneApplicationOptions	1	8
 compiler.build.standaloneWindowsApplication	-1	0

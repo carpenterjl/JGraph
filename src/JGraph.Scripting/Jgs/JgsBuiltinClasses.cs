@@ -38,6 +38,7 @@ internal static partial class JgsBuiltinClasses
         DotNetOptions => DotNetOptionsDeclaration(interpreter),
         CLibraryOptions => CLibraryOptionsDeclaration(interpreter),
         CppLibraryOptions => CppLibraryOptionsDeclaration(interpreter),
+        PythonPackageOptions => PythonPackageOptionsDeclaration(interpreter),
         BuildResults => BuildResultsDeclaration(),
         RuntimeDependencies => RuntimeDependenciesDeclaration(),
         _ => null,

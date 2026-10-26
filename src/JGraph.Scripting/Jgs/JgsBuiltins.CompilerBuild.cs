@@ -57,6 +57,7 @@ internal static partial class JgsBuiltins
         RegisterDotNetBuild(env, interpreter, host);
         RegisterCLibraryBuild(env, interpreter, host);
         RegisterCppLibraryBuild(env, interpreter, host);
+        RegisterPythonPackageBuild(env, interpreter, host);
     }
 
     // --- The options -----------------------------------------------------------------------
@@ -367,9 +368,11 @@ internal static partial class JgsBuiltins
         }
     }
 
+    /// <summary>validateattributes' refusal of a class; a cell is not named, as R2025b's message leaves it out (k13_build: opts.name.cell).</summary>
     private static JgsRuntimeException InvalidType(string name, string[] classes, JgsValue value, int line, int col) =>
         new(line, col, "MATLAB:invalidType",
-            $"Expected {name} to be one of these types:\n\n{string.Join(", ", classes)}\n\nInstead its type was {ClassOf(value, JgsDialect.Matlab)}.");
+            $"Expected {name} to be one of these types:\n\n{string.Join(", ", classes)}"
+            + (value.Type == JgsType.Cell ? "" : $"\n\nInstead its type was {ClassOf(value, JgsDialect.Matlab)}."));
 
     private static JgsRuntimeException BadProperty(string name, string value, int line, int col) =>
         new(line, col, "Compiler:clishared:badProperty", $"Invalid '{name}': '{value}'");

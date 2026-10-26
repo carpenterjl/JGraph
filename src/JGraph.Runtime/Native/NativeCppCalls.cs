@@ -78,14 +78,28 @@ internal static unsafe class NativeCppCalls
         }
     }
 
-    /// <summary>jgrtCppOpen: a library over the component the archive holds, or 0 with the reason.</summary>
+    /// <summary>
+    /// jgrtCppOpen: a library over the component the archive holds, in a session of its own as each
+    /// of R2025b's libraries is (k12_client lib.two.of.one: an object of one is refused by another);
+    /// or 0 with the reason.
+    /// </summary>
     [UnmanagedCallersOnly]
-    internal static nint Open(char* archive, char** error)
+    internal static nint Open(char* archive, char** error) => OpenLibrary(archive, error, python: false);
+
+    /// <summary>
+    /// jgrtPyOpen (stage K13): a Python package's instance, opened as a library is, whose calls take and
+    /// give datetimes, durations and dictionaries as values (<see cref="NativeWire"/>), as R2025b's
+    /// Python runtime converts them (k13_client: out.datetime, out.duration, out.dict).
+    /// </summary>
+    [UnmanagedCallersOnly]
+    internal static nint PyOpen(char* archive, char** error) => OpenLibrary(archive, error, python: true);
+
+    private static nint OpenLibrary(char* archive, char** error, bool python)
     {
         try
         {
-            Component component = Component.Open(new string(archive));
-            return GCHandle.ToIntPtr(GCHandle.Alloc(new NativeInstance(component, 0, 0)));
+            Component component = Component.Open(new string(archive), ownSession: true);
+            return GCHandle.ToIntPtr(GCHandle.Alloc(new NativeInstance(component, 0, 0) { Python = python }));
         }
         catch (Exception failure)
         {
@@ -184,7 +198,7 @@ internal static unsafe class NativeCppCalls
         JgsValue[] arguments;
         try
         {
-            arguments = NativeWire.ReadAll(task.Inputs, session);
+            arguments = NativeWire.ReadAll(task.Inputs, session, instance.Python);
         }
         catch (ArgumentException failure)
         {
@@ -220,7 +234,7 @@ internal static unsafe class NativeCppCalls
         // An output the binary form cannot hold exactly is refused as an input is (calls: make.uint64).
         try
         {
-            return (Done, NativeWire.WriteAll(results.Take(task.Nlhs), session));
+            return (Done, NativeWire.WriteAll(results.Take(task.Nlhs), session, instance.Python));
         }
         catch (ArgumentException failure)
         {
@@ -280,21 +294,34 @@ internal static unsafe class NativeCppCalls
 
         public bool Cancel(bool allowInterrupt)
         {
+            bool queued;
             lock (_gate)
             {
-                if (_state == 0 || (_state == 1 && allowInterrupt))
+                if (_state == 0)
                 {
-                    if (_state == 0)
-                    {
-                        _state = 2;
-                    }
-
-                    _cancel.Cancel();
-                    return true;
+                    _state = 2;
+                    queued = true;
+                }
+                else if (_state == 1 && allowInterrupt)
+                {
+                    queued = false;
+                }
+                else
+                {
+                    return false;
                 }
 
-                return false;
+                _cancel.Cancel();
             }
+
+            // A call that never started ends now rather than when the engine reaches it, as R2025b's
+            // does (k13_client: queued.done answered true at once); the engine passes it over later.
+            if (queued)
+            {
+                Complete(Cancelled, NativeWire.Text(CancelledText));
+            }
+
+            return true;
         }
 
         public void Write(int stream, string text)

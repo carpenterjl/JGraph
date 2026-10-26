@@ -40,6 +40,7 @@ internal static unsafe class NativeBridge
         public delegate* unmanaged<nint, char*, nuint, byte*, nuint, nint, nint, int, int, nint, char**, ulong> CppCall;
         public delegate* unmanaged<ulong, int, int> CppCancel;
         public delegate* unmanaged<ulong, void> CppForget;
+        public delegate* unmanaged<char*, char**, nint> PyOpen;
     }
 
     /// <summary>
@@ -103,5 +104,6 @@ internal static unsafe class NativeBridge
         table->CppCall = &NativeCppCalls.Call;
         table->CppCancel = &NativeCppCalls.Cancel;
         table->CppForget = &NativeCppCalls.Forget;
+        table->PyOpen = &NativeCppCalls.PyOpen;
     }
 }

@@ -21,7 +21,7 @@ internal static partial class JgsBuiltins
         "mcc", "compiler.build.standaloneApplication", "compiler.build.standaloneWindowsApplication",
         "compiler.build.StandaloneApplicationOptions", "compiler.build.dotNETAssembly", "compiler.build.DotNETAssemblyOptions",
         "compiler.build.cSharedLibrary", "compiler.build.CSharedLibraryOptions", "compiler.build.cppSharedLibrary",
-        "compiler.build.CppSharedLibraryOptions",
+        "compiler.build.CppSharedLibraryOptions", "compiler.build.pythonPackage", "compiler.build.PythonPackageOptions",
     ];
 
     /// <summary>The functions whose use makes mcc warn that secrets come from the machine the program runs on.</summary>
@@ -280,17 +280,19 @@ internal static partial class JgsBuiltins
             }
         }
 
+        // Neither a C++ library's generic interface nor a Python package takes a version, and R2025b
+        // says so (k12_build: mcc_version; k13_build: mcc_version).
+        if (command.Target is MccTarget.CppLibrary or MccTarget.PythonPackage && command.IgnoredVersion is { } ignoredVersion)
+        {
+            McWarn("Compiler:compiler:COM_WARN_VERSIONING_NOT_SUPPORTED",
+                $"Versioning is not supported for this target. Version string \"{ignoredVersion}\" specified in -W option will be ignored.");
+        }
+
         // A C++ library's generic interface generates its header first as well (k12_build: main.printed,
         // mcc_verbose); -W cpplib:name and ,all write the archive alone, as R2025b's do (mcc_default).
         string? cppHeader = null;
         if (command.Target == MccTarget.CppLibrary)
         {
-            if (command.IgnoredCppVersion is { } ignoredVersion)
-            {
-                McWarn("Compiler:compiler:COM_WARN_VERSIONING_NOT_SUPPORTED",
-                    $"Versioning is not supported for this target. Version string \"{ignoredVersion}\" specified in -W option will be ignored.");
-            }
-
             if (command.CppInterface == CppInterfaceKind.All)
             {
                 McWarn("JGraph:mcc:legacyNotBuilt",
@@ -369,6 +371,11 @@ internal static partial class JgsBuiltins
         if (command.Target == MccTarget.CppLibrary)
         {
             return CppLibraryBuild(command, exported, cppHeader, main, report, folder, here, line, col, host);
+        }
+
+        if (command.Target == MccTarget.PythonPackage)
+        {
+            return PythonPackageBuild(command, exported, main, report, folder, here, line, col, host);
         }
 
         if (command.Target == MccTarget.CLibrary)

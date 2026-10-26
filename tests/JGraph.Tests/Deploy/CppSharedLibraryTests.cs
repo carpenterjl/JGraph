@@ -109,12 +109,12 @@ public sealed class CppSharedLibraryTests
         Assert.Equal(MccTarget.CppLibrary, generic.Target);
         Assert.Equal(CppInterfaceKind.Generic, generic.CppInterface);
         Assert.Equal("k12gn", generic.ComponentName);
-        Assert.Null(generic.IgnoredCppVersion);
+        Assert.Null(generic.IgnoredVersion);
 
         Assert.Equal(CppInterfaceKind.All, MccCommandLine.Parse(["-W", "cpplib:k12m", "k9echo.m"]).CppInterface);
         Assert.Equal(CppInterfaceKind.All, MccCommandLine.Parse(["-W", "cpplib:k12al,all", "k9echo.m"]).CppInterface);
-        Assert.Equal("2.0", MccCommandLine.Parse(["-W", "cpplib:k12vr,generic,version=2.0", "k9echo.m"]).IgnoredCppVersion);
-        Assert.Null(MccCommandLine.Parse(["-W", "cpplib:k12vf,version=2.0", "k9echo.m"]).IgnoredCppVersion);
+        Assert.Equal("2.0", MccCommandLine.Parse(["-W", "cpplib:k12vr,generic,version=2.0", "k9echo.m"]).IgnoredVersion);
+        Assert.Null(MccCommandLine.Parse(["-W", "cpplib:k12vf,version=2.0", "k9echo.m"]).IgnoredVersion);
         Assert.Equal(MccTarget.CppLibrary, MccCommandLine.Parse(["-W", "cpplib:k12ex,generic", "-T", "link:exe", "k9echo.m"]).Target);
         Assert.Equal("k12t2", MccCommandLine.Parse(["-W", "cpplib:k12t1,generic", "-W", "cpplib:k12t2,generic", "k9echo.m"]).ComponentName);
         Assert.True(MccCommandLine.Parse(["-W", "cpplib:k12db,generic", "-g", "k9echo.m"]).DebugBuild);

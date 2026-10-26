@@ -20,8 +20,9 @@
 
   <ItemGroup>
     <!-- The out-of-process Python console's child script, copied beside every host that references
-         this project (the WPF app and the CLI launcher both need it). -->
-    <Content Include="..\..\python\**\*.py" LinkBase="python" CopyToOutputDirectory="PreserveNewest" />
+         this project (the WPF app and the CLI launcher both need it). The JGraph Runtime's own python
+         folder (python\jgraph_runtime, stage K13) is JGraph.Deploy's to copy. -->
+    <Content Include="..\..\python\*.py" LinkBase="python" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

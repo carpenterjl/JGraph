@@ -26,6 +26,9 @@ public enum MccTarget
 
     /// <summary>A C++ shared library for the MATLAB Data API: <c>-W cpplib:</c> (stage K12).</summary>
     CppLibrary,
+
+    /// <summary>A Python package: <c>-W python:</c> (stage K13).</summary>
+    PythonPackage,
 }
 
 /// <summary>Which interfaces <c>-W cpplib:name[,generic|legacy|all]</c> asks for (k12_build: mcc_*).</summary>
@@ -255,8 +258,8 @@ public sealed class MccCommandLine
     /// <summary><c>-W cpplib:</c>'s interfaces, for a C++ shared library.</summary>
     public CppInterfaceKind CppInterface { get; private set; }
 
-    /// <summary>The version <c>-W cpplib:name,generic,version=v</c> gives, which R2025b warns it ignores; else null.</summary>
-    public string? IgnoredCppVersion { get; private set; }
+    /// <summary>The version <c>-W cpplib:name,generic,version=v</c> or <c>-W python:name,version=v</c> gives, which R2025b warns it ignores; else null.</summary>
+    public string? IgnoredVersion { get; private set; }
 
     /// <summary>A library's <c>class{Name:file,file}</c> arguments, in order: each class and its files.</summary>
     public List<(string Name, List<string> Files)> Classes { get; } = [];
@@ -457,8 +460,8 @@ public sealed class MccCommandLine
 
                     // A library's name is a component name, as -o's is: one after the other is refused,
                     // though a second -W lib: names the library again (k11_build: lib_o; k11_names: o_W, W_W;
-                    // k12_build: mcc_o, mcc_twice).
-                    if (wrapperKind is "lib" or "cpplib")
+                    // k12_build: mcc_o, mcc_twice; k13_build: mcc_o, mcc_ofirst).
+                    if (wrapperKind is "lib" or "cpplib" or "python")
                     {
                         if (line.OutputName is { } named)
                         {
@@ -643,6 +646,25 @@ public sealed class MccCommandLine
                 line.Target = MccTarget.CppLibrary;
             }
         }
+        else if (wrapperKind == "python")
+        {
+            // -c makes R2025b write a C library's source in place of the package; -g, -C and -T
+            // change nothing a package is made of (k13_build: mcc_c, mcc_debug, mcc_separate,
+            // mcc_codegen, mcc_compile, mcc_exe).
+            line.ComponentName = libraryName;
+            line.IgnoredSwitches.RemoveAll(static s => s == "g");
+            if (line.IgnoredSwitches.RemoveAll(static s => s == "c") > 0)
+            {
+                line.Target = MccTarget.CLibrary;
+                link = "codegen";
+            }
+            else
+            {
+                line.Target = MccTarget.PythonPackage;
+                link = null;
+                separateSwitch = false;
+            }
+        }
         else if (!standalone)
         {
             OtherTarget(wrapperKind, wrapperParts, mpsSwitch, separateSwitch);
@@ -796,7 +818,7 @@ public sealed class MccCommandLine
                 }
 
                 // The generic interface has no version, and R2025b says so; the legacy library takes it (k12_build: mcc_version, mcc_verfirst).
-                IgnoredCppVersion = CppInterface == CppInterfaceKind.Generic ? version : null;
+                IgnoredVersion = CppInterface == CppInterfaceKind.Generic ? version : null;
                 ComponentName = name;
                 break;
             case "dotnet":
@@ -830,7 +852,30 @@ public sealed class MccCommandLine
                 }
 
                 break;
-            case "python" or "com" or "CTF" or "excel" or "mpsxl":
+            case "python":
+            {
+                // python:name[,version=v] (stage K13; k13_build: mcc_*): any name but an empty one, its
+                // empty dotted parts dropped, and a second -W python: nesting its name inside the first's
+                // (mcc_dotdot, mcc_twice); a version warned about and ignored, anything else ignored.
+                RequireName(name);
+                string joined = string.Join('.', name.Split('.', StringSplitOptions.RemoveEmptyEntries));
+                RequireName(joined);
+                IgnoredVersion = null;
+                foreach (string part in parts.Skip(1))
+                {
+                    if (part.StartsWith("version=", StringComparison.Ordinal))
+                    {
+                        IgnoredVersion = part["version=".Length..];
+                        Version = ProgramVersion.Parse(IgnoredVersion) ?? throw Refuse("COM_ERR_INVALID_VERSION", ProgramVersion.Refusal(IgnoredVersion));
+                    }
+                }
+
+                ComponentName = Target == MccTarget.PythonPackage && ComponentName is { } outer ? outer + "." + joined : joined;
+                Target = MccTarget.PythonPackage;
+                break;
+            }
+
+            case "com" or "CTF" or "excel" or "mpsxl":
                 RequireName(name);
                 break;
         }
@@ -1006,8 +1051,10 @@ public sealed class MccCommandLine
         + "  A C++ shared library for the MATLAB Data API, with its strongly typed header\n"
         + "  mcc -W cpplib:<name>,generic <file.m> [moreFiles...]\n"
         + "  -W cpplib:<name> alone writes the archive without the header; the legacy mwArray interface is not built.\n\n"
+        + "  A Python package, which a Python program imports to call the functions in it\n"
+        + "  mcc -W python:<package> <file.m> [moreFiles...]\n"
+        + "  A dotted name nests the package in its parts' folders.\n\n"
         + "JGraph does not build these yet\n"
-        + "  Python package               mcc -W python:<package> <file.m>\n"
         + "  Production Server archive    mcc -W CTF:<archive> -U <file.m>\n"
         + "  Excel add-in                 mcc -W 'excel:<addin>,<class>' -b <file.m>\n\n"
         + "From a Windows command prompt, run jgmcc (or jgraph mcc) and use double quotes where these use single.\n";

@@ -48,6 +48,9 @@
     <None Include="..\..\native\jgrt\include\jgraph\*" Link="extern\include\jgraph\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
     <None Include="..\..\native\jgrt\include\MatlabDataArray\*" Link="extern\include\MatlabDataArray\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
     <None Include="..\..\native\win-x64\jgrt\jgrt.lib" Link="extern\lib\win64\microsoft\jgrt.lib" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <!-- Stage K13: the JGraph Runtime's python folder, the matlab module and the matlab_pysdk runtime a
+         Python package imports, beside JGraph as the runtime keeps it beside its engine. -->
+    <None Include="..\..\python\jgraph_runtime\**\*.py" Link="python\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
   </ItemGroup>
 
   <!-- Stage K8: the generated classes are compiled against .NET 8's reference assemblies, so a client

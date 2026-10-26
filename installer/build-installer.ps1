@@ -95,7 +95,12 @@ $anchors = @(
 
     # mcc -W cpplib (stage K12, ADR 0268): the C++ Data API's headers a client compiles against.
     "extern\include\MatlabCppSharedLib.hpp",
-    "extern\include\jgraph\cpplib.hpp"
+    "extern\include\jgraph\cpplib.hpp",
+
+    # mcc -W python (stage K13, ADR 0269): the matlab module and the package runtime beside the
+    # engine, where a package finds them with this folder, jgrt.dll's, on the PATH.
+    "python\matlab\__init__.py",
+    "python\matlab_pysdk\runtime\__init__.py"
 )
 foreach ($anchor in $anchors) {
     if (-not (Test-Path (Join-Path $staging $anchor))) {

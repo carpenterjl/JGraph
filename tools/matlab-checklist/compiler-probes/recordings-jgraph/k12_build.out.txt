@@ -99,8 +99,8 @@ main.Options
       SupportPackages: {'autodetect'}
       Verbose: on
       OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
-main.files	GettingStarted.html (1163) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1336) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12lib.ctf (14663) | v2\generic_interface\k12libv2.hpp (66469) | v2\generic_interface\readme.txt (1082)
-main.seconds	0.4
+main.files	GettingStarted.html (1163) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1336) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12lib.ctf (14661) | v2\generic_interface\k12libv2.hpp (66469) | v2\generic_interface\readme.txt (1082)
+main.seconds	1.4
 main.readme	1336 chars, CRLF 31, ends with newline 1
   |k12lib C++ Shared Library
   |
@@ -2084,8 +2084,8 @@ variadic.Options
       SupportPackages: {'autodetect'}
       Verbose: off
       OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
-variadic.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12v.ctf (4835) | v2\generic_interface\k12vv2.hpp (3578) | v2\generic_interface\readme.txt (1076)
-variadic.seconds	0.0
+variadic.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12v.ctf (4832) | v2\generic_interface\k12vv2.hpp (3578) | v2\generic_interface\readme.txt (1076)
+variadic.seconds	0.1
 variadic.hpp.v2\generic_interface\k12vv2.hpp	3578 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\cpp\k12v\k12vv2.hpp
   |*
@@ -2220,8 +2220,8 @@ defaults.Options
       SupportPackages: {'autodetect'}
       Verbose: off
       OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
-defaults.files	GettingStarted.html (1163) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1336) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k9echo.ctf (3437) | v2\generic_interface\k9echov2.hpp (1416) | v2\generic_interface\readme.txt (1082)
-defaults.seconds	0.0
+defaults.files	GettingStarted.html (1163) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1336) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k9echo.ctf (3434) | v2\generic_interface\k9echov2.hpp (1416) | v2\generic_interface\readme.txt (1082)
+defaults.seconds	0.1
 defaults.hpp.v2\generic_interface\k9echov2.hpp	1416 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\defaults\k9echov2.hpp
   |*
@@ -2289,7 +2289,7 @@ varargin.Options
       SupportPackages: {'autodetect'}
       Verbose: off
       OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
-varargin.files	GettingStarted.html (1158) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12va.ctf (4483) | v2\generic_interface\k12vav2.hpp (1341) | v2\generic_interface\readme.txt (1079)
+varargin.files	GettingStarted.html (1158) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12va.ctf (4481) | v2\generic_interface\k12vav2.hpp (1341) | v2\generic_interface\readme.txt (1079)
 varargin.seconds	0.0
 varargin.hpp.v2\generic_interface\k12vav2.hpp	1341 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\varargin\k12vav2.hpp
@@ -2353,8 +2353,8 @@ varargout.Options
       SupportPackages: {'autodetect'}
       Verbose: off
       OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
-varargout.files	GettingStarted.html (1158) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12vo.ctf (3492) | v2\generic_interface\k12vov2.hpp (1411) | v2\generic_interface\readme.txt (1079)
-varargout.seconds	0.0
+varargout.files	GettingStarted.html (1158) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12vo.ctf (3489) | v2\generic_interface\k12vov2.hpp (1411) | v2\generic_interface\readme.txt (1079)
+varargout.seconds	0.1
 varargout.hpp.v2\generic_interface\k12vov2.hpp	1411 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\varargout\k12vov2.hpp
   |*
@@ -2422,7 +2422,7 @@ mixed.Options
       SupportPackages: {'autodetect'}
       Verbose: off
       OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
-mixed.files	GettingStarted.html (1158) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12mx.ctf (5107) | v2\generic_interface\k12mxv2.hpp (3545) | v2\generic_interface\readme.txt (1079)
+mixed.files	GettingStarted.html (1158) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12mx.ctf (5104) | v2\generic_interface\k12mxv2.hpp (3545) | v2\generic_interface\readme.txt (1079)
 mixed.seconds	0.0
 mixed.hpp.v2\generic_interface\k12mxv2.hpp	3545 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\mixed\k12mxv2.hpp
@@ -2558,8 +2558,8 @@ classonly.Options
       SupportPackages: {'autodetect'}
       Verbose: off
       OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
-classonly.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12c.ctf (3691) | v2\generic_interface\k12cv2.hpp (5528) | v2\generic_interface\readme.txt (1076)
-classonly.seconds	0.0
+classonly.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12c.ctf (3690) | v2\generic_interface\k12cv2.hpp (5528) | v2\generic_interface\readme.txt (1076)
+classonly.seconds	0.1
 classonly.hpp.v2\generic_interface\k12cv2.hpp	5528 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\classonly\k12cv2.hpp
   |*
@@ -2751,8 +2751,8 @@ handleonly.Options
       SupportPackages: {'autodetect'}
       Verbose: off
       OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
-handleonly.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12h.ctf (3611) | v2\generic_interface\k12hv2.hpp (11448) | v2\generic_interface\readme.txt (1076)
-handleonly.seconds	0.0
+handleonly.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12h.ctf (3610) | v2\generic_interface\k12hv2.hpp (11448) | v2\generic_interface\readme.txt (1076)
+handleonly.seconds	0.1
 handleonly.hpp.v2\generic_interface\k12hv2.hpp	11448 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\handleonly\k12hv2.hpp
   |*
@@ -3146,7 +3146,7 @@ enumonly.Options
       Verbose: off
       OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
 enumonly.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12e.ctf (3445) | v2\generic_interface\k12ev2.hpp (904) | v2\generic_interface\readme.txt (1076)
-enumonly.seconds	0.0
+enumonly.seconds	0.1
 enumonly.hpp.v2\generic_interface\k12ev2.hpp	904 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\enumonly\k12ev2.hpp
   |*
@@ -3198,8 +3198,8 @@ pkg.Options
       SupportPackages: {'autodetect'}
       Verbose: off
       OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
-pkg.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12p.ctf (3511) | v2\generic_interface\k12pv2.hpp (1519) | v2\generic_interface\readme.txt (1076)
-pkg.seconds	0.0
+pkg.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12p.ctf (3509) | v2\generic_interface\k12pv2.hpp (1519) | v2\generic_interface\readme.txt (1076)
+pkg.seconds	0.1
 pkg.hpp.v2\generic_interface\k12pv2.hpp	1519 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\pkg\k12pv2.hpp
   |*
@@ -3270,8 +3270,8 @@ untyped.Options
       SupportPackages: {'autodetect'}
       Verbose: off
       OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
-untyped.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12u.ctf (3466) | v2\generic_interface\k12uv2.hpp (1544) | v2\generic_interface\readme.txt (1076)
-untyped.seconds	0.0
+untyped.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12u.ctf (3464) | v2\generic_interface\k12uv2.hpp (1544) | v2\generic_interface\readme.txt (1076)
+untyped.seconds	0.1
 untyped.hpp.v2\generic_interface\k12uv2.hpp	1544 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\untyped\k12uv2.hpp
   |*
@@ -3341,7 +3341,7 @@ optmethod.Options
       SupportPackages: {'autodetect'}
       Verbose: off
       OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
-optmethod.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12o.ctf (3657) | v2\generic_interface\k12ov2.hpp (9794) | v2\generic_interface\readme.txt (1076)
+optmethod.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12o.ctf (3655) | v2\generic_interface\k12ov2.hpp (9794) | v2\generic_interface\readme.txt (1076)
 optmethod.seconds	0.0
 optmethod.hpp.v2\generic_interface\k12ov2.hpp	9794 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\optmethod\k12ov2.hpp
@@ -3690,8 +3690,8 @@ objects.Options
       SupportPackages: {'autodetect'}
       Verbose: off
       OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
-objects.files	GettingStarted.html (1158) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12ob.ctf (4430) | v2\generic_interface\k12obv2.hpp (8248) | v2\generic_interface\readme.txt (1079)
-objects.seconds	0.0
+objects.files	GettingStarted.html (1158) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12ob.ctf (4426) | v2\generic_interface\k12obv2.hpp (8248) | v2\generic_interface\readme.txt (1079)
+objects.seconds	0.1
 objects.hpp.v2\generic_interface\k12obv2.hpp	8248 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\objects\k12obv2.hpp
   |*
@@ -3962,7 +3962,7 @@ version.Options
       SupportPackages: {'autodetect'}
       Verbose: off
       OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
-version.files	GettingStarted.html (1163) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1336) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12ver.ctf (3446) | v2\generic_interface\k12verv2.hpp (1415) | v2\generic_interface\readme.txt (1082)
+version.files	GettingStarted.html (1163) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1336) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12ver.ctf (3439) | v2\generic_interface\k12verv2.hpp (1415) | v2\generic_interface\readme.txt (1082)
 version.seconds	0.0
 version.warn	Compiler:compiler:COM_WARN_VERSIONING_NOT_SUPPORTED | Versioning is not supported for this target. Version string "2.3.4" specified in -W option will be ignored.
 version.hpp.v2\generic_interface\k12verv2.hpp	1415 chars, CRLF 0, ends with newline 0
@@ -4032,8 +4032,8 @@ debug.Options
       SupportPackages: {'autodetect'}
       Verbose: off
       OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
-debug.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12g.ctf (3434) | v2\generic_interface\k12gv2.hpp (1411) | v2\generic_interface\readme.txt (1076)
-debug.seconds	0.0
+debug.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12g.ctf (3430) | v2\generic_interface\k12gv2.hpp (1411) | v2\generic_interface\readme.txt (1076)
+debug.seconds	0.1
 debug.hpp.v2\generic_interface\k12gv2.hpp	1411 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\debug\k12gv2.hpp
   |*
@@ -4101,8 +4101,8 @@ explicit.Options
       SupportPackages: {'autodetect'}
       Verbose: off
       OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
-explicit.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12x.ctf (3435) | v2\generic_interface\k12xv2.hpp (1414) | v2\generic_interface\readme.txt (1076)
-explicit.seconds	0.0
+explicit.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12x.ctf (3432) | v2\generic_interface\k12xv2.hpp (1414) | v2\generic_interface\readme.txt (1076)
+explicit.seconds	0.1
 explicit.hpp.v2\generic_interface\k12xv2.hpp	1414 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\explicit\k12xv2.hpp
   |*
@@ -4171,7 +4171,7 @@ folder.Options
       Verbose: off
       OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
 folder.files	GettingStarted.html (1153) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1328) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12f.ctf (3511) | v2\generic_interface\k12fv2.hpp (1522) | v2\generic_interface\readme.txt (1076)
-folder.seconds	0.0
+folder.seconds	0.1
 folder.hpp.v2\generic_interface\k12fv2.hpp	1522 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\folder\k12fv2.hpp
   |*
@@ -4247,15 +4247,15 @@ defaults.GettingStarted	1163 chars, CRLF 0, ends with newline 1
   |</html>
 mwarray.readme	missing
 nooutdir.Files	<SRC>\k9echocppSharedLibrary\v2 | <SRC>\k9echocppSharedLibrary\GettingStarted.html
-nooutdir.files	GettingStarted.html (1163) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1336) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k9echo.ctf (3434) | v2\generic_interface\k9echov2.hpp (1434) | v2\generic_interface\readme.txt (1082)
+nooutdir.files	GettingStarted.html (1163) | buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1336) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k9echo.ctf (3436) | v2\generic_interface\k9echov2.hpp (1434) | v2\generic_interface\readme.txt (1082)
 nooutdir.seconds	0.0
 mcc_default	ok
   |Warning: JGraph builds no legacy mwArray interface: -W cpplib:k12m writes the generic interface's archive alone, and -W cpplib:k12m,generic its strongly typed header as well.
-mcc_default.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1371) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12m.ctf (3829) | v2\generic_interface\readme.txt (1032)
+mcc_default.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1371) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12m.ctf (3825) | v2\generic_interface\readme.txt (1032)
 mcc_default.seconds	0.0
 mcc_default.warn	JGraph:mcc:legacyNotBuilt | JGraph builds no legacy mwArray interface: -W cpplib:k12m writes the generic interface's archive alone, and -W cpplib:k12m,generic its strongly typed header as well.
 mcc_generic	ok
-mcc_generic.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12gn.ctf (3832) | v2\generic_interface\k12gnv2.hpp (2897) | v2\generic_interface\readme.txt (1079)
+mcc_generic.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12gn.ctf (3831) | v2\generic_interface\k12gnv2.hpp (2897) | v2\generic_interface\readme.txt (1079)
 mcc_generic.hpp.v2\generic_interface\k12gnv2.hpp	2897 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\mcc_generic\k12gnv2.hpp
   |*
@@ -4338,17 +4338,17 @@ mcc_generic.hpp.v2\generic_interface\k12gnv2.hpp	2897 chars, CRLF 0, ends with n
   |    _result = _result_mda;
   |    return _result;
   |}
-mcc_generic.seconds	0.0
+mcc_generic.seconds	0.1
 mcc_all	ok
   |Warning: JGraph builds no legacy mwArray interface: -W cpplib:k12al writes the generic interface's archive alone, and -W cpplib:k12al,generic its strongly typed header as well.
-mcc_all.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1374) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12al.ctf (3441) | v2\generic_interface\readme.txt (1034)
-mcc_all.seconds	0.0
+mcc_all.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1374) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12al.ctf (3437) | v2\generic_interface\readme.txt (1034)
+mcc_all.seconds	0.1
 mcc_all.warn	JGraph:mcc:legacyNotBuilt | JGraph builds no legacy mwArray interface: -W cpplib:k12al writes the generic interface's archive alone, and -W cpplib:k12al,generic its strongly typed header as well.
 mcc_legacy	ERR JGraph:mcc:targetOutOfScope | JGraph does not build the legacy mwArray interface of a C++ shared library (-W cpplib:k12lg,legacy); -W cpplib:k12lg,generic builds its MATLAB Data API interface.
 mcc_legacy.files	
 mcc_legacy.seconds	0.0
 mcc_notarget	ok
-mcc_notarget.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12nt.ctf (3440) | v2\generic_interface\k12ntv2.hpp (1419) | v2\generic_interface\readme.txt (1079)
+mcc_notarget.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12nt.ctf (3439) | v2\generic_interface\k12ntv2.hpp (1419) | v2\generic_interface\readme.txt (1079)
 mcc_notarget.hpp.v2\generic_interface\k12ntv2.hpp	1419 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\mcc_notarget\k12ntv2.hpp
   |*
@@ -4391,10 +4391,10 @@ mcc_notarget.hpp.v2\generic_interface\k12ntv2.hpp	1419 chars, CRLF 0, ends with 
   |    _result = _result_mda;
   |    return _result;
   |}
-mcc_notarget.seconds	0.0
+mcc_notarget.seconds	0.1
 mcc_version	ok
   |Warning: Versioning is not supported for this target. Version string "2.0" specified in -W option will be ignored.
-mcc_version.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12vr.ctf (3440) | v2\generic_interface\k12vrv2.hpp (1418) | v2\generic_interface\readme.txt (1079)
+mcc_version.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12vr.ctf (3439) | v2\generic_interface\k12vrv2.hpp (1418) | v2\generic_interface\readme.txt (1079)
 mcc_version.hpp.v2\generic_interface\k12vrv2.hpp	1418 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\mcc_version\k12vrv2.hpp
   |*
@@ -4437,15 +4437,15 @@ mcc_version.hpp.v2\generic_interface\k12vrv2.hpp	1418 chars, CRLF 0, ends with n
   |    _result = _result_mda;
   |    return _result;
   |}
-mcc_version.seconds	0.0
+mcc_version.seconds	0.1
 mcc_version.warn	Compiler:compiler:COM_WARN_VERSIONING_NOT_SUPPORTED | Versioning is not supported for this target. Version string "2.0" specified in -W option will be ignored.
 mcc_verfirst	ok
   |Warning: JGraph builds no legacy mwArray interface: -W cpplib:k12vf writes the generic interface's archive alone, and -W cpplib:k12vf,generic its strongly typed header as well.
-mcc_verfirst.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1374) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12vf.ctf (3443) | v2\generic_interface\readme.txt (1034)
-mcc_verfirst.seconds	0.0
+mcc_verfirst.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1374) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12vf.ctf (3439) | v2\generic_interface\readme.txt (1034)
+mcc_verfirst.seconds	0.1
 mcc_verfirst.warn	JGraph:mcc:legacyNotBuilt | JGraph builds no legacy mwArray interface: -W cpplib:k12vf writes the generic interface's archive alone, and -W cpplib:k12vf,generic its strongly typed header as well.
 mcc_separate	ok
-mcc_separate.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12sp.ctf (3444) | v2\generic_interface\k12spv2.hpp (1419) | v2\generic_interface\readme.txt (1079)
+mcc_separate.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12sp.ctf (3438) | v2\generic_interface\k12spv2.hpp (1419) | v2\generic_interface\readme.txt (1079)
 mcc_separate.hpp.v2\generic_interface\k12spv2.hpp	1419 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\mcc_separate\k12spv2.hpp
   |*
@@ -4488,9 +4488,9 @@ mcc_separate.hpp.v2\generic_interface\k12spv2.hpp	1419 chars, CRLF 0, ends with 
   |    _result = _result_mda;
   |    return _result;
   |}
-mcc_separate.seconds	0.0
+mcc_separate.seconds	0.1
 mcc_codegen	ok
-mcc_codegen.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12cg.ctf (3440) | v2\generic_interface\k12cgv2.hpp (1418) | v2\generic_interface\readme.txt (1079)
+mcc_codegen.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12cg.ctf (3438) | v2\generic_interface\k12cgv2.hpp (1418) | v2\generic_interface\readme.txt (1079)
 mcc_codegen.hpp.v2\generic_interface\k12cgv2.hpp	1418 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\mcc_codegen\k12cgv2.hpp
   |*
@@ -4533,9 +4533,9 @@ mcc_codegen.hpp.v2\generic_interface\k12cgv2.hpp	1418 chars, CRLF 0, ends with n
   |    _result = _result_mda;
   |    return _result;
   |}
-mcc_codegen.seconds	0.0
+mcc_codegen.seconds	0.1
 mcc_compile	ok
-mcc_compile.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12cp.ctf (3438) | v2\generic_interface\k12cpv2.hpp (1418) | v2\generic_interface\readme.txt (1079)
+mcc_compile.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12cp.ctf (3437) | v2\generic_interface\k12cpv2.hpp (1418) | v2\generic_interface\readme.txt (1079)
 mcc_compile.hpp.v2\generic_interface\k12cpv2.hpp	1418 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\mcc_compile\k12cpv2.hpp
   |*
@@ -4578,9 +4578,9 @@ mcc_compile.hpp.v2\generic_interface\k12cpv2.hpp	1418 chars, CRLF 0, ends with n
   |    _result = _result_mda;
   |    return _result;
   |}
-mcc_compile.seconds	0.0
+mcc_compile.seconds	0.1
 mcc_c	ok
-mcc_c.files	buildresult.json (102) | includedSupportPackages.txt (0) | k12cc.c (3970) | k12cc.ctf (3440) | k12cc.exports (108) | k12cc.h (1822) | mccExcludedFiles.log (90) | readme.txt (996) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_c.files	buildresult.json (102) | includedSupportPackages.txt (0) | k12cc.c (3970) | k12cc.ctf (3438) | k12cc.exports (108) | k12cc.h (1822) | mccExcludedFiles.log (90) | readme.txt (996) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_c.seconds	0.0
 mcc_verbose	ok
   |0 class(es) and 1 function(s) written to <W>\b\mcc_verbose\k12vbv2.hpp
@@ -4591,7 +4591,7 @@ mcc_verbose	ok
   |	(referenced from command line).
   |Generating file "<W>\b\mcc_verbose\readme.txt".
   |Generating file "<W>\b\mcc_verbose\v2\generic_interface\readme.txt".
-mcc_verbose.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12vb.ctf (3441) | v2\generic_interface\k12vbv2.hpp (1418) | v2\generic_interface\readme.txt (1079)
+mcc_verbose.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12vb.ctf (3440) | v2\generic_interface\k12vbv2.hpp (1418) | v2\generic_interface\readme.txt (1079)
 mcc_verbose.hpp.v2\generic_interface\k12vbv2.hpp	1418 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\mcc_verbose\k12vbv2.hpp
   |*
@@ -4634,9 +4634,9 @@ mcc_verbose.hpp.v2\generic_interface\k12vbv2.hpp	1418 chars, CRLF 0, ends with n
   |    _result = _result_mda;
   |    return _result;
   |}
-mcc_verbose.seconds	0.0
+mcc_verbose.seconds	0.1
 mcc_debug	ok
-mcc_debug.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12db.ctf (3441) | v2\generic_interface\k12dbv2.hpp (1416) | v2\generic_interface\readme.txt (1079)
+mcc_debug.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12db.ctf (3438) | v2\generic_interface\k12dbv2.hpp (1416) | v2\generic_interface\readme.txt (1079)
 mcc_debug.hpp.v2\generic_interface\k12dbv2.hpp	1416 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\mcc_debug\k12dbv2.hpp
   |*
@@ -4684,7 +4684,7 @@ mcc_o	ERR Compiler:compiler:COM_ERR_MULTIPLE_COMPONENT_NAMES | Error: Multiple c
 mcc_o.files	
 mcc_o.seconds	0.0
 mcc_exe	ok
-mcc_exe.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12ex.ctf (3443) | v2\generic_interface\k12exv2.hpp (1414) | v2\generic_interface\readme.txt (1079)
+mcc_exe.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12ex.ctf (3439) | v2\generic_interface\k12exv2.hpp (1414) | v2\generic_interface\readme.txt (1079)
 mcc_exe.hpp.v2\generic_interface\k12exv2.hpp	1414 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\mcc_exe\k12exv2.hpp
   |*
@@ -4727,7 +4727,7 @@ mcc_exe.hpp.v2\generic_interface\k12exv2.hpp	1414 chars, CRLF 0, ends with newli
   |    _result = _result_mda;
   |    return _result;
   |}
-mcc_exe.seconds	0.0
+mcc_exe.seconds	0.1
 mcc_classes	ok
 mcc_classes.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12cl.ctf (4429) | v2\generic_interface\k12clv2.hpp (8252) | v2\generic_interface\readme.txt (1079)
 mcc_classes.hpp.v2\generic_interface\k12clv2.hpp	8252 chars, CRLF 0, ends with newline 0
@@ -4972,9 +4972,9 @@ mcc_classes.hpp.v2\generic_interface\k12clv2.hpp	8252 chars, CRLF 0, ends with n
   |    std::get<1>(_result) = getk9colorEnum(_str2);
   |    return _result;
   |}
-mcc_classes.seconds	0.0
+mcc_classes.seconds	0.2
 mcc_varargin	ok
-mcc_varargin.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12vg.ctf (4479) | v2\generic_interface\k12vgv2.hpp (1345) | v2\generic_interface\readme.txt (1079)
+mcc_varargin.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12vg.ctf (4482) | v2\generic_interface\k12vgv2.hpp (1345) | v2\generic_interface\readme.txt (1079)
 mcc_varargin.hpp.v2\generic_interface\k12vgv2.hpp	1345 chars, CRLF 0, ends with newline 0
   |/* File: <W>\b\mcc_varargin\k12vgv2.hpp
   |*
@@ -5012,7 +5012,7 @@ mcc_varargin.hpp.v2\generic_interface\k12vgv2.hpp	1345 chars, CRLF 0, ends with 
   |    _result = _result_mda;
   |    return _result;
   |}
-mcc_varargin.seconds	0.0
+mcc_varargin.seconds	0.1
 mcc_twice	ok
 mcc_twice.files	buildresult.json (102) | includedSupportPackages.txt (0) | mccExcludedFiles.log (90) | readme.txt (1332) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20) | v2\generic_interface\k12t2.ctf (3436) | v2\generic_interface\k12t2v2.hpp (1416) | v2\generic_interface\readme.txt (1079)
 mcc_twice.hpp.v2\generic_interface\k12t2v2.hpp	1416 chars, CRLF 0, ends with newline 0
@@ -5057,7 +5057,7 @@ mcc_twice.hpp.v2\generic_interface\k12t2v2.hpp	1416 chars, CRLF 0, ends with new
   |    _result = _result_mda;
   |    return _result;
   |}
-mcc_twice.seconds	0.0
+mcc_twice.seconds	0.1
 mcc_badname	ERR Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME | Illegal output name: '1bad'  /  (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')
 mcc_badname.files	
 mcc_badname.seconds	0.0

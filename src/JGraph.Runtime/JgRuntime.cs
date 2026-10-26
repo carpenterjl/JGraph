@@ -47,6 +47,7 @@ public static class JgRuntime
     private static DeployedLogOutput? _log;
     private static ComponentSession? _active;
     private static JgsProcessState? _host;
+    private static int _ownSessions;
 
     /// <summary>Held while the process's state is swapped, and by a window's report that runs in the live component's.</summary>
     private static readonly object ActivationGate = new();
@@ -206,12 +207,13 @@ public static class JgRuntime
 
     /// <summary>
     /// The session of the archive <paramref name="archivePath"/> names, made on first use: the archive
-    /// is extracted into the runtime cache and a deployed session is started over it. Runs on the
+    /// is extracted into the runtime cache and a deployed session is started over it. With
+    /// <paramref name="own"/>, a new session every time, which <see cref="Close"/> ends. Runs on the
     /// engine thread.
     /// </summary>
-    internal static ComponentSession Open(string archivePath, string uuid)
+    internal static ComponentSession Open(string archivePath, string uuid, bool own = false)
     {
-        if (Sessions.TryGetValue(uuid, out ComponentSession? open))
+        if (!own && Sessions.TryGetValue(uuid, out ComponentSession? open))
         {
             return open;
         }
@@ -223,7 +225,7 @@ public static class JgRuntime
             // fresh one does, with its own figures and format.
             Activate(null);
             var session = new ComponentSession(deployment, _output);
-            Sessions[uuid] = session;
+            Sessions[own ? uuid + "#" + (++_ownSessions).ToString(System.Globalization.CultureInfo.InvariantCulture) : uuid] = session;
             _active = session;
             return session;
         }
@@ -232,6 +234,24 @@ public static class JgRuntime
             deployment.Dispose();
             throw;
         }
+    }
+
+    /// <summary>
+    /// Ends a session a component had of its own (<see cref="Component.Dispose"/>): its figures and
+    /// state go, and a value it made can no longer be used. Engine thread.
+    /// </summary>
+    internal static void Close(ComponentSession session)
+    {
+        string? key = Sessions.FirstOrDefault(pair => ReferenceEquals(pair.Value, session)).Key;
+        if (key is null)
+        {
+            return;
+        }
+
+        Activate(session);
+        session.End();
+        Sessions.Remove(key);
+        Activate(null);
     }
 
     /// <summary>

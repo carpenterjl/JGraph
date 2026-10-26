@@ -1,0 +1,74 @@
+CHK|class|compiler.build.PythonPackageOptions|exact
+CHK|props|FunctionFiles SampleGenerationFiles PackageName AdditionalFiles AutoDetectDataFiles ExternalEncryptionKey ObfuscateArchive SecretsManifest SupportPackages Verbose OutputDir|exact
+CHK|name|example.k13f|exact
+CHK|getname|k13f|exact
+CHK|outdir|.\k13fpythonPackage|exact
+CHK|samples|cell|exact
+CHK|samples_size|double [1 2] 0 0|exact
+CHK|files|k13f.m|exact
+CHK|verbose|off|exact
+CHK|two_name|example.k13g|exact
+CHK|given_name|.\k13namedpythonPackage|exact
+CHK|dotted_outdir|.\deeppythonPackage|exact
+CHK|dotted_getname|deep|exact
+CHK|nv_prefix|k13pre|exact
+CHK|nv_case|k13case|exact
+CHK|script_file|k13s.m|exact
+CHK|none|MATLAB:narginchk:notEnoughInputs / Not enough input arguments.|exact
+CHK|missing|Compiler:utils:shared:cannotFindFile / Cannot find file: / / k13nosuch.m|exact
+CHK|not_code|Compiler:clishared:badExtension / Expected 'FunctionFiles' to have one of the following extensions: / / .mexw64 / .mlapp / .mlx / .p / .m|exact
+CHK|folder|Compiler:utils:shared:cannotFindFile / Cannot find file: / / <src>|exact
+CHK|number|MATLAB:invalidType / Expected FunctionFiles to be one of these types: / / char, string, cell / / Instead its type was double.|exact
+CHK|bogus_nv|MATLAB:InputParser:UnmatchedParameter / 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|odd_nv|MATLAB:InputParser:ParamMissingValue / No value was given for 'PackageName'. Name-value pair arguments require a name followed by a value.|exact
+CHK|interface_nv|MATLAB:InputParser:UnmatchedParameter / 'Interface' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|set_name_digit|1abc|exact
+CHK|set_name_dash|a-b|exact
+CHK|set_name_dots|a..b|exact
+CHK|set_name_keyword|class|exact
+CHK|set_name_space|a b|exact
+CHK|set_name_string|k13str|exact
+CHK|set_name_empty|MATLAB:validators:mustBeNonzeroLengthText / Value must be text with one or more characters.|exact
+CHK|set_name_number|MATLAB:invalidType / Expected PackageName to be one of these types: / / char, string / / Instead its type was double.|exact
+CHK|set_name_cell|MATLAB:invalidType / Expected PackageName to be one of these types: / / char, string|exact
+CHK|set_samples_missing|Compiler:utils:shared:cannotFindFile / Cannot find file: / / k13nosuch.m|exact
+CHK|set_samples_text|Compiler:clishared:badExtension / Expected 'SampleGenerationFiles' to have one of the following extensions: / / .m / .mlx|exact
+CHK|set_samples_ok|k13sample.m|exact
+CHK|set_samples_empty|double [1 2] 0 0|exact
+CHK|set_verbose|on|exact
+CHK|mcc_default|no error / warn / files buildresult.json includedSupportPackages.txt k13m/__init__.py k13m/k13m.ctf mccExcludedFiles.log pyproject.toml readme.txt requiredMCRProducts.txt setup.py unresolvedSymbols.txt|exact
+CHK|mcc_notarget|no error / warn / files buildresult.json includedSupportPackages.txt k13nt/__init__.py k13nt/k13nt.ctf mccExcludedFiles.log pyproject.toml readme.txt requiredMCRProducts.txt setup.py unresolvedSymbols.txt|exact
+CHK|mcc_dotted|no error / warn / files buildresult.json includedSupportPackages.txt mccExcludedFiles.log org/__init__.py org/k13m/__init__.py org/k13m/k13m.ctf pyproject.toml readme.txt requiredMCRProducts.txt setup.py unresolvedSymbols.txt|exact
+CHK|mcc_dotdot|no error / warn / files a/__init__.py a/b/__init__.py a/b/b.ctf buildresult.json includedSupportPackages.txt mccExcludedFiles.log pyproject.toml readme.txt requiredMCRProducts.txt setup.py unresolvedSymbols.txt|exact
+CHK|mcc_twice|no error / warn / files buildresult.json includedSupportPackages.txt k13t1/__init__.py k13t1/k13t2/__init__.py k13t1/k13t2/k13t2.ctf mccExcludedFiles.log pyproject.toml readme.txt requiredMCRProducts.txt setup.py unresolvedSymbols.txt|exact
+CHK|mcc_version|no error / warn Compiler:compiler:COM_WARN_VERSIONING_NOT_SUPPORTED / files buildresult.json includedSupportPackages.txt k13vr/__init__.py k13vr/k13vr.ctf mccExcludedFiles.log pyproject.toml readme.txt requiredMCRProducts.txt setup.py unresolvedSymbols.txt|exact
+CHK|mcc_extra|no error / warn / files buildresult.json includedSupportPackages.txt k13cm/__init__.py k13cm/k13cm.ctf mccExcludedFiles.log pyproject.toml readme.txt requiredMCRProducts.txt setup.py unresolvedSymbols.txt|exact
+CHK|mcc_exe|no error / warn / files buildresult.json includedSupportPackages.txt k13ex/__init__.py k13ex/k13ex.ctf mccExcludedFiles.log pyproject.toml readme.txt requiredMCRProducts.txt setup.py unresolvedSymbols.txt|exact
+CHK|mcc_separate|no error / warn / files buildresult.json includedSupportPackages.txt k13sp/__init__.py k13sp/k13sp.ctf mccExcludedFiles.log pyproject.toml readme.txt requiredMCRProducts.txt setup.py unresolvedSymbols.txt|exact
+CHK|mcc_badname|no error / warn / files 1bad/1bad.ctf 1bad/__init__.py buildresult.json includedSupportPackages.txt mccExcludedFiles.log pyproject.toml readme.txt requiredMCRProducts.txt setup.py unresolvedSymbols.txt|exact
+CHK|mcc_script|no error / warn / files buildresult.json includedSupportPackages.txt k13sc/__init__.py k13sc/k13sc.ctf mccExcludedFiles.log pyproject.toml readme.txt requiredMCRProducts.txt setup.py unresolvedSymbols.txt|exact
+CHK|mcc_noname|Compiler:compiler:COM_ERR_ILLEGAL_COMPONENT_NAME / Error: Component name invalid or unspecified (specify with -n or -W). / warn / files |exact
+CHK|mcc_nocolon|Compiler:compiler:COM_ERR_ILLEGAL_COMPONENT_NAME / Error: Component name invalid or unspecified (specify with -n or -W). / warn / files |exact
+CHK|mcc_o_after|Compiler:compiler:COM_ERR_MULTIPLE_COMPONENT_NAMES / Error: Multiple component names. Processing "-o" switch. Component name "k13on" already specified via "-W". / warn / files |exact
+CHK|mcc_o_first|Compiler:compiler:COM_ERR_MULTIPLE_COMPONENT_NAMES / Error: Multiple component names. Processing "-W" switch. Component name "k13of" already specified via "-o". / warn / files |exact
+CHK|mcc_dash_c|no error / warn / files buildresult.json includedSupportPackages.txt k13cc.c k13cc.ctf k13cc.exports k13cc.h mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt|exact
+CHK|mcc_no_files|Compiler:compiler:COM_ERR_NO_FILES_SPECIFIED / Error: No source files were specified (-? for help). / warn / files |exact
+CHK|mcc_setup_name|k13m-R2025b|exact
+CHK|mcc_setup_version|25.2|exact
+CHK|mcc_setup_packages|'org', / 'org.k13m'|exact
+CHK|mcc_init_versions|SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12'] / PACKAGE_NAME = 'k13m'|exact
+CHK|mcc_init_functions|def initialize(): / def initialize_runtime(option_list): / def terminate_runtime(): / def __exit_packages():|exact
+CHK|mcc_namespace|from pkgutil import extend_path / __path__ = extend_path(__path__, __name__)|exact
+CHK|mcc_toml|[build-system] / requires = ["setuptools >= 42", "wheel"] / build-backend = "setuptools.build_meta"|exact
+CHK|mcc_readme_title|k13m MATLAB Python Package|exact
+CHK|api_type|pythonPackage|exact
+CHK|api_files|k13api setup.py GettingStarted.html|exact
+CHK|api_options|compiler.build.PythonPackageOptions|exact
+CHK|api_written|GettingStarted.html buildresult.json includedSupportPackages.txt k13api/__init__.py k13api/k13api.ctf mccExcludedFiles.log pyproject.toml readme.txt requiredMCRProducts.txt setup.py unresolvedSymbols.txt|exact
+CHK|api_default_files|example setup.py GettingStarted.html|exact
+CHK|api_default_written|GettingStarted.html buildresult.json example/__init__.py example/k13g/__init__.py example/k13g/k13g.ctf includedSupportPackages.txt mccExcludedFiles.log pyproject.toml readme.txt requiredMCRProducts.txt setup.py unresolvedSymbols.txt|exact
+CHK|api_wrong_options|Compiler:clishared:wrongOptionsObject / 'compiler.build.StandaloneApplicationOptions' is not a valid options object for this function. Use 'compiler.build.PythonPackageOptions' instead.|exact
+CHK|api_no_args|MATLAB:narginchk:notEnoughInputs / Not enough input arguments.|exact
+CHK|api_two_out|MATLAB:nargoutchk:tooManyOutputs / Too many output arguments.|exact
+CHK|api_extra|MATLAB:narginchk:tooManyInputs / Too many input arguments.|exact
+CHK|api_bad_nv|MATLAB:InputParser:UnmatchedParameter / 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact

@@ -95,6 +95,25 @@ void jgrtCppStop(void)
     }
 }
 
+namespace
+{
+uint64_t OpenLibrary(intptr_t (*open)(const wchar_t*, wchar_t**), const char16_t* path, char16_t** error)
+{
+    wchar_t* reason = nullptr;
+    intptr_t library = open(Wide(path), &reason);
+    if (error != nullptr)
+    {
+        *error = reinterpret_cast<char16_t*>(reason);
+    }
+    else
+    {
+        CoTaskMemFree(reason);
+    }
+
+    return static_cast<uint64_t>(library);
+}
+}
+
 uint64_t jgrtCppOpen(const char16_t* path, char16_t** error)
 {
     if (error != nullptr)
@@ -108,18 +127,23 @@ uint64_t jgrtCppOpen(const char16_t* path, char16_t** error)
         return 0;
     }
 
-    wchar_t* reason = nullptr;
-    intptr_t library = engine->CppOpen(Wide(path), &reason);
+    return OpenLibrary(engine->CppOpen, path, error);
+}
+
+uint64_t jgrtPyOpen(const char16_t* path, char16_t** error)
+{
     if (error != nullptr)
     {
-        *error = reinterpret_cast<char16_t*>(reason);
-    }
-    else
-    {
-        CoTaskMemFree(reason);
+        *error = nullptr;
     }
 
-    return static_cast<uint64_t>(library);
+    const JgrtManaged* engine = JgrtEngine();
+    if (engine == nullptr || path == nullptr)
+    {
+        return 0;
+    }
+
+    return OpenLibrary(engine->PyOpen, path, error);
 }
 
 void jgrtCppClose(uint64_t library)

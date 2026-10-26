@@ -4,6 +4,11 @@
 
 Accepted, 2026-10-25. Compiler and SDK plan, stage K12 (decisions KD7 and KO3).
 
+Amended 2026-10-25 by ADR 0269 (stage K13): each library opened runs in a session of its own, as
+R2025b's does, so the divergence that two libraries of one archive shared a session is retired; a
+handle object of one is now refused by the other, in JGraph's words. A queued call cancelled through
+its `FutureResult` now completes at once.
+
 ## Context
 
 R2025b's `mcc -W cpplib:<name>,generic` (and `compiler.build.cppSharedLibrary`, whose Interface is
@@ -202,8 +207,7 @@ They found:
 - **A cell's element read past the end throws InvalidArrayIndexException**, as R2025b's header documents; R2025b's library throws its internal `EArrayIndexOutOfRange`, which no documented exception catches.
 - **Comparing or iterating past the end does not end the process**: an element past the end compares unequal (`==` false, `!=` true) and a struct element taken past the end has no fields to iterate; R2025b's library ends the process (0xC0000409) for a number compared and for the iteration (`k12_edge`).
 - **An empty array keeps its shape**: a 0-by-3 array reaches MATLAB as 0-by-3, where R2025b's Data API hands MATLAB 0-by-0.
-- **Two libraries of one archive share one session**, so a handle object of one is good in the other; R2025b runs each in a session of its own and refuses it ("Invalid HandleObjectRef").
-- **An object goes back only to the component that returned it**: another archive's library refuses a value object, which R2025b's takes.
+- **An object goes back only to the component that returned it**, refused by any other library in JGraph's words: another archive's library refuses a value object, which R2025b's takes, and another library of the same archive a handle object, which R2025b's refuses as `MATLAB:matlab_data_array:invalidHandleObjectRef` ("Invalid HandleObjectRef - Entry not found in the server table"), also writing that to standard error (since stage K13, ADR 0269).
 - **A native call's error stack ends at the function that raised it**: R2025b's has a frame of its own below it, `matlab.engine.internal.fevalWithCustomTypeConversion`.
 - **A char result is taken as text in a typed tuple**, as it is alone; R2025b's tuple refuses it.
 - **An application started out of process runs in this one**: JGraph's runtime has no separate process.

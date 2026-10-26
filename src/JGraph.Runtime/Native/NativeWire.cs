@@ -16,10 +16,19 @@ namespace JGraph.Runtime.Native;
 /// on the engine thread.
 /// </summary>
 /// <remarks>
+/// <para>
 /// What R2025b passes and JGraph cannot hold is refused with a message rather than changed, as
 /// stage K10's conversions refuse it (ADR 0266): a complex integer array, a complex or single
 /// sparse array, an int64 or uint64 past 2^53. A sparse logical array comes in as JGraph's sparse
 /// double. An object comes back only to the component that made it.
+/// </para>
+/// <para>
+/// A Python package's calls (stage K13, <c>jgrtPyOpen</c>) carry three more forms, for what R2025b's
+/// Python runtime converts by value (record-k13.ps1, k13_client: out.datetime, out.duration, out.dict,
+/// dt.*, dict.*): a datetime as its wall-clock milliseconds since 1899-12-30 and its offset from UTC
+/// when it has a zone, a duration as its milliseconds, a dictionary as its keys and values. The
+/// matlab_pysdk runtime in the JGraph Runtime's python folder reads and writes them.
+/// </para>
 /// </remarks>
 internal static class NativeWire
 {
@@ -42,6 +51,14 @@ internal static class NativeWire
     private const byte SparseSingle = 33;
     private const byte SparseComplexSingle = 34;
 
+    // A Python package's own forms (stage K13), outside the Data API's ArrayType values.
+    private const byte PythonDatetime = 100;
+    private const byte PythonDuration = 101;
+    private const byte PythonDictionary = 102;
+
+    /// <summary>The format R2025b gives a datetime that comes from Python (k13_client: in.datetime).</summary>
+    private const string PythonDatetimeFormat = "uuuu-MM-dd'T'HH:mm:ss.SSS'Z'";
+
     private const double ExactLimit = 9007199254740992.0; // 2^53
 
     /// <summary>The numeric classes by their ArrayType (DOUBLE to UINT64), and each element's size.</summary>
@@ -54,11 +71,11 @@ internal static class NativeWire
     internal static bool StartsWithObject(ReadOnlySpan<byte> inputs) =>
         inputs.Length > 0 && inputs[0] is ObjectType or ValueObject or HandleObjectRef or EnumType;
 
-    /// <summary>A call's inputs as the engine's values for <paramref name="session"/>. Engine thread.</summary>
+    /// <summary>A call's inputs as the engine's values for <paramref name="session"/>; a Python package's forms too with <paramref name="python"/>. Engine thread.</summary>
     /// <exception cref="ArgumentException">An input JGraph cannot hold, or an object another component made.</exception>
-    internal static JgsValue[] ReadAll(byte[] bytes, ComponentSession session)
+    internal static JgsValue[] ReadAll(byte[] bytes, ComponentSession session, bool python = false)
     {
-        var reader = new Reader(bytes);
+        var reader = new Reader(bytes) { Python = python };
         var values = new List<JgsValue>();
         while (!reader.AtEnd)
         {
@@ -68,10 +85,10 @@ internal static class NativeWire
         return [.. values];
     }
 
-    /// <summary>A call's outputs in the binary form. Engine thread.</summary>
-    internal static byte[] WriteAll(IEnumerable<JgsValue> values, ComponentSession session)
+    /// <summary>A call's outputs in the binary form; a Python package's forms too with <paramref name="python"/>. Engine thread.</summary>
+    internal static byte[] WriteAll(IEnumerable<JgsValue> values, ComponentSession session, bool python = false)
     {
-        var writer = new Writer();
+        var writer = new Writer { Python = python };
         foreach (JgsValue value in values)
         {
             Write(writer, value, session);
@@ -199,6 +216,16 @@ internal static class NativeWire
                 throw new ArgumentException(type == SparseComplexDouble
                     ? "JGraph has no complex sparse arrays: pass the real and imaginary parts apart."
                     : "JGraph has no single sparse arrays: pass the matrix as sparse double.");
+
+            case PythonDatetime when r.Python:
+                return ReadDatetime(r, session);
+
+            case PythonDuration when r.Python:
+                // duration(h, m, s, ms): R2025b's from a timedelta keeps the default format (k13_client: dt.delta.in).
+                return Feval(session, "duration", JgsValue.Number(0), JgsValue.Number(0), JgsValue.Number(0), JgsValue.Number(r.Number(0, 8)));
+
+            case PythonDictionary when r.Python:
+                return r.Byte() == 0 ? Feval(session, "dictionary") : Feval(session, "dictionary", Read(r, session), Read(r, session));
 
             case >= DoubleType and < DoubleType + 10:
                 return ReadNumbers(r, type - DoubleType, complex: false, dims, count, session);
@@ -363,6 +390,34 @@ internal static class NativeWire
             : JgsBuiltins.Feval(session.Interpreter, [JgsValue.Str("reshape"), joined, .. dims.Select(static d => JgsValue.Number(d))], 1, 0, 0)[0];
     }
 
+    /// <summary>
+    /// A Python datetime: its wall clock and, for an aware one, its zone as R2025b names a fixed offset
+    /// (<c>+02:00:00</c>), with the format R2025b gives it (k13_client: in.datetime, dt.tz.in, dt.offset.in).
+    /// </summary>
+    private static JgsValue ReadDatetime(Reader r, ComponentSession session)
+    {
+        double wall = r.Number(0, 8);
+        bool zoned = r.Byte() != 0;
+        double offset = r.Number(0, 8);
+        DateTime at = JgsTime.ToDateTime(wall);
+        var args = new List<JgsValue>
+        {
+            JgsValue.Str("datetime"), JgsValue.Number(at.Year), JgsValue.Number(at.Month), JgsValue.Number(at.Day),
+            JgsValue.Number(at.Hour), JgsValue.Number(at.Minute), JgsValue.Number(JgsTime.SecondsOf(at)),
+        };
+        if (zoned)
+        {
+            var span = TimeSpan.FromSeconds(Math.Abs(offset));
+            args.AddRange([JgsValue.Str("TimeZone"), JgsValue.Str($"{(offset < 0 ? '-' : '+')}{(int)span.TotalHours:00}:{span.Minutes:00}:{span.Seconds:00}")]);
+        }
+
+        args.AddRange([JgsValue.Str("Format"), JgsValue.Str(PythonDatetimeFormat)]);
+        return JgsBuiltins.Feval(session.Interpreter, [.. args], 1, 0, 0)[0];
+    }
+
+    private static JgsValue Feval(ComponentSession session, string name, params JgsValue[] args) =>
+        JgsBuiltins.Feval(session.Interpreter, [JgsValue.Str(name), .. args], 1, 0, 0)[0];
+
     private static JgsValue ReadSparse(Reader r, int[] dims, bool logical, ComponentSession session)
     {
         int nnz = checked((int)r.U64());
@@ -394,6 +449,11 @@ internal static class NativeWire
         if (value.Type == JgsType.Null)
         {
             w.Header(DoubleType, [0, 0]);
+            return;
+        }
+
+        if (w.Python && WritePython(w, value, session))
+        {
             return;
         }
 
@@ -498,6 +558,51 @@ internal static class NativeWire
         }
     }
 
+    /// <summary>
+    /// A Python package's own forms: a datetime or duration 1-by-1 as its milliseconds (a datetime's
+    /// wall clock in its zone, and the zone's offset there), a dictionary as its keys and values each a
+    /// cell of elements, an unconfigured one as nothing. Anything else is written as for C++.
+    /// </summary>
+    private static bool WritePython(Writer w, JgsValue value, ComponentSession session)
+    {
+        if (value.TimeTag is { Kind: JgsTimeKind.Datetime or JgsTimeKind.Duration } tag && value.ArrayLength == 1)
+        {
+            double ms = JgsBuiltins.TimeMs(value)[0];
+            if (tag.Kind == JgsTimeKind.Duration)
+            {
+                w.Header(PythonDuration, [1, 1]);
+                w.Number(0, ms);
+                return true;
+            }
+
+            TimeZoneInfo? zone = JgsTime.ZoneOf(tag);
+            w.Header(PythonDatetime, [1, 1]);
+            w.Number(0, zone is null || double.IsNaN(ms) ? ms : JgsTime.FromDateTime(JgsTime.WallClock(ms, tag)));
+            w.Byte(zone is null ? (byte)0 : (byte)1);
+            w.Number(0, zone is null || double.IsNaN(ms) ? 0 : JgsTime.OffsetAt(ms, zone).TotalSeconds);
+            return true;
+        }
+
+        if (JgsBuiltins.ClassOf(value, JgsDialect.Matlab) != "dictionary")
+        {
+            return false;
+        }
+
+        bool configured = Feval(session, "isConfigured", value).AsBool;
+        w.Header(PythonDictionary, [1, 1]);
+        w.Byte(configured ? (byte)1 : (byte)0);
+        if (configured)
+        {
+            foreach (string part in new[] { "keys", "values" })
+            {
+                JgsValue elements = Feval(session, part, value);
+                Write(w, elements.Type == JgsType.Cell ? elements : Feval(session, "num2cell", elements), session);
+            }
+        }
+
+        return true;
+    }
+
     private static void WriteNumbers(Writer w, RuntimeNumeric numeric)
     {
         int kind = Array.IndexOf(RuntimeNumeric.Classes.ToArray(), numeric.ClassName);
@@ -567,6 +672,9 @@ internal static class NativeWire
     {
         private int _at;
 
+        /// <summary>Whether a Python package's forms may come (stage K13).</summary>
+        public bool Python { get; init; }
+
         public bool AtEnd => _at >= bytes.Length;
 
         public byte Byte() => Take(1)[0];
@@ -635,6 +743,9 @@ internal static class NativeWire
     {
         private readonly MemoryStream _bytes = new();
         private readonly byte[] _scratch = new byte[8];
+
+        /// <summary>Whether a Python package's forms are written (stage K13).</summary>
+        public bool Python { get; init; }
 
         public byte[] ToArray() => _bytes.ToArray();
 

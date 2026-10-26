@@ -1,0 +1,3799 @@
+k13_build: 150 of 300 keys agree; 150 recorded divergences, 0 unexplained
+k13_client: 798 of 835 cases and reports agree; 38 recorded divergences, 0 unexplained
+
+k13_build main.options
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {16×1 cell}
+      SampleGenerationFiles: {}
+                PackageName: 'k13pkg'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: on
+                  OutputDir: '<W>\b\py\k13pkg'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {16×1 cell}
+      SampleGenerationFiles: {}
+      PackageName: 'k13pkg'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: on
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build main.printed
+  R2025b: |mcc -W python:k13pkg -T link:lib -d <W>\b\py\k13pkg -v -Z autodetect <W>\b\src\k9describe.m <W>\b\src\k9make.m <W>\b\src\k9echo.m <W>\b\src\k9multi.m <W>\b\src\k9nv.m <W>\b\src\k9print.m <W>\b\src\k9noout.m <W>\b\src\k9nout.m <W>\b\src\k9nargs.m <W>\b\src\k9slow.m <W>\b\src\k9err.m <W>\b\src\k9quiet.m <W>\b\src\k9point.m <W>\b\src\k9counter.m <W>\b\src\k9color.m <W>\b\src\k13state.m
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies.
+  |Parsing file "<W>\b\src\k9describe.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9make.m"
+  |	(referenced from command lin
+  JGraph: |mcc -W python:k13pkg -T link:lib -d <W>\b\py\k13pkg -v -Z autodetect <W>\b\src\k9describe.m <W>\b\src\k9make.m <W>\b\src\k9echo.m <W>\b\src\k9multi.m <W>\b\src\k9nv.m <W>\b\src\k9print.m <W>\b\src\k9noout.m <W>\b\src\k9nout.m <W>\b\src\k9nargs.m <W>\b\src\k9slow.m <W>\b\src\k9err.m <W>\b\src\k9quiet.m <W>\b\src\k9point.m <W>\b\src\k9counter.m <W>\b\src\k9color.m <W>\b\src\k13state.m
+  |Compiler version: JGraph 0.2.3 (R2025b)
+  |Analyzing file dependencies.
+  |Parsing file "<W>\b\src\k9describe.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\b\src\k9make.m"
+  |	(referenced from com
+  recorded: the version line names JGraph's compiler
+
+k13_build main.results
+  R2025b: Results with properties:
+                    BuildType: 'pythonPackage'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.PythonPackageOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'pythonPackage'
+      Files: {3×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.PythonPackageOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build main.Options
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {16×1 cell}
+      SampleGenerationFiles: {}
+                PackageName: 'k13pkg'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: on
+                  OutputDir: '<W>\b\py\k13pkg'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {16×1 cell}
+      SampleGenerationFiles: {}
+      PackageName: 'k13pkg'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: on
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build main.RuntimeDependencies
+  R2025b: Dependencies with properties:
+      Required: [2×2 table]
+      Optional: [0×0 table]
+  JGraph: Dependencies with properties:
+      Required: [1×2 table]
+      Optional: [0×0 table]
+  recorded: JGraph's runtime is one install, so a build lists it alone where R2025b lists its Python add-on too (ADR 0267)
+
+k13_build main.file.GettingStarted.html
+  R2025b: CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <title>Getting Started with the k13pkg Python Package</title>
+  |        <style type="text/css">
+  |            .rtcContent { padding: 20px; }
+  |            .S0 {padding:0 61px 2px 0; margin-bottom: 16px; border-bottom: 1px solid #cbcbcb; background-position: right 6px; background-repeat: no-repeat; background-size: 58px; color: #c45400; font: normal normal 22px/1.136 Arial,Helvetica,sans-serif; }
+  |            .S1 { margin: 2px 10px 9px 4px; padding: 0px; line-height: 21px; min-height: 0px; white-space: pre-wr
+  JGraph: CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |<head>
+  |<meta charset="utf-8">
+  |<title>Getting Started with the k13pkg Python Package</title>
+  |</head>
+  |<body>
+  |<h1>Getting Started with the k13pkg Python Package</h1>
+  |<ol>
+  |<li>Install the JGraph Runtime 0.2.3, or set JGRAPH_RUNTIME_ROOT to its folder, or put its runtime\win64 folder on the PATH.</li>
+  |<li>Install the package from this folder with <code>python -m pip install .</code>, or put this folder on PYTHONPATH.</li>
+  |<li>In Python, import the package, then the matlab module, and call the functions through th
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build main.file.buildresult.json
+  R2025b: CRLF 6, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"MATLAB Base Runtime", "Optional":"no"},
+  |		{"ID":35055, "DisplayName":"Python Target Runtime Addon", "Optional":"no"}
+  |	]
+  |}
+  JGraph: CRLF 5, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"JGraph Runtime", "Optional":"no"}
+  |	]
+  |}
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build main.file.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13pkg, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build main.file.readme.txt
+  R2025b: CRLF 50, ends with newline 1
+  |k13pkg MATLAB Python Package
+  |
+  |1. Prerequisites for Deployment
+  |
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |
+  |    >>mcrinstaller
+  |
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |
+ 
+  JGraph: CRLF 35, ends with newline 1
+  |k13pkg MATLAB Python Package
+  |
+  |1. Prerequisites for Deployment
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed: the package finds it through the
+  |JGRAPH_RUNTIME_ROOT environment variable, the registry key its installer writes, or its runtime\win64
+  |folder on the PATH, and runs its functions there. The JGraph Runtime holds the matlab module the
+  |package's functions take and give arrays of.
+  |
+  |Verify that a Windows version of Python 3.9, 3.10, 3.11, and/or 3.12 is installed. A newer
+  |Python is warned about and used.
+  |
+  |2. Installing
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build main.file.requiredMCRProducts.txt
+  R2025b: CRLF 0, ends with newline 0
+  |35010	35055
+  JGraph: CRLF 0, ends with newline 0
+  |35010
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build main.file.setup.py
+  R2025b: CRLF 82, ends with newline 1
+  |# Copyright 2015-2024 The MathWorks, Inc.
+  |import sys
+  |import warnings
+  |from shutil import rmtree
+  |from os.path import exists
+  |
+  |use_build_msg = '.*Use build and pip and other standards-based tools.*'
+  |excTxt = ''
+  |
+  |if 'bdist_wheel' in sys.argv[1:]:
+  |    # If "python setup.py bdist_wheel" is executed, we need to
+  |    # import from setuptools.
+  |    warnings.filterwarnings('ignore', message=use_build_msg)
+  |    from setuptools import setup
+  |    from setuptools.command.install import install
+  |    try:
+  |        import wheel
+  |    exc
+  JGraph: CRLF 20, ends with newline 1
+  |# Installs the Python package k13pkg, generated by JGraph's mcc:
+  |#     python -m pip install .
+  |# from the folder this file is in.
+  |
+  |try:
+  |    from setuptools import setup
+  |except ImportError:
+  |    raise EnvironmentError("Installation failed. Install setuptools using 'python -m pip install setuptools', then try again.")
+  |
+  |if __name__ == '__main__':
+  |    setup(
+  |        name='k13pkg-R2025b',
+  |        version='25.2',
+  |        description='A Python interface to k13pkg',
+  |        platforms=['Windows'],
+  |        packages=[
+  |        
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build main.file.k13pkg\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13pkg of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathIni
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build defaults.results
+  R2025b: Results with properties:
+                    BuildType: 'pythonPackage'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.PythonPackageOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'pythonPackage'
+      Files: {3×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.PythonPackageOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build defaults.Options
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {'<W>\b\src\k9echo.m'}
+      SampleGenerationFiles: {}
+                PackageName: 'example.k9echo'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\defaults'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      SampleGenerationFiles: {}
+      PackageName: 'example.k9echo'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build defaults.RuntimeDependencies
+  R2025b: Dependencies with properties:
+      Required: [2×2 table]
+      Optional: [0×0 table]
+  JGraph: Dependencies with properties:
+      Required: [1×2 table]
+      Optional: [0×0 table]
+  recorded: JGraph's runtime is one install, so a build lists it alone where R2025b lists its Python add-on too (ADR 0267)
+
+k13_build defaults.init.example\__init__.py
+  R2025b: CRLF 6, ends with newline 1
+  |
+  |#Copyright 2015-2018 MathWorks, Inc.
+  |
+  |from pkgutil import extend_path
+  |__path__ = extend_path(__path__, __name__)
+  |
+  JGraph: CRLF 5, ends with newline 1
+  |
+  |# A namespace level of the Python package example.k9echo, generated by JGraph's mcc.
+  |
+  |from pkgutil import extend_path
+  |__path__ = extend_path(__path__, __name__)
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build defaults.init.example\k9echo\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package example.k9echo of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class 
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build defaults.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package example.k9echo, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build dotted.results
+  R2025b: Results with properties:
+                    BuildType: 'pythonPackage'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.PythonPackageOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'pythonPackage'
+      Files: {3×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.PythonPackageOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build dotted.Options
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {'<W>\b\src\k9echo.m'}
+      SampleGenerationFiles: {}
+                PackageName: 'org.k13.deep'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\dotted'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      SampleGenerationFiles: {}
+      PackageName: 'org.k13.deep'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build dotted.RuntimeDependencies
+  R2025b: Dependencies with properties:
+      Required: [2×2 table]
+      Optional: [0×0 table]
+  JGraph: Dependencies with properties:
+      Required: [1×2 table]
+      Optional: [0×0 table]
+  recorded: JGraph's runtime is one install, so a build lists it alone where R2025b lists its Python add-on too (ADR 0267)
+
+k13_build dotted.init.org\__init__.py
+  R2025b: CRLF 6, ends with newline 1
+  |
+  |#Copyright 2015-2018 MathWorks, Inc.
+  |
+  |from pkgutil import extend_path
+  |__path__ = extend_path(__path__, __name__)
+  |
+  JGraph: CRLF 5, ends with newline 1
+  |
+  |# A namespace level of the Python package org.k13.deep, generated by JGraph's mcc.
+  |
+  |from pkgutil import extend_path
+  |__path__ = extend_path(__path__, __name__)
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build dotted.init.org\k13\__init__.py
+  R2025b: CRLF 6, ends with newline 1
+  |
+  |#Copyright 2015-2018 MathWorks, Inc.
+  |
+  |from pkgutil import extend_path
+  |__path__ = extend_path(__path__, __name__)
+  |
+  JGraph: CRLF 5, ends with newline 1
+  |
+  |# A namespace level of the Python package org.k13.deep, generated by JGraph's mcc.
+  |
+  |from pkgutil import extend_path
+  |__path__ = extend_path(__path__, __name__)
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build dotted.init.org\k13\deep\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package org.k13.deep of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _P
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build dotted.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package org.k13.deep, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build twolevel.results
+  R2025b: Results with properties:
+                    BuildType: 'pythonPackage'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.PythonPackageOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'pythonPackage'
+      Files: {3×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.PythonPackageOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build twolevel.Options
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {'<W>\b\src\k9echo.m'}
+      SampleGenerationFiles: {}
+                PackageName: 'k13a.k13b'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\twolevel'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      SampleGenerationFiles: {}
+      PackageName: 'k13a.k13b'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build twolevel.RuntimeDependencies
+  R2025b: Dependencies with properties:
+      Required: [2×2 table]
+      Optional: [0×0 table]
+  JGraph: Dependencies with properties:
+      Required: [1×2 table]
+      Optional: [0×0 table]
+  recorded: JGraph's runtime is one install, so a build lists it alone where R2025b lists its Python add-on too (ADR 0267)
+
+k13_build twolevel.init.k13a\__init__.py
+  R2025b: CRLF 6, ends with newline 1
+  |
+  |#Copyright 2015-2018 MathWorks, Inc.
+  |
+  |from pkgutil import extend_path
+  |__path__ = extend_path(__path__, __name__)
+  |
+  JGraph: CRLF 5, ends with newline 1
+  |
+  |# A namespace level of the Python package k13a.k13b, generated by JGraph's mcc.
+  |
+  |from pkgutil import extend_path
+  |__path__ = extend_path(__path__, __name__)
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build twolevel.init.k13a\k13b\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13a.k13b of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _Path
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build twolevel.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13a.k13b, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build upper.results
+  R2025b: Results with properties:
+                    BuildType: 'pythonPackage'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.PythonPackageOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'pythonPackage'
+      Files: {3×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.PythonPackageOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build upper.Options
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {'<W>\b\src\k9echo.m'}
+      SampleGenerationFiles: {}
+                PackageName: 'K13Upper'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\upper'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      SampleGenerationFiles: {}
+      PackageName: 'K13Upper'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build upper.RuntimeDependencies
+  R2025b: Dependencies with properties:
+      Required: [2×2 table]
+      Optional: [0×0 table]
+  JGraph: Dependencies with properties:
+      Required: [1×2 table]
+      Optional: [0×0 table]
+  recorded: JGraph's runtime is one install, so a build lists it alone where R2025b lists its Python add-on too (ADR 0267)
+
+k13_build upper.init.K13Upper\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package K13Upper of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathI
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build upper.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package K13Upper, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build underscore.results
+  R2025b: Results with properties:
+                    BuildType: 'pythonPackage'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.PythonPackageOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'pythonPackage'
+      Files: {3×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.PythonPackageOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build underscore.Options
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {'<W>\b\src\k9echo.m'}
+      SampleGenerationFiles: {}
+                PackageName: '_k13u'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\underscore'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      SampleGenerationFiles: {}
+      PackageName: '_k13u'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build underscore.RuntimeDependencies
+  R2025b: Dependencies with properties:
+      Required: [2×2 table]
+      Optional: [0×0 table]
+  JGraph: Dependencies with properties:
+      Required: [1×2 table]
+      Optional: [0×0 table]
+  recorded: JGraph's runtime is one install, so a build lists it alone where R2025b lists its Python add-on too (ADR 0267)
+
+k13_build underscore.init._k13u\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package _k13u of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInit
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build underscore.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package _k13u, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build classonly.results
+  R2025b: Results with properties:
+                    BuildType: 'pythonPackage'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.PythonPackageOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'pythonPackage'
+      Files: {3×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.PythonPackageOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build classonly.Options
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {'<W>\b\src\k9point.m'}
+      SampleGenerationFiles: {}
+                PackageName: 'k13c'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\classonly'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      SampleGenerationFiles: {}
+      PackageName: 'k13c'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build classonly.RuntimeDependencies
+  R2025b: Dependencies with properties:
+      Required: [2×2 table]
+      Optional: [0×0 table]
+  JGraph: Dependencies with properties:
+      Required: [1×2 table]
+      Optional: [0×0 table]
+  recorded: JGraph's runtime is one install, so a build lists it alone where R2025b lists its Python add-on too (ADR 0267)
+
+k13_build classonly.init.k13c\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13c of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathIniti
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build classonly.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13c, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build handleonly.results
+  R2025b: Results with properties:
+                    BuildType: 'pythonPackage'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.PythonPackageOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'pythonPackage'
+      Files: {3×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.PythonPackageOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build handleonly.Options
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {'<W>\b\src\k9counter.m'}
+      SampleGenerationFiles: {}
+                PackageName: 'k13h'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\handleonly'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      SampleGenerationFiles: {}
+      PackageName: 'k13h'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build handleonly.RuntimeDependencies
+  R2025b: Dependencies with properties:
+      Required: [2×2 table]
+      Optional: [0×0 table]
+  JGraph: Dependencies with properties:
+      Required: [1×2 table]
+      Optional: [0×0 table]
+  recorded: JGraph's runtime is one install, so a build lists it alone where R2025b lists its Python add-on too (ADR 0267)
+
+k13_build handleonly.init.k13h\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13h of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathIniti
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build handleonly.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13h, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build enumonly.results
+  R2025b: Results with properties:
+                    BuildType: 'pythonPackage'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.PythonPackageOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'pythonPackage'
+      Files: {3×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.PythonPackageOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build enumonly.Options
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {'<W>\b\src\k9color.m'}
+      SampleGenerationFiles: {}
+                PackageName: 'k13e'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\enumonly'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      SampleGenerationFiles: {}
+      PackageName: 'k13e'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build enumonly.RuntimeDependencies
+  R2025b: Dependencies with properties:
+      Required: [2×2 table]
+      Optional: [0×0 table]
+  JGraph: Dependencies with properties:
+      Required: [1×2 table]
+      Optional: [0×0 table]
+  recorded: JGraph's runtime is one install, so a build lists it alone where R2025b lists its Python add-on too (ADR 0267)
+
+k13_build enumonly.init.k13e\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13e of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathIniti
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build enumonly.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13e, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build pkg.results
+  R2025b: Results with properties:
+                    BuildType: 'pythonPackage'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.PythonPackageOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'pythonPackage'
+      Files: {3×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.PythonPackageOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build pkg.Options
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {'<W>\b\src\+k9pkg\k9inner.m'}
+      SampleGenerationFiles: {}
+                PackageName: 'k13p'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\pkg'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      SampleGenerationFiles: {}
+      PackageName: 'k13p'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build pkg.RuntimeDependencies
+  R2025b: Dependencies with properties:
+      Required: [2×2 table]
+      Optional: [0×0 table]
+  JGraph: Dependencies with properties:
+      Required: [1×2 table]
+      Optional: [0×0 table]
+  recorded: JGraph's runtime is one install, so a build lists it alone where R2025b lists its Python add-on too (ADR 0267)
+
+k13_build pkg.init.k13p\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13p of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathIniti
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build pkg.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13p, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build varargs.results
+  R2025b: Results with properties:
+                    BuildType: 'pythonPackage'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.PythonPackageOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'pythonPackage'
+      Files: {3×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.PythonPackageOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build varargs.Options
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {2×1 cell}
+      SampleGenerationFiles: {}
+                PackageName: 'k13v'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\varargs'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {2×1 cell}
+      SampleGenerationFiles: {}
+      PackageName: 'k13v'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build varargs.RuntimeDependencies
+  R2025b: Dependencies with properties:
+      Required: [2×2 table]
+      Optional: [0×0 table]
+  JGraph: Dependencies with properties:
+      Required: [1×2 table]
+      Optional: [0×0 table]
+  recorded: JGraph's runtime is one install, so a build lists it alone where R2025b lists its Python add-on too (ADR 0267)
+
+k13_build varargs.init.k13v\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13v of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathIniti
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build varargs.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13v, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build additional.results
+  R2025b: Results with properties:
+                    BuildType: 'pythonPackage'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.PythonPackageOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'pythonPackage'
+      Files: {3×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.PythonPackageOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build additional.Options
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {'<W>\b\src\k9echo.m'}
+      SampleGenerationFiles: {}
+                PackageName: 'k13ad'
+            AdditionalFiles: {'<W>\b\src\k13data.txt'}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\additional'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      SampleGenerationFiles: {}
+      PackageName: 'k13ad'
+      AdditionalFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build additional.RuntimeDependencies
+  R2025b: Dependencies with properties:
+      Required: [2×2 table]
+      Optional: [0×0 table]
+  JGraph: Dependencies with properties:
+      Required: [1×2 table]
+      Optional: [0×0 table]
+  recorded: JGraph's runtime is one install, so a build lists it alone where R2025b lists its Python add-on too (ADR 0267)
+
+k13_build additional.init.k13ad\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13ad of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInit
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build additional.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13ad, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build samples.results
+  R2025b: Results with properties:
+                    BuildType: 'pythonPackage'
+                        Files: {5×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.PythonPackageOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'pythonPackage'
+      Files: {3×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.PythonPackageOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build samples.Files
+  R2025b: <OUT>\k13s | <OUT>\setup.py | <OUT>\samples\k13sample1.py | <OUT>\samples\k13sample2.py | <OUT>\GettingStarted.html
+  JGraph: <OUT>\k13s | <OUT>\setup.py | <OUT>\GettingStarted.html
+  recorded: JGraph writes no samples from SampleGenerationFiles (open item 207)
+
+k13_build samples.Options
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {2×1 cell}
+      SampleGenerationFiles: {'<W>\b\src\k13sample.m'}
+                PackageName: 'k13s'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\samples'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {2×1 cell}
+      SampleGenerationFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      PackageName: 'k13s'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build samples.RuntimeDependencies
+  R2025b: Dependencies with properties:
+      Required: [2×2 table]
+      Optional: [0×0 table]
+  JGraph: Dependencies with properties:
+      Required: [1×2 table]
+      Optional: [0×0 table]
+  recorded: JGraph's runtime is one install, so a build lists it alone where R2025b lists its Python add-on too (ADR 0267)
+
+k13_build samples.files
+  R2025b: GettingStarted.html | buildresult.json | includedSupportPackages.txt | k13s\__init__.py | k13s\k13s.ctf | mccExcludedFiles.log | pyproject.toml | readme.txt | requiredMCRProducts.txt | samples\k13sample1.py | samples\k13sample2.py | setup.py | unresolvedSymbols.txt
+  JGraph: GettingStarted.html | buildresult.json | includedSupportPackages.txt | k13s\__init__.py | k13s\k13s.ctf | mccExcludedFiles.log | pyproject.toml | readme.txt | requiredMCRProducts.txt | setup.py | unresolvedSymbols.txt
+  recorded: JGraph writes no samples from SampleGenerationFiles (open item 207)
+
+k13_build samples.init.k13s\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13s of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathIniti
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build samples.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13s, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build script.results
+  R2025b: Results with properties:
+                    BuildType: 'pythonPackage'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.PythonPackageOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'pythonPackage'
+      Files: {3×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.PythonPackageOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build script.Options
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {'<W>\b\src\k13script.m'}
+      SampleGenerationFiles: {}
+                PackageName: 'k13sc'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\script'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      SampleGenerationFiles: {}
+      PackageName: 'k13sc'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build script.RuntimeDependencies
+  R2025b: Dependencies with properties:
+      Required: [2×2 table]
+      Optional: [0×0 table]
+  JGraph: Dependencies with properties:
+      Required: [1×2 table]
+      Optional: [0×0 table]
+  recorded: JGraph's runtime is one install, so a build lists it alone where R2025b lists its Python add-on too (ADR 0267)
+
+k13_build script.init.k13sc\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13sc of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInit
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build script.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13sc, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build keyword.results
+  R2025b: Results with properties:
+                    BuildType: 'pythonPackage'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.PythonPackageOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'pythonPackage'
+      Files: {3×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.PythonPackageOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build keyword.Options
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {'<W>\b\src\k9echo.m'}
+      SampleGenerationFiles: {}
+                PackageName: 'class'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\keyword'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      SampleGenerationFiles: {}
+      PackageName: 'class'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build keyword.RuntimeDependencies
+  R2025b: Dependencies with properties:
+      Required: [2×2 table]
+      Optional: [0×0 table]
+  JGraph: Dependencies with properties:
+      Required: [1×2 table]
+      Optional: [0×0 table]
+  recorded: JGraph's runtime is one install, so a build lists it alone where R2025b lists its Python add-on too (ADR 0267)
+
+k13_build keyword.init.class\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package class of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInit
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build keyword.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package class, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build builtinname.results
+  R2025b: Results with properties:
+                    BuildType: 'pythonPackage'
+                        Files: {3×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.PythonPackageOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'pythonPackage'
+      Files: {3×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.PythonPackageOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build builtinname.Options
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {'<W>\b\src\k9echo.m'}
+      SampleGenerationFiles: {}
+                PackageName: 'json'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\builtinname'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      SampleGenerationFiles: {}
+      PackageName: 'json'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_build builtinname.RuntimeDependencies
+  R2025b: Dependencies with properties:
+      Required: [2×2 table]
+      Optional: [0×0 table]
+  JGraph: Dependencies with properties:
+      Required: [1×2 table]
+      Optional: [0×0 table]
+  recorded: JGraph's runtime is one install, so a build lists it alone where R2025b lists its Python add-on too (ADR 0267)
+
+k13_build builtinname.init.json\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package json of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathIniti
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build builtinname.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package json, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build samples.file.GettingStarted.html
+  R2025b: CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <title>Getting Started with the k13s Python Package</title>
+  |        <style type="text/css">
+  |            .rtcContent { padding: 20px; }
+  |            .S0 {padding:0 61px 2px 0; margin-bottom: 16px; border-bottom: 1px solid #cbcbcb; background-position: right 6px; background-repeat: no-repeat; background-size: 58px; color: #c45400; font: normal normal 22px/1.136 Arial,Helvetica,sans-serif; }
+  |            .S1 { margin: 2px 10px 9px 4px; padding: 0px; line-height: 21px; min-height: 0px; white-space: pre-wrap
+  JGraph: CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |<head>
+  |<meta charset="utf-8">
+  |<title>Getting Started with the k13s Python Package</title>
+  |</head>
+  |<body>
+  |<h1>Getting Started with the k13s Python Package</h1>
+  |<ol>
+  |<li>Install the JGraph Runtime 0.2.3, or set JGRAPH_RUNTIME_ROOT to its folder, or put its runtime\win64 folder on the PATH.</li>
+  |<li>Install the package from this folder with <code>python -m pip install .</code>, or put this folder on PYTHONPATH.</li>
+  |<li>In Python, import the package, then the matlab module, and call the functions through the ha
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build samples.file.buildresult.json
+  R2025b: CRLF 6, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"MATLAB Base Runtime", "Optional":"no"},
+  |		{"ID":35055, "DisplayName":"Python Target Runtime Addon", "Optional":"no"}
+  |	]
+  |}
+  JGraph: CRLF 5, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"JGraph Runtime", "Optional":"no"}
+  |	]
+  |}
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build samples.file.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13s, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build samples.file.readme.txt
+  R2025b: CRLF 50, ends with newline 1
+  |k13s MATLAB Python Package
+  |
+  |1. Prerequisites for Deployment
+  |
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |
+  |    >>mcrinstaller
+  |
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |
+  |
+  JGraph: CRLF 35, ends with newline 1
+  |k13s MATLAB Python Package
+  |
+  |1. Prerequisites for Deployment
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed: the package finds it through the
+  |JGRAPH_RUNTIME_ROOT environment variable, the registry key its installer writes, or its runtime\win64
+  |folder on the PATH, and runs its functions there. The JGraph Runtime holds the matlab module the
+  |package's functions take and give arrays of.
+  |
+  |Verify that a Windows version of Python 3.9, 3.10, 3.11, and/or 3.12 is installed. A newer
+  |Python is warned about and used.
+  |
+  |2. Installing t
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build samples.file.requiredMCRProducts.txt
+  R2025b: CRLF 0, ends with newline 0
+  |35010	35055
+  JGraph: CRLF 0, ends with newline 0
+  |35010
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build samples.file.setup.py
+  R2025b: CRLF 82, ends with newline 1
+  |# Copyright 2015-2024 The MathWorks, Inc.
+  |import sys
+  |import warnings
+  |from shutil import rmtree
+  |from os.path import exists
+  |
+  |use_build_msg = '.*Use build and pip and other standards-based tools.*'
+  |excTxt = ''
+  |
+  |if 'bdist_wheel' in sys.argv[1:]:
+  |    # If "python setup.py bdist_wheel" is executed, we need to
+  |    # import from setuptools.
+  |    warnings.filterwarnings('ignore', message=use_build_msg)
+  |    from setuptools import setup
+  |    from setuptools.command.install import install
+  |    try:
+  |        import wheel
+  |    exc
+  JGraph: CRLF 20, ends with newline 1
+  |# Installs the Python package k13s, generated by JGraph's mcc:
+  |#     python -m pip install .
+  |# from the folder this file is in.
+  |
+  |try:
+  |    from setuptools import setup
+  |except ImportError:
+  |    raise EnvironmentError("Installation failed. Install setuptools using 'python -m pip install setuptools', then try again.")
+  |
+  |if __name__ == '__main__':
+  |    setup(
+  |        name='k13s-R2025b',
+  |        version='25.2',
+  |        description='A Python interface to k13s',
+  |        platforms=['Windows'],
+  |        packages=[
+  |            'k
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build samples.file.k13s\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13s of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathIniti
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build samples.file.samples\k13sample1.py
+  R2025b: CRLF 26, ends with newline 0
+  |#!/usr/bin/env python
+  |"""
+  |Sample script that uses the k13s package created using
+  |MATLAB Compiler SDK.
+  |
+  |Refer to the MATLAB Compiler SDK documentation for more information.
+  |"""
+  |
+  |import k13s
+  |# Import the matlab module only after you have imported
+  |# MATLAB Compiler SDK generated Python modules.
+  |import matlab
+  |
+  |try:
+  |    my_k13s = k13s.initialize()
+  |except Exception as e:
+  |    print('Error initializing k13s package\n:{}'.format(e))
+  |    exit(1)
+  |
+  |try:
+  |    inIn = matlab.double([1.5], size=(1, 1))
+  |    outOut = m
+  JGraph: (missing)
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build samples.file.samples\k13sample2.py
+  R2025b: CRLF 26, ends with newline 0
+  |#!/usr/bin/env python
+  |"""
+  |Sample script that uses the k13s package created using
+  |MATLAB Compiler SDK.
+  |
+  |Refer to the MATLAB Compiler SDK documentation for more information.
+  |"""
+  |
+  |import k13s
+  |# Import the matlab module only after you have imported
+  |# MATLAB Compiler SDK generated Python modules.
+  |import matlab
+  |
+  |try:
+  |    my_k13s = k13s.initialize()
+  |except Exception as e:
+  |    print('Error initializing k13s package\n:{}'.format(e))
+  |    exit(1)
+  |
+  |try:
+  |    xIn = matlab.double([1, 2, 3], size=(1, 3))
+  |    aOut, b
+  JGraph: (missing)
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build defaults.GettingStarted
+  R2025b: CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <title>Getting Started with the k9echo Python Package</title>
+  |        <style type="text/css">
+  |            .rtcContent { padding: 20px; }
+  |            .S0 {padding:0 61px 2px 0; margin-bottom: 16px; border-bottom: 1px solid #cbcbcb; background-position: right 6px; background-repeat: no-repeat; background-size: 58px; color: #c45400; font: normal normal 22px/1.136 Arial,Helvetica,sans-serif; }
+  |            .S1 { margin: 2px 10px 9px 4px; padding: 0px; line-height: 21px; min-height: 0px; white-space: pre-wr
+  JGraph: CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |<head>
+  |<meta charset="utf-8">
+  |<title>Getting Started with the k9echo Python Package</title>
+  |</head>
+  |<body>
+  |<h1>Getting Started with the k9echo Python Package</h1>
+  |<ol>
+  |<li>Install the JGraph Runtime 0.2.3, or set JGRAPH_RUNTIME_ROOT to its folder, or put its runtime\win64 folder on the PATH.</li>
+  |<li>Install the package from this folder with <code>python -m pip install .</code>, or put this folder on PYTHONPATH.</li>
+  |<li>In Python, import the package, then the matlab module, and call the functions through th
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build defaults.setup
+  R2025b: CRLF 83, ends with newline 1
+  |# Copyright 2015-2024 The MathWorks, Inc.
+  |import sys
+  |import warnings
+  |from shutil import rmtree
+  |from os.path import exists
+  |
+  |use_build_msg = '.*Use build and pip and other standards-based tools.*'
+  |excTxt = ''
+  |
+  |if 'bdist_wheel' in sys.argv[1:]:
+  |    # If "python setup.py bdist_wheel" is executed, we need to
+  |    # import from setuptools.
+  |    warnings.filterwarnings('ignore', message=use_build_msg)
+  |    from setuptools import setup
+  |    from setuptools.command.install import install
+  |    try:
+  |        import wheel
+  |    exc
+  JGraph: CRLF 21, ends with newline 1
+  |# Installs the Python package example.k9echo, generated by JGraph's mcc:
+  |#     python -m pip install .
+  |# from the folder this file is in.
+  |
+  |try:
+  |    from setuptools import setup
+  |except ImportError:
+  |    raise EnvironmentError("Installation failed. Install setuptools using 'python -m pip install setuptools', then try again.")
+  |
+  |if __name__ == '__main__':
+  |    setup(
+  |        name='example.k9echo-R2025b',
+  |        version='25.2',
+  |        description='A Python interface to example.k9echo',
+  |        platforms=['Windows'],
+  |      
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build dotted.setup
+  R2025b: CRLF 84, ends with newline 1
+  |# Copyright 2015-2024 The MathWorks, Inc.
+  |import sys
+  |import warnings
+  |from shutil import rmtree
+  |from os.path import exists
+  |
+  |use_build_msg = '.*Use build and pip and other standards-based tools.*'
+  |excTxt = ''
+  |
+  |if 'bdist_wheel' in sys.argv[1:]:
+  |    # If "python setup.py bdist_wheel" is executed, we need to
+  |    # import from setuptools.
+  |    warnings.filterwarnings('ignore', message=use_build_msg)
+  |    from setuptools import setup
+  |    from setuptools.command.install import install
+  |    try:
+  |        import wheel
+  |    exc
+  JGraph: CRLF 22, ends with newline 1
+  |# Installs the Python package org.k13.deep, generated by JGraph's mcc:
+  |#     python -m pip install .
+  |# from the folder this file is in.
+  |
+  |try:
+  |    from setuptools import setup
+  |except ImportError:
+  |    raise EnvironmentError("Installation failed. Install setuptools using 'python -m pip install setuptools', then try again.")
+  |
+  |if __name__ == '__main__':
+  |    setup(
+  |        name='org.k13.deep-R2025b',
+  |        version='25.2',
+  |        description='A Python interface to org.k13.deep',
+  |        platforms=['Windows'],
+  |        pack
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_default.init.k13m\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13m of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathIniti
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_default.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13m, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_notarget.init.k13nt\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13nt of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInit
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_notarget.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13nt, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_dotted.init.org\__init__.py
+  R2025b: CRLF 6, ends with newline 1
+  |
+  |#Copyright 2015-2018 MathWorks, Inc.
+  |
+  |from pkgutil import extend_path
+  |__path__ = extend_path(__path__, __name__)
+  |
+  JGraph: CRLF 5, ends with newline 1
+  |
+  |# A namespace level of the Python package org.k13m, generated by JGraph's mcc.
+  |
+  |from pkgutil import extend_path
+  |__path__ = extend_path(__path__, __name__)
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_dotted.init.org\k13m\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package org.k13m of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathI
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_dotted.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package org.k13m, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_version.init.k13vr\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13vr of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInit
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_version.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13vr, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_comma.init.k13cm\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13cm of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInit
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_comma.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13cm, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_separate.init.k13sp\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13sp of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInit
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_separate.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13sp, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_codegen.init.k13cg\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13cg of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInit
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_codegen.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13cg, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_compile.init.k13cp\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13cp of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInit
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_compile.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13cp, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_verbose
+  R2025b: ok
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies.
+  |Parsing file "<W>\b\src\k9echo.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\mcc_verbose\k13vb\__init__.py".
+  |Generating file "<W>\b\mcc_verbose\setup.py".
+  |Generating file "<W>\b\mcc_verbose\pyproject.toml".
+  |Generating file "<W>\b\mcc_verbose\readme.txt".
+  JGraph: ok
+  |Compiler version: JGraph 0.2.3 (R2025b)
+  |Analyzing file dependencies.
+  |Parsing file "<W>\b\src\k9echo.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\mcc_verbose\k13vb\__init__.py".
+  |Generating file "<W>\b\mcc_verbose\setup.py".
+  |Generating file "<W>\b\mcc_verbose\pyproject.toml".
+  |Generating file "<W>\b\mcc_verbose\readme.txt".
+  recorded: the version line names JGraph's compiler
+
+k13_build mcc_verbose.init.k13vb\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13vb of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInit
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_verbose.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13vb, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_debug.init.k13db\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13db of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInit
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_debug.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13db, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_exe.init.k13ex\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13ex of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInit
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_exe.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13ex, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_twice.init.k13t1\__init__.py
+  R2025b: CRLF 6, ends with newline 1
+  |
+  |#Copyright 2015-2018 MathWorks, Inc.
+  |
+  |from pkgutil import extend_path
+  |__path__ = extend_path(__path__, __name__)
+  |
+  JGraph: CRLF 5, ends with newline 1
+  |
+  |# A namespace level of the Python package k13t1.k13t2, generated by JGraph's mcc.
+  |
+  |from pkgutil import extend_path
+  |__path__ = extend_path(__path__, __name__)
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_twice.init.k13t1\k13t2\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13t1.k13t2 of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _Pa
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_twice.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13t1.k13t2, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_badname.init.1bad\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package 1bad of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathIniti
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_badname.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package 1bad, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_dash.init.a-b\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package a-b of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInitia
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_dash.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package a-b, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_keyword.init.class\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package class of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInit
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_keyword.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package class, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_dotdot.init.a\__init__.py
+  R2025b: CRLF 6, ends with newline 1
+  |
+  |#Copyright 2015-2018 MathWorks, Inc.
+  |
+  |from pkgutil import extend_path
+  |__path__ = extend_path(__path__, __name__)
+  |
+  JGraph: CRLF 5, ends with newline 1
+  |
+  |# A namespace level of the Python package a.b, generated by JGraph's mcc.
+  |
+  |from pkgutil import extend_path
+  |__path__ = extend_path(__path__, __name__)
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_dotdot.init.a\b\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package a.b of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInitia
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_dotdot.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package a.b, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_classes.init.k13cl\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13cl of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInit
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_classes.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13cl, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_script.init.k13sc\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13sc of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInit
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_script.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13sc, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_data.init.k13da\__init__.py
+  R2025b: CRLF 354, ends with newline 1
+  |# Copyright 2015-2024 MathWorks, Inc.
+  |
+  |
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import glob
+  |import importlib
+  |import os
+  |import os.path
+  |import pdb
+  |import platform
+  |import re
+  |import sys
+  |import weakref
+  |import warnings
+  |
+  |class _PathInitializer(object):
+  |    PLATFORM_DICT = {'Windows': ['PATH','dll',''], 'Linux': ['LD_LIBRARY_PATH','so','libmw'], 'Darwin': ['DYLD_LIBRARY_PATH','dylib','libmw']}
+  |    SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
+  |    RUNTIME_VERSION_W_D
+  JGraph: CRLF 162, ends with newline 1
+  |# The Python package k13da of deployed MATLAB functions, generated by JGraph 0.2.3's mcc.
+  |# It runs on the JGraph Runtime 0.2.3: the folder JGRAPH_RUNTIME_ROOT names, else the one its
+  |# installer registered, else the one whose runtime\win64 folder, where jgrt.dll is, is on the PATH.
+  |# Import it before the matlab module, which comes from that runtime.
+  |""" Package for executing deployed MATLAB functions """
+  |
+  |import atexit
+  |import importlib
+  |import json
+  |import os
+  |import sys
+  |import warnings
+  |import weakref
+  |
+  |
+  |class _PathInit
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_data.toml.pyproject.toml
+  R2025b: CRLF 6, ends with newline 1
+  |# Copyright 2022 MathWorks, Inc.
+  |
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  JGraph: CRLF 5, ends with newline 1
+  |# How pip builds the Python package k13da, generated by JGraph's mcc.
+  |
+  |[build-system]
+  |requires = ["setuptools >= 42", "wheel"]
+  |build-backend = "setuptools.build_meta"
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_default.readme
+  R2025b: CRLF 50, ends with newline 1
+  |k13m MATLAB Python Package
+  |
+  |1. Prerequisites for Deployment
+  |
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |
+  |    >>mcrinstaller
+  |
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |
+  |
+  JGraph: CRLF 35, ends with newline 1
+  |k13m MATLAB Python Package
+  |
+  |1. Prerequisites for Deployment
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed: the package finds it through the
+  |JGRAPH_RUNTIME_ROOT environment variable, the registry key its installer writes, or its runtime\win64
+  |folder on the PATH, and runs its functions there. The JGraph Runtime holds the matlab module the
+  |package's functions take and give arrays of.
+  |
+  |Verify that a Windows version of Python 3.9, 3.10, 3.11, and/or 3.12 is installed. A newer
+  |Python is warned about and used.
+  |
+  |2. Installing t
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build mcc_default.setup
+  R2025b: CRLF 82, ends with newline 1
+  |# Copyright 2015-2024 The MathWorks, Inc.
+  |import sys
+  |import warnings
+  |from shutil import rmtree
+  |from os.path import exists
+  |
+  |use_build_msg = '.*Use build and pip and other standards-based tools.*'
+  |excTxt = ''
+  |
+  |if 'bdist_wheel' in sys.argv[1:]:
+  |    # If "python setup.py bdist_wheel" is executed, we need to
+  |    # import from setuptools.
+  |    warnings.filterwarnings('ignore', message=use_build_msg)
+  |    from setuptools import setup
+  |    from setuptools.command.install import install
+  |    try:
+  |        import wheel
+  |    exc
+  JGraph: CRLF 20, ends with newline 1
+  |# Installs the Python package k13m, generated by JGraph's mcc:
+  |#     python -m pip install .
+  |# from the folder this file is in.
+  |
+  |try:
+  |    from setuptools import setup
+  |except ImportError:
+  |    raise EnvironmentError("Installation failed. Install setuptools using 'python -m pip install setuptools', then try again.")
+  |
+  |if __name__ == '__main__':
+  |    setup(
+  |        name='k13m-R2025b',
+  |        version='25.2',
+  |        description='A Python interface to k13m',
+  |        platforms=['Windows'],
+  |        packages=[
+  |            'k
+  recorded: JGraph writes the package's __init__.py, setup.py, pyproject.toml, readme.txt and GettingStarted.html in its own words, for the JGraph Runtime (ADR 0269)
+
+k13_build opts.default
+  R2025b: PythonPackageOptions with properties:
+              FunctionFiles: {'<W>\b\src\k9echo.m'}
+      SampleGenerationFiles: {}
+                PackageName: 'example.k9echo'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '.\k9echopythonPackage'
+  JGraph: PythonPackageOptions with properties:
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      SampleGenerationFiles: {}
+      PackageName: 'example.k9echo'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '.\k9echopythonPackage'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k13_client [arrays] hash
+  R2025b: ("ERR TypeError | unhashable type: 'matlab.double'", ())
+  JGraph: ("ERR TypeError | unhashable type: 'double'", ())
+  recorded: an array is unhashable as R2025b's is (__hash__ is None), so Python's refusal names the class without its module (ADR 0269)
+
+k13_client [arrays] standard error, R2025b's report
+  TypeError: must be real number, not matlab.double | TypeError: must be real number, not matlab.double | TypeError: 'matlab.int8' object cannot be interpreted as an integer | TypeError: 'matlab.uint64' object cannot be interpreted as an integer | TypeError: 'matlab.logical' object cannot be interpreted as an integer | TypeError: must be real number, not matlab.single
+  recorded: R2025b's toarray() prints the TypeError it meets to standard error before it refuses an array of two dimensions; JGraph's refuses without it (ADR 0269)
+
+k13_client [calls] print.capture
+  R2025b: ("float 2.0 ;; stdout='line 1\\nline 2\\n     2\\n\\nWarning: a warning about 2\\n> In k9print (line 7)\\n' ;; stderr='to standard error\\n'", ())
+  JGraph: ("float 2.0 ;; stdout='line 1\\nline 2\\n2\\nWarning: a warning about 2\\n' ;; stderr='to standard error\\n'", ())
+  recorded: a value's display is JGraph's own (open item 194), and a deployed warning prints no '> In' line in JGraph (open item 170)
+
+k13_client [calls] print.stdout
+  R2025b: ("float 1.0 ;; stdout='line 1\\n     1\\n\\nWarning: a warning about 1\\n> In k9print (line 7)\\n' ;; stderr=''", ())
+  JGraph: ("float 1.0 ;; stdout='line 1\\n1\\nWarning: a warning about 1\\n' ;; stderr=''", ())
+  recorded: a value's display is JGraph's own (open item 194), and a deployed warning prints no '> In' line in JGraph (open item 170)
+
+k13_client [calls] error.builtin
+  R2025b: ("ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \\n  File <W>\\cache\\<V>\\k13pkg0\\k13pkg\\k9err.m, line 11, in k9err\\nIncorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication.\\n ;; stdout='' ;; stderr='Error using *\\nIncorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication.\\n\\nError in k9err (line 11)\\n\\n'", ())
+  JGraph: ("ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \\n  File <W>\\cache\\<V>\\k13pkg0\\k13pkg\\k9err.m, line 11, in k9err\\nIncorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication.\\n ;; stdout='' ;; stderr='Incorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication.\\n\\nError in k9err (line 11)\\n\\n'", ())
+  recorded: a deployed report does not head an operator's error with the operator, Error using * (open item 170)
+
+k13_client [calls] error.undefined
+  R2025b: ('ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \\n  File <W>\\cache\\<V>\\k13pkg0\\k13pkg\\k9err.m, line 12, in k9err\\nUndefined function \'k9nosuchfunction\' for input arguments of type \'double\'.\\n ;; stdout=\'\' ;; stderr="Unrecognized function or variable \'k9nosuchfunction\'.\\n\\nError in k9err (line 12)\\n\\n"', ())
+  JGraph: ('ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \\n  File <W>\\cache\\<V>\\k13pkg0\\k13pkg\\k9err.m, line 12, in k9err\\nUndefined function \'k9nosuchfunction\' for input arguments of type \'double\'.\\n ;; stdout=\'\' ;; stderr="Undefined function \'k9nosuchfunction\' for input arguments of type \'double\'.\\n\\nError in k9err (line 12)\\n\\n"', ())
+  recorded: an undefined function is named in JGraph's words, where R2025b's deployed report says Unrecognized function or variable (open item 203)
+
+k13_client [convert] out.int64
+  R2025b: ('int -9007199254740993', ())
+  JGraph: ('int -9007199254740992', ())
+  recorded: JGraph keeps an int64 as a double, so k9make's -9007199254740993 is made as -9007199254740992 (ADR 0266)
+
+k13_client [convert] out.uint64
+  R2025b: ('int 18446744073709551615', ())
+  JGraph: ('ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: 1.8446744073709552E+19 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\\n', ())
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53: a value past it is refused, not rounded (ADR 0266)
+
+k13_client [convert] out.complexint8
+  R2025b: ('complex (1+2j)', ())
+  JGraph: ('ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \\n  File <W>\\cache\\<V>\\k13pkg0\\k13pkg\\k9make.m, line 30, in k9make\\nint8 expects a number or numeric array, but got a complex.\\n', ())
+  recorded: JGraph keeps no complex integer arrays
+
+k13_client [convert] out.nestedcell
+  R2025b: ('list[list[float 1.0], matlab.double size=(0, 0) matlab.double([])]', ())
+  JGraph: ('list[list[float 1.0], list[]]', ())
+  recorded: an empty cell inside a cell comes back as an empty list, as an empty cell does alone; R2025b's gives matlab.double([]) inside a cell (ADR 0269)
+
+k13_client [convert] out.sparsecomplex
+  R2025b: ('ERR TypeError | conversion of MATLAB sparse array to Python not supported', ())
+  JGraph: ('ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \\n  File <W>\\cache\\<V>\\k13pkg0\\k13pkg\\k9make.m, line 61, in k9make\\nsparse needs numbers, but element (0, 0) was a complex.\\n', ())
+  recorded: JGraph has no complex sparse arrays, so k9make fails making one
+
+k13_client [convert] in.int.2^53+1
+  R2025b: ("str 'int64 [1 1] [9007199254740993]'", ())
+  JGraph: ('ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: 9007199254740993 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\\n', ())
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53: a value past it is refused, not rounded (ADR 0266)
+
+k13_client [convert] in.int.2^62
+  R2025b: ("str 'int64 [1 1] [4611686018427387904]'", ())
+  JGraph: ('ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: 4611686018427387904 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\\n', ())
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53: a value past it is refused, not rounded (ADR 0266)
+
+k13_client [convert] in.int.max
+  R2025b: ("str 'int64 [1 1] [9223372036854775807]'", ())
+  JGraph: ('ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: 9223372036854775807 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\\n', ())
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53: a value past it is refused, not rounded (ADR 0266)
+
+k13_client [convert] in.int.min
+  R2025b: ("str 'int64 [1 1] [-9223372036854775808]'", ())
+  JGraph: ('ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: -9223372036854775808 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\\n', ())
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53: a value past it is refused, not rounded (ADR 0266)
+
+k13_client [convert] in.complex.zero
+  R2025b: ("str 'double [1 1] complex [3]'", ())
+  JGraph: ("str 'double [1 1] [3]'", ())
+  recorded: JGraph keeps an element with no imaginary part as a real number
+
+k13_client [convert] in.range
+  R2025b: ('ERR IndexError | unable to iterate over matlab.dictionary object', ())
+  JGraph: ("str 'cell [1 3] {int64 [1 1] [0]; int64 [1 1] [1]; int64 [1 1] [2]}'", ())
+  recorded: a range is a sequence as a list or tuple is, a cell row of int64; R2025b's runtime takes it for a dictionary and fails (ADR 0269)
+
+k13_client [convert] in.datetime
+  R2025b: ('str \'datetime [1 1] (Format=char [1 28] \\\'uuuu-MM-dd\\\'T\\\'HH:mm:ss.SSS\\\'Z\\\'\\\', TimeZone=string [1 1] [""], Year=double [1 1] [2026], Month=double [1 1] [1], Day=double [1 1] [2], Hour=double [1 1] [3], Minute=double [1 1] [4], Second=double [1 1] [5])\'', ())
+  JGraph: ('str "datetime [1 1] (Format=char [1 28] \'uuuu-MM-dd\'T\'HH:mm:ss.SSS\'Z\'\', TimeZone=char [0 0] \'\', Year=double [1 1] [2026], Month=double [1 1] [1], Day=double [1 1] [2], Hour=double [1 1] [3], Minute=double [1 1] [4], Second=double [1 1] [5])"', ())
+  recorded: a datetime made from Python keeps its TimeZone as char, as JGraph's datetimes do; R2025b's keeps the string it was made with (ADR 0269)
+
+k13_client [convert] in.m.complex.realvalues
+  R2025b: ("str 'double [1 2] complex [1 2]'", ())
+  JGraph: ("str 'double [1 2] [1 2]'", ())
+  recorded: JGraph keeps an element with no imaginary part as a real number
+
+k13_client [convert] in.m.int64
+  R2025b: ("str 'int64 [1 1] [-9007199254740993]'", ())
+  JGraph: ('ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: -9007199254740993 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\\n', ())
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53: a value past it is refused, not rounded (ADR 0266)
+
+k13_client [convert] in.m.uint64
+  R2025b: ("str 'uint64 [1 1] [1.844674e+19]'", ())
+  JGraph: ('ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: 18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\\n', ())
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53: a value past it is refused, not rounded (ADR 0266)
+
+k13_client [convert] in.m.int8.complex
+  R2025b: ("str 'int8 [1 1] complex [1]'", ())
+  JGraph: ('ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: JGraph keeps no complex int8 array: pass it as a complex double or single one.\\n', ())
+  recorded: JGraph keeps no complex integer arrays
+
+k13_client [convert] echo.int.2^62
+  R2025b: ('int 4611686018427387904', ())
+  JGraph: ('ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: 4611686018427387904 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.\\n', ())
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53: a value past it is refused, not rounded (ADR 0266)
+
+k13_client [convert] echo.m.uint64
+  R2025b: ('int 18446744073709551615', ())
+  JGraph: ('ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: 18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53.\\n', ())
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53: a value past it is refused, not rounded (ADR 0266)
+
+k13_client [convert] standard error, JGraph's report
+  int8 expects a number or numeric array, but got a complex.
+  recorded: JGraph keeps no complex integer arrays and no complex sparse arrays, so k9make fails making one
+
+k13_client [convert] standard error, JGraph's report
+  Error in k9make (line 30)
+  recorded: JGraph keeps no complex integer arrays and no complex sparse arrays, so k9make fails making one
+
+k13_client [convert] standard error, JGraph's report
+  sparse needs numbers, but element (0, 0) was a complex.
+  recorded: JGraph keeps no complex integer arrays and no complex sparse arrays, so k9make fails making one
+
+k13_client [convert] standard error, JGraph's report
+  Error in k9make (line 61)
+  recorded: JGraph keeps no complex integer arrays and no complex sparse arrays, so k9make fails making one
+
+k13_client [background] stdout.after
+  R2025b: ("str 'line 1\\nline 2\\n     2\\n\\nWarning: a warning about 2\\n> In k9print (line 7)\\n'", ())
+  JGraph: ("str 'line 1\\nline 2\\n2\\nWarning: a warning about 2\\n'", ())
+  recorded: a value's display is JGraph's own (open item 194), and a deployed warning prints no '> In' line in JGraph (open item 170)
+
+k13_client [life] after.terminate_runtime
+  R2025b: ('ERR SystemError | MclJmiUtils plugin not available', ())
+  JGraph: ('ERR SystemError | The JGraph Runtime has ended in this process: terminate_runtime() was called, and the runtime cannot start again in it.', ())
+  recorded: a package started after terminate_runtime() is refused in JGraph's words; R2025b's says MclJmiUtils plugin not available (ADR 0269)
+
+k13_client [runtime None] runtime.None
+  R2025b: ('ERR SystemError | <built-in function initializeApplication> returned a result with an exception set', ())
+  JGraph: ('None', ())
+  recorded: initialize_runtime(None) starts the runtime with no options, as an empty list does; R2025b's raises SystemError from its extension (ADR 0269)
+
+k13_client [runtime terminate] exit
+  R2025b: EXIT	TIMEOUT after 900 s (process tree killed)
+  JGraph: EXIT	0
+  recorded: R2025b's initialize() after terminate_runtime() never returns (ADR 0269)
+
+k13_client [runtime terminate] runtime.initialize
+  R2025b: (missing)
+  JGraph: ('ERR SystemError | The JGraph Runtime has ended in this process: terminate_runtime() was called, and the runtime cannot start again in it.', ())
+  recorded: initialize() after terminate_runtime() is refused at once; R2025b's never returns (ADR 0269)
+
+k13_client [runtime terminate] end
+  R2025b: (missing)
+  JGraph: ('runtime', ())
+  recorded: the run went on to its end where R2025b's hung (ADR 0269)
+
+k13_client [extra] dt.tz.in
+  R2025b: ('str \'datetime [1 1] (Format=char [1 28] \\\'uuuu-MM-dd\\\'T\\\'HH:mm:ss.SSS\\\'Z\\\'\\\', TimeZone=string [1 1] ["+00:00:00"], Year=double [1 1] [2026], Month=double [1 1] [1], Day=double [1 1] [2], Hour=double [1 1] [3], Minute=double [1 1] [4], Second=double [1 1] [5])\'', ())
+  JGraph: ('str "datetime [1 1] (Format=char [1 28] \'uuuu-MM-dd\'T\'HH:mm:ss.SSS\'Z\'\', TimeZone=char [1 9] \'+00:00:00\', Year=double [1 1] [2026], Month=double [1 1] [1], Day=double [1 1] [2], Hour=double [1 1] [3], Minute=double [1 1] [4], Second=double [1 1] [5])"', ())
+  recorded: a datetime made from Python keeps its TimeZone as char, as JGraph's datetimes do; R2025b's keeps the string it was made with (ADR 0269)
+
+k13_client [extra] dt.offset.in
+  R2025b: ('str \'datetime [1 1] (Format=char [1 28] \\\'uuuu-MM-dd\\\'T\\\'HH:mm:ss.SSS\\\'Z\\\'\\\', TimeZone=string [1 1] ["+02:00:00"], Year=double [1 1] [2026], Month=double [1 1] [1], Day=double [1 1] [2], Hour=double [1 1] [3], Minute=double [1 1] [4], Second=double [1 1] [5])\'', ())
+  JGraph: ('str "datetime [1 1] (Format=char [1 28] \'uuuu-MM-dd\'T\'HH:mm:ss.SSS\'Z\'\', TimeZone=char [1 9] \'+02:00:00\', Year=double [1 1] [2026], Month=double [1 1] [1], Day=double [1 1] [2], Hour=double [1 1] [3], Minute=double [1 1] [4], Second=double [1 1] [5])"', ())
+  recorded: a datetime made from Python keeps its TimeZone as char, as JGraph's datetimes do; R2025b's keeps the string it was made with (ADR 0269)
+
+k13_client [extra] dt.micro.in
+  R2025b: ('str \'datetime [1 1] (Format=char [1 28] \\\'uuuu-MM-dd\\\'T\\\'HH:mm:ss.SSS\\\'Z\\\'\\\', TimeZone=string [1 1] [""], Year=double [1 1] [2026], Month=double [1 1] [1], Day=double [1 1] [2], Hour=double [1 1] [3], Minute=double [1 1] [4], Second=double [1 1] [5.123456])\'', ())
+  JGraph: ('str "datetime [1 1] (Format=char [1 28] \'uuuu-MM-dd\'T\'HH:mm:ss.SSS\'Z\'\', TimeZone=char [0 0] \'\', Year=double [1 1] [2026], Month=double [1 1] [1], Day=double [1 1] [2], Hour=double [1 1] [3], Minute=double [1 1] [4], Second=double [1 1] [5.1234561000000003])"', ())
+  recorded: a datetime keeps its moment as milliseconds since 1899 in a double, about half a microsecond apart near 2026 (ADR 0269)
+
+k13_client [extra] dt.delta.echo
+  R2025b: ('datetime.timedelta datetime.timedelta(days=1, seconds=2)', ())
+  JGraph: ('datetime.timedelta datetime.timedelta(days=1, seconds=2, microseconds=3)', ())
+  recorded: a duration keeps a timedelta's microseconds; R2025b's drops what is finer than a millisecond (ADR 0269)
+
+k13_client [extra] dt.list.in
+  R2025b: ('str \'cell [1 1] {datetime [1 1] (Format=char [1 28] \\\'uuuu-MM-dd\\\'T\\\'HH:mm:ss.SSS\\\'Z\\\'\\\', TimeZone=string [1 1] [""], Year=double [1 1] [2026], Month=double [1 1] [1], Day=double [1 1] [2], Hour=double [1 1] [0], Minute=double [1 1] [0], Second=double [1 1] [0])}\'', ())
+  JGraph: ('str "cell [1 1] {datetime [1 1] (Format=char [1 28] \'uuuu-MM-dd\'T\'HH:mm:ss.SSS\'Z\'\', TimeZone=char [0 0] \'\', Year=double [1 1] [2026], Month=double [1 1] [1], Day=double [1 1] [2], Hour=double [1 1] [0], Minute=double [1 1] [0], Second=double [1 1] [0])}"', ())
+  recorded: a datetime made from Python keeps its TimeZone as char, as JGraph's datetimes do; R2025b's keeps the string it was made with (ADR 0269)
+
+k13_client [extra] in.range.list
+  R2025b: ('ERR IndexError | unable to iterate over matlab.dictionary object', ())
+  JGraph: ("str 'cell [1 1] {cell [1 2] {int64 [1 1] [0]; int64 [1 1] [1]}}'", ())
+  recorded: a range is a sequence as a list or tuple is, a cell row of int64; R2025b's runtime takes it for a dictionary and fails (ADR 0269)
