@@ -1,0 +1,53 @@
+{
+    "version": "1.0.0",
+    "pathmap": [
+        {
+            "match": "^/k15/web$",
+            "webhandler": {"component": "k15comp", "function": "k15web"}
+        },
+        {
+            "match": "^/k15/web/",
+            "webhandler": {"component": "k15comp", "function": "k15web"}
+        },
+        {
+            "match": "^/k15/q($|\\W+)",
+            "webhandler": {"component": "k15comp", "function": "k15web"}
+        },
+        {
+            "match": "^/k15/bad/",
+            "webhandler": {"component": "k15comp", "function": "k15webbad"}
+        },
+        {
+            "match": "^/k15/missingfn$",
+            "webhandler": {"component": "k15comp", "function": "k15nosuch"}
+        },
+        {
+            "match": "^/k15/othercomp$",
+            "webhandler": {"component": "k15other", "function": "k15web"}
+        },
+        {
+            "match": "^/k15/plain$",
+            "webhandler": {"component": "k15comp", "function": "k14add"}
+        },
+        {
+            "match": "^/k15/first$",
+            "webhandler": {"component": "k15comp", "function": "k15web"}
+        },
+        {
+            "match": "^/k15/first$",
+            "webhandler": {"component": "k15comp", "function": "k15webbad"}
+        },
+        {
+            "match": "k15/anywhere",
+            "webhandler": {"component": "k15comp", "function": "k15web"}
+        },
+        {
+            "match": "^/k15comp/k15web$",
+            "webhandler": {"component": "k15comp", "function": "k15web"}
+        },
+        {
+            "match": "^/k15/inst$",
+            "webhandler": {"component": "k15comp", "function": "k15web"}
+        }
+    ]
+}

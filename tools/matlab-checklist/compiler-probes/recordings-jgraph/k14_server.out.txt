@@ -6,8 +6,8 @@
   no.outputformat	200 OK	content-length=57; content-type=application/json	{"lhs":[{"mwdata":[3],"mwsize":[1,1],"mwtype":"double"}]}
   no.nargout	400 MissingOutputArgs nargout missing (request id=<N>)	content-length=0	
   no.rhs	400 MissingInputArgs rhs missing. (request id=<N>)	content-length=0	
-  rhs.number	200 OK	content-length=301; content-type=application/json	{"error":{"id":"MATLAB:minrhs","message":"Not enough input arguments.","stack":[{"file":"<F>/k14add.m","line":3,"name":"k14add"}],"type":"matlaberror"}}
-  rhs.object	200 OK	content-length=301; content-type=application/json	{"error":{"id":"MATLAB:minrhs","message":"Not enough input arguments.","stack":[{"file":"<F>/k14add.m","line":3,"name":"k14add"}],"type":"matlaberror"}}
+  rhs.number	200 OK	content-length=408; content-type=application/json	{"error":{"id":"MATLAB:minrhs","message":"Not enough input arguments.","stack":[{"file":"<F>/k14add.m","line":3,"name":"k14add"}],"type":"matlaberror"}}
+  rhs.object	200 OK	content-length=408; content-type=application/json	{"error":{"id":"MATLAB:minrhs","message":"Not enough input arguments.","stack":[{"file":"<F>/k14add.m","line":3,"name":"k14add"}],"type":"matlaberror"}}
   rhs.null	400 InvalidInputArgs Invalid rhs. (request id=<N>)	content-length=0	
   rhs.empty	200 OK	content-length=59; content-type=application/json	{"lhs":[{"mwdata":[0,1],"mwsize":[1,2],"mwtype":"double"}]}
   nargout.text	400 InvalidInput Invalid input (request id=<N>)	content-length=0	
@@ -195,25 +195,25 @@
   out.large.dict	500 ReturnTypeNotSupported Function return type not supported. (request id=<N>)	content-length=0	
   out.large	200 OK	content-length=588908; content-type=application/json	<588908 bytes md5 7f8cab07ecf5162e357e571c3920c776>
   out.large.large	200 OK	content-length=588955; content-type=application/json	<588955 bytes md5 13b4791bdf187e4ae275a955bec34f18>
-  out.nosuchkind	200 OK	content-length=297; content-type=application/json	{"error":{"id":"k14:make","message":"No such kind: nosuchkind.","stack":[{"file":"<F>/k14make.m","line":59,"name":"k14make"}],"type":"matlaberror"}}
-  out.large.nosuchkind	200 OK	content-length=297; content-type=application/json	{"error":{"id":"k14:make","message":"No such kind: nosuchkind.","stack":[{"file":"<F>/k14make.m","line":59,"name":"k14make"}],"type":"matlaberror"}}
+  out.nosuchkind	200 OK	content-length=404; content-type=application/json	{"error":{"id":"k14:make","message":"No such kind: nosuchkind.","stack":[{"file":"<F>/k14make.m","line":59,"name":"k14make"}],"type":"matlaberror"}}
+  out.large.nosuchkind	200 OK	content-length=404; content-type=application/json	{"error":{"id":"k14:make","message":"No such kind: nosuchkind.","stack":[{"file":"<F>/k14make.m","line":59,"name":"k14make"}],"type":"matlaberror"}}
   out.inf.object	200 OK	content-length=65; content-type=application/json	{"lhs":[[[{"mwdata":"Inf"},{"mwdata":"-Inf"},{"mwdata":"NaN"}]]]}
   out.large.inf.object	200 OK	content-length=74; content-type=application/json	{"lhs":[{"mwdata":["Inf","-Inf","NaN"],"mwsize":[1,3],"mwtype":"double"}]}
   out.nan.object	200 OK	content-length=26; content-type=application/json	{"lhs":[{"mwdata":"NaN"}]}
-  error.plain	200 OK	content-length=275; content-type=application/json	{"error":{"id":"","message":"A plain error.","stack":[{"file":"<F>/k14err.m","line":4,"name":"k14err"}],"type":"matlaberror"}}
-  error.id	200 OK	content-length=299; content-type=application/json	{"error":{"id":"k14:bad","message":"An error with an identifier: 7.","stack":[{"file":"<F>/k14err.m","line":5,"name":"k14err"}],"type":"matlaberror"}}
-  error.nested	200 OK	content-length=499; content-type=application/json	{"error":{"id":"k14:deep","message":"Raised two calls down.","stack":[{"file":"<F>/k14err.m","line":21,"name":"k14err>k14inner"},{"file":"<F>/k14err.m","line":6,"name":"k14err"}],"type":"matlaberror"}}
-  error.cause	200 OK	content-length=287; content-type=application/json	{"error":{"id":"k14:outer","message":"The outer error.","stack":[{"file":"<F>/k14err.m","line":10,"name":"k14err"}],"type":"matlaberror"}}
-  error.builtin	200 OK	content-length=528; content-type=application/json	{"error":{"id":"MATLAB:innerdim","message":"Incorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication.","stack":[{"file":"<F>/k14err.m","line":11,"name":"k14err"}],"type":"matlaberror"}}
-  error.undefined	200 OK	content-length=362; content-type=application/json	{"error":{"id":"MATLAB:UndefinedFunction","message":"Undefined function 'k14nosuchfunction' for input arguments of type 'double'.","stack":[{"file":"<F>/k14err.m","line":12,"name":"k14err"}],"type":"matlaberror"}}
-  error.multiline	200 OK	content-length=296; content-type=application/json	{"error":{"id":"k14:lines","message":"First line.\nSecond line.","stack":[{"file":"<F>/k14err.m","line":13,"name":"k14err"}],"type":"matlaberror"}}
-  error.quote	200 OK	content-length=284; content-type=application/json	{"error":{"id":"k14:quote","message":"A \"quoted\" ","stack":[{"file":"<F>/k14err.m","line":14,"name":"k14err"}],"type":"matlaberror"}}
-  error.id.large	200 OK	content-length=299; content-type=application/json	{"error":{"id":"k14:bad","message":"An error with an identifier: 7.","stack":[{"file":"<F>/k14err.m","line":5,"name":"k14err"}],"type":"matlaberror"}}
-  error.id.nargout0	200 OK	content-length=299; content-type=application/json	{"error":{"id":"k14:bad","message":"An error with an identifier: 7.","stack":[{"file":"<F>/k14err.m","line":5,"name":"k14err"}],"type":"matlaberror"}}
+  error.plain	200 OK	content-length=382; content-type=application/json	{"error":{"id":"","message":"A plain error.","stack":[{"file":"<F>/k14err.m","line":4,"name":"k14err"}],"type":"matlaberror"}}
+  error.id	200 OK	content-length=406; content-type=application/json	{"error":{"id":"k14:bad","message":"An error with an identifier: 7.","stack":[{"file":"<F>/k14err.m","line":5,"name":"k14err"}],"type":"matlaberror"}}
+  error.nested	200 OK	content-length=713; content-type=application/json	{"error":{"id":"k14:deep","message":"Raised two calls down.","stack":[{"file":"<F>/k14err.m","line":21,"name":"k14err>k14inner"},{"file":"<F>/k14err.m","line":6,"name":"k14err"}],"type":"matlaberror"}}
+  error.cause	200 OK	content-length=394; content-type=application/json	{"error":{"id":"k14:outer","message":"The outer error.","stack":[{"file":"<F>/k14err.m","line":10,"name":"k14err"}],"type":"matlaberror"}}
+  error.builtin	200 OK	content-length=635; content-type=application/json	{"error":{"id":"MATLAB:innerdim","message":"Incorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication.","stack":[{"file":"<F>/k14err.m","line":11,"name":"k14err"}],"type":"matlaberror"}}
+  error.undefined	200 OK	content-length=469; content-type=application/json	{"error":{"id":"MATLAB:UndefinedFunction","message":"Undefined function 'k14nosuchfunction' for input arguments of type 'double'.","stack":[{"file":"<F>/k14err.m","line":12,"name":"k14err"}],"type":"matlaberror"}}
+  error.multiline	200 OK	content-length=403; content-type=application/json	{"error":{"id":"k14:lines","message":"First line.\nSecond line.","stack":[{"file":"<F>/k14err.m","line":13,"name":"k14err"}],"type":"matlaberror"}}
+  error.quote	200 OK	content-length=391; content-type=application/json	{"error":{"id":"k14:quote","message":"A \"quoted\" ","stack":[{"file":"<F>/k14err.m","line":14,"name":"k14err"}],"type":"matlaberror"}}
+  error.id.large	200 OK	content-length=406; content-type=application/json	{"error":{"id":"k14:bad","message":"An error with an identifier: 7.","stack":[{"file":"<F>/k14err.m","line":5,"name":"k14err"}],"type":"matlaberror"}}
+  error.id.nargout0	200 OK	content-length=406; content-type=application/json	{"error":{"id":"k14:bad","message":"An error with an identifier: 7.","stack":[{"file":"<F>/k14err.m","line":5,"name":"k14err"}],"type":"matlaberror"}}
   error.none	200 OK	content-length=11; content-type=application/json	{"lhs":[1]}
   error.too.many.in	200 OK	content-length=109; content-type=application/json	{"error":{"id":"MATLAB:TooManyInputs","message":"Too many input arguments.","stack":[],"type":"matlaberror"}}
-  error.too.few.in	200 OK	content-length=301; content-type=application/json	{"error":{"id":"MATLAB:minrhs","message":"Not enough input arguments.","stack":[{"file":"<F>/k14add.m","line":3,"name":"k14add"}],"type":"matlaberror"}}
-  error.make.unknown	200 OK	content-length=293; content-type=application/json	{"error":{"id":"k14:make","message":"No such kind: nosuch.","stack":[{"file":"<F>/k14make.m","line":59,"name":"k14make"}],"type":"matlaberror"}}
+  error.too.few.in	200 OK	content-length=408; content-type=application/json	{"error":{"id":"MATLAB:minrhs","message":"Not enough input arguments.","stack":[{"file":"<F>/k14add.m","line":3,"name":"k14add"}],"type":"matlaberror"}}
+  error.make.unknown	200 OK	content-length=400; content-type=application/json	{"error":{"id":"k14:make","message":"No such kind: nosuch.","stack":[{"file":"<F>/k14make.m","line":59,"name":"k14make"}],"type":"matlaberror"}}
   noout.nargout0	200 OK	content-length=10; content-type=application/json	{"lhs":[]}
   noout.nargout1	200 OK	content-length=111; content-type=application/json	{"error":{"id":"MATLAB:TooManyOutputs","message":"Too many output arguments.","stack":[],"type":"matlaberror"}}
   print	200 OK	content-length=11; content-type=application/json	{"lhs":[2]}
@@ -278,8 +278,8 @@
   path.encoded.slash	404 ResourceNotFound URI-path not of form '/APPLICATION/FUNCTION' (request id=<N>)	content-length=0	
   path.query	200 OK	content-length=11; content-type=application/json	{"lhs":[3]}
   path.query.sync	200 OK	content-length=11; content-type=application/json	{"lhs":[3]}
-  path.query.async	200 OK	content-length=11; content-type=application/json	{"lhs":[3]}
-  path.query.async.client	200 OK	content-length=11; content-type=application/json	{"lhs":[3]}
+  path.query.async	201 Created	content-length=244; content-type=application/json; location=/~<UUID>/requests/<UUID>; x-mps-start-time=00df336fa830b410	{"id":"<UUID>","self":"/~<UUID>/requests/<UUID>","up":"/~<UUID>/requests","lastModifiedSeq":1,"state":"READING","client":""}
+  path.query.async.client	201 Created	content-length=248; content-type=application/json; location=/~<UUID>/requests/<UUID>; x-mps-start-time=00df336fa8314166	{"id":"<UUID>","self":"/~<UUID>/requests/<UUID>","up":"/~<UUID>/requests","lastModifiedSeq":5,"state":"READING","client":"k14c"}
   path.query.bogus	200 OK	content-length=11; content-type=application/json	{"lhs":[3]}
   path.double.slash	404 ResourceNotFound URI-path not of form '/APPLICATION/FUNCTION' (request id=<N>)	content-length=0	
   path.dot.segment	404 ResourceNotFound URI-path not of form '/APPLICATION/FUNCTION' (request id=<N>)	content-length=0	
@@ -305,15 +305,15 @@
   preflight.null.origin	200 OK	access-control-allow-methods=POST, GET, DELETE; access-control-allow-origin=null; content-length=0	
   post.origin	200 OK	access-control-allow-origin=http://client.k14.test; content-length=11; content-type=application/json; vary=Origin	{"lhs":[3]}
   post.origin.https	200 OK	access-control-allow-origin=https://other.k14.test:8443; content-length=11; content-type=application/json; vary=Origin	{"lhs":[3]}
-  post.origin.error	200 OK	access-control-allow-origin=http://client.k14.test; content-length=299; content-type=application/json; vary=Origin	{"error":{"id":"k14:bad","message":"An error with an identifier: 7.","stack":[{"file":"<F>/k14err.m","line":5,"name":"k14err"}],"type":"matlaberror"}}
+  post.origin.error	200 OK	access-control-allow-origin=http://client.k14.test; content-length=406; content-type=application/json; vary=Origin	{"error":{"id":"k14:bad","message":"An error with an identifier: 7.","stack":[{"file":"<F>/k14err.m","line":5,"name":"k14err"}],"type":"matlaberror"}}
   post.origin.bad.json	400 InvalidJson Invalid JSON (request id=<N>)	access-control-allow-origin=http://client.k14.test; content-length=0; vary=Origin	
   post.origin.missing	404 FunctionNotFound Function not found. (request id=<N>)	access-control-allow-origin=http://client.k14.test; content-length=0; vary=Origin	
-  get.origin.discovery	200 OK	access-control-allow-origin=http://client.k14.test; content-length=754; content-type=application/json; vary=Origin	{"discoverySchemaVersion":"1.0.0","archives":{"k14comp":{"archiveSchemaVersion":"1.2.0","archiveUuid":"","functions":{"k14add":{"signatures":[{"help":"Add two values.","inputs":[{"help":"The first addend.","mwsize":[1,1],"mwtype":"double","name":"a"},{"help":"The second addend.","mwsize":[],"mwtype":"double","name":"b"}],"outputs":[{"help":"Their sum.","mwsize":[],"mwtype":"double","name":"c"}]}]},"k14multi":{"signatures":[{"help":"Three outputs of three classes.","inputs":[{"help":"","mwsize":[],"mwtype":"","name":"x"}],"outputs":[{"help":"","mwsize":[],"mwtype":"","name":"a"},{"help":"","mwsize":[],"mwtype":"","name":"b"},{"help":"","mwsize":[],"mwtype":"char","name":"c"}]}]}},"matlabRuntimeRelease":"R2025b","matlabRuntimeVersion":"25.2.0"}}}
-  get.origin.health	200 OK	access-control-allow-origin=http://client.k14.test; content-length=0; vary=Origin	
+  get.origin.discovery	200 OK	access-control-allow-origin=http://client.k14.test; content-length=798; content-type=application/json; vary=Origin	{"discoverySchemaVersion":"1.0.0","archives":{"k14comp":{"archiveSchemaVersion":"1.2.0","archiveUuid":"k14comp_<UUID>","functions":{"k14add":{"signatures":[{"help":"Add two values.","inputs":[{"help":"The first addend.","mwsize":[1,1],"mwtype":"double","name":"a"},{"help":"The second addend.","mwsize":[],"mwtype":"double","name":"b"}],"outputs":[{"help":"Their sum.","mwsize":[],"mwtype":"double","name":"c"}]}]},"k14multi":{"signatures":[{"help":"Three outputs of three classes.","inputs":[{"help":"","mwsize":[],"mwtype":"","name":"x"}],"outputs":[{"help":"","mwsize":[],"mwtype":"","name":"a"},{"help":"","mwsize":[],"mwtype":"","name":"b"},{"help":"","mwsize":[],"mwtype":"char","name":"c"}]}]}},"matlabRuntimeRelease":"R2025b","matlabRuntimeVersion":"25.2.0"}}}
+  get.origin.health	200 OK	access-control-allow-origin=http://client.k14.test; content-length=15; content-type=application/json; vary=Origin	{"status":"ok"}
   post.no.origin	200 OK	content-length=11; content-type=application/json	{"lhs":[3]}
   == api
-  get.discovery	200 OK	content-length=754; content-type=application/json	{"discoverySchemaVersion":"1.0.0","archives":{"k14comp":{"archiveSchemaVersion":"1.2.0","archiveUuid":"","functions":{"k14add":{"signatures":[{"help":"Add two values.","inputs":[{"help":"The first addend.","mwsize":[1,1],"mwtype":"double","name":"a"},{"help":"The second addend.","mwsize":[],"mwtype":"double","name":"b"}],"outputs":[{"help":"Their sum.","mwsize":[],"mwtype":"double","name":"c"}]}]},"k14multi":{"signatures":[{"help":"Three outputs of three classes.","inputs":[{"help":"","mwsize":[],"mwtype":"","name":"x"}],"outputs":[{"help":"","mwsize":[],"mwtype":"","name":"a"},{"help":"","mwsize":[],"mwtype":"","name":"b"},{"help":"","mwsize":[],"mwtype":"char","name":"c"}]}]}},"matlabRuntimeRelease":"R2025b","matlabRuntimeVersion":"25.2.0"}}}
-  get.health	200 OK	content-length=0	
+  get.discovery	200 OK	content-length=798; content-type=application/json	{"discoverySchemaVersion":"1.0.0","archives":{"k14comp":{"archiveSchemaVersion":"1.2.0","archiveUuid":"k14comp_<UUID>","functions":{"k14add":{"signatures":[{"help":"Add two values.","inputs":[{"help":"The first addend.","mwsize":[1,1],"mwtype":"double","name":"a"},{"help":"The second addend.","mwsize":[],"mwtype":"double","name":"b"}],"outputs":[{"help":"Their sum.","mwsize":[],"mwtype":"double","name":"c"}]}]},"k14multi":{"signatures":[{"help":"Three outputs of three classes.","inputs":[{"help":"","mwsize":[],"mwtype":"","name":"x"}],"outputs":[{"help":"","mwsize":[],"mwtype":"","name":"a"},{"help":"","mwsize":[],"mwtype":"","name":"b"},{"help":"","mwsize":[],"mwtype":"char","name":"c"}]}]}},"matlabRuntimeRelease":"R2025b","matlabRuntimeVersion":"25.2.0"}}}
+  get.health	200 OK	content-length=15; content-type=application/json	{"status":"ok"}
   get.metrics	403 Metrics Disabled (request id=<N>)	content-length=0	
   get.statistics	403 Statistics Disabled (request id=<N>)	content-length=0	
   get.archives	403 Archive Management Disabled (request id=<N>)	content-length=0	
@@ -345,15 +345,15 @@
   preflight.null.origin	405 MethodNotAllowed Unsupported method (request id=<N>)	content-length=0	
   post.origin	200 OK	content-length=11; content-type=application/json	{"lhs":[3]}
   post.origin.https	200 OK	content-length=11; content-type=application/json	{"lhs":[3]}
-  post.origin.error	200 OK	content-length=299; content-type=application/json	{"error":{"id":"k14:bad","message":"An error with an identifier: 7.","stack":[{"file":"<F>/k14err.m","line":5,"name":"k14err"}],"type":"matlaberror"}}
+  post.origin.error	200 OK	content-length=406; content-type=application/json	{"error":{"id":"k14:bad","message":"An error with an identifier: 7.","stack":[{"file":"<F>/k14err.m","line":5,"name":"k14err"}],"type":"matlaberror"}}
   post.origin.bad.json	400 InvalidJson Invalid JSON (request id=<N>)	content-length=0	
   post.origin.missing	404 FunctionNotFound Function not found. (request id=<N>)	content-length=0	
   get.origin.discovery	403 Discovery Disabled (request id=<N>)	content-length=0	
-  get.origin.health	200 OK	content-length=0	
+  get.origin.health	200 OK	content-length=15; content-type=application/json	{"status":"ok"}
   post.no.origin	200 OK	content-length=11; content-type=application/json	{"lhs":[3]}
   == api
   get.discovery	403 Discovery Disabled (request id=<N>)	content-length=0	
-  get.health	200 OK	content-length=0	
+  get.health	200 OK	content-length=15; content-type=application/json	{"status":"ok"}
   get.metrics	403 Metrics Disabled (request id=<N>)	content-length=0	
   get.statistics	403 Statistics Disabled (request id=<N>)	content-length=0	
   get.archives	403 Archive Management Disabled (request id=<N>)	content-length=0	

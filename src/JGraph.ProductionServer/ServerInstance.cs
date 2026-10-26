@@ -25,6 +25,15 @@ public sealed class ServerInstance
     /// <summary>The folder the log is written in.</summary>
     public string LogFolder => Path.GetFullPath(Path.Combine(Root, Config.LogRoot));
 
+    /// <summary>The instance's routes file (<c>--routes-file</c>), relative to the instance's folder when not absolute; null when it has none.</summary>
+    public string? RoutesFilePath => Config.RoutesFile is { } file ? Path.GetFullPath(Path.Combine(Root, file)) : null;
+
+    /// <summary>The file <c>run</c> writes the server's address to.</summary>
+    public string EndpointFile => Path.Combine(Root, "endpoint", "http");
+
+    /// <summary>The file <c>run</c> writes its process id to.</summary>
+    public string PidFile => Path.Combine(Root, "pid", "main.pid");
+
     /// <summary>The config file's path.</summary>
     public static string ConfigPath(string root) => Path.Combine(root, "config", "main_config");
 

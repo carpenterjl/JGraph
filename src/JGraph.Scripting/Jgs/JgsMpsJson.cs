@@ -134,7 +134,7 @@ internal static class JgsMpsJson
     /// (k14_server: error.*): the identifier, the message, the M-code frames innermost first, each
     /// <c>{"file","line","name"}</c>, and <c>"type":"matlaberror"</c>, the keys in order.
     /// </summary>
-    public static string EncodeError(string identifier, string message, IReadOnlyList<(string Name, string File, int Line)> frames)
+    public static string EncodeError(string identifier, string message, IReadOnlyList<(string Name, string File, int Line)> frames, bool withStack = true)
     {
         var stack = new List<Node>(frames.Count);
         foreach ((string name, string file, int line) in frames)
@@ -142,13 +142,21 @@ internal static class JgsMpsJson
             stack.Add(new Obj([("file", new Str(file)), ("line", new Num(line.ToString(CultureInfo.InvariantCulture))), ("name", new Str(name))]));
         }
 
-        var error = new Obj(
-        [
-            ("id", new Str(identifier)),
-            ("message", new Str(message)),
-            ("stack", new Arr(stack)),
-            ("type", new Str("matlaberror")),
-        ]);
+        // With --hide-matlab-error-stack the server leaves the key out altogether (k15_server: hidden.*).
+        var error = new Obj(withStack
+            ?
+            [
+                ("id", new Str(identifier)),
+                ("message", new Str(message)),
+                ("stack", new Arr(stack)),
+                ("type", new Str("matlaberror")),
+            ]
+            :
+            [
+                ("id", new Str(identifier)),
+                ("message", new Str(message)),
+                ("type", new Str("matlaberror")),
+            ]);
         var text = new StringBuilder();
         Emit(text, new Obj([("error", error)]), pretty: false, 0);
         return text.ToString();

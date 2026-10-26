@@ -1,0 +1,17 @@
+prodserver.metrics.incrementCounter	0	0
+prodserver.metrics.setGauge	0	0
+mps.cache.control	1	0
+mps.cache.connect	1	0
+mps.cache.configure	1	0
+mps.sync.mutex	1	0
+mps.cache.Connection.list	1	0
+mps.cache.Connection.exist	1	0
+mps.cache.Connection.clear	1	0
+mps.cache.Connection.release	1	0
+mps.cache.Connection.disconnect	1	0
+mps.cache.Connection.reset	1	0
+mps.cache.Location.Local	ERR:MATLAB:narginout:notValidMfile	0
+mps.cache.Location.Remote	ERR:MATLAB:narginout:notValidMfile	0
+mps.cache.TriStateBoolean.True	ERR:MATLAB:narginout:notValidMfile	0
+mps.cache.TriStateBoolean.False	ERR:MATLAB:narginout:notValidMfile	0
+mps.cache.TriStateBoolean.Unknown	ERR:MATLAB:narginout:notValidMfile	0

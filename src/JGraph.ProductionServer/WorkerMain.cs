@@ -7,7 +7,8 @@ namespace JGraph.ProductionServer;
 /// The worker process, <c>jgraph-mps worker</c> (compiler and SDK plan, stage K14): a JGraph Runtime host
 /// that opens the archives the server deploys and calls their functions for the requests it is
 /// handed, one at a time, on the engine thread. Its standard output carries the protocol and its
-/// console the engine's output, which goes to standard error for the server's log.
+/// console the engine's output, which goes to standard error for the server's log and its metrics
+/// (stage K15).
 /// </summary>
 internal static class WorkerMain
 {
@@ -18,6 +19,8 @@ internal static class WorkerMain
         using Stream input = Console.OpenStandardInput();
         using Stream output = Console.OpenStandardOutput();
         Console.SetOut(Console.Error);
+        // A fault on any thread names itself in the server's log before the process ends.
+        AppDomain.CurrentDomain.UnhandledException += static (_, e) => Console.Error.WriteLine("[unhandled] " + e.ExceptionObject);
         JgRuntime.Initialize();
 
         var components = new Dictionary<string, Component>(StringComparer.Ordinal);
@@ -47,6 +50,11 @@ internal static class WorkerMain
             {
                 break;
             }
+            catch (Exception ex) when (ex is IOException or InvalidDataException or System.Text.Json.JsonException)
+            {
+                Console.Error.WriteLine("[request stream] " + ex.GetType().Name + ": " + ex.Message);
+                break;
+            }
 
             if (request is null || request.Op == "shutdown")
             {
@@ -63,7 +71,8 @@ internal static class WorkerMain
                             old.Dispose();
                         }
 
-                        Component component = Component.Open(request.Path!, ownSession: true);
+                        // A fresh runtime, its beep on, as muserve's worker starts (k15_server: quiet answers on).
+                        Component component = Component.Open(request.Path!, ownSession: true, cacheFolderName: request.Folder, cacheDirectory: request.CacheRoot);
                         components[request.Name!] = component;
                         await Send(new WorkerProtocol.Reply(request.Id, 200, "OK", Functions: [.. component.Functions])).ConfigureAwait(false);
                     }
@@ -89,6 +98,7 @@ internal static class WorkerMain
 
                     break;
                 case "call":
+                case "web":
                 {
                     if (!components.TryGetValue(request.Name!, out Component? component))
                     {
@@ -103,8 +113,21 @@ internal static class WorkerMain
                     {
                         try
                         {
-                            MpsReply reply = await MpsCalls.CallAsync(component, request.Function!, request.Body ?? "", request.HideStack, source.Token).ConfigureAwait(false);
-                            await Send(new WorkerProtocol.Reply(request.Id, reply.Status, reply.Reason, reply.Body)).ConfigureAwait(false);
+                            if (request.Op == "web")
+                            {
+                                WorkerProtocol.WebRequest web = request.Web!;
+                                MpsWebReply reply = await MpsCalls.WebAsync(
+                                    component, request.Function!, web.Method, web.Path, web.HttpVersion,
+                                    [.. web.Headers.Select(static h => (h[0], h[1]))], Convert.FromBase64String(web.BodyBase64), source.Token).ConfigureAwait(false);
+                                await Send(new WorkerProtocol.Reply(request.Id, reply.Status, reply.Reason,
+                                    WebHeaders: [.. reply.Headers.Select(static h => new[] { h.Name, h.Value })],
+                                    WebBodyBase64: Convert.ToBase64String(reply.Body), WebRefused: reply.Refused)).ConfigureAwait(false);
+                            }
+                            else
+                            {
+                                MpsReply reply = await MpsCalls.CallAsync(component, request.Function!, request.Body ?? "", request.HideStack, source.Token).ConfigureAwait(false);
+                                await Send(new WorkerProtocol.Reply(request.Id, reply.Status, reply.Reason, reply.Body)).ConfigureAwait(false);
+                            }
                         }
                         catch (OperationCanceledException)
                         {

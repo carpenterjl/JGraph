@@ -421,7 +421,8 @@ internal static partial class JgsBuiltins
     /// <summary>One argument of <c>strrep</c> as text; a number is read as character codes, as MATLAB does with a warning.</summary>
     private static TextBundle StrRepText(JgsValue value, int line, int col)
     {
-        if (value.IsCharMatrix)
+        // A char of one row or none (char(zeros(1, 0, 'uint8')), a web request's empty body) is a row vector to strrep (stage K15).
+        if (value.IsCharMatrix && value.CharMatrixRows().Length > 1)
         {
             throw JgsRunningDialect.ThreadIsMatlab
                 ? new JgsRuntimeException(line, col, "MATLAB:strrep:MultiRowInput", "Char inputs must be row vectors.")

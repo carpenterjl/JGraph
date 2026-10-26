@@ -117,9 +117,10 @@ public sealed class ScriptDeployment : IDisposable
     /// <param name="commandLine">The program's command line, <c>-mcruserdata</c> pairs included.</param>
     /// <param name="cacheDirectory">The runtime cache's folder; <see cref="CacheDirectory"/> when not given.</param>
     /// <param name="runtimeOptions">The options the runtime runs under; the archive's own when not given.</param>
+    /// <param name="cacheFolderName">The name the cache folder gets when the archive is extracted now (stage K15); the cache's own when null.</param>
     /// <exception cref="InvalidDataException">The file holds no JGraph archive, or a damaged one.</exception>
     public static ScriptDeployment FromArchive(
-        string archivePath, IReadOnlyList<string> commandLine, string? cacheDirectory = null, RuntimeOptions? runtimeOptions = null)
+        string archivePath, IReadOnlyList<string> commandLine, string? cacheDirectory = null, RuntimeOptions? runtimeOptions = null, string? cacheFolderName = null)
     {
         ArgumentException.ThrowIfNullOrEmpty(archivePath);
         ArgumentNullException.ThrowIfNull(commandLine);
@@ -127,7 +128,7 @@ public sealed class ScriptDeployment : IDisposable
         string? beside = SeparateArchive(archivePath);
         using CtfArchiveReader archive = CtfArchiveReader.Open(beside ?? archivePath);
         CacheEntry entry = beside is null
-            ? new RuntimeCache(cache).Open(archive, Environment.GetEnvironmentVariable("MCR_CACHE_SIZE"))
+            ? new RuntimeCache(cache).Open(archive, Environment.GetEnvironmentVariable("MCR_CACHE_SIZE"), cacheFolderName)
             : RuntimeCache.OpenBeside(archive, Path.Combine(
                 Path.GetDirectoryName(Path.GetFullPath(archivePath))!, Path.GetFileNameWithoutExtension(archivePath) + "_mcr"));
         try

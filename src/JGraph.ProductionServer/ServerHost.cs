@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.Net;
+using System.Text;
 using JGraph.Deploy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,32 +15,42 @@ using Microsoft.Extensions.Logging;
 namespace JGraph.ProductionServer;
 
 /// <summary>
-/// A running JGraph Production Server (compiler and SDK plan, stage K14): Kestrel on the instance's
-/// <c>--http</c> address (decision KO6), the worker pool, and the archive watcher. One request is
-/// <c>POST /&lt;archive&gt;/&lt;function&gt;</c> with a JSON body; the status codes, reason phrases and headers
-/// are those MATLAB Production Server's in-MATLAB test server answered (<c>k14_server</c>): a 404
-/// <c>ResourceNotFound URI-path not of form '/APPLICATION/FUNCTION'</c> for any other path shape, 404
-/// <c>ComponentNotFound</c> and <c>FunctionNotFound</c>, 405 <c>MethodNotAllowed Unsupported method</c>
-/// for methods but POST, 400 <c>MissingContentType</c> and 415 <c>UnsupportedContentType</c>, 400
-/// <c>InvalidJson</c> and <c>InvalidInput</c> for bodies that are not requests, 200 with the outputs or
-/// the error, and 500 <c>ReturnTypeNotSupported</c> for an output JSON cannot hold; CORS preflights
-/// and the <c>Access-Control-Allow-Origin</c> and <c>Vary</c> headers with <c>--cors-allowed-origins</c>;
-/// <c>GET /api/discovery</c> with <c>--enable-discovery</c>. Each refusal's phrase ends with the request's
-/// id, <c>(request id=0:n:0)</c>, as R2025b's do.
+/// A running JGraph Production Server (compiler and SDK plan, stages K14 and K15): Kestrel on the
+/// instance's <c>--http</c> address (decision KO6), the worker pool, the archive watcher, the route
+/// table, the metrics and the asynchronous requests. One request is <c>POST /&lt;archive&gt;/&lt;function&gt;</c>
+/// with a JSON body; the status codes, reason phrases and headers are those MATLAB Production
+/// Server's in-MATLAB test server and R2025b's muserve answered (<c>k14_server</c>, <c>k15_server</c>),
+/// which agree case for case: a 404 <c>ResourceNotFound URI-path not of form '/APPLICATION/FUNCTION'</c>
+/// for any other path shape, 404 <c>ComponentNotFound</c> and <c>FunctionNotFound</c>, 405
+/// <c>MethodNotAllowed Unsupported method</c> for methods but POST, 400 <c>MissingContentType</c> and 415
+/// <c>UnsupportedContentType</c>, 400 <c>InvalidJson</c> and <c>InvalidInput</c> for bodies that are not
+/// requests, 200 with the outputs or the error, 500 <c>ReturnTypeNotSupported</c> for an output JSON
+/// cannot hold, 413 past <c>--request-size-limit</c>; CORS preflights and the <c>Access-Control-Allow-Origin</c>
+/// and <c>Vary</c> headers with <c>--cors-allowed-origins</c>; <c>GET /api/discovery</c>, <c>/api/health</c>
+/// and <c>/api/metrics</c>; the paths a routes file maps to web handlers; and <c>?mode=async</c>, the
+/// asynchronous request protocol of the RESTful API's documentation. Each refusal's phrase ends with
+/// the request's id, <c>(request id=0:n:0)</c>, as R2025b's do.
 /// </summary>
 public sealed class ServerHost : IAsyncDisposable
 {
+    private static readonly string[] KnownMethods = ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"];
+
     private readonly WebApplication _app;
     private readonly WorkerPool _pool;
     private readonly ArchiveWatcher _watcher;
+    private readonly RouteTable _routes;
+    private readonly MetricsRegistry _metrics;
+    private readonly AsyncRequestRegistry _async = new();
     private readonly ConcurrentDictionary<string, CtfManifest> _manifests = new(StringComparer.Ordinal);
     private long _requests;
 
-    private ServerHost(WebApplication app, WorkerPool pool, ArchiveWatcher watcher, ServerInstance instance, Action<string> log)
+    private ServerHost(WebApplication app, WorkerPool pool, ArchiveWatcher watcher, RouteTable routes, MetricsRegistry metrics, ServerInstance instance, Action<string> log)
     {
         _app = app;
         _pool = pool;
         _watcher = watcher;
+        _routes = routes;
+        _metrics = metrics;
         Instance = instance;
         Log = log;
     }
@@ -60,6 +71,7 @@ public sealed class ServerHost : IAsyncDisposable
     /// Starts the workers, deploys the archives and listens. <paramref name="port"/> overrides the
     /// config's (0 for any free port, as the tests take).
     /// </summary>
+    /// <exception cref="InvalidOperationException">The instance's routes file is not as it should be; the server does not start, as MPS does not.</exception>
     public static async Task<ServerHost> StartAsync(ServerInstance instance, int? port, Action<string> log, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(instance);
@@ -70,9 +82,23 @@ public sealed class ServerHost : IAsyncDisposable
             log($"main_config: {unread} is not read by jgraph-mps");
         }
 
-        var pool = new WorkerPool(config.Workers, log);
+        var routes = new RouteTable();
+        if (instance.RoutesFilePath is { } routesFile)
+        {
+            try
+            {
+                routes.LoadInstanceFile(routesFile);
+            }
+            catch (Exception ex) when (ex is RoutesException or IOException or UnauthorizedAccessException)
+            {
+                throw new InvalidOperationException($"The routes file '{routesFile}' cannot be used: {ex.Message}", ex);
+            }
+        }
+
+        var metrics = new MetricsRegistry();
+        var pool = new WorkerPool(config.Workers, log, line => metrics.ReadLine(line));
         await pool.StartAsync().ConfigureAwait(false);
-        var watcher = new ArchiveWatcher(instance.AutoDeployFolder, pool, log);
+        var watcher = new ArchiveWatcher(instance.AutoDeployFolder, Path.Combine(instance.Root, ".jgraph_deployed"), pool, routes, log);
 
         (string host, int configured) = config.Http;
         int listenOn = port ?? configured;
@@ -82,13 +108,30 @@ public sealed class ServerHost : IAsyncDisposable
         {
             options.AddServerHeader = false;
             options.Limits.MaxRequestBodySize = config.RequestSizeLimit;
-            IPAddress address = host is "localhost" or "127.0.0.1" ? IPAddress.Loopback
-                : host == "0.0.0.0" || host == "*" ? IPAddress.Any
-                : IPAddress.TryParse(host, out IPAddress? parsed) ? parsed : IPAddress.Loopback;
-            options.Listen(address, listenOn);
+            // localhost is both loopbacks (a client resolving localhost may try ::1 first, and a SYN to
+            // an unbound ::1 was seen to hang on Windows); a port alone binds every interface, as MPS does.
+            if (host is "localhost" or "127.0.0.1")
+            {
+                if (listenOn == 0)
+                {
+                    options.Listen(IPAddress.Loopback, 0);
+                }
+                else
+                {
+                    options.ListenLocalhost(listenOn);
+                }
+            }
+            else if (host is "0.0.0.0" or "*" or "::")
+            {
+                options.ListenAnyIP(listenOn);
+            }
+            else
+            {
+                options.Listen(IPAddress.TryParse(host, out IPAddress? parsed) ? parsed : IPAddress.Loopback, listenOn);
+            }
         });
         WebApplication app = builder.Build();
-        var server = new ServerHost(app, pool, watcher, instance, log);
+        var server = new ServerHost(app, pool, watcher, routes, metrics, instance, log);
         app.Run(server.HandleAsync);
         await app.StartAsync(cancellationToken).ConfigureAwait(false);
         string bound = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()?.Addresses.FirstOrDefault() ?? $"http://{host}:{listenOn}";
@@ -112,11 +155,11 @@ public sealed class ServerHost : IAsyncDisposable
         string? origin = request.Headers.Origin.FirstOrDefault();
         bool corsOrigin = origin is not null && OriginAllowed(origin);
 
-        void Refuse(int status, string phrase)
+        void Refuse(int status, string phrase, bool withId = true)
         {
             response.StatusCode = status;
             response.ContentLength = 0;
-            SetReason(context, phrase + " " + RequestId());
+            SetReason(context, withId ? phrase + " " + RequestId() : phrase);
         }
 
         void CorsHeaders()
@@ -150,10 +193,6 @@ public sealed class ServerHost : IAsyncDisposable
 
                 return;
             }
-
-            CorsHeaders();
-            Refuse(405, path.StartsWith("/api/", StringComparison.Ordinal) ? "Bad Method" : "MethodNotAllowed Unsupported method");
-            return;
         }
 
         CorsHeaders();
@@ -165,6 +204,41 @@ public sealed class ServerHost : IAsyncDisposable
         if (apiPath)
         {
             await ApiAsync(context, path, Refuse).ConfigureAwait(false);
+            return;
+        }
+
+        // A body past --request-size-limit is refused by its Content-Length before anything else (k15_server: size.*).
+        long limit = Instance.Config.RequestSizeLimit;
+        if (request.ContentLength is { } declared && declared > limit)
+        {
+            Refuse(413, $"Content-Length exceeds size limit of {limit.ToString(CultureInfo.InvariantCulture)} bytes");
+            return;
+        }
+
+        // A method HTTP does not have here is refused before any routing (route.patch).
+        if (!KnownMethods.Contains(method, StringComparer.Ordinal))
+        {
+            Refuse(400, "Invalid HTTP");
+            return;
+        }
+
+        // The asynchronous requests' paths, /~<instance>/requests… (stage K15).
+        if (path.StartsWith("/~", StringComparison.Ordinal))
+        {
+            await AsyncApiAsync(context, path, Refuse).ConfigureAwait(false);
+            return;
+        }
+
+        // A path a routes file maps goes to its web handler, whatever the method (route.*).
+        if (_routes.Match(rawTarget) is { } target)
+        {
+            await WebAsync(context, target, rawTarget, Refuse).ConfigureAwait(false);
+            return;
+        }
+
+        if (method == HttpMethods.Options)
+        {
+            Refuse(405, path.StartsWith("/api/", StringComparison.Ordinal) ? "Bad Method" : "MethodNotAllowed Unsupported method");
             return;
         }
 
@@ -185,12 +259,6 @@ public sealed class ServerHost : IAsyncDisposable
         if (method is "PUT" or "DELETE" or "HEAD")
         {
             Refuse(405, "MethodNotAllowed Unsupported method");
-            return;
-        }
-
-        if (method != HttpMethods.Post)
-        {
-            Refuse(400, "Invalid HTTP");
             return;
         }
 
@@ -230,16 +298,9 @@ public sealed class ServerHost : IAsyncDisposable
             return;
         }
 
-        byte[] body;
-        try
+        byte[]? body = await ReadBodyAsync(context, Refuse).ConfigureAwait(false);
+        if (body is null)
         {
-            using var buffer = new MemoryStream();
-            await request.Body.CopyToAsync(buffer, context.RequestAborted).ConfigureAwait(false);
-            body = buffer.ToArray();
-        }
-        catch (BadHttpRequestException)
-        {
-            Refuse(413, "Request Entity Too Large");
             return;
         }
 
@@ -249,17 +310,28 @@ public sealed class ServerHost : IAsyncDisposable
             return;
         }
 
+        string text = WorkerProtocol.Utf8(body);
+        if (request.Query.TryGetValue("mode", out Microsoft.Extensions.Primitives.StringValues mode) && mode.ToString() == "async")
+        {
+            await StartAsyncRequestAsync(context, component, function, text).ConfigureAwait(false);
+            return;
+        }
+
+        _metrics.Accepted();
+        var queued = System.Diagnostics.Stopwatch.StartNew();
         WorkerProtocol.Reply reply;
         try
         {
-            reply = await _pool.CallAsync(component, function, WorkerProtocol.Utf8(body), Instance.Config.HideErrorStack, Instance.Config.RequestTimeout, context.RequestAborted)
-                .ConfigureAwait(false);
+            reply = await _pool.CallAsync(component, function, text, Instance.Config.HideErrorStack, Instance.Config.RequestTimeout, context.RequestAborted,
+                started: () => _metrics.Started(queued.Elapsed)).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
+            _metrics.Canceled(wasProcessing: false);
             return; // the client went away
         }
 
+        _metrics.Finished(reply.Status == 200);
         if (reply.Status != 200 || reply.Body is null)
         {
             Refuse(reply.Status, reply.Reason);
@@ -269,35 +341,62 @@ public sealed class ServerHost : IAsyncDisposable
         await WriteJsonAsync(context, reply.Body).ConfigureAwait(false);
     }
 
-    /// <summary>A 200 with a JSON body and its length (R2025b's responses carry Content-Length).</summary>
-    private static async Task WriteJsonAsync(HttpContext context, string json)
+    /// <summary>The whole body, or null after a 413 for one past the limit as it is read.</summary>
+    private static async Task<byte[]?> ReadBodyAsync(HttpContext context, Action<int, string, bool> refuse)
     {
-        byte[] bytes = System.Text.Encoding.UTF8.GetBytes(json);
-        context.Response.StatusCode = 200;
+        try
+        {
+            using var buffer = new MemoryStream();
+            await context.Request.Body.CopyToAsync(buffer, context.RequestAborted).ConfigureAwait(false);
+            return buffer.ToArray();
+        }
+        catch (BadHttpRequestException)
+        {
+            long limit = context.Features.Get<IHttpMaxRequestBodySizeFeature>()?.MaxRequestBodySize ?? MainConfig.DefaultRequestSizeLimit;
+            refuse(413, $"Content-Length exceeds size limit of {limit.ToString(CultureInfo.InvariantCulture)} bytes", true);
+            return null;
+        }
+    }
+
+    /// <summary>A 200 with a JSON body and its length (R2025b's responses carry Content-Length).</summary>
+    private static async Task WriteJsonAsync(HttpContext context, string json, int status = 200)
+    {
+        byte[] bytes = Encoding.UTF8.GetBytes(json);
+        context.Response.StatusCode = status;
         context.Response.ContentType = "application/json";
         context.Response.ContentLength = bytes.Length;
         await context.Response.Body.WriteAsync(bytes, context.RequestAborted).ConfigureAwait(false);
     }
 
-    private async Task ApiAsync(HttpContext context, string path, Action<int, string> refuse)
+    private static async Task WriteTextAsync(HttpContext context, string text)
+    {
+        byte[] bytes = Encoding.UTF8.GetBytes(text);
+        context.Response.StatusCode = 200;
+        context.Response.ContentType = "text/plain";
+        context.Response.ContentLength = bytes.Length;
+        await context.Response.Body.WriteAsync(bytes, context.RequestAborted).ConfigureAwait(false);
+    }
+
+    private async Task ApiAsync(HttpContext context, string path, Action<int, string, bool> refuse)
     {
         string method = context.Request.Method;
+        void Refuse(int status, string phrase) => refuse(status, phrase, true);
         switch (path)
         {
             case "/api/discovery":
                 // A HEAD is refused first, then discovery being off (post.discovery is Discovery Disabled when it is),
                 // then any method but GET.
-                if (method is "HEAD")
+                if (method is "HEAD" or "OPTIONS")
                 {
-                    refuse(405, "Bad Method");
+                    Refuse(405, "Bad Method");
                 }
                 else if (!Instance.Config.Discovery)
                 {
-                    refuse(403, "Discovery Disabled");
+                    Refuse(403, "Discovery Disabled");
                 }
                 else if (method != HttpMethods.Get)
                 {
-                    refuse(405, "Method Not Allowed");
+                    Refuse(405, "Method Not Allowed");
                 }
                 else
                 {
@@ -306,28 +405,400 @@ public sealed class ServerHost : IAsyncDisposable
 
                 return;
             case "/api/health":
-                // Stage K15 gives the health check its answer; the server answers while it listens.
-                if (method != HttpMethods.Get)
+                // {"status":"ok"} while the server listens (k15_server: health); MPS answers 503 "Health check failed"
+                // only when it has lost its license server, which JGraph has none of.
+                if (method is "HEAD" or "OPTIONS")
                 {
-                    refuse(405, "Method Not Allowed");
-                    return;
+                    Refuse(405, "Bad Method");
+                }
+                else if (method != HttpMethods.Get)
+                {
+                    Refuse(405, "Method Not Allowed");
+                }
+                else
+                {
+                    await WriteJsonAsync(context, "{\"status\":\"ok\"}").ConfigureAwait(false);
                 }
 
-                context.Response.StatusCode = 200;
-                context.Response.ContentLength = 0;
                 return;
             case "/api/metrics":
-                refuse(403, "Metrics Disabled");
+                if (method is "HEAD" or "OPTIONS")
+                {
+                    Refuse(405, "Bad Method");
+                }
+                else if (!Instance.Config.Metrics)
+                {
+                    Refuse(403, "Metrics Disabled");
+                }
+                else if (method != HttpMethods.Get)
+                {
+                    Refuse(405, "Method Not Allowed");
+                }
+                else
+                {
+                    await WriteTextAsync(context, _metrics.Text()).ConfigureAwait(false);
+                }
+
                 return;
             case "/api/statistics":
-                refuse(403, "Statistics Disabled");
+                Refuse(method is "HEAD" or "OPTIONS" ? 405 : 403, method is "HEAD" or "OPTIONS" ? "Bad Method" : "Statistics Disabled");
                 return;
             case "/api/archives" or "/api/archives/":
-                refuse(403, "Archive Management Disabled");
+                Refuse(method is "HEAD" or "OPTIONS" ? 405 : 403, method is "HEAD" or "OPTIONS" ? "Bad Method" : "Archive Management Disabled");
                 return;
             default:
-                refuse(404, "URL not found " + path);
+                Refuse(404, "URL not found " + path);
                 return;
+        }
+    }
+
+    // --- web handlers (stage K15) ---------------------------------------------------------------------
+
+    private async Task WebAsync(HttpContext context, RouteTable.Target target, string rawTarget, Action<int, string, bool> refuse)
+    {
+        HttpRequest request = context.Request;
+        HttpResponse response = context.Response;
+        if (!_pool.Functions.TryGetValue(target.Component, out string[]? functions))
+        {
+            // muserve: "component not found" followed by a C++ function's name it leaked (route.othercomp); the name alone here.
+            refuse(404, "component not found", true);
+            return;
+        }
+
+        if (!functions.Contains(target.Function, StringComparer.Ordinal))
+        {
+            refuse(500, "invalid work type", true);
+            return;
+        }
+
+        byte[]? body = await ReadBodyAsync(context, refuse).ConfigureAwait(false);
+        if (body is null)
+        {
+            return;
+        }
+
+        // The headers as the handler sees them: Host first, as the wire carries it, then the rest as Kestrel keeps them.
+        var headers = new List<string[]>();
+        if (request.Headers.Host.FirstOrDefault() is { } host)
+        {
+            headers.Add(["Host", host]);
+        }
+
+        foreach ((string name, Microsoft.Extensions.Primitives.StringValues values) in request.Headers)
+        {
+            if (name.Equals("Host", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            foreach (string? value in values)
+            {
+                headers.Add([name, value ?? ""]);
+            }
+        }
+
+        var web = new WorkerProtocol.WebRequest(request.Method, rawTarget, request.Protocol.StartsWith("HTTP/", StringComparison.Ordinal) ? request.Protocol[5..] : "1.1",
+            [.. headers], Convert.ToBase64String(body));
+        _metrics.Accepted();
+        var queued = System.Diagnostics.Stopwatch.StartNew();
+        WorkerProtocol.Reply reply;
+        try
+        {
+            reply = await _pool.CallWebAsync(target.Component, target.Function, web, Instance.Config.RequestTimeout, context.RequestAborted,
+                started: () => _metrics.Started(queued.Elapsed)).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            _metrics.Canceled(wasProcessing: false);
+            return;
+        }
+
+        if (reply.WebRefused || reply.WebBodyBase64 is null)
+        {
+            _metrics.Finished(false);
+            // The server's own refusals carry no request id (bad.error, bad.number); the pool's (a worker ended) do.
+            refuse(reply.Status, reply.Reason, !reply.WebRefused);
+            return;
+        }
+
+        _metrics.Finished(true);
+        byte[] bytes = Convert.FromBase64String(reply.WebBodyBase64);
+        response.StatusCode = reply.Status;
+        SetReason(context, reply.Reason);
+        foreach (string[] header in reply.WebHeaders ?? [])
+        {
+            // A Content-Length the handler wrote is the body's own (muserve sends both; JGraph sends the body's).
+            if (header.Length != 2 || header[0].Equals("Content-Length", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            try
+            {
+                response.Headers.Append(header[0], header[1]);
+            }
+            catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+            {
+                // A name or value HTTP cannot carry is left out.
+            }
+        }
+
+        response.ContentLength = bytes.Length;
+        if (request.Method != "HEAD")
+        {
+            await response.Body.WriteAsync(bytes, context.RequestAborted).ConfigureAwait(false);
+        }
+    }
+
+    // --- asynchronous requests (stage K15) --------------------------------------------------------------
+
+    private async Task StartAsyncRequestAsync(HttpContext context, string component, string function, string body)
+    {
+        string client = context.Request.Query.TryGetValue("client", out Microsoft.Extensions.Primitives.StringValues given) ? given.ToString() : "";
+        AsyncRequest request = _async.Create(client);
+        _metrics.Accepted();
+        context.Response.Headers.Location = request.Self;
+        context.Response.Headers["X-MPS-Start-Time"] = AsyncRequestRegistry.StartTime();
+        await WriteJsonAsync(context, request.RepresentationJson(), 201).ConfigureAwait(false);
+        request.Advance(AsyncState.InQueue);
+        _ = RunAsyncRequestAsync(request, component, function, body);
+    }
+
+    private async Task RunAsyncRequestAsync(AsyncRequest request, string component, string function, string body)
+    {
+        var queued = System.Diagnostics.Stopwatch.StartNew();
+        bool processing = false;
+        WorkerProtocol.Reply reply;
+        try
+        {
+            reply = await _pool.CallAsync(component, function, body, Instance.Config.HideErrorStack, Instance.Config.RequestTimeout, request.Cancellation.Token,
+                started: () =>
+                {
+                    processing = true;
+                    _metrics.Started(queued.Elapsed);
+                    request.Advance(AsyncState.Processing);
+                }).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            _metrics.Canceled(processing);
+            request.Advance(AsyncState.Cancelled);
+            return;
+        }
+
+        if (request.Cancellation.IsCancellationRequested)
+        {
+            _metrics.Canceled(processing);
+            request.Advance(AsyncState.Cancelled);
+            return;
+        }
+
+        bool ok = reply.Status == 200 && reply.Body is not null;
+        _metrics.Finished(ok);
+        request.Advance(ok ? AsyncState.Ready : AsyncState.Error, reply);
+    }
+
+    private async Task AsyncApiAsync(HttpContext context, string path, Action<int, string, bool> refuse)
+    {
+        HttpRequest request = context.Request;
+        string method = request.Method;
+        void Refuse(int status, string phrase) => refuse(status, phrase, true);
+        string[] parts = path.Split('/');
+        // /~<instance>/requests[/<id>[/info|/result|/cancel]]
+        if (parts.Length is < 3 or > 5 || parts[1] != "~" + _async.Instance || parts[2] != "requests")
+        {
+            Refuse(404, "URL not found " + path);
+            return;
+        }
+
+        if (parts.Length == 3)
+        {
+            if (method != HttpMethods.Get)
+            {
+                Refuse(405, "Method Not Allowed");
+                return;
+            }
+
+            await CollectionAsync(context, Refuse).ConfigureAwait(false);
+            return;
+        }
+
+        AsyncRequest? found = _async.Find(parts[3]);
+        string action = parts.Length == 5 ? parts[4] : "";
+        if (action is not ("" or "info" or "result" or "cancel"))
+        {
+            Refuse(404, "URL not found " + path);
+            return;
+        }
+
+        if (found is null)
+        {
+            Refuse(404, action is "" or "info" ? "ResourceNotFound" : "RequestNotFound");
+            return;
+        }
+
+        switch (action)
+        {
+            case "":
+                if (method == HttpMethods.Get)
+                {
+                    if (found.Deleted)
+                    {
+                        Refuse(410, "RequestAlreadyDeleted");
+                        return;
+                    }
+
+                    await WriteJsonAsync(context, found.RepresentationJson()).ConfigureAwait(false);
+                }
+                else if (method == HttpMethods.Delete)
+                {
+                    if (found.Deleted)
+                    {
+                        Refuse(410, "RequestAlreadyDeleted");
+                    }
+                    else if (!found.Terminal)
+                    {
+                        Refuse(409, "RequestNotCompleted");
+                    }
+                    else
+                    {
+                        found.MarkDeleted();
+                        context.Response.StatusCode = 204;
+                        context.Response.ContentLength = 0;
+                    }
+                }
+                else
+                {
+                    Refuse(405, "Method Not Allowed");
+                }
+
+                return;
+            case "info":
+                if (method != HttpMethods.Get)
+                {
+                    Refuse(405, "Method Not Allowed");
+                }
+                else if (found.Deleted)
+                {
+                    Refuse(410, "RequestAlreadyDeleted");
+                }
+                else
+                {
+                    await WriteJsonAsync(context, found.InfoJson()).ConfigureAwait(false);
+                }
+
+                return;
+            case "result":
+                if (method != HttpMethods.Get)
+                {
+                    Refuse(405, "Method Not Allowed");
+                }
+                else if (found.Deleted)
+                {
+                    Refuse(410, "RequestAlreadyDeleted");
+                }
+                else if (found.State == AsyncState.Cancelled)
+                {
+                    Refuse(410, "RequestAlreadyCancelled");
+                }
+                else if (!found.Terminal || found.Result is null)
+                {
+                    Refuse(409, "RequestNotCompleted");
+                }
+                else if (found.State == AsyncState.Ready && found.Result.Body is not null)
+                {
+                    await WriteJsonAsync(context, found.Result.Body).ConfigureAwait(false);
+                }
+                else
+                {
+                    Refuse(found.Result.Status, found.Result.Reason);
+                }
+
+                return;
+            case "cancel":
+                if (method != HttpMethods.Post)
+                {
+                    Refuse(405, "Method Not Allowed");
+                }
+                else if (found.Deleted)
+                {
+                    Refuse(410, "RequestAlreadyDeleted");
+                }
+                else if (found.State == AsyncState.Cancelled)
+                {
+                    Refuse(410, "RequestAlreadyCancelled");
+                }
+                else if (found.Terminal)
+                {
+                    Refuse(410, "RequestAlreadyCompleted");
+                }
+                else
+                {
+                    found.Cancellation.Cancel();
+                    context.Response.StatusCode = 204;
+                    context.Response.ContentLength = 0;
+                }
+
+                return;
+        }
+    }
+
+    private async Task CollectionAsync(HttpContext context, Action<int, string> refuse)
+    {
+        IQueryCollection query = context.Request.Query;
+        if (!query.TryGetValue("since", out Microsoft.Extensions.Primitives.StringValues sinceText))
+        {
+            refuse(400, "MissingParamSince");
+            return;
+        }
+
+        if (!long.TryParse(sinceText.ToString(), NumberStyles.None, CultureInfo.InvariantCulture, out long since))
+        {
+            refuse(400, "InvalidParamSince");
+            return;
+        }
+
+        string[] clients = query.TryGetValue("clients", out Microsoft.Extensions.Primitives.StringValues clientText)
+            ? clientText.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries) : [];
+        string[] ids = query.TryGetValue("ids", out Microsoft.Extensions.Primitives.StringValues idText)
+            ? idText.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries) : [];
+        if (clients.Length == 0 && ids.Length == 0)
+        {
+            refuse(400, "MissingQueryParams");
+            return;
+        }
+
+        if (ids.Length > 0 && !_async.AnyKnown(ids))
+        {
+            refuse(400, "NoMatchForQueryParams");
+            return;
+        }
+
+        if (ids.Length == 0 && !clients.Any(_async.KnowsClient))
+        {
+            refuse(404, "ClientNotFound");
+            return;
+        }
+
+        // The collection waits until one of the requests changes after since, as MPS's does.
+        while (true)
+        {
+            Task changed = _async.WaitForChangeAsync(context.RequestAborted);
+            List<AsyncRequest> matched = _async.Select(clients, ids, since);
+            if (matched.Count > 0)
+            {
+                await WriteJsonAsync(context, _async.CollectionJson(matched)).ConfigureAwait(false);
+                return;
+            }
+
+            try
+            {
+                await changed.ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
         }
     }
 

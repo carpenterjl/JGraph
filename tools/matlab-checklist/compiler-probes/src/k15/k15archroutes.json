@@ -1,0 +1,25 @@
+{
+    "version": "1.0.0",
+    "pathmap": [
+        {
+            "match": "^/arch/web$",
+            "webhandler": {"function": "k15web"}
+        },
+        {
+            "match": "^/arch/bad/",
+            "webhandler": {"function": "k15webbad"}
+        },
+        {
+            "match": "^/arch/named$",
+            "webhandler": {"component": "k15comp", "function": "k15web"}
+        },
+        {
+            "match": "^/k15/inst$",
+            "webhandler": {"function": "k15webbad"}
+        },
+        {
+            "match": "^/k15/archonly$",
+            "webhandler": {"function": "k15web"}
+        }
+    ]
+}

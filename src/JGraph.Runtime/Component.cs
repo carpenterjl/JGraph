@@ -54,8 +54,13 @@ public sealed class Component : IDisposable
     /// </summary>
     /// <param name="archivePath">The archive.</param>
     /// <param name="ownSession">Whether the component gets a session of its own, ended with it, rather than the archive's shared one.</param>
+    /// <param name="cacheFolderName">
+    /// The name the runtime cache's folder gets when the archive is extracted now, which <c>ctfroot</c>
+    /// ends with: a Production Server's <c>&lt;archive&gt;_&lt;n&gt;</c> (stage K15); the cache's own name when null.
+    /// </param>
     /// <exception cref="InvalidDataException">The file holds no JGraph archive, or a damaged one.</exception>
-    public static Component Open(string archivePath, bool ownSession = false)
+    /// <param name="cacheDirectory">The runtime cache the archive is extracted into; the user's runtime cache when null.</param>
+    public static Component Open(string archivePath, bool ownSession = false, string? cacheFolderName = null, string? cacheDirectory = null)
     {
         ArgumentException.ThrowIfNullOrEmpty(archivePath);
         string full = Path.GetFullPath(archivePath);
@@ -66,7 +71,7 @@ public sealed class Component : IDisposable
         }
 
         EngineThread engine = JgRuntime.Engine(RuntimeOptions.Parse(manifest.RuntimeOptions));
-        ComponentSession session = engine.Invoke(() => JgRuntime.Open(full, manifest.Uuid, ownSession));
+        ComponentSession session = engine.Invoke(() => JgRuntime.Open(full, manifest.Uuid, ownSession, cacheFolderName, cacheDirectory));
         return new Component(session, engine, manifest, ownSession);
     }
 

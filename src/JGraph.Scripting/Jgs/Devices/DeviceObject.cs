@@ -348,6 +348,11 @@ internal abstract class DeviceObject : IJgsExternal
     public JgsValue Member(string name, bool autoCall, int wanted, int line, int col)
     {
         var call = new DeviceCall { Target = this, Args = [], Line = line, Column = col, Wanted = wanted };
+        if (TryMember(name, call, out JgsValue? dynamic))
+        {
+            return dynamic;
+        }
+
         if (Class.Find(name) is { } property)
         {
             LiveOrThrow(line, col);
@@ -389,10 +394,28 @@ internal abstract class DeviceObject : IJgsExternal
         return property.Get(this, call);
     }
 
+    /// <summary>
+    /// A class whose dot answers names it declares no property for (a cache whose keys are read as
+    /// fields, stage K15): true with the value when <paramref name="name"/> is its to answer.
+    /// </summary>
+    protected virtual bool TryMember(string name, DeviceCall call, out JgsValue value)
+    {
+        value = JgsValue.Null;
+        return false;
+    }
+
+    /// <summary>The counterpart of <see cref="TryMember"/> for <c>obj.Name = value</c>: true when the class took the write.</summary>
+    protected virtual bool TrySetMember(string name, JgsValue value, DeviceCall call) => false;
+
     /// <summary><c>obj.Name = value</c> (exact name) or <c>set(obj, name, value)</c> (case-blind).</summary>
     public void SetProperty(string name, JgsValue value, DeviceCall call, bool ignoreCase)
     {
         LiveOrThrow(call.Line, call.Column);
+        if (!ignoreCase && TrySetMember(name, value, call))
+        {
+            return;
+        }
+
         DeviceProperty? property = Class.LooseNames
             ? Loose(name, ignoreCase ? "MATLAB:class:InvalidProperty" : "MATLAB:class:AmbiguousProperty", call.Line, call.Column)
             : Class.Find(name, ignoreCase);

@@ -13,6 +13,9 @@ public sealed class MainConfig
     /// <summary>The port a new instance listens on, MPS's default.</summary>
     public const int DefaultPort = 9910;
 
+    /// <summary>The request size limit when none is given: MPS's 64 MB.</summary>
+    public const long DefaultRequestSizeLimit = 64L * 1024 * 1024;
+
     private readonly Dictionary<string, List<string>> _values = new(StringComparer.Ordinal);
 
     private MainConfig()
@@ -29,11 +32,12 @@ public sealed class MainConfig
         ["--request-timeout"] = "how long a function may run, h:mm:ss (1:00:00)",
         ["--cors-allowed-origins"] = "the origins browsers may call from, comma-separated, or *",
         ["--hide-matlab-error-stack"] = "leave the M-code frames out of an error reply",
-        ["--request-size-limit"] = "the largest request body, in bytes (67108864)",
+        ["--request-size-limit"] = "the largest request body: bytes, or a number with B, KB, MB or GB (64MB)",
         ["--enable-discovery"] = "answer GET /api/discovery with the archives' signatures",
+        ["--enable-metrics"] = "answer GET /api/metrics with the server's and the functions' metrics",
         ["--log-severity"] = "error, warning, information or trace",
         ["--mcr-root"] = "ignored: the server runs the JGraph Runtime it was installed with",
-        ["--routes-file"] = "a routes file that applies to every archive (read, not yet routed: stage K15)",
+        ["--routes-file"] = "the instance's routes file, whose web handlers answer the paths it maps (stage K15)",
     };
 
     /// <summary>Every option in the file, by name, with the values given in order.</summary>
@@ -70,19 +74,55 @@ public sealed class MainConfig
         ? span
         : TimeSpan.FromHours(1);
 
-    public long RequestSizeLimit => long.TryParse(First("--request-size-limit"), NumberStyles.None, CultureInfo.InvariantCulture, out long n) && n > 0 ? n : 64L * 1024 * 1024;
+    /// <summary>The largest request body in bytes: a number with an optional unit, as MPS reads it (1KB is 1024).</summary>
+    public long RequestSizeLimit => ParseSize(First("--request-size-limit")) ?? DefaultRequestSizeLimit;
+
+    /// <summary>A size as MPS writes one: an integer followed by B, KB, MB or GB, or none for bytes; null for anything else.</summary>
+    public static long? ParseSize(string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return null;
+        }
+
+        string trimmed = text.Trim();
+        int digits = 0;
+        while (digits < trimmed.Length && char.IsDigit(trimmed[digits]))
+        {
+            digits++;
+        }
+
+        if (digits == 0 || !long.TryParse(trimmed[..digits], NumberStyles.None, CultureInfo.InvariantCulture, out long number))
+        {
+            return null;
+        }
+
+        long factor = trimmed[digits..].Trim().ToUpperInvariant() switch
+        {
+            "" or "B" => 1,
+            "KB" => 1024,
+            "MB" => 1024 * 1024,
+            "GB" => 1024L * 1024 * 1024,
+            _ => 0,
+        };
+        return factor == 0 || number <= 0 ? null : number * factor;
+    }
 
     public bool HideErrorStack => _values.ContainsKey("--hide-matlab-error-stack");
 
     public bool Discovery => _values.ContainsKey("--enable-discovery");
 
-    public string? RoutesFile => First("--routes-file");
+    public bool Metrics => _values.ContainsKey("--enable-metrics");
+
+    /// <summary>The instance's routes file as written, relative to the instance's folder when not absolute.</summary>
+    public string? RoutesFile => First("--routes-file") is { Length: > 0 } file ? file : null;
 
     /// <summary>The origins allowed, lowercased; <c>*</c> means every origin; empty means CORS is off.</summary>
     public IReadOnlyList<string> CorsOrigins =>
         [.. (_values.GetValueOrDefault("--cors-allowed-origins") ?? []).SelectMany(static v => v.Split(',')).Select(static o => o.Trim().ToLowerInvariant()).Where(static o => o.Length > 0)];
 
-    private string? First(string option) => _values.TryGetValue(option, out List<string>? values) && values.Count > 0 ? values[0] : null;
+    /// <summary>An option's value: the last line's, as a later --option on a command line overrides an earlier one.</summary>
+    private string? First(string option) => _values.TryGetValue(option, out List<string>? values) && values.Count > 0 ? values[^1] : null;
 
     /// <summary>Reads a config file.</summary>
     public static MainConfig Read(string path) => Parse(File.ReadAllLines(path));
@@ -135,11 +175,20 @@ public sealed class MainConfig
         # How long a function may run before its request is given up and its worker restarted.
         --request-timeout 1:00:00
 
+        # The largest request body: bytes, or a number with B, KB, MB or GB.
+        --request-size-limit 64MB
+
         # Uncomment to let browsers call from these origins (comma-separated, or * for any).
         # --cors-allowed-origins http://localhost:3000
 
         # Uncomment to answer GET /api/discovery with the deployed archives' function signatures.
         # --enable-discovery
+
+        # Uncomment to answer GET /api/metrics with the server's metrics and the functions' custom ones.
+        # --enable-metrics
+
+        # Uncomment to route the paths a routes file maps to web handler functions (relative to this instance).
+        # --routes-file config/routes.json
 
         # Uncomment to leave the M-code stack out of an error reply.
         # --hide-matlab-error-stack

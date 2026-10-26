@@ -78,7 +78,6 @@ KNOWN_SERVER = {
     "out.large.int64": "int64 past 2^53 is a double in JGraph (ADR 0174)",
     "out.uint64": "uint64 past 2^53 is a double in JGraph (ADR 0174)",
     "out.large.uint64": "uint64 past 2^53 is a double in JGraph (ADR 0174)",
-    "quiet": "the in-MATLAB server inherits the probe's beep('off'); JGraph's worker is a fresh runtime, its beep on",
     "out.sparselogical": "a sparse array is double in JGraph (ADR 0266)",
     "out.large.sparselogical": "a sparse array is double in JGraph (ADR 0266)",
     "get.health": "the health check answers 200 while the server listens; its body comes with stage K15",
@@ -86,6 +85,11 @@ KNOWN_SERVER = {
     "in.big.number": "JGraph prints the number with its own digits (k14describe's %.17g)",
     "in.tiny.number": "JGraph prints the number with its own digits (k14describe's %.17g)",
     "path.space": "the client itself refuses a space in a URL",
+    "path.query.async": "the in-MATLAB test server has no asynchronous requests; JGraph starts one (ADR 0271)",
+    "path.query.async.client": "the in-MATLAB test server has no asynchronous requests; JGraph starts one (ADR 0271)",
+    "get.origin.discovery": "the archive's uuid: the in-MATLAB test server wrote none, muserve and JGraph write <name>_<uuid> (ADR 0271)",
+    "get.discovery": "the archive's uuid: the in-MATLAB test server wrote none, muserve and JGraph write <name>_<uuid> (ADR 0271)",
+    "quiet": "the in-MATLAB server inherits the probe's beep('off'); JGraph's worker starts with it on, as muserve's does (ADR 0271)",
 }
 
 

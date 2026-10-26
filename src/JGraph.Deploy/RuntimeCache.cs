@@ -91,7 +91,11 @@ public sealed class RuntimeCache
     /// </summary>
     /// <param name="archive">The archive.</param>
     /// <param name="sizeSetting"><c>MCR_CACHE_SIZE</c>, or <see langword="null"/> when it is not set.</param>
-    public CacheEntry Open(CtfArchiveReader archive, string? sizeSetting)
+    /// <param name="folderName">
+    /// The name the entry's folder gets when it is made now (a Production Server's <c>&lt;archive&gt;_&lt;n&gt;</c>,
+    /// stage K15); the cache's own name when null or taken.
+    /// </param>
+    public CacheEntry Open(CtfArchiveReader archive, string? sizeSetting, string? folderName = null)
     {
         ArgumentNullException.ThrowIfNull(archive);
         System.IO.Directory.CreateDirectory(Directory);
@@ -106,7 +110,32 @@ public sealed class RuntimeCache
         bool extracted = false;
         if (entry is null)
         {
-            entry = new IndexEntry(uuid, NewFolderName(uuid, index), 0, DateTime.UtcNow);
+            bool wanted = folderName is { Length: > 0 } && folderName.IndexOfAny(Path.GetInvalidFileNameChars()) < 0;
+            if (wanted)
+            {
+                // The name held by another archive's copy that no program runs (an earlier server run's) is taken over.
+                IndexEntry? holder = index.FirstOrDefault(e => string.Equals(e.Folder, folderName, StringComparison.OrdinalIgnoreCase));
+                string held = Path.Combine(Directory, folderName!);
+                if (System.IO.Directory.Exists(held) && !InUse(held))
+                {
+                    try
+                    {
+                        System.IO.Directory.Delete(held, recursive: true);
+                    }
+                    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                    {
+                        // Still held after all; the cache's own name is used.
+                    }
+                }
+
+                wanted = !System.IO.Directory.Exists(held);
+                if (wanted && holder is not null)
+                {
+                    index.Remove(holder);
+                }
+            }
+
+            entry = new IndexEntry(uuid, wanted ? folderName! : NewFolderName(uuid, index), 0, DateTime.UtcNow);
             index.Add(entry);
         }
 

@@ -38,12 +38,15 @@ public sealed class RoutesFile
     /// <summary>The entries in order.</summary>
     public IReadOnlyList<Route> Routes { get; }
 
-    /// <summary>Reads and checks <paramref name="path"/> for the archive <paramref name="componentName"/>.</summary>
+    /// <summary>
+    /// Reads and checks <paramref name="path"/> for the archive <paramref name="componentName"/>; with
+    /// null, a server instance's file (stage K15), whose entries name any archive.
+    /// </summary>
     /// <exception cref="RoutesException">R2025b's message for what is wrong.</exception>
-    public static RoutesFile Read(string path, string componentName) => Parse(File.ReadAllText(path), componentName);
+    public static RoutesFile Read(string path, string? componentName) => Parse(File.ReadAllText(path), componentName);
 
     /// <summary>Reads routes text, as <see cref="Read"/> reads a file.</summary>
-    public static RoutesFile Parse(string text, string componentName)
+    public static RoutesFile Parse(string text, string? componentName)
     {
         ArgumentNullException.ThrowIfNull(text);
         JsonDocument document;
@@ -122,7 +125,7 @@ public sealed class RoutesFile
                 if (handler.TryGetProperty("component", out JsonElement named))
                 {
                     string component = named.ValueKind == JsonValueKind.String ? named.GetString()! : named.GetRawText();
-                    if (component != componentName)
+                    if (componentName is not null && component != componentName)
                     {
                         throw new RoutesException($"Optional property \"component\" if present must be the same value as \"{componentName}\" . (at {at})");
                     }

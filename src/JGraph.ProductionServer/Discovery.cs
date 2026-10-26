@@ -29,7 +29,8 @@ internal static class Discovery
 
                 writer.WriteStartObject(name);
                 writer.WriteString("archiveSchemaVersion", "1.2.0");
-                writer.WriteString("archiveUuid", "");
+                // The archive's own uuid, <name>_<guid>, as muserve writes it (k15_server: discovery); the in-MATLAB test server wrote none.
+                writer.WriteString("archiveUuid", manifest.Uuid);
                 writer.WriteStartObject("functions");
                 foreach (CtfFunction function in described)
                 {

@@ -1,0 +1,230 @@
+CHK|m_counter|[metric:counter] R2025b/k15_calls_total 1 |div=ADR0271|diverges|[metric:counter] net8.0/k15_calls_total 1
+CHK|m_counter_string|[metric:counter] R2025b/k15_calls_total 2.5 |div=ADR0271|diverges|[metric:counter] net8.0/k15_calls_total 2.5
+CHK|m_gauge|[metric:gauge] R2025b/k15_level 4 |div=ADR0271|diverges|[metric:gauge] net8.0/k15_level 4
+CHK|m_gauge_neg|[metric:gauge] R2025b/k15_level -1.25 |div=ADR0271|diverges|[metric:gauge] net8.0/k15_level -1.25
+CHK|m_gauge_int|[metric:gauge] R2025b/k15_level 7 |div=ADR0271|diverges|[metric:gauge] net8.0/k15_level 7
+CHK|m_gauge_single|[metric:gauge] R2025b/k15_level 0.1 |div=ADR0271|diverges|[metric:gauge] net8.0/k15_level 0.1
+CHK|m_big|[metric:counter] R2025b/k15_big 1.23457e+08 |div=ADR0271|diverges|[metric:counter] net8.0/k15_big 1.23457e+08
+CHK|m_small|[metric:gauge] R2025b/k15_small 1.2345e-05 |div=ADR0271|diverges|[metric:gauge] net8.0/k15_small 1.2345e-05
+CHK|m_nan|[metric:gauge] R2025b/k15_nan NaN |div=ADR0271|diverges|[metric:gauge] net8.0/k15_nan NaN
+CHK|m_inf|[metric:counter] R2025b/k15_inf Inf |div=ADR0271|diverges|[metric:counter] net8.0/k15_inf Inf
+CHK|m_zero_gauge|[metric:gauge] R2025b/k15_zero 0 |div=ADR0271|diverges|[metric:gauge] net8.0/k15_zero 0
+CHK|m_badname|MPS:MATLAB:Metrics:IncorrectNameFormat / The value of 'name' is invalid. Incorrect metric name format. Metric name must be a valid MATLAB variable name. Prometheus naming convention is lower-case letters and underscores.|exact
+CHK|m_dash|MPS:MATLAB:Metrics:IncorrectNameFormat / The value of 'name' is invalid. Incorrect metric name format. Metric name must be a valid MATLAB variable name. Prometheus naming convention is lower-case letters and underscores.|exact
+CHK|m_emptyname|MATLAB:validators:mustBeNonzeroLengthText / The value of 'name' is invalid. Value must be text with one or more characters.|exact
+CHK|m_cellname|MATLAB:validators:mustBeTextScalar / The value of 'name' is invalid. Value must be a character vector or string scalar.|exact
+CHK|m_strings|MATLAB:validators:mustBeTextScalar / The value of 'name' is invalid. Value must be a character vector or string scalar.|exact
+CHK|m_number_name|MATLAB:validators:mustBeNonzeroLengthText / The value of 'name' is invalid. Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|m_zero|MATLAB:validators:mustBePositive / The value of 'value' is invalid. Value must be positive.|exact
+CHK|m_negative|MATLAB:validators:mustBePositive / The value of 'value' is invalid. Value must be positive.|exact
+CHK|m_textvalue|MATLAB:invalidType / The value of 'value' is invalid. Expected input to be one of these types: / / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64|exact
+CHK|m_vector|MATLAB:expectedScalar / The value of 'value' is invalid. Expected input to be a scalar.|exact
+CHK|m_empty_value|MATLAB:expectedScalar / The value of 'value' is invalid. Expected input to be a scalar.|exact
+CHK|m_complex|MATLAB:validators:mustBeReal / The value of 'value' is invalid. Value must be real.|exact
+CHK|m_logical|MATLAB:invalidType / The value of 'value' is invalid. Expected input to be one of these types: / / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 / / Instead its type was logical.|exact
+CHK|m_logical_counter|MATLAB:invalidType / The value of 'value' is invalid. Expected input to be one of these types: / / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 / / Instead its type was logical.|exact
+CHK|m_cell_value|MATLAB:invalidType / The value of 'value' is invalid. Expected input to be one of these types: / / double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 / / Instead its type was cell.|exact
+CHK|m_noargs|MATLAB:minrhs / Not enough input arguments.|exact
+CHK|m_onearg|MATLAB:minrhs / Not enough input arguments.|exact
+CHK|m_threeargs|MATLAB:TooManyInputs / Too many input arguments.|exact
+CHK|m_output|MATLAB:TooManyOutputs|exact
+CHK|m_output_msg|Too many output arguments.|exact
+CHK|m_nargin|double [1 1] 2|exact
+CHK|m_nargout|double [1 1] 0|exact
+CHK|ctrl_none|MATLAB:minrhs|exact
+CHK|ctrl_none_msg|Not enough input arguments.|exact
+CHK|ctrl_unknown_connection|MPS:MATLAB:Cache:UnknownServiceConnection|exact
+CHK|ctrl_unknown_connection_msg|Unknown service connection "NoSuch".|exact
+CHK|ctrl_unknown_provider|MPS:MATLAB:Cache:UnknownProvider|exact
+CHK|ctrl_unknown_provider_msg|Unknown provider "NoSuchProvider".|exact
+CHK|ctrl_number|MATLAB:invalidType|exact
+CHK|ctrl_number_msg|The value of 'name' is invalid. Expected input to be one of these types: string, char Instead its type was double.|exact
+CHK|ctrl_empty_name|MATLAB:expectedNonempty|exact
+CHK|ctrl_empty_name_msg|The value of 'name' is invalid. Expected input to be nonempty.|exact
+CHK|ctrl_class|mps.cache.Controller|exact
+CHK|ctrl_connection_name|k15conn|exact
+CHK|ctrl_provider|MatlabTest|exact
+CHK|ctrl_folder|<folder>|exact
+CHK|ctrl_operations|read / write / create / update|exact
+CHK|ctrl_active|False|exact
+CHK|ctrl_manage|Unknown|exact
+CHK|ctrl_connection_class|mps.cache.FolderConnection|exact
+CHK|ctrl_ctrlparams|--folder "<folder>"|exact
+CHK|ctrl_props|ActiveConnection ConnectionName Folder ManageService Operations ProviderName|exact
+CHK|ctrl_methods|Controller addlistener addprop attach delete detach eq findobj findprop ge gt isvalid le listener lt ne notify ping restart start stop version|exact
+CHK|ctrl_duplicate|MPS:MATLAB:Cache:DuplicateServiceConnection|exact
+CHK|ctrl_duplicate_msg|Connection "k15conn" already exists. Retrieve it by calling mps.cache.control('k15conn').|exact
+CHK|ctrl_lookup|mps.cache.Controller|exact
+CHK|ctrl_stop_before_start|MPS:MATLAB:Cache:ControlActionFailed / Could not perform action "stop" on k15conn service. Reason: / Connection "k15conn" to MatlabTest service is invalid.|exact
+CHK|ctrl_ping_before_start|MPS:MATLAB:Cache:ControlActionFailed|exact
+CHK|ctrl_ping_before_start_msg|Could not perform action "ping" on k15conn service. Reason: Connection "k15conn" to MatlabTest service is invalid.|exact
+CHK|ctrl_restart_before_start|MPS:MATLAB:Cache:MaybeStartService / MatlabTest service on connection "k15conn" not started, cannot restart. If start is necessary, call the start method.|exact
+CHK|ctrl_detach_before_start|MPS:MATLAB:Cache:ControlActionFailed / Could not perform action "detach" on k15conn service. Reason: / Connection "k15conn" to MatlabTest service is invalid.|exact
+CHK|ctrl_connect_before_start|MPS:MATLAB:Cache:InactiveService|exact
+CHK|ctrl_connect_before_start_msg|MatlabTest service on connection "k15conn" not active. Use Controller object to start or attach to service.|exact
+CHK|ctrl_start|ok|exact
+CHK|ctrl_folder_exists|double [1 1] 7|exact
+CHK|ctrl_active_after|True|exact
+CHK|ctrl_manage_after|True|exact
+CHK|ctrl_start_again|MPS:MATLAB:Cache:MaybeRestartService / MatlabTest service on connection "k15conn" already started. If restart is necessary, call the restart method.|exact
+CHK|ctrl_ping|logical [1 1] 1|exact
+CHK|ctrl_ping_shown|MAT-File service active in <folder>. ans = <a href="matlab:helpPopup('logical')" style="font-weight:bold">logical</a> 1|div=ADR0271|diverges|MAT-File service active in <folder>. ans = true
+CHK|ctrl_version|logical [1 1] 1|exact
+CHK|ctrl_attach_after_start|MPS:MATLAB:Cache:ServiceConnected / Already connected to MatlabTest service on connection "k15conn". Cannot perform action: "attach".|exact
+CHK|ctrl_detach_after_start|MPS:MATLAB:Cache:ConnectionManagementMismatch / Cannot perform action "detach" because connection "k15conn" requires the "stop" command.|exact
+CHK|ctrl_list|k15conn|exact
+CHK|ctrl_exist|logical [1 1] 1|exact
+CHK|ctrl_exist_no|logical [1 1] 0|exact
+CHK|cache_bad_name|MATLAB:InputParser:ArgumentFailedValidation|exact
+CHK|cache_bad_name_msg|The value of 'name' is invalid. It must satisfy the function: @(p)isvarname(p).|exact
+CHK|cache_unknown_connection|MPS:MATLAB:Cache:UnknownServiceConnection|exact
+CHK|cache_unknown_connection_msg|Unknown service connection "nosuch".|exact
+CHK|cache_bad_option|MPS:MATLAB:Cache:UnrecognizedOption|exact
+CHK|cache_bad_option_msg|Unrecognized option: "Bogus".|exact
+CHK|cache_class|mps.cache.MATFileCache|exact
+CHK|cache_default_connection|mps.cache.MATFileCache|exact
+CHK|cache_getp_name|k15cache|exact
+CHK|cache_getp_connection|k15conn|exact
+CHK|cache_getp_folder|MPS:MATLAB:Cache:InvalidPropertyName|exact
+CHK|cache_getp_folder_msg|Class mps.cache.MATFileCache has no property named "Folder".|exact
+CHK|cache_getp_operations|read / write / create / update|exact
+CHK|cache_getp_localkeys|cell|exact
+CHK|cache_getp_bad|MPS:MATLAB:Cache:InvalidPropertyName|exact
+CHK|cache_getp_bad_msg|Class mps.cache.MATFileCache has no property named "Nosuch".|exact
+CHK|cache_length_0|int64 [1 1] 0|exact
+CHK|cache_length_class|int64|exact
+CHK|cache_keys_0|double [1 2] 0 1|exact
+CHK|cache_keys_0_class|cell|exact
+CHK|cache_get_missing|double|exact
+CHK|cache_get_missing_size|double [1 2] 0 0|exact
+CHK|cache_dot_set_get|double [1 3] 350 107 28|exact
+CHK|cache_length_1|int64 [1 1] 1|exact
+CHK|cache_keys_1|cell [1 1] {char 'temperature'}|exact
+CHK|cache_put_pairs|names numbers temperature|exact
+CHK|cache_get_two|cell [1 2] {double [1 3] 350 107 28, double [1 4] 3 5 7 9}|exact
+CHK|cache_get_cell|cell [1 2] {double [1 4] 3 5 7 9, cell [1 4] {char 'three', char 'five', char 'seven', char 'nine'}}|exact
+CHK|cache_get_string|cell [1 2] {cell [1 4] {char 'three', char 'five', char 'seven', char 'nine'}, double [1 4] 3 5 7 9}|exact
+CHK|cache_get_one|cell [1 4] {char 'three', char 'five', char 'seven', char 'nine'}|exact
+CHK|cache_get_two_out|MATLAB:TooManyOutputs|exact
+CHK|cache_get_two_out_msg|Too many output arguments.|exact
+CHK|cache_iskey|logical [1 3] 1 0 1|exact
+CHK|cache_iskey_cell|logical [1 2] 1 0|exact
+CHK|cache_iskey_string|logical [1 1] 1|exact
+CHK|cache_put_cells|Rb Vb Vbe names numbers temperature|exact
+CHK|cache_put_strings|Rb Sa Sb Vb Vbe names numbers temperature|exact
+CHK|cache_put_count_mismatch|MPS:MATLAB:KVStore:KeyValueCountMismatch / Number of keys (2) must match number of values (1).|exact
+CHK|cache_put_odd|MPS:MATLAB:KVStore:BadInputsToWrite / Wrong number of inputs: 2. Expecting even number four or greater: <service connection>, <cache name>, <list of variable / value pairs>.|exact
+CHK|cache_put_cell_value|cell [1 3] {double [1 1] 2, double [1 1] 4, double [1 1] 8}|exact
+CHK|cache_put_struct_value|struct|exact
+CHK|cache_put_string_value|string|exact
+CHK|cache_put_empty_value|double [0 0]|exact
+CHK|cache_put_logical|logical [1 1] 1|exact
+CHK|cache_put_int|int32 [1 1] -5|exact
+CHK|cache_put_matrix|double [3 3] 8 3 4 1 5 9 6 7 2|exact
+CHK|cache_overwrite|double [1 1] 1|exact
+CHK|cache_bytes|double [1 1] 152|exact
+CHK|cache_bytes_missing|double [1 1] NaN|exact
+CHK|cache_bytes_two|MATLAB:strcmp:InputsSizeMismatch|exact
+CHK|cache_bytes_two_msg|Inputs must be the same size or either one can be a scalar.|exact
+CHK|cache_length_many|int64 [1 1] 15|exact
+CHK|cache_length_remote|int64 [1 1] 15|exact
+CHK|cache_length_local|int64 [1 1] 0|exact
+CHK|cache_remove_one|int64 [1 1] 1|exact
+CHK|cache_remove_class|int64|exact
+CHK|cache_remove_missing|int64 [1 1] 0|exact
+CHK|cache_remove_many|int64 [1 1] 2|exact
+CHK|cache_remove_string|int64 [1 1] 1|exact
+CHK|cache_keys_after|E I L M S T V names numbers temperature|exact
+CHK|cache_count_remote|double [1 1] 10|exact
+CHK|cache_bad_key_get|double [0 0]|exact
+CHK|cache_bad_key_put|ok|exact
+CHK|cache_bad_dot_set|ok|exact
+CHK|cache_shadow_warning| / |exact
+CHK|cache_shadow_get|double [1 1] 1|exact
+CHK|cache_remove_shadow|int64 [1 1] 1|exact
+CHK|cache_composite_get|cell [1 2] {char 'data', char 'later'}|exact
+CHK|cache_composite_dot|cell [1 2] {char 'data', char 'later'}|div=ADR0271|diverges|ERR MATLAB:mustBeFieldName
+CHK|cache_composite_iskey|logical [1 2] 1 0|exact
+CHK|cache_composite_keys|1bad 5 E I L M S T V names numbers struct(time=17,id=23) temperature|exact
+CHK|cache_composite_remove|int64 [1 1] 1|exact
+CHK|cache_composite_gone|1bad 5 E I L M S T V names numbers temperature|exact
+CHK|cache_retain_get|double [1 2] 0 0|exact
+CHK|cache_retain_set|phi a|exact
+CHK|cache_retain_local_keys|a phi|exact
+CHK|cache_local_get|double [1 1] 1.61803|exact
+CHK|cache_local_length|int64 [1 1] 14|exact
+CHK|cache_local_length_local|int64 [1 1] 2|exact
+CHK|cache_local_length_remote|int64 [1 1] 12|exact
+CHK|cache_local_remote_keys|logical [1 1] 0|exact
+CHK|cache_flush|a phi|exact
+CHK|cache_flush_remote|logical [1 1] 1|exact
+CHK|cache_flush_again|double [1 2] 0 0|exact
+CHK|cache_purge|a|exact
+CHK|cache_purge_retain|double [1 2] 0 0|exact
+CHK|cache_purge_value|double [1 1] 18|exact
+CHK|cache_retain_true|logical [1 1] 1|exact
+CHK|cache_retain_true_local|int64 [1 1] 1|exact
+CHK|cache_retain_true_purge|b|exact
+CHK|cache_retain_false|logical [1 1] 0|exact
+CHK|cache_clear|int64 [1 1] 15|exact
+CHK|cache_clear_again|double [1 1] 0|exact
+CHK|cache_length_cleared|int64 [1 1] 0|exact
+CHK|cache_disp|MATFileCache with properties: / Name: 'k15cache' / Operations: "read / write / create / update" / LocalKeys: 0 / Connection: 'k15conn' / Use getp instead of dot notation to access cache properties.|exact
+CHK|ctrl_disp|ActiveConnection: True / ConnectionName: 'k15conn' / Controller with properties: / Folder: '<folder>' / ManageService: True / Operations: "read / write / create / update" / ProviderName: 'MatlabTest'|exact
+CHK|location_members|Local Remote|div=ADR0271|diverges|ERR
+CHK|tristate_true|double [1 1] 1|exact
+CHK|tristate_unknown|double [1 1] -1|exact
+CHK|cache_second_keys|cell [1 1] {char 'x'}|exact
+CHK|cache_first_keys|double [1 2] 0 1|exact
+CHK|cache_files|#compositeKey_k15cache.mat .configFile.mat k15cache.mat k15second.mat|exact
+CHK|mutex_no_name|MATLAB:minrhs|exact
+CHK|mutex_no_name_msg|Not enough input arguments.|exact
+CHK|mutex_bad_name|MATLAB:InputParser:ArgumentFailedValidation|exact
+CHK|mutex_bad_name_msg|The value of 'name' is invalid. It must satisfy the function: @(p)isvarname(p).|exact
+CHK|mutex_unknown_connection|MPS:MATLAB:Cache:UnknownServiceConnection|exact
+CHK|mutex_unknown_connection_msg|Unknown service connection "nosuch".|exact
+CHK|mutex_bad_expiration|MATLAB:expectedInteger|exact
+CHK|mutex_bad_expiration_msg|The value of 'Expiration' is invalid. Expected input to be integer-valued.|exact
+CHK|mutex_class|mps.sync.TimedMATFileMutex|exact
+CHK|mutex_name|k15lock|exact
+CHK|mutex_connection|k15conn|exact
+CHK|mutex_expiration|double [1 1] 10|exact
+CHK|mutex_props|Expiration ConnectionName MutexName|exact
+CHK|mutex_methods|TimedMATFileMutex acquire addlistener delete eq findobj findprop ge gt isvalid le listener lt ne notify own release|exact
+CHK|mutex_own_before|logical [1 1] 0|exact
+CHK|mutex_release_before|logical [1 1] 0|exact
+CHK|mutex_acquire|logical [1 1] 1|exact
+CHK|mutex_own|logical [1 1] 1|exact
+CHK|mutex_acquire_again|logical [1 1] 0|exact
+CHK|mutex_locks_dir|double [1 1] 7|exact
+CHK|mutex_second_acquire|logical [1 1] 1|div=ADR0271|diverges|logical [1 1] 0
+CHK|mutex_second_own|logical [1 1] 1|div=ADR0271|diverges|logical [1 1] 0
+CHK|mutex_release|logical [1 1] 1|exact
+CHK|mutex_release_again|logical [1 1] 0|exact
+CHK|mutex_own_after|logical [1 1] 0|exact
+CHK|mutex_acquire_timeout|logical [1 1] 1|exact
+CHK|mutex_expire|logical [1 1] 0|exact
+CHK|mutex_default_connection|mps.sync.TimedMATFileMutex|exact
+CHK|ctrl_stop|ok|exact
+CHK|ctrl_folder_gone|double [1 1] 0|exact
+CHK|ctrl_active_stopped|False|exact
+CHK|cache_after_stop|MPS:MATLAB:Cache:InactiveService|exact
+CHK|cache_after_stop_msg|MatlabTest service on connection "k15conn" not active. Use Controller object to start or attach to service.|exact
+CHK|ctrl_stop_again|MPS:MATLAB:Cache:ControlActionFailed / Could not perform action "stop" on k15conn service. Reason: / Connection "k15conn" to MatlabTest service is invalid.|exact
+CHK|ctrl_list_after|k15conn|exact
+CHK|ctrl_list_cleared||exact
+CHK|ctrl_lookup_cleared|MPS:MATLAB:Cache:UnknownServiceConnection|exact
+CHK|ctrl_lookup_cleared_msg|Unknown service connection "k15conn".|exact
+CHK|ctrl_keepdata|MATLAB:InputParser:UnmatchedParameter|exact
+CHK|ctrl_keepdata_msg|'KeepData' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|ctrl_second_attach_new|MPS:MATLAB:Cache:ControlActionFailed / Could not perform action "attach" on MatlabTest service. Reason: / Cannot attach MAT-file service to folder <root>\second because that folder does not exist. Try start() instead.|exact
+CHK|ctrl_second_start|ok|exact
+CHK|ctrl_second_attach|MPS:MATLAB:Cache:ServiceConnected / Already connected to MatlabTest service on connection "k15second". Cannot perform action: "attach".|exact
+CHK|ctrl_second_stop|ok|exact
+CHK|ctrl_second_detach|MPS:MATLAB:Cache:ControlActionFailed / Could not perform action "detach" on k15second service. Reason: / Connection "k15second" to MatlabTest service is invalid.|exact
+CHK|ctrl_third_attach_gone|MPS:MATLAB:Cache:ControlActionFailed / Could not perform action "attach" on MatlabTest service. Reason: / Cannot attach MAT-file service to folder <root>\second because that folder does not exist. Try start() instead.|exact
+CHK|ctrl_third_attach|ok|exact
+CHK|ctrl_third_start|MPS:MATLAB:Cache:ServiceConnected / Already connected to MatlabTest service on connection "k15third". Cannot perform action: "start".|exact
+CHK|ctrl_third_stop|MPS:MATLAB:Cache:ConnectionManagementMismatch / Cannot perform action "stop" because connection "k15third" requires the "detach" command.|exact
+CHK|ctrl_third_detach|ok|exact
+CHK|ctrl_list_all_cleared|double [1 2] 0 0|exact

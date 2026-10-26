@@ -211,14 +211,14 @@ public static class JgRuntime
     /// <paramref name="own"/>, a new session every time, which <see cref="Close"/> ends. Runs on the
     /// engine thread.
     /// </summary>
-    internal static ComponentSession Open(string archivePath, string uuid, bool own = false)
+    internal static ComponentSession Open(string archivePath, string uuid, bool own = false, string? cacheFolderName = null, string? cacheDirectory = null)
     {
         if (!own && Sessions.TryGetValue(uuid, out ComponentSession? open))
         {
             return open;
         }
 
-        ScriptDeployment deployment = ScriptDeployment.FromArchive(archivePath, [], runtimeOptions: Options);
+        ScriptDeployment deployment = ScriptDeployment.FromArchive(archivePath, [], cacheDirectory, runtimeOptions: Options, cacheFolderName: cacheFolderName);
         try
         {
             // Out with the last component's state (or the host's), so the new session starts as a
