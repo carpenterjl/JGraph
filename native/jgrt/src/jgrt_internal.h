@@ -79,6 +79,14 @@ struct JgrtManaged
     mxArray* (*GetProperty)(intptr_t value, uint64_t index, const wchar_t* name);
     intptr_t (*SetProperty)(intptr_t value, uint64_t index, const wchar_t* name, const mxArray* property);
     void (*WaitForFigures)(intptr_t instance);
+
+    // The C++ shared library API's (stage K12, cpplib.cpp): a library is an instance as above.
+    int (*CppStart)(int outOfProcess, const wchar_t** options, int count, wchar_t** error);
+    intptr_t (*CppOpen)(const wchar_t* archive, wchar_t** error);
+    uint64_t (*CppCall)(intptr_t library, const wchar_t* function, size_t nlhs, const unsigned char* inputs, size_t length,
+        void* context, void* write, int output, int error, void* done, wchar_t** refused);
+    int (*CppCancel)(uint64_t task, int allowInterrupt);
+    void (*CppForget)(uint64_t task);
 };
 
 // What LastError answers.

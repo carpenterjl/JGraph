@@ -374,7 +374,7 @@ CHK|dot|MATLAB:categorical:FieldReferenceNotAllowed|exact
 CHK|dot_msg|Attempt to reference field of non-structure array.|exact
 CHK|fieldnames|MATLAB:categorical:UndefinedFunction|exact
 CHK|fieldnames_msg|Undefined function 'fieldnames' for input arguments of type 'categorical'.|exact
-CHK|properties|cell[0 1]{}|div=ADR0232|diverges|char[0 0]''
+CHK|properties|cell[0 1]{}|exact
 CHK|methods_count|double[1 1] 73|div=ADR0232|diverges|char[0 0]''
 CHK|methods_list|char[1 551]'addcats,cat,categorical,categories,cellstr,char,countcats,ctranspose,double,eq,ge,gt,histcounts,horzcat,int16,int32,int64,int8,intersect,iscategory,iscolumn,isempty,isequal,isequaln,ismatrix,ismember,isordinal,isprotected,isrow,isscalar,issorted,issortedrows,isundefined,isvector,keyHash,keyMatch,le,length,lt,max,maxk,median,mergecats,min,mink,mode,ndims,ne,numel,permute,removecats,renamecats,reordercats,reshape,setcats,setdiff,setxor,single,size,sort,sortrows,string,summary,times,topkrows,transpose,uint16,uint32,uint64,uint8,union,unique,vertcat'|div=ADR0232|diverges|char[0 0]''
 CHK|struct|struct[1 1]{(f=<categorical[1 4]>)}|exact

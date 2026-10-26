@@ -56,6 +56,7 @@ internal static partial class JgsBuiltins
 
         RegisterDotNetBuild(env, interpreter, host);
         RegisterCLibraryBuild(env, interpreter, host);
+        RegisterCppLibraryBuild(env, interpreter, host);
     }
 
     // --- The options -----------------------------------------------------------------------

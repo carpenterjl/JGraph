@@ -338,13 +338,34 @@ internal static partial class JgsBuiltins
         if (keys.Length > 0)
         {
             fields["KeyType"] = JgsValue.Str(IsTextScalar(keys[0]) ? "char" : "double");
-            if (className == DictionaryClassName)
-            {
-                fields["ValueType"] = JgsValue.Str(ValueKind(ValueCell(map)[0]));
-            }
+            fields["ValueType"] = JgsValue.Str(className == DictionaryClassName ? ValueKind(ValueCell(map)[0]) : MapValueType(given));
         }
 
         return map;
+    }
+
+    /// <summary>
+    /// The value type a containers.Map takes from the values it is made with, as R2025b's does
+    /// (measured, stage K12): real scalars all of one numeric or logical class are that class, char
+    /// rows are char, and anything else - a mix, a vector, a string, a complex number - any.
+    /// </summary>
+    private static string MapValueType(JgsValue[] values)
+    {
+        string? kind = null;
+        foreach (JgsValue value in values)
+        {
+            string these = value.Type == JgsType.String && !value.IsCharMatrix ? "char"
+                : value.Type is JgsType.Number or JgsType.Bool ? ClassOf(value, JgsDialect.Matlab)
+                : "any";
+            if (these == "any" || (kind is not null && kind != these))
+            {
+                return "any";
+            }
+
+            kind = these;
+        }
+
+        return kind ?? "any";
     }
 
     /// <summary>

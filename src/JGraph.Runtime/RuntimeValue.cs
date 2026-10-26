@@ -236,7 +236,9 @@ public sealed class RuntimeNumeric : RuntimeValue
     }
 
     private static ArgumentException Inexact(string className, object x) =>
-        new($"{x} cannot be held exactly: JGraph keeps an {className} as a double, exact to 2^53.");
+        new($"{x} cannot be held exactly: JGraph keeps {Article(className)} {className} as a double, exact to 2^53.");
+
+    private static string Article(string className) => className.StartsWith('u') ? "a" : "an";
 
     /// <summary>The elements as the class holds them, refusing any the class cannot.</summary>
     private static double[] Held(string className, IReadOnlyList<double> values)
@@ -274,7 +276,7 @@ public sealed class RuntimeNumeric : RuntimeValue
         {
             throw new ArgumentException(
                 className is "int64" or "uint64" && x == Math.Floor(x)
-                    ? $"{x} cannot be held exactly: JGraph keeps an {className} as a double, exact to 2^53."
+                    ? $"{x} cannot be held exactly: JGraph keeps {Article(className)} {className} as a double, exact to 2^53."
                     : $"{x} is not a {className} value.");
         }
 

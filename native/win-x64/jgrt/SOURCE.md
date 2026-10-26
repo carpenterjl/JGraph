@@ -1,10 +1,10 @@
 # jgrt.dll and jgrt.lib
 
-Built by `native\jgrt\build.ps1` from `native\jgrt\src` and `native\jgrt\include` (compiler and SDK plan, stage K10).
+Built by `native\jgrt\build.ps1` from `native\jgrt\src` and `native\jgrt\include` (compiler and SDK plan, stages K10 and K12).
 
 - Compiler: Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35229 for x64 (x64), `/O2 /MT /EHsc /W4 /WX /std:c++17 /Brepro`
 - nethost: `8.0.31` apphost pack, linked statically
 
-- `jgrt.dll`: 313344 bytes, SHA-256 `58dd62d4433ef0ca55b00c4eec644f633410c27b594f19da9faf2f0a400ba47e`
-- `jgrt.lib`: 36250 bytes, SHA-256 `774a62a2ec3266f9e45183547b45b21f77b07e23c6f091e904d1d3ebd43ffe55`
-- `tests\JGraph.Tests\Runtime\native\win-x64\jgrtclient.exe` (NativeBridgeTests' C program): 160768 bytes, SHA-256 `26c11cca158d9e4e10790c8047351414d6fa30931d9134f5e69e92a28eedc95e`
+- `jgrt.dll`: 315904 bytes, SHA-256 `7e5e2784410cc8feeca4cbb78cc126043c3db0bd52e8d79e07d6a6502d0171bb`
+- `jgrt.lib`: 38122 bytes, SHA-256 `0e454b0e3f6968456397e8925989af9eaf972141e436bb6f3d4a31009e85ac26`
+- `tests\JGraph.Tests\Runtime\native\win-x64\jgrtclient.exe` (NativeBridgeTests' C program): 160768 bytes, SHA-256 `0e38a9cf68bff4b554ce75e1e68791cec3518be6e84127c6c54566561f771299`

@@ -46,6 +46,16 @@ internal static partial class JgsBuiltinClasses
     /// <summary>Where a name given for <c>LibraryName</c> is kept (R2025b's UserProvidedLibraryName).</summary>
     public const string GivenLibraryName = "UserProvidedLibraryName";
 
+    /// <summary>The C++ shared library options class (stage K12).</summary>
+    public const string CppLibraryOptions = "compiler.build.CppSharedLibraryOptions";
+
+    /// <summary>The C++ library options' public properties, in the order R2025b lists them (k12_build: opts.properties).</summary>
+    public static readonly string[] CppLibraryOptionNames =
+    [
+        "Interface", "LibraryVersion", "SampleGenerationFiles", "FunctionFiles", "DebugBuild", "LibraryName", "AdditionalFiles",
+        "AutoDetectDataFiles", "ExternalEncryptionKey", "ObfuscateArchive", "SecretsManifest", "SupportPackages", "Verbose", "OutputDir",
+    ];
+
     /// <summary>R2025b's InterfaceManager: the interface, its version and EmbedArchive, kept together because setting one warns about the others.</summary>
     public const string InterfaceValue = "InterfaceManagerInterface";
 
@@ -239,6 +249,58 @@ internal static partial class JgsBuiltinClasses
         }
 
         return new ClassdefStmt(CLibraryOptions, isHandle: false, properties, methods)
+        {
+            Dialect = JgsDialect.Matlab,
+            Superclasses = [],
+        };
+    }
+
+    /// <summary>
+    /// <c>compiler.build.CppSharedLibraryOptions</c> (stage K12): R2025b's properties in its order, the
+    /// interface and its version kept as its interface manager keeps them, the library's name and
+    /// output folder dependent on what was given, each set checked by
+    /// <see cref="JgsBuiltins.SetCppLibraryOption"/>, and its hidden <c>getName</c>.
+    /// </summary>
+    private static ClassdefStmt CppLibraryOptionsDeclaration(Interpreter interpreter)
+    {
+        var properties = new List<ClassProperty>();
+        var methods = new List<ClassMethod>();
+        foreach (string name in CppLibraryOptionNames)
+        {
+            bool derived = name is "Interface" or "LibraryVersion" or "LibraryName" or "OutputDir";
+            properties.Add(new ClassProperty(new ArgumentSpec(name, null, null, [], new PreEvaluated(JgsBuiltins.CppLibraryOptionDefault(name))),
+                Constant: false, Dependent: derived));
+            string captured = name;
+            methods.Add(Setter(name, (copy, value, line, col) =>
+                JgsBuiltins.SetCppLibraryOption(interpreter, interpreter.Host as JGraphScriptGlobals, copy, captured, value, line, col)));
+            if (derived)
+            {
+                methods.Add(new ClassMethod(new FnStmt("get." + name, ["obj"], [], ["value"]) { Dialect = JgsDialect.Matlab }, Static: false)
+                {
+                    Native = new BuiltinFunction("get." + name, (args, line, col) => JgsBuiltins.CppLibraryOptionDerived(captured, args[0].AsObject)),
+                });
+            }
+        }
+
+        methods.Add(new ClassMethod(new FnStmt("getName", ["obj"], [], ["name"]) { Dialect = JgsDialect.Matlab }, Static: false)
+        {
+            Hidden = true,
+            Native = new BuiltinFunction("getName", (args, line, col) => JgsBuiltins.CppLibraryOptionDerived("LibraryName", args[0].AsObject)),
+        });
+
+        var hidden = new MemberAccess(MemberAccessKind.Protected);
+        foreach (string field in new[] { GivenLibraryName, GivenOutputDir, InterfaceValue, InterfaceVersion })
+        {
+            JgsValue initial = JgsValue.Str(field == InterfaceValue ? "matlab-data" : "");
+            properties.Add(new ClassProperty(new ArgumentSpec(field, null, null, [], new PreEvaluated(initial)), Constant: false)
+            {
+                GetAccess = hidden,
+                SetAccess = hidden,
+                Hidden = true,
+            });
+        }
+
+        return new ClassdefStmt(CppLibraryOptions, isHandle: false, properties, methods)
         {
             Dialect = JgsDialect.Matlab,
             Superclasses = [],

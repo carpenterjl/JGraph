@@ -1,0 +1,1490 @@
+k12_build: 147 of 211 keys agree; 64 recorded divergences, 0 unexplained
+k12_client: 556 of 602 cases and reports agree; 46 recorded divergences, 0 unexplained
+k12_paths: 12 of 12 cases and reports agree; 0 recorded divergences, 0 unexplained
+
+k12_build main.options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {26×1 cell}
+                 DebugBuild: off
+                LibraryName: 'k12lib'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: on
+                  OutputDir: '<W>\b\cpp\k12lib'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {26×1 cell}
+      DebugBuild: off
+      LibraryName: 'k12lib'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: on
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build main.printed
+  R2025b: |mcc -W 'cpplib:k12lib,generic' -T link:lib -d <W>\b\cpp\k12lib -v -Z autodetect <W>\b\src\k9describe.m <W>\b\src\k9make.m <W>\b\src\k9echo.m <W>\b\src\k9multi.m <W>\b\src\k9nv.m <W>\b\src\k9print.m <W>\b\src\k9noout.m <W>\b\src\k9slow.m <W>\b\src\k9err.m <W>\b\src\k9quiet.m <W>\b\src\k9t_real.m <W>\b\src\k9t_cplx.m <W>\b\src\k9t_ints.m <W>\b\src\k9t_misc.m <W>\b\src\k9t_untyped.m <W>\b\src\k9t_opt.m <W>\b\src\k9t_ref.m <W>\b\src\k9t_keyword.m <W>\b\src\k9t_multi.m <W>\b\src\k9t_none.m <W>\b\src\k9t_objects.m <W>\b\src\k9point.m <W>\b\src\k9counter.m <W>\b\src\k9color.m <W>\b\src\k9opt.m <W>\b
+  JGraph: |mcc -W 'cpplib:k12lib,generic' -T link:lib -d <W>\b\cpp\k12lib -v -Z autodetect <W>\b\src\k9describe.m <W>\b\src\k9make.m <W>\b\src\k9echo.m <W>\b\src\k9multi.m <W>\b\src\k9nv.m <W>\b\src\k9print.m <W>\b\src\k9noout.m <W>\b\src\k9slow.m <W>\b\src\k9err.m <W>\b\src\k9quiet.m <W>\b\src\k9t_real.m <W>\b\src\k9t_cplx.m <W>\b\src\k9t_ints.m <W>\b\src\k9t_misc.m <W>\b\src\k9t_untyped.m <W>\b\src\k9t_opt.m <W>\b\src\k9t_ref.m <W>\b\src\k9t_keyword.m <W>\b\src\k9t_multi.m <W>\b\src\k9t_none.m <W>\b\src\k9t_objects.m <W>\b\src\k9point.m <W>\b\src\k9counter.m <W>\b\src\k9color.m <W>\b\src\k9opt.m <W>\b
+  recorded: the version line names JGraph's compiler
+
+k12_build main.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cppSharedLibrary'
+      Files: {2×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build main.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {26×1 cell}
+                 DebugBuild: off
+                LibraryName: 'k12lib'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: on
+                  OutputDir: '<W>\b\cpp\k12lib'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {26×1 cell}
+      DebugBuild: off
+      LibraryName: 'k12lib'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: on
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build main.readme
+  R2025b: CRLF 52, ends with newline 1
+  |k12lib C++ Shared Library
+  |
+  |1. Prerequisites for Deployment
+  |
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |
+  |    >>mcrinstaller
+  |
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |
+  |F
+  JGraph: CRLF 31, ends with newline 1
+  |k12lib C++ Shared Library
+  |
+  |1. Prerequisites for Deployment
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed, with its runtime\win64 folder
+  |on the PATH, where a program finds jgrt.dll, which runs the library's archive.
+  |A program compiles with the runtime's include folder, where MatlabCppSharedLib.hpp and
+  |the jgraph headers are, and links with the runtime's lib\win64\jgrt.lib (on the computer
+  |that builds it, JGraph's extern\include and extern\lib\win64\microsoft hold the same).
+  |
+  |2. Files to Deploy and Package
+  |
+  |A C++ shared l
+  recorded: readme.txt and GettingStarted.html are in JGraph's words, for the JGraph Runtime
+
+k12_build main.generic.readme
+  R2025b: CRLF 38, ends with newline 1
+  |
+  |1. Prerequisites for Deployment
+  |
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |
+  |    >>mcrinstaller
+  |
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |
+  |For more information about the
+  JGraph: CRLF 25, ends with newline 1
+  |
+  |1. Prerequisites for Deployment
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed, with its runtime\win64 folder
+  |on the PATH, where a program finds jgrt.dll, which runs the library's archive.
+  |A program compiles with the runtime's include folder, where MatlabCppSharedLib.hpp and
+  |the jgraph headers are, and links with the runtime's lib\win64\jgrt.lib (on the computer
+  |that builds it, JGraph's extern\include and extern\lib\win64\microsoft hold the same).
+  |
+  |2. Files to Deploy and Package
+  |
+  |Files to Package for the Generic Interface
+
+  recorded: readme.txt and GettingStarted.html are in JGraph's words, for the JGraph Runtime
+
+k12_build main.hpp.v2\generic_interface\k12libv2.hpp
+  R2025b: CRLF 0, ends with newline 0
+  |/* File: <W>\b\cpp\k12lib\k12libv2.hpp
+  |*
+  |* C++ source code generated on: <DATE>
+  |*/
+  |#include "MatlabTypesInterface.hpp"
+  |#include <map>
+  |
+  |    class k9opt : public MATLABHandleObject<MATLABControllerType> {
+  |    public:
+  |
+  |    friend bool operator==(const k9opt& A, const k9opt& B);
+  |    friend bool operator!=(const k9opt& A, const k9opt& B);
+  |    friend bool operator<(const k9opt& a, const k9opt& b);
+  |    friend bool operator>(const k9opt& A, const k9opt& B);
+  |    friend bool operator<=(const k9opt& A, const k9opt& B);
+  |    friend
+  JGraph: CRLF 0, ends with newline 0
+  |/* File: <W>\b\cpp\k12lib\k12libv2.hpp
+  |*
+  |* C++ source code generated on: <DATE>
+  |*/
+  |#include "MatlabTypesInterface.hpp"
+  |#include <map>
+  |
+  |    class k9opt : public MATLABHandleObject<MATLABControllerType> {
+  |    public:
+  |
+  |    friend bool operator==(const k9opt& A, const k9opt& B);
+  |    friend bool operator!=(const k9opt& A, const k9opt& B);
+  |    friend bool operator<(const k9opt& a, const k9opt& b);
+  |    friend bool operator>(const k9opt& A, const k9opt& B);
+  |    friend bool operator<=(const k9opt& A, const k9opt& B);
+  |    friend
+  recorded: the generated header passes a name-value argument with its name before it; R2025b's passes it by position (ADR 0268)
+
+k12_build variadic.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cppSharedLibrary'
+      Files: {2×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build variadic.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {3×1 cell}
+                 DebugBuild: off
+                LibraryName: 'k12v'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\cpp\k12v'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {3×1 cell}
+      DebugBuild: off
+      LibraryName: 'k12v'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build defaults.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cppSharedLibrary'
+      Files: {2×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build defaults.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {'<W>\b\src\k9echo.m'}
+                 DebugBuild: off
+                LibraryName: 'k9echo'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\defaults'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: off
+      LibraryName: 'k9echo'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build varargin.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cppSharedLibrary'
+      Files: {2×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build varargin.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {'<W>\b\src\k9nargs.m'}
+                 DebugBuild: off
+                LibraryName: 'k12va'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\varargin'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: off
+      LibraryName: 'k12va'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build varargout.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cppSharedLibrary'
+      Files: {2×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build varargout.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {'<W>\b\src\k9nout.m'}
+                 DebugBuild: off
+                LibraryName: 'k12vo'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\varargout'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: off
+      LibraryName: 'k12vo'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build mixed.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cppSharedLibrary'
+      Files: {2×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build mixed.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {3×1 cell}
+                 DebugBuild: off
+                LibraryName: 'k12mx'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\mixed'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {3×1 cell}
+      DebugBuild: off
+      LibraryName: 'k12mx'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build classonly.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cppSharedLibrary'
+      Files: {2×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build classonly.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {'<W>\b\src\k9point.m'}
+                 DebugBuild: off
+                LibraryName: 'k12c'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\classonly'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: off
+      LibraryName: 'k12c'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build handleonly.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cppSharedLibrary'
+      Files: {2×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build handleonly.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {'<W>\b\src\k9counter.m'}
+                 DebugBuild: off
+                LibraryName: 'k12h'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\handleonly'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: off
+      LibraryName: 'k12h'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build enumonly.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cppSharedLibrary'
+      Files: {2×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build enumonly.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {'<W>\b\src\k9color.m'}
+                 DebugBuild: off
+                LibraryName: 'k12e'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\enumonly'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: off
+      LibraryName: 'k12e'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build pkg.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cppSharedLibrary'
+      Files: {2×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build pkg.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {'<W>\b\src\+k9pkg\k9inner.m'}
+                 DebugBuild: off
+                LibraryName: 'k12p'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\pkg'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: off
+      LibraryName: 'k12p'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build untyped.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cppSharedLibrary'
+      Files: {2×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build untyped.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {'<W>\b\src\k9t_untyped.m'}
+                 DebugBuild: off
+                LibraryName: 'k12u'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\untyped'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: off
+      LibraryName: 'k12u'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build optmethod.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cppSharedLibrary'
+      Files: {2×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build optmethod.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {'<W>\b\src\k9opt.m'}
+                 DebugBuild: off
+                LibraryName: 'k12o'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\optmethod'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: off
+      LibraryName: 'k12o'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build objects.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cppSharedLibrary'
+      Files: {2×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build objects.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {3×1 cell}
+                 DebugBuild: off
+                LibraryName: 'k12ob'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\objects'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {3×1 cell}
+      DebugBuild: off
+      LibraryName: 'k12ob'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build version.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cppSharedLibrary'
+      Files: {2×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build version.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: '2.3.4'
+      SampleGenerationFiles: {}
+              FunctionFiles: {'<W>\b\src\k9echo.m'}
+                 DebugBuild: off
+                LibraryName: 'k12ver'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\version'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: '2.3.4'
+      SampleGenerationFiles: {}
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: off
+      LibraryName: 'k12ver'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build debug.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cppSharedLibrary'
+      Files: {2×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build debug.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {'<W>\b\src\k9echo.m'}
+                 DebugBuild: on
+                LibraryName: 'k12g'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\debug'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: on
+      LibraryName: 'k12g'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build explicit.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cppSharedLibrary'
+      Files: {2×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build explicit.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {'<W>\b\src\k9echo.m'}
+                 DebugBuild: off
+                LibraryName: 'k12x'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\explicit'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: off
+      LibraryName: 'k12x'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build folder.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {2×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: Results with properties:
+      BuildType: 'cppSharedLibrary'
+      Files: {2×1 cell}
+      IncludedSupportPackages: {}
+      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build folder.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {'<W>\b\src\+k9pkg'}
+                 DebugBuild: off
+                LibraryName: 'k12f'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\folder'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: off
+      LibraryName: 'k12f'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<TEMP>\claude\D--EE-Projects-J...'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build mwarray.printed
+  R2025b: |Building with 'Microsoft Visual C++ 2022'.
+  JGraph: (missing)
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; Interface 'mwarray' is refused
+
+k12_build mwarray.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: (missing)
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; Interface 'mwarray' is refused
+
+k12_build mwarray.BuildType
+  R2025b: cppSharedLibrary
+  JGraph: (missing)
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; Interface 'mwarray' is refused
+
+k12_build mwarray.Files
+  R2025b: <OUT>\k12mw.h | <OUT>\k12mw.dll | <OUT>\k12mw.lib | <OUT>\GettingStarted.html
+  JGraph: (missing)
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; Interface 'mwarray' is refused
+
+k12_build mwarray.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'mwarray'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {'<W>\b\src\k9echo.m'}
+                 DebugBuild: off
+                LibraryName: 'k12mw'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\mwarray'
+  JGraph: (missing)
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; Interface 'mwarray' is refused
+
+k12_build mwarray.files
+  R2025b: GettingStarted.html | buildresult.json | includedSupportPackages.txt | k12mw.cpp | k12mw.def | k12mw.dll | k12mw.exp | k12mw.exports | k12mw.h | k12mw.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+  JGraph: (no folder)
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; Interface 'mwarray' is refused
+
+k12_build mwarrayver.printed
+  R2025b: |Building with 'Microsoft Visual C++ 2022'.
+  JGraph: (missing)
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; Interface 'mwarray' is refused
+
+k12_build mwarrayver.results
+  R2025b: Results with properties:
+                    BuildType: 'cppSharedLibrary'
+                        Files: {4×1 cell}
+      IncludedSupportPackages: {}
+                      Options: [1×1 compiler.build.CppSharedLibraryOptions]
+          RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+  JGraph: (missing)
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; Interface 'mwarray' is refused
+
+k12_build mwarrayver.BuildType
+  R2025b: cppSharedLibrary
+  JGraph: (missing)
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; Interface 'mwarray' is refused
+
+k12_build mwarrayver.Files
+  R2025b: <OUT>\k12mwv.h | <OUT>\k12mwv.dll | <OUT>\k12mwv.lib | <OUT>\GettingStarted.html
+  JGraph: (missing)
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; Interface 'mwarray' is refused
+
+k12_build mwarrayver.Options
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'mwarray'
+             LibraryVersion: '3.1'
+      SampleGenerationFiles: {}
+              FunctionFiles: {'<W>\b\src\k9echo.m'}
+                 DebugBuild: off
+                LibraryName: 'k12mwv'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '<W>\b\mwarrayver'
+  JGraph: (missing)
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; Interface 'mwarray' is refused
+
+k12_build mwarrayver.files
+  R2025b: GettingStarted.html | buildresult.json | includedSupportPackages.txt | k12mwv.cpp | k12mwv.def | k12mwv.dll | k12mwv.exp | k12mwv.exports | k12mwv.h | k12mwv.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+  JGraph: (no folder)
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; Interface 'mwarray' is refused
+
+k12_build defaults.GettingStarted
+  R2025b: CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <title>Getting Started with the k9echo C++ Shared Library (Data Array Interface)</title>
+  |        <style type="text/css">
+  |            .rtcContent { padding: 20px; }
+  |            .S0 {padding:0 61px 2px 0; margin-bottom: 16px; border-bottom: 1px solid #cbcbcb; background-position: right 6px; background-repeat: no-repeat; background-size: 58px; color: #c45400; font: normal normal 22px/1.136 Arial,Helvetica,sans-serif; }
+  |            .S1 { margin: 2px 10px 9px 4px; padding: 0px; line-height: 21px; min-heigh
+  JGraph: CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |<head>
+  |<meta charset="utf-8">
+  |<title>Getting started with the k9echo C++ shared library</title>
+  |</head>
+  |<body>
+  |<h1>Getting started with the k9echo C++ shared library</h1>
+  |<ol>
+  |<li>Install the JGraph Runtime 0.2.3, or set JGRAPH_RUNTIME_ROOT to its folder, and put its runtime\win64 folder on the PATH.</li>
+  |<li>Include k9echov2.hpp (in v2\generic_interface) in one source file of the program, compile with the runtime's include folder and C++17, and link with jgrt.lib:
+  |<pre>cl /std:c++17 /EHsc /I "%JGRAPH_RUNTIM
+  recorded: readme.txt and GettingStarted.html are in JGraph's words, for the JGraph Runtime
+
+k12_build mwarray.readme
+  R2025b: CRLF 58, ends with newline 1
+  |k12mw C++ Shared Library
+  |
+  |1. Prerequisites for Deployment
+  |
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |
+  |    >>mcrinstaller
+  |
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |
+  |Fo
+  JGraph: missing
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; Interface 'mwarray' is refused
+
+k12_build mcc_default
+  R2025b: ok
+  |Building with 'Microsoft Visual C++ 2022'.
+  JGraph: ok
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; -W cpplib:name writes the generic interface's archive alone, with JGraph's warning
+
+k12_build mcc_default.files
+  R2025b: buildresult.json | includedSupportPackages.txt | k12m.cpp | k12m.def | k12m.dll | k12m.exp | k12m.exports | k12m.h | k12m.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt | v2\generic_interface\k12m.ctf | v2\generic_interface\readme.txt
+  JGraph: buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt | v2\generic_interface\k12m.ctf | v2\generic_interface\readme.txt
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; -W cpplib:name writes the generic interface's archive alone, with JGraph's warning
+
+k12_build mcc_all
+  R2025b: ok
+  |Building with 'Microsoft Visual C++ 2022'.
+  JGraph: ok
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; -W cpplib:name writes the generic interface's archive alone, with JGraph's warning
+
+k12_build mcc_all.files
+  R2025b: buildresult.json | includedSupportPackages.txt | k12al.cpp | k12al.def | k12al.dll | k12al.exp | k12al.exports | k12al.h | k12al.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt | v2\generic_interface\k12al.ctf | v2\generic_interface\readme.txt
+  JGraph: buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt | v2\generic_interface\k12al.ctf | v2\generic_interface\readme.txt
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; -W cpplib:name writes the generic interface's archive alone, with JGraph's warning
+
+k12_build mcc_legacy
+  R2025b: ok
+  |Building with 'Microsoft Visual C++ 2022'.
+  JGraph: ERR JGraph:mcc:targetOutOfScope | JGraph does not build the legacy mwArray interface of a C++ shared library (-W cpplib:k12lg,legacy); -W cpplib:k12lg,generic builds its MATLAB Data API interface.
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; -W cpplib:name,legacy is refused
+
+k12_build mcc_legacy.files
+  R2025b: buildresult.json | includedSupportPackages.txt | k12lg.cpp | k12lg.def | k12lg.dll | k12lg.exp | k12lg.exports | k12lg.h | k12lg.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+  JGraph: (missing)
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; -W cpplib:name,legacy is refused
+
+k12_build mcc_verfirst
+  R2025b: ok
+  |Building with 'Microsoft Visual C++ 2022'.
+  JGraph: ok
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; -W cpplib:name writes the generic interface's archive alone, with JGraph's warning
+
+k12_build mcc_verfirst.files
+  R2025b: buildresult.json | includedSupportPackages.txt | k12vf.cpp | k12vf.def | k12vf.dll | k12vf.exp | k12vf.exports | k12vf.h | k12vf.lib | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt | v2\generic_interface\k12vf.ctf | v2\generic_interface\readme.txt
+  JGraph: buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt | v2\generic_interface\k12vf.ctf | v2\generic_interface\readme.txt
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; -W cpplib:name writes the generic interface's archive alone, with JGraph's warning
+
+k12_build mcc_verbose
+  R2025b: ok
+  |0 class(es) and 1 function(s) written to <W>\b\mcc_verbose\k12vbv2.hpp
+  |
+  |Compiler version: 25.2 (R2025b)
+  |Analyzing file dependencies.
+  |Parsing file "<W>\b\src\k9echo.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\mcc_verbose\readme.txt".
+  |Generating file "<W>\b\mcc_verbose\v2\generic_interface\readme.txt".
+  JGraph: ok
+  |0 class(es) and 1 function(s) written to <W>\b\mcc_verbose\k12vbv2.hpp
+  |
+  |Compiler version: JGraph 0.2.3 (R2025b)
+  |Analyzing file dependencies.
+  |Parsing file "<W>\b\src\k9echo.m"
+  |	(referenced from command line).
+  |Generating file "<W>\b\mcc_verbose\readme.txt".
+  |Generating file "<W>\b\mcc_verbose\v2\generic_interface\readme.txt".
+  recorded: the version line names JGraph's compiler
+
+k12_build mcc_default.readme
+  R2025b: CRLF 63, ends with newline 1
+  |k12m C++ Shared Library
+  |
+  |1. Prerequisites for Deployment
+  |
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |
+  |    >>mcrinstaller
+  |
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |
+  |For
+  JGraph: CRLF 31, ends with newline 1
+  |k12m C++ Shared Library
+  |
+  |1. Prerequisites for Deployment
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed, with its runtime\win64 folder
+  |on the PATH, where a program finds jgrt.dll, which runs the library's archive.
+  |A program compiles with the runtime's include folder, where MatlabCppSharedLib.hpp and
+  |the jgraph headers are, and links with the runtime's lib\win64\jgrt.lib (on the computer
+  |that builds it, JGraph's extern\include and extern\lib\win64\microsoft hold the same).
+  |
+  |2. Files to Deploy and Package
+  |
+  |A C++ shared lib
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; -W cpplib:name writes the generic interface's archive alone, with JGraph's warning
+
+k12_build opts.default
+  R2025b: CppSharedLibraryOptions with properties:
+                  Interface: 'matlab-data'
+             LibraryVersion: ''
+      SampleGenerationFiles: {}
+              FunctionFiles: {'<W>\b\src\k9echo.m'}
+                 DebugBuild: off
+                LibraryName: 'k9echo'
+            AdditionalFiles: {}
+        AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+           ObfuscateArchive: off
+            SecretsManifest: ''
+            SupportPackages: {'autodetect'}
+                    Verbose: off
+                  OutputDir: '.\k9echocppSharedLibrary'
+  JGraph: CppSharedLibraryOptions with properties:
+      Interface: 'matlab-data'
+      LibraryVersion: ''
+      SampleGenerationFiles: {}
+      FunctionFiles: {'<TEMP>\claude\D--EE-Projects-J...'}
+      DebugBuild: off
+      LibraryName: 'k9echo'
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0×0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '.\k9echocppSharedLibrary'
+  recorded: an object's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+
+k12_build mwarray
+  R2025b: (missing)
+  JGraph: ERR JGraph:mcc:targetOutOfScope | JGraph does not build the legacy mwArray interface of a C++ shared library (Interface 'mwarray'); the 'matlab-data' interface builds its MATLAB Data API interface.
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; Interface 'mwarray' is refused
+
+k12_build mwarrayver
+  R2025b: (missing)
+  JGraph: ERR JGraph:mcc:targetOutOfScope | JGraph does not build the legacy mwArray interface of a C++ shared library (Interface 'mwarray'); the 'matlab-data' interface builds its MATLAB Data API interface.
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; Interface 'mwarray' is refused
+
+k12_build mcc_default.warn
+  R2025b: (missing)
+  JGraph: JGraph:mcc:legacyNotBuilt | JGraph builds no legacy mwArray interface: -W cpplib:k12m writes the generic interface's archive alone, and -W cpplib:k12m,generic its strongly typed header as well.
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; -W cpplib:name writes the generic interface's archive alone, with JGraph's warning
+
+k12_build mcc_all.warn
+  R2025b: (missing)
+  JGraph: JGraph:mcc:legacyNotBuilt | JGraph builds no legacy mwArray interface: -W cpplib:k12al writes the generic interface's archive alone, and -W cpplib:k12al,generic its strongly typed header as well.
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; -W cpplib:name writes the generic interface's archive alone, with JGraph's warning
+
+k12_build mcc_verfirst.warn
+  R2025b: (missing)
+  JGraph: JGraph:mcc:legacyNotBuilt | JGraph builds no legacy mwArray interface: -W cpplib:k12vf writes the generic interface's archive alone, and -W cpplib:k12vf,generic its strongly typed header as well.
+  recorded: JGraph builds no legacy mwArray interface of a C++ shared library (decision KD7): R2025b's library, its source and its import library are not written; -W cpplib:name writes the generic interface's archive alone, with JGraph's warning
+
+k12_client [local] cell.nested.index
+  R2025b: ('ERR std::exception | Array index is out of range.', ())
+  JGraph: ('ERR InvalidArrayIndexException | Array index is invalid.', ())
+  recorded: a cell's element read as an Array past the end throws InvalidArrayIndexException, as R2025b's own header documents; R2025b throws its internal foundation::matlabdata::EArrayIndexOutOfRange, a bare std::exception (ADR 0268)
+
+k12_client [calls] make.int64
+  R2025b: ('INT64 [1,1] [-9007199254740993]', ())
+  JGraph: ('INT64 [1,1] [-9007199254740992]', ())
+  recorded: JGraph's intmin and intmax answer a double, not the class asked for (open item 199)
+
+k12_client [calls] make.uint64
+  R2025b: ('UINT64 [1,1] [18446744073709551615]', ())
+  JGraph: ('ERR MATLABExecutionException |  | 1.8446744073709552E+19 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53. | what 1.8446744073709552E+19 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53. | |', ())
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53: a value past it is refused, not rounded (ADR 0266)
+
+k12_client [calls] make.complexint8
+  R2025b: ('COMPLEX_INT8 [1,1] [1+2i]', ())
+  JGraph: ('ERR MATLABExecutionException |  | int8 expects a number or numeric array, but got a complex. | what int8 expects a number or numeric array, but got a complex. | [k9make.m:k9make:30] |', ())
+  recorded: JGraph keeps no complex integer arrays
+
+k12_client [calls] make.sparselogical
+  R2025b: ('SPARSE_LOGICAL [2,2] nnz=2 (0,0)=1 (1,1)=1', ())
+  JGraph: ('SPARSE_DOUBLE [2,2] nnz=2 (0,0)=1 (1,1)=1', ())
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k12_client [calls] make.sparsecomplex
+  R2025b: ('SPARSE_COMPLEX_DOUBLE [2,2] nnz=2 (0,0)=1+1i (1,1)=2+0i', ())
+  JGraph: ('ERR MATLABExecutionException |  | sparse needs numbers, but element (0, 0) was a complex. | what sparse needs numbers, but element (0, 0) was a complex. | [k9make.m:k9make:61] |', ())
+  recorded: JGraph has no complex sparse arrays
+
+k12_client [calls] in.empty03
+  R2025b: ('double [0 0] []', ())
+  JGraph: ('double [0 3] []', ())
+  recorded: an empty array keeps its shape (0-by-3); R2025b's Data API hands MATLAB 0-by-0 (ADR 0268)
+
+k12_client [calls] in.int64
+  R2025b: ('int64 [1 1] [-9007199254740993]', ())
+  JGraph: ('ERR MATLABExecutionException |  | -9007199254740993 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53. | what -9007199254740993 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53. | |', ())
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53: a value past it is refused, not rounded (ADR 0266)
+
+k12_client [calls] in.uint64
+  R2025b: ('uint64 [1 1] [1.844674e+19]', ())
+  JGraph: ('ERR MATLABExecutionException |  | 18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53. | what 18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53. | |', ())
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53: a value past it is refused, not rounded (ADR 0266)
+
+k12_client [calls] in.complexzero
+  R2025b: ('double [1 1] complex [3]', ())
+  JGraph: ('double [1 1] [3]', ())
+  recorded: JGraph keeps an element with no imaginary part as a real number
+
+k12_client [calls] in.complexint8
+  R2025b: ('int8 [1 1] complex [1]', ())
+  JGraph: ('ERR MATLABExecutionException |  | JGraph keeps no complex int8 array: pass it as a complex double or single one. | what JGraph keeps no complex int8 array: pass it as a complex double or single one. | |', ())
+  recorded: JGraph keeps no complex integer arrays
+
+k12_client [calls] in.sparselogical
+  R2025b: ('logical [2 2] sparse [1 0 0 1]', ())
+  JGraph: ('double [2 2] sparse [1 0 0 1]', ())
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k12_client [calls] in.sparsecomplex
+  R2025b: ('double [2 2] complex sparse [1+1i 0 0 0]', ())
+  JGraph: ('ERR MATLABExecutionException |  | JGraph has no complex sparse arrays: pass the real and imaginary parts apart. | what JGraph has no complex sparse arrays: pass the real and imaginary parts apart. | |', ())
+  recorded: JGraph has no complex sparse arrays
+
+k12_client [calls] echo.empty03
+  R2025b: ('DOUBLE [0,0] []', ())
+  JGraph: ('DOUBLE [0,3] []', ())
+  recorded: an empty array keeps its shape (0-by-3); R2025b's Data API hands MATLAB 0-by-0 (ADR 0268)
+
+k12_client [calls] echo.int64
+  R2025b: ('INT64 [1,1] [-9007199254740993]', ())
+  JGraph: ('ERR MATLABExecutionException |  | -9007199254740993 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53. | what -9007199254740993 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53. | |', ())
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53: a value past it is refused, not rounded (ADR 0266)
+
+k12_client [calls] echo.uint64
+  R2025b: ('UINT64 [1,1] [18446744073709551615]', ())
+  JGraph: ('ERR MATLABExecutionException |  | 18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53. | what 18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53. | |', ())
+  recorded: JGraph keeps a 64-bit integer as a double, exact to 2^53: a value past it is refused, not rounded (ADR 0266)
+
+k12_client [calls] echo.complexzero
+  R2025b: ('COMPLEX_DOUBLE [1,1] [3+0i]', ())
+  JGraph: ('DOUBLE [1,1] [3]', ())
+  recorded: JGraph keeps an element with no imaginary part as a real number
+
+k12_client [calls] echo.complexint8
+  R2025b: ('COMPLEX_INT8 [1,1] [1+2i]', ())
+  JGraph: ('ERR MATLABExecutionException |  | JGraph keeps no complex int8 array: pass it as a complex double or single one. | what JGraph keeps no complex int8 array: pass it as a complex double or single one. | |', ())
+  recorded: JGraph keeps no complex integer arrays
+
+k12_client [calls] echo.sparselogical
+  R2025b: ('SPARSE_LOGICAL [2,2] nnz=2 (0,0)=1 (1,1)=1', ())
+  JGraph: ('SPARSE_DOUBLE [2,2] nnz=2 (0,0)=1 (1,1)=1', ())
+  recorded: JGraph has no sparse logical arrays: one becomes sparse double
+
+k12_client [calls] echo.sparsecomplex
+  R2025b: ('SPARSE_COMPLEX_DOUBLE [2,2] nnz=1 (0,0)=1+1i', ())
+  JGraph: ('ERR MATLABExecutionException |  | JGraph has no complex sparse arrays: pass the real and imaginary parts apart. | what JGraph has no complex sparse arrays: pass the real and imaginary parts apart. | |', ())
+  recorded: JGraph has no complex sparse arrays
+
+k12_client [calls] obj.across.libraries
+  R2025b: ('k9point [1 1] (X=double [1 1] [3], Y=double [1 1] [4], Tag=string [1 1] ["pt"])', ())
+  JGraph: ('ERR MATLABExecutionException |  | A k9point value can only be passed back to the component that returned it. | what A k9point value can only be passed back to the component that returned it. | |', ())
+  recorded: an object goes back only to the library that returned it; R2025b's passes it to another library of the application (ADR 0268)
+
+k12_client [calls] print.buffers
+  R2025b: ('DOUBLE [1,1] [2] out=line 1\\nline 2\\n     2Warning: a warning about 2\\n> In k9print (line 7) err=to standard error\\n', ())
+  JGraph: ('DOUBLE [1,1] [2] out=line 1\\nline 2\\n2\\nWarning: a warning about 2\\n err=to standard error\\n', ())
+  recorded: a value's display is JGraph's own (open item 194), and a deployed warning prints no '> In' line in JGraph (open item 170)
+
+k12_client [calls] print.output.only
+  R2025b: ('DOUBLE [1,1] [1] out=line 1\\n     1Warning: a warning about 1\\n', ())
+  JGraph: ('DOUBLE [1,1] [1] out=line 1\\n1\\nWarning: a warning about 1\\n', ())
+  recorded: a value's display is JGraph's own (open item 194), and a deployed warning prints no '> In' line in JGraph (open item 170)
+
+k12_client [calls] native.tuple
+  R2025b: ("ERR InvalidArrayTypeException | Can't convert the Array to this TypedArray", ())
+  JGraph: ('2 4 three', ())
+  recorded: a char result is taken as text in a typed tuple, as it is alone; R2025b's tuple refuses it (ADR 0268)
+
+k12_client [calls] native.error
+  R2025b: ('ERR MATLABExecutionException | k9:bad | An error with an identifier: 7. | what An error with an identifier: 7. | [k9err.m:k9err:5] [fevalWithCustomTypeConversion.m:fevalWithCustomTypeConversion:43] |', ())
+  JGraph: ('ERR MATLABExecutionException | k9:bad | An error with an identifier: 7. | what An error with an identifier: 7. | [k9err.m:k9err:5] |', ())
+  recorded: R2025b's stack has a frame of its own, fevalWithCustomTypeConversion, below the function's (ADR 0268)
+
+k12_client [calls] native.buffers
+  R2025b: ('1 out=line 1\\n     1Warning: a warning about 1\\n err=to standard error\\n', ())
+  JGraph: ('1 out=line 1\\n1\\nWarning: a warning about 1\\n err=to standard error\\n', ())
+  recorded: a value's display is JGraph's own (open item 194), and a deployed warning prints no '> In' line in JGraph (open item 170)
+
+k12_client [calls] standard error, R2025b's report
+  Error using * | Incorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication.
+  recorded: a deployed report does not head an operator's error with the operator, Error using * (open item 170)
+
+k12_client [calls] standard error, R2025b's report
+  Unrecognized function or variable 'k9nosuchfunction'.
+  recorded: an undefined function is named in JGraph's words, where R2025b's deployed report says Unrecognized function or variable (open item 203)
+
+k12_client [calls] standard error, R2025b's report
+  Error in matlab.engine.internal.fevalWithCustomTypeConversion (line 43)
+  recorded: R2025b's stack has a frame of its own, fevalWithCustomTypeConversion, below the function's (ADR 0268)
+
+k12_client [calls] standard error, R2025b's report
+  Error using clear | In definition of enumeration member 'red' in class 'k9color': | Method 'k9color' is not defined for class 'k9color' or is removed from MATLAB's search path.
+  recorded: R2025b's own error as it clears k9color while the runtime ends
+
+k12_client [calls] standard error, JGraph's report
+  int8 expects a number or numeric array, but got a complex.
+  recorded: JGraph keeps no complex integer arrays and no complex sparse arrays, so k9make fails making one
+
+k12_client [calls] standard error, JGraph's report
+  Error in k9make (line 30)
+  recorded: JGraph keeps no complex integer arrays and no complex sparse arrays, so k9make fails making one
+
+k12_client [calls] standard error, JGraph's report
+  sparse needs numbers, but element (0, 0) was a complex.
+  recorded: JGraph keeps no complex integer arrays and no complex sparse arrays, so k9make fails making one
+
+k12_client [calls] standard error, JGraph's report
+  Error in k9make (line 61)
+  recorded: JGraph keeps no complex integer arrays and no complex sparse arrays, so k9make fails making one
+
+k12_client [calls] standard error, JGraph's report
+  Incorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication.
+  recorded: a deployed report does not head an operator's error with the operator, Error using * (open item 170)
+
+k12_client [calls] standard error, JGraph's report
+  Undefined function 'k9nosuchfunction' for input arguments of type 'double'.
+  recorded: an undefined function is named in JGraph's words, where R2025b's deployed report says Unrecognized function or variable (open item 203)
+
+k12_client [typed] t.nv
+  R2025b: ('ERR MATLABExecutionException | MATLAB:TooManyInputs | Invalid argument at position 2. A name is expected. | what Invalid argument at position 2. A name is expected. | [k9nv.m:k9nv:1] |', ())
+  JGraph: ('3 2 lbl', ())
+  recorded: the generated header passes a name-value argument with its name; R2025b's passes it by position, which the function refuses (ADR 0268)
+
+k12_client [typed] t.nv.complex
+  R2025b: ('ERR MATLABExecutionException | MATLAB:TooManyInputs | Invalid argument at position 2. A name is expected. | what Invalid argument at position 2. A name is expected. | [k9nv.m:k9nv:1] |', ())
+  JGraph: ('3 2 lbl', ())
+  recorded: the generated header passes a name-value argument with its name; R2025b's passes it by position, which the function refuses (ADR 0268)
+
+k12_client [typed] t.ints.complex
+  R2025b: ('DOUBLE [1,1] [55]', ())
+  JGraph: ('ERR MATLABExecutionException |  | JGraph keeps no complex int32 array: pass it as a complex double or single one. | what JGraph keeps no complex int32 array: pass it as a complex double or single one. | |', ())
+  recorded: JGraph keeps no complex integer arrays
+
+k12_client [typed] t.inner
+  R2025b: ('DOUBLE [1,1] [105]', ())
+  JGraph: ("ERR MATLABExecutionException |  | feval: 'k9pkg.k9inner' is not a function. | what feval: 'k9pkg.k9inner' is not a function. | |", ())
+  recorded: JGraph has no packages, so k9pkg.k9inner is not callable by its package name (open item 195)
+
+k12_client [typed] standard error, R2025b's report
+  Error using k9nv (line 1) | Invalid argument at position 2. A name is expected.
+  recorded: the generated header passes k9nv's name-value arguments with their names, so the call succeeds (ADR 0268)
+
+k12_client [typed] standard error, R2025b's report
+  Error using k9nv (line 1) | Invalid argument at position 2. A name is expected.
+  recorded: the generated header passes k9nv's name-value arguments with their names, so the call succeeds (ADR 0268)
+
+k12_client [typed] standard error, JGraph's report
+  feval: 'k9pkg.k9inner' is not a function.
+  recorded: JGraph has no packages, so k9pkg.k9inner is not callable by its package name (open item 195)
+
+k12_client [twice] lib.two.of.one
+  R2025b: ('ERR MATLABExecutionException | MATLAB:matlab_data_array:invalidHandleObjectRef | Invalid HandleObjectRef - Entry not found in the server table | what Invalid HandleObjectRef - Entry not found in the server table | |', ())
+  JGraph: ("k9counter [1 1] (Count=double [1 1] [5], Label=char [1 7] 'counter')", ())
+  recorded: two libraries of one archive share one session, so an object of one is good in the other; R2025b runs each in a session of its own and refuses it (ADR 0268)
+
+k12_client [twice] standard error, R2025b's report
+  Invalid HandleObjectRef - Entry not found in the server table
+  recorded: two libraries of one archive share one session in JGraph, so the object is good in the other (ADR 0268)
+
+k12_client [outproc] print
+  R2025b: ('DOUBLE [1,1] [1] out=line 1\\n     1\\n\\nWarning: a warning about 1\\n> In k9print (line 7)\\n', ())
+  JGraph: ('DOUBLE [1,1] [1] out=line 1\\n1\\nWarning: a warning about 1\\n', ())
+  recorded: a value's display is JGraph's own (open item 194), and a deployed warning prints no '> In' line in JGraph (open item 170)

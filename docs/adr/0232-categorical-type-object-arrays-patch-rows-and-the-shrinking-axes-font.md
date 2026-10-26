@@ -190,7 +190,7 @@ and `JgsRulerTicks` answers the theta ruler's ticks by the 30/15/5-degree rule.
 - **The constructor call count differs**: a gap filled by the no-argument constructor costs this
   build one or two calls more or fewer than R2025b over a long script (106 there, 108 here).
 - **A categorical's refusals keep this build's words**: `times`, `regexp`, `regexprep`, `strjoin`,
-  `strsplit`, `strtrim`, `cellfun`, `str2num`, `datestr`, `fieldnames`, `properties`, `methods`,
+  `strsplit`, `strtrim`, `cellfun`, `str2num`, `datestr`, `fieldnames`, `methods`,
   `c.a`, `strrep` (R2025b warns), `categorical(["a" missing], …)` (`EmptyCategoryName` there,
   `CharData` here), and a table's braces over mixed variables.
 - **`arrayfun` over a categorical is refused**; R2025b applies the function to each element and

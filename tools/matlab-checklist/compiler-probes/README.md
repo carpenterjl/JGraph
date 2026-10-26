@@ -1,4 +1,4 @@
-# Compiler and SDK probes (stages K0-K11)
+# Compiler and SDK probes (stages K0-K12)
 
 Recordings of what R2025b's MATLAB Compiler builds and what the programs it builds do when run,
 for the compiler and SDK plan (`docs/plans/compiler-and-sdk-plan.md`, stage K0). Later stages
@@ -82,7 +82,12 @@ and runs them only when they are named; tell the user before running one.
 | `src/k11client/` | `k11client.c`, a client of the main build's `k11lib` compiled against its generated header: every wrapper in both forms, in three modes (the client's handlers, the library's own, terminate and start again). |
 | `record-k11.ps1` | Runs the probes under `matlab -batch -noFigureWindows`, reads each DLL with `pe-resources.py`, and compiles and runs the client against R2025b's `mclmcrrt.lib`; writes `recordings/k11_build.out.txt`, `k11_names.out.txt`, `k11_nocompiler.out.txt`, `k11_pe.out.txt`, `k11_client.out.txt` and `k11_out`. A generated header's argument list is replaced whole (`<ARGUMENTS>`), as its paths are cut across lines where no token finds them. |
 | `run-k11.ps1`, `compare-k11.py` | The same probes under `jgraph -batch`, the same client against JGraph's `k11lib`, stage K10's `k10feval` against JGraph's own generated `k10lib`, and the comparison (with compare-k10.py's tables): `recordings-jgraph/k11_*.out.txt` and `k11_differences.txt`. |
-| `recordings-jgraph/` | JGraph's recordings of K0's cases, K6's, K7's, K8's, K9's, K10's and K11's, with the same tokens, and the lines that differ from R2025b's. |
+| `probe_k12_build.m` | Over a copy of stage K9's functions (`src/k9`), stage K12's C++ shared libraries for the MATLAB Data API: the main build of 26 files, a variadic one, 18 other `compiler.build.cppSharedLibrary` builds, one with no output folder, 20 `mcc -W cpplib` forms, and `CppSharedLibraryOptions`' answers and refusals, with each build's files and its strongly typed header (stage K12, ADR 0268). |
+| `src/k12client/` | `k12client.cpp`, a C++ client of the main build's `k12lib` and the variadic `k12v`, compiled from the same source against either engine's headers, in seven modes: `local` (the Data API in the program's own memory), `calls` (`feval` and `fevalAsync` every way), `typed` (the generated header), `paths` (where an archive named without a folder is found), `twice`, `outproc` and `runmain`. |
+| `record-k12.ps1` | Runs `probe_k12_build` under `matlab -batch -noFigureWindows`, copies the generated text into `recordings/k12_out`, compiles the client against R2025b's headers and libraries and runs it in each mode, and the paths mode in four setups of the three folders searched; writes `recordings/k12_build.out.txt`, `k12_client.out.txt` and `k12_paths.out.txt`. |
+| `run-k12.ps1`, `compare-k12.py` | The same probe under `jgraph -batch`, the same client against the runtime's headers, the header JGraph generated and `jgrt.lib`, run on JGraph's archives with R2025b's runtime off the PATH, and the comparison: `recordings-jgraph/k12_*.out.txt` and `k12_differences.txt`. |
+| `src/k12edge/`, `record-k12-edge.ps1` | Two Data API programs compiled from one source against both engines' headers: `kind` reads past the end and names what each read throws, and `eq` makes one reference, comparison or struct element past the end per process, as R2025b's library ends the process for some; writes `recordings/k12_edge.out.txt` and `recordings-jgraph/k12_edge.out.txt`. |
+| `recordings-jgraph/` | JGraph's recordings of K0's cases, K6's, K7's, K8's, K9's, K10's, K11's and K12's, with the same tokens, and the lines that differ from R2025b's. |
 | `src/` | The probe programs. `k0_try`/`k0_do` print `key<TAB>value` or `ERR id \| message`, then any warning. |
 | `recordings/` | The recordings. Machine paths are tokens: `<CACHE>`, `<BUILD>`, `<RUN>`, `<TEMP>`, `<MATLABROOT>`, `<HOME>`, `<REPO>`, and each of them without its drive as `<...-NODRIVE>`. The `[1 N]` sizes printed for path values still depend on the machine. |
 | `research-2026-10-21/` | Sources from the plan's research session: the SDK client programs (C, C++, .NET MWArray, .NET Data API, Python) for stages K8-K13, the `mps.json` probes and their output for K14, and the options probes. |
@@ -114,6 +119,9 @@ powershell -File record-k10.ps1 -WorkRoot <a sixteenth scratch>         # about 
 powershell -File run-k10.ps1 -WorkRoot <a seventeenth scratch> -Runtime <the runtime scratch> -Jgraph <the runtime scratch>\bin\win64\jgraph.exe
 powershell -File record-k11.ps1 -WorkRoot <an eighteenth scratch>        # about 25 min; needs MSVC
 powershell -File run-k11.ps1 -WorkRoot <a nineteenth scratch>           # about 30 s; name it as long as the eighteenth
+powershell -File record-k12.ps1 -WorkRoot <a twentieth scratch>          # about 8 min; needs MSVC
+powershell -File run-k12.ps1 -WorkRoot <a twenty-first scratch>          # about 30 s; name it as long as the twentieth
+powershell -File record-k12-edge.ps1 -WorkRoot <a twenty-second scratch> # about 1 min; both engines, needs MSVC
 ```
 
 `run-quiet.ps1` gives a program an empty stdin. Until stage K1 it held a UTF-8 byte order mark,

@@ -55,6 +55,12 @@ public sealed record TypedProperty(string Name)
 
     /// <summary>Whether a client may write it.</summary>
     public bool Writable { get; init; }
+
+    /// <summary>Whether it is <c>Dependent</c>: R2025b's C++ generator reads one only through a <c>get.</c> method of its own.</summary>
+    public bool Dependent { get; init; }
+
+    /// <summary>Whether the class has a <c>get.</c> method for it.</summary>
+    public bool HasGetMethod { get; init; }
 }
 
 /// <summary>A class's method, its object first among an instance method's inputs.</summary>
@@ -62,6 +68,9 @@ public sealed record TypedMethod(string Name, IReadOnlyList<TypedArgument> Input
 {
     /// <summary>Whether the method is static.</summary>
     public bool Static { get; init; }
+
+    /// <summary>The class that defines it when another does (<c>handle</c> for its comparisons), else null.</summary>
+    public string? DefiningClass { get; init; }
 }
 
 /// <summary>A class the interface wraps: a value or handle class, or an enumeration.</summary>
@@ -69,6 +78,9 @@ public sealed record TypedClass(string FullName)
 {
     /// <summary>Whether it derives from handle (a C# class; a value class is a C# struct).</summary>
     public bool IsHandle { get; init; }
+
+    /// <summary>Whether the header said <c>(Abstract)</c>, which R2025b's C++ generator leaves out.</summary>
+    public bool Abstract { get; init; }
 
     /// <summary>The members an enumeration declares, not hidden; empty for any other class.</summary>
     public IReadOnlyList<string> Enumeration { get; init; } = [];

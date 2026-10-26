@@ -89,7 +89,8 @@ public sealed class MccCommandLineTests
     {
         Assert.Equal("JGraph:mcc:optionNotBuilt", Refused("-m", "-s", "app.m").Identifier);
         Assert.Equal("JGraph:mcc:optionNotBuilt", Refused("-m", "-k", "key", "app.m").Identifier);
-        Assert.Equal("JGraph:mcc:targetNotBuilt", Refused("-W", "cpplib:mylib", "app.m").Identifier);
+        Assert.Equal("JGraph:mcc:targetNotBuilt", Refused("-W", "python:mypkg", "app.m").Identifier);
+        Assert.Equal("JGraph:mcc:targetOutOfScope", Refused("-W", "cpplib:mylib,legacy", "app.m").Identifier); // decision KD7
         Assert.Equal("Compiler:compiler:REQ_UNEXPECTED_ERROR", Refused("-m", "-Z", "Arduino", "app.m").Identifier); // k7_switches: Z_bogus
     }
 

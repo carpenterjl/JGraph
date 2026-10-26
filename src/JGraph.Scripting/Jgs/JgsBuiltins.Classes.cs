@@ -47,9 +47,12 @@ internal static partial class JgsBuiltins
         {
             Arity("properties", args, 1, line, col);
             JgsValue names = CellColumn(PropertyNames("properties", args[0], interpreter, line, col));
-            if (names.AsCell.Length == 0 && (IsDeviceValue(args[0].AsExternalOrNull()) || IsEnumerationValue(args[0])))
+            if (names.AsCell.Length == 0 && (IsDeviceValue(args[0].AsExternalOrNull()) || IsEnumerationValue(args[0])
+                || MatlabValueClassProperties(args[0]) is not null))
             {
-                names.Reshape(0, 1); // midicontrols and an enumeration with none: a 0-by-1 cell (probe_midi_controls, k9_enumerations)
+                // midicontrols, an enumeration with none, and MATLAB's classes with none (a categorical, a
+                // string, a cell): a 0-by-1 cell (probe_midi_controls, k9_enumerations, k12_cpp_shared_library).
+                names.Reshape(0, 1);
             }
 
             return names;
@@ -566,6 +569,12 @@ internal static partial class JgsBuiltins
             return definition.ListedProperties.Select(static p => p.Spec.Name);
         }
 
+        // After the class a text names, so properties('Circle') is still Circle's.
+        if (MatlabValueClassProperties(value) is { } own)
+        {
+            return own;
+        }
+
         if (IsMatFile(value))
         {
             return MatFilePropertyNames(value, line, col); // Properties, then the file's variables (V6, #112)
@@ -590,6 +599,39 @@ internal static partial class JgsBuiltins
 
         throw new JgsRuntimeException(line, col,
             $"{builtin}: a {value.TypeName} has no properties to list.");
+    }
+
+    /// <summary>
+    /// What R2025b's <c>properties</c> lists for MATLAB's own value classes (stage K12, whose C++
+    /// client lists them; measured: a table's variables then Properties and its two dimension names,
+    /// none for a categorical, a string or a cell), or null for any other value.
+    /// </summary>
+    private static IEnumerable<string>? MatlabValueClassProperties(JgsValue value)
+    {
+        if (value.Type == JgsType.Struct && value.ClassName == MapClassName)
+        {
+            return ["Count", "KeyType", "ValueType"];
+        }
+
+        if (IsCalendarDuration(value))
+        {
+            return ["Format"];
+        }
+
+        if (value.Type == JgsType.Table)
+        {
+            JGraph.Data.Table table = value.AsTable;
+            IReadOnlyList<string> dimensions = table.DimensionNames ?? (table.RowTimes is null ? ["Row", "Variables"] : ["Time", "Variables"]);
+            return [.. table.ColumnNames, "Properties", .. dimensions];
+        }
+
+        return value.TypeName switch
+        {
+            "datetime" => ["Format", "TimeZone", "Year", "Month", "Day", "Hour", "Minute", "Second"],
+            "duration" => ["Format"],
+            "categorical" or "string array" or "string" or "cell" => [],
+            _ => null,
+        };
     }
 
     /// <summary>

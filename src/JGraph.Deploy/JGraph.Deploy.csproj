@@ -43,6 +43,10 @@
     <!-- Stage K11: a C shared library is compiled against the JGraph Runtime's headers and linked with
          jgrt.lib (native/jgrt, stage K10), carried beside JGraph where MATLAB keeps its own. -->
     <None Include="..\..\native\jgrt\include\*.h" Link="extern\include\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <!-- Stage K12: the C++ shared library API, JGraph's own headers under MATLAB's names. -->
+    <None Include="..\..\native\jgrt\include\*.hpp" Link="extern\include\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <None Include="..\..\native\jgrt\include\jgraph\*" Link="extern\include\jgraph\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <None Include="..\..\native\jgrt\include\MatlabDataArray\*" Link="extern\include\MatlabDataArray\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
     <None Include="..\..\native\win-x64\jgrt\jgrt.lib" Link="extern\lib\win64\microsoft\jgrt.lib" CopyToOutputDirectory="PreserveNewest" Visible="false" />
   </ItemGroup>
 

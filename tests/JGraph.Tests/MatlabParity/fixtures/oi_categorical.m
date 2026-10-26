@@ -147,7 +147,7 @@ u9b_chk('cellfun', @() cellfun(@(x) x, c)); u9b_chk('arrayfun', @() arrayfun(@(x
 u9b_chk('num2cell', @() num2cell(c)); u9b_chk('num2cell_class', @() class(num2cellel(c))); u9b_chk('cell_from_cat', @() cell(c));
 u9b_chk('brace', @() bracecat(c));
 u9b_chk('dot', @() dotcat(c));
-u9b_chk('fieldnames', @() fieldnames(c)); u9b_chkdiv('properties', @() oi_try( @() properties(c)), 'ADR0232'); u9b_chkdiv('methods_count', @() oi_try( @() numel(methods(c))), 'ADR0232'); u9b_chkdiv('methods_list', @() oi_try( @() strjoin(methods(c)', ',')), 'ADR0232');
+u9b_chk('fieldnames', @() fieldnames(c)); u9b_chk('properties', @() oi_try( @() properties(c))); u9b_chkdiv('methods_count', @() oi_try( @() numel(methods(c))), 'ADR0232'); u9b_chkdiv('methods_list', @() oi_try( @() strjoin(methods(c)', ',')), 'ADR0232');
 u9b_chk('struct', @() struct('f', c)); u9b_chk('struct_field_class', @() class(getfield(struct('f', c), 'f')));
 u9b_chk('summary_out', @() summary(c));
 u9b_chk('summary_out_undef', @() summary(categorical({'a', ''})));

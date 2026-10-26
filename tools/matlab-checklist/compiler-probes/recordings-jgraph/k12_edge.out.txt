@@ -1,0 +1,66 @@
+== kind
+  c01.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  base	matlab::Exception
+  data	InvalidArrayIndexException
+  plain.c1	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  const.c1	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  const.c01	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  iter.ok	ok
+  e00.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,21> | Can't index into an empty array.
+  e00.write	class jgraph::data::detail::ArrayException<class jgraph::Exception,21> | Can't index into an empty array.
+  e10.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,21> | Can't index into an empty array.
+  ref.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  typed.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  typed.ok	ok
+  inner.ref	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  inner.ref.past	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  c000.read	ok
+  c001.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,6> | Too many indices provided.
+  c1.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  c02.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  c01.write	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  c01.type	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  d02.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  d20.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  d02.write	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  d20.write	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  d010.read	ok
+  d011.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,6> | Too many indices provided.
+  d3.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,5> | Not enough indices provided.
+  r4.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  r4.write	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  r04.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  s2.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  s02.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  s10.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  m02.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  m02.write	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  t2.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  t02.read	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  EXIT	0
+== eq num
+  num	ok 0
+  EXIT	0
+== eq str
+  str	ok 0
+  EXIT	0
+== eq ref
+  ref	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  EXIT	0
+== eq refok
+  refok	ok 6
+  EXIT	0
+== eq st
+  st	made
+  st	ok 0
+  EXIT	0
+== eq stf
+  stf	made
+  stf	class jgraph::data::detail::ArrayException<class jgraph::Exception,1> | Array index is invalid.
+  EXIT	0
+== eq streq
+  streq	ok 1
+  EXIT	0
+== eq refeq
+  refeq	ok 0
+  EXIT	0

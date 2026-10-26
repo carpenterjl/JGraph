@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Getting started with the k12lib C++ shared library</title>
+</head>
+<body>
+<h1>Getting started with the k12lib C++ shared library</h1>
+<ol>
+<li>Install the JGraph Runtime 0.2.3, or set JGRAPH_RUNTIME_ROOT to its folder, and put its runtime\win64 folder on the PATH.</li>
+<li>Include k12libv2.hpp (in v2\generic_interface) in one source file of the program, compile with the runtime's include folder and C++17, and link with jgrt.lib:
+<pre>cl /std:c++17 /EHsc /I "%JGRAPH_RUNTIME_ROOT%\include" /I v2\generic_interface driverApplication.cpp "%JGRAPH_RUNTIME_ROOT%\lib\win64\jgrt.lib"</pre></li>
+<li>In the program, start the runtime with <code>matlab::cpplib::initMATLABApplication</code>, open k12lib.ctf with <code>initMATLABLibrary</code>,
+and call its functions through the header or with <code>feval</code>. A program written for MATLAB's runtime compiles as it is: the runtime's headers name their <code>jgraph</code> namespace <code>matlab</code> too.</li>
+<li>Keep k12lib.ctf beside the program, in the folder it runs in, or in the folder CPPSHARED_BASE_CTF_PATH names.</li>
+</ol>
+</body>
+</html>

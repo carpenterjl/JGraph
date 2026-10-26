@@ -1,0 +1,685 @@
+== local
+  type.bool	LOGICAL [2,3] [0 0 0 0 0 0]
+  scalar.bool	LOGICAL [1,1] [1]
+  list.bool	LOGICAL [1,2] [1 1]
+  typed.bool	ok LOGICAL
+  type.char16	CHAR [2,3] '\x00\x00\x00\x00\x00\x00'
+  scalar.char16	CHAR [1,1] 'x'
+  list.char16	CHAR [1,2] 'xx'
+  typed.char16	ok CHAR
+  type.double	DOUBLE [2,3] [0 0 0 0 0 0]
+  scalar.double	DOUBLE [1,1] [2.5]
+  list.double	DOUBLE [1,2] [2.5 2.5]
+  typed.double	ok DOUBLE
+  type.float	SINGLE [2,3] [0 0 0 0 0 0]
+  scalar.float	SINGLE [1,1] [1.5]
+  list.float	SINGLE [1,2] [1.5 1.5]
+  typed.float	ok SINGLE
+  type.int8	INT8 [2,3] [0 0 0 0 0 0]
+  scalar.int8	INT8 [1,1] [-5]
+  list.int8	INT8 [1,2] [-5 -5]
+  typed.int8	ok INT8
+  type.uint8	UINT8 [2,3] [0 0 0 0 0 0]
+  scalar.uint8	UINT8 [1,1] [200]
+  list.uint8	UINT8 [1,2] [200 200]
+  typed.uint8	ok UINT8
+  type.int16	INT16 [2,3] [0 0 0 0 0 0]
+  scalar.int16	INT16 [1,1] [-7]
+  list.int16	INT16 [1,2] [-7 -7]
+  typed.int16	ok INT16
+  type.uint16	UINT16 [2,3] [0 0 0 0 0 0]
+  scalar.uint16	UINT16 [1,1] [7]
+  list.uint16	UINT16 [1,2] [7 7]
+  typed.uint16	ok UINT16
+  type.int32	INT32 [2,3] [0 0 0 0 0 0]
+  scalar.int32	INT32 [1,1] [-100000]
+  list.int32	INT32 [1,2] [-100000 -100000]
+  typed.int32	ok INT32
+  type.uint32	UINT32 [2,3] [0 0 0 0 0 0]
+  scalar.uint32	UINT32 [1,1] [4000000000]
+  list.uint32	UINT32 [1,2] [4000000000 4000000000]
+  typed.uint32	ok UINT32
+  type.int64	INT64 [2,3] [0 0 0 0 0 0]
+  scalar.int64	INT64 [1,1] [-9007199254740993]
+  list.int64	INT64 [1,2] [-9007199254740993 -9007199254740993]
+  typed.int64	ok INT64
+  type.uint64	UINT64 [2,3] [0 0 0 0 0 0]
+  scalar.uint64	UINT64 [1,1] [18446744073709551615]
+  list.uint64	UINT64 [1,2] [18446744073709551615 18446744073709551615]
+  typed.uint64	ok UINT64
+  type.cdouble	COMPLEX_DOUBLE [2,3] [0+0i 0+0i 0+0i 0+0i 0+0i 0+0i]
+  scalar.cdouble	COMPLEX_DOUBLE [1,1] [1-1i]
+  list.cdouble	COMPLEX_DOUBLE [1,2] [1-1i 1-1i]
+  typed.cdouble	ok COMPLEX_DOUBLE
+  type.cfloat	COMPLEX_SINGLE [2,3] [0+0i 0+0i 0+0i 0+0i 0+0i 0+0i]
+  scalar.cfloat	COMPLEX_SINGLE [1,1] [2+3i]
+  list.cfloat	COMPLEX_SINGLE [1,2] [2+3i 2+3i]
+  typed.cfloat	ok COMPLEX_SINGLE
+  type.cint8	COMPLEX_INT8 [2,3] [0+0i 0+0i 0+0i 0+0i 0+0i 0+0i]
+  scalar.cint8	COMPLEX_INT8 [1,1] [1+2i]
+  list.cint8	COMPLEX_INT8 [1,2] [1+2i 1+2i]
+  typed.cint8	ok COMPLEX_INT8
+  type.cuint16	COMPLEX_UINT16 [2,3] [0+0i 0+0i 0+0i 0+0i 0+0i 0+0i]
+  scalar.cuint16	COMPLEX_UINT16 [1,1] [3+4i]
+  list.cuint16	COMPLEX_UINT16 [1,2] [3+4i 3+4i]
+  typed.cuint16	ok COMPLEX_UINT16
+  type.cint64	COMPLEX_INT64 [2,3] [0+0i 0+0i 0+0i 0+0i 0+0i 0+0i]
+  scalar.cint64	COMPLEX_INT64 [1,1] [-5+6i]
+  list.cint64	COMPLEX_INT64 [1,2] [-5+6i -5+6i]
+  typed.cint64	ok COMPLEX_INT64
+  type.string	MATLAB_STRING [1,2] [<missing> <missing>]
+  type.cell	CELL [1,2] {DOUBLE [0,0] []; DOUBLE [0,0] []}
+  type.cellarray	CELL [2,1] {DOUBLE [0,0] []; DOUBLE [0,0] []}
+  dims.[2,3,1]	[2,3,1] n=6 empty=0
+  dims.[2,1,1]	[2,1,1] n=2 empty=0
+  dims.[1]	[1,1] n=1 empty=0
+  dims.[5]	[5,1] n=5 empty=0
+  dims.[]	[] n=1 empty=0
+  dims.[0,3]	[0,3] n=0 empty=1
+  dims.[2,3,1,1]	[2,3,1,1] n=6 empty=0
+  dims.[1,1,2]	[1,1,2] n=2 empty=0
+  dims.[3,0,2]	[3,0,2] n=0 empty=1
+  dims.[1,1]	[1,1] n=1 empty=0
+  dims.[0]	[0,1] n=0 empty=1
+  dims.[2,3,4]	[2,3,4] n=24 empty=0
+  dims.getNumElements	24
+  dims.getNumElements0	1
+  scalar.string16	MATLAB_STRING [1,1] ["alpha"]
+  scalar.std	MATLAB_STRING [1,1] ["abc"]
+  scalar.std.nonascii	ERR NonAsciiCharInInputDataException | Input data can only contain ASCII characters
+  scalar.missing	MATLAB_STRING [1,1] [<missing>]
+  scalar.emptystring	MATLAB_STRING [1,1] [""]
+  char.hello	CHAR [1,5] 'hello'
+  char.empty	CHAR [0,0] ''
+  char.u16	CHAR [1,3] '\xCE\xBB\xE2\x82\xACA'
+  char.std.nonascii	ERR NonAsciiCharInInputDataException | Input data can only contain ASCII characters
+  char.utf8	CHAR [1,7] 'h\xC3\xA9llo \xCE\xBB'
+  char.utf8.bad	CHAR [1,4] 'bad '
+  char.toAscii	abc
+  char.toAscii.nonascii	ERR NonAsciiCharInRequestedAsciiOutputException | Can't create a std::string from this data.
+  char.toUTF8	\xCE\xBB\xE2\x82\xACA
+  char.toUTF16	xyz
+  char.matrix	CHAR [2,3] 'adbecf' ascii adbecf
+  char.element	e heY
+  char.from.double	ERR InvalidArrayTypeException | Can't convert the Array to this TypedArray
+  init.exact	DOUBLE [2,2] [1 2 3 4]
+  init.fewer	DOUBLE [2,2] [1 2 3 0]
+  init.more	DOUBLE [2,2] [1 2 3 4]
+  init.iter	DOUBLE [2,3] [1 2 3 4 5 6]
+  init.iter.rowmajor	DOUBLE [2,3] [1 4 2 5 3 6]
+  init.iter.fewer	DOUBLE [2,2] [1 2 3 0]
+  init.iter.more	DOUBLE [2,2] [1 2 3 4]
+  init.iter.int	INT32 [1,2] [1 2]
+  init.pointers	DOUBLE [1,3] [7 8 9]
+  init.strings	MATLAB_STRING [1,3] ["a" <missing> "c"]
+  init.stdstrings	MATLAB_STRING [1,2] ["x" "yy"]
+  init.cellvalues	CELL [1,3] {DOUBLE [1,1] [1]; MATLAB_STRING [1,1] ["two"]; INT16 [1,1] [3]}
+  init.cellvalues.u16	CELL [1,2] {MATLAB_STRING [1,1] ["w"]; LOGICAL [1,1] [1]}
+  index.linear	ERR NotEnoughIndicesProvidedException | Not enough indices provided.
+  index.pair	6
+  index.pair.first	3
+  index.past	ERR NotEnoughIndicesProvidedException | Not enough indices provided.
+  index.pair.past	ERR InvalidArrayIndexException | Array index is invalid.
+  index.three	1
+  index.empty	ERR CantIndexIntoEmptyArrayException | Can't index into an empty array.
+  index.write	ERR NotEnoughIndicesProvidedException | Not enough indices provided.
+  index.generic	6
+  index.generic.mismatch	6
+  index.generic.write	DOUBLE [1,2] [9 6]
+  index.generic.write.mismatch	ERR TypeMismatchException | Data type mismatch.
+  index.typed.read.int	6
+  cast.double.from.int32	ERR InvalidArrayTypeException | Can't convert the Array to this TypedArray
+  cast.struct.from.cell	ERR InvalidArrayTypeException | Can't convert the Array to this TypedArray
+  cast.cell.from.struct	ERR InvalidArrayTypeException | Can't convert the Array to this TypedArray
+  cast.enum.from.double	ERR InvalidArrayTypeException | Can't convert the Array to this TypedArray
+  cast.sparse.from.double	ERR InvalidArrayTypeException | Can't convert the Array to this SparseArray
+  cast.string.from.char	ERR InvalidArrayTypeException | Can't convert the Array to this TypedArray
+  cast.complex.from.double	ERR InvalidArrayTypeException | Can't convert the Array to this TypedArray
+  cow.typed	a=[1 2 3] b=[10 2 3]
+  cow.generic	a=[1 2 3] c=[1 2 3] d=[1 20 3]
+  cow.cell	CELL [1,1] {DOUBLE [1,1] [1]} / CELL [1,1] {DOUBLE [1,1] [2]}
+  cow.struct.ref	STRUCT [1,1] fields [v] (v=DOUBLE [1,2] [1 2]) / STRUCT [1,1] fields [v] (v=DOUBLE [1,2] [99 2])
+  cow.cell.nested	CELL [1,1] {DOUBLE [1,2] [1 2]} / CELL [1,1] {DOUBLE [1,2] [1 7]}
+  cow.element.taken	CELL [1,1] {DOUBLE [1,2] [1 2]} / DOUBLE [1,2] [50 2]
+  iter.sum	21
+  iter.write	DOUBLE [1,3] [2 4 6]
+  iter.arith	3 4 4 d=6 lt=1
+  iter.sort	DOUBLE [1,4] [1 2 3 4]
+  iter.empty	1
+  iter.strings	a;b;
+  iter.cell.write	CELL [1,2] {DOUBLE [1,1] [4]; DOUBLE [1,1] [4]}
+  range.readonly	21
+  range.readonly.mismatch	ERR InvalidArrayTypeException | Can't convert the Array to this TypedArray
+  range.writable	DOUBLE [1,2] [11 12]
+  buffer.column	DOUBLE [2,3] [1 2 3 4 5 6] [0][1]=3
+  rowmajor.describe	DOUBLE [2,3] rowmajor [1 2 3 4 5 6]
+  rowmajor.pair	2 4
+  rowmajor.linear	ERR NotEnoughIndicesProvidedException | Not enough indices provided.
+  rowmajor.column.order	1 4 2 5 3 6 
+  rowmajor.row.order	1 2 3 4 5 6 
+  columnmajor.row.order	1 3 5 2 4 6 
+  rowmajor.nd	DOUBLE [2,2,2] rowmajor [1 2 3 4 5 6 7 8]
+  buffer.cell	ERR TypeMismatchException | Data type mismatch.
+  buffer.zero	DOUBLE [0,0] []
+  buffer.short	DOUBLE [1,2] [1 2]
+  release	1 3 after [0,0]
+  release.shared	1 keep [1 2 3]
+  string.std	one
+  string.std.missing	ERR std::exception | Missing string
+  string.std.nonascii	ERR NonAsciiCharInInputDataException | Input data can only contain ASCII characters
+  string.u16	one
+  string.u16.missing	ERR std::exception | Missing string value
+  string.has_value	10
+  string.bool	10
+  string.optional	0
+  string.assign	MATLAB_STRING [1,3] ["uno" "two" "\xCE\xBB"] / MATLAB_STRING [1,3] ["one" <missing> "\xCE\xBB"]
+  string.compare	1101
+  cell.default	CELL [1,2] {DOUBLE [0,0] []; DOUBLE [0,0] []}
+  cell.set	CELL [1,2] {DOUBLE [1,1] [1]; CHAR [1,3] 'two'} e=CHAR ref=CHAR
+  cell.nested.index	ERR InvalidArrayIndexException | Array index is invalid.
+  cell.pair.index	CELL [2,2] {DOUBLE [0,0] []; DOUBLE [1,1] [10]; DOUBLE [1,1] [20]; DOUBLE [0,0] []}
+  cell.inner.ref	5 CELL [1,1] {DOUBLE [1,3] [4 5 60]}
+  cell.ref.dims	[2,2] n=4 empty=0
+  struct.default	STRUCT [1,2] fields [b,a] (b=DOUBLE [0,0] [], a=DOUBLE [0,0] []) (b=DOUBLE [0,0] [], a=DOUBLE [0,0] [])
+  struct.set	STRUCT [1,1] fields [name,value] (name=CHAR [1,5] 'probe', value=DOUBLE [1,3] [1 2 3]) fields=2
+  struct.missing.field	ERR InvalidFieldNameException | Field does not exist in this struct.
+  struct.missing.field.set	ERR InvalidFieldNameException | Field does not exist in this struct.
+  struct.duplicate	ERR DuplicateFieldNameInStructArrayException | Duplicate field names not allowed.
+  struct.illegal.digit	STRUCT [1,1] fields [1a] (1a=DOUBLE [0,0] [])
+  struct.illegal.space	STRUCT [1,1] fields [a b] (a b=DOUBLE [0,0] [])
+  struct.illegal.empty	STRUCT [1,1] fields [] (=DOUBLE [0,0] [])
+  struct.long.63	STRUCT [1,1] fields [aaaaaaaaa
+  struct.long.64	STRUCT [1,1] fields [aaaaaaaaa
+  struct.nofields	STRUCT [1,1] fields [] ()
+  struct.index.past	ERR InvalidArrayIndexException | Array index is invalid.
+  struct.element	DOUBLE [1,1] [5] it:DOUBLE
+  struct.fieldid	10 x
+  enum.make	ENUM [1,2] k9color {red blue}
+  enum.noname	ENUM [1,2] k9color { }
+  enum.wrongcount	ERR WrongNumberOfEnumsSuppliedException | Wrong number of enums supplied.
+  enum.noclass	ERR MustSpecifyClassNameException | Must specify a class name.
+  enum.element	blue k9color
+  sparse.make	SPARSE_DOUBLE [3,3] nnz=2 (0,0)=5 (2,1)=6
+  sparse.unsorted	SPARSE_DOUBLE [3,2] nnz=3 (0,0)=3 (2,0)=1 (0,1)=2
+  sparse.logical	SPARSE_LOGICAL [2,2] nnz=1 (1,1)=1
+  sparse.complex	SPARSE_COMPLEX_DOUBLE [2,2] nnz=1 (0,0)=1+1i
+  sparse.nd	ERR InvalidDimensionsInSparseArrayException | Sparse Array can only have 2 dimensions
+  sparse.past	ERR std::exception | Row Range Check
+  sparse.write	SPARSE_DOUBLE [2,2] nnz=1 (0,0)=8
+  optional	001x010
+  empty	DOUBLE [0,0] []
+  visit.double	double
+  visit.char	char
+  visit.struct	struct
+  visit.int8	other
+  visit.string	other
+  utf.8to16	h\xC3\xA9 \xCE\xBB
+  utf.16to8	h\xC3\xA9 \xCE\xBB
+  empty.default	1 n=0 UNKNOWN
+  end	local
+  EXIT	0
+  SECONDS	0.2
+== calls
+  app.start	ok inproc=1
+  lib.open	ok
+  lib.open.variadic	ok
+  quiet	CHAR [1,2] 'on'
+  lib.missing	ERR CppSharedLibException | Unable to open file 'nosuch.ctf'.
+  lib.async	double [1 1] [1]
+  make.double	DOUBLE [1,1] [2.5]
+  make.negzero	DOUBLE [1,1] [-0]
+  make.row	DOUBLE [1,3] [1 2 3]
+  make.column	DOUBLE [3,1] [1 2 3]
+  make.matrix	DOUBLE [2,3] [1 4 2 5 3 6]
+  make.nd	DOUBLE [2,3,4] [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24]
+  make.nd4	DOUBLE [2,2,2,2] [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16]
+  make.trailing	DOUBLE [1,3,2] [1 2 3 4 5 6]
+  make.empty	DOUBLE [0,0] []
+  make.empty03	DOUBLE [0,3] []
+  make.single	SINGLE [1,1] [1.5]
+  make.singles	SINGLE [1,2] [1.5 2.5]
+  make.int8	INT8 [1,1] [-5]
+  make.int8s	INT8 [1,3] [-5 0 127]
+  make.uint8	UINT8 [1,1] [200]
+  make.uint8m	UINT8 [2,2] [1 3 2 4]
+  make.int16	INT16 [1,1] [-7]
+  make.uint16	UINT16 [1,1] [7]
+  make.int32	INT32 [1,1] [-100000]
+  make.int32s	INT32 [1,3] [1 2 3]
+  make.uint32	UINT32 [1,1] [4000000000]
+  make.int64	INT64 [1,1] [-9007199254740992]
+  make.uint64	ERR MATLABExecutionException |  | 1.8446744073709552E+19 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53. | what 1.8446744073709552E+19 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53. | |
+  make.complex	COMPLEX_DOUBLE [1,1] [1-1i]
+  make.complexrow	COMPLEX_DOUBLE [1,2] [1+2i 3-4i]
+  make.complexsingle	COMPLEX_SINGLE [1,1] [2+3i]
+  make.complexint8	ERR MATLABExecutionException |  | int8 expects a number or numeric array, but got a complex. | what int8 expects a number or numeric array, but got a complex. | [k9make.m:k9make:30] |
+  make.logical	LOGICAL [1,1] [1]
+  make.logicals	LOGICAL [1,3] [1 0 1]
+  make.logicalm	LOGICAL [2,2] [1 0 0 1]
+  make.char	CHAR [1,5] 'hello'
+  make.char1	CHAR [1,1] 'x'
+  make.charmatrix	CHAR [2,3] 'adbecf'
+  make.emptychar	CHAR [0,0] ''
+  make.unicode	CHAR [1,3] '\xCE\xBB\xE2\x82\xACA'
+  make.string	MATLAB_STRING [1,1] ["alpha"]
+  make.strings	MATLAB_STRING [1,2] ["alpha" "beta"]
+  make.stringm	MATLAB_STRING [2,2] ["a" "c" "b" "d"]
+  make.stringmissing	MATLAB_STRING [1,1] [<missing>]
+  make.stringsmissing	MATLAB_STRING [1,2] [<missing> "x"]
+  make.emptystring	MATLAB_STRING [1,1] [""]
+  make.stringempty	MATLAB_STRING [1,0] []
+  make.cell	CELL [1,3] {DOUBLE [1,1] [1]; CHAR [1,3] 'two'; DOUBLE [2,2] [3 5 4 6]}
+  make.cellcol	CELL [2,1] {DOUBLE [1,1] [1]; CHAR [1,3] 'two'}
+  make.cellm	CELL [2,2] {DOUBLE [1,1] [1]; DOUBLE [1,1] [3]; DOUBLE [1,1] [2]; DOUBLE [1,1] [4]}
+  make.cellstr	CELL [1,2] {CHAR [1,3] 'one'; CHAR [1,3] 'two'}
+  make.cellstrcol	CELL [2,1] {CHAR [1,3] 'one'; CHAR [1,3] 'two'}
+  make.nestedcell	CELL [1,2] {CELL [1,1] {DOUBLE [1,1] [1]}; CELL [0,0] {}}
+  make.emptycell	CELL [0,0] {}
+  make.struct	STRUCT [1,1] fields [name,value] (name=CHAR [1,5] 'probe', value=DOUBLE [1,3] [1 2 3])
+  make.structnested	STRUCT [1,1] fields [inner,list] (inner=STRUCT [1,1] fields [x] (x=DOUBLE [1,1] [1]), list=CELL [1,2] {DOUBLE [1,1] [1]; CHAR [1,1] 'a'})
+  make.structarray	STRUCT [1,3] fields [a] (a=DOUBLE [1,1] [1]) (a=DOUBLE [1,1] [2]) (a=DOUBLE [1,1] [3])
+  make.structm	STRUCT [2,2] fields [a] (a=DOUBLE [1,1] [1]) (a=DOUBLE [1,1] [1]) (a=DOUBLE [1,1] [1]) (a=DOUBLE [1,1] [1])
+  make.emptystruct	STRUCT [0,0] fields []
+  make.nofields	STRUCT [1,1] fields [] ()
+  make.sparse	SPARSE_DOUBLE [3,3] nnz=2 (0,0)=5 (2,1)=6
+  make.sparselogical	SPARSE_DOUBLE [2,2] nnz=2 (0,0)=1 (1,1)=1
+  make.sparsecomplex	ERR MATLABExecutionException |  | sparse needs numbers, but element (0, 0) was a complex. | what sparse needs numbers, but element (0, 0) was a complex. | [k9make.m:k9make:61] |
+  make.inf	DOUBLE [1,3] [inf -inf -nan(ind)]
+  make.nan	DOUBLE [1,1] [-nan(ind)]
+  make.pi	DOUBLE [1,1] [3.1415926535897931]
+  make.enum	ENUM [1,1] k9color {green}
+  make.enums	ENUM [1,2] k9color {red blue}
+  make.point	VALUE_OBJECT [1,1] object
+  make.points	VALUE_OBJECT [1,2] object
+  make.counter	HANDLE_OBJECT_REF [1,1] object
+  make.dict	VALUE_OBJECT [1,1] object
+  make.dictnum	VALUE_OBJECT [1,1] object
+  make.dictcell	VALUE_OBJECT [1,1] object
+  make.dictempty	VALUE_OBJECT [1,1] object
+  make.dictconfigured	VALUE_OBJECT [1,1] object
+  make.handle	HANDLE_OBJECT_REF [1,1] object
+  make.datetime	VALUE_OBJECT [1,1] object
+  make.table	VALUE_OBJECT [1,1] object
+  make.map	HANDLE_OBJECT_REF [1,1] object
+  make.categorical	VALUE_OBJECT [1,1] object
+  make.duration	VALUE_OBJECT [1,1] object
+  in.double	double [1 1] [2.5]
+  in.negzero	double [1 1] [-0]
+  in.row	double [1 3] [1 2 3]
+  in.column	double [3 1] [1 2 3]
+  in.matrix	double [2 3] [1 4 2 5 3 6]
+  in.nd	double [2 3 4] [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24]
+  in.trailing	double [2 3] [0 0 0 0 0 0]
+  in.empty	double [0 0] []
+  in.empty03	double [0 3] []
+  in.emptyarray	double [0 0] []
+  in.single	single [1 1] [1.5]
+  in.int8	int8 [1 3] [-128 0 127]
+  in.uint8	uint8 [1 1] [200]
+  in.int16	int16 [1 1] [-7]
+  in.uint16	uint16 [1 1] [7]
+  in.int32	int32 [1 1] [-100000]
+  in.uint32	uint32 [1 1] [4000000000]
+  in.int64	ERR MATLABExecutionException |  | -9007199254740993 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53. | what -9007199254740993 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53. | |
+  in.int64small	int64 [1 1] [-42]
+  in.uint64	ERR MATLABExecutionException |  | 18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53. | what 18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53. | |
+  in.uint64small	uint64 [1 1] [42]
+  in.complex	double [1 1] complex [1-1i]
+  in.complexrow	double [1 2] complex [1+2i 3-4i]
+  in.complexzero	double [1 1] [3]
+  in.complexsingle	single [1 1] complex [2+3i]
+  in.complexint8	ERR MATLABExecutionException |  | JGraph keeps no complex int8 array: pass it as a complex double or single one. | what JGraph keeps no complex int8 array: pass it as a complex double or single one. | |
+  in.logical	logical [1 1] [1]
+  in.logicalm	logical [2 2] [1 0 0 1]
+  in.char	char [1 5] 'hello'
+  in.charmatrix	char [2 3] 'adbecf'
+  in.unicode	char [1 3] '\xCE\xBB\xE2\x82\xACA'
+  in.emptychar	char [0 0] ''
+  in.string	string [1 1] ["alpha"]
+  in.strings	string [1 2] ["alpha" "beta"]
+  in.stringm	string [2 2] ["a" "c" "b" "d"]
+  in.stringmissing	string [1 1] [<missing>]
+  in.stringsmissing	string [1 2] [<missing> "x"]
+  in.emptystring	string [1 1] [""]
+  in.stringempty	string [1 0] []
+  in.cell	cell [1 3] {double [1 1] [1]; char [1 3] 'two'; double [2 2] [3 5 4 6]}
+  in.cellcol	cell [2 1] {double [1 1] [1]; char [1 3] 'two'}
+  in.nestedcell	cell [1 2] {cell [1 1] {double [1 1] [1]}; cell [0 0] {}}
+  in.emptycell	cell [0 0] {}
+  in.defaultcell	cell [1 2] {double [0 0] []; double [0 0] []}
+  in.struct	struct [1 1] fields [name,value] (name=char [1 5] 'probe', value=double [1 3] [1 2 3])
+  in.structarray	struct [1 3] fields [a] (a=double [1 1] [1]) (a=double [1 1] [2]) (a=double [1 1] [3])
+  in.structnested	struct [1 1] fields [inner] (inner=struct [1 1] fields [x] (x=double [1 1] [1]))
+  in.emptystruct	struct [0 0] fields [a] 
+  in.nofields	struct [1 1] fields [] ()
+  in.defaultstruct	struct [1 1] fields [p,q] (p=double [0 0] [], q=double [0 0] [])
+  in.sparse	double [3 3] sparse [5 0 0 0 0 6 0 0 0]
+  in.sparselogical	double [2 2] sparse [1 0 0 1]
+  in.sparsecomplex	ERR MATLABExecutionException |  | JGraph has no complex sparse arrays: pass the real and imaginary parts apart. | what JGraph has no complex sparse arrays: pass the real and imaginary parts apart. | |
+  in.enum	k9color [1 1] {green}
+  in.enums	k9color [1 2] {red blue}
+  in.enumbad	ERR MATLABExecutionException |  | Invalid enumeration | what Invalid enumeration | |
+  in.enumnoclass	ERR MATLABExecutionException |  | Class k9nosuchclass not found. | what Class k9nosuchclass not found. | |
+  in.rowmajor	double [2 3] [1 4 2 5 3 6]
+  in.rowmajorint16	int16 [2 2] [1 3 2 4]
+  in.rowmajornd	double [2 2 2] [1 5 3 7 2 6 4 8]
+  in.inf	double [1 3] [Inf -Inf NaN]
+  echo.double	DOUBLE [1,1] [2.5]
+  echo.negzero	DOUBLE [1,1] [-0]
+  echo.row	DOUBLE [1,3] [1 2 3]
+  echo.column	DOUBLE [3,1] [1 2 3]
+  echo.matrix	DOUBLE [2,3] [1 4 2 5 3 6]
+  echo.nd	DOUBLE [2,3,4] [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24]
+  echo.trailing	DOUBLE [2,3] [0 0 0 0 0 0]
+  echo.empty	DOUBLE [0,0] []
+  echo.empty03	DOUBLE [0,3] []
+  echo.emptyarray	DOUBLE [0,0] []
+  echo.single	SINGLE [1,1] [1.5]
+  echo.int8	INT8 [1,3] [-128 0 127]
+  echo.uint8	UINT8 [1,1] [200]
+  echo.int16	INT16 [1,1] [-7]
+  echo.uint16	UINT16 [1,1] [7]
+  echo.int32	INT32 [1,1] [-100000]
+  echo.uint32	UINT32 [1,1] [4000000000]
+  echo.int64	ERR MATLABExecutionException |  | -9007199254740993 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53. | what -9007199254740993 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53. | |
+  echo.int64small	INT64 [1,1] [-42]
+  echo.uint64	ERR MATLABExecutionException |  | 18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53. | what 18446744073709551615 cannot be held exactly: JGraph keeps a uint64 as a double, exact to 2^53. | |
+  echo.uint64small	UINT64 [1,1] [42]
+  echo.complex	COMPLEX_DOUBLE [1,1] [1-1i]
+  echo.complexrow	COMPLEX_DOUBLE [1,2] [1+2i 3-4i]
+  echo.complexzero	DOUBLE [1,1] [3]
+  echo.complexsingle	COMPLEX_SINGLE [1,1] [2+3i]
+  echo.complexint8	ERR MATLABExecutionException |  | JGraph keeps no complex int8 array: pass it as a complex double or single one. | what JGraph keeps no complex int8 array: pass it as a complex double or single one. | |
+  echo.logical	LOGICAL [1,1] [1]
+  echo.logicalm	LOGICAL [2,2] [1 0 0 1]
+  echo.char	CHAR [1,5] 'hello'
+  echo.charmatrix	CHAR [2,3] 'adbecf'
+  echo.unicode	CHAR [1,3] '\xCE\xBB\xE2\x82\xACA'
+  echo.emptychar	CHAR [0,0] ''
+  echo.string	MATLAB_STRING [1,1] ["alpha"]
+  echo.strings	MATLAB_STRING [1,2] ["alpha" "beta"]
+  echo.stringm	MATLAB_STRING [2,2] ["a" "c" "b" "d"]
+  echo.stringmissing	MATLAB_STRING [1,1] [<missing>]
+  echo.stringsmissing	MATLAB_STRING [1,2] [<missing> "x"]
+  echo.emptystring	MATLAB_STRING [1,1] [""]
+  echo.stringempty	MATLAB_STRING [1,0] []
+  echo.cell	CELL [1,3] {DOUBLE [1,1] [1]; CHAR [1,3] 'two'; DOUBLE [2,2] [3 5 4 6]}
+  echo.cellcol	CELL [2,1] {DOUBLE [1,1] [1]; CHAR [1,3] 'two'}
+  echo.nestedcell	CELL [1,2] {CELL [1,1] {DOUBLE [1,1] [1]}; CELL [0,0] {}}
+  echo.emptycell	CELL [0,0] {}
+  echo.defaultcell	CELL [1,2] {DOUBLE [0,0] []; DOUBLE [0,0] []}
+  echo.struct	STRUCT [1,1] fields [name,value] (name=CHAR [1,5] 'probe', value=DOUBLE [1,3] [1 2 3])
+  echo.structarray	STRUCT [1,3] fields [a] (a=DOUBLE [1,1] [1]) (a=DOUBLE [1,1] [2]) (a=DOUBLE [1,1] [3])
+  echo.structnested	STRUCT [1,1] fields [inner] (inner=STRUCT [1,1] fields [x] (x=DOUBLE [1,1] [1]))
+  echo.emptystruct	STRUCT [0,0] fields [a]
+  echo.nofields	STRUCT [1,1] fields [] ()
+  echo.defaultstruct	STRUCT [1,1] fields [p,q] (p=DOUBLE [0,0] [], q=DOUBLE [0,0] [])
+  echo.sparse	SPARSE_DOUBLE [3,3] nnz=2 (0,0)=5 (2,1)=6
+  echo.sparselogical	SPARSE_DOUBLE [2,2] nnz=2 (0,0)=1 (1,1)=1
+  echo.sparsecomplex	ERR MATLABExecutionException |  | JGraph has no complex sparse arrays: pass the real and imaginary parts apart. | what JGraph has no complex sparse arrays: pass the real and imaginary parts apart. | |
+  echo.enum	ENUM [1,1] k9color {green}
+  echo.enums	ENUM [1,2] k9color {red blue}
+  echo.enumbad	ERR MATLABExecutionException |  | Invalid enumeration | what Invalid enumeration | |
+  echo.enumnoclass	ERR MATLABExecutionException |  | Class k9nosuchclass not found. | what Class k9nosuchclass not found. | |
+  echo.rowmajor	DOUBLE [2,3] [1 4 2 5 3 6]
+  echo.rowmajorint16	INT16 [2,2] [1 3 2 4]
+  echo.rowmajornd	DOUBLE [2,2,2] [1 5 3 7 2 6 4 8]
+  echo.inf	DOUBLE [1,3] [inf -inf nan]
+  obj.point	k9point [1 1] (X=double [1 1] [3], Y=double [1 1] [4], Tag=string [1 1] ["pt"]) norm=DOUBLE [1,1] [5]
+  obj.point.scaled	VALUE_OBJECT [1,1] object k9point [1 1] (X=double [1 1] [6], Y=double [1 1] [8], Tag=string [1 1] ["pt"])
+  obj.points	VALUE_OBJECT [1,2] object k9point [1 2] array of 2
+  obj.counter	DOUBLE [1,1] [8] k9counter [1 1] (Count=double [1 1] [8], Label=char [1 7] 'counter')
+  obj.counter.isvalid	ERR std::exception | Function delete not found in the component.
+  obj.back.enum	k9color [1 1] {green}
+  obj.back.enums	k9color [1 2] {red blue}
+  obj.back.dict	dictionary [1 1] string->double [["a" "b"]] -> [[1 2]]
+  obj.back.handle	function_handle [1 1] sin
+  obj.back.datetime	datetime [1 1] (Format=char [1 11] 'dd-MMM-uuuu', TimeZone=char [0 0] '', Year=double [1 1] [2026], Month=double [1 1] [10], Day=double [1 1] [24], Hour=double [1 1] [0], Minute=double [1 1] [0], Second=double [1 1] [0])
+  obj.back.table	table [2 2] array of 4
+  obj.back.map	containers.Map [1 1] (Count=uint64 [1 1] [1], KeyType=char [1 4] 'char', ValueType=char [1 6] 'double')
+  obj.back.categorical	categorical [1 2] array of 2
+  obj.back.duration	duration [1 1] (Format=char [1 1] 's')
+  obj.handle.call	ERR std::exception | Function feval not found in the component.
+  obj.across.libraries	ERR MATLABExecutionException |  | A k9point value can only be passed back to the component that returned it. | what A k9point value can only be passed back to the component that returned it. | |
+  builtin.sqrt	ERR std::exception | Function sqrt not found in the component.
+  builtin.class	ERR std::exception | Function class not found in the component.
+  builtin.plus	ERR std::exception | Function plus not found in the component.
+  builtin.disp.nlhs1	ERR std::exception | Function disp not found in the component.
+  unknown	ERR std::exception | Function k9nosuchfunction not found in the component.
+  unknown.utf8name	DOUBLE [1,1] [1]
+  variadic.from.main	ERR std::exception | Function k9nargs not found in the component.
+  err.plain	ERR MATLABExecutionException |  | A plain error. | what A plain error. | [k9err.m:k9err:4] |
+  err.id	ERR MATLABExecutionException | k9:bad | An error with an identifier: 7. | what An error with an identifier: 7. | [k9err.m:k9err:5] |
+  err.nested	ERR MATLABExecutionException | k9:deep | Raised two calls down. | what Raised two calls down. | [k9err.m:k9inner:18] [k9err.m:k9err:6] |
+  err.cause	ERR MATLABExecutionException | k9:outer | The outer error. | what The outer error. | [k9err.m:k9err:10] | {k9:inner | The cause.}
+  err.builtin	ERR MATLABExecutionException | MATLAB:innerdim | Incorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication. | what Incorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication. | [k9err.m:k9err:11] |
+  err.undefined	ERR MATLABExecutionException | MATLAB:UndefinedFunction | Undefined function 'k9nosuchfunction' for input arguments of type 'double'. | what Undefined function 'k9nosuchfunction' for input arguments of type 'double'. | [k9err.m:k9err:12] |
+  err.none	DOUBLE [1,1] [1]
+  err.bogus	ERR MATLABExecutionException | MATLAB:unassignedOutputs | Output argument "r" (and possibly others) not assigned a value in the execution with "k9err" function. | what Output argument "r" (and possibly others) not assigned a value in the execution with "k9err" function. | |
+  err.toomany.inputs	ERR MATLABExecutionException | MATLAB:TooManyInputs | Too many input arguments. | what Too many input arguments. | |
+  err.toomany.outputs	ERR MATLABExecutionException | MATLAB:TooManyOutputs | Too many output arguments. | what Too many output arguments. | |
+  err.noinput	ERR MATLABExecutionException | MATLAB:minrhs | Not enough input arguments. | what Not enough input arguments. | [k9echo.m:k9echo:3] |
+  err.typed.reject	DOUBLE [1,1] [146]
+  err.nv.reject	ERR MATLABExecutionException | MATLAB:TooManyInputs | Invalid argument name 'Nope'. Name must be 'Scale' or 'Label'. | what Invalid argument name 'Nope'. Name must be 'Scale' or 'Label'. | [k9nv.m:k9nv:1] |
+  nlhs.multi.0	0:
+  nlhs.multi.1	1: <DOUBLE [1,1] [2]>
+  nlhs.multi.2	2: <DOUBLE [1,1] [2]> <DOUBLE [1,1] [4]>
+  nlhs.multi.3	3: <DOUBLE [1,1] [2]> <DOUBLE [1,1] [4]> <CHAR [1,5] 'three'>
+  nlhs.multi.4	ERR MATLABExecutionException | MATLAB:TooManyOutputs | Too many output arguments. | what Too many output arguments. | |
+  noout double [1 1] [1]
+  nlhs.noout.0	0:
+  nlhs.noout.single	ERR MATLABExecutionException | MATLAB:TooManyOutputs | Too many output arguments. | what Too many output arguments. | |
+  k9t_none ran
+  nlhs.none.0	0:
+  nlhs.echo.0	0:
+  nargs.0	1: <CHAR [1,3] '0: '>
+  nargs.1	1: <CHAR [1,19] '1: double [1 1] [1]'>
+  nargs.3	1: <CHAR [1,57] '3: double [1 1] [1] | double [1 1] [2] | double [1 1] [3]'>
+  nout.0	0:
+  nout.1	1: <DOUBLE [1,1] [2]>
+  nout.3	3: <DOUBLE [1,1] [2]> <DOUBLE [1,1] [4]> <DOUBLE [1,1] [6]>
+  nv.default	3 1 none
+  nv.given	3 2 lbl
+  print.buffers	DOUBLE [1,1] [2] out=line 1\nline 2\n2\nWarning: a warning about 2\n err=to standard error\n
+  print.output.only	DOUBLE [1,1] [1] out=line 1\n1\nWarning: a warning about 1\n
+  line 1
+  1
+  Warning: a warning about 1
+  print.error.only	DOUBLE [1,1] [1] err=to standard error\n
+  print.error.buffers	threw out= err=Error using k9err (line 5)\nAn error with an identifier: 7.\n\n
+  print.none.start
+  line 1
+  1
+  Warning: a warning about 1
+  print.none	DOUBLE [1,1] [1]
+  print.none.end
+  async.get	waiting=1 DOUBLE [1,1] [1] valid=0
+  async.multi	3: <DOUBLE [1,1] [2]> <DOUBLE [1,1] [4]> <CHAR [1,5] 'three'>
+  async.error	ERR MATLABExecutionException | k9:bad | An error with an identifier: 7. | what An error with an identifier: 7. | [k9err.m:k9err:5] |
+  async.share	DOUBLE [1,1] [4] DOUBLE [1,1] [4] valid=01
+  async.cancel.queued	cancel=1 quick ERR CancelledException | The MATLAB command was cancelled. slow DOUBLE [1,1] [2]
+  async.cancel.running.keep	cancel=0 DOUBLE [1,1] [2]
+  async.cancel.running.interrupt	cancel=1 ERR InterruptedException | The execution of the MATLAB command was interrupted.
+  async.cancel.done	cancel=0 DOUBLE [1,1] [1]
+  native.double	2.5
+  native.int	7
+  native.bool	1
+  native.complex	1+2i
+  native.string	abc
+  native.u16	\xCE\xBBx
+  native.char.result	hello
+  native.vector	1 2 3 
+  native.vector.in	double [1 3] [1 2 3]
+  native.strings	alpha;beta;
+  native.tuple	2 4 three
+  noout double [1 1] [1]
+  native.void	ok
+  native.array	DOUBLE [1,1] [3]
+  native.mismatch	ERR TypeConversionException | Can't convert the Array to this TypedArray
+  native.empty	ERR TypeConversionException | The result is empty.
+  native.string.mismatch	ERR TypeConversionException | The return value is not a string (or) char.
+  native.error	ERR MATLABExecutionException | k9:bad | An error with an identifier: 7. | what An error with an identifier: 7. | [k9err.m:k9err:5] |
+  native.async	6
+  native.buffers	1 out=line 1\n1\nWarning: a warning about 1\n err=to standard error\n
+  figures	returned
+  lib.close	closed
+  lib.after.other.closed	DOUBLE [1,1] [1]
+  end	calls
+  STDERR	int8 expects a number or numeric array, but got a complex.
+  STDERR	
+  STDERR	Error in k9make (line 30)
+  STDERR	
+  STDERR	sparse needs numbers, but element (0, 0) was a complex.
+  STDERR	
+  STDERR	Error in k9make (line 61)
+  STDERR	
+  STDERR	Error using k9err (line 4)
+  STDERR	A plain error.
+  STDERR	
+  STDERR	Error using k9err (line 5)
+  STDERR	An error with an identifier: 7.
+  STDERR	
+  STDERR	Error using k9err>k9inner (line 18)
+  STDERR	Raised two calls down.
+  STDERR	
+  STDERR	Error in k9err (line 6)
+  STDERR	
+  STDERR	Error using k9err (line 10)
+  STDERR	The outer error.
+  STDERR	
+  STDERR	Caused by:
+  STDERR	    The cause.
+  STDERR	
+  STDERR	Incorrect dimensions for matrix multiplication. Check that the number of columns in the first matrix matches the number of rows in the second matrix. To operate on each element of the matrix individually, use TIMES (.*) for elementwise multiplication.
+  STDERR	
+  STDERR	Error in k9err (line 11)
+  STDERR	
+  STDERR	Undefined function 'k9nosuchfunction' for input arguments of type 'double'.
+  STDERR	
+  STDERR	Error in k9err (line 12)
+  STDERR	
+  STDERR	Output argument "r" (and possibly others) not assigned a value in the execution with "k9err" function.
+  STDERR	
+  STDERR	Error using k9echo
+  STDERR	Too many input arguments.
+  STDERR	
+  STDERR	Error using k9echo
+  STDERR	Too many output arguments.
+  STDERR	
+  STDERR	Not enough input arguments.
+  STDERR	
+  STDERR	Error in k9echo (line 3)
+  STDERR	
+  STDERR	Error using k9nv (line 1)
+  STDERR	Invalid argument name 'Nope'. Name must be 'Scale' or 'Label'.
+  STDERR	
+  STDERR	Error using k9multi
+  STDERR	Too many output arguments.
+  STDERR	
+  STDERR	Error using k9noout
+  STDERR	Too many output arguments.
+  STDERR	
+  STDERR	to standard error
+  STDERR	to standard error
+  STDERR	Error using k9err (line 5)
+  STDERR	An error with an identifier: 7.
+  STDERR	
+  STDERR	Error using k9err (line 5)
+  STDERR	An error with an identifier: 7.
+  EXIT	0
+  SECONDS	6.5
+== typed
+  t.describe	double [1 1] [1]
+  t.make	DOUBLE [1,3] [1 2 3]
+  t.echo.0	ok
+  t.multi.1	DOUBLE [1,1] [2]
+  t.multi.2	DOUBLE [1,1] [2] DOUBLE [1,1] [4]
+  t.multi.3	CHAR [1,5] 'three'
+  t.nv	3 2 lbl
+  t.nv.complex	3 2 lbl
+  t.slow	DOUBLE [1,1] [0]
+  t.err	ERR MATLABExecutionException | k9:bad | An error with an identifier: 7. | what An error with an identifier: 7. | [k9err.m:k9err:5] |
+  t.err.0	ok
+  t.noout.start
+  noout double [1 1] [1]
+  t.noout	ok
+  k9t_none ran
+  t.none	ok
+  t.none.end
+  t.real	DOUBLE [1,1] [14]
+  t.real.badsize	ERR MATLABExecutionException | MATLAB:validation:IncompatibleSize | Invalid argument at position 4. Value must be an array of size 2-by-3-by-4. | what Invalid argument at position 4. Value must be an array of size 2-by-3-by-4. | [k9t_real.m:k9t_real:7] |
+  t.cplx	DOUBLE [1,1] [6]
+  t.cplx.complex	COMPLEX_DOUBLE [1,1] [4+2i]
+  t.ints	DOUBLE [1,1] [55]
+  t.ints.complex	ERR MATLABExecutionException |  | JGraph keeps no complex int32 array: pass it as a complex double or single one. | what JGraph keeps no complex int32 array: pass it as a complex double or single one. | |
+  t.misc	ERR MATLABExecutionException | MATLAB:validation:UnableToConvert | Invalid argument at position 14. Value must be of type dictionary or be convertible to dictionary. | what Invalid argument at position 14. Value must be of type dictionary or be convertible to dictionary. | [k9t_misc.m:k9t_misc:17] |
+  t.untyped	DOUBLE [1,1] [3]
+  t.opt	1 2 z
+  t.ref.1	DOUBLE [1,2] [3 6]
+  t.ref.2	DOUBLE [1,2] [3 6] DOUBLE [1,1] [2]
+  t.keyword	DOUBLE [1,1] [6]
+  t.typed.multi.1	6
+  t.typed.multi.2	6 3
+  t.typed.multi.3	6 3 n=3
+  t.objects.1	1+0i 1+0i
+  t.objects.2	1+0i blue
+  t.inner	ERR MATLABExecutionException |  | feval: 'k9pkg.k9inner' is not a function. | what feval: 'k9pkg.k9inner' is not a function. | |
+  c.point	3+0i 4+0i pt norm=DOUBLE [1,1] [5]
+  c.point.set	10+0i 1+2i
+  c.point.scaled	VALUE_OBJECT [1,1] object k9point [1 1] (X=double [1 1] [6], Y=double [1 1] [8], Tag=string [1 1] ["pt"])
+  c.point.parts	DOUBLE [1,1] [3] DOUBLE [1,1] [4] one=DOUBLE [1,1] [3]
+  c.point.array	VALUE_OBJECT [1,1] object
+  c.counter	7+0i DOUBLE [1,1] [7] valid=1
+  c.counter.set	9+0i CHAR [1,3] 'lbl'
+  c.counter.compare	101
+  c.counter.shared	6+0i
+  c.opt	4 twice=DOUBLE [1,1] [8]
+  c.opt.lt	10 LOGICAL [1,1] [1]
+  c.opt.ge	01
+  e.color	red 2
+  end	typed
+  STDERR	Error using k9err (line 5)
+  STDERR	An error with an identifier: 7.
+  STDERR	
+  STDERR	Error using k9t_real (line 7)
+  STDERR	Invalid argument at position 4. Value must be an array of size 2-by-3-by-4.
+  STDERR	
+  STDERR	Error using k9t_misc (line 17)
+  STDERR	Invalid argument at position 14. Value must be of type dictionary or be convertible to dictionary.
+  STDERR	
+  STDERR	feval: 'k9pkg.k9inner' is not a function.
+  EXIT	0
+  SECONDS	0.7
+== twice
+  first	ok
+  second.while.running	ERR CppSharedLibException | MATLABApplication is already initialized.
+  second.outproc.while.running	ERR CppSharedLibException | MATLABApplication is already initialized.
+  call	DOUBLE [1,1] [1]
+  lib.two.of.one	k9counter [1 1] (Count=double [1 1] [5], Label=char [1 7] 'counter')
+  after.end	ERR CppSharedLibException | MATLABApplication is already terminated and cannot be reinitialized.
+  end	twice
+  EXIT	0
+  SECONDS	0.4
+== outproc
+  app.start	ok inproc=0
+  lib.open	ok
+  quiet	CHAR [1,2] 'on'
+  echo	DOUBLE [1,2] [1 2]
+  describe	string [1 1] ["x"]
+  error	ERR MATLABExecutionException | k9:bad | An error with an identifier: 7. | what An error with an identifier: 7. | [k9err.m:k9err:5] |
+  print	DOUBLE [1,1] [1] out=line 1\n1\nWarning: a warning about 1\n
+  end	outproc
+  STDERR	Error using k9err (line 5)
+  STDERR	An error with an identifier: 7.
+  STDERR	
+  STDERR	to standard error
+  EXIT	0
+  SECONDS	0.4
+== runmain
+  main.argc	4
+  main.argv1	runmain
+  main.call	DOUBLE [1,1] [1]
+  runmain.returned	7
+  end	runmain
+  EXIT	0
+  SECONDS	0.3

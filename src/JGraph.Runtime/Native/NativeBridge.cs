@@ -8,7 +8,8 @@ namespace JGraph.Runtime.Native;
 /// stage K10). jgrt starts .NET in a C program's process, loads this assembly into the default load
 /// context and calls <see cref="Start"/>, which teaches the load context where the engine's other
 /// assemblies and native libraries are and hands back the table of entry points the mcl functions
-/// call. Everything after <see cref="Start"/> is <see cref="NativeCalls"/>'s.
+/// call. Everything after <see cref="Start"/> is <see cref="NativeCalls"/>'s, and the C++ shared library
+/// API's <see cref="NativeCppCalls"/>'s (stage K12).
 /// </summary>
 /// <remarks>
 /// This class names no engine type: its statics and <see cref="Start"/> must load before the
@@ -34,6 +35,11 @@ internal static unsafe class NativeBridge
         public delegate* unmanaged<nint, ulong, char*, nint> GetProperty;
         public delegate* unmanaged<nint, ulong, char*, nint, nint> SetProperty;
         public delegate* unmanaged<nint, void> WaitForFigures;
+        public delegate* unmanaged<int, char**, int, char**, int> CppStart;
+        public delegate* unmanaged<char*, char**, nint> CppOpen;
+        public delegate* unmanaged<nint, char*, nuint, byte*, nuint, nint, nint, int, int, nint, char**, ulong> CppCall;
+        public delegate* unmanaged<ulong, int, int> CppCancel;
+        public delegate* unmanaged<ulong, void> CppForget;
     }
 
     /// <summary>
@@ -92,5 +98,10 @@ internal static unsafe class NativeBridge
         table->GetProperty = &NativeCalls.GetProperty;
         table->SetProperty = &NativeCalls.SetProperty;
         table->WaitForFigures = &NativeCalls.WaitForFigures;
+        table->CppStart = &NativeCppCalls.Start;
+        table->CppOpen = &NativeCppCalls.Open;
+        table->CppCall = &NativeCppCalls.Call;
+        table->CppCancel = &NativeCppCalls.Cancel;
+        table->CppForget = &NativeCppCalls.Forget;
     }
 }

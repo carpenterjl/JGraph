@@ -191,7 +191,9 @@ public sealed class MccSwitchesTests : IDisposable
         Assert.Equal(MccTarget.Console, MccCommandLine.Parse(["-B", "macro_option_m", "k7_hello.m"], _folder).Target);
         MccCommandLine bundled = MccCommandLine.Parse(["-B", "csharedlib:k7blib", "k7_hello.m"], _folder);
         Assert.Equal((MccTarget.CLibrary, "k7blib", CLibraryStage.Link), (bundled.Target, bundled.ComponentName, bundled.LibraryStage));
-        Assert.Equal("JGraph:mcc:targetNotBuilt", Assert.Throws<MccException>(() => MccCommandLine.Parse(["-B", "cpplib:k7bc", "k7_hello.m"], _folder)).Identifier);
+        // Stage K12 builds the C++ library's generic interface; the bundle asks for both, as -W cpplib:name does.
+        MccCommandLine cpp = MccCommandLine.Parse(["-B", "cpplib:k7bc", "k7_hello.m"], _folder);
+        Assert.Equal((MccTarget.CppLibrary, "k7bc", CppInterfaceKind.All), (cpp.Target, cpp.ComponentName, cpp.CppInterface));
     }
 
     [Fact]

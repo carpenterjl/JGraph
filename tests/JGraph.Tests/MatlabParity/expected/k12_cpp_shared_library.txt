@@ -1,0 +1,184 @@
+CHK|class|compiler.build.CppSharedLibraryOptions|exact
+CHK|props|Interface LibraryVersion SampleGenerationFiles FunctionFiles DebugBuild LibraryName AdditionalFiles AutoDetectDataFiles ExternalEncryptionKey ObfuscateArchive SecretsManifest SupportPackages Verbose OutputDir|exact
+CHK|interface|matlab-data|exact
+CHK|version||exact
+CHK|name|k12f|exact
+CHK|getname|k12f|exact
+CHK|outdir|.\k12fcppSharedLibrary|exact
+CHK|debug|off|exact
+CHK|samples|cell|exact
+CHK|samples_size|double [1 2] 0 0|exact
+CHK|files|k12f.m|exact
+CHK|two_name|k12g|exact
+CHK|given_name|.\K12NamedcppSharedLibrary|exact
+CHK|nv_interface|mwarray|exact
+CHK|none|MATLAB:narginchk:notEnoughInputs / Not enough input arguments.|exact
+CHK|missing|Compiler:utils:shared:cannotFindFileOrFolder / Cannot find file or folder: / / k12nosuch.m|exact
+CHK|not_code|Compiler:clishared:badExtension / Expected 'FunctionFiles' to have one of the following extensions: / / .mexw64 / .mlapp / .mlx / .p / .m|exact
+CHK|number|MATLAB:invalidType / Expected FunctionFiles to be one of these types: / / char, string, cell / / Instead its type was double.|exact
+CHK|ambiguous_nv|MATLAB:InputParser:AmbiguousParameter / 'Library' matches multiple parameter names: 'LibraryName', 'LibraryVersion'. To avoid ambiguity, specify the complete name of the parameter.|exact
+CHK|embed_nv|MATLAB:InputParser:UnmatchedParameter / 'EmbedArchive' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.|exact
+CHK|folder_mwarray|Compiler:build:shared:folderOnlyForMATLABData / Inputs may only contain folders when "Interface" is set to 'matlab-data'.|exact
+CHK|set_interface_upper|mwarray|exact
+CHK|set_interface_mixed|matlab-data|exact
+CHK|set_interface_bad|MATLAB:validators:mustBeMember / Value must be a member of this set: / 'matlab-data' / 'mwarray' / |exact
+CHK|set_interface_number|MATLAB:invalidType / Expected Interface to be one of these types: / / char, string / / Instead its type was double.|exact
+CHK|set_interface_empty|MATLAB:validators:mustBeNonzeroLengthText / Value must be text with one or more characters.|exact
+CHK|set_version_warns|1.2 / warn Compiler:build:shared:badInterfaceVersionPair|exact
+CHK|set_version_empty||exact
+CHK|set_name_digit|1abc|exact
+CHK|set_name_dotted|Org.Group|exact
+CHK|set_name_slash|Compiler:clishared:badProperty / Invalid 'LibraryName': 'a/b'|exact
+CHK|set_samples_missing|Compiler:utils:shared:cannotFindFile / Cannot find file: / / k12nosuch.m|exact
+CHK|set_debug_on|on|exact
+CHK|mcc_generic|no error / warn / files buildresult.json includedSupportPackages.txt mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt v2/generic_interface/k12gen.ctf v2/generic_interface/k12genv2.hpp v2/generic_interface/readme.txt|exact
+CHK|mcc_version|no error / warn Compiler:compiler:COM_WARN_VERSIONING_NOT_SUPPORTED / files buildresult.json includedSupportPackages.txt mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt v2/generic_interface/k12ver.ctf v2/generic_interface/k12verv2.hpp v2/generic_interface/readme.txt|exact
+CHK|mcc_codegen|no error / warn / files buildresult.json includedSupportPackages.txt mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt v2/generic_interface/k12cg.ctf v2/generic_interface/k12cgv2.hpp v2/generic_interface/readme.txt|exact
+CHK|mcc_exe|no error / warn / files buildresult.json includedSupportPackages.txt mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt v2/generic_interface/k12ex.ctf v2/generic_interface/k12exv2.hpp v2/generic_interface/readme.txt|exact
+CHK|mcc_twice|no error / warn / files buildresult.json includedSupportPackages.txt mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt v2/generic_interface/k12t2.ctf v2/generic_interface/k12t2v2.hpp v2/generic_interface/readme.txt|exact
+CHK|mcc_o|Compiler:compiler:COM_ERR_MULTIPLE_COMPONENT_NAMES / Error: Multiple component names. Processing "-o" switch. Component name "k12on" already specified via "-W". / warn / files |exact
+CHK|mcc_badname|Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME / Illegal output name: '1bad' / (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_') / warn / files |exact
+CHK|mcc_dash|Compiler:compiler:COM_ERR_ILLEGAL_OUTPUT_NAME / Illegal output name: 'a-b' / (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_') / warn / files |exact
+CHK|mcc_noname|Compiler:compiler:COM_ERR_COMPONENT_NAME_NEEDED_FOR_CPPLIB / Error: A component name must be specified following "cpplib:". / / warn / files |exact
+CHK|mcc_named|Compiler:compiler:COM_ERR_NAMED_CPPLIB_NOT_SUPPORTED_YET / Error: The "named" interface for the C++ Shared Library target is not yet supported. / / warn / files |exact
+CHK|mcc_badarg|Compiler:compiler:COM_ERR_BAD_ARG_FOR_CPPLIB / Error: Option "bogus" is not valid following "cpplib:component_name,". / / warn / files |exact
+CHK|mcc_dash_c|no error / warn / files buildresult.json includedSupportPackages.txt k12cc.c k12cc.ctf k12cc.exports k12cc.h mccExcludedFiles.log readme.txt requiredMCRProducts.txt unresolvedSymbols.txt|exact
+CHK|gen_includes|#include "MatlabTypesInterface.hpp" / #include <map>|exact
+CHK|gen_classes|enum class k12shade { / class k12ctr : public MATLABHandleObject<MATLABControllerType> { / class k12pt : public MATLABObject<MATLABControllerType> {|exact
+CHK|gen_constructors|k12ctr() : MATLABHandleObject() {} / k12ctr(std::shared_ptr<MATLABControllerType> matlabPtr) : / k12ctr(std::shared_ptr<MATLABControllerType> matlabPtr, matlab::data::Array obj) : / k12pt() : MATLABObject() {} / k12pt(std::shared_ptr<MATLABControllerType> _matlabPtr, matlab::data::Array x) :|exact
+CHK|gen_properties|double getCount() { return MATLABGetScalarProperty<double>(u"Count"); } / void setCount(double value) { return MATLABSetScalarProperty(u"Count", value); } / std::complex<double> getX() { return MATLABGetComplexScalarProperty<double>(u"X"); } / void setX(double value) { return MATLABSetScalarProperty(u"X", value); } / void setX(std::complex<double> value) { return MATLABSetScalarProperty(u"X", value); } / std::u16string getTag() { return MATLABGetScalarProperty<std::u16string>(u"Tag"); } / void setTag(std::u16string value) { return MATLABSetScalarProperty(u"Tag", value); } / std::complex<double> getHidden2() { return MATLABGetComplexScalarProperty<double>(u"Hidden2"); }|exact
+CHK|gen_friends|friend bool operator==(const k12ctr& A, const k12ctr& B); / friend bool operator!=(const k12ctr& A, const k12ctr& B); / friend bool operator<(const k12ctr& A, const k12ctr& B); / friend bool operator>(const k12ctr& A, const k12ctr& B); / friend bool operator<=(const k12ctr& A, const k12ctr& B); / friend bool operator>=(const k12ctr& A, const k12ctr& B);|exact
+CHK|gen_templates|typename return_type_eq<nargout>::type eq(matlab::data::Array B) { / typename return_type_ne<nargout>::type ne(matlab::data::Array B) { / typename return_type_lt<nargout>::type lt(matlab::data::Array B) { / typename return_type_gt<nargout>::type gt(matlab::data::Array B) { / typename return_type_le<nargout>::type le(matlab::data::Array B) { / typename return_type_ge<nargout>::type ge(matlab::data::Array B) { / typename return_type_twice<nargout>::type twice() { / typename return_type_k12f<nargout>::type k12f(std::shared_ptr<MATLABControllerType> _matlabPtr, std::vector<double> x, std::complex<int32_t> n) { / typename return_type_k12f<nargout>::type k12f(std::shared_ptr<MATLABControllerType> _matlabPtr, std::vector<double> x, int32_t n) { / typename return_type_k12v<nargout>::type k12v(std::shared_ptr<MATLABControllerType> _matlabPtr, matlab::data::Array varargin) { / typename return_type_k12v<nargout>::type k12v(std::shared_ptr<MATLABControllerType> _matlabPtr, std::vector<matlab::data::Array> _args) {|exact
+CHK|gen_specializations|struct k12ctr::return_type_eq<0> { typedef void type; }; / struct k12ctr::return_type_eq<1> { typedef matlab::data::Array type; }; / struct k12ctr::return_type_ne<0> { typedef void type; }; / struct k12ctr::return_type_ne<1> { typedef matlab::data::Array type; }; / struct k12ctr::return_type_lt<0> { typedef void type; }; / struct k12ctr::return_type_lt<1> { typedef matlab::data::Array type; }; / struct k12ctr::return_type_gt<0> { typedef void type; }; / struct k12ctr::return_type_gt<1> { typedef matlab::data::Array type; }; / struct k12ctr::return_type_le<0> { typedef void type; }; / struct k12ctr::return_type_le<1> { typedef matlab::data::Array type; }; / struct k12ctr::return_type_ge<0> { typedef void type; }; / struct k12ctr::return_type_ge<1> { typedef matlab::data::Array type; }; / struct k12pt::return_type_twice<0> { typedef void type; }; / struct k12pt::return_type_twice<1> { typedef matlab::data::Array type; }; / struct return_type_k12f<0> { typedef void type; }; / struct return_type_k12f<1> { typedef matlab::data::Array type; }; / struct return_type_k12f<2> { typedef std::tuple<matlab::data::Array, matlab::data::Array> type; }; / struct return_type_k12v<0> { typedef void type; }; / struct return_type_k12v<1> { typedef matlab::data::Array type; };|exact
+CHK|gen_calls|m_matlabPtr->feval(u"eq", 0, _args); / matlab::data::Array _result_mda = m_matlabPtr->feval(u"eq", _args); / m_matlabPtr->feval(u"ne", 0, _args); / matlab::data::Array _result_mda = m_matlabPtr->feval(u"ne", _args); / m_matlabPtr->feval(u"lt", 0, _args); / matlab::data::Array _result_mda = m_matlabPtr->feval(u"lt", _args); / m_matlabPtr->feval(u"gt", 0, _args); / matlab::data::Array _result_mda = m_matlabPtr->feval(u"gt", _args); / m_matlabPtr->feval(u"le", 0, _args); / matlab::data::Array _result_mda = m_matlabPtr->feval(u"le", _args); / m_matlabPtr->feval(u"ge", 0, _args); / matlab::data::Array _result_mda = m_matlabPtr->feval(u"ge", _args); / matlab::data::TypedArray<bool> _result_mda = A.m_matlabPtr->feval(u"eq", _args); / matlab::data::TypedArray<bool> _result_mda = A.m_matlabPtr->feval(u"ne", _args); / matlab::data::TypedArray<bool> _result_mda = A.m_matlabPtr->feval(u"lt", _args); / matlab::data::TypedArray<bool> _result_mda = A.m_matlabPtr->feval(u"gt", _args); / matlab::data::TypedArray<bool> _result_mda = A.m_matlabPtr->feval(u"le", _args); / matlab::data::TypedArray<bool> _result_mda = A.m_matlabPtr->feval(u"ge", _args); / matlab::data::Array _result = m_matlabPtr->feval(u"k12pt", _args); / m_matlabPtr->feval(u"twice", 0, _args); / matlab::data::Array _result_mda = m_matlabPtr->feval(u"twice", _args); / _matlabPtr->feval(u"k12f", 0, _args); / matlab::data::Array _result_mda = _matlabPtr->feval(u"k12f", _args); / std::vector<matlab::data::Array> _result_mda = _matlabPtr->feval(u"k12f",2, _args); / _matlabPtr->feval(u"k12f", 0, _args); / matlab::data::Array _result_mda = _matlabPtr->feval(u"k12f", _args); / std::vector<matlab::data::Array> _result_mda = _matlabPtr->feval(u"k12f",2, _args); / _matlabPtr->feval(u"k12g", 0, _args); / matlab::data::Array _result_mda = _matlabPtr->feval(u"k12v", _args);|exact
+CHK|gen_enum|static const std::map<k12shade, std::string> map = { {k12shade::light, "light"}, {k12shade::dark, "dark"} }; / static const std::map<std::string, k12shade> map = { {"light", k12shade::light}, {"dark", k12shade::dark} };|exact
+CHK|gen_arrays|_arrayFactory.createArray({1,x.size()}, x.begin(), x.end()), / _arrayFactory.createArray<int32_t>({1,1}, {n}) }; / _arrayFactory.createArray({1,x.size()}, x.begin(), x.end()), / _arrayFactory.createArray<int32_t>({1,1}, {n}) }; / _arrayFactory.createArray({1,x.size()}, x.begin(), x.end()), / _arrayFactory.createArray<int32_t>({1,1}, {n}) }; / _arrayFactory.createArray({1,x.size()}, x.begin(), x.end()), / _arrayFactory.createArray<std::complex<int32_t>>({1,1}, {n}) }; / _arrayFactory.createArray({1,x.size()}, x.begin(), x.end()), / _arrayFactory.createArray<std::complex<int32_t>>({1,1}, {n}) }; / _arrayFactory.createArray({1,x.size()}, x.begin(), x.end()), / _arrayFactory.createArray<std::complex<int32_t>>({1,1}, {n}) }; / matlab::data::Array _c_Enum = _arrayFactory.createEnumArray({1,1}, "k12shade", {getk12shadeString(c)}); / _arrayFactory.createArray<std::u16string>({1,1}, {s}),|exact
+CHK|api_wrong_options|Compiler:clishared:wrongOptionsObject / 'compiler.build.StandaloneApplicationOptions' is not a valid options object for this function. Use 'compiler.build.CppSharedLibraryOptions' instead.|exact
+CHK|api_no_args|MATLAB:narginchk:notEnoughInputs / Not enough input arguments.|exact
+CHK|api_two_out|MATLAB:nargoutchk:tooManyOutputs / Too many output arguments.|exact
+CHK|api_extra|MATLAB:narginchk:tooManyInputs / Too many input arguments.|exact
+CHK|substruct_class|struct|exact
+CHK|substruct_size|double [1 2] 1 1|exact
+CHK|substruct_fields|type subs|exact
+CHK|substruct_type|.|exact
+CHK|substruct_subs|a|exact
+CHK|substruct_chain_size|double [1 2] 1 3|exact
+CHK|substruct_chain_types|() . {}|exact
+CHK|substruct_chain_subs|cell|exact
+CHK|substruct_bad_type|no error|exact
+CHK|substruct_paren_not_cell|no error|exact
+CHK|substruct_dot_not_text|no error|exact
+CHK|substruct_odd|MATLAB:substruct:nargin / SUBSTRUCT takes at least two arguments.|exact
+CHK|substruct_none|MATLAB:substruct:nargin / SUBSTRUCT takes at least two arguments.|exact
+CHK|subsref_field|double [1 3] 10 20 30|exact
+CHK|subsref_field_index|double [1 1] 20|exact
+CHK|subsref_matrix_row|double [1 3] 3 5 7|exact
+CHK|subsref_colon_char|double [4 1] 1 2 3 4|exact
+CHK|subsref_cell_brace|two|exact
+CHK|subsref_cell_paren|cell|exact
+CHK|subsref_nested|x|exact
+CHK|subsref_struct_built|double [1 3] 10 20 30|exact
+CHK|subsref_object|double [1 1] 4|exact
+CHK|subsref_method|double [1 1] 8|exact
+CHK|subsref_handle|double [1 1] 0|exact
+CHK|subsref_no_field|MATLAB:nonExistentField / Unrecognized field name "nosuch".|exact
+CHK|subsref_past_end|MATLAB:badsubscript / Index exceeds the number of array elements. Index must not exceed 3.|exact
+CHK|subsref_bad_type|MATLAB:subsTypeMustBeSquigglyOrSmooth / The "type" field in the indexing structure argument to SUBSREF and SUBSASGN must be a string scalar or character vector of "." or "{}" or "()".|exact
+CHK|subsref_not_struct|MATLAB:subsArgNotStruc / Subscript argument to SUBSREF and SUBSASGN must be a structure.|exact
+CHK|subsref_one_arg|MATLAB:minrhs / Not enough input arguments.|exact
+CHK|subsasgn_field|double [1 1] 5|exact
+CHK|subsasgn_matrix|double [2 2] 0 0 9 0|exact
+CHK|subsasgn_grow|double [1 4] 1 2 0 7|exact
+CHK|subsasgn_cell|double double char|exact
+CHK|subsasgn_nested|double [1 3] 99 20 30|exact
+CHK|subsasgn_object|double [1 1] 7|exact
+CHK|subsasgn_object_class|k12pt|exact
+CHK|subsasgn_leaves_matrix|double [1 6] 1 2 3 9 2 3|exact
+CHK|subsasgn_leaves_struct|double [1 4] 4 5 4 0|exact
+CHK|subsasgn_leaves_cell|double char|exact
+CHK|subsref_gives_a_copy|double [1 3] 100 5 7|exact
+CHK|subsasgn_handle_in_place|double [1 1] 3|exact
+CHK|subsasgn_no_output|MATLAB:subsasgnMustHaveOutput / SUBSASGN must be called with an output.|exact
+CHK|subsasgn_private|MATLAB:class:SetProhibited / Unable to set the 'Hidden2' property of class ''k12pt'' because it is read-only.|exact
+CHK|subsasgn_validation|MATLAB:validators:mustBeReal / Error setting property 'Count' of class 'k12ctr'. Value must be real.|exact
+CHK|subsasgn_two_args|MATLAB:TooManyOutputsDueToMissingBraces / Unable to perform assignment with 0 elements on the right-hand side.|exact
+CHK|subsasgn_bad_type|MATLAB:subsTypeMustBeSquigglyOrSmooth / The "type" field in the indexing structure argument to SUBSREF and SUBSASGN must be a string scalar or character vector of "." or "{}" or "()".|exact
+CHK|subsref_no_type|MATLAB:subsMustHaveTwo / Subscript argument to SUBSREF and SUBSASGN must have two fields.|exact
+CHK|subsref_no_fields|MATLAB:subsMustHaveTwo / Subscript argument to SUBSREF and SUBSASGN must have two fields.|exact
+CHK|subsref_extra_field|MATLAB:subsMustHaveTwo / Subscript argument to SUBSREF and SUBSASGN must have two fields.|exact
+CHK|subsref_wrong_fields|MATLAB:subsMustHaveTypeSubs / Subscript argument to SUBSREF and SUBSASGN must have two fields whose names are "type" and "subs".|exact
+CHK|subsref_wrong_fields_empty|MATLAB:subsMustHaveTypeSubs / Subscript argument to SUBSREF and SUBSASGN must have two fields whose names are "type" and "subs".|exact
+CHK|subsref_fields_reversed|double [1 1] 3|exact
+CHK|subsref_empty|MATLAB:subsArgEmpty / Subscript argument to SUBSREF and SUBSASGN must not be empty.|exact
+CHK|subsref_type_number|MATLAB:subsTypeMustBeChar / The "type" field in the indexing structure argument to SUBSREF and SUBSASGN must be a string scalar or character vector.|exact
+CHK|subsref_type_cell|MATLAB:subsTypeMustBeChar / The "type" field in the indexing structure argument to SUBSREF and SUBSASGN must be a string scalar or character vector.|exact
+CHK|subsref_type_column|MATLAB:subsTypeMustBeChar / The "type" field in the indexing structure argument to SUBSREF and SUBSASGN must be a string scalar or character vector.|exact
+CHK|subsref_type_strings|MATLAB:subsTypeMustBeChar / The "type" field in the indexing structure argument to SUBSREF and SUBSASGN must be a string scalar or character vector.|exact
+CHK|subsref_type_string|double [1 1] 3|exact
+CHK|subsref_type_empty|MATLAB:subsTypeMustBeSquigglyOrSmooth / The "type" field in the indexing structure argument to SUBSREF and SUBSASGN must be a string scalar or character vector of "." or "{}" or "()".|exact
+CHK|subsref_type_space|MATLAB:subsTypeMustBeSquigglyOrSmooth / The "type" field in the indexing structure argument to SUBSREF and SUBSASGN must be a string scalar or character vector of "." or "{}" or "()".|exact
+CHK|subsref_paren_not_cell|MATLAB:subsSmoothTypeSubsMustBeCell / SUBS field must be a cell array for () TYPE.|exact
+CHK|subsref_paren_char|MATLAB:subsSmoothTypeSubsMustBeCell / SUBS field must be a cell array for () TYPE.|exact
+CHK|subsref_brace_not_cell|MATLAB:subsSquigglyTypeSubsMustBeCell / SUBS field must be a cell array for {} TYPE.|exact
+CHK|subsref_dot_number|MATLAB:mustBeFieldName / Argument to dynamic structure reference must evaluate to a valid field name.|exact
+CHK|subsref_dot_cell|MATLAB:mustBeFieldName / Argument to dynamic structure reference must evaluate to a valid field name.|exact
+CHK|subsref_dot_string|double [1 3] 10 20 30|exact
+CHK|subsref_dot_empty|MATLAB:nonExistentField / Unrecognized field name "".|exact
+CHK|subsref_later_type_first|MATLAB:subsTypeMustBeSquigglyOrSmooth / The "type" field in the indexing structure argument to SUBSREF and SUBSASGN must be a string scalar or character vector of "." or "{}" or "()".|exact
+CHK|subsref_later_number_type|MATLAB:subsTypeMustBeChar / The "type" field in the indexing structure argument to SUBSREF and SUBSASGN must be a string scalar or character vector.|exact
+CHK|subsref_paren_then_paren|MATLAB:subsDotMustFollow / Only a dot field name can follow ()'s.|exact
+CHK|subsref_paren_then_brace|MATLAB:subsDotMustFollow / Only a dot field name can follow ()'s.|exact
+CHK|subsref_level_order|MATLAB:subsSmoothTypeSubsMustBeCell / SUBS field must be a cell array for () TYPE.|exact
+CHK|subsref_column_levels|double [1 1] 20|exact
+CHK|subsref_brace_after_brace|two|exact
+CHK|subsref_paren_after_brace|double [1 1] 3|exact
+CHK|subsref_dot_after_paren|double [1 1] 20|exact
+CHK|subsref_brace_no_index|double [1 1] 1|exact
+CHK|subsref_handle_call|double [1 1] 3|exact
+CHK|subsref_logical_index|double [1 2] 8 4|exact
+CHK|subsref_list_first|double [1 1] 1|exact
+CHK|subsref_list_fields_first|double [1 1] 10|exact
+CHK|subsref_list_three|double [1 1] 1 / two / double [1 3] 3 3 3|exact
+CHK|subsref_list_two_fields|double [1 1] 10 / double [1 1] 20|exact
+CHK|subsref_list_range_fields|double [1 1] 10 / double [1 1] 20|exact
+CHK|subsref_list_braces|double [1 1] 1 / two|exact
+CHK|subsref_list_short|MATLAB:needMoreRhsOutputs / Insufficient number of outputs from right hand side of equal sign to satisfy assignment.|exact
+CHK|subsref_list_four|MATLAB:needMoreRhsOutputs / Insufficient number of outputs from right hand side of equal sign to satisfy assignment.|exact
+CHK|subsref_list_none|MATLAB:TooManyOutputsDueToMissingBraces / Unable to perform assignment with 0 elements on the right-hand side.|exact
+CHK|subsasgn_paren_no_index|MATLAB:atLeastOneIndexIsRequired / At least one index is required.|exact
+CHK|subsasgn_no_index_first|MATLAB:atLeastOneIndexIsRequired / At least one index is required.|exact
+CHK|subsasgn_no_index_last|MATLAB:atLeastOneIndexIsRequired / At least one index is required.|exact
+CHK|subsasgn_paren_then_paren|MATLAB:subsDotMustFollow / Only a dot field name can follow ()'s.|exact
+CHK|subsasgn_later_type_first|MATLAB:subsTypeMustBeSquigglyOrSmooth / The "type" field in the indexing structure argument to SUBSREF and SUBSASGN must be a string scalar or character vector of "." or "{}" or "()".|exact
+CHK|subsasgn_empty|MATLAB:subsArgEmpty / Subscript argument to SUBSREF and SUBSASGN must not be empty.|exact
+CHK|subsasgn_no_type|MATLAB:subsMustHaveTwo / Subscript argument to SUBSREF and SUBSASGN must have two fields.|exact
+CHK|subsasgn_dot_number|MATLAB:mustBeFieldName / Argument to dynamic structure reference must evaluate to a valid field name.|exact
+CHK|subsasgn_paren_not_cell|MATLAB:subsSmoothTypeSubsMustBeCell / SUBS field must be a cell array for () TYPE.|exact
+CHK|subsasgn_dot_colon|double [1 3] 0 0 0|exact
+CHK|subsasgn_new_field|a c b|exact
+CHK|subsasgn_delete_row|double [2 3] 3 4 5 9 7 2|exact
+CHK|subsasgn_brace_grow|double [1 2] 1 5|exact
+CHK|subsasgn_mismatch|MATLAB:matrix:singleSubscriptNumelMismatch / Unable to perform assignment because the left and right sides have a different number of elements.|exact
+CHK|subsasgn_two_outputs|MATLAB:maxlhs / Too many output arguments.|exact
+CHK|subs_argument_counts|double [1 4] 1 1 2 3|exact
+CHK|props_datetime|Format TimeZone Year Month Day Hour Minute Second|exact
+CHK|props_duration|Format|exact
+CHK|props_caldur|Format|exact
+CHK|props_categorical|double [1 2] 0 1|exact
+CHK|props_map|Count KeyType ValueType|exact
+CHK|props_table|Var1 Var2 Properties Row Variables|exact
+CHK|props_timetable|Var1 Properties Time Variables|exact
+CHK|props_string|double [1 2] 0 1|exact
+CHK|props_cell|double [1 2] 0 1|exact
+CHK|map_num|double|exact
+CHK|map_mixednum|any|exact
+CHK|map_int8|int8|exact
+CHK|map_logical|logical|exact
+CHK|map_char|char|exact
+CHK|map_string|any|exact
+CHK|map_vector|any|exact
+CHK|map_mixed|any|exact
+CHK|map_complex|any|exact
+CHK|map_scalar|double|exact
+CHK|map_numkeys|char|exact
+CHK|map_empty|any|exact

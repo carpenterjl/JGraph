@@ -1,0 +1,44 @@
+== paths all three
+  open.pick.ctf	has k9nargs 
+  open.missing.ctf	ERR CppSharedLibException | Unable to open file 'missing.ctf'.
+  open.sub\inner.ctf	has k9make k9echo 
+  open.sub/inner.ctf	has k9make k9echo 
+  open.<W>\paths\cwd\sub\inner.ctf	has k9make k9echo 
+  open.<W>\paths\cwd\nothere.ctf	ERR CppSharedLibException | Unable to open file '<W>\paths\cwd\nothere.ctf'.
+  open..\pick.ctf	has k9nargs 
+  end	paths
+  EXIT	0
+  SECONDS	8.6
+== paths cwd and exe
+  open.pick.ctf	has k9make k9echo 
+  open.missing.ctf	ERR CppSharedLibException | Unable to open file 'missing.ctf'.
+  open.sub\inner.ctf	has k9make k9echo 
+  open.sub/inner.ctf	has k9make k9echo 
+  open.<W>\paths\cwd\sub\inner.ctf	has k9make k9echo 
+  open.<W>\paths\cwd\nothere.ctf	ERR CppSharedLibException | Unable to open file '<W>\paths\cwd\nothere.ctf'.
+  open..\pick.ctf	has k9make k9echo 
+  end	paths
+  EXIT	0
+  SECONDS	7.3
+== paths exe only
+  open.pick.ctf	has k9echo 
+  open.missing.ctf	ERR CppSharedLibException | Unable to open file 'missing.ctf'.
+  open.sub\inner.ctf	has k9make k9echo 
+  open.sub/inner.ctf	has k9make k9echo 
+  open.<W>\paths\cwd\sub\inner.ctf	has k9make k9echo 
+  open.<W>\paths\cwd\nothere.ctf	ERR CppSharedLibException | Unable to open file '<W>\paths\cwd\nothere.ctf'.
+  open..\pick.ctf	has k9echo 
+  end	paths
+  EXIT	0
+  SECONDS	7.3
+== paths env names a missing folder
+  open.pick.ctf	has k9make k9echo 
+  open.missing.ctf	ERR CppSharedLibException | Unable to open file 'missing.ctf'.
+  open.sub\inner.ctf	has k9make k9echo 
+  open.sub/inner.ctf	has k9make k9echo 
+  open.<W>\paths\cwd\sub\inner.ctf	has k9make k9echo 
+  open.<W>\paths\cwd\nothere.ctf	ERR CppSharedLibException | Unable to open file '<W>\paths\cwd\nothere.ctf'.
+  open..\pick.ctf	has k9make k9echo 
+  end	paths
+  EXIT	0
+  SECONDS	7.3

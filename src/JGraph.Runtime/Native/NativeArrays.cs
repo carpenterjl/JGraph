@@ -421,7 +421,7 @@ internal static unsafe class NativeArrays
     // JGraph:interop:int64Precision): one past that is refused, not rounded.
     private static double Exact(long x, string className) => x is >= -(1L << 53) and <= 1L << 53
         ? x
-        : throw new ArgumentException($"{x} cannot be held exactly: JGraph keeps an {className} as a double, exact to 2^53.");
+        : throw new ArgumentException($"{x} cannot be held exactly: JGraph keeps {(className.StartsWith('u') ? "a" : "an")} {className} as a double, exact to 2^53.");
 
     private static double Exact(ulong x, string className) => x <= 1UL << 53
         ? x

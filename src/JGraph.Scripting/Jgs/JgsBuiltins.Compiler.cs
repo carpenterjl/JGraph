@@ -20,7 +20,8 @@ internal static partial class JgsBuiltins
     [
         "mcc", "compiler.build.standaloneApplication", "compiler.build.standaloneWindowsApplication",
         "compiler.build.StandaloneApplicationOptions", "compiler.build.dotNETAssembly", "compiler.build.DotNETAssemblyOptions",
-        "compiler.build.cSharedLibrary", "compiler.build.CSharedLibraryOptions",
+        "compiler.build.cSharedLibrary", "compiler.build.CSharedLibraryOptions", "compiler.build.cppSharedLibrary",
+        "compiler.build.CppSharedLibraryOptions",
     ];
 
     /// <summary>The functions whose use makes mcc warn that secrets come from the machine the program runs on.</summary>
@@ -169,9 +170,14 @@ internal static partial class JgsBuiltins
             return classes[at].Files;
         }
 
-        // A C library exports each file named, in order (stage K11).
+        // A C library exports each file named, in order (stage K11); a C++ library each file a folder
+        // named holds as well (stage K12; k12_build: folder).
         var exported = new List<string>();
-        foreach (string given in command.Files)
+        foreach (string given in command.Files.SelectMany<string, string>(g => command.Target == MccTarget.CppLibrary && Directory.Exists(Within(g))
+            ? Directory.EnumerateFiles(Within(g), "*", SearchOption.AllDirectories)
+                .Where(static f => Path.GetExtension(f).ToLowerInvariant() is ".m" or ".p" or ".mlapp")
+                .OrderBy(static f => f, StringComparer.OrdinalIgnoreCase)
+            : [g]))
         {
             if (AddRoot(given) is { } root)
             {
@@ -274,6 +280,29 @@ internal static partial class JgsBuiltins
             }
         }
 
+        // A C++ library's generic interface generates its header first as well (k12_build: main.printed,
+        // mcc_verbose); -W cpplib:name and ,all write the archive alone, as R2025b's do (mcc_default).
+        string? cppHeader = null;
+        if (command.Target == MccTarget.CppLibrary)
+        {
+            if (command.IgnoredCppVersion is { } ignoredVersion)
+            {
+                McWarn("Compiler:compiler:COM_WARN_VERSIONING_NOT_SUPPORTED",
+                    $"Versioning is not supported for this target. Version string \"{ignoredVersion}\" specified in -W option will be ignored.");
+            }
+
+            if (command.CppInterface == CppInterfaceKind.All)
+            {
+                McWarn("JGraph:mcc:legacyNotBuilt",
+                    $"JGraph builds no legacy mwArray interface: -W cpplib:{command.ComponentName} writes the generic interface's archive "
+                    + $"alone, and -W cpplib:{command.ComponentName},generic its strongly typed header as well.");
+            }
+            else
+            {
+                cppHeader = CppHeader(command, exported, folder, env, interpreter, host, line, col);
+            }
+        }
+
         if (command.Verbose)
         {
             host.WriteOut($"Compiler version: JGraph {RuntimeLayout.CurrentVersion} (R2025b)\nAnalyzing file dependencies. \n");
@@ -335,6 +364,11 @@ internal static partial class JgsBuiltins
         if (command.DotNet is { } assembly)
         {
             return DotNetBuild(command, assembly, classes, main, report, folder, here, words, line, col, host);
+        }
+
+        if (command.Target == MccTarget.CppLibrary)
+        {
+            return CppLibraryBuild(command, exported, cppHeader, main, report, folder, here, line, col, host);
         }
 
         if (command.Target == MccTarget.CLibrary)

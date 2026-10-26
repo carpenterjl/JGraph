@@ -143,6 +143,7 @@ internal static class TypedInterfaceReader
         }
 
         var setters = new HashSet<string>(cls.Methods.Where(static m => m.AccessorProperty is not null && !m.IsGetter).Select(static m => m.AccessorProperty!), StringComparer.Ordinal);
+        var getters = new HashSet<string>(cls.Methods.Where(static m => m.IsGetter).Select(static m => m.AccessorProperty!), StringComparer.Ordinal);
         var properties = new List<TypedProperty>();
         foreach (ClassProperty property in cls.Properties)
         {
@@ -159,6 +160,8 @@ internal static class TypedInterfaceReader
                 MustBeReal = spec.Validators.Count > 0 && IsMustBeReal(spec.Validators[^1]),
                 Readable = true,
                 Writable = property.SetAccess.IsPublic && !property.Constant && !(property.Dependent && !setters.Contains(spec.Name)),
+                Dependent = property.Dependent,
+                HasGetMethod = getters.Contains(spec.Name),
             });
         }
 
@@ -192,11 +195,14 @@ internal static class TypedInterfaceReader
             {
                 if (!own.Contains(name))
                 {
-                    methods.Add(new TypedMethod(name, [.. inputs.Select(static i => new TypedArgument(i))], [.. outputs.Select(static o => new TypedArgument(o))]));
+                    methods.Add(new TypedMethod(name, [.. inputs.Select(static i => new TypedArgument(i))], [.. outputs.Select(static o => new TypedArgument(o))])
+                    {
+                        DefiningClass = "handle",
+                    });
                 }
             }
         }
 
-        return new TypedClass(fullName) { IsHandle = cls.IsHandle, Properties = properties, Constructor = constructor, Methods = methods };
+        return new TypedClass(fullName) { IsHandle = cls.IsHandle, Abstract = cls.Abstract, Properties = properties, Constructor = constructor, Methods = methods };
     }
 }

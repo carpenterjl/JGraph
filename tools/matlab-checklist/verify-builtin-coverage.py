@@ -130,7 +130,9 @@ def missing_sections(text: str) -> list[tuple[str, int, list[str], bool]]:
                 paragraph.append(body)
                 cursor += 1
             block = "\n".join(paragraph)
-            names = re.findall(r"(?<!~)`([^`]+)`(?!~)", block)
+            # A struck name is taken whole and dropped: matching around it, as a lookbehind did,
+            # paired its closing backtick with the next name's opening one (stage K12's two).
+            names = [n for n in re.findall(r"~~`[^`]+`~~|`([^`]+)`", block) if n]
 
             # Asked before the prose test below, because a family list is prose *and* unenumerable,
             # and blanking it first would turn "34 names we never wrote out" into "0 names".

@@ -91,7 +91,11 @@ $anchors = @(
     # mcc -W lib (stage K11, ADR 0267): the headers a C shared library and its clients compile
     # against and the import library they link with, where MATLAB keeps its own.
     "extern\include\mclmcrrt.h",
-    "extern\lib\win64\microsoft\jgrt.lib"
+    "extern\lib\win64\microsoft\jgrt.lib",
+
+    # mcc -W cpplib (stage K12, ADR 0268): the C++ Data API's headers a client compiles against.
+    "extern\include\MatlabCppSharedLib.hpp",
+    "extern\include\jgraph\cpplib.hpp"
 )
 foreach ($anchor in $anchors) {
     if (-not (Test-Path (Join-Path $staging $anchor))) {

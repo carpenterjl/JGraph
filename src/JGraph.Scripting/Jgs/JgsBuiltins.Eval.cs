@@ -28,6 +28,9 @@ internal static partial class JgsBuiltins
         // K9: a name-value structure back into its pairs.
         "namedargs2cell",
 
+        // K12: the indexing a subscript structure spells, which the C++ interface reaches properties by.
+        "substruct", "subsref", "subsasgn",
+
         // K3b: pcode reads names where a call would find them.
         "pcode",
         "lasterr", "lasterror", "lastwarn", "refreshdata",
@@ -697,6 +700,9 @@ internal static partial class JgsBuiltins
 
             return JgsValue.Cell([.. pairs]);
         });
+
+        // substruct, subsref and subsasgn (stage K12).
+        RegisterSubscriptBuiltins(env, interpreter);
 
         // exist and which ask Query mode (M145, step 7): every layer that holds the name as a
         // function, in the resolver's order with no argument to dispatch on — a nested or local

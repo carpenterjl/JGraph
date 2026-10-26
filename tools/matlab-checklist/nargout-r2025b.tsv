@@ -306,6 +306,8 @@ comet	0	2
 comet3	0	2
 compan	1	2
 compass	1	2
+compiler.build.cppSharedLibrary	-1	0
+compiler.build.CppSharedLibraryOptions	1	8
 compiler.build.cSharedLibrary	-1	0
 compiler.build.CSharedLibraryOptions	1	8
 compiler.build.dotNETAssembly	-1	0
@@ -1973,7 +1975,10 @@ structfun	-1	5
 strvcat	1	2
 sub2ind	1	2
 subplot	1	2
+subsasgn	1	5
 subspace	1	2
+subsref	1	5
+substruct	1	2
 subtitle	1	2
 subvolume	6	2
 sum	1	5

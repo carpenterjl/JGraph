@@ -23,6 +23,22 @@ public enum MccTarget
 
     /// <summary>A C shared library: <c>-W lib:</c> or <c>-l</c> (stage K11).</summary>
     CLibrary,
+
+    /// <summary>A C++ shared library for the MATLAB Data API: <c>-W cpplib:</c> (stage K12).</summary>
+    CppLibrary,
+}
+
+/// <summary>Which interfaces <c>-W cpplib:name[,generic|legacy|all]</c> asks for (k12_build: mcc_*).</summary>
+public enum CppInterfaceKind
+{
+    /// <summary>Both, the default: R2025b writes the legacy library and the generic interface's archive, with no header.</summary>
+    All,
+
+    /// <summary><c>generic</c>: the MATLAB Data API's archive and its strongly typed header.</summary>
+    Generic,
+
+    /// <summary><c>legacy</c>: the mwArray library alone, which JGraph does not build (decision KD7).</summary>
+    Legacy,
 }
 
 /// <summary>
@@ -236,6 +252,12 @@ public sealed class MccCommandLine
     /// <summary><c>-W dotnet:</c>'s parts, for a .NET assembly.</summary>
     public DotNetWrapper? DotNet { get; private set; }
 
+    /// <summary><c>-W cpplib:</c>'s interfaces, for a C++ shared library.</summary>
+    public CppInterfaceKind CppInterface { get; private set; }
+
+    /// <summary>The version <c>-W cpplib:name,generic,version=v</c> gives, which R2025b warns it ignores; else null.</summary>
+    public string? IgnoredCppVersion { get; private set; }
+
     /// <summary>A library's <c>class{Name:file,file}</c> arguments, in order: each class and its files.</summary>
     public List<(string Name, List<string> Files)> Classes { get; } = [];
 
@@ -434,8 +456,9 @@ public sealed class MccCommandLine
                     (wrapperKind, wrapperParts) = line.Wrapper(value!);
 
                     // A library's name is a component name, as -o's is: one after the other is refused,
-                    // though a second -W lib: names the library again (k11_build: lib_o; k11_names: o_W, W_W).
-                    if (wrapperKind == "lib")
+                    // though a second -W lib: names the library again (k11_build: lib_o; k11_names: o_W, W_W;
+                    // k12_build: mcc_o, mcc_twice).
+                    if (wrapperKind is "lib" or "cpplib")
                     {
                         if (line.OutputName is { } named)
                         {
@@ -597,6 +620,29 @@ public sealed class MccCommandLine
                 link = "codegen";
             }
         }
+        else if (wrapperKind == "cpplib")
+        {
+            // -g is taken without a word, and -c makes R2025b write a C library's source in place of
+            // the C++ library (k12_build: mcc_debug, mcc_c).
+            line.ComponentName = libraryName;
+            line.DebugBuild = line.IgnoredSwitches.Remove("g");
+            line.IgnoredSwitches.RemoveAll(static s => s == "g");
+            if (line.IgnoredSwitches.RemoveAll(static s => s == "c") > 0)
+            {
+                line.Target = MccTarget.CLibrary;
+                link = "codegen";
+            }
+            else if (line.CppInterface == CppInterfaceKind.Legacy)
+            {
+                throw new MccException("JGraph:mcc:targetOutOfScope",
+                    $"JGraph does not build the legacy mwArray interface of a C++ shared library (-W cpplib:{libraryName},legacy); "
+                    + $"-W cpplib:{libraryName},generic builds its MATLAB Data API interface.");
+            }
+            else
+            {
+                line.Target = MccTarget.CppLibrary;
+            }
+        }
         else if (!standalone)
         {
             OtherTarget(wrapperKind, wrapperParts, mpsSwitch, separateSwitch);
@@ -712,11 +758,14 @@ public sealed class MccCommandLine
                 ComponentName = name;
                 break;
             case "cpplib":
+                // cpplib:name[,generic|legacy|all][,version=v] (stage K12; k12_build: mcc_*).
                 if (name.Length == 0)
                 {
                     throw Refuse("COM_ERR_COMPONENT_NAME_NEEDED_FOR_CPPLIB", "Error: A component name must be specified following \"cpplib:\".\n");
                 }
 
+                string? version = null;
+                CppInterface = CppInterfaceKind.All;
                 foreach (string part in parts.Skip(1))
                 {
                     if (part == "named")
@@ -724,12 +773,31 @@ public sealed class MccCommandLine
                         throw Refuse("COM_ERR_NAMED_CPPLIB_NOT_SUPPORTED_YET", "Error: The \"named\" interface for the C++ Shared Library target is not yet supported.\n");
                     }
 
-                    if (part is not ("all" or "generic" or "legacy"))
+                    if (part.StartsWith("version=", StringComparison.Ordinal))
                     {
-                        throw Refuse("COM_ERR_BAD_ARG_FOR_CPPLIB", $"Error: Option \"{part}\" is not valid following \"cpplib:component_name,\".\n");
+                        version = part["version=".Length..];
+                        Version = ProgramVersion.Parse(version) ?? throw Refuse("COM_ERR_INVALID_VERSION", ProgramVersion.Refusal(version));
+                        continue;
                     }
+
+                    CppInterface = part switch
+                    {
+                        "all" => CppInterfaceKind.All,
+                        "generic" => CppInterfaceKind.Generic,
+                        "legacy" => CppInterfaceKind.Legacy,
+                        _ => throw Refuse("COM_ERR_BAD_ARG_FOR_CPPLIB", $"Error: Option \"{part}\" is not valid following \"cpplib:component_name,\".\n"),
+                    };
                 }
 
+                if (!IsOutputName(name))
+                {
+                    throw Refuse("COM_ERR_ILLEGAL_OUTPUT_NAME",
+                        $"Illegal output name: '{name}' \n (standalone and shared library target output names must begin with a letter or '_' and contain only alpha-numeric characters or '_')");
+                }
+
+                // The generic interface has no version, and R2025b says so; the legacy library takes it (k12_build: mcc_version, mcc_verfirst).
+                IgnoredCppVersion = CppInterface == CppInterfaceKind.Generic ? version : null;
+                ComponentName = name;
                 break;
             case "dotnet":
                 RequireName(name);
@@ -935,8 +1003,10 @@ public sealed class MccCommandLine
         + "  mcc -W lib:<name>[,version=<v>] <file.m> [moreFiles...]    or    mcc -l <file.m>\n"
         + "  -C writes the archive beside the library, -g builds it for debugging, -T compile:lib stops at the\n"
         + "  object file and -T codegen (or -c) at the generated source.\n\n"
+        + "  A C++ shared library for the MATLAB Data API, with its strongly typed header\n"
+        + "  mcc -W cpplib:<name>,generic <file.m> [moreFiles...]\n"
+        + "  -W cpplib:<name> alone writes the archive without the header; the legacy mwArray interface is not built.\n\n"
         + "JGraph does not build these yet\n"
-        + "  C++ shared library           mcc -W cpplib:<name> <file.m>\n"
         + "  Python package               mcc -W python:<package> <file.m>\n"
         + "  Production Server archive    mcc -W CTF:<archive> -U <file.m>\n"
         + "  Excel add-in                 mcc -W 'excel:<addin>,<class>' -b <file.m>\n\n"

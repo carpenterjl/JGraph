@@ -34,7 +34,7 @@ so long. The live tracker is `matlab-r2021b-documented.html` in the demo workspa
 `tools/matlab-checklist/build-checklist.py`; this file is the standing summary, so the shape of what
 is left does not have to be re-derived each time.
 
-**438 of 514 builtins implemented** (437 before the compiler and SDK plan's stage K9, which added `namedargs2cell`; 434 from app-building stage U6 to U7b; 433 from app-building stage U2 to U5; 432 at app-building stage U1; 431 from interop stage I8 to device classes stage D13; 428 from interop stage I4 to I7; 427 at interop stage I3; 424 at interop stage I2; 422 at interop stage I1; 417 from V10 to Z2; 416 from M87 to M144; 415 from M71 to M86; 413 from M68 to M70; 386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
+**440 of 514 builtins implemented** (438 before the compiler and SDK plan's stage K12, which added `subsref` and `subsasgn`; 437 before its stage K9, which added `namedargs2cell`; 434 from app-building stage U6 to U7b; 433 from app-building stage U2 to U5; 432 at app-building stage U1; 431 from interop stage I8 to device classes stage D13; 428 from interop stage I4 to I7; 427 at interop stage I3; 424 at interop stage I2; 422 at interop stage I1; 417 from V10 to Z2; 416 from M87 to M144; 415 from M71 to M86; 413 from M68 to M70; 386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
 M39, 326 after M38, 185 after M37, 109 after M36) — M46 through M53 all added names MATLAB documents
 as *functions*, which this table does not hold. M45's eight are the drawing primitives the "handle
 graphics" section below used to list as missing and call the most useful thing left: `plot3`, `line`,
@@ -103,8 +103,9 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,236 of
-2,024** as of the compiler and SDK plan's stage K9 (ADR 0265), which added `namedargs2cell`; 1,235 as of its stage K3b (ADR 0259), which added `pcode`; 1,234 as of its
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,239 of
+2,024** as of the compiler and SDK plan's stage K12 (ADR 0268), which added `substruct`, `subsref` and
+`subsasgn`; 1,236 as of its stage K9 (ADR 0265), which added `namedargs2cell`; 1,235 as of its stage K3b (ADR 0259), which added `pcode`; 1,234 as of its
 stage K3 (ADR 0258), which added `zip` and `unzip`;
 1,232 as of its stage K2 (ADR 0257), which added
 `matlab.codetools.requiredFilesAndProducts`; 1,231 as of the designer plan's stage DS2 (ADR 0246), which added `appdesigner`; 1,230 as of
@@ -416,6 +417,7 @@ plus a short list of eleven odds and ends. Every one of them is accounted for be
 | Dependency analysis | K2 (ADR 0257) | `matlab.codetools.requiredFilesAndProducts` `compiler.codetools.deployableSupportPackages` — the first is one of the 2,024 (the total moves to 1,232); the support-package stub is MATLAB Compiler's, outside them |
 | Archives | K3 (ADR 0258) | `zip` `unzip` — both among the 2,024 (the total moves to 1,234); no encryption, and `unzip` refuses an entry that would land outside its folder |
 | P-code and secrets | K3b (ADR 0259) | `pcode` — among the 2,024 (the total moves to 1,235), writing JGraph's own unencrypted P-file; `getSecret` `isSecret` `getSecretMetadata` `setSecret` `removeSecret` `setSecretMetadata` `listSecrets` — newer than the 2,024, so the total does not move; no vault, so a session refuses as R2025b's `-batch` does and a deployed program reads the environment |
+| C++ shared libraries | K12 (ADR 0268) | `substruct` `subsref` `subsasgn` — among the 2,024 (the total moves to 1,239; `subsref` and `subsasgn` are builtins, 440 of 514); `compiler.build.cppSharedLibrary` `compiler.build.CppSharedLibraryOptions` — MATLAB Compiler SDK's, outside them |
 | The MATLAB Data API | K9 (ADR 0265) | `namedargs2cell` — a builtin among the 2,024 (the total moves to 1,236); `keyHash` `configureDictionary` — newer than the 2,024, so the total does not move; `arguments` blocks with name-value, repeating and output lines, and enumeration classes, which are language rather than callables |
 | Stress-test numerics and sparse | M42 | `sparse` `sprand` `eigs` `spy` `hilb` `polyval` `peaks` `cond` `sqrtm` `logm` `ode45` `int8`…`uint64` (with `.empty` statics) — plus complex `det`/`inv`/`trace`/`eig`/`svd`/`exp`/`log`/`sqrt` and the parallel dense product |
 | Stress-test data types and verbs | M43 | `table` `timetable` `seconds` `categorical` `summary` `string` `cellstr` `compose` `missing` `ismissing` `tiledlayout` `nexttile` `axis` `shading` `lighting` `camlight` `rotate3d` — plus sprintf format cycling, element-wise `~`, and `colormap turbo` |
@@ -1082,7 +1084,7 @@ M52 left these behind, each named rather than silent (the full table is in
   scoped out of M52 deliberately.~~ **`interp2` and `'SamplePoints'` closed in M66**; `'native'`
   output classes and the `histogram` object options are still out.
 
-## Not implemented — 76
+## Not implemented — 74
 
 ### Handle graphics and app building — 2
 
@@ -1254,11 +1256,11 @@ departs from R2025b is in the divergence index, under ADRs 0174–0183.
 The R2020b pattern API is a composable value type of its own. Plain regular expressions cover the
 same ground and are implemented in full, including MATLAB's option-word output ordering.
 
-### OOP and metaclass plumbing — 15
+### OOP and metaclass plumbing — 13
 
 ~~`builtin`~~ `empty` `event.hasListener` `inmem` `listLength` `loadobj` `localfunctions`
-`mislocked` `mlock` `munlock` `numArgumentsFromSubscript` `saveobj` `subsasgn`
-`subsindex` `subsref` `underlyingType`
+`mislocked` `mlock` `munlock` `numArgumentsFromSubscript` `saveobj` ~~`subsasgn`~~
+`subsindex` ~~`subsref`~~ `underlyingType`
 
 The sentence that used to close this section — "these exist to customize the behaviour of
 user-defined classes, which JGS does not have" — stopped being true in **M68**, which gave the
@@ -1267,10 +1269,14 @@ MATLAB dialect `classdef`. ~~`metaclass`~~ left this list with it, and `isobject
 file could shadow a built-in and a script needed a way past it: `builtin(name, args…)` forwards
 to the built-in layer alone, with the output count and the call site of the written call.
 ~~`superclasses`~~ left in app-building stage **U6** (ADR 0203), when a class could first inherit
-from another class and there was a hierarchy to answer about.
+from another class and there was a hierarchy to answer about. ~~`subsref`~~ and ~~`subsasgn`~~ left in the
+compiler and SDK plan's stage **K12** (ADR 0268) as the functions they are to a caller: the indexing a
+subscript structure spells, done as that indexing written out would be, which the strongly typed C++
+interface reaches a class's properties by. A class that defines methods of those names still does not
+take over indexing, for the reason below.
 
 What remains is the part of the object model M68 deliberately excluded, and the exclusions are the
-reasons: `subsref`/`subsasgn`/`subsindex`/`numArgumentsFromSubscript` would let a class take over
+reasons: `subsindex`/`numArgumentsFromSubscript`, and a class's own `subsref`/`subsasgn` methods, would let a class take over
 indexing, and the interpreter's indexing pipeline stays authoritative (ADR 0068); `event.hasListener`
 belongs to events, which are excluded; `loadobj`/`saveobj` belong to a saved-object
 format there is none of; and `mlock`/`munlock`/`mislocked`/`inmem` are about MATLAB's own function
