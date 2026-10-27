@@ -78,6 +78,7 @@ public partial class ScriptWorkspaceWindow
             TableViewer = _tables,
             DeviceWindows = _deviceWindows,
             AppDesigner = AppDesignerDoor,
+            CompilerApps = CompilerAppsDoor,
         };
 
         _cts = new System.Threading.CancellationTokenSource();

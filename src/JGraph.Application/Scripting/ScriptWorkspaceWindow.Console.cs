@@ -23,6 +23,7 @@ public partial class ScriptWorkspaceWindow
     /// </summary>
     private void AppendScriptOutput(string text, bool newline)
     {
+        CaptureCompilerOutput(text, newline);
         if (_runOutputTruncated)
         {
             return;

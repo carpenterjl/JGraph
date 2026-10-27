@@ -85,6 +85,9 @@ public sealed class JGraphScriptGlobals
     /// <summary>The host's App Designer window, or null when it has none (designer plan DS2).</summary>
     internal IScriptAppDesigner? AppDesigner => _context.AppDesigner;
 
+    /// <summary>The host's compiler apps, or null when it has none (compiler and SDK plan, stage K19).</summary>
+    internal IScriptCompilerApps? CompilerApps => _context.CompilerApps;
+
     // --- Output -----------------------------------------------------------------------------------
 
     /// <summary>Writes a value followed by a newline to the output console (C# scripts).</summary>

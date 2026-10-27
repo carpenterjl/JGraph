@@ -1,0 +1,1134 @@
+﻿244 of 511 keys agree, 267 recorded divergences, 0 unexplained, 0 keys JGraph alone has
+
+DIVERGENCES
+  exist.standaloneApplicationCompiler: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+    R2025b: double [1 1] 2
+    JGraph: double [1 1] 5
+  which.standaloneApplicationCompiler: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 99] '<MATLABROOT>\toolbox\compiler\ui\standalone\utils\standaloneApplicationCompiler.m'
+    JGraph: char [1 53] 'standaloneApplicationCompiler is a built-in function.'
+  h1.standaloneApplicationCompiler: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 114] '<strong>standaloneApplicationCompiler</strong> - Package MATLAB programs for deployment as standalone applications'
+    JGraph: char [1 36] 'standaloneApplicationCompiler(file?)'
+  exist.productionServerArchiveCompiler: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+    R2025b: double [1 1] 2
+    JGraph: double [1 1] 5
+  which.productionServerArchiveCompiler: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 98] '<MATLABROOT>\toolbox\compiler_sdk\ui\mps\utils\productionServerArchiveCompiler.m'
+    JGraph: char [1 55] 'productionServerArchiveCompiler is a built-in function.'
+  h1.productionServerArchiveCompiler: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 126] '<strong>productionServerArchiveCompiler</strong> - Package MATLAB programs for deployment as MATLAB Production Server archives'
+    JGraph: char [1 38] 'productionServerArchiveCompiler(file?)'
+  exist.excelAddinCompiler: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+    R2025b: double [1 1] 2
+    JGraph: double [1 1] 5
+  which.excelAddinCompiler: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 83] '<MATLABROOT>\toolbox\compiler\ui\excel\utils\excelAddinCompiler.m'
+    JGraph: char [1 42] 'excelAddinCompiler is a built-in function.'
+  h1.excelAddinCompiler: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 93] '<strong>excelAddinCompiler</strong> - Package MATLAB programs for deployment as Excel add-ins'
+    JGraph: char [1 20] 'excelAddinCompiler()'
+  exist.dotNetAssemblyCompiler: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+    R2025b: double [1 1] 2
+    JGraph: double [1 1] 5
+  which.dotNetAssemblyCompiler: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 92] '<MATLABROOT>\toolbox\compiler_sdk\ui\dotnet\utils\dotNetAssemblyCompiler.m'
+    JGraph: char [1 46] 'dotNetAssemblyCompiler is a built-in function.'
+  h1.dotNetAssemblyCompiler: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 99] '<strong>dotNetAssemblyCompiler</strong> - Package MATLAB programs for deployment as .NET assemblies'
+    JGraph: char [1 24] 'dotNetAssemblyCompiler()'
+  exist.pythonPackageCompiler: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+    R2025b: double [1 1] 2
+    JGraph: double [1 1] 5
+  which.pythonPackageCompiler: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 91] '<MATLABROOT>\toolbox\compiler_sdk\ui\python\utils\pythonPackageCompiler.m'
+    JGraph: char [1 45] 'pythonPackageCompiler is a built-in function.'
+  h1.pythonPackageCompiler: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 98] '<strong>pythonPackageCompiler</strong> - Package MATLAB programs for deployment as Python packages'
+    JGraph: char [1 23] 'pythonPackageCompiler()'
+  exist.cppSharedLibraryCompiler: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+    R2025b: double [1 1] 2
+    JGraph: double [1 1] 5
+  which.cppSharedLibraryCompiler: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 104] '<MATLABROOT>\toolbox\compiler_sdk\ui\cppSharedLibrary\utils\cppSharedLibraryCompiler.m'
+    JGraph: char [1 48] 'cppSharedLibraryCompiler is a built-in function.'
+  h1.cppSharedLibraryCompiler: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 106] '<strong>cppSharedLibraryCompiler</strong> - Package MATLAB programs for deployment as C++ shared libraries'
+    JGraph: char [1 26] 'cppSharedLibraryCompiler()'
+  exist.cSharedLibraryCompiler: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+    R2025b: double [1 1] 2
+    JGraph: double [1 1] 5
+  which.cSharedLibraryCompiler: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 100] '<MATLABROOT>\toolbox\compiler_sdk\ui\cSharedLibrary\utils\cSharedLibraryCompiler.m'
+    JGraph: char [1 46] 'cSharedLibraryCompiler is a built-in function.'
+  h1.cSharedLibraryCompiler: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 102] '<strong>cSharedLibraryCompiler</strong> - Package MATLAB programs for deployment as C shared libraries'
+    JGraph: char [1 24] 'cSharedLibraryCompiler()'
+  exist.javaPackageCompiler: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+    R2025b: double [1 1] 2
+    JGraph: double [1 1] 5
+  which.javaPackageCompiler: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 87] '<MATLABROOT>\toolbox\compiler_sdk\ui\java\utils\javaPackageCompiler.m'
+    JGraph: char [1 43] 'javaPackageCompiler is a built-in function.'
+  h1.javaPackageCompiler: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 94] '<strong>javaPackageCompiler</strong> - Package MATLAB programs for deployment as Java packages'
+    JGraph: char [1 21] 'javaPackageCompiler()'
+  exist.comComponentCompiler: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+    R2025b: double [1 1] 2
+    JGraph: double [1 1] 5
+  which.comComponentCompiler: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 87] '<MATLABROOT>\toolbox\compiler_sdk\ui\com\utils\comComponentCompiler.m'
+    JGraph: char [1 44] 'comComponentCompiler is a built-in function.'
+  h1.comComponentCompiler: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 96] '<strong>comComponentCompiler</strong> - Package MATLAB programs for deployment as COM components'
+    JGraph: char [1 22] 'comComponentCompiler()'
+  exist.applicationCompiler: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+    R2025b: double [1 1] 2
+    JGraph: double [1 1] 5
+  nargin.applicationCompiler: nargin of a legacy app is -1 for its varargin in R2025b; JGraph's built-in takes the two inputs by name
+    R2025b: double [1 1] -1
+    JGraph: double [1 1] 2
+  which.applicationCompiler: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 74] '<MATLABROOT>\toolbox\compiler\java\applicationCompiler.m'
+    JGraph: char [1 43] 'applicationCompiler is a built-in function.'
+  h1.applicationCompiler: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 61] '<strong>applicationCompiler</strong> Application Compiler app'
+    JGraph: char [1 49] 'applicationCompiler('-build' | '-package'?, prj?)'
+  exist.libraryCompiler: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+    R2025b: double [1 1] 2
+    JGraph: double [1 1] 5
+  nargin.libraryCompiler: nargin of a legacy app is -1 for its varargin in R2025b; JGraph's built-in takes the two inputs by name
+    R2025b: double [1 1] -1
+    JGraph: double [1 1] 2
+  which.libraryCompiler: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 70] '<MATLABROOT>\toolbox\compiler\java\libraryCompiler.m'
+    JGraph: char [1 39] 'libraryCompiler is a built-in function.'
+  h1.libraryCompiler: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 35] 'Copyright 2013-2024 MathWorks, Inc.'
+    JGraph: char [1 45] 'libraryCompiler('-build' | '-package'?, prj?)'
+  exist.productionServerCompiler: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+    R2025b: double [1 1] 2
+    JGraph: double [1 1] 5
+  nargin.productionServerCompiler: nargin of a legacy app is -1 for its varargin in R2025b; JGraph's built-in takes the two inputs by name
+    R2025b: double [1 1] -1
+    JGraph: double [1 1] 2
+  which.productionServerCompiler: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 83] '<MATLABROOT>\toolbox\compiler_sdk\java\productionServerCompiler.m'
+    JGraph: char [1 48] 'productionServerCompiler is a built-in function.'
+  h1.productionServerCompiler: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 35] 'Copyright 2014-2024 MathWorks, Inc.'
+    JGraph: char [1 54] 'productionServerCompiler('-build' | '-package'?, prj?)'
+  exist.deploytool: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+    R2025b: double [1 1] 2
+    JGraph: double [1 1] 5
+  nargin.deploytool: nargin of a legacy app is -1 for its varargin in R2025b; JGraph's built-in takes the two inputs by name
+    R2025b: double [1 1] -1
+    JGraph: double [1 1] 2
+  which.deploytool: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 65] '<MATLABROOT>\toolbox\compiler\java\deploytool.m'
+    JGraph: char [1 34] 'deploytool is a built-in function.'
+  h1.deploytool: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 58] '<strong>deploytool</strong> MATLAB Compiler user interface'
+    JGraph: char [1 40] 'deploytool('-build' | '-package'?, prj?)'
+  exist.webAppCompiler: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+    R2025b: double [1 1] 2
+    JGraph: double [1 1] 5
+  nargin.webAppCompiler: nargin of a legacy app is -1 for its varargin in R2025b; JGraph's built-in takes the two inputs by name
+    R2025b: double [1 1] -1
+    JGraph: double [1 1] 2
+  which.webAppCompiler: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 69] '<MATLABROOT>\toolbox\compiler\java\webAppCompiler.m'
+    JGraph: char [1 38] 'webAppCompiler is a built-in function.'
+  h1.webAppCompiler: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 84] '<strong>webAppCompiler</strong> - Package MATLAB programs for deployment as web apps'
+    JGraph: char [1 44] 'webAppCompiler('-build' | '-package'?, prj?)'
+  exist.hadoopCompiler: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+    R2025b: double [1 1] 2
+    JGraph: double [1 1] 5
+  nargin.hadoopCompiler: nargin of a legacy app is -1 for its varargin in R2025b; JGraph's built-in takes the two inputs by name
+    R2025b: double [1 1] -1
+    JGraph: double [1 1] 0
+  which.hadoopCompiler: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 69] '<MATLABROOT>\toolbox\compiler\java\hadoopCompiler.m'
+    JGraph: char [1 38] 'hadoopCompiler is a built-in function.'
+  h1.hadoopCompiler: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 35] 'Copyright 2014-2024 MathWorks, Inc.'
+    JGraph: char [1 16] 'hadoopCompiler()'
+  exist.createDeploymentScript: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+    R2025b: double [1 1] 6
+    JGraph: double [1 1] 0
+  nargin.createDeploymentScript: createDeploymentScript (stage K21) and R2025b's internal helpers are not built (open item 216)
+    R2025b: double [1 1] 2
+    JGraph: ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+  nargout.createDeploymentScript: createDeploymentScript (stage K21) and R2025b's internal helpers are not built (open item 216)
+    R2025b: double [1 1] 0
+    JGraph: ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+  which.createDeploymentScript: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 108] '<MATLABROOT>\toolbox\deployment\common\gui\utils\deploymentScript\createDeploymentScript.p'
+    JGraph: char [0 0] ''
+  h1.createDeploymentScript: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 100] '<strong>createDeploymentScript</strong> - Create a deployment script from a MATLAB Compiler PRJ file'
+    JGraph: char [1 43] 'No help found for 'createDeploymentScript'.'
+  nargin.compiler.internal.displayDeploymentUIWarning: createDeploymentScript (stage K21) and R2025b's internal helpers are not built (open item 216)
+    R2025b: double [1 1] -2
+    JGraph: ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+  nargout.compiler.internal.displayDeploymentUIWarning: createDeploymentScript (stage K21) and R2025b's internal helpers are not built (open item 216)
+    R2025b: double [1 1] 0
+    JGraph: ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+  which.compiler.internal.displayDeploymentUIWarning: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 101] '<MATLABROOT>\toolbox\compiler\java\+compiler\+internal\displayDeploymentUIWarning.m'
+    JGraph: char [0 0] ''
+  h1.compiler.internal.displayDeploymentUIWarning: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 72] 'Display the appropriate discourage use warning depending on the input to'
+    JGraph: char [1 65] 'No help found for 'compiler.internal.displayDeploymentUIWarning'.'
+  nargin.compiler.internal.launchui: createDeploymentScript (stage K21) and R2025b's internal helpers are not built (open item 216)
+    R2025b: double [1 1] -2
+    JGraph: ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+  nargout.compiler.internal.launchui: createDeploymentScript (stage K21) and R2025b's internal helpers are not built (open item 216)
+    R2025b: double [1 1] 0
+    JGraph: ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+  which.compiler.internal.launchui: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 83] '<MATLABROOT>\toolbox\compiler\java\+compiler\+internal\launchui.m'
+    JGraph: char [0 0] ''
+  h1.compiler.internal.launchui: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 58] '<strong>compiler.internal.launchui</strong> is a function.'
+    JGraph: char [1 47] 'No help found for 'compiler.internal.launchui'.'
+  exist.excelAddInCompiler: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+    R2025b: double [1 1] 2
+    JGraph: double [1 1] 0
+  nargin.excelAddInCompiler: R2025b's nargin finds excelAddinCompiler.m case-insensitively on Windows while calling the name is undefined; JGraph knows no such name
+    R2025b: double [1 1] 0
+    JGraph: ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+  nargout.excelAddInCompiler: R2025b's nargin finds excelAddinCompiler.m case-insensitively on Windows while calling the name is undefined; JGraph knows no such name
+    R2025b: double [1 1] 0
+    JGraph: ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+  which.excelAddInCompiler: which names R2025b's file; JGraph's built-in has none
+    R2025b: char [1 83] '<MATLABROOT>\toolbox\compiler\ui\excel\utils\excelAddinCompiler.m'
+    JGraph: char [0 0] ''
+  h1.excelAddInCompiler: the first help line is R2025b's H1 comment; JGraph's is the catalog's signature (open item 194)
+    R2025b: char [1 116] '--- <strong>excelAddInCompiler</strong> not found. Showing help for <strong>excelAddinCompiler</strong> instead. ---'
+    JGraph: char [1 39] 'No help found for 'excelAddInCompiler'.'
+  standaloneApplicationCompiler.noargs.printed: R2025b publishes to its app gallery (a desktop that a -batch session lacks, silently) where JGraph's session without windows refuses to open the app (ADR 0274)
+    R2025b: 
+  |[Warning: MATLAB Connector is not running.] 
+  |[> In message.publish
+  |In standaloneApplicationCompiler (line 10)
+  |In @()f()', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 53)" style="font-weight:bold">probe_k19_apps>@()f() (line 53)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 53)] 
+    JGraph: None
+  standaloneApplicationCompiler.noargs: R2025b publishes to its app gallery (a desktop that a -batch session lacks, silently) where JGraph's session without windows refuses to open the app (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NoWindow | standaloneApplicationCompiler opens the Standalone Application Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+  standaloneApplicationCompiler.noargs.warn: R2025b publishes to its app gallery (a desktop that a -batch session lacks, silently) where JGraph's session without windows refuses to open the app (ADR 0274)
+    R2025b: MATLAB:connector:connector:ConnectorNotRunning | MATLAB Connector is not running.
+    JGraph: None
+  standaloneApplicationCompiler.stub: R2025b opens the file in its editor or project through open(), silently in -batch; JGraph refuses a project (none until stage K20) and opens the app on a MATLAB file, which a session without windows refuses (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NoProject | '<W>\p\src\k19stub.prj' is a project, and JGraph has no MATLAB projects yet (compiler and SDK plan, stage K20): standaloneApplicationCompiler opens its app on a MATLAB file given as the main file, or with nothing, and Create Build Script keeps the task as a script.
+  standaloneApplicationCompiler.text: R2025b opens the file in its editor or project through open(), silently in -batch; JGraph refuses a project (none until stage K20) and opens the app on a MATLAB file, which a session without windows refuses (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NoProject | '<W>\p\src\k19text.prj' is a project, and JGraph has no MATLAB projects yet (compiler and SDK plan, stage K20): standaloneApplicationCompiler opens its app on a MATLAB file given as the main file, or with nothing, and Create Build Script keeps the task as a script.
+  standaloneApplicationCompiler.mfile: R2025b opens the file in its editor or project through open(), silently in -batch; JGraph refuses a project (none until stage K20) and opens the app on a MATLAB file, which a session without windows refuses (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NoWindow | standaloneApplicationCompiler opens the Standalone Application Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+  standaloneApplicationCompiler.txt: R2025b opens the file in its editor or project through open(), silently in -batch; JGraph refuses a project (none until stage K20) and opens the app on a MATLAB file, which a session without windows refuses (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NotAMatlabFile | '<W>\p\src\k19note.txt' is not a MATLAB file: standaloneApplicationCompiler takes a main file (.m, .mlapp, .mlx or .p) or a project (.prj).
+  productionServerArchiveCompiler.noargs: R2025b publishes to its app gallery (a desktop that a -batch session lacks, silently) where JGraph's session without windows refuses to open the app (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NoWindow | productionServerArchiveCompiler opens the Production Server Archive Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+  productionServerArchiveCompiler.stub: R2025b opens the file in its editor or project through open(), silently in -batch; JGraph refuses a project (none until stage K20) and opens the app on a MATLAB file, which a session without windows refuses (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NoProject | '<W>\p\src\k19stub.prj' is a project, and JGraph has no MATLAB projects yet (compiler and SDK plan, stage K20): productionServerArchiveCompiler opens its app on a MATLAB file given as the main file, or with nothing, and Create Build Script keeps the task as a script.
+  productionServerArchiveCompiler.text: R2025b opens the file in its editor or project through open(), silently in -batch; JGraph refuses a project (none until stage K20) and opens the app on a MATLAB file, which a session without windows refuses (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NoProject | '<W>\p\src\k19text.prj' is a project, and JGraph has no MATLAB projects yet (compiler and SDK plan, stage K20): productionServerArchiveCompiler opens its app on a MATLAB file given as the main file, or with nothing, and Create Build Script keeps the task as a script.
+  productionServerArchiveCompiler.mfile: R2025b opens the file in its editor or project through open(), silently in -batch; JGraph refuses a project (none until stage K20) and opens the app on a MATLAB file, which a session without windows refuses (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NoWindow | productionServerArchiveCompiler opens the Production Server Archive Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+  productionServerArchiveCompiler.txt: R2025b opens the file in its editor or project through open(), silently in -batch; JGraph refuses a project (none until stage K20) and opens the app on a MATLAB file, which a session without windows refuses (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NotAMatlabFile | '<W>\p\src\k19note.txt' is not a MATLAB file: productionServerArchiveCompiler takes a main file (.m, .mlapp, .mlx or .p) or a project (.prj).
+  excelAddinCompiler.noargs: R2025b publishes to its app gallery (a desktop that a -batch session lacks, silently) where JGraph's session without windows refuses to open the app (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NoWindow | excelAddinCompiler opens the Excel Add-in Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+  dotNetAssemblyCompiler.noargs: R2025b publishes to its app gallery (a desktop that a -batch session lacks, silently) where JGraph's session without windows refuses to open the app (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NoWindow | dotNetAssemblyCompiler opens the .NET Assembly Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+  pythonPackageCompiler.noargs: R2025b publishes to its app gallery (a desktop that a -batch session lacks, silently) where JGraph's session without windows refuses to open the app (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NoWindow | pythonPackageCompiler opens the Python Package Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+  cppSharedLibraryCompiler.noargs: R2025b publishes to its app gallery (a desktop that a -batch session lacks, silently) where JGraph's session without windows refuses to open the app (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NoWindow | cppSharedLibraryCompiler opens the C++ Shared Library Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+  cSharedLibraryCompiler.noargs: R2025b publishes to its app gallery (a desktop that a -batch session lacks, silently) where JGraph's session without windows refuses to open the app (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NoWindow | cSharedLibraryCompiler opens the C Shared Library Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+  javaPackageCompiler.noargs: an app for a target outside JGraph's scope (Java, COM, web apps: decisions KD1 and KD2) is refused where R2025b opens it (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:targetOutOfScope | javaPackageCompiler opens an app for a target JGraph's compiler does not build: Java packages are out of JGraph's scope (decision KD1). The apps JGraph has are standaloneApplicationCompiler, productionServerArchiveCompiler, dotNetAssemblyCompiler, pythonPackageCompiler, cppSharedLibraryCompiler, cSharedLibraryCompiler, excelAddinCompiler.
+  comComponentCompiler.noargs: an app for a target outside JGraph's scope (Java, COM, web apps: decisions KD1 and KD2) is refused where R2025b opens it (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:targetOutOfScope | comComponentCompiler opens an app for a target JGraph's compiler does not build: COM components are out of JGraph's scope (decision KD2). The apps JGraph has are standaloneApplicationCompiler, productionServerArchiveCompiler, dotNetAssemblyCompiler, pythonPackageCompiler, cppSharedLibraryCompiler, cSharedLibraryCompiler, excelAddinCompiler.
+  applicationCompiler.noargs.printed: the legacy app warns, then R2025b publishes to its app gallery where JGraph's session without windows refuses to open the app (ADR 0274)
+    R2025b: 
+  |[Warning: applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.] 
+  |[> In compiler.internal.displayDeploymentUIWarning (line 16)
+  |In applicationCompiler (line 25)
+  |In @()f()', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 80)" style="font-weight:bold">probe_k19_apps>@()f() (line 80)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 80)] 
+    JGraph: None
+  applicationCompiler.noargs: the legacy app warns, then R2025b publishes to its app gallery where JGraph's session without windows refuses to open the app (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NoWindow | applicationCompiler opens the Standalone Application Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+  applicationCompiler.help.printed: R2025b prints the function's help block for -?; JGraph prints the catalog's entry as help does (ADR 0274)
+    R2025b: 
+  |[Warning: applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.] 
+  |[> In compiler.internal.displayDeploymentUIWarning (line 16)
+  |In applicationCompiler (line 25)
+  |In @()f(''-?'')', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 86)" style="font-weight:bold">probe_k19_apps>@()f('-?') (line 86)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 86)] 
+  | <strong>applicationCompiler</strong> Application Compiler app
+  | 
+  |     This function will start the Standalone Compiler. You can create,
+  |     build and package standalone deployment projects using the Application
+  |     Compiler app.
+  | 
+  |     USAGE:
+  |     <strong>applicationCompiler</strong> will start the app with an empty Standalone
+  |     Compiler project.
+  | 
+  |     <strong>applicationCompiler</strong> projectname will open an existing project in the
+  |     app. If the project does not exist, an error will be generated and the
+  |     program will exit.
+  | 
+  |     See also compiler.build.standaloneApplication,
+  |     compiler.build.standaloneWindowsApplication,
+  |     compiler.package.installer, createDeploymentScript, mcc
+  |
+    JGraph: 
+  |Warning: applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+  |applicationCompiler('-build' | '-package'?, prj?)
+  |  The Application Compiler of R2025b, scheduled for removal there and warned about here: applicationCompiler opens the Standalone Application Compiler app; applicationCompiler -? prints this help; applicationCompiler prj and applicationCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+  applicationCompiler.help.slash.printed: R2025b prints the function's help block for -?; JGraph prints the catalog's entry as help does (ADR 0274)
+    R2025b: 
+  |[Warning: applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.] 
+  |[> In compiler.internal.displayDeploymentUIWarning (line 16)
+  |In applicationCompiler (line 25)
+  |In @()f(''/?'')', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 87)" style="font-weight:bold">probe_k19_apps>@()f('/?') (line 87)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 87)] 
+  | <strong>applicationCompiler</strong> Application Compiler app
+  | 
+  |     This function will start the Standalone Compiler. You can create,
+  |     build and package standalone deployment projects using the Application
+  |     Compiler app.
+  | 
+  |     USAGE:
+  |     <strong>applicationCompiler</strong> will start the app with an empty Standalone
+  |     Compiler project.
+  | 
+  |     <strong>applicationCompiler</strong> projectname will open an existing project in the
+  |     app. If the project does not exist, an error will be generated and the
+  |     program will exit.
+  | 
+  |     See also compiler.build.standaloneApplication,
+  |     compiler.build.standaloneWindowsApplication,
+  |     compiler.package.installer, createDeploymentScript, mcc
+  |
+    JGraph: 
+  |Warning: applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+  |applicationCompiler('-build' | '-package'?, prj?)
+  |  The Application Compiler of R2025b, scheduled for removal there and warned about here: applicationCompiler opens the Standalone Application Compiler app; applicationCompiler -? prints this help; applicationCompiler prj and applicationCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+  applicationCompiler.help.string.printed: R2025b prints the function's help block for -?; JGraph prints the catalog's entry as help does (ADR 0274)
+    R2025b: 
+  |[Warning: applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.] 
+  |[> In compiler.internal.displayDeploymentUIWarning (line 16)
+  |In applicationCompiler (line 25)
+  |In <strong>probe_k19_apps>@()f("-?")</strong> (line 88)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 88)] 
+  | <strong>applicationCompiler</strong> Application Compiler app
+  | 
+  |     This function will start the Standalone Compiler. You can create,
+  |     build and package standalone deployment projects using the Application
+  |     Compiler app.
+  | 
+  |     USAGE:
+  |     <strong>applicationCompiler</strong> will start the app with an empty Standalone
+  |     Compiler project.
+  | 
+  |     <strong>applicationCompiler</strong> projectname will open an existing project in the
+  |     app. If the project does not exist, an error will be generated and the
+  |     program will exit.
+  | 
+  |     See also compiler.build.standaloneApplication,
+  |     compiler.build.standaloneWindowsApplication,
+  |     compiler.package.installer, createDeploymentScript, mcc
+  |
+    JGraph: 
+  |Warning: applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+  |applicationCompiler('-build' | '-package'?, prj?)
+  |  The Application Compiler of R2025b, scheduled for removal there and warned about here: applicationCompiler opens the Standalone Application Compiler app; applicationCompiler -? prints this help; applicationCompiler prj and applicationCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+  libraryCompiler.noargs.printed: the legacy app warns, then R2025b publishes to its app gallery where JGraph's session without windows refuses to open the app (ADR 0274)
+    R2025b: 
+  |[Warning: libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.] 
+  |[> In compiler.internal.displayDeploymentUIWarning (line 20)
+  |In libraryCompiler (line 6)
+  |In @()f()', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 80)" style="font-weight:bold">probe_k19_apps>@()f() (line 80)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 80)] 
+    JGraph: None
+  libraryCompiler.noargs: the legacy app warns, then R2025b publishes to its app gallery where JGraph's session without windows refuses to open the app (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NoWindow | libraryCompiler opens the compiler apps' gallery in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+  libraryCompiler.help.printed: R2025b prints the function's help block for -?; JGraph prints the catalog's entry as help does (ADR 0274)
+    R2025b: 
+  |[Warning: libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.] 
+  |[> In compiler.internal.displayDeploymentUIWarning (line 20)
+  |In libraryCompiler (line 6)
+  |In @()f(''-?'')', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 86)" style="font-weight:bold">probe_k19_apps>@()f('-?') (line 86)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 86)] 
+  |  Copyright 2013-2024 MathWorks, Inc.
+  |
+    JGraph: 
+  |Warning: libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+  |libraryCompiler('-build' | '-package'?, prj?)
+  |  The Library Compiler of R2025b, scheduled for removal there and warned about here: libraryCompiler opens the gallery of compiler apps; libraryCompiler -? prints this help; libraryCompiler prj and libraryCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+  libraryCompiler.help.slash.printed: R2025b prints the function's help block for -?; JGraph prints the catalog's entry as help does (ADR 0274)
+    R2025b: 
+  |[Warning: libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.] 
+  |[> In compiler.internal.displayDeploymentUIWarning (line 20)
+  |In libraryCompiler (line 6)
+  |In @()f(''/?'')', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 87)" style="font-weight:bold">probe_k19_apps>@()f('/?') (line 87)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 87)] 
+  |  Copyright 2013-2024 MathWorks, Inc.
+  |
+    JGraph: 
+  |Warning: libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+  |libraryCompiler('-build' | '-package'?, prj?)
+  |  The Library Compiler of R2025b, scheduled for removal there and warned about here: libraryCompiler opens the gallery of compiler apps; libraryCompiler -? prints this help; libraryCompiler prj and libraryCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+  libraryCompiler.help.string.printed: R2025b prints the function's help block for -?; JGraph prints the catalog's entry as help does (ADR 0274)
+    R2025b: 
+  |[Warning: libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.] 
+  |[> In compiler.internal.displayDeploymentUIWarning (line 20)
+  |In libraryCompiler (line 6)
+  |In <strong>probe_k19_apps>@()f("-?")</strong> (line 88)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 88)] 
+  |  Copyright 2013-2024 MathWorks, Inc.
+  |
+    JGraph: 
+  |Warning: libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+  |libraryCompiler('-build' | '-package'?, prj?)
+  |  The Library Compiler of R2025b, scheduled for removal there and warned about here: libraryCompiler opens the gallery of compiler apps; libraryCompiler -? prints this help; libraryCompiler prj and libraryCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+  productionServerCompiler.noargs.printed: the legacy app warns, then R2025b publishes to its app gallery where JGraph's session without windows refuses to open the app (ADR 0274)
+    R2025b: 
+  |[Warning: productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.] 
+  |[> In compiler.internal.displayDeploymentUIWarning (line 18)
+  |In productionServerCompiler (line 7)
+  |In @()f()', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 80)" style="font-weight:bold">probe_k19_apps>@()f() (line 80)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 80)] 
+    JGraph: None
+  productionServerCompiler.noargs: the legacy app warns, then R2025b publishes to its app gallery where JGraph's session without windows refuses to open the app (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NoWindow | productionServerCompiler opens the Production Server Archive Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+  productionServerCompiler.help.printed: R2025b prints the function's help block for -?; JGraph prints the catalog's entry as help does (ADR 0274)
+    R2025b: 
+  |[Warning: productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.] 
+  |[> In compiler.internal.displayDeploymentUIWarning (line 18)
+  |In productionServerCompiler (line 7)
+  |In @()f(''-?'')', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 86)" style="font-weight:bold">probe_k19_apps>@()f('-?') (line 86)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 86)] 
+  |  Copyright 2014-2024 MathWorks, Inc.
+  |
+    JGraph: 
+  |Warning: productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+  |productionServerCompiler('-build' | '-package'?, prj?)
+  |  The Production Server Compiler of R2025b, scheduled for removal there and warned about here: productionServerCompiler opens the Production Server Archive Compiler app; productionServerCompiler -? prints this help; productionServerCompiler prj and productionServerCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+  productionServerCompiler.help.slash.printed: R2025b prints the function's help block for -?; JGraph prints the catalog's entry as help does (ADR 0274)
+    R2025b: 
+  |[Warning: productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.] 
+  |[> In compiler.internal.displayDeploymentUIWarning (line 18)
+  |In productionServerCompiler (line 7)
+  |In @()f(''/?'')', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 87)" style="font-weight:bold">probe_k19_apps>@()f('/?') (line 87)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 87)] 
+  |  Copyright 2014-2024 MathWorks, Inc.
+  |
+    JGraph: 
+  |Warning: productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+  |productionServerCompiler('-build' | '-package'?, prj?)
+  |  The Production Server Compiler of R2025b, scheduled for removal there and warned about here: productionServerCompiler opens the Production Server Archive Compiler app; productionServerCompiler -? prints this help; productionServerCompiler prj and productionServerCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+  productionServerCompiler.help.string.printed: R2025b prints the function's help block for -?; JGraph prints the catalog's entry as help does (ADR 0274)
+    R2025b: 
+  |[Warning: productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.] 
+  |[> In compiler.internal.displayDeploymentUIWarning (line 18)
+  |In productionServerCompiler (line 7)
+  |In <strong>probe_k19_apps>@()f("-?")</strong> (line 88)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 88)] 
+  |  Copyright 2014-2024 MathWorks, Inc.
+  |
+    JGraph: 
+  |Warning: productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+  |productionServerCompiler('-build' | '-package'?, prj?)
+  |  The Production Server Compiler of R2025b, scheduled for removal there and warned about here: productionServerCompiler opens the Production Server Archive Compiler app; productionServerCompiler -? prints this help; productionServerCompiler prj and productionServerCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+  deploytool.noargs: the legacy app warns, then R2025b publishes to its app gallery where JGraph's session without windows refuses to open the app (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:NoWindow | deploytool opens the compiler apps' gallery in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+  deploytool.help.printed: R2025b prints the function's help block for -?; JGraph prints the catalog's entry as help does (ADR 0274)
+    R2025b: 
+  | <strong>deploytool</strong> MATLAB Compiler user interface
+  | 
+  |     This function will start the MATLAB Compiler user interface. You can
+  |     create, build and package various deployment projects using Compiler
+  |     apps, or you can build and package existing projects from the Command
+  |     Line Interface.
+  | 
+  |     USAGE:
+  |     <strong>deploytool</strong> will not accept -build or -package in a future release.
+  |     Use createDeploymentScript, deployment scenario specific functions such as
+  |     compiler.build.standaloneApplication, and compiler.package.installer
+  |     instead.
+  | 
+  |     <strong>deploytool</strong> will open a dialog for selecting a MATLAB Compiler app to
+  |     begin a new project in.
+  | 
+  |     <strong>deploytool</strong> projectname will open an existing MATLAB Compiler project.
+  |     If the project does not exist, an error will be generated and the
+  |     program will exit.
+  | 
+  |     <strong>deploytool</strong> -build projectname will build an existing project
+  |     from the Command Line Interface.
+  | 
+  |     <strong>deploytool</strong> -package projectname will package an existing project from
+  |     the Command Line Interface.
+  | 
+  |     <strong>deploytool</strong> -? will display this message.
+  | 
+  |     See also compiler.package.installer, createDeploymentScript, mcc
+  |
+    JGraph: 
+  |deploytool('-build' | '-package'?, prj?)
+  |  MATLAB Compiler's user interface: deploytool opens the gallery of compiler apps, one per target; deploytool -? prints this help; deploytool prj, deploytool -build prj and deploytool -package prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+  deploytool.help.slash.printed: R2025b prints the function's help block for -?; JGraph prints the catalog's entry as help does (ADR 0274)
+    R2025b: 
+  | <strong>deploytool</strong> MATLAB Compiler user interface
+  | 
+  |     This function will start the MATLAB Compiler user interface. You can
+  |     create, build and package various deployment projects using Compiler
+  |     apps, or you can build and package existing projects from the Command
+  |     Line Interface.
+  | 
+  |     USAGE:
+  |     <strong>deploytool</strong> will not accept -build or -package in a future release.
+  |     Use createDeploymentScript, deployment scenario specific functions such as
+  |     compiler.build.standaloneApplication, and compiler.package.installer
+  |     instead.
+  | 
+  |     <strong>deploytool</strong> will open a dialog for selecting a MATLAB Compiler app to
+  |     begin a new project in.
+  | 
+  |     <strong>deploytool</strong> projectname will open an existing MATLAB Compiler project.
+  |     If the project does not exist, an error will be generated and the
+  |     program will exit.
+  | 
+  |     <strong>deploytool</strong> -build projectname will build an existing project
+  |     from the Command Line Interface.
+  | 
+  |     <strong>deploytool</strong> -package projectname will package an existing project from
+  |     the Command Line Interface.
+  | 
+  |     <strong>deploytool</strong> -? will display this message.
+  | 
+  |     See also compiler.package.installer, createDeploymentScript, mcc
+  |
+    JGraph: 
+  |deploytool('-build' | '-package'?, prj?)
+  |  MATLAB Compiler's user interface: deploytool opens the gallery of compiler apps, one per target; deploytool -? prints this help; deploytool prj, deploytool -build prj and deploytool -package prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+  deploytool.help.string.printed: R2025b prints the function's help block for -?; JGraph prints the catalog's entry as help does (ADR 0274)
+    R2025b: 
+  | <strong>deploytool</strong> MATLAB Compiler user interface
+  | 
+  |     This function will start the MATLAB Compiler user interface. You can
+  |     create, build and package various deployment projects using Compiler
+  |     apps, or you can build and package existing projects from the Command
+  |     Line Interface.
+  | 
+  |     USAGE:
+  |     <strong>deploytool</strong> will not accept -build or -package in a future release.
+  |     Use createDeploymentScript, deployment scenario specific functions such as
+  |     compiler.build.standaloneApplication, and compiler.package.installer
+  |     instead.
+  | 
+  |     <strong>deploytool</strong> will open a dialog for selecting a MATLAB Compiler app to
+  |     begin a new project in.
+  | 
+  |     <strong>deploytool</strong> projectname will open an existing MATLAB Compiler project.
+  |     If the project does not exist, an error will be generated and the
+  |     program will exit.
+  | 
+  |     <strong>deploytool</strong> -build projectname will build an existing project
+  |     from the Command Line Interface.
+  | 
+  |     <strong>deploytool</strong> -package projectname will package an existing project from
+  |     the Command Line Interface.
+  | 
+  |     <strong>deploytool</strong> -? will display this message.
+  | 
+  |     See also compiler.package.installer, createDeploymentScript, mcc
+  |
+    JGraph: 
+  |deploytool('-build' | '-package'?, prj?)
+  |  MATLAB Compiler's user interface: deploytool opens the gallery of compiler apps, one per target; deploytool -? prints this help; deploytool prj, deploytool -build prj and deploytool -package prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+  webAppCompiler.noargs: an app for a target outside JGraph's scope (Java, COM, web apps: decisions KD1 and KD2) is refused where R2025b opens it (ADR 0274)
+    R2025b: ok
+    JGraph: ERR JGraph:compilerApps:targetOutOfScope | webAppCompiler opens an app for a target JGraph's compiler does not build: web apps are out of JGraph's scope (decision KD2). The apps JGraph has are standaloneApplicationCompiler, productionServerArchiveCompiler, dotNetAssemblyCompiler, pythonPackageCompiler, cppSharedLibraryCompiler, cSharedLibraryCompiler, excelAddinCompiler.
+  webAppCompiler.help.printed: R2025b prints the function's help block for -?; JGraph prints the catalog's entry as help does (ADR 0274)
+    R2025b: 
+  | <strong>webAppCompiler</strong> - Package MATLAB programs for deployment as web apps
+  |    The Web App Compiler packages MATLAB programs into web applications that
+  |    can run on MATLAB Web App Server.
+  |
+  |    See also compiler.build.webAppArchive,
+  |      compiler.build.WebAppArchiveOptions
+  |
+  |    Introduced in MATLAB Compiler in R2025a
+  |    Documentation for webAppCompiler
+  |
+    JGraph: 
+  |webAppCompiler('-build' | '-package'?, prj?)
+  |  R2025b's Web App Compiler; web apps are out of JGraph's scope, so opening the app is refused, while webAppCompiler -? prints this help and the project forms refuse as R2025b refuses a file that is not a project.
+  webAppCompiler.help.slash.printed: R2025b prints the function's help block for -?; JGraph prints the catalog's entry as help does (ADR 0274)
+    R2025b: 
+  | <strong>webAppCompiler</strong> - Package MATLAB programs for deployment as web apps
+  |    The Web App Compiler packages MATLAB programs into web applications that
+  |    can run on MATLAB Web App Server.
+  |
+  |    See also compiler.build.webAppArchive,
+  |      compiler.build.WebAppArchiveOptions
+  |
+  |    Introduced in MATLAB Compiler in R2025a
+  |    Documentation for webAppCompiler
+  |
+    JGraph: 
+  |webAppCompiler('-build' | '-package'?, prj?)
+  |  R2025b's Web App Compiler; web apps are out of JGraph's scope, so opening the app is refused, while webAppCompiler -? prints this help and the project forms refuse as R2025b refuses a file that is not a project.
+  webAppCompiler.help.string.printed: R2025b prints the function's help block for -?; JGraph prints the catalog's entry as help does (ADR 0274)
+    R2025b: 
+  | <strong>webAppCompiler</strong> - Package MATLAB programs for deployment as web apps
+  |    The Web App Compiler packages MATLAB programs into web applications that
+  |    can run on MATLAB Web App Server.
+  |
+  |    See also compiler.build.webAppArchive,
+  |      compiler.build.WebAppArchiveOptions
+  |
+  |    Introduced in MATLAB Compiler in R2025a
+  |    Documentation for webAppCompiler
+  |
+    JGraph: 
+  |webAppCompiler('-build' | '-package'?, prj?)
+  |  R2025b's Web App Compiler; web apps are out of JGraph's scope, so opening the app is refused, while webAppCompiler -? prints this help and the project forms refuse as R2025b refuses a file that is not a project.
+  publish.standalone: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ok
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'message.publish'.
+  publish.empty: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ok
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'message.publish'.
+  uiwarning.applicationCompiler.printed: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: 
+  |[Warning: applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.] 
+  |[> In compiler.internal.displayDeploymentUIWarning (line 16)
+  |In @()compiler.internal.displayDeploymentUIWarning(''applicationCompiler'')', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 113)" style="font-weight:bold">probe_k19_apps>@()compiler.internal.displayDeploymentUIWarning('applicationCompiler') (line 113)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 113)] 
+    JGraph: None
+  uiwarning.applicationCompiler: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ok
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+  uiwarning.applicationCompiler.warn: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: Compiler:deploytool:JavaAPIToBeRemoved | applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+    JGraph: None
+  uiwarning.productionServerCompiler.printed: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: 
+  |[Warning: productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.] 
+  |[> In compiler.internal.displayDeploymentUIWarning (line 18)
+  |In @()compiler.internal.displayDeploymentUIWarning(''productionServerCompiler'')', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 114)" style="font-weight:bold">probe_k19_apps>@()compiler.internal.displayDeploymentUIWarning('productionServerCompiler') (line 114)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 114)] 
+    JGraph: None
+  uiwarning.productionServerCompiler: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ok
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+  uiwarning.productionServerCompiler.warn: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: Compiler:deploytool:JavaAPIToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+    JGraph: None
+  uiwarning.libraryCompiler.printed: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: 
+  |[Warning: libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.] 
+  |[> In compiler.internal.displayDeploymentUIWarning (line 20)
+  |In @()compiler.internal.displayDeploymentUIWarning(''libraryCompiler'',''x.prj'')', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 115)" style="font-weight:bold">probe_k19_apps>@()compiler.internal.displayDeploymentUIWarning('libraryCompiler','x.prj') (line 115)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 115)] 
+    JGraph: None
+  uiwarning.libraryCompiler: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ok
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+  uiwarning.libraryCompiler.warn: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: Compiler:deploytool:JavaAPIToBeRemoved | libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+    JGraph: None
+  uiwarning.deploytool: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ok
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+  uiwarning.webAppCompiler: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ok
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+  uiwarning.deploytool.build.printed: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: 
+  |[Warning: deploytool will not accept -build or -package in a future release. Use mcc, deployment scenario specific functions such as compiler.build.standaloneApplication, and
+  |compiler.package.installer instead.] 
+  |[> In compiler.internal.displayDeploymentUIWarning (line 32)
+  |In @()compiler.internal.displayDeploymentUIWarning(''deploytool'',''-build'',''x.prj'')', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 118)" style="font-weight:bold">probe_k19_apps>@()compiler.internal.displayDeploymentUIWarning('deploytool','-build','x.prj') (line 118)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 118)] 
+    JGraph: None
+  uiwarning.deploytool.build: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ok
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+  uiwarning.deploytool.build.warn: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: Compiler:deploytool:DeploytoolBuildPackageToBeRemoved | deploytool will not accept -build or -package in a future release. Use mcc, deployment scenario specific functions such as compiler.build.standaloneApplication, and compiler.package.installer instead.
+    JGraph: None
+  uiwarning.applicationCompiler.build.printed: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: 
+  |[Warning: applicationCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such
+  |as compiler.build.standaloneApplication and compiler.package.installer.] 
+  |[> In compiler.internal.displayDeploymentUIWarning (line 34)
+  |In @()compiler.internal.displayDeploymentUIWarning(''applicationCompiler'',''/package'',''x.prj'')', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 119)" style="font-weight:bold">probe_k19_apps>@()compiler.internal.displayDeploymentUIWarning('applicationCompiler','/package','x.prj') (line 119)
+  |In call', '<REPO>\tools\matlab-checklist\compiler-probes\probe_k19_apps.m', 272)" style="font-weight:bold">probe_k19_apps>call (line 272)
+  |In probe_k19_apps (line 119)] 
+    JGraph: None
+  uiwarning.applicationCompiler.build: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ok
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+  uiwarning.applicationCompiler.build.warn: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | applicationCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+    JGraph: None
+  uiwarning.applicationCompiler.other: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ok
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+  uiwarning.unknown: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ok
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+  uiwarning.four: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ERR MATLAB:narginchk:tooManyInputs | Too many input arguments.
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+  launchui.none: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ok
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.launchui'.
+  launchui.other: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ok
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.launchui'.
+  launchui.number: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ERR MATLAB:deploytool:invalidType | Expected input number 1 to be one of these types: /  / char, string /  / Instead its type was double.
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.launchui'.
+  license.compiler: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: double [1 1] 1
+    JGraph: char [1 6] 'JGraph'
+  license.sdk: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: double [1 1] 1
+    JGraph: char [1 6] 'JGraph'
+  script.missing: createDeploymentScript arrives with stage K21 (open item 216)
+    R2025b: ERR Compiler:build:compatibility:projectDoesNotExist | Input project file k19none.prj does not exist.
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'createDeploymentScript' for input arguments of type 'char'.
+  script.stub: createDeploymentScript arrives with stage K21 (open item 216)
+    R2025b: ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k19stub.prj is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'createDeploymentScript' for input arguments of type 'char'.
+  script.text: createDeploymentScript arrives with stage K21 (open item 216)
+    R2025b: ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k19text.prj is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'createDeploymentScript' for input arguments of type 'char'.
+  script.mfile: createDeploymentScript arrives with stage K21 (open item 216)
+    R2025b: ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k6_hello.m is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'createDeploymentScript' for input arguments of type 'char'.
+  script.noargs: createDeploymentScript arrives with stage K21 (open item 216)
+    R2025b: ERR MATLAB:minrhs | Invalid argument list. Function requires 2 more input(s).
+    JGraph: ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'createDeploymentScript'.
+  script.one: createDeploymentScript arrives with stage K21 (open item 216)
+    R2025b: ERR MATLAB:minrhs | Invalid argument list. Function requires 1 more input(s).
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'createDeploymentScript' for input arguments of type 'char'.
+  script.three: createDeploymentScript arrives with stage K21 (open item 216)
+    R2025b: ERR MATLAB:TooManyInputs | Too many input arguments.
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'createDeploymentScript' for input arguments of type 'char'.
+  prjstruct.stub: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ERR MATLAB:nonExistentField | Unrecognized field name "configuration".
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.readPRJStruct'.
+  prjstruct.text: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ERR MATLAB:io:xml:common:InvalidXMLFile | Invalid XML file: <W>\p\src\k19text.prj.
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.readPRJStruct'.
+  prjstruct.missing: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: ERR MATLAB:textio:textio:FileNotFound | Unable to find or open '<W>\p\src\k19none.prj'. Check the path and filename or file permissions.
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.readPRJStruct'.
+  open.stub: R2025b's open() of a project or MATLAB file opens nothing in -batch; JGraph's open takes a VideoWriter or a context menu (ADR 0274)
+    R2025b: double [0 0] []
+    JGraph: ERR  | open expects a VideoWriter, but got a string.
+  open.missing: R2025b's open() of a project or MATLAB file opens nothing in -batch; JGraph's open takes a VideoWriter or a context menu (ADR 0274)
+    R2025b: ERR MATLAB:open:fileNotFound | File 'k19none.prj' not found.
+    JGraph: ERR  | open expects a VideoWriter, but got a string.
+  open.text: R2025b's open() of a project or MATLAB file opens nothing in -batch; JGraph's open takes a VideoWriter or a context menu (ADR 0274)
+    R2025b: double [0 0] []
+    JGraph: ERR  | open expects a VideoWriter, but got a string.
+  open.mfile: R2025b's open() of a project or MATLAB file opens nothing in -batch; JGraph's open takes a VideoWriter or a context menu (ADR 0274)
+    R2025b: double [0 0] []
+    JGraph: ERR  | open expects a VideoWriter, but got a string.
+  webui: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: double [1 1] 1
+    JGraph: ERR JGraph:feature:unsupported | JGraph answers feature('getpid') and no other feature key.
+  capability.local: R2025b's internal helpers (compiler.internal.*, message.publish, licenses, feature, the capability) are not JGraph's to answer
+    R2025b: logical [1 1] true
+    JGraph: ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'matlab.internal.capability.Capability.isSupported'.
+  text.deployment:desktop:Tool_standaloneApplicationCompiler_Label: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 31] 'Standalone Application Compiler'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:desktop:Tool_standaloneApplicationCompiler_Description: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 97] 'Package MATLAB Programs for deployment as standalone applications (standaloneApplicationCompiler)'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:desktop:Tool_productionServerArchiveCompiler_Label: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 34] 'Production Server Archive Compiler'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:desktop:Tool_productionServerArchiveCompiler_Description: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 89] 'Package MATLAB Programs for deployment as code archives (productionServerArchiveCompiler)'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:desktop:Tool_excelAddinCompiler_Label: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 21] 'Excel Add-in Compiler'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:desktop:Tool_dotNetAssemblyCompiler_Label: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 22] '.NET Assembly Compiler'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:desktop:Tool_pythonPackageCompiler_Label: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 23] 'Python Package Compiler'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:desktop:Tool_cppSharedLibraryCompiler_Label: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 27] 'C++ Shared Library Compiler'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:desktop:Tool_cSharedLibraryCompiler_Label: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 25] 'C Shared Library Compiler'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:desktop:Tool_javaPackageCompiler_Label: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 21] 'Java Package Compiler'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:desktop:Tool_comComponentCompiler_Label: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 22] 'COM Component Compiler'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:desktop:Tool_webAppCompiler_Label: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 16] 'Web App Compiler'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.Compiler:desktop:Tool_applicationCompiler_Label: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 20] 'Application Compiler'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.Compiler:desktop:Tool_libraryCompiler_Label: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 16] 'Library Compiler'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:model:CONFIGTYPE_STANDALONEAPP: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 22] 'Standalone Application'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:model:CONFIGTYPE_STANDALONEAPP_DESC: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 65] 'Package MATLAB programs for deployment as standalone applications'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:model:CONFIGTYPE_MPSARCHIVE: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 25] 'Deployable Archive (.ctf)'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:model:CONFIGTYPE_MPSARCHIVE_DESC: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 66] 'Package MATLAB programs for deployment to MATLAB Production Server'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:model:CONFIGTYPE_DOTNETASSEMBLY_DESC: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 57] 'Package MATLAB programs for deployment as .NET assemblies'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:model:CONFIGTYPE_PYTHONPACKAGE_DESC: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 57] 'Package MATLAB programs for deployment as Python packages'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:model:CONFIGTYPE_CPPSHAREDLIB_DESC: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 62] 'Package MATLAB programs for deployment as C++ shared libraries'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:model:CONFIGTYPE_CSHAREDLIB_DESC: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 60] 'Package MATLAB programs for deployment as C shared libraries'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:model:CONFIGTYPE_EXCELADDIN_DESC: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 55] 'Package MATLAB programs for deployment as Excel add-ins'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment:model:TITLE_OUTPUT_FOLDER_PATH: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 13] 'Output Folder'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:mainFile: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 9] 'Main File'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:exportedFunctionsTitle: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 18] 'Exported Functions'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:build: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 5] 'Build'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:buildAndPackage: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 17] 'Build and Package'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:createBuildScriptLabel: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 21] 'Create / Build Script'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:showCode: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 9] 'Show Code'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:hideCode: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 9] 'Hide Code'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:installerSettingsLabel: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 18] 'Installer Settings'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageTypeLabel: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 12] 'Package Type'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:webRuntimeDescription: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 71] 'Fetch MATLAB Runtime from mathworks.com during application installation'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageRuntimeDescription: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 72] 'Include MATLAB Runtime in application installer for offline installation'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageNoInstallerDescription: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 54] 'Do not include MATLAB Runtime in application installer'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:outputLocationsLabel: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 16] 'Output Locations'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:outputLocationsBuildDescription: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 27] 'Output Folder for the Build'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:outputLocationsPackageDescription: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 31] 'Output Folder for the Installer'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:filesPackaged: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 31] 'Files Packaged in the Installer'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:autoDetectDataFiles: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 21] 'Autodetect Data Files'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:enableAutoDetectDataFiles: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 96] 'Automatically include data files that are provided as inputs to functions such as load and fopen'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:enableObfuscation: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 75] 'Obfuscate all file names, folder structures, code, and data in build output'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:obfuscation: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 16] 'Code Obfuscation'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:installerDetails: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 17] 'Installer Details'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:installerImages: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 24] 'Images for the Installer'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:installRootWindows: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 14] '%ProgramFiles%'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:installSubfolder: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 17] 'Install subfolder'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:readyToPackage: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 26] 'The compiler task is ready'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:missingMain: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 39] 'Missing main file or exported functions'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:noRequiredFiles: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 26] 'No required files detected'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageDialogBuildSuccess: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 30] 'Process completed successfully'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageDialogBuildWithWarnings: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 31] 'Process completed with warnings'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageDialogBuildError: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 33] 'An error occurred while deploying'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageDialogFirstPhaseLineStandalone: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 23] 'Building Standalone App'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageDialogFirstPhaseLineMPS: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 20] 'Building MPS Archive'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageDialogFirstPhaseLineNet: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 22] 'Building .NET Assembly'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageDialogFirstPhaseLinePython: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 23] 'Building Python Package'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageDialogFirstPhaseLineCpp: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 27] 'Building C++ Shared Library'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageDialogFirstPhaseLineC: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 25] 'Building C Shared Library'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageDialogFirstPhaseLineExcel: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 21] 'Building Excel Add-In'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageDialogSecondPhaseCreateInstaller: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 18] 'Creating Installer'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageDialogOpenOutputLabel: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 18] 'Open Output Folder'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageDialogShowLogLabel: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 8] 'Show Log'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageDialogHideLogLabel: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 8] 'Hide Log'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:messages:packageNotSupported: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 44] 'Current target does not support package step'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:deploymentscript:buildIntro: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 67] 'Create target build options object, set build properties and build.'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:deploymentscript:packageIntro: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 66] 'Create package options object, set package properties and package.'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:deploymentscript:setProjectRoot: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 43] 'Set the path to the project root directory.'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:deploymentscript:downloadRuntime: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 56] 'Download the MATLAB Runtime to include in the installer.'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:deploymentscript:assemblyVersionPreLines: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 69] '% "AssemblyVersion" will be ignored when using the 'matlab-data' api.'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_common:deploymentscript:libraryVersionPreLines: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 68] '% "LibraryVersion" will be ignored when using the 'matlab-data' api.'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_standalone:messages:applicationInfo: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 16] 'Application Info'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_standalone:messages:applicationType: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 16] 'Application Type'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_standalone:messages:standaloneApplication: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 22] 'Standalone Application'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_standalone:messages:standaloneWindowsApplication: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 30] 'Standalone Windows Application'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_standalone:messages:executableDetails: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 18] 'Executable Details'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_standalone:messages:executableNameLabel: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 15] 'Executable Name'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_standalone:messages:inputTypeLabel: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 10] 'Input Type'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_standalone:messages:inputTreatmentChar: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 52] 'Treat inputs to the app as a MATLAB character vector'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_standalone:messages:inputTreatmentNumeric: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 50] 'Treat inputs to the app as a numeric MATLAB double'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_standalone:messages:requiredFilesMessage: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 36] 'Files Required for Standalone to Run'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_standalone:messages:standaloneImages: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 37] 'Images for the Standalone Application'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_standalone:messages:initialInfo: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 43] 'Add a main file to make the task deployable'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_standalone:messages:appHelp: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 8] 'App Help'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compilersdk_ui_mps:messages:archiveInfo: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 12] 'Archive Info'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compilersdk_ui_mps:messages:functionSignatureTitle: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 30] 'MATLAB Function Signature File'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compilersdk_ui_mps:messages:functionSignaturePlaceholder: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 81] 'Add or create a function signature file to help clients use your MATLAB functions'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compilersdk_ui_mps:messages:requiredFilesLabel: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 33] 'Files Required for Archive to Run'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compilersdk_ui_mps:messages:testClient: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 11] 'Test Client'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compilersdk_ui_mps:messages:cannotOpenMessage: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 75] 'A test client is already open. Close it before launching a new test client.'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compilersdk_ui_dotnet:messages:assemblyInfoTitle: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 18] '.NET Assembly Info'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compilersdk_ui_dotnet:messages:netAPISelectionLabel: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 18] '.NET API Selection'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compilersdk_ui_dotnet:messages:netVersion: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 12] '.NET Version'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compilersdk_ui_dotnet:messages:netVersionFive: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 18] '.NET 5.0 or higher'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compilersdk_ui_dotnet:messages:filesRequiredLabel: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 43] 'Files Required for the .NET Assembly to Run'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compilersdk_ui_python:messages:packageInfoTitle: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 12] 'Package Info'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compilersdk_ui_python:messages:filesRequiredLabel: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 33] 'Files Required for Package to Run'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compilersdk_ui_cppSharedLibrary:messages:apiSelectionTitle: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 17] 'C++ API Selection'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_excel:messages:addinInfo: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 11] 'Add-In Info'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_excel:messages:addinName: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 11] 'Add-In Name'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.compiler_ui_excel:messages:filesRequiredLabel: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 36] 'Files Required for the Add-In to Run'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.deployment_common:messages:devAndTestLabel: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 11] 'Test Client'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.Compiler:deploytool:JavaAPIToBeRemoved: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 117] 'a is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use b instead.'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.Compiler:deploytool:DeploytoolFunctionalityToBeRemoved: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 224] 'a is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.Compiler:deploytool:DeploytoolBuildPackageToBeRemoved: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 191] 'a will not accept -build or -package in a future release. Use mcc, deployment scenario specific functions such as compiler.build.standaloneApplication, and compiler.package.installer instead.'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.Compiler:deploytool:invalidFirstInputOneInput: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 158] 'a is an invalid input argument. When using b with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / '
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.Compiler:deploytool:invalidFirstInputTwoInputs: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 225] 'a is an invalid input argument.  When using b with two input arguments, the first input must be either "-build" or "-package" and the second input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / '
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.Compiler:deploytool:HadoopCompilerRemoved: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 167] 'hadoopCompiler has been removed.  To create standalone MATLAB MapReduce applications, or deployable archives from MATLAB map and reduce functions, use the mcc command.'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.Compiler:deploytool:OpenProjectRequiresDesktop: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 65] 'Opening a MATLAB Compiler project requires the MATLAB Desktop. / '
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.Compiler:deploytool:NotACompilerPRJ: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 35] 'a is not a valid Compiler PRJ file.'
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.Compiler:deploytool:MatlabOnlineSupport: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 47] 'MATLAB Compiler Apps are not supported in a. / '
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+  text.Compiler:deploytool:license_checkout_error: a message catalog R2025b reads through message(); JGraph has no catalog and its windows carry the words (ADR 0274)
+    R2025b: char [1 57] 'Error: Failed to check out a MATLAB Compiler license.  / '
+    JGraph: ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.

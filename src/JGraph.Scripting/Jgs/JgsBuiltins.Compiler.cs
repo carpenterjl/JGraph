@@ -26,6 +26,7 @@ internal static partial class JgsBuiltins
         "mps.json.encode", "mps.json.decode", "mps.json.encoderequest", "mps.json.decoderesponse",
         "compiler.package.installer", "compiler.package.InstallerOptions", "compiler.runtime.customInstaller",
         "compiler.runtime.download", "compiler.runtime.version", "mcrinstaller",
+        .. CompilerAppNames,
     ];
 
     /// <summary>The functions whose use makes mcc warn that secrets come from the machine the program runs on.</summary>
@@ -48,6 +49,7 @@ internal static partial class JgsBuiltins
         }));
 
         RegisterCompilerBuild(env, interpreter, host);
+        RegisterCompilerAppBuiltins(env, interpreter, host);
     }
 
     /// <summary>mcc's arguments: each a char row or a string scalar.</summary>

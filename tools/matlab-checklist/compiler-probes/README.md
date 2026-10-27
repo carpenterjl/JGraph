@@ -1,4 +1,4 @@
-# Compiler and SDK probes (stages K0-K18)
+# Compiler and SDK probes (stages K0-K19)
 
 Recordings of what R2025b's MATLAB Compiler builds and what the programs it builds do when run,
 for the compiler and SDK plan (`docs/plans/compiler-and-sdk-plan.md`, stage K0). Later stages
@@ -104,8 +104,11 @@ and runs them only when they are named; tell the user before running one.
 | `k18-payload.py` | What an installer carries: for R2025b's `setup.exe` with the payload embedded as resources (`MW_COMPILER_EZDEPLOY_*`), the bundle's files and its `ApplicationInstallerManifest.xml`, the install agent URL, the splash and the icon; for a zip, the entries and the same of the program inside. `pe-resources.py`'s reader. |
 | `record-k18.ps1` | Runs the probe and `k18-payload.py` over every installer it wrote: `recordings/k18_package.out.txt` and `k18_payload.out.txt`. No installer is run. |
 | `run-k18.ps1`, `compare-k18.py` | The same probe under `jgraph -batch` (JGraph's installers are WiX bundles built by its own packager, so the machine needs the WiX 6 tool from the NuGet package cache and the JGraph Runtime MSI `installer\build-runtime-installer.ps1` builds), and the comparison: `recordings-jgraph/k18_package.out.txt` and `k18_differences.txt`. |
+| `probe_k19_apps.m` | Stage K19's compiler app commands under `matlab -batch -noFigureWindows`: the target-specific apps of R2025a and later (`standaloneApplicationCompiler` and its siblings) and the legacy ones (`applicationCompiler`, `libraryCompiler`, `productionServerCompiler`, `deploytool`, `webAppCompiler`, `hadoopCompiler`): their counts, help and first help line, what each does with no argument, a missing file, a stub project, a MATLAB file, a text file and bad arguments, the legacy warnings and `-?`, `-build` and `-package` forms, the helpers they are built on (`displayDeploymentUIWarning`, `launchui`, `message.publish`, `createDeploymentScript`, `readPRJStruct`, `open`) and the catalog texts their windows are made of. Nothing opens a window: the app gallery is published to a desktop that is not there. |
+| `record-k19.ps1` | Runs the probe: `recordings/k19_apps.out.txt`. |
+| `run-k19.ps1`, `compare-k19.py` | The same probe under `jgraph -batch` (no window there either, so what R2025b publishes silently is JGraph's refusal that the session has no window), and the comparison: `recordings-jgraph/k19_apps.out.txt` and `k19_differences.txt`. The windows themselves are checked by `tools/runtime-checks/run-k19window.ps1`. |
 | `src/k12edge/`, `record-k12-edge.ps1` | Two Data API programs compiled from one source against both engines' headers: `kind` reads past the end and names what each read throws, and `eq` makes one reference, comparison or struct element past the end per process, as R2025b's library ends the process for some; writes `recordings/k12_edge.out.txt` and `recordings-jgraph/k12_edge.out.txt`. |
-| `recordings-jgraph/` | JGraph's recordings of K0's cases, K6's, K7's, K8's, K9's, K10's, K11's, K12's, K13's, K14's, K15's, K16's and K18's, with the same tokens, and the lines that differ from R2025b's. |
+| `recordings-jgraph/` | JGraph's recordings of K0's cases, K6's, K7's, K8's, K9's, K10's, K11's, K12's, K13's, K14's, K15's, K16's, K18's and K19's, with the same tokens, and the lines that differ from R2025b's. |
 | `src/` | The probe programs. `k0_try`/`k0_do` print `key<TAB>value` or `ERR id \| message`, then any warning. |
 | `recordings/` | The recordings. Machine paths are tokens: `<CACHE>`, `<BUILD>`, `<RUN>`, `<TEMP>`, `<MATLABROOT>`, `<HOME>`, `<REPO>`, and each of them without its drive as `<...-NODRIVE>`. The `[1 N]` sizes printed for path values still depend on the machine. |
 | `research-2026-10-21/` | Sources from the plan's research session: the SDK client programs (C, C++, .NET MWArray, .NET Data API, Python) for stages K8-K13, the `mps.json` probes and their output for K14, and the options probes. |
@@ -150,6 +153,8 @@ powershell -File record-k16.ps1 -WorkRoot <a twenty-ninth scratch>      # about 
 powershell -File run-k16.ps1 -WorkRoot <a thirtieth scratch>            # about 6 min
 powershell -File record-k18.ps1 -WorkRoot <a thirty-first scratch>     # about 2 min; MATLAB and Python
 powershell -File run-k18.ps1 -WorkRoot <a thirty-second scratch>       # about 3 min; WiX 6 and the runtime MSI
+powershell -File record-k19.ps1 -WorkRoot <a thirty-third scratch>      # about 1 min; MATLAB
+powershell -File run-k19.ps1 -WorkRoot <a thirty-fourth scratch>        # seconds
 ```
 
 `run-quiet.ps1` gives a program an empty stdin. Until stage K1 it held a UTF-8 byte order mark,

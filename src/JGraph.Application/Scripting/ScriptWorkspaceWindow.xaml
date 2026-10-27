@@ -49,6 +49,17 @@
                 <MenuItem Header="Toggle _Breakpoint"
                           Command="{x:Static local:WorkspaceCommands.ToggleBreakpoint}" />
             </MenuItem>
+            <MenuItem Header="_Deploy">
+                <MenuItem Header="_Standalone Application Compiler" Command="{x:Static local:WorkspaceCommands.OpenCompilerApp}" CommandParameter="standaloneApplicationCompiler" />
+                <MenuItem Header="_Production Server Archive Compiler" Command="{x:Static local:WorkspaceCommands.OpenCompilerApp}" CommandParameter="productionServerArchiveCompiler" />
+                <MenuItem Header=".NET _Assembly Compiler" Command="{x:Static local:WorkspaceCommands.OpenCompilerApp}" CommandParameter="dotNetAssemblyCompiler" />
+                <MenuItem Header="Python Package _Compiler" Command="{x:Static local:WorkspaceCommands.OpenCompilerApp}" CommandParameter="pythonPackageCompiler" />
+                <MenuItem Header="C++ Shared _Library Compiler" Command="{x:Static local:WorkspaceCommands.OpenCompilerApp}" CommandParameter="cppSharedLibraryCompiler" />
+                <MenuItem Header="C Shared Li_brary Compiler" Command="{x:Static local:WorkspaceCommands.OpenCompilerApp}" CommandParameter="cSharedLibraryCompiler" />
+                <MenuItem Header="_Excel Add-in Compiler" Command="{x:Static local:WorkspaceCommands.OpenCompilerApp}" CommandParameter="excelAddinCompiler" />
+                <Separator />
+                <MenuItem Header="Compiler Apps _Gallery (deploytool)" Command="{x:Static local:WorkspaceCommands.OpenCompilerApp}" CommandParameter="deploytool" />
+            </MenuItem>
             <MenuItem Header="_Tools">
                 <MenuItem Header="New _Figure Window"
                           Command="{x:Static local:WorkspaceCommands.NewFigureWindow}" />

@@ -1,0 +1,535 @@
+exist.standaloneApplicationCompiler	double [1 1] 5
+nargin.standaloneApplicationCompiler	double [1 1] 1
+nargout.standaloneApplicationCompiler	double [1 1] 0
+which.standaloneApplicationCompiler	char [1 53] 'standaloneApplicationCompiler is a built-in function.'
+h1.standaloneApplicationCompiler	char [1 36] 'standaloneApplicationCompiler(file?)'
+exist.productionServerArchiveCompiler	double [1 1] 5
+nargin.productionServerArchiveCompiler	double [1 1] 1
+nargout.productionServerArchiveCompiler	double [1 1] 0
+which.productionServerArchiveCompiler	char [1 55] 'productionServerArchiveCompiler is a built-in function.'
+h1.productionServerArchiveCompiler	char [1 38] 'productionServerArchiveCompiler(file?)'
+exist.excelAddinCompiler	double [1 1] 5
+nargin.excelAddinCompiler	double [1 1] 0
+nargout.excelAddinCompiler	double [1 1] 0
+which.excelAddinCompiler	char [1 42] 'excelAddinCompiler is a built-in function.'
+h1.excelAddinCompiler	char [1 20] 'excelAddinCompiler()'
+exist.dotNetAssemblyCompiler	double [1 1] 5
+nargin.dotNetAssemblyCompiler	double [1 1] 0
+nargout.dotNetAssemblyCompiler	double [1 1] 0
+which.dotNetAssemblyCompiler	char [1 46] 'dotNetAssemblyCompiler is a built-in function.'
+h1.dotNetAssemblyCompiler	char [1 24] 'dotNetAssemblyCompiler()'
+exist.pythonPackageCompiler	double [1 1] 5
+nargin.pythonPackageCompiler	double [1 1] 0
+nargout.pythonPackageCompiler	double [1 1] 0
+which.pythonPackageCompiler	char [1 45] 'pythonPackageCompiler is a built-in function.'
+h1.pythonPackageCompiler	char [1 23] 'pythonPackageCompiler()'
+exist.cppSharedLibraryCompiler	double [1 1] 5
+nargin.cppSharedLibraryCompiler	double [1 1] 0
+nargout.cppSharedLibraryCompiler	double [1 1] 0
+which.cppSharedLibraryCompiler	char [1 48] 'cppSharedLibraryCompiler is a built-in function.'
+h1.cppSharedLibraryCompiler	char [1 26] 'cppSharedLibraryCompiler()'
+exist.cSharedLibraryCompiler	double [1 1] 5
+nargin.cSharedLibraryCompiler	double [1 1] 0
+nargout.cSharedLibraryCompiler	double [1 1] 0
+which.cSharedLibraryCompiler	char [1 46] 'cSharedLibraryCompiler is a built-in function.'
+h1.cSharedLibraryCompiler	char [1 24] 'cSharedLibraryCompiler()'
+exist.javaPackageCompiler	double [1 1] 5
+nargin.javaPackageCompiler	double [1 1] 0
+nargout.javaPackageCompiler	double [1 1] 0
+which.javaPackageCompiler	char [1 43] 'javaPackageCompiler is a built-in function.'
+h1.javaPackageCompiler	char [1 21] 'javaPackageCompiler()'
+exist.comComponentCompiler	double [1 1] 5
+nargin.comComponentCompiler	double [1 1] 0
+nargout.comComponentCompiler	double [1 1] 0
+which.comComponentCompiler	char [1 44] 'comComponentCompiler is a built-in function.'
+h1.comComponentCompiler	char [1 22] 'comComponentCompiler()'
+exist.applicationCompiler	double [1 1] 5
+nargin.applicationCompiler	double [1 1] 2
+nargout.applicationCompiler	double [1 1] 0
+which.applicationCompiler	char [1 43] 'applicationCompiler is a built-in function.'
+h1.applicationCompiler	char [1 49] 'applicationCompiler('-build' | '-package'?, prj?)'
+exist.libraryCompiler	double [1 1] 5
+nargin.libraryCompiler	double [1 1] 2
+nargout.libraryCompiler	double [1 1] 0
+which.libraryCompiler	char [1 39] 'libraryCompiler is a built-in function.'
+h1.libraryCompiler	char [1 45] 'libraryCompiler('-build' | '-package'?, prj?)'
+exist.productionServerCompiler	double [1 1] 5
+nargin.productionServerCompiler	double [1 1] 2
+nargout.productionServerCompiler	double [1 1] 0
+which.productionServerCompiler	char [1 48] 'productionServerCompiler is a built-in function.'
+h1.productionServerCompiler	char [1 54] 'productionServerCompiler('-build' | '-package'?, prj?)'
+exist.deploytool	double [1 1] 5
+nargin.deploytool	double [1 1] 2
+nargout.deploytool	double [1 1] 0
+which.deploytool	char [1 34] 'deploytool is a built-in function.'
+h1.deploytool	char [1 40] 'deploytool('-build' | '-package'?, prj?)'
+exist.webAppCompiler	double [1 1] 5
+nargin.webAppCompiler	double [1 1] 2
+nargout.webAppCompiler	double [1 1] 0
+which.webAppCompiler	char [1 38] 'webAppCompiler is a built-in function.'
+h1.webAppCompiler	char [1 44] 'webAppCompiler('-build' | '-package'?, prj?)'
+exist.hadoopCompiler	double [1 1] 5
+nargin.hadoopCompiler	double [1 1] 0
+nargout.hadoopCompiler	double [1 1] 0
+which.hadoopCompiler	char [1 38] 'hadoopCompiler is a built-in function.'
+h1.hadoopCompiler	char [1 16] 'hadoopCompiler()'
+exist.createDeploymentScript	double [1 1] 0
+nargin.createDeploymentScript	ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+nargout.createDeploymentScript	ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+which.createDeploymentScript	char [0 0] ''
+h1.createDeploymentScript	char [1 43] 'No help found for 'createDeploymentScript'.'
+exist.compiler.internal.displayDeploymentUIWarning	double [1 1] 0
+nargin.compiler.internal.displayDeploymentUIWarning	ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+nargout.compiler.internal.displayDeploymentUIWarning	ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+which.compiler.internal.displayDeploymentUIWarning	char [0 0] ''
+h1.compiler.internal.displayDeploymentUIWarning	char [1 65] 'No help found for 'compiler.internal.displayDeploymentUIWarning'.'
+exist.compiler.internal.launchui	double [1 1] 0
+nargin.compiler.internal.launchui	ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+nargout.compiler.internal.launchui	ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+which.compiler.internal.launchui	char [0 0] ''
+h1.compiler.internal.launchui	char [1 47] 'No help found for 'compiler.internal.launchui'.'
+exist.excelAddInCompiler	double [1 1] 0
+nargin.excelAddInCompiler	ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+nargout.excelAddInCompiler	ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+which.excelAddInCompiler	char [0 0] ''
+h1.excelAddInCompiler	char [1 39] 'No help found for 'excelAddInCompiler'.'
+standaloneApplicationCompiler.noargs	ERR JGraph:compilerApps:NoWindow | standaloneApplicationCompiler opens the Standalone Application Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+standaloneApplicationCompiler.missing	ERR MATLAB:open:fileNotFound | File 'k19none.prj' not found.
+standaloneApplicationCompiler.missing.string	ERR MATLAB:open:fileNotFound | File 'k19none.prj' not found.
+standaloneApplicationCompiler.stub	ERR JGraph:compilerApps:NoProject | '<W>\p\src\k19stub.prj' is a project, and JGraph has no MATLAB projects yet (compiler and SDK plan, stage K20): standaloneApplicationCompiler opens its app on a MATLAB file given as the main file, or with nothing, and Create Build Script keeps the task as a script.
+standaloneApplicationCompiler.text	ERR JGraph:compilerApps:NoProject | '<W>\p\src\k19text.prj' is a project, and JGraph has no MATLAB projects yet (compiler and SDK plan, stage K20): standaloneApplicationCompiler opens its app on a MATLAB file given as the main file, or with nothing, and Create Build Script keeps the task as a script.
+standaloneApplicationCompiler.mfile	ERR JGraph:compilerApps:NoWindow | standaloneApplicationCompiler opens the Standalone Application Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+standaloneApplicationCompiler.txt	ERR JGraph:compilerApps:NotAMatlabFile | '<W>\p\src\k19note.txt' is not a MATLAB file: standaloneApplicationCompiler takes a main file (.m, .mlapp, .mlx or .p) or a project (.prj).
+standaloneApplicationCompiler.number	ERR MATLAB:validators:mustBeTextScalar | Invalid argument at position 1. Value must be a character vector or string scalar.
+standaloneApplicationCompiler.empty	ERR MATLAB:validators:mustBeNonzeroLengthText | Invalid argument at position 1. Value must be text with one or more characters.
+standaloneApplicationCompiler.two	ERR MATLAB:TooManyInputs | Too many input arguments.
+standaloneApplicationCompiler.output	ERR MATLAB:TooManyOutputs | Too many output arguments.
+productionServerArchiveCompiler.noargs	ERR JGraph:compilerApps:NoWindow | productionServerArchiveCompiler opens the Production Server Archive Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+productionServerArchiveCompiler.missing	ERR MATLAB:open:fileNotFound | File 'k19none.prj' not found.
+productionServerArchiveCompiler.missing.string	ERR MATLAB:open:fileNotFound | File 'k19none.prj' not found.
+productionServerArchiveCompiler.stub	ERR JGraph:compilerApps:NoProject | '<W>\p\src\k19stub.prj' is a project, and JGraph has no MATLAB projects yet (compiler and SDK plan, stage K20): productionServerArchiveCompiler opens its app on a MATLAB file given as the main file, or with nothing, and Create Build Script keeps the task as a script.
+productionServerArchiveCompiler.text	ERR JGraph:compilerApps:NoProject | '<W>\p\src\k19text.prj' is a project, and JGraph has no MATLAB projects yet (compiler and SDK plan, stage K20): productionServerArchiveCompiler opens its app on a MATLAB file given as the main file, or with nothing, and Create Build Script keeps the task as a script.
+productionServerArchiveCompiler.mfile	ERR JGraph:compilerApps:NoWindow | productionServerArchiveCompiler opens the Production Server Archive Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+productionServerArchiveCompiler.txt	ERR JGraph:compilerApps:NotAMatlabFile | '<W>\p\src\k19note.txt' is not a MATLAB file: productionServerArchiveCompiler takes a main file (.m, .mlapp, .mlx or .p) or a project (.prj).
+productionServerArchiveCompiler.number	ERR MATLAB:validators:mustBeTextScalar | Invalid argument at position 1. Value must be a character vector or string scalar.
+productionServerArchiveCompiler.empty	ERR MATLAB:validators:mustBeNonzeroLengthText | Invalid argument at position 1. Value must be text with one or more characters.
+productionServerArchiveCompiler.two	ERR MATLAB:TooManyInputs | Too many input arguments.
+productionServerArchiveCompiler.output	ERR MATLAB:TooManyOutputs | Too many output arguments.
+excelAddinCompiler.noargs	ERR JGraph:compilerApps:NoWindow | excelAddinCompiler opens the Excel Add-in Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+excelAddinCompiler.one	ERR MATLAB:TooManyInputs | Too many input arguments.
+excelAddinCompiler.output	ERR MATLAB:TooManyOutputs | Too many output arguments.
+dotNetAssemblyCompiler.noargs	ERR JGraph:compilerApps:NoWindow | dotNetAssemblyCompiler opens the .NET Assembly Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+dotNetAssemblyCompiler.one	ERR MATLAB:TooManyInputs | Too many input arguments.
+dotNetAssemblyCompiler.output	ERR MATLAB:TooManyOutputs | Too many output arguments.
+pythonPackageCompiler.noargs	ERR JGraph:compilerApps:NoWindow | pythonPackageCompiler opens the Python Package Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+pythonPackageCompiler.one	ERR MATLAB:TooManyInputs | Too many input arguments.
+pythonPackageCompiler.output	ERR MATLAB:TooManyOutputs | Too many output arguments.
+cppSharedLibraryCompiler.noargs	ERR JGraph:compilerApps:NoWindow | cppSharedLibraryCompiler opens the C++ Shared Library Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+cppSharedLibraryCompiler.one	ERR MATLAB:TooManyInputs | Too many input arguments.
+cppSharedLibraryCompiler.output	ERR MATLAB:TooManyOutputs | Too many output arguments.
+cSharedLibraryCompiler.noargs	ERR JGraph:compilerApps:NoWindow | cSharedLibraryCompiler opens the C Shared Library Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+cSharedLibraryCompiler.one	ERR MATLAB:TooManyInputs | Too many input arguments.
+cSharedLibraryCompiler.output	ERR MATLAB:TooManyOutputs | Too many output arguments.
+javaPackageCompiler.noargs	ERR JGraph:compilerApps:targetOutOfScope | javaPackageCompiler opens an app for a target JGraph's compiler does not build: Java packages are out of JGraph's scope (decision KD1). The apps JGraph has are standaloneApplicationCompiler, productionServerArchiveCompiler, dotNetAssemblyCompiler, pythonPackageCompiler, cppSharedLibraryCompiler, cSharedLibraryCompiler, excelAddinCompiler.
+javaPackageCompiler.one	ERR MATLAB:TooManyInputs | Too many input arguments.
+javaPackageCompiler.output	ERR MATLAB:TooManyOutputs | Too many output arguments.
+comComponentCompiler.noargs	ERR JGraph:compilerApps:targetOutOfScope | comComponentCompiler opens an app for a target JGraph's compiler does not build: COM components are out of JGraph's scope (decision KD2). The apps JGraph has are standaloneApplicationCompiler, productionServerArchiveCompiler, dotNetAssemblyCompiler, pythonPackageCompiler, cppSharedLibraryCompiler, cSharedLibraryCompiler, excelAddinCompiler.
+comComponentCompiler.one	ERR MATLAB:TooManyInputs | Too many input arguments.
+comComponentCompiler.output	ERR MATLAB:TooManyOutputs | Too many output arguments.
+applicationCompiler.noargs	ERR JGraph:compilerApps:NoWindow | applicationCompiler opens the Standalone Application Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+applicationCompiler.noargs.warn	Compiler:deploytool:JavaAPIToBeRemoved | applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+applicationCompiler.number	ERR MATLAB:applicationCompiler:invalidType | Expected input number 1 to be one of these types: /  / char, string /  / Instead its type was double.
+applicationCompiler.number.warn	Compiler:deploytool:JavaAPIToBeRemoved | applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+applicationCompiler.strings	ERR MATLAB:applicationCompiler:expectedScalartext | Expected input number 1 to be a non-missing string scalar or character vector.
+applicationCompiler.strings.warn	Compiler:deploytool:JavaAPIToBeRemoved | applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+applicationCompiler.cell	ERR MATLAB:applicationCompiler:expectedScalartext | Expected input number 1 to be a non-missing string scalar or character vector.
+applicationCompiler.cell.warn	Compiler:deploytool:JavaAPIToBeRemoved | applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+applicationCompiler.charmatrix	ERR MATLAB:applicationCompiler:expectedScalartext | Expected input number 1 to be a non-missing string scalar or character vector.
+applicationCompiler.charmatrix.warn	Compiler:deploytool:JavaAPIToBeRemoved | applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+applicationCompiler.empty	ERR Compiler:deploytool:invalidFirstInputOneInput |  is an invalid input argument. When using applicationCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+applicationCompiler.empty.warn	Compiler:deploytool:JavaAPIToBeRemoved | applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+applicationCompiler.help.printed
+  |Warning: applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+  |applicationCompiler('-build' | '-package'?, prj?)
+  |  The Application Compiler of R2025b, scheduled for removal there and warned about here: applicationCompiler opens the Standalone Application Compiler app; applicationCompiler -? prints this help; applicationCompiler prj and applicationCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+applicationCompiler.help	ok
+applicationCompiler.help.warn	Compiler:deploytool:JavaAPIToBeRemoved | applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+applicationCompiler.help.slash.printed
+  |Warning: applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+  |applicationCompiler('-build' | '-package'?, prj?)
+  |  The Application Compiler of R2025b, scheduled for removal there and warned about here: applicationCompiler opens the Standalone Application Compiler app; applicationCompiler -? prints this help; applicationCompiler prj and applicationCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+applicationCompiler.help.slash	ok
+applicationCompiler.help.slash.warn	Compiler:deploytool:JavaAPIToBeRemoved | applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+applicationCompiler.help.string.printed
+  |Warning: applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+  |applicationCompiler('-build' | '-package'?, prj?)
+  |  The Application Compiler of R2025b, scheduled for removal there and warned about here: applicationCompiler opens the Standalone Application Compiler app; applicationCompiler -? prints this help; applicationCompiler prj and applicationCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+applicationCompiler.help.string	ok
+applicationCompiler.help.string.warn	Compiler:deploytool:JavaAPIToBeRemoved | applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+applicationCompiler.missing	ERR Compiler:deploytool:invalidFirstInputOneInput | k19none.prj is an invalid input argument. When using applicationCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+applicationCompiler.missing.warn	Compiler:deploytool:JavaAPIToBeRemoved | applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+applicationCompiler.stub	ERR Compiler:deploytool:invalidFirstInputOneInput | k19stub.prj is an invalid input argument. When using applicationCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+applicationCompiler.stub.warn	Compiler:deploytool:JavaAPIToBeRemoved | applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+applicationCompiler.text	ERR Compiler:deploytool:invalidFirstInputOneInput | k19text.prj is an invalid input argument. When using applicationCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+applicationCompiler.text.warn	Compiler:deploytool:JavaAPIToBeRemoved | applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+applicationCompiler.mfile	ERR Compiler:deploytool:invalidFirstInputOneInput | k6_hello.m is an invalid input argument. When using applicationCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+applicationCompiler.mfile.warn	Compiler:deploytool:JavaAPIToBeRemoved | applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+applicationCompiler.txt	ERR Compiler:deploytool:invalidFirstInputOneInput | k19note.txt is an invalid input argument. When using applicationCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+applicationCompiler.txt.warn	Compiler:deploytool:JavaAPIToBeRemoved | applicationCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use standaloneApplicationCompiler instead.
+applicationCompiler.build.missing	ERR Compiler:build:compatibility:projectDoesNotExist | Input project file k19none.prj does not exist.
+applicationCompiler.build.missing.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | applicationCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+applicationCompiler.build.stub	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k19stub.prj is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+applicationCompiler.build.stub.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | applicationCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+applicationCompiler.build.slash	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k19stub.prj is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+applicationCompiler.build.slash.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | applicationCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+applicationCompiler.package.stub	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k19stub.prj is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+applicationCompiler.package.stub.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | applicationCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+applicationCompiler.package.mfile	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k6_hello.m is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+applicationCompiler.package.mfile.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | applicationCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+applicationCompiler.build.number	ERR MATLAB:applicationCompiler:invalidType | Expected input number 2 to be one of these types: /  / char, string /  / Instead its type was double.
+applicationCompiler.build.number.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | applicationCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+applicationCompiler.build.upper	ERR Compiler:deploytool:invalidFirstInputTwoInputs | -BUILD is an invalid input argument.  When using applicationCompiler with two input arguments, the first input must be either "-build" or "-package" and the second input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+applicationCompiler.bad.two	ERR Compiler:deploytool:invalidFirstInputTwoInputs | -foo is an invalid input argument.  When using applicationCompiler with two input arguments, the first input must be either "-build" or "-package" and the second input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+applicationCompiler.three	ERR MATLAB:narginchk:tooManyInputs | Too many input arguments.
+applicationCompiler.output	ERR MATLAB:TooManyOutputs | Too many output arguments.
+libraryCompiler.noargs	ERR JGraph:compilerApps:NoWindow | libraryCompiler opens the compiler apps' gallery in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+libraryCompiler.noargs.warn	Compiler:deploytool:JavaAPIToBeRemoved | libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+libraryCompiler.number	ERR MATLAB:libraryCompiler:invalidType | Expected input number 1 to be one of these types: /  / char, string /  / Instead its type was double.
+libraryCompiler.number.warn	Compiler:deploytool:JavaAPIToBeRemoved | libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+libraryCompiler.strings	ERR MATLAB:libraryCompiler:expectedScalartext | Expected input number 1 to be a non-missing string scalar or character vector.
+libraryCompiler.strings.warn	Compiler:deploytool:JavaAPIToBeRemoved | libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+libraryCompiler.cell	ERR MATLAB:libraryCompiler:expectedScalartext | Expected input number 1 to be a non-missing string scalar or character vector.
+libraryCompiler.cell.warn	Compiler:deploytool:JavaAPIToBeRemoved | libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+libraryCompiler.charmatrix	ERR MATLAB:libraryCompiler:expectedScalartext | Expected input number 1 to be a non-missing string scalar or character vector.
+libraryCompiler.charmatrix.warn	Compiler:deploytool:JavaAPIToBeRemoved | libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+libraryCompiler.empty	ERR Compiler:deploytool:invalidFirstInputOneInput |  is an invalid input argument. When using libraryCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+libraryCompiler.empty.warn	Compiler:deploytool:JavaAPIToBeRemoved | libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+libraryCompiler.help.printed
+  |Warning: libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+  |libraryCompiler('-build' | '-package'?, prj?)
+  |  The Library Compiler of R2025b, scheduled for removal there and warned about here: libraryCompiler opens the gallery of compiler apps; libraryCompiler -? prints this help; libraryCompiler prj and libraryCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+libraryCompiler.help	ok
+libraryCompiler.help.warn	Compiler:deploytool:JavaAPIToBeRemoved | libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+libraryCompiler.help.slash.printed
+  |Warning: libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+  |libraryCompiler('-build' | '-package'?, prj?)
+  |  The Library Compiler of R2025b, scheduled for removal there and warned about here: libraryCompiler opens the gallery of compiler apps; libraryCompiler -? prints this help; libraryCompiler prj and libraryCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+libraryCompiler.help.slash	ok
+libraryCompiler.help.slash.warn	Compiler:deploytool:JavaAPIToBeRemoved | libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+libraryCompiler.help.string.printed
+  |Warning: libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+  |libraryCompiler('-build' | '-package'?, prj?)
+  |  The Library Compiler of R2025b, scheduled for removal there and warned about here: libraryCompiler opens the gallery of compiler apps; libraryCompiler -? prints this help; libraryCompiler prj and libraryCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+libraryCompiler.help.string	ok
+libraryCompiler.help.string.warn	Compiler:deploytool:JavaAPIToBeRemoved | libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+libraryCompiler.missing	ERR Compiler:deploytool:invalidFirstInputOneInput | k19none.prj is an invalid input argument. When using libraryCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+libraryCompiler.missing.warn	Compiler:deploytool:JavaAPIToBeRemoved | libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+libraryCompiler.stub	ERR Compiler:deploytool:invalidFirstInputOneInput | k19stub.prj is an invalid input argument. When using libraryCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+libraryCompiler.stub.warn	Compiler:deploytool:JavaAPIToBeRemoved | libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+libraryCompiler.text	ERR Compiler:deploytool:invalidFirstInputOneInput | k19text.prj is an invalid input argument. When using libraryCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+libraryCompiler.text.warn	Compiler:deploytool:JavaAPIToBeRemoved | libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+libraryCompiler.mfile	ERR Compiler:deploytool:invalidFirstInputOneInput | k6_hello.m is an invalid input argument. When using libraryCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+libraryCompiler.mfile.warn	Compiler:deploytool:JavaAPIToBeRemoved | libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+libraryCompiler.txt	ERR Compiler:deploytool:invalidFirstInputOneInput | k19note.txt is an invalid input argument. When using libraryCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+libraryCompiler.txt.warn	Compiler:deploytool:JavaAPIToBeRemoved | libraryCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use deploytool instead.
+libraryCompiler.build.missing	ERR Compiler:build:compatibility:projectDoesNotExist | Input project file k19none.prj does not exist.
+libraryCompiler.build.missing.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | libraryCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+libraryCompiler.build.stub	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k19stub.prj is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+libraryCompiler.build.stub.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | libraryCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+libraryCompiler.build.slash	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k19stub.prj is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+libraryCompiler.build.slash.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | libraryCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+libraryCompiler.package.stub	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k19stub.prj is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+libraryCompiler.package.stub.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | libraryCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+libraryCompiler.package.mfile	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k6_hello.m is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+libraryCompiler.package.mfile.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | libraryCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+libraryCompiler.build.number	ERR MATLAB:libraryCompiler:invalidType | Expected input number 2 to be one of these types: /  / char, string /  / Instead its type was double.
+libraryCompiler.build.number.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | libraryCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+libraryCompiler.build.upper	ERR Compiler:deploytool:invalidFirstInputTwoInputs | -BUILD is an invalid input argument.  When using libraryCompiler with two input arguments, the first input must be either "-build" or "-package" and the second input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+libraryCompiler.bad.two	ERR Compiler:deploytool:invalidFirstInputTwoInputs | -foo is an invalid input argument.  When using libraryCompiler with two input arguments, the first input must be either "-build" or "-package" and the second input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+libraryCompiler.three	ERR MATLAB:narginchk:tooManyInputs | Too many input arguments.
+libraryCompiler.output	ERR MATLAB:TooManyOutputs | Too many output arguments.
+productionServerCompiler.noargs	ERR JGraph:compilerApps:NoWindow | productionServerCompiler opens the Production Server Archive Compiler window in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+productionServerCompiler.noargs.warn	Compiler:deploytool:JavaAPIToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+productionServerCompiler.number	ERR MATLAB:productionServerCompiler:invalidType | Expected input number 1 to be one of these types: /  / char, string /  / Instead its type was double.
+productionServerCompiler.number.warn	Compiler:deploytool:JavaAPIToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+productionServerCompiler.strings	ERR MATLAB:productionServerCompiler:expectedScalartext | Expected input number 1 to be a non-missing string scalar or character vector.
+productionServerCompiler.strings.warn	Compiler:deploytool:JavaAPIToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+productionServerCompiler.cell	ERR MATLAB:productionServerCompiler:expectedScalartext | Expected input number 1 to be a non-missing string scalar or character vector.
+productionServerCompiler.cell.warn	Compiler:deploytool:JavaAPIToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+productionServerCompiler.charmatrix	ERR MATLAB:productionServerCompiler:expectedScalartext | Expected input number 1 to be a non-missing string scalar or character vector.
+productionServerCompiler.charmatrix.warn	Compiler:deploytool:JavaAPIToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+productionServerCompiler.empty	ERR Compiler:deploytool:invalidFirstInputOneInput |  is an invalid input argument. When using productionServerCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+productionServerCompiler.empty.warn	Compiler:deploytool:JavaAPIToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+productionServerCompiler.help.printed
+  |Warning: productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+  |productionServerCompiler('-build' | '-package'?, prj?)
+  |  The Production Server Compiler of R2025b, scheduled for removal there and warned about here: productionServerCompiler opens the Production Server Archive Compiler app; productionServerCompiler -? prints this help; productionServerCompiler prj and productionServerCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+productionServerCompiler.help	ok
+productionServerCompiler.help.warn	Compiler:deploytool:JavaAPIToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+productionServerCompiler.help.slash.printed
+  |Warning: productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+  |productionServerCompiler('-build' | '-package'?, prj?)
+  |  The Production Server Compiler of R2025b, scheduled for removal there and warned about here: productionServerCompiler opens the Production Server Archive Compiler app; productionServerCompiler -? prints this help; productionServerCompiler prj and productionServerCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+productionServerCompiler.help.slash	ok
+productionServerCompiler.help.slash.warn	Compiler:deploytool:JavaAPIToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+productionServerCompiler.help.string.printed
+  |Warning: productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+  |productionServerCompiler('-build' | '-package'?, prj?)
+  |  The Production Server Compiler of R2025b, scheduled for removal there and warned about here: productionServerCompiler opens the Production Server Archive Compiler app; productionServerCompiler -? prints this help; productionServerCompiler prj and productionServerCompiler -build prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+productionServerCompiler.help.string	ok
+productionServerCompiler.help.string.warn	Compiler:deploytool:JavaAPIToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+productionServerCompiler.missing	ERR Compiler:deploytool:invalidFirstInputOneInput | k19none.prj is an invalid input argument. When using productionServerCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+productionServerCompiler.missing.warn	Compiler:deploytool:JavaAPIToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+productionServerCompiler.stub	ERR Compiler:deploytool:invalidFirstInputOneInput | k19stub.prj is an invalid input argument. When using productionServerCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+productionServerCompiler.stub.warn	Compiler:deploytool:JavaAPIToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+productionServerCompiler.text	ERR Compiler:deploytool:invalidFirstInputOneInput | k19text.prj is an invalid input argument. When using productionServerCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+productionServerCompiler.text.warn	Compiler:deploytool:JavaAPIToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+productionServerCompiler.mfile	ERR Compiler:deploytool:invalidFirstInputOneInput | k6_hello.m is an invalid input argument. When using productionServerCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+productionServerCompiler.mfile.warn	Compiler:deploytool:JavaAPIToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+productionServerCompiler.txt	ERR Compiler:deploytool:invalidFirstInputOneInput | k19note.txt is an invalid input argument. When using productionServerCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+productionServerCompiler.txt.warn	Compiler:deploytool:JavaAPIToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To package MATLAB code using the MATLAB Compiler apps, use productionServerArchiveCompiler instead.
+productionServerCompiler.build.missing	ERR Compiler:build:compatibility:projectDoesNotExist | Input project file k19none.prj does not exist.
+productionServerCompiler.build.missing.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+productionServerCompiler.build.stub	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k19stub.prj is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+productionServerCompiler.build.stub.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+productionServerCompiler.build.slash	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k19stub.prj is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+productionServerCompiler.build.slash.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+productionServerCompiler.package.stub	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k19stub.prj is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+productionServerCompiler.package.stub.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+productionServerCompiler.package.mfile	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k6_hello.m is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+productionServerCompiler.package.mfile.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+productionServerCompiler.build.number	ERR MATLAB:productionServerCompiler:invalidType | Expected input number 2 to be one of these types: /  / char, string /  / Instead its type was double.
+productionServerCompiler.build.number.warn	Compiler:deploytool:DeploytoolFunctionalityToBeRemoved | productionServerCompiler is scheduled for removal in a future release. To build and package MATLAB code programmatically, use the mcc command or target-specific functions such as compiler.build.standaloneApplication and compiler.package.installer.
+productionServerCompiler.build.upper	ERR Compiler:deploytool:invalidFirstInputTwoInputs | -BUILD is an invalid input argument.  When using productionServerCompiler with two input arguments, the first input must be either "-build" or "-package" and the second input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+productionServerCompiler.bad.two	ERR Compiler:deploytool:invalidFirstInputTwoInputs | -foo is an invalid input argument.  When using productionServerCompiler with two input arguments, the first input must be either "-build" or "-package" and the second input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+productionServerCompiler.three	ERR MATLAB:narginchk:tooManyInputs | Too many input arguments.
+productionServerCompiler.output	ERR MATLAB:TooManyOutputs | Too many output arguments.
+deploytool.noargs	ERR JGraph:compilerApps:NoWindow | deploytool opens the compiler apps' gallery in the JGraph app, and this session has no window. A batch run builds with mcc or the compiler.build functions instead.
+deploytool.number	ERR MATLAB:deploytool:invalidType | Expected input number 1 to be one of these types: /  / char, string /  / Instead its type was double.
+deploytool.strings	ERR MATLAB:deploytool:expectedScalartext | Expected input number 1 to be a non-missing string scalar or character vector.
+deploytool.cell	ERR MATLAB:deploytool:expectedScalartext | Expected input number 1 to be a non-missing string scalar or character vector.
+deploytool.charmatrix	ERR MATLAB:deploytool:expectedScalartext | Expected input number 1 to be a non-missing string scalar or character vector.
+deploytool.empty	ERR Compiler:deploytool:invalidFirstInputOneInput |  is an invalid input argument. When using deploytool with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+deploytool.help.printed
+  |deploytool('-build' | '-package'?, prj?)
+  |  MATLAB Compiler's user interface: deploytool opens the gallery of compiler apps, one per target; deploytool -? prints this help; deploytool prj, deploytool -build prj and deploytool -package prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+deploytool.help	ok
+deploytool.help.slash.printed
+  |deploytool('-build' | '-package'?, prj?)
+  |  MATLAB Compiler's user interface: deploytool opens the gallery of compiler apps, one per target; deploytool -? prints this help; deploytool prj, deploytool -build prj and deploytool -package prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+deploytool.help.slash	ok
+deploytool.help.string.printed
+  |deploytool('-build' | '-package'?, prj?)
+  |  MATLAB Compiler's user interface: deploytool opens the gallery of compiler apps, one per target; deploytool -? prints this help; deploytool prj, deploytool -build prj and deploytool -package prj take a MATLAB Compiler project, which JGraph has none of yet, and refuse as R2025b refuses a file that is not one.
+deploytool.help.string	ok
+deploytool.missing	ERR Compiler:deploytool:invalidFirstInputOneInput | k19none.prj is an invalid input argument. When using deploytool with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+deploytool.stub	ERR Compiler:deploytool:invalidFirstInputOneInput | k19stub.prj is an invalid input argument. When using deploytool with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+deploytool.text	ERR Compiler:deploytool:invalidFirstInputOneInput | k19text.prj is an invalid input argument. When using deploytool with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+deploytool.mfile	ERR Compiler:deploytool:invalidFirstInputOneInput | k6_hello.m is an invalid input argument. When using deploytool with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+deploytool.txt	ERR Compiler:deploytool:invalidFirstInputOneInput | k19note.txt is an invalid input argument. When using deploytool with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+deploytool.build.missing	ERR Compiler:build:compatibility:projectDoesNotExist | Input project file k19none.prj does not exist.
+deploytool.build.missing.warn	Compiler:deploytool:DeploytoolBuildPackageToBeRemoved | deploytool will not accept -build or -package in a future release. Use mcc, deployment scenario specific functions such as compiler.build.standaloneApplication, and compiler.package.installer instead.
+deploytool.build.stub	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k19stub.prj is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+deploytool.build.stub.warn	Compiler:deploytool:DeploytoolBuildPackageToBeRemoved | deploytool will not accept -build or -package in a future release. Use mcc, deployment scenario specific functions such as compiler.build.standaloneApplication, and compiler.package.installer instead.
+deploytool.build.slash	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k19stub.prj is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+deploytool.build.slash.warn	Compiler:deploytool:DeploytoolBuildPackageToBeRemoved | deploytool will not accept -build or -package in a future release. Use mcc, deployment scenario specific functions such as compiler.build.standaloneApplication, and compiler.package.installer instead.
+deploytool.package.stub	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k19stub.prj is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+deploytool.package.stub.warn	Compiler:deploytool:DeploytoolBuildPackageToBeRemoved | deploytool will not accept -build or -package in a future release. Use mcc, deployment scenario specific functions such as compiler.build.standaloneApplication, and compiler.package.installer instead.
+deploytool.package.mfile	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k6_hello.m is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+deploytool.package.mfile.warn	Compiler:deploytool:DeploytoolBuildPackageToBeRemoved | deploytool will not accept -build or -package in a future release. Use mcc, deployment scenario specific functions such as compiler.build.standaloneApplication, and compiler.package.installer instead.
+deploytool.build.number	ERR MATLAB:deploytool:invalidType | Expected input number 2 to be one of these types: /  / char, string /  / Instead its type was double.
+deploytool.build.number.warn	Compiler:deploytool:DeploytoolBuildPackageToBeRemoved | deploytool will not accept -build or -package in a future release. Use mcc, deployment scenario specific functions such as compiler.build.standaloneApplication, and compiler.package.installer instead.
+deploytool.build.upper	ERR Compiler:deploytool:invalidFirstInputTwoInputs | -BUILD is an invalid input argument.  When using deploytool with two input arguments, the first input must be either "-build" or "-package" and the second input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+deploytool.bad.two	ERR Compiler:deploytool:invalidFirstInputTwoInputs | -foo is an invalid input argument.  When using deploytool with two input arguments, the first input must be either "-build" or "-package" and the second input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+deploytool.three	ERR MATLAB:narginchk:tooManyInputs | Too many input arguments.
+deploytool.output	ERR MATLAB:TooManyOutputs | Too many output arguments.
+webAppCompiler.noargs	ERR JGraph:compilerApps:targetOutOfScope | webAppCompiler opens an app for a target JGraph's compiler does not build: web apps are out of JGraph's scope (decision KD2). The apps JGraph has are standaloneApplicationCompiler, productionServerArchiveCompiler, dotNetAssemblyCompiler, pythonPackageCompiler, cppSharedLibraryCompiler, cSharedLibraryCompiler, excelAddinCompiler.
+webAppCompiler.number	ERR MATLAB:webAppCompiler:invalidType | Expected input number 1 to be one of these types: /  / char, string /  / Instead its type was double.
+webAppCompiler.strings	ERR MATLAB:webAppCompiler:expectedScalartext | Expected input number 1 to be a non-missing string scalar or character vector.
+webAppCompiler.cell	ERR MATLAB:webAppCompiler:expectedScalartext | Expected input number 1 to be a non-missing string scalar or character vector.
+webAppCompiler.charmatrix	ERR MATLAB:webAppCompiler:expectedScalartext | Expected input number 1 to be a non-missing string scalar or character vector.
+webAppCompiler.empty	ERR Compiler:deploytool:invalidFirstInputOneInput |  is an invalid input argument. When using webAppCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+webAppCompiler.help.printed
+  |webAppCompiler('-build' | '-package'?, prj?)
+  |  R2025b's Web App Compiler; web apps are out of JGraph's scope, so opening the app is refused, while webAppCompiler -? prints this help and the project forms refuse as R2025b refuses a file that is not a project.
+webAppCompiler.help	ok
+webAppCompiler.help.slash.printed
+  |webAppCompiler('-build' | '-package'?, prj?)
+  |  R2025b's Web App Compiler; web apps are out of JGraph's scope, so opening the app is refused, while webAppCompiler -? prints this help and the project forms refuse as R2025b refuses a file that is not a project.
+webAppCompiler.help.slash	ok
+webAppCompiler.help.string.printed
+  |webAppCompiler('-build' | '-package'?, prj?)
+  |  R2025b's Web App Compiler; web apps are out of JGraph's scope, so opening the app is refused, while webAppCompiler -? prints this help and the project forms refuse as R2025b refuses a file that is not a project.
+webAppCompiler.help.string	ok
+webAppCompiler.missing	ERR Compiler:deploytool:invalidFirstInputOneInput | k19none.prj is an invalid input argument. When using webAppCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+webAppCompiler.stub	ERR Compiler:deploytool:invalidFirstInputOneInput | k19stub.prj is an invalid input argument. When using webAppCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+webAppCompiler.text	ERR Compiler:deploytool:invalidFirstInputOneInput | k19text.prj is an invalid input argument. When using webAppCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+webAppCompiler.mfile	ERR Compiler:deploytool:invalidFirstInputOneInput | k6_hello.m is an invalid input argument. When using webAppCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+webAppCompiler.txt	ERR Compiler:deploytool:invalidFirstInputOneInput | k19note.txt is an invalid input argument. When using webAppCompiler with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+webAppCompiler.build.missing	ERR Compiler:build:compatibility:projectDoesNotExist | Input project file k19none.prj does not exist.
+webAppCompiler.build.missing.warn	Compiler:deploytool:DeploytoolBuildPackageToBeRemoved | webAppCompiler will not accept -build or -package in a future release. Use mcc, deployment scenario specific functions such as compiler.build.standaloneApplication, and compiler.package.installer instead.
+webAppCompiler.build.stub	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k19stub.prj is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+webAppCompiler.build.stub.warn	Compiler:deploytool:DeploytoolBuildPackageToBeRemoved | webAppCompiler will not accept -build or -package in a future release. Use mcc, deployment scenario specific functions such as compiler.build.standaloneApplication, and compiler.package.installer instead.
+webAppCompiler.build.slash	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k19stub.prj is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+webAppCompiler.build.slash.warn	Compiler:deploytool:DeploytoolBuildPackageToBeRemoved | webAppCompiler will not accept -build or -package in a future release. Use mcc, deployment scenario specific functions such as compiler.build.standaloneApplication, and compiler.package.installer instead.
+webAppCompiler.package.stub	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k19stub.prj is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+webAppCompiler.package.stub.warn	Compiler:deploytool:DeploytoolBuildPackageToBeRemoved | webAppCompiler will not accept -build or -package in a future release. Use mcc, deployment scenario specific functions such as compiler.build.standaloneApplication, and compiler.package.installer instead.
+webAppCompiler.package.mfile	ERR Compiler:build:compatibility:notCompatibilityPRJ | Input project file k6_hello.m is not a valid MATLAB Compiler or MATLAB Compiler SDK project.
+webAppCompiler.package.mfile.warn	Compiler:deploytool:DeploytoolBuildPackageToBeRemoved | webAppCompiler will not accept -build or -package in a future release. Use mcc, deployment scenario specific functions such as compiler.build.standaloneApplication, and compiler.package.installer instead.
+webAppCompiler.build.number	ERR MATLAB:webAppCompiler:invalidType | Expected input number 2 to be one of these types: /  / char, string /  / Instead its type was double.
+webAppCompiler.build.number.warn	Compiler:deploytool:DeploytoolBuildPackageToBeRemoved | webAppCompiler will not accept -build or -package in a future release. Use mcc, deployment scenario specific functions such as compiler.build.standaloneApplication, and compiler.package.installer instead.
+webAppCompiler.build.upper	ERR Compiler:deploytool:invalidFirstInputTwoInputs | -BUILD is an invalid input argument.  When using webAppCompiler with two input arguments, the first input must be either "-build" or "-package" and the second input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+webAppCompiler.bad.two	ERR Compiler:deploytool:invalidFirstInputTwoInputs | -foo is an invalid input argument.  When using webAppCompiler with two input arguments, the first input must be either "-build" or "-package" and the second input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file. / 
+webAppCompiler.three	ERR MATLAB:narginchk:tooManyInputs | Too many input arguments.
+webAppCompiler.output	ERR MATLAB:TooManyOutputs | Too many output arguments.
+hadoopCompiler.noargs	ERR Compiler:deploytool:HadoopCompilerRemoved | hadoopCompiler has been removed.  To create standalone MATLAB MapReduce applications, or deployable archives from MATLAB map and reduce functions, use the mcc command.
+hadoopCompiler.one	ERR Compiler:deploytool:HadoopCompilerRemoved | hadoopCompiler has been removed.  To create standalone MATLAB MapReduce applications, or deployable archives from MATLAB map and reduce functions, use the mcc command.
+hadoopCompiler.output	ERR MATLAB:TooManyOutputs | Too many output arguments.
+excelAddInCompiler.noargs	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'excelAddInCompiler'.
+publish.standalone	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'message.publish'.
+publish.empty	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'message.publish'.
+uiwarning.applicationCompiler	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+uiwarning.productionServerCompiler	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+uiwarning.libraryCompiler	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+uiwarning.deploytool	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+uiwarning.webAppCompiler	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+uiwarning.deploytool.build	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+uiwarning.applicationCompiler.build	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+uiwarning.applicationCompiler.other	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+uiwarning.unknown	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+uiwarning.four	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.displayDeploymentUIWarning'.
+launchui.none	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.launchui'.
+launchui.other	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.launchui'.
+launchui.number	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.launchui'.
+license.compiler	char [1 6] 'JGraph'
+license.sdk	char [1 6] 'JGraph'
+license.test	double [1 1] 1
+script.missing	ERR MATLAB:UndefinedFunction | Undefined function 'createDeploymentScript' for input arguments of type 'char'.
+script.stub	ERR MATLAB:UndefinedFunction | Undefined function 'createDeploymentScript' for input arguments of type 'char'.
+script.text	ERR MATLAB:UndefinedFunction | Undefined function 'createDeploymentScript' for input arguments of type 'char'.
+script.mfile	ERR MATLAB:UndefinedFunction | Undefined function 'createDeploymentScript' for input arguments of type 'char'.
+script.noargs	ERR MATLAB:UndefinedFunction | Unrecognized function or variable 'createDeploymentScript'.
+script.one	ERR MATLAB:UndefinedFunction | Undefined function 'createDeploymentScript' for input arguments of type 'char'.
+script.three	ERR MATLAB:UndefinedFunction | Undefined function 'createDeploymentScript' for input arguments of type 'char'.
+prjstruct.stub	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.readPRJStruct'.
+prjstruct.text	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.readPRJStruct'.
+prjstruct.missing	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.readPRJStruct'.
+open.stub	ERR  | open expects a VideoWriter, but got a string.
+open.missing	ERR  | open expects a VideoWriter, but got a string.
+open.text	ERR  | open expects a VideoWriter, but got a string.
+open.mfile	ERR  | open expects a VideoWriter, but got a string.
+webui	ERR JGraph:feature:unsupported | JGraph answers feature('getpid') and no other feature key.
+capability.local	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'matlab.internal.capability.Capability.isSupported'.
+text.deployment:desktop:Tool_standaloneApplicationCompiler_Label	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:desktop:Tool_standaloneApplicationCompiler_Description	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:desktop:Tool_productionServerArchiveCompiler_Label	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:desktop:Tool_productionServerArchiveCompiler_Description	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:desktop:Tool_excelAddinCompiler_Label	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:desktop:Tool_dotNetAssemblyCompiler_Label	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:desktop:Tool_pythonPackageCompiler_Label	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:desktop:Tool_cppSharedLibraryCompiler_Label	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:desktop:Tool_cSharedLibraryCompiler_Label	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:desktop:Tool_javaPackageCompiler_Label	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:desktop:Tool_comComponentCompiler_Label	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:desktop:Tool_webAppCompiler_Label	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.Compiler:desktop:Tool_applicationCompiler_Label	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.Compiler:desktop:Tool_libraryCompiler_Label	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:model:CONFIGTYPE_STANDALONEAPP	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:model:CONFIGTYPE_STANDALONEAPP_DESC	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:model:CONFIGTYPE_MPSARCHIVE	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:model:CONFIGTYPE_MPSARCHIVE_DESC	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:model:CONFIGTYPE_DOTNETASSEMBLY_DESC	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:model:CONFIGTYPE_PYTHONPACKAGE_DESC	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:model:CONFIGTYPE_CPPSHAREDLIB_DESC	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:model:CONFIGTYPE_CSHAREDLIB_DESC	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:model:CONFIGTYPE_EXCELADDIN_DESC	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment:model:TITLE_OUTPUT_FOLDER_PATH	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:mainFile	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:exportedFunctionsTitle	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:build	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:buildAndPackage	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:createBuildScriptLabel	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:showCode	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:hideCode	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:installerSettingsLabel	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageTypeLabel	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:webRuntimeDescription	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageRuntimeDescription	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageNoInstallerDescription	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:outputLocationsLabel	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:outputLocationsBuildDescription	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:outputLocationsPackageDescription	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:filesPackaged	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:autoDetectDataFiles	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:enableAutoDetectDataFiles	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:enableObfuscation	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:obfuscation	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:installerDetails	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:installerImages	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:installRootWindows	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:installSubfolder	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:readyToPackage	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:missingMain	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:noRequiredFiles	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageDialogBuildSuccess	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageDialogBuildWithWarnings	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageDialogBuildError	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageDialogFirstPhaseLineStandalone	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageDialogFirstPhaseLineMPS	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageDialogFirstPhaseLineNet	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageDialogFirstPhaseLinePython	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageDialogFirstPhaseLineCpp	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageDialogFirstPhaseLineC	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageDialogFirstPhaseLineExcel	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageDialogSecondPhaseCreateInstaller	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageDialogOpenOutputLabel	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageDialogShowLogLabel	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageDialogHideLogLabel	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:messages:packageNotSupported	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:deploymentscript:buildIntro	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:deploymentscript:packageIntro	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:deploymentscript:setProjectRoot	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:deploymentscript:downloadRuntime	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:deploymentscript:assemblyVersionPreLines	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_common:deploymentscript:libraryVersionPreLines	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_standalone:messages:applicationInfo	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_standalone:messages:applicationType	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_standalone:messages:standaloneApplication	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_standalone:messages:standaloneWindowsApplication	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_standalone:messages:executableDetails	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_standalone:messages:executableNameLabel	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_standalone:messages:inputTypeLabel	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_standalone:messages:inputTreatmentChar	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_standalone:messages:inputTreatmentNumeric	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_standalone:messages:requiredFilesMessage	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_standalone:messages:standaloneImages	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_standalone:messages:initialInfo	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_standalone:messages:appHelp	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compilersdk_ui_mps:messages:archiveInfo	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compilersdk_ui_mps:messages:functionSignatureTitle	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compilersdk_ui_mps:messages:functionSignaturePlaceholder	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compilersdk_ui_mps:messages:requiredFilesLabel	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compilersdk_ui_mps:messages:testClient	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compilersdk_ui_mps:messages:cannotOpenMessage	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compilersdk_ui_dotnet:messages:assemblyInfoTitle	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compilersdk_ui_dotnet:messages:netAPISelectionLabel	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compilersdk_ui_dotnet:messages:netVersion	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compilersdk_ui_dotnet:messages:netVersionFive	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compilersdk_ui_dotnet:messages:filesRequiredLabel	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compilersdk_ui_python:messages:packageInfoTitle	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compilersdk_ui_python:messages:filesRequiredLabel	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compilersdk_ui_cppSharedLibrary:messages:apiSelectionTitle	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_excel:messages:addinInfo	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_excel:messages:addinName	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.compiler_ui_excel:messages:filesRequiredLabel	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.deployment_common:messages:devAndTestLabel	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.Compiler:deploytool:JavaAPIToBeRemoved	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.Compiler:deploytool:DeploytoolFunctionalityToBeRemoved	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.Compiler:deploytool:DeploytoolBuildPackageToBeRemoved	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.Compiler:deploytool:invalidFirstInputOneInput	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.Compiler:deploytool:invalidFirstInputTwoInputs	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.Compiler:deploytool:HadoopCompilerRemoved	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.Compiler:deploytool:OpenProjectRequiresDesktop	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.Compiler:deploytool:NotACompilerPRJ	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.Compiler:deploytool:MatlabOnlineSupport	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
+text.Compiler:deploytool:license_checkout_error	ERR MATLAB:UndefinedFunction | Undefined function 'message' for input arguments of type 'char'.
