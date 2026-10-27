@@ -123,6 +123,12 @@ internal static class WorkerMain
                                     WebHeaders: [.. reply.Headers.Select(static h => new[] { h.Name, h.Value })],
                                     WebBodyBase64: Convert.ToBase64String(reply.Body), WebRefused: reply.Refused)).ConfigureAwait(false);
                             }
+                            else if (request.BodyBase64 is not null)
+                            {
+                                // The protobuf format (stage K16): MATLAB_Params in, MATLAB_Result out.
+                                MpsBinaryReply reply = await MpsCalls.CallProtobufAsync(component, request.Function!, Convert.FromBase64String(request.BodyBase64), request.HideStack, source.Token).ConfigureAwait(false);
+                                await Send(new WorkerProtocol.Reply(request.Id, reply.Status, reply.Reason, BodyBase64: reply.Body is null ? null : Convert.ToBase64String(reply.Body))).ConfigureAwait(false);
+                            }
                             else
                             {
                                 MpsReply reply = await MpsCalls.CallAsync(component, request.Function!, request.Body ?? "", request.HideStack, source.Token).ConfigureAwait(false);

@@ -39,8 +39,9 @@ internal static class WorkerProtocol
     /// <param name="Folder">The runtime cache folder's name, for <c>deploy</c> (<c>&lt;archive&gt;_&lt;n&gt;</c>).</param>
     /// <param name="Web">The web request, for <c>web</c>.</param>
     /// <param name="CacheRoot">The instance's own runtime cache the archive is extracted into, for <c>deploy</c>.</param>
+    /// <param name="BodyBase64">A protobuf request body (<c>MATLAB_Params</c>), base64, for a <c>call</c> in that format (stage K16).</param>
     public sealed record Request(long Id, string Op, string? Name = null, string? Path = null, string? Function = null, string? Body = null,
-        bool HideStack = false, long Target = 0, string? Folder = null, WebRequest? Web = null, string? CacheRoot = null);
+        bool HideStack = false, long Target = 0, string? Folder = null, WebRequest? Web = null, string? CacheRoot = null, string? BodyBase64 = null);
 
     /// <summary>A worker's reply.</summary>
     /// <param name="Id">The request answered.</param>
@@ -51,8 +52,9 @@ internal static class WorkerProtocol
     /// <param name="WebHeaders">A web handler's response headers, each a name and a value.</param>
     /// <param name="WebBodyBase64">A web handler's response body, base64.</param>
     /// <param name="WebRefused">Whether a web reply is the server's refusal (its status and reason) rather than the handler's answer.</param>
+    /// <param name="BodyBase64">A protobuf reply (<c>MATLAB_Result</c>), base64, for a call in that format (stage K16); empty for no outputs.</param>
     public sealed record Reply(long Id, int Status, string Reason, string? Body = null, string[]? Functions = null,
-        string[][]? WebHeaders = null, string? WebBodyBase64 = null, bool WebRefused = false);
+        string[][]? WebHeaders = null, string? WebBodyBase64 = null, bool WebRefused = false, string? BodyBase64 = null);
 
     public static async Task WriteAsync<T>(Stream stream, T message, CancellationToken cancellationToken)
     {

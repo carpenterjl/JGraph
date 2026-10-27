@@ -109,6 +109,10 @@ internal sealed class WorkerPool : IAsyncDisposable
     public Task<WorkerProtocol.Reply> CallAsync(string component, string function, string body, bool hideStack, TimeSpan timeout, CancellationToken cancellationToken, Action? started = null) =>
         RunAsync(new WorkerProtocol.Request(0, "call", component, Function: function, Body: body, HideStack: hideStack), $"{component}/{function}", timeout, cancellationToken, started);
 
+    /// <summary>Runs one request whose body is protobuf, <c>MATLAB_Params</c> (stage K16); the reply's bytes come back base64.</summary>
+    public Task<WorkerProtocol.Reply> CallProtobufAsync(string component, string function, byte[] body, bool hideStack, TimeSpan timeout, CancellationToken cancellationToken, Action? started = null) =>
+        RunAsync(new WorkerProtocol.Request(0, "call", component, Function: function, HideStack: hideStack, BodyBase64: Convert.ToBase64String(body)), $"{component}/{function} (protobuf)", timeout, cancellationToken, started);
+
     /// <summary>Runs a web request on a web handler (stage K15).</summary>
     public Task<WorkerProtocol.Reply> CallWebAsync(string component, string function, WorkerProtocol.WebRequest web, TimeSpan timeout, CancellationToken cancellationToken, Action? started = null) =>
         RunAsync(new WorkerProtocol.Request(0, "web", component, Function: function, Web: web), $"{component}/{function} (web)", timeout, cancellationToken, started);

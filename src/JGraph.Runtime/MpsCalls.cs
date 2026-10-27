@@ -8,6 +8,12 @@ namespace JGraph.Runtime;
 /// <param name="Body">The JSON reply for a 200: <c>{"lhs":[…]}</c> or <c>{"error":{…}}</c>; null otherwise.</param>
 public sealed record MpsReply(int Status, string Reason, string? Body);
 
+/// <summary>A Production Server's answer to one protobuf request (stage K16): the status, the reason phrase, and the <c>MATLAB_Result</c> bytes for a 200 (empty for no outputs).</summary>
+/// <param name="Status">The HTTP status code.</param>
+/// <param name="Reason">The reason phrase: <c>OK</c>, or R2025b's code and text.</param>
+/// <param name="Body">The protobuf reply for a 200; null otherwise.</param>
+public sealed record MpsBinaryReply(int Status, string Reason, byte[]? Body);
+
 /// <summary>
 /// A web handler's answer (compiler and SDK plan, stage K15): the handler's status, message, headers and
 /// body, or, when <paramref name="Refused"/>, the server's 500 and its reason for an answer that is not
@@ -67,13 +73,7 @@ public static class MpsCalls
         catch (DeployedException error)
         {
             // R2025b's server answers 200 with the error (k14_server: error.*); its frames name each file in full.
-            var frames = new List<(string Name, string File, int Line)>();
-            if (!hideStack)
-            {
-                frames.AddRange(error.Stack.Select(static f => (f.Name, f.File, f.Line)));
-            }
-
-            return new MpsReply(200, "OK", JgsMpsJson.EncodeError(error.Identifier, error.Message, frames, withStack: !hideStack));
+            return new MpsReply(200, "OK", JgsMpsJson.EncodeError(error.Identifier, error.Message, Frames(error, hideStack), withStack: !hideStack));
         }
 
         try
@@ -83,6 +83,58 @@ public static class MpsCalls
         catch (JgsMpsJson.Refused)
         {
             return new MpsReply(500, "ReturnTypeNotSupported Function return type not supported.", null);
+        }
+    }
+
+    /// <summary>
+    /// Answers a <c>POST /&lt;component&gt;/&lt;function&gt;</c> whose body is <c>application/x-google-protobuf</c>
+    /// (stage K16, k16_server): <c>MATLAB_Params</c> read by <see cref="JgsMpsProtobuf"/>, the function
+    /// called, and <c>MATLAB_Result</c> written back with the outputs or the error, as R2025b's muserve
+    /// answers MathWorks' own client libraries; a body that is not a request is a 400.
+    /// </summary>
+    public static Task<MpsBinaryReply> CallProtobufAsync(Component component, string function, byte[] requestBody, bool hideStack = false, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(component);
+        ArgumentException.ThrowIfNullOrEmpty(function);
+        ArgumentNullException.ThrowIfNull(requestBody);
+        return component.RunOnEngine(session => CallProtobuf(session, function, requestBody, hideStack, cancellationToken), cancellationToken);
+    }
+
+    private static MpsBinaryReply CallProtobuf(ComponentSession session, string function, byte[] requestBody, bool hideStack, CancellationToken cancellationToken)
+    {
+        JgsMpsProtobuf.ServerRequest request;
+        try
+        {
+            request = JgsMpsProtobuf.DecodeRequest(requestBody, session.Interpreter.FindClass);
+        }
+        catch (JgsMpsJson.ServerRefusal refusal)
+        {
+            return new MpsBinaryReply(refusal.Status, refusal.Code + " " + refusal.Reason, null);
+        }
+
+        if (request.Fault is not null)
+        {
+            // What muserve answers as a MATLAB error of its own (nargout.negative: "vector too long").
+            return new MpsBinaryReply(200, "OK", JgsMpsProtobuf.EncodeError("", request.Fault, [], withStack: false));
+        }
+
+        JgsValue[] outputs;
+        try
+        {
+            outputs = session.CallEngine(function, request.Nargout, request.Arguments, output: null, error: null, cancellationToken);
+        }
+        catch (DeployedException error)
+        {
+            return new MpsBinaryReply(200, "OK", JgsMpsProtobuf.EncodeError(error.Identifier, error.Message, Frames(error, hideStack), withStack: !hideStack));
+        }
+
+        try
+        {
+            return new MpsBinaryReply(200, "OK", JgsMpsProtobuf.EncodeResult([.. outputs.Take(request.Nargout)]));
+        }
+        catch (JgsMpsProtobuf.Refused refused)
+        {
+            return new MpsBinaryReply(200, "OK", JgsMpsProtobuf.EncodeError(refused.Identifier, refused.Message, [], withStack: false));
         }
     }
 
@@ -199,6 +251,21 @@ public static class MpsCalls
         }
 
         return new MpsWebReply(code, message, responseHeaders, bytes, Refused: false);
+    }
+
+    /// <summary>
+    /// An error's M-code frames as R2025b's server names them (k14_server, k16_server: error.nested): a local
+    /// function by its own name, where JGraph's stack says <c>file&gt;local</c>; none with the stack hidden.
+    /// </summary>
+    private static List<(string Name, string File, int Line)> Frames(DeployedException error, bool hideStack)
+    {
+        var frames = new List<(string Name, string File, int Line)>();
+        if (!hideStack)
+        {
+            frames.AddRange(error.Stack.Select(static f => (f.Name[(f.Name.LastIndexOf('>') + 1)..], f.File, f.Line)));
+        }
+
+        return frames;
     }
 
     private static bool IsScalar(JgsValue value) => value.Dims is [1, 1] or [];

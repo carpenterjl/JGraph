@@ -304,16 +304,11 @@ public sealed class ServerHost : IAsyncDisposable
             return;
         }
 
-        if (protobuf)
-        {
-            Refuse(400, "InvalidInputArgs Invalid rhs.");
-            return;
-        }
-
-        string text = WorkerProtocol.Utf8(body);
+        // The protobuf format (stage K16) carries MATLAB_Params and answers MATLAB_Result; JSON is stage K14's.
+        string? text = protobuf ? null : WorkerProtocol.Utf8(body);
         if (request.Query.TryGetValue("mode", out Microsoft.Extensions.Primitives.StringValues mode) && mode.ToString() == "async")
         {
-            await StartAsyncRequestAsync(context, component, function, text).ConfigureAwait(false);
+            await StartAsyncRequestAsync(context, component, function, text, protobuf ? body : null).ConfigureAwait(false);
             return;
         }
 
@@ -322,8 +317,7 @@ public sealed class ServerHost : IAsyncDisposable
         WorkerProtocol.Reply reply;
         try
         {
-            reply = await _pool.CallAsync(component, function, text, Instance.Config.HideErrorStack, Instance.Config.RequestTimeout, context.RequestAborted,
-                started: () => _metrics.Started(queued.Elapsed)).ConfigureAwait(false);
+            reply = await CallPoolAsync(component, function, text, protobuf ? body : null, context.RequestAborted, () => _metrics.Started(queued.Elapsed)).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -332,13 +326,41 @@ public sealed class ServerHost : IAsyncDisposable
         }
 
         _metrics.Finished(reply.Status == 200);
-        if (reply.Status != 200 || reply.Body is null)
+        if (reply.Status != 200 || (reply.Body is null && reply.BodyBase64 is null))
         {
             Refuse(reply.Status, reply.Reason);
             return;
         }
 
-        await WriteJsonAsync(context, reply.Body).ConfigureAwait(false);
+        if (reply.BodyBase64 is not null)
+        {
+            await WriteProtobufAsync(context, Convert.FromBase64String(reply.BodyBase64)).ConfigureAwait(false);
+            return;
+        }
+
+        await WriteJsonAsync(context, reply.Body!).ConfigureAwait(false);
+    }
+
+    /// <summary>One call on the pool, in the JSON format with <paramref name="text"/> or the protobuf one with <paramref name="protobufBody"/>.</summary>
+    private Task<WorkerProtocol.Reply> CallPoolAsync(string component, string function, string? text, byte[]? protobufBody, CancellationToken cancellationToken, Action started) =>
+        protobufBody is not null
+            ? _pool.CallProtobufAsync(component, function, protobufBody, Instance.Config.HideErrorStack, Instance.Config.RequestTimeout, cancellationToken, started)
+            : _pool.CallAsync(component, function, text ?? "", Instance.Config.HideErrorStack, Instance.Config.RequestTimeout, cancellationToken, started);
+
+    /// <summary>A 200 with a MATLAB_Result body; muserve sends no outputs as an empty body with its length and no type (k16_server: nargout.0).</summary>
+    private static async Task WriteProtobufAsync(HttpContext context, byte[] bytes)
+    {
+        context.Response.StatusCode = 200;
+        if (bytes.Length > 0)
+        {
+            context.Response.ContentType = "application/x-google-protobuf";
+        }
+
+        context.Response.ContentLength = bytes.Length;
+        if (bytes.Length > 0)
+        {
+            await context.Response.Body.WriteAsync(bytes, context.RequestAborted).ConfigureAwait(false);
+        }
     }
 
     /// <summary>The whole body, or null after a 413 for one past the limit as it is read.</summary>
@@ -552,7 +574,7 @@ public sealed class ServerHost : IAsyncDisposable
 
     // --- asynchronous requests (stage K15) --------------------------------------------------------------
 
-    private async Task StartAsyncRequestAsync(HttpContext context, string component, string function, string body)
+    private async Task StartAsyncRequestAsync(HttpContext context, string component, string function, string? body, byte[]? protobufBody)
     {
         string client = context.Request.Query.TryGetValue("client", out Microsoft.Extensions.Primitives.StringValues given) ? given.ToString() : "";
         AsyncRequest request = _async.Create(client);
@@ -561,23 +583,22 @@ public sealed class ServerHost : IAsyncDisposable
         context.Response.Headers["X-MPS-Start-Time"] = AsyncRequestRegistry.StartTime();
         await WriteJsonAsync(context, request.RepresentationJson(), 201).ConfigureAwait(false);
         request.Advance(AsyncState.InQueue);
-        _ = RunAsyncRequestAsync(request, component, function, body);
+        _ = RunAsyncRequestAsync(request, component, function, body, protobufBody);
     }
 
-    private async Task RunAsyncRequestAsync(AsyncRequest request, string component, string function, string body)
+    private async Task RunAsyncRequestAsync(AsyncRequest request, string component, string function, string? body, byte[]? protobufBody)
     {
         var queued = System.Diagnostics.Stopwatch.StartNew();
         bool processing = false;
         WorkerProtocol.Reply reply;
         try
         {
-            reply = await _pool.CallAsync(component, function, body, Instance.Config.HideErrorStack, Instance.Config.RequestTimeout, request.Cancellation.Token,
-                started: () =>
-                {
-                    processing = true;
-                    _metrics.Started(queued.Elapsed);
-                    request.Advance(AsyncState.Processing);
-                }).ConfigureAwait(false);
+            reply = await CallPoolAsync(component, function, body, protobufBody, request.Cancellation.Token, () =>
+            {
+                processing = true;
+                _metrics.Started(queued.Elapsed);
+                request.Advance(AsyncState.Processing);
+            }).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -593,7 +614,7 @@ public sealed class ServerHost : IAsyncDisposable
             return;
         }
 
-        bool ok = reply.Status == 200 && reply.Body is not null;
+        bool ok = reply.Status == 200 && (reply.Body is not null || reply.BodyBase64 is not null);
         _metrics.Finished(ok);
         request.Advance(ok ? AsyncState.Ready : AsyncState.Error, reply);
     }
@@ -704,6 +725,10 @@ public sealed class ServerHost : IAsyncDisposable
                 else if (!found.Terminal || found.Result is null)
                 {
                     Refuse(409, "RequestNotCompleted");
+                }
+                else if (found.State == AsyncState.Ready && found.Result.BodyBase64 is not null)
+                {
+                    await WriteProtobufAsync(context, Convert.FromBase64String(found.Result.BodyBase64)).ConfigureAwait(false);
                 }
                 else if (found.State == AsyncState.Ready && found.Result.Body is not null)
                 {
