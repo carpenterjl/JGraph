@@ -16,8 +16,9 @@ mathematics, shows MATLAB to be wrong. Being merely different, idiosyncratic, or
 among several does not qualify. The prioritised plan for every other divergence is
 `docs/plans/divergence-remediation-plan.md`.
 
-**18 of 456 rows qualify.** Section A holds the 6 where MATLAB's *mathematics* is wrong. Section B
-holds the 12 where MATLAB's *behaviour* is wrong: a crash, a hang, a stale state, or MATLAB
+**18 of 456 rows qualify**, and 4 more were added after the review (ADR 0275, dated in their rows).
+Section A holds the 6 where MATLAB's *mathematics* is wrong. Section B
+holds the 16 where MATLAB's *behaviour* is wrong: a crash, a hang, a stale state, or MATLAB
 contradicting itself. Section C lists 3 places where MATLAB is wrong and JGraph currently copies the
 error. Section D lists borderline rows that were considered and rejected.
 
@@ -34,7 +35,7 @@ error. Section D lists borderline rows that were considered and rejected.
 | 426 | [0182](adr/0182-calllib-pointers-and-structs.md) | a native function returning `UINT64_MAX` | `-1` | `1.8447e19`, with the int64Precision warning | MATLAB reinterprets an unsigned bit pattern as signed, so the value has the wrong sign and the wrong magnitude. *Caveat:* JGraph's value is right but rounded to a double. Exactness waits on real 64-bit integer storage (plan item 15). | Pre-registered R2025b defect, fixture `shrlib_types` row `uint64_max_ret`. |
 | 212 | [0103](adr/0103-a-named-matrix-is-a-rule-about-two-indices.md) | `toeplitz([])` | error `MATLAB:badsubscript` | 0×0 empty | MATLAB's `toeplitz.m` reads element 1 before checking that one exists. *Weak case:* an accidental error, not a wrong number. | Second road: `hankel([])` answers 0×0 in MATLAB. No documented restriction exists. |
 
-## B. MATLAB's behaviour is wrong: crash, hang, stale state, or self-contradiction (12)
+## B. MATLAB's behaviour is wrong: crash, hang, stale state, or self-contradiction (16)
 
 | Index line | ADR | Situation | MATLAB (R2025b) | JGraph | Why JGraph's answer stays |
 |---|---|---|---|---|---|
@@ -50,6 +51,10 @@ error. Section D lists borderline rows that were considered and rejected.
 | 423 | [0181](adr/0181-loadlibrary-and-the-prototype-model.md) | `loadlibrary(...,'mfilename','dir/x')` | ignores the folder and writes into the current folder | writes where it was told | MATLAB ignores its own argument. Pre-registered in the interop plan, step 0, finding 9. |
 | 432 | [0183](adr/0183-interop-views-completion-and-gate.md) | `methodsview` "Inherited From" column | blanks some inherited rows, and which ones changes from run to run | names the defining class on every inherited row | A nondeterministic column is wrong by construction. Fixture `views_methods`, four rows. |
 | 348 | [0149](adr/0149-a-file-takes-a-builtin-name-unless-a-method-claims-the-call.md) | call a name after deleting the file that shadowed it (`delete('eps.m'); eps`) | error "Previously accessible file … is now inaccessible" | falls through to the next layer (the built-in) | MATLAB errors on a stale path-cache entry. The shadow no longer exists, so the built-in is the right answer. A file that exists but cannot be read still gets MATLAB's error. |
+| 1085 | [0275](adr/0275-matlab-projects-and-compiler-tasks.md) | a compiler task's deployment script for a standalone application (`DeployScriptBuilder`; added 2026-10-26, after the review) | a task with `SuppressWindowsCmdPrompt` false is built by `compiler.build.standaloneWindowsApplication` and one with it true by `standaloneApplication` | the task that suppresses the prompt is the Windows application | The generator contradicts the option it reads: the probe's `script.Standalone.console.web` (prompt kept) names the Windows build and `script.Standalone.MCRInstaller` (prompt suppressed) the console build. |
+| 1085 | [0275](adr/0275-matlab-projects-and-compiler-tasks.md) | the same script with `RuntimeInstallType` `installer` (added 2026-10-26) | no `RuntimeDelivery` line, so the installer the script makes fetches the runtime from the web | `packageOpts.RuntimeDelivery = "installer"` | `NONE` is written as `"none"` and `web` is the default, so `installer` alone is lost; the task's own setting says what the installer should carry. |
+| 1085 | [0275](adr/0275-matlab-projects-and-compiler-tasks.md) | the same script with `InstallerAdditionalFileList` set (added 2026-10-26) | the files are written nowhere | `packageOpts.AdditionalFiles = [...]` | The task holds the files and labels them Installer Additional Files; the script that stands for the task must carry them. |
+| 1086 | [0275](adr/0275-matlab-projects-and-compiler-tasks.md) | `compiler.project.DotNETLibraryConfigurationOptions`'s `StrongNameKeyFileLabel` (added 2026-10-26) | `Name` is "Sample File" | "Strong Key File (.NET Shared Assembly)" | The class's own category carries a label of that name for the strong key file, and `StrongNameKeyFile` is read through it; the struct names the wrong label. |
 | 500 | [0200](adr/0200-the-rest-of-uicontrol-and-the-button-group.md) | a `uicontrol`'s `SliderStep` set from a `single` or an integer class (added 2026-10-04, after the review) | reads the bytes as doubles: `single([0.1 0.3])` reads back `[3.8e-07 0]`, `int8([0 1])` `[1.3e-321 0]` | the numbers given | MATLAB converts every other numeric property of the same object (`Value`, `Min`, `Max`) by value; a step that reads back as garbage is no step. The second road is the same call with `double(...)`, which reads back what was set. |
 
 ## C. MATLAB is wrong and JGraph currently copies it (3)

@@ -113,6 +113,7 @@ internal static partial class JgsBuiltins
         if (host.Deployment is null)
         {
             RegisterCompilerBuiltins(env, interpreter, host);
+            RegisterProjectBuiltins(env, interpreter, host); // MATLAB Projects and compiler tasks (stage K20)
         }
 
         // MATLAB Production Server's metrics and cache helpers (stage K15), in every session: a deployed function emits metrics.

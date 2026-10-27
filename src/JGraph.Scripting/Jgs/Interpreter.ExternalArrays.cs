@@ -238,7 +238,15 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue[]? ExternalArraySpread(MemberExpr member, JgsEnvironment env)
     {
-        if (RootName(member.Target) is not { } root || !LookUp(root, env, out JgsValue holder) || holder.AsExternalOrNull() is not IJgsExternalArray)
+        // The root holds an external array, or an external object whose member may be one (a project's
+        // Categories, stage K20: {proj.Categories.Name} is one name per category); or the target is a
+        // call whose answer may be one ({findCategory(p, 'Owners').LabelDefinitions.Name}), evaluated
+        // once here and answered as the plain path would answer when it is not.
+        string? rootName = RootName(member.Target);
+        JgsValue holder = JgsValue.Null;
+        bool rootIsVariable = rootName is not null && LookUp(rootName, env, out holder);
+        bool rootIsExternal = rootIsVariable && holder.AsExternalOrNull() is IJgsExternalArray or Devices.DeviceObject;
+        if (!rootIsExternal && (rootIsVariable || !HasCallRoot(member.Target)))
         {
             return null;
         }
@@ -258,6 +266,14 @@ internal sealed partial class Interpreter
 
         return [MemberOf(owner, field, member, autoCall: true)];
     }
+
+    /// <summary>Whether a member chain starts at a call: <c>f(x).A.B</c>.</summary>
+    private static bool HasCallRoot(Expr target) => target switch
+    {
+        CallExpr => true,
+        MemberExpr inner => HasCallRoot(inner.Target),
+        _ => false,
+    };
 
     /// <summary>
     /// A bracket whose pieces include an array of external values, or a device object (which joins

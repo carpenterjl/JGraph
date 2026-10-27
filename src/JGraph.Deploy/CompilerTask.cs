@@ -311,26 +311,79 @@ public sealed class CompilerTaskModel
     /// <summary>The installer's own AdditionalFiles ("Files Packaged in the Installer").</summary>
     public List<string> InstallerAdditionalFiles { get; } = [];
 
+    /// <summary>The installer's Version (a project task's InstallerVersion); the script writes it when it is not 1.0.0.</summary>
+    public string InstallerVersion { get; set; } = "1.0.0";
+
+    /// <summary>The Windows Apps &amp; Features icon (a project task's InstallerAddRemoveProgramsIconFile), or empty.</summary>
+    public string InstallerAddRemoveProgramsIcon { get; set; } = "";
+
+    // --- What a project task carries beyond the K19 window (stage K20) ---
+
+    /// <summary>Verbose (a project task's; the script always builds verbosely, as R2025b's does).</summary>
+    public bool Verbose { get; set; } = true;
+
+    /// <summary>EmbedArchive.</summary>
+    public bool EmbedArchive { get; set; } = true;
+
+    /// <summary>DebugBuild (the library targets).</summary>
+    public bool DebugBuild { get; set; }
+
+    /// <summary>A standalone application's help text, written to a temporary CustomHelpTextFile by the script.</summary>
+    public string HelpText { get; set; } = "";
+
+    /// <summary>A standalone application's example text (shown by the app, not built).</summary>
+    public string ExampleText { get; set; } = "";
+
+    /// <summary>A standalone application's CustomHelpTextFile, or empty.</summary>
+    public string CustomHelpTextFile { get; set; } = "";
+
+    /// <summary>A .NET assembly's EnableRemoting.</summary>
+    public bool EnableRemoting { get; set; }
+
+    /// <summary>A .NET assembly's FrameworkVersion.</summary>
+    public string FrameworkVersion { get; set; } = "4.0";
+
+    /// <summary>A .NET assembly's StrongNameKeyFile, or empty.</summary>
+    public string StrongNameKeyFile { get; set; } = "";
+
+    /// <summary>An Excel add-in's GenerateVisualBasicFile.</summary>
+    public bool GenerateVisualBasicFile { get; set; } = true;
+
+    /// <summary>An Excel add-in's Name (its installer's application name), or empty for the add-in name.</summary>
+    public string DisplayName { get; set; } = "";
+
+    /// <summary>The project the task lives in, when it does: the root the script's paths are relative to and the output folders sit under.</summary>
+    public string? ProjectRootOverride { get; set; }
+
+    /// <summary>The task's name in its project, which names its output folders (<c>&lt;name&gt;\output\build</c>); empty outside a project.</summary>
+    public string TaskName { get; set; } = "";
+
     /// <summary>The files the task starts from: the main file, or the exported functions.</summary>
     public IReadOnlyList<string> SourceFiles => CompilerTargets.HasMainFile(Target)
         ? (MainFile is { Length: > 0 } main ? [main] : [])
         : ExportedFunctions;
 
-    /// <summary>The project root the script's paths are relative to: the first source file's folder, or null with none.</summary>
-    public string? ProjectRoot => SourceFiles.Count > 0 ? Path.GetDirectoryName(Path.GetFullPath(SourceFiles[0])) : null;
+    /// <summary>The project root the script's paths are relative to: the project's when the task is in one, else the first source file's folder, or null with none.</summary>
+    public string? ProjectRoot => ProjectRootOverride ?? (SourceFiles.Count > 0 ? Path.GetDirectoryName(Path.GetFullPath(SourceFiles[0])) : null);
 
     /// <summary>The name the build uses: <see cref="Name"/>, else the first source file's.</summary>
     public string EffectiveName => Name.Length > 0 ? Name
         : SourceFiles.Count > 0 ? Path.GetFileNameWithoutExtension(SourceFiles[0])
         : "";
 
+    /// <summary>The executable's name: <see cref="ExecutableName"/>, else the application's name without blanks.</summary>
+    public string EffectiveExecutableName => ExecutableName.Length > 0 ? ExecutableName : EffectiveName.Replace(" ", "", StringComparison.Ordinal);
+
+    /// <summary>The folder the default output folders sit in: the task's name in a project, else the build's name.</summary>
+    private string OutputFolderName => TaskName.Length > 0 ? TaskName : EffectiveName;
+
     /// <summary>The build's output folder as the script writes it.</summary>
     public string EffectiveOutputFolder => OutputFolder.Length > 0 ? OutputFolder
-        : ProjectRoot is { } root ? Path.Combine(root, EffectiveName, "output", "build") : "";
+        : ProjectRoot is { } root ? Path.Combine(root, OutputFolderName, "output", "build") : "";
 
     /// <summary>The installer's output folder as the script writes it.</summary>
     public string EffectivePackageFolder => PackageFolder.Length > 0 ? PackageFolder
-        : ProjectRoot is { } root ? Path.Combine(root, EffectiveName, "output", "package") : "";
+        : ProjectRoot is { } root ? Path.Combine(root, OutputFolderName, "output", "package") : "";
 
     /// <summary>The installer's DefaultInstallationDir: the root and the subfolder (the name when none).</summary>
     public string DefaultInstallationDir => Path.Combine(InstallRoot, InstallSubfolder.Length > 0 ? InstallSubfolder : EffectiveName);

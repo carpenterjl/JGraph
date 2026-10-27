@@ -294,17 +294,20 @@ internal static partial class JgsBuiltins
     private static void OpenCompilerApp(
         JgsEnvironment env, Interpreter interpreter, JGraphScriptGlobals host, string name, CompilerTarget? target, string? file, int line, int col)
     {
+        bool isProject = false;
         if (file is not null)
         {
             string extension = Path.GetExtension(file);
-            if (extension.Equals(".prj", StringComparison.OrdinalIgnoreCase))
+            isProject = extension.Equals(".prj", StringComparison.OrdinalIgnoreCase);
+            if (isProject && !JGraph.Deploy.Projects.ProjectDefinitionFiles.IsProjectFile(file))
             {
-                throw new JgsRuntimeException(line, col, "JGraph:compilerApps:NoProject",
-                    $"'{file}' is a project, and JGraph has no MATLAB projects yet (compiler and SDK plan, stage K20): {name} opens its app on a "
-                    + "MATLAB file given as the main file, or with nothing, and Create Build Script keeps the task as a script.");
+                // A legacy deployment project (<deployment-project>): read by stage K21, refused until then.
+                throw new JgsRuntimeException(line, col, "JGraph:compilerApps:LegacyProject",
+                    $"'{file}' is a deployment project of the older kind (a <deployment-project> file), which JGraph does not read yet (compiler and SDK plan, stage K21): "
+                    + $"{name} opens a MATLAB project's .prj with its compiler tasks, or a MATLAB file as the main file.");
             }
 
-            if (!AppFileExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase))
+            if (!isProject && !AppFileExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase))
             {
                 throw new JgsRuntimeException(line, col, "JGraph:compilerApps:NotAMatlabFile",
                     $"'{file}' is not a MATLAB file: {name} takes a main file (.m, .mlapp, .mlx or .p) or a project (.prj).");
@@ -323,7 +326,21 @@ internal static partial class JgsBuiltins
             Analyze = roots => AnalyzeDependencies(env, interpreter, host, roots, topOnly: false),
             CurrentFolder = host.CurrentDirectory,
         };
-        if (apps.Open(target, file, services) is { } refused)
+
+        // A project opens as R2025b opens it, and its Compiler Task Manager shows its tasks (stage K20); with
+        // a project already open and no file, the manager too, since a task lives in a project.
+        JGraph.Deploy.Projects.MatlabProject? project = null;
+        if (isProject)
+        {
+            project = OpenProject(env, interpreter, host, file!, line, col).Project;
+        }
+        else if (file is null && host.Projects.Current is { } current)
+        {
+            project = current;
+        }
+
+        string? refusal = project is not null ? apps.OpenTaskManager(project, target, services) : apps.Open(target, file, services);
+        if (refusal is { } refused)
         {
             throw new JgsRuntimeException(line, col, "JGraph:compilerApps:CannotOpen", refused);
         }

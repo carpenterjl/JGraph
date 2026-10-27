@@ -62,6 +62,15 @@ public sealed class CompilerAppsTests : IAsyncLifetime
             Services = services;
             return Refusal;
         }
+
+        public List<(string Root, CompilerTarget? Target)> Managed { get; } = [];
+
+        public string? OpenTaskManager(JGraph.Deploy.Projects.MatlabProject project, CompilerTarget? preferred, CompilerAppServices services)
+        {
+            Managed.Add((project.RootFolder, preferred));
+            Services = services;
+            return Refusal;
+        }
     }
 
     /// <summary>The identifier and message a statement fails with, or "ok", and the warning it raised.</summary>
@@ -144,54 +153,54 @@ public sealed class CompilerAppsTests : IAsyncLifetime
         string script = DeploymentScript.Generate(task, package: true);
         string expected = string.Join("\n",
         [
-            "% Set the path to the project root directory.",
             $"projectRoot = \"{_folder}\";",
             "",
             "% Create target build options object, set build properties and build.",
             "buildOpts = compiler.build.StandaloneApplicationOptions(fullfile(projectRoot, \"k19_hello.m\"));",
-            "buildOpts.ExecutableVersion = \"2.1\";",
-            "buildOpts.ExecutableIcon = fullfile(projectRoot, \"icon.png\");",
-            "buildOpts.TreatInputsAsNumeric = true;",
             "buildOpts.AdditionalFiles = [fullfile(projectRoot, \"data\", \"x.txt\"), \"C:\\elsewhere\\y.txt\"];",
+            "buildOpts.AutoDetectDataFiles = true;",
             "buildOpts.OutputDir = fullfile(projectRoot, \"Hello App\", \"output\", \"build\");",
+            "buildOpts.ObfuscateArchive = false;",
             "buildOpts.Verbose = true;",
-            "buildResults = compiler.build.standaloneWindowsApplication(buildOpts);",
+            "buildOpts.EmbedArchive = true;",
+            "buildOpts.ExecutableIcon = fullfile(projectRoot, \"icon.png\");",
+            "buildOpts.ExecutableName = \"HelloApp\";",
+            "buildOpts.ExecutableVersion = \"2.1\";",
+            "buildOpts.TreatInputsAsNumeric = true;",
+            "buildResult = compiler.build.standaloneWindowsApplication(buildOpts);",
             "",
-            "% Download the MATLAB Runtime to include in the installer.",
-            "compiler.runtime.download;",
             "",
             "% Create package options object, set package properties and package.",
-            "packageOpts = compiler.package.InstallerOptions(buildResults);",
+            "packageOpts = compiler.package.InstallerOptions(buildResult);",
             "packageOpts.ApplicationName = \"Hello App\";",
-            "packageOpts.Version = \"2.1\";",
             "packageOpts.AuthorName = \"A. Author\";",
             "packageOpts.InstallationNotes = \"Say \"\"hi\"\"\";",
-            "packageOpts.RuntimeDelivery = \"installer\";",
-            "packageOpts.DefaultInstallationDir = \"%ProgramFiles%\\Hello App\";",
             "packageOpts.OutputDir = fullfile(projectRoot, \"Hello App\", \"output\", \"package\");",
+            "packageOpts.RuntimeDelivery = \"installer\";",
             "packageOpts.Verbose = true;",
-            "compiler.package.installer(buildResults, \"Options\", packageOpts);",
+            "compiler.package.installer(buildResult, \"Options\", packageOpts);",
             "",
         ]);
         Assert.Equal(expected, script);
 
-        // The package part alone, for the dialog's second step, over the build's buildResults.
+        // The package part alone, for the dialog's second step, over the build's buildResult.
         string packageOnly = DeploymentScript.GeneratePackageOnly(task);
-        Assert.StartsWith($"projectRoot = \"{_folder}\";\n% Download the MATLAB Runtime", packageOnly);
+        Assert.StartsWith($"projectRoot = \"{_folder}\";\n% Create package options object", packageOnly);
         Assert.DoesNotContain("buildOpts", packageOnly);
 
-        // An archive packages nothing; .NET and C++ note the version the Data API ignores.
+        // An archive packages nothing; .NET takes its functions through a class map.
         var archive = new CompilerTaskModel(CompilerTarget.ProductionServerArchive) { Name = "arch" };
         archive.ExportedFunctions.Add(Path.Combine(_folder, "k19_hello.m"));
         archive.FunctionSignatures = Path.Combine(_folder, "sig.json");
         string archiveScript = DeploymentScript.Generate(archive, package: true);
-        Assert.Contains("buildOpts = compiler.build.ProductionServerArchiveOptions(fullfile(projectRoot, \"k19_hello.m\"));\nbuildOpts.ArchiveName = \"arch\";\nbuildOpts.FunctionSignatures = fullfile(projectRoot, \"sig.json\");", archiveScript);
-        Assert.EndsWith("buildResults = compiler.build.productionServerArchive(buildOpts);\n", archiveScript);
+        Assert.Contains("buildOpts = compiler.build.ProductionServerArchiveOptions(fullfile(projectRoot, \"k19_hello.m\"));\nbuildOpts.AutoDetectDataFiles = true;", archiveScript);
+        Assert.EndsWith("buildOpts.ArchiveName = \"arch\";\nbuildOpts.FunctionSignatures = fullfile(projectRoot, \"sig.json\");\nbuildResult = compiler.build.productionServerArchive(buildOpts);\n", archiveScript);
         var dotnet = new CompilerTaskModel(CompilerTarget.DotNetAssembly) { Name = "Net" };
         dotnet.ExportedFunctions.Add(Path.Combine(_folder, "k19_hello.m"));
         dotnet.ExportedFunctions.Add(Path.Combine(_folder, "k19_other.m"));
         string dotnetScript = DeploymentScript.Generate(dotnet, package: false);
-        Assert.Contains("DotNETAssemblyOptions([fullfile(projectRoot, \"k19_hello.m\"), fullfile(projectRoot, \"k19_other.m\")]);\nbuildOpts.AssemblyName = \"Net\";\nbuildOpts.Interface = \"matlab-data\";\n% \"AssemblyVersion\" will be ignored when using the 'matlab-data' api.\nbuildOpts.AssemblyVersion = \"1.0\";", dotnetScript);
+        Assert.Contains("classmap = containers.Map;\nclassmap(\"Class1\") = [fullfile(projectRoot, \"k19_hello.m\"), fullfile(projectRoot, \"k19_other.m\")];\nbuildOpts = compiler.build.DotNETAssemblyOptions(classmap);", dotnetScript);
+        Assert.Contains("buildOpts.AssemblyName = \"Net\";\nbuildOpts.AssemblyVersion = \"1.0\";\nbuildOpts.DebugBuild = false;\nbuildOpts.EmbedArchive = \"on\";\nbuildOpts.Interface = \"matlab-data\";", dotnetScript);
         Assert.Equal("compiler.build.cppSharedLibrary", DeploymentScript.BuildFunction(new CompilerTaskModel(CompilerTarget.CppSharedLibrary)));
     }
 
@@ -245,7 +254,7 @@ public sealed class CompilerAppsTests : IAsyncLifetime
     [InlineData("standaloneApplicationCompiler('a', 'b')", "MATLAB:TooManyInputs | Too many input arguments.")]
     [InlineData("x = standaloneApplicationCompiler", "MATLAB:TooManyOutputs | Too many output arguments.")]
     [InlineData("productionServerArchiveCompiler('k19none.prj')", "MATLAB:open:fileNotFound | File 'k19none.prj' not found.")]
-    [InlineData("standaloneApplicationCompiler('k19stub.prj')", "JGraph:compilerApps:NoProject")]
+    [InlineData("standaloneApplicationCompiler('k19stub.prj')", "JGraph:compilerApps:LegacyProject")]
     [InlineData("standaloneApplicationCompiler('k19note.txt')", "JGraph:compilerApps:NotAMatlabFile")]
     [InlineData("excelAddinCompiler('x')", "MATLAB:TooManyInputs | Too many input arguments.")]
     [InlineData("javaPackageCompiler", "JGraph:compilerApps:targetOutOfScope")]

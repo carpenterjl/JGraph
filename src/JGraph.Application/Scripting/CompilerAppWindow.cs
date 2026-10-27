@@ -74,12 +74,32 @@ internal sealed class CompilerAppWindow : Window
     private bool _loading;
     private bool _busy;
 
+    /// <summary>A window over a project's task (stage K20): every edit is written back to the project at once.</summary>
+    public CompilerAppWindow(JGraph.Deploy.Projects.CompilerTaskConfiguration source, CompilerAppServices services)
+        : this(source.Target ?? throw new ArgumentException("The task's target is not one JGraph builds.", nameof(source)), services,
+            source.ToTaskModel() ?? throw new ArgumentException("The task's target is not one JGraph builds.", nameof(source)))
+    {
+        Source = source;
+        Title = CompilerTargets.AppTitle(Target) + " - " + source.Name;
+        if (Task.IsDeployable)
+        {
+            Analyze();
+        }
+
+        Refresh();
+    }
+
     public CompilerAppWindow(CompilerTarget target, CompilerAppServices services)
+        : this(target, services, new CompilerTaskModel(target))
+    {
+    }
+
+    private CompilerAppWindow(CompilerTarget target, CompilerAppServices services, CompilerTaskModel task)
     {
         ArgumentNullException.ThrowIfNull(services);
         Target = target;
         _services = services;
-        Task = new CompilerTaskModel(target);
+        Task = task;
         Title = CompilerTargets.AppTitle(target);
         Width = 1040;
         Height = 760;
@@ -155,6 +175,9 @@ internal sealed class CompilerAppWindow : Window
 
     /// <summary>The task as the window holds it.</summary>
     public CompilerTaskModel Task { get; }
+
+    /// <summary>The project task the window is over, or null for a task the window alone holds (stage K19's form).</summary>
+    public JGraph.Deploy.Projects.CompilerTaskConfiguration? Source { get; }
 
     /// <summary>
     /// Runs a script in the MATLAB session, as the Build and Package steps need; null when there is
@@ -542,6 +565,18 @@ internal sealed class CompilerAppWindow : Window
 
             _code.Text = Task.IsDeployable ? Script : "% " + Task.StatusText;
             _status.Text = Task.StatusText;
+            if (Source is { } source)
+            {
+                // A project's task is saved as it is edited, as R2025b saves one.
+                try
+                {
+                    source.ApplyTaskModel(Task);
+                }
+                catch (Exception ex) when (ex is JGraph.Deploy.Projects.ProjectException or IOException or UnauthorizedAccessException)
+                {
+                    _status.Text = "The task could not be saved to the project: " + ex.Message;
+                }
+            }
         }
         finally
         {

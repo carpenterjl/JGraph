@@ -915,7 +915,7 @@ internal sealed class JgsLifetime
 
                 break;
             case Devices.DeviceObject device:
-                if (device.Exact == 0 && !device.Deleted)
+                if (device.Exact == 0 && !device.Deleted && device.DeletesWhenUnheld)
                 {
                     device.Delete(); // closes the port and saves the serialport settings (internal.Serialport.delete)
                 }

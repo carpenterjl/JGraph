@@ -222,6 +222,13 @@ internal abstract class DeviceObject : IJgsExternal
     /// <summary>Whether <c>delete</c> has run.</summary>
     public bool Deleted { get; private set; }
 
+    /// <summary>
+    /// Whether the object is deleted once no holder is left (a port, a socket): true for a device;
+    /// false for a view the session itself keeps alive, such as a project's handle, which R2025b
+    /// keeps while the project is loaded (stage K20).
+    /// </summary>
+    public virtual bool DeletesWhenUnheld => true;
+
     // --- exact lifetime (ADR 0171) ---------------------------------------------------------------
 
     /// <summary>How many holders the lifetime count sees.</summary>

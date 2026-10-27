@@ -1,13 +1,12 @@
 using JGraph.Deploy;
+using JGraph.Deploy.Projects;
 
 namespace JGraph.Scripting;
 
 /// <summary>
-/// The host's compiler apps (compiler and SDK plan, stage K19), behind <c>standaloneApplicationCompiler</c>
-/// and its siblings, <c>applicationCompiler</c>, <c>libraryCompiler</c>, <c>productionServerCompiler</c>
-/// and <c>deploytool</c>: the app brings its window up; a host without windows (the CLI, a batch run,
-/// tests) passes none, and the builtin refuses with the reason. Invoked on the engine's background
-/// thread, so a UI host marshals it.
+/// The host's compiler apps (compiler and SDK plan, stage K19): what <c>standaloneApplicationCompiler</c>
+/// and its siblings open from a script. A host with windows (the JGraph app) shows the app; a session
+/// without one refuses the call before reaching here.
 /// </summary>
 public interface IScriptCompilerApps
 {
@@ -21,9 +20,20 @@ public interface IScriptCompilerApps
     /// <param name="services">What the window asks the session for.</param>
     /// <returns>Null when it opened, else why the app could not open.</returns>
     string? Open(CompilerTarget? target, string? mainFile, CompilerAppServices services);
+
+    /// <summary>
+    /// Brings up the Compiler Task Manager for the open project (stage K20): its tasks, with the
+    /// app for <paramref name="preferred"/> offered first for a new task, and returns once the
+    /// window is up.
+    /// </summary>
+    /// <param name="project">The open project.</param>
+    /// <param name="preferred">The target the command that opened the manager stands for, or null for the gallery.</param>
+    /// <param name="services">What the windows ask the session for.</param>
+    /// <returns>Null when it opened, else why not.</returns>
+    string? OpenTaskManager(MatlabProject project, CompilerTarget? preferred, CompilerAppServices services);
 }
 
-/// <summary>What a compiler app's window asks the session that opened it for.</summary>
+/// <summary>What a compiler app's window asks of the session that opened it.</summary>
 public sealed class CompilerAppServices
 {
     /// <summary>

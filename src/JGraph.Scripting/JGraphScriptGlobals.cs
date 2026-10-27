@@ -816,6 +816,11 @@ public sealed class JGraphScriptGlobals
     /// <summary>The device session if the script has made one: what another thread reads, since it must not make it.</summary>
     internal Jgs.Devices.DeviceSession? DevicesOrNull => _devices;
 
+    private Jgs.Devices.ProjectSession? _projects;
+
+    /// <summary>The session's open MATLAB project, if any (compiler and SDK plan, stage K20).</summary>
+    internal Jgs.Devices.ProjectSession Projects => _projects ??= new Jgs.Devices.ProjectSession();
+
     /// <summary>
     /// Stops the echo servers <c>echotcpip</c> and <c>echoudp</c> started: they end with the run or the
     /// console session, as fopen's files do (R2025b's end with MATLAB).

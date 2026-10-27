@@ -538,6 +538,17 @@ internal static partial class JgsBuiltins
         {
             Arity("num2cell", args, 1, line, col);
 
+            // A struct array's elements, one per cell, in its shape (stage K20: a metaclass's lists).
+            if (args[0].Type == JgsType.Struct)
+            {
+                JgsValue[] elements = args[0].AsStructArray.Elements
+                    .Select(fields => JgsValue.Struct(new Dictionary<string, JgsValue>(fields, StringComparer.Ordinal)))
+                    .ToArray();
+                JgsValue structs = JgsValue.Cell(elements);
+                structs.Reshape(args[0].Rows, args[0].Cols);
+                return structs;
+            }
+
             // M2: over a cell the elements are the argument's own children, and each slot of the
             // answer is an entry, so it takes a share; over an array they are fresh numbers, for
             // which a share is the value itself. A 2-D argument keeps its shape (open item 116).

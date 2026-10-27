@@ -331,6 +331,31 @@ internal static partial class JgsBuiltins
                 return MetaClassOf(args[0].ObjectClass);
             }
 
+            if (args[0].AsExternalOrNull() is Devices.DeviceObject device)
+            {
+                // A device class's declaration as R2025b's metaclass shows one: the properties with their
+                // access, the superclasses, the methods (stage K20, for a project's task configuration).
+                var propertyList = device.Class.Properties.Select(p => new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+                {
+                    ["Name"] = JgsValue.Str(p.Name),
+                    ["GetAccess"] = JgsValue.Str("public"),
+                    ["SetAccess"] = JgsValue.Str(p.Set is null ? "none" : "public"),
+                    ["Dependent"] = JgsValue.Bool(false),
+                    ["Constant"] = JgsValue.Bool(false),
+                    ["Hidden"] = JgsValue.Bool(p.Hidden),
+                }).ToArray();
+                var superclassList = device.Class.Superclasses.Select(s => new Dictionary<string, JgsValue>(StringComparer.Ordinal) { ["Name"] = JgsValue.Str(s) }).ToArray();
+                JgsValue meta = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+                {
+                    ["Name"] = JgsValue.Str(device.ClassName),
+                    ["PropertyList"] = propertyList.Length == 0 ? JgsValue.StructArray(new JgsStructArray([], ["Name", "GetAccess", "SetAccess", "Dependent", "Constant", "Hidden"]), 0, 1) : JgsValue.StructArray(new JgsStructArray(propertyList), propertyList.Length, 1),
+                    ["SuperclassList"] = superclassList.Length == 0 ? JgsValue.StructArray(new JgsStructArray([], ["Name"]), 0, 1) : JgsValue.StructArray(new JgsStructArray(superclassList), superclassList.Length, 1),
+                    ["MethodList"] = CellColumn(device.Class.MethodListing.ToList()),
+                });
+                meta.SetClassName(JgsRunningDialect.ThreadIsMatlab ? "matlab.metadata.Class" : MetaClassName);
+                return meta;
+            }
+
             JgsValue described = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
             {
                 ["Name"] = JgsValue.Str(ClassOf(args[0], JgsDialect.Matlab)),

@@ -15,6 +15,8 @@ namespace JGraph.Application.Scripting;
 public partial class ScriptWorkspaceWindow
 {
     private readonly Dictionary<CompilerTarget, CompilerAppWindow> _compilerApps = [];
+    private readonly Dictionary<string, CompilerAppWindow> _taskWindows = new(StringComparer.OrdinalIgnoreCase);
+    private CompilerTaskManagerWindow? _taskManager;
     private CompilerAppGalleryWindow? _compilerGallery;
     private IScriptCompilerApps? _compilerAppsHost;
     private CompilerAppServices? _compilerServices;
@@ -65,6 +67,58 @@ public partial class ScriptWorkspaceWindow
 
         window.Bring();
         return null;
+    }
+
+    /// <summary>
+    /// Brings up the Compiler Task Manager over <paramref name="project"/> (stage K20), one window
+    /// per session, remade when the project changes; a task it opens gets the app window for its
+    /// target over the task, one per task.
+    /// </summary>
+    /// <returns>Null when it opened, else why not.</returns>
+    private string? OpenTaskManager(JGraph.Deploy.Projects.MatlabProject project, CompilerTarget? preferred, CompilerAppServices services)
+    {
+        _compilerServices = services;
+        if (_taskManager is null || !string.Equals(_taskManager.Tag as string, project.RootFolder, StringComparison.OrdinalIgnoreCase))
+        {
+            _taskManager?.Close();
+            _taskManager = new CompilerTaskManagerWindow(project, preferred, task => OpenTaskWindow(task, services)) { Tag = project.RootFolder };
+            _taskManager.Closed += (_, _) => _taskManager = null;
+        }
+        else
+        {
+            _taskManager.Refresh();
+        }
+
+        _taskManager.Show();
+        if (_taskManager.WindowState == System.Windows.WindowState.Minimized)
+        {
+            _taskManager.WindowState = System.Windows.WindowState.Normal;
+        }
+
+        _taskManager.Activate();
+        return null;
+    }
+
+    /// <summary>The app window over one project task, made when first wanted.</summary>
+    private void OpenTaskWindow(JGraph.Deploy.Projects.CompilerTaskConfiguration task, CompilerAppServices services)
+    {
+        string key = task.Project.RootFolder + "|" + task.Name;
+        if (!_taskWindows.TryGetValue(key, out CompilerAppWindow? window))
+        {
+            try
+            {
+                window = new CompilerAppWindow(task, services) { Runner = RunCompilerScriptAsync };
+            }
+            catch (ArgumentException)
+            {
+                return; // a target JGraph does not build; the manager says so
+            }
+
+            window.Closed += (_, _) => _taskWindows.Remove(key);
+            _taskWindows[key] = window;
+        }
+
+        window.Bring();
     }
 
     /// <summary>The Deploy menu: the app's command run at the prompt, so the window opens as it does from a script.</summary>
@@ -144,5 +198,8 @@ public partial class ScriptWorkspaceWindow
     {
         public string? Open(CompilerTarget? target, string? mainFile, CompilerAppServices services) =>
             window.Dispatcher.Invoke(() => window.OpenCompilerApp(target, mainFile, services));
+
+        public string? OpenTaskManager(JGraph.Deploy.Projects.MatlabProject project, CompilerTarget? preferred, CompilerAppServices services) =>
+            window.Dispatcher.Invoke(() => window.OpenTaskManager(project, preferred, services));
     }
 }
