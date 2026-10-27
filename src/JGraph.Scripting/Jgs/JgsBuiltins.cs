@@ -1331,6 +1331,7 @@ internal static partial class JgsBuiltins
                         ?? throw new JgsRuntimeException(line, col, $"fprintf: {fid} is not an open file.");
                     byte[] bytes = entry.Encoding.GetBytes(text);
                     entry.Stream.Write(bytes, 0, bytes.Length);
+                    entry.Stream.Flush(); // a reader sees the text while the file stays open, as R2025b's deployment script relies on (its help text file is built from before it is closed)
                     written = bytes.Length;
                     break;
             }

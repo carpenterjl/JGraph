@@ -1,0 +1,16 @@
+createDeploymentScript	0	6
+compiler.internal.readPRJStruct	1	0
+matlab.internal.deployment.readPRJStruct	1	0
+compiler.internal.build.legacyProject	1	0
+compiler.internal.package.legacyProject	0	0
+matlab.internal.deployment.createProjectModelFromPRJ	3	0
+compiler.internal.ui.getStandaloneDeploymentScript	1	0
+compiler.internal.ui.getCSharedLibraryDeploymentScript	1	0
+compiler.internal.ui.getCppSharedLibraryDeploymentScript	1	0
+compiler.internal.ui.getDotNETDeploymentScript	1	0
+compiler.internal.ui.getPythonDeploymentScript	1	0
+compiler.internal.ui.getExcelDeploymentScript	1	0
+compiler.internal.ui.getPSADeploymentScript	1	0
+compiler.internal.ui.getWebAppDeploymentScript	1	0
+compiler.internal.ui.getJavaDeploymentScript	1	0
+compiler.internal.ui.getCOMLibraryDeploymentScript	1	0

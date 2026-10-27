@@ -53,6 +53,14 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>mcc's arguments: each a char row or a string scalar.</summary>
+    /// <summary>A text file's content while another handle may hold it open for writing (a deployment script's help text file).</summary>
+    private static string ReadShared(string path)
+    {
+        using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        using var reader = new StreamReader(stream);
+        return reader.ReadToEnd();
+    }
+
     private static List<string> McWords(IReadOnlyList<JgsValue> args, int line, int col)
     {
         var words = new List<string>(args.Count);
@@ -246,7 +254,7 @@ internal static partial class JgsBuiltins
         }
 
         string main = roots[0];
-        string? help = command.HelpFile is { } helpFile ? File.ReadAllText(Within(helpFile)) : null; // MccCommandLine found it
+        string? help = command.HelpFile is { } helpFile ? ReadShared(Within(helpFile)) : null; // MccCommandLine found it; R2025b's deployment script keeps the file open while it builds
 
         var additional = new List<string>();
         foreach (string given in command.Additional)

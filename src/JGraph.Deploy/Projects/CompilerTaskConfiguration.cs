@@ -723,6 +723,10 @@ public sealed class CompilerTaskConfiguration
             task.ExportedFunctions.AddRange(LabelledFiles("ExportedFunctionFile"));
             task.EmbedArchive = Kind.Property("EmbedArchive") is null || Flag("EmbedArchive");
             task.DebugBuild = Flag("DebugBuild");
+            if (Kind.Labels.Any(static l => l.Key == "SamplesFile"))
+            {
+                task.SampleFiles.AddRange(LabelledFiles("SamplesFile"));
+            }
         }
 
         switch (target)

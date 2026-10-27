@@ -205,14 +205,25 @@ internal static partial class JgsBuiltins
                     return;
                 }
 
-                // isValidProject: the file exists and readPRJStruct reads it. JGraph reads no legacy
-                // project until stage K21, so every file is R2025b's refusal of one that is not a project.
+                // isValidProject: the file exists and readPRJStruct reads it; then open, which upgrades
+                // the legacy project into a MATLAB project with a task and shows the task (stage K21).
+                string resolved = host.Resolve(words[0]);
+                if (File.Exists(resolved) && JGraph.Deploy.Projects.LegacyDeploymentProject.IsLegacyProjectFile(resolved)
+                    && JGraph.Deploy.Projects.LegacyDeploymentProject.ReadStruct(resolved) is { } legacy)
+                {
+                    OpenLegacyProject(env, interpreter, host, name, legacy, line, col);
+                    return;
+                }
+
                 throw new JgsRuntimeException(line, col, "Compiler:deploytool:invalidFirstInputOneInput",
                     $"{words[0]} is an invalid input argument. When using {name} with one input argument, the input must be a valid MATLAB Compiler or MATLAB Compiler SDK Project (.prj) file.\n");
             default:
                 if (IsBuildOrPackageSwitch(words[0]))
                 {
-                    throw LegacyProjectRefusal(host, words[1], line, col);
+                    // compiler.internal.build.legacyProject and compiler.internal.package.legacyProject (stage K21).
+                    bool package = words[0] is "-package" or "/package";
+                    LegacyBuild(env, interpreter, host, [JgsValue.Str(words[1])], package, line, col);
+                    return;
                 }
 
                 throw new JgsRuntimeException(line, col, "Compiler:deploytool:invalidFirstInputTwoInputs",
@@ -223,17 +234,29 @@ internal static partial class JgsBuiltins
     private static bool IsBuildOrPackageSwitch(string word) => word is "-build" or "/build" or "-package" or "/package";
 
     /// <summary>
-    /// What <c>compiler.internal.build.legacyProject</c> answers for <paramref name="file"/>: a missing
-    /// file, or one that is not a legacy project (which none is to JGraph until stage K21 reads them).
+    /// A legacy project given to an app or <c>open</c>, as R2025b takes it (stage K21): upgraded into
+    /// a MATLAB project with a task, the project left open, and the task's app window brought up
+    /// when the host has windows (a session without them stops at the upgrade, as R2025b's
+    /// <c>-batch</c> does).
     /// </summary>
-    internal static JgsRuntimeException LegacyProjectRefusal(JGraphScriptGlobals host, string file, int line, int col)
+    private static void OpenLegacyProject(
+        JgsEnvironment env, Interpreter interpreter, JGraphScriptGlobals host, string name, JGraph.Deploy.Projects.LegacyDeploymentProject legacy, int line, int col)
     {
-        string resolved = host.Resolve(file);
-        return File.Exists(resolved)
-            ? new JgsRuntimeException(line, col, "Compiler:build:compatibility:notCompatibilityPRJ",
-                $"Input project file {file} is not a valid MATLAB Compiler or MATLAB Compiler SDK project.")
-            : new JgsRuntimeException(line, col, "Compiler:build:compatibility:projectDoesNotExist",
-                $"Input project file {file} does not exist.");
+        JGraph.Deploy.Projects.LegacyProjectUpgradeResult upgraded = UpgradeAndOpen(env, interpreter, host, legacy, line, col, out _);
+        if (upgraded.Task is not { } task || host.CompilerApps is not { } apps)
+        {
+            return;
+        }
+
+        var services = new CompilerAppServices
+        {
+            Analyze = roots => AnalyzeDependencies(env, interpreter, host, roots, topOnly: false),
+            CurrentFolder = host.CurrentDirectory,
+        };
+        if (apps.OpenTask(host.Projects.Current!, task.Name, services) is { } refused)
+        {
+            throw new JgsRuntimeException(line, col, "JGraph:compilerApps:CannotOpen", $"{name}: {refused}");
+        }
     }
 
     /// <summary>R2025b prints the function's help block for <c>-?</c>; here it is the catalog's entry, as <c>help</c> prints it.</summary>
@@ -301,10 +324,22 @@ internal static partial class JgsBuiltins
             isProject = extension.Equals(".prj", StringComparison.OrdinalIgnoreCase);
             if (isProject && !JGraph.Deploy.Projects.ProjectDefinitionFiles.IsProjectFile(file))
             {
-                // A legacy deployment project (<deployment-project>): read by stage K21, refused until then.
-                throw new JgsRuntimeException(line, col, "JGraph:compilerApps:LegacyProject",
-                    $"'{file}' is a deployment project of the older kind (a <deployment-project> file), which JGraph does not read yet (compiler and SDK plan, stage K21): "
-                    + $"{name} opens a MATLAB project's .prj with its compiler tasks, or a MATLAB file as the main file.");
+                // A legacy deployment project (<deployment-project>) upgrades into a project with a task (stage K21).
+                if (JGraph.Deploy.Projects.LegacyDeploymentProject.IsLegacyProjectFile(file))
+                {
+                    if (JGraph.Deploy.Projects.LegacyDeploymentProject.ReadStruct(file) is { } legacy)
+                    {
+                        OpenLegacyProject(env, interpreter, host, name, legacy, line, col);
+                        return;
+                    }
+
+                    // R2025b's open reads the configuration element unguarded; a <deployment-project> without one fails there.
+                    throw new JgsRuntimeException(line, col, "MATLAB:nonExistentField", "Unrecognized field name \"configuration\".");
+                }
+
+                throw new JgsRuntimeException(line, col, "JGraph:compilerApps:NotAProject",
+                    $"'{file}' is neither a MATLAB project nor a deployment project: {name} opens a MATLAB project's .prj with its compiler tasks, "
+                    + "a deployment project of R2024b and before, or a MATLAB file as the main file.");
             }
 
             if (!isProject && !AppFileExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase))

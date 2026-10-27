@@ -81,7 +81,14 @@ public sealed class MatlabProject
     /// <summary>The default category's labels, in the order <c>LabelDefinitions</c> lists them.</summary>
     public static readonly string[] ClassificationLabels = ["Artifact", "Convenience", "Derived", "Design", "None", "Other", "Test"];
 
-    private static readonly string[] DesignExtensions = [".m", ".mlx", ".mlapp", ".p", ".slx", ".mdl", ".sfx"];
+    /// <summary>The extensions MATLAB classifies Design when a file joins a project (probes k20_projects and k21_legacy, the upgrade's labels).</summary>
+    private static readonly string[] DesignExtensions = [".m", ".mlx", ".mlapp", ".p", ".slx", ".mdl", ".sfx", ".mat", ".c", ".h", ".cpp", ".hpp"];
+
+    /// <summary>The extensions MATLAB classifies Derived: built binaries and the XML beside them.</summary>
+    private static readonly string[] DerivedExtensions = [".dll", ".exe", ".lib", ".xml"];
+
+    /// <summary>The extensions MATLAB classifies Artifact: generated HTML.</summary>
+    private static readonly string[] ArtifactExtensions = [".html"];
 
     private readonly List<ProjectNode> _root;
 
@@ -400,6 +407,14 @@ public sealed class MatlabProject
                 else if (DesignExtensions.Contains(Path.GetExtension(segments[i]), StringComparer.OrdinalIgnoreCase))
                 {
                     AttachLabel(child, ClassificationCategoryId, "design", singleValued: true);
+                }
+                else if (DerivedExtensions.Contains(Path.GetExtension(segments[i]), StringComparer.OrdinalIgnoreCase))
+                {
+                    AttachLabel(child, ClassificationCategoryId, "derived", singleValued: true);
+                }
+                else if (ArtifactExtensions.Contains(Path.GetExtension(segments[i]), StringComparer.OrdinalIgnoreCase))
+                {
+                    AttachLabel(child, ClassificationCategoryId, "artifact", singleValued: true);
                 }
             }
 

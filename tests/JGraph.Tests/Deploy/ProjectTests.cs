@@ -62,6 +62,14 @@ public sealed class ProjectTests : IAsyncLifetime
             Managed.Add((project.RootFolder, preferred));
             return null;
         }
+
+        public List<(string Root, string Task)> Tasks { get; } = [];
+
+        public string? OpenTask(MatlabProject project, string taskName, CompilerAppServices services)
+        {
+            Tasks.Add((project.RootFolder, taskName));
+            return null;
+        }
     }
 
     /// <summary>The identifier and message a statement fails with, or "ok", and the warning it raised.</summary>

@@ -71,6 +71,15 @@ public sealed class CompilerAppsTests : IAsyncLifetime
             Services = services;
             return Refusal;
         }
+
+        public List<(string Root, string Task)> Tasks { get; } = [];
+
+        public string? OpenTask(JGraph.Deploy.Projects.MatlabProject project, string taskName, CompilerAppServices services)
+        {
+            Tasks.Add((project.RootFolder, taskName));
+            Services = services;
+            return Refusal;
+        }
     }
 
     /// <summary>The identifier and message a statement fails with, or "ok", and the warning it raised.</summary>
@@ -254,7 +263,7 @@ public sealed class CompilerAppsTests : IAsyncLifetime
     [InlineData("standaloneApplicationCompiler('a', 'b')", "MATLAB:TooManyInputs | Too many input arguments.")]
     [InlineData("x = standaloneApplicationCompiler", "MATLAB:TooManyOutputs | Too many output arguments.")]
     [InlineData("productionServerArchiveCompiler('k19none.prj')", "MATLAB:open:fileNotFound | File 'k19none.prj' not found.")]
-    [InlineData("standaloneApplicationCompiler('k19stub.prj')", "JGraph:compilerApps:LegacyProject")]
+    [InlineData("standaloneApplicationCompiler('k19stub.prj')", "MATLAB:nonExistentField | Unrecognized field name \"configuration\".")] // a legacy file goes the way of R2025b's open, which fails on a stub without a configuration (stage K21)
     [InlineData("standaloneApplicationCompiler('k19note.txt')", "JGraph:compilerApps:NotAMatlabFile")]
     [InlineData("excelAddinCompiler('x')", "MATLAB:TooManyInputs | Too many input arguments.")]
     [InlineData("javaPackageCompiler", "JGraph:compilerApps:targetOutOfScope")]

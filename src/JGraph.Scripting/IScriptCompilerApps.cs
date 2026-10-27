@@ -31,6 +31,16 @@ public interface IScriptCompilerApps
     /// <param name="services">What the windows ask the session for.</param>
     /// <returns>Null when it opened, else why not.</returns>
     string? OpenTaskManager(MatlabProject project, CompilerTarget? preferred, CompilerAppServices services);
+
+    /// <summary>
+    /// Brings up the app window over one task of the open project (stage K21: what a legacy
+    /// project upgrades into), and returns once the window is up.
+    /// </summary>
+    /// <param name="project">The open project.</param>
+    /// <param name="taskName">The task's name in the project.</param>
+    /// <param name="services">What the window asks the session for.</param>
+    /// <returns>Null when it opened, else why not.</returns>
+    string? OpenTask(MatlabProject project, string taskName, CompilerAppServices services);
 }
 
 /// <summary>What a compiler app's window asks of the session that opened it.</summary>

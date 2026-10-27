@@ -358,6 +358,9 @@ public sealed class CompilerTaskModel
     /// <summary>The task's name in its project, which names its output folders (<c>&lt;name&gt;\output\build</c>); empty outside a project.</summary>
     public string TaskName { get; set; } = "";
 
+    /// <summary>The sample files of a library task (its Sample File label in a project): <c>SampleGenerationFiles</c>.</summary>
+    public List<string> SampleFiles { get; } = [];
+
     /// <summary>The files the task starts from: the main file, or the exported functions.</summary>
     public IReadOnlyList<string> SourceFiles => CompilerTargets.HasMainFile(Target)
         ? (MainFile is { Length: > 0 } main ? [main] : [])

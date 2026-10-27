@@ -89,7 +89,7 @@ public static class DeploymentScript
                     text.Append("helpTextFile = tempname;\n");
                     text.Append("fileID = fopen(helpTextFile,'w');\n");
                     text.Append("ensureFileCloseObject = onCleanup(@()fclose(fileID));\n");
-                    text.Append($"fprintf(fileID, {Quoted(task.HelpText)});\n");
+                    text.Append($"fprintf(fileID, {Quoted(task.HelpText.Replace("\r\n", "\n", StringComparison.Ordinal).Replace("\n", "\\n", StringComparison.Ordinal))});\n");
                     text.Append("ensureFileDeleteObject = onCleanup(@()delete(helpTextFile));\n");
                     text.Append("buildOpts.CustomHelpTextFile = helpTextFile;\n");
                 }
@@ -123,6 +123,7 @@ public static class DeploymentScript
                 break;
             case CompilerTarget.PythonPackage:
                 text.Append($"buildOpts.PackageName = {Quoted(name)};\n");
+                AppendSamples(text, task, root);
                 break;
             case CompilerTarget.DotNetAssembly:
                 text.Append($"buildOpts.AssemblyName = {Quoted(name)};\n");
@@ -130,6 +131,7 @@ public static class DeploymentScript
                 text.Append($"buildOpts.DebugBuild = {Flag(task.DebugBuild)};\n");
                 text.Append($"buildOpts.EmbedArchive = {Quoted(task.EmbedArchive ? "on" : "off")};\n");
                 text.Append($"buildOpts.Interface = {Quoted(task.Interface)};\n");
+                AppendSamples(text, task, root);
                 text.Append($"buildOpts.EnableRemoting = {Flag(task.EnableRemoting)};\n");
                 text.Append($"buildOpts.FrameworkVersion = {Quoted(task.FrameworkVersion)};\n");
                 if (task.StrongNameKeyFile.Length > 0)
@@ -142,7 +144,17 @@ public static class DeploymentScript
                 text.Append($"buildOpts.DebugBuild = {Flag(task.DebugBuild)};\n");
                 text.Append($"buildOpts.Interface = {Quoted(task.Interface)};\n");
                 text.Append($"buildOpts.LibraryName = {Quoted(name)};\n");
-                text.Append($"buildOpts.LibraryVersion = {Quoted(task.Version)};\n");
+                if (task.Interface == "matlab-data")
+                {
+                    // R2025b's generator writes a comment in the version's place for the MATLAB Data API (probe k21_legacy, upgrade.k21cpp.task.script).
+                    text.Append("% \"LibraryVersion\" will be ignored when using the 'matlab-data' api.\n\n");
+                }
+                else
+                {
+                    text.Append($"buildOpts.LibraryVersion = {Quoted(task.Version)};\n");
+                }
+
+                AppendSamples(text, task, root);
                 break;
             case CompilerTarget.CSharedLibrary:
                 text.Append($"buildOpts.DebugBuild = {Flag(task.DebugBuild)};\n");
@@ -217,6 +229,15 @@ public static class DeploymentScript
         }
 
         text.Append("compiler.package.installer(buildResult, \"Options\", packageOpts);\n");
+    }
+
+    /// <summary>The sample files a library task carries (its Sample File label), as <c>SampleGenerationFiles</c>.</summary>
+    private static void AppendSamples(StringBuilder text, CompilerTaskModel task, string? root)
+    {
+        if (task.SampleFiles.Count > 0)
+        {
+            text.Append($"buildOpts.SampleGenerationFiles = {PathList(task.SampleFiles, root)};\n");
+        }
     }
 
     private static void AppendWhenSet(StringBuilder text, string property, string value)

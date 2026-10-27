@@ -201,5 +201,22 @@ public partial class ScriptWorkspaceWindow
 
         public string? OpenTaskManager(JGraph.Deploy.Projects.MatlabProject project, CompilerTarget? preferred, CompilerAppServices services) =>
             window.Dispatcher.Invoke(() => window.OpenTaskManager(project, preferred, services));
+
+        public string? OpenTask(JGraph.Deploy.Projects.MatlabProject project, string taskName, CompilerAppServices services) =>
+            window.Dispatcher.Invoke(() =>
+            {
+                if (project.FindTask(taskName) is not { } task)
+                {
+                    return $"the project has no task named \"{taskName}\".";
+                }
+
+                if (task.Target is null)
+                {
+                    return $"the task \"{taskName}\" is for a target JGraph's compiler does not build.";
+                }
+
+                window.OpenTaskWindow(task, services);
+                return null;
+            });
     }
 }
