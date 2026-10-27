@@ -44,6 +44,23 @@ foreach ($project in "src\JGraph.Application", "src\JGraph.Cli", "src\JGraph.Pro
     if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed for $project." }
 }
 
+# The WiX 6 command line and its extensions (compiler and SDK plan, stage K18, decision KO7): what
+# compiler.package.installer and compiler.runtime.customInstaller build installers with, shipped under
+# toolbox\compiler\wix where JGraph.Deploy.WixTool looks first, from the NuGet package cache that
+# restoring installer\WixTools\WixTools.csproj fills. WiX is MS-RL licensed; its license text goes with it.
+Write-Host "-- WiX 6 (installer\WixTools)" -ForegroundColor Cyan
+dotnet restore (Join-Path $PSScriptRoot "WixTools\WixTools.csproj") --nologo
+if ($LASTEXITCODE -ne 0) { throw "The WiX packages could not be restored." }
+$wixVersion = ([xml](Get-Content (Join-Path $PSScriptRoot "WixTools\WixTools.csproj"))).Project.PropertyGroup.WixVersion
+$packages = if ($env:NUGET_PACKAGES) { $env:NUGET_PACKAGES } else { Join-Path $env:USERPROFILE ".nuget\packages" }
+$wixFolder = Join-Path $staging "toolbox\compiler\wix"
+New-Item -ItemType Directory -Force (Join-Path $wixFolder "ext") | Out-Null
+Copy-Item (Join-Path $packages "wixtoolset.sdk\$wixVersion\tools\net6.0\*") $wixFolder -Recurse -Force
+Copy-Item (Join-Path $packages "wixtoolset.sdk\$wixVersion\OSMFEULA.txt") (Join-Path $wixFolder "LICENSE.txt") -Force
+foreach ($extension in "WixToolset.UI.wixext", "WixToolset.BootstrapperApplications.wixext") {
+    Copy-Item (Join-Path $packages "$($extension.ToLowerInvariant())\$wixVersion\wixext6\$extension.dll") (Join-Path $wixFolder "ext\$extension.dll") -Force
+}
+
 # Anchors that must be present for the installed product to work; missing means the publish
 # layout changed and the installer would silently ship a broken product.
 $anchors = @(
@@ -107,7 +124,15 @@ $anchors = @(
     # The Production Server (stage K14, ADR 0270): jgraph-mps new/run/worker, and the runtimeconfig
     # naming the ASP.NET Core shared framework it runs on.
     "jgraph-mps.exe",
-    "jgraph-mps.runtimeconfig.json"
+    "jgraph-mps.runtimeconfig.json",
+
+    # compiler.package.installer (stage K18, ADR 0273): the WiX command line, the bootstrapper
+    # applications extension an installer's bundle is built with, its license, and the default logo
+    # the installer's pages show.
+    "toolbox\compiler\wix\wix.dll",
+    "toolbox\compiler\wix\ext\WixToolset.BootstrapperApplications.wixext.dll",
+    "toolbox\compiler\wix\LICENSE.txt",
+    "toolbox\compiler\packagingResources\default_logo.png"
 )
 foreach ($anchor in $anchors) {
     if (-not (Test-Path (Join-Path $staging $anchor))) {

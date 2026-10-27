@@ -36,7 +36,7 @@
     <None Include="..\..\native\win-x64\launchers\jglaunch-console.exe;..\..\native\win-x64\launchers\jglaunch-gui.exe"
           Link="launchers\win64\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
     <!-- compiler.build's default icon and splash, where R2025b keeps its own under matlabroot. -->
-    <None Include="PackagingResources\default_icon_48.png;PackagingResources\default_splash.png"
+    <None Include="PackagingResources\default_icon_48.png;PackagingResources\default_splash.png;PackagingResources\default_logo.png"
           Link="toolbox\compiler\packagingResources\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- Stage K7: mcc -B's bundle files, under R2025b's names. -->
     <None Include="Bundles\*" Link="toolbox\compiler\bundles\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

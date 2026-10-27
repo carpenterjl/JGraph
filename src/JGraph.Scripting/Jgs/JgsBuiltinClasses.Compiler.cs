@@ -82,6 +82,23 @@ internal static partial class JgsBuiltinClasses
     /// <summary>Where a name given for <c>ArchiveName</c> is kept (R2025b's UserProvidedArchiveName).</summary>
     public const string GivenArchiveName = "UserProvidedArchiveName";
 
+    /// <summary>The installer options class (stage K18).</summary>
+    public const string InstallerOptions = "compiler.package.InstallerOptions";
+
+    /// <summary>The installer options' public properties, in the order R2025b lists them (k18_package: opts.results.properties).</summary>
+    public static readonly string[] InstallerOptionNames =
+    [
+        "RuntimeDelivery", "InstallerSplash", "InstallerIcon", "InstallerLogo", "PackageType", "AdditionalFiles", "AddRemoveProgramsIcon",
+        "AuthorName", "AuthorEmail", "AuthorCompany", "Summary", "Description", "InstallationNotes", "OptionalDependencies", "Shortcut",
+        "Verbose", "Version", "ApplicationName", "InstallerName", "OutputDir", "DefaultInstallationDir",
+    ];
+
+    /// <summary>Where a name given for <c>InstallerName</c> is kept (R2025b's UserProvidedInstallerName).</summary>
+    public const string GivenInstallerName = "UserProvidedInstallerName";
+
+    /// <summary>Where a folder given for <c>DefaultInstallationDir</c> is kept (R2025b's UserProvidedDefaultInstallationDir).</summary>
+    public const string GivenDefaultInstallationDir = "UserProvidedDefaultInstallationDir";
+
     /// <summary>R2025b's InterfaceManager: the interface, its version and EmbedArchive, kept together because setting one warns about the others.</summary>
     public const string InterfaceValue = "InterfaceManagerInterface";
 
@@ -426,6 +443,49 @@ internal static partial class JgsBuiltinClasses
         }
 
         return new ClassdefStmt(ProductionServerArchiveOptions, isHandle: false, properties, methods)
+        {
+            Dialect = JgsDialect.Matlab,
+            Superclasses = [],
+        };
+    }
+
+    /// <summary>
+    /// <c>compiler.package.InstallerOptions</c> (stage K18): R2025b's properties in its order, the
+    /// installer's name, output folder and default installation folder dependent on what was given,
+    /// each set checked by <see cref="JgsBuiltins.SetInstallerOption"/>.
+    /// </summary>
+    private static ClassdefStmt InstallerOptionsDeclaration(Interpreter interpreter)
+    {
+        var properties = new List<ClassProperty>();
+        var methods = new List<ClassMethod>();
+        foreach (string name in InstallerOptionNames)
+        {
+            bool derived = name is "InstallerName" or "OutputDir" or "DefaultInstallationDir";
+            properties.Add(new ClassProperty(new ArgumentSpec(name, null, null, [], new PreEvaluated(JgsBuiltins.InstallerOptionDefault(name))),
+                Constant: false, Dependent: derived));
+            string captured = name;
+            methods.Add(Setter(name, (copy, value, line, col) => JgsBuiltins.SetInstallerOption(interpreter, copy, captured, value, line, col)));
+            if (derived)
+            {
+                methods.Add(new ClassMethod(new FnStmt("get." + name, ["obj"], [], ["value"]) { Dialect = JgsDialect.Matlab }, Static: false)
+                {
+                    Native = new BuiltinFunction("get." + name, (args, line, col) => JgsBuiltins.InstallerOptionDerived(captured, args[0].AsObject)),
+                });
+            }
+        }
+
+        var hidden = new MemberAccess(MemberAccessKind.Protected);
+        foreach (string field in new[] { GivenInstallerName, GivenOutputDir, GivenDefaultInstallationDir })
+        {
+            properties.Add(new ClassProperty(new ArgumentSpec(field, null, null, [], new PreEvaluated(JgsValue.Str(""))), Constant: false)
+            {
+                GetAccess = hidden,
+                SetAccess = hidden,
+                Hidden = true,
+            });
+        }
+
+        return new ClassdefStmt(InstallerOptions, isHandle: false, properties, methods)
         {
             Dialect = JgsDialect.Matlab,
             Superclasses = [],

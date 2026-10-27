@@ -1,0 +1,7 @@
+name,kind,method_classes
+compiler.package.installer,mfile,
+compiler.package.InstallerOptions,mfile,
+compiler.runtime.customInstaller,mfile,
+compiler.runtime.version,other,
+mcrinstaller,mfile,
+compiler.runtime.download,other,

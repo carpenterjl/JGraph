@@ -1,0 +1,776 @@
+build.seconds	0.4
+build.Files	<OUT>\k18hello.exe | <OUT>\readme.txt
+build.requiredMCRProducts	6 chars, CRLF 0, ends with newline 0
+  |35010	
+build.py.Files	<OUT>\k18py | <OUT>\setup.py | <OUT>\GettingStarted.html
+opts.default
+  InstallerOptions with properties:
+      RuntimeDelivery: 'web'
+      InstallerSplash: '<MATLABROOT>\toolbox\compiler\packagingResources\default_splash.png'
+      InstallerIcon: '<MATLABROOT>\toolbox\compiler\packagingResources\default_icon_48.png'
+      InstallerLogo: '<MATLABROOT>\toolbox\compiler\packagingResources\default_logo.png'
+      PackageType: 'auto'
+      AdditionalFiles: {}
+      AddRemoveProgramsIcon: ''
+      AuthorName: ''
+      AuthorEmail: ''
+      AuthorCompany: ''
+      Summary: ''
+      Description: ''
+      InstallationNotes: ''
+      OptionalDependencies: 'all'
+      Shortcut: ''
+      Verbose: off
+      Version: '1.0'
+      ApplicationName: 'k18app'
+      InstallerName: 'MyAppInstaller'
+      OutputDir: '.\k18appinstaller'
+      DefaultInstallationDir: '%ProgramFiles%\k18app'
+opts.noargs	ERR Compiler:package:shared:mustSetProperty | 'ApplicationName' has no default and must be set.
+opts.noname	ERR Compiler:package:shared:mustSetProperty | 'ApplicationName' has no default and must be set.
+opts.odd	ERR MATLAB:InputParser:ParamMissingValue | No value was given for 'ApplicationName'. Name-value pair arguments require a name followed by a value.
+opts.unknown	ERR MATLAB:InputParser:UnmatchedParameter | 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+opts.nameonly	ERR Compiler:package:shared:mustSetProperty | 'ApplicationName' has no default and must be set.
+opts.partial	ERR MATLAB:InputParser:AmbiguousParameter | 'Author' matches multiple parameter names: 'AuthorCompany', 'AuthorEmail', 'AuthorName'. To avoid ambiguity, specify the complete name of the parameter.
+opts.case	compiler.package.InstallerOptions [1 1]
+opts.twice	compiler.package.InstallerOptions [1 1]
+opts.toomany	compiler.package.InstallerOptions [1 1]
+opts.results
+  InstallerOptions with properties:
+      RuntimeDelivery: 'web'
+      InstallerSplash: '<MATLABROOT>\toolbox\compiler\packagingResources\default_splash.png'
+      InstallerIcon: '<MATLABROOT>\toolbox\compiler\packagingResources\default_icon_48.png'
+      InstallerLogo: '<MATLABROOT>\toolbox\compiler\packagingResources\default_logo.png'
+      PackageType: 'auto'
+      AdditionalFiles: {}
+      AddRemoveProgramsIcon: '<W>\p\src\k18_icon.png'
+      AuthorName: ''
+      AuthorEmail: ''
+      AuthorCompany: ''
+      Summary: ''
+      Description: ''
+      InstallationNotes: ''
+      OptionalDependencies: 'all'
+      Shortcut: '<W>\p\b\k18hello.exe'
+      Verbose: off
+      Version: '1.0'
+      ApplicationName: 'k18hello'
+      InstallerName: 'MyAppInstaller'
+      OutputDir: '.\k18helloinstaller'
+      DefaultInstallationDir: '%ProgramFiles%\k18hello'
+opts.results.win
+  InstallerOptions with properties:
+      RuntimeDelivery: 'web'
+      InstallerSplash: '<MATLABROOT>\toolbox\compiler\packagingResources\default_splash.png'
+      InstallerIcon: '<MATLABROOT>\toolbox\compiler\packagingResources\default_icon_48.png'
+      InstallerLogo: '<MATLABROOT>\toolbox\compiler\packagingResources\default_logo.png'
+      PackageType: 'auto'
+      AdditionalFiles: {}
+      AddRemoveProgramsIcon: '<MATLABROOT>\toolbox\compiler\packagingResources\default_icon_48.png'
+      AuthorName: ''
+      AuthorEmail: ''
+      AuthorCompany: ''
+      Summary: ''
+      Description: ''
+      InstallationNotes: ''
+      OptionalDependencies: 'all'
+      Shortcut: '<W>\p\bw\k18win.exe'
+      Verbose: off
+      Version: '1.0'
+      ApplicationName: 'k18win'
+      InstallerName: 'MyAppInstaller'
+      OutputDir: '.\k18wininstaller'
+      DefaultInstallationDir: '%ProgramFiles%\k18win'
+opts.results.py
+  InstallerOptions with properties:
+      RuntimeDelivery: 'web'
+      InstallerSplash: '<MATLABROOT>\toolbox\compiler\packagingResources\default_splash.png'
+      InstallerIcon: '<MATLABROOT>\toolbox\compiler\packagingResources\default_icon_48.png'
+      InstallerLogo: '<MATLABROOT>\toolbox\compiler\packagingResources\default_logo.png'
+      PackageType: 'auto'
+      AdditionalFiles: {}
+      AddRemoveProgramsIcon: ''
+      AuthorName: ''
+      AuthorEmail: ''
+      AuthorCompany: ''
+      Summary: ''
+      Description: ''
+      InstallationNotes: ''
+      OptionalDependencies: 'all'
+      Shortcut: ''
+      Verbose: off
+      Version: '1.0'
+      ApplicationName: 'k18py'
+      InstallerName: 'MyAppInstaller'
+      OutputDir: '.\k18pyinstaller'
+      DefaultInstallationDir: '%ProgramFiles%\k18py'
+opts.results.nv
+  InstallerOptions with properties:
+      RuntimeDelivery: 'web'
+      InstallerSplash: '<MATLABROOT>\toolbox\compiler\packagingResources\default_splash.png'
+      InstallerIcon: '<MATLABROOT>\toolbox\compiler\packagingResources\default_icon_48.png'
+      InstallerLogo: '<MATLABROOT>\toolbox\compiler\packagingResources\default_logo.png'
+      PackageType: 'auto'
+      AdditionalFiles: {}
+      AddRemoveProgramsIcon: '<W>\p\src\k18_icon.png'
+      AuthorName: ''
+      AuthorEmail: ''
+      AuthorCompany: ''
+      Summary: ''
+      Description: ''
+      InstallationNotes: ''
+      OptionalDependencies: 'all'
+      Shortcut: '<W>\p\src\k18data.txt'
+      Verbose: off
+      Version: '1.0'
+      ApplicationName: 'Other'
+      InstallerName: 'MyAppInstaller'
+      OutputDir: '.\Otherinstaller'
+      DefaultInstallationDir: '%ProgramFiles%\Other'
+opts.results.two	ERR MATLAB:index:expected_one_output_from_intermediate_indexing | Intermediate dot '.' indexing produced a comma-separated list with 2 values, but it must produce a single value when followed by subsequent indexing operations.
+opts.results.first	compiler.package.InstallerOptions [1 1]
+opts.results.properties
+  {'RuntimeDelivery', 'InstallerSplash', 'InstallerIcon', 'InstallerLogo', 'PackageType', 'AdditionalFiles', 'AddRemoveProgramsIcon', 'AuthorName', 'AuthorEmail', 'AuthorCompany', 'Summary', 'Description', 'InstallationNotes', 'OptionalDependencies', 'Shortcut', 'Verbose', 'Version', 'ApplicationName', 'InstallerName', 'OutputDir', 'DefaultInstallationDir'}
+opts.results.class	compiler.package.InstallerOptions
+set.ApplicationName.1.value	'My App'
+set.ApplicationName.1	My App
+set.ApplicationName.2.value	string[Str App]
+set.ApplicationName.2	Str App
+set.ApplicationName.3.value	'a/b'
+set.ApplicationName.3	ERR Compiler:clishared:badProperty | Invalid 'ApplicationName': 'a/b'
+set.ApplicationName.4.value	'a\b'
+set.ApplicationName.4	ERR Compiler:clishared:badProperty | Invalid 'ApplicationName': 'a\b'
+set.ApplicationName.5.value	'a:b'
+set.ApplicationName.5	ERR Compiler:clishared:badProperty | Invalid 'ApplicationName': 'a:b'
+set.ApplicationName.6.value	'a*b'
+set.ApplicationName.6	ERR Compiler:clishared:badProperty | Invalid 'ApplicationName': 'a*b'
+set.ApplicationName.7.value	''
+set.ApplicationName.7	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.ApplicationName.8.value	double 5
+set.ApplicationName.8	ERR MATLAB:invalidType | Expected ApplicationName to be one of these types: /  / char, string /  / Instead its type was double.
+set.ApplicationName.9.value	cell{'a'}
+set.ApplicationName.9	ERR MATLAB:invalidType | Expected ApplicationName to be one of these types: /  / char, string
+set.ApplicationName.10.value	'a	b'
+set.ApplicationName.10	ERR Compiler:clishared:noWhiteSpaceInProperty | 'ApplicationName' cannot contain any white space characters.
+set.ApplicationName.11.value	char 2x2
+set.ApplicationName.11	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be a character vector, string array, or cell array of character vectors.
+set.ApplicationName.12.value	string[]
+set.ApplicationName.12	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.ApplicationName.13.value	'a b  c'
+set.ApplicationName.13	a b  c
+set.InstallerName.1.value	'Setup Me'
+set.InstallerName.1	Setup Me
+set.InstallerName.2.value	'x/y'
+set.InstallerName.2	ERR Compiler:clishared:badProperty | Invalid 'InstallerName': 'x/y'
+set.InstallerName.3.value	''
+set.InstallerName.3	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.InstallerName.4.value	double 7
+set.InstallerName.4	ERR MATLAB:invalidType | Expected InstallerName to be one of these types: /  / char, string /  / Instead its type was double.
+set.InstallerName.5.value	string[named]
+set.InstallerName.5	named
+set.InstallerName.6.value	'a|b'
+set.InstallerName.6	ERR Compiler:clishared:badProperty | Invalid 'InstallerName': 'a|b'
+set.Version.1.value	'1'
+set.Version.1	1
+set.Version.2.value	'2.3.4.5.6'
+set.Version.2	2.3.4.5.6
+set.Version.3.value	'a.b'
+set.Version.3	ERR Compiler:clishared:badProperty | Invalid 'Version': 'a.b'
+set.Version.4.value	'1.0-beta'
+set.Version.4	ERR Compiler:clishared:badProperty | Invalid 'Version': '1.0-beta'
+set.Version.5.value	''
+set.Version.5	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.Version.6.value	double 3
+set.Version.6	ERR MATLAB:invalidType | Expected Version to be one of these types: /  / char, string /  / Instead its type was double.
+set.Version.7.value	string[2.0]
+set.Version.7	2.0
+set.Version.8.value	'1..2'
+set.Version.8	ERR Compiler:clishared:badProperty | Invalid 'Version': '1..2'
+set.Version.9.value	' 1.0'
+set.Version.9	 1.0
+set.Version.10.value	'1.0 '
+set.Version.10	1.0 
+set.Version.11.value	'1,2'
+set.Version.11	1,2
+set.Version.12.value	'007.08'
+set.Version.12	007.08
+set.RuntimeDelivery.1.value	'web'
+set.RuntimeDelivery.1	web
+set.RuntimeDelivery.2.value	'installer'
+set.RuntimeDelivery.2	installer
+set.RuntimeDelivery.3.value	'none'
+set.RuntimeDelivery.3	none
+set.RuntimeDelivery.4.value	'WEB'
+set.RuntimeDelivery.4	ERR MATLAB:validators:mustBeMember | Value must be a member of this set: /     'installer' /     'none' /     'web' / 
+set.RuntimeDelivery.5.value	'Web'
+set.RuntimeDelivery.5	ERR MATLAB:validators:mustBeMember | Value must be a member of this set: /     'installer' /     'none' /     'web' / 
+set.RuntimeDelivery.6.value	string[installer]
+set.RuntimeDelivery.6	installer
+set.RuntimeDelivery.7.value	'offline'
+set.RuntimeDelivery.7	ERR MATLAB:validators:mustBeMember | Value must be a member of this set: /     'installer' /     'none' /     'web' / 
+set.RuntimeDelivery.8.value	double 5
+set.RuntimeDelivery.8	ERR MATLAB:invalidType | Expected RuntimeDeliveryValues to be one of these types: /  / char, string /  / Instead its type was double.
+set.RuntimeDelivery.9.value	''
+set.RuntimeDelivery.9	ERR MATLAB:validators:mustBeMember | Value must be a member of this set: /     'installer' /     'none' /     'web' / 
+set.RuntimeDelivery.10.value	cell{'web'}
+set.RuntimeDelivery.10	ERR MATLAB:invalidType | Expected RuntimeDeliveryValues to be one of these types: /  / char, string
+set.PackageType.1.value	'auto'
+set.PackageType.1	auto
+set.PackageType.2.value	'zip'
+set.PackageType.2	zip
+set.PackageType.3.value	'ZIP'
+set.PackageType.3	ERR MATLAB:validators:mustBeMember | Value must be a member of this set: /     'auto' /     'zip' / 
+set.PackageType.4.value	'Auto'
+set.PackageType.4	ERR MATLAB:validators:mustBeMember | Value must be a member of this set: /     'auto' /     'zip' / 
+set.PackageType.5.value	'tar'
+set.PackageType.5	ERR MATLAB:validators:mustBeMember | Value must be a member of this set: /     'auto' /     'zip' / 
+set.PackageType.6.value	''
+set.PackageType.6	ERR MATLAB:validators:mustBeMember | Value must be a member of this set: /     'auto' /     'zip' / 
+set.PackageType.7.value	double 5
+set.PackageType.7	ERR MATLAB:invalidType | Expected PackageType to be one of these types: /  / char, string /  / Instead its type was double.
+set.OptionalDependencies.1.value	'all'
+set.OptionalDependencies.1	all
+set.OptionalDependencies.2.value	'none'
+set.OptionalDependencies.2	none
+set.OptionalDependencies.3.value	'ALL'
+set.OptionalDependencies.3	ERR MATLAB:validators:mustBeMember | Value must be a member of this set: /     'all' /     'none' / 
+set.OptionalDependencies.4.value	'some'
+set.OptionalDependencies.4	ERR MATLAB:validators:mustBeMember | Value must be a member of this set: /     'all' /     'none' / 
+set.OptionalDependencies.5.value	double 1
+set.OptionalDependencies.5	ERR MATLAB:invalidType | Expected OptionalDependencies to be one of these types: /  / char, string /  / Instead its type was double.
+set.OptionalDependencies.6.value	string[none]
+set.OptionalDependencies.6	none
+set.OptionalDependencies.7.value	''
+set.OptionalDependencies.7	ERR MATLAB:validators:mustBeMember | Value must be a member of this set: /     'all' /     'none' / 
+set.Verbose.1.value	'on'
+set.Verbose.1	on
+set.Verbose.2.value	'off'
+set.Verbose.2	off
+set.Verbose.3.value	logical true
+set.Verbose.3	on
+set.Verbose.4.value	double 1
+set.Verbose.4	on
+set.Verbose.5.value	'maybe'
+set.Verbose.5	ERR MATLAB:validation:UnableToConvert | Error setting property 'Verbose' of class 'compiler.package.InstallerOptions'. 'maybe' is invalid. Value must be 'off' or 'on'.
+set.Verbose.6.value	double 2
+set.Verbose.6	on
+set.Verbose.7.value	string[on]
+set.Verbose.7	on
+set.Verbose.8.value	'ON'
+set.Verbose.8	on
+set.Verbose.9.value	double 0
+set.Verbose.9	off
+set.InstallerSplash.1.value	'<W>\p\src\k18_splash.png'
+set.InstallerSplash.1	<W>\p\src\k18_splash.png
+set.InstallerSplash.2.value	'k18_icon.png'
+set.InstallerSplash.2	<W>\p\src\k18_icon.png
+set.InstallerSplash.3.value	'nosuch.png'
+set.InstallerSplash.3	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / nosuch.png
+set.InstallerSplash.4.value	''
+set.InstallerSplash.4	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.InstallerSplash.5.value	'<W>\p\src\k18_anim.gif'
+set.InstallerSplash.5	ERR Compiler:utils:shared:noAnimatedGIFs | Animated '.gif' files are not supported.
+set.InstallerSplash.6.value	'<W>\p\src\k18data.txt'
+set.InstallerSplash.6	ERR Compiler:utils:shared:notAnImage | The file: /  / <W>\p\src\k18data.txt /  / is not an image file.
+set.InstallerSplash.7.value	double 5
+set.InstallerSplash.7	ERR MATLAB:invalidType | Expected InstallerSplash to be one of these types: /  / char, string /  / Instead its type was double.
+set.InstallerSplash.8.value	string[]
+set.InstallerSplash.8	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.InstallerIcon.1.value	'<W>\p\src\k18_icon.png'
+set.InstallerIcon.1	<W>\p\src\k18_icon.png
+set.InstallerIcon.2.value	'k18_logo.png'
+set.InstallerIcon.2	<W>\p\src\k18_logo.png
+set.InstallerIcon.3.value	'nosuch.png'
+set.InstallerIcon.3	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / nosuch.png
+set.InstallerIcon.4.value	''
+set.InstallerIcon.4	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.InstallerIcon.5.value	'<W>\p\src\k18_anim.gif'
+set.InstallerIcon.5	ERR Compiler:utils:shared:noAnimatedGIFs | Animated '.gif' files are not supported.
+set.InstallerIcon.6.value	'<W>\p\src\k18data.txt'
+set.InstallerIcon.6	ERR Compiler:utils:shared:notAnImage | The file: /  / <W>\p\src\k18data.txt /  / is not an image file.
+set.InstallerIcon.7.value	double 5
+set.InstallerIcon.7	ERR MATLAB:invalidType | Expected InstallerIcon to be one of these types: /  / char, string /  / Instead its type was double.
+set.InstallerLogo.1.value	'<W>\p\src\k18_logo.png'
+set.InstallerLogo.1	<W>\p\src\k18_logo.png
+set.InstallerLogo.2.value	'k18_splash.png'
+set.InstallerLogo.2	<W>\p\src\k18_splash.png
+set.InstallerLogo.3.value	'nosuch.png'
+set.InstallerLogo.3	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / nosuch.png
+set.InstallerLogo.4.value	''
+set.InstallerLogo.4	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.InstallerLogo.5.value	'<W>\p\src\k18_anim.gif'
+set.InstallerLogo.5	ERR Compiler:utils:shared:noAnimatedGIFs | Animated '.gif' files are not supported.
+set.InstallerLogo.6.value	double 5
+set.InstallerLogo.6	ERR MATLAB:invalidType | Expected InstallerLogo to be one of these types: /  / char, string /  / Instead its type was double.
+set.AddRemoveProgramsIcon.1.value	''
+set.AddRemoveProgramsIcon.1	
+set.AddRemoveProgramsIcon.2.value	'<W>\p\src\k18_icon.png'
+set.AddRemoveProgramsIcon.2	<W>\p\src\k18_icon.png
+set.AddRemoveProgramsIcon.3.value	'k18_logo.png'
+set.AddRemoveProgramsIcon.3	<W>\p\src\k18_logo.png
+set.AddRemoveProgramsIcon.4.value	'nosuch.png'
+set.AddRemoveProgramsIcon.4	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / nosuch.png
+set.AddRemoveProgramsIcon.5.value	'<W>\p\src\k18_anim.gif'
+set.AddRemoveProgramsIcon.5	ERR Compiler:utils:shared:noAnimatedGIFs | Animated '.gif' files are not supported.
+set.AddRemoveProgramsIcon.6.value	string[]
+set.AddRemoveProgramsIcon.6	
+set.AddRemoveProgramsIcon.7.value	double 5
+set.AddRemoveProgramsIcon.7	ERR MATLAB:invalidType | Expected AddRemoveProgramsIcon to be one of these types: /  / char, string /  / Instead its type was double.
+set.AddRemoveProgramsIcon.8.value	double empty
+set.AddRemoveProgramsIcon.8	
+set.AddRemoveProgramsIcon.9.value	'<W>\p\src\k18data.txt'
+set.AddRemoveProgramsIcon.9	ERR Compiler:utils:shared:notAnImage | The file: /  / <W>\p\src\k18data.txt /  / is not an image file.
+set.Shortcut.1.value	''
+set.Shortcut.1	
+set.Shortcut.2.value	'<W>\p\src\k18data.txt'
+set.Shortcut.2	<W>\p\src\k18data.txt
+set.Shortcut.3.value	'nosuch'
+set.Shortcut.3	ERR Compiler:package:shared:cannotFindFileOrFolder | Cannot find file or folder: /  / nosuch
+set.Shortcut.4.value	'<W>\p\src\k18folder'
+set.Shortcut.4	<W>\p\src\k18folder
+set.Shortcut.5.value	'k18data.txt'
+set.Shortcut.5	<W>\p\src\k18data.txt
+set.Shortcut.6.value	string[]
+set.Shortcut.6	
+set.Shortcut.7.value	double 5
+set.Shortcut.7	ERR MATLAB:invalidType | Expected Shortcut to be one of these types: /  / char, string /  / Instead its type was double.
+set.Shortcut.8.value	double empty
+set.Shortcut.8	
+set.AdditionalFiles.1.value	cell{}
+set.AdditionalFiles.1	{}
+set.AdditionalFiles.2.value	'k18data.txt'
+set.AdditionalFiles.2	{'<W>\p\src\k18data.txt'}
+set.AdditionalFiles.3.value	cell{'<W>\p\src\k18data.txt','<W>\p\src\k18folder'}
+set.AdditionalFiles.3	{'<W>\p\src\k18data.txt', '<W>\p\src\k18folder'}
+set.AdditionalFiles.4.value	'nosuch'
+set.AdditionalFiles.4	ERR Compiler:utils:shared:cannotFindFileOrFolder | Cannot find file or folder: /  / nosuch
+set.AdditionalFiles.5.value	string[]
+set.AdditionalFiles.5	{}
+set.AdditionalFiles.6.value	string[k18data.txt,k18bad.txt]
+set.AdditionalFiles.6	{'<W>\p\src\k18data.txt', '<W>\p\src\k18bad.txt'}
+set.AdditionalFiles.7.value	double 5
+set.AdditionalFiles.7	ERR MATLAB:invalidType | Expected AdditionalFiles to be one of these types: /  / char, string, cell /  / Instead its type was double.
+set.AdditionalFiles.8.value	cell{double 5}
+set.AdditionalFiles.8	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be a character vector, string array, or cell array of character vectors.
+set.AdditionalFiles.9.value	''
+set.AdditionalFiles.9	{}
+set.AdditionalFiles.10.value	double empty
+set.AdditionalFiles.10	{}
+set.OutputDir.1.value	'out18'
+set.OutputDir.1	<W>\p\src\out18
+set.OutputDir.2.value	'C:\k18\x\y'
+set.OutputDir.2	C:\k18\x\y
+set.OutputDir.3.value	'.'
+set.OutputDir.3	.
+set.OutputDir.4.value	'.\rel'
+set.OutputDir.4	.\rel
+set.OutputDir.5.value	'<W>\p\src\k18data.txt'
+set.OutputDir.5	ERR Compiler:build:outputdir:mustBeFolder | The value specified for 'OutputDir': /  / <W>\p\src\k18data.txt /  / is not a valid folder path.
+set.OutputDir.6.value	'a<b'
+set.OutputDir.6	ERR Compiler:clishared:badProperty | Invalid 'OutputDir': 'a<b'
+set.OutputDir.7.value	double 5
+set.OutputDir.7	ERR MATLAB:invalidType | Expected OutputDir to be one of these types: /  / char, string /  / Instead its type was double.
+set.OutputDir.8.value	''
+set.OutputDir.8	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.OutputDir.9.value	string[strdir]
+set.OutputDir.9	<W>\p\src\strdir
+set.OutputDir.10.value	'sub/deep'
+set.OutputDir.10	<W>\p\src\sub\deep
+set.DefaultInstallationDir.1.value	'C:\Apps\K18'
+set.DefaultInstallationDir.1	C:\Apps\K18
+set.DefaultInstallationDir.2.value	''
+set.DefaultInstallationDir.2	ERR MATLAB:validators:mustBeNonempty | Error setting property 'DefaultInstallationDir' of class 'compiler.package.InstallerOptions'. Value must not be empty.
+set.DefaultInstallationDir.3.value	double 5
+set.DefaultInstallationDir.3	ERR MATLAB:invalidType | Expected DefaultInstallationDir to be one of these types: /  / char, string /  / Instead its type was double.
+set.DefaultInstallationDir.4.value	string[%ProgramFiles%\x]
+set.DefaultInstallationDir.4	%ProgramFiles%\x
+set.DefaultInstallationDir.5.value	'rel\dir'
+set.DefaultInstallationDir.5	rel\dir
+set.DefaultInstallationDir.6.value	cell{'a'}
+set.DefaultInstallationDir.6	ERR MATLAB:invalidType | Expected DefaultInstallationDir to be one of these types: /  / char, string
+set.AuthorName.1.value	'Frog'
+set.AuthorName.1	Frog
+set.AuthorName.2.value	double 5
+set.AuthorName.2	ERR MATLAB:invalidType | Expected AuthorName to be one of these types: /  / char, string /  / Instead its type was double.
+set.AuthorName.3.value	string[]
+set.AuthorName.3	
+set.AuthorName.4.value	cell{'a'}
+set.AuthorName.4	ERR MATLAB:invalidType | Expected AuthorName to be one of these types: /  / char, string
+set.AuthorName.5.value	''
+set.AuthorName.5	
+set.AuthorName.6.value	char 2x2
+set.AuthorName.6	ERR MATLAB:expectedScalartext | Expected AuthorName to be a non-missing string scalar or character vector.
+set.AuthorEmail.1.value	'frog@pond.org'
+set.AuthorEmail.1	frog@pond.org
+set.AuthorEmail.2.value	double 5
+set.AuthorEmail.2	ERR MATLAB:invalidType | Expected AuthorEmail to be one of these types: /  / char, string /  / Instead its type was double.
+set.AuthorEmail.3.value	''
+set.AuthorEmail.3	
+set.AuthorCompany.1.value	'Boston Common'
+set.AuthorCompany.1	Boston Common
+set.AuthorCompany.2.value	double 5
+set.AuthorCompany.2	ERR MATLAB:invalidType | Expected AuthorCompany to be one of these types: /  / char, string /  / Instead its type was double.
+set.AuthorCompany.3.value	''
+set.AuthorCompany.3	
+set.Summary.1.value	'The best'
+set.Summary.1	The best
+set.Summary.2.value	double 5
+set.Summary.2	ERR MATLAB:invalidType | Expected Summary to be one of these types: /  / char, string /  / Instead its type was double.
+set.Summary.3.value	'two
+lines'
+set.Summary.3	two / lines
+set.Description.1.value	'Long text'
+set.Description.1	Long text
+set.Description.2.value	double 5
+set.Description.2	ERR MATLAB:invalidType | Expected Description to be one of these types: /  / char, string /  / Instead its type was double.
+set.Description.3.value	''
+set.Description.3	
+set.InstallationNotes.1.value	'note 1
+note 2'
+set.InstallationNotes.1	note 1 / note 2
+set.InstallationNotes.2.value	double 5
+set.InstallationNotes.2	ERR MATLAB:invalidType | Expected InstallationNotes to be one of these types: /  / char, string /  / Instead its type was double.
+derived.InstallerName	MyAppInstaller
+derived.OutputDir	.\My_Appinstaller
+derived.DefaultInstallationDir	%ProgramFiles%\My_App
+derived.OutputDir.set	<W>\p\src\chosen
+derived.after.rename	MySetup | <W>\p\src\chosen | D:\There
+derived.fresh	MyAppInstaller | .\Renamedinstaller | %ProgramFiles%\Renamed
+derived.display
+  InstallerOptions with properties:
+      RuntimeDelivery: 'web'
+      InstallerSplash: '<MATLABROOT>\toolbox\compiler\packagingResources\default_splash.png'
+      InstallerIcon: '<MATLABROOT>\toolbox\compiler\packagingResources\default_icon_48.png'
+      InstallerLogo: '<MATLABROOT>\toolbox\compiler\packagingResources\default_logo.png'
+      PackageType: 'auto'
+      AdditionalFiles: {}
+      AddRemoveProgramsIcon: ''
+      AuthorName: ''
+      AuthorEmail: ''
+      AuthorCompany: ''
+      Summary: ''
+      Description: ''
+      InstallationNotes: ''
+      OptionalDependencies: 'all'
+      Shortcut: ''
+      Verbose: off
+      Version: '1.0'
+      ApplicationName: 'Renamed'
+      InstallerName: 'MySetup'
+      OutputDir: '<W>\p\src\chosen'
+      DefaultInstallationDir: 'D:\There'
+derived.saveload	ERR  | save: 'o' is a matlab.lang.OnOffSwitchState, a .NET value, which a MAT-file cannot hold.
+web.printed
+  |Packaging files
+  |Installer created at <W>\p\web\MyAppInstaller.exe
+web	ok
+web.files	MyAppInstaller.exe (1974827)
+web.seconds	3.0
+quiet	ok
+quiet.files	MyAppInstaller.exe (1974823)
+quiet.seconds	3.1
+named.printed
+  |Packaging files
+  |Installer created at <W>\p\named\k18setup.exe
+named	ok
+named.files	k18setup.exe (2086908)
+named.seconds	3.4
+zip.printed
+  |Packaging files
+  |Installer created at <W>\p\zip\MyAppInstaller.zip
+zip	ok
+zip.files	MyAppInstaller.zip (1054010)
+zip.seconds	3.4
+installer.printed
+  |Packaging files
+  |Packaging the JGraph Runtime
+  |Installer created at <W>\p\offline\MyAppInstaller.exe
+installer	ok
+installer.files	MyAppInstaller.exe (55212382)
+installer.seconds	9.4
+none.printed
+  |Packaging files
+  |No JGraph Runtime will be installed during application installation.
+  |Installer created at <W>\p\none\MyAppInstaller.exe
+none	ok
+none.files	MyAppInstaller.exe (1974071)
+none.seconds	3.0
+none.zip	ok
+none.zip.files	MyAppInstaller.zip (1053259)
+none.zip.seconds	3.5
+optional.none	ok
+optional.none.files	MyAppInstaller.exe (1974455)
+optional.none.seconds	3.5
+options	ok
+options.files	FromOptions.exe (1974525)
+options.seconds	3.1
+options.extra	ERR Compiler:package:shared:onlyOptions | No other name-value arguments can be used with the 'Options' parameter.
+options.extra.files	FromOptions.exe (1974525)
+options.extra.seconds	0.0
+options.wrongclass	ERR MATLAB:invalidType | The value of 'Options' is invalid. Expected input to be one of these types: /  / compiler.package.InstallerOptions /  / Instead its type was double.
+options.wrongclass.files	FromOptions.exe (1974525)
+options.wrongclass.seconds	0.0
+options.other	ERR MATLAB:invalidType | The value of 'Options' is invalid. Expected input to be one of these types: /  / compiler.package.InstallerOptions /  / Instead its type was compiler.build.StandaloneApplicationOptions.
+options.other.files	FromOptions.exe (1974525)
+options.other.seconds	0.0
+results.win	ok
+results.win.files	MyAppInstaller.exe (1758855)
+results.win.seconds	3.3
+results.py	ok
+results.py.files	MyAppInstaller.exe (1509787)
+results.py.seconds	2.7
+files.exe.printed
+  |Warning: Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+  |Warning: The following executables are being packaged:
+  |
+  |<W>\p\b\k18hello.exe
+  |
+  |In order to show the application in the Windows Apps & Features list, set the 'Shortcut' option to the name of the executable that launches the application.
+files.exe	ok
+files.exe.warn	Compiler:installer:exeButNoShortcut | The following executables are being packaged: /  / <W>\p\b\k18hello.exe /  / In order to show the application in the Windows Apps & Features list, set the 'Shortcut' option to the name of the executable that launches the application.
+files.exe.files	MyAppInstaller.exe (1798429)
+files.exe.seconds	2.9
+files.shortcut.printed
+  |Warning: Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+files.shortcut	ok
+files.shortcut.warn	Compiler:build:shared:mcrProductsTxtGoingAway | Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+files.shortcut.files	MyAppInstaller.exe (1799795)
+files.shortcut.seconds	2.8
+files.string.printed
+  |Warning: Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+files.string	ok
+files.string.warn	Compiler:build:shared:mcrProductsTxtGoingAway | Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+files.string.files	MyAppInstaller.exe (1799023)
+files.string.seconds	2.9
+files.folder.printed
+  |Warning: Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+files.folder	ok
+files.folder.warn	Compiler:build:shared:mcrProductsTxtGoingAway | Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+files.folder.files	MyAppInstaller.exe (1502141)
+files.folder.seconds	2.9
+files.folder.shortcut.printed
+  |Warning: Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+files.folder.shortcut	ok
+files.folder.shortcut.warn	Compiler:build:shared:mcrProductsTxtGoingAway | Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+files.folder.shortcut.files	MyAppInstaller.exe (1800535)
+files.folder.shortcut.seconds	2.9
+files.onetxt.printed
+  |Warning: Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+files.onetxt	ok
+files.onetxt.warn	Compiler:build:shared:mcrProductsTxtGoingAway | Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+files.onetxt.files	MyAppInstaller.exe (1800173)
+files.onetxt.seconds	2.9
+files.noname	ERR Compiler:package:shared:mustSetProperty | 'ApplicationName' has no default and must be set.
+files.noname.warn	Compiler:build:shared:mcrProductsTxtGoingAway | Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+files.noname.files	(no folder)
+files.noname.seconds	0.0
+files.missing	ERR Compiler:package:shared:cannotFindFileOrFolder | Cannot find file or folder: /  / <W>\p\src\nosuch.exe
+files.missing.files	(no folder)
+files.missing.seconds	0.0
+files.repeat	ERR Compiler:package:shared:noRepeats | Cannot package items with the same name.  The following inputs have the same name: /  / <W>\p\b\k18hello.exe / <W>\p\src\k18hello.exe
+files.repeat.files	(no folder)
+files.repeat.seconds	0.0
+files.badtxt	ERR Compiler:utils:shared:badProductEntry | The entry 'hello' in the file: /  / <W>\p\src\k18bad.txt /  / is invalid.
+files.badtxt.warn	Compiler:build:shared:mcrProductsTxtGoingAway | Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+files.badtxt.files	(no folder)
+files.badtxt.seconds	0.0
+files.emptytxt	ERR Compiler:installer:emptyRequiredMCRProducts | The required runtime product information is either empty or invalid.
+files.emptytxt.warn	Compiler:build:shared:mcrProductsTxtGoingAway | Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+files.emptytxt.files	(no folder)
+files.emptytxt.seconds	0.0
+files.notxt	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / <W>\p\src\nosuch.txt
+files.notxt.files	(no folder)
+files.notxt.seconds	0.0
+files.txtmissingarg	ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+files.txtmissingarg.files	(no folder)
+files.txtmissingarg.seconds	0.0
+files.cellnum	ERR Compiler:package:shared:mustBeCellstr | When specifying items to be packaged, the item list must be convertible to a cell array of char row vectors.
+files.cellnum.files	(no folder)
+files.cellnum.seconds	0.0
+files.empty	ERR MATLAB:expectedNonempty | Expected input number 1, Files, to be nonempty.
+files.empty.files	(no folder)
+files.empty.seconds	0.0
+files.number	ERR MATLAB:invalidType | Expected input number 1, Files, to be one of these types: /  / cell, char, string, compiler.build.Results /  / Instead its type was double.
+files.number.files	(no folder)
+files.number.seconds	0.0
+files.results.txt	ok
+files.results.txt.files	MyAppInstaller.exe (1798979)
+files.results.txt.seconds	2.9
+shortcut.notpackaged	ERR Compiler:installer:shortcutNotPackaged | 'Shortcut' should be either one of files to be packaged, or one of the folders owning a file to be packaged.
+shortcut.notpackaged.warn	Compiler:build:shared:mcrProductsTxtGoingAway | Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+shortcut.notpackaged.files	MyAppInstaller.exe (1798979)
+shortcut.notpackaged.seconds	0.0
+shortcut.byname	ERR Compiler:installer:shortcutNotPackaged | 'Shortcut' should be either one of files to be packaged, or one of the folders owning a file to be packaged.
+shortcut.byname.warn	Compiler:build:shared:mcrProductsTxtGoingAway | Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+shortcut.byname.files	MyAppInstaller.exe (1798979)
+shortcut.byname.seconds	0.0
+results.noshortcut.printed
+  |Warning: The following executables are being packaged:
+  |
+  |<W>\p\b\k18hello.exe
+  |
+  |In order to show the application in the Windows Apps & Features list, set the 'Shortcut' option to the name of the executable that launches the application.
+results.noshortcut	ok
+results.noshortcut.warn	Compiler:installer:exeButNoShortcut | The following executables are being packaged: /  / <W>\p\b\k18hello.exe /  / In order to show the application in the Windows Apps & Features list, set the 'Shortcut' option to the name of the executable that launches the application.
+results.noshortcut.files	MyAppInstaller.exe (1973441)
+results.noshortcut.seconds	3.3
+results.exe.additional	ERR JGraph:installer:wixFailed | wix build failed with exit code 92. <TEMP>\jgraph-installer-0842d1377c4141c49be0f7c1b6c3e692\application.wxs(16) : error WIX0091: Duplicate File with identifier 'filqf93ejrb1zME0t4dZPe9fDuTBNg' found. Access modifiers (global, library, file, section) cannot prevent these conflicts. Ensure all your identifiers of a given type (Directory, File, etc.) are unique. <TEMP>\jgraph-installer-0842d1377c4141c49be0f7c1b6c3e692\application.wxs(18) : error WIX0092: Location of symbol related to previous error. <TEMP>\jgraph-installer-0842d1377c4141c49be0f7c1b6c3e692\application.wxs(16) : error WIX0091: Duplicate Component with identifier 'filqf93ejrb1zME0t4dZPe9fDuTBNg' found. Access modifiers (global, library, file, section) cannot prevent these conflicts. Ensure all your identifiers of a given type (Directory, File, etc.) are unique. / <TEMP>\jgraph-installer-0842d1377c4141c49be0f7c1b6c3e692\application.wxs(16) : error WIX0091: Duplicate File with identifier 'filqf93ejrb1zME0t4dZPe9fDuTBNg' found. Access modifiers (global, library, file, section) cannot prevent these conflicts. Ensure all your identifiers of a given type (Directory, File, etc.) are unique. / <TEMP>\jgraph-installer-0842d1377c4141c49be0f7c1b6c3e692\application.wxs(18) : error WIX0092: Location of symbol related to previous error. / <TEMP>\jgraph-installer-0842d1377c4141c49be0f7c1b6c3e692\application.wxs(16) : error WIX0091: Duplicate Component with identifier 'filqf93ejrb1zME0t4dZPe9fDuTBNg' found. Access modifiers (global, library, file, section) cannot prevent these conflicts. Ensure all your identifiers of a given type (Directory, File, etc.) are unique. / <TEMP>\jgraph-installer-0842d1377c4141c49be0f7c1b6c3e692\application.wxs(18) : error WIX0092: Location of symbol related to previous error.
+results.exe.additional.files	MyAppInstaller.exe (1973441)
+results.exe.additional.seconds	1.6
+nargs	ERR MATLAB:narginchk:tooManyInputs | Too many input arguments.
+nargs.files	MyAppInstaller.exe (1973441)
+nargs.seconds	0.0
+nargs.odd	ERR MATLAB:InputParser:ParamMissingValue | No value was given for 'OutputDir'. Name-value pair arguments require a name followed by a value.
+nargs.odd.files	MyAppInstaller.exe (1973441)
+nargs.odd.seconds	0.0
+unknown	ERR MATLAB:InputParser:UnmatchedParameter | 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+unknown.files	MyAppInstaller.exe (1973441)
+unknown.seconds	0.0
+icon.deleted	ERR Compiler:installer:propDoesNotExist | The file /  / '<W>\p\src\k18_gone.png' /  / in the property 'InstallerIcon' does not exist.
+icon.deleted.files	(no folder)
+icon.deleted.seconds	0.0
+addremove.deleted	ERR Compiler:installer:propDoesNotExist | The file /  / '<W>\p\src\k18_gone.png' /  / in the property 'AddRemoveProgramsIcon' does not exist.
+addremove.deleted.files	(no folder)
+addremove.deleted.seconds	0.0
+outdir.file	ERR Compiler:build:outputdir:mustBeFolder | The value specified for 'OutputDir': /  / <W>\p\src\k18data.txt /  / is not a valid folder path.
+outdir.file.files	(no folder)
+outdir.file.seconds	0.0
+outdir.relative	ok
+outdir.relative.files	MyAppInstaller.exe (1974883)
+outdir.relative.seconds	3.2
+outdir.default	ok
+outdir.default.files	MyAppInstaller.exe (1974809)
+outdir.default.seconds	3.4
+outdir.default.named	ok
+outdir.default.named.files	MyAppInstaller.exe (1974549)
+outdir.default.named.seconds	3.3
+verbose.logical.printed
+  |Packaging files
+  |Installer created at <W>\p\verbosezip\MyAppInstaller.exe
+verbose.logical	ok
+verbose.logical.files	MyAppInstaller.exe (1974475)
+verbose.logical.seconds	3.1
+custom.web	ok
+custom.web.files	k18rt.exe (1495884)
+custom.web.seconds	2.2
+custom.default.outdir	ok
+custom.default.outdir.files	k18rt2.exe (1496250)
+custom.default.outdir.seconds	2.3
+custom.none	ERR Compiler:utils:shared:noneNotSupported | 'none' is not a supported value of 'RuntimeDelivery' for the function 'compiler.runtime.customInstaller'.
+custom.none.files	k18rt.exe (1495884)
+custom.none.seconds	0.0
+custom.zipweb	ERR Compiler:package:shared:noZipWithWeb | Cannot set "PackageType" to "zip" when "RuntimeDelivery" is set to "web".
+custom.zipweb.files	k18rt.exe (1495884)
+custom.zipweb.seconds	0.0
+custom.installer	ok
+custom.installer.files	k18rt.exe (54732767)
+custom.installer.seconds	8.4
+custom.zip.installer	ok
+custom.zip.installer.files	k18rt.exe (54732767) | k18rt.zip (53820980)
+custom.zip.installer.seconds	11.4
+custom.files.printed
+  |Warning: Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+custom.files	ok
+custom.files.warn	Compiler:build:shared:mcrProductsTxtGoingAway | Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+custom.files.files	k18rt.exe (54732767) | k18rt.zip (53820980) | k18rt3.exe (1495602)
+custom.files.seconds	2.2
+custom.files.two.printed
+  |Warning: Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+custom.files.two	ok
+custom.files.two.warn	Compiler:build:shared:mcrProductsTxtGoingAway | Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+custom.files.two.files	k18rt.exe (54732767) | k18rt.zip (53820980) | k18rt3.exe (1495602) | k18rt4.exe (1496248)
+custom.files.two.seconds	2.2
+custom.files.string.printed
+  |Warning: Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+custom.files.string	ok
+custom.files.string.warn	Compiler:build:shared:mcrProductsTxtGoingAway | Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+custom.files.string.files	k18rt.exe (54732767) | k18rt.zip (53820980) | k18rt3.exe (1495602) | k18rt4.exe (1496248) | k18rt5.exe (1496234)
+custom.files.string.seconds	2.1
+custom.multi	ok
+custom.multi.files	k18rt.exe (54732767) | k18rt.zip (53820980) | k18rt3.exe (1495602) | k18rt4.exe (1496248) | k18rt5.exe (1496234) | k18rt6.exe (1495608)
+custom.multi.seconds	2.1
+custom.badname.space	ok
+custom.badname.space.files	k18 rt.exe (1496258) | k18rt.exe (54732767) | k18rt.zip (53820980) | k18rt3.exe (1495602) | k18rt4.exe (1496248) | k18rt5.exe (1496234) | k18rt6.exe (1495608)
+custom.badname.space.seconds	2.3
+custom.badname.slash	ERR Compiler:clishared:badProperty | Invalid 'InstallerName': 'k18/rt'
+custom.badname.slash.files	k18 rt.exe (1496258) | k18rt.exe (54732767) | k18rt.zip (53820980) | k18rt3.exe (1495602) | k18rt4.exe (1496248) | k18rt5.exe (1496234) | k18rt6.exe (1495608)
+custom.badname.slash.seconds	0.0
+custom.badname.empty	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+custom.badname.empty.files	k18 rt.exe (1496258) | k18rt.exe (54732767) | k18rt.zip (53820980) | k18rt3.exe (1495602) | k18rt4.exe (1496248) | k18rt5.exe (1496234) | k18rt6.exe (1495608)
+custom.badname.empty.seconds	0.0
+custom.badname.number	ERR MATLAB:invalidType | Expected InstallerName to be one of these types: /  / char, string /  / Instead its type was double.
+custom.badname.number.files	k18 rt.exe (1496258) | k18rt.exe (54732767) | k18rt.zip (53820980) | k18rt3.exe (1495602) | k18rt4.exe (1496248) | k18rt5.exe (1496234) | k18rt6.exe (1495608)
+custom.badname.number.seconds	0.0
+custom.optional.none	ok
+custom.optional.none.files	k18 rt.exe (1496258) | k18rt.exe (54732767) | k18rt.zip (53820980) | k18rt3.exe (1495602) | k18rt4.exe (1496248) | k18rt5.exe (1496234) | k18rt6.exe (1495608) | k18rt7.exe (1496254)
+custom.optional.none.seconds	1.9
+custom.optional.bad	ERR MATLAB:validators:mustBeMember | Value must be a member of this set: /     'all' /     'none' / 
+custom.optional.bad.files	k18 rt.exe (1496258) | k18rt.exe (54732767) | k18rt.zip (53820980) | k18rt3.exe (1495602) | k18rt4.exe (1496248) | k18rt5.exe (1496234) | k18rt6.exe (1495608) | k18rt7.exe (1496254)
+custom.optional.bad.seconds	0.0
+custom.badtype	ERR MATLAB:invalidType | Expected RuntimeDefinition to be one of these types: /  / char, string, cell, compiler.build.Results /  / Instead its type was double.
+custom.badtype.files	k18 rt.exe (1496258) | k18rt.exe (54732767) | k18rt.zip (53820980) | k18rt3.exe (1495602) | k18rt4.exe (1496248) | k18rt5.exe (1496234) | k18rt6.exe (1495608) | k18rt7.exe (1496254)
+custom.badtype.seconds	0.0
+custom.badtxt	ERR Compiler:utils:shared:badProductEntry | The entry 'hello' in the file: /  / <W>\p\src\k18bad.txt /  / is invalid.
+custom.badtxt.warn	Compiler:build:shared:mcrProductsTxtGoingAway | Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+custom.badtxt.files	k18 rt.exe (1496258) | k18rt.exe (54732767) | k18rt.zip (53820980) | k18rt3.exe (1495602) | k18rt4.exe (1496248) | k18rt5.exe (1496234) | k18rt6.exe (1495608) | k18rt7.exe (1496254)
+custom.badtxt.seconds	0.0
+custom.emptytxt.printed
+  |Warning: Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+custom.emptytxt	ok
+custom.emptytxt.warn	Compiler:build:shared:mcrProductsTxtGoingAway | Using "requiredMCRProducts.txt" as an input will not be supported in a future release. Use "buildresults.json" instead.
+custom.emptytxt.files	k18 rt.exe (1496258) | k18rt.exe (1495882) | k18rt.zip (53820980) | k18rt3.exe (1495602) | k18rt4.exe (1496248) | k18rt5.exe (1496234) | k18rt6.exe (1495608) | k18rt7.exe (1496254)
+custom.emptytxt.seconds	2.1
+custom.notxt	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / <W>\p\src\nosuch.txt
+custom.notxt.files	k18 rt.exe (1496258) | k18rt.exe (1495882) | k18rt.zip (53820980) | k18rt3.exe (1495602) | k18rt4.exe (1496248) | k18rt5.exe (1496234) | k18rt6.exe (1495608) | k18rt7.exe (1496254)
+custom.notxt.seconds	0.0
+custom.nargs	ERR MATLAB:narginchk:tooManyInputs | Too many input arguments.
+custom.nargs.files	k18 rt.exe (1496258) | k18rt.exe (1495882) | k18rt.zip (53820980) | k18rt3.exe (1495602) | k18rt4.exe (1496248) | k18rt5.exe (1496234) | k18rt6.exe (1495608) | k18rt7.exe (1496254)
+custom.nargs.seconds	0.0
+custom.unknown	ERR MATLAB:InputParser:UnmatchedParameter | 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+custom.unknown.files	k18 rt.exe (1496258) | k18rt.exe (1495882) | k18rt.zip (53820980) | k18rt3.exe (1495602) | k18rt4.exe (1496248) | k18rt5.exe (1496234) | k18rt6.exe (1495608) | k18rt7.exe (1496254)
+custom.unknown.seconds	0.0
+custom.outdir.file	ERR Compiler:build:outputdir:mustBeFolder | The value specified for 'OutputDir': /  / <W>\p\src\k18data.txt /  / is not a valid folder path.
+custom.outdir.file.files	k18 rt.exe (1496258) | k18rt.exe (1495882) | k18rt.zip (53820980) | k18rt3.exe (1495602) | k18rt4.exe (1496248) | k18rt5.exe (1496234) | k18rt6.exe (1495608) | k18rt7.exe (1496254)
+custom.outdir.file.seconds	0.0
+custom.oneinput	ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+custom.oneinput.files	k18 rt.exe (1496258) | k18rt.exe (1495882) | k18rt.zip (53820980) | k18rt3.exe (1495602) | k18rt4.exe (1496248) | k18rt5.exe (1496234) | k18rt6.exe (1495608) | k18rt7.exe (1496254)
+custom.oneinput.seconds	0.0
+mcrinstaller.printed	char [1 106] 'ans = <REPO>\installer\JGraph.Runtime.Installer\bin\Release\JGraph-Runtime-0.2.3.msi'
+mcrinstaller.outputs	'<REPO>\installer\JGraph.Runtime.Installer\bin\Release\JGraph-Runtime-0.2.3.msi' | double 25 | double 2 | double 0 | 'WIN64'
+mcrinstaller.nargout	double [1 1] 5
+runtime.version	double [1 1] 25
+runtime.version.class	char [1 6] 'double'
+runtime.version.two	ERR MATLAB:TooManyOutputs | Too many output arguments.
+nargin.compiler.runtime.download	double [1 1] 0
+nargout.compiler.runtime.download	double [1 1] 0
+exist.compiler.runtime.download	double [1 1] 5
+nargin.compiler.runtime.version	double [1 1] 0
+nargout.compiler.runtime.version	double [1 1] -1
+exist.compiler.runtime.version	double [1 1] 5
+nargin.compiler.runtime.installer	ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+nargout.compiler.runtime.installer	ERR MATLAB:narginout:notValidMfile | Not a valid MATLAB file.
+exist.compiler.runtime.installer	double [1 1] 0
+nargin.compiler.package.installer	double [1 1] -1
+nargout.compiler.package.installer	double [1 1] 0
+exist.compiler.package.installer	double [1 1] 5
+nargin.compiler.package.InstallerOptions	double [1 1] -1
+nargout.compiler.package.InstallerOptions	double [1 1] 1
+exist.compiler.package.InstallerOptions	double [1 1] 8
+nargin.compiler.runtime.customInstaller	double [1 1] -3
+nargout.compiler.runtime.customInstaller	double [1 1] 0
+exist.compiler.runtime.customInstaller	double [1 1] 5
+nargin.mcrinstaller	double [1 1] 0
+nargout.mcrinstaller	double [1 1] 5
+exist.mcrinstaller	double [1 1] 5
+url	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.runtime.utils.getInstallagentDowndloadURL'.
+notes	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.getDefaultInstallNotes'.
+scrub	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.utils.scrubName'.
+ext	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.package.installer.addInstallerExtension'.
+imgformats	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.utils.CLIConstants.AllowedImageFormats'.
+optionalproducts	ERR  | No class 'compiler.internal.utils.OptionalProductsValues'.
+deliveries	ERR  | No class 'compiler.internal.package.shared.RuntimeDeliveryValues'.
+packagetypes	ERR  | No class 'compiler.internal.package.shared.PackageTypes'.
+expectedMcrVersion	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.runtime.utils.expectedMcrVersion'.
+installerkey	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.internal.utils.CLIConstants.RuntimeInstallerKeyCurrentPlatform'.
+runtime.version.text	char [1 9] 'ans = 25 / '
+STDERR	Warning: Calling STRUCT on an object prevents the object from hiding its implementation details and should thus be avoided. Use DISP or DISPLAY to see the visible public details of an object. See 'help struct' for more information.

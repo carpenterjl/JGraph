@@ -24,6 +24,8 @@ internal static partial class JgsBuiltins
         "compiler.build.CppSharedLibraryOptions", "compiler.build.pythonPackage", "compiler.build.PythonPackageOptions",
         "compiler.build.productionServerArchive", "compiler.build.ProductionServerArchiveOptions",
         "mps.json.encode", "mps.json.decode", "mps.json.encoderequest", "mps.json.decoderesponse",
+        "compiler.package.installer", "compiler.package.InstallerOptions", "compiler.runtime.customInstaller",
+        "compiler.runtime.download", "compiler.runtime.version", "mcrinstaller",
     ];
 
     /// <summary>The functions whose use makes mcc warn that secrets come from the machine the program runs on.</summary>

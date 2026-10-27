@@ -1,0 +1,1429 @@
+custom.k18 rt.file	k18 rt.exe
+custom.k18 rt.bytes	1984512
+custom.k18 rt.subsystem	windows-gui
+custom.k18 rt.overlay.bytes	0
+custom.k18 rt.resource.ICON	1 lang 0: 1640 bytes
+custom.k18 rt.resource.ICON	2 lang 0: 744 bytes
+custom.k18 rt.resource.ICON	3 lang 0: 296 bytes
+custom.k18 rt.resource.ICON	4 lang 0: 3752 bytes
+custom.k18 rt.resource.ICON	5 lang 0: 2216 bytes
+custom.k18 rt.resource.ICON	6 lang 0: 1384 bytes
+custom.k18 rt.resource.ICON	7 lang 0: 43212 bytes
+custom.k18 rt.resource.ICON	8 lang 0: 9640 bytes
+custom.k18 rt.resource.ICON	9 lang 0: 4264 bytes
+custom.k18 rt.resource.ICON	10 lang 0: 1128 bytes
+custom.k18 rt.resource.DIALOG	1101 lang 1033: 352 bytes
+custom.k18 rt.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+custom.k18 rt.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+custom.k18 rt.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	381 bytes
+custom.k18 rt.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (254)
+custom.k18 rt.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+custom.k18 rt.resource.MW_COMPILER_EZDEPLOY_SPLASH	28508 bytes
+custom.k18 rt.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+custom.k18 rt.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+custom.k18 rt.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+custom.k18 rt.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+custom.k18 rt.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+custom.k18 rt.icongroup.1	48x96 4bpp dib 48x48 4bpp | 32x64 4bpp dib 32x32 4bpp | 16x32 4bpp dib 16x16 4bpp | 48x96 8bpp dib 48x48 8bpp | 32x64 8bpp dib 32x32 8bpp | 16x32 8bpp dib 16x16 8bpp | 13x0 21060bpp png 256x256 | 48x96 32bpp dib 48x48 32bpp | 32x64 32bpp dib 32x32 32bpp | 16x32 32bpp dib 16x16 32bpp
+custom.k18 rt.resource.MANIFEST	1 lang 1033: 1382 bytes
+custom.k18rt.file	k18rt.exe
+custom.k18rt.bytes	1984512
+custom.k18rt.subsystem	windows-gui
+custom.k18rt.overlay.bytes	0
+custom.k18rt.resource.ICON	1 lang 0: 1640 bytes
+custom.k18rt.resource.ICON	2 lang 0: 744 bytes
+custom.k18rt.resource.ICON	3 lang 0: 296 bytes
+custom.k18rt.resource.ICON	4 lang 0: 3752 bytes
+custom.k18rt.resource.ICON	5 lang 0: 2216 bytes
+custom.k18rt.resource.ICON	6 lang 0: 1384 bytes
+custom.k18rt.resource.ICON	7 lang 0: 43212 bytes
+custom.k18rt.resource.ICON	8 lang 0: 9640 bytes
+custom.k18rt.resource.ICON	9 lang 0: 4264 bytes
+custom.k18rt.resource.ICON	10 lang 0: 1128 bytes
+custom.k18rt.resource.DIALOG	1101 lang 1033: 352 bytes
+custom.k18rt.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+custom.k18rt.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+custom.k18rt.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	322 bytes
+custom.k18rt.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (88)
+custom.k18rt.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest/>
+custom.k18rt.resource.MW_COMPILER_EZDEPLOY_SPLASH	28508 bytes
+custom.k18rt.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+custom.k18rt.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+custom.k18rt.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+custom.k18rt.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+custom.k18rt.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+custom.k18rt.icongroup.1	48x96 4bpp dib 48x48 4bpp | 32x64 4bpp dib 32x32 4bpp | 16x32 4bpp dib 16x16 4bpp | 48x96 8bpp dib 48x48 8bpp | 32x64 8bpp dib 32x32 8bpp | 16x32 8bpp dib 16x16 8bpp | 13x0 21060bpp png 256x256 | 48x96 32bpp dib 48x48 32bpp | 32x64 32bpp dib 32x32 32bpp | 16x32 32bpp dib 16x16 32bpp
+custom.k18rt.resource.MANIFEST	1 lang 1033: 1382 bytes
+custom.k18rt3.file	k18rt3.exe
+custom.k18rt3.bytes	1984512
+custom.k18rt3.subsystem	windows-gui
+custom.k18rt3.overlay.bytes	0
+custom.k18rt3.resource.ICON	1 lang 0: 1640 bytes
+custom.k18rt3.resource.ICON	2 lang 0: 744 bytes
+custom.k18rt3.resource.ICON	3 lang 0: 296 bytes
+custom.k18rt3.resource.ICON	4 lang 0: 3752 bytes
+custom.k18rt3.resource.ICON	5 lang 0: 2216 bytes
+custom.k18rt3.resource.ICON	6 lang 0: 1384 bytes
+custom.k18rt3.resource.ICON	7 lang 0: 43212 bytes
+custom.k18rt3.resource.ICON	8 lang 0: 9640 bytes
+custom.k18rt3.resource.ICON	9 lang 0: 4264 bytes
+custom.k18rt3.resource.ICON	10 lang 0: 1128 bytes
+custom.k18rt3.resource.DIALOG	1101 lang 1033: 352 bytes
+custom.k18rt3.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+custom.k18rt3.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+custom.k18rt3.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	381 bytes
+custom.k18rt3.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (254)
+custom.k18rt3.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+custom.k18rt3.resource.MW_COMPILER_EZDEPLOY_SPLASH	28508 bytes
+custom.k18rt3.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+custom.k18rt3.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+custom.k18rt3.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+custom.k18rt3.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+custom.k18rt3.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+custom.k18rt3.icongroup.1	48x96 4bpp dib 48x48 4bpp | 32x64 4bpp dib 32x32 4bpp | 16x32 4bpp dib 16x16 4bpp | 48x96 8bpp dib 48x48 8bpp | 32x64 8bpp dib 32x32 8bpp | 16x32 8bpp dib 16x16 8bpp | 13x0 21060bpp png 256x256 | 48x96 32bpp dib 48x48 32bpp | 32x64 32bpp dib 32x32 32bpp | 16x32 32bpp dib 16x16 32bpp
+custom.k18rt3.resource.MANIFEST	1 lang 1033: 1382 bytes
+custom.k18rt4.file	k18rt4.exe
+custom.k18rt4.bytes	1984512
+custom.k18rt4.subsystem	windows-gui
+custom.k18rt4.overlay.bytes	0
+custom.k18rt4.resource.ICON	1 lang 0: 1640 bytes
+custom.k18rt4.resource.ICON	2 lang 0: 744 bytes
+custom.k18rt4.resource.ICON	3 lang 0: 296 bytes
+custom.k18rt4.resource.ICON	4 lang 0: 3752 bytes
+custom.k18rt4.resource.ICON	5 lang 0: 2216 bytes
+custom.k18rt4.resource.ICON	6 lang 0: 1384 bytes
+custom.k18rt4.resource.ICON	7 lang 0: 43212 bytes
+custom.k18rt4.resource.ICON	8 lang 0: 9640 bytes
+custom.k18rt4.resource.ICON	9 lang 0: 4264 bytes
+custom.k18rt4.resource.ICON	10 lang 0: 1128 bytes
+custom.k18rt4.resource.DIALOG	1101 lang 1033: 352 bytes
+custom.k18rt4.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+custom.k18rt4.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+custom.k18rt4.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	381 bytes
+custom.k18rt4.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (254)
+custom.k18rt4.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+custom.k18rt4.resource.MW_COMPILER_EZDEPLOY_SPLASH	28508 bytes
+custom.k18rt4.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+custom.k18rt4.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+custom.k18rt4.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+custom.k18rt4.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+custom.k18rt4.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+custom.k18rt4.icongroup.1	48x96 4bpp dib 48x48 4bpp | 32x64 4bpp dib 32x32 4bpp | 16x32 4bpp dib 16x16 4bpp | 48x96 8bpp dib 48x48 8bpp | 32x64 8bpp dib 32x32 8bpp | 16x32 8bpp dib 16x16 8bpp | 13x0 21060bpp png 256x256 | 48x96 32bpp dib 48x48 32bpp | 32x64 32bpp dib 32x32 32bpp | 16x32 32bpp dib 16x16 32bpp
+custom.k18rt4.resource.MANIFEST	1 lang 1033: 1382 bytes
+custom.k18rt5.file	k18rt5.exe
+custom.k18rt5.bytes	1984512
+custom.k18rt5.subsystem	windows-gui
+custom.k18rt5.overlay.bytes	0
+custom.k18rt5.resource.ICON	1 lang 0: 1640 bytes
+custom.k18rt5.resource.ICON	2 lang 0: 744 bytes
+custom.k18rt5.resource.ICON	3 lang 0: 296 bytes
+custom.k18rt5.resource.ICON	4 lang 0: 3752 bytes
+custom.k18rt5.resource.ICON	5 lang 0: 2216 bytes
+custom.k18rt5.resource.ICON	6 lang 0: 1384 bytes
+custom.k18rt5.resource.ICON	7 lang 0: 43212 bytes
+custom.k18rt5.resource.ICON	8 lang 0: 9640 bytes
+custom.k18rt5.resource.ICON	9 lang 0: 4264 bytes
+custom.k18rt5.resource.ICON	10 lang 0: 1128 bytes
+custom.k18rt5.resource.DIALOG	1101 lang 1033: 352 bytes
+custom.k18rt5.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+custom.k18rt5.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+custom.k18rt5.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	391 bytes
+custom.k18rt5.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (356)
+custom.k18rt5.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35055</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+custom.k18rt5.resource.MW_COMPILER_EZDEPLOY_SPLASH	28508 bytes
+custom.k18rt5.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+custom.k18rt5.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+custom.k18rt5.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+custom.k18rt5.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+custom.k18rt5.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+custom.k18rt5.icongroup.1	48x96 4bpp dib 48x48 4bpp | 32x64 4bpp dib 32x32 4bpp | 16x32 4bpp dib 16x16 4bpp | 48x96 8bpp dib 48x48 8bpp | 32x64 8bpp dib 32x32 8bpp | 16x32 8bpp dib 16x16 8bpp | 13x0 21060bpp png 256x256 | 48x96 32bpp dib 48x48 32bpp | 32x64 32bpp dib 32x32 32bpp | 16x32 32bpp dib 16x16 32bpp
+custom.k18rt5.resource.MANIFEST	1 lang 1033: 1382 bytes
+custom.k18rt6.file	k18rt6.exe
+custom.k18rt6.bytes	1984512
+custom.k18rt6.subsystem	windows-gui
+custom.k18rt6.overlay.bytes	0
+custom.k18rt6.resource.ICON	1 lang 0: 1640 bytes
+custom.k18rt6.resource.ICON	2 lang 0: 744 bytes
+custom.k18rt6.resource.ICON	3 lang 0: 296 bytes
+custom.k18rt6.resource.ICON	4 lang 0: 3752 bytes
+custom.k18rt6.resource.ICON	5 lang 0: 2216 bytes
+custom.k18rt6.resource.ICON	6 lang 0: 1384 bytes
+custom.k18rt6.resource.ICON	7 lang 0: 43212 bytes
+custom.k18rt6.resource.ICON	8 lang 0: 9640 bytes
+custom.k18rt6.resource.ICON	9 lang 0: 4264 bytes
+custom.k18rt6.resource.ICON	10 lang 0: 1128 bytes
+custom.k18rt6.resource.DIALOG	1101 lang 1033: 352 bytes
+custom.k18rt6.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+custom.k18rt6.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+custom.k18rt6.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	381 bytes
+custom.k18rt6.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (254)
+custom.k18rt6.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+custom.k18rt6.resource.MW_COMPILER_EZDEPLOY_SPLASH	28508 bytes
+custom.k18rt6.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+custom.k18rt6.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+custom.k18rt6.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+custom.k18rt6.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+custom.k18rt6.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+custom.k18rt6.icongroup.1	48x96 4bpp dib 48x48 4bpp | 32x64 4bpp dib 32x32 4bpp | 16x32 4bpp dib 16x16 4bpp | 48x96 8bpp dib 48x48 8bpp | 32x64 8bpp dib 32x32 8bpp | 16x32 8bpp dib 16x16 8bpp | 13x0 21060bpp png 256x256 | 48x96 32bpp dib 48x48 32bpp | 32x64 32bpp dib 32x32 32bpp | 16x32 32bpp dib 16x16 32bpp
+custom.k18rt6.resource.MANIFEST	1 lang 1033: 1382 bytes
+custom.k18rt7.file	k18rt7.exe
+custom.k18rt7.bytes	1984512
+custom.k18rt7.subsystem	windows-gui
+custom.k18rt7.overlay.bytes	0
+custom.k18rt7.resource.ICON	1 lang 0: 1640 bytes
+custom.k18rt7.resource.ICON	2 lang 0: 744 bytes
+custom.k18rt7.resource.ICON	3 lang 0: 296 bytes
+custom.k18rt7.resource.ICON	4 lang 0: 3752 bytes
+custom.k18rt7.resource.ICON	5 lang 0: 2216 bytes
+custom.k18rt7.resource.ICON	6 lang 0: 1384 bytes
+custom.k18rt7.resource.ICON	7 lang 0: 43212 bytes
+custom.k18rt7.resource.ICON	8 lang 0: 9640 bytes
+custom.k18rt7.resource.ICON	9 lang 0: 4264 bytes
+custom.k18rt7.resource.ICON	10 lang 0: 1128 bytes
+custom.k18rt7.resource.DIALOG	1101 lang 1033: 352 bytes
+custom.k18rt7.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+custom.k18rt7.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+custom.k18rt7.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	381 bytes
+custom.k18rt7.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (254)
+custom.k18rt7.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+custom.k18rt7.resource.MW_COMPILER_EZDEPLOY_SPLASH	28508 bytes
+custom.k18rt7.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+custom.k18rt7.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+custom.k18rt7.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+custom.k18rt7.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+custom.k18rt7.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+custom.k18rt7.icongroup.1	48x96 4bpp dib 48x48 4bpp | 32x64 4bpp dib 32x32 4bpp | 16x32 4bpp dib 16x16 4bpp | 48x96 8bpp dib 48x48 8bpp | 32x64 8bpp dib 32x32 8bpp | 16x32 8bpp dib 16x16 8bpp | 13x0 21060bpp png 256x256 | 48x96 32bpp dib 48x48 32bpp | 32x64 32bpp dib 32x32 32bpp | 16x32 32bpp dib 16x16 32bpp
+custom.k18rt7.resource.MANIFEST	1 lang 1033: 1382 bytes
+files.MyAppInstaller.file	MyAppInstaller.exe
+files.MyAppInstaller.bytes	2579968
+files.MyAppInstaller.subsystem	windows-gui
+files.MyAppInstaller.overlay.bytes	0
+files.MyAppInstaller.resource.ICON	1 lang 0: 38701 bytes
+files.MyAppInstaller.resource.ICON	2 lang 0: 15182 bytes
+files.MyAppInstaller.resource.ICON	3 lang 0: 3214 bytes
+files.MyAppInstaller.resource.ICON	4 lang 0: 2085 bytes
+files.MyAppInstaller.resource.ICON	5 lang 0: 1370 bytes
+files.MyAppInstaller.resource.ICON	6 lang 0: 749 bytes
+files.MyAppInstaller.resource.DIALOG	1101 lang 1033: 352 bytes
+files.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+files.MyAppInstaller.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+files.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	597465 bytes
+files.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (638) | application/k18hello.exe (1281073) | icon_48.png (3214) | temp_default_logo.png (11109)
+files.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>%ProgramFiles%\k18f</DefaultInstallationDirectory>
+  |  <ApplicationName>k18f</ApplicationName>
+  |  <ExecutableName>application\</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_default_logo.png</Logo>
+  |  <Version>1.0</Version>
+  |  <WelcomePanelText>k18f 1.0</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+files.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+files.MyAppInstaller.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+files.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+files.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+files.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+files.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+files.MyAppInstaller.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+files.MyAppInstaller.resource.MANIFEST	1 lang 1033: 1382 bytes
+filesbad.MyAppInstaller.file	MyAppInstaller.exe
+filesbad.MyAppInstaller.bytes	2582016
+filesbad.MyAppInstaller.subsystem	windows-gui
+filesbad.MyAppInstaller.overlay.bytes	0
+filesbad.MyAppInstaller.resource.ICON	1 lang 0: 38701 bytes
+filesbad.MyAppInstaller.resource.ICON	2 lang 0: 15182 bytes
+filesbad.MyAppInstaller.resource.ICON	3 lang 0: 3214 bytes
+filesbad.MyAppInstaller.resource.ICON	4 lang 0: 2085 bytes
+filesbad.MyAppInstaller.resource.ICON	5 lang 0: 1370 bytes
+filesbad.MyAppInstaller.resource.ICON	6 lang 0: 749 bytes
+filesbad.MyAppInstaller.resource.DIALOG	1101 lang 1033: 352 bytes
+filesbad.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+filesbad.MyAppInstaller.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+filesbad.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	599441 bytes
+filesbad.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (730) | application/icon.ico (1996) | application/k18hello.exe (1281073) | application/readme.txt (1397) | icon_48.png (3214) | temp_default_logo.png (11109)
+filesbad.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>%ProgramFiles%\k18hello</DefaultInstallationDirectory>
+  |  <ApplicationName>k18hello</ApplicationName>
+  |  <ExecutableName>application\k18hello.exe</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_default_logo.png</Logo>
+  |  <Version>1.0</Version>
+  |  <AddRemoveProgramIcon>application\icon.ico</AddRemoveProgramIcon>
+  |  <WelcomePanelText>k18hello 1.0</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+filesbad.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.application/readme.txt
+  |k18hello Executable
+  |1. Prerequisites for Deployment
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |    >>mcrinstaller
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see
+  |"Distribute Applications" in the MATLAB Compiler documentation
+  |in the MathWorks Documentation Center.
+  |2. Files to Deploy and Package
+  |Files to Package for Standalone
+  |================================
+  |-k18hello.exe
+  |-MCRInstaller.exe
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file
+  |3. Definitions
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+filesbad.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+filesbad.MyAppInstaller.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+filesbad.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+filesbad.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+filesbad.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+filesbad.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+filesbad.MyAppInstaller.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+filesbad.MyAppInstaller.resource.MANIFEST	1 lang 1033: 1382 bytes
+filesfolder.MyAppInstaller.file	MyAppInstaller.exe
+filesfolder.MyAppInstaller.bytes	1997824
+filesfolder.MyAppInstaller.subsystem	windows-gui
+filesfolder.MyAppInstaller.overlay.bytes	0
+filesfolder.MyAppInstaller.resource.ICON	1 lang 0: 38701 bytes
+filesfolder.MyAppInstaller.resource.ICON	2 lang 0: 15182 bytes
+filesfolder.MyAppInstaller.resource.ICON	3 lang 0: 3214 bytes
+filesfolder.MyAppInstaller.resource.ICON	4 lang 0: 2085 bytes
+filesfolder.MyAppInstaller.resource.ICON	5 lang 0: 1370 bytes
+filesfolder.MyAppInstaller.resource.ICON	6 lang 0: 749 bytes
+filesfolder.MyAppInstaller.resource.DIALOG	1101 lang 1033: 352 bytes
+filesfolder.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+filesfolder.MyAppInstaller.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+filesfolder.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	15473 bytes
+filesfolder.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (641) | application/k18folder/inside.txt (7) | icon_48.png (3214) | temp_default_logo.png (11109)
+filesfolder.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>%ProgramFiles%\k18fd</DefaultInstallationDirectory>
+  |  <ApplicationName>k18fd</ApplicationName>
+  |  <ExecutableName>application\</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_default_logo.png</Logo>
+  |  <Version>1.0</Version>
+  |  <WelcomePanelText>k18fd 1.0</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+filesfolder.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.application/k18folder/inside.txt
+  |inside
+filesfolder.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+filesfolder.MyAppInstaller.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+filesfolder.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+filesfolder.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+filesfolder.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+filesfolder.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+filesfolder.MyAppInstaller.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+filesfolder.MyAppInstaller.resource.MANIFEST	1 lang 1033: 1382 bytes
+filesinside.MyAppInstaller.file	MyAppInstaller.exe
+filesinside.MyAppInstaller.bytes	2579968
+filesinside.MyAppInstaller.subsystem	windows-gui
+filesinside.MyAppInstaller.overlay.bytes	0
+filesinside.MyAppInstaller.resource.ICON	1 lang 0: 38701 bytes
+filesinside.MyAppInstaller.resource.ICON	2 lang 0: 15182 bytes
+filesinside.MyAppInstaller.resource.ICON	3 lang 0: 3214 bytes
+filesinside.MyAppInstaller.resource.ICON	4 lang 0: 2085 bytes
+filesinside.MyAppInstaller.resource.ICON	5 lang 0: 1370 bytes
+filesinside.MyAppInstaller.resource.ICON	6 lang 0: 749 bytes
+filesinside.MyAppInstaller.resource.DIALOG	1101 lang 1033: 352 bytes
+filesinside.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+filesinside.MyAppInstaller.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+filesinside.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	597696 bytes
+filesinside.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (661) | application/k18folder/inside.txt (7) | application/k18hello.exe (1281073) | icon_48.png (3214) | temp_default_logo.png (11109)
+filesinside.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>%ProgramFiles%\k18fi</DefaultInstallationDirectory>
+  |  <ApplicationName>k18fi</ApplicationName>
+  |  <ExecutableName>application\k18folder\inside.txt</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_default_logo.png</Logo>
+  |  <Version>1.0</Version>
+  |  <WelcomePanelText>k18fi 1.0</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+filesinside.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.application/k18folder/inside.txt
+  |inside
+filesinside.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+filesinside.MyAppInstaller.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+filesinside.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+filesinside.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+filesinside.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+filesinside.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+filesinside.MyAppInstaller.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+filesinside.MyAppInstaller.resource.MANIFEST	1 lang 1033: 1382 bytes
+filesone.MyAppInstaller.file	MyAppInstaller.exe
+filesone.MyAppInstaller.bytes	2579968
+filesone.MyAppInstaller.subsystem	windows-gui
+filesone.MyAppInstaller.overlay.bytes	0
+filesone.MyAppInstaller.resource.ICON	1 lang 0: 38701 bytes
+filesone.MyAppInstaller.resource.ICON	2 lang 0: 15182 bytes
+filesone.MyAppInstaller.resource.ICON	3 lang 0: 3214 bytes
+filesone.MyAppInstaller.resource.ICON	4 lang 0: 2085 bytes
+filesone.MyAppInstaller.resource.ICON	5 lang 0: 1370 bytes
+filesone.MyAppInstaller.resource.ICON	6 lang 0: 749 bytes
+filesone.MyAppInstaller.resource.DIALOG	1101 lang 1033: 352 bytes
+filesone.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+filesone.MyAppInstaller.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+filesone.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	597471 bytes
+filesone.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (656) | application/k18hello.exe (1281073) | icon_48.png (3214) | temp_default_logo.png (11109)
+filesone.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>%ProgramFiles%\k18one</DefaultInstallationDirectory>
+  |  <ApplicationName>k18one</ApplicationName>
+  |  <ExecutableName>application\k18hello.exe</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_default_logo.png</Logo>
+  |  <Version>1.0</Version>
+  |  <WelcomePanelText>k18one 1.0</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+filesone.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+filesone.MyAppInstaller.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+filesone.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+filesone.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+filesone.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+filesone.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+filesone.MyAppInstaller.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+filesone.MyAppInstaller.resource.MANIFEST	1 lang 1033: 1382 bytes
+filesshort.MyAppInstaller.file	MyAppInstaller.exe
+filesshort.MyAppInstaller.bytes	2579968
+filesshort.MyAppInstaller.subsystem	windows-gui
+filesshort.MyAppInstaller.overlay.bytes	0
+filesshort.MyAppInstaller.resource.ICON	1 lang 0: 38701 bytes
+filesshort.MyAppInstaller.resource.ICON	2 lang 0: 15182 bytes
+filesshort.MyAppInstaller.resource.ICON	3 lang 0: 3214 bytes
+filesshort.MyAppInstaller.resource.ICON	4 lang 0: 2085 bytes
+filesshort.MyAppInstaller.resource.ICON	5 lang 0: 1370 bytes
+filesshort.MyAppInstaller.resource.ICON	6 lang 0: 749 bytes
+filesshort.MyAppInstaller.resource.DIALOG	1101 lang 1033: 352 bytes
+filesshort.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+filesshort.MyAppInstaller.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+filesshort.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	597471 bytes
+filesshort.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (653) | application/k18hello.exe (1281073) | icon_48.png (3214) | temp_default_logo.png (11109)
+filesshort.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>%ProgramFiles%\k18fs</DefaultInstallationDirectory>
+  |  <ApplicationName>k18fs</ApplicationName>
+  |  <ExecutableName>application\k18hello.exe</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_default_logo.png</Logo>
+  |  <Version>1.0</Version>
+  |  <WelcomePanelText>k18fs 1.0</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+filesshort.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+filesshort.MyAppInstaller.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+filesshort.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+filesshort.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+filesshort.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+filesshort.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+filesshort.MyAppInstaller.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+filesshort.MyAppInstaller.resource.MANIFEST	1 lang 1033: 1382 bytes
+filesstr.MyAppInstaller.file	MyAppInstaller.exe
+filesstr.MyAppInstaller.bytes	2579968
+filesstr.MyAppInstaller.subsystem	windows-gui
+filesstr.MyAppInstaller.overlay.bytes	0
+filesstr.MyAppInstaller.resource.ICON	1 lang 0: 38701 bytes
+filesstr.MyAppInstaller.resource.ICON	2 lang 0: 15182 bytes
+filesstr.MyAppInstaller.resource.ICON	3 lang 0: 3214 bytes
+filesstr.MyAppInstaller.resource.ICON	4 lang 0: 2085 bytes
+filesstr.MyAppInstaller.resource.ICON	5 lang 0: 1370 bytes
+filesstr.MyAppInstaller.resource.ICON	6 lang 0: 749 bytes
+filesstr.MyAppInstaller.resource.DIALOG	1101 lang 1033: 352 bytes
+filesstr.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+filesstr.MyAppInstaller.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+filesstr.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	597472 bytes
+filesstr.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (656) | application/k18hello.exe (1281073) | icon_48.png (3214) | temp_default_logo.png (11109)
+filesstr.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>%ProgramFiles%\k18str</DefaultInstallationDirectory>
+  |  <ApplicationName>k18str</ApplicationName>
+  |  <ExecutableName>application\k18hello.exe</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_default_logo.png</Logo>
+  |  <Version>1.0</Version>
+  |  <WelcomePanelText>k18str 1.0</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+filesstr.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+filesstr.MyAppInstaller.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+filesstr.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+filesstr.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+filesstr.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+filesstr.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+filesstr.MyAppInstaller.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+filesstr.MyAppInstaller.resource.MANIFEST	1 lang 1033: 1382 bytes
+named.k18setup.file	k18setup.exe
+named.k18setup.bytes	2477056
+named.k18setup.subsystem	windows-gui
+named.k18setup.overlay.bytes	0
+named.k18setup.resource.ICON	1 lang 0: 838 bytes
+named.k18setup.resource.ICON	2 lang 0: 412 bytes
+named.k18setup.resource.ICON	3 lang 0: 214 bytes
+named.k18setup.resource.ICON	4 lang 0: 149 bytes
+named.k18setup.resource.ICON	5 lang 0: 157 bytes
+named.k18setup.resource.ICON	6 lang 0: 124 bytes
+named.k18setup.resource.DIALOG	1101 lang 1033: 352 bytes
+named.k18setup.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+named.k18setup.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+named.k18setup.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	586444 bytes
+named.k18setup.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (955) | application/icon.ico (2008) | application/k18data.txt (5) | application/k18folder/inside.txt (7) | application/k18hello.exe (1281073) | application/readme.txt (1397) | icon_48.png (214) | temp_k18_logo.png (814)
+named.k18setup.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>C:\Apps\K18</DefaultInstallationDirectory>
+  |  <ApplicationName>k18hello</ApplicationName>
+  |  <ExecutableName>application\k18hello.exe</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_k18_logo.png</Logo>
+  |  <Version>2.5</Version>
+  |  <InstallationNotes>Needs a pond.
+  |And lilies.</InstallationNotes>
+  |  <AddRemoveProgramIcon>application\icon.ico</AddRemoveProgramIcon>
+  |  <AuthorOrganization>Boston Common</AuthorOrganization>
+  |  <Summary>The best app ever</Summary>
+  |  <WelcomePanelText>k18hello 2.5
+  |The best app ever
+  |Makes a magic square for you.
+  |And more.
+  |Frog
+  |frog@pond.org</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+named.k18setup.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.application/k18data.txt
+  |data
+named.k18setup.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.application/readme.txt
+  |k18hello Executable
+  |1. Prerequisites for Deployment
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |    >>mcrinstaller
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see
+  |"Distribute Applications" in the MATLAB Compiler documentation
+  |in the MathWorks Documentation Center.
+  |2. Files to Deploy and Package
+  |Files to Package for Standalone
+  |================================
+  |-k18hello.exe
+  |-MCRInstaller.exe
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file
+  |3. Definitions
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+named.k18setup.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.application/k18folder/inside.txt
+  |inside
+named.k18setup.resource.MW_COMPILER_EZDEPLOY_SPLASH	1529 bytes
+named.k18setup.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+named.k18setup.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+named.k18setup.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+named.k18setup.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+named.k18setup.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+named.k18setup.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+named.k18setup.resource.MANIFEST	1 lang 1033: 1382 bytes
+optnone.MyAppInstaller.file	MyAppInstaller.exe
+optnone.MyAppInstaller.bytes	2582016
+optnone.MyAppInstaller.subsystem	windows-gui
+optnone.MyAppInstaller.overlay.bytes	0
+optnone.MyAppInstaller.resource.ICON	1 lang 0: 38701 bytes
+optnone.MyAppInstaller.resource.ICON	2 lang 0: 15182 bytes
+optnone.MyAppInstaller.resource.ICON	3 lang 0: 3214 bytes
+optnone.MyAppInstaller.resource.ICON	4 lang 0: 2085 bytes
+optnone.MyAppInstaller.resource.ICON	5 lang 0: 1370 bytes
+optnone.MyAppInstaller.resource.ICON	6 lang 0: 749 bytes
+optnone.MyAppInstaller.resource.DIALOG	1101 lang 1033: 352 bytes
+optnone.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+optnone.MyAppInstaller.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+optnone.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	599439 bytes
+optnone.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (730) | application/icon.ico (1996) | application/k18hello.exe (1281073) | application/readme.txt (1397) | icon_48.png (3214) | temp_default_logo.png (11109)
+optnone.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>%ProgramFiles%\k18hello</DefaultInstallationDirectory>
+  |  <ApplicationName>k18hello</ApplicationName>
+  |  <ExecutableName>application\k18hello.exe</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_default_logo.png</Logo>
+  |  <Version>1.0</Version>
+  |  <AddRemoveProgramIcon>application\icon.ico</AddRemoveProgramIcon>
+  |  <WelcomePanelText>k18hello 1.0</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+optnone.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.application/readme.txt
+  |k18hello Executable
+  |1. Prerequisites for Deployment
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |    >>mcrinstaller
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see
+  |"Distribute Applications" in the MATLAB Compiler documentation
+  |in the MathWorks Documentation Center.
+  |2. Files to Deploy and Package
+  |Files to Package for Standalone
+  |================================
+  |-k18hello.exe
+  |-MCRInstaller.exe
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file
+  |3. Definitions
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+optnone.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+optnone.MyAppInstaller.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+optnone.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+optnone.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+optnone.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+optnone.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+optnone.MyAppInstaller.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+optnone.MyAppInstaller.resource.MANIFEST	1 lang 1033: 1382 bytes
+opts.FromOptions.file	FromOptions.exe
+opts.FromOptions.bytes	2582016
+opts.FromOptions.subsystem	windows-gui
+opts.FromOptions.overlay.bytes	0
+opts.FromOptions.resource.ICON	1 lang 0: 38701 bytes
+opts.FromOptions.resource.ICON	2 lang 0: 15182 bytes
+opts.FromOptions.resource.ICON	3 lang 0: 3214 bytes
+opts.FromOptions.resource.ICON	4 lang 0: 2085 bytes
+opts.FromOptions.resource.ICON	5 lang 0: 1370 bytes
+opts.FromOptions.resource.ICON	6 lang 0: 749 bytes
+opts.FromOptions.resource.DIALOG	1101 lang 1033: 352 bytes
+opts.FromOptions.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+opts.FromOptions.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+opts.FromOptions.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	599453 bytes
+opts.FromOptions.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (734) | application/icon.ico (1996) | application/k18hello.exe (1281073) | application/readme.txt (1397) | icon_48.png (3214) | temp_default_logo.png (11109)
+opts.FromOptions.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>%ProgramFiles%\k18hello</DefaultInstallationDirectory>
+  |  <ApplicationName>k18hello</ApplicationName>
+  |  <ExecutableName>application\k18hello.exe</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_default_logo.png</Logo>
+  |  <Version>3.1.4</Version>
+  |  <AddRemoveProgramIcon>application\icon.ico</AddRemoveProgramIcon>
+  |  <WelcomePanelText>k18hello 3.1.4</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+opts.FromOptions.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.application/readme.txt
+  |k18hello Executable
+  |1. Prerequisites for Deployment
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |    >>mcrinstaller
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see
+  |"Distribute Applications" in the MATLAB Compiler documentation
+  |in the MathWorks Documentation Center.
+  |2. Files to Deploy and Package
+  |Files to Package for Standalone
+  |================================
+  |-k18hello.exe
+  |-MCRInstaller.exe
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file
+  |3. Definitions
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+opts.FromOptions.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+opts.FromOptions.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+opts.FromOptions.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+opts.FromOptions.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+opts.FromOptions.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+opts.FromOptions.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+opts.FromOptions.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+opts.FromOptions.resource.MANIFEST	1 lang 1033: 1382 bytes
+py.MyAppInstaller.file	MyAppInstaller.exe
+py.MyAppInstaller.bytes	2159104
+py.MyAppInstaller.subsystem	windows-gui
+py.MyAppInstaller.overlay.bytes	0
+py.MyAppInstaller.resource.ICON	1 lang 0: 38701 bytes
+py.MyAppInstaller.resource.ICON	2 lang 0: 15182 bytes
+py.MyAppInstaller.resource.ICON	3 lang 0: 3214 bytes
+py.MyAppInstaller.resource.ICON	4 lang 0: 2085 bytes
+py.MyAppInstaller.resource.ICON	5 lang 0: 1370 bytes
+py.MyAppInstaller.resource.ICON	6 lang 0: 749 bytes
+py.MyAppInstaller.resource.DIALOG	1101 lang 1033: 352 bytes
+py.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+py.MyAppInstaller.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+py.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	176394 bytes
+py.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (743) | application/GettingStarted.html (4714) | application/k18py/__init__.py (16511) | application/k18py/k18py.ctf (155657) | application/setup.py (2711) | icon_48.png (3214) | temp_default_logo.png (11109)
+py.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>%ProgramFiles%\k18py</DefaultInstallationDirectory>
+  |  <ApplicationName>k18py</ApplicationName>
+  |  <ExecutableName>application\</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_default_logo.png</Logo>
+  |  <Version>1.0</Version>
+  |  <WelcomePanelText>k18py 1.0</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35055</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+py.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+py.MyAppInstaller.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+py.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+py.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+py.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+py.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+py.MyAppInstaller.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+py.MyAppInstaller.resource.MANIFEST	1 lang 1033: 1382 bytes
+quiet.MyAppInstaller.file	MyAppInstaller.exe
+quiet.MyAppInstaller.bytes	2582016
+quiet.MyAppInstaller.subsystem	windows-gui
+quiet.MyAppInstaller.overlay.bytes	0
+quiet.MyAppInstaller.resource.ICON	1 lang 0: 38701 bytes
+quiet.MyAppInstaller.resource.ICON	2 lang 0: 15182 bytes
+quiet.MyAppInstaller.resource.ICON	3 lang 0: 3214 bytes
+quiet.MyAppInstaller.resource.ICON	4 lang 0: 2085 bytes
+quiet.MyAppInstaller.resource.ICON	5 lang 0: 1370 bytes
+quiet.MyAppInstaller.resource.ICON	6 lang 0: 749 bytes
+quiet.MyAppInstaller.resource.DIALOG	1101 lang 1033: 352 bytes
+quiet.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+quiet.MyAppInstaller.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+quiet.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	599442 bytes
+quiet.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (730) | application/icon.ico (1996) | application/k18hello.exe (1281073) | application/readme.txt (1397) | icon_48.png (3214) | temp_default_logo.png (11109)
+quiet.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>%ProgramFiles%\k18hello</DefaultInstallationDirectory>
+  |  <ApplicationName>k18hello</ApplicationName>
+  |  <ExecutableName>application\k18hello.exe</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_default_logo.png</Logo>
+  |  <Version>1.0</Version>
+  |  <AddRemoveProgramIcon>application\icon.ico</AddRemoveProgramIcon>
+  |  <WelcomePanelText>k18hello 1.0</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+quiet.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.application/readme.txt
+  |k18hello Executable
+  |1. Prerequisites for Deployment
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |    >>mcrinstaller
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see
+  |"Distribute Applications" in the MATLAB Compiler documentation
+  |in the MathWorks Documentation Center.
+  |2. Files to Deploy and Package
+  |Files to Package for Standalone
+  |================================
+  |-k18hello.exe
+  |-MCRInstaller.exe
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file
+  |3. Definitions
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+quiet.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+quiet.MyAppInstaller.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+quiet.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+quiet.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+quiet.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+quiet.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+quiet.MyAppInstaller.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+quiet.MyAppInstaller.resource.MANIFEST	1 lang 1033: 1382 bytes
+src.Has_Spaceinstaller.MyAppInstaller.file	MyAppInstaller.exe
+src.Has_Spaceinstaller.MyAppInstaller.bytes	2582016
+src.Has_Spaceinstaller.MyAppInstaller.subsystem	windows-gui
+src.Has_Spaceinstaller.MyAppInstaller.overlay.bytes	0
+src.Has_Spaceinstaller.MyAppInstaller.resource.ICON	1 lang 0: 38701 bytes
+src.Has_Spaceinstaller.MyAppInstaller.resource.ICON	2 lang 0: 15182 bytes
+src.Has_Spaceinstaller.MyAppInstaller.resource.ICON	3 lang 0: 3214 bytes
+src.Has_Spaceinstaller.MyAppInstaller.resource.ICON	4 lang 0: 2085 bytes
+src.Has_Spaceinstaller.MyAppInstaller.resource.ICON	5 lang 0: 1370 bytes
+src.Has_Spaceinstaller.MyAppInstaller.resource.ICON	6 lang 0: 749 bytes
+src.Has_Spaceinstaller.MyAppInstaller.resource.DIALOG	1101 lang 1033: 352 bytes
+src.Has_Spaceinstaller.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+src.Has_Spaceinstaller.MyAppInstaller.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+src.Has_Spaceinstaller.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	599449 bytes
+src.Has_Spaceinstaller.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (733) | application/icon.ico (1996) | application/k18hello.exe (1281073) | application/readme.txt (1397) | icon_48.png (3214) | temp_default_logo.png (11109)
+src.Has_Spaceinstaller.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>%ProgramFiles%\Has_Space</DefaultInstallationDirectory>
+  |  <ApplicationName>Has Space</ApplicationName>
+  |  <ExecutableName>application\k18hello.exe</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_default_logo.png</Logo>
+  |  <Version>1.0</Version>
+  |  <AddRemoveProgramIcon>application\icon.ico</AddRemoveProgramIcon>
+  |  <WelcomePanelText>Has Space 1.0</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+src.Has_Spaceinstaller.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.application/readme.txt
+  |k18hello Executable
+  |1. Prerequisites for Deployment
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |    >>mcrinstaller
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see
+  |"Distribute Applications" in the MATLAB Compiler documentation
+  |in the MathWorks Documentation Center.
+  |2. Files to Deploy and Package
+  |Files to Package for Standalone
+  |================================
+  |-k18hello.exe
+  |-MCRInstaller.exe
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file
+  |3. Definitions
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+src.Has_Spaceinstaller.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+src.Has_Spaceinstaller.MyAppInstaller.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+src.Has_Spaceinstaller.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+src.Has_Spaceinstaller.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+src.Has_Spaceinstaller.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+src.Has_Spaceinstaller.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+src.Has_Spaceinstaller.MyAppInstaller.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+src.Has_Spaceinstaller.MyAppInstaller.resource.MANIFEST	1 lang 1033: 1382 bytes
+src.k18_anim.file	k18_anim.gif
+src.k18_anim.file	<W>\p\src\k18_anim.gif
+ERR	not a PE file
+src.k18_icon.file	k18_icon.png
+src.k18_icon.file	<W>\p\src\k18_icon.png
+ERR	not a PE file
+src.k18_logo.file	k18_logo.png
+src.k18_logo.file	<W>\p\src\k18_logo.png
+ERR	not a PE file
+src.k18_splash.file	k18_splash.png
+src.k18_splash.file	<W>\p\src\k18_splash.png
+ERR	not a PE file
+src.k18bad.file	k18bad.txt
+src.k18bad.file	<W>\p\src\k18bad.txt
+ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 5)
+src.k18data.file	k18data.txt
+src.k18data.file	<W>\p\src\k18data.txt
+ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 5)
+src.k18empty.file	k18empty.txt
+src.k18empty.file	<W>\p\src\k18empty.txt
+ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+src.k18folder.inside.file	inside.txt
+src.k18folder.inside.file	<W>\p\src\k18folder\inside.txt
+ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 7)
+src.k18helloinstaller.MyAppInstaller.file	MyAppInstaller.exe
+src.k18helloinstaller.MyAppInstaller.bytes	2582016
+src.k18helloinstaller.MyAppInstaller.subsystem	windows-gui
+src.k18helloinstaller.MyAppInstaller.overlay.bytes	0
+src.k18helloinstaller.MyAppInstaller.resource.ICON	1 lang 0: 38701 bytes
+src.k18helloinstaller.MyAppInstaller.resource.ICON	2 lang 0: 15182 bytes
+src.k18helloinstaller.MyAppInstaller.resource.ICON	3 lang 0: 3214 bytes
+src.k18helloinstaller.MyAppInstaller.resource.ICON	4 lang 0: 2085 bytes
+src.k18helloinstaller.MyAppInstaller.resource.ICON	5 lang 0: 1370 bytes
+src.k18helloinstaller.MyAppInstaller.resource.ICON	6 lang 0: 749 bytes
+src.k18helloinstaller.MyAppInstaller.resource.DIALOG	1101 lang 1033: 352 bytes
+src.k18helloinstaller.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+src.k18helloinstaller.MyAppInstaller.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+src.k18helloinstaller.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	599441 bytes
+src.k18helloinstaller.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (730) | application/icon.ico (1996) | application/k18hello.exe (1281073) | application/readme.txt (1397) | icon_48.png (3214) | temp_default_logo.png (11109)
+src.k18helloinstaller.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>%ProgramFiles%\k18hello</DefaultInstallationDirectory>
+  |  <ApplicationName>k18hello</ApplicationName>
+  |  <ExecutableName>application\k18hello.exe</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_default_logo.png</Logo>
+  |  <Version>1.0</Version>
+  |  <AddRemoveProgramIcon>application\icon.ico</AddRemoveProgramIcon>
+  |  <WelcomePanelText>k18hello 1.0</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+src.k18helloinstaller.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.application/readme.txt
+  |k18hello Executable
+  |1. Prerequisites for Deployment
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |    >>mcrinstaller
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see
+  |"Distribute Applications" in the MATLAB Compiler documentation
+  |in the MathWorks Documentation Center.
+  |2. Files to Deploy and Package
+  |Files to Package for Standalone
+  |================================
+  |-k18hello.exe
+  |-MCRInstaller.exe
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file
+  |3. Definitions
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+src.k18helloinstaller.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+src.k18helloinstaller.MyAppInstaller.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+src.k18helloinstaller.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+src.k18helloinstaller.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+src.k18helloinstaller.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+src.k18helloinstaller.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+src.k18helloinstaller.MyAppInstaller.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+src.k18helloinstaller.MyAppInstaller.resource.MANIFEST	1 lang 1033: 1382 bytes
+src.k18one.file	k18one.txt
+src.k18one.file	<W>\p\src\k18one.txt
+ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 6)
+src.k18rt2.k18rt2.file	k18rt2.exe
+src.k18rt2.k18rt2.bytes	1984512
+src.k18rt2.k18rt2.subsystem	windows-gui
+src.k18rt2.k18rt2.overlay.bytes	0
+src.k18rt2.k18rt2.resource.ICON	1 lang 0: 1640 bytes
+src.k18rt2.k18rt2.resource.ICON	2 lang 0: 744 bytes
+src.k18rt2.k18rt2.resource.ICON	3 lang 0: 296 bytes
+src.k18rt2.k18rt2.resource.ICON	4 lang 0: 3752 bytes
+src.k18rt2.k18rt2.resource.ICON	5 lang 0: 2216 bytes
+src.k18rt2.k18rt2.resource.ICON	6 lang 0: 1384 bytes
+src.k18rt2.k18rt2.resource.ICON	7 lang 0: 43212 bytes
+src.k18rt2.k18rt2.resource.ICON	8 lang 0: 9640 bytes
+src.k18rt2.k18rt2.resource.ICON	9 lang 0: 4264 bytes
+src.k18rt2.k18rt2.resource.ICON	10 lang 0: 1128 bytes
+src.k18rt2.k18rt2.resource.DIALOG	1101 lang 1033: 352 bytes
+src.k18rt2.k18rt2.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+src.k18rt2.k18rt2.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+src.k18rt2.k18rt2.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	381 bytes
+src.k18rt2.k18rt2.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (254)
+src.k18rt2.k18rt2.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+src.k18rt2.k18rt2.resource.MW_COMPILER_EZDEPLOY_SPLASH	28508 bytes
+src.k18rt2.k18rt2.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+src.k18rt2.k18rt2.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+src.k18rt2.k18rt2.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+src.k18rt2.k18rt2.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+src.k18rt2.k18rt2.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+src.k18rt2.k18rt2.icongroup.1	48x96 4bpp dib 48x48 4bpp | 32x64 4bpp dib 32x32 4bpp | 16x32 4bpp dib 16x16 4bpp | 48x96 8bpp dib 48x48 8bpp | 32x64 8bpp dib 32x32 8bpp | 16x32 8bpp dib 16x16 8bpp | 13x0 21060bpp png 256x256 | 48x96 32bpp dib 48x48 32bpp | 32x64 32bpp dib 32x32 32bpp | 16x32 32bpp dib 16x16 32bpp
+src.k18rt2.k18rt2.resource.MANIFEST	1 lang 1033: 1382 bytes
+src.k6_hello.file	k6_hello.m
+src.k6_hello.file	<W>\p\src\k6_hello.m
+ERR	not a PE file
+src.relout.MyAppInstaller.file	MyAppInstaller.exe
+src.relout.MyAppInstaller.bytes	2582016
+src.relout.MyAppInstaller.subsystem	windows-gui
+src.relout.MyAppInstaller.overlay.bytes	0
+src.relout.MyAppInstaller.resource.ICON	1 lang 0: 38701 bytes
+src.relout.MyAppInstaller.resource.ICON	2 lang 0: 15182 bytes
+src.relout.MyAppInstaller.resource.ICON	3 lang 0: 3214 bytes
+src.relout.MyAppInstaller.resource.ICON	4 lang 0: 2085 bytes
+src.relout.MyAppInstaller.resource.ICON	5 lang 0: 1370 bytes
+src.relout.MyAppInstaller.resource.ICON	6 lang 0: 749 bytes
+src.relout.MyAppInstaller.resource.DIALOG	1101 lang 1033: 352 bytes
+src.relout.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+src.relout.MyAppInstaller.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+src.relout.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	599441 bytes
+src.relout.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (730) | application/icon.ico (1996) | application/k18hello.exe (1281073) | application/readme.txt (1397) | icon_48.png (3214) | temp_default_logo.png (11109)
+src.relout.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>%ProgramFiles%\k18hello</DefaultInstallationDirectory>
+  |  <ApplicationName>k18hello</ApplicationName>
+  |  <ExecutableName>application\k18hello.exe</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_default_logo.png</Logo>
+  |  <Version>1.0</Version>
+  |  <AddRemoveProgramIcon>application\icon.ico</AddRemoveProgramIcon>
+  |  <WelcomePanelText>k18hello 1.0</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+src.relout.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.application/readme.txt
+  |k18hello Executable
+  |1. Prerequisites for Deployment
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |    >>mcrinstaller
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see
+  |"Distribute Applications" in the MATLAB Compiler documentation
+  |in the MathWorks Documentation Center.
+  |2. Files to Deploy and Package
+  |Files to Package for Standalone
+  |================================
+  |-k18hello.exe
+  |-MCRInstaller.exe
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file
+  |3. Definitions
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+src.relout.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+src.relout.MyAppInstaller.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+src.relout.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+src.relout.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+src.relout.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+src.relout.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+src.relout.MyAppInstaller.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+src.relout.MyAppInstaller.resource.MANIFEST	1 lang 1033: 1382 bytes
+verbosezip.MyAppInstaller.file	MyAppInstaller.exe
+verbosezip.MyAppInstaller.bytes	2582016
+verbosezip.MyAppInstaller.subsystem	windows-gui
+verbosezip.MyAppInstaller.overlay.bytes	0
+verbosezip.MyAppInstaller.resource.ICON	1 lang 0: 38701 bytes
+verbosezip.MyAppInstaller.resource.ICON	2 lang 0: 15182 bytes
+verbosezip.MyAppInstaller.resource.ICON	3 lang 0: 3214 bytes
+verbosezip.MyAppInstaller.resource.ICON	4 lang 0: 2085 bytes
+verbosezip.MyAppInstaller.resource.ICON	5 lang 0: 1370 bytes
+verbosezip.MyAppInstaller.resource.ICON	6 lang 0: 749 bytes
+verbosezip.MyAppInstaller.resource.DIALOG	1101 lang 1033: 352 bytes
+verbosezip.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+verbosezip.MyAppInstaller.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+verbosezip.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	599442 bytes
+verbosezip.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (730) | application/icon.ico (1996) | application/k18hello.exe (1281073) | application/readme.txt (1397) | icon_48.png (3214) | temp_default_logo.png (11109)
+verbosezip.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>%ProgramFiles%\k18hello</DefaultInstallationDirectory>
+  |  <ApplicationName>k18hello</ApplicationName>
+  |  <ExecutableName>application\k18hello.exe</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_default_logo.png</Logo>
+  |  <Version>1.0</Version>
+  |  <AddRemoveProgramIcon>application\icon.ico</AddRemoveProgramIcon>
+  |  <WelcomePanelText>k18hello 1.0</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+verbosezip.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.application/readme.txt
+  |k18hello Executable
+  |1. Prerequisites for Deployment
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |    >>mcrinstaller
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see
+  |"Distribute Applications" in the MATLAB Compiler documentation
+  |in the MathWorks Documentation Center.
+  |2. Files to Deploy and Package
+  |Files to Package for Standalone
+  |================================
+  |-k18hello.exe
+  |-MCRInstaller.exe
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file
+  |3. Definitions
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+verbosezip.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+verbosezip.MyAppInstaller.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+verbosezip.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+verbosezip.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+verbosezip.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+verbosezip.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+verbosezip.MyAppInstaller.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+verbosezip.MyAppInstaller.resource.MANIFEST	1 lang 1033: 1382 bytes
+web.MyAppInstaller.file	MyAppInstaller.exe
+web.MyAppInstaller.bytes	2582016
+web.MyAppInstaller.subsystem	windows-gui
+web.MyAppInstaller.overlay.bytes	0
+web.MyAppInstaller.resource.ICON	1 lang 0: 38701 bytes
+web.MyAppInstaller.resource.ICON	2 lang 0: 15182 bytes
+web.MyAppInstaller.resource.ICON	3 lang 0: 3214 bytes
+web.MyAppInstaller.resource.ICON	4 lang 0: 2085 bytes
+web.MyAppInstaller.resource.ICON	5 lang 0: 1370 bytes
+web.MyAppInstaller.resource.ICON	6 lang 0: 749 bytes
+web.MyAppInstaller.resource.DIALOG	1101 lang 1033: 352 bytes
+web.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+web.MyAppInstaller.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+web.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	599447 bytes
+web.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (730) | application/icon.ico (1996) | application/k18hello.exe (1281073) | application/readme.txt (1397) | icon_48.png (3214) | temp_default_logo.png (11109)
+web.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>%ProgramFiles%\k18hello</DefaultInstallationDirectory>
+  |  <ApplicationName>k18hello</ApplicationName>
+  |  <ExecutableName>application\k18hello.exe</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_default_logo.png</Logo>
+  |  <Version>1.0</Version>
+  |  <AddRemoveProgramIcon>application\icon.ico</AddRemoveProgramIcon>
+  |  <WelcomePanelText>k18hello 1.0</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+web.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.application/readme.txt
+  |k18hello Executable
+  |1. Prerequisites for Deployment
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |    >>mcrinstaller
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see
+  |"Distribute Applications" in the MATLAB Compiler documentation
+  |in the MathWorks Documentation Center.
+  |2. Files to Deploy and Package
+  |Files to Package for Standalone
+  |================================
+  |-k18hello.exe
+  |-MCRInstaller.exe
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file
+  |3. Definitions
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+web.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+web.MyAppInstaller.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+web.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+web.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+web.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+web.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+web.MyAppInstaller.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+web.MyAppInstaller.resource.MANIFEST	1 lang 1033: 1382 bytes
+win.MyAppInstaller.file	MyAppInstaller.exe
+win.MyAppInstaller.bytes	2755072
+win.MyAppInstaller.subsystem	windows-gui
+win.MyAppInstaller.overlay.bytes	0
+win.MyAppInstaller.resource.ICON	1 lang 0: 38701 bytes
+win.MyAppInstaller.resource.ICON	2 lang 0: 15182 bytes
+win.MyAppInstaller.resource.ICON	3 lang 0: 3214 bytes
+win.MyAppInstaller.resource.ICON	4 lang 0: 2085 bytes
+win.MyAppInstaller.resource.ICON	5 lang 0: 1370 bytes
+win.MyAppInstaller.resource.ICON	6 lang 0: 749 bytes
+win.MyAppInstaller.resource.DIALOG	1101 lang 1033: 352 bytes
+win.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	140 bytes
+win.MyAppInstaller.text.MW_COMPILER_EZDEPLOY_INSTALLAGENT_URL	https://ssd.mathworks.com/supportfiles/downloads/R2025b/Release/0/deployment_files/installagent/complete/win64/InstallAgent_R2025b_win64.zip
+win.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE	772692 bytes
+win.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries	ApplicationInstallerManifest.xml (722) | application/icon.ico (61403) | application/k18win.exe (1377858) | application/readme.txt (1393) | application/splash.png (33961) | icon_48.png (3214) | temp_default_logo.png (11109)
+win.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.ApplicationInstallerManifest.xml
+  |<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+  |<ApplicationInstallerManifest>
+  |  <DefaultInstallationDirectory>%ProgramFiles%\k18win</DefaultInstallationDirectory>
+  |  <ApplicationName>k18win</ApplicationName>
+  |  <ExecutableName>application\k18win.exe</ExecutableName>
+  |  <GUID><UUID></GUID>
+  |  <ApplicationIcon>icon_48.png</ApplicationIcon>
+  |  <Logo>temp_default_logo.png</Logo>
+  |  <Version>1.0</Version>
+  |  <AddRemoveProgramIcon>application\icon.ico</AddRemoveProgramIcon>
+  |  <WelcomePanelText>k18win 1.0</WelcomePanelText>
+  |  <MCRProducts>
+  |    <MCRProduct>
+  |      <ExternalProductIdentifier>35010</ExternalProductIdentifier>
+  |    </MCRProduct>
+  |  </MCRProducts>
+  |</ApplicationInstallerManifest>
+win.MyAppInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.text.application/readme.txt
+  |k18win Executable
+  |1. Prerequisites for Deployment
+  |Verify that MATLAB Runtime(R2025b) is installed.
+  |If not, you can run the MATLAB Runtime installer.
+  |To find its location, enter
+  |    >>mcrinstaller
+  |at the MATLAB prompt.
+  |NOTE: You will need administrator rights to run the MATLAB Runtime installer.
+  |Alternatively, download and install the Windows version of the MATLAB Runtime for R2025b
+  |from the following link on the MathWorks website:
+  |    https://www.mathworks.com/products/compiler/mcr/index.html
+  |For more information about the MATLAB Runtime and the MATLAB Runtime installer, see
+  |"Distribute Applications" in the MATLAB Compiler documentation
+  |in the MathWorks Documentation Center.
+  |2. Files to Deploy and Package
+  |Files to Package for Standalone
+  |================================
+  |-k18win.exe
+  |-MCRInstaller.exe
+  |    Note: if end users are unable to download the MATLAB Runtime using the
+  |    instructions in the previous section, include it when building your
+  |    component by clicking the "Runtime included in package" link in the
+  |    Deployment Tool.
+  |-This readme file
+  |3. Definitions
+  |For information on deployment terminology, go to
+  |https://www.mathworks.com/help and select MATLAB Compiler >
+  |Getting Started > About Application Deployment >
+  |Deployment Product Terms in the MathWorks Documentation
+  |Center.
+win.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+win.MyAppInstaller.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+win.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+win.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+win.MyAppInstaller.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+win.MyAppInstaller.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+win.MyAppInstaller.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+win.MyAppInstaller.resource.MANIFEST	1 lang 1033: 1382 bytes
+zip.MyAppInstaller.file	MyAppInstaller.zip
+zip.MyAppInstaller.entries	MyAppInstaller.exe (1981952) | data/InstallAgent.zip (140) | data/bundle.zip (599441) | readme.txt (51)
+zip.MyAppInstaller.text.readme.txt
+  |Run MyAppInstaller.exe to install the application.
+zip.MyAppInstaller.inner.MyAppInstaller.exe.bytes	1981952
+zip.MyAppInstaller.inner.MyAppInstaller.exe.subsystem	windows-gui
+zip.MyAppInstaller.inner.MyAppInstaller.exe.overlay.bytes	0
+zip.MyAppInstaller.inner.MyAppInstaller.exe.resource.ICON	1 lang 0: 38701 bytes
+zip.MyAppInstaller.inner.MyAppInstaller.exe.resource.ICON	2 lang 0: 15182 bytes
+zip.MyAppInstaller.inner.MyAppInstaller.exe.resource.ICON	3 lang 0: 3214 bytes
+zip.MyAppInstaller.inner.MyAppInstaller.exe.resource.ICON	4 lang 0: 2085 bytes
+zip.MyAppInstaller.inner.MyAppInstaller.exe.resource.ICON	5 lang 0: 1370 bytes
+zip.MyAppInstaller.inner.MyAppInstaller.exe.resource.ICON	6 lang 0: 749 bytes
+zip.MyAppInstaller.inner.MyAppInstaller.exe.resource.DIALOG	1101 lang 1033: 352 bytes
+zip.MyAppInstaller.inner.MyAppInstaller.exe.resource.MW_COMPILER_EZDEPLOY_SPLASH	33961 bytes
+zip.MyAppInstaller.inner.MyAppInstaller.exe.image.MW_COMPILER_EZDEPLOY_SPLASH	png 400x400
+zip.MyAppInstaller.inner.MyAppInstaller.exe.resource.MW_COMPILER_EZDEPLOY_UNZIP	734560 bytes
+zip.MyAppInstaller.inner.MyAppInstaller.exe.starts.MW_COMPILER_EZDEPLOY_UNZIP	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+zip.MyAppInstaller.inner.MyAppInstaller.exe.resource.MW_COMPILER_EZDEPLOY_ZLIB	100192 bytes
+zip.MyAppInstaller.inner.MyAppInstaller.exe.starts.MW_COMPILER_EZDEPLOY_ZLIB	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+zip.MyAppInstaller.inner.MyAppInstaller.exe.icongroup.1	13x0 21060bpp png 256x256 | 13x0 21060bpp png 128x128 | 13x0 21060bpp png 48x48 | 13x0 21060bpp png 32x32 | 13x0 21060bpp png 24x24 | 13x0 21060bpp png 16x16
+zip.MyAppInstaller.inner.MyAppInstaller.exe.resource.MANIFEST	1 lang 1033: 1382 bytes

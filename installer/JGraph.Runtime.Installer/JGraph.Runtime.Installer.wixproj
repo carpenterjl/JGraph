@@ -1,0 +1,32 @@
+<Project Sdk="WixToolset.Sdk/6.0.2">
+
+  <!--
+    The JGraph Runtime MSI (compiler and SDK plan, stage K18). Deliberately NOT part of JGraph.sln:
+    it consumes ../runtime-staging, which only exists after installer/publish-runtime.ps1 has laid the
+    runtime out, so it must not run on an ordinary solution build. Build it through
+    installer/build-runtime-installer.ps1, which passes the three properties below.
+  -->
+  <PropertyGroup>
+    <!-- Fallbacks only: build-runtime-installer.ps1 always passes the version it read from
+         Directory.Build.props and the upgrade code it derived from that version. -->
+    <ProductVersion Condition="'$(ProductVersion)' == ''">0.2.3</ProductVersion>
+    <StagingDir Condition="'$(StagingDir)' == ''">$(MSBuildThisFileDirectory)..\runtime-staging</StagingDir>
+    <!-- Each version of the runtime is a product of its own, installed beside the others as MATLAB
+         Runtime's releases are, so its upgrade code is derived from the version (JGraph.Deploy's
+         RuntimeInstaller.UpgradeCode and the build script agree on the derivation). -->
+    <UpgradeCode Condition="'$(UpgradeCode)' == ''">00000000-0000-0000-0000-000000000000</UpgradeCode>
+    <OutputName>JGraph-Runtime-$(ProductVersion)</OutputName>
+    <!-- 64-bit package: ProgramFiles64Folder and the 64-bit registry view. -->
+    <InstallerPlatform>x64</InstallerPlatform>
+    <DefineConstants>$(DefineConstants);ProductVersion=$(ProductVersion);StagingDir=$(StagingDir);UpgradeCode=$(UpgradeCode)</DefineConstants>
+    <!-- Inherited from Directory.Build.props but meaningless to a WiX build. -->
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- ICE61 is the expected "same version upgrade" note from AllowSameVersionUpgrades. -->
+    <SuppressIces>ICE61</SuppressIces>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" Version="6.0.2" />
+  </ItemGroup>
+
+</Project>

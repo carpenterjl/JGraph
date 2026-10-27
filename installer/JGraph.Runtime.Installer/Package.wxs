@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  The JGraph Runtime's Windows installer (per-machine MSI; compiler and SDK plan, stage K18): the
+  counterpart of the MATLAB Runtime installer, which a program built by mcc -m, a library built for
+  .NET, C, C++ or Python, or an archive served by jgraph-mps runs on.
+
+  Layout: everything installer/publish-runtime.ps1 laid out in ../runtime-staging is harvested
+  wholesale into Program Files\JGraph Runtime\<version>, the layout JGraph.Deploy.RuntimeLayout
+  describes (bin\win64 the engine, runtime\win64 the native bridge, include, lib\win64, python,
+  launchers\win64, the marker jgraph-runtime.json at the root). Individual files are deliberately
+  not authored: a stage that adds to the runtime ships its files without touching this file.
+
+  Versions side by side: each version of the runtime is a product of its own (its UpgradeCode is
+  derived from the version), installed in its own folder, as MATLAB Runtime's releases are, so a
+  program built for one version keeps running when another is installed.
+
+  Registration: HKLM\SOFTWARE\JGraph\JGraph Runtime\<version>\Location names the folder, which is how
+  a program's launcher (native/jglaunch), RuntimeLayout.Find and a Python package's __init__.py find
+  the runtime after JGRAPH_RUNTIME_ROOT; runtime\win64 is appended to the system PATH, as the MATLAB
+  Runtime installer appends its own, so a C program finds jgrt.dll.
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <Package Name="JGraph Runtime $(var.ProductVersion)"
+           Manufacturer="JGraph contributors"
+           Version="$(var.ProductVersion)"
+           Scope="perMachine"
+           Compressed="yes"
+           UpgradeCode="$(var.UpgradeCode)">
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- Re-running this version's MSI replaces the installed copy in one transaction; another
+         version has another upgrade code and installs beside it. -->
+    <MajorUpgrade AllowSameVersionUpgrades="yes"
+                  DowngradeErrorMessage="A newer build of JGraph Runtime $(var.ProductVersion) is already installed. Uninstall it first to install this older build." />
+
+    <Icon Id="JGraphRuntimeIcon" SourceFile="..\..\src\JGraph.Application\Assets\jgraph.ico" />
+    <Property Id="ARPPRODUCTICON" Value="JGraphRuntimeIcon" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/jgraph/jgraph" />
+    <Property Id="ARPCOMMENTS" Value="The runtime that programs and libraries built with JGraph's compiler run on." />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="RUNTIMEROOT" Name="JGraph Runtime">
+        <Directory Id="INSTALLFOLDER" Name="$(var.ProductVersion)" />
+      </Directory>
+    </StandardDirectory>
+
+    <!-- Everything the publish produced, subfolders preserved. -->
+    <ComponentGroup Id="RuntimeFiles" Directory="INSTALLFOLDER">
+      <Files Include="$(var.StagingDir)\**" />
+    </ComponentGroup>
+
+    <ComponentGroup Id="RuntimeRegistration" Directory="INSTALLFOLDER">
+      <!-- The key RuntimeLayout.Find and the launcher read: Location, with the release the dialect
+           follows beside it. -->
+      <Component Id="RuntimeLocation" Guid="*" Bitness="always64">
+        <RegistryKey Root="HKLM" Key="SOFTWARE\JGraph\JGraph Runtime\$(var.ProductVersion)">
+          <RegistryValue Name="Location" Type="string" Value="[INSTALLFOLDER]" KeyPath="yes" />
+          <RegistryValue Name="Release" Type="string" Value="25.2" />
+        </RegistryKey>
+      </Component>
+      <!-- The PATH entry: appended on install, removed (the entry alone) on uninstall; MSI broadcasts
+           WM_SETTINGCHANGE itself, so new consoles see it. -->
+      <Component Id="RuntimePath" Guid="*" Bitness="always64">
+        <RegistryValue Root="HKLM" Key="SOFTWARE\JGraph\JGraph Runtime\$(var.ProductVersion)" Name="PathEntry"
+                       Type="string" Value="[INSTALLFOLDER]runtime\win64" KeyPath="yes" />
+        <Environment Id="RuntimePathEntry" Name="PATH" Value="[INSTALLFOLDER]runtime\win64"
+                     Part="last" Action="set" System="yes" Permanent="no" />
+      </Component>
+    </ComponentGroup>
+
+    <Feature Id="Main" Title="JGraph Runtime" Level="1">
+      <ComponentGroupRef Id="RuntimeFiles" />
+      <ComponentGroupRef Id="RuntimeRegistration" />
+    </Feature>
+
+    <!-- License -> install dir -> verify. -->
+    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+
+  </Package>
+</Wix>

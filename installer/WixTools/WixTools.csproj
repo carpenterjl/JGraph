@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The WiX 6 packages JGraph's developer install ships (compiler and SDK plan, stage K18, decision
+    KO7): compiler.package.installer and compiler.runtime.customInstaller build installers with the
+    WiX command line (wixtoolset.sdk's tools) and the bootstrapper applications extension; the
+    runtime MSI's project uses the UI extension. Nothing is compiled here: restoring this project
+    puts the packages in the NuGet package cache, from which installer/build-installer.ps1 copies them
+    into staging\toolbox\compiler\wix, and from which JGraph.Deploy.WixTool finds them in a source
+    checkout. Deliberately not part of JGraph.sln.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <IsPackable>false</IsPackable>
+    <WixVersion>6.0.2</WixVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageDownload Include="WixToolset.Sdk" Version="[$(WixVersion)]" />
+    <PackageDownload Include="WixToolset.UI.wixext" Version="[$(WixVersion)]" />
+    <PackageDownload Include="WixToolset.BootstrapperApplications.wixext" Version="[$(WixVersion)]" />
+  </ItemGroup>
+
+</Project>

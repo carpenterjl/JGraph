@@ -1,0 +1,171 @@
+﻿k18_package: 453 of 621 agree, 168 recorded divergences, 0 unexplained
+
+recorded divergences:
+  build.seconds: a build's own files and timing (ADR 0262, 0269)
+  opts.default: an object's or a cell's display is JGraph's own layout, not R2025b's (an empty cell prints {} where R2025b prints nothing; open item 194)
+  opts.results: an object's or a cell's display is JGraph's own layout, not R2025b's (an empty cell prints {} where R2025b prints nothing; open item 194)
+  opts.results.win: an object's or a cell's display is JGraph's own layout, not R2025b's (an empty cell prints {} where R2025b prints nothing; open item 194)
+  opts.results.py: an object's or a cell's display is JGraph's own layout, not R2025b's (an empty cell prints {} where R2025b prints nothing; open item 194)
+  opts.results.nv: an object's or a cell's display is JGraph's own layout, not R2025b's (an empty cell prints {} where R2025b prints nothing; open item 194)
+  opts.results.properties: an object's or a cell's display is JGraph's own layout, not R2025b's (an empty cell prints {} where R2025b prints nothing; open item 194)
+  set.AdditionalFiles.1: an object's or a cell's display is JGraph's own layout, not R2025b's (an empty cell prints {} where R2025b prints nothing; open item 194)
+  set.AdditionalFiles.3: an object's or a cell's display is JGraph's own layout, not R2025b's (an empty cell prints {} where R2025b prints nothing; open item 194)
+  set.AdditionalFiles.5: an object's or a cell's display is JGraph's own layout, not R2025b's (an empty cell prints {} where R2025b prints nothing; open item 194)
+  set.AdditionalFiles.6: an object's or a cell's display is JGraph's own layout, not R2025b's (an empty cell prints {} where R2025b prints nothing; open item 194)
+  set.AdditionalFiles.9: an object's or a cell's display is JGraph's own layout, not R2025b's (an empty cell prints {} where R2025b prints nothing; open item 194)
+  set.AdditionalFiles.10: an object's or a cell's display is JGraph's own layout, not R2025b's (an empty cell prints {} where R2025b prints nothing; open item 194)
+  derived.display: an object's or a cell's display is JGraph's own layout, not R2025b's (an empty cell prints {} where R2025b prints nothing; open item 194)
+  derived.saveload: an options object saved to a MAT-file and loaded back keeps JGraph's class, which answers no saveobj (open item 215)
+  web.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  web.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  web.seconds: a timing
+  quiet.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  quiet.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  quiet.seconds: a timing
+  named.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  named.seconds: a timing
+  zip.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  zip.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  zip.seconds: a timing
+  installer: JGraph's installer names the JGraph Runtime where R2025b's names the MATLAB Runtime (ADR 0273)
+  installer.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  installer.files: the JGraph Runtime installer is on this machine (a checkout's build of the MSI), so mcrinstaller names it and an offline installer is built, where R2025b had no MATLAB Runtime installer (ADR 0273)
+  installer.seconds: a timing
+  none: an application-only installer needs nothing from the runtime's installer, where R2025b needs its install agent; JGraph builds it (ADR 0273)
+  none.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  none.files: an application-only installer needs nothing from the runtime's installer, where R2025b needs its install agent; JGraph builds it (ADR 0273)
+  none.seconds: a timing
+  none.zip: an application-only installer needs nothing from the runtime's installer, where R2025b needs its install agent; JGraph builds it (ADR 0273)
+  none.zip.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  none.zip.files: an application-only installer needs nothing from the runtime's installer, where R2025b needs its install agent; JGraph builds it (ADR 0273)
+  none.zip.seconds: a timing
+  optional.none.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  optional.none.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  optional.none.seconds: a timing
+  options.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  options.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  options.seconds: a timing
+  options.extra.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  options.wrongclass.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  options.other.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  options.other.seconds: a timing
+  results.win.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  results.win.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  results.win.seconds: a timing
+  results.py.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  results.py.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  results.py.seconds: a timing
+  files.exe.printed: a warning's '> In' stack lines are MATLAB's; JGraph prints the warning without them (open item 170)
+  files.exe.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  files.exe.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  files.exe.seconds: a timing
+  files.shortcut.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  files.shortcut.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  files.shortcut.seconds: a timing
+  files.string.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  files.string.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  files.string.seconds: a timing
+  files.folder.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  files.folder.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  files.folder.seconds: a timing
+  files.folder.shortcut.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  files.folder.shortcut.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  files.folder.shortcut.seconds: a timing
+  files.onetxt.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  files.onetxt.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  files.onetxt.seconds: a timing
+  files.noname.seconds: a timing
+  files.repeat.seconds: a timing
+  files.badtxt.seconds: a timing
+  files.emptytxt.seconds: a timing
+  files.notxt.warn: the requiredMCRProducts.txt deprecation warning is raised as R2025b raises it; its text agrees, its '> In' lines are MATLAB's (open item 170)
+  files.results.txt.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  files.results.txt.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  files.results.txt.seconds: a timing
+  shortcut.notpackaged.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  shortcut.notpackaged.seconds: a timing
+  shortcut.byname.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  shortcut.byname.seconds: a timing
+  results.noshortcut.printed: a warning's '> In' stack lines are MATLAB's; JGraph prints the warning without them (open item 170)
+  results.noshortcut.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  results.noshortcut.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  results.noshortcut.seconds: a timing
+  results.exe.additional: an additional file of a packaged file's name is refused (noRepeats) where R2025b packages both (ADR 0273)
+  results.exe.additional.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  results.exe.additional.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  results.exe.additional.seconds: a timing
+  nargs.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  nargs.odd.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  unknown.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  outdir.file.seconds: a timing
+  outdir.relative.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  outdir.relative.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  outdir.relative.seconds: a timing
+  outdir.default.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  outdir.default.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  outdir.default.seconds: a timing
+  outdir.default.named.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  outdir.default.named.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  outdir.default.named.seconds: a timing
+  verbose.logical.warn: R2025b's fileattrib warns about user characters on Windows; JGraph checks the folder without the warning (ADR 0273)
+  verbose.logical.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  verbose.logical.seconds: a timing
+  custom.web.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.web.seconds: a timing
+  custom.default.outdir.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.default.outdir.seconds: a timing
+  custom.none.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.zipweb.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.installer: JGraph's installer names the JGraph Runtime where R2025b's names the MATLAB Runtime (ADR 0273)
+  custom.installer.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.installer.seconds: a timing
+  custom.zip.installer: JGraph's installer names the JGraph Runtime where R2025b's names the MATLAB Runtime (ADR 0273)
+  custom.zip.installer.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.zip.installer.seconds: a timing
+  custom.files.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.files.seconds: a timing
+  custom.files.two.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.files.two.seconds: a timing
+  custom.files.string.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.files.string.seconds: a timing
+  custom.multi.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.multi.seconds: a timing
+  custom.badname.space.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.badname.space.seconds: a timing
+  custom.badname.slash.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.badname.empty.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.badname.number.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.optional.none.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.optional.none.seconds: a timing
+  custom.optional.bad.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.badtype.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.badtxt.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.badtxt.seconds: a timing
+  custom.emptytxt.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.emptytxt.seconds: a timing
+  custom.notxt.warn: the requiredMCRProducts.txt deprecation warning is raised as R2025b raises it; its text agrees, its '> In' lines are MATLAB's (open item 170)
+  custom.notxt.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.nargs.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.unknown.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.outdir.file.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  custom.oneinput.files: the installer is a WiX bundle of JGraph's own, so its size is its own; the names are checked by the tests (ADR 0273)
+  mcrinstaller.printed: the JGraph Runtime installer is on this machine (a checkout's build of the MSI), so mcrinstaller names it and an offline installer is built, where R2025b had no MATLAB Runtime installer (ADR 0273)
+  mcrinstaller.outputs: the JGraph Runtime installer is on this machine (a checkout's build of the MSI), so mcrinstaller names it and an offline installer is built, where R2025b had no MATLAB Runtime installer (ADR 0273)
+  exist.compiler.runtime.download: exist answers 2 for a package function that is a file in R2025b and a built-in here (ADR 0271)
+  exist.compiler.runtime.version: exist answers 2 for a package function that is a file in R2025b and a built-in here (ADR 0271)
+  nargin.compiler.runtime.installer: compiler.runtime.installer, an undocumented p-file, is not built (open item 215)
+  nargout.compiler.runtime.installer: compiler.runtime.installer, an undocumented p-file, is not built (open item 215)
+  exist.compiler.package.installer: exist answers 2 for a package function that is a file in R2025b and a built-in here (ADR 0271)
+  exist.compiler.runtime.customInstaller: exist answers 2 for a package function that is a file in R2025b and a built-in here (ADR 0271)
+  exist.mcrinstaller: exist answers 5 for a built-in that is a file in R2025b (ADR 0271)
+  url: R2025b's internal helpers (compiler.internal.*) are not JGraph's to answer
+  notes: R2025b's internal helpers (compiler.internal.*) are not JGraph's to answer
+  scrub: R2025b's internal helpers (compiler.internal.*) are not JGraph's to answer
+  ext: R2025b's internal helpers (compiler.internal.*) are not JGraph's to answer
+  imgformats: R2025b's internal helpers (compiler.internal.*) are not JGraph's to answer
+  optionalproducts: R2025b's internal helpers (compiler.internal.*) are not JGraph's to answer
+  deliveries: R2025b's internal helpers (compiler.internal.*) are not JGraph's to answer
+  packagetypes: R2025b's internal helpers (compiler.internal.*) are not JGraph's to answer
+  expectedMcrVersion: R2025b's internal helpers (compiler.internal.*) are not JGraph's to answer
+  installerkey: R2025b's internal helpers (compiler.internal.*) are not JGraph's to answer
+  runtime.version.text: a display is JGraph's own layout (open item 194)
