@@ -28,9 +28,12 @@ build_hello_app
 
 writes `output\HelloApp.exe`, a windowed program with the app's code archived inside it. It runs
 on a machine with the JGraph Runtime of the same version installed (the JGraph Runtime installer
-under `installer\`), or with `JGRAPH_RUNTIME_ROOT` naming a runtime laid out by
-`installer\publish-runtime.ps1`. The same script builds the same app with MATLAB Compiler under
-R2025b, where the program then needs the MATLAB Runtime.
+under `installer\`), with `JGRAPH_RUNTIME_ROOT` naming a runtime laid out by
+`installer\publish-runtime.ps1`, or with that runtime's folders copied beside the program (its
+`jgraph-runtime.json`, `bin`, `runtime`, `include`, `lib`, `python` and `launchers` in `output\`):
+a program carries its runtime that way and needs no setting, as the launcher looks in its own
+folder last. The same script builds the same app with MATLAB Compiler under R2025b, where the
+program then needs the MATLAB Runtime.
 
 With `HELLO_LOG` set to a file name, the built program appends each status line to that file,
 since a windowed program's output goes nowhere. `tools\runtime-checks\run-hello-app.ps1` builds
