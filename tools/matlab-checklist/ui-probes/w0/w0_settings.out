@@ -1,0 +1,101 @@
+== matlab.appdesigner
+  AutoSaveOnClickAway : active logical false, factory logical false, personal no
+== matlab.appdesigner.compbrowser
+  IncludeComponentLabels : active logical false, factory logical false, personal no
+== matlab.appdesigner.designview
+  GridInterval : active int32 10, factory int32 10, personal no
+  ShowAlignmentHints : active logical true, factory logical true, personal no
+  ShowGrid : active logical false, factory logical false, personal no
+  ShowResizingHints : active logical false, factory logical false, personal no
+  SnapToGrid : active logical true, factory logical true, personal no
+== matlab.appdesigner.history
+  MaxFileListSize : active int32 8, factory int32 8, personal no
+== matlab.editor.displaysettings
+  DataTipsInEditMode : active logical false, factory logical false, personal no
+  DisableResetZoomKeyboardShortcut : active logical false, factory logical false, personal no
+  EnableInlineOutputFocus : active logical true, factory logical true, personal no
+  EnableSingleFileZoom : active logical false, factory logical false, personal no
+  EnableZoomOnScroll : active logical true, factory logical true, personal no
+  HighlightCurrentLine : active logical false, factory logical false, personal no
+  HighlightCurrentLineColor : active int32 [229 250 221], factory int32 [229 250 221], personal no
+  ShowLineNumbers : active logical true, factory logical true, personal yes
+  ShowOpenAsLiveScriptBanner : active logical true, factory logical true, personal yes
+  ShowWelcomeToLiveEditorBanner : active logical true, factory logical true, personal yes
+== matlab.editor.displaysettings.linelimit
+  LineColor : active int32 [191 191 191], factory int32 [191 191 191], personal no
+  LineColumn : active int32 75, factory int32 75, personal no
+  LineWidth : active int32 1, factory int32 1, personal no
+  ShowLine : active logical true, factory logical true, personal no
+== matlab.editor.spelling
+== matlab.editor.codefolding
+  EnableCodeFolding : active logical true, factory logical true, personal no
+  FoldArgumentsBlocks : active logical false, factory logical false, personal no
+  FoldBlockComments : active logical true, factory logical true, personal no
+  FoldClassCode : active logical true, factory logical true, personal no
+  FoldClassEnumerationBlocks : active logical true, factory logical true, personal no
+  FoldClassEventBlocks : active logical true, factory logical true, personal no
+  FoldClassMethodBlocks : active logical true, factory logical true, personal no
+  FoldClassPropertiesBlocks : active logical true, factory logical true, personal no
+  FoldComments : active logical true, factory logical true, personal no
+  FoldForAndParforBlocks : active logical true, factory logical true, personal no
+  FoldFunctionCode : active logical true, factory logical true, personal no
+  FoldIfElseBlocks : active logical false, factory logical false, personal no
+  FoldSections : active logical false, factory logical false, personal no
+  FoldSpmdBlocks : active logical true, factory logical true, personal no
+  FoldSwitchCaseBlocks : active logical false, factory logical false, personal no
+  FoldTryCatchBlocks : active logical true, factory logical true, personal no
+  FoldWhileBlocks : active logical true, factory logical true, personal no
+  InitiallyFoldArgumentsBlocks : active logical false, factory logical false, personal no
+  InitiallyFoldBlockComments : active logical false, factory logical false, personal no
+  InitiallyFoldClassCode : active logical false, factory logical false, personal no
+  InitiallyFoldClassEnumerationBlocks : active logical false, factory logical false, personal no
+  InitiallyFoldClassEventBlocks : active logical false, factory logical false, personal no
+  InitiallyFoldClassMethodBlocks : active logical false, factory logical false, personal no
+  InitiallyFoldClassPropertiesBlocks : active logical false, factory logical false, personal no
+  InitiallyFoldComments : active logical false, factory logical false, personal no
+  InitiallyFoldForAndParforBlocks : active logical false, factory logical false, personal no
+  InitiallyFoldFunctionCode : active logical false, factory logical false, personal no
+  InitiallyFoldIfElseBlocks : active logical false, factory logical false, personal no
+  InitiallyFoldSections : active logical false, factory logical false, personal no
+  InitiallyFoldSpmdBlocks : active logical false, factory logical false, personal no
+  InitiallyFoldSwitchCaseBlocks : active logical false, factory logical false, personal no
+  InitiallyFoldTryCatchBlocks : active logical false, factory logical false, personal no
+  InitiallyFoldWhileBlocks : active logical false, factory logical false, personal no
+== matlab.editor.language.matlab
+  EnableSyntaxHighlighting : active logical true, factory logical true, personal no
+  EnableVariableAndFunctionRenaming : active logical true, factory logical true, personal no
+  FunctionIndentingFormat : active char "MixedFunctionIndent", factory char "MixedFunctionIndent", personal no
+  SmartIndentWhileTyping : active char "SmartIndent", factory char "SmartIndent", personal no
+== matlab.editor.language.matlab.comments
+  FromCommentStart : active logical false, factory logical false, personal no
+  MaxWidth : active int32 75, factory int32 75, personal no
+  WrapAutomatically : active logical true, factory logical true, personal no
+== matlab.editor.tab
+  EmacsStyle : active logical false, factory logical false, personal no
+  IndentSize : active int32 4, factory int32 4, personal no
+  InsertSpaces : active logical true, factory logical true, personal no
+  TabSize : active int32 4, factory int32 4, personal no
+== matlab.fonts.codefont
+  Name : active char "Monospaced", factory char "Monospaced", personal no
+  Size : active int32 10, factory int32 10, personal no
+  Style : active int32 0, factory int32 0, personal no
+== matlab.appearance.figure
+== matlab.appdesigner settings the client reads by name
+  group codeview: hasGroup 1
+    ShowAppMigrationTips : active logical true, factory logical true
+    ThemedReadonlyBackgroundColor : active char "", factory char ""
+  group compatibility: hasGroup 1
+    ShowBackwardCompatibilityWarningTip : active logical true, factory logical true
+  group componentlibrary: hasGroup 1
+    Favorites : active cell [1 1], factory cell [1 1]
+    CategoryOrder : active cell [1 1], factory cell [1 1]
+    ViewMode : active char "icon_view", factory char "icon_view"
+  group fileformat: hasGroup 1
+    CreateNewAppsAs : active char "m", factory char "m"
+    ShowNewPlainTextInfoMessage : active logical true, factory logical true
+  group window: hasGroup 1
+    ShowTitleFilePath : active logical true, factory logical true
+    ShowTitleFileExtension : active logical true, factory logical true
+  group designview: hasGroup 1
+    AlignmentHints : not a setting
+    SizeIndicator : not a setting

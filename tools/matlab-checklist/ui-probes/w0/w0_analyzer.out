@@ -1,0 +1,66 @@
+== shipped apps: 44 files, 0 failed, 6 s
+== parity fixtures: 527 files, 0 failed, 34 s
+== examples: 5 files, 0 failed, 0 s
+== 2463 issues in all
+== 106 distinct ids; the top 60 by files
+  1 INUSD                  files   81 count   399  warning auto/manual Input argument might be unused. Consider replacing the argument with ~ instead.           
+  2 GVMIS                  files   78 count  1156  warning manual   Global variables are inefficient and make errors difficult to diagnose. Use a function wit
+  3 CHARTEN                files   44 count    46  info    auto     For readability, consider using 'newline' instead of 'char(10)'.                          
+  4 NASGU                  files   38 count   135  warning manual   Value assigned to variable might be unused.                                               
+  5 MSNU                   files   24 count   129  info    auto     A Code Analyzer message was once suppressed here, but the message is no longer generated. 
+  6 FVAL                   files   17 count    67  warning auto/manual Calling functions using 'feval' is usually not necessary. Call the function directly inste
+  7 MANU                   files   17 count    34  warning manual   Input argument might be unused. Consider replacing the argument with ~, or make this metho
+  8 AGROW                  files   12 count    61  info    manual   Variable appears to change size on every loop iteration. Consider preallocating for speed.
+  9 EXIST                  files   12 count    47  info    manual   EXIST with two input arguments is generally faster and clearer than with one input argumen
+ 10 ASGLU                  files    9 count    14  warning auto/manual Value assigned to variable might be unused. Consider replacing the variable with ~ instead
+ 11 STRNU                  files    7 count    17  warning manual   This variable, apparently a structure, is changed but the value might be unused.          
+ 12 LAXES                  files    7 count    11  info    manual   Calling AXES(h) in a loop can be slow. Consider moving the call to AXES outside the loop. 
+ 13 EVLCS                  files    7 count     8  warning manual   'eval' is inefficient and makes code less clear. Call the statement directly.             
+ 14 DEFNU                  files    6 count     9  warning manual   Function might be unused.                                                                 
+ 15 NOANS                  files    5 count    27  warning manual   Using ANS as a variable is not recommended as ANS is frequently overwritten by MATLAB.    
+ 16 CLEAR0ARGS             files    5 count     7  info    manual   Avoid using 'clear' to clear more than necessary, this decreases code performance and is u
+ 17 NBRAK2                 files    5 count     7  info    auto     Use of brackets [] is unnecessary.                                                        
+ 18 STOUT                  files    5 count     7  warning manual   Function return value might be unset.                                                     
+ 19 ISCL                   files    5 count     5  info    manual   To improve performance, use 'isscalar' instead of length comparison.                      
+ 20 NUSED                  files    4 count    36  warning auto     Global or persistent variable might be unused or unset in this function or script.        
+ 21 DATST                  files    4 count    20  info    manual   'datestr' is not recommended. With appropriate code changes, use 'datetime' instead.      
+ 22 ELARLOG                files    3 count     5  warning manual   The + operator in the expression size(A + B) is unexpected. Should this be size(A) + B?   
+ 23 LTARG                  files    3 count     4  warning manual   Function might be called with too few arguments.                                          
+ 24 ST2NM                  files    3 count     4  info    manual   If you are operating on scalar values, consider using 'str2double' for faster performance.
+ 25 NOCOMMA                files    2 count    11  info    auto     Extra comma is unnecessary.                                                               
+ 26 LOAD                   files    2 count     7  warning manual   To avoid conflicts with functions on the path, specify variables to load from file.       
+ 27 DATNM                  files    2 count     4  info    manual   'datenum' is not recommended. With appropriate code changes, use 'datetime' instead.      
+ 28 UNRCH                  files    2 count     4  warning manual   This statement (and possibly following ones) cannot be reached.                           
+ 29 STRQUOT                files    2 count     3  info    auto     string('...') is not recommended. Use "..." instead.                                      
+ 30 VSECC                  files    2 count     3  warning manual   'EOSCharCode' property of 'visadev' class will be removed in a future release. With approp
+ 31 GFLD                   files    2 count     2  info    manual   Use dynamic fieldnames with structures instead of GETFIELD.                               
+ 32 ISMAT                  files    2 count     2  info    auto     When checking if a variable is a matrix consider using ISMATRIX.                          
+ 33 NODEF                  files    2 count     2  warning manual   Variable might be used before it is defined.                                              
+ 34 NUMCH                  files    2 count     2  info    auto     'NumberOfChannels' is not recommended. Use 'NumChannels' instead.                         
+ 35 REDEFGG                files    2 count     2  warning manual   Declaring a variable to be global more than once might not be supported in a future releas
+ 36 VSCRD                  files    2 count     2  warning manual   'clrdevice' method of 'visadev' class will be removed in a future release. With appropriat
+ 37 VUNUS                  files    2 count     2  warning manual   '{' produces a value that might be unused.                                                
+ 38 HIST                   files    1 count    24  info    manual   'hist' is not recommended. With appropriate code changes, use 'histogram' instead.        
+ 39 SUBSASGN               files    1 count    18  error   manual   Output of SUBSASGN must be assigned to a variable.                                        
+ 40 VRJOYSTK               files    1 count    11  warning auto     'vrjoystick' will be removed in a future release. Use 'sim3d.io.Joystick' instead, which i
+ 41 DQUADL                 files    1 count     8  info    manual   'quadl' is not recommended. With appropriate code changes, use 'integral' instead.        
+ 42 DDBLQD                 files    1 count     7  info    manual   'dblquad' is not recommended. With appropriate code changes, use 'integral2' instead.     
+ 43 DQUAD                  files    1 count     7  info    manual   'quad' is not recommended. With appropriate code changes, use 'integral' instead.         
+ 44 COMPASS                files    1 count     6  info    manual   'compass' is not recommended. With appropriate code changes, use 'compassplot' instead.   
+ 45 DINLN                  files    1 count     5  warning manual   INLINE will be removed in a future release. Use anonymous functions instead.              
+ 46 DTRIQD                 files    1 count     4  info    manual   'triplequad' is not recommended. With appropriate code changes, use 'integral3' instead.  
+ 47 DQUADV                 files    1 count     3  info    manual   'quadv' is not recommended. With appropriate code changes, use 'integral' instead.        
+ 48 LOGSUM                 files    1 count     3  info    manual   Consider using 'nnz' instead of 'sum' for logical vectors to improve readability.         
+ 49 SFLD                   files    1 count     3  info    manual   Use dynamic fieldnames with structures instead of SETFIELD.                               
+ 50 COMNL                  files    1 count     2  info    manual   Newline following comma acts as a row separator. Replace the comma with a semicolon to mak
+ 51 DFCNCHK                files    1 count     2  warning manual   FCNCHK will be removed in a future release. Use anonymous functions instead.              
+ 52 DFIRRCOS               files    1 count     2  info    manual   'firrcos' is not recommended. With appropriate code changes, use 'rcosdesign' instead.    
+ 53 GRIDD                  files    1 count     2  info    manual   Consider replacing GRIDDATA with SCATTEREDINTERPOLANT for better performance.             
+ 54 PSET                   files    1 count     2  warning manual   Persistent variable is used, but might be unset.                                          
+ 55 RPMT1                  files    1 count     2  info    auto     For readability, consider using 'ones(x,y)' instead of 'repmat(1,x,y)'.                   
+ 56 ATTOF                  files    1 count     1  warning manual   Setting the class attribute Abstract to false is not recommended.                         
+ 57 ATUNK                  files    1 count     1  error   manual   Unknown attribute name.                                                                   
+ 58 CCAT1                  files    1 count     1  info    manual   { A{I} } can usually be replaced by A(I) or A(I)', which can be much faster.              
+ 59 DATE                   files    1 count     1  info    manual   'date' is not recommended. With appropriate code changes, use 'datetime("today")' instead.
+ 60 DFIRGAUSS              files    1 count     1  info    manual   'firgauss' is not recommended. With appropriate code changes, use 'gaussdesign' instead.  
+done

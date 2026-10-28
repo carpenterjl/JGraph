@@ -1,0 +1,293 @@
+=== AppDocumentTypeConfig [{"contextId":"AD_APP_DESIGN_VIEW_CONTEXT","panelIds":["AD_COMPONENT_LIBRARY","AD_COMPONENT_BROWSER"],"tabGroupTags":["appDesignerToolstrip.layoutTabGroup","appDesignerToolstrip.designviewTabGroup"]},{"contextId":"AD_APP_CODE_VIEW_CONTEXT","panelIds":["AD_CODE_VIEW","AD_THUMBNAIL","AD_COMPONENT_BROWSER"],"tabGroupTags":["appDesignerToolstrip.editorTabGroup","appDesignerToolstrip.viewTabGroup"]}]
+--- tab appDesignerToolstrip.designerTab
+  TabGroup #appDesignerToolstrip.designerTabGroup
+    Tab #appDesignerToolstrip.designerTab title="DESIGNER"
+      Section #appDesignerToolstrip.designerTab.fileSection title="FILE"
+        Column
+          PushButton #appDesignerToolstrip.designerTab.file.newButton "New" OPEN_STARTSCREEN_DIALOG <new>
+        Column
+          SplitButton #appDesignerToolstrip.designerTab.file.openButton "Open" OPEN [Ctrl+O] <openFolder> ->appDesignerToolstrip.designerTab.file.openButton.menu
+        Column
+          SplitButton #appDesignerToolstrip.designerTab.file.saveSplitButton "Save" SAVE [Ctrl+S] <saved> ->appDesignerToolstrip.designerTab.file.saveMenu
+        Column
+          PushButton #appDesignerToolstrip.designerTab.file.compareFilesButton "Compare To" OPEN_FILE_COMPARISON_DIALOG <compare>
+        Column #appDesignerToolstrip.designerTab.share.configureMetaDataColumn
+          PushButton #appDesignerToolstrip.designerTab.share.configureMetaData "Configure\nfor Apps" CONFIGURE_METADATA <toolsColor> ->Configure component for interactive use in App Designer
+      Section #appDesignerToolstrip.designerTab.shareSection title="SHARE"
+        Column #appDesignerToolstrip.designerTab.share.appDetailsColumn
+          PushButton #appDesignerToolstrip.designerTab.share.appDetailsButton "App\nDetails" APP_DETAILS <details_app>
+        Column #appDesignerToolstrip.designerTab.share.shareMenuColumn
+          DropDownButton #appDesignerToolstrip.designerTab.share.shareAllOptions "SHARE" SHARE_ALL_OPTIONS <applicationCompilerApp> ->appDesignerToolstrip.designerTab.share.shareMenu
+      Section #appDesignerToolstrip.editorTab.run title="RUN"
+        Column #appDesignerToolstrip.editorTab.run.column1
+          SplitButton #appDesignerToolstrip.editorTab.run.run "Run" RUN [F5] <playControl> ->appDesignerToolstrip.editorTab.run.runSectionPopUpList
+          SplitButton #appDesignerToolstrip.editorTab.run.pause "Pause" EDITOR_PAUSE ->appDesignerToolstrip.editorTab.run.runSectionPopUpList
+          SplitButton #appDesignerToolstrip.editorTab.run.continue "Continue" EDITOR_CONTINUE ->appDesignerToolstrip.editorTab.run.runSectionPopUpList
+        Column #appDesignerToolstrip.editorTab.run.column2
+          PushButton #appDesignerToolstrip.editorTab.run.step "Step" EDITOR_STEP
+        Column #appDesignerToolstrip.editorTab.run.stepInOutColumn
+          PushButton #appDesignerToolstrip.editorTab.run.stepin "Step In" EDITOR_STEP_IN
+          PushButton #appDesignerToolstrip.editorTab.run.stepout "Step Out" EDITOR_STEP_OUT
+        Column #appDesignerToolstrip.editorTab.run.column3
+          PushButton #appDesignerToolstrip.editorTab.run.stop "Stop" EDITOR_STOP
+  
+    PopupList #appDesignerToolstrip.designerTab.file.saveMenu
+      ListItem "Save" SAVE [Ctrl+S] <saved>
+      ListItem "Save As..." SAVEAS <saveAs>
+      ListItem "Save Copy As..." SAVECOPY_AS <saveCopyAs>
+      PopupListSeparator
+      ListItem "Export to .m File..." EXPORT <export_data>
+    PopupList #appDesignerToolstrip.designerTab.share.shareMenu
+      ListItem #appDesignerToolstrip.designerTab.file.packageButton "MATLAB App" SHARE_MATLAB
+      ListItem #appDesignerToolstrip.designerTab.share.compileWeb "Web App" SHARE_WEB
+      ListItem #appDesignerToolstrip.designerTab.share.compileDesktop "Standalone Desktop App" SHARE_DESKTOP
+    PopupList #appDesignerToolstrip.designerTab.file.openButton.menu
+      ListItem #appDesignerToolstrip.designerTab.file.openButton.menu.openButton "Open..." OPEN [Ctrl+O] <openFolder>
+      PopupListHeader #appDesignerToolstrip.designerTab.file.openButton.menu.guide.header title="GUIDE App"
+      ListItem #appDesignerToolstrip.designerTab.file.openButton.menu.openGUIDEAppButton "Open GUIDE to App Designer Migration Tool..." OPENGUIDEAPP <openFolder>
+    PopupList #appDesignerToolstrip.editorTab.run.runSectionPopUpList
+      PopupListHeader #appDesignerToolstrip.editorTab.breakpoint.breakpointLineHeader title="Breakpoints"
+      ListItem #appDesignerToolstrip.editorTab.breakpoint.clear_all_breakpoints "Clear All Breakpoints" EDITOR_CLEAR_ALL_BREAKPOINTS
+      ListItem #appDesignerToolstrip.editorTab.breakpoint.toggle_breakpoint "Set/Clear" EDITOR_TOGGLE_BREAKPOINT
+      ListItem #appDesignerToolstrip.editorTab.breakpoint.toggle_enable_breakpoint "Enable/Disable" EDITOR_TOGGLE_ENABLE_BREAKPOINT
+      ListItem #appDesignerToolstrip.editorTab.breakpoint.set_condition_breakpoint "Set Condition" EDITOR_TOGGLE_CONDITIONAL
+      PopupListHeader #appDesignerToolstrip.editorTab.breakpoint.errorhandlingLineHeader title="Error Handling"
+      ListItemWithCheckBox #appDesignerToolstrip.editorTab.breakpoint.pause_on_error "Pause on Errors" EDITOR_TOGGLE_STOP_IF_ERROR
+      ListItemWithCheckBox #appDesignerToolstrip.editorTab.breakpoint.pause_on_warning "Pause on Warnings" EDITOR_TOGGLE_STOP_IF_WARNING
+      ListItemWithCheckBox #appDesignerToolstrip.editorTab.breakpoint.pause_on_nan_inf "Pause on NaN or Inf" EDITOR_TOGGLE_STOP_IF_NAN_INF
+      ListItemWithCheckBox #appDesignerToolstrip.editorTab.breakpoint.pause_on_unsuppressed_output "Pause on Output" EDITOR_TOGGLE_STOP_IF_UNSUPPRESSED_OUTPUT
+--- tab appDesignerToolstrip.simulinkTab
+  TabGroup #appDesignerToolstrip.simulinkTabGroup
+    Tab #appDesignerToolstrip.simulinkTab title="SIMULINK"
+      Section #appDesignerToolstrip.simulinkTab.fileSection title="FILE"
+        Column
+          SplitButton #appDesignerToolstrip.simulinkTab.simulink.saveModelButton "Save" SAVE [Ctrl+S] <saved> ->appDesignerToolstrip.simulinkTab.file.saveMenu
+      Section #appDesignerToolstrip.simulinkTab.modelSection title="MODEL"
+        Column #appDesignerToolstrip.simulinkTab.simulink.modelNameColumn
+          TextField #appDesignerToolstrip.simulinkTab.simulink.model
+        Column #appDesignerToolstrip.simulinkTab.simulink.selectModelColumn
+          EmptyControl
+          PushButton #appDesignerToolstrip.simulinkTab.simulink.selectModelButton SELECT_SIMULINK_MODEL <edit>
+          EmptyControl
+        Column
+          PushButton #appDesignerToolstrip.simulinkTab.simulink.openModelButton "Open\nModel" OPEN_SIMULINK_MODEL <simulink>
+      Section #appDesignerToolstrip.simulinkTab.bindingSection title="BINDING"
+        Column #appDesignerToolstrip.simulinkTab.binding.bindingColumn
+          PushButton #appDesignerToolstrip.simulinkTab.simulink.bindButton "Bind" SIMULINK_BIND <link>
+        Column #appDesignerToolstrip.simulinkTab.binding.bindingColumn
+          PushButton #appDesignerToolstrip.simulinkTab.simulink.Validatebutton "Validate\nBindings" VALIDATE_SIMULINK_BINDINGS <validateDesign>
+  
+    PopupList #appDesignerToolstrip.simulinkTab.file.saveMenu
+      ListItem "Save" SAVE [Ctrl+S] <saved>
+      ListItem "Save As..." SAVEAS <saveAs>
+      ListItem "Save Copy As..." SAVECOPY_AS <saveCopyAs>
+      PopupListSeparator
+      ListItem "Export to .m File..." EXPORT <export_data>
+--- tab appDesignerToolstrip.layoutTab (contextual)
+  TabGroup #appDesignerToolstrip.layoutTabGroup
+    Tab #appDesignerToolstrip.layoutTab title="CANVAS"
+      Section #appDesignerToolstrip.layoutTab.fileSection title="FILE"
+        Column
+          SplitButton #appDesignerToolstrip.layoutTab.file.saveSplitButton "Save" SAVE [Ctrl+S] <saved> ->appDesignerToolstrip.layoutTab.file.saveMenu
+        Column #appDesignerToolstrip.layoutTab.file.responsifycolumn
+          DropDownButton #appDesignerToolstrip.layoutTab.file.responsifyPushButton "Convert" RESPONSIFY_ALL_OPTIONS <convertApp> ->appDesignerToolstrip.layoutTab.file.responsifyMenu
+      Section title="ALIGN"
+        Column
+          PushButton #appDesignerToolstrip.layoutTab.align.left " " DESIGN_ALIGN_LEFT [Ctrl+Alt+1] <alignLeft>
+          PushButton #appDesignerToolstrip.layoutTab.align.top " " DESIGN_ALIGN_TOP [Ctrl+Alt+4] <alignTop>
+        Column
+          PushButton #appDesignerToolstrip.layoutTab.align.center " " DESIGN_ALIGN_CENTER [Ctrl+Alt+2] <alignHorizontalCenter>
+          PushButton #appDesignerToolstrip.layoutTab.align.middle " " DESIGN_ALIGN_MIDDLE [Ctrl+Alt+5] <alignVerticalCenter>
+        Column
+          PushButton #appDesignerToolstrip.layoutTab.align.right " " DESIGN_ALIGN_RIGHT [Ctrl+Alt+3] <alignRight>
+          PushButton #appDesignerToolstrip.layoutTab.align.bottom " " DESIGN_ALIGN_BOTTOM [Ctrl+Alt+6] <alignBottom>
+      Section title="ARRANGE"
+        Column
+          SplitButton #appDesignerToolstrip.layoutTab.size.sizeSplitButton "Same Size" DESIGN_SIZE_SAME_SIZE <makeSameSize> ->appDesignerToolstrip.layoutTab.size.sizeMenu
+        Column
+          DropDownButton #appDesignerToolstrip.layoutTab.arrange.groupButton "Grouping" DESIGN_GROUP_ALL_OPTIONS [Ctrl+G] <group> ->appDesignerToolstrip.layoutTab.arrange.groupMenu
+        Column
+          DropDownButton #appDesignerToolstrip.layoutTab.arrange.reorderButton "Reorder" DESIGN_REORDER_COMPONENT_ALL_OPTIONS <reorder> ->appDesignerToolstrip.layoutTab.arrange.reorderMenu
+        Column
+          DropDownButton #appDesignerToolstrip.layoutTab.arrange.tabOrderButton "Tab Order" DESIGN_TABORDER_ALL_OPTIONS <changeSelectionOrder> ->appDesignerToolstrip.layoutTab.arrange.tabOrderMenu
+      Section title="SPACE"
+        Column
+          ComboBox #appDesignerToolstrip.layoutTab.spacing.combo DESIGN_SPACING_COMBO
+          PushButton #appDesignerToolstrip.layoutTab.spacing.applyHorz "Apply Horizontally" DESIGN_SPACING_HORZ <evenHorizontalGaps>
+          PushButton #appDesignerToolstrip.layoutTab.spacing.applyVert "Apply Vertically" DESIGN_SPACING_VERT <evenVerticalGaps>
+  
+    PopupList #appDesignerToolstrip.layoutTab.file.responsifyMenu
+      ListItem #appDesignerToolstrip.layoutTab.file.responsify2ColumnMenuItem "2-Panel App with Auto-Reflow" RESPONSIFY_TO_2COLUMN <autoReflowTwoPanel>
+      ListItem #appDesignerToolstrip.layoutTab.file.responsify3ColumnMenuItem "3-Panel App with Auto-Reflow" RESPONSIFY_TO_3COLUMN <autoReflowThreePanel>
+      ListItem "App without Auto-Reflow" UNRESPONSIFY_TO_STANDARD <autoReflowTwoPanel>
+    PopupList #appDesignerToolstrip.layoutTab.size.sizeMenu
+      ListItem #appDesignerToolstrip.layoutTab.size.sameSizeItem "Same Size" DESIGN_SIZE_SAME_SIZE <makeSameSize>
+      ListItem #appDesignerToolstrip.layoutTab.size.sameWidthItem "Width" DESIGN_SIZE_SAME_WIDTH <makeSameWidth>
+      ListItem #appDesignerToolstrip.layoutTab.size.sameHeightItem "Height" DESIGN_SIZE_SAME_HEIGHT <makeSameHeight>
+    PopupList #appDesignerToolstrip.layoutTab.arrange.groupMenu
+      ListItem #appDesignerToolstrip.layoutTab.arrange.groupItem "Group" DESIGN_GROUP_GROUP [Ctrl+G] <group>
+      ListItem #appDesignerToolstrip.layoutTab.arrange.groupAddItem "Add to Group" DESIGN_GROUP_ADD
+      ListItem #appDesignerToolstrip.layoutTab.arrange.groupRemoveItem "Remove from Group" DESIGN_GROUP_REMOVE
+      PopupListSeparator
+      ListItem #appDesignerToolstrip.layoutTab.arrange.ungroupItem "Ungroup" DESIGN_GROUP_UNGROUP [Ctrl+Shift+G] <ungroup>
+    PopupList #appDesignerToolstrip.layoutTab.arrange.reorderMenu
+      ListItem #appDesignerToolstrip.layoutTab.arrange.reorder.frontItem "Bring to Front" DESIGN_REORDER_COMPONENT_FRONT [Ctrl+Shift+Home] <bringToFront>
+      ListItem #appDesignerToolstrip.layoutTab.arrange.reorder.forwardItem "Bring Forward" DESIGN_REORDER_COMPONENT_FORWARD [Ctrl+Shift+↑] <bringForward>
+      ListItem #appDesignerToolstrip.layoutTab.arrange.reorder.backwardItem "Send Backward" DESIGN_REORDER_COMPONENT_BACKWARD [Ctrl+Shift+↓] <sendBackward>
+      ListItem #appDesignerToolstrip.layoutTab.arrange.reorder.backItem "Send to Back" DESIGN_REORDER_COMPONENT_BACK [Ctrl+Shift+End] <sendToBack>
+    PopupList #appDesignerToolstrip.layoutTab.arrange.tabOrderMenu
+      ListItem #appDesignerToolstrip.layoutTab.arrange.tabOrder.autoTabOrderItem "Apply Auto Tab Order" DESIGN_TABORDER_APP_AUTO
+      ListItem #appDesignerToolstrip.layoutTab.arrange.tabOrder.visualizeTabOrderItem "Visualize Tab Order" DESIGN_TABORDER_APP_VISUALIZE
+    PopupList #appDesignerToolstrip.layoutTab.file.saveMenu
+      ListItem "Save" SAVE [Ctrl+S] <saved>
+      ListItem "Save As..." SAVEAS <saveAs>
+      ListItem "Save Copy As..." SAVECOPY_AS <saveCopyAs>
+      PopupListSeparator
+      ListItem "Export to .m File..." EXPORT <export_data>
+--- tab appDesignerToolstrip.designviewTab (contextual)
+  TabGroup #appDesignerToolstrip.designviewTabGroup
+    Tab #appDesignerToolstrip.designviewTab title="VIEW"
+      Section title="DISPLAY"
+        Column
+          ToggleButton #appDesignerToolstrip.layoutTab.view.showGrid "Grid" DESIGN_GRID_SHOW <grid>
+        Column
+          Panel #appDesignerToolstrip.layoutTab.view.intervalPanel
+            Column
+              Label #appDesignerToolstrip.layoutTab.view.intervalLabel "Interval" DESIGN_GRID_INTERVAL
+            Column
+              Spinner #appDesignerToolstrip.layoutTab.view.intervalSpinner "Interval" DESIGN_GRID_INTERVAL
+            ToggleButton #appDesignerToolstrip.layoutTab.view.snapGrid "Snap to Grid" DESIGN_GRID_SNAP <snapToGrid>
+        Column
+          ToggleButton #appDesignerToolstrip.layoutTab.view.hints "Alignment\nHints" DESIGN_VIEW_ALIGN_HINTS <hintsAlignment>
+        Column
+          ToggleButton #appDesignerToolstrip.layoutTab.view.size "Resizing\nHints" DESIGN_VIEW_DISPLAY_SIZE <hintsResizing>
+      Section title="ZOOM"
+        Column
+          PushButton #appDesignerToolstrip.layoutTab.zoom.fit "Fit to View" FIT_TO_VIEW [Space] <fitToView>
+        Column
+          PushButton #appDesignerToolstrip.layoutTab.zoom.zoomIn "Zoom In" ZOOM_IN [Ctrl++]
+          PushButton #appDesignerToolstrip.layoutTab.zoom.zoomOut "Zoom Out" ZOOM_OUT [Ctrl+-]
+          PushButton #appDesignerToolstrip.layoutTab.zoom.resetZoom "Reset Zoom" RESET_ZOOM [Ctrl+Alt+0]
+--- tab appDesignerToolstrip.editorTab (contextual)
+  TabGroup #appDesignerToolstrip.editorTabGroup
+    Tab #appDesignerToolstrip.editorTab title="EDITOR"
+      Section
+        Column
+          SplitButton #appDesignerToolstrip.editorTab.file.saveSplitButton "Save" SAVE [Ctrl+S] <saved> ->appDesignerToolstrip.editorTab.file.saveMenu
+        Column
+          PushButton #appDesignerToolstrip.editorTab.file.compareFilesButton "Compare To" OPEN_FILE_COMPARISON_DIALOG <compare>
+          SplitButton #appDesignerToolstrip.editorTab.file.printButton "Print" EDITOR_PRINT ->appDesignerToolstrip.editorTab.file.printPopUpList
+      Section title="NAVIGATE"
+        Column
+          DropDownButton #appDesignerToolstrip.editorTab.navigate.gotoButton "Go To" ->appDesignerToolstrip.editorTab.navigate.gotoPopUpList
+        Column
+          SplitButton #appDesignerToolstrip.editorTab.navigate.findButton "Find" EDITOR_FIND ->appDesignerToolstrip.editorTab.navigate.findPopUpList
+          SplitButton #appDesignerToolstrip.editorTab.navigate.bookmarkButton "Bookmark" EDITOR_TOGGLE_BOOKMARK ->appDesignerToolstrip.editorTab.navigate.bookmarkPopUpList
+      Section #appDesignerToolstrip.editorTab.insertSection title="INSERT"
+        Column #appDesignerToolstrip.editorTab.edit.addCallbackColumn
+          PushButton #appDesignerToolstrip.editorTab.edit.addCallbackButton "Callback" <add_callback>
+        Column #appDesignerToolstrip.editorTab.edit.addCallbackSplitButtonColumn
+          SplitButton #appDesignerToolstrip.editorTab.edit.addCallbackSplitButton "Callback" <add_callback> ->appDesignerToolstrip.editorTab.edit.addCallbackButton.Menu
+        Column
+          SplitButton #appDesignerToolstrip.editorTab.edit.addFunctionSplitButton "Function" EDITOR_ADD_FUNCTION <add_callbackFunction> ->appDesignerToolstrip.editorTab.edit.addFunctionButton
+        Column #appDesignerToolstrip.editorTab.edit.addPropertyColumn
+          SplitButton #appDesignerToolstrip.editorTab.edit.addPropertySplitButton "Property" EDITOR_ADD_PROPERTY <add_callbackProperty> ->appDesignerToolstrip.editorTab.edit.addProperty
+        Column #appDesignerToolstrip.editorTab.edit.addEventColumn
+          PushButton #appDesignerToolstrip.editorTab.edit.addEvent "Event" <add_event>
+        Column #appDesignerToolstrip.editorTab.edit.addInputArgumentsColumn
+          PushButton #appDesignerToolstrip.editorTab.edit.addInputArgumentsButton "App Input\nArguments" INPUT_ARGUMENTS <edit_appInputArguments>
+        Column
+          PushButton #appDesignerToolstrip.editorTab.edit.addHelpCommentsButton "${0}\nHelp Text" HELP_COMMENTS <edit_appHelpText>
+      Section title="CODE"
+        Column
+          Label "Comment"
+          Label "Indent"
+        Column
+          PushButton #appDesignerToolstrip.editorTab.edit.commentButton EDITOR_COMMENT
+          PushButton #appDesignerToolstrip.editorTab.edit.smartIndentButton EDITOR_SMART_INDENT
+        Column
+          PushButton #appDesignerToolstrip.editorTab.edit.uncommentButton EDITOR_UNCOMMENT
+          PushButton #appDesignerToolstrip.editorTab.edit.moreIndentButton EDITOR_INDENT_MORE
+        Column
+          PushButton #appDesignerToolstrip.editorTab.edit.wrapcommentButton EDITOR_WRAP_COMMENT
+          PushButton #appDesignerToolstrip.editorTab.edit.lessIndentButton EDITOR_INDENT_LESS
+  
+    PopupList #appDesignerToolstrip.editorTab.navigate.gotoPopUpList
+      PopupListHeader #appDesignerToolstrip.editorTab.navigate.gotoButton.gotoLineHeader title="LINE"
+      ListItem #appDesignerToolstrip.editorTab.navigate.gotoButton.gotoLine "Go To" EDITOR_GOTO
+      PopupListHeader #appDesignerToolstrip.editorTab.navigate.gotoButton.functionsLineHeader title="FUNCTIONS"
+      PopupListPanel #appDesignerToolstrip.editorTab.navigate.gotoPopUpList.panel
+    PopupList #appDesignerToolstrip.editorTab.navigate.findPopUpList
+      ListItem #appDesignerToolstrip.editorTab.navigate.findButton.findNextListItem "Find Next" EDITOR_FIND_NEXT
+      ListItem #appDesignerToolstrip.editorTab.navigate.findButton.findPrevListItem "Find Previous" EDITOR_FIND_PREVIOUS
+      ListItem #appDesignerToolstrip.editorTab.navigate.findButton.findSelectionListItem "Find Selection" EDITOR_FIND_SELECTION
+    PopupList #appDesignerToolstrip.editorTab.navigate.bookmarkPopUpList
+      ListItem #appDesignerToolstrip.editorTab.navigate.bookmarkButton.bookmarkSetClearListItem "Bookmark" EDITOR_TOGGLE_BOOKMARK
+      ListItem #appDesignerToolstrip.editorTab.navigate.bookmarkButton.bookmarkPrevListItem "Previous" EDITOR_PREV_BOOKMARK
+      ListItem #appDesignerToolstrip.editorTab.navigate.bookmarkButton.bookmarkNextListItem "Next" EDITOR_NEXT_BOOKMARK
+    PopupList #appDesignerToolstrip.editorTab.edit.addFunctionButton
+      ListItem #appDesignerToolstrip.editorTab.edit.addFunctionPrivateButton "Private Function" EDITOR_ADD_PRIVATE_FUNCTION <add_callbackFunction>
+      ListItem #appDesignerToolstrip.editorTab.edit.addFunctionPublicButton "Public Function" EDITOR_ADD_PUBLIC_FUNCTION <add_callbackFunction>
+    PopupList #appDesignerToolstrip.editorTab.edit.addCallbackButton.Menu
+      ListItem "Callback" EDITOR_ADD_CALLBACK <add_callback>
+      ListItem "Event–Public Callback Pair" EDITOR_ADD_CALLBACK_EVENT_PAIR <add_event>
+    PopupList #appDesignerToolstrip.editorTab.edit.addProperty
+      ListItem #appDesignerToolstrip.editorTab.edit.addPropertyPrivateButton "Private Property" EDITOR_ADD_PRIVATE_PROPERTY <add_callbackProperty>
+      ListItem #appDesignerToolstrip.editorTab.edit.addPropertyPublicButton "Public Property" EDITOR_ADD_PUBLIC_PROPERTY <add_callbackProperty>
+    PopupList #appDesignerToolstrip.editorTab.file.printPopUpList
+      ListItem #appDesignerToolstrip.editorTab.file.printButton.print "Print" EDITOR_PRINT
+      ListItem #appDesignerToolstrip.editorTab.file.printButton.printSelection "Print Selection..." EDITOR_PRINT_SELECTION
+    PopupList #appDesignerToolstrip.editorTab.file.saveMenu
+      ListItem "Save" SAVE [Ctrl+S] <saved>
+      ListItem "Save As..." SAVEAS <saveAs>
+      ListItem "Save Copy As..." SAVECOPY_AS <saveCopyAs>
+      PopupListSeparator
+      ListItem "Export to .m File..." EXPORT <export_data>
+--- tab appDesignerToolstrip.viewTab (contextual)
+  TabGroup #appDesignerToolstrip.viewTabGroup
+    Tab #appDesignerToolstrip.viewTab title="VIEW"
+      Section title="SPLIT DOCUMENT"
+        Column
+          ToggleButton #appDesignerToolstrip.codeViewTab.split.none "None" EDITOR_SPLIT_NONE
+        Column
+          ToggleButton #appDesignerToolstrip.codeViewTab.split.leftRight "Left/ Right" EDITOR_SPLIT_LEFTRIGHT
+        Column
+          ToggleButton #appDesignerToolstrip.codeViewTab.split.topBottom "Top/ Bottom" EDITOR_SPLIT_TOPBOTTOM
+      Section title="DISPLAY"
+        Column
+          ToggleButton #appDesignerToolstrip.CodeViewTab.display.highlightCurrentline "Highlight \nCurrent Line" EDITOR_HIGHLIGHT_CURRENT_LINE
+        Column
+          ToggleButton #appDesignerToolstrip.CodeViewTab.display.linenumbers "Line \nNumbers" EDITOR_LINE_NUMBERS
+        Column
+          ToggleButton #appDesignerToolstrip.CodeViewTab.display.highlightCurrentline "Datatips" EDITOR_DATATIPS
+      Section title="CODE FOLDING"
+        Column
+          PushButton "Expand" EDITOR_UNFOLD_CURRENT
+        Column
+          PushButton "Collapse" EDITOR_FOLD_CURRENT
+        Column
+          PushButton "Expand \nAll" EDITOR_UNFOLD_ALL
+        Column
+          PushButton "Collapse \nAll" EDITOR_FOLD_ALL
+      Section title="ZOOM"
+        Column
+          PushButton #appDesignerToolstrip.editorTab.zoom.zoomIn "Zoom In" EDITOR_ZOOM_IN
+          PushButton #appDesignerToolstrip.editorTab.zoom.zoomOut "Zoom Out" EDITOR_ZOOM_OUT
+          PushButton #appDesignerToolstrip.editorTab.zoom.resetZoom "Reset Zoom" EDITOR_RESET_ZOOM
+      Section title="Review"
+        Column
+          ToggleButton #appDesignerToolstrip.CodeViewTab.review.spellchecker "Spelling" EDITOR_SPELL_CHECKER <check_formatText>
+      Section title="RESOURCES"
+        Column
+          PushButton #appDesignerToolstrip.editorTab.view.codeViewTips "Show Tips" EDITOR_CODE_VIEW_TIPS <showTips>
+=== UserComponentDocumentTypeConfig [{"contextId":"AD_APP_DESIGN_VIEW_CONTEXT","panelIds":["AD_COMPONENT_LIBRARY","AD_COMPONENT_BROWSER"],"tabGroupTags":["appDesignerToolstrip.layoutTabGroup","appDesignerToolstrip.designviewTabGroup"]},{"contextId":"AD_APP_CODE_VIEW_CONTEXT","panelIds":["AD_CODE_VIEW","AD_THUMBNAIL","AD_COMPONENT_BROWSER"],"tabGroupTags":["appDesignerToolstrip.editorTabGroup","appDesignerToolstrip.viewTabGroup"]}]
+=== QAB
+  QuickAccessGroup #appdesignerToolstrip.qab.group
+  QABPushButton #appDesignerToolstrip.qab.runButton "Run" RUN [F5] <playControl>
+  QABPushButton #appDesignerToolstrip.qab.saveButton "Save" SAVE [Ctrl+S] <saved>
+  QABPushButton #appDesignerToolstrip.qab.cutButton "Cut" CUT [Ctrl+X]
+  QABPushButton #appDesignerToolstrip.qab.copyButton "Copy" COPY [Ctrl+C]
+  QABPushButton #appDesignerToolstrip.qab.pasteButton "Paste" PASTE [Ctrl+V]
+  QABPushButton #appDesignerToolstrip.qab.undoButton "Undo" UNDO [Ctrl+Z]
+  QABPushButton #appDesignerToolstrip.qab.redoButton "Redo" REDO [Ctrl+Y]
+  QABPushButton #appDesignerToolstrip.qab.helpButton "Help" HELP [F1]

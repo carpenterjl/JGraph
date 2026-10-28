@@ -1,0 +1,51 @@
+== AcceptForm.mlapp code: 177 lines
+callback at line 33: function ComputeButtonPushed(app, event)
+  33          function ComputeButtonPushed(app, event)
+  34              a = app.EditField.Value;
+  35              b = app.Spinner.Value;
+  36              if strcmp(app.DropDown.Value, 'Add')
+  37                  r = a + b;
+which AcceptForm: <debug>\AcceptForm.mlapp
+exist AcceptForm: 2
+dbstop in AcceptForm at 34 -> ok
+dbstop in AcceptForm.mlapp at 35 -> ok
+dbstop in <debug>\AcceptForm.mlapp at 36 -> ok
+dbstop in AcceptForm>AcceptForm.ComputeButtonPushed -> ok
+dbstop in AcceptForm at 1 -> ok
+dbstop in AcceptForm at 34 if app.EditField.Value > 3 -> ok
+dbstop in AcceptForm at 227 -> MATLAB:lineBeyondFileEnd: Setting or clearing breakpoints past the start of the last expression is not supported.
+dbstop in AcceptFormPlain at 3 -> ok
+== dbstatus struct
+  name AcceptForm>AcceptForm.ComputeButtonPushed | file <debug>\AcceptForm.mlapp | line [34 35 36] | anonymous [0 0 0] | expression app.EditField.Value > 3;; | cond  | identifier 
+  name AcceptForm>AcceptForm.startupFcn | file <debug>\AcceptForm.mlapp | line 29 | anonymous 0 | expression  | cond  | identifier 
+  name AcceptFormPlain>AcceptFormPlain.startupFcn | file <debug>\AcceptFormPlain.m | line 29 | anonymous 0 | expression  | cond  | identifier 
+== dbstatus printed
+Breakpoints for AcceptForm>AcceptForm.ComputeButtonPushed are on lines <a href="matlab: opentoline('<debug>\AcceptForm.mlapp',34,1)">34</a>, <a href="matlab: opentoline('<debug>\AcceptForm.mlapp',35,1)">35</a>, <a href="matlab: opentoline('<debug>\AcceptForm.mlapp',36,1)">36</a>.
+  Breakpoint on line <a href="matlab: opentoline('<debug>\AcceptForm.mlapp',34,1)">34</a> has conditional expression "app.EditField.Value > 3".
+
+Breakpoint for AcceptForm>AcceptForm.startupFcn is on line <a href="matlab: opentoline('<debug>\AcceptForm.mlapp',29,1)">29</a>.
+Breakpoint for AcceptFormPlain>AcceptFormPlain.startupFcn is on line <a href="matlab: opentoline('<debug>\AcceptFormPlain.m',29,1)">29</a>.
+== dbstatus AcceptForm printed
+Breakpoints for AcceptForm>AcceptForm.ComputeButtonPushed are on lines <a href="matlab: opentoline('<debug>\AcceptForm.mlapp',34,1)">34</a>, <a href="matlab: opentoline('<debug>\AcceptForm.mlapp',35,1)">35</a>, <a href="matlab: opentoline('<debug>\AcceptForm.mlapp',36,1)">36</a>.
+  Breakpoint on line <a href="matlab: opentoline('<debug>\AcceptForm.mlapp',34,1)">34</a> has conditional expression "app.EditField.Value > 3".
+
+Breakpoint for AcceptForm>AcceptForm.startupFcn is on line <a href="matlab: opentoline('<debug>\AcceptForm.mlapp',29,1)">29</a>.
+== dbstatus after the conditions
+Stop if error.
+Stop if caught error.
+Stop if warning.
+Stop if naninf.
+  cond error | identifier all
+  cond caught error | identifier all
+  cond warning | identifier all
+  cond naninf | identifier 
+== after dbclear if error
+Stop if caught error.
+Stop if warning.
+Stop if naninf.
+== after dbclear all: 0 entries
+dbstop if bogus -> ok
+dbstop in NoSuchFunctionW0 at 3 -> MATLAB:dispatcher:cannotFindFunction: Cannot find function "NoSuchFunctionW0".
+dbstop at 3 -> ok
+dbclear in NoSuchFunctionW0 -> MATLAB:dispatcher:cannotFindFunction: Cannot find function "NoSuchFunctionW0".
+done

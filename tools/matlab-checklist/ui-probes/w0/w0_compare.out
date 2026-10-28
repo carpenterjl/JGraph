@@ -1,0 +1,41 @@
+== getAppData: code data fields ClassName, Callbacks, StartupCallback, InputParameters, EditableSectionCode
+   compatibility fields CompatibilityType, LoadedVersion, CurrentVersion, MLAPPVersion
+   Callbacks: struct [1 1], fields Name, Code
+saveAppCode -> success 
+== same: <compare>\AcceptForm.mlapp vs <compare>\same\AcceptForm.mlapp
+class comparisons.MlappComparison; Left <compare>\AcceptForm.mlapp; Right <compare>\same\AcceptForm.mlapp
+methods: addlistener, delete, eq, findobj, findprop, ge, gt, isvalid, le, listener, lt, ne, notify, publish
+report <compare>\report_same.html
+report: 167060 bytes; "No changes detected" 1; section headings:  | Files |  | Environment |  |  | Comparison Results | 
+  rows 185: inserted 0, deleted 0, changed 0
+filter -> comparisons:FilterNotSupported: Filtering is not supported for this comparison type.
+== details: <compare>\AcceptForm.mlapp vs <compare>\details\AcceptForm.mlapp
+class comparisons.MlappComparison; Left <compare>\AcceptForm.mlapp; Right <compare>\details\AcceptForm.mlapp
+methods: addlistener, delete, eq, findobj, findprop, ge, gt, isvalid, le, listener, lt, ne, notify, publish
+report <compare>\report_details.html
+report: 167063 bytes; "No changes detected" 1; section headings:  | Files |  | Environment |  |  | Comparison Results | 
+  rows 185: inserted 0, deleted 0, changed 0
+filter -> comparisons:FilterNotSupported: Filtering is not supported for this comparison type.
+== code: <compare>\AcceptForm.mlapp vs <compare>\code\AcceptForm.mlapp
+class comparisons.MlappComparison; Left <compare>\AcceptForm.mlapp; Right <compare>\code\AcceptForm.mlapp
+methods: addlistener, delete, eq, findobj, findprop, ge, gt, isvalid, le, listener, lt, ne, notify, publish
+report <compare>\report_code.html
+report: 168173 bytes; "No changes detected" 0; section headings:  | Files |  | Environment |  |  | Comparison Results | 
+     37 r = a + b;  37 r = a + b + 0 ;
+  rows 185: inserted 0, deleted 0, changed 1
+filter -> comparisons:FilterNotSupported: Filtering is not supported for this comparison type.
+== other app: <compare>\AcceptForm.mlapp vs <compare>\AcceptGrid.mlapp
+class comparisons.MlappComparison; Left <compare>\AcceptForm.mlapp; Right <compare>\AcceptGrid.mlapp
+methods: addlistener, delete, eq, findobj, findprop, ge, gt, isvalid, le, listener, lt, ne, notify, publish
+report <compare>\report_other_app.html
+report: 261470 bytes; "No changes detected" 0; section headings:  | Files |  | Environment |  |  | Comparison Results | 
+     1 classdef AcceptForm < matlab.apps.AppBase  1 classdef AcceptGrid < matlab.apps.AppBase
+     5 AcceptFormUIFigure matlab.ui.Figure  5 UIFigure matlab.ui.Figure
+     6 ResultLabel matlab.ui. control . Label  6 GridLayout matlab.ui. container . GridLayout
+     7 ComputeButton matlab.ui.control.Button
+     9 Node matlab.ui. container . TreeNode  7 UIAxes matlab.ui. control . UIAxes
+     10 Node2 matlab.ui.container.TreeNode
+  rows 191: inserted 0, deleted 11, changed 47
+filter -> comparisons:FilterNotSupported: Filtering is not supported for this comparison type.
+== mlapp vs plain-text .m -> comparisons:mldesktop:CannotCompareWithoutDisplay: Unable to compare '<compare>\AcceptForm.mlapp' and '<ds8>\rt\accept\AcceptFormPlain.m' without opening the Comparison Tool.
+done

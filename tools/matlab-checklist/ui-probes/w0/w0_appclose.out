@@ -1,0 +1,17 @@
+== matlab.apps.AppBase properties
+  TimingFields: Hidden 0, SetAccess matlab.ui.internal.controller.FigureController,appdesigner.internal.ddux.AppDDUXTimingManager, GetAccess matlab.ui.internal.controller.FigureController,appdesigner.internal.ddux.AppDDUXTimingManager, Transient 0
+== matlab.apps.AppBase methods (not handle's)
+  AppBase: Hidden 0, Access public, Static 0
+  saveobj: Hidden 0, Access public, Static 0
+  loadobj: Hidden 0, Access public, Static 1
+  getRunningApp: Hidden 0, Access protected, Static 0
+  setAutoResize: Hidden 0, Access protected, Static 0
+  registerApp: Hidden 0, Access protected, Static 0
+  runStartupFcn: Hidden 0, Access protected, Static 0
+  createCallbackFcn: Hidden 0, Access protected, Static 0
+isprop AppCloseDataFcn 0
+read AppCloseDataFcn -> MATLAB:noSuchMethodOrField: Unrecognized method, property, or field 'AppCloseDataFcn' for class 'AcceptForm'.
+set AppCloseDataFcn -> MATLAB:noPublicFieldForClass: Unrecognized property 'AppCloseDataFcn' for class 'AcceptForm'.
+after delete: 0 call(s)
+set AppCloseDataFcn to a char -> MATLAB:noPublicFieldForClass: Unrecognized property 'AppCloseDataFcn' for class 'AcceptForm'.
+done
