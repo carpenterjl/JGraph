@@ -45,6 +45,14 @@ public static class ScriptGraphicsCallbacks
     }
 
     /// <summary>
+    /// Raised after a figure's window has closed and its figure was retired, on the thread the window
+    /// closed on. A run that ends when the last window closes listens here, so it can deliver what the
+    /// close queued for the script thread - the figure's <c>DeleteFcn</c>, an app's <c>delete</c>
+    /// method - before it shuts the program down (the Hello World app, ADR 0278).
+    /// </summary>
+    public static event Action? WindowClosed;
+
+    /// <summary>
     /// A figure's window has closed: the figure numbered <paramref name="number"/> is retired, so
     /// the engine stops handing scripts a model nothing can display, and the handles only it held
     /// are let go. The window service calls this from its window's Closed event.
@@ -54,11 +62,22 @@ public static class ScriptGraphicsCallbacks
         ArgumentNullException.ThrowIfNull(figure);
         Routed(figure, () =>
         {
+            int queued = ScriptEventQueue.Count;
             JGraph.Api.JG.CloseFigure(number);
 
             // Retiring the figure is what makes its script-side handles unreachable; this is what
             // lets go of them. Without it the registry keeps the figure, and through it the whole
             // model subtree and the window that drew it, for the rest of the session.
+            // Not yet when the close queued the figure's deletion for the script thread - its
+            // DeleteFcn, an app's delete method through the listener registerApp added: the sweep
+            // would drop the entry that holds them, and the queued event would find nothing to run
+            // (the Hello World app, ADR 0278). The drain that delivers it releases afterwards.
+            if (ScriptEventQueue.Count > queued)
+            {
+                Volatile.Write(ref _releaseOwed, true);
+                return;
+            }
+
             try
             {
                 ReleaseRetiredFigures();
@@ -70,6 +89,25 @@ public static class ScriptGraphicsCallbacks
                 // Closed handler would cost the user a dialog.
             }
         });
+        WindowClosed?.Invoke();
+    }
+
+    private static bool _releaseOwed;
+
+    /// <summary>
+    /// Whether a window's close left the retired figure's handles to be released once the deletion
+    /// it queued has been delivered; answers true once per such close. The dispatcher asks at the
+    /// end of a drain, on the script thread, and releases then.
+    /// </summary>
+    public static bool TakeOwedRelease()
+    {
+        if (!Volatile.Read(ref _releaseOwed))
+        {
+            return false;
+        }
+
+        Volatile.Write(ref _releaseOwed, false);
+        return true;
     }
 
     /// <summary>

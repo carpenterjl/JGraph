@@ -111,9 +111,71 @@ public sealed class WindowedBatchRun
         // Figures are on screen: hand control back to the user and keep the code for the way out.
         // Their callbacks are delivered by the pump below, the IDE's idle pump in miniature.
         PendingExitCode = code;
-        _app.ShutdownMode = ShutdownMode.OnLastWindowClose;
+
+        // The program ends when the last window closes - once what that close queued for the script
+        // thread has been delivered: the figure's DeleteFcn, an app's delete method. WPF's own
+        // OnLastWindowClose shut the program down before the pump could run them (the Hello World
+        // app, ADR 0278), so the end is decided here, when the window service reports the close.
+        _app.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+        ScriptGraphicsCallbacks.WindowClosed += OnWindowClosed;
         ScriptUiTrace.Write($"batch: run ended with {code}, {_app.Windows.Count} window(s), session {_session is not null}");
         Pump();
+    }
+
+    /// <summary>
+    /// How long the program waits, after its last window closed, for the work that close queued to
+    /// be delivered before it shuts down regardless. R2025b's take 12-20 s after theirs (k6_windows).
+    /// </summary>
+    private static readonly TimeSpan ClosingGrace = TimeSpan.FromSeconds(10);
+
+    private System.Diagnostics.Stopwatch? _sinceLastWindow;
+    private bool _ending;
+    private bool _endRetryScheduled;
+
+    private void OnWindowClosed() => _app.Dispatcher.BeginInvoke(new Action(EndWhenDone));
+
+    /// <summary>
+    /// Shuts the program down once its last window has closed and nothing that close queued is
+    /// still owed. A drain under way, or events still queued, are given until <see cref="ClosingGrace"/>
+    /// has passed since the last window went. UI thread.
+    /// </summary>
+    private void EndWhenDone()
+    {
+        if (_ending || PendingExitCode is not { } code || _app.Windows.Count > 0)
+        {
+            return;
+        }
+
+        _sinceLastWindow ??= System.Diagnostics.Stopwatch.StartNew();
+        if ((_pumping || ScriptEventQueue.HasWork) && _sinceLastWindow.Elapsed < ClosingGrace)
+        {
+            Pump();
+            if (!_endRetryScheduled)
+            {
+                _endRetryScheduled = true;
+                _ = RetryEndAsync();
+            }
+
+            return;
+        }
+
+        _ending = true;
+        ScriptUiTrace.Write($"batch: last window closed, shutting down with {code}");
+        _app.Shutdown(code);
+    }
+
+    private async Task RetryEndAsync()
+    {
+        try
+        {
+            await Task.Delay(50).ConfigureAwait(true);
+        }
+        finally
+        {
+            _endRetryScheduled = false;
+        }
+
+        EndWhenDone();
     }
 
     /// <summary>
@@ -158,11 +220,13 @@ public sealed class WindowedBatchRun
         }
 
         Pump();
+        EndWhenDone();
     }
 
     /// <summary>Ends the run's session: its workspace, files and native host, and the log.</summary>
     public async Task EndAsync()
     {
+        ScriptGraphicsCallbacks.WindowClosed -= OnWindowClosed;
         ScriptEventQueue.InstallPump(null);
         _pumpStop.Cancel();
         if (_session is { } session)

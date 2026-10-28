@@ -458,7 +458,10 @@ internal static class JgsHandleRegistry
         // queues, which is the same answer every caller wants from a false return.
         if (target is FigureModel figure)
         {
-            if (JG.GetFigureNumber(figure) > 0)
+            // A figure whose window closed has left JG's numbering before its queued deletion is
+            // delivered; until the drain's sweep lets its entry go, the entry is still read, so the
+            // DeleteFcn and the destroy listeners on it - an app's delete - run (ADR 0278).
+            if (JG.GetFigureNumber(figure) > 0 || figure.BeingDeleted)
             {
                 lock (Gate)
                 {

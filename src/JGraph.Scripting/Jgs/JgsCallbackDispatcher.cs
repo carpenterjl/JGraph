@@ -303,6 +303,13 @@ internal sealed class JgsCallbackDispatcher
 
             Deliver(next);
         }
+
+        // A window's close that queued its figure's deletion left the figure's handles for after
+        // the delivery (ADR 0278): with the drain done, they are let go here, on the script thread.
+        if (ScriptEventQueue.Count == 0 && ScriptGraphicsCallbacks.TakeOwedRelease())
+        {
+            ScriptGraphicsCallbacks.ReleaseRetiredFigures();
+        }
     }
 
     /// <summary>Runs an event's callback if the running one may be interrupted; otherwise its own

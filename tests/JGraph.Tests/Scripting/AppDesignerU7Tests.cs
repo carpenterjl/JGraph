@@ -120,6 +120,10 @@ public class AppDesignerU7Tests : IAsyncLifetime
         JG.Reset();
         Directory.CreateDirectory(_directory);
         File.WriteAllText(Path.Combine(_directory, "MiniApp.m"), AppText);
+        // The same app without a CloseRequestFcn: its window closes outright on the title bar's X.
+        File.WriteAllText(Path.Combine(_directory, "PlainApp.m"), AppText
+            .Replace("MiniApp", "PlainApp", StringComparison.Ordinal)
+            .Replace("app.UIFigure.CloseRequestFcn = createCallbackFcn(app, @UIFigureCloseRequest, true);", "", StringComparison.Ordinal));
         WriteMlapp("MlMini", AppText.Replace("MiniApp", "MlMini", StringComparison.Ordinal));
         _session = Assert.IsType<JgsReplSession>(((IScriptRepl)new MatlabScriptEngine()).CreateSession(
             new ScriptContext(_output, (_, _) => { }, _directory)));
@@ -252,6 +256,38 @@ public class AppDesignerU7Tests : IAsyncLifetime
         Assert.True(Printed("close asked"), _output.NormalText);
         Assert.Equal(1, _output.NormalLines.Count(static line => line == "deleted"));
         Assert.True(Printed("valid 0 figures 0"), _output.NormalText);
+    }
+
+    [Fact]
+    public async Task ClosingTheWindowOfAnAppWithoutACloseRequestFcn_RunsItsDeleteFromTheDrain()
+    {
+        // The title bar's X on an app whose figure keeps the default closereq (the Hello World app,
+        // ADR 0278): the close is not queued, the window closes outright and reports the close,
+        // which retires the figure and queues its deletion for the script thread. The app's delete
+        // runs from the drain - the figure's handles, which hold the listener registerApp added,
+        // are let go only after it - and the app and its figure are gone.
+        await Exec("app = PlainApp;");
+        int number = Assert.Single(JG.FigureNumbers);
+        FigureModel figure = Figure();
+
+        Assert.True(ScriptGraphicsCallbacks.HasCallback(figure, GraphicsEventKind.ObjectDeleted), "the app listens for its figure's going");
+
+        bool closedAnyway = false;
+        Assert.False(ScriptGraphicsCallbacks.RequestClose(figure, () => closedAnyway = true));
+        Assert.False(closedAnyway);
+        await Task.Run(() => ScriptGraphicsCallbacks.NotifyWindowClosed(figure, number));
+        Assert.Empty(JG.FigureNumbers);
+        Assert.True(figure.BeingDeleted);
+        Assert.Equal(1, ScriptEventQueue.Count); // the deletion, owed to the script thread
+        Assert.True(ScriptGraphicsCallbacks.HasCallback(figure, GraphicsEventKind.ObjectDeleted), "the listener is kept for the delivery");
+        Assert.False(Printed("deleted"), _output.NormalText); // not run yet
+
+        await Drain();
+        await Exec("fprintf('valid %d figures %d\\n', isvalid(app), numel(findall(groot, 'Type', 'figure')));");
+
+        Assert.Equal(1, _output.NormalLines.Count(static line => line == "deleted"));
+        Assert.True(Printed("valid 0 figures 0"), _output.NormalText);
+        Assert.False(JgsHandleRegistry.TryGetEntry(figure, out _)); // let go after the delivery
     }
 
     [Fact]
