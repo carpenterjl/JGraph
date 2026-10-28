@@ -1,0 +1,68 @@
+build.console	ok standaloneApplication
+files.console	acc_tool.exe | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+build.windowed	ok standaloneWindowsApplication
+files.windowed	acc_app.exe | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+build.net	ok dotNETAssembly
+files.net	AccNet.dll | AccNetNative.dll | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+ 
+Build succeeded. 
+    1 Warning(s) 
+    0 Error(s) 
+ 
+Time Elapsed 00:00:01.64 
+build.data	ok dotNETAssembly
+files.data	AccData.ctf | AccData.dll | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+Building with 'Microsoft Visual C++ 2022 (C)'. 
+build.c	ok cSharedLibrary
+files.c	acclib.dll | acclib.h | acclib.lib | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+build.cpp	ok cppSharedLibrary
+files.cpp	includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt | v2/generic_interface/acccpp.ctf | v2/generic_interface/acccppv2.hpp | v2/generic_interface/readme.txt
+build.python	ok pythonPackage
+files.python	accpkg/__init__.py | accpkg/accpkg.ctf | includedSupportPackages.txt | pyproject.toml | readme.txt | requiredMCRProducts.txt | setup.py | unresolvedSymbols.txt
+build.server	ok productionServerArchive
+files.server	accarch.ctf | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+[Warning: Component "accxl_1_0" will be registered for the current user only.
+Applications that run with full administrative privileges cannot access the component.
+To register the component for all users, run MATLAB or the mcc command as Administrator.] 
+[> In compiler.internal.build.builder/Generic/build (line 83)
+In compiler.build.excelAddIn (line 133)
+In build_k22>@()compiler.build.excelAddIn(lib,'AddInName','accxl','ClassName','AccXl','OutputDir',fullfile(work,'excel')) (line 34)
+In build_k22>built (line 40)
+In build_k22 (line 34)] 
+Building with 'Microsoft Visual C++ 2022'. 
+mwcomtypes.idl 
+oaidl.idl 
+objidl.idl 
+unknwn.idl 
+wtypes.idl 
+wtypesbase.idl 
+basetsd.h 
+guiddef.h 
+ocidl.idl 
+oleidl.idl 
+servprov.idl 
+urlmon.idl 
+msxml.idl 
+oaidl.acf 
+ocidl.acf 
+ 
+accxl_idl.idl 
+oaidl.idl 
+objidl.idl 
+unknwn.idl 
+wtypes.idl 
+wtypesbase.idl 
+basetsd.h 
+guiddef.h 
+ocidl.idl 
+oleidl.idl 
+servprov.idl 
+urlmon.idl 
+msxml.idl 
+mwcomtypes.idl 
+oaidl.acf 
+ocidl.acf 
+ 
+build.excel	ok excelAddIn
+files.excel	AccXl_com.hpp | accxl_1_0.dll | accxl_1_0.lib | accxl_idl.h | includedSupportPackages.txt | mwcomtypes.h | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+EXIT	

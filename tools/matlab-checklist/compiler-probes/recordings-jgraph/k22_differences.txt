@@ -1,0 +1,88 @@
+acceptance set (stage K22): 245 keys, 218 agree, 27 differ (27 recorded divergences, 0 unexplained)
+
+EXCEL (4): The Excel add-in is stage K17's: R2025b builds it and JGraph has no compiler.build.excelAddIn yet.
+  build.excel
+    R2025b	ok excelAddIn
+    JGraph	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.build.excelAddIn'.
+  files.excel
+    R2025b	AccXl_com.hpp | accxl_1_0.dll | accxl_1_0.lib | accxl_idl.h | includedSupportPackages.txt | mwcomtypes.h | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+    JGraph	
+  excel/built; not run (stage K17: no Excel client here)
+    R2025b	
+    JGraph	<absent>
+  excel/not built
+    R2025b	<absent>
+    JGraph	
+
+WINDOW_LEAVE (13): R2025b's windowed program is a MATLAB window and ran only if the user gave leave; JGraph's ran as a JGraph window.
+  windowed/not run: an R2025b windowed program needs the user's leave (-AllowMatlabWindows)
+    R2025b	
+    JGraph	<absent>
+  windowed/t=<T> + <HWND> acc_app.exe HwndWrapper[<APP>] 'acc app' hidden 1200x720
+    R2025b	<absent>
+    JGraph	
+  windowed/t=<T> + <HWND> acc_app.exe HwndWrapper[<APP>] 'acc app' shown 1200x720
+    R2025b	<absent>
+    JGraph	
+  windowed/t=<T> + <HWND> acc_app.exe HwndWrapper[<APP>] 'acc app' shown 336x179
+    R2025b	<absent>
+    JGraph	
+  windowed/t=<T> ACTION InvokePattern 'Compute' in 'acc app'
+    R2025b	<absent>
+    JGraph	
+  windowed/t=<T> runner exited
+    R2025b	<absent>
+    JGraph	
+  windowed/EXIT
+    R2025b	<absent>
+    JGraph	0
+  windowed/SECONDS
+    R2025b	<absent>
+    JGraph	2.7
+  windowed/LOG t=<T> started
+    R2025b	<absent>
+    JGraph	
+  windowed/LOG t=<T> isdeployed 1
+    R2025b	<absent>
+    JGraph	
+  windowed/LOG t=<T> computed add=5 n=5 mean=2.8 max=5
+    R2025b	<absent>
+    JGraph	
+  windowed/LOG t=<T> label add=5 n=5 mean=2.8 max=5
+    R2025b	<absent>
+    JGraph	
+  windowed/LOG t=<T> closing
+    R2025b	<absent>
+    JGraph	
+
+ASYNC (10): muserve, R2025b's one-archive server, has no asynchronous requests (400 'mode=async is not supported.'); jgraph-mps answers the RESTful API's protocol (ADR 0271).
+  server/async.post
+    R2025b	400		
+    JGraph	201	content-type=application/json; location=/~<CLIENT>/requests/<ID>	{"id":"<ID>","self":"/~<CLIENT>/requests/<ID>","up":"/~<UUID>/requests","lastModifiedSeq":<SEQ>,"state":"READING","client":"acc"}
+  server/async.state
+    R2025b	not started
+    JGraph	READY
+  server/async.info
+    R2025b	<absent>
+    JGraph	200 OK	content-type=application/json	{"request":"/~<CLIENT>/requests/<ID>","lastModifiedSeq":<SEQ>,"state":"READY"}
+  server/async.result
+    R2025b	<absent>
+    JGraph	200 OK	content-type=application/json	{"lhs":[{"mwdata":[42],"mwsize":[1,1],"mwtype":"double"}]}
+  server/async.collection
+    R2025b	<absent>
+    JGraph	400 MissingParamSince (request id=<N>)		
+  server/async.delete
+    R2025b	<absent>
+    JGraph	204 No Content		
+  server/async.deleted
+    R2025b	<absent>
+    JGraph	410 RequestAlreadyDeleted (request id=<N>)		
+  server/async.fail.state
+    R2025b	<absent>
+    JGraph	READY
+  server/async.fail.result
+    R2025b	<absent>
+    JGraph	200 OK	content-type=application/json	{"error":{"id":"acc:fail","message":"acc_fail: async","stack":[{"file":"<F>/acc_fail.m","line":6,"name":"acc_fail"}],"type":"matlaberror"}}
+  server/async.fail.delete
+    R2025b	<absent>
+    JGraph	204 No Content		

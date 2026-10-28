@@ -1,0 +1,216 @@
+== console.args
+  beep.default	on
+  nargin	2
+  arg1	Ada
+  arg2	2
+  isdeployed	1
+  data	[3 1 4 1 5 9 2 6]
+  sum	31
+  stats	n=8 mean=3.875 max=9
+  count	1 2
+  greet	Hello, Ada!
+  scaled	[6 2 8 2 10 18 4 12]
+  add	11
+  end
+  EXIT	0
+== console.none
+  beep.default	on
+  nargin	0
+  isdeployed	1
+  data	[3 1 4 1 5 9 2 6]
+  sum	31
+  stats	n=8 mean=3.875 max=9
+  count	1 2
+  end
+  EXIT	0
+== console.fail
+  beep.default	on
+  nargin	1
+  arg1	-fail
+  isdeployed	1
+  data	[3 1 4 1 5 9 2 6]
+  sum	31
+  stats	n=8 mean=3.875 max=9
+  count	1 2
+  STDERR	Error using acc_fail (line 6)
+  STDERR	acc_fail: asked for
+  STDERR	
+  STDERR	Error in acc_tool (line 21)
+  STDERR	
+  STDERR	acc:fail
+  EXIT	249
+== windowed
+  not run: an R2025b windowed program needs the user's leave (-AllowMatlabWindows)
+== net
+  construct	"ok"
+  quiet	"ok"
+  add	MWNumericArray 1x1 Double <<5>>
+  add.outs	MWArray[1] {MWNumericArray 1x1 Double <<5>>}
+  add.double	5
+  add.int	MWNumericArray 1x1 Double <<5>>
+  stats	MWStructArray 1x1 {n=MWNumericArray 1x1 Double <<5>>, mean=MWNumericArray 1x1 Double <<2.8000>>, max=MWNumericArray 1x1 Double <<5>>}
+  stats.mean	2.8
+  greet	MWCharArray 1x11 <<Hello, Ada!>>
+  greet.string	"Hello, Ada!"
+  greet.implicit	MWCharArray 1x11 <<Hello, Ada!>>
+  scale	MWNumericArray 2x2 Double <<10    20\n    30    40>>
+  scale.array	"2x2 10 20 30 40"
+  count.1	MWNumericArray 1x1 Double <<1>>
+  count.2	MWNumericArray 1x1 Double <<2>>
+  fail	THREW Exception: ... MWMCR::EvaluateFunction error ... \nacc_fail: from .NET\nError in => acc_fail.m at line 6.\n\n... Matlab M-code Stack Trace ...\n    at\nfile <W>\cache\R2025b\AccNet0\AccNet\acc_fail.m, name acc_fail, line 6.
+  add.wrongclass	MWNumericArray 1x1 Double <<123>>
+  count.3	MWNumericArray 1x1 Double <<3>>
+  dispose	"ok"
+  STDERR	Error using acc_fail (line 6)
+  STDERR	acc_fail: from .NET
+  EXIT	0
+== data
+  start	"ok"
+  quiet	"ok"
+  quiet.default	THREW MATLABExecutionException: MATLAB:TooManyOutputs: Too many output arguments.
+  add	5
+  add.int	5
+  stats	MATLABStruct{max=MATLABArray 5, mean=MATLABArray 2.8, n=MATLABArray 5}
+  stats.fields	"n=5 mean=2.8 max=5"
+  greet	"Hello, Ada!"
+  scale	double[2,2] {10, 20, 30, 40}
+  scale.row	double[3] {2, 4, 6}
+  count.1	1
+  count.2	2
+  fail	THREW MATLABExecutionException: acc:fail: acc_fail: from .NET\nError in acc_fail (line 6) in file: <W>\cache\R2025b\AccDat0\AccData\acc_fail.m
+  add.wrongclass	NaN
+  count.3	3
+  typed.add	5
+  typed.stats	MATLABStruct{max=MATLABArray 5, mean=MATLABArray 2.8, n=MATLABArray 5}
+  typed.greet	"Hello, Ada!"
+  typed.scale	double[2,2] {10, 20, 30, 40}
+  typed.count	4
+  typed.quiet	"ok"
+  typed.fail	THREW MATLABExecutionException: acc:fail: acc_fail: typed\nError in acc_fail (line 6) in file: <W>\cache\R2025b\AccDat0\AccData\acc_fail.m
+  dispose	"ok"
+  terminate	"ok"
+  STDERR	Error using acc_quiet
+  STDERR	Too many output arguments.
+  STDERR	
+  STDERR	
+  STDERR	Error using acc_fail (line 6)
+  STDERR	acc_fail: from .NET
+  STDERR	
+  STDERR	
+  STDERR	Error using acc_fail (line 6)
+  STDERR	acc_fail: typed
+  EXIT	0
+== c
+  initialize	ok
+  quiet	ok
+  add.ok	ok
+  add	double 1x1 5
+  stats.ok	ok
+  stats	struct fields 3
+  stats.n	5
+  stats.mean	2.8
+  stats.max	5
+  greet.ok	ok
+  greet	char 1x11 <<Hello, Ada!>>
+  scale.ok	ok
+  scale	double 2x2 10 30 20 40
+  count.1.ok	ok
+  count.1	double 1x1 1
+  count.2.ok	ok
+  count.2	double 1x1 2
+  fail.ok	failed
+  fail.message	acc_fail: from C
+  Error in => acc_fail.m at line 6
+  add.wrongclass.ok	failed
+  add.wrongclass.message	Invalid argument at position 1. Value must be a scalar.
+  Error in => acc_add.m at line 4
+  count.3.ok	ok
+  count.3	double 1x1 3
+  terminate	ok
+  terminate.application	1
+  STDERR	Error using acc_fail (line 6)
+  STDERR	acc_fail: from C
+  STDERR	
+  STDERR	Error using acc_add (line 4)
+  STDERR	Invalid argument at position 1. Value must be a scalar.
+  EXIT	0
+== cpp
+  start	ok
+  quiet	ok
+  add	double 1x1 5
+  add.int	double 1x1 5
+  stats	struct n=5 mean=2.8 max=5
+  greet	char 1x11 <<Hello, Ada!>>
+  scale	double 2x2 10 30 20 40
+  count.1	double 1x1 1
+  count.2	double 1x1 2
+  fail	THREW acc_fail: from C++
+  add.wrongclass	double 1x1 123
+  count.3	double 1x1 3
+  typed.add	double 1x1 5
+  typed.add.complex	double 1x1 5
+  typed.stats	n=5
+  typed.greet	Hello, Ada!
+  typed.scale	double 2x2 10 30 20 40
+  typed.count	double 1x1 4
+  typed.quiet	ok
+  typed.fail	THREW acc_fail: typed
+  end	ok
+  STDERR	Error using acc_fail (line 6)
+  STDERR	acc_fail: from C++
+  STDERR	
+  STDERR	Error using acc_fail (line 6)
+  STDERR	acc_fail: typed
+  EXIT	0
+== python
+  import	str 'accpkg'
+  initialize	matlab_pysdk.runtime.deployablepackage.DeployablePackage
+  quiet	None
+  add	float 5.0
+  add.int	float 5.0
+  stats	dict{'max': float 5.0, 'mean': float 2.8, 'n': float 5.0}
+  stats.mean	float 2.8
+  greet	str 'Hello, Ada!'
+  scale	matlab.double size=(2, 2) matlab.double([[10.0,20.0],[30.0,40.0]])
+  scale.list	list[list[float 10.0, float 20.0], list[float 30.0, float 40.0]]
+  count.1	float 1.0
+  count.2	float 2.0
+  fail	ERR matlab_pysdk.runtime.MatlabRuntimeError | An error occurred when evaluating the result from a function. Details: \n  File <W>\cache\R2025b\accpkg0\accpkg\acc_fail.m, line 6, in acc_fail\nacc_fail: from Python\n
+  add.wrongclass	float 123.0
+  count.3	float 3.0
+  terminate	None
+  end	ok
+  STDERR	Error using acc_fail (line 6)
+  STDERR	acc_fail: from Python
+  EXIT	0
+== server
+  health	200 OK	content-type=application/json	{"status":"ok"}
+  discovery.archives	200 accarch
+  discovery.functions	acc_add acc_greet acc_scale acc_stats
+  discovery.release	R2025b
+  discovery.acc_add	{"signatures":[{"help":"Add two scalars.","inputs":[{"help":"The first addend.","mwsize":[1,1],"mwtype":"double","name":"a"},{"help":"The second addend.","mwsize":[1,1],"mwtype":"double","name":"b"}],"outputs":[{"help":"Their sum.","mwsize":[1,1],"mwtype":"double","name":"c"}]}]}
+  discovery.acc_stats	{"signatures":[{"help":"Describe a row.","inputs":[{"help":"A row of values.","mwsize":[1,":"],"mwtype":"double","name":"v"}],"outputs":[{"help":"Its count, mean and largest value.","mwsize":[],"mwtype":"struct","name":"s"}]}]}
+  quiet	200 OK	content-type=application/json	{"lhs":[]}
+  add	200 OK	content-type=application/json	{"lhs":[5]}
+  add.large	200 OK	content-type=application/json	{"lhs":[{"mwdata":[5],"mwsize":[1,1],"mwtype":"double"}]}
+  add.nargout0	200 OK	content-type=application/json	{"lhs":[]}
+  stats	200 OK	content-type=application/json	{"lhs":[{"max":5,"mean":2.8,"n":5}]}
+  stats.large	200 OK	content-type=application/json	{"lhs":[{"mwdata":{"max":[{"mwdata":[5],"mwsize":[1,1],"mwtype":"double"}],"mean":[{"mwdata":[2.8],"mwsize":[1,1],"mwtype":"double"}],"n":[{"mwdata":[5],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}]}
+  greet	200 OK	content-type=application/json	{"lhs":["Hello, Ada!"]}
+  greet.large	200 OK	content-type=application/json	{"lhs":[{"mwdata":["Hello, Ada!"],"mwsize":[1,11],"mwtype":"char"}]}
+  scale	200 OK	content-type=application/json	{"lhs":[[[10,20],[30,40]]]}
+  scale.large	200 OK	content-type=application/json	{"lhs":[{"mwdata":[10,30,20,40],"mwsize":[2,2],"mwtype":"double"}]}
+  count.1	200 OK	content-type=application/json	{"lhs":[1]}
+  count.2	200 OK	content-type=application/json	{"lhs":[2]}
+  fail	200 OK	content-type=application/json	{"error":{"id":"acc:fail","message":"acc_fail: from HTTP","stack":[{"file":"<F>/acc_fail.m","line":6,"name":"acc_fail"}],"type":"matlaberror"}}
+  add.wrongclass	200 OK	content-type=application/json	{"lhs":[123]}
+  add.missing	200 OK	content-type=application/json	{"error":{"id":"MATLAB:minrhs","message":"Invalid argument list. Function requires 1 more input(s).","stack":[{"file":"<F>/acc_add.m","line":1,"name":"acc_add"}],"type":"matlaberror"}}
+  count.3	200 OK	content-type=application/json	{"lhs":[3]}
+  nosuch	404 FunctionNotFound Function not found. (request id=<N>)		
+  get	404 URL not found /accarch/acc_add (request id=<N>)		
+  async.post	400		
+  async.state	not started
+  end	ok
+  EXIT	0
+== excel
+  built; not run (stage K17: no Excel client here)

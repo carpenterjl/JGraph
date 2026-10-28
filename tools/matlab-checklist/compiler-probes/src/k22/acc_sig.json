@@ -1,0 +1,41 @@
+{
+    "_schemaVersion": "1.1.0",
+    "acc_add": {
+        "inputs": [
+            {"name": "a", "type": ["double", "size=1,1"], "purpose": "The first addend."},
+            {"name": "b", "type": ["double", "size=1,1"], "purpose": "The second addend."}
+        ],
+        "outputs": [
+            {"name": "c", "type": ["double", "size=1,1"], "purpose": "Their sum."}
+        ],
+        "purpose": "Add two scalars."
+    },
+    "acc_stats": {
+        "inputs": [
+            {"name": "v", "type": ["double", "size=1,:"], "purpose": "A row of values."}
+        ],
+        "outputs": [
+            {"name": "s", "type": ["struct"], "purpose": "Its count, mean and largest value."}
+        ],
+        "purpose": "Describe a row."
+    },
+    "acc_greet": {
+        "inputs": [
+            {"name": "name", "type": ["char"], "purpose": "Whom to greet."}
+        ],
+        "outputs": [
+            {"name": "g", "type": ["char"], "purpose": "The greeting."}
+        ],
+        "purpose": "Greet someone."
+    },
+    "acc_scale": {
+        "inputs": [
+            {"name": "x", "type": ["double"], "purpose": "A matrix."},
+            {"name": "k", "type": ["double", "size=1,1"], "purpose": "The factor."}
+        ],
+        "outputs": [
+            {"name": "y", "type": ["double"], "purpose": "The matrix scaled."}
+        ],
+        "purpose": "Scale a matrix."
+    }
+}

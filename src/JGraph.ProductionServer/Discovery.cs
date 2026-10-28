@@ -67,15 +67,20 @@ internal static class Discovery
             writer.WriteStartObject();
             writer.WriteString("help", parameter.Help);
             writer.WriteStartArray("mwsize");
-            // "[1,1]" as numbers; a size with ':' in it has no number for that dimension and is written as none.
+            // "[1,1]" as numbers; a dimension given as ':' is written as the string ":" (R2025b's
+            // discovery writes "mwsize":[1,":"] for size=1,: - the compiler plan's acceptance set, stage K22).
             if (parameter.Size.Length > 2)
             {
-                string[] parts = parameter.Size.Trim('[', ']').Split(',');
-                if (parts.All(static p => int.TryParse(p.Trim(), out _)))
+                foreach (string part in parameter.Size.Trim('[', ']').Split(','))
                 {
-                    foreach (string part in parts)
+                    string trimmed = part.Trim();
+                    if (int.TryParse(trimmed, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out int number))
                     {
-                        writer.WriteNumberValue(int.Parse(part.Trim(), System.Globalization.CultureInfo.InvariantCulture));
+                        writer.WriteNumberValue(number);
+                    }
+                    else
+                    {
+                        writer.WriteStringValue(trimmed);
                     }
                 }
             }

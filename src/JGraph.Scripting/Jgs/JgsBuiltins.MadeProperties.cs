@@ -39,12 +39,14 @@ internal static partial class JgsBuiltins
     /// <param name="GroupFirst">Whether R2025b's maker takes a group or a transform first (<c>quiver</c>, <c>scatter3</c>, <c>surf</c>, <c>mesh</c> and <c>pcolor</c> read one as data).</param>
     /// <param name="KeepsOptions">The maker sets every property itself, in order (<c>line</c>, <c>text</c>, <c>surface</c>, <c>image</c>): only a group first and a <c>'Parent'</c> naming a group or an axes are taken.</param>
     /// <param name="OwnParent">The maker reads its parent itself (<c>hggroup</c>, <c>hgtransform</c>).</param>
+    /// <param name="TableNames">How many variable names follow a table given first (<c>scatter(tbl, xvar, yvar)</c>: 2; <c>scatter3</c>: 3). They are data, however they are spelled, and the trailing pairs are found after them.</param>
     internal sealed record MadeShape(
         Type Made,
         IReadOnlyCollection<string> Own,
         bool GroupFirst = true,
         bool KeepsOptions = false,
-        bool OwnParent = false)
+        bool OwnParent = false,
+        int TableNames = 0)
     {
         private readonly HashSet<string> _own = new(Own, StringComparer.OrdinalIgnoreCase);
 
@@ -165,7 +167,10 @@ internal static partial class JgsBuiltins
         var foreign = new List<(string Name, JgsValue Value)>();
         JgsHandleEntry? parent = null;
         IReadOnlyDictionary<string, GraphicsProperty> table = JgsGraphicsProperties.TableFor(shape.Made);
-        for (int i = args.Count - 2; i >= 0; i -= 2)
+        // A table first makes the words after it the variables' names, data whatever they are called
+        // (a capitalised word would otherwise read as a property in the MATLAB dialect).
+        int first = args.Count > 0 && args[0].Type == JgsType.Table ? 1 + shape.TableNames : 0;
+        for (int i = args.Count - 2; i >= first; i -= 2)
         {
             if (!IsTextScalar(args[i]))
             {
@@ -345,9 +350,9 @@ internal static partial class JgsBuiltins
 
     internal static MadeShape Stem3Made => new(typeof(Stem3DPlot), Stem3OptionNames);
 
-    internal static MadeShape ScatterMade => new(typeof(ScatterPlot), MarkerChartOptionNames);
+    internal static MadeShape ScatterMade => new(typeof(ScatterPlot), MarkerChartOptionNames, TableNames: 2);
 
-    internal static MadeShape Scatter3Made => new(typeof(Scatter3DPlot), Scatter3OptionNames, GroupFirst: false);
+    internal static MadeShape Scatter3Made => new(typeof(Scatter3DPlot), Scatter3OptionNames, GroupFirst: false, TableNames: 3);
 
     internal static MadeShape BarMade => new(typeof(BarPlot), BarOptionNames);
 
