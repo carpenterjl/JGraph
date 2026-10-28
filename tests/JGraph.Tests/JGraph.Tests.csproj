@@ -90,6 +90,13 @@
     <Content Include="Scripting\Designer\gridify-verify.jsonl;Scripting\Designer\gridify-verify-growth.jsonl;Scripting\Designer\gridify-verify-numbers.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <!-- The toolstrip (App Designer window plan, stage W1): R2025b's App Designer toolstrip as stage W0
+       recorded it, and what R2025b's own Tab.resize does over seeded tabs (ui-probes/w0/oracle/resize.js). -->
+  <ItemGroup>
+    <Content Include="..\..\tools\matlab-checklist\ui-probes\w0\w0_toolstrip.json" Link="Scripting\Toolstrip\w0_toolstrip.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Scripting\Toolstrip\ToolstripResizeOracle.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <!-- What R2025b's App Designer gives for its grid rules (designer plan DS4): its own client
        modules, run unaltered under node over fixed and seeded-random grids. -->
   <ItemGroup>

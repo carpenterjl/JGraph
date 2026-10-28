@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Stage W1's window check (App Designer window plan): the toolstrip control in a window of its
+       own, showing R2025b's App Designer toolstrip as stage W0 recorded it. -selftest runs the checks
+       that need WPF's real layout and prints key<TAB>value lines; run-w1toolstrip.ps1 builds it, runs
+       the self-test, then drives the window through UI Automation patterns and pictures it. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\JGraph.Controls\JGraph.Controls.csproj" />
+  </ItemGroup>
+</Project>
