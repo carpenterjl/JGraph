@@ -41,7 +41,7 @@ public static class DesignActions
     /// commands, the Code View's insertions and Code Options, Find (the code editor's own search),
     /// cut, copy and paste in the Code View, help, the shortcuts dialog and the document tab's menu;
     /// since W3, the Start Page and its new apps (a new custom component waits for W15); since W4, the
-    /// arrange actions. The grid layout actions run from the canvas's context menu (designer plan DS4).
+    /// arrange actions; since W6, the zoom and Resizing Hints. The grid layout actions run from the canvas's context menu (designer plan DS4).
     /// </summary>
     private static readonly HashSet<string> Live = new(StringComparer.Ordinal)
     {
@@ -67,6 +67,8 @@ public static class DesignActions
         "AD_DESIGN_TABORDER_APP_AUTO", "AD_DESIGN_TABORDER_APP_VISUALIZE", "AD_DESIGN_TABORDER_ALL_OPTIONS",
         "AD_DESIGN_FONT_BOLD", "AD_DESIGN_FONT_ITALIC", "AD_DESIGN_FONT_INCREMENT", "AD_DESIGN_FONT_DECREMENT",
         "AD_ADD_LABEL",
+        // Stage W6: the zoom and Resizing Hints.
+        "AD_ZOOM_IN", "AD_ZOOM_OUT", "AD_RESET_ZOOM", "AD_FIT_TO_VIEW", "AD_DESIGN_VIEW_DISPLAY_SIZE",
     };
 
     /// <summary>Every action, by id.</summary>
@@ -116,7 +118,6 @@ public static class DesignActions
             "DUPLICATE" or "SELECT_ALL" or "EDIT_MODE" => "W5",
             _ when name.StartsWith("DESIGN_MENU", StringComparison.Ordinal) || name.StartsWith("DESIGN_TREE_", StringComparison.Ordinal)
                 || name.StartsWith("DESIGN_TOOL", StringComparison.Ordinal) || name.StartsWith("DESIGN_REORDER_", StringComparison.Ordinal) => "W5",
-            "ZOOM_IN" or "ZOOM_OUT" or "RESET_ZOOM" or "FIT_TO_VIEW" or "DESIGN_VIEW_DISPLAY_SIZE" => "W6",
             "APP_DETAILS" or "HELP_COMMENTS" or "SAVECOPY_AS" or "EXPORT" => "W8",
             _ when name.StartsWith("RESPONSIFY", StringComparison.Ordinal) || name.StartsWith("UNRESPONSIFY", StringComparison.Ordinal) => "W8",
             "EDITOR_PAUSE" or "EDITOR_CONTINUE" or "EDITOR_STEP" or "EDITOR_STEP_IN" or "EDITOR_STEP_OUT" or "EDITOR_STOP" => "W11",

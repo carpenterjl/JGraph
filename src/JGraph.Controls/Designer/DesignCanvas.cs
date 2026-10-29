@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -22,6 +23,10 @@ namespace JGraph.Controls.Designer;
 /// a grid being configured with its bands and popup, and the context menu. W4: the figure resized
 /// by its edges, the anchor of a selection outlined 2 pixels wide, Visualize Tab Order's outline
 /// going from component to component, and a library entry dropped with Ctrl held without its label.
+/// W6: the zoom - its steps, Ctrl+wheel about the pointer, Fit to View on a tap of Space, the
+/// floating zoom panel at the bottom-right - a drag with Space held or the middle button pans, a zoom
+/// says how to pan the first few times, the menu's Zoom and display items, and the size shown while
+/// resizing when Resizing Hints is on.
 /// </summary>
 public sealed class DesignCanvas : UserControl
 {
@@ -54,6 +59,14 @@ public sealed class DesignCanvas : UserControl
     private static readonly Brush SplitterAlertBrush = Frozen(new SolidColorBrush(Color.FromArgb(0xC0, 0xD3, 0x2F, 0x2F)));
 
     private readonly Grid _outer;
+    private readonly ScrollViewer _scroll;
+    private readonly ScaleTransform _scale = new(1, 1);
+    private readonly Border _zoomPanel;
+    private readonly StackPanel _zoomFull;
+    private readonly TextBlock _zoomPercent;
+    private readonly Border _panMessage;
+    private readonly DispatcherTimer _spaceTimer = new() { Interval = TimeSpan.FromMilliseconds(DesignZoom.SpaceHoldMilliseconds) };
+    private readonly DispatcherTimer _panMessageTimer = new() { Interval = TimeSpan.FromMilliseconds(DesignZoom.PanMessageMilliseconds) };
     private readonly Grid _surface;
     private readonly FigureControl _figure;
     private readonly UiComponentLayer _layer;
@@ -70,6 +83,15 @@ public sealed class DesignCanvas : UserControl
     private readonly DispatcherTimer _tabOrderTimer = new() { Interval = TimeSpan.FromMilliseconds(DesignGestures.VisualizeStep) };
     private IReadOnlyList<DesignComponent> _tabOrder = [];
     private int _tabOrderAt = -1;
+    private double _zoom = 1;
+    private bool _showResizingHints;
+    private bool _spaceHeld;
+    private bool _panning;
+    private Point _panFrom;
+    private Point _panOffsets;
+
+    // How many more zooms say how to pan, in this session, until Space has been held once (PanMessageCount).
+    private static int panMessagesLeft = DesignZoom.PanMessageTimes;
 
     public DesignCanvas()
     {
@@ -101,19 +123,103 @@ public sealed class DesignCanvas : UserControl
                 _popup.Hide();
             }
         };
-        _outer = new Grid { HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top };
+        _outer = new Grid { HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top, LayoutTransform = _scale };
         _outer.Children.Add(_surface);
         _outer.Children.Add(_overlay);
-        var scroll = new ScrollViewer
+        _scroll = new ScrollViewer
         {
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
             Content = _outer,
             Focusable = false,
         };
-        scroll.SetResourceReference(BackgroundProperty, ThemeKeys.Panel);
-        Content = scroll;
+        _scroll.SetResourceReference(BackgroundProperty, ThemeKeys.Panel);
+        _scroll.PreviewMouseWheel += OnWheel;
+
+        // The floating zoom panel (hmishared ZoomPanel, ad-canvas-zoomPanel): a magnifier at the
+        // bottom-right that opens to the percentage, -, + and Reset.
+        _zoomPercent = new TextBlock { Text = DesignZoom.Percent(1), Margin = new System.Windows.Thickness(10, 5, 10, 5), VerticalAlignment = VerticalAlignment.Center };
+        System.Windows.Automation.AutomationProperties.SetAutomationId(_zoomPercent, "Canvas.ZoomPanel.Percent");
+        _zoomFull = new StackPanel { Orientation = Orientation.Horizontal, Visibility = Visibility.Collapsed };
+        _zoomFull.Children.Add(_zoomPercent);
+        _zoomFull.Children.Add(PanelButton("-", "Canvas.ZoomPanel.ZoomOut", "Zoom Out", () => ZoomOut()));
+        _zoomFull.Children.Add(PanelButton("+", "Canvas.ZoomPanel.ZoomIn", "Zoom In", () => ZoomIn()));
+        _zoomFull.Children.Add(PanelButton(DesignZoom.ResetText, "Canvas.ZoomPanel.Reset", "Reset Zoom", () => ResetZoom()));
+        _zoomFull.Children.Add(new Border { Width = 1, Height = 20, Background = Frozen(new SolidColorBrush(Color.FromRgb(0xCA, 0xC4, 0xC4))), Margin = new System.Windows.Thickness(0, 0, 0, 0) });
+        var zoomRow = new StackPanel { Orientation = Orientation.Horizontal };
+        zoomRow.Children.Add(_zoomFull);
+        zoomRow.Children.Add(PanelButton("\uD83D\uDD0D", "Canvas.ZoomPanel.Toggle", "Zoom", () => _zoomFull.Visibility = _zoomFull.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible));
+        _zoomPanel = new Border
+        {
+            Child = zoomRow,
+            CornerRadius = new CornerRadius(5),
+            MinHeight = 30,
+            MinWidth = 30,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Bottom,
+            Margin = new System.Windows.Thickness(0, 0, 25, 25),
+            Effect = new System.Windows.Media.Effects.DropShadowEffect { BlurRadius = 4, ShadowDepth = 1, Opacity = 0.3 },
+        };
+        _zoomPanel.SetResourceReference(Border.BackgroundProperty, ThemeKeys.Surface);
+        _zoomPanel.SetResourceReference(TextElement.ForegroundProperty, ThemeKeys.Text);
+        System.Windows.Automation.AutomationProperties.SetAutomationId(_zoomPanel, "Canvas.ZoomPanel");
+
+        // What a zoom says about panning (ad-canvas-message), above the panel.
+        var message = new TextBlock { Margin = new System.Windows.Thickness(5) };
+        message.Inlines.Add(new Run("Hold "));
+        message.Inlines.Add(new Bold(new Run("Space")));
+        message.Inlines.Add(new Run(" and drag to pan"));
+        _panMessage = new Border
+        {
+            Child = message,
+            CornerRadius = new CornerRadius(5),
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Bottom,
+            Margin = new System.Windows.Thickness(0, 0, 25, 60),
+            Visibility = Visibility.Collapsed,
+            IsHitTestVisible = false,
+        };
+        _panMessage.SetResourceReference(Border.BackgroundProperty, ThemeKeys.Panel);
+        System.Windows.Automation.AutomationProperties.SetAutomationId(message, "Canvas.PanMessage"); // a Border has no automation peer
+        _panMessageTimer.Tick += (_, _) =>
+        {
+            _panMessageTimer.Stop();
+            _panMessage.Visibility = Visibility.Collapsed;
+        };
+        _spaceTimer.Tick += (_, _) =>
+        {
+            // Held: Space pans until it is let go (DesignViewKeyboardHandler._spacePressed).
+            _spaceTimer.Stop();
+            _spaceHeld = true;
+            _overlay.Cursor = Cursors.Hand;
+        };
+
+        var host = new Grid();
+        host.Children.Add(_scroll);
+        host.Children.Add(_panMessage);
+        host.Children.Add(_zoomPanel);
+        Content = host;
         _tabOrderTimer.Tick += (_, _) => StepTabOrder();
+    }
+
+    private static Button PanelButton(string text, string id, string name, Action click)
+    {
+        var button = new Button
+        {
+            Content = text,
+            Focusable = false,
+            Background = Brushes.Transparent,
+            BorderThickness = new System.Windows.Thickness(0),
+            Padding = new System.Windows.Thickness(4, 0, 4, 0),
+            Margin = new System.Windows.Thickness(0, 5, 6, 5),
+            MinWidth = 20,
+            Cursor = Cursors.Hand,
+        };
+        button.SetResourceReference(Control.ForegroundProperty, ThemeKeys.Text);
+        System.Windows.Automation.AutomationProperties.SetAutomationId(button, id);
+        System.Windows.Automation.AutomationProperties.SetName(button, name);
+        button.Click += (_, _) => click();
+        return button;
     }
 
     /// <summary>Raised when the selection, the design or a gesture's state changed, for the window's status and commands.</summary>
@@ -127,6 +233,156 @@ public sealed class DesignCanvas : UserControl
 
     /// <summary>Raised with an alert App Designer shows in a dialog of its own: a title and a message (Add Label's refusal).</summary>
     public event EventHandler<(string Title, string Message)>? Alerted;
+
+    /// <summary>Raised when the zoom changed (W6).</summary>
+    public event EventHandler? ZoomChanged;
+
+    /// <summary>Raised with a display setting's name and its new state when the canvas's menu turns it on or off (W6).</summary>
+    public event EventHandler<(string Setting, bool On)>? DisplayOptionToggled;
+
+    /// <summary>The zoom: 1 is the figure's own size (W6).</summary>
+    public double Zoom => _zoom;
+
+    /// <summary>Whether Zoom In can go further.</summary>
+    public bool CanZoomIn => DesignZoom.CanZoomIn(_zoom);
+
+    /// <summary>Whether Zoom Out can go further.</summary>
+    public bool CanZoomOut => DesignZoom.CanZoomOut(_zoom);
+
+    /// <summary>Whether Reset Zoom applies.</summary>
+    public bool CanResetZoom => DesignZoom.CanReset(_zoom);
+
+    /// <summary>Whether a resize, a drawing and the figure's edges show the size (Resizing Hints).</summary>
+    public bool ShowResizingHints
+    {
+        get => _showResizingHints;
+        set
+        {
+            _showResizingHints = value;
+            ApplyOptions();
+        }
+    }
+
+    /// <summary>Zooms in a step about the view's centre (the toolstrip's and the keys').</summary>
+    public void ZoomIn() => SetZoom(DesignZoom.ZoomIn(_zoom));
+
+    /// <summary>Zooms out a step about the view's centre.</summary>
+    public void ZoomOut() => SetZoom(DesignZoom.ZoomOut(_zoom));
+
+    /// <summary>Back to the figure's own size.</summary>
+    public void ResetZoom() => SetZoom(1);
+
+    /// <summary>
+    /// Fit to View (<c>DesignAreaView.fitAppToView</c>): the figure centred in the view, then zoomed
+    /// to the level that fits it with its margin (<see cref="DesignZoom.FitToView"/>).
+    /// </summary>
+    public void FitToView()
+    {
+        if (_document is not { } document)
+        {
+            return;
+        }
+
+        Size2D figure = document.Runtime.Figure.Size;
+        SetZoom(DesignZoom.FitToView(new Size2D(_scroll.ViewportWidth, _scroll.ViewportHeight), figure));
+
+        // Centred in the view: by scrolling, or - the canvas smaller than the view - by a margin, kept
+        // until the zoom changes again.
+        double width = (figure.Width + (2 * Gutter)) * _zoom;
+        double height = (figure.Height + (2 * Gutter)) * _zoom;
+        _outer.Margin = new System.Windows.Thickness(
+            System.Math.Max(0, (_scroll.ViewportWidth - width) / 2), System.Math.Max(0, (_scroll.ViewportHeight - height) / 2), 0, 0);
+        _scroll.UpdateLayout();
+        _scroll.ScrollToHorizontalOffset(((Gutter + (figure.Width / 2)) * _zoom) - (_scroll.ViewportWidth / 2));
+        _scroll.ScrollToVerticalOffset(((Gutter + (figure.Height / 2)) * _zoom) - (_scroll.ViewportHeight / 2));
+    }
+
+    /// <summary>
+    /// Zooms to <paramref name="level"/>, the point of the view at <paramref name="about"/> - its centre
+    /// when none - keeping the part of the canvas it shows (<c>CanvasZoomStrategy</c>).
+    /// </summary>
+    private void SetZoom(double level, Point? about = null)
+    {
+        if (level == _zoom || _document is null)
+        {
+            return;
+        }
+
+        Point a = about ?? new Point(_scroll.ViewportWidth / 2, _scroll.ViewportHeight / 2);
+        double x = (_scroll.HorizontalOffset + a.X - _outer.Margin.Left) / _zoom;
+        double y = (_scroll.VerticalOffset + a.Y - _outer.Margin.Top) / _zoom;
+        _outer.Margin = default;
+        _zoom = level;
+        _scale.ScaleX = level;
+        _scale.ScaleY = level;
+        _scroll.UpdateLayout();
+        _scroll.ScrollToHorizontalOffset((x * level) - a.X);
+        _scroll.ScrollToVerticalOffset((y * level) - a.Y);
+        _zoomPercent.Text = DesignZoom.Percent(level);
+        if (_gestures is { } gestures)
+        {
+            gestures.ZoomLevel = level;
+        }
+
+        _document.CanvasZoom = level;
+
+        // The first few zooms of a session say how to pan (DesignAreaViewController, PanMessageCount).
+        if (panMessagesLeft > 0)
+        {
+            panMessagesLeft--;
+            _panMessage.Visibility = Visibility.Visible;
+            _panMessageTimer.Stop();
+            _panMessageTimer.Start();
+        }
+
+        _overlay.InvalidateVisual();
+        ZoomChanged?.Invoke(this, EventArgs.Empty);
+        DesignChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>Whether the pan message shows now.</summary>
+    public bool ShowsPanMessage => _panMessage.Visibility == Visibility.Visible;
+
+    // Ctrl+wheel zooms about the pointer (ZoomHandler._mouseWheelHandler: up is in).
+    private void OnWheel(object sender, MouseWheelEventArgs e)
+    {
+        if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift | ModifierKeys.Alt)) != ModifierKeys.Control || _document is null)
+        {
+            return;
+        }
+
+        e.Handled = true;
+        Point at = e.GetPosition(_scroll);
+        if (e.Delta > 0 && CanZoomIn)
+        {
+            SetZoom(DesignZoom.ZoomIn(_zoom), at);
+        }
+        else if (e.Delta < 0 && CanZoomOut)
+        {
+            SetZoom(DesignZoom.ZoomOut(_zoom), at);
+        }
+    }
+
+    private void OnZoomRequested(object? sender, DesignZoomRequest request)
+    {
+        switch (request)
+        {
+            case DesignZoomRequest.In:
+                ZoomIn();
+                break;
+            case DesignZoomRequest.Out:
+                ZoomOut();
+                break;
+            case DesignZoomRequest.Reset:
+                ResetZoom();
+                break;
+            default:
+                FitToView();
+                break;
+        }
+    }
+
+    private void OnDisplayOptionToggled(object? sender, (string Setting, bool On) toggled) => DisplayOptionToggled?.Invoke(this, toggled);
 
     /// <summary>The library entry the next press places or draws (App Designer's click and draw); null when none.</summary>
     public DesignPaletteEntry? DrawEntry
@@ -163,6 +419,8 @@ public sealed class DesignCanvas : UserControl
                 _gestures!.Changed -= OnChanged;
                 _gestures.TabOrderShown -= OnTabOrderShown;
                 _gestures.Alerted -= OnAlerted;
+                _gestures.ZoomRequested -= OnZoomRequested;
+                _gestures.DisplayOptionToggled -= OnDisplayOptionToggled;
             }
 
             StopTabOrder();
@@ -186,6 +444,10 @@ public sealed class DesignCanvas : UserControl
                 _gestures.Changed += OnChanged;
                 _gestures.TabOrderShown += OnTabOrderShown;
                 _gestures.Alerted += OnAlerted;
+                _gestures.ZoomRequested += OnZoomRequested;
+                _gestures.DisplayOptionToggled += OnDisplayOptionToggled;
+                _gestures.ZoomLevel = _zoom;
+                value.CanvasZoom = _zoom;
                 if (value.Selection.Count == 0)
                 {
                     value.Select([]);
@@ -248,6 +510,7 @@ public sealed class DesignCanvas : UserControl
             gestures.SnapToGrid = _snapToGrid;
             gestures.GridInterval = _gridInterval;
             gestures.ShowAlignmentHints = _showAlignmentHints;
+            gestures.ShowResizingHints = _showResizingHints;
         }
 
         _overlay.InvalidateVisual();
@@ -364,6 +627,20 @@ public sealed class DesignCanvas : UserControl
     private void OnPressed(MouseButtonEventArgs e)
     {
         Focus();
+        _zoomFull.Visibility = Visibility.Collapsed;
+
+        // Space held, or the middle button: a pan (CanvasPanPlugin).
+        if (_spaceHeld || e.ChangedButton == MouseButton.Middle)
+        {
+            _panning = true;
+            _panFrom = e.GetPosition(_scroll);
+            _panOffsets = new Point(_scroll.HorizontalOffset, _scroll.VerticalOffset);
+            _overlay.Cursor = Cursors.SizeAll;
+            _overlay.CaptureMouse();
+            e.Handled = true;
+            return;
+        }
+
         DesignButton button = e.ChangedButton switch
         {
             MouseButton.Left => DesignButton.Left,
@@ -423,7 +700,7 @@ public sealed class DesignCanvas : UserControl
             return new Separator();
         }
 
-        var entry = new MenuItem { Header = item.Label, IsEnabled = item.Enabled };
+        var entry = new MenuItem { Header = item.Label, IsEnabled = item.Enabled, IsCheckable = item.Checked is not null, IsChecked = item.Checked == true };
         System.Windows.Automation.AutomationProperties.SetAutomationId(entry, "Menu." + item.Label.Replace(" ", string.Empty, StringComparison.Ordinal));
         if (item.Items is { } children)
         {
@@ -460,6 +737,20 @@ public sealed class DesignCanvas : UserControl
 
     private void OnMoved(MouseEventArgs e)
     {
+        if (_panning)
+        {
+            Point now = e.GetPosition(_scroll);
+            _scroll.ScrollToHorizontalOffset(_panOffsets.X - (now.X - _panFrom.X));
+            _scroll.ScrollToVerticalOffset(_panOffsets.Y - (now.Y - _panFrom.Y));
+            return;
+        }
+
+        if (_spaceHeld)
+        {
+            _overlay.Cursor = Cursors.Hand;
+            return;
+        }
+
         if (_gestures is not { } gestures)
         {
             return;
@@ -488,6 +779,14 @@ public sealed class DesignCanvas : UserControl
 
     private void OnReleased()
     {
+        if (_panning)
+        {
+            _panning = false;
+            _overlay.Cursor = _spaceHeld ? Cursors.Hand : Cursors.Arrow;
+            _overlay.ReleaseMouseCapture();
+            return;
+        }
+
         if (_gestures is { IsPressed: true } gestures)
         {
             gestures.Release();
@@ -499,6 +798,19 @@ public sealed class DesignCanvas : UserControl
     protected override void OnKeyDown(KeyEventArgs e)
     {
         base.OnKeyDown(e);
+        if (e.Key == Key.Space && Keyboard.Modifiers == ModifierKeys.None && _document is not null)
+        {
+            // A tap fits the view, a hold of 200 ms pans (DesignViewKeyboardHandler).
+            if (!e.IsRepeat && !_spaceHeld)
+            {
+                _spaceTimer.Stop();
+                _spaceTimer.Start();
+            }
+
+            e.Handled = true;
+            return;
+        }
+
         DesignKey? key = e.Key switch
         {
             Key.Left => DesignKey.Left,
@@ -532,6 +844,25 @@ public sealed class DesignCanvas : UserControl
     protected override void OnKeyUp(KeyEventArgs e)
     {
         base.OnKeyUp(e);
+        if (e.Key == Key.Space)
+        {
+            if (_spaceTimer.IsEnabled)
+            {
+                _spaceTimer.Stop();
+                FitToView();
+            }
+            else if (_spaceHeld)
+            {
+                // Once Space has been held and let go, zooms no longer say how to pan.
+                _spaceHeld = false;
+                panMessagesLeft = 0;
+                _overlay.Cursor = Cursors.Arrow;
+            }
+
+            e.Handled = true;
+            return;
+        }
+
         if (e.Key is Key.Left or Key.Right or Key.Up or Key.Down)
         {
             _gestures?.ArrowUp(Keyboard.IsKeyDown(Key.Left) || Keyboard.IsKeyDown(Key.Right) || Keyboard.IsKeyDown(Key.Up) || Keyboard.IsKeyDown(Key.Down));
@@ -683,6 +1014,11 @@ public sealed class DesignCanvas : UserControl
             }
         }
 
+        if (gestures.SizeHint is { } hint)
+        {
+            DrawSizeHint(dc, hint, accent);
+        }
+
         // Visualize Tab Order: the component focus would be on, outlined 2 pixels wide (ad-tab-order-animation).
         if (TabOrderShown is { } focused && document.BoxOf(focused) is { Shown: true } focusBox)
         {
@@ -730,6 +1066,50 @@ public sealed class DesignCanvas : UserControl
         }
 
         dc.Pop();
+    }
+
+    /// <summary>
+    /// The size shown while resizing (Resizing Hints, <c>SizeDisplayController</c>): the width along
+    /// the top edge - the bottom one for a resize from the top and for the figure - and the height
+    /// along the left edge - the right one for a resize from a left corner and the figure's
+    /// bottom-right corner - each a line the box's length with its number, in whole pixels.
+    /// </summary>
+    private void DrawSizeHint(DrawingContext dc, DesignSizeHint hint, Brush accent)
+    {
+        Rect2D b = hint.Box;
+        var pen = new Pen(accent, 1);
+        pen.Freeze();
+        double dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+        bool across = hint.Edges.HasFlag(ResizeEdges.East) || hint.Edges.HasFlag(ResizeEdges.West);
+        bool down = hint.Edges.HasFlag(ResizeEdges.North) || hint.Edges.HasFlag(ResizeEdges.South);
+        if (across)
+        {
+            bool below = hint.Figure || hint.Edges.HasFlag(ResizeEdges.North);
+            double y = below ? b.Y + b.Height + 8 : b.Y - 8;
+            dc.DrawLine(pen, new Point(b.X, y), new Point(b.X + b.Width, y));
+            dc.DrawLine(pen, new Point(b.X + 0.5, y - 3), new Point(b.X + 0.5, y + 3));
+            dc.DrawLine(pen, new Point(b.X + b.Width - 0.5, y - 3), new Point(b.X + b.Width - 0.5, y + 3));
+            Label(System.Math.Round(b.Width, MidpointRounding.AwayFromZero), new Point(b.X + (b.Width / 2), y));
+        }
+
+        if (down)
+        {
+            bool right = hint.Figure ? hint.Edges == ResizeEdges.SouthEast : hint.Edges is ResizeEdges.SouthWest or ResizeEdges.NorthWest;
+            double x = right ? b.X + b.Width + 8 : b.X - 8;
+            dc.DrawLine(pen, new Point(x, b.Y), new Point(x, b.Y + b.Height));
+            dc.DrawLine(pen, new Point(x - 3, b.Y + 0.5), new Point(x + 3, b.Y + 0.5));
+            dc.DrawLine(pen, new Point(x - 3, b.Y + b.Height - 0.5), new Point(x + 3, b.Y + b.Height - 0.5));
+            Label(System.Math.Round(b.Height, MidpointRounding.AwayFromZero), new Point(x, b.Y + (b.Height / 2)));
+        }
+
+        void Label(double value, Point centre)
+        {
+            var text = new FormattedText(value.ToString(System.Globalization.CultureInfo.InvariantCulture), System.Globalization.CultureInfo.InvariantCulture,
+                FlowDirection.LeftToRight, new Typeface("Segoe UI"), 11, Brushes.White, dpi);
+            var box = new Rect(centre.X - (text.Width / 2) - 3, centre.Y - (text.Height / 2), text.Width + 6, text.Height);
+            dc.DrawRoundedRectangle(accent, null, box, 3, 3);
+            dc.DrawText(text, new Point(box.X + 3, box.Y));
+        }
     }
 
     /// <summary>

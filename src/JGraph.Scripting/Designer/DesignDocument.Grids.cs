@@ -952,7 +952,7 @@ public sealed partial class DesignDocument
                 child.CodeName, new Rect2D(box.Box.X - area.X, box.Box.Y - area.Y, box.Box.Width, box.Box.Height), horizontal, vertical));
         }
 
-        GridifyResult result = DesignGridify.Gridify(new Size2D(area.Width, area.Height), given, GridPadding, GridSpacing, GridSpacing);
+        GridifyResult result = DesignGridify.Gridify(new Size2D(area.Width, area.Height), given, GridPadding, GridSpacing, GridSpacing, CanvasZoom);
         DesignComponent grid = NewGrid(container, result);
         var edits = new List<Edit> { new AddEdit(grid, container, null) };
         foreach (DesignComponent child in kept)

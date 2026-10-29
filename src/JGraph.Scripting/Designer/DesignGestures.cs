@@ -57,6 +57,31 @@ public enum DesignCursor
 }
 
 /// <summary>A resize handle of a selected component: its edges, and its square on the surface.</summary>
+/// <summary>What a zoom request from the canvas's menu asks for (W6, <c>ZoomMenuItemProvider</c>).</summary>
+public enum DesignZoomRequest
+{
+    /// <summary>Zoom In.</summary>
+    In,
+
+    /// <summary>Zoom Out.</summary>
+    Out,
+
+    /// <summary>Reset Zoom.</summary>
+    Reset,
+
+    /// <summary>Fit to View.</summary>
+    Fit,
+}
+
+/// <summary>
+/// The size a resizing hint shows (W6, <c>SizeDisplayController</c>): the box being resized on the
+/// surface, the edges its handle moves, and whether it is the figure's.
+/// </summary>
+/// <param name="Box">The box, on the surface.</param>
+/// <param name="Edges">The edges being moved.</param>
+/// <param name="Figure">Whether the figure is being resized by its edge.</param>
+public readonly record struct DesignSizeHint(Rect2D Box, ResizeEdges Edges, bool Figure);
+
 public readonly record struct DesignHandle(DesignComponent Component, ResizeEdges Edges, Rect2D Box, DesignGroup? Group = null);
 
 /// <summary>
@@ -148,6 +173,29 @@ public sealed class DesignGestures
 
     /// <summary>Whether a move or a resize shows alignment guides and snaps to them.</summary>
     public bool ShowAlignmentHints { get; set; } = true;
+
+    /// <summary>Whether a resize, a drawing and the figure's edges show the size (Resizing Hints, W6; R2025b's factory setting is off).</summary>
+    public bool ShowResizingHints { get; set; }
+
+    /// <summary>The canvas's zoom (W6), which the menu's Zoom items are enabled by; the gestures' points are the surface's whatever it is.</summary>
+    public double ZoomLevel { get; set; } = 1;
+
+    /// <summary>Raised when the canvas's menu asks for a zoom (W6).</summary>
+    public event EventHandler<DesignZoomRequest>? ZoomRequested;
+
+    /// <summary>Raised with a display setting's name (<see cref="DesignSettings"/>) when the canvas's menu turns it on or off (W6, <c>FigureMenuItemsProvider</c>).</summary>
+    public event EventHandler<(string Setting, bool On)>? DisplayOptionToggled;
+
+    /// <summary>
+    /// The size to show while a component is resized or drawn or the figure's edge is dragged, when
+    /// <see cref="ShowResizingHints"/> is on (<c>SizeDisplayController.showSizeDisplay</c>); null otherwise.
+    /// </summary>
+    public DesignSizeHint? SizeHint =>
+        !ShowResizingHints ? null
+        : _press == PressState.FigureResizing && FigureSize is { } figure ? new DesignSizeHint(new Rect2D(0, 0, figure.Width, figure.Height), _edges, Figure: true)
+        : _press == PressState.Resizing && _anchor is { } resized && Document.BoxOf(resized) is { } box ? new DesignSizeHint(box.Box, _edges, Figure: false)
+        : _press == PressState.Drawing && Drawn is { } drawn ? new DesignSizeHint(drawn, ResizeEdges.SouthEast, Figure: false)
+        : null;
 
     /// <summary>How far a press must travel before it is a drag.</summary>
     public double DragThreshold { get; set; } = 4;
@@ -1683,6 +1731,20 @@ public sealed class DesignGestures
             items.Add(new DesignMenuItem("Delete", true, () => document.Delete(document.Selection)));
         }
 
+        // Zoom, always (ZoomMenuItemProvider, W6).
+        if (items.Count > 0)
+        {
+            items.Add(DesignMenuItem.Separator);
+        }
+
+        items.Add(new DesignMenuItem("Zoom", true, Items:
+        [
+            new("Zoom In", DesignZoom.CanZoomIn(ZoomLevel), () => ZoomRequested?.Invoke(this, DesignZoomRequest.In)),
+            new("Zoom Out", DesignZoom.CanZoomOut(ZoomLevel), () => ZoomRequested?.Invoke(this, DesignZoomRequest.Out)),
+            new("Reset Zoom", DesignZoom.CanReset(ZoomLevel), () => ZoomRequested?.Invoke(this, DesignZoomRequest.Reset)),
+            new("Fit to View", true, () => ZoomRequested?.Invoke(this, DesignZoomRequest.Fit)),
+        ]));
+
         // The Layout items (LayoutMenuItemsProvider, W4) for anything but the figure: Align, Same Size,
         // the grouping actions (open item 150) and Reorder, each a submenu enabled when any item is.
         if (document.Selection.Any(static c => c.Parent is not null))
@@ -1728,6 +1790,16 @@ public sealed class DesignGestures
             ]));
         }
 
+        // The figure's display options (FigureMenuItemsProvider, W6): with the figure selected, check items.
+        if (document.Selection is [{ Parent: null }])
+        {
+            items.Add(DesignMenuItem.Separator);
+            items.Add(Toggle("Grid", DesignSettings.ShowGrid, ShowGrid));
+            items.Add(Toggle("Snap to Grid", DesignSettings.SnapToGrid, SnapToGrid));
+            items.Add(Toggle("Alignment Hints", DesignSettings.ShowAlignmentHints, ShowAlignmentHints));
+            items.Add(Toggle("Resizing Hints", DesignSettings.ShowResizingHints, ShowResizingHints));
+        }
+
         if (document.Selection is [var container, ..] && document.CanGridify(container))
         {
             if (items.Count > 0)
@@ -1755,6 +1827,9 @@ public sealed class DesignGestures
         }
 
         return items;
+
+        DesignMenuItem Toggle(string label, string setting, bool on) =>
+            new(label, true, () => DisplayOptionToggled?.Invoke(this, (setting, !on))) { Checked = on };
     }
 }
 
@@ -1764,6 +1839,9 @@ public sealed class DesignGestures
 /// </summary>
 public sealed record DesignMenuItem(string Label, bool Enabled = true, Action? Run = null, IReadOnlyList<DesignMenuItem>? Items = null, DesignGridHint? Hint = null)
 {
+    /// <summary>For a check item, whether it is checked; null for any other (W6).</summary>
+    public bool? Checked { get; init; }
+
     /// <summary>A line between groups of items.</summary>
     public static DesignMenuItem Separator { get; } = new("-", false);
 

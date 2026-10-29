@@ -215,7 +215,7 @@ try {
     Start-Sleep -Milliseconds 400
     Check ($interval -and $interval.Current.Value -eq '30') "the interval is 30 (got $($interval.Current.Value))"
     $resize = Find-InProcess $p.Id 'appDesignerToolstrip.layoutTab.view.size'
-    Check ($resize -and -not $resize.Current.IsEnabled) 'Resizing Hints is disabled (W6)'
+    Check ($resize -and $resize.Current.IsEnabled) 'Resizing Hints is enabled (W6: a setting)'
     Check (Save-Picture $hwnd (Join-Path $WorkRoot 'view.png')) 'a picture of the VIEW tab with the grid'
     $saved = if (Test-Path -LiteralPath $settingsFile) { Get-Content -LiteralPath $settingsFile -Raw } else { '' }
     Check ($saved.Contains('matlab.appdesigner.designview.ShowGrid') -and $saved.Contains('matlab.appdesigner.designview.GridInterval')) 'the grid and its interval were kept as settings by their R2025b names'

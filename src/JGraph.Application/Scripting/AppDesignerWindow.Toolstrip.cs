@@ -76,8 +76,9 @@ internal sealed partial class AppDesignerWindow
         "AD_DESIGN_GROUP_REMOVE" => RemoveFromGroup,
         "AD_DESIGN_GROUP_UNGROUP" => UngroupSelection,
         // The toggles and the interval spinner keep settings: they answer through Invoked.
-        "AD_DESIGN_GRID_SHOW" or "AD_DESIGN_GRID_SNAP" or "AD_DESIGN_VIEW_ALIGN_HINTS" or "AD_DESIGN_GRID_INTERVAL" => null,
+        "AD_DESIGN_GRID_SHOW" or "AD_DESIGN_GRID_SNAP" or "AD_DESIGN_VIEW_ALIGN_HINTS" or "AD_DESIGN_VIEW_DISPLAY_SIZE" or "AD_DESIGN_GRID_INTERVAL" => null,
         _ when ArrangeCommands.TryGetValue(action, out RoutedCommand? arrange) => arrange,
+        _ when ZoomCommands.TryGetValue(action, out RoutedCommand? zoom) => zoom,
         _ => DesignActions.IsLive(action) ? null : NotYet,
     };
 
@@ -111,6 +112,7 @@ internal sealed partial class AppDesignerWindow
 
         _toolstrip.Invoked += (_, e) => Invoked(e);
         BindArrangeCommands();
+        BindZoomCommands();
         System.Windows.Automation.AutomationProperties.SetAutomationId(_toolstrip, "AppDesigner.Toolstrip");
 
         CommandBindings.Add(new CommandBinding(NotYet, static (_, _) => { }, static (_, e) => e.CanExecute = false));
@@ -157,6 +159,9 @@ internal sealed partial class AppDesignerWindow
                 break;
             case "AD_DESIGN_VIEW_ALIGN_HINTS" when e.Value is bool on:
                 Settings.Set(DesignSettings.ShowAlignmentHints, on);
+                break;
+            case "AD_DESIGN_VIEW_DISPLAY_SIZE" when e.Value is bool on:
+                Settings.Set(DesignSettings.ShowResizingHints, on);
                 break;
             case "AD_DESIGN_GRID_INTERVAL" when e.Value is double interval:
                 Settings.Set(DesignSettings.GridInterval, (int)DesignGeometry.GridIntervalWithin(interval));
@@ -207,8 +212,9 @@ internal sealed partial class AppDesignerWindow
         _toolstrip.SetSelected("AD_DESIGN_GRID_SHOW", Settings.GetBool(DesignSettings.ShowGrid));
         _toolstrip.SetSelected("AD_DESIGN_GRID_SNAP", Settings.GetBool(DesignSettings.SnapToGrid));
         _toolstrip.SetSelected("AD_DESIGN_VIEW_ALIGN_HINTS", Settings.GetBool(DesignSettings.ShowAlignmentHints));
+        _toolstrip.SetSelected("AD_DESIGN_VIEW_DISPLAY_SIZE", Settings.GetBool(DesignSettings.ShowResizingHints));
         _toolstrip.SetValue(DesignToolstrip.IntervalSpinner, ((int)Settings.GridIntervalValue).ToString(CultureInfo.InvariantCulture));
-        foreach (string id in new[] { "AD_DESIGN_GRID_SHOW", "AD_DESIGN_GRID_SNAP", "AD_DESIGN_VIEW_ALIGN_HINTS", "AD_DESIGN_GRID_INTERVAL" })
+        foreach (string id in new[] { "AD_DESIGN_GRID_SHOW", "AD_DESIGN_GRID_SNAP", "AD_DESIGN_VIEW_ALIGN_HINTS", "AD_DESIGN_VIEW_DISPLAY_SIZE", "AD_DESIGN_GRID_INTERVAL" })
         {
             _toolstrip.SetEnabled(id, app is not null);
         }

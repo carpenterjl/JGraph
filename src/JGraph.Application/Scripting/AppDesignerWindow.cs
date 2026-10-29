@@ -304,6 +304,7 @@ internal sealed partial class AppDesignerWindow : Window
         codeButton.Unchecked += (_, _) => { if (designButton.IsChecked != true) { codeButton.IsChecked = true; } };
         AttachTab(app);
         AddArrangeKeys(canvas);
+        WatchView(canvas);
         canvas.Alerted += (_, alert) => ShowAlert(alert.Title, alert.Message);
         canvas.DesignChanged += (_, _) =>
         {
@@ -418,6 +419,7 @@ internal sealed partial class AppDesignerWindow : Window
         app.Canvas.ShowGrid = Settings.GetBool(DesignSettings.ShowGrid);
         app.Canvas.SnapToGrid = Settings.GetBool(DesignSettings.SnapToGrid);
         app.Canvas.ShowAlignmentHints = Settings.GetBool(DesignSettings.ShowAlignmentHints);
+        app.Canvas.ShowResizingHints = Settings.GetBool(DesignSettings.ShowResizingHints);
         app.Canvas.GridInterval = Settings.GridIntervalValue;
     }
 

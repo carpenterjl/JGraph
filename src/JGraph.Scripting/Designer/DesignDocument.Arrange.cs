@@ -102,6 +102,12 @@ public sealed partial class DesignDocument
 
     private DesignPick? _anchor;
 
+    /// <summary>
+    /// The canvas's zoom (W6), which App Designer's gridifier reads its boxes at: Apply Grid Layout's
+    /// and the auto tab order's results depend on it, as App Designer measures the page (DS4).
+    /// </summary>
+    public double CanvasZoom { get; set; } = 1;
+
     private enum Arrange
     {
         Align,
@@ -532,7 +538,7 @@ public sealed partial class DesignDocument
         GridifyResult result;
         try
         {
-            result = DesignGridify.Gridify(new Size2D(area.Width, area.Height), given, [0, 0, 0, 0], GridSpacing, GridSpacing);
+            result = DesignGridify.Gridify(new Size2D(area.Width, area.Height), given, [0, 0, 0, 0], GridSpacing, GridSpacing, CanvasZoom);
         }
         catch (Exception ex) when (ex is InvalidOperationException or ArgumentException)
         {
