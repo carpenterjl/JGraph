@@ -10,7 +10,9 @@ namespace JGraph.Controls.Designer;
 /// The visual designer's component library (designer plan DS3): App Designer's sections, each with
 /// its entries. A click on an entry chooses it for the canvas's click and draw, and a second click
 /// lets it go, as App Designer's library does; an entry dragged onto the canvas is added where it is
-/// dropped. An entry the designer does not make yet is shown and cannot be chosen.
+/// dropped. An entry the designer does not make yet is shown and cannot be chosen. The search box
+/// over the sections (App Designer window plan, stage W2) shows the entries whose names hold what is
+/// typed, ignoring case, and hides the sections left empty.
 /// </summary>
 public sealed class DesignPaletteView : UserControl
 {
@@ -20,6 +22,8 @@ public sealed class DesignPaletteView : UserControl
     private readonly Dictionary<DesignPaletteEntry, Button> _buttons = new(ReferenceEqualityComparer.Instance);
     private readonly List<Expander> _userSections = [];
     private readonly StackPanel _stack = new();
+    private readonly TextBox _search = new() { Margin = new Thickness(4, 4, 4, 4) };
+    private readonly TextBlock _searchHint = new() { Text = "Search", IsHitTestVisible = false, Margin = new Thickness(9, 6, 0, 0), Opacity = 0.6 };
     private DesignPaletteEntry? _chosen;
     private Point? _pressAt;
 
@@ -45,8 +49,44 @@ public sealed class DesignPaletteView : UserControl
 
         var scroll = new ScrollViewer { Content = _stack, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
         scroll.SetResourceReference(BackgroundProperty, ThemeKeys.Panel);
-        Content = scroll;
+        System.Windows.Automation.AutomationProperties.SetAutomationId(_search, "Palette.Search");
+        System.Windows.Automation.AutomationProperties.SetName(_search, "Search");
+        _search.TextChanged += (_, _) => Filter();
+        var searchBox = new Grid();
+        searchBox.Children.Add(_search);
+        searchBox.Children.Add(_searchHint);
+        var root = new DockPanel();
+        root.SetResourceReference(BackgroundProperty, ThemeKeys.Panel);
+        DockPanel.SetDock(searchBox, Dock.Top);
+        root.Children.Add(searchBox);
+        root.Children.Add(scroll);
+        Content = root;
         Paint();
+    }
+
+    /// <summary>What the search box holds.</summary>
+    public string SearchText
+    {
+        get => _search.Text;
+        set => _search.Text = value ?? string.Empty;
+    }
+
+    /// <summary>Shows the entries whose names hold the search text and the sections that have any.</summary>
+    private void Filter()
+    {
+        string wanted = _search.Text.Trim();
+        _searchHint.Visibility = _search.Text.Length == 0 ? Visibility.Visible : Visibility.Collapsed;
+        foreach ((DesignPaletteEntry entry, Button button) in _buttons)
+        {
+            button.Visibility = wanted.Length == 0 || entry.Name.Contains(wanted, StringComparison.OrdinalIgnoreCase)
+                ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        foreach (Expander section in _stack.Children.OfType<Expander>())
+        {
+            bool any = section.Content is Panel { Children: var children } && children.OfType<UIElement>().Any(static c => c.Visibility == Visibility.Visible);
+            section.Visibility = any ? Visibility.Visible : Visibility.Collapsed;
+        }
     }
 
     /// <summary>Raised when the entry chosen for click and draw changed: an entry, or null when none is.</summary>
@@ -141,6 +181,7 @@ public sealed class DesignPaletteView : UserControl
         }
 
         Paint();
+        Filter();
     }
 
     /// <summary>One entry's button, wired as every entry's is.</summary>

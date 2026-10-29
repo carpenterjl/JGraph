@@ -41,6 +41,12 @@ public sealed class UserSettings
     /// <summary>The C compiler <c>loadlibrary</c> uses, by its discovery id, or null for automatic (ADR 0181).</summary>
     public string? CCompiler { get; set; }
 
+    /// <summary>App Designer's settings by R2025b's names, as text; a missing name is at its factory value (WO7).</summary>
+    public Dictionary<string, string> AppDesigner { get; set; } = new(StringComparer.Ordinal);
+
+    /// <summary>The App Designer window's last place, "left,top,width,height[,max]", or null.</summary>
+    public string? AppDesignerPlacement { get; set; }
+
     /// <summary>The JGS language options these settings imply (sanitized against a hand-edited index base).</summary>
     public JgsLanguageOptions ToJgsOptions() =>
         new JgsLanguageOptions(RequireLet: !JgsOptionalLet, IndexBase: JgsIndexBase).Sanitized();
@@ -69,6 +75,8 @@ public sealed class UserSettings
             LinkFigureThemeToAppTheme = dto.LinkFigureThemeToAppTheme,
             BugReportReplyTo = dto.BugReportReplyTo,
             CCompiler = dto.CCompiler,
+            AppDesigner = dto.AppDesigner is { } designer ? new(designer, StringComparer.Ordinal) : new(StringComparer.Ordinal),
+            AppDesignerPlacement = dto.AppDesignerPlacement,
         };
     }
 
@@ -85,6 +93,8 @@ public sealed class UserSettings
         LinkFigureThemeToAppTheme = LinkFigureThemeToAppTheme,
         BugReportReplyTo = BugReportReplyTo,
         CCompiler = CCompiler,
+        AppDesigner = AppDesigner.Count > 0 ? new(AppDesigner, StringComparer.Ordinal) : null,
+        AppDesignerPlacement = AppDesignerPlacement,
     };
 
     /// <summary>A copy, so the Options dialog can edit a draft and discard it on Cancel.</summary>

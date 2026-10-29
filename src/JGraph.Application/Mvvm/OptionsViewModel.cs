@@ -94,7 +94,11 @@ public sealed class OptionsViewModel
         Compilers = [new LoadLibraryCompiler("", automatic), .. found];
         SelectedCompiler = Compilers.FirstOrDefault(c => c.Id.Length > 0 && string.Equals(c.Id, current.CCompiler, StringComparison.OrdinalIgnoreCase))
             ?? Compilers[0];
+        AppDesigner = new JGraph.Scripting.Designer.DesignSettings(current.AppDesigner);
     }
+
+    /// <summary>App Designer's settings, a draft the App Designer page edits by R2025b's names (WO7).</summary>
+    public JGraph.Scripting.Designer.DesignSettings AppDesigner { get; }
 
     /// <summary>The C compilers <c>loadlibrary</c> can preprocess headers with, "Automatic" first (id empty).</summary>
     public IReadOnlyList<LoadLibraryCompiler> Compilers { get; }
@@ -163,6 +167,11 @@ public sealed class OptionsViewModel
             LinkFigureThemeToAppTheme = LinkFigureThemeToAppTheme,
             BugReportReplyTo = before.BugReportReplyTo, // not edited here, and not to be lost by an OK
             CCompiler = SelectedCompiler.Id.Length > 0 ? SelectedCompiler.Id : null,
+            // Only what differs from the factory value is kept; the window's place is not edited here.
+            AppDesigner = AppDesigner.Values
+                .Where(v => JGraph.Scripting.Designer.DesignSettings.Definitions.FirstOrDefault(d => d.Name == v.Key) is not { } definition || definition.Default != v.Value)
+                .ToDictionary(static v => v.Key, static v => v.Value, StringComparer.Ordinal),
+            AppDesignerPlacement = before.AppDesignerPlacement,
         };
 
         PluginsChanged = !updated.DisabledPlugins.ToHashSet(StringComparer.Ordinal)

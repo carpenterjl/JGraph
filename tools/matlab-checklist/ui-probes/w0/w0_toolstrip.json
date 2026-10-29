@@ -587,6 +587,8 @@
                "actionName": "EDITOR_PAUSE",
                "text": "Pause",
                "description": "Pausing at the next executable code line",
+               "icon": "pause",
+               "quickAccessIcon": "pause",
                "enabledWithNoApp": false
               },
               {
@@ -599,6 +601,8 @@
                "actionName": "EDITOR_CONTINUE",
                "text": "Continue",
                "description": "Continue running",
+               "icon": "continue",
+               "quickAccessIcon": "continue",
                "enabledWithNoApp": false
               }
              ]
@@ -616,6 +620,8 @@
                "actionName": "EDITOR_STEP",
                "text": "Step",
                "description": "Run next line",
+               "icon": "stepForward",
+               "quickAccessIcon": "stepForward",
                "enabledWithNoApp": false
               }
              ]
@@ -631,6 +637,8 @@
                "actionName": "EDITOR_STEP_IN",
                "text": "Step In",
                "description": "Run next line and step into function",
+               "icon": "stepForwardIn",
+               "quickAccessIcon": "stepForwardIn",
                "enabledWithNoApp": false
               },
               {
@@ -640,6 +648,8 @@
                "actionName": "EDITOR_STEP_OUT",
                "text": "Step Out",
                "description": "Run until current function returns",
+               "icon": "stepForwardOut",
+               "quickAccessIcon": "stepForwardOut",
                "enabledWithNoApp": false
               }
              ]
@@ -657,6 +667,8 @@
                "actionName": "EDITOR_STOP",
                "text": "Stop",
                "description": "Quit execution",
+               "icon": "stop",
+               "quickAccessIcon": "stop",
                "enabledWithNoApp": false
               }
              ]
@@ -800,6 +812,8 @@
            "actionName": "EDITOR_CLEAR_ALL_BREAKPOINTS",
            "text": "Clear All Breakpoints",
            "description": "Clear all breakpoints in all files",
+           "icon": "clear_breakpoints",
+           "quickAccessIcon": "clear_breakpoints",
            "enabledWithNoApp": true
           },
           {
@@ -809,6 +823,8 @@
            "actionName": "EDITOR_TOGGLE_BREAKPOINT",
            "text": "Set/Clear",
            "description": "Set or Clear breakpoint on current Line",
+           "icon": "breakpoint_code",
+           "quickAccessIcon": "breakpoint_code",
            "enabledWithNoApp": true
           },
           {
@@ -818,6 +834,8 @@
            "actionName": "EDITOR_TOGGLE_ENABLE_BREAKPOINT",
            "text": "Enable/Disable",
            "description": "Enable or Disable on current Line",
+           "icon": "disable_breakpoint",
+           "quickAccessIcon": "disable_breakpoint",
            "enabledWithNoApp": true
           },
           {
@@ -827,6 +845,7 @@
            "actionName": "EDITOR_TOGGLE_CONDITIONAL",
            "text": "Set Condition",
            "description": "Set or modify conditional breakpoint",
+           "icon": "set_conditionalBreakpoint",
            "enabledWithNoApp": true
           },
           {
@@ -2359,6 +2378,7 @@
                "actionName": "ZOOM_IN",
                "text": "Zoom In",
                "description": "Zoom In",
+               "icon": "zoomIn",
                "shortcut": "Ctrl++",
                "enabledWithNoApp": true
               },
@@ -2369,6 +2389,7 @@
                "actionName": "ZOOM_OUT",
                "text": "Zoom Out",
                "description": "Zoom Out",
+               "icon": "zoomOut",
                "shortcut": "Ctrl+-",
                "enabledWithNoApp": true
               },
@@ -2379,6 +2400,7 @@
                "actionName": "RESET_ZOOM",
                "text": "Reset Zoom",
                "description": "Reset zoom to default",
+               "icon": "zoomReset",
                "shortcut": "Ctrl+Alt+0",
                "enabledWithNoApp": false
               }
@@ -2455,6 +2477,7 @@
               "type": "DropDownButton",
               "text": "Go To",
               "description": "Move cursor to line, function, or section",
+              "icon": "arrowGoTo",
               "popupTag": "appDesignerToolstrip.editorTab.navigate.gotoPopUpList",
               "hasDynamicPopup": true
              }
@@ -2865,6 +2888,7 @@
                "actionName": "EDITOR_PRINT",
                "text": "Print",
                "description": "Print...",
+               "icon": "printer",
                "enabledWithNoApp": false
               }
              ]
@@ -2883,6 +2907,7 @@
                "type": "DropDownButton",
                "text": "Go To",
                "description": "Move cursor to line, function, or section",
+               "icon": "arrowGoTo",
                "popupTag": "appDesignerToolstrip.editorTab.navigate.gotoPopUpList",
                "hasDynamicPopup": true
               }
@@ -2899,6 +2924,7 @@
                "actionName": "EDITOR_FIND",
                "text": "Find",
                "description": "Find and optionally replace text",
+               "icon": "find",
                "enabledWithNoApp": false
               },
               {
@@ -2909,6 +2935,8 @@
                "actionName": "EDITOR_TOGGLE_BOOKMARK",
                "text": "Bookmark",
                "description": "Set or clear bookmark on current line",
+               "icon": "bookmark",
+               "quickAccessIcon": "bookmark",
                "enabledWithNoApp": false
               }
              ]
@@ -3058,6 +3086,7 @@
                "actionId": "AD_EDITOR_COMMENT",
                "actionName": "EDITOR_COMMENT",
                "description": "Comment",
+               "icon": "comment",
                "enabledWithNoApp": false
               },
               {
@@ -3067,6 +3096,7 @@
                "actionName": "EDITOR_SMART_INDENT",
                "text": "",
                "description": "Smart Indent",
+               "icon": "indentCodeAuto",
                "enabledWithNoApp": false
               }
              ]
@@ -3080,6 +3110,7 @@
                "actionId": "AD_EDITOR_UNCOMMENT",
                "actionName": "EDITOR_UNCOMMENT",
                "description": "Uncomment",
+               "icon": "clear_comment",
                "enabledWithNoApp": false
               },
               {
@@ -3088,6 +3119,7 @@
                "actionId": "AD_EDITOR_INDENT_MORE",
                "actionName": "EDITOR_INDENT_MORE",
                "description": "Increase Indent",
+               "icon": "indentCodeRight",
                "enabledWithNoApp": false
               }
              ]
@@ -3101,6 +3133,7 @@
                "actionId": "AD_EDITOR_WRAP_COMMENT",
                "actionName": "EDITOR_WRAP_COMMENT",
                "description": "Wrap Comments",
+               "icon": "wrap_comment",
                "enabledWithNoApp": false
               },
               {
@@ -3109,6 +3142,7 @@
                "actionId": "AD_EDITOR_INDENT_LESS",
                "actionName": "EDITOR_INDENT_LESS",
                "description": "Decrease Indent",
+               "icon": "indentCodeLeft",
                "enabledWithNoApp": false
               }
              ]
@@ -3137,6 +3171,7 @@
            "actionName": "EDITOR_GOTO",
            "text": "Go To",
            "description": "Move cursor to line within document",
+           "icon": "goToLine",
            "enabledWithNoApp": false
           },
           {
@@ -3192,6 +3227,8 @@
            "actionName": "EDITOR_TOGGLE_BOOKMARK",
            "text": "Bookmark",
            "description": "Set or clear bookmark on current line",
+           "icon": "bookmark",
+           "quickAccessIcon": "bookmark",
            "enabledWithNoApp": false
           },
           {
@@ -3201,6 +3238,8 @@
            "actionName": "EDITOR_PREV_BOOKMARK",
            "text": "Previous",
            "description": "Move to the previous bookmark",
+           "icon": "arrowNavigationNorth",
+           "quickAccessIcon": "arrowNavigationNorth",
            "enabledWithNoApp": false
           },
           {
@@ -3210,6 +3249,8 @@
            "actionName": "EDITOR_NEXT_BOOKMARK",
            "text": "Next",
            "description": "Move to the next bookmark",
+           "icon": "arrowNavigationSouth",
+           "quickAccessIcon": "arrowNavigationSouth",
            "enabledWithNoApp": false
           }
          ]
@@ -3301,6 +3342,7 @@
            "actionName": "EDITOR_PRINT",
            "text": "Print",
            "description": "Print...",
+           "icon": "printer",
            "enabledWithNoApp": false
           },
           {
@@ -3602,6 +3644,7 @@
                "actionName": "EDITOR_SPLIT_NONE",
                "text": "None",
                "description": "Remove split-screen view of document",
+               "icon": "singleTile",
                "enabledWithNoApp": false
               }
              ]
@@ -3618,6 +3661,7 @@
                "actionName": "EDITOR_SPLIT_LEFTRIGHT",
                "text": "Left/ Right",
                "description": "Split document view horizontally",
+               "icon": "splitDocHorizontally",
                "enabledWithNoApp": false
               }
              ]
@@ -3634,6 +3678,7 @@
                "actionName": "EDITOR_SPLIT_TOPBOTTOM",
                "text": "Top/ Bottom",
                "description": "Split document view vertically",
+               "icon": "splitDocVertically",
                "enabledWithNoApp": false
               }
              ]
@@ -3655,6 +3700,8 @@
                "actionName": "EDITOR_HIGHLIGHT_CURRENT_LINE",
                "text": "Highlight \nCurrent Line",
                "description": "Highlight current line",
+               "icon": "codeHighlighted",
+               "quickAccessIcon": "codeHighlighted",
                "selected": false,
                "enabledWithNoApp": true
               }
@@ -3671,6 +3718,8 @@
                "actionName": "EDITOR_LINE_NUMBERS",
                "text": "Line \nNumbers",
                "description": "Display line numbers",
+               "icon": "lineNumbers",
+               "quickAccessIcon": "lineNumbers",
                "selected": false,
                "enabledWithNoApp": true
               }
@@ -3687,6 +3736,8 @@
                "actionName": "EDITOR_DATATIPS",
                "text": "Datatips",
                "description": "Enable datatips while editing",
+               "icon": "dataTip",
+               "quickAccessIcon": "dataTip",
                "selected": false,
                "enabledWithNoApp": true
               }
@@ -3709,6 +3760,8 @@
                "actionName": "EDITOR_UNFOLD_CURRENT",
                "text": "Expand",
                "description": "Expand current fold",
+               "icon": "codeExpand",
+               "quickAccessIcon": "codeExpand",
                "enabledWithNoApp": false
               }
              ]
@@ -3724,6 +3777,8 @@
                "actionName": "EDITOR_FOLD_CURRENT",
                "text": "Collapse",
                "description": "Collapse current fold",
+               "icon": "codeCollapse",
+               "quickAccessIcon": "codeCollapse",
                "enabledWithNoApp": false
               }
              ]
@@ -3739,6 +3794,8 @@
                "actionName": "EDITOR_UNFOLD_ALL",
                "text": "Expand \nAll",
                "description": "Expand all folds in a document",
+               "icon": "codeExpand",
+               "quickAccessIcon": "codeExpand",
                "enabledWithNoApp": false
               }
              ]
@@ -3754,6 +3811,8 @@
                "actionName": "EDITOR_FOLD_ALL",
                "text": "Collapse \nAll",
                "description": "Collapse all folds in a document",
+               "icon": "codeCollapse",
+               "quickAccessIcon": "codeCollapse",
                "enabledWithNoApp": false
               }
              ]
@@ -3775,6 +3834,7 @@
                "actionName": "EDITOR_ZOOM_IN",
                "text": "Zoom In",
                "description": "Zoom In",
+               "icon": "zoomIn",
                "enabledWithNoApp": false
               },
               {
@@ -3784,6 +3844,7 @@
                "actionName": "EDITOR_ZOOM_OUT",
                "text": "Zoom Out",
                "description": "Zoom Out",
+               "icon": "zoomOut",
                "enabledWithNoApp": false
               },
               {
@@ -3793,6 +3854,7 @@
                "actionName": "EDITOR_RESET_ZOOM",
                "text": "Reset Zoom",
                "description": "Reset zoom to default",
+               "icon": "zoomReset",
                "enabledWithNoApp": false
               }
              ]
@@ -3815,6 +3877,7 @@
                "text": "Spelling",
                "description": "Check spelling",
                "icon": "check_formatText",
+               "quickAccessIcon": "check_formatText",
                "enabledWithNoApp": false
               }
              ]
@@ -6034,6 +6097,7 @@
    "registration_framework_js/regFwkServiceProvider",
    "registration_framework_js/utils/PluginManager",
    "rendererseditors/editors/_BaseRichEditor",
+   "rtc/RTCToolstripMetaDataProvider",
    "rtc/RichTextComponentFeatureEnum",
    "rtc/resources/rich_text_component/nls/actions",
    "rtc/resources/rich_text_component/nls/execution",
@@ -6572,7 +6636,6 @@
    "performance/cache/simple-caches",
    "react/react.production.min",
    "regenerator-runtime/runtime",
-   "rtc/RTCToolstripMetaDataProvider",
    "rtc/plugins/debug/DebugServicesFactory",
    "settings/settingsService",
    "studio-controller-js/utilities/persistence",

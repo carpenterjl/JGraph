@@ -96,7 +96,9 @@ stubWhere(n => /^(dijit|dojox|mw-notifications|mw-dialogs|mw-webwindow|mw-webwin
 // The settings service records each setting an action reads; every read answers no value.
 const settingsRead = [];
 stub('settings/settingsService', new Proxy({}, { get: (_, k) => (...a) => { settingsRead.push({ call: String(k), args: JSON.parse(JSON.stringify(a.filter(x => typeof x !== 'function'))) }); return Promise.resolve(undefined); } }));
-stubWhere(n => /^rtc\/(?!RichTextComponentFeatureEnum$|resources\/)|^settings\/|^mw-messageservice\/|^mw-log\//.test(n), n => anything(n));
+// rtc's icon provider is real (stage W2): it has no dependencies, and the tabs and the feature enum ask it
+// for the editor buttons' icons, which a stub would leave empty.
+stubWhere(n => /^rtc\/(?!RichTextComponentFeatureEnum$|RTCToolstripMetaDataProvider$|resources\/)|^settings\/|^mw-messageservice\/|^mw-log\//.test(n), n => anything(n));
 stubWhere(n => /^dojo\//.test(n) && !n.startsWith('dojo/i18n!'), n => anything(n));
 stubWhere(n => !n.startsWith('dojo/i18n!') && moduleText(n) === null, n => anything(n));
 

@@ -318,6 +318,66 @@ internal static class AppDesignerDialogs
         return dialog.ShowDialog() == true;
     }
 
+    /// <summary>
+    /// App Designer's Keyboard Shortcuts dialog (Ctrl+/, App Designer window plan W2): R2025b's
+    /// "App Designer Keyboard Shortcuts", its table of actions and keys (<see cref="DesignActions.Shortcuts"/>),
+    /// "For more shortcuts, see the Documentation", "Do not show again on session start" kept in the
+    /// <c>ShowShortcutsDialog</c> setting, and Close. The documentation link opens the scripting
+    /// guide's App Designer chapter.
+    /// </summary>
+    public static void Shortcuts(Window owner, DesignSettings settings)
+    {
+        var dialog = Dialog(owner, "App Designer Keyboard Shortcuts");
+        var table = new Grid { Margin = new Thickness(12, 12, 12, 6) };
+        table.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(55, GridUnitType.Star), MaxWidth = 420 });
+        table.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(45, GridUnitType.Star), MinWidth = 150 });
+        void Add(int row, string action, string keys, bool header)
+        {
+            table.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            var left = new TextBlock { Text = action, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 2, 12, 2), MaxWidth = 400 };
+            var right = new TextBlock { Text = keys, Margin = new Thickness(0, 2, 0, 2) };
+            if (header)
+            {
+                left.FontWeight = right.FontWeight = FontWeights.SemiBold;
+            }
+
+            Grid.SetRow(left, row);
+            Grid.SetRow(right, row);
+            Grid.SetColumn(right, 1);
+            table.Children.Add(left);
+            table.Children.Add(right);
+        }
+
+        Add(0, "Action", "Keys", header: true);
+        for (int i = 0; i < DesignActions.Shortcuts.Count; i++)
+        {
+            Add(i + 1, DesignActions.Shortcuts[i].Action, DesignActions.Shortcuts[i].Keys, header: false);
+        }
+
+        var link = new System.Windows.Documents.Hyperlink(new System.Windows.Documents.Run("Documentation"));
+        link.Click += (_, _) => ApplicationCommandsHelp(owner);
+        var more = new TextBlock { Margin = new Thickness(12, 6, 12, 6) };
+        more.Inlines.Add("For more shortcuts, see the ");
+        more.Inlines.Add(link);
+        var again = new CheckBox { Content = "Do not show again on session start", Margin = new Thickness(12, 6, 12, 12), IsChecked = !settings.GetBool(DesignSettings.ShowShortcutsDialog) };
+        again.Checked += (_, _) => settings.Set(DesignSettings.ShowShortcutsDialog, false);
+        again.Unchecked += (_, _) => settings.Set(DesignSettings.ShowShortcutsDialog, true);
+        var close = new Button { Content = "Close", MinWidth = 90, IsDefault = true, IsCancel = true, HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(12, 0, 12, 12) };
+        close.Click += (_, _) => dialog.Close();
+        System.Windows.Automation.AutomationProperties.SetAutomationId(table, "Shortcuts.Table");
+        System.Windows.Automation.AutomationProperties.SetAutomationId(again, "Shortcuts.DoNotShowAgain");
+        System.Windows.Automation.AutomationProperties.SetAutomationId(close, "Shortcuts.Close");
+        var root = new StackPanel();
+        root.Children.Add(table);
+        root.Children.Add(more);
+        root.Children.Add(again);
+        root.Children.Add(close);
+        dialog.Content = root;
+        dialog.ShowDialog();
+
+        static void ApplicationCommandsHelp(Window owner) => System.Windows.Input.ApplicationCommands.Help.Execute(null, owner);
+    }
+
     private static Window Dialog(Window owner, string title)
     {
         // A dialog raised before the designer's window is shown (an app opened by appdesigner(...)

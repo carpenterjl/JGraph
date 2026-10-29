@@ -52,6 +52,10 @@
          callback bound to each, and the code a new callback starts with, read from its bundle's
          component models under node (ds5/). Read by DesignCallbacks. -->
     <EmbeddedResource Include="..\..\tools\matlab-checklist\ui-probes\ds5\ds5_callbacks.json" LogicalName="JGraph.Scripting.designer-callbacks.json" />
+    <!-- App Designer window plan W0/W2: App Designer's toolstrip and its 202 actions as R2025b's client
+         builds them, recorded under node (ui-probes/w0/oracle). Read by DesignToolstrip and DesignActions. -->
+    <EmbeddedResource Include="..\..\tools\matlab-checklist\ui-probes\w0\w0_toolstrip.json" LogicalName="JGraph.Scripting.designer-toolstrip.json" />
+    <EmbeddedResource Include="..\..\tools\matlab-checklist\ui-probes\w0\w0_actions.json" LogicalName="JGraph.Scripting.designer-actions.json" />
   </ItemGroup>
 
   <ItemGroup>

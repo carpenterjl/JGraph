@@ -353,15 +353,31 @@ public partial class ScriptWorkspaceWindow
     {
         if (_appDesigner is null)
         {
-            _appDesigner = new AppDesignerWindow
+            // App Designer's settings by R2025b's names (WO7), kept in the user's settings file.
+            var designSettings = new JGraph.Scripting.Designer.DesignSettings(_settings?.Current.AppDesigner);
+            designSettings.Changed += (_, _) => SaveAppDesignerSettings(designSettings);
+            _appDesigner = new AppDesignerWindow(designSettings)
             {
                 // A custom component's class is found as the MATLAB session finds it (designer plan DS7b).
                 PathFolders = () => _sessions.TryGetValue("MATLAB", out IScriptSession? matlab) ? matlab.PathFolders : [],
                 // Run goes to the MATLAB session, as App Designer's Run goes to the base workspace (designer plan DS8).
                 Runner = RunAppFromDesignerAsync,
+                // The tab menu's cd, addpath and rmpath run in the MATLAB session, unechoed (W2).
+                SessionStatement = code => RunWorkspaceStatementAsync("MATLAB", code),
+                Placement = _settings?.Current.AppDesignerPlacement,
             };
             _appDesigner.AppSaved += ReloadSavedApp;
-            _appDesigner.Closed += (_, _) => _appDesigner = null;
+            _appDesigner.Closed += (_, _) =>
+            {
+                if (_settings is { } settings && _appDesigner?.Placement is { } place && place != settings.Current.AppDesignerPlacement)
+                {
+                    UserSettings next = settings.Current.Clone();
+                    next.AppDesignerPlacement = place;
+                    settings.Save(next);
+                }
+
+                _appDesigner = null;
+            };
         }
 
         if (path is null)
@@ -372,6 +388,53 @@ public partial class ScriptWorkspaceWindow
 
         return _appDesigner.Open(path);
     }
+
+    /// <summary>Keeps App Designer's settings in the user's settings file when the designer changed one (a toggle on its toolstrip, WO7).</summary>
+    private void SaveAppDesignerSettings(JGraph.Scripting.Designer.DesignSettings designSettings)
+    {
+        if (_settings is not { } settings || _applyingDesignSettings)
+        {
+            return;
+        }
+
+        // Only what differs from the factory value is written.
+        Dictionary<string, string> changed = designSettings.Values
+            .Where(v => JGraph.Scripting.Designer.DesignSettings.Definitions.FirstOrDefault(d => d.Name == v.Key) is not { } definition || definition.Default != v.Value)
+            .ToDictionary(static v => v.Key, static v => v.Value, StringComparer.Ordinal);
+        if (changed.Count == settings.Current.AppDesigner.Count && changed.All(c => settings.Current.AppDesigner.TryGetValue(c.Key, out string? v) && v == c.Value))
+        {
+            return;
+        }
+
+        UserSettings next = settings.Current.Clone();
+        next.AppDesigner = changed;
+        settings.Save(next);
+    }
+
+    /// <summary>The Options dialog saved: an open designer takes App Designer's settings from it.</summary>
+    private void AppDesignerSettingsSaved()
+    {
+        if (_appDesigner is not { } designer || _settings is not { } settings)
+        {
+            return;
+        }
+
+        // Applied one by one, each raising the designer's Changed: none is saved back half-applied.
+        _applyingDesignSettings = true;
+        try
+        {
+            foreach (JGraph.Scripting.Designer.DesignSettingDefinition definition in JGraph.Scripting.Designer.DesignSettings.Definitions)
+            {
+                designer.Settings.Set(definition.Name, settings.Current.AppDesigner.TryGetValue(definition.Name, out string? value) ? value : definition.Default);
+            }
+        }
+        finally
+        {
+            _applyingDesignSettings = false;
+        }
+    }
+
+    private bool _applyingDesignSettings;
 
     /// <summary>What <c>appdesigner</c> reaches from a script: the designer's window, opened on the UI thread.</summary>
     private sealed class AppDesignerHost(ScriptWorkspaceWindow window) : IScriptAppDesigner

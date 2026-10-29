@@ -15,11 +15,11 @@ namespace JGraph.Application.Scripting;
 /// two views, switched by the buttons above it (Shift+F7): the Design View, the app's canvas with
 /// App Designer's component library on the left; and the Code View (DS5), the app's class with the
 /// code browser - callbacks, functions, properties - on the left. The component browser, over the
-/// inspector and the Callbacks tab, is on the right in both. The toolbar is App Designer's canvas
-/// tab (save, undo and redo, the grid, the alignment guides) and the Editor tab's insertions: a
-/// callback, a function, a property, the app's input arguments and the single-instance setting.
+/// inspector and the Callbacks tab, is on the right in both. Over them is App Designer's toolstrip
+/// (App Designer window plan, stage W2): DESIGNER, CANVAS and VIEW in the Design View, DESIGNER,
+/// EDITOR and VIEW in the Code View, the RUN section and the quick access bar.
 /// </summary>
-internal sealed class AppDesignerWindow : Window
+internal sealed partial class AppDesignerWindow : Window
 {
     /// <summary>Switches the active app between its Design View and its Code View (Shift+F7).</summary>
     public static readonly RoutedCommand ToggleView = new(nameof(ToggleView), typeof(AppDesignerWindow));
@@ -53,11 +53,6 @@ internal sealed class AppDesignerWindow : Window
 
     private readonly TabControl _tabs = new();
     private readonly TextBlock _status = new() { Margin = new Thickness(4, 0, 4, 0) };
-    private readonly ToggleButton _showGrid = new() { Content = "Show Grid", ToolTip = "Show a grid on the canvas; moves and resizes snap to it" };
-    private readonly ToggleButton _snap = new() { Content = "Snap to Grid", IsChecked = true, ToolTip = "Snap to the grid while it is shown" };
-    private readonly ComboBox _interval = new() { Width = 56, ToolTip = "Grid interval, in pixels" };
-    private readonly ToggleButton _hints = new() { Content = "Alignment Hints", IsChecked = true, ToolTip = "Show alignment guides and snap to them" };
-    private readonly ToggleButton _singleInstance = new() { Content = "Single Running Instance", ToolTip = "App allows only one running instance at a time." };
     private readonly DesignPaletteView _palette = new();
     private readonly DesignCodeBrowserView _codeBrowser = new();
     private readonly ContentControl _left = new();
@@ -65,10 +60,11 @@ internal sealed class AppDesignerWindow : Window
     private readonly DesignInspectorView _inspector = new();
     private readonly DesignCallbacksView _callbacks = new();
     private readonly TabControl _right = new();
-    private bool _settingSingleInstance;
 
-    public AppDesignerWindow()
+    /// <summary>Makes the window over App Designer's settings (WO7), at their factory values when none are given.</summary>
+    public AppDesignerWindow(DesignSettings? settings = null)
     {
+        Settings = settings ?? new DesignSettings();
         Title = "App Designer";
         Width = 1100;
         Height = 760;
@@ -76,68 +72,7 @@ internal sealed class AppDesignerWindow : Window
         SetResourceReference(BackgroundProperty, ThemeKeys.Window);
         SetResourceReference(ForegroundProperty, ThemeKeys.Text);
 
-        for (double i = DesignGeometry.GridMinimum; i <= DesignGeometry.GridMaximum; i += DesignGeometry.GridStep)
-        {
-            _interval.Items.Add(i);
-        }
-
-        _interval.SelectedItem = DesignGeometry.GridInterval;
-        // The state, not the click: a toggle set by the keyboard or through automation raises no Click.
-        foreach (ToggleButton toggle in (ToggleButton[])[_showGrid, _snap, _hints])
-        {
-            toggle.Checked += (_, _) => ApplyCanvasOptions();
-            toggle.Unchecked += (_, _) => ApplyCanvasOptions();
-        }
-        _interval.SelectionChanged += (_, _) => ApplyCanvasOptions();
-        _singleInstance.Checked += (_, _) => SetSingleInstance(true);
-        _singleInstance.Unchecked += (_, _) => SetSingleInstance(false);
-        System.Windows.Automation.AutomationProperties.SetAutomationId(_singleInstance, "SingleRunningInstance");
-
-        var toolbar = new ToolBar();
-        var run = new Button { Content = "Run", Command = RunApp, ToolTip = "Save the app and run it (F5)" };
-        System.Windows.Automation.AutomationProperties.SetAutomationId(run, "Run");
-        toolbar.Items.Add(run);
-        toolbar.Items.Add(new Separator());
-        toolbar.Items.Add(new Button { Content = "Open…", Command = ApplicationCommands.Open, ToolTip = "Open an app (Ctrl+O)" });
-        toolbar.Items.Add(new Button { Content = "Save", Command = ApplicationCommands.Save, ToolTip = "Save the app (Ctrl+S)" });
-        var saveAs = new Button { Content = "Save As…", Command = WorkspaceCommands.SaveAs, ToolTip = "Save the app under another name, as an .mlapp or as a plain-text .m app (Ctrl+Shift+S)" };
-        System.Windows.Automation.AutomationProperties.SetAutomationId(saveAs, "SaveAs");
-        toolbar.Items.Add(saveAs);
-        toolbar.Items.Add(new Separator());
-        toolbar.Items.Add(new Button { Content = "Undo", Command = ApplicationCommands.Undo, ToolTip = "Undo (Ctrl+Z)" });
-        toolbar.Items.Add(new Button { Content = "Redo", Command = ApplicationCommands.Redo, ToolTip = "Redo (Ctrl+Y)" });
-        toolbar.Items.Add(new Button { Content = "Delete", Command = ApplicationCommands.Delete, ToolTip = "Delete the selected components (Delete)" });
-        toolbar.Items.Add(new Separator());
-        toolbar.Items.Add(_showGrid);
-        toolbar.Items.Add(_snap);
-        toolbar.Items.Add(new TextBlock { Text = "Interval", VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 0, 4, 0) });
-        toolbar.Items.Add(_interval);
-        toolbar.Items.Add(new Separator());
-        toolbar.Items.Add(_hints);
-        toolbar.Items.Add(new Separator());
-        // App Designer's Grouping split button (open item 150): the four actions under one menu.
-        var grouping = new Menu { Background = System.Windows.Media.Brushes.Transparent, VerticalAlignment = VerticalAlignment.Center };
-        var groupingItem = new MenuItem { Header = "Grouping", ToolTip = "Group selected components" };
-        System.Windows.Automation.AutomationProperties.SetAutomationId(groupingItem, "Grouping");
-        groupingItem.Items.Add(new MenuItem { Header = "Group", InputGestureText = "Ctrl+G", Command = GroupSelection, CommandTarget = this });
-        groupingItem.Items.Add(new MenuItem { Header = "Add to Group", Command = AddToGroup, CommandTarget = this });
-        groupingItem.Items.Add(new MenuItem { Header = "Remove from Group", Command = RemoveFromGroup, CommandTarget = this });
-        groupingItem.Items.Add(new MenuItem { Header = "Ungroup", InputGestureText = "Ctrl+Shift+G", Command = UngroupSelection, CommandTarget = this });
-        grouping.Items.Add(groupingItem);
-        toolbar.Items.Add(grouping);
-        toolbar.Items.Add(new Separator());
-        toolbar.Items.Add(new Button { Content = "Callback", Command = AddCallback, ToolTip = "Add a callback function to respond to user interactions" });
-        toolbar.Items.Add(new Button { Content = "Function", Command = AddFunction, ToolTip = "Add a function to organize your code into helper or utility functions" });
-        toolbar.Items.Add(new Button { Content = "Property", Command = AddProperty, ToolTip = "Add a property to create a variable to store and share data between callbacks and functions" });
-        toolbar.Items.Add(new Button { Content = "App Input Arguments…", Command = CodeOptions, ToolTip = "Allow app to take in input arguments" });
-        toolbar.Items.Add(_singleInstance);
-
-        // The toolbar's commands are the window's: routed from the focused element, Undo would reach
-        // an inspector text box's own (empty) undo instead of the design's.
-        foreach (Button button in toolbar.Items.OfType<Button>())
-        {
-            button.CommandTarget = this;
-        }
+        BuildToolstrip();
 
         var statusBar = new StatusBar();
         statusBar.Items.Add(new StatusBarItem { Content = _status });
@@ -177,9 +112,9 @@ internal sealed class AppDesignerWindow : Window
         body.Children.Add(right);
 
         var root = new DockPanel();
-        DockPanel.SetDock(toolbar, Dock.Top);
+        DockPanel.SetDock(_toolstrip, Dock.Top);
         DockPanel.SetDock(statusBar, Dock.Bottom);
-        root.Children.Add(toolbar);
+        root.Children.Add(_toolstrip);
         root.Children.Add(statusBar);
         root.Children.Add(body);
         Content = root;
@@ -222,6 +157,7 @@ internal sealed class AppDesignerWindow : Window
                 _codeBrowser.Document = Active?.Document;
                 ShowView();
                 ShowState();
+                ShowTitle();
             }
         };
 
@@ -350,12 +286,14 @@ internal sealed class AppDesignerWindow : Window
         codeButton.Checked += (_, _) => SetView(app, code: true);
         designButton.Unchecked += (_, _) => { if (codeButton.IsChecked != true) { designButton.IsChecked = true; } };
         codeButton.Unchecked += (_, _) => { if (designButton.IsChecked != true) { codeButton.IsChecked = true; } };
+        AttachTab(app);
         canvas.DesignChanged += (_, _) =>
         {
             item.Header = app.Header;
             if (ReferenceEquals(Active, app))
             {
                 ShowState();
+                ShowTitle();
             }
 
             CommandManager.InvalidateRequerySuggested();
@@ -386,9 +324,9 @@ internal sealed class AppDesignerWindow : Window
             item.Header = app.Header;
             if (ReferenceEquals(Active, app))
             {
-                // The toolbar's single-instance toggle follows the document through an undo too.
                 ShowView();
                 ShowState();
+                ShowTitle();
             }
         };
         item.Header = app.Header;
@@ -401,6 +339,7 @@ internal sealed class AppDesignerWindow : Window
         ApplyCanvasOptions();
         ShowView();
         ShowState();
+        ShowTitle();
         Bring();
         canvas.Focus();
         return null;
@@ -410,7 +349,9 @@ internal sealed class AppDesignerWindow : Window
     public void ShowWindow()
     {
         Bring();
+        ShowView();
         ShowState();
+        ShowTitle();
     }
 
     private void PromptOpen()
@@ -445,13 +386,10 @@ internal sealed class AppDesignerWindow : Window
             return;
         }
 
-        app.Canvas.ShowGrid = _showGrid.IsChecked == true;
-        app.Canvas.SnapToGrid = _snap.IsChecked == true;
-        app.Canvas.ShowAlignmentHints = _hints.IsChecked == true;
-        if (_interval.SelectedItem is double interval)
-        {
-            app.Canvas.GridInterval = interval;
-        }
+        app.Canvas.ShowGrid = Settings.GetBool(DesignSettings.ShowGrid);
+        app.Canvas.SnapToGrid = Settings.GetBool(DesignSettings.SnapToGrid);
+        app.Canvas.ShowAlignmentHints = Settings.GetBool(DesignSettings.ShowAlignmentHints);
+        app.Canvas.GridInterval = Settings.GridIntervalValue;
     }
 
     // --- the two views (DS5) -----------------------------------------------------------------------
@@ -487,25 +425,12 @@ internal sealed class AppDesignerWindow : Window
         }
     }
 
-    /// <summary>The left pane follows the active app's view: the library in the Design View, the code browser in the Code View.</summary>
+    /// <summary>The left pane and the toolstrip follow the active app's view: the library and the CANVAS tab in the Design View, the code browser and the EDITOR tab in the Code View.</summary>
     private void ShowView()
     {
         bool code = Active?.InCodeView == true;
         _left.Content = code ? _codeBrowser : _palette;
-        _settingSingleInstance = true;
-        _singleInstance.IsChecked = Active?.Document.SingleInstance == true;
-        _singleInstance.IsEnabled = Active is { Document.Code: not null };
-        _settingSingleInstance = false;
-    }
-
-    private void SetSingleInstance(bool on)
-    {
-        if (_settingSingleInstance || Active is not { Document: { Code: not null } document })
-        {
-            return;
-        }
-
-        document.SetSingleInstance(on);
+        ShowToolstripState();
     }
 
     /// <summary>Shows the Code View with the caret in the function <paramref name="name"/>.</summary>
@@ -772,9 +697,10 @@ internal sealed class AppDesignerWindow : Window
                 return;
             }
 
-            _status.Text = app.Document.SaveAs(chosen);
+            Saving(app, () => _status.Text = app.Document.SaveAs(chosen));
             app.Item.ToolTip = app.Document.Path;
             app.Item.Header = app.Header;
+            ShowTitle();
             AppSaved?.Invoke(app.Document.Path!, app.Document.Text);
             ShowState();
         }
@@ -826,7 +752,7 @@ internal sealed class AppDesignerWindow : Window
             // silently, before it is run; a save that fails is the run's refusal.
             try
             {
-                app.Document.SaveAs(path);
+                Saving(app, () => app.Document.SaveAs(path));
                 app.Item.Header = app.Header;
                 AppSaved?.Invoke(path, app.Document.Text);
             }
@@ -838,7 +764,19 @@ internal sealed class AppDesignerWindow : Window
         }
 
         _status.Text = $"Running {Path.GetFileName(path)}…";
-        string? refused = await runner(path, app.Document.SingleInstance);
+        _running = true;
+        ShowToolstripState();
+        string? refused;
+        try
+        {
+            refused = await runner(path, app.Document.SingleInstance);
+        }
+        finally
+        {
+            _running = false;
+            ShowToolstripState();
+        }
+
         // The status line has one line: the message's first; the console has the whole of it.
         _status.Text = refused is null ? $"Running {Path.GetFileNameWithoutExtension(path)}."
             : refused.Split('\n').Select(static l => l.Trim()).FirstOrDefault(static l => l.Length > 0) ?? refused;
@@ -859,9 +797,10 @@ internal sealed class AppDesignerWindow : Window
                 return false;
             }
 
-            _status.Text = app.Document.Save();
+            Saving(app, () => _status.Text = app.Document.Save());
             AppSaved?.Invoke(app.Document.Path!, app.Document.Text);
             app.Item.Header = app.Header;
+            ShowTitle();
             return true;
         }
         catch (Exception ex) when (ex is IOException or InvalidOperationException or UnauthorizedAccessException or InvalidDataException)
@@ -909,6 +848,7 @@ internal sealed class AppDesignerWindow : Window
         }
 
         _tabs.Items.Remove(app.Item);
+        DetachTab(app);
         app.Canvas.Document = null;
         app.CodeView.Document = null;
         if (ReferenceEquals(_inspector.Document, app.Document))
@@ -924,6 +864,9 @@ internal sealed class AppDesignerWindow : Window
         {
             Hide();
         }
+
+        ShowView();
+        ShowTitle();
     }
 
     /// <inheritdoc />
@@ -943,8 +886,10 @@ internal sealed class AppDesignerWindow : Window
         _callbacks.Document = null;
         _browser.Document = null;
         _codeBrowser.Document = null;
+        RememberPlace();
         foreach (AppTab app in Apps.ToList())
         {
+            DetachTab(app);
             app.Canvas.Document = null;
             app.CodeView.Document = null;
             app.Document.Dispose();
@@ -956,6 +901,18 @@ internal sealed class AppDesignerWindow : Window
     private sealed record AppTab(DesignDocument Document, DesignCanvas Canvas, DesignCodeView CodeView, ToggleButton DesignButton, ToggleButton CodeButton, TabItem Item)
     {
         public bool InCodeView { get; set; }
+
+        /// <summary>The watch on the app's file for a change made outside (W2), or null.</summary>
+        public FileSystemWatcher? Watcher { get; set; }
+
+        /// <summary>Until when a change seen on the file is this window's own save.</summary>
+        public DateTime SavedUntil { get; set; }
+
+        /// <summary>The file's last write already saved here or asked about: one write is asked about once, however many changes the watch reports for it.</summary>
+        public DateTime SeenWrite { get; set; }
+
+        /// <summary>Whether a reload prompt for the file is already up or waiting.</summary>
+        public bool Prompting { get; set; }
 
         public string Header => Path.GetFileName(Document.Path) + (Document.IsDirty ? " *" : string.Empty);
     }

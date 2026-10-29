@@ -492,7 +492,8 @@
    "id": "AD_EDITOR_PRINT",
    "appDesignerEditorActionId": "rtc_print",
    "description": "Print...",
-   "text": "Print"
+   "text": "Print",
+   "icon": "printer"
   },
   {
    "name": "EDITOR_PRINT_SELECTION",
@@ -506,6 +507,7 @@
    "enabled": false,
    "id": "AD_EDITOR_COMMENT",
    "appDesignerEditorActionId": "rtc_comment",
+   "icon": "comment",
    "description": "Comment"
   },
   {
@@ -513,6 +515,7 @@
    "enabled": false,
    "id": "AD_EDITOR_UNCOMMENT",
    "appDesignerEditorActionId": "rtc_uncomment",
+   "icon": "clear_comment",
    "description": "Uncomment"
   },
   {
@@ -520,6 +523,7 @@
    "enabled": false,
    "id": "AD_EDITOR_WRAP_COMMENT",
    "appDesignerEditorActionId": "rtc_wrap_comment",
+   "icon": "wrap_comment",
    "description": "Wrap Comments"
   },
   {
@@ -528,7 +532,8 @@
    "id": "AD_EDITOR_FIND",
    "appDesignerEditorActionId": "rtc_find_dialog",
    "text": "Find",
-   "description": "Find and optionally replace text"
+   "description": "Find and optionally replace text",
+   "icon": "find"
   },
   {
    "name": "EDITOR_FIND_NEXT",
@@ -557,6 +562,7 @@
    "id": "AD_EDITOR_GOTO",
    "description": "Move cursor to line within document",
    "text": "Go To",
+   "icon": "goToLine",
    "appDesignerEditorActionId": "rtc_goTo_dialog"
   },
   {
@@ -565,7 +571,9 @@
    "id": "AD_EDITOR_TOGGLE_BOOKMARK",
    "appDesignerEditorActionId": "rtc_toggle_bookmark",
    "description": "Set or clear bookmark on current line",
-   "text": "Bookmark"
+   "text": "Bookmark",
+   "icon": "bookmark",
+   "quickAccessIcon": "bookmark"
   },
   {
    "name": "EDITOR_PREV_BOOKMARK",
@@ -573,7 +581,9 @@
    "id": "AD_EDITOR_PREV_BOOKMARK",
    "appDesignerEditorActionId": "rtc_previous_bookmark",
    "description": "Move to the previous bookmark",
-   "text": "Previous"
+   "text": "Previous",
+   "icon": "arrowNavigationNorth",
+   "quickAccessIcon": "arrowNavigationNorth"
   },
   {
    "name": "EDITOR_NEXT_BOOKMARK",
@@ -581,13 +591,16 @@
    "id": "AD_EDITOR_NEXT_BOOKMARK",
    "appDesignerEditorActionId": "rtc_next_bookmark",
    "description": "Move to the next bookmark",
-   "text": "Next"
+   "text": "Next",
+   "icon": "arrowNavigationSouth",
+   "quickAccessIcon": "arrowNavigationSouth"
   },
   {
    "name": "EDITOR_SMART_INDENT",
    "enabled": false,
    "id": "AD_EDITOR_SMART_INDENT",
    "text": "",
+   "icon": "indentCodeAuto",
    "appDesignerEditorActionId": "rtc_smart_indent",
    "description": "Smart Indent"
   },
@@ -596,6 +609,7 @@
    "enabled": false,
    "id": "AD_EDITOR_INDENT_MORE",
    "appDesignerEditorActionId": "rtc_indent",
+   "icon": "indentCodeRight",
    "description": "Increase Indent"
   },
   {
@@ -603,6 +617,7 @@
    "enabled": false,
    "id": "AD_EDITOR_INDENT_LESS",
    "appDesignerEditorActionId": "rtc_unindent",
+   "icon": "indentCodeLeft",
    "description": "Decrease Indent"
   },
   {
@@ -610,6 +625,7 @@
    "enabled": false,
    "id": "AD_EDITOR_SPLIT_NONE",
    "appDesignerEditorActionId": "rtc_split_none",
+   "icon": "singleTile",
    "description": "Remove split-screen view of document",
    "text": "None"
   },
@@ -618,6 +634,7 @@
    "enabled": false,
    "id": "AD_EDITOR_SPLIT_LEFTRIGHT",
    "appDesignerEditorActionId": "rtc_split_left_right",
+   "icon": "splitDocHorizontally",
    "description": "Split document view horizontally",
    "text": "Left/ Right"
   },
@@ -626,6 +643,7 @@
    "enabled": false,
    "id": "AD_EDITOR_SPLIT_TOPBOTTOM",
    "appDesignerEditorActionId": "rtc_split_top_bottom",
+   "icon": "splitDocVertically",
    "description": "Split document view vertically",
    "text": "Top/ Bottom"
   },
@@ -634,6 +652,8 @@
    "enabled": false,
    "id": "AD_EDITOR_FOLD_CURRENT",
    "appDesignerEditorActionId": "rtc_fold_current_block",
+   "icon": "codeCollapse",
+   "quickAccessIcon": "codeCollapse",
    "text": "Collapse",
    "description": "Collapse current fold"
   },
@@ -642,6 +662,8 @@
    "enabled": false,
    "id": "AD_EDITOR_UNFOLD_CURRENT",
    "appDesignerEditorActionId": "rtc_unfold_current_block",
+   "icon": "codeExpand",
+   "quickAccessIcon": "codeExpand",
    "text": "Expand",
    "description": "Expand current fold"
   },
@@ -650,6 +672,8 @@
    "enabled": false,
    "id": "AD_EDITOR_FOLD_ALL",
    "appDesignerEditorActionId": "rtc_fold_all",
+   "icon": "codeCollapse",
+   "quickAccessIcon": "codeCollapse",
    "text": "Collapse \nAll",
    "description": "Collapse all folds in a document"
   },
@@ -658,6 +682,8 @@
    "enabled": false,
    "id": "AD_EDITOR_UNFOLD_ALL",
    "appDesignerEditorActionId": "rtc_unfold_all",
+   "icon": "codeExpand",
+   "quickAccessIcon": "codeExpand",
    "text": "Expand \nAll",
    "description": "Expand all folds in a document"
   },
@@ -666,6 +692,7 @@
    "enabled": false,
    "id": "AD_EDITOR_ZOOM_IN",
    "appDesignerEditorActionId": "zoomIn",
+   "icon": "zoomIn",
    "description": "Zoom In",
    "text": "Zoom In"
   },
@@ -674,6 +701,7 @@
    "enabled": false,
    "id": "AD_EDITOR_ZOOM_OUT",
    "appDesignerEditorActionId": "zoomOut",
+   "icon": "zoomOut",
    "description": "Zoom Out",
    "text": "Zoom Out"
   },
@@ -682,6 +710,7 @@
    "enabled": false,
    "id": "AD_EDITOR_RESET_ZOOM",
    "appDesignerEditorActionId": "resetZoom",
+   "icon": "zoomReset",
    "description": "Reset zoom to default",
    "text": "Reset Zoom"
   },
@@ -691,6 +720,7 @@
    "id": "AD_EDITOR_SPELL_CHECKER",
    "appDesignerEditorActionId": "rtc_spell_checker",
    "icon": "check_formatText",
+   "quickAccessIcon": "check_formatText",
    "text": "Spelling",
    "description": "Check spelling"
   },
@@ -700,6 +730,8 @@
    "id": "AD_EDITOR_HIGHLIGHT_CURRENT_LINE",
    "text": "Highlight \nCurrent Line",
    "description": "Highlight current line",
+   "icon": "codeHighlighted",
+   "quickAccessIcon": "codeHighlighted",
    "selected": false
   },
   {
@@ -708,6 +740,8 @@
    "id": "AD_EDITOR_DATATIPS",
    "text": "Datatips",
    "description": "Enable datatips while editing",
+   "icon": "dataTip",
+   "quickAccessIcon": "dataTip",
    "selected": false
   },
   {
@@ -716,6 +750,8 @@
    "id": "AD_EDITOR_LINE_NUMBERS",
    "text": "Line \nNumbers",
    "description": "Display line numbers",
+   "icon": "lineNumbers",
+   "quickAccessIcon": "lineNumbers",
    "selected": false
   },
   {
@@ -723,6 +759,8 @@
    "enabled": false,
    "id": "AD_EDITOR_PAUSE",
    "appDesignerEditorActionId": "rtc_pause",
+   "icon": "pause",
+   "quickAccessIcon": "pause",
    "text": "Pause",
    "description": "Pausing at the next executable code line"
   },
@@ -731,6 +769,8 @@
    "enabled": false,
    "id": "AD_EDITOR_CONTINUE",
    "appDesignerEditorActionId": "rtc_continue",
+   "icon": "continue",
+   "quickAccessIcon": "continue",
    "text": "Continue",
    "description": "Continue running"
   },
@@ -739,6 +779,8 @@
    "enabled": false,
    "id": "AD_EDITOR_STEP",
    "appDesignerEditorActionId": "rtc_step",
+   "icon": "stepForward",
+   "quickAccessIcon": "stepForward",
    "text": "Step",
    "description": "Run next line"
   },
@@ -747,7 +789,9 @@
    "enabled": false,
    "id": "AD_EDITOR_STEP_IN",
    "appDesignerEditorActionId": "rtc_debug_step_in",
+   "icon": "stepForwardIn",
    "iconOverride": "stepIn",
+   "quickAccessIcon": "stepForwardIn",
    "text": "Step In",
    "description": "Run next line and step into function"
   },
@@ -756,7 +800,9 @@
    "enabled": false,
    "id": "AD_EDITOR_STEP_OUT",
    "appDesignerEditorActionId": "rtc_debug_step_out",
+   "icon": "stepForwardOut",
    "iconOverride": "stepOut",
+   "quickAccessIcon": "stepForwardOut",
    "text": "Step Out",
    "description": "Run until current function returns"
   },
@@ -765,6 +811,8 @@
    "enabled": false,
    "id": "AD_EDITOR_STOP",
    "appDesignerEditorActionId": "rtc_stop_execution",
+   "icon": "stop",
+   "quickAccessIcon": "stop",
    "text": "Stop",
    "description": "Quit execution"
   },
@@ -773,6 +821,8 @@
    "enabled": true,
    "id": "AD_EDITOR_CLEAR_ALL_BREAKPOINTS",
    "appDesignerEditorActionId": "rtc_clear_all_breakpoints",
+   "icon": "clear_breakpoints",
+   "quickAccessIcon": "clear_breakpoints",
    "text": "Clear All Breakpoints",
    "description": "Clear all breakpoints in all files"
   },
@@ -781,6 +831,8 @@
    "enabled": true,
    "id": "AD_EDITOR_TOGGLE_BREAKPOINT",
    "appDesignerEditorActionId": "rtc_toggle_breakpoint",
+   "icon": "breakpoint_code",
+   "quickAccessIcon": "breakpoint_code",
    "text": "Set/Clear",
    "description": "Set or Clear breakpoint on current Line"
   },
@@ -789,6 +841,8 @@
    "enabled": true,
    "id": "AD_EDITOR_TOGGLE_ENABLE_BREAKPOINT",
    "appDesignerEditorActionId": "rtc_toggle_enable_breakpoint",
+   "icon": "disable_breakpoint",
+   "quickAccessIcon": "disable_breakpoint",
    "text": "Enable/Disable",
    "description": "Enable or Disable on current Line"
   },
@@ -797,6 +851,7 @@
    "enabled": true,
    "id": "AD_EDITOR_TOGGLE_CONDITIONAL",
    "appDesignerEditorActionId": "rtc_toggle_conditional_breakpoint",
+   "icon": "set_conditionalBreakpoint",
    "text": "Set Condition",
    "description": "Set or modify conditional breakpoint"
   },
@@ -1578,7 +1633,8 @@
    "shortcut": "Ctrl++",
    "platformKey": {
     "mac": "meta_+"
-   }
+   },
+   "icon": "zoomIn"
   },
   {
    "name": "ZOOM_OUT",
@@ -1590,7 +1646,8 @@
    "shortcut": "Ctrl+-",
    "platformKey": {
     "mac": "meta_-"
-   }
+   },
+   "icon": "zoomOut"
   },
   {
    "name": "RESET_ZOOM",
@@ -1602,7 +1659,8 @@
    "shortcut": "Ctrl+Alt+0",
    "platformKey": {
     "mac": "meta_alt_0"
-   }
+   },
+   "icon": "zoomReset"
   },
   {
    "name": "FIT_TO_VIEW",
@@ -3600,6 +3658,7 @@
    "registration_framework_js/regFwkServiceProvider",
    "registration_framework_js/utils/PluginManager",
    "rendererseditors/editors/_BaseRichEditor",
+   "rtc/RTCToolstripMetaDataProvider",
    "rtc/RichTextComponentFeatureEnum",
    "rtc/resources/rich_text_component/nls/actions",
    "rtc/resources/rich_text_component/nls/execution",
@@ -4137,7 +4196,6 @@
    "performance/cache/simple-caches",
    "react/react.production.min",
    "regenerator-runtime/runtime",
-   "rtc/RTCToolstripMetaDataProvider",
    "rtc/plugins/debug/DebugServicesFactory",
    "settings/settingsService",
    "studio-controller-js/utilities/persistence",

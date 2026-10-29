@@ -78,6 +78,30 @@
                     </StackPanel>
                 </GroupBox>
 
+                <!-- App Designer: R2025b's settings page (preferences.xml), over matlab.appdesigner.* -->
+                <GroupBox Header="App Designer" Padding="8" Margin="0,0,0,10">
+                    <StackPanel>
+                        <TextBlock Text="Canvas" FontWeight="SemiBold" Margin="0,0,0,2" />
+                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                            <CheckBox x:Name="DesignShowGridBox" Content="Show grid with interval:" VerticalAlignment="Center" />
+                            <ComboBox x:Name="DesignGridIntervalCombo" Width="60" Margin="6,0,4,0" />
+                            <TextBlock Text="pixels" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <CheckBox x:Name="DesignSnapBox" Content="Snap to grid" Margin="0,2" />
+                        <CheckBox x:Name="DesignAlignmentHintsBox" Content="Show alignment hints" Margin="0,2" />
+                        <CheckBox x:Name="DesignResizingHintsBox" Content="Show resizing hints" Margin="0,2" />
+                        <TextBlock Text="Component Browser" FontWeight="SemiBold" Margin="0,8,0,2" />
+                        <CheckBox x:Name="DesignIncludeLabelsBox" Content="Include component labels in Component Browser" Margin="0,2" />
+                        <TextBlock Text="Most recently used file list" FontWeight="SemiBold" Margin="0,8,0,2" />
+                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                            <TextBlock Text="Number of entries:" VerticalAlignment="Center" />
+                            <ComboBox x:Name="DesignRecentCombo" Width="60" Margin="6,0,0,0" />
+                        </StackPanel>
+                        <TextBlock Text="Automatic file changes" FontWeight="SemiBold" Margin="0,8,0,2" />
+                        <CheckBox x:Name="DesignAutoSaveBox" Content="Save changes upon clicking away from an app" Margin="0,2" />
+                    </StackPanel>
+                </GroupBox>
+
                 <!-- Plugins -->
                 <GroupBox Header="Plugins" Padding="8">
                     <StackPanel>

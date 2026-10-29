@@ -53,4 +53,13 @@ public sealed class UserSettingsDto
     /// or null for automatic: the MinGW variable, then MSVC, then <c>PATH</c> (ADR 0181).
     /// </summary>
     public string? CCompiler { get; set; }
+
+    /// <summary>
+    /// App Designer's settings by R2025b's names (<c>matlab.appdesigner.designview.ShowGrid</c>), as
+    /// text; null or a missing name means the factory value (App Designer window plan, WO7).
+    /// </summary>
+    public Dictionary<string, string>? AppDesigner { get; set; }
+
+    /// <summary>The App Designer window's last place, "left,top,width,height[,max]" in device-independent pixels, or null.</summary>
+    public string? AppDesignerPlacement { get; set; }
 }

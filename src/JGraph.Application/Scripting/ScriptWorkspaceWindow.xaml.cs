@@ -96,6 +96,11 @@ public partial class ScriptWorkspaceWindow : Window
         _settings = settings;
         _options = options;
         _bugReports = bugReports;
+        if (settings is not null)
+        {
+            settings.Changed += (_, _) => AppDesignerSettingsSaved();
+        }
+
         _session = new ScriptSessionModel(engines.Where(e => e.IsAvailable).Select(e => e.Language));
         _session.StateChanged += (_, _) => Dispatcher.Invoke(UpdateCommandStates);
         DockManager.ActiveContentChanged += (_, _) => UpdateCommandStates(); // Run reflects the active tab

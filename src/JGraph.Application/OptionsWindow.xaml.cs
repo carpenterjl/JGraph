@@ -1,6 +1,7 @@
 using System.Windows;
 using JGraph.Application.Mvvm;
 using JGraph.Runtime.Desktop.Theming;
+using JGraph.Scripting.Designer;
 using Microsoft.Win32;
 
 namespace JGraph.Application;
@@ -40,6 +41,19 @@ public partial class OptionsWindow : Window
 
         PluginList.ItemsSource = model.Plugins;
         NoPluginsLabel.Visibility = model.Plugins.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+
+        // App Designer's settings (WO7): the grid interval from 10 to 50 by 5, the recent files 0 to 12.
+        DesignSettings design = model.AppDesigner;
+        DesignShowGridBox.IsChecked = design.GetBool(DesignSettings.ShowGrid);
+        DesignGridIntervalCombo.ItemsSource = Enumerable.Range(0, 9).Select(static i => 10 + 5 * i).ToList();
+        DesignGridIntervalCombo.SelectedItem = (int)design.GridIntervalValue;
+        DesignSnapBox.IsChecked = design.GetBool(DesignSettings.SnapToGrid);
+        DesignAlignmentHintsBox.IsChecked = design.GetBool(DesignSettings.ShowAlignmentHints);
+        DesignResizingHintsBox.IsChecked = design.GetBool(DesignSettings.ShowResizingHints);
+        DesignIncludeLabelsBox.IsChecked = design.GetBool(DesignSettings.IncludeComponentLabels);
+        DesignRecentCombo.ItemsSource = Enumerable.Range(0, 13).ToList();
+        DesignRecentCombo.SelectedItem = Math.Clamp(design.GetInt(DesignSettings.MaxFileListSize, 8), 0, 12);
+        DesignAutoSaveBox.IsChecked = design.GetBool(DesignSettings.AutoSaveOnClickAway);
     }
 
     private void OnBrowse(object sender, RoutedEventArgs e)
@@ -65,6 +79,23 @@ public partial class OptionsWindow : Window
         _model.SelectedAppTheme = AppThemeCombo.SelectedItem as AppThemeDescriptor ?? _model.SelectedAppTheme;
         _model.LinkFigureThemeToAppTheme = LinkFigureThemeBox.IsChecked == true;
         _model.SelectedCompiler = CompilerCombo.SelectedItem as JGraph.Scripting.LoadLibraryCompiler ?? _model.SelectedCompiler;
+        DesignSettings design = _model.AppDesigner;
+        design.Set(DesignSettings.ShowGrid, DesignShowGridBox.IsChecked == true);
+        if (DesignGridIntervalCombo.SelectedItem is int interval)
+        {
+            design.Set(DesignSettings.GridInterval, interval);
+        }
+
+        design.Set(DesignSettings.SnapToGrid, DesignSnapBox.IsChecked == true);
+        design.Set(DesignSettings.ShowAlignmentHints, DesignAlignmentHintsBox.IsChecked == true);
+        design.Set(DesignSettings.ShowResizingHints, DesignResizingHintsBox.IsChecked == true);
+        design.Set(DesignSettings.IncludeComponentLabels, DesignIncludeLabelsBox.IsChecked == true);
+        if (DesignRecentCombo.SelectedItem is int recent)
+        {
+            design.Set(DesignSettings.MaxFileListSize, recent);
+        }
+
+        design.Set(DesignSettings.AutoSaveOnClickAway, DesignAutoSaveBox.IsChecked == true);
         _model.Apply();
 
         if (_model.PluginsChanged)
