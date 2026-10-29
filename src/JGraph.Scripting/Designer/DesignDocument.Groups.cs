@@ -36,6 +36,7 @@ public sealed partial class DesignDocument
         _selection = leaves;
         if (!same)
         {
+            _anchor = null;
             OnChanged();
         }
     }

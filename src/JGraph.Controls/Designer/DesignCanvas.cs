@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using JGraph.Controls.Themes;
 using JGraph.Core.Primitives;
 using JGraph.Scripting.Designer;
@@ -18,7 +19,9 @@ namespace JGraph.Controls.Designer;
 /// (<see cref="DrawEntry"/>) is placed or drawn by the next press, one dragged from the library is
 /// added where it is dropped, and Delete deletes the selection. DS4: a grid's cells as App Designer
 /// shows them, the cells a drop goes into, a grid child's span being resized, the configure button,
-/// a grid being configured with its bands and popup, and the context menu.
+/// a grid being configured with its bands and popup, and the context menu. W4: the figure resized
+/// by its edges, the anchor of a selection outlined 2 pixels wide, Visualize Tab Order's outline
+/// going from component to component, and a library entry dropped with Ctrl held without its label.
 /// </summary>
 public sealed class DesignCanvas : UserControl
 {
@@ -64,6 +67,9 @@ public sealed class DesignCanvas : UserControl
     private double _gridInterval = DesignGeometry.GridInterval;
     private bool _showAlignmentHints = true;
     private bool _drawing;
+    private readonly DispatcherTimer _tabOrderTimer = new() { Interval = TimeSpan.FromMilliseconds(DesignGestures.VisualizeStep) };
+    private IReadOnlyList<DesignComponent> _tabOrder = [];
+    private int _tabOrderAt = -1;
 
     public DesignCanvas()
     {
@@ -107,6 +113,7 @@ public sealed class DesignCanvas : UserControl
         };
         scroll.SetResourceReference(BackgroundProperty, ThemeKeys.Panel);
         Content = scroll;
+        _tabOrderTimer.Tick += (_, _) => StepTabOrder();
     }
 
     /// <summary>Raised when the selection, the design or a gesture's state changed, for the window's status and commands.</summary>
@@ -117,6 +124,9 @@ public sealed class DesignCanvas : UserControl
 
     /// <summary>Raised with what a grid's configuring refused (a weight past 100, a size that is no number).</summary>
     public event EventHandler<string>? Problem;
+
+    /// <summary>Raised with an alert App Designer shows in a dialog of its own: a title and a message (Add Label's refusal).</summary>
+    public event EventHandler<(string Title, string Message)>? Alerted;
 
     /// <summary>The library entry the next press places or draws (App Designer's click and draw); null when none.</summary>
     public DesignPaletteEntry? DrawEntry
@@ -151,7 +161,11 @@ public sealed class DesignCanvas : UserControl
                 _gestures?.EndConfigure();
                 _document.Changed -= OnChanged;
                 _gestures!.Changed -= OnChanged;
+                _gestures.TabOrderShown -= OnTabOrderShown;
+                _gestures.Alerted -= OnAlerted;
             }
+
+            StopTabOrder();
 
             _popup.Hide();
 
@@ -165,10 +179,13 @@ public sealed class DesignCanvas : UserControl
                 {
                     TabHeadingAt = at => _layer.TabHeadingAt(new Point(at.X, at.Y)) is { } tab ? value.Runtime.ComponentOf(tab) : null,
                     DragThreshold = System.Math.Max(SystemParameters.MinimumHorizontalDragDistance, SystemParameters.MinimumVerticalDragDistance),
+                    FigureLeftRoom = Gutter - 2,
                 };
                 ApplyOptions();
                 value.Changed += OnChanged;
                 _gestures.Changed += OnChanged;
+                _gestures.TabOrderShown += OnTabOrderShown;
+                _gestures.Alerted += OnAlerted;
                 if (value.Selection.Count == 0)
                 {
                     value.Select([]);
@@ -279,6 +296,7 @@ public sealed class DesignCanvas : UserControl
             Size2D size = document.Runtime.Figure.Size;
             _surface.Width = size.Width;
             _surface.Height = size.Height;
+            _surface.Margin = new System.Windows.Thickness(Gutter + (_gestures?.FigureShift ?? 0), Gutter, Gutter, Gutter);
             _outer.Width = size.Width + (2 * Gutter);
             _outer.Height = size.Height + (2 * Gutter);
             _layer.Apply(document.Runtime.TakeFrame());
@@ -291,6 +309,44 @@ public sealed class DesignCanvas : UserControl
 
     /// <summary>Cancels a gesture under way: its components go back to where they were.</summary>
     public void CancelGesture() => _gestures?.Cancel();
+
+    /// <summary>Shows <paramref name="order"/>'s tab order: each one outlined in turn, at most <paramref name="limit"/> of them (null for all).</summary>
+    public void ShowTabOrder(IReadOnlyList<DesignComponent> order, int? limit = null) => _gestures?.ShowTabOrder(order, limit);
+
+    /// <summary>The component Visualize Tab Order outlines now; null when it shows none.</summary>
+    public DesignComponent? TabOrderShown => _tabOrderAt >= 0 && _tabOrderAt < _tabOrder.Count ? _tabOrder[_tabOrderAt] : null;
+
+    // App Designer's animClassOnElements: the class on each element for 500 ms, one after another.
+    private void OnTabOrderShown(object? sender, (IReadOnlyList<DesignComponent> Order, int? Limit) shown)
+    {
+        _tabOrder = shown.Limit is { } limit ? shown.Order.Take(limit).ToArray() : shown.Order;
+        _tabOrderAt = 0;
+        _tabOrderTimer.Stop();
+        _tabOrderTimer.Start();
+        _overlay.InvalidateVisual();
+        DesignChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void OnAlerted(object? sender, (string Title, string Message) alert) => Alerted?.Invoke(this, alert);
+
+    private void StepTabOrder()
+    {
+        if (++_tabOrderAt >= _tabOrder.Count)
+        {
+            StopTabOrder();
+        }
+
+        _overlay.InvalidateVisual();
+        DesignChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void StopTabOrder()
+    {
+        _tabOrderTimer.Stop();
+        _tabOrder = [];
+        _tabOrderAt = -1;
+        _overlay.InvalidateVisual();
+    }
 
     // --- input -------------------------------------------------------------------------------------
 
@@ -456,6 +512,11 @@ public sealed class DesignCanvas : UserControl
             Key.G when Keyboard.Modifiers == ModifierKeys.Control => DesignKey.Group,
             _ => null,
         };
+        if (e.Key == Key.Escape && _tabOrderAt >= 0)
+        {
+            StopTabOrder();
+        }
+
         if (!e.Handled && key is { } pressed && _gestures?.KeyDown(pressed, Modifiers()) == true)
         {
             if (pressed == DesignKey.Escape)
@@ -512,7 +573,7 @@ public sealed class DesignCanvas : UserControl
         }
 
         Point at = e.GetPosition(_overlay);
-        gestures.Drop(entry, new Point2D(at.X - Gutter, at.Y - Gutter));
+        gestures.Drop(entry, new Point2D(at.X - Gutter, at.Y - Gutter), withoutLabel: (e.KeyStates & DragDropKeyStates.ControlKey) != 0);
         Focus();
         e.Handled = true;
     }
@@ -533,7 +594,7 @@ public sealed class DesignCanvas : UserControl
         outline.Freeze();
         var dashed = new Pen(accent, 1) { DashStyle = DashStyles.Dash };
         dashed.Freeze();
-        dc.PushTransform(new TranslateTransform(Gutter, Gutter));
+        dc.PushTransform(new TranslateTransform(Gutter + gestures.FigureShift, Gutter));
         Size2D size = document.Runtime.Figure.Size;
 
         if (_showGrid)
@@ -584,13 +645,18 @@ public sealed class DesignCanvas : UserControl
 
         // A component selected on its own is outlined; a group selected whole has its outline 4
         // pixels outside its box (GROUP_SELECTION_BORDER_OFFSET_PX) and its members marked (open item 150).
+        // The anchor of two or more is outlined 2 pixels wide (ad-layout-anchor, W4).
+        var anchorPen = new Pen(accent, 2);
+        anchorPen.Freeze();
+        DesignPick? anchor = document.Anchor;
         foreach (DesignPick pick in document.Picks)
         {
+            bool isAnchor = anchor is { } a && ((a.Component is not null && ReferenceEquals(a.Component, pick.Component)) || (a.Group is not null && ReferenceEquals(a.Group, pick.Group)));
             if (pick.Group is { } group)
             {
                 if (document.BoxOfGroup(group) is { } gb)
                 {
-                    dc.DrawRectangle(null, outline, Inset(new Rect(gb.X - 4, gb.Y - 4, gb.Width + 8, gb.Height + 8)));
+                    dc.DrawRectangle(null, isAnchor ? anchorPen : outline, Inset(new Rect(gb.X - 4, gb.Y - 4, gb.Width + 8, gb.Height + 8)));
                 }
 
                 foreach (DesignComponent member in group.AllComponents())
@@ -612,8 +678,18 @@ public sealed class DesignCanvas : UserControl
             else if (document.BoxOf(selected) is { Shown: true } box)
             {
                 // A grid's child is outlined on its cells (DS4).
-                dc.DrawRectangle(null, outline, Inset(Wpf(document.CellBoxOf(selected) ?? box.Box)));
+                Rect r = Wpf(document.CellBoxOf(selected) ?? box.Box);
+                dc.DrawRectangle(null, isAnchor ? anchorPen : outline, isAnchor ? new Rect(r.X + 1, r.Y + 1, System.Math.Max(r.Width - 2, 0), System.Math.Max(r.Height - 2, 0)) : Inset(r));
             }
+        }
+
+        // Visualize Tab Order: the component focus would be on, outlined 2 pixels wide (ad-tab-order-animation).
+        if (TabOrderShown is { } focused && document.BoxOf(focused) is { Shown: true } focusBox)
+        {
+            var focusPen = new Pen(TryFindResource(ThemeKeys.Accent) as Brush ?? Brushes.DodgerBlue, 2);
+            focusPen.Freeze();
+            Rect f = Wpf(document.CellBoxOf(focused) ?? focusBox.Box);
+            dc.DrawRectangle(null, focusPen, new Rect(f.X - 1, f.Y - 1, f.Width + 2, f.Height + 2));
         }
 
         foreach (DesignHandle handle in gestures.Handles())

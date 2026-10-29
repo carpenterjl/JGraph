@@ -303,6 +303,8 @@ internal sealed partial class AppDesignerWindow : Window
         designButton.Unchecked += (_, _) => { if (codeButton.IsChecked != true) { designButton.IsChecked = true; } };
         codeButton.Unchecked += (_, _) => { if (designButton.IsChecked != true) { codeButton.IsChecked = true; } };
         AttachTab(app);
+        AddArrangeKeys(canvas);
+        canvas.Alerted += (_, alert) => ShowAlert(alert.Title, alert.Message);
         canvas.DesignChanged += (_, _) =>
         {
             ShowHeader(app);
@@ -310,6 +312,7 @@ internal sealed partial class AppDesignerWindow : Window
             {
                 ShowState();
                 ShowTitle();
+                ShowArrangeState();
             }
 
             CommandManager.InvalidateRequerySuggested();

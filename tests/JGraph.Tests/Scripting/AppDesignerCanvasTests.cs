@@ -612,9 +612,10 @@ public class AppDesignerCanvasTests(ITestOutputHelper output)
         string text = DesignCodeWriter.Splice(AppDesignerDocument.NewAppText(), design)!;
         using DesignDocument document = DesignDocument.FromText(text, null);
         DesignComponent gauges = document.Design.Find("GaugesTab")!;
-        var gestures = new DesignGestures(document) { TabHeadingAt = at => at.X < 0 ? gauges : null };
+        // The layer's heading stands in at the figure's top edge, which no figure edge takes (W4's edges are right, bottom and left).
+        var gestures = new DesignGestures(document) { TabHeadingAt = at => at.Y < 1 ? gauges : null };
         Assert.False(document.Runtime.Boxes().Single(b => b.Component == document.Design.Find("Knob")).Shown);
-        Assert.False(gestures.Press(new Point2D(-1, 0), DesignButton.Left, DesignModifiers.None));
+        Assert.False(gestures.Press(new Point2D(150, 0), DesignButton.Left, DesignModifiers.None));
         Assert.Equal([gauges], document.Selection);
         Assert.True(document.Boxes.Single(b => b.Component == document.Design.Find("Knob")).Shown);
     }

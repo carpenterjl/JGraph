@@ -723,6 +723,7 @@ public sealed partial class DesignDocument : IDisposable
         {
             _picks = picks;
             _selection = picks.SelectMany(static p => p.Leaves()).Distinct(ReferenceEqualityComparer.Instance).Cast<DesignComponent>().ToArray();
+            _anchor = step.OfType<PicksEdit>().LastOrDefault()?.AnchorPick; // the arrange commands set it back (W4)
         }
         else if (touched.Length > 0 && touched.Length == _selection.Count && touched.All(t => _selection.Contains(t, ReferenceEqualityComparer.Instance))
             && _picks.All(p => p.Leaves().All(IsInDesign)))
@@ -733,6 +734,7 @@ public sealed partial class DesignDocument : IDisposable
         {
             _picks = touched.Length > 0 ? Promoted(touched) : [DesignPick.Of(Design.Figure)];
             _selection = _picks.SelectMany(static p => p.Leaves()).Distinct(ReferenceEqualityComparer.Instance).Cast<DesignComponent>().ToArray();
+            _anchor = null;
         }
 
         DesignTheme theme = DesignCodeStyle.ThemeOf(Design);
@@ -806,11 +808,13 @@ public sealed partial class DesignDocument : IDisposable
     /// <see cref="ContainerFor"/> gives for <paramref name="target"/>, the top-left corner of its box at
     /// <paramref name="topLeft"/> on the surface, in whole pixels, kept inside a container that is not
     /// the figure; a drawn <paramref name="size"/> is the component's own. Named and made as App
-    /// Designer's palette names and makes them; what is added is selected.
+    /// Designer's palette names and makes them; what is added is selected. With
+    /// <paramref name="withoutLabel"/> - Ctrl held as the entry is dragged or drawn - a labelled entry
+    /// adds its component alone (App Designer's optional entry, W4).
     /// </summary>
     /// <returns>The components added to the container.</returns>
     /// <exception cref="InvalidOperationException">The entry is one the designer does not make yet.</exception>
-    public IReadOnlyList<DesignComponent> Add(DesignPaletteEntry entry, DesignComponent target, Point2D topLeft, Size2D? size = null)
+    public IReadOnlyList<DesignComponent> Add(DesignPaletteEntry entry, DesignComponent target, Point2D topLeft, Size2D? size = null, bool withoutLabel = false)
     {
         ArgumentNullException.ThrowIfNull(entry);
         ArgumentNullException.ThrowIfNull(target);
@@ -836,7 +840,7 @@ public sealed partial class DesignDocument : IDisposable
         }
 
         DesignComponent parent = ContainerFor(entry, target);
-        IReadOnlyList<(DesignComponent Component, int? Index)> made = MakeFromEntry(entry, parent, size);
+        IReadOnlyList<(DesignComponent Component, int? Index)> made = MakeFromEntry(entry, parent, size, withoutLabel);
         Place(parent, made.Select(static m => m.Component).ToArray(), topLeft);
 
         List<Edit> step = made.Select(m => (Edit)new AddEdit(m.Component, parent, m.Index)).ToList();
@@ -856,8 +860,8 @@ public sealed partial class DesignDocument : IDisposable
 
     /// <summary>What <paramref name="entry"/> makes for <paramref name="parent"/>: App Designer's palette's components, or a custom component (DS7b).</summary>
     /// <exception cref="InvalidOperationException">The entry is one the designer does not make, or a custom component whose class the runtime cannot make.</exception>
-    private IReadOnlyList<(DesignComponent Component, int? Index)> MakeFromEntry(DesignPaletteEntry entry, DesignComponent parent, Size2D? size = null) =>
-        entry.UserComponent is { } user ? [(MakeUserComponent(user, size), null)] : Palette.Make(entry, Design, parent, new Point2D(0, 0), size);
+    private IReadOnlyList<(DesignComponent Component, int? Index)> MakeFromEntry(DesignPaletteEntry entry, DesignComponent parent, Size2D? size = null, bool withoutLabel = false) =>
+        entry.UserComponent is { } user ? [(MakeUserComponent(user, size), null)] : Palette.Make(entry, Design, parent, new Point2D(0, 0), size, withoutLabel);
 
     /// <summary>
     /// A new custom component (designer plan DS7b, <c>_UserComponentEntryDefinition._makeEntryData</c>):

@@ -380,8 +380,12 @@ public class AppDesignerGroupCanvasTests
         document.SelectPicks([DesignPick.Of(b1), DesignPick.Of(b3)]);
         Assert.False(document.CanGroup);
         IReadOnlyList<DesignMenuItem> menu = gestures.MenuAt(Centre(document.BoxOf(b3)!.Value.Box));
-        Assert.Equal([("Group", false), ("Add to Group", false), ("Remove from Group", false), ("Ungroup", false)],
-            menu.Where(static i => i.Label.Contains("group", StringComparison.OrdinalIgnoreCase)).Select(static i => (i.Label, i.Enabled)));
+
+        // The grouping actions are the Layout items' Group submenu (LayoutMenuItemsProvider, W4), disabled when all four are.
+        DesignMenuItem grouping = menu.Single(static i => i.Label == "Group");
+        Assert.False(grouping.Enabled);
+        Assert.Equal([("Group", false), ("Add to Group", false), ("Remove from Group", false), ("-", false), ("Ungroup", false)],
+            grouping.Items!.Select(static i => (i.Label, i.Enabled)));
     }
 
     // --- a group member in a grid -----------------------------------------------------------------------

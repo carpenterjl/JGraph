@@ -940,6 +940,28 @@ public sealed class DesignRuntime : IDisposable
         _layout = null;
     }
 
+    /// <summary>
+    /// Stacks <paramref name="container"/>'s components and axes in the runtime as the design orders
+    /// them, the later in front - each brought to the top of its kind in turn (<c>uistack</c>) - once
+    /// Reorder or the tab order has put them in another order (W4). Menus, context menus and toolbars
+    /// are not stacked.
+    /// </summary>
+    public void Restack(DesignComponent container)
+    {
+        ArgumentNullException.ThrowIfNull(container);
+        using Scope scope = Enter();
+        foreach (DesignComponent child in container.Children)
+        {
+            if (child.Type is not ("matlab.ui.container.Menu" or "matlab.ui.container.ContextMenu" or "matlab.ui.container.Toolbar")
+                && _objects.TryGetValue(child, out GraphObject? target) && target is UiObject or AxesModel)
+            {
+                Run($"uistack({App}.{child.CodeName}, 'top');");
+            }
+        }
+
+        _layout = null;
+    }
+
     /// <summary>Sets the theme the design's code is written under; the components already made keep what they hold.</summary>
     public void SetTheme(DesignTheme theme) => Theme = theme;
 

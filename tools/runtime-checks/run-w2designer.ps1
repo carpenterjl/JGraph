@@ -196,7 +196,7 @@ try {
     $canvasTab.Select()
     Start-Sleep -Milliseconds 500
     $align = Find-InProcess $p.Id 'appDesignerToolstrip.layoutTab.align.left'
-    Check ($align -and -not $align.Current.IsEnabled) 'Align Left is disabled (W4)'
+    Check ($align -and -not $align.Current.IsEnabled) 'Align Left is disabled with the figure selected (it takes two, W4)'
     $grouping = Find-InProcess $p.Id 'appDesignerToolstrip.layoutTab.arrange.groupButton'
     Check ($grouping -and $grouping.Current.IsEnabled) 'Grouping is enabled'
     Check (Save-Picture $hwnd (Join-Path $WorkRoot 'canvas.png')) 'a picture of the CANVAS tab'

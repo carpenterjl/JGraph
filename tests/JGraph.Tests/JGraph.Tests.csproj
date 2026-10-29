@@ -101,6 +101,7 @@
        modules, run unaltered under node over fixed and seeded-random grids. -->
   <ItemGroup>
     <Content Include="Scripting\Designer\GridRulesOracle.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Scripting\Designer\DesignArrangeOracle.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Scripting\Designer\GridRulesVerifyOracle.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

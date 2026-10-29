@@ -88,6 +88,15 @@ public static class DesignToolstrip
     /// <summary>A recent file's item; JGraph adds "." and the file's place in the list, so the window knows which was chosen.</summary>
     public const string RecentFilesItem = OpenMenu + ".recentFiles.item";
 
+    /// <summary>CANVAS > ARRANGE > Reorder, the drop-down.</summary>
+    public const string ReorderButton = Prefix + "layoutTab.arrange.reorderButton";
+
+    /// <summary>CANVAS > ARRANGE > Tab Order, the drop-down.</summary>
+    public const string TabOrderButton = Prefix + "layoutTab.arrange.tabOrderButton";
+
+    /// <summary>CANVAS > SPACE's box: "Evenly" or the pixels between.</summary>
+    public const string SpacingCombo = Prefix + "layoutTab.spacing.combo";
+
     private static readonly Lazy<Recording> Recorded = new(Read);
 
     /// <summary>The layout: R2025b's as recorded, with the grid interval spinner's limits and step (<see cref="DesignGeometry"/>).</summary>

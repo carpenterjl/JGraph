@@ -177,6 +177,18 @@ public sealed class DesignPalette
     public Size2D DesignTimeSize(string type) =>
         _designTime.TryGetValue(type, out var made) ? made.Size : new Size2D(100, 22);
 
+    /// <summary>
+    /// Where the label of <paramref name="type"/>'s library entry goes - the class's labelled entry
+    /// definition (<c>hasLabel</c>, <c>getLabelConfig</c>) - or <see cref="DesignLabelPlace.None"/>
+    /// for a class whose entry comes with no label.
+    /// </summary>
+    public DesignLabelPlace LabelPlaceOf(string type) =>
+        Entries.FirstOrDefault(e => e.Type == type && e.Label != DesignLabelPlace.None)?.Label ?? DesignLabelPlace.None;
+
+    /// <summary>The width of the box a new <paramref name="type"/>'s ticks or labels take (its <c>OuterSize(1)</c> as the library makes it).</summary>
+    public double DefaultOuterWidth(string type) =>
+        Outer.TryGetValue(type, out var o) ? o.Width : DesignTimeSize(type).Width;
+
     /// <summary>The values the design-time component of <paramref name="type"/> holds that its generated code writes, its position apart.</summary>
     public IReadOnlyList<KeyValuePair<string, DesignValue>> DesignTimeValues(string type) =>
         _designTime.TryGetValue(type, out var made) ? made.Values : [];
@@ -208,9 +220,13 @@ public sealed class DesignPalette
     /// drawn <paramref name="size"/> is the component's own (null for the class's). The figure tools
     /// have none.
     /// </summary>
+    /// <remarks>
+    /// With <paramref name="withoutLabel"/> a labelled entry makes its component alone (App Designer's
+    /// optional entry, a drag or a draw with Ctrl held), named and placed as an entry with no label.
+    /// </remarks>
     /// <returns>The components to put in <paramref name="parent"/>, in order, and where in its children each goes (null for last).</returns>
     public IReadOnlyList<(DesignComponent Component, int? Index)> Make(
-        DesignPaletteEntry entry, AppDesign design, DesignComponent parent, Point2D corner, Size2D? size = null)
+        DesignPaletteEntry entry, AppDesign design, DesignComponent parent, Point2D corner, Size2D? size = null, bool withoutLabel = false)
     {
         ArgumentNullException.ThrowIfNull(entry);
         ArgumentNullException.ThrowIfNull(design);
@@ -221,7 +237,7 @@ public sealed class DesignPalette
         }
 
         var names = new Names(design);
-        if (entry.Label != DesignLabelPlace.None)
+        if (entry.Label != DesignLabelPlace.None && !withoutLabel)
         {
             return MakeLabeled(entry, names, corner, size);
         }
@@ -417,6 +433,24 @@ public sealed class DesignPalette
         label.Set("Position", NumericValue.Row(corner.X + labelX, corner.Y + labelY, labelSize.Width, labelSize.Height));
         component.Set("Position", NumericValue.Row(corner.X + componentX + left, corner.Y + componentY + bottom, own.Width, own.Height));
         return [(label, null), (component, null)];
+    }
+
+    /// <summary>
+    /// The label Add Label gives a <paramref name="type"/> already in <paramref name="design"/>
+    /// (<c>AddLabelToComponentCommand</c>): named, and its text counted, as the label of a new labelled
+    /// component of the class would be (the entry's naming function); aligned as the entry's label is;
+    /// sized to its text (<c>updateLabelSize</c>). It has no position yet.
+    /// </summary>
+    public DesignComponent MakeLabelFor(string type, AppDesign design)
+    {
+        ArgumentNullException.ThrowIfNull(type);
+        ArgumentNullException.ThrowIfNull(design);
+        var names = new Names(design);
+        (_, string labelCodeName, string text) = DesignNames.ForNewLabeled(type, names.CodeNames, names.Texts);
+        DesignComponent label = New(labelCodeName, Label);
+        label.Set("HorizontalAlignment", new CharValue(LabelPlaceOf(type) == DesignLabelPlace.SouthCenter ? "center" : "right"));
+        label.Set("Text", new CharValue(text));
+        return label;
     }
 
     /// <summary>JavaScript's <c>Math.round</c>: halves up.</summary>

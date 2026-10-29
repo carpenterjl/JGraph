@@ -327,6 +327,27 @@ public sealed partial class Toolstrip : Border
     /// <summary>Whether the toggle or check item with this tag or action id is pressed.</summary>
     public bool IsSelected(string id) => _selected.TryGetValue(id, out bool selected) && selected;
 
+    /// <summary>An input's value as it stands (a spinner's number, a combo box's or a text field's text, typed or chosen); null for no such input.</summary>
+    public string? GetValue(string tag)
+    {
+        foreach (FrameworkElement element in Elements(tag))
+        {
+            switch (element)
+            {
+                case ToolstripSpinnerBox spinner:
+                    return spinner.Spinner.Text;
+                case ComboBox combo when combo.IsEditable:
+                    return combo.Text;
+                case ComboBox combo:
+                    return combo.SelectedItem as string;
+                case TextBox box:
+                    return box.Text;
+            }
+        }
+
+        return null;
+    }
+
     /// <summary>Sets an input's value (a spinner's number, a combo box's or a text field's text), without raising <see cref="Invoked"/>.</summary>
     public void SetValue(string tag, string value)
     {

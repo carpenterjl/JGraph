@@ -501,10 +501,12 @@ public sealed partial class DesignDocument
     /// <summary>
     /// Adds what <paramref name="entry"/> makes into <paramref name="grid"/>'s cells, as one edit:
     /// each component the entry makes takes the span given for it, in order (a label's, then its
-    /// component's), its place a row and a column rather than a position.
+    /// component's), its place a row and a column rather than a position. With
+    /// <paramref name="withoutLabel"/> a labelled entry's component goes alone into the first span,
+    /// where the pointer is (W4).
     /// </summary>
     /// <returns>The components added.</returns>
-    public IReadOnlyList<DesignComponent> AddToGrid(DesignPaletteEntry entry, DesignComponent grid, IReadOnlyList<GridSpan> spans)
+    public IReadOnlyList<DesignComponent> AddToGrid(DesignPaletteEntry entry, DesignComponent grid, IReadOnlyList<GridSpan> spans, bool withoutLabel = false)
     {
         ArgumentNullException.ThrowIfNull(entry);
         ArgumentNullException.ThrowIfNull(grid);
@@ -515,7 +517,12 @@ public sealed partial class DesignDocument
             return [AddGridInGrid(grid, spans[0])];
         }
 
-        IReadOnlyList<(DesignComponent Component, int? Index)> made = MakeFromEntry(entry, grid);
+        IReadOnlyList<(DesignComponent Component, int? Index)> made = MakeFromEntry(entry, grid, withoutLabel: withoutLabel);
+        if (withoutLabel && made.Count == 1 && spans.Count == 2)
+        {
+            spans = [spans[0]];
+        }
+
         if (made.Count != spans.Count)
         {
             throw new ArgumentException($"The entry makes {made.Count} components, and {spans.Count} cells were given.", nameof(spans));

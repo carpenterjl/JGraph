@@ -40,8 +40,8 @@ public static class DesignActions
     /// The actions JGraph runs since stage W2: the file commands it had, the grid and grouping
     /// commands, the Code View's insertions and Code Options, Find (the code editor's own search),
     /// cut, copy and paste in the Code View, help, the shortcuts dialog and the document tab's menu;
-    /// since W3, the Start Page and its new apps (a new custom component waits for W15). The grid
-    /// layout actions run from the canvas's context menu (designer plan DS4).
+    /// since W3, the Start Page and its new apps (a new custom component waits for W15); since W4, the
+    /// arrange actions. The grid layout actions run from the canvas's context menu (designer plan DS4).
     /// </summary>
     private static readonly HashSet<string> Live = new(StringComparer.Ordinal)
     {
@@ -58,6 +58,15 @@ public static class DesignActions
         "CHANGE_CURRENT_WORKING_DIRECTORY", "ADD_TO_SEARCH_PATH", "REMOVE_FROM_SEARCH_PATH", "OPEN_IN_FILE_MANAGER", "COPY_TO_CLIPBOARD",
         // Stage W3: the Start Page (New, the tab menu's New App) and the apps its tiles make.
         "OPEN_STARTSCREEN_DIALOG", "AD_NEW", "AD_NEW_2COL_APP", "AD_NEW_3COL_APP",
+        // Stage W4: arranging - Align, Same Size, Space, Reorder, Tab Order, Add Label and the font keys.
+        "AD_DESIGN_ALIGN_LEFT", "AD_DESIGN_ALIGN_CENTER", "AD_DESIGN_ALIGN_RIGHT", "AD_DESIGN_ALIGN_TOP", "AD_DESIGN_ALIGN_MIDDLE", "AD_DESIGN_ALIGN_BOTTOM",
+        "AD_DESIGN_SIZE_SAME_SIZE", "AD_DESIGN_SIZE_SAME_WIDTH", "AD_DESIGN_SIZE_SAME_HEIGHT",
+        "AD_DESIGN_SPACING_HORZ", "AD_DESIGN_SPACING_VERT", "AD_DESIGN_SPACING_COMBO",
+        "AD_DESIGN_REORDER_COMPONENT_FRONT", "AD_DESIGN_REORDER_COMPONENT_FORWARD", "AD_DESIGN_REORDER_COMPONENT_BACKWARD",
+        "AD_DESIGN_REORDER_COMPONENT_BACK", "AD_DESIGN_REORDER_COMPONENT_ALL_OPTIONS",
+        "AD_DESIGN_TABORDER_APP_AUTO", "AD_DESIGN_TABORDER_APP_VISUALIZE", "AD_DESIGN_TABORDER_ALL_OPTIONS",
+        "AD_DESIGN_FONT_BOLD", "AD_DESIGN_FONT_ITALIC", "AD_DESIGN_FONT_INCREMENT", "AD_DESIGN_FONT_DECREMENT",
+        "AD_ADD_LABEL",
     };
 
     /// <summary>Every action, by id.</summary>
@@ -104,10 +113,6 @@ public static class DesignActions
             "EDITOR_SPELL_CHECKER" => "X9",
             // MathWorks' own example apps and guided tutorials: JGraph shows its own examples (WO2).
             _ when name.StartsWith("EXAMPLE_", StringComparison.Ordinal) || name.StartsWith("TUTORIAL_", StringComparison.Ordinal) => "X8",
-            _ when name.StartsWith("DESIGN_ALIGN_", StringComparison.Ordinal) || name.StartsWith("DESIGN_SIZE_", StringComparison.Ordinal)
-                || name.StartsWith("DESIGN_SPACING_", StringComparison.Ordinal) || name.StartsWith("DESIGN_REORDER_COMPONENT_", StringComparison.Ordinal)
-                || name.StartsWith("DESIGN_TABORDER_", StringComparison.Ordinal) || name.StartsWith("DESIGN_FONT_", StringComparison.Ordinal)
-                || name == "ADD_LABEL" => "W4",
             "DUPLICATE" or "SELECT_ALL" or "EDIT_MODE" => "W5",
             _ when name.StartsWith("DESIGN_MENU", StringComparison.Ordinal) || name.StartsWith("DESIGN_TREE_", StringComparison.Ordinal)
                 || name.StartsWith("DESIGN_TOOL", StringComparison.Ordinal) || name.StartsWith("DESIGN_REORDER_", StringComparison.Ordinal) => "W5",

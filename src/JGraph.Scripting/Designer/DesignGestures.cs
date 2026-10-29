@@ -92,6 +92,12 @@ public sealed class DesignGestures
     /// <summary>The side of a resize handle.</summary>
     public const double HandleSize = 7;
 
+    /// <summary>How long Visualize Tab Order shows each component, in milliseconds (<c>MILLISECONDS_PER_COMPONENT</c>).</summary>
+    public const int VisualizeStep = 500;
+
+    /// <summary>How many components the canvas menu's Apply Auto Tab Order shows (<c>MAX_TIME_TO_ANIMATE</c> over <see cref="VisualizeStep"/>).</summary>
+    public const int VisualizeLimit = 3000 / VisualizeStep;
+
     /// <summary>How deep a container's edge is where a press moves it rather than drawing a band.</summary>
     public const double ContainerEdge = 6;
 
@@ -115,6 +121,8 @@ public sealed class DesignGestures
     private DesignSplitter? _splitter;
     private DesignRegionResize? _regionResize;
     private double _splitAnchor;
+    private Size2D _figureStart;
+    private bool _drawWithoutLabel;
 
     /// <summary>The gestures on <paramref name="document"/>.</summary>
     public DesignGestures(DesignDocument document)
@@ -143,6 +151,27 @@ public sealed class DesignGestures
 
     /// <summary>How far a press must travel before it is a drag.</summary>
     public double DragThreshold { get; set; } = 4;
+
+    /// <summary>
+    /// How far left of the figure its left edge may be dragged (W4): the room the canvas shows there,
+    /// less App Designer's 2-pixel inset from the view's edge (<c>VIEWPORT_EDGE_INSET</c>).
+    /// </summary>
+    public double FigureLeftRoom { get; set; } = 22;
+
+    /// <summary>The size the figure is being resized to by an edge, which the canvas shows; null when it is not.</summary>
+    public Size2D? FigureSize { get; private set; }
+
+    /// <summary>How far left a drag of the figure's left edge has its left edge, 0 or less, while <see cref="FigureSize"/> is shown.</summary>
+    public double FigureShift { get; private set; }
+
+    /// <summary>
+    /// Raised with the components whose tab order a Visualize Tab Order shows, one after another (W4,
+    /// <c>VisualizeTabOrderCommand</c>), and how many of them at most - null for all.
+    /// </summary>
+    public event EventHandler<(IReadOnlyList<DesignComponent> Order, int? Limit)>? TabOrderShown;
+
+    /// <summary>Raised with what App Designer says in an alert of its own: a title and a message (Add Label's refusal, W4).</summary>
+    public event EventHandler<(string Title, string Message)>? Alerted;
 
     /// <summary>Whether a press is held: the canvas keeps the mouse until it is released.</summary>
     public bool IsPressed => _press != PressState.None;
@@ -245,6 +274,7 @@ public sealed class DesignGestures
         Drawing,
         Spanning,
         Splitting,
+        FigureResizing,
     }
 
     private enum Intent
@@ -255,6 +285,7 @@ public sealed class DesignGestures
         Band,
         Span,
         Split,
+        FigureResize,
     }
 
     // --- the mouse -------------------------------------------------------------------------------
@@ -325,6 +356,7 @@ public sealed class DesignGestures
             }
 
             _drawIn = drawIn;
+            _drawWithoutLabel = modifiers.HasFlag(DesignModifiers.Control); // App Designer's optional entry (beginComponentDraw)
             if (document.IsGrid(container) && drawIn.Spans is { } spans)
             {
                 _down = at;
@@ -358,6 +390,13 @@ public sealed class DesignGestures
             return Begin(document.IsGridChild(handle.Component) ? Intent.Span : Intent.Resize, handle.Component, handle.Edges);
         }
 
+        // The figure's edges resize it (FigureResizeService, W4).
+        if (button == DesignButton.Left && FigureEdgeAt(at) is var figureEdges and not ResizeEdges.None)
+        {
+            _figureStart = document.Runtime.Figure.Size;
+            return Begin(Intent.FigureResize, document.Design.Figure, figureEdges);
+        }
+
         // A tab's heading shows the tab and selects it.
         if (TabHeadingAt?.Invoke(at) is { } tab)
         {
@@ -379,6 +418,11 @@ public sealed class DesignGestures
             if (!selected && DesignGroupRules.Press(document.Design, picks, pick, DesignModifiers.None) is { Now: { } chosen })
             {
                 document.SelectPicks(chosen);
+            }
+            else if (selected)
+            {
+                // One of several selected becomes the anchor (WidgetSelectionRules, W4).
+                document.SetAnchor(pick);
             }
 
             return false;
@@ -473,6 +517,10 @@ public sealed class DesignGestures
                 case Intent.Split when _splitter is not null:
                     _press = PressState.Splitting;
                     break;
+                case Intent.FigureResize:
+                    _clickSelects = null;
+                    _press = PressState.FigureResizing;
+                    break;
                 default:
                     _press = PressState.None;
                     return;
@@ -488,6 +536,9 @@ public sealed class DesignGestures
                 break;
             case PressState.Resizing:
                 DragResize(dx, dy, modifiers);
+                break;
+            case PressState.FigureResizing:
+                DragFigure(System.Math.Round(dx, MidpointRounding.AwayFromZero), System.Math.Round(dy, MidpointRounding.AwayFromZero));
                 break;
             case PressState.Splitting when _splitter is { } dragged:
                 // App Designer's steps: each from where the last left the regions, by what the pointer
@@ -548,6 +599,11 @@ public sealed class DesignGestures
                 Guides = [];
                 _resizeGroup = null;
                 document.EndGesture(commit: true);
+                break;
+            case PressState.FigureResizing when FigureSize is { } size:
+                FigureSize = null;
+                FigureShift = 0;
+                document.ResizeFigure(size.Width, size.Height);
                 break;
             case PressState.Splitting:
                 _splitter = null;
@@ -615,6 +671,13 @@ public sealed class DesignGestures
         {
             _regionResize = null;
             Document.PreviewRegions(null);
+        }
+
+        if (FigureSize is not null)
+        {
+            FigureSize = null;
+            FigureShift = 0;
+            Document.PreviewFigureSize(null);
         }
 
         _splitter = null;
@@ -736,6 +799,75 @@ public sealed class DesignGestures
         document.Preview(boxes);
     }
 
+    /// <summary>
+    /// The figure's new size for an edge dragged (<paramref name="dx"/>, <paramref name="dy"/>)
+    /// (<c>FigureResizeCalculator</c>, which R2025b never runs with a kept aspect ratio): the right edge,
+    /// the bottom, both, the left - no further than <see cref="FigureLeftRoom"/>, and its left edge
+    /// stopping where the width reaches its least - or the bottom-left corner; never under 10 by 10.
+    /// </summary>
+    private void DragFigure(double dx, double dy)
+    {
+        double width = _figureStart.Width;
+        double height = _figureStart.Height;
+        double shift = 0;
+        bool west = _edges.HasFlag(ResizeEdges.West);
+        if (west)
+        {
+            dx = System.Math.Max(dx, -FigureLeftRoom);
+            double wanted = width - dx;
+            shift = dx + (wanted - System.Math.Max(wanted, DesignDocument.MinimumFigureSize));
+            width = wanted;
+        }
+        else if (_edges.HasFlag(ResizeEdges.East))
+        {
+            width += dx;
+        }
+
+        if (_edges.HasFlag(ResizeEdges.South))
+        {
+            height += dy;
+        }
+
+        FigureSize = new Size2D(System.Math.Max(width, DesignDocument.MinimumFigureSize), System.Math.Max(height, DesignDocument.MinimumFigureSize));
+        FigureShift = west ? shift : 0;
+        Document.PreviewFigureSize(FigureSize);
+    }
+
+    /// <summary>
+    /// The figure's edge at <paramref name="at"/>, as App Designer's are laid over it (<c>ad-figure-edge</c>):
+    /// 12 pixels deep, 8 of them outside it - the right, the bottom, the left, the bottom-left corner in
+    /// two pieces and a 23-pixel bottom-right corner on top. <see cref="ResizeEdges.None"/> elsewhere,
+    /// and for a figure whose edges do not resize it (<see cref="DesignDocument.CanResizeFigure"/>).
+    /// </summary>
+    public ResizeEdges FigureEdgeAt(Point2D at)
+    {
+        if (!Document.CanResizeFigure)
+        {
+            return ResizeEdges.None;
+        }
+
+        Size2D size = Document.Runtime.Figure.Size;
+        double w = size.Width;
+        double h = size.Height;
+        bool In(double left, double top, double right, double bottom) => at.X >= left && at.X < right && at.Y >= top && at.Y < bottom;
+        return In(w - 15, h - 15, w + 8, h + 8) ? ResizeEdges.SouthEast
+            : In(-8, h - 4, 12, h + 8) || In(-8, h - 12, 4, h - 4) ? ResizeEdges.SouthWest
+            : In(4, h - 4, w - 4, h + 8) ? ResizeEdges.South
+            : In(-8, -8, 4, h + 8) ? ResizeEdges.West
+            : In(w - 4, -8, w + 8, h + 8) ? ResizeEdges.East
+            : ResizeEdges.None;
+    }
+
+    /// <summary>Shows <paramref name="order"/>'s tab order on the canvas, at most <paramref name="limit"/> of them (null for all).</summary>
+    public void ShowTabOrder(IReadOnlyList<DesignComponent> order, int? limit = null)
+    {
+        ArgumentNullException.ThrowIfNull(order);
+        if (order.Count > 1)
+        {
+            TabOrderShown?.Invoke(this, (order, limit));
+        }
+    }
+
     /// <summary>The boxes a moving selection aligns with: every other shown one, and the figure's.</summary>
     private IEnumerable<Rect2D> Others(IEnumerable<DesignComponent> moving)
     {
@@ -793,8 +925,11 @@ public sealed class DesignGestures
     /// A library entry dropped at <paramref name="at"/> on the surface: added into the container there
     /// that can hold it, its box's top-left corner where it landed (snapped to a shown grid).
     /// </summary>
+    /// <param name="entry">The entry.</param>
+    /// <param name="at">Where it landed.</param>
+    /// <param name="withoutLabel">Whether Ctrl was held: a labelled entry's component alone (App Designer's optional entry, W4).</param>
     /// <returns>What was added; empty when the entry was refused (<see cref="Refusal"/> says why).</returns>
-    public IReadOnlyList<DesignComponent> Drop(DesignPaletteEntry entry, Point2D at)
+    public IReadOnlyList<DesignComponent> Drop(DesignPaletteEntry entry, Point2D at, bool withoutLabel = false)
     {
         ArgumentNullException.ThrowIfNull(entry);
         Cancel();
@@ -809,10 +944,10 @@ public sealed class DesignGestures
         }
 
         return Document.IsGrid(container) && placement.Spans is { } spans
-            ? AddFrom(() => Document.AddToGrid(entry, container, spans))
+            ? AddFrom(() => Document.AddToGrid(entry, container, spans, withoutLabel))
             : entry.Type == DesignDocument.GridType && !entry.FigureOnly
                 ? AddFrom(() => [Document.Gridify(container)])
-                : AddFrom(() => Document.Add(entry, container, SnapCorner(container, at), null));
+                : AddFrom(() => Document.Add(entry, container, SnapCorner(container, at), null, withoutLabel));
     }
 
     /// <summary>
@@ -917,7 +1052,7 @@ public sealed class DesignGestures
 
         if (cells is { } c)
         {
-            AddFrom(() => Document.AddToGrid(entry, c.Grid, c.Spans));
+            AddFrom(() => Document.AddToGrid(entry, c.Grid, c.Spans, _drawWithoutLabel));
         }
         else if (entry.Type == DesignDocument.GridType && !entry.FigureOnly)
         {
@@ -925,7 +1060,7 @@ public sealed class DesignGestures
         }
         else
         {
-            AddFrom(() => Document.Add(entry, container, drawn is { } d ? new Point2D(d.X, d.Y) : _drawFrom, drawn is { } s ? new Size2D(s.Width, s.Height) : null));
+            AddFrom(() => Document.Add(entry, container, drawn is { } d ? new Point2D(d.X, d.Y) : _drawFrom, drawn is { } s ? new Size2D(s.Width, s.Height) : null, _drawWithoutLabel));
         }
     }
 
@@ -1085,6 +1220,18 @@ public sealed class DesignGestures
                 ResizeEdges.North or ResizeEdges.South => DesignCursor.SizeNorthSouth,
                 _ => DesignCursor.SizeWestEast,
             };
+        }
+
+        switch (FigureEdgeAt(at))
+        {
+            case ResizeEdges.SouthEast:
+                return DesignCursor.SizeNorthWestSouthEast;
+            case ResizeEdges.SouthWest:
+                return DesignCursor.SizeNorthEastSouthWest;
+            case ResizeEdges.South:
+                return DesignCursor.SizeNorthSouth;
+            case ResizeEdges.West or ResizeEdges.East:
+                return DesignCursor.SizeWestEast;
         }
 
         DesignComponent hit = Document.ComponentAt(at);
@@ -1464,6 +1611,19 @@ public sealed class DesignGestures
     {
         DesignDocument document = Document;
         var items = new List<DesignMenuItem>();
+
+        // Add Label, first (AddLabelMenuItemProvider): one component whose library entry has a label (W4).
+        if (document.Picks is [{ Component: { } labelled }] && document.Palette.LabelPlaceOf(labelled.Type) != DesignLabelPlace.None)
+        {
+            items.Add(new DesignMenuItem("Add Label", document.CanAddLabel, () =>
+            {
+                if (document.AddLabel() is { } refused)
+                {
+                    Alerted?.Invoke(this, (DesignDocument.AddLabelFailedTitle, refused));
+                }
+            }));
+        }
+
         if (document.Selection is [var grid] && document.IsGrid(grid) && document.CellsOf(grid) is { } cells)
         {
             int rows = document.TracksOf(grid, GridAxis.Row).Count;
@@ -1523,7 +1683,8 @@ public sealed class DesignGestures
             items.Add(new DesignMenuItem("Delete", true, () => document.Delete(document.Selection)));
         }
 
-        // The grouping actions (GroupingAction, open item 150), each when it applies.
+        // The Layout items (LayoutMenuItemsProvider, W4) for anything but the figure: Align, Same Size,
+        // the grouping actions (open item 150) and Reorder, each a submenu enabled when any item is.
         if (document.Selection.Any(static c => c.Parent is not null))
         {
             if (items.Count > 0)
@@ -1531,10 +1692,40 @@ public sealed class DesignGestures
                 items.Add(DesignMenuItem.Separator);
             }
 
-            items.Add(new DesignMenuItem("Group", document.CanGroup, () => document.Group()));
-            items.Add(new DesignMenuItem("Add to Group", document.CanAddToGroup, () => document.AddToGroup()));
-            items.Add(new DesignMenuItem("Remove from Group", document.CanRemoveFromGroup, () => document.RemoveFromGroup()));
-            items.Add(new DesignMenuItem("Ungroup", document.CanUngroup, () => document.Ungroup()));
+            bool align = document.CanAlign;
+            items.Add(new DesignMenuItem("Align", align, Items:
+            [
+                new("Left", align, () => document.Align(DesignAlign.Left)),
+                new("Center", align, () => document.Align(DesignAlign.Center)),
+                new("Right", align, () => document.Align(DesignAlign.Right)),
+                new("Top", align, () => document.Align(DesignAlign.Top)),
+                new("Middle", align, () => document.Align(DesignAlign.Middle)),
+                new("Bottom", align, () => document.Align(DesignAlign.Bottom)),
+            ]));
+            bool size = document.CanSameSize;
+            items.Add(new DesignMenuItem("Same Size", size, Items:
+            [
+                new("Same Size", size, () => document.SameSize(DesignSameSize.Size)),
+                new("Width", size, () => document.SameSize(DesignSameSize.Width)),
+                new("Height", size, () => document.SameSize(DesignSameSize.Height)),
+            ]));
+            items.Add(new DesignMenuItem("Group", document.CanGroup || document.CanAddToGroup || document.CanRemoveFromGroup || document.CanUngroup, Items:
+            [
+                new("Group", document.CanGroup, () => document.Group()),
+                new("Add to Group", document.CanAddToGroup, () => document.AddToGroup()),
+                new("Remove from Group", document.CanRemoveFromGroup, () => document.RemoveFromGroup()),
+                DesignMenuItem.Separator,
+                new("Ungroup", document.CanUngroup, () => document.Ungroup()),
+            ]));
+            bool front = document.CanStack(DesignStack.Front), forward = document.CanStack(DesignStack.Forward);
+            bool backward = document.CanStack(DesignStack.Backward), back = document.CanStack(DesignStack.Back);
+            items.Add(new DesignMenuItem("Reorder", front || forward || backward || back, Items:
+            [
+                new("Bring to Front", front, () => document.Stack(DesignStack.Front)),
+                new("Bring Forward", forward, () => document.Stack(DesignStack.Forward)),
+                new("Send Backward", backward, () => document.Stack(DesignStack.Backward)),
+                new("Send to Back", back, () => document.Stack(DesignStack.Back)),
+            ]));
         }
 
         if (document.Selection is [var container, ..] && document.CanGridify(container))
@@ -1545,6 +1736,22 @@ public sealed class DesignGestures
             }
 
             items.Add(new DesignMenuItem("Apply Grid Layout", true, () => document.Gridify(container)));
+        }
+
+        // The tab order of one container (TabOrderMenuItemsProvider, W4), with Apply Grid Layout.
+        if (document.Selection is [var holder] && document.CanApplyAutoTabOrder(holder))
+        {
+            if (items.Count > 0 && !(document.CanGridify(holder)))
+            {
+                items.Add(DesignMenuItem.Separator);
+            }
+
+            items.Add(new DesignMenuItem("Apply Auto Tab Order", true, () =>
+            {
+                document.ApplyAutoTabOrder(holder);
+                ShowTabOrder(document.TabOrder(holder), VisualizeLimit);
+            }));
+            items.Add(new DesignMenuItem("Visualize Tab Order", true, () => ShowTabOrder(document.TabOrder(holder))));
         }
 
         return items;

@@ -77,6 +77,7 @@ internal sealed partial class AppDesignerWindow
         "AD_DESIGN_GROUP_UNGROUP" => UngroupSelection,
         // The toggles and the interval spinner keep settings: they answer through Invoked.
         "AD_DESIGN_GRID_SHOW" or "AD_DESIGN_GRID_SNAP" or "AD_DESIGN_VIEW_ALIGN_HINTS" or "AD_DESIGN_GRID_INTERVAL" => null,
+        _ when ArrangeCommands.TryGetValue(action, out RoutedCommand? arrange) => arrange,
         _ => DesignActions.IsLive(action) ? null : NotYet,
     };
 
@@ -109,6 +110,7 @@ internal sealed partial class AppDesignerWindow
         }
 
         _toolstrip.Invoked += (_, e) => Invoked(e);
+        BindArrangeCommands();
         System.Windows.Automation.AutomationProperties.SetAutomationId(_toolstrip, "AppDesigner.Toolstrip");
 
         CommandBindings.Add(new CommandBinding(NotYet, static (_, _) => { }, static (_, e) => e.CanExecute = false));
@@ -212,6 +214,7 @@ internal sealed partial class AppDesignerWindow
         }
 
         _toolstrip.SetEnabled("appDesignerToolstrip.layoutTab.arrange.groupButton", app is not null);
+        ShowArrangeState();
         _toolstrip.SetEnabled(DesignToolstrip.AddCallbackButton, app is { Document.Code: not null });
         foreach ((string tag, bool shown) in DesignToolstrip.ExecutionControls(_running, debugging: false))
         {
