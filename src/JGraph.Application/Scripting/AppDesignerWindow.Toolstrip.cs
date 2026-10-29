@@ -64,6 +64,7 @@ internal sealed partial class AppDesignerWindow
         "AD_HELP" => ApplicationCommands.Help,
         "AD_EDITOR_FIND" => ApplicationCommands.Find,
         "AD_RUN" => RunApp,
+        "OPEN_STARTSCREEN_DIALOG" => ShowStartPage,
         "AD_INPUT_ARGUMENTS" => CodeOptions,
         "AD_EDITOR_ADD_CALLBACK" => AddCallback,
         "AD_EDITOR_ADD_FUNCTION" or "AD_EDITOR_ADD_PRIVATE_FUNCTION" => AddFunction,
@@ -117,7 +118,7 @@ internal sealed partial class AppDesignerWindow
             (_, e) => e.CanExecute = Active is { Document.Code: not null }));
         CommandBindings.Add(new CommandBinding(Quit, (_, _) => Close()));
         CommandBindings.Add(new CommandBinding(ShowShortcuts, (_, _) => AppDesignerDialogs.Shortcuts(this, Settings)));
-        CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, (_, _) => OpenHelp()));
+        CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, (_, _) => OpenHelp("apps-designer")));
         CommandBindings.Add(new CommandBinding(ToggleGrid, (_, _) => Settings.Set(DesignSettings.ShowGrid, !Settings.GetBool(DesignSettings.ShowGrid)),
             (_, e) => e.CanExecute = Active is { InCodeView: false }));
         CommandBindings.Add(new CommandBinding(ToggleSnap, (_, _) => Settings.Set(DesignSettings.SnapToGrid, !Settings.GetBool(DesignSettings.SnapToGrid)),
@@ -164,6 +165,10 @@ internal sealed partial class AppDesignerWindow
             case null when e.Tag == DesignToolstrip.AddCallbackButton:
                 ShowAddCallback();
                 break;
+            case null when DesignToolstrip.RecentFileIndex(e.Tag) is int recent and >= 0
+                && Settings.RecentFiles().Files is { } files && recent < files.Count:
+                OpenRecent(files[recent].FilePath);
+                break;
         }
     }
 
@@ -180,6 +185,11 @@ internal sealed partial class AppDesignerWindow
         if (name is DesignSettings.ShowTitleFilePath or DesignSettings.ShowTitleFileExtension)
         {
             ShowTitle();
+        }
+
+        if (name is DesignSettings.MaxFileListSize or DesignSettings.FileList)
+        {
+            _startPage.RecentFiles = Settings.RecentFiles().Files;
         }
     }
 
@@ -211,8 +221,8 @@ internal sealed partial class AppDesignerWindow
         CommandManager.InvalidateRequerySuggested();
     }
 
-    /// <summary>F1: the scripting guide's App Designer chapter (R2025b opens its own documentation).</summary>
-    private void OpenHelp()
+    /// <summary>F1 and the Start Page's links: a section of the scripting guide, F1's the App Designer chapter (R2025b opens its own documentation).</summary>
+    private void OpenHelp(string anchor)
     {
         if (JGraph.Scripting.Startup.StartupHelp.FindGuide(AppContext.BaseDirectory) is not { } guide)
         {
@@ -222,7 +232,7 @@ internal sealed partial class AppDesignerWindow
 
         try
         {
-            string target = new Uri(guide).AbsoluteUri + "#apps-designer";
+            string target = new Uri(guide).AbsoluteUri + "#" + anchor;
             using System.Diagnostics.Process? _ = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(target) { UseShellExecute = true });
         }
         catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException)

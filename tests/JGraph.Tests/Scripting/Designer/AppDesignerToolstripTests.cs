@@ -88,8 +88,9 @@ public class AppDesignerToolstripTests
     [InlineData("AD_DESIGN_GROUP_GROUP", null)]
     [InlineData("AD_EDITOR_ADD_PUBLIC_FUNCTION", null)]
     [InlineData("AD_INSERT_AT_CURSOR", null)]
-    [InlineData("AD_NEW_2COL_APP", "W3")]
-    [InlineData("OPEN_STARTSCREEN_DIALOG", "W3")]
+    [InlineData("AD_NEW_2COL_APP", null)]
+    [InlineData("OPEN_STARTSCREEN_DIALOG", null)]
+    [InlineData("AD_EXAMPLE_TABLEEXAMPLE", "X8")]
     [InlineData("AD_DESIGN_ALIGN_LEFT", "W4")]
     [InlineData("AD_DESIGN_REORDER_COMPONENT_FRONT", "W4")]
     [InlineData("AD_ADD_LABEL", "W4")]
@@ -119,8 +120,10 @@ public class AppDesignerToolstripTests
     [Fact]
     public void OnlyACustomComponentsActionsWaitForW15()
     {
+        // The Start Page's new components too (W3 leaves them to W15).
         Assert.Equal(
-            ["AD_CONFIGURE_METADATA", "AD_EDITOR_ADD_CALLBACK_EVENT_PAIR", "AD_EDITOR_ADD_MANAGED_USER_PROPERTY", "AD_EDITOR_ADD_PRIVATE_MANAGED_USER_PROPERTY", "AD_EDITOR_ADD_PUBLIC_MANAGED_USER_PROPERTY"],
+            ["AD_CONFIGURE_METADATA", "AD_EDITOR_ADD_CALLBACK_EVENT_PAIR", "AD_EDITOR_ADD_MANAGED_USER_PROPERTY", "AD_EDITOR_ADD_PRIVATE_MANAGED_USER_PROPERTY", "AD_EDITOR_ADD_PUBLIC_MANAGED_USER_PROPERTY",
+             "AD_NEW_COMP_APP", "AD_NEW_COMP_GRID_APP"],
             DesignActions.All.Values.Where(a => a.Stage == "W15").Select(a => a.Id).Order(StringComparer.Ordinal));
     }
 

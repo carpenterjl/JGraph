@@ -17,6 +17,7 @@
                 <MenuItem Header="Save _As…" Command="{x:Static local:WorkspaceCommands.SaveAs}" />
                 <MenuItem Header="_Export to .m File…" Command="{x:Static local:WorkspaceCommands.ExportAppCode}" />
                 <MenuItem Header="Open in App _Designer" Command="{x:Static local:WorkspaceCommands.OpenInAppDesigner}" />
+                <MenuItem Header="Design A_pp" Command="{x:Static local:WorkspaceCommands.DesignApp}" />
                 <MenuItem Header="_Close Tab" Command="{x:Static local:WorkspaceCommands.CloseTab}" />
                 <Separator />
                 <MenuItem Header="E_xit" Command="{x:Static local:WorkspaceCommands.Exit}" />
@@ -86,6 +87,9 @@
                 <Button Content="Save" Padding="8,2"
                         Command="{x:Static local:WorkspaceCommands.Save}"
                         ToolTip="Save the active script (Ctrl+S)" />
+                <Button x:Name="DesignAppButton" Content="Design App" Padding="8,2"
+                        Command="{x:Static local:WorkspaceCommands.DesignApp}"
+                        ToolTip="Open App Designer, on its Start Page when no app is open" />
                 <Separator />
                 <Button x:Name="RunButton" Content="▶ Run (F5)" Padding="10,2"
                         Command="{x:Static local:WorkspaceCommands.RunOrContinue}"

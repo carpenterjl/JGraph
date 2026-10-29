@@ -98,19 +98,23 @@ public partial class ScriptWorkspaceWindow
 
     private void OpenNewScript(string language)
     {
-        if (language is NewTwoPanelAppLanguage or NewThreePanelAppLanguage)
+        if (language is NewAppLanguage or NewTwoPanelAppLanguage or NewThreePanelAppLanguage)
         {
-            // A responsive app, as App Designer's start page makes one (designer plan DS4b).
-            string text = JGraph.Scripting.Designer.DesignResponsive.NewAppText(language == NewTwoPanelAppLanguage ? 2 : 3);
-            AddDocument(new ScriptDocumentModel(path: null, text, "MATLAB") { IsNewApp = true }, activate: true);
-            return;
-        }
+            // A new app is made in App Designer, unsaved, as R2025b's desktop New > App makes one
+            // there (createNewApp); its responsive kinds as the Start Page's tiles make them
+            // (App Designer window plan, W3). An .mlapp opened as a file still shows its class here.
+            JGraph.Scripting.Designer.DesignNewKind kind = language switch
+            {
+                NewTwoPanelAppLanguage => JGraph.Scripting.Designer.DesignNewKind.TwoPanelApp,
+                NewThreePanelAppLanguage => JGraph.Scripting.Designer.DesignNewKind.ThreePanelApp,
+                _ => JGraph.Scripting.Designer.DesignNewKind.BlankApp,
+            };
+            AppDesignerWindow designer = EnsureAppDesigner();
+            if (designer.OpenNew(kind) is { } refused)
+            {
+                SetStatus(refused);
+            }
 
-        if (language == NewAppLanguage)
-        {
-            // A blank app, as App Designer makes one (designer plan DS6): saved, it is an .mlapp
-            // App Designer opens with its canvas.
-            AddDocument(new ScriptDocumentModel(path: null, AppDesignerDocument.NewAppText(), "MATLAB") { IsNewApp = true }, activate: true);
             return;
         }
 
@@ -351,6 +355,22 @@ public partial class ScriptWorkspaceWindow
     /// <returns>Null when it opened, else why not.</returns>
     private string? OpenInAppDesigner(string? path)
     {
+        AppDesignerWindow designer = EnsureAppDesigner();
+        if (path is null)
+        {
+            designer.ShowWindow();
+            return null;
+        }
+
+        return designer.Open(path);
+    }
+
+    /// <summary>Design App: the designer's window, on its Start Page when no app is open (W3).</summary>
+    private void DesignApp() => OpenInAppDesigner(null);
+
+    /// <summary>The designer's window, made when first wanted (designer plan DS2) with App Designer's settings and the session's doors.</summary>
+    private AppDesignerWindow EnsureAppDesigner()
+    {
         if (_appDesigner is null)
         {
             // App Designer's settings by R2025b's names (WO7), kept in the user's settings file.
@@ -380,13 +400,7 @@ public partial class ScriptWorkspaceWindow
             };
         }
 
-        if (path is null)
-        {
-            _appDesigner.ShowWindow();
-            return null;
-        }
-
-        return _appDesigner.Open(path);
+        return _appDesigner;
     }
 
     /// <summary>Keeps App Designer's settings in the user's settings file when the designer changed one (a toggle on its toolstrip, WO7).</summary>

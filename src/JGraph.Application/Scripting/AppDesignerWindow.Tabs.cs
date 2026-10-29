@@ -54,7 +54,9 @@ internal sealed partial class AppDesignerWindow
     private string? _placement;
 
     /// <summary>The window's title: R2025b's "App Designer - " and the active app (<see cref="DesignSettings.Title"/>).</summary>
-    private void ShowTitle() => Title = Settings.Title(Active?.Document.Path, Active?.Document.IsDirty == true);
+    private void ShowTitle() => Title = Active is { Document.Path: null } app
+        ? Settings.Title(app.FileName, app.Document.IsDirty, isNew: true)
+        : Settings.Title(Active?.Document.Path, Active?.Document.IsDirty == true);
 
     /// <summary>Keeps the window's place for <see cref="Placement"/>, while the window still has one.</summary>
     private void RememberPlace()
@@ -111,7 +113,7 @@ internal sealed partial class AppDesignerWindow
         menu.Items.Clear();
         List<TabItem> tabs = [.. _tabs.Items.OfType<TabItem>()];
         int index = tabs.IndexOf(app.Item);
-        string title = Path.GetFileName(app.Document.Path) ?? app.Header;
+        string title = app.FileName;
         IReadOnlyList<string> path = PathFolders?.Invoke() ?? [];
         foreach (DesignTabMenuItem entry in DesignTabMenu.Items(app.Document.Path, title, index, tabs.Count,
             folder => string.Equals(folder, _currentFolder, StringComparison.OrdinalIgnoreCase),
@@ -165,6 +167,9 @@ internal sealed partial class AppDesignerWindow
                 break;
             case DesignTabMenuCommand.CopyFullPath when app.Document.Path is { } copied:
                 Clipboard.SetText(copied);
+                break;
+            case DesignTabMenuCommand.NewApp:
+                OpenStartPage();
                 break;
             case DesignTabMenuCommand.Close:
                 CloseTab(app);

@@ -32,6 +32,9 @@ public static class WorkspaceCommands
     /// <summary>Opens the active App Designer file on the visual designer's canvas, in its own window (designer plan DS2).</summary>
     public static RoutedUICommand OpenInAppDesigner { get; } = Create("Open in App Designer");
 
+    /// <summary>Brings up App Designer, on its Start Page when no app is open, as R2025b's Design App runs <c>appdesigner</c> (App Designer window plan, W3).</summary>
+    public static RoutedUICommand DesignApp { get; } = Create("Design App");
+
     /// <summary>Opens a compiler app (compiler and SDK plan, stage K19). The command parameter is the app's command, <c>deploytool</c> for the gallery.</summary>
     public static RoutedUICommand OpenCompilerApp { get; } = Create("Compiler App");
 

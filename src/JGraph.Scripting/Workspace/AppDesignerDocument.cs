@@ -147,11 +147,11 @@ public static partial class AppDesignerDocument
     }
 
     /// <summary>
-    /// The text of a new, blank app as App Designer makes one: a class <c>app1</c> (renamed for its
-    /// file when it is saved) whose figure is its only component, its constructor and its
-    /// <c>delete</c>. The component code is the designer's own writer's (DS1).
+    /// The text of a new, blank app as App Designer makes one: a class <paramref name="className"/>
+    /// (renamed for its file when it is saved) whose figure is its only component, its constructor
+    /// and its <c>delete</c>. The component code is the designer's own writer's (DS1).
     /// </summary>
-    public static string NewAppText()
+    public static string NewAppText(string className = "app1")
     {
         DesignComponentClass figureClass = DesignCatalog.R2025b.ByType("matlab.ui.Figure")
             ?? throw new InvalidOperationException("The catalog has no figure.");
@@ -159,7 +159,7 @@ public static partial class AppDesignerDocument
         figure.Set("Position", NumericValue.Row(100, 100, 640, 480));
         figure.Set("Name", new CharValue("MATLAB App"));
         var design = new AppDesign(figure);
-        return DesignClassWriter.Render(design, new DesignCode("app1"));
+        return DesignClassWriter.Render(design, new DesignCode(className));
     }
 
     /// <summary>

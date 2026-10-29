@@ -187,7 +187,7 @@ try {
     $details = Find-InProcess $p.Id 'appDesignerToolstrip.designerTab.share.appDetailsButton'
     Check ($details -and -not $details.Current.IsEnabled -and $details.Current.HelpText -eq 'Specify details about your app') "App Details is shown disabled with R2025b's words (W8)"
     $new = Find-InProcess $p.Id 'appDesignerToolstrip.designerTab.file.newButton'
-    Check ($new -and -not $new.Current.IsEnabled) 'New is disabled (W3)'
+    Check ($new -and $new.Current.IsEnabled) 'New is enabled (W3: the Start Page)'
     $share = Find-InProcess $p.Id 'appDesignerToolstrip.designerTab.share.shareAllOptions'
     Check ($share -and -not $share.Current.IsEnabled) 'Share is disabled (W12, W13)'
     Check (Save-Picture $hwnd (Join-Path $WorkRoot 'designer.png')) 'a picture of the DESIGNER tab'

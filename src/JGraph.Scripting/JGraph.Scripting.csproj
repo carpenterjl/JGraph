@@ -56,6 +56,8 @@
          builds them, recorded under node (ui-probes/w0/oracle). Read by DesignToolstrip and DesignActions. -->
     <EmbeddedResource Include="..\..\tools\matlab-checklist\ui-probes\w0\w0_toolstrip.json" LogicalName="JGraph.Scripting.designer-toolstrip.json" />
     <EmbeddedResource Include="..\..\tools\matlab-checklist\ui-probes\w0\w0_actions.json" LogicalName="JGraph.Scripting.designer-actions.json" />
+    <!-- App Designer window plan W3: JGraph's example apps for the Start Page (WO2), copied out by DesignStartPage.CopyExample. -->
+    <EmbeddedResource Include="..\..\examples\apps\**\*.m" LogicalName="JGraph.Scripting.example-apps/%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

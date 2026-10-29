@@ -39,8 +39,9 @@ public static class DesignActions
     /// <summary>
     /// The actions JGraph runs since stage W2: the file commands it had, the grid and grouping
     /// commands, the Code View's insertions and Code Options, Find (the code editor's own search),
-    /// cut, copy and paste in the Code View, help, the shortcuts dialog and the document tab's menu.
-    /// The grid layout actions run from the canvas's context menu (designer plan DS4).
+    /// cut, copy and paste in the Code View, help, the shortcuts dialog and the document tab's menu;
+    /// since W3, the Start Page and its new apps (a new custom component waits for W15). The grid
+    /// layout actions run from the canvas's context menu (designer plan DS4).
     /// </summary>
     private static readonly HashSet<string> Live = new(StringComparer.Ordinal)
     {
@@ -55,6 +56,8 @@ public static class DesignActions
         "AD_INPUT_ARGUMENTS", "AD_TOGGLE_SINGLETON", "AD_INSERT_AT_CURSOR", "AD_EDITOR_FIND",
         "AD_OPEN_SHORTCUTS_DIALOG",
         "CHANGE_CURRENT_WORKING_DIRECTORY", "ADD_TO_SEARCH_PATH", "REMOVE_FROM_SEARCH_PATH", "OPEN_IN_FILE_MANAGER", "COPY_TO_CLIPBOARD",
+        // Stage W3: the Start Page (New, the tab menu's New App) and the apps its tiles make.
+        "OPEN_STARTSCREEN_DIALOG", "AD_NEW", "AD_NEW_2COL_APP", "AD_NEW_3COL_APP",
     };
 
     /// <summary>Every action, by id.</summary>
@@ -99,8 +102,8 @@ public static class DesignActions
             "OPENGUIDEAPP" => "X3",
             "SHARE_WEB" => "X2",
             "EDITOR_SPELL_CHECKER" => "X9",
-            "NEW" or "NEW2COLAPP" or "NEW3COLAPP" or "NEWCOMPONENTAPP" or "NEWCOMPONENTGRIDAPP" or "OPEN_STARTSCREEN_DIALOG" => "W3",
-            _ when name.StartsWith("EXAMPLE_", StringComparison.Ordinal) || name.StartsWith("TUTORIAL_", StringComparison.Ordinal) => "W3",
+            // MathWorks' own example apps and guided tutorials: JGraph shows its own examples (WO2).
+            _ when name.StartsWith("EXAMPLE_", StringComparison.Ordinal) || name.StartsWith("TUTORIAL_", StringComparison.Ordinal) => "X8",
             _ when name.StartsWith("DESIGN_ALIGN_", StringComparison.Ordinal) || name.StartsWith("DESIGN_SIZE_", StringComparison.Ordinal)
                 || name.StartsWith("DESIGN_SPACING_", StringComparison.Ordinal) || name.StartsWith("DESIGN_REORDER_COMPONENT_", StringComparison.Ordinal)
                 || name.StartsWith("DESIGN_TABORDER_", StringComparison.Ordinal) || name.StartsWith("DESIGN_FONT_", StringComparison.Ordinal)

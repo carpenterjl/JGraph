@@ -60,6 +60,7 @@ internal sealed partial class AppDesignerWindow : Window
     private readonly DesignInspectorView _inspector = new();
     private readonly DesignCallbacksView _callbacks = new();
     private readonly TabControl _right = new();
+    private readonly Grid _body = new();
 
     /// <summary>Makes the window over App Designer's settings (WO7), at their factory values when none are given.</summary>
     public AppDesignerWindow(DesignSettings? settings = null)
@@ -93,7 +94,7 @@ internal sealed partial class AppDesignerWindow : Window
         right.Children.Add(rowSplitter);
         right.Children.Add(_right);
 
-        var body = new Grid();
+        Grid body = _body;
         body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(220) });
         body.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
         body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -114,10 +115,15 @@ internal sealed partial class AppDesignerWindow : Window
         var root = new DockPanel();
         DockPanel.SetDock(_toolstrip, Dock.Top);
         DockPanel.SetDock(statusBar, Dock.Bottom);
+        // The Start Page takes the panes' place while no app is open (W3).
+        var center = new Grid();
+        center.Children.Add(body);
+        center.Children.Add(_startPage);
         root.Children.Add(_toolstrip);
         root.Children.Add(statusBar);
-        root.Children.Add(body);
+        root.Children.Add(center);
         Content = root;
+        BuildStartPage();
 
         _palette.ChosenChanged += (_, entry) =>
         {
@@ -162,8 +168,9 @@ internal sealed partial class AppDesignerWindow : Window
         };
 
         CommandBindings.Add(new CommandBinding(ApplicationCommands.Open, (_, _) => PromptOpen()));
+        // A new app has no file yet: its Save asks for one, as R2025b's does.
         CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, (_, _) => Save(Active),
-            (_, e) => e.CanExecute = Active is { Document.CanSave: true }));
+            (_, e) => e.CanExecute = Active is { Document: { CanSave: true } or { Path: null, CanSaveAs: true } }));
         CommandBindings.Add(new CommandBinding(WorkspaceCommands.SaveAs, (_, _) => PromptSaveAs(Active),
             (_, e) => e.CanExecute = Active is { Document.CanSaveAs: true }));
         CommandBindings.Add(new CommandBinding(ApplicationCommands.Undo, (_, _) => Active?.Document.Undo(),
@@ -197,6 +204,7 @@ internal sealed partial class AppDesignerWindow : Window
         CommandBindings.Add(new CommandBinding(UngroupSelection, (_, _) => Active?.Document.Ungroup(), (_, e) => e.CanExecute = Active is { Document.CanUngroup: true }));
         InputBindings.Add(new KeyBinding(GroupSelection, Key.G, ModifierKeys.Control));
         InputBindings.Add(new KeyBinding(UngroupSelection, Key.G, ModifierKeys.Control | ModifierKeys.Shift));
+        ShowStartPageInPlace();
     }
 
     /// <summary>Raised after an app was saved, with its file and its class's new text, for an editor tab showing it.</summary>
@@ -261,6 +269,14 @@ internal sealed partial class AppDesignerWindow : Window
             document.RemoveUnavailableUserComponents();
         }
 
+        AddApp(document);
+        RememberRecent(document);
+        return null;
+    }
+
+    /// <summary>Gives <paramref name="document"/> a tab of its own, shown, with its canvas, its Code View and the switch between them.</summary>
+    private void AddApp(DesignDocument document)
+    {
         var canvas = new DesignCanvas { Document = document };
         var codeView = new DesignCodeView { Document = document, Visibility = Visibility.Collapsed };
         var designButton = new ToggleButton { Content = "Design View", IsChecked = true, Margin = new Thickness(0, 0, 2, 0), Padding = new Thickness(10, 2, 10, 2) };
@@ -278,7 +294,7 @@ internal sealed partial class AppDesignerWindow : Window
         content.Children.Add(band);
         content.Children.Add(canvas);
         content.Children.Add(codeView);
-        var item = new TabItem { Content = content, ToolTip = path };
+        var item = new TabItem { Content = content, ToolTip = document.Path ?? document.Code?.ClassName };
         var app = new AppTab(document, canvas, codeView, designButton, codeButton, item);
         item.Tag = app;
         // The state, not the click: a toggle set by the keyboard or through automation raises no Click.
@@ -289,7 +305,7 @@ internal sealed partial class AppDesignerWindow : Window
         AttachTab(app);
         canvas.DesignChanged += (_, _) =>
         {
-            item.Header = app.Header;
+            ShowHeader(app);
             if (ReferenceEquals(Active, app))
             {
                 ShowState();
@@ -321,7 +337,7 @@ internal sealed partial class AppDesignerWindow : Window
         };
         document.Changed += (_, _) =>
         {
-            item.Header = app.Header;
+            ShowHeader(app);
             if (ReferenceEquals(Active, app))
             {
                 ShowView();
@@ -329,25 +345,35 @@ internal sealed partial class AppDesignerWindow : Window
                 ShowTitle();
             }
         };
-        item.Header = app.Header;
+        // The tab's title and its close button, as R2025b's document tabs have them.
+        var close = new Button { Content = "×", Padding = new Thickness(4, 0, 4, 0), Margin = new Thickness(6, 0, 0, 0), BorderThickness = new Thickness(0), Background = System.Windows.Media.Brushes.Transparent, ToolTip = "Close", Focusable = false };
+        close.SetResourceReference(ForegroundProperty, ThemeKeys.Text);
+        System.Windows.Automation.AutomationProperties.SetAutomationId(close, "AppTab.CloseButton");
+        close.Click += (_, _) => CloseTab(app);
+        var header = new StackPanel { Orientation = Orientation.Horizontal };
+        header.Children.Add(app.HeaderText);
+        header.Children.Add(close);
+        item.Header = header;
+        ShowHeader(app);
         _tabs.Items.Add(item);
         _tabs.SelectedItem = item;
         _browser.Document = document;
         _inspector.Document = document;
         _callbacks.Document = document;
         _codeBrowser.Document = document;
+        ShowStartPageInPlace();
         ApplyCanvasOptions();
         ShowView();
         ShowState();
         ShowTitle();
         Bring();
         canvas.Focus();
-        return null;
     }
 
-    /// <summary>Brings the window up as it is: what <c>appdesigner</c> with no file does.</summary>
+    /// <summary>Brings the window up as it is - on the Start Page when no app is open: what <c>appdesigner</c> with no file does.</summary>
     public void ShowWindow()
     {
+        ShowStartPageInPlace();
         Bring();
         ShowView();
         ShowState();
@@ -672,7 +698,7 @@ internal sealed partial class AppDesignerWindow : Window
             Filter = "MATLAB App (*.mlapp)|*.mlapp|MATLAB App, plain text (*.m)|*.m",
             FilterIndex = app.Document.Format == DesignFileFormat.PlainText ? 2 : 1,
             FileName = app.Document.Path is { } current ? Path.GetFileName(current) : app.Document.Code?.ClassName,
-            InitialDirectory = app.Document.Path is { } here ? Path.GetDirectoryName(here) : null,
+            InitialDirectory = app.Document.Path is { } here ? Path.GetDirectoryName(here) : _currentFolder,
             AddExtension = true,
         };
         if (dialog.ShowDialog(this) != true || dialog.FileName is not { Length: > 0 } chosen)
@@ -699,9 +725,10 @@ internal sealed partial class AppDesignerWindow : Window
 
             Saving(app, () => _status.Text = app.Document.SaveAs(chosen));
             app.Item.ToolTip = app.Document.Path;
-            app.Item.Header = app.Header;
+            ShowHeader(app);
             ShowTitle();
             AppSaved?.Invoke(app.Document.Path!, app.Document.Text);
+            RememberRecent(app.Document);
             ShowState();
         }
         catch (Exception ex) when (ex is IOException or InvalidOperationException or UnauthorizedAccessException or InvalidDataException)
@@ -753,7 +780,7 @@ internal sealed partial class AppDesignerWindow : Window
             try
             {
                 Saving(app, () => app.Document.SaveAs(path));
-                app.Item.Header = app.Header;
+                ShowHeader(app);
                 AppSaved?.Invoke(path, app.Document.Text);
             }
             catch (Exception ex) when (ex is IOException or InvalidOperationException or UnauthorizedAccessException or InvalidDataException)
@@ -789,6 +816,13 @@ internal sealed partial class AppDesignerWindow : Window
             return false;
         }
 
+        if (app.Document.Path is null)
+        {
+            // A new app: Save is Save As until it has a file.
+            PromptSaveAs(app);
+            return app.Document is { Path: not null, IsDirty: false };
+        }
+
         try
         {
             // Text the document would not take is not saved over: the status line says what to put right.
@@ -799,7 +833,8 @@ internal sealed partial class AppDesignerWindow : Window
 
             Saving(app, () => _status.Text = app.Document.Save());
             AppSaved?.Invoke(app.Document.Path!, app.Document.Text);
-            app.Item.Header = app.Header;
+            RememberRecent(app.Document);
+            ShowHeader(app);
             ShowTitle();
             return true;
         }
@@ -816,7 +851,7 @@ internal sealed partial class AppDesignerWindow : Window
         if (!app.CodeView.Push())
         {
             MessageBoxResult keep = MessageBox.Show(this,
-                $"The code typed into {Path.GetFileName(app.Document.Path)} no longer matches the app's structure, so it cannot be kept. Close anyway and lose it?",
+                $"The code typed into {app.FileName} no longer matches the app's structure, so it cannot be kept. Close anyway and lose it?",
                 "App Designer", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (keep != MessageBoxResult.Yes)
             {
@@ -830,8 +865,8 @@ internal sealed partial class AppDesignerWindow : Window
         }
 
         MessageBoxResult answer = MessageBox.Show(this,
-            $"Save the changes to {Path.GetFileName(app.Document.Path)}?", "App Designer",
-            app.Document.CanSave ? MessageBoxButton.YesNoCancel : MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            $"Save the changes to {app.FileName}?", "App Designer",
+            app.Document.CanSave || app.Document is { Path: null, CanSaveAs: true } ? MessageBoxButton.YesNoCancel : MessageBoxButton.OKCancel, MessageBoxImage.Question);
         return answer switch
         {
             MessageBoxResult.Yes => Save(app),
@@ -860,12 +895,11 @@ internal sealed partial class AppDesignerWindow : Window
         }
 
         app.Document.Dispose();
-        if (_tabs.Items.Count == 0)
-        {
-            Hide();
-        }
 
+        // With the last app closed the window stays, on the Start Page (R2025b opens it then).
+        ShowStartPageInPlace();
         ShowView();
+        ShowState();
         ShowTitle();
     }
 
@@ -898,9 +932,23 @@ internal sealed partial class AppDesignerWindow : Window
         _tabs.Items.Clear();
     }
 
+    /// <summary>The tab's title as the app now is, for the eye and for UI Automation.</summary>
+    private static void ShowHeader(AppTab app)
+    {
+        app.HeaderText.Text = app.Header;
+        System.Windows.Automation.AutomationProperties.SetName(app.Item, app.Header);
+        if (app.Item.Header is StackPanel { Children: [_, Button close] })
+        {
+            System.Windows.Automation.AutomationProperties.SetName(close, "Close " + app.FileName);
+        }
+    }
+
     private sealed record AppTab(DesignDocument Document, DesignCanvas Canvas, DesignCodeView CodeView, ToggleButton DesignButton, ToggleButton CodeButton, TabItem Item)
     {
         public bool InCodeView { get; set; }
+
+        /// <summary>The tab's title, beside its close button.</summary>
+        public TextBlock HeaderText { get; } = new() { VerticalAlignment = VerticalAlignment.Center };
 
         /// <summary>The watch on the app's file for a change made outside (W2), or null.</summary>
         public FileSystemWatcher? Watcher { get; set; }
@@ -914,6 +962,10 @@ internal sealed partial class AppDesignerWindow : Window
         /// <summary>Whether a reload prompt for the file is already up or waiting.</summary>
         public bool Prompting { get; set; }
 
-        public string Header => Path.GetFileName(Document.Path) + (Document.IsDirty ? " *" : string.Empty);
+        /// <summary>The app's file name; a new app's is its name and the extension it will be saved with (<c>app1.mlapp</c>).</summary>
+        public string FileName => Document.Path is { } path ? Path.GetFileName(path) : Document.Code?.ClassName + ".mlapp";
+
+        /// <summary>The tab's title, as R2025b's <c>AppViewController</c> writes it: the file name, and "*" when it has unsaved changes.</summary>
+        public string Header => FileName + (Document.IsDirty ? "*" : string.Empty);
     }
 }

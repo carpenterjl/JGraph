@@ -73,6 +73,21 @@ public static class DesignToolstrip
     /// <summary>The Go To popup's FUNCTIONS panel, filled when it opens.</summary>
     public const string GoToFunctionsPanel = Prefix + "editorTab.navigate.gotoPopUpList.panel";
 
+    /// <summary>DESIGNER > New, which opens the Start Page.</summary>
+    public const string NewButton = Prefix + "designerTab.file.newButton";
+
+    /// <summary>DESIGNER > Open's popup.</summary>
+    public const string OpenMenu = Prefix + "designerTab.file.openButton.menu";
+
+    /// <summary>The Open popup's recent files, filled when it opens (<c>DesignerTab._buildRecentFilesList</c>).</summary>
+    public const string RecentFilesPanel = OpenMenu + ".recentFiles.panel";
+
+    /// <summary>The recent files' heading.</summary>
+    public const string RecentFilesHeader = OpenMenu + ".recentFiles.header";
+
+    /// <summary>A recent file's item; JGraph adds "." and the file's place in the list, so the window knows which was chosen.</summary>
+    public const string RecentFilesItem = OpenMenu + ".recentFiles.item";
+
     private static readonly Lazy<Recording> Recorded = new(Read);
 
     /// <summary>The layout: R2025b's as recorded, with the grid interval spinner's limits and step (<see cref="DesignGeometry"/>).</summary>
@@ -110,6 +125,42 @@ public static class DesignToolstrip
     public static string Format(string text, bool component) =>
         text.Replace("${0}", component ? "Component" : "App", StringComparison.Ordinal);
 
+    /// <summary>
+    /// The Open popup's recent files as R2025b's <c>DesignerTab._buildRecentFilesList</c> makes them:
+    /// nothing with no recent file; else the "Recent Files" heading, then each file by its name with
+    /// its full name under it.
+    /// </summary>
+    public static IReadOnlyList<ToolstripPopupEntry> RecentFilesEntries(IReadOnlyList<DesignRecentFile> files)
+    {
+        ArgumentNullException.ThrowIfNull(files);
+        if (files.Count == 0)
+        {
+            return [];
+        }
+
+        var entries = new List<ToolstripPopupEntry> { new() { Kind = ToolstripPopupEntryKind.Header, Tag = RecentFilesHeader, Text = DesignStartPage.RecentFiles } };
+        for (int i = 0; i < files.Count; i++)
+        {
+            entries.Add(new()
+            {
+                Kind = ToolstripPopupEntryKind.Item,
+                Tag = RecentFilesItem + "." + i.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                Text = Path.GetFileName(files[i].FilePath),
+                Description = files[i].FilePath,
+                ShowDescription = true,
+                Icon = "packageApp",
+            });
+        }
+
+        return entries;
+    }
+
+    /// <summary>The place in the recent files of the item tagged <paramref name="tag"/>, or -1 when it is not a recent file's item.</summary>
+    public static int RecentFileIndex(string? tag) =>
+        tag is not null && tag.StartsWith(RecentFilesItem + ".", StringComparison.Ordinal)
+        && int.TryParse(tag.AsSpan(RecentFilesItem.Length + 1), System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out int index)
+            ? index : -1;
+
     private static Recording Read()
     {
         using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("JGraph.Scripting.designer-toolstrip.json")
@@ -118,6 +169,18 @@ public static class DesignToolstrip
         ToolstripLayout layout = ToolstripConfigReader.ReadRecording(recording.RootElement).MapItems(static item => item.Tag == IntervalSpinner
             ? item with { Minimum = DesignGeometry.GridMinimum, Maximum = DesignGeometry.GridMaximum, Step = DesignGeometry.GridStep, Value = Whole(DesignGeometry.GridInterval) }
             : item);
+
+        // The Open popup (W3): the recent files go after Open..., where R2025b adds them each time it
+        // opens; the GUIDE App heading and its migration tool are left out (X3).
+        var popups = new Dictionary<string, ToolstripPopup>(layout.Popups, StringComparer.Ordinal);
+        if (popups.TryGetValue(OpenMenu, out ToolstripPopup? open))
+        {
+            List<ToolstripPopupEntry> entries = [.. open.Entries.Where(static e => e.ActionId != "AD_OPEN_GUIDE_APP" && e.Tag != OpenMenu + ".guide.header")];
+            entries.Insert(Math.Min(1, entries.Count), new() { Kind = ToolstripPopupEntryKind.Panel, Tag = RecentFilesPanel, MaxHeight = 2000 });
+            popups[OpenMenu] = open with { Entries = entries };
+            layout = layout with { Popups = popups };
+        }
+
         JsonElement contexts = recording.RootElement.GetProperty("documentTypes")[0].GetProperty("properties").GetProperty("contexts");
         return new Recording(layout, Groups(contexts, "AD_APP_DESIGN_VIEW_CONTEXT"), Groups(contexts, "AD_APP_CODE_VIEW_CONTEXT"));
     }

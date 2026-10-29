@@ -41,6 +41,9 @@ public sealed class DesignSettings
     /// <summary>How many recent files the Start Page lists (0 to 12).</summary>
     public const string MaxFileListSize = "matlab.appdesigner.history.MaxFileListSize";
 
+    /// <summary>The recent files (<see cref="DesignRecentFiles"/>), newest first: each a JSON entry, joined by <c>|</c>.</summary>
+    public const string FileList = "matlab.appdesigner.history.FileList";
+
     /// <summary>The window's title shows the app's folder.</summary>
     public const string ShowTitleFilePath = "matlab.appdesigner.window.ShowTitleFilePath";
 
@@ -78,6 +81,7 @@ public sealed class DesignSettings
         new(ShowTitleFilePath, "true", false),
         new(ShowTitleFileExtension, "true", false),
         new(ShowShortcutsDialog, "true", false),
+        new(FileList, "", false),
     ];
 
     private readonly Dictionary<string, string> _values = new(StringComparer.Ordinal);
@@ -138,13 +142,25 @@ public sealed class DesignSettings
     /// <summary>The grid interval, kept within App Designer's limits (10 to 50).</summary>
     public double GridIntervalValue => DesignGeometry.GridIntervalWithin(GetInt(GridInterval, (int)DesignGeometry.GridInterval));
 
+    /// <summary>The recent files as the setting keeps them, held to <see cref="MaxFileListSize"/>.</summary>
+    public DesignRecentFiles RecentFiles() =>
+        new(Get(FileList).Split('|', StringSplitOptions.RemoveEmptyEntries), Math.Clamp(GetInt(MaxFileListSize, 8), 0, 12));
+
+    /// <summary>Keeps <paramref name="files"/> in the setting.</summary>
+    public void SetRecentFiles(DesignRecentFiles files)
+    {
+        ArgumentNullException.ThrowIfNull(files);
+        Set(FileList, string.Join('|', files.Entries()));
+    }
+
     /// <summary>
     /// The window's title for the active app, as R2025b's <c>_getAppTitle</c> makes it: "App Designer -"
     /// and the app's full file name, or its name alone when <see cref="ShowTitleFilePath"/> is off,
     /// without its extension when <see cref="ShowTitleFileExtension"/> is off, and "*" when it has
-    /// unsaved changes; just "App Designer" with no app.
+    /// unsaved changes; just "App Designer" with no app. A new app (<paramref name="isNew"/>) shows
+    /// its name and the extension it will be saved with (<c>app1.mlapp</c>), whatever the path setting.
     /// </summary>
-    public string Title(string? fullFileName, bool dirty)
+    public string Title(string? fullFileName, bool dirty, bool isNew = false)
     {
         if (fullFileName is null)
         {
@@ -152,7 +168,7 @@ public sealed class DesignSettings
         }
 
         string shown = fullFileName;
-        if (!GetBool(ShowTitleFilePath))
+        if (!isNew && !GetBool(ShowTitleFilePath))
         {
             shown = shown[(shown.LastIndexOf(Path.DirectorySeparatorChar) + 1)..];
         }

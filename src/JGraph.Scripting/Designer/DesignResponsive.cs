@@ -361,7 +361,7 @@ public static class DesignResponsive
     /// and <c>RightPanel</c>; the widths block; and <c>updateAppLayout</c>. The component code is the
     /// designer's own writer's.
     /// </summary>
-    public static string NewAppText(int panels)
+    public static string NewAppText(int panels, string className = "app1")
     {
         if (panels is not (2 or 3))
         {
@@ -400,7 +400,7 @@ public static class DesignResponsive
         }
 
         // The widths block and the layout callback are the class writer's to write for a template (DS5).
-        var code = new DesignCode("app1");
+        var code = new DesignCode(className);
         code.Callbacks.Add(new DesignCallback(Callback, isGenerated: true));
         return DesignClassWriter.Render(design, code);
     }

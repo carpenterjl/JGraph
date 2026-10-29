@@ -27,6 +27,7 @@ public partial class ScriptWorkspaceWindow
             (_, e) => e.CanExecute = ActiveDocument?.Model.IsAppDesignerFile == true);
         Bind(WorkspaceCommands.OpenInAppDesigner, (_, _) => OpenActiveInAppDesigner(),
             (_, e) => e.CanExecute = ActiveDocument is { Model: { FilePath: not null } model } && (model.IsAppDesignerFile || model.IsPlainTextApp));
+        Bind(WorkspaceCommands.DesignApp, (_, _) => DesignApp());
         Bind(WorkspaceCommands.OpenCompilerApp, (_, e) => OpenCompilerAppFromMenu(e.Parameter as string ?? "deploytool"));
         Bind(WorkspaceCommands.CloseTab, (_, _) => ActiveDocument?.Document.Close(), CanCloseTab);
         Bind(WorkspaceCommands.Exit, (_, _) => Close());
