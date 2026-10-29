@@ -34,6 +34,7 @@ public sealed partial class DesignDocument
             || (z.First.Group is not null && ReferenceEquals(z.First.Group, z.Second.Group)));
         _picks = picks;
         _selection = leaves;
+        _nothingSelected = false;
         if (!same)
         {
             _anchor = null;
@@ -345,8 +346,12 @@ public sealed partial class DesignDocument
 
         public override void Undo(DesignDocument document) => document.Design.RemoveGroup(Group);
 
+        /// <summary>Whether the edit selects the group (its members when undone); a paste sets the selection itself (W5).</summary>
+        public bool SelectsGroup { get; init; } = true;
+
         public override IReadOnlyList<DesignPick>? PicksAfter(bool done) =>
-            done ? [DesignPick.Of(Group)] : Members.Select(static m => m.Component is { } c ? DesignPick.Of(c) : DesignPick.Of(m.Group!)).ToArray();
+            !SelectsGroup ? null
+            : done ? [DesignPick.Of(Group)] : Members.Select(static m => m.Component is { } c ? DesignPick.Of(c) : DesignPick.Of(m.Group!)).ToArray();
     }
 
     /// <summary>A group taken apart; undone, made again of the same members in the same place.</summary>

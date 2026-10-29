@@ -61,6 +61,8 @@ internal sealed partial class AppDesignerWindow
         "AD_CUT" => ApplicationCommands.Cut,
         "AD_COPY" => ApplicationCommands.Copy,
         "AD_PASTE" => ApplicationCommands.Paste,
+        "AD_DUPLICATE" => DuplicateSelection,
+        "AD_SELECT_ALL" => SelectAllComponents,
         "AD_HELP" => ApplicationCommands.Help,
         "AD_EDITOR_FIND" => ApplicationCommands.Find,
         "AD_RUN" => RunApp,
@@ -129,13 +131,11 @@ internal sealed partial class AppDesignerWindow
             (_, e) => e.CanExecute = Active is { InCodeView: false }));
         CommandBindings.Add(new CommandBinding(GridIncrement, (_, _) => StepInterval(+1), (_, e) => e.CanExecute = Active is { InCodeView: false }));
         CommandBindings.Add(new CommandBinding(GridDecrement, (_, _) => StepInterval(-1), (_, e) => e.CanExecute = Active is { InCodeView: false }));
-        // Cut, copy, paste and find reach the Code View's editor; on the canvas they wait for W5.
-        foreach (RoutedCommand edit in new[] { ApplicationCommands.Cut, ApplicationCommands.Copy, ApplicationCommands.Paste, ApplicationCommands.Find })
-        {
-            CommandBindings.Add(new CommandBinding(edit,
-                (_, e) => ((RoutedCommand)e.Command).Execute(null, Active!.CodeView.Editor.EditingSurface),
-                (_, e) => e.CanExecute = Active is { InCodeView: true } app && ((RoutedCommand)e.Command).CanExecute(null, app.CodeView.Editor.EditingSurface)));
-        }
+        // Find reaches the Code View's editor; cut, copy and paste reach it or the canvas (W5).
+        CommandBindings.Add(new CommandBinding(ApplicationCommands.Find,
+            (_, e) => ((RoutedCommand)e.Command).Execute(null, Active!.CodeView.Editor.EditingSurface),
+            (_, e) => e.CanExecute = Active is { InCodeView: true } app && ((RoutedCommand)e.Command).CanExecute(null, app.CodeView.Editor.EditingSurface)));
+        BindClipboardCommands();
 
         InputBindings.Add(new KeyBinding(Quit, Key.Q, ModifierKeys.Control));
         InputBindings.Add(new KeyBinding(ShowShortcuts, Key.Oem2, ModifierKeys.Control));

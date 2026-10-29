@@ -852,6 +852,13 @@ public sealed class DesignRuntime : IDisposable
         }
     }
 
+    /// <summary>The tab <paramref name="group"/> shows (its <c>SelectedTab</c>); null when it has none.</summary>
+    public DesignComponent? ShownTabOf(DesignComponent group)
+    {
+        ArgumentNullException.ThrowIfNull(group);
+        return group.Children.FirstOrDefault(tab => ObjectOf(tab) is UiTabModel { IsShowing: true });
+    }
+
     /// <summary>Takes a frame of the components, as a flush takes one: for the canvas to draw.</summary>
     public UiFrame TakeFrame()
     {

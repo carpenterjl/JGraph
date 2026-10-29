@@ -435,7 +435,14 @@ public sealed partial class DesignDocument : IDisposable
     /// <see cref="Preview"/> moves them from, and what <see cref="EndGesture(bool, DesignPlacement?)"/> puts back when the
     /// gesture is cancelled.
     /// </summary>
-    public void BeginGesture(IReadOnlyList<DesignComponent> components)
+    public void BeginGesture(IReadOnlyList<DesignComponent> components) => BeginGesture(components, duplicate: false);
+
+    /// <summary>
+    /// Starts a gesture on <paramref name="components"/>; with <paramref name="duplicate"/>, a Ctrl-drag
+    /// (W5, <c>DragDuplicateController</c>): the components stay where they are while the canvas draws
+    /// where their copies would go (<see cref="GestureGhosts"/>), and the gesture's end makes the copies.
+    /// </summary>
+    public void BeginGesture(IReadOnlyList<DesignComponent> components, bool duplicate)
     {
         ArgumentNullException.ThrowIfNull(components);
         EndGesture(commit: false);
@@ -449,8 +456,11 @@ public sealed partial class DesignDocument : IDisposable
             }
         }
 
-        _gesture = new Gesture(start);
+        _gesture = new Gesture(start) { Duplicate = duplicate };
     }
+
+    /// <summary>Whether the gesture under way is a Ctrl-drag that copies (W5).</summary>
+    public bool IsDuplicating => _gesture is { Duplicate: true };
 
     /// <summary>The boxes the gesture started from.</summary>
     public IReadOnlyDictionary<DesignComponent, Rect2D> GestureStart =>
@@ -462,7 +472,7 @@ public sealed partial class DesignDocument : IDisposable
     /// </summary>
     public IReadOnlyDictionary<DesignComponent, Rect2D> GestureGhosts =>
         new Dictionary<DesignComponent, Rect2D>(
-            _gesture is { } gesture ? gesture.Last.Where(p => IsGridChild(p.Key)) : [],
+            _gesture is { } gesture ? gesture.Last.Where(p => gesture.Duplicate || IsGridChild(p.Key)) : [],
             ReferenceEqualityComparer.Instance);
 
     /// <summary>
@@ -482,7 +492,7 @@ public sealed partial class DesignDocument : IDisposable
         {
             if (_gesture.Start.ContainsKey(component) && component.Parent is { } parent)
             {
-                if (!IsGridChild(component))
+                if (!IsGridChild(component) && !_gesture.Duplicate)
                 {
                     Rect2D position = Runtime.ToPosition(parent, box);
                     Runtime.Set(component, "Position", Row(position));
@@ -529,6 +539,23 @@ public sealed partial class DesignDocument : IDisposable
                 startPositions[component] = startPosition;
                 Runtime.Set(component, "Position", Row(startPosition));
             }
+        }
+
+        if (gesture.Duplicate)
+        {
+            int before = _version;
+            if (commit && placement is not { CanDrop: false })
+            {
+                EndDuplicate(gesture, placement);
+            }
+
+            if (_version == before)
+            {
+                _boxes = null;
+                OnChanged();
+            }
+
+            return;
         }
 
         List<Edit> edits = commit && placement is not { CanDrop: false } ? GestureEdits(gesture, placement, startPositions) : [];
@@ -724,6 +751,7 @@ public sealed partial class DesignDocument : IDisposable
             _picks = picks;
             _selection = picks.SelectMany(static p => p.Leaves()).Distinct(ReferenceEqualityComparer.Instance).Cast<DesignComponent>().ToArray();
             _anchor = step.OfType<PicksEdit>().LastOrDefault()?.AnchorPick; // the arrange commands set it back (W4)
+            _nothingSelected = false;
         }
         else if (touched.Length > 0 && touched.Length == _selection.Count && touched.All(t => _selection.Contains(t, ReferenceEqualityComparer.Instance))
             && _picks.All(p => p.Leaves().All(IsInDesign)))
@@ -735,6 +763,10 @@ public sealed partial class DesignDocument : IDisposable
             _picks = touched.Length > 0 ? Promoted(touched) : [DesignPick.Of(Design.Figure)];
             _selection = _picks.SelectMany(static p => p.Leaves()).Distinct(ReferenceEqualityComparer.Instance).Cast<DesignComponent>().ToArray();
             _anchor = null;
+
+            // Nothing the edit touched is left (a delete): App Designer's selection is empty then,
+            // which a paste reads (CopyPasteUtil.getValidParent, W5); the canvas shows the figure's.
+            _nothingSelected = touched.Length == 0;
         }
 
         DesignTheme theme = DesignCodeStyle.ThemeOf(Design);
@@ -1616,6 +1648,9 @@ public sealed partial class DesignDocument : IDisposable
         public Dictionary<DesignComponent, Rect2D> Start { get; } = start;
 
         public Dictionary<DesignComponent, Rect2D> Last { get; } = new(ReferenceEqualityComparer.Instance);
+
+        /// <summary>Whether the gesture copies what it drags rather than moving it (a Ctrl-drag, W5).</summary>
+        public bool Duplicate { get; init; }
     }
 
     /// <summary>One change to the design and its component, which can be undone.</summary>

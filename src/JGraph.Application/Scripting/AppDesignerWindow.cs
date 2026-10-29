@@ -277,7 +277,7 @@ internal sealed partial class AppDesignerWindow : Window
     /// <summary>Gives <paramref name="document"/> a tab of its own, shown, with its canvas, its Code View and the switch between them.</summary>
     private void AddApp(DesignDocument document)
     {
-        var canvas = new DesignCanvas { Document = document };
+        var canvas = new DesignCanvas { Clipboard = _clipboard, Document = document };
         var codeView = new DesignCodeView { Document = document, Visibility = Visibility.Collapsed };
         var designButton = new ToggleButton { Content = "Design View", IsChecked = true, Margin = new Thickness(0, 0, 2, 0), Padding = new Thickness(10, 2, 10, 2) };
         var codeButton = new ToggleButton { Content = "Code View", Padding = new Thickness(10, 2, 10, 2), ToolTip = "Switch to Code View (Shift + F7)" };
@@ -304,6 +304,7 @@ internal sealed partial class AppDesignerWindow : Window
         codeButton.Unchecked += (_, _) => { if (designButton.IsChecked != true) { codeButton.IsChecked = true; } };
         AttachTab(app);
         AddArrangeKeys(canvas);
+        AddClipboardKeys(canvas);
         WatchView(canvas);
         canvas.Alerted += (_, alert) => ShowAlert(alert.Title, alert.Message);
         canvas.DesignChanged += (_, _) =>

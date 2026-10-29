@@ -104,7 +104,7 @@ public readonly record struct DesignHandle(DesignComponent Component, ResizeEdge
 /// rubber band when dragged, and selects what it holds whole; without a drag it selects what was
 /// pressed.</item>
 /// <item>The arrow keys move the selection a pixel, ten with Shift; a run of them is one edit,
-/// ended when no arrow is held. Ctrl+A selects everything in the selection's container. Escape
+/// ended when no arrow is held. Ctrl+A selects everything at the top of the figure (W5). Escape
 /// cancels a gesture under way. Delete and Backspace delete the selection (DS3).</item>
 /// <item>With a library entry to draw (<see cref="DrawEntry"/>, App Designer's click-and-draw mode,
 /// DS3), a press adds the entry where it is: a click at its own size with its top-left corner there,
@@ -148,6 +148,7 @@ public sealed class DesignGestures
     private double _splitAnchor;
     private Size2D _figureStart;
     private bool _drawWithoutLabel;
+    private bool _duplicatePress;
 
     /// <summary>The gestures on <paramref name="document"/>.</summary>
     public DesignGestures(DesignDocument document)
@@ -158,6 +159,9 @@ public sealed class DesignGestures
 
     /// <summary>The app the gestures edit.</summary>
     public DesignDocument Document { get; }
+
+    /// <summary>The clipboard the canvas's menu cuts, copies and pastes with: the window's, shared by its apps (W5); null for none.</summary>
+    public DesignClipboard? Clipboard { get; set; }
 
     /// <summary>The tab whose heading is at a point of the surface, which the canvas's component layer knows; null when none.</summary>
     public Func<Point2D, DesignComponent?>? TabHeadingAt { get; set; }
@@ -483,6 +487,16 @@ public sealed class DesignGestures
             return Begin(Intent.Band, hit, ResizeEdges.None);
         }
 
+        // Ctrl alone on what is selected keeps it selected for a drag that copies the selection, its
+        // toggle waiting for the release; on nothing selected, it is selected and a drag copies it
+        // (WidgetSelectionRules and GroupSelectionRules' CheckDuplicate, W5).
+        _duplicatePress = modifiers == DesignModifiers.Control && (selected || document.SelectionIsEmpty);
+        if (_duplicatePress && selected)
+        {
+            _clickSelects = result.Now ?? result.OnRelease;
+            return Begin(Intent.Move, pick.Component ?? pick.Group!.AllComponents().First(), ResizeEdges.None);
+        }
+
         if (result.Now is { } now)
         {
             document.SelectPicks(now);
@@ -532,8 +546,9 @@ public sealed class DesignGestures
             switch (_intent)
             {
                 case Intent.Move when draggable.Count == document.Selection.Count && draggable.Count > 0:
+                    // With Ctrl held at the press, the drag copies the selection (CheckDuplicate, W5).
                     _clickSelects = null;
-                    document.BeginGesture(draggable);
+                    document.BeginGesture(draggable, duplicate: _duplicatePress && document.CanDuplicate);
                     _press = PressState.Moving;
                     break;
                 case Intent.Resize when movable.Count > 0:
@@ -772,7 +787,8 @@ public sealed class DesignGestures
             dy = System.Math.Round(dy, MidpointRounding.AwayFromZero);
             if (ShowAlignmentHints && !overGrid)
             {
-                DesignSnap snap = DesignGeometry.Snap(Shifted(from, dx, dy), Others(start.Keys));
+                // A Ctrl-drag's copies align to what they copy too, which stays where it is (W5).
+                DesignSnap snap = DesignGeometry.Snap(Shifted(from, dx, dy), Others(document.IsDuplicating ? [] : start.Keys));
                 dx += snap.DX;
                 dy += snap.DY;
                 Guides = snap.Guides;
@@ -1361,10 +1377,10 @@ public sealed class DesignGestures
 
                 document.Preview(boxes);
                 return true;
-            case DesignKey.SelectAll:
-                DesignComponent container = document.Selection.Count > 0 && document.Selection[0].Parent is { } parent ? parent : document.Design.Figure;
-                document.Select(document.Boxes.Where(b => b.Shown && ReferenceEquals(b.Component.Parent, container) && !document.IsResponsiveGrid(b.Component))
-                    .Select(static b => b.Component).ToArray());
+            case DesignKey.SelectAll when _press == PressState.None:
+                // Everything at the top of the figure (SelectAllComponentsCommand, W5).
+                EndKeyMove();
+                document.SelectAll();
                 return true;
             default:
                 return false;
@@ -1669,7 +1685,7 @@ public sealed class DesignGestures
                 {
                     Alerted?.Invoke(this, (DesignDocument.AddLabelFailedTitle, refused));
                 }
-            }));
+            }) { Shortcut = "Ctrl+L" });
         }
 
         if (document.Selection is [var grid] && document.IsGrid(grid) && document.CellsOf(grid) is { } cells)
@@ -1721,14 +1737,25 @@ public sealed class DesignGestures
                     Hint: index is { } h ? new DesignGridHint(grid, axis, h, Insert: false) : null);
         }
 
+        // Cut, Copy, Paste and Duplicate (StandardMenuItemsProvider, W5), with Delete.
+        if (items.Count > 0)
+        {
+            items.Add(DesignMenuItem.Separator);
+        }
+
+        bool copy = document.CanCopy;
+        DesignClipboard? clipboard = Clipboard;
+        items.Add(new DesignMenuItem("Cut", copy && clipboard is not null, () => document.Cut(clipboard!)) { Shortcut = "Ctrl+X" });
+        items.Add(new DesignMenuItem("Copy", copy && clipboard is not null, () => document.Copy(clipboard!)) { Shortcut = "Ctrl+C" });
+        items.Add(new DesignMenuItem("Paste", clipboard is not null && document.CanPasteAt(clipboard, at), () => document.PasteAt(clipboard!, at)) { Shortcut = "Ctrl+V" });
+        if (!document.SelectionIsEmpty && !(document.Selection is [{ Parent: null }]))
+        {
+            items.Add(new DesignMenuItem("Duplicate", document.CanDuplicate, () => document.Duplicate()) { Shortcut = "Ctrl+D" });
+        }
+
         if (document.Selection.Any(document.CanDelete))
         {
-            if (items.Count > 0)
-            {
-                items.Add(DesignMenuItem.Separator);
-            }
-
-            items.Add(new DesignMenuItem("Delete", true, () => document.Delete(document.Selection)));
+            items.Add(new DesignMenuItem("Delete", true, () => document.Delete(document.Selection)) { Shortcut = "Delete" });
         }
 
         // Zoom, always (ZoomMenuItemProvider, W6).
@@ -1841,6 +1868,9 @@ public sealed record DesignMenuItem(string Label, bool Enabled = true, Action? R
 {
     /// <summary>For a check item, whether it is checked; null for any other (W6).</summary>
     public bool? Checked { get; init; }
+
+    /// <summary>The keys the menu shows beside the item (<c>shortcut</c>), as App Designer words them; null for none (W5).</summary>
+    public string? Shortcut { get; init; }
 
     /// <summary>A line between groups of items.</summary>
     public static DesignMenuItem Separator { get; } = new("-", false);

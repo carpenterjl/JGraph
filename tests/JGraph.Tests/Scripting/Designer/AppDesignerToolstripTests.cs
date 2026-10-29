@@ -95,7 +95,7 @@ public class AppDesignerToolstripTests
     [InlineData("AD_DESIGN_REORDER_COMPONENT_FRONT", null)]
     [InlineData("AD_ADD_LABEL", null)]
     [InlineData("APPDES_DESIGN_REORDER_NEXT", "W5")]
-    [InlineData("AD_DUPLICATE", "W5")]
+    [InlineData("EDIT_MODE", "W5")]
     [InlineData("AD_ZOOM_IN", null)]
     [InlineData("AD_DESIGN_VIEW_DISPLAY_SIZE", null)]
     [InlineData("AD_APP_DETAILS", "W8")]

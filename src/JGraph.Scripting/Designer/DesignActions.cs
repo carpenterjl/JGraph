@@ -41,7 +41,8 @@ public static class DesignActions
     /// commands, the Code View's insertions and Code Options, Find (the code editor's own search),
     /// cut, copy and paste in the Code View, help, the shortcuts dialog and the document tab's menu;
     /// since W3, the Start Page and its new apps (a new custom component waits for W15); since W4, the
-    /// arrange actions; since W6, the zoom and Resizing Hints. The grid layout actions run from the canvas's context menu (designer plan DS4).
+    /// arrange actions; since W6, the zoom and Resizing Hints; since W5, cut, copy, paste, Duplicate and
+    /// Select All on the canvas. The grid layout actions run from the canvas's context menu (designer plan DS4).
     /// </summary>
     private static readonly HashSet<string> Live = new(StringComparer.Ordinal)
     {
@@ -69,6 +70,8 @@ public static class DesignActions
         "AD_ADD_LABEL",
         // Stage W6: the zoom and Resizing Hints.
         "AD_ZOOM_IN", "AD_ZOOM_OUT", "AD_RESET_ZOOM", "AD_FIT_TO_VIEW", "AD_DESIGN_VIEW_DISPLAY_SIZE",
+        // Stage W5: the clipboard on the canvas - Duplicate and Select All beside Cut, Copy and Paste.
+        "AD_DUPLICATE", "AD_SELECT_ALL",
     };
 
     /// <summary>Every action, by id.</summary>

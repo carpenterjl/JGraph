@@ -438,6 +438,7 @@ public sealed class DesignCanvas : UserControl
                     TabHeadingAt = at => _layer.TabHeadingAt(new Point(at.X, at.Y)) is { } tab ? value.Runtime.ComponentOf(tab) : null,
                     DragThreshold = System.Math.Max(SystemParameters.MinimumHorizontalDragDistance, SystemParameters.MinimumVerticalDragDistance),
                     FigureLeftRoom = Gutter - 2,
+                    Clipboard = _clipboard,
                 };
                 ApplyOptions();
                 value.Changed += OnChanged;
@@ -457,6 +458,22 @@ public sealed class DesignCanvas : UserControl
             Refresh();
         }
     }
+
+    /// <summary>The clipboard the canvas's menu cuts, copies and pastes with: the designer window's, which its apps share (W5).</summary>
+    public DesignClipboard? Clipboard
+    {
+        get => _clipboard;
+        set
+        {
+            _clipboard = value;
+            if (_gestures is not null)
+            {
+                _gestures.Clipboard = value;
+            }
+        }
+    }
+
+    private DesignClipboard? _clipboard;
 
     /// <summary>Whether the grid is drawn, which a move and a resize then snap to.</summary>
     public bool ShowGrid
@@ -700,7 +717,11 @@ public sealed class DesignCanvas : UserControl
             return new Separator();
         }
 
-        var entry = new MenuItem { Header = item.Label, IsEnabled = item.Enabled, IsCheckable = item.Checked is not null, IsChecked = item.Checked == true };
+        var entry = new MenuItem
+        {
+            Header = item.Label, IsEnabled = item.Enabled, IsCheckable = item.Checked is not null, IsChecked = item.Checked == true,
+            InputGestureText = item.Shortcut ?? string.Empty,
+        };
         System.Windows.Automation.AutomationProperties.SetAutomationId(entry, "Menu." + item.Label.Replace(" ", string.Empty, StringComparison.Ordinal));
         if (item.Items is { } children)
         {
