@@ -96,6 +96,7 @@ public sealed class UiSliderFace : FrameworkElement
     {
         ArgumentNullException.ThrowIfNull(drawingContext);
         base.OnRender(drawingContext);
+        _labelBoxes.Clear();
 
         // The whole element takes the mouse, so a press beside the track still lands on it.
         drawingContext.DrawRectangle(Brushes.Transparent, null, new Rect(0, 0, ActualWidth, ActualHeight));
@@ -121,7 +122,7 @@ public sealed class UiSliderFace : FrameworkElement
                 if (i < TickLabels.Count)
                 {
                     FormattedText text = Label(TickLabels[i], pixelsPerDip);
-                    drawingContext.DrawText(text, new Point(x + 18, y - (text.Height / 2)));
+                    DrawLabel(drawingContext, text, new Point(x + 18, y - (text.Height / 2)));
                 }
             }
 
@@ -151,7 +152,7 @@ public sealed class UiSliderFace : FrameworkElement
             if (i < TickLabels.Count)
             {
                 FormattedText text = Label(TickLabels[i], pixelsPerDip);
-                drawingContext.DrawText(text, new Point(x - (text.Width / 2), top + 17));
+                DrawLabel(drawingContext, text, new Point(x - (text.Width / 2), top + 17));
             }
         }
 
@@ -160,6 +161,20 @@ public sealed class UiSliderFace : FrameworkElement
         {
             DrawThumb(drawingContext, new Point(Along(High), top + (Thickness / 2)));
         }
+    }
+
+    private readonly List<Rect> _labelBoxes = [];
+
+    /// <summary>
+    /// Where the last render drew each tick label, in the order drawn, in the element's coordinates:
+    /// the places the visual designer's canvas edits the limits in (W5b).
+    /// </summary>
+    public IReadOnlyList<Rect> LabelBoxes => _labelBoxes;
+
+    private void DrawLabel(DrawingContext context, FormattedText label, Point origin)
+    {
+        context.DrawText(label, origin);
+        _labelBoxes.Add(new Rect(origin, new Size(label.Width, label.Height)));
     }
 
     private FormattedText Label(string text, double pixelsPerDip) => new(

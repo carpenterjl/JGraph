@@ -123,6 +123,72 @@ public sealed partial class UiComponentLayer
         }
     }
 
+    /// <summary>
+    /// Where <paramref name="source"/> draws the places the visual designer's canvas edits in place,
+    /// on this layer (W5b): a slider's, knob's and gauge's first and last tick labels, a discrete
+    /// knob's items, a switch's two items, a table's column headings, left to right; null for any
+    /// other component, and when it is not shown.
+    /// </summary>
+    public IReadOnlyList<Rect>? InPlaceBoxesOf(UiComponentModel source)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        if (!_components.TryGetValue(source, out Shown? shown) || shown.Element.Visibility != Visibility.Visible || !shown.Element.IsDescendantOf(this))
+        {
+            return null;
+        }
+
+        static IReadOnlyList<Rect>? Ends(IReadOnlyList<Rect> boxes) => boxes.Count switch
+        {
+            0 => null,
+            1 => [boxes[0]],
+            _ => [boxes[0], boxes[^1]],
+        };
+
+        IReadOnlyList<Rect>? local = shown switch
+        {
+            { Slider: { } slider } => Ends(slider.LabelBoxes),
+            { Knob: { } knob } => Ends(knob.LabelBoxes),
+            { Gauge: { } gauge } => Ends(gauge.LabelBoxes),
+            { Dial: { } dial } => dial.LabelBoxes.Count > 0 ? dial.LabelBoxes : null,
+            { Switch: { } toggle } => toggle.LabelBoxes.Count > 0 ? toggle.LabelBoxes : null,
+            _ => null,
+        };
+        if (local is not null)
+        {
+            GeneralTransform toLayer = shown.Element.TransformToAncestor(this);
+            return local.Select(toLayer.TransformBounds).ToArray();
+        }
+
+        if (shown.Input is DataGrid grid)
+        {
+            var headers = new List<DataGridColumnHeader>();
+            Collect(grid, headers);
+            return headers.Count == 0
+                ? null
+                : headers.OrderBy(static h => h.Column.DisplayIndex)
+                    .Select(h => h.TransformToAncestor(this).TransformBounds(new Rect(h.RenderSize)))
+                    .ToArray();
+        }
+
+        return null;
+
+        static void Collect(DependencyObject parent, List<DataGridColumnHeader> found)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+                if (child is DataGridColumnHeader { Column: not null, IsVisible: true, ActualWidth: > 0 } header)
+                {
+                    found.Add(header);
+                }
+                else
+                {
+                    Collect(child, found);
+                }
+            }
+        }
+    }
+
     /// <summary>Whether a field a person types into has the keyboard: what a press elsewhere commits first.</summary>
     public bool HasFocusedTextEntry =>
         FocusedComponent is { Style: UiControlStyle.Edit }

@@ -40,6 +40,9 @@ public enum DesignKey
 
     /// <summary>Ctrl+Shift+G: takes the selected groups apart.</summary>
     Ungroup,
+
+    /// <summary>F2: opens the selected component's in-place editor (W5b, <c>INPLACE_EDIT_KEY</c>).</summary>
+    EditInPlace,
 }
 
 /// <summary>The pointer the canvas shows where the mouse is.</summary>
@@ -165,6 +168,13 @@ public sealed class DesignGestures
 
     /// <summary>The tab whose heading is at a point of the surface, which the canvas's component layer knows; null when none.</summary>
     public Func<Point2D, DesignComponent?>? TabHeadingAt { get; set; }
+
+    /// <summary>
+    /// Where the canvas drew each of a component's places to edit in place (a label's text, a gauge's
+    /// limits, a table's column headings), on the surface; null or empty where it cannot say, and the
+    /// document's own estimate stands (W5b).
+    /// </summary>
+    public Func<DesignComponent, IReadOnlyList<Rect2D>?>? HotspotsOf { get; set; }
 
     /// <summary>Whether the grid is shown; a move and a resize snap to it then, when <see cref="SnapToGrid"/>.</summary>
     public bool ShowGrid { get; set; }
@@ -1377,6 +1387,10 @@ public sealed class DesignGestures
 
                 document.Preview(boxes);
                 return true;
+            case DesignKey.EditInPlace when _press == PressState.None && modifiers == DesignModifiers.None:
+                // F2 on the one selected component, a labelled component's label (DesignAreaKeyboardController).
+                EndKeyMove();
+                return document.InPlaceTarget is { } target && BeginInPlace(target);
             case DesignKey.SelectAll when _press == PressState.None:
                 // Everything at the top of the figure (SelectAllComponentsCommand, W5).
                 EndKeyMove();
@@ -1590,7 +1604,7 @@ public sealed class DesignGestures
     /// (<c>GridRichEditPlugin.handleDoubleClick</c>).
     /// </summary>
     /// <returns>Whether it did.</returns>
-    public bool DoubleClick(Point2D at)
+    public bool DoubleClick(Point2D at, DesignModifiers modifiers = DesignModifiers.None)
     {
         if (Document.Selection is [var grid] && Document.IsGrid(grid) && Configuring?.Grid != grid)
         {
@@ -1598,7 +1612,96 @@ public sealed class DesignGestures
             return true;
         }
 
+        // An in-place edit of what is under it, selected first, with no keys held (InplaceEditPlugin, W5b).
+        // A tab's heading edits its title (TabStripMouseController).
+        if (modifiers == DesignModifiers.None && _press == PressState.None
+            && ((TabHeadingAt?.Invoke(at) is { } tab && Document.CanEditInPlace(tab) ? tab : null) ?? Document.InPlaceComponentAt(at, HotspotsOf)) is { } target)
+        {
+            if (!Document.Selection.Contains(target))
+            {
+                Document.Select([target]);
+            }
+
+            BeginInPlace(target, pointer: at);
+            return true;
+        }
+
         return false;
+    }
+
+    // --- in-place text (W5b) ---------------------------------------------------------------------
+
+    /// <summary>The in-place edit open on the canvas, or null.</summary>
+    public DesignInPlaceEdit? InPlace { get; private set; }
+
+    /// <summary>
+    /// Opens the in-place editor on <paramref name="component"/>: at the place a double click at
+    /// <paramref name="pointer"/> hit, on what a key <paramref name="seed"/> typed, or at the place
+    /// <paramref name="hotspot"/> (<c>InPlaceEditorManager.showEditorForWidget</c>). An editor already
+    /// open closes unsaved first.
+    /// </summary>
+    /// <returns>Whether one opened: not on a component the canvas does not edit, nor for a click that missed each of a component's places.</returns>
+    public bool BeginInPlace(DesignComponent component, Point2D? pointer = null, string? seed = null, int? hotspot = null)
+    {
+        ArgumentNullException.ThrowIfNull(component);
+        InPlace = Document.InPlaceEdit(component, pointer, seed, hotspot, HotspotsOf);
+        Changed?.Invoke(this, EventArgs.Empty);
+        return InPlace is not null;
+    }
+
+    /// <summary>
+    /// Characters typed on the canvas: the first one past a space opens the editor of the one selected
+    /// component that a key opens, the text replaced by them (<c>_initiateInPlaceEditing</c>'s <c>SeedValue</c>).
+    /// </summary>
+    /// <returns>Whether an editor opened.</returns>
+    public bool TypeText(string text)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        if (InPlace is not null || _press != PressState.None || text.Length == 0 || text[0] <= ' ' || char.IsControl(text[0]))
+        {
+            return false;
+        }
+
+        EndKeyMove();
+        return Document.InPlaceTarget is { } target && BeginInPlace(target, seed: text);
+    }
+
+    /// <summary>
+    /// Closes the in-place editor: <paramref name="save"/> saves <paramref name="text"/> (and a
+    /// hyperlink's <paramref name="url"/>) as <see cref="DesignDocument.SaveInPlace"/> does; Tab's
+    /// <paramref name="next"/> then says which way to the component's next place to edit.
+    /// </summary>
+    /// <returns>What the component refused, or null; and the place Tab opens next on a component with several, or null.</returns>
+    public (string? Refused, int? Next) EndInPlace(bool save, string text, string? url = null, bool? next = null)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        if (InPlace is not { } edit)
+        {
+            return (null, null);
+        }
+
+        InPlace = null;
+        string? refused = save ? Document.SaveInPlace(edit, text, url) : null;
+        int? following = save && next is { } backwards && refused is null && edit.Component.Parent is not null
+            ? Document.NextHotspot(edit, backwards, HotspotsOf)
+            : null;
+        Changed?.Invoke(this, EventArgs.Empty);
+        return (refused, following);
+    }
+
+    /// <summary>Sets the image the open file browser edit is on to the file <paramref name="path"/> chosen for it, and closes it; a null path closes it unchanged.</summary>
+    /// <returns>What the image refused, or null.</returns>
+    public string? ChooseImage(string? path)
+    {
+        if (InPlace is not { Kind: DesignInPlaceKind.FileBrowser } edit)
+        {
+            return null;
+        }
+
+        InPlace = null;
+        string? refused = path is { Length: > 0 } ? Document.SetImageFile(edit.Component, path) : null;
+        Changed?.Invoke(this, EventArgs.Empty);
+        return refused;
     }
 
     /// <summary>

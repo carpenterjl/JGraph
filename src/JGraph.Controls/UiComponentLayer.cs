@@ -96,6 +96,29 @@ public sealed partial class UiComponentLayer : Canvas
         return null;
     }
 
+    /// <summary>Where <paramref name="tab"/>'s heading is on this layer, or null when it shows none: where the designer's canvas edits its title (W5b).</summary>
+    public Rect? TabHeadingBoxOf(UiTabModel tab)
+    {
+        ArgumentNullException.ThrowIfNull(tab);
+        foreach (TabControl strip in _tabStrips.Values)
+        {
+            if (strip.Visibility != Visibility.Visible)
+            {
+                continue;
+            }
+
+            foreach (object entry in strip.Items)
+            {
+                if (entry is TabItem { Tag: UiTabModel shown, IsVisible: true } item && ReferenceEquals(shown, tab) && item.ActualWidth > 0)
+                {
+                    return item.TransformToAncestor(this).TransformBounds(new Rect(item.RenderSize));
+                }
+            }
+        }
+
+        return null;
+    }
+
     /// <summary>The component with the keyboard, or null when none of this layer's controls has it.</summary>
     public UiControlModel? FocusedComponent
     {

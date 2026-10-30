@@ -64,7 +64,25 @@ public abstract class UiDrawnFace : FrameworkElement
     protected void DrawCentred(DrawingContext context, string text, Point centre, double pixelsPerDip)
     {
         FormattedText label = Label(text, pixelsPerDip);
-        context.DrawText(label, new Point(centre.X - (label.Width / 2), centre.Y - (label.Height / 2)));
+        DrawLabel(context, label, new Point(centre.X - (label.Width / 2), centre.Y - (label.Height / 2)));
+    }
+
+    private readonly List<Rect> _labelBoxes = [];
+
+    /// <summary>
+    /// Where the last render drew each label, in the order drawn, in the element's coordinates: the
+    /// places the visual designer's canvas edits a limit or an item in (W5b).
+    /// </summary>
+    public IReadOnlyList<Rect> LabelBoxes => _labelBoxes;
+
+    /// <summary>Forgets the labels of the last render, as a render begins.</summary>
+    protected void ClearLabels() => _labelBoxes.Clear();
+
+    /// <summary>Draws a label with its top-left corner at <paramref name="origin"/>, and keeps where.</summary>
+    protected void DrawLabel(DrawingContext context, FormattedText label, Point origin)
+    {
+        context.DrawText(label, origin);
+        _labelBoxes.Add(new Rect(origin, new Size(label.Width, label.Height)));
     }
 
     /// <summary>A point on a circle: <paramref name="degrees"/> clockwise from twelve o'clock.</summary>
@@ -136,6 +154,7 @@ public sealed class UiKnobFace : UiDrawnFace
     {
         ArgumentNullException.ThrowIfNull(drawingContext);
         base.OnRender(drawingContext);
+        ClearLabels();
         drawingContext.DrawRectangle(Brushes.Transparent, null, new Rect(0, 0, ActualWidth, ActualHeight));
         double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
         Point centre = Centre;
@@ -158,7 +177,7 @@ public sealed class UiKnobFace : UiDrawnFace
             {
                 FormattedText label = Label(TickLabels[i], pixelsPerDip);
                 Point at = OnCircle(centre, labelRadius + (label.Width / 2 * System.Math.Abs(System.Math.Sin(angle * System.Math.PI / 180))), angle);
-                drawingContext.DrawText(label, new Point(at.X - (label.Width / 2), at.Y - (label.Height / 2)));
+                DrawLabel(drawingContext, label, new Point(at.X - (label.Width / 2), at.Y - (label.Height / 2)));
             }
         }
 
@@ -326,6 +345,7 @@ public sealed class UiDiscreteKnobFace : UiDrawnFace
     {
         ArgumentNullException.ThrowIfNull(drawingContext);
         base.OnRender(drawingContext);
+        ClearLabels();
         drawingContext.DrawRectangle(Brushes.Transparent, null, new Rect(0, 0, ActualWidth, ActualHeight));
         double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
         Point centre = Centre;
@@ -339,7 +359,7 @@ public sealed class UiDiscreteKnobFace : UiDrawnFace
             drawingContext.DrawLine(TickPen, OnCircle(centre, ring, angle), OnCircle(centre, ring + UiKnobModel.MajorTickLength, angle));
             FormattedText label = Label(Items[i], pixelsPerDip);
             Point at = OnCircle(centre, labelRadius + (label.Width / 2 * System.Math.Abs(System.Math.Sin(angle * System.Math.PI / 180))), angle);
-            drawingContext.DrawText(label, new Point(at.X - (label.Width / 2), at.Y - (label.Height / 2)));
+            DrawLabel(drawingContext, label, new Point(at.X - (label.Width / 2), at.Y - (label.Height / 2)));
         }
 
         double pointer = AngleOf(System.Math.Clamp(Selected, 0, System.Math.Max(0, Items.Count - 1)));
@@ -525,6 +545,7 @@ public sealed class UiGaugeFace : UiDrawnFace
     {
         ArgumentNullException.ThrowIfNull(drawingContext);
         base.OnRender(drawingContext);
+        ClearLabels();
         Rect box = Inner;
         drawingContext.DrawRectangle(Background ?? Brushes.Transparent, null, box);
         double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
@@ -613,7 +634,7 @@ public sealed class UiGaugeFace : UiDrawnFace
             if (i < TickLabels.Count)
             {
                 FormattedText label = Label(TickLabels[i], pixelsPerDip);
-                drawingContext.DrawText(label, vertical
+                DrawLabel(drawingContext, label, vertical
                     ? new Point(at.X + 9, at.Y - (label.Height / 2))
                     : new Point(at.X - (label.Width / 2), at.Y + 8));
             }
@@ -704,6 +725,7 @@ public sealed class UiSwitchFace : UiDrawnFace
     {
         ArgumentNullException.ThrowIfNull(drawingContext);
         base.OnRender(drawingContext);
+        ClearLabels();
         drawingContext.DrawRectangle(Brushes.Transparent, null, new Rect(0, 0, ActualWidth, ActualHeight));
         double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
         Rect box = Inner;
@@ -753,13 +775,13 @@ public sealed class UiSwitchFace : UiDrawnFace
             FormattedText second = Label(Items[1], pixelsPerDip);
             if (Upright)
             {
-                drawingContext.DrawText(first, new Point(box.X + (box.Width / 2) - (first.Width / 2), box.Bottom + UiSwitchModel.LabelGap));
-                drawingContext.DrawText(second, new Point(box.X + (box.Width / 2) - (second.Width / 2), box.Y - UiSwitchModel.LabelGap - second.Height));
+                DrawLabel(drawingContext, first, new Point(box.X + (box.Width / 2) - (first.Width / 2), box.Bottom + UiSwitchModel.LabelGap));
+                DrawLabel(drawingContext, second, new Point(box.X + (box.Width / 2) - (second.Width / 2), box.Y - UiSwitchModel.LabelGap - second.Height));
             }
             else
             {
-                drawingContext.DrawText(first, new Point(box.X - UiSwitchModel.LabelGap - first.Width, box.Y + (box.Height / 2) - (first.Height / 2)));
-                drawingContext.DrawText(second, new Point(box.Right + UiSwitchModel.LabelGap, box.Y + (box.Height / 2) - (second.Height / 2)));
+                DrawLabel(drawingContext, first, new Point(box.X - UiSwitchModel.LabelGap - first.Width, box.Y + (box.Height / 2) - (first.Height / 2)));
+                DrawLabel(drawingContext, second, new Point(box.Right + UiSwitchModel.LabelGap, box.Y + (box.Height / 2) - (second.Height / 2)));
             }
         }
     }
@@ -838,6 +860,7 @@ public sealed class UiLampFace : UiDrawnFace
     {
         ArgumentNullException.ThrowIfNull(drawingContext);
         base.OnRender(drawingContext);
+        ClearLabels();
         Rect box = Inner;
         double radius = System.Math.Max(1, System.Math.Min(box.Width, box.Height) / 2);
         Point centre = new(box.X + (box.Width / 2), box.Y + (box.Height / 2));

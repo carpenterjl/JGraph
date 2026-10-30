@@ -26,9 +26,9 @@ namespace JGraph.Controls.Designer;
 /// W6: the zoom - its steps, Ctrl+wheel about the pointer, Fit to View on a tap of Space, the
 /// floating zoom panel at the bottom-right - a drag with Space held or the middle button pans, a zoom
 /// says how to pan the first few times, the menu's Zoom and display items, and the size shown while
-/// resizing when Resizing Hints is on.
+/// resizing when Resizing Hints is on. W5b: a component's text edited in place, in a box over it.
 /// </summary>
-public sealed class DesignCanvas : UserControl
+public sealed partial class DesignCanvas : UserControl
 {
     /// <summary>The space around the figure on the canvas.</summary>
     private const double Gutter = 24;
@@ -126,6 +126,7 @@ public sealed class DesignCanvas : UserControl
         _outer = new Grid { HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top, LayoutTransform = _scale };
         _outer.Children.Add(_surface);
         _outer.Children.Add(_overlay);
+        _outer.Children.Add(_inPlaceHost);
         _scroll = new ScrollViewer
         {
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
@@ -308,6 +309,9 @@ public sealed class DesignCanvas : UserControl
             return;
         }
 
+        // A zoom from the toolstrip or the panel takes the editor's keyboard, which saves it (the wheel closed it unsaved first).
+        CloseInPlace(save: true);
+
         Point a = about ?? new Point(_scroll.ViewportWidth / 2, _scroll.ViewportHeight / 2);
         double x = (_scroll.HorizontalOffset + a.X - _outer.Margin.Left) / _zoom;
         double y = (_scroll.VerticalOffset + a.Y - _outer.Margin.Top) / _zoom;
@@ -346,6 +350,7 @@ public sealed class DesignCanvas : UserControl
     // Ctrl+wheel zooms about the pointer (ZoomHandler._mouseWheelHandler: up is in).
     private void OnWheel(object sender, MouseWheelEventArgs e)
     {
+        CloseInPlace(save: false);
         if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift | ModifierKeys.Alt)) != ModifierKeys.Control || _document is null)
         {
             return;
@@ -413,6 +418,7 @@ public sealed class DesignCanvas : UserControl
 
             if (_document is not null)
             {
+                CloseInPlace(save: false);
                 _gestures?.Cancel();
                 _gestures?.EndConfigure();
                 _document.Changed -= OnChanged;
@@ -439,6 +445,7 @@ public sealed class DesignCanvas : UserControl
                     DragThreshold = System.Math.Max(SystemParameters.MinimumHorizontalDragDistance, SystemParameters.MinimumVerticalDragDistance),
                     FigureLeftRoom = Gutter - 2,
                     Clipboard = _clipboard,
+                    HotspotsOf = InPlaceHotspots,
                 };
                 ApplyOptions();
                 value.Changed += OnChanged;
@@ -543,6 +550,7 @@ public sealed class DesignCanvas : UserControl
             }
 
             _drawing = _gestures!.DrawEntry is not null;
+            SyncInPlace();
             _overlay.InvalidateVisual();
             ShowPopup();
             DesignChanged?.Invoke(this, EventArgs.Empty);
@@ -672,7 +680,7 @@ public sealed class DesignCanvas : UserControl
         Point2D at = OnSurface(e);
 
         // A double click on a selected grid configures it (DS4).
-        if (button == DesignButton.Left && e.ClickCount == 2 && gestures.DoubleClick(at))
+        if (button == DesignButton.Left && e.ClickCount == 2 && gestures.DoubleClick(at, Modifiers()))
         {
             return;
         }
@@ -819,6 +827,11 @@ public sealed class DesignCanvas : UserControl
     protected override void OnKeyDown(KeyEventArgs e)
     {
         base.OnKeyDown(e);
+        if (IsEditingInPlace)
+        {
+            return;
+        }
+
         if (e.Key == Key.Space && Keyboard.Modifiers == ModifierKeys.None && _document is not null)
         {
             // A tap fits the view, a hold of 200 ms pans (DesignViewKeyboardHandler).
@@ -843,6 +856,7 @@ public sealed class DesignCanvas : UserControl
             Key.Delete or Key.Back => DesignKey.Delete,
             Key.G when Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) => DesignKey.Ungroup,
             Key.G when Keyboard.Modifiers == ModifierKeys.Control => DesignKey.Group,
+            Key.F2 => DesignKey.EditInPlace,
             _ => null,
         };
         if (e.Key == Key.Escape && _tabOrderAt >= 0)
@@ -865,6 +879,11 @@ public sealed class DesignCanvas : UserControl
     protected override void OnKeyUp(KeyEventArgs e)
     {
         base.OnKeyUp(e);
+        if (IsEditingInPlace)
+        {
+            return;
+        }
+
         if (e.Key == Key.Space)
         {
             if (_spaceTimer.IsEnabled)
