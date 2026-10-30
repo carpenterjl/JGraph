@@ -199,6 +199,7 @@ public sealed partial class DesignCanvas : UserControl
         host.Children.Add(_scroll);
         host.Children.Add(_panMessage);
         host.Children.Add(_zoomPanel);
+        BuildTray(host);
         Content = host;
         _tabOrderTimer.Tick += (_, _) => StepTabOrder();
     }
@@ -285,6 +286,7 @@ public sealed partial class DesignCanvas : UserControl
         }
 
         Size2D figure = document.Runtime.Figure.Size;
+        figure = new Size2D(figure.Width, figure.Height + BarsHeight); // the menu bar and toolbars are the figure's too
         SetZoom(DesignZoom.FitToView(new Size2D(_scroll.ViewportWidth, _scroll.ViewportHeight), figure));
 
         // Centred in the view: by scrolling, or - the canvas smaller than the view - by a margin, kept
@@ -427,6 +429,7 @@ public sealed partial class DesignCanvas : UserControl
                 _gestures.Alerted -= OnAlerted;
                 _gestures.ZoomRequested -= OnZoomRequested;
                 _gestures.DisplayOptionToggled -= OnDisplayOptionToggled;
+                _gestures.MenuOpened -= OnBarMenuOpened;
             }
 
             StopTabOrder();
@@ -449,6 +452,7 @@ public sealed partial class DesignCanvas : UserControl
                     FigureLeftRoom = Gutter - 2,
                     Clipboard = _clipboard,
                     HotspotsOf = InPlaceHotspots,
+                    TextWidth = MeasureBarText,
                 };
                 ApplyOptions();
                 value.Changed += OnChanged;
@@ -457,6 +461,7 @@ public sealed partial class DesignCanvas : UserControl
                 _gestures.Alerted += OnAlerted;
                 _gestures.ZoomRequested += OnZoomRequested;
                 _gestures.DisplayOptionToggled += OnDisplayOptionToggled;
+                _gestures.MenuOpened += OnBarMenuOpened;
                 _gestures.ZoomLevel = _zoom;
                 value.CanvasZoom = _zoom;
                 if (value.Selection.Count == 0)
@@ -554,6 +559,7 @@ public sealed partial class DesignCanvas : UserControl
 
             _drawing = _gestures!.DrawEntry is not null;
             SyncInPlace();
+            SyncTrayView();
             _overlay.InvalidateVisual();
             ShowPopup();
             DesignChanged?.Invoke(this, EventArgs.Empty);
@@ -571,7 +577,7 @@ public sealed partial class DesignCanvas : UserControl
     {
         if (IsVisible)
         {
-            _popup.Show(_gestures, Gutter, Gutter);
+            _popup.Show(_gestures, Gutter, Top);
         }
         else
         {
@@ -587,13 +593,14 @@ public sealed partial class DesignCanvas : UserControl
             Size2D size = document.Runtime.Figure.Size;
             _surface.Width = size.Width;
             _surface.Height = size.Height;
-            _surface.Margin = new System.Windows.Thickness(Gutter + (_gestures?.FigureShift ?? 0), Gutter, Gutter, Gutter);
+            _surface.Margin = new System.Windows.Thickness(Gutter + (_gestures?.FigureShift ?? 0), Top, Gutter, Gutter);
             _outer.Width = size.Width + (2 * Gutter);
-            _outer.Height = size.Height + (2 * Gutter);
+            _outer.Height = size.Height + (2 * Gutter) + BarsHeight;
             _layer.Apply(document.Runtime.TakeFrame());
             _figure.RequestRender();
         }
 
+        SyncTrayView();
         _overlay.InvalidateVisual();
         DesignChanged?.Invoke(this, EventArgs.Empty);
     }
@@ -644,7 +651,7 @@ public sealed partial class DesignCanvas : UserControl
     private Point2D OnSurface(MouseEventArgs e)
     {
         Point at = e.GetPosition(_overlay);
-        return new Point2D(at.X - Gutter, at.Y - Gutter);
+        return new Point2D(at.X - Gutter, at.Y - Top);
     }
 
     private static DesignModifiers Modifiers() =>
@@ -718,7 +725,7 @@ public sealed partial class DesignCanvas : UserControl
         {
             menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Relative;
             menu.HorizontalOffset = (place.X + Gutter) * _zoom;
-            menu.VerticalOffset = (place.Y + Gutter) * _zoom;
+            menu.VerticalOffset = (place.Y + Top) * _zoom;
         }
 
         foreach (DesignMenuItem item in items)
@@ -870,6 +877,10 @@ public sealed partial class DesignCanvas : UserControl
             Key.G when Keyboard.Modifiers == ModifierKeys.Control => DesignKey.Group,
             Key.F2 => DesignKey.EditInPlace,
             Key.Enter => DesignKey.Enter,
+            Key.Home => DesignKey.Home,
+            Key.End => DesignKey.End,
+            Key.P when (Keyboard.Modifiers & ModifierKeys.Control) == 0 => DesignKey.AddPushTool,
+            Key.T when (Keyboard.Modifiers & ModifierKeys.Control) == 0 => DesignKey.AddToggleTool,
             _ => null,
         };
         if (e.Key == Key.Escape && _tabOrderAt >= 0)
@@ -946,14 +957,20 @@ public sealed partial class DesignCanvas : UserControl
         {
             // Where it would drop, and every grid's cells, as App Designer's drop hints (DS4).
             Point at = e.GetPosition(_overlay);
-            gestures.DragOver(entry, new Point2D(at.X - Gutter, at.Y - Gutter));
+            _dragPointer = e.GetPosition((UIElement)Content);
+            gestures.DragOver(entry, new Point2D(at.X - Gutter, at.Y - Top));
+            _dragLayer?.InvalidateVisual();
         }
 
         e.Handled = true;
     }
 
     /// <summary>A library drag left the canvas.</summary>
-    private void DragLeft() => _gestures?.DragLeave();
+    private void DragLeft()
+    {
+        _gestures?.DragLeave();
+        _dragLayer?.InvalidateVisual();
+    }
 
     /// <summary>A library entry dropped is added where it landed.</summary>
     private void Dropped(DragEventArgs e)
@@ -965,7 +982,7 @@ public sealed partial class DesignCanvas : UserControl
         }
 
         Point at = e.GetPosition(_overlay);
-        gestures.Drop(entry, new Point2D(at.X - Gutter, at.Y - Gutter), withoutLabel: (e.KeyStates & DragDropKeyStates.ControlKey) != 0);
+        gestures.Drop(entry, new Point2D(at.X - Gutter, at.Y - Top), withoutLabel: (e.KeyStates & DragDropKeyStates.ControlKey) != 0);
         Focus();
         e.Handled = true;
     }
@@ -986,7 +1003,7 @@ public sealed partial class DesignCanvas : UserControl
         outline.Freeze();
         var dashed = new Pen(accent, 1) { DashStyle = DashStyles.Dash };
         dashed.Freeze();
-        dc.PushTransform(new TranslateTransform(Gutter + gestures.FigureShift, Gutter));
+        dc.PushTransform(new TranslateTransform(Gutter + gestures.FigureShift, Top));
         Size2D size = document.Runtime.Figure.Size;
 
         if (_showGrid)
@@ -1090,6 +1107,7 @@ public sealed partial class DesignCanvas : UserControl
         }
 
         DrawStructure(dc, document, gestures, accent, outline, dashed);
+        DrawBars(dc, gestures, accent, outline, dashed);
 
         foreach (DesignHandle handle in gestures.Handles())
         {

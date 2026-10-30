@@ -42,8 +42,9 @@ public static class DesignActions
     /// cut, copy and paste in the Code View, help, the shortcuts dialog and the document tab's menu;
     /// since W3, the Start Page and its new apps (a new custom component waits for W15); since W4, the
     /// arrange actions; since W6, the zoom and Resizing Hints; since W5, cut, copy, paste, Duplicate and
-    /// Select All on the canvas, and since W5c, Move for tabs and tree nodes and a tree's nodes added and
-    /// indented. The grid layout actions run from the canvas's context menu (designer plan DS4).
+    /// Select All on the canvas, since W5c, Move for tabs and tree nodes and a tree's nodes added and
+    /// indented, and since W5d, a figure's menus and tools built on the canvas. The grid layout actions
+    /// run from the canvas's context menu (designer plan DS4).
     /// </summary>
     private static readonly HashSet<string> Live = new(StringComparer.Ordinal)
     {
@@ -73,6 +74,10 @@ public static class DesignActions
         "AD_ZOOM_IN", "AD_ZOOM_OUT", "AD_RESET_ZOOM", "AD_FIT_TO_VIEW", "AD_DESIGN_VIEW_DISPLAY_SIZE",
         // Stage W5: the clipboard on the canvas - Duplicate and Select All beside Cut, Copy and Paste.
         "AD_DUPLICATE", "AD_SELECT_ALL",
+        // Stage W5d: menus, the menu bar's own items and tools on the canvas.
+        "AD_DESIGN_MENU_HIERARCHY_ADD_RIGHT", "AD_DESIGN_MENU_HIERARCHY_ADD_BELOW", "AD_DESIGN_MENU_HIERARCHY_ADD_AT_END",
+        "AD_DESIGN_MENUBAR_ADD_AT_END", "AD_DESIGN_MENUBAR_SELECT_ALL", "AD_DESIGN_MENUBAR_COPY", "AD_DESIGN_MENUBAR_PASTE",
+        "DESIGN_TOOL_ADD_PUSHTOOL_TO_RIGHT", "DESIGN_TOOL_ADD_TOGGLETOOL_TO_RIGHT", "DESIGN_TOOLBAR_ADD_PUSHTOOL_TO_END", "DESIGN_TOOLBAR_ADD_TOGGLETOOL_TO_END",
         // Stage W5c: a tab's and a node's order (Move and a heading's drag) and a tree's nodes.
         "APPDES_DESIGN_REORDER_PREVIOUS", "APPDES_DESIGN_REORDER_NEXT", "APPDES_DESIGN_REORDER_FIRST", "APPDES_DESIGN_REORDER_LAST",
         "APPDES_DESIGN_REORDER_OFFSET",

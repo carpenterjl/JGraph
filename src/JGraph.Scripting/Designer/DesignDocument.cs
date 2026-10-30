@@ -874,8 +874,14 @@ public sealed partial class DesignDocument : IDisposable
         DesignComponent parent = ContainerFor(entry, target);
         IReadOnlyList<(DesignComponent Component, int? Index)> made = MakeFromEntry(entry, parent, size, withoutLabel);
         Place(parent, made.Select(static m => m.Component).ToArray(), topLeft);
+        if (entry.Type == DesignBars.ToolbarType)
+        {
+            // A toolbar goes among the toolbars by where it was dropped (W5d).
+            made = [(made[0].Component, ToolbarIndexFor(topLeft.Y))];
+        }
 
-        List<Edit> step = made.Select(m => (Edit)new AddEdit(m.Component, parent, m.Index)).ToList();
+        // A menu bar's first menu alone is selected (MenuBarEntryDefinition's Selected, W5d).
+        List<Edit> step = made.Select((m, i) => (Edit)new AddEdit(m.Component, parent, m.Index) { Selects = entry.Type != DesignBars.MenuType || i == 0 }).ToList();
         AddLabeledGroup(entry, made, step);
         Do([.. step]);
         return made.Select(static m => m.Component).ToArray();

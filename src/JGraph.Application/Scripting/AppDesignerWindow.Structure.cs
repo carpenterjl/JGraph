@@ -65,6 +65,11 @@ internal sealed partial class AppDesignerWindow
 
         bool inside = d.MovesInside;
         bool node = d.SelectedTreeNode is not null;
+        if (ToolKeyIsIdle(d, key))
+        {
+            return false;
+        }
+
         return key switch
         {
             StructureKey.Home => inside ? d.CanMove(DesignMove.First) : d.CanStack(DesignStack.Front),
@@ -78,6 +83,11 @@ internal sealed partial class AppDesignerWindow
         };
     }
 
+    // A tool moves along its toolbar only and a toolbar up and down only (ToolKeyboardPlugin, ToolbarKeyboardPlugin, W5d).
+    private static bool ToolKeyIsIdle(DesignDocument d, StructureKey key) => d.Selection is [var first, ..]
+        && ((DesignBars.IsTool(first) && key is StructureKey.Up or StructureKey.Down)
+            || (first.Type == DesignBars.ToolbarType && key is StructureKey.Left or StructureKey.Right));
+
     private void RunStructureKey(StructureKey key)
     {
         if (Active is not { InCodeView: false, Document: var d } app)
@@ -86,6 +96,11 @@ internal sealed partial class AppDesignerWindow
         }
 
         app.Canvas.CancelGesture();
+        if (ToolKeyIsIdle(d, key))
+        {
+            return;
+        }
+
         bool inside = d.MovesInside;
         bool node = d.SelectedTreeNode is not null;
         _ = key switch

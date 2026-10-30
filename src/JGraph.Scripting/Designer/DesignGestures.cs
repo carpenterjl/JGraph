@@ -44,8 +44,20 @@ public enum DesignKey
     /// <summary>F2: opens the selected component's in-place editor (W5b, <c>INPLACE_EDIT_KEY</c>).</summary>
     EditInPlace,
 
-    /// <summary>Enter: a tree's Add Sibling, Shift+Enter its Add Child (W5c, <c>TreeController._processKeyDown</c>).</summary>
+    /// <summary>Enter: a tree's Add Sibling, Shift+Enter its Add Child (W5c, <c>TreeController._processKeyDown</c>); a menu's Add Menu Below, Shift+Enter its Add Menu to Right (W5d).</summary>
     Enter,
+
+    /// <summary>Home: a menu's, tool's or toolbar's first sibling (W5d).</summary>
+    Home,
+
+    /// <summary>End: a menu's, tool's or toolbar's last sibling (W5d).</summary>
+    End,
+
+    /// <summary>P without Ctrl: a tool's or toolbar's Add Push Tool (W5d, <c>ToolbarHierarchyKeyboardPlugin</c>).</summary>
+    AddPushTool,
+
+    /// <summary>T without Ctrl: a tool's or toolbar's Add Toggle Tool (W5d).</summary>
+    AddToggleTool,
 }
 
 /// <summary>The pointer the canvas shows where the mouse is.</summary>
@@ -164,6 +176,8 @@ public sealed partial class DesignGestures
     {
         ArgumentNullException.ThrowIfNull(document);
         Document = document;
+        _trayCount = document.ContextMenus.Count;
+        document.Changed += (_, _) => SyncTray();
     }
 
     /// <summary>The app the gestures edit.</summary>
@@ -359,6 +373,8 @@ public sealed partial class DesignGestures
         Splitting,
         FigureResizing,
         TabDragging,
+        BarDragging,
+        Assigning,
     }
 
     private enum Intent
@@ -371,6 +387,8 @@ public sealed partial class DesignGestures
         Split,
         FigureResize,
         TabDrag,
+        BarDrag,
+        Assign,
     }
 
     // --- the mouse -------------------------------------------------------------------------------
@@ -387,6 +405,7 @@ public sealed partial class DesignGestures
         EndKeyMove();
         Refusal = null;
         _menuNode = null;
+        _barMenu = BarMenu.None;
         _down = at;
         _lastDrag = at;
         _pressAt = at;
@@ -433,6 +452,13 @@ public sealed partial class DesignGestures
                 return false;
             }
 
+            // A context menu is placed by a click, on the component it goes to (CanvasTrayTarget, W5d).
+            if (_drawEntry.Type == DesignBars.ContextMenuType)
+            {
+                Drop(_drawEntry, at);
+                return false;
+            }
+
             DesignPlacement drawIn = document.DrawPlacement(_drawEntry, at);
             if (!drawIn.CanDrop || drawIn.Container is not { } container)
             {
@@ -457,6 +483,12 @@ public sealed partial class DesignGestures
 
             _press = PressState.Drawing;
             return true;
+        }
+
+        // The menu bar, the toolbars and what stands open under them, over everything else (W5d).
+        if (Bars.PlaceAt(at) is { } barPlace)
+        {
+            return PressBar(barPlace, at, button, modifiers);
         }
 
         // A responsive app's splitter resizes its regions (DS4b).
@@ -624,7 +656,8 @@ public sealed partial class DesignGestures
 
         if (_press == PressState.Pending)
         {
-            if (System.Math.Abs(at.X - _down.X) < DragThreshold && System.Math.Abs(at.Y - _down.Y) < DragThreshold)
+            double threshold = _intent == Intent.Assign ? AssignThreshold : DragThreshold;
+            if (System.Math.Abs(at.X - _down.X) < threshold && System.Math.Abs(at.Y - _down.Y) < threshold)
             {
                 return;
             }
@@ -675,6 +708,12 @@ public sealed partial class DesignGestures
                 case Intent.TabDrag when _tabDrag is not null:
                     _press = PressState.TabDragging;
                     break;
+                case Intent.BarDrag when _barDrag is not null:
+                    _press = PressState.BarDragging;
+                    break;
+                case Intent.Assign:
+                    _press = PressState.Assigning;
+                    break;
                 default:
                     _press = PressState.None;
                     return;
@@ -696,6 +735,12 @@ public sealed partial class DesignGestures
                 break;
             case PressState.TabDragging when _tabDrag is { } drag:
                 DragTab(drag, at, dx, dy);
+                break;
+            case PressState.BarDragging when _barDrag is { } barDrag:
+                DragBar(barDrag, at, dx, dy);
+                break;
+            case PressState.Assigning when _anchor is { } contextMenu:
+                DragAssign(contextMenu);
                 break;
             case PressState.Splitting when _splitter is { } dragged:
                 // App Designer's steps: each from where the last left the regions, by what the pointer
@@ -810,9 +855,17 @@ public sealed partial class DesignGestures
                 }
 
                 break;
+            case PressState.BarDragging when _barDrag is { } barDrag:
+                DropBar(barDrag);
+                break;
+            case PressState.Assigning when AssignDrag is { Target: { } assignTo, ContextMenu: { } assigned }:
+                // Dropped on a component, it is assigned there (DragAssignContextMenuServiceModel).
+                document.AssignContextMenu(assignTo, assigned);
+                break;
         }
 
         ClearTabDrag();
+        ClearBarDrag();
         _clickSelects = null;
         Changed?.Invoke(this, EventArgs.Empty);
     }
@@ -850,6 +903,7 @@ public sealed partial class DesignGestures
 
         _splitter = null;
         ClearTabDrag();
+        ClearBarDrag();
         Document.EndGesture(commit: false);
         Changed?.Invoke(this, EventArgs.Empty);
     }
@@ -1105,6 +1159,27 @@ public sealed partial class DesignGestures
         Cancel();
         _drawEntry = null;
         _libraryDrag = false;
+        if (entry.Type == DesignBars.ContextMenuType)
+        {
+            // A context menu goes to the component it is dropped on (_handleDropInCanvasTrayTarget, W5d).
+            if (Document.AssignTargetAt(at) is { } target)
+            {
+                return AddFrom(() => [Document.AddContextMenu(target)]);
+            }
+
+            Refusal = "Drag to component or to Context Menus area";
+            Changed?.Invoke(this, EventArgs.Empty);
+            return [];
+        }
+
+        if (entry.Type == DesignBars.MenuType && Document.TopLevelMenus.Count > 0)
+        {
+            // The Menu Bar entry drops once (SingleDropEntryModel, W5d).
+            Refusal = "This figure has a menu bar.";
+            Changed?.Invoke(this, EventArgs.Empty);
+            return [];
+        }
+
         DesignPlacement placement = Document.PlacementForNew(entry, at);
         if (!placement.CanDrop || placement.Container is not { } container)
         {
@@ -1127,6 +1202,16 @@ public sealed partial class DesignGestures
     public void DragOver(DesignPaletteEntry entry, Point2D at)
     {
         ArgumentNullException.ThrowIfNull(entry);
+        if (entry.Type == DesignBars.ContextMenuType)
+        {
+            // Over a component, what the drop would do (_afterMouseMoveCanvasTray, W5d).
+            DesignComponent? assignTo = Document.AssignTargetAt(at);
+            (string text, DesignAssignHint hint) = Document.AssignMessage("ContextMenu", assignTo, fromLibrary: true);
+            AssignDrag = new DesignAssignDrag(null, assignTo, text, hint, at, []);
+            Changed?.Invoke(this, EventArgs.Empty);
+            return;
+        }
+
         _libraryDrag = true;
         DesignPlacement placement = Document.PlacementForNew(entry, at);
         Placement = placement;
@@ -1142,6 +1227,7 @@ public sealed partial class DesignGestures
         _libraryDrag = false;
         Placement = null;
         DropTarget = null;
+        AssignDrag = null;
         Changed?.Invoke(this, EventArgs.Empty);
     }
 
@@ -1376,6 +1462,11 @@ public sealed partial class DesignGestures
             return DesignCursor.Cross;
         }
 
+        if (Bars.PlaceAt(at) is not null)
+        {
+            return DesignCursor.Arrow;
+        }
+
         if (SplitterAt(at) is not null)
         {
             return DesignCursor.SizeWestEast;
@@ -1432,6 +1523,10 @@ public sealed partial class DesignGestures
             case DesignKey.Escape when Configuring is not null:
                 EndConfigure();
                 return true;
+            case not DesignKey.Delete when _press == PressState.None && BarKey(key, modifiers) is { } barKey:
+                // A menu's, tool's or toolbar's own keys (W5d).
+                EndKeyMove();
+                return barKey;
             case DesignKey.Delete when _press == PressState.None && document.Selection.Any(document.CanDelete):
                 EndKeyMove();
                 document.Delete(document.Selection);
@@ -1707,6 +1802,18 @@ public sealed partial class DesignGestures
     /// <returns>Whether it did.</returns>
     public bool DoubleClick(Point2D at, DesignModifiers modifiers = DesignModifiers.None)
     {
+        // A menu edits its text, a tool its icon, selected first (MenuHierarchyInPlaceEditPlugin, W5d).
+        if (modifiers == DesignModifiers.None && _press == PressState.None && Bars.PlaceAt(at) is { Kind: DesignBarPlaceKind.Menu or DesignBarPlaceKind.Tool } barPlace)
+        {
+            if (!Document.Selection.Contains(barPlace.Component) || Document.Selection.Count > 1)
+            {
+                Document.Select([barPlace.Component]);
+            }
+
+            BeginInPlace(barPlace.Component, pointer: at);
+            return true;
+        }
+
         if (Document.Selection is [var grid] && Document.IsGrid(grid) && Configuring?.Grid != grid)
         {
             Configure(grid);
@@ -1757,7 +1864,7 @@ public sealed partial class DesignGestures
     public bool BeginInPlace(DesignComponent component, Point2D? pointer = null, string? seed = null, int? hotspot = null)
     {
         ArgumentNullException.ThrowIfNull(component);
-        InPlace = Document.InPlaceEdit(component, pointer, seed, hotspot, HotspotsOf);
+        InPlace = Document.InPlaceEdit(component, pointer, seed, hotspot, InPlaceSpots);
         Changed?.Invoke(this, EventArgs.Empty);
         return InPlace is not null;
     }
@@ -1776,6 +1883,13 @@ public sealed partial class DesignGestures
         }
 
         EndKeyMove();
+
+        // P and T on a tool add one (ToolbarHierarchyKeyboardPlugin); whatever the key left of them does not open its icon's file.
+        if (text[0] is 'p' or 'P' or 't' or 'T' && Document.Selection is [var tool] && DesignBars.IsTool(tool))
+        {
+            return false;
+        }
+
         return Document.InPlaceTarget is { } target && BeginInPlace(target, seed: text);
     }
 
@@ -1812,7 +1926,7 @@ public sealed partial class DesignGestures
         }
 
         InPlace = null;
-        string? refused = path is { Length: > 0 } ? Document.SetImageFile(edit.Component, path) : null;
+        string? refused = path is { Length: > 0 } ? Document.SetImageFile(edit.Component, path, edit.Property) : null;
         Changed?.Invoke(this, EventArgs.Empty);
         return refused;
     }
@@ -1895,6 +2009,12 @@ public sealed partial class DesignGestures
         if (_menuNode is { } node && document.Selection.Contains(node))
         {
             return NodeMenu();
+        }
+
+        // The menu bar, a menu, a tool, a toolbar, a context menu and the tray have their own (W5d).
+        if (BarItems() is { } barItems)
+        {
+            return barItems;
         }
 
         var items = new List<DesignMenuItem>();
@@ -2062,6 +2182,13 @@ public sealed partial class DesignGestures
             items.Add(Toggle("Snap to Grid", DesignSettings.SnapToGrid, SnapToGrid));
             items.Add(Toggle("Alignment Hints", DesignSettings.ShowAlignmentHints, ShowAlignmentHints));
             items.Add(Toggle("Resizing Hints", DesignSettings.ShowResizingHints, ShowResizingHints));
+        }
+
+        // A component's Context Menu submenu (_ComponentContextMenuInfo, W5d).
+        if (ContextMenuItem() is { } contextMenuItem)
+        {
+            items.Add(DesignMenuItem.Separator);
+            items.Add(contextMenuItem);
         }
 
         if (document.Selection is [var container, ..] && document.CanGridify(container))

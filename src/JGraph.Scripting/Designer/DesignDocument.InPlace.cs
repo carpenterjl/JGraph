@@ -202,8 +202,10 @@ public sealed partial class DesignDocument
                     => Edit(DesignInPlaceKind.SingleLine, "Title", [PlainText(ValueOf(component, "Title")) ?? string.Empty], TitleAlignment(component), false),
                 TabType
                     => Edit(DesignInPlaceKind.SingleLine, "Title", [PlainText(ValueOf(component, "Title")) ?? string.Empty], "center", false),
-                TreeNodeType
+                TreeNodeType or MenuType
                     => Edit(DesignInPlaceKind.SingleLine, "Text", [PlainText(ValueOf(component, "Text")) ?? string.Empty], "left", false),
+                PushToolType or ToggleToolType
+                    => Edit(DesignInPlaceKind.FileBrowser, "Icon", [ImageText(ValueOf(component, "Icon"))], "left", false),
                 _ => null,
             };
 
@@ -342,7 +344,7 @@ public sealed partial class DesignDocument
     /// image's file browser): kept beside the app when it is in the app's folder, else by its full path.
     /// </summary>
     /// <returns>Null when set; else what the image said, and nothing changed.</returns>
-    public string? SetImageFile(DesignComponent component, string path)
+    public string? SetImageFile(DesignComponent component, string path, string property = "ImageSource")
     {
         ArgumentNullException.ThrowIfNull(component);
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -352,11 +354,11 @@ public sealed partial class DesignDocument
             string relative = System.IO.Path.GetRelativePath(folder, full);
             if (!relative.StartsWith("..", StringComparison.Ordinal) && !System.IO.Path.IsPathRooted(relative))
             {
-                return SetProperty(component, "ImageSource", new ImageFileValue(relative.Split(['\\', '/'], StringSplitOptions.RemoveEmptyEntries)));
+                return SetProperty(component, property, new ImageFileValue(relative.Split(['\\', '/'], StringSplitOptions.RemoveEmptyEntries)));
             }
         }
 
-        return SetProperty(component, "ImageSource", new CharValue(full));
+        return SetProperty(component, property, new CharValue(full));
     }
 
     private string? DeleteLabel(DesignComponent label)

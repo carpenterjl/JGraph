@@ -256,7 +256,10 @@ public sealed partial class DesignGestures
     {
         DesignDocument document = Document;
         DesignComponent? first = document.Selection.FirstOrDefault();
-        Rect2D? box = first is null ? null : first.Type == TreeNodeType ? TreeNodeBoxOf?.Invoke(first) : document.BoxOf(first)?.Box;
+        _barMenu = BarMenuOfSelection();
+        Rect2D? box = first is null ? null
+            : _barMenu != BarMenu.None ? (first.Type == DesignBars.ContextMenuType ? null : PlaceOf(first)?.Box)
+            : first.Type == TreeNodeType ? TreeNodeBoxOf?.Invoke(first) : document.BoxOf(first)?.Box;
         at = box is { } b ? new Point2D(b.X + (b.Width / 2), b.Y + (b.Height / 2)) : new Point2D(0, 0);
         _menuNode = document.SelectedTreeNode;
         return MenuAt(at);

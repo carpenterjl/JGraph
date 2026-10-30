@@ -57,11 +57,12 @@ public static class DesignStructure
     /// The order <paramref name="count"/> siblings take when the ones at <paramref name="selected"/>
     /// move <paramref name="how"/> (<c>_performReorder</c>): each to its place less the first's for
     /// First, plus the room after the last for Last, one back or on; or, for a drag
-    /// (<paramref name="drop"/>), one after another from the place dropped at - then put there one at a
-    /// time as <c>ReorderCommand</c> does.
+    /// (<paramref name="drop"/>), one after another from the place dropped at - or, going on
+    /// (<paramref name="direction"/> over 0: a menu's, tool's or toolbar's, W5d), so that the last lands
+    /// there - then put there one at a time as <c>ReorderCommand</c> does.
     /// </summary>
     /// <returns>The siblings' former places in their new order.</returns>
-    public static int[] Order(int count, IReadOnlyList<int> selected, DesignMove? how, int? drop = null)
+    public static int[] Order(int count, IReadOnlyList<int> selected, DesignMove? how, int? drop = null, double direction = 0)
     {
         ArgumentNullException.ThrowIfNull(selected);
         int[] sorted = [.. selected.Order()];
@@ -78,8 +79,9 @@ public static class DesignStructure
                 DesignMove.Last => n + s - i,
                 DesignMove.Previous => n - 1,
                 DesignMove.Next => n + 1,
-                _ => b++,
+                _ => direction > 0 ? b + t - i : b,
             };
+            b++;
             moves.Add((n, n, f));
         }
 

@@ -159,12 +159,24 @@ public sealed partial class DesignCanvas
 
         System.Windows.Automation.AutomationProperties.SetAutomationId(box, "Canvas.InPlaceEditor");
         System.Windows.Automation.AutomationProperties.SetName(box, edit.Component.CodeName + "." + edit.Property);
-        Canvas.SetLeft(box, Gutter + at.X - InPlaceOutline);
-        Canvas.SetTop(box, Gutter + at.Y - InPlaceOutline);
+        if (DesignBars.IsContextMenuItem(edit.Component) && _trayView is { } tray)
+        {
+            // A context menu's item is edited over the tray, in the tray's own scale.
+            Point origin = tray.TranslatePoint(new Point(0, TrayTabHeight), _trayEditorHost);
+            Canvas.SetLeft(box, origin.X + at.X - InPlaceOutline);
+            Canvas.SetTop(box, origin.Y + at.Y - InPlaceOutline);
+            _trayEditorHost.Children.Add(box);
+        }
+        else
+        {
+            Canvas.SetLeft(box, Gutter + at.X - InPlaceOutline);
+            Canvas.SetTop(box, Top + at.Y - InPlaceOutline);
+            _inPlaceHost.Children.Add(box);
+        }
+
         box.PreviewKeyDown += (_, e) => InPlaceKey(e, DesignInPlaceField.Text);
         box.KeyDown += (_, e) => e.Handled = true; // nothing typed in the editor reaches the canvas's keys
         box.LostKeyboardFocus += (_, e) => InPlaceBlurred(e);
-        _inPlaceHost.Children.Add(box);
         _inPlaceBox = box;
 
         if (edit.Kind == DesignInPlaceKind.Hyperlink)
@@ -252,6 +264,18 @@ public sealed partial class DesignCanvas
         }
 
         Key key = e.Key == Key.System ? e.SystemKey : e.Key;
+
+        // A menu's editor saves on Up and Down, and goes on from there (ArrowKeyExit, W5d).
+        if (key is Key.Up or Key.Down && edit.Component.Type == DesignBars.MenuType && field == DesignInPlaceField.Text && Keyboard.Modifiers == ModifierKeys.None)
+        {
+            DesignComponent menu = edit.Component;
+            CloseInPlace(save: true);
+            _gestures?.EditorArrow(menu, down: key == Key.Down);
+            Focus();
+            e.Handled = true;
+            return;
+        }
+
         DesignInPlaceKey? pressed = key switch
         {
             Key.Enter => DesignInPlaceKey.Enter,
@@ -412,7 +436,7 @@ public sealed partial class DesignCanvas
 
     private void RemoveInPlaceUi()
     {
-        if (_inPlaceBox is null && _inPlaceHost.Children.Count == 0)
+        if (_inPlaceBox is null && _inPlaceHost.Children.Count == 0 && _trayEditorHost.Children.Count == 0)
         {
             return;
         }
@@ -421,8 +445,9 @@ public sealed partial class DesignCanvas
         _inPlaceClosing = true;
         try
         {
-            bool hadKeyboard = _inPlaceHost.IsKeyboardFocusWithin;
+            bool hadKeyboard = _inPlaceHost.IsKeyboardFocusWithin || _trayEditorHost.IsKeyboardFocusWithin;
             _inPlaceHost.Children.Clear();
+            _trayEditorHost.Children.Clear();
             _inPlaceBox = null;
             _inPlaceUrl = null;
             _inPlaceVisit = null;

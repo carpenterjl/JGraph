@@ -10,8 +10,8 @@ namespace JGraph.Scripting.Designer;
 /// </content>
 public sealed partial class DesignDocument
 {
-    // The models whose DesignGestures allow CanReorder: a tab and a tree node (the menus and tools come with W5d).
-    private static bool CanReorderInside(DesignComponent component) => component.Type is TabType or TreeNodeType;
+    // The models whose DesignGestures allow CanReorder: a tab, a tree node, a menu, a toolbar and a tool.
+    private static bool CanReorderInside(DesignComponent component) => component.Type is TabType or TreeNodeType or MenuType or ToolbarType or PushToolType or ToggleToolType;
 
     // --- tabs --------------------------------------------------------------------------------------
 
@@ -74,7 +74,10 @@ public sealed partial class DesignDocument
             return null;
         }
 
-        List<DesignComponent> among = [.. parent.Children];
+        // A menu among menus and a toolbar among toolbars (_getReorderableComponents); any other among all.
+        List<DesignComponent> among = chosen[0].Type is MenuType or ToolbarType
+            ? parent.Children.Where(c => c.Type == chosen[0].Type).ToList()
+            : [.. parent.Children];
         List<DesignComponent> moving = among.Where(c => chosen.Contains(c, ReferenceEqualityComparer.Instance)).ToList();
         return moving.Count == 0 ? null : (moving, among);
     }
@@ -111,16 +114,17 @@ public sealed partial class DesignDocument
     public bool Move(DesignMove how) => CanMove(how) && MoveSet() is { } set && Reorder(set, how, null);
 
     /// <summary>
-    /// A tab heading's drag dropped at <paramref name="index"/> (<c>DESIGN_REORDER_OFFSET</c>, which
-    /// <c>TabDragController</c> runs): the selected tabs one after another from there, as one edit.
+    /// A drag dropped at <paramref name="index"/> (<c>DESIGN_REORDER_OFFSET</c>, which
+    /// <c>TabDragController</c> and the menus' and tools' drags run): the selected ones one after another
+    /// from there - going on (<paramref name="direction"/> over 0), so that the last lands there - as one edit.
     /// </summary>
     /// <returns>Whether the order changed.</returns>
-    public bool MoveTo(int index) => MoveSet() is { } set && Reorder(set, null, index);
+    public bool MoveTo(int index, double direction = 0) => MoveSet() is { } set && Reorder(set, null, index, direction);
 
-    private bool Reorder((List<DesignComponent> Moving, List<DesignComponent> Among) set, DesignMove? how, int? drop)
+    private bool Reorder((List<DesignComponent> Moving, List<DesignComponent> Among) set, DesignMove? how, int? drop, double direction = 0)
     {
         EndGesture(commit: false);
-        int[] order = DesignStructure.Order(set.Among.Count, [.. set.Moving.Select(c => set.Among.IndexOf(c))], how, drop);
+        int[] order = DesignStructure.Order(set.Among.Count, [.. set.Moving.Select(c => set.Among.IndexOf(c))], how, drop, direction);
         List<DesignComponent> after = order.Select(k => set.Among[k]).ToList();
         return ReorderEdits(set.Moving[0].Parent!, set.Among, after) is { } edit && DoOrder([edit]);
     }
@@ -316,13 +320,13 @@ public sealed partial class DesignDocument
 
     /// <summary>
     /// What is selected once <paramref name="components"/> are deleted (<c>_checkForSelectAfterDelete</c>):
-    /// for a tab or a node first among them, the sibling before the first of them, else the first
-    /// sibling left, else their container (<c>_getClosestComponent</c>); null for any other, which
-    /// leaves nothing selected.
+    /// for a tab, a node, a menu, a tool or a context menu first among them (each model's
+    /// <c>getSelectionAfterDeleted</c>), the sibling before the first of them, else the first sibling
+    /// left, else their container (<c>_getClosestComponent</c>); null for any other, which leaves nothing selected.
     /// </summary>
     private static DesignComponent? SelectedAfterDelete(IReadOnlyList<DesignComponent> components)
     {
-        if (components is not [{ Type: TabType or TreeNodeType, Parent: { } parent }, ..])
+        if (components is not [{ Type: TabType or TreeNodeType or MenuType or PushToolType or ToggleToolType or ContextMenuType, Parent: { } parent }, ..])
         {
             return null;
         }
