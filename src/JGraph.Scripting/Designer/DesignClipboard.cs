@@ -18,6 +18,9 @@ public sealed class DesignClipboard
     /// <summary>Whether the contents were cut rather than copied (<c>getContentAction</c> is <c>CUT</c>).</summary>
     public bool WasCut { get; internal set; }
 
+    /// <summary>Whether the clipboard holds components, every one at its top of <paramref name="type"/> (a tree node's menu's Paste, W5c).</summary>
+    public bool HoldsOnly(string type) => Clip is { } clip && clip.Items.All(i => i.Copy.Type == type);
+
     /// <summary>The code names of what the clipboard holds, at the top, in its order; empty when it holds nothing.</summary>
     public IReadOnlyList<string> CodeNames => Clip?.Items.Select(static i => i.Copy.CodeName).ToArray() ?? [];
 

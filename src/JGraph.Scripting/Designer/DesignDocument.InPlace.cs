@@ -51,6 +51,12 @@ public sealed partial class DesignDocument
     }
 
     /// <summary>
+    /// The node F2 opens its tree's editor on (W5c, the tree's own editor rather than
+    /// <c>isAutoEditable</c>): the one tree node selected alone; null otherwise.
+    /// </summary>
+    public DesignComponent? SelectedTreeNode => _picks is [{ Component: { Type: TreeNodeType } node }] ? node : null;
+
+    /// <summary>
     /// The component a double click at <paramref name="at"/> edits (<c>matchSelector</c> on
     /// <c>.ad-can-inplace-edit</c>): one of whose places to edit is under it - a limit or an item drawn
     /// outside the component - else the front component under it, or the nearest container round it,
@@ -196,6 +202,8 @@ public sealed partial class DesignDocument
                     => Edit(DesignInPlaceKind.SingleLine, "Title", [PlainText(ValueOf(component, "Title")) ?? string.Empty], TitleAlignment(component), false),
                 TabType
                     => Edit(DesignInPlaceKind.SingleLine, "Title", [PlainText(ValueOf(component, "Title")) ?? string.Empty], "center", false),
+                TreeNodeType
+                    => Edit(DesignInPlaceKind.SingleLine, "Text", [PlainText(ValueOf(component, "Text")) ?? string.Empty], "left", false),
                 _ => null,
             };
 

@@ -114,6 +114,7 @@ internal sealed partial class AppDesignerWindow
 
         _toolstrip.Invoked += (_, e) => Invoked(e);
         BindArrangeCommands();
+        BindStructureCommands();
         BindZoomCommands();
         System.Windows.Automation.AutomationProperties.SetAutomationId(_toolstrip, "AppDesigner.Toolstrip");
 

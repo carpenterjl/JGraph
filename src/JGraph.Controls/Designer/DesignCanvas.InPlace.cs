@@ -48,7 +48,7 @@ public sealed partial class DesignCanvas
     /// <summary>
     /// Where the component layer drew <paramref name="component"/>'s places to edit, on the surface: a
     /// tab's heading, a scale's end labels, a switch's or a discrete knob's items, a table's column
-    /// headings; null where the document's own estimate stands.
+    /// headings, a tree node's row (W5c); null where the document's own estimate stands.
     /// </summary>
     private IReadOnlyList<Rect2D>? InPlaceHotspots(DesignComponent component)
     {
@@ -56,6 +56,7 @@ public sealed partial class DesignCanvas
         return _document?.Runtime.ObjectOf(component) switch
         {
             UiTabModel tab => _layer.TabHeadingBoxOf(tab) is { } heading ? [On(heading)] : null,
+            UiTreeNodeModel node => _layer.TreeNodeBoxOf(node) is { } row ? [On(row)] : null,
             UiComponentModel model => _layer.InPlaceBoxesOf(model)?.Select(On).ToArray(),
             _ => null,
         };

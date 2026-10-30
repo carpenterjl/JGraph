@@ -304,6 +304,7 @@ internal sealed partial class AppDesignerWindow : Window
         codeButton.Unchecked += (_, _) => { if (designButton.IsChecked != true) { codeButton.IsChecked = true; } };
         AttachTab(app);
         AddArrangeKeys(canvas);
+        AddStructureKeys(canvas);
         AddClipboardKeys(canvas);
         WatchView(canvas);
         canvas.Alerted += (_, alert) => ShowAlert(alert.Title, alert.Message);

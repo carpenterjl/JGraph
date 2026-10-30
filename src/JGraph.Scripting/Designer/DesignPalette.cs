@@ -453,6 +453,36 @@ public sealed class DesignPalette
         return label;
     }
 
+    /// <summary>
+    /// A new <paramref name="type"/> for <paramref name="parent"/> named among its siblings
+    /// (<c>CreateRestrictedParentCodeNameGenerator</c>, W5c): its text counted against the texts of the
+    /// siblings its class counts (<c>Parenting.getSiblingTextValues</c>: a tab's every title, a node's
+    /// every text, a radio or toggle button's the group's buttons'), its code name unique in the app.
+    /// It has no position, and is not yet in the design.
+    /// </summary>
+    public DesignComponent MakeAmongSiblings(string type, AppDesign design, DesignComponent parent)
+    {
+        ArgumentNullException.ThrowIfNull(type);
+        ArgumentNullException.ThrowIfNull(design);
+        ArgumentNullException.ThrowIfNull(parent);
+        var names = new Names(design);
+        string? property = DesignNames.Of(type)?.TextProperty;
+        bool buttons = type is "matlab.ui.control.RadioButton" or "matlab.ui.control.ToggleButton";
+        List<string> siblings = property is null ? [] : parent.Children
+            .Where(c => !buttons || c.Type is "matlab.ui.control.RadioButton" or "matlab.ui.control.ToggleButton")
+            .Select(c => (c.Get(property) ?? c.Class?.Property(property)?.DefaultFor(DesignTheme.Light)) is { } v ? Text(v) : null)
+            .OfType<string>()
+            .ToList();
+        (string codeName, string? text) = DesignNames.ForNew(type, names.CodeNames, siblings);
+        DesignComponent made = New(codeName, type);
+        if (text is not null && property is not null)
+        {
+            made.Set(property, new CharValue(text));
+        }
+
+        return made;
+    }
+
     /// <summary>JavaScript's <c>Math.round</c>: halves up.</summary>
     private static double JsRound(double x) => System.Math.Floor(x + 0.5);
 

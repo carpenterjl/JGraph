@@ -38,6 +38,13 @@ public sealed partial class DesignDocument
         if (!same)
         {
             _anchor = null;
+
+            // A node selected shows: the nodes above it opened (updateNodeSelectionInView, W5c).
+            foreach (DesignComponent node in leaves.Where(static c => c.Type == TreeNodeType))
+            {
+                Runtime.ExpandTo(node);
+            }
+
             OnChanged();
         }
     }

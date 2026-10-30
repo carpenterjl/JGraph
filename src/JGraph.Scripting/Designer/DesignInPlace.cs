@@ -146,7 +146,8 @@ public static partial class DesignInPlace
     private const string SemicircularGauge = "matlab.ui.control.SemicircularGauge";
     private const string Table = "matlab.ui.control.Table";
 
-    // The models whose InPlaceEditing says isInPlaceEditable (W5d brings the menus' and tools').
+    // The models whose InPlaceEditing says isInPlaceEditable, and a tree node, which its tree's own
+    // editor edits (W5c; W5d brings the menus' and tools').
     private static readonly HashSet<string> Editable = new(StringComparer.Ordinal)
     {
         Label, "matlab.ui.control.Button", "matlab.ui.control.StateButton", "matlab.ui.control.ToggleButton",
@@ -155,7 +156,7 @@ public static partial class DesignInPlace
         "matlab.ui.control.TextArea", "matlab.ui.control.DropDown", "matlab.ui.control.ListBox",
         "matlab.ui.control.Image", Slider, Knob, DiscreteKnob, Gauge, LinearGauge, NinetyDegreeGauge, SemicircularGauge,
         "matlab.ui.control.Switch", "matlab.ui.control.RockerSwitch", "matlab.ui.control.ToggleSwitch", Table,
-        "matlab.ui.container.Panel", "matlab.ui.container.ButtonGroup", "matlab.ui.container.Tab",
+        "matlab.ui.container.Panel", "matlab.ui.container.ButtonGroup", "matlab.ui.container.Tab", "matlab.ui.container.TreeNode",
     };
 
     /// <summary>
@@ -168,10 +169,10 @@ public static partial class DesignInPlace
     /// <summary>
     /// Whether F2 or a typed character opens the editor of a component of <paramref name="type"/>
     /// selected alone (<c>isAutoEditable</c>): any it edits but a drop-down's and a list's items, which
-    /// only a double click opens.
+    /// only a double click opens, and a tree node, whose tree's editor F2 opens and typing does not (W5c).
     /// </summary>
     public static bool IsAutoEditable(string type, string? interpreter = null) =>
-        IsEditable(type, interpreter) && type is not "matlab.ui.control.DropDown" and not "matlab.ui.control.ListBox";
+        IsEditable(type, interpreter) && type is not "matlab.ui.control.DropDown" and not "matlab.ui.control.ListBox" and not "matlab.ui.container.TreeNode";
 
     /// <summary>Whether a component of <paramref name="type"/> has several places to edit (<c>isMultiHotSpots</c>).</summary>
     public static bool HasHotspots(string type) => type is Slider or Knob or DiscreteKnob or Gauge or LinearGauge or NinetyDegreeGauge or SemicircularGauge

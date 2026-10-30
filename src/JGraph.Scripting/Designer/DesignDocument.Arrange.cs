@@ -357,24 +357,32 @@ public sealed partial class DesignDocument
         return moving.Count == 0 || among.Count < 2 ? null : (moving, among);
     }
 
-    /// <summary>Whether Reorder can move the selection <paramref name="how"/> (<c>_checkAbilityToReorder</c>).</summary>
+    /// <summary>
+    /// Whether Reorder can move the selection <paramref name="how"/> (<c>_checkAbilityToReorder</c>
+    /// for the stack order): one component selected alone, with a sibling of its kind that way (W5c;
+    /// W4 moved several together, which R2025b's check never allows).
+    /// </summary>
     public bool CanStack(DesignStack how)
     {
-        if (StackSet() is not { } set)
+        if (_picks.Count != 1 || StackSet() is not { } set)
         {
             return false;
         }
 
-        int first = set.Among.IndexOf(set.Moving[0]);
-        int last = set.Among.IndexOf(set.Moving[^1]);
-        return how is DesignStack.Back or DesignStack.Backward ? first > 0 : last < set.Among.Count - 1;
+        var can = DesignStructure.Ability(set.Among.Count, [.. set.Moving.Select(c => set.Among.IndexOf(c))], stack: true);
+        return how switch
+        {
+            DesignStack.Back => can.First,
+            DesignStack.Backward => can.Previous,
+            DesignStack.Forward => can.Next,
+            _ => can.Last,
+        };
     }
 
     /// <summary>
-    /// Moves the selection <paramref name="how"/> among its siblings of its kind, as one edit
-    /// (<c>ReorderAction._performReorder</c>, <c>ReorderCommand</c>): a group of them keeps the gaps
-    /// between them going to the front or the back. The order is the order the code makes them in,
-    /// the later in front; the selection stays.
+    /// Moves the selected component <paramref name="how"/> among its siblings of its kind, as one edit
+    /// (<c>ReorderAction._performReorder</c>, <c>ReorderCommand</c>). The order is the order the code
+    /// makes them in, the later in front; the selection stays.
     /// </summary>
     /// <returns>Whether the order changed.</returns>
     public bool Stack(DesignStack how)
@@ -401,31 +409,8 @@ public sealed partial class DesignDocument
             };
             return (Component: c, Old: n, New: f);
         }).ToList();
-        List<DesignComponent> after = Reordered(among, moves);
+        List<DesignComponent> after = DesignStructure.Apply(among, moves);
         return ReorderEdits(set.Moving[0].Parent!, among, after) is { } edit && DoOrder([edit]);
-    }
-
-    /// <summary>
-    /// <paramref name="order"/> after <c>ReorderCommand._moveComponents</c>: the moves taken from the
-    /// greatest new index, or from the least when all of them go back, each one out of the list and in
-    /// again at its new index.
-    /// </summary>
-    private static List<DesignComponent> Reordered(List<DesignComponent> order, List<(DesignComponent Component, int Old, int New)> moves)
-    {
-        var list = new List<DesignComponent>(order);
-        var sorted = moves.OrderByDescending(static m => m.New).ToList();
-        if (sorted.All(static m => m.New < m.Old))
-        {
-            sorted.Reverse();
-        }
-
-        foreach ((DesignComponent component, _, int to) in sorted)
-        {
-            list.Remove(component);
-            list.Insert(System.Math.Clamp(to, 0, list.Count), component);
-        }
-
-        return list;
     }
 
     /// <summary>The edit that puts <paramref name="among"/>, children of <paramref name="parent"/>, in the order <paramref name="after"/>, in the places they held; null when it is the same.</summary>
@@ -505,7 +490,7 @@ public sealed partial class DesignDocument
             int offset = container.Children.Count - taking.Count - container.Children.Count(static c => c.Type == ContextMenuType);
             var children = container.Children.ToList();
             var moves = sorted.Select((c, k) => (Component: c, Old: children.IndexOf(c), New: k + offset)).ToList();
-            List<DesignComponent> after = Reordered(children, moves);
+            List<DesignComponent> after = DesignStructure.Apply(children, moves);
             if (ReorderEdits(container, children, after) is { } edit)
             {
                 edits.Add(edit);
@@ -870,7 +855,7 @@ public sealed partial class DesignDocument
                 Component.Add(child);
             }
 
-            document.Runtime.Restack(Component);
+            document.Runtime.PutInOrder(Component);
         }
     }
 

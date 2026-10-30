@@ -42,7 +42,8 @@ public static class DesignActions
     /// cut, copy and paste in the Code View, help, the shortcuts dialog and the document tab's menu;
     /// since W3, the Start Page and its new apps (a new custom component waits for W15); since W4, the
     /// arrange actions; since W6, the zoom and Resizing Hints; since W5, cut, copy, paste, Duplicate and
-    /// Select All on the canvas. The grid layout actions run from the canvas's context menu (designer plan DS4).
+    /// Select All on the canvas, and since W5c, Move for tabs and tree nodes and a tree's nodes added and
+    /// indented. The grid layout actions run from the canvas's context menu (designer plan DS4).
     /// </summary>
     private static readonly HashSet<string> Live = new(StringComparer.Ordinal)
     {
@@ -72,6 +73,10 @@ public static class DesignActions
         "AD_ZOOM_IN", "AD_ZOOM_OUT", "AD_RESET_ZOOM", "AD_FIT_TO_VIEW", "AD_DESIGN_VIEW_DISPLAY_SIZE",
         // Stage W5: the clipboard on the canvas - Duplicate and Select All beside Cut, Copy and Paste.
         "AD_DUPLICATE", "AD_SELECT_ALL",
+        // Stage W5c: a tab's and a node's order (Move and a heading's drag) and a tree's nodes.
+        "APPDES_DESIGN_REORDER_PREVIOUS", "APPDES_DESIGN_REORDER_NEXT", "APPDES_DESIGN_REORDER_FIRST", "APPDES_DESIGN_REORDER_LAST",
+        "APPDES_DESIGN_REORDER_OFFSET",
+        "DESIGN_TREE_ADD_SIBLING", "DESIGN_TREE_ADD_CHILD", "DESIGN_TREE_INCREASE_INDENT", "DESIGN_TREE_DECREASE_INDENT",
     };
 
     /// <summary>Every action, by id.</summary>

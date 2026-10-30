@@ -34,7 +34,11 @@ internal sealed partial class AppDesignerWindow
         }
     }
 
-    /// <summary>The canvas's own keys for the arrange actions (<c>DesignAreaKeyboardController</c>): they act while the canvas has the keyboard.</summary>
+    /// <summary>
+    /// The canvas's own keys for the arrange actions (<c>DesignAreaKeyboardController</c>): they act while
+    /// the canvas has the keyboard. Ctrl+Shift+Home, End, Up and Down and Ctrl+] and Ctrl+[ are the
+    /// structure keys' (W5c), which restack and change the font when no tab or node is selected.
+    /// </summary>
     private static void AddArrangeKeys(DesignCanvas canvas)
     {
         (Key Key, ModifierKeys Modifiers, string Action)[] keys =
@@ -51,15 +55,9 @@ internal sealed partial class AppDesignerWindow
             (Key.NumPad4, ModifierKeys.Control | ModifierKeys.Alt, "AD_DESIGN_ALIGN_TOP"),
             (Key.NumPad5, ModifierKeys.Control | ModifierKeys.Alt, "AD_DESIGN_ALIGN_MIDDLE"),
             (Key.NumPad6, ModifierKeys.Control | ModifierKeys.Alt, "AD_DESIGN_ALIGN_BOTTOM"),
-            (Key.Home, ModifierKeys.Control | ModifierKeys.Shift, "AD_DESIGN_REORDER_COMPONENT_FRONT"),
-            (Key.Up, ModifierKeys.Control | ModifierKeys.Shift, "AD_DESIGN_REORDER_COMPONENT_FORWARD"),
-            (Key.Down, ModifierKeys.Control | ModifierKeys.Shift, "AD_DESIGN_REORDER_COMPONENT_BACKWARD"),
-            (Key.End, ModifierKeys.Control | ModifierKeys.Shift, "AD_DESIGN_REORDER_COMPONENT_BACK"),
             (Key.L, ModifierKeys.Control, "AD_ADD_LABEL"),
             (Key.B, ModifierKeys.Control, "AD_DESIGN_FONT_BOLD"),
             (Key.I, ModifierKeys.Control, "AD_DESIGN_FONT_ITALIC"),
-            (Key.OemCloseBrackets, ModifierKeys.Control, "AD_DESIGN_FONT_INCREMENT"),
-            (Key.OemOpenBrackets, ModifierKeys.Control, "AD_DESIGN_FONT_DECREMENT"),
         ];
         foreach ((Key key, ModifierKeys modifiers, string action) in keys)
         {

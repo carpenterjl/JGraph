@@ -895,6 +895,11 @@ public sealed class DesignRuntime : IDisposable
         {
             MakeEnd(component, _problems);
         }
+
+        foreach (DesignComponent tree in Design.Components.Where(static c => c.Type is "matlab.ui.container.Tree" or "matlab.ui.container.CheckBoxTree"))
+        {
+            ExpandFirstLevel(tree);
+        }
     }
 
     /// <summary>
@@ -917,6 +922,11 @@ public sealed class DesignRuntime : IDisposable
         foreach (DesignComponent c in made)
         {
             MakeEnd(c, problems);
+        }
+
+        foreach (DesignComponent tree in made.Where(static c => c.Type is "matlab.ui.container.Tree" or "matlab.ui.container.CheckBoxTree"))
+        {
+            ExpandFirstLevel(tree);
         }
 
         _problems.AddRange(problems);
@@ -967,6 +977,99 @@ public sealed class DesignRuntime : IDisposable
         }
 
         _layout = null;
+    }
+
+    /// <summary>
+    /// Puts <paramref name="container"/>'s children in the runtime in the order the design holds them
+    /// (W5c): a tab group's tabs each sent to the end in turn (<c>uistack</c>), a tree's or a node's
+    /// nodes each moved after the one before it (<c>move</c>), any other container's components
+    /// restacked (<see cref="Restack"/>). A child made or moved in goes last, as the runtime adds it.
+    /// </summary>
+    public void PutInOrder(DesignComponent container)
+    {
+        ArgumentNullException.ThrowIfNull(container);
+        if (ObjectOf(container) is UiTabGroupModel)
+        {
+            using Scope scope = Enter();
+            foreach (DesignComponent tab in container.Children)
+            {
+                if (_objects.ContainsKey(tab))
+                {
+                    Run($"uistack({App}.{tab.CodeName}, 'bottom');");
+                }
+            }
+        }
+        else if (container.Type is "matlab.ui.container.Tree" or "matlab.ui.container.CheckBoxTree" or "matlab.ui.container.TreeNode")
+        {
+            using Scope scope = Enter();
+            DesignComponent? before = null;
+            foreach (DesignComponent node in container.Children)
+            {
+                if (before is not null && _objects.ContainsKey(node) && _objects.ContainsKey(before))
+                {
+                    Run($"move({App}.{node.CodeName}, {App}.{before.CodeName}, 'after');");
+                }
+
+                before = node;
+            }
+        }
+        else
+        {
+            Restack(container);
+            return;
+        }
+
+        _layout = null;
+    }
+
+    /// <summary>
+    /// Opens every node above <paramref name="node"/> on the canvas, so that it shows (the tree's
+    /// <c>expandTo</c>, W5c). What a tree shows open at design time is the canvas's, not the design's.
+    /// </summary>
+    public void ExpandTo(DesignComponent node)
+    {
+        ArgumentNullException.ThrowIfNull(node);
+        for (DesignComponent? up = node.Parent; up is { Type: "matlab.ui.container.TreeNode" }; up = up.Parent)
+        {
+            if (ObjectOf(up) is UiTreeNodeModel { Expanded: false } shut)
+            {
+                shut.Expanded = true;
+                _layout = null;
+            }
+        }
+    }
+
+    /// <summary>Whether <paramref name="node"/> stands open on the canvas.</summary>
+    public bool IsExpanded(DesignComponent node)
+    {
+        ArgumentNullException.ThrowIfNull(node);
+        return ObjectOf(node) is UiTreeNodeModel { Expanded: true };
+    }
+
+    /// <summary>Opens or closes <paramref name="node"/> on the canvas, as its twisty does; false when it has no nodes to show.</summary>
+    public bool ToggleExpanded(DesignComponent node)
+    {
+        ArgumentNullException.ThrowIfNull(node);
+        if (ObjectOf(node) is not UiTreeNodeModel model || node.Children.Count == 0)
+        {
+            return false;
+        }
+
+        model.Expanded = !model.Expanded;
+        _layout = null;
+        return true;
+    }
+
+    /// <summary>A tree's first nodes opened, as the canvas shows a tree it makes (<c>_expandFirstLevelNodesOnLoad</c>).</summary>
+    private void ExpandFirstLevel(DesignComponent tree)
+    {
+        foreach (DesignComponent node in tree.Children)
+        {
+            if (ObjectOf(node) is UiTreeNodeModel model)
+            {
+                model.Expanded = true;
+            }
+        }
     }
 
     /// <summary>Sets the theme the design's code is written under; the components already made keep what they hold.</summary>

@@ -442,6 +442,9 @@ public sealed partial class DesignCanvas : UserControl
                 _gestures = new DesignGestures(value)
                 {
                     TabHeadingAt = at => _layer.TabHeadingAt(new Point(at.X, at.Y)) is { } tab ? value.Runtime.ComponentOf(tab) : null,
+                    TabHeadingBoxOf = c => value.Runtime.ObjectOf(c) is JGraph.Core.Model.UiTabModel tab && _layer.TabHeadingBoxOf(tab) is { } r ? new Rect2D(r.X, r.Y, r.Width, r.Height) : null,
+                    TreeNodeAt = at => _layer.TreeNodeAt(new Point(at.X, at.Y)) is { } row && value.Runtime.ComponentOf(row.Node) is { } node ? (node, row.Twisty) : null,
+                    TreeNodeBoxOf = c => value.Runtime.ObjectOf(c) is JGraph.Core.Model.UiTreeNodeModel node && _layer.TreeNodeBoxOf(node) is { } r ? new Rect2D(r.X, r.Y, r.Width, r.Height) : null,
                     DragThreshold = System.Math.Max(SystemParameters.MinimumHorizontalDragDistance, SystemParameters.MinimumVerticalDragDistance),
                     FigureLeftRoom = Gutter - 2,
                     Clipboard = _clipboard,
@@ -700,15 +703,24 @@ public sealed partial class DesignCanvas : UserControl
     /// <see cref="DesignGestures.MenuAt"/> says, and shows the row or column it would add or delete
     /// while it is pointed at.
     /// </summary>
-    private void ShowMenu(DesignGestures gestures, Point2D at)
+    private void ShowMenu(DesignGestures gestures, Point2D at) => ShowMenu(gestures, gestures.MenuAt(at), null);
+
+    private void ShowMenu(DesignGestures gestures, IReadOnlyList<DesignMenuItem> items, Point2D? at)
     {
-        IReadOnlyList<DesignMenuItem> items = gestures.MenuAt(at);
         if (items.Count == 0)
         {
             return;
         }
 
+        // At the pointer for a right click; at the selection for the menu key (W5c).
         var menu = new ContextMenu { PlacementTarget = _overlay };
+        if (at is { } place)
+        {
+            menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Relative;
+            menu.HorizontalOffset = (place.X + Gutter) * _zoom;
+            menu.VerticalOffset = (place.Y + Gutter) * _zoom;
+        }
+
         foreach (DesignMenuItem item in items)
         {
             menu.Items.Add(MenuEntry(gestures, item));
@@ -857,6 +869,7 @@ public sealed partial class DesignCanvas : UserControl
             Key.G when Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) => DesignKey.Ungroup,
             Key.G when Keyboard.Modifiers == ModifierKeys.Control => DesignKey.Group,
             Key.F2 => DesignKey.EditInPlace,
+            Key.Enter => DesignKey.Enter,
             _ => null,
         };
         if (e.Key == Key.Escape && _tabOrderAt >= 0)
@@ -906,6 +919,14 @@ public sealed partial class DesignCanvas : UserControl
         if (e.Key is Key.Left or Key.Right or Key.Up or Key.Down)
         {
             _gestures?.ArrowUp(Keyboard.IsKeyDown(Key.Left) || Keyboard.IsKeyDown(Key.Right) || Keyboard.IsKeyDown(Key.Up) || Keyboard.IsKeyDown(Key.Down));
+        }
+
+        // The menu key brings the selection's menu, as the browser's contextmenu event at the focused canvas does (W5c).
+        if ((e.Key == Key.Apps || (e.Key == Key.F10 && Keyboard.Modifiers == ModifierKeys.Shift)) && _gestures is { IsPressed: false } gestures)
+        {
+            IReadOnlyList<DesignMenuItem> items = gestures.KeyboardMenu(out Point2D at);
+            ShowMenu(gestures, items, at);
+            e.Handled = true;
         }
     }
 
@@ -1067,6 +1088,8 @@ public sealed partial class DesignCanvas : UserControl
             Rect f = Wpf(document.CellBoxOf(focused) ?? focusBox.Box);
             dc.DrawRectangle(null, focusPen, new Rect(f.X - 1, f.Y - 1, f.Width + 2, f.Height + 2));
         }
+
+        DrawStructure(dc, document, gestures, accent, outline, dashed);
 
         foreach (DesignHandle handle in gestures.Handles())
         {

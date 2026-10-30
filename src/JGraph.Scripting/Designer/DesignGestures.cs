@@ -43,6 +43,9 @@ public enum DesignKey
 
     /// <summary>F2: opens the selected component's in-place editor (W5b, <c>INPLACE_EDIT_KEY</c>).</summary>
     EditInPlace,
+
+    /// <summary>Enter: a tree's Add Sibling, Shift+Enter its Add Child (W5c, <c>TreeController._processKeyDown</c>).</summary>
+    Enter,
 }
 
 /// <summary>The pointer the canvas shows where the mouse is.</summary>
@@ -115,7 +118,7 @@ public readonly record struct DesignHandle(DesignComponent Component, ResizeEdge
 /// (<see cref="Drop"/>) is added where it lands. On a shown grid the corner snaps to it.</item>
 /// </list>
 /// </remarks>
-public sealed class DesignGestures
+public sealed partial class DesignGestures
 {
     /// <summary>The side of a resize handle.</summary>
     public const double HandleSize = 7;
@@ -152,6 +155,9 @@ public sealed class DesignGestures
     private Size2D _figureStart;
     private bool _drawWithoutLabel;
     private bool _duplicatePress;
+    private TabDrag? _tabDrag;
+    private DesignComponent? _menuNode;
+    private DesignComponent? _nodeAnchor;
 
     /// <summary>The gestures on <paramref name="document"/>.</summary>
     public DesignGestures(DesignDocument document)
@@ -168,6 +174,21 @@ public sealed class DesignGestures
 
     /// <summary>The tab whose heading is at a point of the surface, which the canvas's component layer knows; null when none.</summary>
     public Func<Point2D, DesignComponent?>? TabHeadingAt { get; set; }
+
+    /// <summary>Where the canvas drew a tab's heading, on the surface; null when it cannot say (W5c: a heading's drag and the strip's +).</summary>
+    public Func<DesignComponent, Rect2D?>? TabHeadingBoxOf { get; set; }
+
+    /// <summary>The tree node whose row is at a point of the surface, and whether the point is on its twisty; null when none (W5c).</summary>
+    public Func<Point2D, (DesignComponent Node, bool Twisty)?>? TreeNodeAt { get; set; }
+
+    /// <summary>Where the canvas drew a tree node's row, on the surface; null when it does not show it (W5c).</summary>
+    public Func<DesignComponent, Rect2D?>? TreeNodeBoxOf { get; set; }
+
+    /// <summary>The side of the + a tab group's strip ends in (the tab bar's plus button, W5c).</summary>
+    public const double TabPlusSize = 22;
+
+    /// <summary>The side of the + beside a tree's selected node (its <c>TreeToolbar</c>, W5c).</summary>
+    public const double TreeAddSize = 18;
 
     /// <summary>
     /// Where the canvas drew each of a component's places to edit in place (a label's text, a gauge's
@@ -337,6 +358,7 @@ public sealed class DesignGestures
         Spanning,
         Splitting,
         FigureResizing,
+        TabDragging,
     }
 
     private enum Intent
@@ -348,6 +370,7 @@ public sealed class DesignGestures
         Span,
         Split,
         FigureResize,
+        TabDrag,
     }
 
     // --- the mouse -------------------------------------------------------------------------------
@@ -363,6 +386,7 @@ public sealed class DesignGestures
 
         EndKeyMove();
         Refusal = null;
+        _menuNode = null;
         _down = at;
         _lastDrag = at;
         _pressAt = at;
@@ -459,11 +483,65 @@ public sealed class DesignGestures
             return Begin(Intent.FigureResize, document.Design.Figure, figureEdges);
         }
 
-        // A tab's heading shows the tab and selects it.
+        // The tab strip's + adds a tab at its end (TabStripMouseController._handleTabPlusMouseDown, W5c).
+        if (TabPlusAt(at) is { } plusGroup)
+        {
+            if (button == DesignButton.Left && modifiers == DesignModifiers.None)
+            {
+                document.AddTab(plusGroup);
+            }
+            else if (!document.Selection.Contains(plusGroup))
+            {
+                document.Select([plusGroup]);
+            }
+
+            return false;
+        }
+
+        // The + beside a tree's selected node adds a sibling (TreeToolbar, W5c).
+        if (button == DesignButton.Left && TreeAddButton is { } treeAdd && treeAdd.Contains(at))
+        {
+            document.AddTreeNode(child: false);
+            return false;
+        }
+
+        // A tab's heading shows the tab and selects it; held, it drags along its strip
+        // (TabStripMouseController._handleTabThumbMouseDown, TabDragController, W5c).
         if (TabHeadingAt?.Invoke(at) is { } tab)
         {
+            bool held = document.Selection.Contains(tab);
+            if (button != DesignButton.Left)
+            {
+                if (!held && modifiers == DesignModifiers.None)
+                {
+                    document.ShowTab(tab);
+                    document.Select([tab]);
+                }
+
+                return false;
+            }
+
+            if (modifiers != DesignModifiers.None)
+            {
+                // Ctrl or Shift takes a selected heading out, or selects another alone.
+                document.Select(held ? document.Selection.Where(c => !ReferenceEquals(c, tab)).ToArray() : [tab]);
+                return false;
+            }
+
             document.ShowTab(tab);
-            document.Select([tab]);
+            if (!held)
+            {
+                document.Select([tab]);
+            }
+
+            _tabDrag = TabDragOf(tab);
+            return _tabDrag is not null && Begin(Intent.TabDrag, tab, ResizeEdges.None);
+        }
+
+        // A tree's node is selected as its tree selects it (TreeSelectPlugin, W5c).
+        if (TreeNodeAt?.Invoke(at) is { } row)
+        {
+            PressNode(row.Node, row.Twisty, button, modifiers);
             return false;
         }
 
@@ -594,6 +672,9 @@ public sealed class DesignGestures
                     _clickSelects = null;
                     _press = PressState.FigureResizing;
                     break;
+                case Intent.TabDrag when _tabDrag is not null:
+                    _press = PressState.TabDragging;
+                    break;
                 default:
                     _press = PressState.None;
                     return;
@@ -612,6 +693,9 @@ public sealed class DesignGestures
                 break;
             case PressState.FigureResizing:
                 DragFigure(System.Math.Round(dx, MidpointRounding.AwayFromZero), System.Math.Round(dy, MidpointRounding.AwayFromZero));
+                break;
+            case PressState.TabDragging when _tabDrag is { } drag:
+                DragTab(drag, at, dx, dy);
                 break;
             case PressState.Splitting when _splitter is { } dragged:
                 // App Designer's steps: each from where the last left the regions, by what the pointer
@@ -716,8 +800,19 @@ public sealed class DesignGestures
             case PressState.Drawing when _drawEntry is { } entry:
                 ReleaseDraw(entry);
                 break;
+            case PressState.TabDragging:
+                // Dropped on its strip, the tab goes where the marker is (TabDragController._completeGesture).
+                int? to = TabDrop is { To: { } dropped } && TabDragged is { } avatar && _tabDrag is { } drag && avatar.IntersectsWith(drag.Strip) ? dropped : null;
+                ClearTabDrag();
+                if (to is { } place)
+                {
+                    document.MoveTo(place);
+                }
+
+                break;
         }
 
+        ClearTabDrag();
         _clickSelects = null;
         Changed?.Invoke(this, EventArgs.Empty);
     }
@@ -754,6 +849,7 @@ public sealed class DesignGestures
         }
 
         _splitter = null;
+        ClearTabDrag();
         Document.EndGesture(commit: false);
         Changed?.Invoke(this, EventArgs.Empty);
     }
@@ -1388,9 +1484,14 @@ public sealed class DesignGestures
                 document.Preview(boxes);
                 return true;
             case DesignKey.EditInPlace when _press == PressState.None && modifiers == DesignModifiers.None:
-                // F2 on the one selected component, a labelled component's label (DesignAreaKeyboardController).
+                // F2 on the one selected component, a labelled component's label (DesignAreaKeyboardController);
+                // a tree's node by its tree's editor (W5c).
                 EndKeyMove();
-                return document.InPlaceTarget is { } target && BeginInPlace(target);
+                return (document.InPlaceTarget ?? document.SelectedTreeNode) is { } target && BeginInPlace(target);
+            case DesignKey.Enter when _press == PressState.None && modifiers is DesignModifiers.None or DesignModifiers.Shift && document.CanAddTreeNode:
+                // A tree's Add Sibling, or Add Child with Shift (TreeController._processEnterKeyShortcuts, W5c).
+                EndKeyMove();
+                return document.AddTreeNode(child: modifiers == DesignModifiers.Shift) is not null;
             case DesignKey.SelectAll when _press == PressState.None:
                 // Everything at the top of the figure (SelectAllComponentsCommand, W5).
                 EndKeyMove();
@@ -1612,6 +1713,18 @@ public sealed class DesignGestures
             return true;
         }
 
+        // A tree's node edits its text, selected first (the tree's own editor, W5c).
+        if (modifiers == DesignModifiers.None && _press == PressState.None && TreeNodeAt?.Invoke(at) is { Twisty: false } row)
+        {
+            if (!Document.Selection.Contains(row.Node))
+            {
+                Document.Select([row.Node]);
+            }
+
+            BeginInPlace(row.Node, pointer: at);
+            return true;
+        }
+
         // An in-place edit of what is under it, selected first, with no keys held (InplaceEditPlugin, W5b).
         // A tab's heading edits its title (TabStripMouseController).
         if (modifiers == DesignModifiers.None && _press == PressState.None
@@ -1777,6 +1890,13 @@ public sealed class DesignGestures
     public IReadOnlyList<DesignMenuItem> MenuAt(Point2D at)
     {
         DesignDocument document = Document;
+
+        // A tree node's row has its own menu (the canvas's tree-list-item menu, W5c).
+        if (_menuNode is { } node && document.Selection.Contains(node))
+        {
+            return NodeMenu();
+        }
+
         var items = new List<DesignMenuItem>();
 
         // Add Label, first (AddLabelMenuItemProvider): one component whose library entry has a label (W4).
@@ -1789,6 +1909,17 @@ public sealed class DesignGestures
                     Alerted?.Invoke(this, (DesignDocument.AddLabelFailedTitle, refused));
                 }
             }) { Shortcut = "Ctrl+L" });
+        }
+
+        // Add Radio Button or Add Toggle Button, for one button group (ButtonGroupMenuItemProvider, W5c).
+        if (document.AddButtonType is { } kind)
+        {
+            if (items.Count > 0)
+            {
+                items.Add(DesignMenuItem.Separator);
+            }
+
+            items.Add(new DesignMenuItem(kind == "matlab.ui.control.ToggleButton" ? "Add Toggle Button" : "Add Radio Button", true, () => document.AddButton()));
         }
 
         if (document.Selection is [var grid] && document.IsGrid(grid) && document.CellsOf(grid) is { } cells)
@@ -1839,6 +1970,9 @@ public sealed class DesignGestures
                 new(label, index is not null, index is { } i ? () => document.DeleteTrack(grid, axis, i) : null,
                     Hint: index is { } h ? new DesignGridHint(grid, axis, h, Insert: false) : null);
         }
+
+        // Add Tab, and a tab's Move (AddTabMenuItemProvider, W5c).
+        AddTabItems(items);
 
         // Cut, Copy, Paste and Duplicate (StandardMenuItemsProvider, W5), with Delete.
         if (items.Count > 0)

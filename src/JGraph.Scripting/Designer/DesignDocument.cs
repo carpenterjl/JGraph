@@ -361,7 +361,7 @@ public sealed partial class DesignDocument : IDisposable
     /// <summary>
     /// The containers a component can be dropped into: the figure, a panel, a button group, a tab -
     /// any container that places its children by their positions. A radio button and a toggle button
-    /// belong in a button group only.
+    /// belong in a button group only, of their own kind (<c>canMoveToParent</c>, W5c).
     /// </summary>
     public bool CanHold(DesignComponent container, DesignComponent component)
     {
@@ -378,7 +378,7 @@ public sealed partial class DesignDocument : IDisposable
         bool needsGroup = component.Type is "matlab.ui.control.RadioButton" or "matlab.ui.control.ToggleButton";
         return container.Type switch
         {
-            "matlab.ui.container.ButtonGroup" => true,
+            "matlab.ui.container.ButtonGroup" => !needsGroup || ButtonTypeOf(container) == component.Type,
             "matlab.ui.Figure" or "matlab.ui.container.Panel" or "matlab.ui.container.Tab" => !needsGroup,
             _ => false,
         };
@@ -796,7 +796,7 @@ public sealed partial class DesignDocument : IDisposable
     /// <summary>
     /// Whether <paramref name="container"/> can hold a new component of <paramref name="type"/>: a
     /// container that places its children by their positions, a radio or toggle button only in a
-    /// button group. Grids wait for the designer's grid editing (DS4).
+    /// button group of its kind (W5c). Grids wait for the designer's grid editing (DS4).
     /// </summary>
     public static bool CanHoldNew(DesignComponent container, string type)
     {
@@ -804,7 +804,7 @@ public sealed partial class DesignDocument : IDisposable
         bool needsGroup = type is "matlab.ui.control.RadioButton" or "matlab.ui.control.ToggleButton";
         return container.Type switch
         {
-            "matlab.ui.container.ButtonGroup" => true,
+            "matlab.ui.container.ButtonGroup" => !needsGroup || ButtonTypeOf(container) == type,
             "matlab.ui.Figure" or "matlab.ui.container.Panel" or "matlab.ui.container.Tab" => !needsGroup,
             _ => false,
         };
@@ -957,16 +957,28 @@ public sealed partial class DesignDocument : IDisposable
     /// Deletes <paramref name="components"/> and everything inside them, as one edit; the figure is
     /// never deleted. A context menu deleted is taken off the components it was assigned to, and a
     /// deleted tree node out of its tree's checked nodes. Callbacks the components named stay in the
-    /// app's code, which is the user's.
+    /// app's code, which is the user's. A tab group's only tab takes its group with it, and a deleted
+    /// tab or node leaves the one before it selected (W5c, <c>DeleteCommand</c>).
     /// </summary>
     public void Delete(IReadOnlyList<DesignComponent> components)
     {
         ArgumentNullException.ThrowIfNull(components);
         EndGesture(commit: false);
+        components = WithLastChildParents(components);
+        DesignComponent? next = SelectedAfterDelete(components);
         List<Edit> edits = DeleteEdits(components);
         if (edits.Count > 0)
         {
             Do([.. edits]);
+            if (next is not null && IsInDesign(next))
+            {
+                if (next.Type == TabType)
+                {
+                    Runtime.ShowTab(next);
+                }
+
+                Select([next]);
+            }
         }
     }
 
@@ -1701,11 +1713,12 @@ public sealed partial class DesignDocument : IDisposable
     }
 
     /// <summary>
-    /// A component moved into another container: last among its new siblings, as the last made. Undone,
-    /// it goes back where it was when it moved - recorded then, since a step moving several children of
-    /// one container undoes them last to first.
+    /// A component moved into another container: at <paramref name="At"/> among its new siblings, or
+    /// last, as the last made. Undone, it goes back where it was when it moved - recorded then, since a
+    /// step moving several children of one container undoes them last to first. A tab group's, a
+    /// tree's and a node's children take their places in the runtime too (W5c).
     /// </summary>
-    private sealed record ParentEdit(DesignComponent Component, DesignComponent From, int Index, DesignComponent To) : Edit(Component)
+    private sealed record ParentEdit(DesignComponent Component, DesignComponent From, int Index, DesignComponent To, int? At = null) : Edit(Component)
     {
         private int _at = -1;
 
@@ -1714,7 +1727,9 @@ public sealed partial class DesignDocument : IDisposable
             _at = IndexIn(From, Component);
             document.Runtime.SetParent(Component, To);
             From.Remove(Component);
-            To.Add(Component);
+            To.Insert(System.Math.Min(At ?? To.Children.Count, To.Children.Count), Component);
+            document.PutInOrder(To);
+            document.ShowMade(Component);
             document.NoteMoved(Component);
         }
 
@@ -1723,7 +1738,18 @@ public sealed partial class DesignDocument : IDisposable
             document.Runtime.SetParent(Component, From);
             To.Remove(Component);
             From.Insert(System.Math.Min(_at >= 0 ? _at : Index, From.Children.Count), Component);
+            document.PutInOrder(From);
+            document.ShowMade(Component);
             document.NoteMoved(Component);
+        }
+    }
+
+    /// <summary>A tab group's, a tree's or a node's children put in the runtime in the design's order, as one changed (W5c); any other container's are not touched.</summary>
+    private void PutInOrder(DesignComponent container)
+    {
+        if (container.Type is TabGroupType or TreeType or CheckBoxTreeType or TreeNodeType)
+        {
+            Runtime.PutInOrder(container);
         }
     }
 
@@ -1831,6 +1857,8 @@ public sealed partial class DesignDocument : IDisposable
         {
             Parent.Insert(System.Math.Min(Index ?? Parent.Children.Count, Parent.Children.Count), Component);
             document.Runtime.MakeNew(Component);
+            document.PutInOrder(Parent);
+            document.ShowMade(Component);
             document.NoteBindings(Component, added: true);
         }
 
@@ -1859,6 +1887,8 @@ public sealed partial class DesignDocument : IDisposable
         {
             Parent.Insert(System.Math.Min(_at >= 0 ? _at : Index, Parent.Children.Count), Component);
             document.Runtime.MakeNew(Component);
+            document.PutInOrder(Parent);
+            document.ShowMade(Component);
             document.NoteBindings(Component, added: true);
         }
     }

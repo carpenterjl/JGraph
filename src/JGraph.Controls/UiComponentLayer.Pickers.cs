@@ -688,6 +688,68 @@ public sealed partial class UiComponentLayer
         return item;
     }
 
+    /// <summary>
+    /// The tree node whose row is under <paramref name="point"/> (on this layer), and whether the point
+    /// is on its twisty - left of its picture and text, on a node with nodes in it - or null: what a
+    /// press there selects or opens, which the designer's canvas asks since the layer takes no press
+    /// itself (W5c). A row spans its tree's width.
+    /// </summary>
+    public (UiTreeNodeModel Node, bool Twisty)? TreeNodeAt(Point point)
+    {
+        foreach (Shown shown in _components.Values)
+        {
+            if (shown.Tree is not { } tree || !TreeShows(tree))
+            {
+                continue;
+            }
+
+            foreach ((UiTreeNodeModel node, TreeViewItem item) in shown.TreeItems)
+            {
+                if (RowOf(tree, item) is { } row && row.Row.Contains(point))
+                {
+                    return (node, item.HasItems && point.X < row.Header.X && point.X >= row.Header.X - TwistyWidth);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>Where <paramref name="node"/>'s row is on this layer, its tree's width across, or null when its tree does not show it (W5c).</summary>
+    public Rect? TreeNodeBoxOf(UiTreeNodeModel node)
+    {
+        ArgumentNullException.ThrowIfNull(node);
+        foreach (Shown shown in _components.Values)
+        {
+            if (shown.Tree is { } tree && TreeShows(tree) && shown.TreeItems.TryGetValue(node, out TreeViewItem? item) && RowOf(tree, item) is { } row)
+            {
+                return row.Row;
+            }
+        }
+
+        return null;
+    }
+
+    // The width of a tree item's twisty, left of its header (the TreeViewItem template's expander column).
+    private const double TwistyWidth = 19;
+
+    private bool TreeShows(TreeView tree) => tree.IsVisible && tree.ActualWidth > 0 && tree.IsDescendantOf(this);
+
+    /// <summary>A shown item's row on this layer, its tree's width across and inside the tree, and its header's box; null when it does not show.</summary>
+    private (Rect Row, Rect Header)? RowOf(TreeView tree, TreeViewItem item)
+    {
+        if (!item.IsVisible || item.Header is not FrameworkElement { ActualHeight: > 0 } header || !header.IsDescendantOf(tree))
+        {
+            return null;
+        }
+
+        Rect inside = tree.TransformToAncestor(this).TransformBounds(new Rect(tree.RenderSize));
+        Rect box = header.TransformToAncestor(this).TransformBounds(new Rect(header.RenderSize));
+        var row = new Rect(inside.X + 1, box.Y, System.Math.Max(0, inside.Width - 2), box.Height);
+        row.Intersect(inside);
+        return row.IsEmpty || row.Height <= 0 ? null : (row, box);
+    }
+
     /// <summary>Marks the nodes of a multiselect tree that are selected beyond the one WPF holds.</summary>
     private static void PaintTreeSelection(Shown shown)
     {

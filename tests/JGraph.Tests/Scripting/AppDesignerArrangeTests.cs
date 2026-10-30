@@ -230,10 +230,11 @@ public class AppDesignerArrangeTests
         document.Undo();
         Assert.Equal(["Button", "Button2", "Button3", "Slider", "Panel", "EditField", "Knob"], Children(figure));
 
-        // Two together go to the back keeping the gap between them (ReorderCommand's moves, one at a time).
+        // Two together do not restack: R2025b's _checkAbilityToReorder enables the stack order for one alone (W5c).
         Select(document, "Button3", "EditField");
-        Assert.True(document.Stack(DesignStack.Back));
-        Assert.Equal(["Button3", "Button", "Button2", "EditField", "Slider", "Panel", "Knob"], Children(figure));
+        Assert.False(document.CanStack(DesignStack.Back));
+        Assert.False(document.Stack(DesignStack.Back));
+        Assert.Equal(["Button", "Button2", "Button3", "Slider", "Panel", "EditField", "Knob"], Children(figure));
 
         // The figure does not restack; a group does not either.
         document.Select([]);

@@ -85,7 +85,7 @@ public sealed partial class DesignDocument
         MenuType => container.Type is FigureType or MenuType or ContextMenuType,
         PushToolType or ToggleToolType => container.Type == ToolbarType,
         ContextMenuType or ToolbarType => container.Parent is null,
-        RadioButtonType or ToggleButtonType => container.Type == ButtonGroupType,
+        RadioButtonType or ToggleButtonType => container.Type == ButtonGroupType && ButtonTypeOf(container) == type,
         _ => IsGrid(container) || container.Type is FigureType or PanelType or TabType or ButtonGroupType,
     };
 

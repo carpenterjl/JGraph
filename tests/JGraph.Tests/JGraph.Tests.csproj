@@ -104,6 +104,7 @@
     <Content Include="Scripting\Designer\DesignArrangeOracle.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Scripting\Designer\DesignClipboardOracle.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Scripting\Designer\DesignInPlaceOracle.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Scripting\Designer\DesignStructureOracle.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Scripting\Designer\GridRulesVerifyOracle.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
