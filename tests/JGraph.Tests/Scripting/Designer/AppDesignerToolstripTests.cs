@@ -100,7 +100,7 @@ public class AppDesignerToolstripTests
     [InlineData("AD_ZOOM_IN", null)]
     [InlineData("AD_DESIGN_VIEW_DISPLAY_SIZE", null)]
     [InlineData("AD_APP_DETAILS", null)]
-    [InlineData("AD_RESPONSIFY_2COLUMN", "W8")]
+    [InlineData("AD_RESPONSIFY_2COLUMN", null)]
     [InlineData("AD_EDITOR_COMMENT", "W9")]
     [InlineData("AD_EDITOR_LINE_NUMBERS", "W9")]
     [InlineData("AD_EDITOR_STEP", "W11")]

@@ -43,6 +43,21 @@ internal sealed partial class AppDesignerWindow : Window
     /// <summary>The Help Text dialog (EDITOR > App Help Text).</summary>
     public static readonly RoutedCommand HelpText = new(nameof(HelpText), typeof(AppDesignerWindow));
 
+    /// <summary>Save Copy As... (Save's drop-down).</summary>
+    public static readonly RoutedCommand SaveCopyAs = new(nameof(SaveCopyAs), typeof(AppDesignerWindow));
+
+    /// <summary>Export to .m File... (Save's drop-down).</summary>
+    public static readonly RoutedCommand ExportCode = new(nameof(ExportCode), typeof(AppDesignerWindow));
+
+    /// <summary>Convert > 2-Panel App with Auto-Reflow.</summary>
+    public static readonly RoutedCommand ConvertTwoPanel = new(nameof(ConvertTwoPanel), typeof(AppDesignerWindow));
+
+    /// <summary>Convert > 3-Panel App with Auto-Reflow.</summary>
+    public static readonly RoutedCommand ConvertThreePanel = new(nameof(ConvertThreePanel), typeof(AppDesignerWindow));
+
+    /// <summary>Convert > App without Auto-Reflow.</summary>
+    public static readonly RoutedCommand ConvertStandard = new(nameof(ConvertStandard), typeof(AppDesignerWindow));
+
     /// <summary>Run (F5): saves the app and runs it in the MATLAB session, as App Designer's Run does (designer plan DS8).</summary>
     public static readonly RoutedCommand RunApp = new(nameof(RunApp), typeof(AppDesignerWindow));
 
@@ -222,6 +237,16 @@ internal sealed partial class AppDesignerWindow : Window
             (_, e) => e.CanExecute = Active is not null));
         CommandBindings.Add(new CommandBinding(HelpText, (_, _) => ShowHelpText(),
             (_, e) => e.CanExecute = Active is { Document.Code: not null }));
+        CommandBindings.Add(new CommandBinding(SaveCopyAs, (_, _) => PromptSaveCopy(),
+            (_, e) => e.CanExecute = Active is { Document.CanSaveAs: true }));
+        CommandBindings.Add(new CommandBinding(ExportCode, (_, _) => PromptExport(),
+            (_, e) => e.CanExecute = Active is { Document.Code: not null }));
+        CommandBindings.Add(new CommandBinding(ConvertTwoPanel, (_, _) => Convert(2),
+            (_, e) => e.CanExecute = Active is { Document: { CanConvert: true, HasConvertibleRegions: false } }));
+        CommandBindings.Add(new CommandBinding(ConvertThreePanel, (_, _) => Convert(3),
+            (_, e) => e.CanExecute = Active is { Document: { CanConvert: true, HasConvertibleRegions: false } }));
+        CommandBindings.Add(new CommandBinding(ConvertStandard, (_, _) => Convert(0),
+            (_, e) => e.CanExecute = Active is { Document: { CanConvert: true, HasConvertibleRegions: true } }));
         InputBindings.Add(new KeyBinding(ApplicationCommands.Close, Key.W, ModifierKeys.Control));
         InputBindings.Add(new KeyBinding(ApplicationCommands.Redo, Key.Z, ModifierKeys.Control | ModifierKeys.Shift));
         InputBindings.Add(new KeyBinding(ToggleView, Key.F7, ModifierKeys.Shift));
@@ -633,6 +658,113 @@ internal sealed partial class AppDesignerWindow : Window
         if (app.Document.Callbacks.FirstOrDefault(static c => c.IsStartup) is { } startup)
         {
             app.CodeView.GoToFunction(startup.Name);
+        }
+    }
+
+    /// <summary>
+    /// Convert (<c>ResponsifyAppAction</c>): a new app, not saved, in a tab of its own, named for this one; the app it came from stays as it is. R2025b walks through what changed in a tutorial;
+    /// here the status line says it, and an alert says what a figure's callback lost.
+    /// </summary>
+    private void Convert(int panels)
+    {
+        if (Active is not { Document: var document } app || !app.CodeView.Push())
+        {
+            return;
+        }
+
+        string name = DesignConversion.ConvertedName(document.AppName, Apps.Select(static a => a.Document.AppName));
+        try
+        {
+            DesignConverted made = panels == 0 ? document.ConvertToStandard(name) : document.ConvertToPanels(panels, name);
+            AddApp(made.Document);
+            if (panels != 0)
+            {
+                _status.Text = DesignConversion.Converted;
+            }
+
+            if (made.Detached is not null)
+            {
+                ShowAlert("App Designer", DesignConversion.SizeChangedDetached);
+            }
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or InvalidDataException or IOException)
+        {
+            ShowAlert("App Designer", ex.Message);
+        }
+    }
+
+    /// <summary>Save Copy As... (<c>SaveCopyAsCommand</c>): this app stays what it is; its own file is refused, with the dialog offered again (<c>_showCannotCopyOverAppDialog</c>).</summary>
+    private void PromptSaveCopy()
+    {
+        if (Active is not { Document: var document } app || !app.CodeView.Push())
+        {
+            return;
+        }
+
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Title = DesignConversion.SaveCopyTitle,
+            Filter = "MATLAB App (*.mlapp)|*.mlapp|MATLAB App, plain text (*.m)|*.m",
+            FilterIndex = document.Format == DesignFileFormat.PlainText ? 2 : 1,
+            FileName = document.AppName,
+            InitialDirectory = document.Path is { } here ? Path.GetDirectoryName(here) : _currentFolder,
+            AddExtension = true,
+        };
+        if (dialog.ShowDialog(this) != true || dialog.FileName is not { Length: > 0 } chosen)
+        {
+            return;
+        }
+
+        string full = Path.GetFullPath(chosen);
+        if (document.Path is { } own && string.Equals(own, full, StringComparison.OrdinalIgnoreCase))
+        {
+            if (MessageBox.Show(this, DesignConversion.CopyOverApp, "App Designer", MessageBoxButton.OKCancel, MessageBoxImage.Error) == MessageBoxResult.OK)
+            {
+                PromptSaveCopy();
+            }
+
+            return;
+        }
+
+        try
+        {
+            document.SaveCopy(full);
+            _status.Text = $"Saved a copy as {full}.";
+        }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or UnauthorizedAccessException or InvalidDataException)
+        {
+            ShowAlert("App Designer", ex.Message);
+        }
+    }
+
+    /// <summary>Export to .m File... (<c>ExportModelCommand</c>): the class alone, named <c>app_exported</c> to start with.</summary>
+    private void PromptExport()
+    {
+        if (Active is not { Document: var document } app || !app.CodeView.Push())
+        {
+            return;
+        }
+
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Filter = "MATLAB Code File (*.m)|*.m",
+            FileName = document.AppName + DesignConversion.ExportSuffix,
+            InitialDirectory = document.Path is { } here ? Path.GetDirectoryName(here) : _currentFolder,
+            AddExtension = true,
+        };
+        if (dialog.ShowDialog(this) != true || dialog.FileName is not { Length: > 0 } chosen)
+        {
+            return;
+        }
+
+        try
+        {
+            document.Export(chosen);
+            _status.Text = $"Exported {Path.GetFullPath(chosen)}.";
+        }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or UnauthorizedAccessException)
+        {
+            ShowAlert("App Designer", ex.Message);
         }
     }
 

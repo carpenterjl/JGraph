@@ -84,6 +84,8 @@ public static class DesignActions
         "DESIGN_TREE_ADD_SIBLING", "DESIGN_TREE_ADD_CHILD", "DESIGN_TREE_INCREASE_INDENT", "DESIGN_TREE_DECREASE_INDENT",
         // Stage W8a: App Details and the app's help text.
         "AD_APP_DETAILS", "AD_HELP_COMMENTS",
+        // Stage W8c: Convert, Save Copy As and Export to .m File.
+        "AD_RESPONSIFY_ALL_OPTIONS", "AD_RESPONSIFY_2COLUMN", "AD_RESPONSIFY_3COLUMN", "AD_UNRESPONSIFY_TO_STANDARD", "AD_SAVECOPY_AS", "AD_EXPORT",
     };
 
     /// <summary>Every action, by id.</summary>

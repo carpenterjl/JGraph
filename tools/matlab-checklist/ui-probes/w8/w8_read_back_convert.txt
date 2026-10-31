@@ -1,0 +1,8 @@
+outcome [{"Status":"success"}]
+class [W8cBin]
+AppType [Responsive]
+child matlab.ui.container.GridLayout GridLayout
+  matlab.ui.container.Panel RightPanel
+    matlab.ui.control.Knob Rg [239 340 60 60]
+  matlab.ui.container.Panel LeftPanel
+    matlab.ui.control.Slider Lf [39 400 150 3]
