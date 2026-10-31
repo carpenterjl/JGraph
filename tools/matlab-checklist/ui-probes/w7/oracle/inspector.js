@@ -132,10 +132,21 @@ for (const [type, model] of Object.entries(MODELS)) {
 const TYPES = Object.keys(MODELS);
 
 if (process.argv[2] === 'sheet') {
+  // The editor R2025b's sheet names for a property (stage W7c): the widget that shows it, the one that edits it in place,
+  // its rich editor, and of richEditorProperties what does not depend on an instance's value.
+  const short = m => (m || '').split('/').pop();
+  const editorOf = p => {
+    const rich = p.richEditorProperties || {};
+    const kept = {};
+    for (const k of ['categories', 'isProtected', 'enumeratedValues', 'icon', 'icons', 'fields', 'numElements', 'validation', 'minNumber', 'maxNumber', 'defaultNameKey', 'outputType', 'inputType', 'delimiters', 'showStyle', 'styleOptions', 'MinValue', 'MaxValue', 'IncludeMin', 'IncludeMax', 'Step', 'isNumeric']) {
+      if (rich[k] !== undefined && rich[k] !== null) kept[k] = rich[k];
+    }
+    return { renderer: short(p.renderer), inPlace: short(p.inPlaceEditor), rich: short(rich.richEditor), editable: p.editable !== false, ...kept };
+  };
   const classes = TYPES.map(type => ({
     type,
     tab: WORDS[type].name,
-    properties: Object.fromEntries(proxyMap.AppDesigner[type].propertySheet.properties.map(p => [p.name, [p.displayName, p.className, p.tooltip || '']])),
+    properties: Object.fromEntries(proxyMap.AppDesigner[type].propertySheet.properties.map(p => [p.name, [p.displayName, p.className, p.tooltip || '', editorOf(p)]])),
   }));
   process.stdout.write(JSON.stringify({ release: raw.release, classes }, null, 1));
   process.exit(0);

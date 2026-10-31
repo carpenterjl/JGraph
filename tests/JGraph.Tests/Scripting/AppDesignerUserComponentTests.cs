@@ -512,6 +512,47 @@ public class AppDesignerUserComponentTests : IDisposable
         }
     }
 
+    /// <summary>An enumeration with a default is a choice of its members, written by name; one with none is left out (<c>UserComponentPropertyView</c>).</summary>
+    [Fact]
+    public void AnEnumerationPropertyIsAChoiceOfItsMembers()
+    {
+        File.WriteAllText(Path.Combine(_folder, "Ds7Speed.m"), """
+            classdef Ds7Speed
+                enumeration
+                    Slow, Medium, Fast
+                end
+            end
+            """);
+        File.WriteAllText(Path.Combine(_folder, "Ds7Enum.m"), """
+            classdef Ds7Enum < matlab.ui.componentcontainer.ComponentContainer
+                properties
+                    Speed Ds7Speed = Ds7Speed.Medium
+                    Other Ds7Speed
+                end
+                methods (Access = protected)
+                    function setup(comp)
+                        comp.Position = [10 10 120 40];
+                    end
+                    function update(~)
+                    end
+                end
+            end
+            """);
+        string text = UacLastText.ReplaceLineEndings("\n").Replace("SpinnerGauge", "Ds7Enum", StringComparison.Ordinal).Replace("app.Gauge.Value = 40;\n", string.Empty, StringComparison.Ordinal);
+        using DesignDocument document = DesignDocument.FromText(text, Path.Combine(_folder, "UacLast.mlapp"));
+        DesignComponent gauge = document.Design.Find("Gauge")!;
+        DesignEditor speed = Assert.Single(document.InspectorGroupsOf(gauge)[0].Rows).Editors[0];
+        Assert.Equal("Speed", speed.Name);
+        Assert.Equal(DesignEditorKind.Choice, speed.Kind);
+        Assert.Equal(["Slow", "Medium", "Fast"], speed.Choices);
+        Assert.Equal("Medium", Assert.IsType<CharValue>(document.ValueOf(gauge, "Speed")).Text);
+        Assert.Null(document.SetProperty(gauge, "Speed", new CharValue("Fast")));
+        Assert.Equal("Fast", Assert.IsType<CharValue>(document.ValueOf(gauge, "Speed")).Text);
+        Assert.Contains("app.Gauge.Speed = 'Fast';", DesignCodeWriter.ComponentCode(gauge));
+        Assert.NotNull(document.SetProperty(gauge, "Speed", new CharValue("Nope")));
+        Assert.DoesNotContain(document.InspectorGroupsOf(gauge)[0].Rows, static r => r.Editors[0].Name == "Other");
+    }
+
     /// <summary>A class with typed numbers and a char: each in the inspector as a number or text, each generated as the design value's text.</summary>
     [Fact]
     public void TypedNumbersAndTextAreInspectedAndWritten()

@@ -307,9 +307,9 @@ public sealed class DesignRuntime : IDisposable
     /// design-time controller's editor filter): the class's own public properties that the view
     /// shows - with a non-empty default or a declared class; not a callback; a cell only as a
     /// vector, a char only as a row, a string only as a scalar - each edited by what it holds and
-    /// shown without editing when only the class may set it, those the inspector has no editor for
-    /// (a struct, a date, an object, an enumeration) left out; under the class's short name,
-    /// expanded; then the six groups every component shows.
+    /// shown without editing when only the class may set it, an enumeration with a default as a choice of its
+    /// members (<c>isCategoricalOrEnum</c>; stage W7c), those the inspector has no editor for (a struct, a date, an
+    /// object) left out; under the class's short name, expanded; then the six groups every component shows.
     /// </summary>
     private IReadOnlyList<DesignInspectorGroup> InspectorGroups(JgsClass cls, string className, IReadOnlyList<string> names, IReadOnlyList<string> callbacks)
     {
@@ -319,6 +319,16 @@ public sealed class DesignRuntime : IDisposable
             if (JgsBuiltinClasses.ComponentContainerProperties.Contains(name, StringComparer.Ordinal) || callbacks.Contains(name, StringComparer.Ordinal)
                 || FindProperty(cls, name) is not { } property)
             {
+                continue;
+            }
+
+            if (Run($"{ValueVariable} = {UserVariable}.{name};") is null && _environment.TryGet(ValueVariable, out JgsValue held) && JgsBuiltins.IsEnumerationValue(held))
+            {
+                if (property.Spec.Default is not null && held.ObjectClass.EnumerationNames.Count > 0)
+                {
+                    own.Add(new DesignInspectorRow([new DesignEditor(name, property.SetAccess.IsPublic ? DesignEditorKind.Choice : DesignEditorKind.ReadOnly, [.. held.ObjectClass.EnumerationNames])]));
+                }
+
                 continue;
             }
 
@@ -551,6 +561,12 @@ public sealed class DesignRuntime : IDisposable
     /// <summary>A value of the language as a design value; null for one no design value is.</summary>
     private static DesignValue? ValueOf(JgsValue value, DesignValue? like)
     {
+        // An enumeration's member is written as its name (ComponentCodeGenerator's isenum).
+        if (JgsBuiltins.IsEnumerationValue(value) && JgsBuiltins.EnumerationNamesOf(value) is [var member])
+        {
+            return new CharValue(member);
+        }
+
         switch (JgsBuiltins.ClassOf(value, JgsDialect.Matlab))
         {
             case "char" when !value.IsCharMatrix && value.Type == JgsType.String:

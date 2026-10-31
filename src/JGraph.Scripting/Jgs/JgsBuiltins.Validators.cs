@@ -316,6 +316,12 @@ internal static partial class JgsBuiltins
             return value;
         }
 
+        // A property typed as an enumeration takes a member's name (W7c: R2025b's generator writes a member so).
+        if (interpreter?.ClassForLoad(className) is { IsEnumeration: true } enumeration)
+        {
+            return ToEnumerationMember(enumeration, value, string.Empty, line, col);
+        }
+
         // The container classes have constructors that mean something else entirely — cell(3) builds
         // a 3-by-3 cell rather than converting anything — so those are checked, never converted. A
         // user class converts through its constructor, as R2025b's does (U6, measured).

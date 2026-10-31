@@ -1156,6 +1156,7 @@ public sealed partial class DesignDocument : IDisposable
         var linked = Linked(component, name).Select(l => (l.Component, l.Name, Before: Runtime.Read(l.Component, l.Name, LikeOf(l.Component, l.Name))))
             .ToArray();
         string? oldText = TextOf(component);
+        Size2D? sizedBefore = skipSame && DesignPreferredSize.Applies(component.Type, name) ? WidgetSize(component) : null;
 
         if (Runtime.Set(component, name, toSet) is { } refused)
         {
@@ -1181,7 +1182,24 @@ public sealed partial class DesignDocument : IDisposable
         }
 
         DesignValue? designValue = property is not null && IsDefaultValue(component, name, kept) ? null : kept;
+
+        // The inspector says a property's mode beside it: automatic for what its class's default says (executePropertyEditorCommand).
+        bool automatic = skipSame && property is { HasMode: true } && defaultValue is not null && DesignPropertyMode.For(defaultValue, toSet) == "auto";
+        if (automatic)
+        {
+            designValue = null;
+        }
+
         edits.Add(new PropertyEdit(component, name, held, designValue, before, toSet));
+        if (skipSame && property is { HasMode: true } && Runtime.Read(component, name + "Mode", new CharValue("auto")) is CharValue modeBefore)
+        {
+            edits.Add(new ModeEdit(component, name + "Mode", modeBefore, new CharValue(automatic ? "auto" : "manual")) { Selects = false });
+        }
+
+        if (sizedBefore is { } sized && FitEdit(component, sized) is { } fit)
+        {
+            edits.Add(fit);
+        }
 
         // A component named from its text follows its text, as App Designer renames it.
         if (oldText is not null && DesignNames.Of(component.Type)?.TextProperty == name && DesignPalette.Text(kept) is { } newText)
@@ -1825,6 +1843,14 @@ public sealed partial class DesignDocument : IDisposable
                 Component.Set(Name, value);
             }
         }
+    }
+
+    /// <summary>A property's <c>...Mode</c> set beside it (W7c): the runtime's alone, since the design's holding a value is its mode.</summary>
+    private sealed record ModeEdit(DesignComponent Component, string Name, DesignValue Before, DesignValue After) : Edit(Component)
+    {
+        public override void Do(DesignDocument document) => document.Runtime.Set(Component, Name, After);
+
+        public override void Undo(DesignDocument document) => document.Runtime.Set(Component, Name, Before);
     }
 
     /// <summary>

@@ -625,6 +625,14 @@ internal sealed class JgsClass
     public JgsValue DefaultOf(ClassProperty property, int line, int col)
     {
         JgsClass owner = property.Owner ?? this;
+
+        // With no default, a property typed as an enumeration starts as a 0-by-0 of its class (W7c, measured).
+        if (property.Spec.Default is null && property.Spec.ClassName is { } typed
+            && _interpreter.ClassForLoad(typed) is { IsEnumeration: true } enumeration)
+        {
+            return JgsObjectArray.ValueOf(enumeration, [], 0, 0);
+        }
+
         JgsValue start = property.Spec.Default is { } expression
             ? _interpreter.EvaluateInContext(
                 expression, owner.DefaultWorkspace(), owner.Declaration.SourceId, $"{owner.Name}.{property.Spec.Name} default",

@@ -614,7 +614,7 @@ public class AppDesignerPaletteTests(ITestOutputHelper output)
             button.Select(static g => g.Title));
         Assert.Equal(["Text", "Interpreter", "WordWrap", "HorizontalAlignment", "VerticalAlignment", "Icon", "IconAlignment"],
             button[0].Rows.Select(static r => r.Editors.Single().Name));
-        Assert.Equal(DesignEditorKind.Text, button[0].Rows[0].Editors[0].Kind);
+        Assert.Equal(DesignEditorKind.Lines, button[0].Rows[0].Editors[0].Kind);
         Assert.Equal(DesignEditorKind.OnOff, button[0].Rows[2].Editors[0].Kind);
         Assert.Equal(["left", "center", "right"], button[0].Rows[3].Editors[0].Choices);
         Assert.Equal(DesignEditorKind.Color, button[1].Rows.Single(r => r.Editors[0].Name == "FontColor").Editors[0].Kind);

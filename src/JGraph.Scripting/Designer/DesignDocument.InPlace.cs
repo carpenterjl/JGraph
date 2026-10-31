@@ -348,17 +348,24 @@ public sealed partial class DesignDocument
     {
         ArgumentNullException.ThrowIfNull(component);
         ArgumentException.ThrowIfNullOrEmpty(path);
+        return SetProperty(component, property, ImageValue(path));
+    }
+
+    /// <summary>What a file chosen for an image comes to: its parts when it is in the app's folder, else its full path.</summary>
+    public DesignValue ImageValue(string path)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(path);
         string full = System.IO.Path.GetFullPath(path);
         if (Path is { } app && System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(app)) is { } folder)
         {
             string relative = System.IO.Path.GetRelativePath(folder, full);
             if (!relative.StartsWith("..", StringComparison.Ordinal) && !System.IO.Path.IsPathRooted(relative))
             {
-                return SetProperty(component, property, new ImageFileValue(relative.Split(['\\', '/'], StringSplitOptions.RemoveEmptyEntries)));
+                return new ImageFileValue(relative.Split(['\\', '/'], StringSplitOptions.RemoveEmptyEntries));
             }
         }
 
-        return SetProperty(component, property, new CharValue(full));
+        return new CharValue(full);
     }
 
     private string? DeleteLabel(DesignComponent label)
@@ -479,7 +486,7 @@ public sealed partial class DesignDocument
         NumberText(value is NumericValue { Data: [var n] } ? n : fallback);
 
     /// <summary>A number as the editor's box shows it: as JavaScript writes a number into text, <c>Infinity</c> and all.</summary>
-    internal static string NumberText(double value)
+    public static string NumberText(double value)
     {
         if (double.IsNaN(value))
         {

@@ -1,0 +1,5 @@
+size=[0 0] class=W7cSpeed isempty=1
+then Fast
+string gives Slow
+refused: MATLAB:validation:UnableToConvert | Error setting property 'Speed' of class 'W7cHolder'. 'Nope' is invalid. Value must be 'Slow', 'Medium', or 'Fast'.
+number refused: MATLAB:validation:UnableToConvert | Error setting property 'Speed' of class 'W7cHolder'. Value must be 'Slow', 'Medium', or 'Fast'.

@@ -21,7 +21,7 @@ namespace JGraph.Controls.Designer;
 /// (<c>InspectorToolbar</c>, <c>InspectorClientManager</c>); what is open and which view shows are kept per
 /// app for each class or set of classes, and a selection clears the search.
 /// </summary>
-public sealed class DesignInspectorView : UserControl
+public sealed partial class DesignInspectorView : UserControl
 {
     private readonly StackPanel _panel = new() { Margin = new Thickness(4) };
     private readonly StackPanel _header = new();
@@ -725,9 +725,16 @@ public sealed class DesignInspectorView : UserControl
                 return new Row(editor, text, value => text.Text = value is null ? string.Empty : Shown(value, plain: false));
             }
 
+            case DesignEditorKind.Lines or DesignEditorKind.Items or DesignEditorKind.Toggle or DesignEditorKind.ToggleGroup
+                or DesignEditorKind.FontName or DesignEditorKind.FontSize or DesignEditorKind.Fields or DesignEditorKind.Spinner
+                or DesignEditorKind.File or DesignEditorKind.ScaleColors or DesignEditorKind.Ticks or DesignEditorKind.Columns
+                or DesignEditorKind.ViewFormat or DesignEditorKind.Date or DesignEditorKind.DateLimits or DesignEditorKind.DisabledDates
+                or DesignEditorKind.DaysOfWeek or DesignEditorKind.Color or DesignEditorKind.ColorList:
+                return BuildEditor(editor, id);
+
             default:
             {
-                // Text, a colour, or the value as MATLAB writes it.
+                // Text, or the value as MATLAB writes it.
                 bool plain = editor.Kind == DesignEditorKind.Text;
                 var box = new TextBox { Margin = new Thickness(0, 1, 0, 1) };
                 Identify(box, id, editor.Name);
@@ -754,19 +761,7 @@ public sealed class DesignInspectorView : UserControl
                     DesignValue value = plain ? new CharValue(text) : DesignValueText.Parse(text);
                     Set(editor.Name, value);
                 });
-                FrameworkElement control = box;
-                Border? swatch = null;
-                if (editor.Kind == DesignEditorKind.Color)
-                {
-                    swatch = new Border { Width = 16, Height = 16, BorderThickness = new Thickness(1), BorderBrush = Brushes.Gray, Margin = new Thickness(0, 0, 4, 0) };
-                    var dock = new DockPanel();
-                    DockPanel.SetDock(swatch, Dock.Left);
-                    dock.Children.Add(swatch);
-                    dock.Children.Add(box);
-                    control = dock;
-                }
-
-                return new Row(editor, control, value =>
+                return new Row(editor, box, value =>
                 {
                     // A box being typed in keeps what is typed; one showing what it last showed takes the new value.
                     bool untouched = box.Text == current || !box.IsKeyboardFocusWithin;
@@ -775,19 +770,10 @@ public sealed class DesignInspectorView : UserControl
                     {
                         box.Text = current;
                     }
-
-                    if (swatch is not null)
-                    {
-                        swatch.Background = value is NumericValue { Data: [var r, var g, var b] }
-                            ? new SolidColorBrush(Color.FromRgb(Byte(r), Byte(g), Byte(b)))
-                            : Brushes.Transparent;
-                    }
                 });
             }
         }
     }
-
-    private static byte Byte(double unit) => (byte)System.Math.Clamp(System.Math.Round(unit * 255), 0, 255);
 
     /// <summary>A value as the inspector shows it: text as itself, anything else as MATLAB writes it.</summary>
     private static string Shown(DesignValue value, bool plain) => value switch
