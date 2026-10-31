@@ -263,7 +263,7 @@ public class AppDesignerBarsTests
         Rect2D tool = gestures.Bars.PlaceOf(C(document, "PushTool"))!.Box;
         Assert.False(gestures.Press(Centre(tool), DesignButton.Right, DesignModifiers.None));
         string[] labels = gestures.MenuAt(new Point2D(0, 0)).Select(static i => i.Label).ToArray();
-        Assert.Equal(["Add Push Tool", "Add Toggle Tool", "Move", "-", "Cut", "Copy", "Paste", "Duplicate", "Delete"], labels);
+        Assert.Equal(["Add Push Tool", "Add Toggle Tool", "Move", "-", "Cut", "Copy", "Paste", "Duplicate", "Delete", "-", "Replace With"], labels);
         Assert.Equal(["First", "Left", "Right", "Last"], gestures.MenuAt(new Point2D(0, 0))[2].Items!.Select(static i => i.Label));
         gestures.Press(new Point2D(600, gestures.Bars.PlaceOf(bar)!.Box.Y + 3), DesignButton.Right, DesignModifiers.None);
         Assert.Equal(["bar"], new[] { document.Selection[0].CodeName.ToLowerInvariant().Replace("toolbar", "bar", StringComparison.Ordinal) });

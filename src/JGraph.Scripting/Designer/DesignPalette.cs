@@ -185,6 +185,15 @@ public sealed class DesignPalette
     public DesignLabelPlace LabelPlaceOf(string type) =>
         Entries.FirstOrDefault(e => e.Type == type && e.Label != DesignLabelPlace.None)?.Label ?? DesignLabelPlace.None;
 
+    /// <summary>Where a new <paramref name="type"/>'s position sits in the box its ticks or labels take, and the two sizes (W5e).</summary>
+    public DesignClassBox BoxOf(string type)
+    {
+        Size2D size = DesignTimeSize(type);
+        return Outer.TryGetValue(type, out var o)
+            ? new DesignClassBox(o.Left, o.Bottom, size, new Size2D(o.Width, o.Height))
+            : new DesignClassBox(0, 0, size, size);
+    }
+
     /// <summary>The width of the box a new <paramref name="type"/>'s ticks or labels take (its <c>OuterSize(1)</c> as the library makes it).</summary>
     public double DefaultOuterWidth(string type) =>
         Outer.TryGetValue(type, out var o) ? o.Width : DesignTimeSize(type).Width;
@@ -481,6 +490,21 @@ public sealed class DesignPalette
         }
 
         return made;
+    }
+
+    /// <summary>A new <paramref name="type"/> called <paramref name="codeName"/>, with its design-time values alone (Replace With names it itself, W5e).</summary>
+    public DesignComponent MakeNamed(string type, string codeName)
+    {
+        ArgumentNullException.ThrowIfNull(type);
+        ArgumentNullException.ThrowIfNull(codeName);
+        return New(codeName, type);
+    }
+
+    /// <summary>The texts <paramref name="design"/>'s components show, which new texts are counted against.</summary>
+    public IReadOnlyList<string> TextsIn(AppDesign design)
+    {
+        ArgumentNullException.ThrowIfNull(design);
+        return new Names(design).Texts;
     }
 
     /// <summary>JavaScript's <c>Math.round</c>: halves up.</summary>

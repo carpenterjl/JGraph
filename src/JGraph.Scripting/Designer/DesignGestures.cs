@@ -2217,6 +2217,13 @@ public sealed partial class DesignGestures
             items.Add(new DesignMenuItem("Visualize Tab Order", true, () => ShowTabOrder(document.TabOrder(holder))));
         }
 
+        // Replace With, last (CompReplacementProvider, W5e).
+        if (ReplaceItem() is { } replaceItem)
+        {
+            items.Add(DesignMenuItem.Separator);
+            items.Add(replaceItem);
+        }
+
         return items;
 
         DesignMenuItem Toggle(string label, string setting, bool on) =>

@@ -813,6 +813,12 @@ public sealed partial class DesignGestures
                     DesignMenuItem.Separator,
                 ];
                 AddStandard(tool, null);
+                if (ReplaceItem() is { } replaceTool)
+                {
+                    tool.Add(DesignMenuItem.Separator);
+                    tool.Add(replaceTool); // CompReplacementProvider, W5e
+                }
+
                 return tool;
             case BarMenu.ContextMenu:
                 // StandardMenuItemsProvider, then ContextMenuMenuItemProvider.
@@ -834,6 +840,15 @@ public sealed partial class DesignGestures
             default:
                 return null;
         }
+    }
+
+    // Replace With and what the selection can be replaced with (CompReplacementProvider); null when it cannot (W5e).
+    private DesignMenuItem? ReplaceItem()
+    {
+        DesignDocument document = Document;
+        IReadOnlyList<(string Type, string Name)> offered = document.Replacements;
+        return offered.Count == 0 ? null : new DesignMenuItem("Replace With", true, Items:
+            offered.Select(o => new DesignMenuItem(o.Name, true, () => document.ReplaceWith(o.Type))).ToArray());
     }
 
     // Cut, Copy, Paste, Paste to Right for a menu, Duplicate and Delete (StandardMenuItemsProvider, the delete item).

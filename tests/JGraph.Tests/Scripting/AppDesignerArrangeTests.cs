@@ -461,7 +461,7 @@ public class AppDesignerArrangeTests
         IReadOnlyList<DesignMenuItem> items = gestures.MenuAt(new Point2D(150, 370));
         Assert.Equal("Add Label", items[0].Label);
         string[] labels = items.Where(static i => !i.IsSeparator).Select(static i => i.Label).ToArray();
-        Assert.Equal(["Add Label", "Cut", "Copy", "Paste", "Duplicate", "Delete", "Zoom", "Align", "Same Size", "Group", "Reorder", "Context Menu"], labels);
+        Assert.Equal(["Add Label", "Cut", "Copy", "Paste", "Duplicate", "Delete", "Zoom", "Align", "Same Size", "Group", "Reorder", "Context Menu", "Replace With"], labels);
         DesignMenuItem align = items.Single(static i => i.Label == "Align");
         Assert.False(align.Enabled);
         Assert.Equal(["Left", "Center", "Right", "Top", "Middle", "Bottom"], align.Items!.Select(static i => i.Label));
