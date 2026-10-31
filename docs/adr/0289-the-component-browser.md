@@ -103,6 +103,7 @@ and `mw-tree` and `mw-data-model`'s selection, keys, drag and search.
 - **The one object goes over**, where R2025b deletes a menu or tab and pastes a copy; nothing differs in the file.
 - **A context menu's items are not listed in the tab order.** R2025b hands the tree rows whose parent it does not list.
 - **A custom component is always listed in the tab order**, where R2025b asks whether anything in it takes focus.
-- **The toolbar's look is JGraph's**, with its own glyphs for the two views, and a drag has no avatar beside the pointer.
+- **The toolbar has JGraph's own glyphs for the two views**, its sizes being R2025b's (`.adToolbarTopLine`), and a drag has no
+  avatar beside the pointer.
 - **No Ctrl+Space, and no typed character opening the editor with several selected.**
 - **A component's Rename shows no preview of what changes.** DS5's dialog did, and R2025b has none; the code browser's keeps it.

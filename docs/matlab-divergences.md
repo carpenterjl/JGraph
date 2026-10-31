@@ -1187,7 +1187,7 @@ probe found gaps recorded in none of the three.
 | [0289](adr/0289-the-component-browser.md) | the component browser | The one object goes over |
 | [0289](adr/0289-the-component-browser.md) | the component browser | A context menu's items are not listed in the tab order. |
 | [0289](adr/0289-the-component-browser.md) | the component browser | A custom component is always listed in the tab order |
-| [0289](adr/0289-the-component-browser.md) | the component browser | The toolbar's look is JGraph's |
+| [0289](adr/0289-the-component-browser.md) | the component browser | The toolbar has JGraph's own glyphs for the two views |
 | [0289](adr/0289-the-component-browser.md) | the component browser | No Ctrl+Space, and no typed character opening the editor with several selected. |
 | [0289](adr/0289-the-component-browser.md) | the component browser | A component's Rename shows no preview of what changes. |
 

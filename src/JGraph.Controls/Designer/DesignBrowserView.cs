@@ -29,8 +29,8 @@ public sealed class DesignBrowserView : UserControl
     private readonly TextBox _search = new() { VerticalContentAlignment = VerticalAlignment.Center };
     private readonly TextBlock _searchHint = new() { Text = "Search", Opacity = 0.55, IsHitTestVisible = false, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 0, 0, 0) };
     private readonly Button _clear = new() { Content = "×", Width = 18, Padding = new Thickness(0), VerticalContentAlignment = VerticalAlignment.Center, BorderThickness = new Thickness(0), Background = Brushes.Transparent, Visibility = Visibility.Collapsed, ToolTip = "Clear search" };
-    private readonly Button _viewButton = new() { MinWidth = 26, Padding = new Thickness(4, 0, 4, 0) };
-    private readonly TextBlock _noMatches = new() { Text = DesignBrowser.NoMatches, Margin = new Thickness(6, 2, 2, 2), Visibility = Visibility.Collapsed };
+    private readonly Button _viewButton = new() { MinWidth = 26, Margin = new Thickness(0, 0, 4, 0), Padding = new Thickness(4, 0, 4, 0) };
+    private readonly TextBlock _noMatches = new() { Text = DesignBrowser.NoMatches, Margin = new Thickness(10, 10, 2, 2), Visibility = Visibility.Collapsed };
     private readonly WrapPanel _crumbs = new() { Margin = new Thickness(2), Visibility = Visibility.Collapsed };
     private readonly Canvas _overlay = new() { IsHitTestVisible = false };
     private readonly Rectangle _dropLine = new() { Height = 2, Fill = Brushes.DodgerBlue, Visibility = Visibility.Collapsed };
@@ -116,8 +116,10 @@ public sealed class DesignBrowserView : UserControl
 
         AutomationId(_viewButton, "ComponentBrowser.View");
         _viewButton.Click += (_, _) => OpenViewMenu();
-        var viewLabel = new TextBlock { Text = "View:", VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 0, 4, 0) };
-        var toolbar = new DockPanel { Margin = new Thickness(4), Height = 25 };
+        var viewLabel = new TextBlock { Text = "View:", VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 0, 2, 0) };
+
+        // R2025b's .adToolbarTopLine: 22 high, in the 33 the browser's height allows it.
+        var toolbar = new DockPanel { Margin = new Thickness(4, 5, 0, 6), Height = 22 };
         DockPanel.SetDock(_viewButton, Dock.Right);
         DockPanel.SetDock(viewLabel, Dock.Right);
         toolbar.Children.Add(_viewButton);
