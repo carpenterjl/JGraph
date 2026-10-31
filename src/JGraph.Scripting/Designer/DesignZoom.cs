@@ -11,6 +11,18 @@ namespace JGraph.Scripting.Designer;
 /// </summary>
 public static class DesignZoom
 {
+    /// <summary>
+    /// The App Layout picture's scale (<c>CodeView.rescaleThumbnailAppWindow</c>): to fit the pane less the figure's margin on each side, never above 1 or below 0.4.
+    /// </summary>
+    public static double ThumbnailScale(double paneWidth, double paneHeight, double margin, double figureWidth, double figureHeight)
+    {
+        double across = Math.Round(paneWidth) - margin * 2;
+        double down = Math.Round(paneHeight) - margin * 2;
+        double x = across / figureWidth;
+        double y = down / figureHeight;
+        return Math.Max(0.4, Math.Min(1, x <= y ? x : y));
+    }
+
     /// <summary>The zoom levels (<c>ZOOM_STEPS</c>).</summary>
     public static readonly IReadOnlyList<double> Steps = [0.5, 0.55, 0.6, 0.7, 0.8, 0.9, 1, 1.12, 1.25, 1.37, 1.5, 1.62, 1.75, 1.87, 2, 2.12, 2.5, 2.75, 3, 3.5, 4];
 

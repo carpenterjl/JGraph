@@ -58,6 +58,28 @@ public sealed partial class DesignCanvas : UserControl
     private static readonly Brush SplitterBrush = Frozen(new SolidColorBrush(Color.FromArgb(0x30, 0x60, 0x60, 0x60)));
     private static readonly Brush SplitterAlertBrush = Frozen(new SolidColorBrush(Color.FromArgb(0xC0, 0xD3, 0x2F, 0x2F)));
 
+    /// <summary>A picture of the figure at its own size, as it is drawn now; null before it has been laid out.</summary>
+    public System.Windows.Media.Imaging.BitmapSource? Snapshot()
+    {
+        double width = _surface.ActualWidth;
+        double height = _surface.ActualHeight;
+        if (width <= 0 || height <= 0)
+        {
+            return null;
+        }
+
+        var drawing = new System.Windows.Media.DrawingVisual();
+        using (System.Windows.Media.DrawingContext context = drawing.RenderOpen())
+        {
+            context.DrawRectangle(new System.Windows.Media.VisualBrush(_surface) { Stretch = System.Windows.Media.Stretch.None, AlignmentX = System.Windows.Media.AlignmentX.Left, AlignmentY = System.Windows.Media.AlignmentY.Top }, null, new System.Windows.Rect(0, 0, width, height));
+        }
+
+        var bitmap = new System.Windows.Media.Imaging.RenderTargetBitmap((int)Math.Ceiling(width), (int)Math.Ceiling(height), 96, 96, System.Windows.Media.PixelFormats.Pbgra32);
+        bitmap.Render(drawing);
+        bitmap.Freeze();
+        return bitmap;
+    }
+
     private readonly Grid _outer;
     private readonly ScrollViewer _scroll;
     private readonly ScaleTransform _scale = new(1, 1);

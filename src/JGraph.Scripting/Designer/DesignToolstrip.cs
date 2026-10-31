@@ -82,6 +82,15 @@ public static class DesignToolstrip
     /// <summary>The Open popup's recent files, filled when it opens (<c>DesignerTab._buildRecentFilesList</c>).</summary>
     public const string RecentFilesPanel = OpenMenu + ".recentFiles.panel";
 
+    /// <summary>EDITOR's Go To.</summary>
+    public const string GoToButton = "appDesignerToolstrip.editorTab.navigate.gotoButton";
+
+    /// <summary>The place in its drop-down the host fills (<c>gotoPopUpList.panel</c>).</summary>
+    public const string GoToPanel = "appDesignerToolstrip.editorTab.navigate.gotoPopUpList.panel";
+
+    /// <summary>What starts the tag of a function's item in it (<c>gotoButton.</c> and the name).</summary>
+    public const string GoToItem = GoToButton + ".function.";
+
     /// <summary>The Run drop-down (<c>RUN_SECTION_POPUP_LIST</c>).</summary>
     public const string RunMenu = "appDesignerToolstrip.editorTab.run.runSectionPopUpList";
 
@@ -223,6 +232,17 @@ public static class DesignToolstrip
         });
         return entries;
     }
+
+    /// <summary>The Go To list's functions (<c>EditorTab._generateFunctionList</c>).</summary>
+    public static IReadOnlyList<ToolstripPopupEntry> GoToEntries(IReadOnlyList<string> functions)
+    {
+        ArgumentNullException.ThrowIfNull(functions);
+        return [.. functions.Select(static f => new ToolstripPopupEntry { Kind = ToolstripPopupEntryKind.Item, Tag = GoToItem + f, Text = f })];
+    }
+
+    /// <summary>The function a Go To item goes to, or null when <paramref name="tag"/> is no such item.</summary>
+    public static string? GoToFunctionOf(string? tag) =>
+        tag is not null && tag.StartsWith(GoToItem, StringComparison.Ordinal) ? tag[GoToItem.Length..] : null;
 
     /// <summary>The place among the argument sets of the Run drop-down's item tagged <paramref name="tag"/>, or -1 when it is not one.</summary>
     public static int RunSetIndex(string? tag) =>

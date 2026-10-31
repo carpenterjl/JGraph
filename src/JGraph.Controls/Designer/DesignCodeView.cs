@@ -312,8 +312,9 @@ public sealed partial class DesignCodeView : UserControl
         try
         {
             _pending.Stop();
-            _editor.ReplaceText(text);
+            _editor.ReplaceText(text, _document?.TakeKeepEditorUndo() ?? false);
             _editor.InvalidateEditableLines();
+            _editor.SetFolds(DesignCodeFolds.ClosedByDefault(text, _document?.Code));
         }
         finally
         {

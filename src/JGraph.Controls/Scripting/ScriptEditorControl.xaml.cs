@@ -271,7 +271,12 @@ public partial class ScriptEditorControl : UserControl
     /// renders: what the designer does when the design changed the code around the user's. The
     /// editor's undo history is cleared: it would undo into text the design no longer has.
     /// </summary>
-    public void ReplaceText(string text)
+    public void ReplaceText(string text) => ReplaceText(text, keepUndo: false);
+
+    /// <summary>
+    /// <see cref="ReplaceText(string)"/>, the undo history kept with <paramref name="keepUndo"/>: what App Designer's Add Function and Add Property do (<c>clearRTCUndoStack: false</c>), as the text they add is the user's to undo.
+    /// </summary>
+    public void ReplaceText(string text, bool keepUndo)
     {
         ArgumentNullException.ThrowIfNull(text);
         string old = Editor.Document.Text;
@@ -295,8 +300,51 @@ public partial class ScriptEditorControl : UserControl
         }
 
         Editor.Document.Replace(prefix, old.Length - prefix - suffix, text.Substring(prefix, text.Length - prefix - suffix));
-        Editor.Document.UndoStack.ClearAll();
+        if (!keepUndo)
+        {
+            Editor.Document.UndoStack.ClearAll();
+        }
+
         Editor.ScrollToVerticalOffset(offset);
+    }
+
+    private ICSharpCode.AvalonEdit.Folding.FoldingManager? _folding;
+
+    /// <summary>
+    /// The folds the editor offers, by one-based first and last lines: each closed when it first appears (<c>DefaultFoldsPlugin</c>), unless the caret is in it, and left as the user has it after that.
+    /// </summary>
+    public void SetFolds(IReadOnlyList<(int First, int Last)> folds)
+    {
+        ArgumentNullException.ThrowIfNull(folds);
+        _folding ??= ICSharpCode.AvalonEdit.Folding.FoldingManager.Install(Editor.TextArea);
+        var made = new List<ICSharpCode.AvalonEdit.Folding.NewFolding>(folds.Count);
+        foreach ((int first, int last) in folds)
+        {
+            if (first < 1 || last > Editor.Document.LineCount || last <= first)
+            {
+                continue;
+            }
+
+            ICSharpCode.AvalonEdit.Document.DocumentLine start = Editor.Document.GetLineByNumber(first);
+            made.Add(new ICSharpCode.AvalonEdit.Folding.NewFolding(start.EndOffset, Editor.Document.GetLineByNumber(last).EndOffset) { Name = " ...", DefaultClosed = true });
+        }
+
+        _folding.UpdateFoldings(made, -1);
+        OpenFoldsAtCaret();
+    }
+
+    /// <summary>A fold closed over the caret is opened: the caret does not stand in hidden text.</summary>
+    private void OpenFoldsAtCaret()
+    {
+        if (_folding is null)
+        {
+            return;
+        }
+
+        foreach (ICSharpCode.AvalonEdit.Folding.FoldingSection section in _folding.GetFoldingsContaining(Editor.CaretOffset))
+        {
+            section.IsFolded = false;
+        }
     }
 
     /// <summary>Scrolls <paramref name="line"/> (one-based) into view without moving the caret.</summary>
@@ -309,6 +357,7 @@ public partial class ScriptEditorControl : UserControl
         ICSharpCode.AvalonEdit.Document.DocumentLine at = Editor.Document.GetLineByNumber(target);
         Editor.TextArea.Caret.Line = target;
         Editor.TextArea.Caret.Column = Math.Clamp(column, 1, at.Length + 1);
+        OpenFoldsAtCaret();
         Editor.ScrollToLine(target);
         FocusEditor();
     }

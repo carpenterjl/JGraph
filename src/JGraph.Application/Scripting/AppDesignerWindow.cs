@@ -183,6 +183,7 @@ internal sealed partial class AppDesignerWindow : Window
         };
         _callbacks.Problem += (_, problem) => ShowAlert(DesignCallbackRules.InvalidNameTitle, problem);
         _callbacks.GoTo += (_, name) => GoToFunction(name);
+        BuildAppLayout();
         _codeBrowser.Problem += (_, problem) => _status.Text = problem;
         _codeBrowser.Picked += (_, item) => Picked(item);
         _codeBrowser.GoToRequested += (_, item) => GoTo(item);
@@ -373,6 +374,7 @@ internal sealed partial class AppDesignerWindow : Window
         canvas.DesignChanged += (_, _) =>
         {
             ShowHeader(app);
+            AppLayoutChanged();
             if (ReferenceEquals(Active, app))
             {
                 ShowState();
@@ -524,8 +526,12 @@ internal sealed partial class AppDesignerWindow : Window
     private void ShowView()
     {
         bool code = Active?.InCodeView == true;
-        _left.Content = code ? _codeBrowser : _palette;
+        _left.Content = code ? _codePane : _palette;
         ShowToolstripState();
+        if (code)
+        {
+            ShowAppLayout();
+        }
     }
 
     /// <summary>Shows the Code View with the caret in the function <paramref name="name"/>.</summary>
@@ -1252,7 +1258,7 @@ internal sealed partial class AppDesignerWindow : Window
         public bool Prompting { get; set; }
 
         /// <summary>The app's file name; a new app's is its name and the extension it will be saved with (<c>app1.mlapp</c>).</summary>
-        public string FileName => Document.Path is { } path ? Path.GetFileName(path) : Document.Code?.ClassName + ".mlapp";
+        public string FileName => Document.Path is { } path ? Path.GetFileName(path) : Document.Code?.ClassName + (Document.Format == DesignFileFormat.PlainText ? ".m" : ".mlapp");
 
         /// <summary>The tab's title, as R2025b's <c>AppViewController</c> writes it: the file name, and "*" when it has unsaved changes.</summary>
         public string Header => FileName + (Document.IsDirty ? "*" : string.Empty);

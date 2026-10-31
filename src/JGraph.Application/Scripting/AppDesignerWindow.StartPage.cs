@@ -40,6 +40,8 @@ internal sealed partial class AppDesignerWindow
         _toolstrip.PopupPanelProvider = tag => tag == DesignToolstrip.RecentFilesPanel
             ? DesignToolstrip.RecentFilesEntries(Settings.RecentFiles().Files)
             : tag == DesignToolstrip.RunPanel ? RunEntries()
+            : tag == DesignToolstrip.GoToPanel && Active is { Document: var document }
+                ? DesignToolstrip.GoToEntries(DesignCodeFolds.GoToFunctions(document.Code, document.UserFunctions().Select(static f => f.Name)))
             : null;
         _startPage.RecentFiles = Settings.RecentFiles().Files;
     }

@@ -7,6 +7,16 @@ namespace JGraph.Scripting.Designer;
 /// </content>
 public sealed partial class DesignDocument
 {
+    private bool _keepEditorUndo;
+
+    /// <summary>Whether the code editor keeps its undo history through this render (<c>clearRTCUndoStack: false</c>, Add Function's and Add Property's); asked once.</summary>
+    public bool TakeKeepEditorUndo()
+    {
+        bool keep = _keepEditorUndo;
+        _keepEditorUndo = false;
+        return keep;
+    }
+
     /// <summary>The figure's properties a converted app keeps as its template has them (<c>copyFigureProperties</c>).</summary>
     private static readonly string[] FigurePropertiesKept = ["SizeChangedFcn", "AutoResizeChildren", "Resize", "ContextMenu"];
 

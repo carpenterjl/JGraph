@@ -180,6 +180,9 @@ internal sealed partial class AppDesignerWindow
             case null when e.Tag == DesignToolstrip.AddCallbackButton:
                 ShowAddCallback();
                 break;
+            case null when DesignToolstrip.GoToFunctionOf(e.Tag) is { } function:
+                GoToFunction(function);
+                break;
             case null when DesignToolstrip.RunSetIndex(e.Tag) is int set and >= 0:
                 RunSetChosen(set, e.Value as string);
                 break;
@@ -236,6 +239,7 @@ internal sealed partial class AppDesignerWindow
         _toolstrip.SetEnabled("appDesignerToolstrip.layoutTab.arrange.groupButton", app is not null);
         ShowArrangeState();
         _toolstrip.SetEnabled(DesignToolstrip.AddCallbackButton, app is { Document.Code: not null });
+        _toolstrip.SetEnabled(DesignToolstrip.GoToButton, app is { Document.Code: not null });
         _toolstrip.SetIcon("AD_RUN", app is not null && !DesignRunArguments.IsNoArguments(app.Document.RunArguments.MostRecent) ? "runConfiguration" : "playControl");
         foreach ((string tag, bool shown) in DesignToolstrip.ExecutionControls(_running, debugging: false))
         {

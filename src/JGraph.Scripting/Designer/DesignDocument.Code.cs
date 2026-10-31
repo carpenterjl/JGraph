@@ -831,6 +831,7 @@ public sealed partial class DesignDocument
     /// <returns>The property's name, or null when nothing was added.</returns>
     public string? InsertUserProperty(string access = "private")
     {
+        _keepEditorUndo = true;
         ArgumentNullException.ThrowIfNull(access);
         if (Code is null)
         {
@@ -886,6 +887,7 @@ public sealed partial class DesignDocument
     /// <returns>The function's name, or null when nothing was added.</returns>
     public string? InsertUserFunction(string access = "private")
     {
+        _keepEditorUndo = true;
         ArgumentNullException.ThrowIfNull(access);
         if (Code is null)
         {
