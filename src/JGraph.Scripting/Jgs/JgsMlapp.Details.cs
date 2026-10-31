@@ -33,6 +33,39 @@ public static partial class JgsMlapp
         return DesignAppDetails.DataUri(bytes.ToArray(), entry.FullName[ScreenshotPrefix.Length..]);
     }
 
+    /// <summary>The argument sets the package's model keeps (<c>loadApp</c>); null when it keeps none.</summary>
+    /// <exception cref="InvalidDataException">The file is not a package.</exception>
+    public static IReadOnlyList<string>? ReadRunConfigurations(string path)
+    {
+        ArgumentNullException.ThrowIfNull(path);
+        using ZipArchive package = ZipFile.OpenRead(path);
+        if (package.GetEntry(ModelPart) is not { } entry)
+        {
+            return null;
+        }
+
+        using Stream stream = entry.Open();
+        using var bytes = new MemoryStream();
+        stream.CopyTo(bytes);
+        return JgsMlappModel.ReadRunConfigurations(bytes.ToArray());
+    }
+
+    /// <summary>The thumbnail Run took written into the package at once (<c>FileWriter.writeAppScreenshot</c>), every other part left as it is.</summary>
+    /// <exception cref="IOException">The file could not be read or replaced.</exception>
+    public static void WriteThumbnail(string path, string uri)
+    {
+        ArgumentNullException.ThrowIfNull(path);
+        ArgumentNullException.ThrowIfNull(uri);
+        List<Part> parts;
+        using (ZipArchive package = ZipFile.OpenRead(path))
+        {
+            parts = package.Entries.Select(Part.Of).ToList();
+        }
+
+        PutScreenshot(parts, uri);
+        Replace(path, parts, null);
+    }
+
     /// <summary>The details written into a package's parts, the rest of each part kept as its bytes; a package without those parts, one holding its code alone, has nowhere to keep them.</summary>
     private static void ApplyDetails(List<Part> parts, MlappMetadata details)
     {

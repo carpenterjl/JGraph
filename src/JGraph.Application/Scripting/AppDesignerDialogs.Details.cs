@@ -392,6 +392,19 @@ internal static partial class AppDesignerDialogs
         }
     }
 
+    /// <summary>The refusal of an app whose name the current folder shadows (<c>AppModel._runCallback</c>): Change Folder, or Cancel.</summary>
+    /// <returns>Whether Change Folder was chosen.</returns>
+    public static bool ChangeFolder(Window owner, string message)
+    {
+        var dialog = Dialog(owner, "App Designer");
+        AutomationProperties.SetAutomationId(dialog, "ChangeFolder");
+        var grid = new Grid { Margin = new Thickness(12), MaxWidth = 460 };
+        grid.Children.Add(new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap });
+        Button change = Buttons(dialog, grid, "Change Folder");
+        AutomationProperties.SetAutomationId(change, "ChangeFolder.Change");
+        return dialog.ShowDialog() == true;
+    }
+
     private static void ShowInvalid(Window owner, string message) => MessageBox.Show(owner, message, "App Designer", MessageBoxButton.OK, MessageBoxImage.Error);
 
     /// <summary>A data URI's picture, or null when it holds none WPF can draw.</summary>

@@ -63,7 +63,11 @@ public static partial class JgsMlapp
 
     /// <summary><see cref="WriteApp(string, string, MlappMetadata?)"/> with the designer's component groups (<paramref name="groups"/>, open item 150) written into the tree.</summary>
     /// <exception cref="IOException">The file could not be written or replaced.</exception>
-    public static MlappWriteResult WriteApp(string path, string text, MlappMetadata? metadata, IReadOnlyList<DesignGroupRecord>? groups)
+    public static MlappWriteResult WriteApp(string path, string text, MlappMetadata? metadata, IReadOnlyList<DesignGroupRecord>? groups) => WriteApp(path, text, metadata, groups, null);
+
+    /// <summary>The same with the app's argument sets written into its model (<paramref name="runConfigurations"/>, App Designer window plan W8b): saved only when there is more than the empty set.</summary>
+    /// <exception cref="IOException">The file could not be written or replaced.</exception>
+    public static MlappWriteResult WriteApp(string path, string text, MlappMetadata? metadata, IReadOnlyList<DesignGroupRecord>? groups, IReadOnlyList<string>? runConfigurations)
     {
         ArgumentNullException.ThrowIfNull(path);
         ArgumentNullException.ThrowIfNull(text);
@@ -98,6 +102,10 @@ public static partial class JgsMlapp
             ("code", new MatData.Kept(copy, [])),
             ("appData", new MatData.Object(appData)),
         ], null, compress: true);
+        if (runConfigurations is not null && JgsMlappModel.WithRunConfigurations(model, runConfigurations) is { } withSets)
+        {
+            model = withSets;
+        }
 
         DateTimeOffset now = DateTimeOffset.Now;
         string stamp = now.UtcDateTime.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture);

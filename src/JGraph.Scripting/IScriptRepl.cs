@@ -91,6 +91,15 @@ public interface IScriptAppRunner
     /// one started elsewhere is closed when the designer has none of its own.
     /// </summary>
     Task<ScriptRunResult> RunAppAsync(string fullFileName, bool singleInstance, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// <see cref="RunAppAsync(string, bool, CancellationToken)"/> with the app's input arguments as they are typed in Run's drop-down (App Designer window plan W8b),
+    /// empty for none; <paramref name="changeFolder"/> first makes the app's folder the current one (<c>AppController</c>'s <c>CHANGE_FOLDER</c>).
+    /// </summary>
+    Task<ScriptRunResult> RunAppAsync(string fullFileName, bool singleInstance, string arguments, bool changeFolder, CancellationToken cancellationToken);
+
+    /// <summary>A PNG picture of the window of the app the designer last ran from <paramref name="fullFileName"/> (<c>DesktopFigureService.captureScreenshot</c>), or null with none to capture.</summary>
+    Task<byte[]?> CaptureAppAsync(string fullFileName, CancellationToken cancellationToken);
 }
 
 /// <summary>

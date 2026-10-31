@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using JGraph.Application.Services;
 using JGraph.Runtime.Desktop.Services;
+using JGraph.Scripting.Designer;
 using JGraph.Scripting;
 using JGraph.Scripting.Jgs;
 using JGraph.Scripting.Jgs.Debug;
@@ -177,17 +178,17 @@ public partial class ScriptWorkspaceWindow
     /// taken while it is idle, the result shown in the console as a statement's is.
     /// </summary>
     /// <returns>Null when the app ran, else why not.</returns>
-    private async Task<string?> RunAppFromDesignerAsync(string path, bool singleInstance)
+    private async Task<DesignRunOutcome> RunAppFromDesignerAsync(string path, bool singleInstance, string arguments, bool changeFolder)
     {
         if (SessionFor("MATLAB") is not IScriptAppRunner runner)
         {
-            return "There is no MATLAB session to run the app in.";
+            return new DesignRunOutcome("There is no MATLAB session to run the app in.", null);
         }
 
         await YieldPumpAsync().ConfigureAwait(true);
         if (!_session.TryBeginRun("MATLAB"))
         {
-            return "MATLAB is busy; wait for the prompt before running the app.";
+            return new DesignRunOutcome("MATLAB is busy; wait for the prompt before running the app.", null);
         }
 
         _runOutputLines = 0;
@@ -196,7 +197,7 @@ public partial class ScriptWorkspaceWindow
         ScriptRunResult result;
         try
         {
-            result = await runner.RunAppAsync(path, singleInstance, _cts.Token).ConfigureAwait(true);
+            result = await runner.RunAppAsync(path, singleInstance, arguments, changeFolder, _cts.Token).ConfigureAwait(true);
         }
         catch (Exception ex) when (ex is InvalidOperationException or IOException)
         {
@@ -211,7 +212,19 @@ public partial class ScriptWorkspaceWindow
 
         ShowRunResult(result, announceSuccess: false, "MATLAB");
         PumpGraphicsEventsWhenIdle();
-        return result.Success ? null : result.Message;
+        return new DesignRunOutcome(result.Success ? null : result.Message, result.ErrorIdentifier);
+    }
+
+    /// <summary>The picture of a running app the designer's Run asks for: nothing while MATLAB is busy.</summary>
+    private async Task<byte[]?> CaptureAppFromDesignerAsync(string path)
+    {
+        if (SessionFor("MATLAB") is not IScriptAppRunner runner)
+        {
+            return null;
+        }
+
+        await YieldPumpAsync().ConfigureAwait(true);
+        return await runner.CaptureAppAsync(path, default).ConfigureAwait(true);
     }
 
     /// <summary>

@@ -478,8 +478,16 @@ public sealed partial class Toolstrip
             return false;
         }
 
-        menu.Closed += (_, _) => button.PopupClosed();
-        button.ClosePopup = () => menu.IsOpen = false;
+        // A menu closing late, once another has opened from the same button, is not that one's close.
+        Action close = () => menu.IsOpen = false;
+        menu.Closed += (_, _) =>
+        {
+            if (ReferenceEquals(button.ClosePopup, close))
+            {
+                button.PopupClosed();
+            }
+        };
+        button.ClosePopup = close;
         menu.IsOpen = true;
         return true;
     }
@@ -512,6 +520,10 @@ public sealed partial class Toolstrip
 
                     break;
 
+                case ToolstripPopupEntryKind.FieldItem:
+                    menu.Items.Add(FieldEntry(entry));
+                    break;
+
                 default:
                     menu.Items.Add(MenuEntry(entry));
                     break;
@@ -519,10 +531,84 @@ public sealed partial class Toolstrip
         }
     }
 
+    /// <summary>An item with a text field in it: Enter or the item's click raises the field's text under the item's tag.</summary>
+    private MenuItem FieldEntry(ToolstripPopupEntry entry)
+    {
+        var field = new TextBox { Text = entry.FieldText ?? "", MinWidth = 120, Margin = new Thickness(2, 0, 2, 0), VerticalAlignment = VerticalAlignment.Center };
+        string id = entry.Tag ?? entry.Text ?? "";
+        AutomationProperties.SetAutomationId(field, id + ".field");
+        AutomationProperties.SetName(field, Words(entry.Text));
+        var holder = new Grid();
+        holder.Children.Add(field);
+        if (entry.Placeholder is { Length: > 0 } placeholder)
+        {
+            var empty = new TextBlock { Text = placeholder, Opacity = 0.6, IsHitTestVisible = false, Margin = new Thickness(6, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
+            void Show() => empty.Visibility = field.Text.Length == 0 ? Visibility.Visible : Visibility.Collapsed;
+            field.TextChanged += (_, _) => Show();
+            Show();
+            holder.Children.Add(empty);
+        }
+
+        var row = new StackPanel { Orientation = Orientation.Horizontal };
+        row.Children.Add(new TextBlock { Text = Words(entry.Text), VerticalAlignment = VerticalAlignment.Center });
+        row.Children.Add(holder);
+        row.Children.Add(new TextBlock { Text = Words(entry.AfterField), VerticalAlignment = VerticalAlignment.Center });
+        var body = new StackPanel();
+        body.Children.Add(row);
+        if (entry.ErrorText is { Length: > 0 } error)
+        {
+            var said = new TextBlock { Text = error, MaxWidth = 320, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 2, 0, 0) };
+            said.SetResourceReference(TextBlock.ForegroundProperty, ThemeKeys.Error);
+            AutomationProperties.SetAutomationId(said, id + ".error");
+            body.Children.Add(said);
+            field.BorderBrush = System.Windows.Media.Brushes.IndianRed;
+            field.Loaded += (_, _) => { field.Focus(); field.SelectAll(); };
+        }
+
+        var item = new MenuItem { Header = body, StaysOpenOnClick = true, IsEnabled = entry.IsEnabled ?? true };
+        AutomationProperties.SetAutomationId(item, id);
+        AutomationProperties.SetName(item, Words(entry.Text));
+        void Commit()
+        {
+            CloseTransients();
+            Raise(entry.Tag, null, field.Text);
+        }
+
+        // A menu takes a letter for its items' access keys and Enter for the item in focus: the field has them first.
+        field.PreviewKeyDown += (_, e) =>
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                e.Handled = true;
+                Commit();
+            }
+        };
+        item.Click += (_, _) => Commit();
+        return item;
+    }
+
     private MenuItem MenuEntry(ToolstripPopupEntry entry)
     {
         string text = ToolstripRules.Label(Words(entry.Text), vertical: false);
         object header = new TextBlock { Text = text };
+        if (entry.Removable)
+        {
+            var remove = new Button { Content = "\u00D7", Width = 18, Height = 18, Padding = new Thickness(0), Margin = new Thickness(12, 0, 0, 0), ToolTip = "Remove", Focusable = false };
+            AutomationProperties.SetAutomationId(remove, (entry.Tag ?? text) + ".remove");
+            AutomationProperties.SetName(remove, "Remove " + text);
+            remove.Click += (_, e) =>
+            {
+                e.Handled = true;
+                CloseTransients();
+                Raise(entry.Tag, entry.ActionId, ToolstripPopupEntry.RemoveValue);
+            };
+            var removable = new DockPanel { LastChildFill = true };
+            DockPanel.SetDock(remove, Dock.Right);
+            removable.Children.Add(remove);
+            removable.Children.Add(new TextBlock { Text = text, VerticalAlignment = VerticalAlignment.Center });
+            header = removable;
+        }
+
         if (entry.ShowDescription && entry.Description is { Length: > 0 } description)
         {
             var two = new StackPanel();
@@ -539,6 +625,11 @@ public sealed partial class Toolstrip
             InputGestureText = entry.Shortcut ?? "",
             Icon = ToolstripIcons.Create(entry.Icon, 16),
         };
+        if (entry.IsEnabled is { } enabled)
+        {
+            menuItem.IsEnabled = enabled;
+        }
+
         if (!entry.ShowDescription && entry.Description is { Length: > 0 } tip && tip != text)
         {
             menuItem.ToolTip = Words(tip);

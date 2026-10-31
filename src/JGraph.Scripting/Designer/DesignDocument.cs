@@ -1460,15 +1460,16 @@ public sealed partial class DesignDocument : IDisposable
             Text = text;
             _savedVersion = _version;
             _textDirty = false;
+            Saved();
             OnChanged();
             return $"Saved {Path}.";
         }
 
-        (string saved, MlappSaveResult result) = AppDesignerDocument.Save(Path!, Path!, CurrentText, Design.GroupRecords(), DetailsForPackage());
+        (string saved, MlappSaveResult result) = AppDesignerDocument.Save(Path!, Path!, CurrentText, Design.GroupRecords(), DetailsForPackage(), RunArgumentsForPackage());
         Text = saved;
         _savedVersion = _version;
         _textDirty = false;
-        _detailsChanged = false;
+        Saved();
         OnChanged();
         return $"Saved {Path}.{AppSaveNote(result)}";
     }
@@ -1549,7 +1550,7 @@ public sealed partial class DesignDocument : IDisposable
             {
                 code.ClassName = name; // before the text is written, so that its help text says the new name
                 _renderedText = null;
-                (saved, MlappSaveResult result) = AppDesignerDocument.Save(source, target, CurrentText, Design.GroupRecords(), DetailsForPackage());
+                (saved, MlappSaveResult result) = AppDesignerDocument.Save(source, target, CurrentText, Design.GroupRecords(), DetailsForPackage(), RunArgumentsForPackage());
                 note = AppSaveNote(result);
             }
             else
@@ -1558,7 +1559,7 @@ public sealed partial class DesignDocument : IDisposable
                 (_newline, _trailingNewline) = ("\n", true);
                 code.ClassName = name;
                 _renderedText = null;
-                (saved, MlappWriteResult result) = AppDesignerDocument.SaveNew(target, CurrentText, MetadataOf(Details), Design.GroupRecords());
+                (saved, MlappWriteResult result) = AppDesignerDocument.SaveNew(target, CurrentText, MetadataOf(Details), Design.GroupRecords(), _runArguments?.All);
                 note = AppDesignerDocument.NewFileNote(result);
             }
         }
@@ -1583,7 +1584,7 @@ public sealed partial class DesignDocument : IDisposable
         _renderedText = null;
         _savedVersion = _version;
         _textDirty = false;
-        _detailsChanged = false;
+        Saved();
         OnChanged();
         return $"Saved {Path}.{note}";
     }

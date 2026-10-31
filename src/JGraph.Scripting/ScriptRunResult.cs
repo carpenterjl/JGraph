@@ -62,7 +62,14 @@ public sealed class ScriptRunResult
         int exitCode, int figuresShown, IReadOnlyList<ScriptVariable>? variables = null) =>
         new(success: true, message: null, NoDiagnostics, figuresShown, variables ?? NoVariables, exitCode);
 
+    /// <summary>The identifier of the error that failed the run, or null when it had none or the run did not fail.</summary>
+    public string? ErrorIdentifier { get; private init; }
+
     /// <summary>A failed run with a summary <paramref name="message"/> and optional <paramref name="diagnostics"/>.</summary>
     public static ScriptRunResult Failed(string message, IReadOnlyList<ScriptDiagnostic>? diagnostics = null) =>
         new(success: false, message, diagnostics ?? NoDiagnostics, figuresShown: 0, NoVariables);
+
+    /// <summary>A failed run that says the error's <paramref name="identifier"/> as well.</summary>
+    public static ScriptRunResult Failed(string message, IReadOnlyList<ScriptDiagnostic>? diagnostics, string? identifier) =>
+        new(success: false, message, diagnostics ?? NoDiagnostics, figuresShown: 0, NoVariables) { ErrorIdentifier = identifier };
 }

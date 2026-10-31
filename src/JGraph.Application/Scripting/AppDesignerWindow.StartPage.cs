@@ -39,6 +39,7 @@ internal sealed partial class AppDesignerWindow
         CommandBindings.Add(new CommandBinding(ShowStartPage, (_, _) => OpenStartPage()));
         _toolstrip.PopupPanelProvider = tag => tag == DesignToolstrip.RecentFilesPanel
             ? DesignToolstrip.RecentFilesEntries(Settings.RecentFiles().Files)
+            : tag == DesignToolstrip.RunPanel ? RunEntries()
             : null;
         _startPage.RecentFiles = Settings.RecentFiles().Files;
     }

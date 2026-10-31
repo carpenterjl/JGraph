@@ -82,6 +82,21 @@ public static class DesignToolstrip
     /// <summary>The Open popup's recent files, filled when it opens (<c>DesignerTab._buildRecentFilesList</c>).</summary>
     public const string RecentFilesPanel = OpenMenu + ".recentFiles.panel";
 
+    /// <summary>The Run drop-down (<c>RUN_SECTION_POPUP_LIST</c>).</summary>
+    public const string RunMenu = "appDesignerToolstrip.editorTab.run.runSectionPopUpList";
+
+    /// <summary>The place in it the host fills (<c>RUN_SECTION_RUN_WITH_ARGUMENTS_PANEL_TAG</c>).</summary>
+    public const string RunPanel = "appDesignerToolstrip.run.runPanel";
+
+    /// <summary>What starts the tag of an argument set's item (<c>n.RUN + ".ArgumentSet"</c>).</summary>
+    public const string RunSetItem = "appDesignerToolstrip.editorTab.run.run.ArgumentSet";
+
+    /// <summary>The item with the text field (<c>RUN_SECTION_RUN_WITH_ARGUMENTS_LIST_ITEM_TAG</c>).</summary>
+    public const string RunFieldItem = "appDesignerToolstrip.run.runWithArgumentsListItem";
+
+    /// <summary>App Input Arguments in the Run drop-down.</summary>
+    public const string RunArgumentsItem = "appDesignerToolstrip.run.inputArgumentsItem";
+
     /// <summary>The recent files' heading.</summary>
     public const string RecentFilesHeader = OpenMenu + ".recentFiles.header";
 
@@ -164,6 +179,57 @@ public static class DesignToolstrip
         return entries;
     }
 
+    /// <summary>
+    /// The Run drop-down's sets as R2025b's <c>RunSection._buildPopupList</c> makes them: each set, the most recent first, the empty one with no remove button; the field,
+    /// enabled once the app takes arguments and showing their names until something is typed; and App Input Arguments, whose words say Add or Edit (<c>AppDetailsAction._updateAction</c>).
+    /// An error of the arguments Run was given stands on the field, with the set in it.
+    /// </summary>
+    public static IReadOnlyList<ToolstripPopupEntry> RunEntries(string appName, IReadOnlyList<string> sets, string inputParameters, string? error, bool enabled)
+    {
+        ArgumentNullException.ThrowIfNull(appName);
+        ArgumentNullException.ThrowIfNull(sets);
+        ArgumentNullException.ThrowIfNull(inputParameters);
+        var entries = new List<ToolstripPopupEntry>(sets.Count + 2);
+        for (int i = 0; i < sets.Count; i++)
+        {
+            entries.Add(new()
+            {
+                Kind = ToolstripPopupEntryKind.Item,
+                Tag = RunSetItem + (i + 1).ToString(System.Globalization.CultureInfo.InvariantCulture),
+                Text = DesignRunArguments.ItemText(appName, sets[i]),
+                Removable = sets[i].Length > 0,
+                IsEnabled = enabled,
+            });
+        }
+
+        entries.Add(new()
+        {
+            Kind = ToolstripPopupEntryKind.FieldItem,
+            Tag = RunFieldItem,
+            Text = DesignRunArguments.FieldLabel(appName),
+            AfterField = ")",
+            Placeholder = inputParameters,
+            FieldText = error is null ? string.Empty : sets[0],
+            ErrorText = error,
+            IsEnabled = enabled && inputParameters.Length > 0,
+        });
+        entries.Add(new()
+        {
+            Kind = ToolstripPopupEntryKind.Item,
+            ActionId = "AD_INPUT_ARGUMENTS",
+            Tag = RunArgumentsItem,
+            Text = inputParameters.Length > 0 ? "Edit App Input Arguments..." : "Add App Input Arguments...",
+            IsEnabled = enabled,
+        });
+        return entries;
+    }
+
+    /// <summary>The place among the argument sets of the Run drop-down's item tagged <paramref name="tag"/>, or -1 when it is not one.</summary>
+    public static int RunSetIndex(string? tag) =>
+        tag is not null && tag.StartsWith(RunSetItem, StringComparison.Ordinal)
+        && int.TryParse(tag.AsSpan(RunSetItem.Length), System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out int index)
+            ? index - 1 : -1;
+
     /// <summary>The place in the recent files of the item tagged <paramref name="tag"/>, or -1 when it is not a recent file's item.</summary>
     public static int RecentFileIndex(string? tag) =>
         tag is not null && tag.StartsWith(RecentFilesItem + ".", StringComparison.Ordinal)
@@ -187,6 +253,13 @@ public static class DesignToolstrip
             List<ToolstripPopupEntry> entries = [.. open.Entries.Where(static e => e.ActionId != "AD_OPEN_GUIDE_APP" && e.Tag != OpenMenu + ".guide.header")];
             entries.Insert(Math.Min(1, entries.Count), new() { Kind = ToolstripPopupEntryKind.Panel, Tag = RecentFilesPanel, MaxHeight = 2000 });
             popups[OpenMenu] = open with { Entries = entries };
+            layout = layout with { Popups = popups };
+        }
+
+        // The Run drop-down (W8b): the argument sets above the breakpoints', where _buildPopupList adds them each time it opens.
+        if (popups.TryGetValue(RunMenu, out ToolstripPopup? run))
+        {
+            popups[RunMenu] = run with { Entries = [new() { Kind = ToolstripPopupEntryKind.Panel, Tag = RunPanel, MaxHeight = 2000 }, .. run.Entries] };
             layout = layout with { Popups = popups };
         }
 

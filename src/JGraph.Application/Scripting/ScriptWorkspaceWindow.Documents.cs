@@ -382,6 +382,7 @@ public partial class ScriptWorkspaceWindow
                 PathFolders = () => _sessions.TryGetValue("MATLAB", out IScriptSession? matlab) ? matlab.PathFolders : [],
                 // Run goes to the MATLAB session, as App Designer's Run goes to the base workspace (designer plan DS8).
                 Runner = RunAppFromDesignerAsync,
+                Capturer = CaptureAppFromDesignerAsync,
                 // The tab menu's cd, addpath and rmpath run in the MATLAB session, unechoed (W2).
                 SessionStatement = code => RunWorkspaceStatementAsync("MATLAB", code),
                 Placement = _settings?.Current.AppDesignerPlacement,

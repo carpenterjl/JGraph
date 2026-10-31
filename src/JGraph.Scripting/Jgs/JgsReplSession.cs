@@ -312,13 +312,27 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IGraphi
     private readonly Dictionary<string, JgsValue> _designerApps = new(StringComparer.OrdinalIgnoreCase);
 
     /// <inheritdoc />
-    public Task<ScriptRunResult> RunAppAsync(string fullFileName, bool singleInstance, CancellationToken cancellationToken)
+    public Task<ScriptRunResult> RunAppAsync(string fullFileName, bool singleInstance, CancellationToken cancellationToken) =>
+        RunAppAsync(fullFileName, singleInstance, string.Empty, false, cancellationToken);
+
+    /// <inheritdoc />
+    public Task<byte[]?> CaptureAppAsync(string fullFileName, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(fullFileName);
         ObjectDisposedException.ThrowIf(_disposed, this);
         string key = System.IO.Path.GetFullPath(fullFileName);
+        return ScriptThread.Run(() => DesignRun.Capture(_globals, key));
+    }
+
+    /// <inheritdoc />
+    public Task<ScriptRunResult> RunAppAsync(string fullFileName, bool singleInstance, string arguments, bool changeFolder, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(fullFileName);
+        ArgumentNullException.ThrowIfNull(arguments);
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        string key = System.IO.Path.GetFullPath(fullFileName);
         return ScriptThread.Run(() => Execute(
-            () => DesignRun.Run(_interpreter, key, singleInstance, _designerApps.GetValueOrDefault(key),
+            () => DesignRun.Run(_interpreter, key, singleInstance, _designerApps.GetValueOrDefault(key), arguments, changeFolder,
                 made =>
                 {
                     if (made is null)
@@ -415,7 +429,7 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IGraphi
             ScriptDiagnostic diagnostic = ScriptDiagnostic.For(ex, sourceId);
             _context.Output.WriteError(diagnostic.ToString());
             _globals.ShowTouchedFigures();
-            return ScriptRunResult.Failed(ex.Message, new[] { diagnostic });
+            return ScriptRunResult.Failed(ex.Message, new[] { diagnostic }, (ex as JgsRuntimeException)?.Identifier);
         }
         catch (OperationCanceledException)
         {

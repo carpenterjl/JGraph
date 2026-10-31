@@ -964,6 +964,14 @@ public static partial class DesignPlainText
     }
 
     /// <summary>The run configuration section's startup function name and single-instance setting, for the code model; both absent when there is no section.</summary>
+    /// <summary>The file's text with <paramref name="uri"/> in its automatic thumbnail (<c>captureScreenshot</c>'s pattern): as it is when the section is not automatic.</summary>
+    public static string WithAutoThumbnail(string text, string uri)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        ArgumentNullException.ThrowIfNull(uri);
+        return System.Text.RegularExpressions.Regex.Replace(text, "(<Thumbnail autoCapture='true'>)(.*?)(</Thumbnail>)", m => m.Groups[1].Value + uri + m.Groups[3].Value, System.Text.RegularExpressions.RegexOptions.Singleline);
+    }
+
     public static (string? Startup, bool SingleInstance) RunConfiguration(string text)
     {
         ArgumentNullException.ThrowIfNull(text);

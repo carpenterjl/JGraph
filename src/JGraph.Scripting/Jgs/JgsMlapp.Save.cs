@@ -37,7 +37,7 @@ public static partial class JgsMlapp
     /// </summary>
     /// <exception cref="InvalidDataException">The file is not a package with a code document.</exception>
     /// <exception cref="IOException">The file could not be read or replaced.</exception>
-    public static MlappSaveResult WriteCode(string path, string text) => WriteCode(path, text, (Action?)null, null);
+    public static MlappSaveResult WriteCode(string path, string text) => WriteCode(path, text, null, null, null, null);
 
     /// <summary>
     /// <see cref="WriteCode(string, string)"/> with the designer's component groups
@@ -45,20 +45,23 @@ public static partial class JgsMlapp
     /// brought to the code when the groups differ from the file's, as when the generated code
     /// changed. Null keeps the file's groups over the components it still has.
     /// </summary>
-    public static MlappSaveResult WriteCode(string path, string text, IReadOnlyList<JGraph.Scripting.Designer.DesignGroupRecord>? groups) => WriteCode(path, text, (Action?)null, groups);
+    public static MlappSaveResult WriteCode(string path, string text, IReadOnlyList<JGraph.Scripting.Designer.DesignGroupRecord>? groups) => WriteCode(path, text, null, groups, null, null);
 
     /// <summary>
     /// <see cref="WriteCode(string, string)"/> with a hook called once the new file is written and
     /// before it replaces the old one, which is where a test makes a save fail.
     /// </summary>
-    internal static MlappSaveResult WriteCode(string path, string text, Action? beforeReplace) => WriteCode(path, text, beforeReplace, (IReadOnlyList<JGraph.Scripting.Designer.DesignGroupRecord>?)null);
+    internal static MlappSaveResult WriteCode(string path, string text, Action? beforeReplace) => WriteCode(path, text, beforeReplace, null, null, null);
 
-    internal static MlappSaveResult WriteCode(string path, string text, Action? beforeReplace, IReadOnlyList<JGraph.Scripting.Designer.DesignGroupRecord>? groups) => WriteCode(path, text, beforeReplace, groups, null);
+    internal static MlappSaveResult WriteCode(string path, string text, Action? beforeReplace, IReadOnlyList<JGraph.Scripting.Designer.DesignGroupRecord>? groups) => WriteCode(path, text, beforeReplace, groups, null, null);
 
     /// <summary><see cref="WriteCode(string, string, IReadOnlyList{JGraph.Scripting.Designer.DesignGroupRecord}?)"/> with the app's details and thumbnail (<paramref name="details"/>, App Designer window plan W8a) written into the package; null keeps the file's.</summary>
-    public static MlappSaveResult WriteCode(string path, string text, IReadOnlyList<JGraph.Scripting.Designer.DesignGroupRecord>? groups, MlappMetadata? details) => WriteCode(path, text, null, groups, details);
+    public static MlappSaveResult WriteCode(string path, string text, IReadOnlyList<JGraph.Scripting.Designer.DesignGroupRecord>? groups, MlappMetadata? details) => WriteCode(path, text, null, groups, details, null);
 
-    private static MlappSaveResult WriteCode(string path, string text, Action? beforeReplace, IReadOnlyList<JGraph.Scripting.Designer.DesignGroupRecord>? groups, MlappMetadata? details)
+    /// <summary>The same with the app's argument sets (<paramref name="runConfigurations"/>, App Designer window plan W8b) written into its model; null keeps the file's.</summary>
+    public static MlappSaveResult WriteCode(string path, string text, IReadOnlyList<JGraph.Scripting.Designer.DesignGroupRecord>? groups, MlappMetadata? details, IReadOnlyList<string>? runConfigurations) => WriteCode(path, text, null, groups, details, runConfigurations);
+
+    private static MlappSaveResult WriteCode(string path, string text, Action? beforeReplace, IReadOnlyList<JGraph.Scripting.Designer.DesignGroupRecord>? groups, MlappMetadata? details, IReadOnlyList<string>? runConfigurations)
     {
         ArgumentNullException.ThrowIfNull(path);
         ArgumentNullException.ThrowIfNull(text);
@@ -131,6 +134,11 @@ public static partial class JgsMlapp
         if (details is not null)
         {
             ApplyDetails(parts, details);
+        }
+
+        if (runConfigurations is not null && model is not null && JgsMlappModel.WithRunConfigurations(parts.First(p => p.Name == model).Bytes, runConfigurations) is { } kept)
+        {
+            parts.First(p => p.Name == model).Bytes = kept;
         }
 
         Replace(path, parts, beforeReplace);

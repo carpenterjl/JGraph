@@ -324,6 +324,33 @@ public sealed partial class Toolstrip : Border
         }
     }
 
+    /// <summary>Opens the popup of the split or drop-down button with this tag or action id, as its arrow does (App Designer's Run says an argument's error so).</summary>
+    public void OpenPopupOf(string id)
+    {
+        // A control on several tabs has an arrow on each: the one in view.
+        if (Elements(id).OfType<ToolstripPopupButton>().FirstOrDefault(static b => b.IsVisible) is { } button)
+        {
+            button.IsChecked = false;
+            button.IsChecked = true;
+        }
+    }
+
+    /// <summary>Draws the controls with this action's or tag's icon anew, large and in the quick access bar (Run with arguments has an icon of its own).</summary>
+    public void SetIcon(string id, string icon)
+    {
+        foreach (FrameworkElement element in Elements(id))
+        {
+            if (element.Parent is ToolstripSplitButton split)
+            {
+                split.SetIcon(icon);
+            }
+            else if (element is ToolstripPushButton button && ReferenceEquals(button.Parent, _quickAccess))
+            {
+                button.Content = new ToolstripFace(icon, "", vertical: false, arrow: false);
+            }
+        }
+    }
+
     /// <summary>Whether the toggle or check item with this tag or action id is pressed.</summary>
     public bool IsSelected(string id) => _selected.TryGetValue(id, out bool selected) && selected;
 

@@ -349,6 +349,15 @@ public sealed class AppDesignerDetailsTests : IDisposable
         if (Environment.GetEnvironmentVariable("JGRAPH_W8A_FIXTURE") is { Length: > 0 } target)
         {
             File.Copy(file, target, overwrite: true);
+
+            // Stage W8b's: an app with one input argument, which its startup function reads.
+            string second = Saved("W8bApp");
+            using DesignDocument document = DesignDocument.Open(second);
+            Assert.Null(document.SetInputParameters("n"));
+            string empty = "        function startupFcn(app, n)\n            \n        end";
+            Assert.True(document.ApplyEditedText(document.CurrentText.Replace(empty, "        function startupFcn(app, n)\n            app.UIFigure.Name = sprintf('n is %d', n);\n        end", StringComparison.Ordinal)));
+            document.Save();
+            File.Copy(second, Path.Combine(Path.GetDirectoryName(target)!, "W8bApp.mlapp"), overwrite: true);
         }
     }
 

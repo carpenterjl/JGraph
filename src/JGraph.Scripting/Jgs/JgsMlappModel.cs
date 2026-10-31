@@ -124,6 +124,15 @@ internal static partial class JgsMlappModel
             code.Get("InputParameters") is { } parameters ? TextOf(parameters) : null);
     }
 
+    /// <summary>The MAT-file's <c>runConfigurations</c> (<c>MLAPPSerializer</c>, <c>loadApp</c>); null when it has none, or keeps its variables in a form not read here.</summary>
+    public static IReadOnlyList<string>? ReadRunConfigurations(byte[] mat) => Level5Copy.ReadRunConfigurations(mat);
+
+    /// <summary>
+    /// The MAT-file with its <c>runConfigurations</c> as <paramref name="sets"/>: written only when there is more than the empty set, taken out otherwise
+    /// (<c>MLAPPSerializer</c>: <c>length(obj.RunConfigurations) > 1</c>). Null when the file keeps its variables in a form that cannot take a new one.
+    /// </summary>
+    public static byte[]? WithRunConfigurations(byte[] mat, IReadOnlyList<string> sets) => Level5Copy.WithRunConfigurations(mat, sets);
+
     /// <summary>The file's <c>code</c> struct in whichever form the file keeps it; null when it has none that can be read or rewritten.</summary>
     private static ICodeCopy? Open(byte[] mat) => (ICodeCopy?)Level5Copy.Open(mat) ?? V73Copy.Open(mat);
 

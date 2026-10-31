@@ -603,6 +603,9 @@ internal static class MatMcosWriter
     /// <summary>A stored value's matrix element, with no name; for a value that refers to no object.</summary>
     public static byte[] Element(MatData data) => Build(string.Empty, data).Bytes;
 
+    /// <summary>A variable's matrix element, under its name: for data that refers to no subsystem object.</summary>
+    public static byte[] Named(string name, MatData data) => Build(name, data).Bytes;
+
     /// <summary>A value as a kept element under <paramref name="name"/>, its references to objects marked, so that it can stand among a read file's variables.</summary>
     public static MatData.Kept Keep(string name, MatData data)
     {

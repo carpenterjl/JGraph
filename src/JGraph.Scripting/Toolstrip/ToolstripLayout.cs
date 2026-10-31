@@ -54,6 +54,9 @@ public enum ToolstripPopupEntryKind
 
     /// <summary>A place the host fills with items each time the popup opens: recent files, argument sets, functions (<c>PopupListPanel</c>).</summary>
     Panel,
+
+    /// <summary>An item with a text field in it (<c>ListItemWithTextField</c>): the words before the field are <see cref="ToolstripPopupEntry.Text"/>, those after it <see cref="ToolstripPopupEntry.AfterField"/>.</summary>
+    FieldItem,
 }
 
 /// <summary>
@@ -197,6 +200,27 @@ public sealed record ToolstripPopupEntry
 
     /// <summary>The tallest a panel grows before it scrolls, or 0 for no limit.</summary>
     public double MaxHeight { get; init; }
+
+    /// <summary>Whether an item has a button that takes it out (<c>removable</c>); pressing it raises the item's tag with <see cref="RemoveValue"/>.</summary>
+    public bool Removable { get; init; }
+
+    /// <summary>Whether the entry can be chosen, when the host says (the action's command says otherwise).</summary>
+    public bool? IsEnabled { get; init; }
+
+    /// <summary>A field's words after it.</summary>
+    public string? AfterField { get; init; }
+
+    /// <summary>A field's text.</summary>
+    public string? FieldText { get; init; }
+
+    /// <summary>What an empty field says (<c>placeholderText</c>).</summary>
+    public string? Placeholder { get; init; }
+
+    /// <summary>What a field says is wrong (<c>errorText</c>); the keyboard goes to it when the popup opens.</summary>
+    public string? ErrorText { get; init; }
+
+    /// <summary>The value an item's remove button raises.</summary>
+    public const string RemoveValue = "\u0001remove";
 }
 
 /// <summary>A popup list a split or drop-down button opens.</summary>

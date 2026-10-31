@@ -31,6 +31,7 @@ public static class ToolstripIcons
         ["applicationCompilerApp"] = "A|M1.5,6.5H11.5V14.5H1.5Z;i|M1.5,6.5H11.5V14.5H1.5Z;i|M1.5,6.5L4,3.5H9L11.5,6.5;g|M9,4L14.5,1.5;g|M11,1.5H14.5V5",
         ["playControl"] = "G|M4,2.5L13.5,8L4,13.5Z;g|M4,2.5L13.5,8L4,13.5Z",
         ["continue"] = "G|M4,2.5L13.5,8L4,13.5Z;g|M4,2.5L13.5,8L4,13.5Z",
+        ["runConfiguration"] = "G|M2,2.5L10,7L2,11.5Z;g|M2,2.5L10,7L2,11.5Z;B|M10,10h5v1.5h-5z;B|M10,12.5h5v1.5h-5z",
         ["pause"] = "B|M3.5,2.5h3v11h-3z;B|M9.5,2.5h3v11h-3z",
         ["stop"] = "R|M3,3h10v10h-10z",
         ["stepForward"] = "i|M2.5,9A5.5,5.5 0 0 1 13.5,9;b|M10.5,8.5L13.5,9L14.5,6;I|M7,12.5h2v2h-2z",

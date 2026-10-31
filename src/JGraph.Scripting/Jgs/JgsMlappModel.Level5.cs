@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using System.IO.Compression;
+using JGraph.Scripting.MatFile;
 using System.Text;
 using static JGraph.Scripting.MatFile.MatConstants;
 
@@ -91,6 +92,71 @@ internal static partial class JgsMlappModel
                     throw new InvalidDataException("the model's subsystem offset names no element");
                 }
 
+                BinaryPrimitives.WriteInt64LittleEndian(bytes.AsSpan(SubsystemOffsetAt), moved);
+            }
+
+            return bytes;
+        }
+
+        private const string RunConfigurations = "runConfigurations";
+
+        /// <summary>The file's <c>runConfigurations</c> cell as its texts; null when it has none.</summary>
+        public static IReadOnlyList<string>? ReadRunConfigurations(byte[] mat)
+        {
+            if (!IsLevel5(mat) || ElementsOf(mat).FirstOrDefault(static e => e.Name == RunConfigurations) is not { } element)
+            {
+                return null;
+            }
+
+            return LinesOf(element.Matrix);
+        }
+
+        /// <summary>The file with <c>runConfigurations</c> replaced, added before its subsystem, or taken out for no more than the empty set; null when it is not a level-5 file.</summary>
+        public static byte[]? WithRunConfigurations(byte[] mat, IReadOnlyList<string> sets)
+        {
+            if (!IsLevel5(mat))
+            {
+                return null;
+            }
+
+            byte[]? element = sets.Count > 1
+                ? MatMcosWriter.Named(RunConfigurations, new MatData.Cells([sets.Count, 1], [.. sets.Select(static s => (MatData)MatData.Text(s))]))
+                : null;
+            List<Element> elements = ElementsOf(mat);
+            long subsystem = BinaryPrimitives.ReadInt64LittleEndian(mat.AsSpan(SubsystemOffsetAt));
+            long moved = 0;
+            bool put = element is null;
+            using var result = new MemoryStream(mat.Length + (element?.Length ?? 0));
+            result.Write(mat, 0, HeaderLength);
+            foreach (Element held in elements)
+            {
+                if (held.Name == RunConfigurations)
+                {
+                    continue;
+                }
+
+                if (held.Offset == subsystem)
+                {
+                    if (!put)
+                    {
+                        result.Write(element!);
+                        put = true;
+                    }
+
+                    moved = result.Position;
+                }
+
+                result.Write(mat, held.Offset, held.Length);
+            }
+
+            if (!put)
+            {
+                result.Write(element!);
+            }
+
+            byte[] bytes = result.ToArray();
+            if (subsystem != 0)
+            {
                 BinaryPrimitives.WriteInt64LittleEndian(bytes.AsSpan(SubsystemOffsetAt), moved);
             }
 

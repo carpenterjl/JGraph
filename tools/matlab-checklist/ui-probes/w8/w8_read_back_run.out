@@ -1,1 +1,5 @@
-done
+Unrecognized field name "ScreenshotMode".
+
+Error in w8_read_back_run (line 14)
+        fprintf(fid, 'screenshot [%s] %d bytes, mode [%s]\n', format, numel(bytes), reader.readMLAPPMetadata().ScreenshotMode);
+                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

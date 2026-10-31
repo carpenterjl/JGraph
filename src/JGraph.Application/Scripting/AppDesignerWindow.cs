@@ -6,6 +6,7 @@ using System.Windows.Input;
 using JGraph.Controls.Designer;
 using JGraph.Controls.Themes;
 using JGraph.Scripting.Designer;
+using JGraph.Scripting.Toolstrip;
 
 namespace JGraph.Application.Scripting;
 
@@ -155,6 +156,7 @@ internal sealed partial class AppDesignerWindow : Window
                 _palette.Chosen = null;
             }
         };
+        System.Windows.Automation.AutomationProperties.SetAutomationId(_status, "AppDesigner.Status");
         _inspector.Problem += (_, problem) => ShowAlert("App Designer", problem);
         _inspector.AppDetailsAsked += (_, codeOptions) => ShowAppDetails(codeOptions);
         _inspector.InputArgumentsEdited += (_, _) =>
@@ -256,7 +258,10 @@ internal sealed partial class AppDesignerWindow : Window
     /// DS8), told whether the app's code allows one running instance; answers null when it ran, else
     /// why not. Null when there is no session to run it in.
     /// </summary>
-    public Func<string, bool, Task<string?>>? Runner { get; set; }
+    public Func<string, bool, string, bool, Task<DesignRunOutcome>>? Runner { get; set; }
+
+    /// <summary>A picture of the running app's window, as PNG bytes, or null (<c>captureScreenshot</c>).</summary>
+    public Func<string, Task<byte[]?>>? Capturer { get; set; }
 
     private IEnumerable<AppTab> Apps => _tabs.Items.OfType<TabItem>().Select(static t => (AppTab)t.Tag);
 
@@ -796,7 +801,55 @@ internal sealed partial class AppDesignerWindow : Window
     /// as App Designer asks for a file before its first run - then run in the MATLAB session as a call
     /// of its name would run it, and the status line says what the session answered.
     /// </summary>
-    private async void RunActive()
+    private string? _runArgumentError;
+
+    /// <summary>The Run drop-down's sets for the active app; the error of its last Run stands on the field until the drop-down closes.</summary>
+    private IReadOnlyList<ToolstripPopupEntry>? RunEntries()
+    {
+        if (Active is not { Document: var document })
+        {
+            return [];
+        }
+
+        string? error = _runArgumentError;
+        _runArgumentError = null;
+        return DesignToolstrip.RunEntries(document.AppName, document.RunArguments.All, document.InputParameters, error, enabled: !_running);
+    }
+
+    /// <summary>An argument set's item: Run with it, or its button: taken out (<c>DeleteRunCommandWithArgs</c>), one step, and the drop-down made again.</summary>
+    private void RunSetChosen(int index, string? value)
+    {
+        if (Active is not { Document: var document } || index >= document.RunArguments.All.Count)
+        {
+            return;
+        }
+
+        string set = document.RunArguments.All[index];
+        if (value == ToolstripPopupEntry.RemoveValue)
+        {
+            document.RemoveRunArguments(set);
+            ShowToolstripState();
+            Dispatcher.BeginInvoke(() => _toolstrip.OpenPopupOf("AD_RUN"), System.Windows.Threading.DispatcherPriority.Loaded);
+            return;
+        }
+
+        document.UseRunArguments(set);
+        RunActive();
+    }
+
+    /// <summary>The field's text: Run with it, blanks trimmed (<c>_buildRunEditableArgumentItem</c>).</summary>
+    private void RunTyped(string text)
+    {
+        if (Active is { Document: var document })
+        {
+            document.UseRunArguments(text.Trim());
+            RunActive();
+        }
+    }
+
+    private async void RunActive() => await RunActiveAsync(changeFolder: false);
+
+    private async Task RunActiveAsync(bool changeFolder)
     {
         if (Active is not { } app)
         {
@@ -847,10 +900,10 @@ internal sealed partial class AppDesignerWindow : Window
         _status.Text = $"Running {Path.GetFileName(path)}…";
         _running = true;
         ShowToolstripState();
-        string? refused;
+        DesignRunOutcome outcome;
         try
         {
-            refused = await runner(path, app.Document.SingleInstance);
+            outcome = await runner(path, app.Document.SingleInstance, app.Document.RunArguments.MostRecent, changeFolder);
         }
         finally
         {
@@ -859,8 +912,58 @@ internal sealed partial class AppDesignerWindow : Window
         }
 
         // The status line has one line: the message's first; the console has the whole of it.
+        string? refused = outcome.Message;
         _status.Text = refused is null ? $"Running {Path.GetFileNameWithoutExtension(path)}."
             : refused.Split('\n').Select(static l => l.Trim()).FirstOrDefault(static l => l.Length > 0) ?? refused;
+        if (refused is null)
+        {
+            await CaptureThumbnail(app, path);
+            return;
+        }
+
+        if (outcome.Identifier == DesignRunOutcome.ArgumentError)
+        {
+            // RunSection: the drop-down opens by itself, its field holding the set, the error on it.
+            _runArgumentError = refused;
+            _toolstrip.SelectedTab = app.InCodeView ? DesignToolstrip.EditorTab : DesignToolstrip.CanvasTab;
+            await Dispatcher.InvokeAsync(() => _toolstrip.OpenPopupOf("AD_RUN"), System.Windows.Threading.DispatcherPriority.Loaded);
+        }
+        else if (outcome.Identifier == DesignRunOutcome.ShadowedByCurrentFolder)
+        {
+            // AppModel._runCallback: Change Folder runs it again from the app's own folder.
+            if (AppDesignerDialogs.ChangeFolder(this, refused))
+            {
+                await RunActiveAsync(changeFolder: true);
+            }
+        }
+        else
+        {
+            ShowAlert("App Designer", refused);
+        }
+    }
+
+    /// <summary>
+    /// The picture Run takes (<c>runAppHelper</c>): the app's window, when its thumbnail is automatic and it has not run since it was saved. It goes straight into the file, as
+    /// <c>captureScreenshot</c> writes it; a capture that fails goes unnoticed.
+    /// </summary>
+    private async Task CaptureThumbnail(AppTab app, string path)
+    {
+        if (app.Document.WantsThumbnailCapture && Capturer is { } capture)
+        {
+            try
+            {
+                if (await capture(path) is { } picture)
+                {
+                    Saving(app, () => app.Document.TakeThumbnail(picture));
+                }
+            }
+            catch (Exception ex) when (ex is IOException or InvalidOperationException or UnauthorizedAccessException or InvalidDataException)
+            {
+                _status.Text = $"Running {Path.GetFileNameWithoutExtension(path)}.";
+            }
+        }
+
+        app.Document.RanSinceSave();
     }
 
     private bool Save(AppTab? app)

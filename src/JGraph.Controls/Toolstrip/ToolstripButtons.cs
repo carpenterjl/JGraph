@@ -371,11 +371,18 @@ internal sealed class ToolstripSplitButton : StackPanel, IToolstripLabelled, ITo
 {
     // The large button's upper part: the icon with its margins and padding.
     private const double IconPart = 30;
-    private readonly string? _icon;
+    private string? _icon;
     private readonly string? _text;
     private readonly double _height;
     private bool _labelShown = true;
     private bool _vertical;
+
+    /// <summary>Draws the button with another icon.</summary>
+    public void SetIcon(string icon)
+    {
+        _icon = icon;
+        SetVertical(_vertical);
+    }
 
     public ToolstripSplitButton(string? icon, string? text, bool vertical, double height)
     {

@@ -1334,9 +1334,19 @@ public sealed partial class DesignDocument
     /// <summary>The app's input parameters changed.</summary>
     private sealed record ParametersEdit(DesignComponent Component, string Before, string After) : CodeEdit(Component)
     {
-        public override void Do(DesignDocument document) => document.Code!.InputParameters = After;
+        public override void Do(DesignDocument document) => Put(document, After);
 
-        public override void Undo(DesignDocument document) => document.Code!.InputParameters = Before;
+        public override void Undo(DesignDocument document) => Put(document, Before);
+
+        // updateAppParams: an app that takes no arguments runs with none.
+        private static void Put(DesignDocument document, string parameters)
+        {
+            document.Code!.InputParameters = parameters;
+            if (parameters.Length == 0)
+            {
+                document.UseRunArguments(DesignRunArguments.Empty);
+            }
+        }
     }
 
     /// <summary>The single-instance setting changed.</summary>

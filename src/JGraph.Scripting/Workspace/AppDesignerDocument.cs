@@ -47,7 +47,10 @@ public static partial class AppDesignerDocument
     public static (string Text, MlappSaveResult Result) Save(string source, string target, string text, IReadOnlyList<DesignGroupRecord>? groups) => Save(source, target, text, groups, null);
 
     /// <summary><see cref="Save(string, string, string, IReadOnlyList{DesignGroupRecord}?)"/> with the app's details (<paramref name="details"/>, App Designer window plan W8a) written into the package; null keeps the file's.</summary>
-    public static (string Text, MlappSaveResult Result) Save(string source, string target, string text, IReadOnlyList<DesignGroupRecord>? groups, MlappMetadata? details)
+    public static (string Text, MlappSaveResult Result) Save(string source, string target, string text, IReadOnlyList<DesignGroupRecord>? groups, MlappMetadata? details) => Save(source, target, text, groups, details, null);
+
+    /// <summary>The same with the app's argument sets (<paramref name="runConfigurations"/>, App Designer window plan W8b) written into its model; null keeps the file's.</summary>
+    public static (string Text, MlappSaveResult Result) Save(string source, string target, string text, IReadOnlyList<DesignGroupRecord>? groups, MlappMetadata? details, IReadOnlyList<string>? runConfigurations)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(target);
@@ -55,7 +58,7 @@ public static partial class AppDesignerDocument
 
         if (string.Equals(Path.GetFullPath(source), Path.GetFullPath(target), StringComparison.OrdinalIgnoreCase))
         {
-            return (text, JgsMlapp.WriteCode(target, text, groups, details));
+            return (text, JgsMlapp.WriteCode(target, text, groups, details, runConfigurations));
         }
 
         // The new name is App Designer's to write, not an edit to its code: what the save changed
@@ -71,7 +74,7 @@ public static partial class AppDesignerDocument
         {
             File.Copy(source, copy, overwrite: true);
             File.SetAttributes(copy, FileAttributes.Normal);
-            MlappSaveResult result = JgsMlapp.WriteCode(copy, text, groups, details);
+            MlappSaveResult result = JgsMlapp.WriteCode(copy, text, groups, details, runConfigurations);
             bool generated = !before.SameGeneratedCode(JgsMlappLayout.Of(text));
             result = result with { GeneratedCodeChanged = generated, Tree = generated ? result.Tree : null };
             File.Move(copy, target, overwrite: true);
@@ -119,7 +122,11 @@ public static partial class AppDesignerDocument
 
     /// <summary><see cref="SaveNew(string, string, MlappMetadata?)"/> with the designer's component groups (<paramref name="groups"/>, open item 150) written into the tree.</summary>
     /// <exception cref="IOException">The text is not a class, the name is not one a class can have, or the file could not be written.</exception>
-    public static (string Text, MlappWriteResult Result) SaveNew(string target, string text, MlappMetadata? metadata, IReadOnlyList<DesignGroupRecord>? groups)
+    public static (string Text, MlappWriteResult Result) SaveNew(string target, string text, MlappMetadata? metadata, IReadOnlyList<DesignGroupRecord>? groups) => SaveNew(target, text, metadata, groups, null);
+
+    /// <summary>The same with the app's argument sets written into its model (<paramref name="runConfigurations"/>).</summary>
+    /// <exception cref="IOException">The text is not a class, the name is not one a class can have, or the file could not be written.</exception>
+    public static (string Text, MlappWriteResult Result) SaveNew(string target, string text, MlappMetadata? metadata, IReadOnlyList<DesignGroupRecord>? groups, IReadOnlyList<string>? runConfigurations)
     {
         ArgumentNullException.ThrowIfNull(target);
         ArgumentNullException.ThrowIfNull(text);
@@ -132,7 +139,7 @@ public static partial class AppDesignerDocument
         }
 
         string saved = JgsMlapp.ExportedCode(text, name);
-        return (saved, JgsMlapp.WriteApp(target, saved, metadata, groups));
+        return (saved, JgsMlapp.WriteApp(target, saved, metadata, groups, runConfigurations));
     }
 
     /// <summary>What to add to "Saved ..." after <see cref="SaveNew(string, string, MlappMetadata?)"/>.</summary>
