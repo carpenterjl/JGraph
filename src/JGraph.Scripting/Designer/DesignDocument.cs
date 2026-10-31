@@ -1097,15 +1097,35 @@ public sealed partial class DesignDocument : IDisposable
         ArgumentNullException.ThrowIfNull(component);
         ArgumentNullException.ThrowIfNull(name);
         EndGesture(commit: false);
+        var edits = new List<Edit>();
+        if (PropertyEdits(component, name, value, edits, null, skipSame: false) is { } refused)
+        {
+            return refused;
+        }
+
+        if (edits.Count > 0)
+        {
+            Do([.. edits]);
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// What <see cref="SetProperty"/> does to one component, set on the runtime and gathered in <paramref name="edits"/>
+    /// to be done as part of a step: the renames among <paramref name="inUse"/>, which they add to (all the names in use when
+    /// null); with <paramref name="skipSame"/>, nothing for a component already holding the value (<c>_isUserEnteredValueTheSame</c>).
+    /// </summary>
+    private string? PropertyEdits(DesignComponent component, string name, DesignValue? value, List<Edit> edits, List<string>? inUse, bool skipSame)
+    {
         if (name == "ContextMenu" && value is null)
         {
             // A context menu taken off: the component's ContextMenu emptied, and its assignment gone.
-            if (component.Get(name) is not { } assigned)
+            if (component.Get(name) is { } assigned)
             {
-                return null;
+                edits.Add(new PropertyEdit(component, name, assigned, null, assigned, new NumericValue(0, 0, [])));
             }
 
-            Do([new PropertyEdit(component, name, assigned, null, assigned, new NumericValue(0, 0, []))]);
             return null;
         }
 
@@ -1127,6 +1147,12 @@ public sealed partial class DesignDocument : IDisposable
         {
             before = null; // a recorded default the designer cannot write back (an object): undo leaves the component
         }
+
+        if (skipSame && before is not null && SameValue(before, toSet))
+        {
+            return null;
+        }
+
         var linked = Linked(component, name).Select(l => (l.Component, l.Name, Before: Runtime.Read(l.Component, l.Name, LikeOf(l.Component, l.Name))))
             .ToArray();
         string? oldText = TextOf(component);
@@ -1137,7 +1163,6 @@ public sealed partial class DesignDocument : IDisposable
         }
 
         DesignValue kept = Runtime.Read(component, name, toSet) ?? toSet;
-        var edits = new List<Edit>();
 
         // Linked properties first: undoing the property they followed puts it back before them.
         foreach ((DesignComponent other, string otherName, DesignValue? otherBefore) in linked)
@@ -1161,10 +1186,9 @@ public sealed partial class DesignDocument : IDisposable
         // A component named from its text follows its text, as App Designer renames it.
         if (oldText is not null && DesignNames.Of(component.Type)?.TextProperty == name && DesignPalette.Text(kept) is { } newText)
         {
-            edits.AddRange(Renames(component, oldText, newText));
+            edits.AddRange(Renames(component, oldText, newText, inUse));
         }
 
-        Do([.. edits]);
         return null;
     }
 
@@ -1316,9 +1340,9 @@ public sealed partial class DesignDocument : IDisposable
     /// text is named from its new one; a labelled component's label names the component, and the label
     /// is named after it.
     /// </summary>
-    private IEnumerable<Edit> Renames(DesignComponent component, string oldText, string newText)
+    private IEnumerable<Edit> Renames(DesignComponent component, string oldText, string newText, List<string>? names = null)
     {
-        var inUse = NamesInUse().ToList();
+        List<string> inUse = names ?? NamesInUse().ToList();
         if (LabelledBy(component) is { } labelled && DesignNames.Of(labelled.Type) is { } naming)
         {
             string componentName = DesignNames.IsNamedByHand(oldText, naming.Text, labelled.CodeName, naming.CodeName)
@@ -1337,6 +1361,7 @@ public sealed partial class DesignDocument : IDisposable
                 string labelName = DesignNames.ForEditedText(from, "Label", component.CodeName, "Label", inUse);
                 if (labelName != component.CodeName)
                 {
+                    inUse.Add(labelName);
                     yield return new RenameEdit(component, component.CodeName, labelName);
                 }
             }
@@ -1344,9 +1369,9 @@ public sealed partial class DesignDocument : IDisposable
             yield break;
         }
 
-        if (DesignNames.Of(component.Type) is { } own && !DesignNames.IsNamedByHand(oldText, own.Text, component.CodeName, own.CodeName))
+        if (DesignNames.Of(component.Type) is { } own)
         {
-            string renamed = DesignNames.ForEditedText(newText, own.Text, component.CodeName, own.CodeName, inUse);
+            string renamed = DesignNames.RenamedForText(oldText, newText, own, component.CodeName, inUse);
             if (renamed != component.CodeName)
             {
                 yield return new RenameEdit(component, component.CodeName, renamed);

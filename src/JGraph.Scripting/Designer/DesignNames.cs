@@ -180,6 +180,22 @@ public static partial class DesignNames
     }
 
     /// <summary>
+    /// The code name a component called <paramref name="codeName"/> ends up with when its text goes from <paramref name="oldText"/>
+    /// to <paramref name="newText"/> (<c>ModifyCodeNameGenerator._generateCodeNameForExistingComponent</c>): kept when named by
+    /// hand, and otherwise made from the new text; added to <paramref name="inUse"/>, so that several edited together differ.
+    /// </summary>
+    public static string RenamedForText(string oldText, string newText, DesignNaming naming, string codeName, List<string> inUse)
+    {
+        ArgumentNullException.ThrowIfNull(naming);
+        ArgumentNullException.ThrowIfNull(inUse);
+        string renamed = IsNamedByHand(oldText, naming.Text, codeName, naming.CodeName)
+            ? codeName
+            : ForEditedText(newText, naming.Text, codeName, naming.CodeName, inUse);
+        inUse.Add(renamed);
+        return renamed;
+    }
+
+    /// <summary>
     /// The code name a component named from its text gets when its text becomes
     /// <paramref name="newText"/> (<c>_generateCodeNameForEditedText</c>): the name the text gives,
     /// unique among <paramref name="codeNamesInUse"/>; its own name when that is what it gives, or an

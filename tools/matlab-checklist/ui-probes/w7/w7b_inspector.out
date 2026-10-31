@@ -1,0 +1,14 @@
+[Warning: MATLAB Connector is not running.] 
+[> In message.publish
+In internal.matlab.inspector.peer/InspectorFactory/sendProxyViewMapToClient (line 66)
+In internal.matlab.inspector.peer/InspectorFactory (line 44)
+In internal.matlab.inspector.peer.InspectorFactory.getInstance (line 185)
+In w7b_inspector (line 6)] 
+[Warning: MATLAB Connector is not running.] 
+[> In message.subscribeJSON
+In message.subscribe
+In internal.matlab.inspector.peer/InspectorFactory (line 46)
+In internal.matlab.inspector.peer.InspectorFactory.getInstance (line 185)
+In w7b_inspector (line 6)] 
+54 AppDesigner classes of 120
+[Warning: You are deleting one or more running timer objects. MATLAB has automatically stopped them before deletion.] 

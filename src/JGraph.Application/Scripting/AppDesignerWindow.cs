@@ -80,7 +80,15 @@ internal sealed partial class AppDesignerWindow : Window
 
         // The library or the code browser, the apps, and the browser over the inspector's two tabs, as App Designer lays them out.
         _left.Content = _palette;
-        _right.Items.Add(new TabItem { Header = "Inspector", Content = _inspector });
+        var inspectorTab = new TabItem { Header = _inspector.Tab, Content = _inspector };
+        System.Windows.Automation.AutomationProperties.SetAutomationId(inspectorTab, "PropertiesPanel.Inspector");
+        _inspector.TabChanged += (_, _) =>
+        {
+            // The first tab says what is selected, and the panel hides with nothing selected (_updateContentPaneTitle).
+            inspectorTab.Header = _inspector.Tab;
+            _right.Visibility = _inspector.HasSelection ? Visibility.Visible : Visibility.Hidden;
+        };
+        _right.Items.Add(inspectorTab);
         _right.Items.Add(new TabItem { Header = "Callbacks", Content = _callbacks });
         System.Windows.Automation.AutomationProperties.SetAutomationId(_right, "PropertiesPanel");
         var right = new Grid();
@@ -139,7 +147,7 @@ internal sealed partial class AppDesignerWindow : Window
                 _palette.Chosen = null;
             }
         };
-        _inspector.Problem += (_, problem) => _status.Text = problem;
+        _inspector.Problem += (_, problem) => ShowAlert("App Designer", problem);
         _callbacks.Problem += (_, problem) => _status.Text = problem;
         _callbacks.GoTo += (_, name) => GoToFunction(name);
         _codeBrowser.Problem += (_, problem) => _status.Text = problem;

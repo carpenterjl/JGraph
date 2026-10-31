@@ -1,0 +1,5325 @@
+{
+ "release": "2025b",
+ "classes": [
+  {
+   "type": "matlab.ui.Figure",
+   "tab": "UI Figure",
+   "properties": {
+    "AD_ColormapString": [
+     "Colormap",
+     "matlab.graphics.datatype.ColorMap",
+     "Color map for axes content of figure||parula (default) | m-by-3 array of RGB triplets"
+    ],
+    "Alphamap": [
+     "Alphamap",
+     "matlab.graphics.datatype.AlphaMap",
+     "Transparency map for axes content||array of 64 values from 0 to 1 (default) | array of finite alpha values from 0 to 1"
+    ],
+    "AutoResizeChildren": [
+     "AutoResizeChildren",
+     "matlab.lang.OnOffSwitchState",
+     "Automatically resize children||on/off logical value"
+    ],
+    "BeingDeleted": [
+     "BeingDeleted",
+     "matlab.graphics.datatype.on_off",
+     "Deletion status||on/off logical value"
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "Color": [
+     "Color",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "Colormap": [
+     "Colormap",
+     "matlab.graphics.datatype.ColorMap",
+     "Color map for axes content of figure||parula (default) | m-by-3 array of RGB triplets"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of figure object||'off' | 'callback' | 'on'"
+    ],
+    "Icon": [
+     "Icon",
+     "internal.matlab.editorconverters.datatype.FullPath",
+     "Icon source or file||'' (default) | character vector | string scalar | m-by-n-by-3 truecolor image array"
+    ],
+    "IntegerHandle": [
+     "IntegerHandle",
+     "matlab.lang.OnOffSwitchState",
+     "Use integer handle||on/off logical value"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Name": [
+     "Name",
+     "char",
+     "Name||character vector | string scalar"
+    ],
+    "NextPlot": [
+     "NextPlot",
+     "matlab.graphics.datatype.NextPlot",
+     "Directive on how to add next plot||'add' (default) | 'new' | 'replace' | 'replacechildren'"
+    ],
+    "NumberTitle": [
+     "NumberTitle",
+     "matlab.lang.OnOffSwitchState",
+     "Use number title||on/off logical value"
+    ],
+    "Pointer": [
+     "Pointer",
+     "inspector.internal.datatype.Pointer",
+     "Pointer symbol||'arrow' (default) | 'ibeam' | 'crosshair' | 'watch' | 'topl' | 'custom' | ..."
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of figure, excluding borders, figure tools, and title bar||[left bottom width height]"
+    ],
+    "Resize": [
+     "Resize",
+     "matlab.lang.OnOffSwitchState",
+     "Resizable||'on' (default) | on/off logical value"
+    ],
+    "Scrollable": [
+     "Scrollable",
+     "matlab.lang.OnOffSwitchState",
+     "Ability to scroll||'off' (default) | on/off logical value"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Theme": [
+     "Theme",
+     "inspector.internal.datatype.Theme",
+     "Graphics theme||'light' | 'dark' | GraphicsTheme object"
+    ],
+    "ThemeMode": [
+     "ThemeMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Graphics theme selection||'auto' (default) | 'manual'"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'figure'"
+    ],
+    "WindowState": [
+     "WindowState",
+     "matlab.ui.datatype.WindowState",
+     "Window state||'normal' (default) | 'minimized' | 'maximized' | 'fullscreen'"
+    ],
+    "WindowStyle": [
+     "WindowStyle",
+     "inspector.internal.datatype.WindowStyle",
+     "Window style||'docked' | 'normal' | 'modal' | 'alwaysontop'"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.Button",
+   "tab": "Button",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "HorizontalAlignment": [
+     "HorizontalAlignment",
+     "inspector.internal.datatype.HorizontalAlignment",
+     "Horizontal alignment of icon and text||'center' (default) | 'left' | 'right'"
+    ],
+    "Icon": [
+     "Icon",
+     "internal.matlab.editorconverters.datatype.FullPath",
+     "Predefined or custom icon||'' (default) | character vector | string scalar | m-by-n-by-3 truecolor image array"
+    ],
+    "IconAlignment": [
+     "IconAlignment",
+     "inspector.internal.datatype.IconAlignment",
+     "Location of button icon||'left' (default) | 'right' | 'center' | 'leftmargin' | 'rightmargin' | 'top' | 'bottom'"
+    ],
+    "Interpreter": [
+     "Interpreter",
+     "inspector.internal.datatype.Interpreter",
+     "Button text interpreter||'none' (default) | 'tex' | 'latex' | 'html'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of button||[100 100 100 22] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Text": [
+     "Text",
+     "matlab.graphics.datatype.NumericOrString",
+     "Button label||'Button' (default) | character vector | cell array of character vectors | string scalar | string array | ..."
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uibutton'"
+    ],
+    "VerticalAlignment": [
+     "VerticalAlignment",
+     "inspector.internal.datatype.VerticalAlignment",
+     "Vertical alignment of icon and text||'center' (default) | 'top' | 'bottom'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ],
+    "WordWrap": [
+     "WordWrap",
+     "matlab.lang.OnOffSwitchState",
+     "Word wrapping to fit component width||'off' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.StateButton",
+   "tab": "State Button",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "HorizontalAlignment": [
+     "HorizontalAlignment",
+     "inspector.internal.datatype.HorizontalAlignment",
+     "Horizontal alignment of icon and text||'center' (default) | 'left' | 'right'"
+    ],
+    "Icon": [
+     "Icon",
+     "internal.matlab.editorconverters.datatype.FullPath",
+     "Predefined or custom icon||'' (default) | character vector | string scalar | m-by-n-by-3 truecolor image array"
+    ],
+    "IconAlignment": [
+     "IconAlignment",
+     "inspector.internal.datatype.IconAlignment",
+     "Location of button icon||'left' (default) | 'right' | 'center' | 'leftmargin' | 'rightmargin' | 'top' | 'bottom'"
+    ],
+    "Interpreter": [
+     "Interpreter",
+     "inspector.internal.datatype.Interpreter",
+     "Button text interpreter||'none' (default) | 'tex' | 'latex' | 'html'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of button||[100 100 100 22] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Text": [
+     "Text",
+     "matlab.graphics.datatype.NumericOrString",
+     "Button label||'State Button' (default) | character vector | cell array of character vectors | string scalar | string array | ..."
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uistatebutton'"
+    ],
+    "Value": [
+     "Value",
+     "logical",
+     "Pressed state of button||0 (default) | 1"
+    ],
+    "VerticalAlignment": [
+     "VerticalAlignment",
+     "inspector.internal.datatype.VerticalAlignment",
+     "Vertical alignment of icon and text||'center' (default) | 'top' | 'bottom'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ],
+    "WordWrap": [
+     "WordWrap",
+     "matlab.lang.OnOffSwitchState",
+     "Word wrapping to fit component width||'off' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.Label",
+   "tab": "Label",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBAColor",
+     "Background color||'none' (default) | RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Visual appearance of label||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "HorizontalAlignment": [
+     "HorizontalAlignment",
+     "inspector.internal.datatype.HorizontalAlignment",
+     "Horizontal alignment of text||'left' (default) | 'right' | 'center'"
+    ],
+    "Interpreter": [
+     "Interpreter",
+     "inspector.internal.datatype.Interpreter",
+     "Label text interpreter||'none' (default) | 'tex' | 'latex' | 'html'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Label location and size||[100 100 31 22] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Text": [
+     "Text",
+     "matlab.graphics.datatype.NumericOrString",
+     "Label text||'Label' (default) | character vector | cell array of character vectors | string scalar | string array | ..."
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uilabel'"
+    ],
+    "VerticalAlignment": [
+     "VerticalAlignment",
+     "inspector.internal.datatype.VerticalAlignment",
+     "Vertical alignment of text||'center' (default) | 'top' | 'bottom'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ],
+    "WordWrap": [
+     "WordWrap",
+     "matlab.lang.OnOffSwitchState",
+     "Word wrapping to fit component width||'off' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.EditField",
+   "tab": "Edit Field (Text)",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "CharacterLimits": [
+     "CharacterLimits",
+     "matlab.graphics.datatype.LimitsWithInfs",
+     "Minimum and maximum number of characters||[0 Inf] (default) | two-element numeric array"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Editable": [
+     "Editable",
+     "matlab.lang.OnOffSwitchState",
+     "Whether edit field is editable||'on' (default) | on/off logical value"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state of edit field||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "HorizontalAlignment": [
+     "HorizontalAlignment",
+     "inspector.internal.datatype.HorizontalAlignment",
+     "Horizontal alignment of text within edit field||'left' (default) | 'right' | 'center'"
+    ],
+    "InputType": [
+     "InputType",
+     "inspector.internal.datatype.TextInputType",
+     "Valid text content||'text' (default) | 'letters' | 'digits' | 'alphanumerics'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Placeholder": [
+     "Placeholder",
+     "char",
+     "Placeholder text in edit field||'' (default) | character vector | string scalar"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of edit field||[100 100 100 22] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uieditfield'"
+    ],
+    "Value": [
+     "Value",
+     "char",
+     "Text in edit field||'' (default) | character vector | string scalar"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.NumericEditField",
+   "tab": "Edit Field (Numeric)",
+   "properties": {
+    "AllowEmpty": [
+     "AllowEmpty",
+     "matlab.lang.OnOffSwitchState",
+     "Ability to clear edit field||'off' (default) | on/off logical value"
+    ],
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Editable": [
+     "Editable",
+     "matlab.lang.OnOffSwitchState",
+     "Editability of edit field||'on' (default) | on/off logical value"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state of edit field||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "HorizontalAlignment": [
+     "HorizontalAlignment",
+     "inspector.internal.datatype.HorizontalAlignment",
+     "Horizontal alignment of numbers||'right' (default) | 'left' | 'center'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Limits": [
+     "Limits",
+     "matlab.graphics.datatype.LimitsWithInfs",
+     "Minimum and maximum edit field values||[-Inf Inf] (default) | two-element numeric array"
+    ],
+    "LowerLimitInclusive": [
+     "LowerLimitInclusive",
+     "matlab.lang.OnOffSwitchState",
+     "Lower limit inclusiveness||'on' (default) | on/off logical value"
+    ],
+    "Placeholder": [
+     "Placeholder",
+     "char",
+     "Placeholder text||'' (default) | string scalar | character vector"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of edit field||[100 100 100 22] (default) | [left bottom width height]"
+    ],
+    "RoundFractionalValues": [
+     "RoundFractionalValues",
+     "matlab.lang.OnOffSwitchState",
+     "Rounding of fractional values||'off' (default) | on/off logical value"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uinumericeditfield'"
+    ],
+    "UpperLimitInclusive": [
+     "UpperLimitInclusive",
+     "matlab.lang.OnOffSwitchState",
+     "Upper limit inclusiveness||'on' (default) | on/off logical value"
+    ],
+    "Value": [
+     "Value",
+     "double",
+     "Value in edit field||0 (default) | numeric value"
+    ],
+    "ValueDisplayFormat": [
+     "ValueDisplayFormat",
+     "internal.matlab.editorconverters.datatype.DisplayFormat",
+     "Value display format||'%11.4g' (default) | character vector | string scalar"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.TextArea",
+   "tab": "Text Area",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Editable": [
+     "Editable",
+     "matlab.lang.OnOffSwitchState",
+     "Editability of text area||'on' (default) | on/off logical value"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state of text area||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "HorizontalAlignment": [
+     "HorizontalAlignment",
+     "inspector.internal.datatype.HorizontalAlignment",
+     "Horizontal alignment of text within text area||'left' (default) | 'right' | 'center'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Placeholder": [
+     "Placeholder",
+     "char",
+     "Placeholder text in text area||'' (default) | character vector | string scalar"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of text area||[100 100 150 60] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uitextarea'"
+    ],
+    "Value": [
+     "Value",
+     "matlab.graphics.datatype.NumericOrString",
+     "Value||{''} (default) | character vector | string scalar | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ],
+    "WordWrap": [
+     "WordWrap",
+     "matlab.lang.OnOffSwitchState",
+     "Word wrapping to fit component width||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.Slider",
+   "tab": "Slider",
+   "properties": {
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Limits": [
+     "Limits",
+     "matlab.graphics.datatype.LimitsWithInfs",
+     "Minimum and maximum slider values||[0 100] (default) | two-element numeric array"
+    ],
+    "MajorTickLabels": [
+     "MajorTickLabels",
+     "matlab.graphics.datatype.NumericOrString",
+     "Major tick labels||{'0','20','40','60','80','100'} (default) | cell array of character vectors | string array | {} | ..."
+    ],
+    "MajorTickLabelsMode": [
+     "MajorTickLabelsMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Major tick labels mode||'auto' (default) | 'manual'"
+    ],
+    "MajorTicks": [
+     "MajorTicks",
+     "matlab.graphics.datatype.Tick",
+     "Major tick mark locations||[0 20 40 60 80 100] (default) | vector of numeric values | []"
+    ],
+    "MajorTicksMode": [
+     "MajorTicksMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Major tick creation mode||'auto' (default) | 'manual'"
+    ],
+    "MinorTicks": [
+     "MinorTicks",
+     "double",
+     "Minor tick mark locations||[0 4 8 12 ... 100] (default) | vector of numeric values | []"
+    ],
+    "MinorTicksMode": [
+     "MinorTicksMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Minor tick creation mode||'auto' (default) | 'manual'"
+    ],
+    "Orientation": [
+     "Orientation",
+     "inspector.internal.datatype.LinearOrientation",
+     "Orientation||'horizontal' (default) | 'vertical'"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of slider||[100 100 150 3] (default) | [left bottom width height]"
+    ],
+    "Step": [
+     "Step",
+     "double",
+     "Slider value step size||0.1 (default) | positive number"
+    ],
+    "StepMode": [
+     "StepMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Slider step mode||'auto' (default) | 'manual'"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uislider'"
+    ],
+    "Value": [
+     "Value",
+     "double",
+     "Slider value||0 (default) | numeric value"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.RangeSlider",
+   "tab": "Slider (Range)",
+   "properties": {
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Limits": [
+     "Limits",
+     "matlab.graphics.datatype.LimitsWithInfs",
+     "Minimum and maximum slider values||[0 100] (default) | two-element numeric array"
+    ],
+    "MajorTickLabels": [
+     "MajorTickLabels",
+     "matlab.graphics.datatype.NumericOrString",
+     "Major tick labels||{'0','20','40','60','80','100'} (default) | cell array of character vectors | string array | {} | ..."
+    ],
+    "MajorTickLabelsMode": [
+     "MajorTickLabelsMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Major tick labels mode||'auto' (default) | 'manual'"
+    ],
+    "MajorTicks": [
+     "MajorTicks",
+     "matlab.graphics.datatype.Tick",
+     "Major tick mark locations||[0 20 40 60 80 100] (default) | vector of numeric values | []"
+    ],
+    "MajorTicksMode": [
+     "MajorTicksMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Major tick creation mode||'auto' (default) | 'manual'"
+    ],
+    "MinorTicks": [
+     "MinorTicks",
+     "double",
+     "Minor tick mark locations||[0 4 8 12 ... 100] (default) | vector of numeric values | []"
+    ],
+    "MinorTicksMode": [
+     "MinorTicksMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Minor tick creation mode||'auto' (default) | 'manual'"
+    ],
+    "Orientation": [
+     "Orientation",
+     "inspector.internal.datatype.LinearOrientation",
+     "Orientation||'horizontal' (default) | 'vertical'"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of slider||[100 100 150 3] (default) | [left bottom width height]"
+    ],
+    "Step": [
+     "Step",
+     "double",
+     "Slider value step size||0.1 (default) | positive number"
+    ],
+    "StepMode": [
+     "StepMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Slider step mode||'auto' (default) | 'manual'"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uirangeslider'"
+    ],
+    "Value": [
+     "Value",
+     "double",
+     "Slider value||[0 100] (default) | two-element numeric array"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.Knob",
+   "tab": "Knob",
+   "properties": {
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Limits": [
+     "Limits",
+     "matlab.graphics.datatype.LimitsWithInfs",
+     "Minimum and maximum knob values||[0 100] (default) | two-element numeric array"
+    ],
+    "MajorTickLabels": [
+     "MajorTickLabels",
+     "matlab.graphics.datatype.NumericOrString",
+     "Major tick labels||{'0','10','20',...,'100'} (default) | cell array of character vectors | string array | {} | ..."
+    ],
+    "MajorTickLabelsMode": [
+     "MajorTickLabelsMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Major tick labels mode||'auto' (default) | 'manual'"
+    ],
+    "MajorTicks": [
+     "MajorTicks",
+     "matlab.graphics.datatype.Tick",
+     "Major tick mark locations||[0 10 20 ... 100] (default) | vector of numeric values | []"
+    ],
+    "MajorTicksMode": [
+     "MajorTicksMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Major tick creation mode||'auto' (default) | 'manual'"
+    ],
+    "MinorTicks": [
+     "MinorTicks",
+     "double",
+     "Minor tick mark locations||[0 2.5 5 7.5 ... 100] (default) | numeric array"
+    ],
+    "MinorTicksMode": [
+     "MinorTicksMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Minor tick creation mode||'auto' (default) | 'manual'"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of knob||[100 100 60 60] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uiknob'"
+    ],
+    "Value": [
+     "Value",
+     "double",
+     "Value of knob||0 (default) | numeric value"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.DiscreteKnob",
+   "tab": "Knob (Discrete)",
+   "properties": {
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Items": [
+     "Items",
+     "internal.matlab.editorconverters.datatype.MoreThanTwoStates",
+     "Knob options||{'Off','Low','Medium','High'} (default) | cell array of character vectors | string array | ..."
+    ],
+    "ItemsData": [
+     "ItemsData",
+     "internal.matlab.editorconverters.datatype.ItemsValue",
+     "Data associated with each element of Items||empty array [] (default) | 1-by-n numeric array | 1-by-n cell array"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of knob||[100 100 60 60] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uidiscreteknob'"
+    ],
+    "Value": [
+     "Value",
+     "internal.matlab.editorconverters.datatype.ItemsValue",
+     "Value||element of Items | element of ItemsData"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.Lamp",
+   "tab": "Lamp",
+   "properties": {
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "Color": [
+     "Color",
+     "matlab.graphics.datatype.RGBColor",
+     "Color of lamp||[0 1 0] (default) | RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state of the lamp||'on' (default) | 'off'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of lamp||[100 100 20 20] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uilamp'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.Gauge",
+   "tab": "Gauge",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state of gauge||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Limits": [
+     "Limits",
+     "matlab.graphics.datatype.LimitsWithInfs",
+     "Minimum and maximum gauge scale values||[0 100] (default) | two-element numeric array"
+    ],
+    "MajorTickLabels": [
+     "MajorTickLabels",
+     "matlab.graphics.datatype.NumericOrString",
+     "Major tick labels||{'0','20','40','60','80','100'} (default) | cell array of character vectors | string array | {} | ..."
+    ],
+    "MajorTickLabelsMode": [
+     "MajorTickLabelsMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Major tick labels mode||'auto' (default) | 'manual'"
+    ],
+    "MajorTicks": [
+     "MajorTicks",
+     "matlab.graphics.datatype.Tick",
+     "Major tick mark locations||[0 20 40 60 80 100] (default) | vector of numeric values | []"
+    ],
+    "MajorTicksMode": [
+     "MajorTicksMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Major tick creation mode||'auto' (default) | 'manual'"
+    ],
+    "MinorTicks": [
+     "MinorTicks",
+     "double",
+     "Minor tick mark locations||[0 4 8 12 ... 100] (default) | vector of numeric values | []"
+    ],
+    "MinorTicksMode": [
+     "MinorTicksMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Minor tick creation mode||'auto' (default) | 'manual'"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of gauge||[100 100 120 120] (default) | [left bottom width height]"
+    ],
+    "ScaleColorLimits": [
+     "ScaleColorLimits",
+     "internal.matlab.editorconverters.datatype.ScaleColorLimits",
+     "Scale color limits||[ ] (default) | n-by-2 array"
+    ],
+    "ScaleColors": [
+     "ScaleColors",
+     "internal.matlab.editorconverters.datatype.ScaleColors",
+     "Scale colors||[ ] (default) | 1-by-n string array | 1-by-n cell array | n-by-3 array of RGB triplets | hexadecimal color code | ..."
+    ],
+    "ScaleDirection": [
+     "ScaleDirection",
+     "inspector.internal.datatype.ScaleDirection",
+     "Direction of gauge scale||'clockwise' (default) | 'counterclockwise'"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uigauge'"
+    ],
+    "Value": [
+     "Value",
+     "double",
+     "Location of gauge needle||0 (default) | numeric"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.LinearGauge",
+   "tab": "Gauge (Linear)",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state of gauge||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Limits": [
+     "Limits",
+     "matlab.graphics.datatype.LimitsWithInfs",
+     "Minimum and maximum gauge scale values||[0 100] (default) | two-element numeric array"
+    ],
+    "MajorTickLabels": [
+     "MajorTickLabels",
+     "matlab.graphics.datatype.NumericOrString",
+     "Major tick labels||{'0','20','40','60','80','100'} (default) | cell array of character vectors | string array | {} | ..."
+    ],
+    "MajorTickLabelsMode": [
+     "MajorTickLabelsMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Major tick labels mode||'auto' (default) | 'manual'"
+    ],
+    "MajorTicks": [
+     "MajorTicks",
+     "matlab.graphics.datatype.Tick",
+     "Major tick mark locations||[0 20 40 60 80 100] (default) | vector of numeric values | []"
+    ],
+    "MajorTicksMode": [
+     "MajorTicksMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Major tick creation mode||'auto' (default) | 'manual'"
+    ],
+    "MinorTicks": [
+     "MinorTicks",
+     "double",
+     "Minor tick mark locations||[0 4 8 12 ... 100] (default) | vector of numeric values | []"
+    ],
+    "MinorTicksMode": [
+     "MinorTicksMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Minor tick creation mode||'auto' (default) | 'manual'"
+    ],
+    "Orientation": [
+     "Orientation",
+     "inspector.internal.datatype.LinearOrientation",
+     "Orientation||'horizontal' (default) | 'vertical'"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Gauge location and size||[100 100 120 40] (default) | [left bottom width height]"
+    ],
+    "ScaleColorLimits": [
+     "ScaleColorLimits",
+     "internal.matlab.editorconverters.datatype.ScaleColorLimits",
+     "Scale color limits||[ ] (default) | n-by-2 array"
+    ],
+    "ScaleColors": [
+     "ScaleColors",
+     "internal.matlab.editorconverters.datatype.ScaleColors",
+     "Scale colors||[ ] (default) | 1-by-n string array | 1-by-n cell array | n-by-3 array of RGB triplets | hexadecimal color code | ..."
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uilineargauge'"
+    ],
+    "Value": [
+     "Value",
+     "double",
+     "Location of gauge needle||0 (default) | numeric"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.NinetyDegreeGauge",
+   "tab": "Gauge (90 Degree)",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state of gauge||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Limits": [
+     "Limits",
+     "matlab.graphics.datatype.LimitsWithInfs",
+     "Minimum and maximum gauge scale values||[0 100] (default) | two-element numeric array"
+    ],
+    "MajorTickLabels": [
+     "MajorTickLabels",
+     "matlab.graphics.datatype.NumericOrString",
+     "Major tick labels||{'0','25','50','75','100'} (default) | cell array of character vectors | string array | 1-D categorical array | {}"
+    ],
+    "MajorTickLabelsMode": [
+     "MajorTickLabelsMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Major tick labels mode||'auto' (default) | 'manual'"
+    ],
+    "MajorTicks": [
+     "MajorTicks",
+     "matlab.graphics.datatype.Tick",
+     "Major tick mark locations||[0 25 50 75 100] (default) | vector of numeric values | []"
+    ],
+    "MajorTicksMode": [
+     "MajorTicksMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Major tick creation mode||'auto' (default) | 'manual'"
+    ],
+    "MinorTicks": [
+     "MinorTicks",
+     "double",
+     "Minor tick locations||[0 5 10 15 … 100] (default) | vector of numeric values | []"
+    ],
+    "MinorTicksMode": [
+     "MinorTicksMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Minor tick creation mode||'auto' (default) | 'manual'"
+    ],
+    "Orientation": [
+     "Orientation",
+     "inspector.internal.datatype.NinetyDegreeOrientation",
+     "Orientation||'northwest' (default) | 'northeast' | 'southwest' | 'southeast'"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of gauge||[100 100 90 90] (default) | [left bottom width height]"
+    ],
+    "ScaleColorLimits": [
+     "ScaleColorLimits",
+     "internal.matlab.editorconverters.datatype.ScaleColorLimits",
+     "Scale color limits||[ ] (default) | n-by-2 array"
+    ],
+    "ScaleColors": [
+     "ScaleColors",
+     "internal.matlab.editorconverters.datatype.ScaleColors",
+     "Scale colors||[ ] (default) | 1-by-n string array | 1-by-n cell array | n-by-3 array of RGB triplets | hexadecimal color code | ..."
+    ],
+    "ScaleDirection": [
+     "ScaleDirection",
+     "inspector.internal.datatype.ScaleDirection",
+     "Direction of gauge scale||'clockwise' (default) | 'counterclockwise'"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uininetydegreegauge'"
+    ],
+    "Value": [
+     "Value",
+     "double",
+     "Location of gauge needle||0 (default) | numeric"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.SemicircularGauge",
+   "tab": "Gauge (Semicircular)",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state of gauge||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Limits": [
+     "Limits",
+     "matlab.graphics.datatype.LimitsWithInfs",
+     "Minimum and maximum gauge scale values||[0 100] (default) | two-element numeric array"
+    ],
+    "MajorTickLabels": [
+     "MajorTickLabels",
+     "matlab.graphics.datatype.NumericOrString",
+     "Major tick labels||{'0','20','40','60','80','100'} (default) | cell array of character vectors | string array | {} | ..."
+    ],
+    "MajorTickLabelsMode": [
+     "MajorTickLabelsMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Major tick labels mode||'auto' (default) | 'manual'"
+    ],
+    "MajorTicks": [
+     "MajorTicks",
+     "matlab.graphics.datatype.Tick",
+     "Major tick mark locations||[0 20 40 60 80 100] (default) | vector of numeric values | []"
+    ],
+    "MajorTicksMode": [
+     "MajorTicksMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Major tick creation mode||'auto' (default) | 'manual'"
+    ],
+    "MinorTicks": [
+     "MinorTicks",
+     "double",
+     "Minor tick mark locations||[0 4 8 12 ... 100] (default) | vector of numeric values | []"
+    ],
+    "MinorTicksMode": [
+     "MinorTicksMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Minor tick creation mode||'auto' (default) | 'manual'"
+    ],
+    "Orientation": [
+     "Orientation",
+     "inspector.internal.datatype.SemicircularOrientation",
+     "Orientation||'north' (default) | 'south' | 'east' | 'west'"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of gauge||[100 100 120 65] (default) | [left bottom width height]"
+    ],
+    "ScaleColorLimits": [
+     "ScaleColorLimits",
+     "internal.matlab.editorconverters.datatype.ScaleColorLimits",
+     "Scale color limits||[ ] (default) | n-by-2 array"
+    ],
+    "ScaleColors": [
+     "ScaleColors",
+     "internal.matlab.editorconverters.datatype.ScaleColors",
+     "Scale colors||[ ] (default) | 1-by-n string array | 1-by-n cell array | n-by-3 array of RGB triplets | hexadecimal color code | ..."
+    ],
+    "ScaleDirection": [
+     "ScaleDirection",
+     "inspector.internal.datatype.ScaleDirection",
+     "Direction of gauge scale||'clockwise' (default) | 'counterclockwise'"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uisemicirculargauge'"
+    ],
+    "Value": [
+     "Value",
+     "double",
+     "Location of gauge needle||0 (default) | numeric"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.Switch",
+   "tab": "Switch",
+   "properties": {
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Items": [
+     "Items",
+     "internal.matlab.editorconverters.datatype.ExactlyTwoItems",
+     "Switch options||{'Off','On'} (default) | cell array of character vectors | string array | 1-by-2 categorical array"
+    ],
+    "ItemsData": [
+     "ItemsData",
+     "internal.matlab.editorconverters.datatype.ItemsValue",
+     "Data associated with each element of Items||empty array ([]) (default) | 1-by-2 numeric array | 1-by-2 cell array"
+    ],
+    "Orientation": [
+     "Orientation",
+     "inspector.internal.datatype.LinearOrientation",
+     "Orientation||'horizontal' (default) | 'vertical'"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of switch||[100 100 45 20] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uiswitch'"
+    ],
+    "Value": [
+     "Value",
+     "internal.matlab.editorconverters.datatype.ItemsValue",
+     "Value||element of Items | element of ItemsData"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.ToggleSwitch",
+   "tab": "Switch (Toggle)",
+   "properties": {
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Items": [
+     "Items",
+     "internal.matlab.editorconverters.datatype.ExactlyTwoItems",
+     "Switch options||{'Off','On'} (default) | cell array of character vectors | string array | 1-by-2 categorical array"
+    ],
+    "ItemsData": [
+     "ItemsData",
+     "internal.matlab.editorconverters.datatype.ItemsValue",
+     "Data associated with each element of Items||empty array ([]) (default) | 1-by-2 numeric array | 1-by-2 cell array"
+    ],
+    "Orientation": [
+     "Orientation",
+     "inspector.internal.datatype.LinearOrientation",
+     "Orientation||'vertical' (default) | 'horizontal'"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of switch||[100 100 20 45] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uitoggleswitch'"
+    ],
+    "Value": [
+     "Value",
+     "internal.matlab.editorconverters.datatype.ItemsValue",
+     "Value||element of Items | element of ItemsData"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.RockerSwitch",
+   "tab": "Switch (Rocker)",
+   "properties": {
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Items": [
+     "Items",
+     "internal.matlab.editorconverters.datatype.ExactlyTwoItems",
+     "Switch options||{'Off','On'} (default) | cell array of character vectors | string array | 1-by-2 categorical array"
+    ],
+    "ItemsData": [
+     "ItemsData",
+     "internal.matlab.editorconverters.datatype.ItemsValue",
+     "Data associated with each element of Items||empty array ([]) (default) | 1-by-2 numeric array | 1-by-2 cell array"
+    ],
+    "Orientation": [
+     "Orientation",
+     "inspector.internal.datatype.LinearOrientation",
+     "Orientation||'vertical' (default) | 'horizontal'"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of switch||[100 100 20 45] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uirockerswitch'"
+    ],
+    "Value": [
+     "Value",
+     "internal.matlab.editorconverters.datatype.ItemsValue",
+     "Value||element of Items | element of ItemsData"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.CheckBox",
+   "tab": "Check Box",
+   "properties": {
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of check box||[100 100 84 22] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Text": [
+     "Text",
+     "matlab.graphics.datatype.NumericOrString",
+     "Check box label||'Check Box' (default) | character vector | cell array of character vectors | string scalar | string array | ..."
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uicheckbox'"
+    ],
+    "Value": [
+     "Value",
+     "logical",
+     "State of check box||0 (default) | 1"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ],
+    "WordWrap": [
+     "WordWrap",
+     "matlab.lang.OnOffSwitchState",
+     "Word wrapping to fit component width||'off' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.DropDown",
+   "tab": "Drop Down",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Editable": [
+     "Editable",
+     "matlab.lang.OnOffSwitchState",
+     "Editable state of drop-down component||'off' (default) | on/off logical value"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Items": [
+     "Items",
+     "internal.matlab.editorconverters.datatype.MoreThanZeroOptions",
+     "Drop-down items||{'Option 1','Option 2','Option 3','Option 4'} (default) | cell array of character vectors | string array | ..."
+    ],
+    "ItemsData": [
+     "ItemsData",
+     "internal.matlab.editorconverters.datatype.ItemsValue",
+     "Data associated with each element of the Items property value||empty array ([]) (default) | 1-by-n numeric array | 1-by-n cell array"
+    ],
+    "Placeholder": [
+     "Placeholder",
+     "char",
+     "Placeholder text||'' (default) | character vector | string scalar"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of drop-down component||[100 100 100 22] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uidropdown'"
+    ],
+    "Value": [
+     "Value",
+     "internal.matlab.editorconverters.datatype.ItemsValue",
+     "Value||element of Items | element of ItemsData"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.ListBox",
+   "tab": "List Box",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Items": [
+     "Items",
+     "internal.matlab.editorconverters.datatype.MoreThanZeroItems",
+     "List box items||{'Item 1','Item 2', 'Item 3', 'Item 4'} (default) | 1-by-n cell array of character vectors | string array | ..."
+    ],
+    "ItemsData": [
+     "ItemsData",
+     "internal.matlab.editorconverters.datatype.ItemsValue",
+     "Data associated with each element of the Items property value||empty array ([]) (default) | 1-by-n numeric array | 1-by-n cell array"
+    ],
+    "Multiselect": [
+     "Multiselect",
+     "matlab.lang.OnOffSwitchState",
+     "Multiple item selection||'off' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of list box||[100 100 100 74] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uilistbox'"
+    ],
+    "Value": [
+     "Value",
+     "internal.matlab.editorconverters.datatype.MultipleItemsValue",
+     "Value||element of Items | element of ItemsData | {}"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.Spinner",
+   "tab": "Spinner",
+   "properties": {
+    "AllowEmpty": [
+     "AllowEmpty",
+     "matlab.lang.OnOffSwitchState",
+     "Ability to clear spinner||'off' (default) | on/off logical value"
+    ],
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Editable": [
+     "Editable",
+     "matlab.lang.OnOffSwitchState",
+     "Editability of spinner||'on' (default) | on/off logical value"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state of spinner||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "HorizontalAlignment": [
+     "HorizontalAlignment",
+     "inspector.internal.datatype.HorizontalAlignment",
+     "Horizontal alignment of numbers within spinner||'right' (default) | 'left' | 'center'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Limits": [
+     "Limits",
+     "matlab.graphics.datatype.LimitsWithInfs",
+     "Minimum and maximum spinner values||[-Inf Inf] (default) | two-element numeric array"
+    ],
+    "LowerLimitInclusive": [
+     "LowerLimitInclusive",
+     "matlab.lang.OnOffSwitchState",
+     "Lower limit inclusiveness||'on' (default) | on/off logical value"
+    ],
+    "Placeholder": [
+     "Placeholder",
+     "char",
+     "Placeholder text||'' (default) | string scalar | character vector"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of spinner||[100 100 100 22] (default) | [left bottom width height]"
+    ],
+    "RoundFractionalValues": [
+     "RoundFractionalValues",
+     "matlab.lang.OnOffSwitchState",
+     "Rounding of fractional values||'off' (default) | on/off logical value"
+    ],
+    "Step": [
+     "Step",
+     "double",
+     "Quantity by which value is incremented or decremented||1 (default) | numeric scalar"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uispinner'"
+    ],
+    "UpperLimitInclusive": [
+     "UpperLimitInclusive",
+     "matlab.lang.OnOffSwitchState",
+     "Upper limit inclusiveness||'on' (default) | on/off logical value"
+    ],
+    "Value": [
+     "Value",
+     "double",
+     "Spinner value||0 (default) | numeric value"
+    ],
+    "ValueDisplayFormat": [
+     "ValueDisplayFormat",
+     "internal.matlab.editorconverters.datatype.DisplayFormat",
+     "Value display format||'%11.4g' (default) | character vector | string scalar"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.Table",
+   "tab": "Table",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBMatrixColor",
+     "Table background color||[1 1 1; 0.94 0.94 0.94] (default) | RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | matrix of color values | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ColumnEditable": [
+     "ColumnEditable",
+     "matlab.ui.datatype.TableColumnEditable",
+     "Ability to edit column cells||[] (default) | logical 1-by-n array | logical scalar"
+    ],
+    "ColumnName": [
+     "ColumnName",
+     "internal.matlab.editorconverters.datatype.UITableColumnName",
+     "Column names||'numbered' | n-by-1 cell array of character vectors | n-by-1 string array | empty cell array ({}) | ..."
+    ],
+    "ColumnRearrangeable": [
+     "ColumnRearrangeable",
+     "matlab.lang.OnOffSwitchState",
+     "Ability to rearrange table columns||'off' (default) | on/off logical value"
+    ],
+    "ColumnSortable": [
+     "ColumnSortable",
+     "matlab.ui.datatype.TableColumnEditable",
+     "Ability to sort columns||[] (default) | logical 1-by-n array | logical scalar"
+    ],
+    "ColumnWidth": [
+     "ColumnWidth",
+     "matlab.ui.datatype.TableColumnWidth",
+     "Width of table columns||'auto' (default) | 'fit' | '1x' | 1-by-n cell array"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state of table||'on' (default) | 'inactive' | 'off'"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "ForegroundColor": [
+     "ForegroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Cell text color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Multiselect": [
+     "Multiselect",
+     "matlab.lang.OnOffSwitchState",
+     "Multiple element selection||'on' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of table||[left bottom width height]"
+    ],
+    "RowName": [
+     "RowName",
+     "matlab.graphics.datatype.NumericOrString",
+     "Row names||'numbered' | n-by-1 cell array of character vectors | n-by-1 string array | empty cell array ({}) | ..."
+    ],
+    "RowStriping": [
+     "RowStriping",
+     "matlab.lang.OnOffSwitchState",
+     "Alternate row shading||'on' (default) | on/off logical value"
+    ],
+    "SelectionType": [
+     "SelectionType",
+     "inspector.internal.datatype.TableSelectionType",
+     "Table selection type||'cell' (default) | 'row' | 'column'"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uitable'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.Image",
+   "tab": "Image",
+   "properties": {
+    "AltText": [
+     "AltText",
+     "char",
+     "Image alt text||'' (default) | string scalar | character vector"
+    ],
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBAColor",
+     "Background Color||'none' (default) | RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "HorizontalAlignment": [
+     "HorizontalAlignment",
+     "inspector.internal.datatype.ImageHorizontalAlignment",
+     "Horizontal alignment of rendered image||'center' (default) | 'left' | 'right'"
+    ],
+    "ImageSource": [
+     "ImageSource",
+     "internal.matlab.editorconverters.datatype.FullPath",
+     "Image source or file||'' (default) | string scalar | character vector | m-by-n-by-3 truecolor image array"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of image component||[100 100 100 100] (default) | [left bottom width height]"
+    ],
+    "ScaleMethod": [
+     "ScaleMethod",
+     "inspector.internal.datatype.ScaleMethod",
+     "Image scaling method||'fit' (default) | 'fill' | 'none' | 'scaledown' | 'scaleup' | 'stretch'"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uiimage'"
+    ],
+    "URL": [
+     "URL",
+     "internal.matlab.editorconverters.datatype.Hyperlink",
+     "Image hyperlink URL||'' (default) | character vector | string scalar"
+    ],
+    "VerticalAlignment": [
+     "VerticalAlignment",
+     "inspector.internal.datatype.ImageVerticalAlignment",
+     "Vertical alignment of rendered image||'center' (default) | 'top' | 'bottom'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.Hyperlink",
+   "tab": "Hyperlink",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBAColor",
+     "Background color||'none' (default) | RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Visual appearance of hyperlink||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "HorizontalAlignment": [
+     "HorizontalAlignment",
+     "inspector.internal.datatype.HorizontalAlignment",
+     "Horizontal alignment of text||'left' (default) | 'right' | 'center'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Hyperlink location and size||[100 100 70 22] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Text": [
+     "Text",
+     "matlab.graphics.datatype.NumericOrString",
+     "Hyperlink display text||'Hyperlink' (default) | character vector | cell array of character vectors | string scalar | string array | 1-D categorical array"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uihyperlink'"
+    ],
+    "URL": [
+     "URL",
+     "internal.matlab.editorconverters.datatype.Hyperlink",
+     "Hyperlink URL||'' (default) | character vector | string scalar"
+    ],
+    "VerticalAlignment": [
+     "VerticalAlignment",
+     "inspector.internal.datatype.VerticalAlignment",
+     "Vertical alignment of text||'center' (default) | 'top' | 'bottom'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ],
+    "VisitedColor": [
+     "VisitedColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color after click||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "WordWrap": [
+     "WordWrap",
+     "matlab.lang.OnOffSwitchState",
+     "Word wrapping to fit component width||'off' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.HTML",
+   "tab": "HTML",
+   "properties": {
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Data": [
+     "Data",
+     "double",
+     "MATLAB data||any MATLAB data type"
+    ],
+    "HTMLSource": [
+     "HTMLSource",
+     "internal.matlab.editorconverters.datatype.NonDelimitedMultlineText",
+     "HTML markup or file||'' (default) | string scalar | character vector"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of HTML UI component||[100 100 100 100] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uihtml'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.DatePicker",
+   "tab": "Date Picker",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "DisabledDates": [
+     "DisabledDates",
+     "internal.matlab.editorconverters.datatype.DateDisabledDates",
+     "Disabled dates||empty datetime array (default) | m-by-1 datetime array"
+    ],
+    "DisabledDaysOfWeek": [
+     "DisabledDaysOfWeek",
+     "internal.matlab.editorconverters.datatype.DateDisabledDaysOfWeek",
+     "Disabled days of week||[] (default) | vector of integers in the range [1, 7] | cell array of character vectors | string vector"
+    ],
+    "DisplayFormat": [
+     "DisplayFormat",
+     "internal.matlab.editorconverters.datatype.DateDisplayFormat",
+     "Display format||character vector | string scalar"
+    ],
+    "Editable": [
+     "Editable",
+     "matlab.lang.OnOffSwitchState",
+     "Allow edit field changes||'on' (default) | on/off logical value"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Limits": [
+     "Limits",
+     "internal.matlab.editorconverters.datatype.DateLimits",
+     "Selection limits||1-by-2 datetime array"
+    ],
+    "Placeholder": [
+     "Placeholder",
+     "char",
+     "Placeholder text||'' (default) | character vector | string scalar"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size||[100 100 150 22] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uidatepicker'"
+    ],
+    "Value": [
+     "Value",
+     "internal.matlab.editorconverters.datatype.Date",
+     "Selected date||NaT (default) | datetime object"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.ColorPicker",
+   "tab": "Color Picker",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     ""
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     ""
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     ""
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     ""
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Icon": [
+     "Icon",
+     "internal.matlab.editorconverters.datatype.FullPath",
+     "Predefined or custom icon||'' (default) | string scalar | character vector | m-by-n-by-3 truecolor image array"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size||[100 100 38 22] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uicolorpicker'"
+    ],
+    "Value": [
+     "Value",
+     "matlab.graphics.datatype.RGBColor",
+     "Selected color||[1 0 0] (default) | RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.UIAxes",
+   "tab": "Axes",
+   "properties": {
+    "AD_AliasedVisible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ],
+    "AD_ColormapString": [
+     "Colormap",
+     "matlab.graphics.datatype.ColorMap",
+     "Color map||parula (default) | m-by-3 array of RGB triplets"
+    ],
+    "ALim": [
+     "ALim",
+     "matlab.graphics.datatype.LimitsWithInfs",
+     "Alpha limits||[0 1] (default) | two-element vector of the form [amin amax]"
+    ],
+    "ALimMode": [
+     "ALimMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for ALim||'auto' (default) | 'manual'"
+    ],
+    "AlphaScale": [
+     "AlphaScale",
+     "matlab.graphics.datatype.AxisScale",
+     "Scale for transparency mapping||'linear' (default) | 'log'"
+    ],
+    "Alphamap": [
+     "Alphamap",
+     "matlab.graphics.datatype.AlphaMap",
+     "Transparency map||array of 64 values from 0 to 1 (default) | array of finite alpha values from 0 to 1"
+    ],
+    "AmbientLightColor": [
+     "AmbientLightColor",
+     "matlab.graphics.datatype.RGBAColor",
+     "Background light color||[1 1 1] (default) | RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BeingDeleted": [
+     "BeingDeleted",
+     "matlab.graphics.datatype.on_off",
+     "Deletion status||on/off logical value"
+    ],
+    "Box": [
+     "Box",
+     "matlab.lang.OnOffSwitchState",
+     "Box outline||'off' (default) | on/off logical value"
+    ],
+    "BoxStyle": [
+     "BoxStyle",
+     "matlab.graphics.datatype.AxesBox",
+     "Box outline style||'back' (default) | 'full'"
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ButtonDownFcn": [
+     "ButtonDownFcn",
+     "matlab.graphics.datatype.Callback",
+     "Mouse-click callback||'' (default) | function handle | cell array | character vector"
+    ],
+    "CLim": [
+     "CLim",
+     "matlab.graphics.datatype.LimitsWithInfs",
+     "Color limits||[0 1] (default) | two-element vector of the form [cmin cmax]"
+    ],
+    "CLimMode": [
+     "CLimMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for CLim||'auto' (default) | 'manual'"
+    ],
+    "CameraPosition": [
+     "CameraPosition",
+     "matlab.graphics.datatype.Point3",
+     "Camera location||three-element vector of the form [x y z]"
+    ],
+    "CameraPositionMode": [
+     "CameraPositionMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for CameraPosition||'auto' (default) | 'manual'"
+    ],
+    "CameraTarget": [
+     "CameraTarget",
+     "matlab.graphics.datatype.Point3",
+     "Camera target point||three-element vector of the form [x y z]"
+    ],
+    "CameraTargetMode": [
+     "CameraTargetMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for CameraTarget||'auto' (default) | 'manual'"
+    ],
+    "CameraUpVector": [
+     "CameraUpVector",
+     "matlab.graphics.datatype.Point3",
+     "Vector defining upwards direction||three-element direction vector of the form [x y z]"
+    ],
+    "CameraUpVectorMode": [
+     "CameraUpVectorMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for CameraUpVector||'auto' (default) | 'manual'"
+    ],
+    "CameraViewAngle": [
+     "CameraViewAngle",
+     "double scalar",
+     "Field of view||6.6086 (default) | scalar angle in range [0,180)"
+    ],
+    "CameraViewAngleMode": [
+     "CameraViewAngleMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for CameraViewAngle||'auto' (default) | 'manual'"
+    ],
+    "Children": [
+     "Children",
+     "matlab.graphics.GraphicsPlaceholder",
+     "Children||empty GraphicsPlaceholder array | array of graphics objects"
+    ],
+    "Clipping": [
+     "Clipping",
+     "matlab.lang.OnOffSwitchState",
+     "Clipping of objects to axes limits||'on' (default) | on/off logical value"
+    ],
+    "ClippingStyle": [
+     "ClippingStyle",
+     "matlab.graphics.datatype.ClippingStyle",
+     "Clipping boundaries||'3dbox' (default) | 'rectangle'"
+    ],
+    "Color": [
+     "Color",
+     "matlab.graphics.datatype.RGBAColor",
+     "Color of plot area||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "ColorOrder": [
+     "ColorOrder",
+     "matlab.graphics.datatype.ColorOrder",
+     "Color order||three-column matrix of RGB triplets"
+    ],
+    "ColorOrderIndex": [
+     "ColorOrderIndex",
+     "matlab.graphics.datatype.PositiveInteger",
+     "Color order index||1 (default) | positive integer"
+    ],
+    "ColorScale": [
+     "ColorScale",
+     "matlab.graphics.datatype.AxisScale",
+     "Scale for color mapping||'linear' (default) | 'log'"
+    ],
+    "Colormap": [
+     "Colormap",
+     "matlab.graphics.datatype.ColorMap",
+     "Color map||parula (default) | m-by-3 array of RGB triplets"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "matlab.graphics.datatype.HandleOrEmpty",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "CreateFcn": [
+     "CreateFcn",
+     "matlab.graphics.datatype.Callback",
+     "Creation function||'' (default) | function handle | cell array | character vector"
+    ],
+    "CurrentPoint": [
+     "CurrentPoint",
+     "double",
+     "Location of mouse pointer||2-by-3 array"
+    ],
+    "DataAspectRatio": [
+     "DataAspectRatio",
+     "matlab.graphics.datatype.PositivePoint3",
+     "Relative length of data units||[1 1 1] (default) | three-element vector of the form [dx dy dz]"
+    ],
+    "DataAspectRatioMode": [
+     "DataAspectRatioMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Data aspect ratio mode||'auto' (default) | 'manual'"
+    ],
+    "DeleteFcn": [
+     "DeleteFcn",
+     "matlab.graphics.datatype.Callback",
+     "Deletion function||'' (default) | function handle | cell array | character vector"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Character slant||'normal' (default) | 'italic'"
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||scalar numeric value"
+    ],
+    "FontSizeMode": [
+     "FontSizeMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for font size||'auto' (default) | 'manual'"
+    ],
+    "FontUnits": [
+     "FontUnits",
+     "matlab.graphics.datatype.FontUnits",
+     "Font size units||'pixels' (default) | 'inches' | 'centimeters' | 'normalized' | 'points'"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Character thickness||'normal' (default) | 'bold'"
+    ],
+    "GridAlpha": [
+     "GridAlpha",
+     "matlab.graphics.datatype.ZeroToOne",
+     "Grid-line transparency||value in the range [0,1]"
+    ],
+    "GridAlphaMode": [
+     "GridAlphaMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for GridAlpha||'auto' (default) | 'manual'"
+    ],
+    "GridColor": [
+     "GridColor",
+     "matlab.graphics.datatype.RGBAColor",
+     "Color of grid lines||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "GridColorMode": [
+     "GridColorMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Property for setting grid color||'auto' (default) | 'manual'"
+    ],
+    "GridLineStyle": [
+     "GridLineStyle",
+     "matlab.graphics.datatype.LineStyle",
+     "Line style for grid lines||'-' (default) | '--' | ':' | '-.' | 'none'"
+    ],
+    "GridLineWidth": [
+     "GridLineWidth",
+     "matlab.graphics.datatype.Positive",
+     "Grid line width||0.5 (default) | positive number"
+    ],
+    "GridLineWidthMode": [
+     "GridLineWidthMode",
+     "matlab.graphics.datatype.AutoManual",
+     "How grid line width is set||'auto' (default) | 'manual'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'off' | 'callback'"
+    ],
+    "HitTest": [
+     "HitTest",
+     "matlab.graphics.datatype.on_off",
+     "Response to captured mouse clicks||'on' (default) | on/off logical value"
+    ],
+    "InnerPosition": [
+     "InnerPosition",
+     "matlab.graphics.datatype.Position",
+     "Size and location of inner axes, excluding labels and margins||[31.75 29.73 369.24 272.27] (default) | four-element vector"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "LabelFontSizeMultiplier": [
+     "LabelFontSizeMultiplier",
+     "matlab.graphics.datatype.Positive",
+     "Scale factor for label font size||1.1 (default) | numeric value greater than 0"
+    ],
+    "Layer": [
+     "Layer",
+     "matlab.graphics.datatype.AxisTopBottom",
+     "Placement of grid lines and tick marks||'bottom' (default) | 'top'"
+    ],
+    "Legend": [
+     "Legend",
+     "matlab.graphics.datatype.HandleOrEmpty",
+     "Legend associated with axes||empty GraphicsPlaceholder (default) | Legend object"
+    ],
+    "LineStyleCyclingMethod": [
+     "LineStyleCyclingMethod",
+     "matlab.graphics.datatype.LineStyleCyclingMethod",
+     "How to cycle through line styles||'aftercolor' (default) | 'beforecolor' | 'withcolor'"
+    ],
+    "LineStyleOrder": [
+     "LineStyleOrder",
+     "matlab.graphics.datatype.NLineStyles",
+     "Line style order||'-' solid line (default) | character vector | cell array of character vectors | string array"
+    ],
+    "LineStyleOrderIndex": [
+     "LineStyleOrderIndex",
+     "matlab.graphics.datatype.PositiveInteger",
+     "Line style order index||1 (default) | positive integer"
+    ],
+    "LineWidth": [
+     "LineWidth",
+     "matlab.graphics.datatype.Positive",
+     "Line width||0.5 (default) | positive numeric value"
+    ],
+    "MinorGridAlpha": [
+     "MinorGridAlpha",
+     "matlab.graphics.datatype.ZeroToOne",
+     "Minor grid line transparency||value in the range [0,1]"
+    ],
+    "MinorGridAlphaMode": [
+     "MinorGridAlphaMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for MinorGridAlpha||'auto' (default) | 'manual'"
+    ],
+    "MinorGridColor": [
+     "MinorGridColor",
+     "matlab.graphics.datatype.RGBAColor",
+     "Color of minor grid lines||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "MinorGridColorMode": [
+     "MinorGridColorMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Property for setting minor grid color||'auto' (default) | 'manual'"
+    ],
+    "MinorGridLineStyle": [
+     "MinorGridLineStyle",
+     "matlab.graphics.datatype.LineStyle",
+     "Line style for minor grid lines||':' (default) | '-' | '--' | '-.' | 'none'"
+    ],
+    "MinorGridLineWidth": [
+     "MinorGridLineWidth",
+     "matlab.graphics.datatype.Positive",
+     "Minor grid line width||0.5 (default) | positive number"
+    ],
+    "MinorGridLineWidthMode": [
+     "MinorGridLineWidthMode",
+     "matlab.graphics.datatype.AutoManual",
+     "How minor grid line width is set||'auto' (default) | 'manual'"
+    ],
+    "NextPlot": [
+     "NextPlot",
+     "matlab.graphics.datatype.AxesNextPlot",
+     "Properties to reset||'replacechildren' (default) | 'add' | 'replaceall' | 'replace'"
+    ],
+    "NextSeriesIndex": [
+     "NextSeriesIndex",
+     "matlab.graphics.datatype.PositiveIntegerWithZero",
+     "SeriesIndex value for next object||whole number"
+    ],
+    "OuterPosition": [
+     "OuterPosition",
+     "matlab.graphics.datatype.Position",
+     "Size and location of axes, including labels and margins||[10 10 400 300] (default) | four-element vector"
+    ],
+    "Parent": [
+     "Parent",
+     "matlab.graphics.Graphics",
+     "Parent container||Figure object | Panel object | Tab object | GridLayout object | TiledChartLayout object"
+    ],
+    "PickableParts": [
+     "PickableParts",
+     "matlab.graphics.datatype.PickableParts",
+     "Ability to capture mouse clicks||'visible' (default) | 'all' | 'none'"
+    ],
+    "PlotBoxAspectRatio": [
+     "PlotBoxAspectRatio",
+     "matlab.graphics.datatype.PositivePoint3",
+     "Relative length of each axis||three-element vector of the form [px py pz]"
+    ],
+    "PlotBoxAspectRatioMode": [
+     "PlotBoxAspectRatioMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for PlotBoxAspectRatio||'auto' (default) | 'manual'"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Size and location of axes, including labels and margins||[10 10 400 300] (default) | four-element vector"
+    ],
+    "PositionConstraint": [
+     "PositionConstraint",
+     "matlab.graphics.datatype.PositionConstraint",
+     "Position to hold constant||'outerposition' | 'innerposition'"
+    ],
+    "Projection": [
+     "Projection",
+     "matlab.graphics.datatype.Projection",
+     "Type of projection onto 2-D screen||'orthographic' (default) | 'perspective'"
+    ],
+    "Selected": [
+     "Selected",
+     "matlab.graphics.datatype.on_off",
+     "Selection state||'off' (default) | on/off logical value"
+    ],
+    "SelectionHighlight": [
+     "SelectionHighlight",
+     "matlab.graphics.datatype.on_off",
+     "Display of selection handles||'on' (default) | on/off logical value"
+    ],
+    "SortMethod": [
+     "SortMethod",
+     "matlab.graphics.datatype.SortMethod",
+     "Order for rendering objects||'depth' | 'childorder'"
+    ],
+    "Subtitle": [
+     "Subtitle",
+     "matlab.graphics.primitive.Text",
+     "Text object for subtitle||text object"
+    ],
+    "SubtitleFontWeight": [
+     "SubtitleFontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Subtitle character thickness||'normal' (default) | 'bold'"
+    ],
+    "SubtitleString": [
+     "Subtitle.String",
+     "matlab.graphics.datatype.NumericOrString",
+     "Text object for subtitle||text object"
+    ],
+    "Tag": [
+     "Tag",
+     "unicodeString",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "TickDir": [
+     "TickDir",
+     "matlab.graphics.datatype.TickDir",
+     "Tick mark direction||'in' (default) | 'out' | 'both' | 'none'"
+    ],
+    "TickDirMode": [
+     "TickDirMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for TickDir||'auto' (default) | 'manual'"
+    ],
+    "TickLabelInterpreter": [
+     "TickLabelInterpreter",
+     "matlab.graphics.datatype.TextInterpreter",
+     "Tick label interpreter||'tex' (default) | 'latex' | 'none'"
+    ],
+    "TickLength": [
+     "TickLength",
+     "matlab.graphics.datatype.TickLength",
+     "Tick mark length||[0.01 0.025] (default) | two-element vector"
+    ],
+    "TightInset": [
+     "TightInset",
+     "matlab.graphics.datatype.Inset",
+     "Margin for text labels||four-element vector of the form [left bottom right top]"
+    ],
+    "Title": [
+     "Title",
+     "matlab.graphics.primitive.Text",
+     "Text object for axes title||text object"
+    ],
+    "TitleFontSizeMultiplier": [
+     "TitleFontSizeMultiplier",
+     "matlab.graphics.datatype.Positive",
+     "Scale factor for title font size||1.1 (default) | numeric value greater than 0"
+    ],
+    "TitleFontWeight": [
+     "TitleFontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Title character thickness||'bold' (default) | 'normal'"
+    ],
+    "TitleHorizontalAlignment": [
+     "TitleHorizontalAlignment",
+     "matlab.graphics.datatype.HorizontalAlignment",
+     "Title and subtitle horizontal alignment||'center' (default) | 'left' | 'right'"
+    ],
+    "TitleString": [
+     "Title.String",
+     "matlab.graphics.datatype.NumericOrString",
+     "Text object for axes title||text object"
+    ],
+    "Toolbar": [
+     "Toolbar",
+     "double",
+     "Toolbar with individual interaction buttons||AxesToolbar object (default) | []"
+    ],
+    "ToolbarVisible": [
+     "Toolbar.Visible",
+     "matlab.lang.OnOffSwitchState",
+     "Toolbar with individual interaction buttons||AxesToolbar object (default) | []"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'axes'"
+    ],
+    "Units": [
+     "Units",
+     "matlab.graphics.datatype.Units",
+     "Position units||'pixels' (default) | 'normalized' | 'inches' | 'centimeters' | 'points' | 'characters'"
+    ],
+    "UserData": [
+     "UserData",
+     "double",
+     "User data||[] (default) | array"
+    ],
+    "View": [
+     "View",
+     "matlab.graphics.datatype.AxesView",
+     "Azimuth and elevation of view||[0 90] (default) | two-element vector of the form [azimuth elevation]"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ],
+    "XAxis": [
+     "XAxis",
+     "matlab.graphics.Graphics",
+     "Axis ruler||ruler object"
+    ],
+    "XAxisLocation": [
+     "XAxisLocation",
+     "matlab.graphics.datatype.AxisXLocation",
+     "x-axis location||'bottom' (default) | 'top' | 'origin'"
+    ],
+    "XColor": [
+     "XColor",
+     "matlab.graphics.datatype.RGBAColor",
+     "Color of axis line, tick values, and labels||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "XColorMode": [
+     "XColorMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Property for setting x-axis grid color||'auto' (default) | 'manual'"
+    ],
+    "XDir": [
+     "XDir",
+     "matlab.graphics.datatype.AxisDirection",
+     "x-axis direction||'normal' (default) | 'reverse'"
+    ],
+    "XGrid": [
+     "XGrid",
+     "matlab.lang.OnOffSwitchState",
+     "Grid lines||'off' (default) | on/off logical value"
+    ],
+    "XLabel": [
+     "XLabel",
+     "matlab.graphics.Graphics",
+     "Text object for axis label||text object"
+    ],
+    "XLabelString": [
+     "XLabel.String",
+     "matlab.graphics.datatype.NumericOrString",
+     "Text object for axis label||text object"
+    ],
+    "XLim": [
+     "XLim",
+     "matlab.graphics.datatype.LimitsAny",
+     "Minimum and maximum axis limits||[0 1] (default) | two-element vector of the form [min max]"
+    ],
+    "XLimMode": [
+     "XLimMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for axis limits||'auto' (default) | 'manual'"
+    ],
+    "XLimitMethod": [
+     "XLimitMethod",
+     "matlab.graphics.datatype.LimitSpec",
+     "Axis limit selection method||'tickaligned' (default) | 'tight' | 'padded'"
+    ],
+    "XMinorGrid": [
+     "XMinorGrid",
+     "matlab.lang.OnOffSwitchState",
+     "Minor grid lines||'off' (default) | on/off logical value"
+    ],
+    "XMinorTick": [
+     "XMinorTick",
+     "matlab.lang.OnOffSwitchState",
+     "Minor tick marks||'off' | on/off logical value"
+    ],
+    "XScale": [
+     "XScale",
+     "matlab.graphics.datatype.AxisScale",
+     "Scale of values along axis||'linear' (default) | 'log'"
+    ],
+    "XTick": [
+     "XTick",
+     "matlab.graphics.datatype.TickAny",
+     "Tick values||[] (default) | vector of increasing values"
+    ],
+    "XTickLabel": [
+     "XTickLabel",
+     "internal.matlab.editorconverters.datatype.TicksLabelType",
+     "Tick labels||'' (default) | cell array of character vectors | string array | categorical array"
+    ],
+    "XTickLabelMode": [
+     "XTickLabelMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for tick labels||'auto' (default) | 'manual'"
+    ],
+    "XTickLabelRotation": [
+     "XTickLabelRotation",
+     "matlab.graphics.datatype.Finite",
+     "Tick label rotation||0 (default) | numeric value in degrees"
+    ],
+    "XTickLabelRotationMode": [
+     "XTickLabelRotationMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for tick label rotation||'auto' (default) | 'manual'"
+    ],
+    "XTickMode": [
+     "XTickMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for tick values||'auto' (default) | 'manual'"
+    ],
+    "YAxis": [
+     "YAxis",
+     "matlab.graphics.axis.decorator.NumericRuler",
+     "Axis ruler||ruler object"
+    ],
+    "YAxisLocation": [
+     "YAxisLocation",
+     "matlab.graphics.datatype.AxisYLocation",
+     "y-axis location||'left' (default) | 'right' | 'origin'"
+    ],
+    "YColor": [
+     "YColor",
+     "matlab.graphics.datatype.RGBAColor",
+     "Color of axis line, tick values, and labels||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "YColorMode": [
+     "YColorMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Property for setting y-axis grid color||'auto' (default) | 'manual'"
+    ],
+    "YDir": [
+     "YDir",
+     "matlab.graphics.datatype.AxisDirection",
+     "y-axis direction||'normal' (default) | 'reverse'"
+    ],
+    "YGrid": [
+     "YGrid",
+     "matlab.lang.OnOffSwitchState",
+     "Grid lines||'off' (default) | on/off logical value"
+    ],
+    "YLabel": [
+     "YLabel",
+     "matlab.graphics.Graphics",
+     "Text object for axis label||text object"
+    ],
+    "YLabelString": [
+     "YLabel.String",
+     "matlab.graphics.datatype.NumericOrString",
+     "Text object for axis label||text object"
+    ],
+    "YLim": [
+     "YLim",
+     "matlab.graphics.datatype.LimitsAny",
+     "Minimum and maximum axis limits||[0 1] (default) | two-element vector of the form [min max]"
+    ],
+    "YLimMode": [
+     "YLimMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for axis limits||'auto' (default) | 'manual'"
+    ],
+    "YLimitMethod": [
+     "YLimitMethod",
+     "matlab.graphics.datatype.LimitSpec",
+     "Axis limit selection method||'tickaligned' (default) | 'tight' | 'padded'"
+    ],
+    "YMinorGrid": [
+     "YMinorGrid",
+     "matlab.lang.OnOffSwitchState",
+     "Minor grid lines||'off' (default) | on/off logical value"
+    ],
+    "YMinorTick": [
+     "YMinorTick",
+     "matlab.lang.OnOffSwitchState",
+     "Minor tick marks||'off' | on/off logical value"
+    ],
+    "YScale": [
+     "YScale",
+     "matlab.graphics.datatype.AxisScale",
+     "Scale of values along axis||'linear' (default) | 'log'"
+    ],
+    "YTick": [
+     "YTick",
+     "matlab.graphics.datatype.TickAny",
+     "Tick values||[] (default) | vector of increasing values"
+    ],
+    "YTickLabel": [
+     "YTickLabel",
+     "internal.matlab.editorconverters.datatype.TicksLabelType",
+     "Tick labels||'' (default) | cell array of character vectors | string array | categorical array"
+    ],
+    "YTickLabelMode": [
+     "YTickLabelMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for tick labels||'auto' (default) | 'manual'"
+    ],
+    "YTickLabelRotation": [
+     "YTickLabelRotation",
+     "matlab.graphics.datatype.Finite",
+     "Tick label rotation||0 (default) | numeric value in degrees"
+    ],
+    "YTickLabelRotationMode": [
+     "YTickLabelRotationMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for tick label rotation||'auto' (default) | 'manual'"
+    ],
+    "YTickMode": [
+     "YTickMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for tick values||'auto' (default) | 'manual'"
+    ],
+    "ZAxis": [
+     "ZAxis",
+     "matlab.graphics.Graphics",
+     "Axis ruler||ruler object"
+    ],
+    "ZColor": [
+     "ZColor",
+     "matlab.graphics.datatype.RGBAColor",
+     "Color of axis line, tick values, and labels||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "ZColorMode": [
+     "ZColorMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Property for setting z-axis grid color||'auto' (default) | 'manual'"
+    ],
+    "ZDir": [
+     "ZDir",
+     "matlab.graphics.datatype.AxisDirection",
+     "z-axis direction||'normal' (default) | 'reverse'"
+    ],
+    "ZGrid": [
+     "ZGrid",
+     "matlab.lang.OnOffSwitchState",
+     "Grid lines||'off' (default) | on/off logical value"
+    ],
+    "ZLabel": [
+     "ZLabel",
+     "matlab.graphics.Graphics",
+     "Text object for axis label||text object"
+    ],
+    "ZLabelString": [
+     "ZLabel.String",
+     "matlab.graphics.datatype.NumericOrString",
+     "Text object for axis label||text object"
+    ],
+    "ZLim": [
+     "ZLim",
+     "matlab.graphics.datatype.LimitsAny",
+     "Minimum and maximum axis limits||[0 1] (default) | two-element vector of the form [min max]"
+    ],
+    "ZLimMode": [
+     "ZLimMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for axis limits||'auto' (default) | 'manual'"
+    ],
+    "ZLimitMethod": [
+     "ZLimitMethod",
+     "matlab.graphics.datatype.LimitSpec",
+     "Axis limit selection method||'tickaligned' (default) | 'tight' | 'padded'"
+    ],
+    "ZMinorGrid": [
+     "ZMinorGrid",
+     "matlab.lang.OnOffSwitchState",
+     "Minor grid lines||'off' (default) | on/off logical value"
+    ],
+    "ZMinorTick": [
+     "ZMinorTick",
+     "matlab.lang.OnOffSwitchState",
+     "Minor tick marks||'off' | on/off logical value"
+    ],
+    "ZScale": [
+     "ZScale",
+     "matlab.graphics.datatype.AxisScale",
+     "Scale of values along axis||'linear' (default) | 'log'"
+    ],
+    "ZTick": [
+     "ZTick",
+     "matlab.graphics.datatype.TickAny",
+     "Tick values||[] (default) | vector of increasing values"
+    ],
+    "ZTickLabel": [
+     "ZTickLabel",
+     "internal.matlab.editorconverters.datatype.TicksLabelType",
+     "Tick labels||'' (default) | cell array of character vectors | string array | categorical array"
+    ],
+    "ZTickLabelMode": [
+     "ZTickLabelMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for tick labels||'auto' (default) | 'manual'"
+    ],
+    "ZTickLabelRotation": [
+     "ZTickLabelRotation",
+     "matlab.graphics.datatype.Finite",
+     "Tick label rotation||0 (default) | numeric value in degrees"
+    ],
+    "ZTickLabelRotationMode": [
+     "ZTickLabelRotationMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for tick label rotation||'auto' (default) | 'manual'"
+    ],
+    "ZTickMode": [
+     "ZTickMode",
+     "matlab.graphics.datatype.AutoManual",
+     "Selection mode for tick values||'auto' (default) | 'manual'"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.container.Panel",
+   "tab": "Panel",
+   "properties": {
+    "AutoResizeChildren": [
+     "AutoResizeChildren",
+     "matlab.lang.OnOffSwitchState",
+     "Automatically resize children||on/off logical value"
+    ],
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BorderColor": [
+     "BorderColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Border color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BorderType": [
+     "BorderType",
+     "inspector.internal.datatype.BorderType",
+     "Panel border||'line' (default) | 'none'"
+    ],
+    "BorderWidth": [
+     "BorderWidth",
+     "double",
+     "Border width||1 (default) | positive integer value"
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "ForegroundColor": [
+     "ForegroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Title color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of panel, including borders and title||[left bottom width height]"
+    ],
+    "Scrollable": [
+     "Scrollable",
+     "matlab.lang.OnOffSwitchState",
+     "Ability to scroll||'off' (default) | on/off logical value"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Title": [
+     "Title",
+     "char",
+     "Title||character vector | string scalar | categorical array"
+    ],
+    "TitlePosition": [
+     "TitlePosition",
+     "inspector.internal.datatype.TitlePosition",
+     "Location of title||'lefttop' (default) | 'centertop' | 'righttop'"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uipanel'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.container.TabGroup",
+   "tab": "Tab Group",
+   "properties": {
+    "AutoResizeChildren": [
+     "AutoResizeChildren",
+     "matlab.lang.OnOffSwitchState",
+     "Automatically resize children||on/off logical value"
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of tab group||[left bottom width height]"
+    ],
+    "TabLocation": [
+     "TabLocation",
+     "inspector.internal.datatype.TabLocation",
+     "Tab label location||'top' (default) | 'bottom' | 'left' | 'right'"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uitabgroup'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.container.Tab",
+   "tab": "Tab",
+   "properties": {
+    "AutoResizeChildren": [
+     "AutoResizeChildren",
+     "matlab.lang.OnOffSwitchState",
+     "Automatically resize children||on/off logical value"
+    ],
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBAColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "ForegroundColor": [
+     "ForegroundColor",
+     "matlab.graphics.datatype.RGBAColor",
+     "Title color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of tab||[left bottom width height]"
+    ],
+    "Scrollable": [
+     "Scrollable",
+     "matlab.lang.OnOffSwitchState",
+     "Ability to scroll||'off' (default) | on/off logical value"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Title": [
+     "Title",
+     "char",
+     "Title||character vector | string scalar | categorical array"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | string scalar | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uitab'"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.container.ButtonGroup",
+   "tab": "Button Group",
+   "properties": {
+    "AutoResizeChildren": [
+     "AutoResizeChildren",
+     "matlab.lang.OnOffSwitchState",
+     "Automatically resize children||'on' (default) | on/off logical value"
+    ],
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB Triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BorderColor": [
+     "BorderColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Border color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BorderType": [
+     "BorderType",
+     "inspector.internal.datatype.BorderType",
+     "Button group border||'line' | 'none'"
+    ],
+    "BorderWidth": [
+     "BorderWidth",
+     "double",
+     "Border width||1 (default) | positive integer value"
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "ForegroundColor": [
+     "ForegroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Title color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of button group, including borders and title||[left bottom width height]"
+    ],
+    "Scrollable": [
+     "Scrollable",
+     "matlab.lang.OnOffSwitchState",
+     "Ability to scroll||'off' (default) | on/off logical value"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Title": [
+     "Title",
+     "char",
+     "Title||character vector | string scalar | categorical array"
+    ],
+    "TitlePosition": [
+     "TitlePosition",
+     "inspector.internal.datatype.TitlePosition",
+     "Location of title||'lefttop' (default) | 'centertop' | 'righttop'"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uibuttongroup'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.container.Tree",
+   "tab": "Tree",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Editable": [
+     "Editable",
+     "matlab.lang.OnOffSwitchState",
+     "Node text editability||'off' (default) | on/off logical value"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state of tree||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Multiselect": [
+     "Multiselect",
+     "matlab.lang.OnOffSwitchState",
+     "Multiple node selection||'off' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size||[20 20 100 300] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uitree'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.container.CheckBoxTree",
+   "tab": "Tree (Check Box)",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Editable": [
+     "Editable",
+     "matlab.lang.OnOffSwitchState",
+     "Node text editability||'off' (default) | on/off logical value"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state of tree||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size||[20 20 150 300] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uicheckboxtree'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.container.TreeNode",
+   "tab": "Tree Node",
+   "properties": {
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Icon": [
+     "Icon",
+     "internal.matlab.editorconverters.datatype.FullPath",
+     "Icon source or file||'' (default) | character vector | string scalar | m-by-n-by-3 truecolor image array"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "NodeData": [
+     "NodeData",
+     "double",
+     "Node data||[] (default) | array"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Text": [
+     "Text",
+     "char",
+     "Node text||'Tree Node' (default) | character vector | string scalar"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uitreenode'"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.container.Menu",
+   "tab": "Menu Bar",
+   "properties": {
+    "Accelerator": [
+     "Accelerator",
+     "char",
+     "Keyboard shortcut||character | string"
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "Checked": [
+     "Checked",
+     "matlab.graphics.datatype.on_off",
+     "Menu check indicator||'off' (default) | on/off logical value"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "ForegroundColor": [
+     "ForegroundColor",
+     "matlab.graphics.datatype.RGBAColor",
+     "Menu label color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Label": [
+     "Text",
+     "char",
+     ""
+    ],
+    "Separator": [
+     "Separator",
+     "matlab.graphics.datatype.on_off",
+     "Separator line mode||'off' (default) | on/off logical value"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | string scalar | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.container.ContextMenu",
+   "tab": "Context Menu",
+   "properties": {
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uicontextmenu'"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.container.Toolbar",
+   "tab": "Toolbar",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical values"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uitoolbar'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.container.toolbar.PushTool",
+   "tab": "Push Tool",
+   "properties": {
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Icon": [
+     "Icon",
+     "internal.matlab.editorconverters.datatype.FileName",
+     "Icon source or file||'' (default) | character vector | string scalar | m-by-n-by-3 truecolor image array"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical values"
+    ],
+    "Separator": [
+     "Separator",
+     "matlab.lang.OnOffSwitchState",
+     "Separator line mode||'off' (default) | on/off logical value"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||character vector | string scalar | categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uipushtool'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.container.toolbar.ToggleTool",
+   "tab": "Toggle Tool",
+   "properties": {
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state||'on' (default) | on/off logical value"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Icon": [
+     "Icon",
+     "internal.matlab.editorconverters.datatype.FileName",
+     "Icon source or file||'' (default) | character vector | string scalar | m-by-n-by-3 truecolor image array"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical values"
+    ],
+    "Separator": [
+     "Separator",
+     "matlab.lang.OnOffSwitchState",
+     "Separator line mode||'off' (default) | on/off logical value"
+    ],
+    "State": [
+     "State",
+     "matlab.lang.OnOffSwitchState",
+     "Toggle tool state||'off' (default) | on/off logical value"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||character vector | string scalar | categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uitoggletool'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.container.GridLayout",
+   "tab": "Grid Layout",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ColumnSpacing": [
+     "ColumnSpacing",
+     "double",
+     "Column spacing||10 (default) | number"
+    ],
+    "ColumnWidth": [
+     "ColumnWidth",
+     "cell",
+     "Column width||{'1x','1x'} (default) | cell array | string array | numeric array"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Padding": [
+     "Padding",
+     "double",
+     "Padding||[10 10 10 10] (default) | [left bottom right top]"
+    ],
+    "RowHeight": [
+     "RowHeight",
+     "cell",
+     "Row height||{'1x','1x'} (default) | cell array | string array | numeric array"
+    ],
+    "RowSpacing": [
+     "RowSpacing",
+     "double",
+     "Row spacing||10 (default) | number"
+    ],
+    "Scrollable": [
+     "Scrollable",
+     "matlab.lang.OnOffSwitchState",
+     "Ability to scroll||'off' (default) | on/off logical value"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     ""
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uigridlayout'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "Visibility of children||'on' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.RadioButton",
+   "tab": "Radio Button",
+   "properties": {
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state of button||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "Interpreter": [
+     "Interpreter",
+     "inspector.internal.datatype.Interpreter",
+     "Button text interpreter||'none' (default) | 'tex' | 'latex' | 'html'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of radio button||[10 10 91 22] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Text": [
+     "Text",
+     "matlab.graphics.datatype.NumericOrString",
+     "Button label||'Radio Button' (default) | character vector | cell array of character vectors | string scalar | string array | ..."
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uiradiobutton'"
+    ],
+    "Value": [
+     "Value",
+     "logical",
+     "State of radio button||1 | 0"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ],
+    "WordWrap": [
+     "WordWrap",
+     "matlab.lang.OnOffSwitchState",
+     "Word wrapping to fit component width||'off' (default) | on/off logical value"
+    ]
+   }
+  },
+  {
+   "type": "matlab.ui.control.ToggleButton",
+   "tab": "Toggle Button",
+   "properties": {
+    "BackgroundColor": [
+     "BackgroundColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Background color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "BusyAction": [
+     "BusyAction",
+     "matlab.graphics.datatype.BusyAction",
+     "Callback queuing||'queue' (default) | 'cancel'"
+    ],
+    "ContextMenu": [
+     "ContextMenu",
+     "inspector.internal.datatype.IconAlignment",
+     "Context menu||empty GraphicsPlaceholder array (default) | ContextMenu object"
+    ],
+    "Enable": [
+     "Enable",
+     "matlab.lang.OnOffSwitchState",
+     "Operational state of button||'on' (default) | on/off logical value"
+    ],
+    "FontAngle": [
+     "FontAngle",
+     "internal.matlab.editorconverters.datatype.FontAngle",
+     "Font angle||'normal' (default) | 'italic'"
+    ],
+    "FontColor": [
+     "FontColor",
+     "matlab.graphics.datatype.RGBColor",
+     "Font color||RGB triplet | hexadecimal color code | 'r' | 'g' | 'b' | ..."
+    ],
+    "FontName": [
+     "FontName",
+     "matlab.graphics.datatype.FontName",
+     "Font name||system supported font name"
+    ],
+    "FontSize": [
+     "FontSize",
+     "internal.matlab.editorconverters.datatype.FontSize",
+     "Font size||positive number"
+    ],
+    "FontWeight": [
+     "FontWeight",
+     "internal.matlab.editorconverters.datatype.FontWeight",
+     "Font weight||'normal' (default) | 'bold'"
+    ],
+    "HandleVisibility": [
+     "HandleVisibility",
+     "matlab.graphics.datatype.HandleVisibility",
+     "Visibility of object handle||'on' (default) | 'callback' | 'off'"
+    ],
+    "HorizontalAlignment": [
+     "HorizontalAlignment",
+     "inspector.internal.datatype.HorizontalAlignment",
+     "Horizontal alignment of icon and text||'center' (default) | 'left' | 'right'"
+    ],
+    "Icon": [
+     "Icon",
+     "internal.matlab.editorconverters.datatype.FullPath",
+     "Predefined or custom icon||'' (default) | character vector | string scalar | m-by-n-by-3 truecolor image array"
+    ],
+    "IconAlignment": [
+     "IconAlignment",
+     "inspector.internal.datatype.IconAlignment",
+     "Location of button icon||'left' (default) | 'right' | 'center' | 'leftmargin' | 'rightmargin' | 'top' | 'bottom'"
+    ],
+    "Interpreter": [
+     "Interpreter",
+     "inspector.internal.datatype.Interpreter",
+     "Button text interpreter||'none' (default) | 'tex' | 'latex' | 'html'"
+    ],
+    "Interruptible": [
+     "Interruptible",
+     "matlab.lang.OnOffSwitchState",
+     "Callback interruption||'on' (default) | on/off logical value"
+    ],
+    "Position": [
+     "Position",
+     "matlab.graphics.datatype.Position",
+     "Location and size of button||[10 40 100 22] (default) | [left bottom width height]"
+    ],
+    "Tag": [
+     "Tag",
+     "char",
+     "Object identifier||'' (default) | character vector | string scalar"
+    ],
+    "Text": [
+     "Text",
+     "matlab.graphics.datatype.NumericOrString",
+     "Button label||'Toggle Button' (default) | character vector | cell array of character vectors | string scalar | string array | ..."
+    ],
+    "Tooltip": [
+     "Tooltip",
+     "matlab.graphics.datatype.NumericOrString",
+     "Tooltip||'' (default) | character vector | cell array of character vectors | string array | 1-D categorical array"
+    ],
+    "Type": [
+     "Type",
+     "matlab.graphics.datatype.TypeName",
+     "Type of graphics object||'uitogglebutton'"
+    ],
+    "Value": [
+     "Value",
+     "logical",
+     "State of toggle button||1 | 0"
+    ],
+    "VerticalAlignment": [
+     "VerticalAlignment",
+     "inspector.internal.datatype.VerticalAlignment",
+     "Vertical alignment of icon and text||'center' (default) | 'top' | 'bottom'"
+    ],
+    "Visible": [
+     "Visible",
+     "matlab.lang.OnOffSwitchState",
+     "State of visibility||'on' (default) | on/off logical value"
+    ],
+    "WordWrap": [
+     "WordWrap",
+     "matlab.lang.OnOffSwitchState",
+     "Word wrapping to fit component width||'off' (default) | on/off logical value"
+    ]
+   }
+  }
+ ]
+}

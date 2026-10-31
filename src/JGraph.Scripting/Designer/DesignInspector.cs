@@ -35,10 +35,30 @@ public enum DesignEditorKind
 /// <param name="Name">The property's name as the design holds it (App Designer's alias where it has one).</param>
 /// <param name="Kind">How it is edited.</param>
 /// <param name="Choices">The choices of a <see cref="DesignEditorKind.Choice"/>; empty otherwise.</param>
-public sealed record DesignEditor(string Name, DesignEditorKind Kind, IReadOnlyList<string> Choices);
+public sealed record DesignEditor(string Name, DesignEditorKind Kind, IReadOnlyList<string> Choices)
+{
+    /// <summary>The property's name in R2025b's sheet (<c>Label</c> for a menu's <c>Text</c>); its design name when the sheet does not differ.</summary>
+    public string SheetName { get; init; } = Name;
+
+    /// <summary>What the row says (<c>displayName</c>): <c>XLabel.String</c>, a menu's <c>Text</c>.</summary>
+    public string DisplayName { get; init; } = Name;
+
+    /// <summary>The class R2025b's sheet types the property as (<c>className</c>), which several components must agree on to share it; empty when not known.</summary>
+    public string ClassName { get; init; } = string.Empty;
+
+    /// <summary>The help the sheet gives (<c>tooltip</c>): a heading and a body between <c>||</c>; empty for none.</summary>
+    public string Tooltip { get; init; } = string.Empty;
+}
 
 /// <summary>A row of the inspector: one property, or properties edited together (an item's value and the items).</summary>
-public sealed record DesignInspectorRow(IReadOnlyList<DesignEditor> Editors);
+public sealed record DesignInspectorRow(IReadOnlyList<DesignEditor> Editors)
+{
+    /// <summary>
+    /// The sub-group the row is in (<c>InspectorPropertySubGroup</c>), counted within its group from 0: its rows stay hidden
+    /// behind the bar under them until it is opened; null for a row of the group itself.
+    /// </summary>
+    public int? SubGroup { get; init; }
+}
 
 /// <summary>A group of the inspector, as App Designer titles and opens it.</summary>
 public sealed record DesignInspectorGroup(string Title, bool Expanded, IReadOnlyList<DesignInspectorRow> Rows);
@@ -61,6 +81,8 @@ public sealed record DesignInspectorGroup(string Title, bool Expanded, IReadOnly
 public sealed class DesignInspector
 {
     private readonly Dictionary<string, IReadOnlyList<DesignInspectorGroup>> _byType = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, string> _tabs = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, Dictionary<string, string>> _classNames = new(StringComparer.Ordinal);
 
     private DesignInspector()
     {
@@ -72,6 +94,16 @@ public sealed class DesignInspector
     /// <summary>The groups the inspector shows for <paramref name="type"/>; empty for a class it does not know.</summary>
     public IReadOnlyList<DesignInspectorGroup> GroupsOf(string type) =>
         _byType.TryGetValue(type, out IReadOnlyList<DesignInspectorGroup>? groups) ? groups : [];
+
+    /// <summary>What the inspector's tab says for one component of <paramref name="type"/> (its model's <c>Name</c>); null for a class it does not know.</summary>
+    public string? TabOf(string type) => _tabs.GetValueOrDefault(type);
+
+    /// <summary>The class R2025b's sheet for <paramref name="type"/> types <paramref name="sheetName"/> as; null when the sheet does not have it.</summary>
+    public string? ClassNameOf(string type, string sheetName) =>
+        _classNames.TryGetValue(type, out Dictionary<string, string>? names) ? names.GetValueOrDefault(sheetName) : null;
+
+    /// <summary>How many properties R2025b's sheet for <paramref name="type"/> has (<c>_getNumOfPropertiesFromObject</c>).</summary>
+    public int PropertyCount(string type) => _classNames.TryGetValue(type, out Dictionary<string, string>? names) ? names.Count : 0;
 
     /// <summary>The design's name for a property the inspector names <paramref name="name"/> on <paramref name="type"/>.</summary>
     public static string DesignName(string type, string name) => (type, name) switch
@@ -86,16 +118,39 @@ public sealed class DesignInspector
         using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("JGraph.Scripting.designer-inspector.json")
             ?? throw new InvalidOperationException("The designer's inspector is not embedded.");
         using JsonDocument json = JsonDocument.Parse(stream);
+        using Stream sheetStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("JGraph.Scripting.designer-inspector-sheet.json")
+            ?? throw new InvalidOperationException("The designer's inspector sheets are not embedded.");
+        using JsonDocument sheetJson = JsonDocument.Parse(sheetStream);
+        var sheets = new Dictionary<string, Dictionary<string, (string Display, string ClassName, string Tooltip)>>(StringComparer.Ordinal);
         var inspector = new DesignInspector();
+        foreach (JsonElement c in sheetJson.RootElement.GetProperty("classes").EnumerateArray())
+        {
+            string type = c.GetProperty("type").GetString()!;
+            inspector._tabs[type] = c.GetProperty("tab").GetString()!;
+            var sheet = new Dictionary<string, (string, string, string)>(StringComparer.Ordinal);
+            var classNames = new Dictionary<string, string>(StringComparer.Ordinal);
+            foreach (JsonProperty p in c.GetProperty("properties").EnumerateObject())
+            {
+                string className = p.Value[1].GetString()!;
+                sheet[p.Name] = (p.Value[0].GetString()!, className, p.Value[2].GetString()!);
+                classNames[p.Name] = className;
+            }
+
+            sheets[type] = sheet;
+            inspector._classNames[type] = classNames;
+        }
+
         foreach (JsonElement c in json.RootElement.GetProperty("classes").EnumerateArray())
         {
             string type = c.GetProperty("type").GetString()!;
             DesignComponentClass? known = catalog.ByType(type);
             JsonElement properties = c.GetProperty("properties");
+            Dictionary<string, (string Display, string ClassName, string Tooltip)>? sheetOf = sheets.GetValueOrDefault(type);
             var groups = new List<DesignInspectorGroup>();
             foreach (JsonElement g in Items(c.GetProperty("groups")))
             {
                 var rows = new List<DesignInspectorRow>();
+                int subGroups = 0;
                 foreach (JsonElement item in Items(g.GetProperty("items")))
                 {
                     var editors = new List<DesignEditor>();
@@ -114,15 +169,30 @@ public sealed class DesignInspector
                         }
 
                         string designName = DesignName(type, name);
-                        editors.Add(new DesignEditor(designName, KindOf(known, designName, p.GetProperty("class").GetString()!, members), members));
+                        var editor = new DesignEditor(designName, KindOf(known, designName, p.GetProperty("class").GetString()!, members), members) { SheetName = name };
+                        if (sheetOf is not null && sheetOf.TryGetValue(name, out (string Display, string ClassName, string Tooltip) said))
+                        {
+                            editor = editor with { DisplayName = said.Display, ClassName = said.ClassName, Tooltip = said.Tooltip };
+                        }
+
+                        editors.Add(editor);
                     }
 
-                    // A sub-group's properties are rows of their own; an editor group's are one row.
-                    if (item.GetProperty("kind").GetString() == "editor")
+                    // A sub-group's properties are rows of their own, behind its bar; an editor group's are one row.
+                    string kind = item.GetProperty("kind").GetString()!;
+                    if (kind == "editor")
                     {
                         if (editors.Count > 0)
                         {
                             rows.Add(new DesignInspectorRow(editors));
+                        }
+                    }
+                    else if (kind == "sub")
+                    {
+                        if (editors.Count > 0)
+                        {
+                            int sub = subGroups++;
+                            rows.AddRange(editors.Select(e => new DesignInspectorRow([e]) { SubGroup = sub }));
                         }
                     }
                     else
