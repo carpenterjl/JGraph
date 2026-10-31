@@ -185,7 +185,7 @@ try {
     $save = Find-InProcess $p.Id 'appDesignerToolstrip.designerTab.file.saveSplitButton'
     Check ($save -and $save.Current.IsEnabled) 'Save is enabled'
     $details = Find-InProcess $p.Id 'appDesignerToolstrip.designerTab.share.appDetailsButton'
-    Check ($details -and -not $details.Current.IsEnabled -and $details.Current.HelpText -eq 'Specify details about your app') "App Details is shown disabled with R2025b's words (W8)"
+    Check ($details -and $details.Current.IsEnabled -and $details.Current.HelpText -eq 'Specify details about your app') "App Details is live, with R2025b's words (W8a)"
     $new = Find-InProcess $p.Id 'appDesignerToolstrip.designerTab.file.newButton'
     Check ($new -and $new.Current.IsEnabled) 'New is enabled (W3: the Start Page)'
     $share = Find-InProcess $p.Id 'appDesignerToolstrip.designerTab.share.shareAllOptions'

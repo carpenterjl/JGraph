@@ -1464,10 +1464,11 @@ public sealed partial class DesignDocument : IDisposable
             return $"Saved {Path}.";
         }
 
-        (string saved, MlappSaveResult result) = AppDesignerDocument.Save(Path!, Path!, CurrentText, Design.GroupRecords());
+        (string saved, MlappSaveResult result) = AppDesignerDocument.Save(Path!, Path!, CurrentText, Design.GroupRecords(), DetailsForPackage());
         Text = saved;
         _savedVersion = _version;
         _textDirty = false;
+        _detailsChanged = false;
         OnChanged();
         return $"Saved {Path}.{AppSaveNote(result)}";
     }
@@ -1546,18 +1547,18 @@ public sealed partial class DesignDocument : IDisposable
             }
             else if (formatWas == DesignFileFormat.Mlapp && source is not null && System.IO.File.Exists(source))
             {
+                code.ClassName = name; // before the text is written, so that its help text says the new name
                 _renderedText = null;
-                (saved, MlappSaveResult result) = AppDesignerDocument.Save(source, target, CurrentText, Design.GroupRecords());
-                code.ClassName = name;
+                (saved, MlappSaveResult result) = AppDesignerDocument.Save(source, target, CurrentText, Design.GroupRecords(), DetailsForPackage());
                 note = AppSaveNote(result);
             }
             else
             {
                 Format = format;
                 (_newline, _trailingNewline) = ("\n", true);
+                code.ClassName = name;
                 _renderedText = null;
                 (saved, MlappWriteResult result) = AppDesignerDocument.SaveNew(target, CurrentText, MetadataOf(Details), Design.GroupRecords());
-                code.ClassName = name;
                 note = AppDesignerDocument.NewFileNote(result);
             }
         }
@@ -1582,6 +1583,7 @@ public sealed partial class DesignDocument : IDisposable
         _renderedText = null;
         _savedVersion = _version;
         _textDirty = false;
+        _detailsChanged = false;
         OnChanged();
         return $"Saved {Path}.{note}";
     }
@@ -1616,6 +1618,14 @@ public sealed partial class DesignDocument : IDisposable
             details.AppId = metadata.Uuid;
         }
 
+        details.ScreenshotMode = metadata.ScreenshotMode switch
+        {
+            "manual" => DesignScreenshotMode.Manual,
+            "none" => DesignScreenshotMode.None,
+            _ => DesignScreenshotMode.Auto,
+        };
+        details.ThumbnailDataUri = details.ScreenshotMode == DesignScreenshotMode.None ? string.Empty : metadata.Screenshot;
+
         if (metadata.Name.Length > 0 && metadata.Name != Code!.ClassName)
         {
             details.Name = metadata.Name; // a name of its own; the class's follows the file
@@ -1626,7 +1636,14 @@ public sealed partial class DesignDocument : IDisposable
 
     /// <summary>The package metadata a plain-text app's details become; null for an app that has none.</summary>
     private static MlappMetadata? MetadataOf(DesignPlainTextDetails? details) => details is null ? null
-        : new MlappMetadata(details.Name, details.Author, details.Summary, details.Description, details.Version, details.AppId);
+        : new MlappMetadata(details.Name, details.Author, details.Summary, details.Description, details.Version, details.AppId,
+            details.ScreenshotMode switch
+            {
+                DesignScreenshotMode.Manual => "manual",
+                DesignScreenshotMode.None => "none",
+                _ => "auto",
+            },
+            details.ThumbnailDataUri);
 
     /// <summary>
     /// Copies the images the design keeps beside the app from the folder of <paramref name="source"/>

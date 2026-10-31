@@ -20,9 +20,11 @@ public sealed record MlappWriteResult(bool HasDesign, IReadOnlyList<string> Prob
 /// App Details in <c>metadata/coreProperties.xml</c> (the name as <c>dc:title</c>, the author as
 /// <c>dc:creator</c>, the summary as <c>dc:description</c>, the version as <c>cp:version</c>), the
 /// description and the app's id in <c>metadata/appMetadata.xml</c> (<c>description</c>, <c>uuid</c>).
-/// Each empty when the package has none.
+/// Each empty when the package has none. The thumbnail (App Designer window plan W8a): its mode as
+/// <c>appMetadata.xml</c>'s <c>screenshotMode</c>, its image as the part <c>metadata/appScreenshot.*</c>,
+/// a data URI here; empty when it has none.
 /// </summary>
-public sealed record MlappMetadata(string Name, string Author, string Summary, string Description, string Version, string Uuid)
+public sealed record MlappMetadata(string Name, string Author, string Summary, string Description, string Version, string Uuid, string ScreenshotMode = "auto", string Screenshot = "")
 {
     /// <summary>No details at all.</summary>
     public static MlappMetadata Empty { get; } = new(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
@@ -67,7 +69,7 @@ public static partial class JgsMlapp
         ArgumentNullException.ThrowIfNull(text);
         metadata ??= MlappMetadata.Empty;
         string uuid = metadata.Uuid.Length > 0 ? metadata.Uuid : Guid.NewGuid().ToString();
-        string version = metadata.Version.Length > 0 ? metadata.Version : "1.0";
+        string version = DesignAppDetails.VersionForPackage(metadata.Version);
         static string X(string value) => System.Security.SecurityElement.Escape(value);
         string code = text.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n');
         DesignReadResult read = DesignCodeReader.Read(code);
@@ -111,7 +113,7 @@ public static partial class JgsMlapp
             Xml("metadata/appMetadata.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>"
                 + "<metadata xmlns=\"http://schemas.mathworks.com/appDesigner/app/2017/appMetadata\"><description>" + X(metadata.Description) + "</description>"
                 + "<MLAPPVersion>2</MLAPPVersion><minimumSupportedMATLABRelease>" + minimum + "</minimumSupportedMATLABRelease>"
-                + "<screenshotMode>auto</screenshotMode><uuid>" + uuid + "</uuid>"
+                + "<screenshotMode>" + X(metadata.ScreenshotMode) + "</screenshotMode><uuid>" + uuid + "</uuid>"
                 + "<AppType>" + (design.IsResponsive ? "Responsive" : "Standard") + "</AppType>"
                 + "<componentProducts/><imageRelativePaths/>" + UserComponentsElement(DesignUserComponents.ClassesOf(design)) + "</metadata>"),
             Xml("metadata/coreProperties.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\n"
@@ -131,6 +133,7 @@ public static partial class JgsMlapp
                 + "<mwcoreProperties xmlns=\"http://schemas.mathworks.com/package/2014/corePropertiesExtension\">\n"
                 + "  <uuid>" + Guid.NewGuid().ToString() + "</uuid>\n</mwcoreProperties>\n"),
         ];
+        PutScreenshot(parts, metadata.Screenshot);
         Replace(path, parts, null);
         return new MlappWriteResult(true, problems);
     }
@@ -157,9 +160,11 @@ public static partial class JgsMlapp
             using ZipArchive package = ZipFile.OpenRead(path);
             System.Xml.Linq.XElement? core = Root(package, "metadata/coreProperties.xml");
             System.Xml.Linq.XElement? app = Root(package, "metadata/appMetadata.xml");
+            string mode = Local(app, "screenshotMode");
             return new MlappMetadata(
                 Local(core, "title"), Local(core, "creator"), Local(core, "description"),
-                Local(app, "description"), Local(core, "version"), Local(app, "uuid"));
+                Local(app, "description"), Local(core, "version"), Local(app, "uuid"),
+                mode.Length > 0 ? mode : "auto", ReadScreenshot(package));
         }
         catch (Exception ex) when (ex is System.Xml.XmlException or NotSupportedException or InvalidDataException)
         {

@@ -82,6 +82,8 @@ public static class DesignActions
         "APPDES_DESIGN_REORDER_PREVIOUS", "APPDES_DESIGN_REORDER_NEXT", "APPDES_DESIGN_REORDER_FIRST", "APPDES_DESIGN_REORDER_LAST",
         "APPDES_DESIGN_REORDER_OFFSET",
         "DESIGN_TREE_ADD_SIBLING", "DESIGN_TREE_ADD_CHILD", "DESIGN_TREE_INCREASE_INDENT", "DESIGN_TREE_DECREASE_INDENT",
+        // Stage W8a: App Details and the app's help text.
+        "AD_APP_DETAILS", "AD_HELP_COMMENTS",
     };
 
     /// <summary>Every action, by id.</summary>

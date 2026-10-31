@@ -420,14 +420,25 @@ public sealed partial class DesignDocument
         }
 
         string parameters = SanitizeInputParameters(text);
-        string[] names = Code.InputParameterNames.ToArray();
-        names = parameters.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         if (parameters == Code.InputParameters)
         {
             return null;
         }
 
         EndGesture(commit: false);
+        Do([.. InputParameterEdits(parameters)]);
+        return null;
+    }
+
+    /// <summary>What setting the input parameters to <paramref name="parameters"/> takes: nothing when they are what the class holds; a startup function added or taken away with them (<c>updateAppParams</c>).</summary>
+    private List<Edit> InputParameterEdits(string parameters)
+    {
+        if (parameters == Code!.InputParameters)
+        {
+            return [];
+        }
+
+        string[] names = parameters.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         var edits = new List<Edit> { new ParametersEdit(Design.Figure, Code.InputParameters, parameters) };
         if (Code.Startup is { } startup)
         {
@@ -442,8 +453,7 @@ public sealed partial class DesignDocument
             edits.Add(new CallbackListEdit(Design.Figure, new DesignCallback(name, [Style.Indent(3)], isStartup: true), 0, Add: true));
         }
 
-        Do([.. edits]);
-        return null;
+        return edits;
     }
 
     /// <summary>Input parameters as App Designer's dialog tidies them (<c>CodeEditUtil.sanitizeInputArgumentText</c>): the names, split at spaces and commas, joined by <c>, </c>.</summary>

@@ -7,11 +7,10 @@ using JGraph.Scripting.Designer;
 namespace JGraph.Application.Scripting;
 
 /// <summary>
-/// App Designer's dialogs in the designer's window (designer plan DS5): Add Callback Function, the
-/// App Details' Code Options (input arguments, single running instance), and a rename that shows
-/// what will change before it does.
+/// App Designer's dialogs in the designer's window (designer plan DS5): Add Callback Function and a
+/// rename that shows what will change before it does; App Details and Help Text beside them.
 /// </summary>
-internal static class AppDesignerDialogs
+internal static partial class AppDesignerDialogs
 {
     /// <summary>
     /// App Designer's "Add Callback Function" dialog: a component with an unbound callback property
@@ -132,86 +131,6 @@ internal static class AppDesignerDialogs
         }
 
         return chosen;
-    }
-
-    /// <summary>What App Details' Code Options set: the input arguments, the single-instance setting, both or neither.</summary>
-    public readonly record struct CodeOptionsResult(bool Arguments, bool SingleInstance)
-    {
-        /// <summary>Whether anything was set.</summary>
-        public bool Any => Arguments || SingleInstance;
-    }
-
-    /// <summary>
-    /// App Designer's App Details > Code Options: Single Running Instance, and the Input Arguments
-    /// (<c>arg1, arg2, ...</c>), tidied and checked as typed. OK sets what changed.
-    /// </summary>
-    /// <returns>What was set.</returns>
-    public static CodeOptionsResult CodeOptions(Window owner, DesignDocument document)
-    {
-        var dialog = Dialog(owner, "App Details");
-        var grid = Form();
-        var single = new CheckBox { Content = "Single Running Instance", IsChecked = document.SingleInstance, ToolTip = "App allows only one running instance at a time.", VerticalAlignment = VerticalAlignment.Center };
-        var arguments = new TextBox { Text = document.InputParameters, MinWidth = 240, ToolTip = "arg1, arg2, ..." };
-        var error = new TextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 4, 0, 0) };
-        error.SetResourceReference(TextBlock.ForegroundProperty, ThemeKeys.Error);
-        var hint = new TextBlock { Text = "Code Options", FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 0, 0, 6) };
-        Grid.SetRow(hint, 0);
-        Grid.SetColumnSpan(hint, 2);
-        grid.Children.Add(hint);
-        Grid.SetRow(single, 1);
-        Grid.SetColumnSpan(single, 2);
-        grid.Children.Add(single);
-        Row(grid, 2, "Input Arguments", arguments);
-        Grid.SetRow(error, 3);
-        Grid.SetColumnSpan(error, 2);
-        grid.Children.Add(error);
-        Button ok = Buttons(dialog, grid, "OK");
-        System.Windows.Automation.AutomationProperties.SetAutomationId(single, "CodeOptions.SingleInstance");
-        System.Windows.Automation.AutomationProperties.SetAutomationId(arguments, "CodeOptions.InputArguments");
-        System.Windows.Automation.AutomationProperties.SetAutomationId(ok, "CodeOptions.OK");
-
-        arguments.TextChanged += (_, _) =>
-        {
-            string? why = DesignDocument.WhyNotInputParameters(arguments.Text);
-            error.Text = why ?? string.Empty;
-            ok.IsEnabled = why is null;
-        };
-        arguments.LostKeyboardFocus += (_, _) =>
-        {
-            string tidy = DesignDocument.SanitizeInputParameters(arguments.Text);
-            if (tidy != arguments.Text)
-            {
-                arguments.Text = tidy;
-            }
-        };
-
-        if (dialog.ShowDialog() != true)
-        {
-            return default;
-        }
-
-        bool argumentsChanged = false;
-        bool singleChanged = false;
-        string parameters = DesignDocument.SanitizeInputParameters(arguments.Text);
-        if (parameters != document.InputParameters)
-        {
-            if (document.SetInputParameters(parameters) is { } refused)
-            {
-                MessageBox.Show(owner, refused, "App Designer", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            else
-            {
-                argumentsChanged = true;
-            }
-        }
-
-        if ((single.IsChecked == true) != document.SingleInstance)
-        {
-            document.SetSingleInstance(single.IsChecked == true);
-            singleChanged = true;
-        }
-
-        return new CodeOptionsResult(argumentsChanged, singleChanged);
     }
 
     /// <summary>

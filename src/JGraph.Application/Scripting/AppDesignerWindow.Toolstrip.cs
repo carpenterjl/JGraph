@@ -68,6 +68,8 @@ internal sealed partial class AppDesignerWindow
         "AD_RUN" => RunApp,
         "OPEN_STARTSCREEN_DIALOG" => ShowStartPage,
         "AD_INPUT_ARGUMENTS" => CodeOptions,
+        "AD_APP_DETAILS" => AppDetails,
+        "AD_HELP_COMMENTS" => HelpText,
         "AD_EDITOR_ADD_CALLBACK" => AddCallback,
         "AD_EDITOR_ADD_FUNCTION" or "AD_EDITOR_ADD_PRIVATE_FUNCTION" => AddFunction,
         "AD_EDITOR_ADD_PUBLIC_FUNCTION" => AddPublicFunction,

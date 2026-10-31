@@ -36,6 +36,12 @@ internal sealed partial class AppDesignerWindow : Window
     /// <summary>Opens the App Details' Code Options: input arguments and the single running instance.</summary>
     public static readonly RoutedCommand CodeOptions = new(nameof(CodeOptions), typeof(AppDesignerWindow));
 
+    /// <summary>App Details (DESIGNER > SHARE > App Details).</summary>
+    public static readonly RoutedCommand AppDetails = new(nameof(AppDetails), typeof(AppDesignerWindow));
+
+    /// <summary>The Help Text dialog (EDITOR > App Help Text).</summary>
+    public static readonly RoutedCommand HelpText = new(nameof(HelpText), typeof(AppDesignerWindow));
+
     /// <summary>Run (F5): saves the app and runs it in the MATLAB session, as App Designer's Run does (designer plan DS8).</summary>
     public static readonly RoutedCommand RunApp = new(nameof(RunApp), typeof(AppDesignerWindow));
 
@@ -150,6 +156,14 @@ internal sealed partial class AppDesignerWindow : Window
             }
         };
         _inspector.Problem += (_, problem) => ShowAlert("App Designer", problem);
+        _inspector.AppDetailsAsked += (_, codeOptions) => ShowAppDetails(codeOptions);
+        _inspector.InputArgumentsEdited += (_, _) =>
+        {
+            if (Active is { } app)
+            {
+                GoToStartup(app);
+            }
+        };
         _callbacks.Problem += (_, problem) => ShowAlert(DesignCallbackRules.InvalidNameTitle, problem);
         _callbacks.GoTo += (_, name) => GoToFunction(name);
         _codeBrowser.Problem += (_, problem) => _status.Text = problem;
@@ -201,6 +215,10 @@ internal sealed partial class AppDesignerWindow : Window
         CommandBindings.Add(new CommandBinding(AddProperty, (_, _) => Declared(Active?.Document.InsertUserProperty("private"), function: false),
             (_, e) => e.CanExecute = Active is { Document.Code: not null }));
         CommandBindings.Add(new CommandBinding(CodeOptions, (_, _) => ShowCodeOptions(),
+            (_, e) => e.CanExecute = Active is { Document.Code: not null }));
+        CommandBindings.Add(new CommandBinding(AppDetails, (_, _) => ShowAppDetails(codeOptions: false),
+            (_, e) => e.CanExecute = Active is not null));
+        CommandBindings.Add(new CommandBinding(HelpText, (_, _) => ShowHelpText(),
             (_, e) => e.CanExecute = Active is { Document.Code: not null }));
         InputBindings.Add(new KeyBinding(ApplicationCommands.Close, Key.W, ModifierKeys.Control));
         InputBindings.Add(new KeyBinding(ApplicationCommands.Redo, Key.Z, ModifierKeys.Control | ModifierKeys.Shift));
@@ -586,23 +604,40 @@ internal sealed partial class AppDesignerWindow : Window
         }
     }
 
-    private void ShowCodeOptions()
+    private void ShowCodeOptions() => ShowAppDetails(codeOptions: true);
+
+    /// <summary>App Details, at Code Options when the input arguments asked for it (<c>AppDetailsAction</c>).</summary>
+    private void ShowAppDetails(bool codeOptions)
     {
-        if (Active is not { Document: { Code: not null } document } app)
+        if (Active is not { Document: var document } app)
         {
             return;
         }
 
         app.CodeView.Push();
-        if (AppDesignerDialogs.CodeOptions(this, document).Arguments)
+        if (AppDesignerDialogs.AppDetails(this, document, codeOptions))
         {
-            // App Designer lands in the Code View, at the startup function, after a change of the input
-            // arguments alone (InputArgumentsCommand); the single-instance setting switches nothing.
-            SetView(app, code: true);
-            if (document.Callbacks.FirstOrDefault(static c => c.IsStartup) is { } startup)
-            {
-                app.CodeView.GoToFunction(startup.Name);
-            }
+            GoToStartup(app);
+        }
+    }
+
+    /// <summary>App Designer lands in the Code View, at the startup function, after a change of the input arguments (<c>InputArgumentsCommand</c>); the other details switch nothing.</summary>
+    private void GoToStartup(AppTab app)
+    {
+        SetView(app, code: true);
+        if (app.Document.Callbacks.FirstOrDefault(static c => c.IsStartup) is { } startup)
+        {
+            app.CodeView.GoToFunction(startup.Name);
+        }
+    }
+
+    /// <summary>The Help Text dialog (<c>HelpCommentsAction</c>).</summary>
+    private void ShowHelpText()
+    {
+        if (Active is { Document: { Code: not null } document } app)
+        {
+            app.CodeView.Push();
+            AppDesignerDialogs.HelpText(this, document);
         }
     }
 

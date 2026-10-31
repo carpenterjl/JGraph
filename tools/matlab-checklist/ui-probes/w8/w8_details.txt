@@ -1,0 +1,118 @@
+== versions
+[1] -> [1.0]
+[1.2] -> [1.2]
+[1.2.3] -> [1.2.3]
+[1.2.3.4] -> [1.2.3.4]
+[abc] -> [1.0]
+[] -> [1.0]
+[ 3.0 ] -> [1.0]
+[3.0 x] -> [3.0 x]
+[.5] -> [1.0]
+[5.] -> [1.0]
+== read back
+Name = [A <name> & more]
+Author = [An "author"]
+Version = [2.5]
+Summary = [A summary]
+Description = [Line one\nLine two]
+MATLABRelease = [R2025b]
+Uuid = [4caa76ce-c63e-42ba-9889-05fe82cd083b]
+AppType = [Standard]
+screenshot format [png] bytes 149
+uri head [data:image/png;base64,iVBORw0KGgoAAAANSU]
+== parts
+/[Content_Types].xml 1159
+/_rels/.rels 1512
+/appdesigner/appModel.mat 6886
+/matlab/document.xml 6667
+/metadata/appScreenshot.png 149
+/metadata/appMetadata.xml 463
+/metadata/coreProperties.xml 701
+/metadata/mwcoreProperties.xml 331
+/metadata/mwcorePropertiesExtension.xml 222
+/metadata/mwcorePropertiesReleaseInfo.xml 303
+--- [Content_Types].xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default ContentType="application/vnd.mathworks.matlab.appDesigner.appModel+mat" Extension="mat"/>
+  <Default ContentType="image/png" Extension="png"/>
+  <Default ContentType="application/vnd.openxmlformats-package.relationships+xml" Extension="rels"/>
+  <Default ContentType="application/vnd.mathworks.package.coreProperties+xml" Extension="xml"/>
+  <Override ContentType="application/vnd.mathworks.matlab.code.document+xml;plaincode=true" PartName="/matlab/document.xml"/>
+  <Override ContentType="application/vnd.mathworks.matlab.appDesigner.appMetadata+xml" PartName="/metadata/appMetadata.xml"/>
+  <Override ContentType="application/vnd.openxmlformats-package.core-properties+xml" PartName="/metadata/coreProperties.xml"/>
+  <Override ContentType="application/vnd.mathworks.package.corePropertiesExtension+xml" PartName="/metadata/mwcorePropertiesExtension.xml"/>
+  <Override ContentType="application/vnd.mathworks.package.corePropertiesReleaseInfo+xml" PartName="/metadata/mwcorePropertiesReleaseInfo.xml"/>
+</Types>
+
+--- _rels\.rels
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Target="metadata/mwcoreProperties.xml" Type="http://schemas.mathworks.com/package/2012/relationships/coreProperties"/>
+  <Relationship Id="rId2" Target="metadata/mwcorePropertiesExtension.xml" Type="http://schemas.mathworks.com/package/2014/relationships/corePropertiesExtension"/>
+  <Relationship Id="rId3" Target="metadata/coreProperties.xml" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties"/>
+  <Relationship Id="rId4" Target="matlab/document.xml" Type="http://schemas.mathworks.com/matlab/code/2013/relationships/document"/>
+  <Relationship Id="rId5" Target="appdesigner/appModel.mat" Type="http://schemas.mathworks.com/appDesigner/app/2014/relationships/appModel"/>
+  <Relationship Id="rId6" Target="metadata/appMetadata.xml" Type="http://schemas.mathworks.com/appDesigner/app/2017/relationships/appMetadata"/>
+  <Relationship Id="rId7" Target="metadata/mwcorePropertiesReleaseInfo.xml" Type="http://schemas.mathworks.com/package/2019/relationships/corePropertiesReleaseInfo"/>
+  <Relationship Id="rId8" Target="metadata/appScreenshot.png" Type="http://schemas.mathworks.com/appDesigner/app/2017/relationships/appScreenshot"/>
+  <Relationship Id="rId9" Target="metadata/appScreenshot.png" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/thumbnail"/>
+</Relationships>
+
+--- metadata\appMetadata.xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?><metadata xmlns="http://schemas.mathworks.com/appDesigner/app/2017/appMetadata"><description>Line one
+Line two</description><MLAPPVersion>2</MLAPPVersion><minimumSupportedMATLABRelease>R2018a</minimumSupportedMATLABRelease><screenshotMode>manual</screenshotMode><uuid>4caa76ce-c63e-42ba-9889-05fe82cd083b</uuid><AppType>Standard</AppType><componentProducts/><imageRelativePaths/><userComponents/></metadata>
+--- metadata\coreProperties.xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <dcterms:created xsi:type="dcterms:W3CDTF">2026-10-20T23:40:03Z</dcterms:created>
+  <dc:creator>An "author"</dc:creator>
+  <dc:description>A summary</dc:description>
+  <dcterms:modified xsi:type="dcterms:W3CDTF">2026-10-31T15:22:09Z</dcterms:modified>
+  <dc:title>A &lt;name&gt; &amp; more</dc:title>
+  <cp:version>2.5</cp:version>
+</cp:coreProperties>
+
+== thumbnail sizes
+100x100 (h x w) -> 100x100
+1000x1000 (h x w) -> 1000x1000
+200x100 (h x w) -> 165x83
+100x200 (h x w) -> 100x200
+300x1000 (h x w) -> 66x220
+1000x300 (h x w) -> 165x50
+165x220 (h x w) -> 165x220
+166x221 (h x w) -> 166x220
+120x400 (h x w) -> 66x220
+== thumbnail section
+%---
+%[app:thumbnail]
+%{
+<!-- Thumbnail is used by file previewers. To change how the thumbnail is captured or stored, use the App Details dialog box in App Designer. -->
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Thumbnail autoCapture='true'>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAAoCAIAAAAt2Q6oAAAAB3RJTUUH6gofDxYIIN639AAAAElJREFUWIXtzkENwCAAADFADf5VIAsPexxZ0iroPHuPv1mvA19IV6Qr0hXpinRFuiJdka5IV6Qr0hXpinRFuiJdka5IV6Qr0pULdsUBaIKSbiEAAAAASUVORK5CYII=</Thumbnail>
+%}
+%---
+%[app:thumbnail]
+%{
+<!-- Thumbnail is used by file previewers. To change how the thumbnail is captured or stored, use the App Details dialog box in App Designer. -->
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Thumbnail autoCapture='false'>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAAoCAIAAAAt2Q6oAAAAB3RJTUUH6gofDxYIIN639AAAAElJREFUWIXtzkENwCAAADFADf5VIAsPexxZ0iroPHuPv1mvA19IV6Qr0hXpinRFuiJdka5IV6Qr0hXpinRFuiJdka5IV6Qr0pULdsUBaIKSbiEAAAAASUVORK5CYII=</Thumbnail>
+%}
+%---
+%[app:thumbnail]
+%{
+<!-- Thumbnail is used by file previewers. To change how the thumbnail is captured or stored, use the App Details dialog box in App Designer. -->
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Thumbnail autoCapture='false'></Thumbnail>
+%}
+== help
+in  [One line] []
+out [One line] []
+in  [A long summary that is long enough to wrap over more than one line of the file as the class builder wraps it] []
+out [A long summary that is long enough to wrap over more than one line of the file as the class builder wraps it] []
+in  [] [Only a description]
+out [] [Only a description]
+in  [Sum] [First line\n\nThird line]
+out [Sum] [First line\nThird line]
+in  [Sum] [  Indented line\nA description long enough that it goes over more than one line when the class builder wraps its text there]
+out [Sum] [  Indented line\nA description long enough that it goes over more than one line when\nthe class builder wraps its text there]

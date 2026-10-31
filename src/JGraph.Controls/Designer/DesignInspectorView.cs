@@ -153,8 +153,13 @@ public sealed partial class DesignInspectorView : UserControl
         Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
         {
             _queued = false;
+            // The app's own rows stay, so that an edit keeps the keyboard where it went.
+            if (_document is { AppSelected: true } && _inspection is null && _appRows.Count > 0)
+            {
+                _appRows.ForEach(static refresh => refresh());
+            }
             // The same components, unless one went into or out of a grid, which changes what is edited.
-            if (_document?.Inspection is { } now && _inspection is { } was && now.Components.SequenceEqual(was.Components)
+            else if (_document?.Inspection is { } now && _inspection is { } was && now.Components.SequenceEqual(was.Components)
                 && now.Labeled == was.Labeled && SheetKey(now) == _keyShown)
             {
                 _inspection = now;
@@ -190,6 +195,7 @@ public sealed partial class DesignInspectorView : UserControl
         _alphaPanel.Children.Clear();
         _rows.Clear();
         _alphaRows.Clear();
+        _appRows.Clear();
         _alphaBuilt = false;
         _name = null;
         _shown = null;
@@ -204,7 +210,8 @@ public sealed partial class DesignInspectorView : UserControl
             _toolbar.Visibility = Visibility.Collapsed;
             if (_document is { AppSelected: true } app)
             {
-                _header.Children.Add(new TextBlock { Text = app.AppName, Margin = new Thickness(2) });
+                _header.Children.Add(new TextBlock { Text = app.AppName, FontWeight = FontWeights.SemiBold, Margin = new Thickness(2, 2, 2, 6) });
+                BuildAppRows(app);
             }
 
             ShowView();

@@ -132,13 +132,37 @@ public sealed partial class DesignCode
         ClassName = className;
     }
 
-    /// <summary>The class's name, which is the file's.</summary>
-    public string ClassName { get; set; }
+    /// <summary>
+    /// The class's name, which is the file's. Help text under the class line says it in capitals, so it follows
+    /// (<c>ClassBuilder</c>, which writes the lines from the summary and the description with the name it holds).
+    /// </summary>
+    public string ClassName
+    {
+        get => _className;
+        set
+        {
+            if (_className.Length > 0 && value != _className)
+            {
+                (string summary, string description) = DesignHelpText.Parse(HeadComments, _className);
+                if (summary.Length > 0 || description.Length > 0)
+                {
+                    string indent = HeadComments[0][..(HeadComments[0].Length - HeadComments[0].TrimStart().Length)];
+                    IReadOnlyList<string> lines = DesignHelpText.Lines(value, summary, description, indent);
+                    HeadComments.Clear();
+                    HeadComments.AddRange(lines);
+                }
+            }
+
+            _className = value;
+        }
+    }
+
+    private string _className = string.Empty;
 
     /// <summary>
     /// The comment lines between <c>classdef</c> and the component properties block, as the text
-    /// holds them: App Designer writes the app's summary and description there from its App
-    /// Details, which the designer does not edit, so they are kept as they are.
+    /// holds them: the app's help text, which <see cref="DesignHelpText"/> reads and writes, or any
+    /// other comment, which is kept as it is.
     /// </summary>
     public List<string> HeadComments { get; } = [];
 

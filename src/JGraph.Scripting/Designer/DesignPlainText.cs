@@ -77,6 +77,34 @@ public sealed class DesignPlainTextDetails
     public string ThumbnailDataUri { get; set; } = string.Empty;
 
     /// <summary>
+    /// Whether the thumbnail is chosen by hand, which <c>autoCapture</c> cannot tell from none when the file holds an
+    /// image; a package says it as <c>screenshotMode</c> (App Designer window plan W8a).
+    /// </summary>
+    public DesignScreenshotMode ScreenshotMode
+    {
+        get => ThumbnailAutoCapture ? DesignScreenshotMode.Auto : ThumbnailDataUri.Length > 0 || _manual ? DesignScreenshotMode.Manual : DesignScreenshotMode.None;
+        set
+        {
+            ThumbnailAutoCapture = value == DesignScreenshotMode.Auto;
+            _manual = value == DesignScreenshotMode.Manual;
+        }
+    }
+
+    private bool _manual;
+
+    /// <summary>What App Details edits, as one value.</summary>
+    public DesignAppDetailsValues Values
+    {
+        get => new(Name, Version, Author, Summary, Description, ScreenshotMode, ThumbnailDataUri);
+        set
+        {
+            (Name, Version, Author, Summary, Description) = (value.Name, value.Version, value.Author, value.Summary, value.Description);
+            ThumbnailDataUri = value.Mode == DesignScreenshotMode.None ? string.Empty : value.Thumbnail;
+            ScreenshotMode = value.Mode;
+        }
+    }
+
+    /// <summary>
     /// The details a new plain-text app starts with (<c>_AppFactory.getNewAppData</c>): its name,
     /// version 1.0, a fresh id, this release, and the oldest release that opens a plain-text app -
     /// R2025a, or R2019a for a responsive one, as <c>ResponsiveAppFactory</c> overrides it.

@@ -44,7 +44,10 @@ public static partial class AppDesignerDocument
     public static (string Text, MlappSaveResult Result) Save(string source, string target, string text) => Save(source, target, text, null);
 
     /// <summary><see cref="Save(string, string, string)"/> with the designer's component groups (<paramref name="groups"/>, open item 150) written into the tree; null keeps the file's.</summary>
-    public static (string Text, MlappSaveResult Result) Save(string source, string target, string text, IReadOnlyList<DesignGroupRecord>? groups)
+    public static (string Text, MlappSaveResult Result) Save(string source, string target, string text, IReadOnlyList<DesignGroupRecord>? groups) => Save(source, target, text, groups, null);
+
+    /// <summary><see cref="Save(string, string, string, IReadOnlyList{DesignGroupRecord}?)"/> with the app's details (<paramref name="details"/>, App Designer window plan W8a) written into the package; null keeps the file's.</summary>
+    public static (string Text, MlappSaveResult Result) Save(string source, string target, string text, IReadOnlyList<DesignGroupRecord>? groups, MlappMetadata? details)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(target);
@@ -52,7 +55,7 @@ public static partial class AppDesignerDocument
 
         if (string.Equals(Path.GetFullPath(source), Path.GetFullPath(target), StringComparison.OrdinalIgnoreCase))
         {
-            return (text, JgsMlapp.WriteCode(target, text, groups));
+            return (text, JgsMlapp.WriteCode(target, text, groups, details));
         }
 
         // The new name is App Designer's to write, not an edit to its code: what the save changed
@@ -68,7 +71,7 @@ public static partial class AppDesignerDocument
         {
             File.Copy(source, copy, overwrite: true);
             File.SetAttributes(copy, FileAttributes.Normal);
-            MlappSaveResult result = JgsMlapp.WriteCode(copy, text, groups);
+            MlappSaveResult result = JgsMlapp.WriteCode(copy, text, groups, details);
             bool generated = !before.SameGeneratedCode(JgsMlappLayout.Of(text));
             result = result with { GeneratedCodeChanged = generated, Tree = generated ? result.Tree : null };
             File.Move(copy, target, overwrite: true);
