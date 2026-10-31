@@ -84,15 +84,17 @@ internal sealed partial class AppDesignerWindow : Window
         _right.Items.Add(new TabItem { Header = "Callbacks", Content = _callbacks });
         System.Windows.Automation.AutomationProperties.SetAutomationId(_right, "PropertiesPanel");
         var right = new Grid();
-        right.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        var browserRow = new RowDefinition { Height = new GridLength(98) };
+        right.RowDefinitions.Add(browserRow);
         right.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-        right.RowDefinitions.Add(new RowDefinition { Height = new GridLength(2, GridUnitType.Star) });
+        right.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         var rowSplitter = new GridSplitter { Height = 4, HorizontalAlignment = HorizontalAlignment.Stretch };
         Grid.SetRow(rowSplitter, 1);
         Grid.SetRow(_right, 2);
         right.Children.Add(_browser);
         right.Children.Add(rowSplitter);
         right.Children.Add(_right);
+        BuildBrowser(right, browserRow, rowSplitter);
 
         Grid body = _body;
         body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(220) });
@@ -140,7 +142,6 @@ internal sealed partial class AppDesignerWindow : Window
         _inspector.Problem += (_, problem) => _status.Text = problem;
         _callbacks.Problem += (_, problem) => _status.Text = problem;
         _callbacks.GoTo += (_, name) => GoToFunction(name);
-        _browser.RenameRequested += (_, component) => RenameComponent(component);
         _codeBrowser.Problem += (_, problem) => _status.Text = problem;
         _codeBrowser.Picked += (_, item) => Picked(item);
         _codeBrowser.GoToRequested += (_, item) => GoTo(item);
@@ -573,24 +574,6 @@ internal sealed partial class AppDesignerWindow : Window
             {
                 app.CodeView.GoToFunction(startup.Name);
             }
-        }
-    }
-
-    /// <summary>Renames a component after showing what changes with it: the lines of the user's code that name it, and the callbacks named after it.</summary>
-    private void RenameComponent(DesignComponent component)
-    {
-        if (Active is not { Document: var document } app || !document.IsEditable(component, "CodeName") && document.IsRegion(component))
-        {
-            return;
-        }
-
-        app.CodeView.Push();
-        string? name = AppDesignerDialogs.Rename(this, $"Rename {component.CodeName}", component.CodeName,
-            candidate => DesignNames.WhyNotName(candidate, component.CodeName, document.NamesInUse()),
-            candidate => Preview(document.RenamePreview(component, Probe(component.CodeName, candidate)), component.CodeName, candidate));
-        if (name is not null && document.Rename(component, name) is { } refused)
-        {
-            _status.Text = refused;
         }
     }
 

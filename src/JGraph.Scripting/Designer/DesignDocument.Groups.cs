@@ -35,7 +35,9 @@ public sealed partial class DesignDocument
         _picks = picks;
         _selection = leaves;
         _nothingSelected = false;
-        if (!same)
+        bool leftApp = AppSelected;
+        AppSelected = false;
+        if (!same || leftApp)
         {
             _anchor = null;
 

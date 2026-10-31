@@ -88,7 +88,7 @@ public sealed class DesignInspectorView : UserControl
         {
             _queued = false;
             // The same component, unless it went into or out of a grid, which changes what is edited.
-            if (_document is { } d && Shown(d) is { } one && ReferenceEquals(one, _shown) && one.IsInGrid == _shownInGrid
+            if (_document is { AppSelected: false } d && Shown(d) is { } one && ReferenceEquals(one, _shown) && one.IsInGrid == _shownInGrid
                 && ReferenceEquals(d.SelectedLabeled, _labeled))
             {
                 RefreshValues();
@@ -108,7 +108,7 @@ public sealed class DesignInspectorView : UserControl
     /// selected whole (<c>LabeledComponentInDesignViewStrategy._determineComponentsToShow</c>, open item 150); null for anything else.
     /// </summary>
     private static DesignComponent? Shown(DesignDocument document) =>
-        document.SelectedLabeled?.Field ?? (document.Picks is [{ Component: { } one }] ? one : null);
+        document.AppSelected ? null : document.SelectedLabeled?.Field ?? (document.Picks is [{ Component: { } one }] ? one : null);
 
     private void Rebuild()
     {
@@ -127,7 +127,8 @@ public sealed class DesignInspectorView : UserControl
         {
             _panel.Children.Add(new TextBlock
             {
-                Text = document.Picks is [{ Group: { } group }] ? $"A group of {group.AllComponents().Count()} components." : $"{document.Selection.Count} components selected.",
+                Text = document.AppSelected ? document.AppName
+                    : document.Picks is [{ Group: { } group }] ? $"A group of {group.AllComponents().Count()} components." : $"{document.Selection.Count} components selected.",
                 Margin = new Thickness(2),
             });
             return;

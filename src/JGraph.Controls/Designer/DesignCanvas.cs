@@ -75,6 +75,10 @@ public sealed partial class DesignCanvas : UserControl
 
     private DesignDocument? _document;
     private DesignGestures? _gestures;
+
+    /// <summary>The gestures over the document shown, for the browser's menu (W7a).</summary>
+    public DesignGestures? Gestures => _gestures;
+
     private bool _showGrid;
     private bool _snapToGrid = true;
     private double _gridInterval = DesignGeometry.GridInterval;
