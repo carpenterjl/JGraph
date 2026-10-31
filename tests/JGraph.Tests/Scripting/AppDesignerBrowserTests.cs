@@ -281,7 +281,7 @@ public class AppDesignerBrowserTests
 
         Add(document, "Button", 20, 20);
         Assert.Equal(
-            [DesignBrowser.IncludeLabels, "-", DesignBrowser.SortByStackOrder, DesignBrowser.SortByTabOrder, "-", "Rename", "Cut", "Copy", "Paste", "Duplicate", "Delete", "Reorder"],
+            [DesignBrowser.IncludeLabels, "-", DesignBrowser.SortByStackOrder, DesignBrowser.SortByTabOrder, "-", "Rename", "Cut", "Copy", "Paste", "Duplicate", "Delete", "Reorder", "-", "Callbacks", "Context Menu", "-", "Help on Selection"],
             Words(Menu()));
         Assert.Equal(["Bring to Front", "Bring Forward", "Send Backward", "Send to Back"], Words(Menu().Single(static i => i.Label == "Reorder").Items!));
 

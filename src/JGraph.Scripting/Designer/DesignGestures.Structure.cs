@@ -268,14 +268,14 @@ public sealed partial class DesignGestures
     /// <summary>
     /// A tree node's menu (<c>TreeNodeMenuItemsProvider</c> and the delete item): Add Sibling, Add
     /// Child, Increase Indent, Decrease Indent, Move, then Cut, Copy, Paste - when the clipboard holds
-    /// nodes only - Duplicate and Delete.
+    /// nodes only - Duplicate and Delete, then the Context Menu submenu and Help on Selection (W7d).
     /// </summary>
     private List<DesignMenuItem> NodeMenu()
     {
         DesignDocument document = Document;
         DesignClipboard? clipboard = Clipboard;
         bool copy = document.CanCopy;
-        return
+        List<DesignMenuItem> menu =
         [
             new("Add Sibling", document.CanAddTreeNode, () => document.AddTreeNode(child: false)) { Shortcut = "Enter" },
             new("Add Child", document.CanAddTreeNode, () => document.AddTreeNode(child: true)) { Shortcut = "Shift+Enter" },
@@ -289,6 +289,8 @@ public sealed partial class DesignGestures
             new("Duplicate", document.CanDuplicate, () => document.Duplicate()) { Shortcut = "Ctrl+D" },
             new("Delete", document.Selection.Any(document.CanDelete), () => document.Delete(document.Selection)) { Shortcut = "Delete" },
         ];
+        AddComponentItems(menu);
+        return menu;
     }
 
     /// <summary>

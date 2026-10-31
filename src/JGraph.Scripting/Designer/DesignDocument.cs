@@ -1301,7 +1301,7 @@ public sealed partial class DesignDocument : IDisposable
             return null;
         }
 
-        if (DesignNames.WhyNotName(name, component.CodeName, NamesInUse()) is { } why)
+        if (WhyNotFunctionName(name, component.CodeName) is { } why)
         {
             return why;
         }

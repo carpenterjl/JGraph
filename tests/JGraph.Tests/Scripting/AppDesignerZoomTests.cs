@@ -82,7 +82,7 @@ public class AppDesignerZoomTests
         document.Select([]);
 
         IReadOnlyList<DesignMenuItem> menu = gestures.MenuAt(new Point2D(5, 5));
-        Assert.Equal(["Cut", "Copy", "Paste", "Zoom", "Grid", "Snap to Grid", "Alignment Hints", "Resizing Hints", "Context Menu", "Apply Grid Layout", "Apply Auto Tab Order", "Visualize Tab Order"],
+        Assert.Equal(["Cut", "Copy", "Paste", "Zoom", "Grid", "Snap to Grid", "Alignment Hints", "Resizing Hints", "Callbacks", "Context Menu", "Help on Selection", "Apply Grid Layout", "Apply Auto Tab Order", "Visualize Tab Order"],
             menu.Where(static i => !i.IsSeparator).Select(static i => i.Label));
         DesignMenuItem zoom = menu.Single(static i => i.Label == "Zoom");
         Assert.Equal([("Zoom In", true), ("Zoom Out", true), ("Reset Zoom", false), ("Fit to View", true)], zoom.Items!.Select(static i => (i.Label, i.Enabled)));
@@ -104,7 +104,7 @@ public class AppDesignerZoomTests
         // A component's menu has Zoom too, but no display items.
         document.Select([document.Design.Find("Button")!]);
         string[] labels = gestures.MenuAt(new Point2D(150, 370)).Where(static i => !i.IsSeparator).Select(static i => i.Label).ToArray();
-        Assert.Equal(["Cut", "Copy", "Paste", "Duplicate", "Delete", "Zoom", "Align", "Same Size", "Group", "Reorder", "Context Menu", "Replace With"], labels);
+        Assert.Equal(["Cut", "Copy", "Paste", "Duplicate", "Delete", "Zoom", "Align", "Same Size", "Group", "Reorder", "Callbacks", "Context Menu", "Help on Selection", "Replace With"], labels);
     }
 
     [Fact]

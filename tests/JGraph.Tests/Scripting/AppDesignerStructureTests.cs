@@ -533,7 +533,7 @@ public class AppDesignerStructureTests
         gestures.Press(new Point2D(30, 30), DesignButton.Right, DesignModifiers.None);
         Assert.Equal([node3], document.Selection);
         IReadOnlyList<DesignMenuItem> items = gestures.MenuAt(new Point2D(30, 30));
-        Assert.Equal(["Add Sibling", "Add Child", "Increase Indent", "Decrease Indent", "Move", "-", "Cut", "Copy", "Paste", "Duplicate", "Delete"], items.Select(static i => i.Label));
+        Assert.Equal(["Add Sibling", "Add Child", "Increase Indent", "Decrease Indent", "Move", "-", "Cut", "Copy", "Paste", "Duplicate", "Delete", "-", "Context Menu", "-", "Help on Selection"], items.Select(static i => i.Label));
         Assert.Equal(["Enter", "Shift+Enter", "Ctrl+]", "Ctrl+["], items.Take(4).Select(static i => i.Shortcut));
         Assert.Equal(["Up", "Down"], items[4].Items!.Skip(1).Take(2).Select(static i => i.Label));
         Assert.False(items.Single(static i => i.Label == "Paste").Enabled);

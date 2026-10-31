@@ -791,6 +791,7 @@ public sealed partial class DesignGestures
                     DesignMenuItem.Separator,
                 ];
                 AddStandard(menu, document.Selection.FirstOrDefault());
+                AddComponentItems(menu);
                 return menu;
             case BarMenu.Toolbar:
                 // ToolbarMenuItemProvider: its tools at the end, moved up and down.
@@ -802,6 +803,7 @@ public sealed partial class DesignGestures
                     DesignMenuItem.Separator,
                 ];
                 AddStandard(bar, null);
+                AddComponentItems(bar);
                 return bar;
             case BarMenu.Tool:
                 // ToolMenuItemProvider: after the tool, moved left and right.
@@ -813,6 +815,7 @@ public sealed partial class DesignGestures
                     DesignMenuItem.Separator,
                 ];
                 AddStandard(tool, null);
+                AddComponentItems(tool);
                 if (ReplaceItem() is { } replaceTool)
                 {
                     tool.Add(DesignMenuItem.Separator);
@@ -830,6 +833,7 @@ public sealed partial class DesignGestures
                 context.Add(new DesignMenuItem("Go to Component", assigned.Count > 0, Items: assigned.Count == 0 ? null
                     : assigned.Select(c => new DesignMenuItem("app." + c.CodeName, true, () => document.Select([c]))).ToArray()));
                 context.Add(new DesignMenuItem(one is null ? "Edit" : "Edit app." + one.CodeName, one is not null, () => BeginTrayEdit(one!)));
+                AddComponentItems(context);
                 return context;
             case BarMenu.TrayPanel:
                 // The tray's own menu: Paste of a context menu (_IsPasteDisabledForCanvasTray).
@@ -889,20 +893,14 @@ public sealed partial class DesignGestures
     }
 
     /// <summary>
-    /// A component's Context Menu submenu (<c>buildContextMenuAssignment</c>): for one with a context menu,
+    /// A component's Context Menu submenu (<c>buildContextMenuAssignment</c>), for the first of what is selected: for one with a context menu,
     /// Go to it, Replace With another, and Unassign Context Menu; for one without, Add New Context Menu and
     /// Assign one there is.
     /// </summary>
     private DesignMenuItem? ContextMenuItem()
     {
         DesignDocument document = Document;
-        if (document.SelectionIsEmpty || document.Picks is not [var pick, ..])
-        {
-            return null;
-        }
-
-        DesignComponent? target = document.SelectedLabeled?.Field ?? pick.Component;
-        if (target is null || !DesignDocument.TakesContextMenu(target))
+        if (document.MenuComponents is not [var target, ..] || !DesignDocument.TakesContextMenu(target))
         {
             return null;
         }

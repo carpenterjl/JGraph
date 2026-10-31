@@ -240,6 +240,15 @@ public sealed partial class DesignCanvas : UserControl
     /// <summary>Raised with an alert App Designer shows in a dialog of its own: a title and a message (Add Label's refusal).</summary>
     public event EventHandler<(string Title, string Message)>? Alerted;
 
+    /// <summary>Raised with a function's name when the Callbacks submenu goes to it, or made it (W7d).</summary>
+    public event EventHandler<string>? CallbackGoTo;
+
+    /// <summary>Raised with who it is for when Select existing callback... is chosen (W7d).</summary>
+    public event EventHandler<IReadOnlyList<DesignComponent>>? CallbackSelectAsked;
+
+    /// <summary>Raised when Help on Selection is chosen (W7d).</summary>
+    public event EventHandler? HelpAsked;
+
     /// <summary>Raised when the zoom changed (W6).</summary>
     public event EventHandler? ZoomChanged;
 
@@ -431,6 +440,9 @@ public sealed partial class DesignCanvas : UserControl
                 _gestures!.Changed -= OnChanged;
                 _gestures.TabOrderShown -= OnTabOrderShown;
                 _gestures.Alerted -= OnAlerted;
+                _gestures.CallbackGoTo -= OnCallbackGoTo;
+                _gestures.CallbackSelectAsked -= OnCallbackSelectAsked;
+                _gestures.HelpAsked -= OnHelpAsked;
                 _gestures.ZoomRequested -= OnZoomRequested;
                 _gestures.DisplayOptionToggled -= OnDisplayOptionToggled;
                 _gestures.MenuOpened -= OnBarMenuOpened;
@@ -463,6 +475,9 @@ public sealed partial class DesignCanvas : UserControl
                 _gestures.Changed += OnChanged;
                 _gestures.TabOrderShown += OnTabOrderShown;
                 _gestures.Alerted += OnAlerted;
+                _gestures.CallbackGoTo += OnCallbackGoTo;
+                _gestures.CallbackSelectAsked += OnCallbackSelectAsked;
+                _gestures.HelpAsked += OnHelpAsked;
                 _gestures.ZoomRequested += OnZoomRequested;
                 _gestures.DisplayOptionToggled += OnDisplayOptionToggled;
                 _gestures.MenuOpened += OnBarMenuOpened;
@@ -630,6 +645,12 @@ public sealed partial class DesignCanvas : UserControl
     }
 
     private void OnAlerted(object? sender, (string Title, string Message) alert) => Alerted?.Invoke(this, alert);
+
+    private void OnCallbackGoTo(object? sender, string name) => CallbackGoTo?.Invoke(this, name);
+
+    private void OnCallbackSelectAsked(object? sender, IReadOnlyList<DesignComponent> peers) => CallbackSelectAsked?.Invoke(this, peers);
+
+    private void OnHelpAsked(object? sender, EventArgs e) => HelpAsked?.Invoke(this, e);
 
     private void StepTabOrder()
     {

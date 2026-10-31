@@ -3,7 +3,8 @@ namespace JGraph.Scripting.Designer;
 /// <content>
 /// The component browser's context menu (App Designer window plan, stage W7a), in
 /// <c>DesignAreaContextMenuController._createComponentTreeContextMenu</c>'s order: Include labels, the two
-/// sorts, Add Label, Rename, Cut, Copy, Paste, Duplicate, Delete, Reorder, Insert at Cursor, the tab order.
+/// sorts, Add Label, Rename, Cut, Copy, Paste, Duplicate, Delete, Reorder, Insert at Cursor, Callbacks with the Context Menu and Help on
+/// Selection (W7d), the tab order.
 /// </content>
 public sealed partial class DesignGestures
 {
@@ -114,6 +115,9 @@ public sealed partial class DesignGestures
         {
             items.Add(new DesignMenuItem("Insert at Cursor", canInsert, () => insert(DesignBrowser.LabelOf(named))));
         }
+
+        // Callbacks, the Context Menu submenu and Help on Selection (ComponentMenuItemsProvider, W7d).
+        AddComponentItems(items, inCodeView);
 
         // The tab order (TabOrderMenuItemsProvider): one container, or the whole app.
         if (app || (document.Selection is [var holder] && document.CanApplyAutoTabOrder(holder)))

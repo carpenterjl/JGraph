@@ -110,6 +110,7 @@
     <Content Include="Scripting\Designer\DesignBrowserOracle.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Scripting\Designer\DesignInspectorOracle.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Scripting\Designer\DesignEditorsOracle.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Scripting\Designer\DesignCallbacksOracle.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Scripting\Designer\GridRulesVerifyOracle.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

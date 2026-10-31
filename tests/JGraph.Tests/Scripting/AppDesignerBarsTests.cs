@@ -263,7 +263,7 @@ public class AppDesignerBarsTests
         Rect2D tool = gestures.Bars.PlaceOf(C(document, "PushTool"))!.Box;
         Assert.False(gestures.Press(Centre(tool), DesignButton.Right, DesignModifiers.None));
         string[] labels = gestures.MenuAt(new Point2D(0, 0)).Select(static i => i.Label).ToArray();
-        Assert.Equal(["Add Push Tool", "Add Toggle Tool", "Move", "-", "Cut", "Copy", "Paste", "Duplicate", "Delete", "-", "Replace With"], labels);
+        Assert.Equal(["Add Push Tool", "Add Toggle Tool", "Move", "-", "Cut", "Copy", "Paste", "Duplicate", "Delete", "-", "Callbacks", "Help on Selection", "-", "Replace With"], labels);
         Assert.Equal(["First", "Left", "Right", "Last"], gestures.MenuAt(new Point2D(0, 0))[2].Items!.Select(static i => i.Label));
         gestures.Press(new Point2D(600, gestures.Bars.PlaceOf(bar)!.Box.Y + 3), DesignButton.Right, DesignModifiers.None);
         Assert.Equal(["bar"], new[] { document.Selection[0].CodeName.ToLowerInvariant().Replace("toolbar", "bar", StringComparison.Ordinal) });
@@ -385,7 +385,7 @@ public class AppDesignerBarsTests
         // A menu's own menu.
         gestures.Press(Centre(gestures.Bars.PlaceOf(menu)!.Box), DesignButton.Right, DesignModifiers.None);
         IReadOnlyList<DesignMenuItem> items = gestures.MenuAt(new Point2D(0, 0));
-        Assert.Equal(["Add Menu Item", "Add Menu", "Move", "-", "Cut", "Copy", "Paste", "Paste to Right", "Duplicate", "Delete"], items.Select(static i => i.Label));
+        Assert.Equal(["Add Menu Item", "Add Menu", "Move", "-", "Cut", "Copy", "Paste", "Paste to Right", "Duplicate", "Delete", "-", "Callbacks", "Help on Selection"], items.Select(static i => i.Label));
         Assert.Equal(["First", "Left", "Right", "Last"], items[2].Items!.Select(static i => i.Label));
         Assert.False(items.Single(static i => i.Label == "Paste to Right").Enabled);
         items.Single(static i => i.Label == "Copy").Run!();
@@ -571,7 +571,7 @@ public class AppDesignerBarsTests
         // Its menu: the clipboard's and Delete, Go to Component, Edit.
         gestures.PressTray(Centre(entry), DesignButton.Right, DesignModifiers.None);
         IReadOnlyList<DesignMenuItem> items = gestures.TrayMenu();
-        Assert.Equal(["Cut", "Copy", "Paste", "Duplicate", "Delete", "-", "Go to Component", "Edit app.ContextMenu"], items.Select(static i => i.Label));
+        Assert.Equal(["Cut", "Copy", "Paste", "Duplicate", "Delete", "-", "Go to Component", "Edit app.ContextMenu", "-", "Callbacks", "Help on Selection"], items.Select(static i => i.Label));
         Assert.Equal(["app.Button"], items.Single(static i => i.Label == "Go to Component").Items!.Select(static i => i.Label));
 
         // The tray's own menu: Paste, for a context menu.

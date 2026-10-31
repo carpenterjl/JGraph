@@ -2184,12 +2184,8 @@ public sealed partial class DesignGestures
             items.Add(Toggle("Resizing Hints", DesignSettings.ShowResizingHints, ShowResizingHints));
         }
 
-        // A component's Context Menu submenu (_ComponentContextMenuInfo, W5d).
-        if (ContextMenuItem() is { } contextMenuItem)
-        {
-            items.Add(DesignMenuItem.Separator);
-            items.Add(contextMenuItem);
-        }
+        // Callbacks, a component's Context Menu submenu and Help on Selection (ComponentMenuItemsProvider, W5d, W7d).
+        AddComponentItems(items);
 
         if (document.Selection is [var container, ..] && document.CanGridify(container))
         {

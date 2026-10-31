@@ -59,7 +59,7 @@ public sealed partial class DesignDocument
 
     /// <summary>
     /// The callback properties of <paramref name="component"/>, as App Designer's inspector lists
-    /// them; the catalog's callback properties for a class the table does not know.
+    /// them: none for a class its table has no row for (a label, a lamp, a gauge); a custom component's are its class's.
     /// </summary>
     public IReadOnlyList<string> CallbackPropertiesOf(DesignComponent component)
     {
@@ -76,9 +76,7 @@ public sealed partial class DesignDocument
             return user.CallbackProperties;
         }
 
-        return component.Class.Properties.Select(static p => DesignCallbacks.PropertyName(p.Name))
-            .Where(static n => n.EndsWith("Fcn", StringComparison.Ordinal) || n.EndsWith("Callback", StringComparison.Ordinal))
-            .ToArray();
+        return [];
     }
 
     /// <summary>The callback properties of <paramref name="component"/> in their groups, as App Designer's inspector lists them (<see cref="CallbackPropertiesOf"/>).</summary>
@@ -116,7 +114,28 @@ public sealed partial class DesignDocument
     public string? WhyNotFunctionName(string name, string? current = null)
     {
         ArgumentNullException.ThrowIfNull(name);
-        return DesignNames.WhyNotName(name, current, NamesInUse());
+        return DesignNames.WhyNotName(name, current, NamesInUse(), WhatANameIs);
+    }
+
+    /// <summary>What a name in use is (<c>isAppAttributeNameUnique</c>'s words): a component, a callback, a property of the user's or the app's class, a function otherwise.</summary>
+    private string WhatANameIs(string name)
+    {
+        if (Design.Find(name) is not null)
+        {
+            return "component";
+        }
+
+        if (Code?.Find(name) is { IsStartup: false })
+        {
+            return "callback";
+        }
+
+        if (name == Code?.ClassName)
+        {
+            return DesignNames.AppNameInUse;
+        }
+
+        return UserProperties().Contains(name, StringComparer.Ordinal) ? "property" : "function";
     }
 
     /// <summary>

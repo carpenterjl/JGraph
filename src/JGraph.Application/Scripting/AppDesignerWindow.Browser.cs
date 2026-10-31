@@ -83,7 +83,7 @@ internal sealed partial class AppDesignerWindow
         }
 
         app.CodeView.Push();
-        string? refused = DesignNames.WhyNotName(name, component.CodeName, document.NamesInUse()) ?? document.Rename(component, name);
+        string? refused = document.WhyNotFunctionName(name, component.CodeName) ?? document.Rename(component, name);
         if (refused is not null)
         {
             ShowAlert("App Designer", refused);

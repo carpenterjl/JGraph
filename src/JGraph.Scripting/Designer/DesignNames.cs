@@ -248,15 +248,16 @@ public static partial class DesignNames
     /// <c>isAppAttributeNameValid</c>): a keyword; not a letter followed by letters, digits and
     /// underscores; longer than <see cref="NameLengthMax"/>; or already the name of something else
     /// in the app (<paramref name="namesInUse"/>; the component's own name, <paramref name="current"/>,
-    /// is free). Null when it can.
+    /// is free). Null when it can. R2025b's words (<c>CodeEditUtil.isVarName</c>, <c>isAppAttributeNameUnique</c>); <paramref name="whatItIs"/> says
+    /// what a name in use is, as its table of names does: a component's, when not given.
     /// </summary>
-    public static string? WhyNotName(string name, string? current, IEnumerable<string> namesInUse)
+    public static string? WhyNotName(string name, string? current, IEnumerable<string> namesInUse, Func<string, string>? whatItIs = null)
     {
         ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(namesInUse);
         if (Keywords.Contains(name))
         {
-            return $"'{name}' is a MATLAB keyword.";
+            return "Name cannot be a MATLAB keyword.";
         }
 
         if (AppDesignerKeywords.Contains(name))
@@ -266,21 +267,25 @@ public static partial class DesignNames
 
         if (!VarName().IsMatch(name))
         {
-            return $"'{name}' is not a valid name: it must start with a letter and hold only letters, digits and underscores.";
+            return "Name must start with a letter and contain only letters, numbers or underscores.";
         }
 
         if (name.Length > NameLengthMax)
         {
-            return $"'{name}' is longer than {NameLengthMax} characters.";
+            return $"Name must be shorter than {NameLengthMax + 1} characters.";
         }
 
         if (name != current && namesInUse.Contains(name, StringComparer.Ordinal))
         {
-            return $"'{name}' is already the name of something in the app.";
+            string what = whatItIs?.Invoke(name) ?? "component";
+            return what == AppNameInUse ? "Name cannot be the same as the app name." : $"Name is already defined as {what}.";
         }
 
         return null;
     }
+
+    /// <summary>What <c>whatItIs</c> says of the app's own class's name, which has a sentence of its own (<c>invalidAttributeNameMessage_DuplicateAppName</c>).</summary>
+    public const string AppNameInUse = "the app";
 
     // --- counting --------------------------------------------------------------------------------
 

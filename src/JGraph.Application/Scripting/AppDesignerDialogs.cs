@@ -378,6 +378,32 @@ internal static class AppDesignerDialogs
         static void ApplicationCommandsHelp(Window owner) => System.Windows.Input.ApplicationCommands.Help.Execute(null, owner);
     }
 
+    /// <summary>
+    /// App Designer's "Select Callback Function" dialog (<c>SharedCallbackDialog</c>), for the first of <paramref name="peers"/>: the properties it has free (<see cref="DesignCallbackRules.Free"/>), and the app's functions, sorted.
+    /// </summary>
+    /// <returns>The property and the function; null when cancelled.</returns>
+    public static (string Property, string Name)? SelectCallback(Window owner, DesignDocument document, IReadOnlyList<DesignComponent> peers)
+    {
+        IReadOnlyList<string> common = DesignCallbackRules.Common(peers.Select(document.CallbackPropertiesOf).ToArray());
+        IReadOnlyList<string> properties = DesignCallbackRules.Free(document.CallbackPropertiesOf(peers[0]), common, p => document.CallbackOf(peers[0], p) ?? string.Empty);
+        string[] names = document.Callbacks.Where(static c => !c.IsStartup && !c.IsGenerated).Select(static c => c.Name).Order(StringComparer.Ordinal).ToArray();
+        if (properties.Count == 0 || names.Length == 0)
+        {
+            return null;
+        }
+
+        var dialog = Dialog(owner, "Select Callback Function");
+        var grid = Form();
+        var propertyBox = new ComboBox { ItemsSource = properties, SelectedIndex = 0, Width = 280 };
+        var nameBox = new ComboBox { ItemsSource = names, SelectedIndex = 0, Width = 280 };
+        Row(grid, 0, "Callback:", propertyBox);
+        Row(grid, 1, "Name:", nameBox);
+        Buttons(dialog, grid, "OK");
+        System.Windows.Automation.AutomationProperties.SetAutomationId(propertyBox, "SelectCallback.Callback");
+        System.Windows.Automation.AutomationProperties.SetAutomationId(nameBox, "SelectCallback.Name");
+        return dialog.ShowDialog() == true ? ((string)propertyBox.SelectedItem, (string)nameBox.SelectedItem) : null;
+    }
+
     private static Window Dialog(Window owner, string title)
     {
         // A dialog raised before the designer's window is shown (an app opened by appdesigner(...)

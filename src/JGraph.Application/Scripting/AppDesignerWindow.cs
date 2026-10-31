@@ -89,7 +89,9 @@ internal sealed partial class AppDesignerWindow : Window
             _right.Visibility = _inspector.HasSelection ? Visibility.Visible : Visibility.Hidden;
         };
         _right.Items.Add(inspectorTab);
-        _right.Items.Add(new TabItem { Header = "Callbacks", Content = _callbacks });
+        var callbacksTab = new TabItem { Header = "Callbacks", Content = _callbacks };
+        System.Windows.Automation.AutomationProperties.SetAutomationId(callbacksTab, "PropertiesPanel.Callbacks");
+        _right.Items.Add(callbacksTab);
         System.Windows.Automation.AutomationProperties.SetAutomationId(_right, "PropertiesPanel");
         var right = new Grid();
         var browserRow = new RowDefinition { Height = new GridLength(98) };
@@ -148,7 +150,7 @@ internal sealed partial class AppDesignerWindow : Window
             }
         };
         _inspector.Problem += (_, problem) => ShowAlert("App Designer", problem);
-        _callbacks.Problem += (_, problem) => _status.Text = problem;
+        _callbacks.Problem += (_, problem) => ShowAlert(DesignCallbackRules.InvalidNameTitle, problem);
         _callbacks.GoTo += (_, name) => GoToFunction(name);
         _codeBrowser.Problem += (_, problem) => _status.Text = problem;
         _codeBrowser.Picked += (_, item) => Picked(item);
@@ -317,6 +319,9 @@ internal sealed partial class AppDesignerWindow : Window
         AddClipboardKeys(canvas);
         WatchView(canvas);
         canvas.Alerted += (_, alert) => ShowAlert(alert.Title, alert.Message);
+        canvas.CallbackGoTo += (_, name) => GoToFunction(name);
+        canvas.CallbackSelectAsked += (_, peers) => ShowSelectCallback(peers);
+        canvas.HelpAsked += (_, _) => OpenHelp("apps-designer");
         canvas.DesignChanged += (_, _) =>
         {
             ShowHeader(app);
@@ -562,6 +567,22 @@ internal sealed partial class AppDesignerWindow : Window
             SetView(app, code: true);
             _codeBrowser.ShowCallback(name);
             app.CodeView.GoToFunction(name);
+        }
+    }
+
+    /// <summary>Select existing callback... (<c>SharedCallbackDialog</c>): the property and the function, the function not shown, as <c>AttachCallbackCommand</c> switches nothing.</summary>
+    private void ShowSelectCallback(IReadOnlyList<DesignComponent> peers)
+    {
+        if (Active is not { Document: { Code: not null } document } app)
+        {
+            return;
+        }
+
+        app.CodeView.Push();
+        if (AppDesignerDialogs.SelectCallback(this, document, peers) is { } chosen
+            && document.MassEditCallback([.. peers], chosen.Name, chosen.Property, detachPrevious: false, out _) is { } refused)
+        {
+            ShowAlert(DesignCallbackRules.InvalidNameTitle, refused);
         }
     }
 
