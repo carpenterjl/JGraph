@@ -21,7 +21,35 @@ public partial class ScriptEditorControl : UserControl
     private readonly LineReadOnlySectionProvider _readOnlyLines;
     private readonly CompletionSupport _completion;
     private readonly MenuItem _openSymbolItem = new() { InputGestureText = "Ctrl+D" };
+    private readonly FindReplaceStrip _find;
+    private readonly BookmarkMargin _bookmarkMargin;
     private ToolTip? _datatip;
+
+    // --- the editor's tools (App Designer window plan W9a): the commands the shell's menus and the designer's EDITOR tab bind to -------
+
+    /// <summary>Find Next (F3): the last text searched, with its options (<c>rtc_find_dialog_find_next_key</c>).</summary>
+    public static RoutedUICommand FindNext { get; } = Tool("Find Next", nameof(FindNext), Key.F3, ModifierKeys.None);
+
+    /// <summary>Find Previous (Shift+F3).</summary>
+    public static RoutedUICommand FindPrevious { get; } = Tool("Find Previous", nameof(FindPrevious), Key.F3, ModifierKeys.Shift);
+
+    /// <summary>Find Selection (Ctrl+F3): the selection's first line searched for.</summary>
+    public static RoutedUICommand FindSelection { get; } = Tool("Find Selection", nameof(FindSelection), Key.F3, ModifierKeys.Control);
+
+    /// <summary>Go To's line (Ctrl+G): the dialog, then the caret on the line chosen.</summary>
+    public static RoutedUICommand GoToLineCommand { get; } = Tool("Go To Line…", nameof(GoToLineCommand), Key.G, ModifierKeys.Control);
+
+    /// <summary>Sets or clears the bookmark on the caret's line (Ctrl+F2).</summary>
+    public static RoutedUICommand ToggleBookmark { get; } = Tool("Set/Clear Bookmark", nameof(ToggleBookmark), Key.F2, ModifierKeys.Control);
+
+    /// <summary>Goes to the next bookmark (F2).</summary>
+    public static RoutedUICommand NextBookmark { get; } = Tool("Next Bookmark", nameof(NextBookmark), Key.F2, ModifierKeys.None);
+
+    /// <summary>Goes to the previous bookmark (Shift+F2).</summary>
+    public static RoutedUICommand PreviousBookmark { get; } = Tool("Previous Bookmark", nameof(PreviousBookmark), Key.F2, ModifierKeys.Shift);
+
+    private static RoutedUICommand Tool(string text, string name, Key key, ModifierKeys modifiers) =>
+        new(text, name, typeof(ScriptEditorControl), [new KeyGesture(key, modifiers)]);
 
     /// <summary>
     /// The band drawn behind the line the debugger is paused at. Themed, and pushed into
@@ -60,15 +88,141 @@ public partial class ScriptEditorControl : UserControl
         SetResourceReference(SyntaxIsDarkProperty, Themes.ThemeKeys.ThemeIsDark);
         SetResourceReference(GeneratedCodeBrushProperty, Themes.ThemeKeys.GeneratedCode);
         Editor.TextArea.LeftMargins.Insert(0, _breakpointMargin);
+        _bookmarkMargin = new BookmarkMargin(Editor.Document);
+        Editor.TextArea.LeftMargins.Insert(1, _bookmarkMargin);
         Editor.TextArea.TextView.BackgroundRenderers.Add(_generatedCodeRenderer);
         Editor.TextArea.TextView.BackgroundRenderers.Add(_currentLineRenderer);
-        // Find has no implementation until the search panel is installed. Without this the Edit menu's
-        // Find item is bound to a command nothing in the window can execute, so it is permanently grey.
-        ICSharpCode.AvalonEdit.Search.SearchPanel.Install(Editor);
         _breakpointMargin.BreakpointToggled += (_, _) => BreakpointsChanged?.Invoke(this, EventArgs.Empty);
         _breakpointMargin.SetNextLineRequested += (_, line) => SetNextStatementRequested?.Invoke(this, line);
+        _bookmarkMargin.Changed += (_, _) =>
+        {
+            ShowStatus();
+            if (!_restoringBookmarks)
+            {
+                BookmarksChanged?.Invoke(this, EventArgs.Empty);
+            }
+        };
+        // The Find and Replace strip in place of AvalonEdit's search panel (W9a).
+        _find = new FindReplaceStrip(Editor, offset => _readOnlyLines.CanInsert(offset));
+        _find.Closed += (_, _) => FocusEditor();
+        StripHost.Content = _find;
+        InstallTools();
         InstallContextMenu();
         InstallDatatips();
+        Editor.TextArea.Caret.PositionChanged += (_, _) => ShowStatus();
+        ShowStatus();
+    }
+
+    /// <summary>
+    /// The editor's tools as commands (W9a): Find (Ctrl+F) and Replace (Ctrl+H) open the strip, F3 and Shift+F3 search again, Ctrl+F3
+    /// searches for the selection, Ctrl+G asks for a line, Ctrl+F2, F2 and Shift+F2 are the bookmarks. Esc closes the strip from the text.
+    /// A tool that cannot run says so and ends the query, so a host forwarding the command to the text is not asked back.
+    /// </summary>
+    private void InstallTools()
+    {
+        void Bind(ICommand command, Action run, Func<bool>? can = null) =>
+            CommandBindings.Add(new CommandBinding(command, (_, e) => { run(); e.Handled = true; }, (_, e) => { e.CanExecute = can?.Invoke() ?? true; e.Handled = true; }));
+
+        Bind(ApplicationCommands.Find, () => _find.Open(withReplace: false));
+        Bind(ApplicationCommands.Replace, () => _find.Open(withReplace: true));
+        Bind(FindNext, () => _find.FindAgain(backward: false));
+        Bind(FindPrevious, () => _find.FindAgain(backward: true));
+        Bind(FindSelection, () => _find.FindSelection(), () => Editor.SelectionLength > 0);
+        Bind(GoToLineCommand, AskGoToLine);
+        Bind(ToggleBookmark, ToggleBookmarkAtCaret);
+        Bind(NextBookmark, () => GoToBookmark(previous: false), () => _bookmarkMargin.HasBookmarks);
+        Bind(PreviousBookmark, () => GoToBookmark(previous: true), () => _bookmarkMargin.HasBookmarks);
+        Editor.TextArea.PreviewKeyDown += (_, e) =>
+        {
+            if (e.Key == Key.Escape && _find.IsOpen)
+            {
+                _find.Close();
+                e.Handled = true;
+            }
+        };
+    }
+
+    /// <summary>Opens the Find and Replace strip (<paramref name="withReplace"/>: the replace row shown), seeded from the selection.</summary>
+    public void OpenFind(bool withReplace) => _find.Open(withReplace);
+
+    /// <summary>
+    /// Names the text editor itself for UI Automation. A UserControl has no automation peer of its own, so an id set on this control is not
+    /// in the tree; the host names the editor inside, whose <c>ItemStatus</c> says where the caret and the bookmarks are.
+    /// </summary>
+    public void SetEditorAutomationId(string id)
+    {
+        ArgumentNullException.ThrowIfNull(id);
+        System.Windows.Automation.AutomationProperties.SetAutomationId(Editor, id);
+    }
+
+    /// <summary>Whether the Find and Replace strip is shown.</summary>
+    public bool IsFindOpen => _find.IsOpen;
+
+    /// <summary>The Go To dialog, then the caret at the start of the line chosen (<c>GotoHandler._goToCodeLine</c>).</summary>
+    private void AskGoToLine()
+    {
+        if (GoToLineDialog.Show(Window.GetWindow(this), Editor.Document.LineCount) is { } line)
+        {
+            GoToLine(line);
+        }
+    }
+
+    /// <summary>The one-based lines carrying a bookmark, in order.</summary>
+    public IReadOnlyList<int> Bookmarks => _bookmarkMargin.Lines;
+
+    /// <summary>Replaces the bookmarks (restoring a file's); a line beyond the text or empty takes none. Does not raise <see cref="BookmarksChanged"/>: the host initiated it.</summary>
+    public void SetBookmarks(IEnumerable<int> lines)
+    {
+        _restoringBookmarks = true;
+        try
+        {
+            _bookmarkMargin.SetLines(lines);
+        }
+        finally
+        {
+            _restoringBookmarks = false;
+        }
+    }
+
+    private bool _restoringBookmarks;
+
+    /// <summary>Raised when a bookmark is set or cleared by the user (Ctrl+F2 or a click in the margin).</summary>
+    public event EventHandler? BookmarksChanged;
+
+    /// <summary>Sets or clears the bookmark on the caret's line (Ctrl+F2); an empty line takes none.</summary>
+    public void ToggleBookmarkAtCaret() => _bookmarkMargin.Toggle(Editor.TextArea.Caret.Line);
+
+    /// <summary>Goes to the next bookmark, or the previous (<paramref name="previous"/>), round the text (F2, Shift+F2).</summary>
+    /// <returns>False when the text has no bookmark to go to.</returns>
+    public bool GoToBookmark(bool previous)
+    {
+        int? target = JGraph.Scripting.Editing.BookmarkRules.Next(_bookmarkMargin.Marked, Editor.Document.LineCount, Editor.TextArea.Caret.Line - 1, previous, line => _bookmarkMargin.IsBlank(line + 1));
+        if (target is not { } line)
+        {
+            return false;
+        }
+
+        Editor.TextArea.ClearSelection();
+        GoToLine(line + 1);
+        return true;
+    }
+
+    /// <summary>
+    /// What UI Automation reads of the editor's state (its <c>ItemStatus</c>): the caret's line and column, and the bookmarked lines - so a
+    /// window check can see where Go To, Find and the bookmarks put the caret without a picture.
+    /// </summary>
+    private void ShowStatus()
+    {
+        ICSharpCode.AvalonEdit.Editing.Caret caret = Editor.TextArea.Caret;
+        string status = $"Ln {caret.Line}, Col {caret.Column}";
+        IReadOnlyList<int> marks = _bookmarkMargin.Lines;
+        if (marks.Count > 0)
+        {
+            status += "; Bookmarks " + string.Join(" ", marks);
+        }
+
+        System.Windows.Automation.AutomationProperties.SetItemStatus(Editor, status);
+        CommandManager.InvalidateRequerySuggested();
     }
 
     /// <summary>

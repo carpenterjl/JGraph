@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using JGraph.Controls.Scripting;
 using JGraph.Scripting;
 using JGraph.Scripting.Startup;
 using JGraph.Scripting.Workspace;
@@ -60,7 +61,9 @@ public partial class ScriptWorkspaceWindow
                  {
                      ApplicationCommands.Undo, ApplicationCommands.Redo, ApplicationCommands.Cut,
                      ApplicationCommands.Copy, ApplicationCommands.Paste, ApplicationCommands.SelectAll,
-                     ApplicationCommands.Find,
+                     ApplicationCommands.Find, ApplicationCommands.Replace,
+                     ScriptEditorControl.FindNext, ScriptEditorControl.FindPrevious, ScriptEditorControl.FindSelection,
+                     ScriptEditorControl.GoToLineCommand, ScriptEditorControl.ToggleBookmark, ScriptEditorControl.NextBookmark, ScriptEditorControl.PreviousBookmark,
                  })
         {
             RoutedUICommand command = editing;

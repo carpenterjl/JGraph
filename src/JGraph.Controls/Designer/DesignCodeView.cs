@@ -45,6 +45,7 @@ public sealed partial class DesignCodeView : UserControl
             Push();
         };
         System.Windows.Automation.AutomationProperties.SetAutomationId(_editor, "CodeView");
+        _editor.SetEditorAutomationId("CodeView.Editor");
         Content = _editor;
     }
 

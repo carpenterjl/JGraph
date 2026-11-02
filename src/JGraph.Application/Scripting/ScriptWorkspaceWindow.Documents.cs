@@ -219,6 +219,20 @@ public partial class ScriptWorkspaceWindow
             _debugSession?.SetBreakpoints(SourceIdOf(entry), entry.Editor.Breakpoints);
         };
 
+        // The file's bookmarks, kept as R2025b keeps them: zero-based lines per path, written when one is set or cleared (W9a).
+        if (model.FilePath is { } bookmarked)
+        {
+            editor.SetBookmarks(_bookmarks.Read(bookmarked).Select(static line => line + 1));
+        }
+
+        editor.BookmarksChanged += (_, _) =>
+        {
+            if (entry.Model.FilePath is { } path)
+            {
+                _bookmarks.Write(path, entry.Editor.Bookmarks.Select(static line => line - 1));
+            }
+        };
+
         editor.SetNextStatementRequested += (_, line) => RequestSetNextStatement(entry, line);
         editor.OpenSymbolRequested += (_, name) => OpenSymbol(entry, name);
         editor.DatatipProvider = name => DatatipFor(entry, name);

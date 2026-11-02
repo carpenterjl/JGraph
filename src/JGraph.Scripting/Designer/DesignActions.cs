@@ -43,8 +43,9 @@ public static class DesignActions
     /// since W3, the Start Page and its new apps (a new custom component waits for W15); since W4, the
     /// arrange actions; since W6, the zoom and Resizing Hints; since W5, cut, copy, paste, Duplicate and
     /// Select All on the canvas, since W5c, Move for tabs and tree nodes and a tree's nodes added and
-    /// indented, and since W5d, a figure's menus and tools built on the canvas. The grid layout actions
-    /// run from the canvas's context menu (designer plan DS4).
+    /// indented, and since W5d, a figure's menus and tools built on the canvas; since W8, App Details, Help
+    /// Text, Convert, Save Copy As and Export; since W9a, Find's searches, Go To's line and the bookmarks.
+    /// The grid layout actions run from the canvas's context menu (designer plan DS4).
     /// </summary>
     private static readonly HashSet<string> Live = new(StringComparer.Ordinal)
     {
@@ -86,6 +87,9 @@ public static class DesignActions
         "AD_APP_DETAILS", "AD_HELP_COMMENTS",
         // Stage W8c: Convert, Save Copy As and Export to .m File.
         "AD_RESPONSIFY_ALL_OPTIONS", "AD_RESPONSIFY_2COLUMN", "AD_RESPONSIFY_3COLUMN", "AD_UNRESPONSIFY_TO_STANDARD", "AD_SAVECOPY_AS", "AD_EXPORT",
+        // Stage W9a: the editor's Find Next, Find Previous and Find Selection, Go To's line, and the bookmarks.
+        "AD_EDITOR_FIND_NEXT", "AD_EDITOR_FIND_PREVIOUS", "AD_EDITOR_FIND_SELECTION", "AD_EDITOR_GOTO",
+        "AD_EDITOR_TOGGLE_BOOKMARK", "AD_EDITOR_PREV_BOOKMARK", "AD_EDITOR_NEXT_BOOKMARK",
     };
 
     /// <summary>Every action, by id.</summary>

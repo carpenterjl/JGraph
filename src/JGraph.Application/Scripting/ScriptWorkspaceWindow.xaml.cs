@@ -42,6 +42,10 @@ public partial class ScriptWorkspaceWindow : Window
     private readonly List<DocumentEntry> _documents = new();
     private readonly Dictionary<string, List<int>> _persistedBreakpoints = new();
 
+    /// <summary>Where each file's bookmarks are kept between sessions (App Designer window plan W9a): <c>bookmarks.xml</c> beside the settings, as R2025b keeps its own.</summary>
+    private readonly JGraph.Scripting.Editing.BookmarkStore _bookmarks = new(System.IO.Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "JGraph", JGraph.Scripting.Editing.BookmarkStore.FileName));
+
     /// <summary>Whether the one-time notice about editing an App Designer file's generated code has been shown.</summary>
     private bool _generatedCodeNoticeShown;
     private readonly Dictionary<string, (DateTime WrittenUtc, IReadOnlyList<JGraph.Scripting.Completion.CompletionItem> Items)> _symbolCache =

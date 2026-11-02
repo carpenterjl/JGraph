@@ -31,7 +31,19 @@
                 <MenuItem Header="_Paste" Command="Paste" />
                 <Separator />
                 <MenuItem Header="Select _All" Command="SelectAll" />
+                <Separator />
+                <!-- The editor's tools (App Designer window plan W9a): the strip, its searches, Go To's line and the bookmarks. -->
                 <MenuItem Header="_Find…" Command="Find" />
+                <MenuItem Header="R_eplace…" Command="Replace" />
+                <MenuItem Header="Find _Next" Command="{x:Static controls:ScriptEditorControl.FindNext}" />
+                <MenuItem Header="Find Pre_vious" Command="{x:Static controls:ScriptEditorControl.FindPrevious}" />
+                <MenuItem Header="Find Se_lection" Command="{x:Static controls:ScriptEditorControl.FindSelection}" />
+                <Separator />
+                <MenuItem Header="_Go To Line…" Command="{x:Static controls:ScriptEditorControl.GoToLineCommand}" />
+                <Separator />
+                <MenuItem Header="Set/Clear _Bookmark" Command="{x:Static controls:ScriptEditorControl.ToggleBookmark}" />
+                <MenuItem Header="Next Boo_kmark" Command="{x:Static controls:ScriptEditorControl.NextBookmark}" />
+                <MenuItem Header="Previous Bookmar_k" Command="{x:Static controls:ScriptEditorControl.PreviousBookmark}" />
             </MenuItem>
             <MenuItem x:Name="ViewMenu" Header="_View" />
             <MenuItem Header="_Run">

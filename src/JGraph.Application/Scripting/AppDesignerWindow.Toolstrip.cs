@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
+using JGraph.Controls.Scripting;
 using JGraph.Controls.Toolstrip;
 using JGraph.Scripting.Designer;
 using JGraph.Scripting.Toolstrip;
@@ -64,7 +65,15 @@ internal sealed partial class AppDesignerWindow
         "AD_DUPLICATE" => DuplicateSelection,
         "AD_SELECT_ALL" => SelectAllComponents,
         "AD_HELP" => ApplicationCommands.Help,
+        // The editor's tools (W9a) reach the Code View's editor through the window's forwarding.
         "AD_EDITOR_FIND" => ApplicationCommands.Find,
+        "AD_EDITOR_FIND_NEXT" => ScriptEditorControl.FindNext,
+        "AD_EDITOR_FIND_PREVIOUS" => ScriptEditorControl.FindPrevious,
+        "AD_EDITOR_FIND_SELECTION" => ScriptEditorControl.FindSelection,
+        "AD_EDITOR_GOTO" => ScriptEditorControl.GoToLineCommand,
+        "AD_EDITOR_TOGGLE_BOOKMARK" => ScriptEditorControl.ToggleBookmark,
+        "AD_EDITOR_PREV_BOOKMARK" => ScriptEditorControl.PreviousBookmark,
+        "AD_EDITOR_NEXT_BOOKMARK" => ScriptEditorControl.NextBookmark,
         "AD_RUN" => RunApp,
         "OPEN_STARTSCREEN_DIALOG" => ShowStartPage,
         "AD_INPUT_ARGUMENTS" => CodeOptions,
@@ -139,10 +148,20 @@ internal sealed partial class AppDesignerWindow
             (_, e) => e.CanExecute = Active is { InCodeView: false }));
         CommandBindings.Add(new CommandBinding(GridIncrement, (_, _) => StepInterval(+1), (_, e) => e.CanExecute = Active is { InCodeView: false }));
         CommandBindings.Add(new CommandBinding(GridDecrement, (_, _) => StepInterval(-1), (_, e) => e.CanExecute = Active is { InCodeView: false }));
-        // Find reaches the Code View's editor; cut, copy and paste reach it or the canvas (W5).
-        CommandBindings.Add(new CommandBinding(ApplicationCommands.Find,
-            (_, e) => ((RoutedCommand)e.Command).Execute(null, Active!.CodeView.Editor.EditingSurface),
-            (_, e) => e.CanExecute = Active is { InCodeView: true } app && ((RoutedCommand)e.Command).CanExecute(null, app.CodeView.Editor.EditingSurface)));
+        // The editor's tools reach the Code View's editor (Find since W2, the rest W9a); cut, copy and paste reach it or the canvas (W5).
+        foreach (RoutedCommand tool in new RoutedCommand[]
+                 {
+                     ApplicationCommands.Find, ApplicationCommands.Replace,
+                     ScriptEditorControl.FindNext, ScriptEditorControl.FindPrevious, ScriptEditorControl.FindSelection, ScriptEditorControl.GoToLineCommand,
+                     ScriptEditorControl.ToggleBookmark, ScriptEditorControl.NextBookmark, ScriptEditorControl.PreviousBookmark,
+                 })
+        {
+            RoutedCommand command = tool;
+            CommandBindings.Add(new CommandBinding(command,
+                (_, _) => ForwardToEditor(command, run: true),
+                (_, e) => e.CanExecute = ForwardToEditor(command, run: false)));
+        }
+
         BindClipboardCommands();
 
         InputBindings.Add(new KeyBinding(Quit, Key.Q, ModifierKeys.Control));
@@ -152,6 +171,41 @@ internal sealed partial class AppDesignerWindow
         InputBindings.Add(new KeyBinding(GridIncrement, Key.PageUp, ModifierKeys.Alt));
         InputBindings.Add(new KeyBinding(GridDecrement, Key.PageDown, ModifierKeys.Alt));
         Settings.Changed += (_, name) => SettingChanged(name);
+    }
+
+    private bool _forwardingToEditor;
+
+    /// <summary>
+    /// Asks the Code View's editor whether it can run one of its tools, and runs it there when asked to; false with no app in its Code View.
+    /// The editor answers every query of its own tools, but the guard keeps a query that comes back from asking again for ever.
+    /// </summary>
+    private bool ForwardToEditor(RoutedCommand command, bool run)
+    {
+        if (_forwardingToEditor || Active is not { InCodeView: true } app)
+        {
+            return false;
+        }
+
+        _forwardingToEditor = true;
+        try
+        {
+            IInputElement target = app.CodeView.Editor.EditingSurface;
+            if (!command.CanExecute(null, target))
+            {
+                return false;
+            }
+
+            if (run)
+            {
+                command.Execute(null, target);
+            }
+
+            return true;
+        }
+        finally
+        {
+            _forwardingToEditor = false;
+        }
     }
 
     /// <summary>A toggle or the spinner changed a setting; INSERT > Callback has no action of its own.</summary>
