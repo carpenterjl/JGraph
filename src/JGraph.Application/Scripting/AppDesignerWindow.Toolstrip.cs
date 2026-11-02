@@ -81,6 +81,18 @@ internal sealed partial class AppDesignerWindow
         "AD_EDITOR_SMART_INDENT" => ScriptEditorControl.SmartIndentLines,
         "AD_EDITOR_INDENT_MORE" => ScriptEditorControl.IncreaseIndent,
         "AD_EDITOR_INDENT_LESS" => ScriptEditorControl.DecreaseIndent,
+        // The VIEW tab's tools (W9c); its toggles - the split, the display settings - answer through Invoked.
+        "AD_EDITOR_FOLD_CURRENT" => ScriptEditorControl.FoldCurrent,
+        "AD_EDITOR_UNFOLD_CURRENT" => ScriptEditorControl.UnfoldCurrent,
+        "AD_EDITOR_FOLD_ALL" => ScriptEditorControl.FoldAll,
+        "AD_EDITOR_UNFOLD_ALL" => ScriptEditorControl.UnfoldAll,
+        "AD_EDITOR_ZOOM_IN" => ScriptEditorControl.ZoomIn,
+        "AD_EDITOR_ZOOM_OUT" => ScriptEditorControl.ZoomOut,
+        "AD_EDITOR_RESET_ZOOM" => ScriptEditorControl.ResetZoom,
+        "AD_EDITOR_PRINT" => ApplicationCommands.Print,
+        "AD_EDITOR_PRINT_SELECTION" => ScriptEditorControl.PrintSelection,
+        "AD_EDITOR_SPLIT_NONE" or "AD_EDITOR_SPLIT_LEFTRIGHT" or "AD_EDITOR_SPLIT_TOPBOTTOM"
+            or "AD_EDITOR_HIGHLIGHT_CURRENT_LINE" or "AD_EDITOR_LINE_NUMBERS" or "AD_EDITOR_DATATIPS" => null,
         "AD_RUN" => RunApp,
         "OPEN_STARTSCREEN_DIALOG" => ShowStartPage,
         "AD_INPUT_ARGUMENTS" => CodeOptions,
@@ -163,6 +175,9 @@ internal sealed partial class AppDesignerWindow
                      ScriptEditorControl.ToggleBookmark, ScriptEditorControl.NextBookmark, ScriptEditorControl.PreviousBookmark,
                      ScriptEditorControl.CommentLines, ScriptEditorControl.UncommentLines, ScriptEditorControl.WrapCommentLines,
                      ScriptEditorControl.SmartIndentLines, ScriptEditorControl.IncreaseIndent, ScriptEditorControl.DecreaseIndent,
+                     ScriptEditorControl.FoldCurrent, ScriptEditorControl.UnfoldCurrent, ScriptEditorControl.FoldAll, ScriptEditorControl.UnfoldAll,
+                     ScriptEditorControl.ZoomIn, ScriptEditorControl.ZoomOut, ScriptEditorControl.ResetZoom, ScriptEditorControl.SwitchSplit,
+                     ApplicationCommands.Print, ScriptEditorControl.PrintSelection,
                  })
         {
             RoutedCommand command = tool;
@@ -172,6 +187,11 @@ internal sealed partial class AppDesignerWindow
         }
 
         BindClipboardCommands();
+
+        // The editor's display settings are every editor's (W9c): read from App Designer's settings, kept there when a toggle or the zoom changes them.
+        EditorDisplay.Load(Settings.Values);
+        EditorDisplay.Changed += OnEditorDisplayChanged;
+        Closed += (_, _) => EditorDisplay.Changed -= OnEditorDisplayChanged;
 
         InputBindings.Add(new KeyBinding(Quit, Key.Q, ModifierKeys.Control));
         InputBindings.Add(new KeyBinding(ShowShortcuts, Key.Oem2, ModifierKeys.Control));
@@ -183,6 +203,25 @@ internal sealed partial class AppDesignerWindow
     }
 
     private bool _forwardingToEditor;
+
+    /// <summary>The four display settings as text, for App Designer's settings (<c>matlab.editor.displaysettings</c>).</summary>
+    private static IEnumerable<(string Name, string Value)> EditorDisplayValues()
+    {
+        yield return (DesignSettings.EditorShowLineNumbers, EditorDisplay.ShowLineNumbers ? "true" : "false");
+        yield return (DesignSettings.EditorHighlightCurrentLine, EditorDisplay.HighlightCurrentLine ? "true" : "false");
+        yield return (DesignSettings.EditorDatatips, EditorDisplay.Datatips ? "true" : "false");
+        yield return (DesignSettings.EditorZoomFactor, EditorDisplay.ZoomFactor.ToString("0.##", CultureInfo.InvariantCulture));
+    }
+
+    private void OnEditorDisplayChanged(object? sender, EventArgs e)
+    {
+        foreach ((string name, string value) in EditorDisplayValues())
+        {
+            Settings.Set(name, value);
+        }
+
+        ShowToolstripState();
+    }
 
     /// <summary>
     /// Asks the Code View's editor whether it can run one of its tools, and runs it there when asked to; false with no app in its Code View.
@@ -240,6 +279,25 @@ internal sealed partial class AppDesignerWindow
             case "AD_DESIGN_GRID_INTERVAL" when e.Value is string text && double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out double typed):
                 Settings.Set(DesignSettings.GridInterval, (int)DesignGeometry.GridIntervalWithin(typed));
                 break;
+            // The VIEW tab (W9c): the display toggles are every editor's; the split is the active Code View's.
+            case "AD_EDITOR_HIGHLIGHT_CURRENT_LINE" when e.Value is bool on:
+                EditorDisplay.HighlightCurrentLine = on;
+                break;
+            case "AD_EDITOR_LINE_NUMBERS" when e.Value is bool on:
+                EditorDisplay.ShowLineNumbers = on;
+                break;
+            case "AD_EDITOR_DATATIPS" when e.Value is bool on:
+                EditorDisplay.Datatips = on;
+                break;
+            case "AD_EDITOR_SPLIT_NONE" when e.Value is true:
+                SetCodeViewSplit(SplitDirection.None);
+                break;
+            case "AD_EDITOR_SPLIT_LEFTRIGHT" when e.Value is true:
+                SetCodeViewSplit(SplitDirection.LeftRight);
+                break;
+            case "AD_EDITOR_SPLIT_TOPBOTTOM" when e.Value is true:
+                SetCodeViewSplit(SplitDirection.TopBottom);
+                break;
             case null when e.Tag == DesignToolstrip.AddCallbackButton:
                 ShowAddCallback();
                 break;
@@ -256,6 +314,15 @@ internal sealed partial class AppDesignerWindow
                 && Settings.RecentFiles().Files is { } files && recent < files.Count:
                 OpenRecent(files[recent].FilePath);
                 break;
+        }
+    }
+
+    private void SetCodeViewSplit(SplitDirection direction)
+    {
+        if (Active is { } app)
+        {
+            app.CodeView.Editor.SetSplit(direction);
+            ShowToolstripState();
         }
     }
 
@@ -278,6 +345,11 @@ internal sealed partial class AppDesignerWindow
         {
             _startPage.RecentFiles = Settings.RecentFiles().Files;
         }
+
+        if (name is DesignSettings.EditorShowLineNumbers or DesignSettings.EditorHighlightCurrentLine or DesignSettings.EditorDatatips or DesignSettings.EditorZoomFactor)
+        {
+            EditorDisplay.Load(Settings.Values);
+        }
     }
 
     /// <summary>
@@ -294,6 +366,18 @@ internal sealed partial class AppDesignerWindow
         _toolstrip.SetSelected("AD_DESIGN_VIEW_ALIGN_HINTS", Settings.GetBool(DesignSettings.ShowAlignmentHints));
         _toolstrip.SetSelected("AD_DESIGN_VIEW_DISPLAY_SIZE", Settings.GetBool(DesignSettings.ShowResizingHints));
         _toolstrip.SetValue(DesignToolstrip.IntervalSpinner, ((int)Settings.GridIntervalValue).ToString(CultureInfo.InvariantCulture));
+        // The VIEW tab's toggles (W9c): the display settings every editor shares, and the active Code View's split.
+        _toolstrip.SetSelected("AD_EDITOR_HIGHLIGHT_CURRENT_LINE", EditorDisplay.HighlightCurrentLine);
+        _toolstrip.SetSelected("AD_EDITOR_LINE_NUMBERS", EditorDisplay.ShowLineNumbers);
+        _toolstrip.SetSelected("AD_EDITOR_DATATIPS", EditorDisplay.Datatips);
+        SplitDirection split = app?.CodeView.Editor.Split ?? SplitDirection.None;
+        _toolstrip.SetSelected("AD_EDITOR_SPLIT_NONE", split == SplitDirection.None);
+        _toolstrip.SetSelected("AD_EDITOR_SPLIT_LEFTRIGHT", split == SplitDirection.LeftRight);
+        _toolstrip.SetSelected("AD_EDITOR_SPLIT_TOPBOTTOM", split == SplitDirection.TopBottom);
+        foreach (string id in new[] { "AD_EDITOR_SPLIT_NONE", "AD_EDITOR_SPLIT_LEFTRIGHT", "AD_EDITOR_SPLIT_TOPBOTTOM" })
+        {
+            _toolstrip.SetEnabled(id, app is not null);
+        }
         foreach (string id in new[] { "AD_DESIGN_GRID_SHOW", "AD_DESIGN_GRID_SNAP", "AD_DESIGN_VIEW_ALIGN_HINTS", "AD_DESIGN_VIEW_DISPLAY_SIZE", "AD_DESIGN_GRID_INTERVAL" })
         {
             _toolstrip.SetEnabled(id, app is not null);

@@ -59,6 +59,18 @@ public sealed class DesignSettings
     /// </summary>
     public const string ShowShortcutsDialog = "matlab.appdesigner.confirmationdialogs.ShowShortcutsDialog";
 
+    /// <summary>The editor's line numbers (W9c; R2025b's <c>matlab.editor.displaysettings.ShowLineNumbers</c>), kept with App Designer's settings.</summary>
+    public const string EditorShowLineNumbers = "matlab.editor.displaysettings.ShowLineNumbers";
+
+    /// <summary>The editor's current-line highlight (<c>HighlightCurrentLine</c>).</summary>
+    public const string EditorHighlightCurrentLine = "matlab.editor.displaysettings.HighlightCurrentLine";
+
+    /// <summary>Datatips while editing (<c>DataTipsInEditMode</c>).</summary>
+    public const string EditorDatatips = "matlab.editor.displaysettings.DataTipsInEditMode";
+
+    /// <summary>The editor's zoom factor (<c>CurrentZoomFactor</c>).</summary>
+    public const string EditorZoomFactor = "matlab.editor.displaysettings.CurrentZoomFactor";
+
     /// <summary>Every setting, with its factory value: the listed eight, then the ones read by name.</summary>
     public static IReadOnlyList<DesignSettingDefinition> Definitions { get; } =
     [
@@ -82,6 +94,11 @@ public sealed class DesignSettings
         new(ShowTitleFileExtension, "true", false),
         new(ShowShortcutsDialog, "true", false),
         new(FileList, "", false),
+        // The editor's display settings (W9c), R2025b's defaults.
+        new(EditorShowLineNumbers, "true", false),
+        new(EditorHighlightCurrentLine, "false", false),
+        new(EditorDatatips, "false", false),
+        new(EditorZoomFactor, "1", false),
     ];
 
     private readonly Dictionary<string, string> _values = new(StringComparer.Ordinal);

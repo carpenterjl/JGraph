@@ -315,7 +315,19 @@ public sealed partial class DesignCodeView : UserControl
             _pending.Stop();
             _editor.ReplaceText(text, _document?.TakeKeepEditorUndo() ?? false);
             _editor.InvalidateEditableLines();
-            _editor.SetFolds(DesignCodeFolds.ClosedByDefault(text, _document?.Code));
+            // Every block of the code can be folded (W9c); App Designer's default folds (W8d) start closed, and a plain-text app's
+            // appendix sections, which are no MATLAB block, fold too.
+            IReadOnlyList<(int First, int Last)> closed = DesignCodeFolds.ClosedByDefault(text, _document?.Code);
+            var candidates = new List<JGraph.Scripting.Editing.FoldCandidate>(JGraph.Scripting.Editing.CodeFoldRules.Candidates(text.Replace("\r", string.Empty).Split('\n')));
+            foreach ((int first, int last) in closed)
+            {
+                if (!candidates.Any(c => c.First == first))
+                {
+                    candidates.Add(new JGraph.Scripting.Editing.FoldCandidate(JGraph.Scripting.Editing.FoldKind.Section, first, last));
+                }
+            }
+
+            _editor.SetFoldCandidates(candidates, new HashSet<int>(closed.Select(static f => f.First)));
         }
         finally
         {

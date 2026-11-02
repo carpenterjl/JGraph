@@ -108,6 +108,7 @@ public partial class ScriptEditorControl : UserControl
         StripHost.Content = _find;
         InstallTools();
         InstallCodeTools();
+        InstallViewTools();
         InstallContextMenu();
         InstallDatatips();
         Editor.TextArea.Caret.PositionChanged += (_, _) => ShowStatus();
@@ -222,6 +223,7 @@ public partial class ScriptEditorControl : UserControl
             status += "; Bookmarks " + string.Join(" ", marks);
         }
 
+        status += ViewStatus();
         System.Windows.Automation.AutomationProperties.SetItemStatus(Editor, status);
         CommandManager.InvalidateRequerySuggested();
     }
@@ -471,21 +473,7 @@ public partial class ScriptEditorControl : UserControl
     public void SetFolds(IReadOnlyList<(int First, int Last)> folds)
     {
         ArgumentNullException.ThrowIfNull(folds);
-        _folding ??= ICSharpCode.AvalonEdit.Folding.FoldingManager.Install(Editor.TextArea);
-        var made = new List<ICSharpCode.AvalonEdit.Folding.NewFolding>(folds.Count);
-        foreach ((int first, int last) in folds)
-        {
-            if (first < 1 || last > Editor.Document.LineCount || last <= first)
-            {
-                continue;
-            }
-
-            ICSharpCode.AvalonEdit.Document.DocumentLine start = Editor.Document.GetLineByNumber(first);
-            made.Add(new ICSharpCode.AvalonEdit.Folding.NewFolding(start.EndOffset, Editor.Document.GetLineByNumber(last).EndOffset) { Name = " ...", DefaultClosed = true });
-        }
-
-        _folding.UpdateFoldings(made, -1);
-        OpenFoldsAtCaret();
+        SetFoldCandidates([.. folds.Select(static f => new JGraph.Scripting.Editing.FoldCandidate(JGraph.Scripting.Editing.FoldKind.Function, f.First, f.Last))], new HashSet<int>(folds.Select(static f => f.First)));
     }
 
     /// <summary>A fold closed over the caret is opened: the caret does not stand in hidden text.</summary>

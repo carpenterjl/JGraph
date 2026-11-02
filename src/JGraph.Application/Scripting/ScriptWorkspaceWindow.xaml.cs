@@ -105,6 +105,10 @@ public partial class ScriptWorkspaceWindow : Window
             settings.Changed += (_, _) => AppDesignerSettingsSaved();
         }
 
+        // The editor's display settings (W9c), kept by R2025b's names among App Designer's; every editor follows them.
+        JGraph.Controls.Scripting.EditorDisplay.Load(settings?.Current.AppDesigner);
+        JGraph.Controls.Scripting.EditorDisplay.Changed += (_, _) => SaveEditorDisplay();
+
         _session = new ScriptSessionModel(engines.Where(e => e.IsAvailable).Select(e => e.Language));
         _session.StateChanged += (_, _) => Dispatcher.Invoke(UpdateCommandStates);
         DockManager.ActiveContentChanged += (_, _) => UpdateCommandStates(); // Run reflects the active tab

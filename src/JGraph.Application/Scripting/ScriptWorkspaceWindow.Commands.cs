@@ -66,6 +66,10 @@ public partial class ScriptWorkspaceWindow
                      ScriptEditorControl.GoToLineCommand, ScriptEditorControl.ToggleBookmark, ScriptEditorControl.NextBookmark, ScriptEditorControl.PreviousBookmark,
                      ScriptEditorControl.CommentLines, ScriptEditorControl.UncommentLines, ScriptEditorControl.WrapCommentLines,
                      ScriptEditorControl.SmartIndentLines, ScriptEditorControl.IncreaseIndent, ScriptEditorControl.DecreaseIndent,
+                     ScriptEditorControl.FoldCurrent, ScriptEditorControl.UnfoldCurrent, ScriptEditorControl.FoldAll, ScriptEditorControl.UnfoldAll,
+                     ScriptEditorControl.ZoomIn, ScriptEditorControl.ZoomOut, ScriptEditorControl.ResetZoom,
+                     ScriptEditorControl.SplitNone, ScriptEditorControl.SplitLeftRight, ScriptEditorControl.SplitTopBottom, ScriptEditorControl.SwitchSplit,
+                     ApplicationCommands.Print, ScriptEditorControl.PrintSelection,
                  })
         {
             RoutedUICommand command = editing;
@@ -162,6 +166,44 @@ public partial class ScriptWorkspaceWindow
             ToolTip = "Put every panel back where it belongs",
         });
 
+        // The editor's VIEW tools (App Designer window plan W9c): the display settings every editor shares, the zoom, the split document, the folds.
+        ViewMenu.Items.Add(new Separator());
+        MenuItem Toggle(string header, Func<bool> get, Action<bool> set)
+        {
+            var item = new MenuItem { Header = header, IsCheckable = true };
+            item.Click += (_, _) => set(item.IsChecked);
+            ViewMenu.SubmenuOpened += (_, _) => item.IsChecked = get();
+            return item;
+        }
+
+        ViewMenu.Items.Add(Toggle("_Highlight Current Line", static () => EditorDisplay.HighlightCurrentLine, static on => EditorDisplay.HighlightCurrentLine = on));
+        ViewMenu.Items.Add(Toggle("Line _Numbers", static () => EditorDisplay.ShowLineNumbers, static on => EditorDisplay.ShowLineNumbers = on));
+        ViewMenu.Items.Add(Toggle("_Datatips While Editing", static () => EditorDisplay.Datatips, static on => EditorDisplay.Datatips = on));
+        ViewMenu.Items.Add(new Separator());
+        ViewMenu.Items.Add(new MenuItem { Header = "Zoom _In", Command = ScriptEditorControl.ZoomIn });
+        ViewMenu.Items.Add(new MenuItem { Header = "Zoom _Out", Command = ScriptEditorControl.ZoomOut });
+        ViewMenu.Items.Add(new MenuItem { Header = "Reset _Zoom", Command = ScriptEditorControl.ResetZoom });
+        ViewMenu.Items.Add(new Separator());
+        var split = new MenuItem { Header = "_Split Document" };
+        foreach ((string header, RoutedUICommand command, SplitDirection direction) in new[]
+                 {
+                     ("O_ff", ScriptEditorControl.SplitNone, SplitDirection.None),
+                     ("_Left/Right", ScriptEditorControl.SplitLeftRight, SplitDirection.LeftRight),
+                     ("_Top/Bottom", ScriptEditorControl.SplitTopBottom, SplitDirection.TopBottom),
+                 })
+        {
+            var choice = new MenuItem { Header = header, Command = command };
+            split.SubmenuOpened += (_, _) => choice.IsChecked = (ActiveDocument?.Editor.Split ?? SplitDirection.None) == direction;
+            split.Items.Add(choice);
+        }
+
+        ViewMenu.Items.Add(split);
+        ViewMenu.Items.Add(new MenuItem { Header = "S_witch Screen Focus", Command = ScriptEditorControl.SwitchSplit });
+        ViewMenu.Items.Add(new Separator());
+        ViewMenu.Items.Add(new MenuItem { Header = "_Collapse", Command = ScriptEditorControl.FoldCurrent });
+        ViewMenu.Items.Add(new MenuItem { Header = "_Expand", Command = ScriptEditorControl.UnfoldCurrent });
+        ViewMenu.Items.Add(new MenuItem { Header = "Collapse _All", Command = ScriptEditorControl.FoldAll });
+        ViewMenu.Items.Add(new MenuItem { Header = "Expand A_ll", Command = ScriptEditorControl.UnfoldAll });
     }
 
     /// <summary>Shows every tool pane in its default place, for a layout the user has lost track of.</summary>

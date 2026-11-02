@@ -16,6 +16,10 @@
                 <MenuItem Header="_Save" Command="{x:Static local:WorkspaceCommands.Save}" />
                 <MenuItem Header="Save _As…" Command="{x:Static local:WorkspaceCommands.SaveAs}" />
                 <MenuItem Header="_Export to .m File…" Command="{x:Static local:WorkspaceCommands.ExportAppCode}" />
+                <Separator />
+                <!-- The editor's Print and Print Selection (App Designer window plan W9c). -->
+                <MenuItem Header="_Print…" Command="Print" />
+                <MenuItem Header="Print Selec_tion…" Command="{x:Static controls:ScriptEditorControl.PrintSelection}" />
                 <MenuItem Header="Open in App _Designer" Command="{x:Static local:WorkspaceCommands.OpenInAppDesigner}" />
                 <MenuItem Header="Design A_pp" Command="{x:Static local:WorkspaceCommands.DesignApp}" />
                 <MenuItem Header="_Close Tab" Command="{x:Static local:WorkspaceCommands.CloseTab}" />

@@ -45,7 +45,7 @@ public static class DesignActions
     /// Select All on the canvas, since W5c, Move for tabs and tree nodes and a tree's nodes added and
     /// indented, and since W5d, a figure's menus and tools built on the canvas; since W8, App Details, Help
     /// Text, Convert, Save Copy As and Export; since W9a, Find's searches, Go To's line and the bookmarks;
-    /// since W9b, the CODE section. The grid layout actions run from the canvas's context menu (designer plan DS4).
+    /// since W9b, the CODE section; since W9c, the VIEW tab and Print. The grid layout actions run from the canvas's context menu (designer plan DS4).
     /// </summary>
     private static readonly HashSet<string> Live = new(StringComparer.Ordinal)
     {
@@ -92,6 +92,11 @@ public static class DesignActions
         "AD_EDITOR_TOGGLE_BOOKMARK", "AD_EDITOR_PREV_BOOKMARK", "AD_EDITOR_NEXT_BOOKMARK",
         // Stage W9b: the CODE section.
         "AD_EDITOR_COMMENT", "AD_EDITOR_UNCOMMENT", "AD_EDITOR_WRAP_COMMENT", "AD_EDITOR_SMART_INDENT", "AD_EDITOR_INDENT_MORE", "AD_EDITOR_INDENT_LESS",
+        // Stage W9c: the VIEW tab - the split, the display toggles, the folds, the zoom - and Print.
+        "AD_EDITOR_SPLIT_NONE", "AD_EDITOR_SPLIT_LEFTRIGHT", "AD_EDITOR_SPLIT_TOPBOTTOM",
+        "AD_EDITOR_HIGHLIGHT_CURRENT_LINE", "AD_EDITOR_LINE_NUMBERS", "AD_EDITOR_DATATIPS",
+        "AD_EDITOR_FOLD_CURRENT", "AD_EDITOR_UNFOLD_CURRENT", "AD_EDITOR_FOLD_ALL", "AD_EDITOR_UNFOLD_ALL",
+        "AD_EDITOR_ZOOM_IN", "AD_EDITOR_ZOOM_OUT", "AD_EDITOR_RESET_ZOOM", "AD_EDITOR_PRINT", "AD_EDITOR_PRINT_SELECTION",
     };
 
     /// <summary>Every action, by id.</summary>
@@ -136,6 +141,8 @@ public static class DesignActions
             "OPENGUIDEAPP" => "X3",
             "SHARE_WEB" => "X2",
             "EDITOR_SPELL_CHECKER" => "X9",
+            // The Code View's onboarding tips (Show Tips): JGraph shows none (a divergence, W9c).
+            "EDITOR_CODE_VIEW_TIPS" => "X10",
             // MathWorks' own example apps and guided tutorials: JGraph shows its own examples (WO2).
             _ when name.StartsWith("EXAMPLE_", StringComparison.Ordinal) || name.StartsWith("TUTORIAL_", StringComparison.Ordinal) => "X8",
             "DUPLICATE" or "SELECT_ALL" or "EDIT_MODE" => "W5",
@@ -146,7 +153,6 @@ public static class DesignActions
             "EDITOR_PAUSE" or "EDITOR_CONTINUE" or "EDITOR_STEP" or "EDITOR_STEP_IN" or "EDITOR_STEP_OUT" or "EDITOR_STOP" => "W11",
             _ when name.Contains("BREAKPOINT", StringComparison.Ordinal) || name.StartsWith("EDITOR_TOGGLE_STOP_IF", StringComparison.Ordinal)
                 || name == "EDITOR_TOGGLE_CONDITIONAL" => "W11",
-            _ when name.StartsWith("EDITOR_", StringComparison.Ordinal) && !name.StartsWith("EDITOR_ADD_", StringComparison.Ordinal) => "W9",
             "SHARE_ALL_OPTIONS" or "SHARE_DESKTOP" => "W12",
             "SHARE_MATLAB" => "W13",
             "OPEN_FILE_COMPARISON_DIALOG" => "W14",

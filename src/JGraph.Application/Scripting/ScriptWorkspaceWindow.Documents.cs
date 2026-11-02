@@ -236,6 +236,12 @@ public partial class ScriptWorkspaceWindow
         editor.SetNextStatementRequested += (_, line) => RequestSetNextStatement(entry, line);
         editor.OpenSymbolRequested += (_, name) => OpenSymbol(entry, name);
         editor.DatatipProvider = name => DatatipFor(entry, name);
+        // A MATLAB or JGS file folds at its blocks (W9c); a print job carries the file's name.
+        editor.DocumentTitle = model.FileName;
+        if (model.Language is "MATLAB" or "JGS")
+        {
+            editor.FoldSource = static lines => JGraph.Scripting.Editing.CodeFoldRules.Candidates(lines);
+        }
         editor.CompletionWorkspaceSymbols = () => HarvestWorkspaceSymbols(entry);
 
         // A MATLAB buffer completes .NET names and calllib's library and function names from the
@@ -440,10 +446,54 @@ public partial class ScriptWorkspaceWindow
         settings.Save(next);
     }
 
-    /// <summary>The Options dialog saved: an open designer takes App Designer's settings from it.</summary>
+    /// <summary>Keeps the editor's display settings (W9c) in the user's settings file, among App Designer's, when a menu or the zoom changed one; an open designer writes them too, and the equal values save nothing twice.</summary>
+    private void SaveEditorDisplay()
+    {
+        if (_settings is not { } settings || _applyingDesignSettings)
+        {
+            return;
+        }
+
+        var next = new Dictionary<string, string>(settings.Current.AppDesigner, StringComparer.Ordinal);
+        foreach ((string name, string value) in new[]
+                 {
+                     (JGraph.Scripting.Designer.DesignSettings.EditorShowLineNumbers, EditorDisplay.ShowLineNumbers ? "true" : "false"),
+                     (JGraph.Scripting.Designer.DesignSettings.EditorHighlightCurrentLine, EditorDisplay.HighlightCurrentLine ? "true" : "false"),
+                     (JGraph.Scripting.Designer.DesignSettings.EditorDatatips, EditorDisplay.Datatips ? "true" : "false"),
+                     (JGraph.Scripting.Designer.DesignSettings.EditorZoomFactor, EditorDisplay.ZoomFactor.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)),
+                 })
+        {
+            // Only what differs from the factory value is written, as App Designer's settings are.
+            if (JGraph.Scripting.Designer.DesignSettings.Definitions.First(d => d.Name == name).Default == value)
+            {
+                next.Remove(name);
+            }
+            else
+            {
+                next[name] = value;
+            }
+        }
+
+        if (next.Count == settings.Current.AppDesigner.Count && next.All(c => settings.Current.AppDesigner.TryGetValue(c.Key, out string? v) && v == c.Value))
+        {
+            return;
+        }
+
+        UserSettings saved = settings.Current.Clone();
+        saved.AppDesigner = next;
+        settings.Save(saved);
+    }
+
+    /// <summary>The Options dialog saved: an open designer takes App Designer's settings from it, and every editor its display settings.</summary>
     private void AppDesignerSettingsSaved()
     {
-        if (_appDesigner is not { } designer || _settings is not { } settings)
+        if (_settings is not { } settings)
+        {
+            return;
+        }
+
+        EditorDisplay.Load(settings.Current.AppDesigner);
+        if (_appDesigner is not { } designer)
         {
             return;
         }

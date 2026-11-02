@@ -117,6 +117,7 @@
     <Content Include="Scripting\Editing\EditorToolsOracle.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Scripting\Editing\CommentOracle.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Scripting\Editing\SmartIndentOracle.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Scripting\Editing\FoldOracle.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Scripting\Designer\GridRulesVerifyOracle.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

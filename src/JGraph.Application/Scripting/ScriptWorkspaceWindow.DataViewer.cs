@@ -69,12 +69,13 @@ public partial class ScriptWorkspaceWindow
     /// class and value as the Workspace pane shows them. Answered from the paused frame while the
     /// debugger is stopped (MATLAB's own datatips), and from the document's language's workspace
     /// when idle — a name the workspace does not hold gets no tip, so hovering code that has not
-    /// run shows nothing rather than something stale.
+    /// run shows nothing rather than something stale. While editing, tips come only with R2025b's
+    /// <c>DataTipsInEditMode</c> on (the VIEW tab's Datatips toggle, W9c), as MATLAB's editor shows them.
     /// </summary>
     private string? DatatipFor(DocumentEntry document, string name)
     {
         bool paused = _debugSession is { IsPaused: true };
-        if (!paused && !string.Equals(document.Model.Language, _variablesLanguage, StringComparison.Ordinal))
+        if (!paused && (!EditorDisplay.Datatips || !string.Equals(document.Model.Language, _variablesLanguage, StringComparison.Ordinal)))
         {
             return null;
         }
