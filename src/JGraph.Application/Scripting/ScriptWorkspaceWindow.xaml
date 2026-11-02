@@ -44,6 +44,15 @@
                 <MenuItem Header="Set/Clear _Bookmark" Command="{x:Static controls:ScriptEditorControl.ToggleBookmark}" />
                 <MenuItem Header="Next Boo_kmark" Command="{x:Static controls:ScriptEditorControl.NextBookmark}" />
                 <MenuItem Header="Previous Bookmar_k" Command="{x:Static controls:ScriptEditorControl.PreviousBookmark}" />
+                <Separator />
+                <!-- The CODE tools (W9b). -->
+                <MenuItem Header="_Comment" Command="{x:Static controls:ScriptEditorControl.CommentLines}" />
+                <MenuItem Header="_Uncomment" Command="{x:Static controls:ScriptEditorControl.UncommentLines}" />
+                <MenuItem Header="_Wrap Comments" Command="{x:Static controls:ScriptEditorControl.WrapCommentLines}" />
+                <Separator />
+                <MenuItem Header="Smart _Indent" Command="{x:Static controls:ScriptEditorControl.SmartIndentLines}" />
+                <MenuItem Header="Increase In_dent" Command="{x:Static controls:ScriptEditorControl.IncreaseIndent}" />
+                <MenuItem Header="Decrease Inden_t" Command="{x:Static controls:ScriptEditorControl.DecreaseIndent}" />
             </MenuItem>
             <MenuItem x:Name="ViewMenu" Header="_View" />
             <MenuItem Header="_Run">

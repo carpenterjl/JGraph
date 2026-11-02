@@ -74,6 +74,13 @@ internal sealed partial class AppDesignerWindow
         "AD_EDITOR_TOGGLE_BOOKMARK" => ScriptEditorControl.ToggleBookmark,
         "AD_EDITOR_PREV_BOOKMARK" => ScriptEditorControl.PreviousBookmark,
         "AD_EDITOR_NEXT_BOOKMARK" => ScriptEditorControl.NextBookmark,
+        // The CODE section (W9b).
+        "AD_EDITOR_COMMENT" => ScriptEditorControl.CommentLines,
+        "AD_EDITOR_UNCOMMENT" => ScriptEditorControl.UncommentLines,
+        "AD_EDITOR_WRAP_COMMENT" => ScriptEditorControl.WrapCommentLines,
+        "AD_EDITOR_SMART_INDENT" => ScriptEditorControl.SmartIndentLines,
+        "AD_EDITOR_INDENT_MORE" => ScriptEditorControl.IncreaseIndent,
+        "AD_EDITOR_INDENT_LESS" => ScriptEditorControl.DecreaseIndent,
         "AD_RUN" => RunApp,
         "OPEN_STARTSCREEN_DIALOG" => ShowStartPage,
         "AD_INPUT_ARGUMENTS" => CodeOptions,
@@ -154,6 +161,8 @@ internal sealed partial class AppDesignerWindow
                      ApplicationCommands.Find, ApplicationCommands.Replace,
                      ScriptEditorControl.FindNext, ScriptEditorControl.FindPrevious, ScriptEditorControl.FindSelection, ScriptEditorControl.GoToLineCommand,
                      ScriptEditorControl.ToggleBookmark, ScriptEditorControl.NextBookmark, ScriptEditorControl.PreviousBookmark,
+                     ScriptEditorControl.CommentLines, ScriptEditorControl.UncommentLines, ScriptEditorControl.WrapCommentLines,
+                     ScriptEditorControl.SmartIndentLines, ScriptEditorControl.IncreaseIndent, ScriptEditorControl.DecreaseIndent,
                  })
         {
             RoutedCommand command = tool;

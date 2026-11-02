@@ -44,8 +44,8 @@ public static class DesignActions
     /// arrange actions; since W6, the zoom and Resizing Hints; since W5, cut, copy, paste, Duplicate and
     /// Select All on the canvas, since W5c, Move for tabs and tree nodes and a tree's nodes added and
     /// indented, and since W5d, a figure's menus and tools built on the canvas; since W8, App Details, Help
-    /// Text, Convert, Save Copy As and Export; since W9a, Find's searches, Go To's line and the bookmarks.
-    /// The grid layout actions run from the canvas's context menu (designer plan DS4).
+    /// Text, Convert, Save Copy As and Export; since W9a, Find's searches, Go To's line and the bookmarks;
+    /// since W9b, the CODE section. The grid layout actions run from the canvas's context menu (designer plan DS4).
     /// </summary>
     private static readonly HashSet<string> Live = new(StringComparer.Ordinal)
     {
@@ -90,6 +90,8 @@ public static class DesignActions
         // Stage W9a: the editor's Find Next, Find Previous and Find Selection, Go To's line, and the bookmarks.
         "AD_EDITOR_FIND_NEXT", "AD_EDITOR_FIND_PREVIOUS", "AD_EDITOR_FIND_SELECTION", "AD_EDITOR_GOTO",
         "AD_EDITOR_TOGGLE_BOOKMARK", "AD_EDITOR_PREV_BOOKMARK", "AD_EDITOR_NEXT_BOOKMARK",
+        // Stage W9b: the CODE section.
+        "AD_EDITOR_COMMENT", "AD_EDITOR_UNCOMMENT", "AD_EDITOR_WRAP_COMMENT", "AD_EDITOR_SMART_INDENT", "AD_EDITOR_INDENT_MORE", "AD_EDITOR_INDENT_LESS",
     };
 
     /// <summary>Every action, by id.</summary>

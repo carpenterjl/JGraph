@@ -81,6 +81,40 @@ public class EditorToolsTests
     public void TheLineIsHeldToTheText(long asked, int lines, int line) => Assert.Equal(line, GoToLineRules.Clamp(asked, lines));
 
     [Fact]
+    public void IndentAndUnindentFollowIndentation()
+    {
+        var lines = new List<string> { "x = 1;", "\ty = 2;", "  z = 3;", "      w = 4;", "" };
+        Assert.True(IndentRules.Indent(lines, 1, 5, line => line != 3));
+        Assert.Equal(["    x = 1;", "\t    y = 2;", "  z = 3;", "          w = 4;", "    "], lines);
+        Assert.True(IndentRules.Unindent(lines, 1, 5));
+        Assert.Equal(["x = 1;", "    y = 2;", "z = 3;", "      w = 4;", ""], lines);
+        Assert.False(IndentRules.Unindent(lines, 1, 1));
+        Assert.Equal((2, 3), IndentRules.LinesOf(2, 4, 1));
+        Assert.Equal((2, 4), IndentRules.LinesOf(2, 4, 2));
+        Assert.Equal((2, 2), IndentRules.LinesOf(2, 2, 1));
+    }
+
+    [Fact]
+    public void ASelectionEndingAtAColumnOneLeavesThatLineOut()
+    {
+        Assert.Equal((3, 5), CommentRules.LinesOf(3, 2, 6, 1, endsAtTextEnd: false));
+        Assert.Equal((3, 6), CommentRules.LinesOf(3, 2, 6, 1, endsAtTextEnd: true));
+        Assert.Equal((3, 6), CommentRules.LinesOf(3, 2, 6, 4, endsAtTextEnd: false));
+        Assert.Equal((3, 3), CommentRules.LinesOf(3, 1, 3, 1, endsAtTextEnd: false));
+    }
+
+    [Fact]
+    public void SmartIndentLeavesTheLinesOutsideTheRange()
+    {
+        // A line alone follows the statement before it as it stands (IndentUtilities reads the lines' own indents).
+        string[] lines = ["if x", "      y = 1;", "   z = 2;", "        end"];
+        Assert.Equal(["if x", "      y = 1;", "      z = 2;", "        end"], SmartIndent.Format(lines, 2, 2, IndentMode.Mixed, padEmptyLines: false));
+        Assert.Equal(["if x", "      y = 1;", "   z = 2;", "end"], SmartIndent.Format(lines, 3, 3, IndentMode.Mixed, padEmptyLines: false));
+        Assert.Equal(["if x", "    y = 1;", "    z = 2;", "end"], SmartIndent.Format(lines, 0, 3, IndentMode.Mixed, padEmptyLines: false));
+        Assert.Equal(8, SmartIndent.IndentLevelOf(["function f", "    if x", "y", "end"], 2, IndentMode.All));
+    }
+
+    [Fact]
     public void AnEmptyLineTakesNoBookmark()
     {
         var marked = new SortedSet<int>();

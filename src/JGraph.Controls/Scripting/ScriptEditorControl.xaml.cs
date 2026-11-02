@@ -107,6 +107,7 @@ public partial class ScriptEditorControl : UserControl
         _find.Closed += (_, _) => FocusEditor();
         StripHost.Content = _find;
         InstallTools();
+        InstallCodeTools();
         InstallContextMenu();
         InstallDatatips();
         Editor.TextArea.Caret.PositionChanged += (_, _) => ShowStatus();

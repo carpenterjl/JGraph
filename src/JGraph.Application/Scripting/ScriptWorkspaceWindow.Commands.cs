@@ -64,6 +64,8 @@ public partial class ScriptWorkspaceWindow
                      ApplicationCommands.Find, ApplicationCommands.Replace,
                      ScriptEditorControl.FindNext, ScriptEditorControl.FindPrevious, ScriptEditorControl.FindSelection,
                      ScriptEditorControl.GoToLineCommand, ScriptEditorControl.ToggleBookmark, ScriptEditorControl.NextBookmark, ScriptEditorControl.PreviousBookmark,
+                     ScriptEditorControl.CommentLines, ScriptEditorControl.UncommentLines, ScriptEditorControl.WrapCommentLines,
+                     ScriptEditorControl.SmartIndentLines, ScriptEditorControl.IncreaseIndent, ScriptEditorControl.DecreaseIndent,
                  })
         {
             RoutedUICommand command = editing;
@@ -159,6 +161,7 @@ public partial class ScriptWorkspaceWindow
             Command = WorkspaceCommands.ResetLayout,
             ToolTip = "Put every panel back where it belongs",
         });
+
     }
 
     /// <summary>Shows every tool pane in its default place, for a layout the user has lost track of.</summary>
