@@ -1,0 +1,21 @@
+== a_theirs_unsigned.mltbx
+installed Accept Form; warning [] 
+== b_ours.mltbx
+[Warning: The installed toolbox "W4App" is not supported for this MATLAB release or for this platform.] 
+[> In installToolbox (line 48)
+In matlab.addons.install/launchInstallation (line 219)
+In matlab.addons.install (line 177)
+In matlab.addons.toolbox.installToolbox
+In w13_warn (line 15)] 
+installed W4App; warning [toolboxmanagement_matlab_api:installToolbox:incompatibleToolbox] The installed toolbox "W4App" is not supported for this MATLAB release or for this platform.
+== c_ours_their_sysreq.mltbx
+installed W4App; warning [] 
+== d_ours_their_mwcore.mltbx
+[Warning: The installed toolbox "W4App" is not supported for this MATLAB release or for this platform.] 
+[> In installToolbox (line 48)
+In matlab.addons.install/launchInstallation (line 219)
+In matlab.addons.install (line 177)
+In matlab.addons.toolbox.installToolbox
+In w13_warn (line 15)] 
+installed W4App; warning [toolboxmanagement_matlab_api:installToolbox:incompatibleToolbox] The installed toolbox "W4App" is not supported for this MATLAB release or for this platform.
+done

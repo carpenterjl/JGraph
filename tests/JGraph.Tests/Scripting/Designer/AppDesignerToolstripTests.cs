@@ -111,7 +111,7 @@ public class AppDesignerToolstripTests
     [InlineData("AD_EDITOR_TOGGLE_STOP_IF_ERROR", "W11")]
     [InlineData("AD_SHARE_DESKTOP", null)]
     [InlineData("AD_SHARE_ALL_OPTIONS", null)]
-    [InlineData("AD_SHARE_MATLAB", "W13")]
+    [InlineData("AD_SHARE_MATLAB", null)]
     [InlineData("OPEN_FILE_COMPARISON_DIALOG", "W14")]
     [InlineData("AD_CONFIGURE_METADATA", "W15")]
     [InlineData("AD_SHARE_WEB", "X2")]

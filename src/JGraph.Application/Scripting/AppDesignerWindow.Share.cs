@@ -6,14 +6,18 @@ using JGraph.Scripting.Designer;
 namespace JGraph.Application.Scripting;
 
 /// <content>
-/// The SHARE drop-down (App Designer window plan W12): Standalone Desktop App opens the app's "Configure Standalone App for Sharing"
-/// window over the saved app, as R2025b's <c>shareApp</c> and <c>DesktopAppSharingStrategy.showProjectWebUI</c> do; Web App stays
-/// disabled, as R2025b's is without a compiler (web apps are out of JGraph's scope, compiler plan KD2, stage X2).
+/// The SHARE drop-down (App Designer window plan W12 and W13): Standalone Desktop App opens the app's "Configure Standalone App for
+/// Sharing" window and MATLAB App its "Configure MATLAB App for Sharing" window over the saved app, as R2025b's <c>shareApp</c> and the
+/// sharing strategies' <c>showProjectWebUI</c> do; Web App stays disabled, as R2025b's is without a compiler (web apps are out of
+/// JGraph's scope, compiler plan KD2, stage X2).
 /// </content>
 internal sealed partial class AppDesignerWindow
 {
     /// <summary>Share &gt; Standalone Desktop App.</summary>
     public static readonly RoutedCommand ShareDesktop = new(nameof(ShareDesktop), typeof(AppDesignerWindow));
+
+    /// <summary>Share &gt; MATLAB App.</summary>
+    public static readonly RoutedCommand ShareMatlabApp = new(nameof(ShareMatlabApp), typeof(AppDesignerWindow));
 
     private readonly Dictionary<string, AppShareWindow> _shareWindows = new(StringComparer.OrdinalIgnoreCase);
 
@@ -32,6 +36,8 @@ internal sealed partial class AppDesignerWindow
     private void BindShareCommands()
     {
         CommandBindings.Add(new CommandBinding(ShareDesktop, (_, _) => ShareActive(AppShareKind.Standalone),
+            (_, e) => e.CanExecute = Active is not null && !_running));
+        CommandBindings.Add(new CommandBinding(ShareMatlabApp, (_, _) => ShareActive(AppShareKind.MatlabApp),
             (_, e) => e.CanExecute = Active is not null && !_running));
     }
 
@@ -55,10 +61,10 @@ internal sealed partial class AppDesignerWindow
         }
 
         DesignAppDetailsValues details = app.Document.AppDetailsValues;
-        // R2025b sets the installer's ApplicationName from App Details as it is; an empty name is refused by the
+        // R2025b sets the installer's or the toolbox's name from App Details as it is; an empty name is refused by the
         // options, so the file's name stands in for one (a divergence).
         string name = details.Name.Length > 0 ? details.Name : Path.GetFileNameWithoutExtension(path);
-        var window = new AppShareWindow(kind, path, new AppShareDetails(name, details.Version, details.Author, details.Summary, details.Description))
+        var window = new AppShareWindow(kind, path, new AppShareDetails(name, details.Version, details.Author, details.Summary, details.Description), details.Thumbnail)
         {
             Owner = this,
             Analyzer = Analyzer,

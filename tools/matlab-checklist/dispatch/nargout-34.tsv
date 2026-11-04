@@ -1,0 +1,16 @@
+matlab.addons.toolbox.ToolboxOptions	1	8
+matlab.addons.toolbox.packageToolbox	0	0
+matlab.addons.toolbox.toolboxVersion	1	0
+matlab.addons.toolbox.installToolbox	1	0
+matlab.addons.toolbox.installedToolboxes	1	0
+matlab.addons.toolbox.uninstallToolbox	0	0
+matlab.apputil.create	0	0
+matlab.apputil.package	0	0
+matlab.apputil.install	1	0
+matlab.apputil.uninstall	0	0
+matlab.apputil.run	0	0
+matlab.apputil.getInstalledAppInfo	1	0
+matlab.addons.installedAddons	1	0
+matlab.addons.install	1	0
+matlab.addons.uninstall	0	0
+matlab.addons.isAddonEnabled	1	0

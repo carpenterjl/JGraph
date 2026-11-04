@@ -1,0 +1,860 @@
+== the add-ons folders
+Add-Ons: C:\Users\Carpe\AppData\Roaming\MathWorks\MATLAB Add-Ons
+Apps: C:\Users\Carpe\AppData\Roaming\MathWorks\MATLAB Add-Ons\Apps
+== the share window's script with files
+disp(string(message("compiler_ui_common:messages:beginBuildMLAPP")));packageOpts=matlab.addons.toolbox.ToolboxOptions("<apps>", "079c16c6-1827-4ad5-9249-17eaa4de3a27", ToolboxFiles={"<apps>\AcceptForm.mlapp", "<apps>\data.txt", "<apps>\helper.m", "<apps>\sub\deep.m", "<apps>\art.png", "<apps>\table.mat"});
+packageOpts.ToolboxName = "Accept Form";
+packageOpts.ToolboxVersion = "2.1";
+packageOpts.AuthorName = "W13 Probe";
+packageOpts.Summary = "A form that adds or multiplies.";
+packageOpts.Description = "One line.";
+packageOpts.AppGalleryFiles = {"<apps>\AcceptForm.mlapp"};
+packageOpts.ToolboxMatlabPath = {"<apps>", "<apps>\sub"};
+packageOpts.OutputFile = "<apps>\release\AcceptForm.mltbx";
+matlab.addons.toolbox.packageToolbox(packageOpts);disp(string(message("compiler_ui_common:messages:endBuildMLAPP")));
+Packaging MATLAB App...
+MATLAB App packaging complete
+
+mltbx exists 1
+== parts of the mltbx with files
+  <apps>\mltbx1\[Content_Types].xml (1950 bytes)
+  <apps>\mltbx1\_rels\.rels (1551 bytes)
+  <apps>\mltbx1\_xmlsignatures\_rels\origin.sigs.rels (302 bytes)
+  <apps>\mltbx1\fsroot\AcceptForm.mlapp (11596 bytes)
+  <apps>\mltbx1\fsroot\DesktopToolset.xml (709 bytes)
+  <apps>\mltbx1\fsroot\art.png (119 bytes)
+  <apps>\mltbx1\fsroot\data.txt (2 bytes)
+  <apps>\mltbx1\fsroot\helper.m (38 bytes)
+  <apps>\mltbx1\fsroot\sub\deep.m (20 bytes)
+  <apps>\mltbx1\fsroot\table.mat (544 bytes)
+  <apps>\mltbx1\metadata\addonProperties.xml (377 bytes)
+  <apps>\mltbx1\metadata\configuration.xml (237 bytes)
+  <apps>\mltbx1\metadata\coreProperties.xml (707 bytes)
+  <apps>\mltbx1\metadata\filesystemManifest.xml (1101 bytes)
+  <apps>\mltbx1\metadata\mwcoreProperties.xml (339 bytes)
+  <apps>\mltbx1\metadata\mwcorePropertiesExtension.xml (222 bytes)
+  <apps>\mltbx1\metadata\mwcorePropertiesReleaseInfo.xml (303 bytes)
+  <apps>\mltbx1\metadata\systemRequirements.xml (301 bytes)
+  <apps>\mltbx1\_xmlsignatures\origin.sigs (0 bytes)
+  <apps>\mltbx1\_xmlsignatures\sig1.xml (2734 bytes)
+---- [Content_Types].xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default ContentType="text/plain;charset=utf-8" Extension="m"/>
+  <Default ContentType="application/vnd.mathworks.matlab.workspaceData" Extension="mat"/>
+  <Default ContentType="application/vnd.mathworks.matlab.app" Extension="mlapp"/>
+  <Default ContentType="image/png" Extension="png"/>
+  <Default ContentType="application/vnd.openxmlformats-package.relationships+xml" Extension="rels"/>
+  <Default ContentType="application/vnd.openxmlformats-package.digital-signature-origin" Extension="sigs"/>
+  <Default ContentType="text/plain;charset=utf-8" Extension="txt"/>
+  <Default ContentType="application/vnd.mathworks.matlab.addon.properties+xml" Extension="xml"/>
+  <Override ContentType="application/vnd.openxmlformats-package.digital-signaturexmlsignature+xml" PartName="/_xmlsignatures/sig1.xml"/>
+  <Override ContentType="application/xml" PartName="/fsroot/DesktopToolset.xml"/>
+  <Override ContentType="application/vnd.mathworks.matlab.addon.configuration+xml" PartName="/metadata/configuration.xml"/>
+  <Override ContentType="application/vnd.openxmlformats-package.core-properties+xml" PartName="/metadata/coreProperties.xml"/>
+  <Override ContentType="application/vnd.mathworks.package.filesystemManifest+xml" PartName="/metadata/filesystemManifest.xml"/>
+  <Override ContentType="application/vnd.mathworks.package.coreProperties+xml" PartName="/metadata/mwcoreProperties.xml"/>
+  <Override ContentType="application/vnd.mathworks.package.corePropertiesExtension+xml" PartName="/metadata/mwcorePropertiesExtension.xml"/>
+  <Override ContentType="application/vnd.mathworks.package.corePropertiesReleaseInfo+xml" PartName="/metadata/mwcorePropertiesReleaseInfo.xml"/>
+  <Override ContentType="application/vnd.mathworks.matlab.addon.systemRequirements+xml" PartName="/metadata/systemRequirements.xml"/>
+</Types>
+
+---- metadata/filesystemManifest.xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<fileEntries xmlns="http://schemas.mathworks.com/package/2013/filesystemManifest" createdByEncoding="UTF-8" createdByPlatform="win64" version="2.0">
+  <fileEntry content="/fsroot/AcceptForm.mlapp" date="2026-11-04T00:59:20Z" name="/AcceptForm.mlapp" permissions="010666" type="File"/>
+  <fileEntry content="/fsroot/DesktopToolset.xml" date="2026-11-04T01:00:35Z" name="/DesktopToolset.xml" permissions="010666" type="File"/>
+  <fileEntry content="/fsroot/art.png" date="2026-11-04T00:59:21Z" name="/art.png" permissions="010666" type="File"/>
+  <fileEntry content="/fsroot/data.txt" date="2026-11-04T00:59:20Z" name="/data.txt" permissions="010666" type="File"/>
+  <fileEntry content="/fsroot/helper.m" date="2026-11-04T00:59:20Z" name="/helper.m" permissions="010666" type="File"/>
+  <fileEntry content="/fsroot/sub/deep.m" date="2026-11-04T00:59:20Z" name="/sub/deep.m" permissions="010666" type="File"/>
+  <fileEntry content="/fsroot/table.mat" date="2026-11-04T00:59:21Z" name="/table.mat" permissions="010666" type="File"/>
+</fileEntries>
+
+---- metadata/configuration.xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?><configuration xmlns="http://schemas.mathworks.com/matlab/addon/2014/configuration"><matlabPaths><matlabPath></matlabPath><matlabPath>/sub</matlabPath></matlabPaths></configuration>
+---- fsroot/DesktopToolset.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<toolset id="user_apps_toolset" template="false">
+    <tool app_file_path="AcceptForm.mlapp" handler_class="com.mathworks.deployment.desktop.toolstrip.ToolboxToolSetExtensionHandler" id="4caa76ce-c63e-42ba-9889-05fe82cd083b:AcceptForm.mlapp" label="Accept Form" quick_access_eligible="false" toolset_id="user_apps_toolset">
+        <callback>AcceptForm</callback>
+        <summary>A form that adds or multiplies.</summary>
+        <description>One line.</description>
+        <icon filename="matlab_app_generic_icon_24" id="app"/>
+        <icon filename="matlab_app_generic_icon_16"/>
+        <parent_tool id="my_apps" toolset_id="apps_toolset"/>
+    </tool>
+</toolset>
+
+---- metadata/addonProperties.xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?><addonProperties xmlns="http://schemas.mathworks.com/matlab/addon/2014/addonProperties"><identifier type="GUID">079c16c6-1827-4ad5-9249-17eaa4de3a27</identifier><description>One line.</description><authors><author><name>W13 Probe</name><contact></contact><organization></organization></author></authors></addonProperties>
+== mlAddonGetProperties
+                  type: 'MATLAB Toolbox'
+                  name: 'Accept Form'
+               version: '2.1'
+         MATLABRelease: 'R2025b'
+               summary: 'A form that adds or multiplies.'
+            authorName: 'W13 Probe'
+         authorContact: ''
+    authorOrganization: ''
+                  GUID: '079c16c6-1827-4ad5-9249-17eaa4de3a27'
+           description: 'One line.'
+
+== toolboxVersion: 2.1
+== ToolboxOptions by hand
+  ToolboxOptions with properties:
+
+               AppGalleryFiles: [0×0 string]
+                 AuthorCompany: ""
+                   AuthorEmail: ""
+                    AuthorName: ""
+                   Description: ""
+                    OutputFile: "D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w13\rt\apps.mltbx"
+    RequiredAdditionalSoftware: [0×0 struct]
+                RequiredAddons: [0×0 struct]
+                       Summary: ""
+            SupportedPlatforms: [1×1 struct]
+    ToolboxGettingStartedGuide: ""
+              ToolboxImageFile: ""
+                  ToolboxFiles: [3×1 string]
+               ToolboxJavaPath: [0×0 string]
+             ToolboxMatlabPath: [0×0 string]
+                   ToolboxName: "apps"
+                ToolboxVersion: "1.0.0"
+          MinimumMatlabRelease: ""
+          MaximumMatlabRelease: ""
+                    Identifier: "w13-probe-id"
+                 ToolboxFolder: "D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w13\rt\apps"
+
+ToolboxFolder <apps>
+OutputFile <apps>.mltbx
+ToolboxMatlabPath 
+Min  Max 
+           Win64: 1
+         Glnxa64: 1
+          Maci64: 1
+    MatlabOnline: 1
+
+== parts of the hand-made mltbx
+  <apps>\mltbx2\[Content_Types].xml (1736 bytes)
+  <apps>\mltbx2\_rels\.rels (1718 bytes)
+  <apps>\mltbx2\_xmlsignatures\_rels\origin.sigs.rels (302 bytes)
+  <apps>\mltbx2\fsroot\AcceptForm.mlapp (11596 bytes)
+  <apps>\mltbx2\fsroot\DesktopToolset.xml (709 bytes)
+  <apps>\mltbx2\fsroot\data.txt (2 bytes)
+  <apps>\mltbx2\fsroot\sub\deep.m (20 bytes)
+  <apps>\mltbx2\metadata\addonProperties.xml (372 bytes)
+  <apps>\mltbx2\metadata\coreProperties.xml (682 bytes)
+  <apps>\mltbx2\metadata\filesystemManifest.xml (741 bytes)
+  <apps>\mltbx2\metadata\mwcoreProperties.xml (339 bytes)
+  <apps>\mltbx2\metadata\mwcorePropertiesExtension.xml (222 bytes)
+  <apps>\mltbx2\metadata\mwcorePropertiesReleaseInfo.xml (303 bytes)
+  <apps>\mltbx2\metadata\primaryScreenShot.png (119 bytes)
+  <apps>\mltbx2\metadata\systemRequirements.xml (301 bytes)
+  <apps>\mltbx2\_xmlsignatures\origin.sigs (0 bytes)
+  <apps>\mltbx2\_xmlsignatures\sig1.xml (2734 bytes)
+---- [Content_Types].xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default ContentType="text/plain;charset=utf-8" Extension="m"/>
+  <Default ContentType="application/vnd.mathworks.matlab.app" Extension="mlapp"/>
+  <Default ContentType="image/png" Extension="png"/>
+  <Default ContentType="application/vnd.openxmlformats-package.relationships+xml" Extension="rels"/>
+  <Default ContentType="application/vnd.openxmlformats-package.digital-signature-origin" Extension="sigs"/>
+  <Default ContentType="text/plain;charset=utf-8" Extension="txt"/>
+  <Default ContentType="application/vnd.mathworks.matlab.addon.properties+xml" Extension="xml"/>
+  <Override ContentType="application/vnd.openxmlformats-package.digital-signaturexmlsignature+xml" PartName="/_xmlsignatures/sig1.xml"/>
+  <Override ContentType="application/xml" PartName="/fsroot/DesktopToolset.xml"/>
+  <Override ContentType="application/vnd.openxmlformats-package.core-properties+xml" PartName="/metadata/coreProperties.xml"/>
+  <Override ContentType="application/vnd.mathworks.package.filesystemManifest+xml" PartName="/metadata/filesystemManifest.xml"/>
+  <Override ContentType="application/vnd.mathworks.package.coreProperties+xml" PartName="/metadata/mwcoreProperties.xml"/>
+  <Override ContentType="application/vnd.mathworks.package.corePropertiesExtension+xml" PartName="/metadata/mwcorePropertiesExtension.xml"/>
+  <Override ContentType="application/vnd.mathworks.package.corePropertiesReleaseInfo+xml" PartName="/metadata/mwcorePropertiesReleaseInfo.xml"/>
+  <Override ContentType="application/vnd.mathworks.matlab.addon.systemRequirements+xml" PartName="/metadata/systemRequirements.xml"/>
+</Types>
+
+---- _rels/.rels
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Target="metadata/addonProperties.xml" Type="http://schemas.mathworks.com/matlab/addon/2014/relationships/addonProperties"/>
+  <Relationship Id="rId100" Target="metadata/primaryScreenShot.png" Type="http://schemas.mathworks.com/matlab/addon/2014/relationships/primaryScreenShot"/>
+  <Relationship Id="rId101" Target="metadata/primaryScreenShot.png" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/thumbnail"/>
+  <Relationship Id="rId2" Target="metadata/mwcoreProperties.xml" Type="http://schemas.mathworks.com/package/2012/relationships/coreProperties"/>
+  <Relationship Id="rId3" Target="metadata/mwcorePropertiesExtension.xml" Type="http://schemas.mathworks.com/package/2014/relationships/corePropertiesExtension"/>
+  <Relationship Id="rId4" Target="metadata/mwcorePropertiesReleaseInfo.xml" Type="http://schemas.mathworks.com/package/2019/relationships/corePropertiesReleaseInfo"/>
+  <Relationship Id="rId5" Target="metadata/coreProperties.xml" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties"/>
+  <Relationship Id="rId6" Target="metadata/filesystemManifest.xml" Type="http://schemas.mathworks.com/package/2013/relationships/filesystemManifest"/>
+  <Relationship Id="rId7" Target="metadata/systemRequirements.xml" Type="http://schemas.mathworks.com/matlab/addon/2014/relationships/systemRequirements"/>
+  <Relationship Id="rId8" Target="_xmlsignatures/origin.sigs" Type="http://schemas.openxmlformats.org/package/2006/relationships/digitalsignature/origin"/>
+</Relationships>
+
+---- metadata/filesystemManifest.xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<fileEntries xmlns="http://schemas.mathworks.com/package/2013/filesystemManifest" createdByEncoding="UTF-8" createdByPlatform="win64" version="2.0">
+  <fileEntry content="/fsroot/AcceptForm.mlapp" date="2026-11-04T00:59:20Z" name="/AcceptForm.mlapp" permissions="010666" type="File"/>
+  <fileEntry content="/fsroot/DesktopToolset.xml" date="2026-11-04T01:00:37Z" name="/DesktopToolset.xml" permissions="010666" type="File"/>
+  <fileEntry content="/fsroot/data.txt" date="2026-11-04T00:59:20Z" name="/data.txt" permissions="010666" type="File"/>
+  <fileEntry content="/fsroot/sub/deep.m" date="2026-11-04T00:59:20Z" name="/sub/deep.m" permissions="010666" type="File"/>
+</fileEntries>
+
+---- metadata/systemRequirements.xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?><systemRequirements xmlns="http://schemas.mathworks.com/matlab/addon/2014/systemRequirements"><platformCompatibility MATLABOnline="true" linux="true" mac="true" win="true"/><releaseCompatibility end="latest" start="R2020a"/></systemRequirements>
+---- metadata/addonProperties.xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?><addonProperties xmlns="http://schemas.mathworks.com/matlab/addon/2014/addonProperties"><identifier type="GUID">w13-probe-id</identifier><description>Desc.</description><authors><author><name>W13 Probe</name><contact>probe@example.com</contact><organization>JGraph</organization></author></authors></addonProperties>
+---- metadata/coreProperties.xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <dcterms:created xsi:type="dcterms:W3CDTF">2026-11-04T01:00:37Z</dcterms:created>
+  <dc:creator>W13 Probe</dc:creator>
+  <dc:description>Sum.</dc:description>
+  <dcterms:modified xsi:type="dcterms:W3CDTF">2026-11-04T01:00:37Z</dcterms:modified>
+  <dc:title>Probe Tools</dc:title>
+  <cp:version>3.0.1</cp:version>
+</cp:coreProperties>
+
+---- fsroot/DesktopToolset.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<toolset id="user_apps_toolset" template="false">
+    <tool app_file_path="AcceptForm.mlapp" handler_class="com.mathworks.deployment.desktop.toolstrip.ToolboxToolSetExtensionHandler" id="4caa76ce-c63e-42ba-9889-05fe82cd083b:AcceptForm.mlapp" label="Accept Form" quick_access_eligible="false" toolset_id="user_apps_toolset">
+        <callback>AcceptForm</callback>
+        <summary>A form that adds or multiplies.</summary>
+        <description>One line.</description>
+        <icon filename="matlab_app_generic_icon_24" id="app"/>
+        <icon filename="matlab_app_generic_icon_16"/>
+        <parent_tool id="my_apps" toolset_id="apps_toolset"/>
+    </tool>
+</toolset>
+
+---- <apps>\mltbx2\_rels\.rels
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Target="metadata/addonProperties.xml" Type="http://schemas.mathworks.com/matlab/addon/2014/relationships/addonProperties"/>
+  <Relationship Id="rId100" Target="metadata/primaryScreenShot.png" Type="http://schemas.mathworks.com/matlab/addon/2014/relationships/primaryScreenShot"/>
+  <Relationship Id="rId101" Target="metadata/primaryScreenShot.png" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/thumbnail"/>
+  <Relationship Id="rId2" Target="metadata/mwcoreProperties.xml" Type="http://schemas.mathworks.com/package/2012/relationships/coreProperties"/>
+  <Relationship Id="rId3" Target="metadata/mwcorePropertiesExtension.xml" Type="http://schemas.mathworks.com/package/2014/relationships/corePropertiesExtension"/>
+  <Relationship Id="rId4" Target="metadata/mwcorePropertiesReleaseInfo.xml" Type="http://schemas.mathworks.com/package/2019/relationships/corePropertiesReleaseInfo"/>
+  <Relationship Id="rId5" Target="metadata/coreProperties.xml" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties"/>
+  <Relationship Id="rId6" Target="metadata/filesystemManifest.xml" Type="http://schemas.mathworks.com/package/2013/relationships/filesystemManifest"/>
+  <Relationship Id="rId7" Target="metadata/systemRequirements.xml" Type="http://schemas.mathworks.com/matlab/addon/2014/relationships/systemRequirements"/>
+  <Relationship Id="rId8" Target="_xmlsignatures/origin.sigs" Type="http://schemas.openxmlformats.org/package/2006/relationships/digitalsignature/origin"/>
+</Relationships>
+
+---- <apps>\mltbx2\_xmlsignatures\_rels\origin.sigs.rels
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="DSRel1" Target="sig1.xml" Type="http://schemas.openxmlformats.org/package/2006/relationships/digitalsignature/signature"/>
+</Relationships>
+
+== buildapp
+             Name: 'AcceptFormApp'
+       EntryPoint: 'AcceptForm'
+          Version: '2.1'
+    MATLABRelease: '(R2025b)'
+             GUID: '4e716c9a-8857-448e-b536-fb847eec6f66'
+
+== parts of the mlappinstall
+  <apps>\mlappinstall\[Content_Types].xml (1219 bytes)
+  <apps>\mlappinstall\_rels\.rels (1242 bytes)
+  <apps>\mlappinstall\fsroot\AcceptForm.mlapp (11596 bytes)
+  <apps>\mlappinstall\metadata\appProperties.xml (960 bytes)
+  <apps>\mlappinstall\metadata\coreProperties.xml (601 bytes)
+  <apps>\mlappinstall\metadata\filesystemManifest.xml (357 bytes)
+  <apps>\mlappinstall\metadata\filesystemManifestV1.xml (326 bytes)
+  <apps>\mlappinstall\metadata\mwcoreProperties.xml (350 bytes)
+  <apps>\mlappinstall\metadata\mwcorePropertiesExtension.xml (222 bytes)
+  <apps>\mlappinstall\metadata\mwcorePropertiesReleaseInfo.xml (303 bytes)
+---- <apps>\mlappinstall\[Content_Types].xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default ContentType="application/vnd.mathworks.matlab.app" Extension="mlapp"/>
+  <Default ContentType="application/vnd.openxmlformats-package.relationships+xml" Extension="rels"/>
+  <Default ContentType="application/vnd.mathworks.matlab.app.properties+xml" Extension="xml"/>
+  <Override ContentType="application/vnd.openxmlformats-package.core-properties+xml" PartName="/metadata/coreProperties.xml"/>
+  <Override ContentType="application/vnd.mathworks.package.filesystemManifest+xml" PartName="/metadata/filesystemManifest.xml"/>
+  <Override ContentType="application/vnd.mathworks.matlab.compiler.fileManifest+xml" PartName="/metadata/filesystemManifestV1.xml"/>
+  <Override ContentType="application/vnd.mathworks.package.coreProperties+xml" PartName="/metadata/mwcoreProperties.xml"/>
+  <Override ContentType="application/vnd.mathworks.package.corePropertiesExtension+xml" PartName="/metadata/mwcorePropertiesExtension.xml"/>
+  <Override ContentType="application/vnd.mathworks.package.corePropertiesReleaseInfo+xml" PartName="/metadata/mwcorePropertiesReleaseInfo.xml"/>
+</Types>
+
+---- <apps>\mlappinstall\_rels\.rels
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Target="metadata/appProperties.xml" Type="http://schemas.mathworks.com/matlab/app/2012/relationships/appProperties"/>
+  <Relationship Id="rId2" Target="metadata/mwcoreProperties.xml" Type="http://schemas.mathworks.com/package/2012/relationships/coreProperties"/>
+  <Relationship Id="rId3" Target="metadata/mwcorePropertiesExtension.xml" Type="http://schemas.mathworks.com/package/2014/relationships/corePropertiesExtension"/>
+  <Relationship Id="rId4" Target="metadata/mwcorePropertiesReleaseInfo.xml" Type="http://schemas.mathworks.com/package/2019/relationships/corePropertiesReleaseInfo"/>
+  <Relationship Id="rId5" Target="metadata/coreProperties.xml" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties"/>
+  <Relationship Id="rId6" Target="metadata/filesystemManifest.xml" Type="http://schemas.mathworks.com/package/2013/relationships/filesystemManifest"/>
+  <Relationship Id="rId7" Target="metadata/filesystemManifestV1.xml" Type="http://schemas.mathworks.com/matlab/compiler/2011/relationships/fileManifest"/>
+</Relationships>
+
+---- <apps>\mlappinstall\metadata\appProperties.xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<appProperties xmlns="http://schemas.mathworks.com/matlab/app/2012/appProperties" signature="6481787F4884072F9BD7A79C82A598C3ECC4D815">
+
+  <entryPoint>AcceptForm</entryPoint>
+
+  <name>AcceptFormApp</name>
+
+  <version>2.1</version>
+
+  <createdByMATLABRelease>(R2025b)</createdByMATLABRelease>
+
+  <GUID>4e716c9a-8857-448e-b536-fb847eec6f66</GUID>
+
+  <summary>A form that adds or multiplies.</summary>
+
+  <description>One line.</description>
+
+  <author>
+    <name>W13 Probe</name>
+    <contact>probe@example.com</contact>
+    <organization>JGraph</organization>
+  </author>
+
+  <supportedPlatforms/>
+
+  <requiredProducts>
+    <product identifier="'''1'''" name="MATLAB" version="25.2"/>
+  </requiredProducts>
+
+  <numFiles>1</numFiles>
+
+  <created>2026-11-04T01:00:42Z</created>
+
+  <appEntries>
+    <appFile>/AcceptForm.mlapp</appFile>
+  </appEntries>
+
+</appProperties>
+
+---- <apps>\mlappinstall\metadata\coreProperties.xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <dcterms:created xsi:type="dcterms:W3CDTF">2026-11-04T01:00:42Z</dcterms:created>
+  <dc:creator>W13 Probe</dc:creator>
+  <dc:description>One line.</dc:description>
+  <dc:title>AcceptFormApp</dc:title>
+  <cp:version>2.1</cp:version>
+</cp:coreProperties>
+
+---- <apps>\mlappinstall\metadata\filesystemManifest.xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<fileEntries xmlns="http://schemas.mathworks.com/package/2013/filesystemManifest" createdByEncoding="UTF-8" createdByPlatform="win64" version="2.0">
+  <fileEntry content="/fsroot/AcceptForm.mlapp" date="2026-11-04T00:59:20Z" name="/AcceptForm.mlapp" permissions="010666" type="File"/>
+</fileEntries>
+
+---- <apps>\mlappinstall\metadata\filesystemManifestV1.xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<fileEntries xmlns="http://schemas.mathworks.com/matlab/compiler/2011/fileManifest" encoding="UTF-8" platform="win64">
+  <fileEntry content="/fsroot/AcceptForm.mlapp" date="2026-11-04T00:59:20Z" name="/AcceptForm.mlapp" permissions="37302" type="File"/>
+</fileEntries>
+
+---- <apps>\mlappinstall\metadata\mwcoreProperties.xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<mwcoreProperties xmlns="http://schemas.mathworks.com/package/2012/coreProperties">
+  <contentType>application/vnd.mathworks.matlab.appInstaller</contentType>
+  <contentTypeFriendlyName>MATLAB App Installer</contentTypeFriendlyName>
+  <matlabRelease>R2025b</matlabRelease>
+</mwcoreProperties>
+
+---- <apps>\mlappinstall\metadata\mwcorePropertiesExtension.xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<mwcoreProperties xmlns="http://schemas.mathworks.com/package/2014/corePropertiesExtension">
+  <uuid>bba7134c-fbc7-4a3a-8ad3-ab29cd6e58e4</uuid>
+</mwcoreProperties>
+
+---- <apps>\mlappinstall\metadata\mwcorePropertiesReleaseInfo.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Version information for MathWorks R2025b Release -->
+<MathWorks_version_info>
+  <version>25.2.0.2998904</version>
+  <release>R2025b</release>
+  <description></description>
+  <date>Aug 21 2025</date>
+  <checksum>3277779261</checksum>
+</MathWorks_version_info>
+
+== mlappinfo
+                entryPoint: 'AcceptForm'
+                      name: 'AcceptFormApp'
+                   version: '2.1'
+    createdByMATLABRelease: '(R2025b)'
+                      GUID: '4e716c9a-8857-448e-b536-fb847eec6f66'
+                   summary: 'A form that adds or multiplies.'
+               description: 'One line.'
+                authorName: 'W13 Probe'
+             authorContact: 'probe@example.com'
+        authorOrganization: 'JGraph'
+                  numFiles: '1'
+        supportedPlatforms: {1×0 cell}
+          requiredProducts: {{3×1 cell}}
+               pathEntries: []
+               createdTime: '2026-11-03T18:00:42Z'
+                   appIcon: []
+            appScaledIcons: []
+             appScreenShot: []
+                appEntries: {'/AcceptForm.mlapp'}
+
+== getappmetadata fields: entryPoint, name, version, createdByMATLABRelease, GUID, summary, description, authorName, authorContact, authorOrganization, numFiles, supportedPlatforms, requiredProducts, pathEntries, createdTime, appIcon, appScaledIcons, appScreenShot, appEntries
+== installToolbox (the share window's mltbx)
+       Name: 'Accept Form'
+    Version: '2.1'
+       Guid: '079c16c6-1827-4ad5-9249-17eaa4de3a27'
+
+installedToolboxes:
+       Name: 'Accept Form'
+    Version: '2.1'
+       Guid: '079c16c6-1827-4ad5-9249-17eaa4de3a27'
+
+installedAddons:
+                      Name                       Version    Enabled                  Identifier              
+    _________________________________________    _______    _______    ______________________________________
+
+    "Mapping Toolbox"                            "25.2"      true      "MG"                                  
+    "AUTOSAR Blockset"                           "25.2"      true      "AS"                                  
+    "5G Toolbox"                                 "25.2"      true      "5G"                                  
+    "Antenna Toolbox"                            "25.2"      true      "AA"                                  
+    "Audio Toolbox"                              "25.2"      true      "AU"                                  
+    "Mixed-Signal Blockset"                      "25.2"      true      "AM"                                  
+    "Aerospace Blockset"                         "25.2"      true      "AE"                                  
+    "Phased Array System Toolbox"                "25.2"      true      "AR"                                  
+    "LTE Toolbox"                                "25.2"      true      "LS"                                  
+    "Simulink Fault Analyzer"                    "25.2"      true      "FA"                                  
+    "Aerospace Toolbox"                          "25.2"      true      "AT"                                  
+    "Bioinformatics Toolbox"                     "25.2"      true      "BI"                                  
+    "Bluetooth Toolbox"                          "25.2"      true      "BL"                                  
+    "Database Toolbox"                           "25.2"      true      "DB"                                  
+    "Simscape Battery"                           "25.2"      true      "BT"                                  
+    "C2000 Microcontroller Blockset"             "25.2"      true      "C2"                                  
+    "SoC Blockset"                               "25.2"      true      "HW"                                  
+    "Accept Form"                                "2.1"       true      "079c16c6-1827-4ad5-9249-17eaa4de3a27"
+    "Image Processing Toolbox"                   "25.2"      true      "IP"                                  
+    "Curve Fitting Toolbox"                      "25.2"      true      "CF"                                  
+    "Deep Learning Toolbox"                      "25.2"      true      "NN"                                  
+    "Communications Toolbox"                     "25.2"      true      "CM"                                  
+    "MATLAB Compiler"                            "25.2"      true      "CO"                                  
+    "Control System Toolbox"                     "25.2"      true      "CT"                                  
+    "Simulink Coverage"                          "25.2"      true      "CV"                                  
+    "Data Acquisition Toolbox"                   "25.2"      true      "DA"                                  
+    "DDS Blockset"                               "25.2"      true      "DD"                                  
+    "Datafeed Toolbox"                           "25.2"      true      "DF"                                  
+    "Deep Learning HDL Toolbox"                  "25.2"      true      "DH"                                  
+    "Parallel Computing Toolbox"                 "25.2"      true      "DM"                                  
+    "Automated Driving Toolbox"                  "25.2"      true      "DR"                                  
+    "System Identification Toolbox"              "25.2"      true      "ID"                                  
+    "Fixed-Point Designer"                       "25.2"      true      "PO"                                  
+    "DSP System Toolbox"                         "25.2"      true      "DS"                                  
+    "Image Acquisition Toolbox"                  "25.2"      true      "IA"                                  
+    "Signal Processing Toolbox"                  "25.2"      true      "SG"                                  
+    "GPU Coder"                                  "25.2"      true      "GC"                                  
+    "Simulink Design Verifier"                   "25.2"      true      "DV"                                  
+    "Medical Imaging Toolbox"                    "25.2"      true      "DX"                                  
+    "Partial Differential Equation Toolbox"      "25.2"      true      "PD"                                  
+    "Wireless HDL Toolbox"                       "25.2"      true      "LH"                                  
+    "Embedded Coder"                             "25.2"      true      "EC"                                  
+    "Motor Control Blockset"                     "25.2"      true      "MT"                                  
+    "Spreadsheet Link"                           "25.2"      true      "EL"                                  
+    "HDL Verifier"                               "25.2"      true      "ES"                                  
+    "HDL Coder"                                  "25.2"      true      "HD"                                  
+    "Econometrics Toolbox"                       "25.2"      true      "ET"                                  
+    "Financial Toolbox"                          "25.2"      true      "FI"                                  
+    "Fuzzy Logic Toolbox"                        "25.2"      true      "FL"                                  
+    "Predictive Maintenance Toolbox"             "25.2"      true      "PM"                                  
+    "Global Optimization Toolbox"                "25.2"      true      "GD"                                  
+    "DSP HDL Toolbox"                            "25.2"      true      "HS"                                  
+    "Navigation Toolbox"                         "25.2"      true      "NV"                                  
+    "Instrument Control Toolbox"                 "25.2"      true      "IC"                                  
+    "Financial Instruments Toolbox"              "25.2"      true      "IT"                                  
+    "Simscape Driveline"                         "25.2"      true      "LD"                                  
+    "Lidar Toolbox"                              "25.2"      true      "LP"                                  
+    "Model-Based Calibration Toolbox"            "25.2"      true      "MB"                                  
+    "MATLAB Coder"                               "25.2"      true      "ME"                                  
+    "MATLAB Compiler SDK"                        "25.2"      true      "MJ"                                  
+    "Model Predictive Control Toolbox"           "25.2"      true      "MP"                                  
+    "MATLAB Report Generator"                    "25.2"      true      "MR"                                  
+    "Simscape Multibody"                         "25.2"      true      "MS"                                  
+    "Optimization Toolbox"                       "25.2"      true      "OP"                                  
+    "Industrial Communication Toolbox"           "25.2"      true      "OT"                                  
+    "Simulink PLC Coder"                         "25.2"      true      "PL"                                  
+    "Simscape Electrical"                        "25.2"      true      "PS"                                  
+    "Powertrain Blockset"                        "25.2"      true      "PW"                                  
+    "Radar Toolbox"                              "25.2"      true      "RA"                                  
+    "RF Blockset"                                "25.2"      true      "RB"                                  
+    "Robust Control Toolbox"                     "25.2"      true      "RC"                                  
+    "RF Toolbox"                                 "25.2"      true      "RF"                                  
+    "Risk Management Toolbox"                    "25.2"      true      "RK"                                  
+    "Reinforcement Learning Toolbox"             "25.2"      true      "RL"                                  
+    "Robotics System Toolbox"                    "25.2"      true      "RO"                                  
+    "RF PCB Toolbox"                             "25.2"      true      "RP"                                  
+    "Requirements Toolbox"                       "25.2"      true      "RQ"                                  
+    "ROS Toolbox"                                "25.2"      true      "RR"                                  
+    "Simulink Coder"                             "25.2"      true      "RT"                                  
+    "SimBiology"                                 "25.2"      true      "SB"                                  
+    "Simulink Control Design"                    "25.2"      true      "SD"                                  
+    "SimEvents"                                  "25.2"      true      "SE"                                  
+    "Stateflow"                                  "25.2"      true      "SF"                                  
+    "Simscape Fluids"                            "25.2"      true      "SH"                                  
+    "Satellite Communications Toolbox"           "25.2"      true      "SI"                                  
+    "Simulink Compiler"                          "25.2"      true      "SK"                                  
+    "Simulink"                                   "25.2"      true      "SL"                                  
+    "Symbolic Math Toolbox"                      "25.2"      true      "SM"                                  
+    "Simulink Design Optimization"               "25.2"      true      "SO"                                  
+    "Signal Integrity Toolbox"                   "25.2"      true      "SQ"                                  
+    "Simulink Report Generator"                  "25.2"      true      "SR"                                  
+    "Simscape"                                   "25.2"      true      "SS"                                  
+    "Statistics and Machine Learning Toolbox"    "25.2"      true      "ST"                                  
+    "SerDes Toolbox"                             "25.2"      true      "SX"                                  
+    "Simulink Test"                              "25.2"      true      "SZ"                                  
+    "Text Analytics Toolbox"                     "25.2"      true      "TA"                                  
+    "MATLAB Test"                                "25.2"      true      "TE"                                  
+    "Sensor Fusion and Tracking Toolbox"         "25.2"      true      "TF"                                  
+    "UAV Toolbox"                                "25.2"      true      "UV"                                  
+    "Vehicle Dynamics Blockset"                  "25.2"      true      "VE"                                  
+    "Vehicle Network Toolbox"                    "25.2"      true      "VN"                                  
+    "Computer Vision Toolbox"                    "25.2"      true      "VP"                                  
+    "Simulink 3D Animation"                      "25.2"      true      "VR"                                  
+    "Vision HDL Toolbox"                         "25.2"      true      "VT"                                  
+    "Simulink Check"                             "25.2"      true      "VV"                                  
+    "Wavelet Toolbox"                            "25.2"      true      "WA"                                  
+    "Wireless Testbench"                         "25.2"      true      "WB"                                  
+    "WLAN Toolbox"                               "25.2"      true      "WL"                                  
+    "Simulink Desktop Real-Time"                 "25.2"      true      "WT"                                  
+    "Simulink Real-Time"                         "25.2"      true      "XP"                                  
+    "System Composer"                            "25.2"      true      "ZC"                                  
+
+isAddonEnabled(Guid): 1
+apputil.getInstalledAppInfo after a toolbox install:
+
+	No apps are installed.  See <a href="matlab:help matlab.apputil.install">matlab.apputil.install</a> for information on installing apps.
+
+== the installed folder
+  <addons>\Toolboxes\Accept Form\AcceptForm.mlapp (11596 bytes)
+  <addons>\Toolboxes\Accept Form\DesktopToolset.xml (709 bytes)
+  <addons>\Toolboxes\Accept Form\art.png (119 bytes)
+  <addons>\Toolboxes\Accept Form\data.txt (2 bytes)
+  <addons>\Toolboxes\Accept Form\helper.m (38 bytes)
+  <addons>\Toolboxes\Accept Form\table.mat (544 bytes)
+  <addons>\Toolboxes\Accept Form\resources\addons_core.xml (371 bytes)
+  <addons>\Toolboxes\Accept Form\resources\matlab_path_entries.xml (92 bytes)
+  <addons>\Toolboxes\Accept Form\resources\mltbx_app_gallery_registration.xml (709 bytes)
+  <addons>\Toolboxes\Accept Form\resources\screenshot.png (832 bytes)
+  <addons>\Toolboxes\Accept Form\sub\deep.m (20 bytes)
+uninstalled; installedToolboxes now 0
+== matlab.apputil.install (the mlappinstall)
+          id: 'AcceptFormAppAPP'
+        name: 'AcceptFormApp'
+      status: 'installed'
+    location: 'C:\Users\Carpe\AppData\Roaming\MathWorks\MATLAB Add-Ons\Apps\AcceptFormApp'
+
+getInstalledAppInfo:
+ID                   Name
+----------------     -------------
+AcceptFormAppAPP     AcceptFormApp
+          id: 'AcceptFormAppAPP'
+        name: 'AcceptFormApp'
+      status: 'installed'
+    location: 'C:\Users\Carpe\AppData\Roaming\MathWorks\MATLAB Add-Ons\Apps\AcceptFormApp'
+
+installedAddons:
+                      Name                       Version    Enabled                  Identifier              
+    _________________________________________    _______    _______    ______________________________________
+
+    "Mapping Toolbox"                            "25.2"      true      "MG"                                  
+    "AUTOSAR Blockset"                           "25.2"      true      "AS"                                  
+    "5G Toolbox"                                 "25.2"      true      "5G"                                  
+    "Antenna Toolbox"                            "25.2"      true      "AA"                                  
+    "Audio Toolbox"                              "25.2"      true      "AU"                                  
+    "Mixed-Signal Blockset"                      "25.2"      true      "AM"                                  
+    "Aerospace Blockset"                         "25.2"      true      "AE"                                  
+    "Phased Array System Toolbox"                "25.2"      true      "AR"                                  
+    "LTE Toolbox"                                "25.2"      true      "LS"                                  
+    "Simulink Fault Analyzer"                    "25.2"      true      "FA"                                  
+    "Aerospace Toolbox"                          "25.2"      true      "AT"                                  
+    "Bioinformatics Toolbox"                     "25.2"      true      "BI"                                  
+    "Bluetooth Toolbox"                          "25.2"      true      "BL"                                  
+    "AcceptFormApp"                              "2.1"       true      "4e716c9a-8857-448e-b536-fb847eec6f66"
+    "Database Toolbox"                           "25.2"      true      "DB"                                  
+    "Simscape Battery"                           "25.2"      true      "BT"                                  
+    "C2000 Microcontroller Blockset"             "25.2"      true      "C2"                                  
+    "SoC Blockset"                               "25.2"      true      "HW"                                  
+    "Image Processing Toolbox"                   "25.2"      true      "IP"                                  
+    "Curve Fitting Toolbox"                      "25.2"      true      "CF"                                  
+    "Deep Learning Toolbox"                      "25.2"      true      "NN"                                  
+    "Communications Toolbox"                     "25.2"      true      "CM"                                  
+    "MATLAB Compiler"                            "25.2"      true      "CO"                                  
+    "Control System Toolbox"                     "25.2"      true      "CT"                                  
+    "Simulink Coverage"                          "25.2"      true      "CV"                                  
+    "Data Acquisition Toolbox"                   "25.2"      true      "DA"                                  
+    "DDS Blockset"                               "25.2"      true      "DD"                                  
+    "Datafeed Toolbox"                           "25.2"      true      "DF"                                  
+    "Deep Learning HDL Toolbox"                  "25.2"      true      "DH"                                  
+    "Parallel Computing Toolbox"                 "25.2"      true      "DM"                                  
+    "Automated Driving Toolbox"                  "25.2"      true      "DR"                                  
+    "System Identification Toolbox"              "25.2"      true      "ID"                                  
+    "Fixed-Point Designer"                       "25.2"      true      "PO"                                  
+    "DSP System Toolbox"                         "25.2"      true      "DS"                                  
+    "Image Acquisition Toolbox"                  "25.2"      true      "IA"                                  
+    "Signal Processing Toolbox"                  "25.2"      true      "SG"                                  
+    "GPU Coder"                                  "25.2"      true      "GC"                                  
+    "Simulink Design Verifier"                   "25.2"      true      "DV"                                  
+    "Medical Imaging Toolbox"                    "25.2"      true      "DX"                                  
+    "Partial Differential Equation Toolbox"      "25.2"      true      "PD"                                  
+    "Wireless HDL Toolbox"                       "25.2"      true      "LH"                                  
+    "Embedded Coder"                             "25.2"      true      "EC"                                  
+    "Motor Control Blockset"                     "25.2"      true      "MT"                                  
+    "Spreadsheet Link"                           "25.2"      true      "EL"                                  
+    "HDL Verifier"                               "25.2"      true      "ES"                                  
+    "HDL Coder"                                  "25.2"      true      "HD"                                  
+    "Econometrics Toolbox"                       "25.2"      true      "ET"                                  
+    "Financial Toolbox"                          "25.2"      true      "FI"                                  
+    "Fuzzy Logic Toolbox"                        "25.2"      true      "FL"                                  
+    "Predictive Maintenance Toolbox"             "25.2"      true      "PM"                                  
+    "Global Optimization Toolbox"                "25.2"      true      "GD"                                  
+    "DSP HDL Toolbox"                            "25.2"      true      "HS"                                  
+    "Navigation Toolbox"                         "25.2"      true      "NV"                                  
+    "Instrument Control Toolbox"                 "25.2"      true      "IC"                                  
+    "Financial Instruments Toolbox"              "25.2"      true      "IT"                                  
+    "Simscape Driveline"                         "25.2"      true      "LD"                                  
+    "Lidar Toolbox"                              "25.2"      true      "LP"                                  
+    "Model-Based Calibration Toolbox"            "25.2"      true      "MB"                                  
+    "MATLAB Coder"                               "25.2"      true      "ME"                                  
+    "MATLAB Compiler SDK"                        "25.2"      true      "MJ"                                  
+    "Model Predictive Control Toolbox"           "25.2"      true      "MP"                                  
+    "MATLAB Report Generator"                    "25.2"      true      "MR"                                  
+    "Simscape Multibody"                         "25.2"      true      "MS"                                  
+    "Optimization Toolbox"                       "25.2"      true      "OP"                                  
+    "Industrial Communication Toolbox"           "25.2"      true      "OT"                                  
+    "Simulink PLC Coder"                         "25.2"      true      "PL"                                  
+    "Simscape Electrical"                        "25.2"      true      "PS"                                  
+    "Powertrain Blockset"                        "25.2"      true      "PW"                                  
+    "Radar Toolbox"                              "25.2"      true      "RA"                                  
+    "RF Blockset"                                "25.2"      true      "RB"                                  
+    "Robust Control Toolbox"                     "25.2"      true      "RC"                                  
+    "RF Toolbox"                                 "25.2"      true      "RF"                                  
+    "Risk Management Toolbox"                    "25.2"      true      "RK"                                  
+    "Reinforcement Learning Toolbox"             "25.2"      true      "RL"                                  
+    "Robotics System Toolbox"                    "25.2"      true      "RO"                                  
+    "RF PCB Toolbox"                             "25.2"      true      "RP"                                  
+    "Requirements Toolbox"                       "25.2"      true      "RQ"                                  
+    "ROS Toolbox"                                "25.2"      true      "RR"                                  
+    "Simulink Coder"                             "25.2"      true      "RT"                                  
+    "SimBiology"                                 "25.2"      true      "SB"                                  
+    "Simulink Control Design"                    "25.2"      true      "SD"                                  
+    "SimEvents"                                  "25.2"      true      "SE"                                  
+    "Stateflow"                                  "25.2"      true      "SF"                                  
+    "Simscape Fluids"                            "25.2"      true      "SH"                                  
+    "Satellite Communications Toolbox"           "25.2"      true      "SI"                                  
+    "Simulink Compiler"                          "25.2"      true      "SK"                                  
+    "Simulink"                                   "25.2"      true      "SL"                                  
+    "Symbolic Math Toolbox"                      "25.2"      true      "SM"                                  
+    "Simulink Design Optimization"               "25.2"      true      "SO"                                  
+    "Signal Integrity Toolbox"                   "25.2"      true      "SQ"                                  
+    "Simulink Report Generator"                  "25.2"      true      "SR"                                  
+    "Simscape"                                   "25.2"      true      "SS"                                  
+    "Statistics and Machine Learning Toolbox"    "25.2"      true      "ST"                                  
+    "SerDes Toolbox"                             "25.2"      true      "SX"                                  
+    "Simulink Test"                              "25.2"      true      "SZ"                                  
+    "Text Analytics Toolbox"                     "25.2"      true      "TA"                                  
+    "MATLAB Test"                                "25.2"      true      "TE"                                  
+    "Sensor Fusion and Tracking Toolbox"         "25.2"      true      "TF"                                  
+    "UAV Toolbox"                                "25.2"      true      "UV"                                  
+    "Vehicle Dynamics Blockset"                  "25.2"      true      "VE"                                  
+    "Vehicle Network Toolbox"                    "25.2"      true      "VN"                                  
+    "Computer Vision Toolbox"                    "25.2"      true      "VP"                                  
+    "Simulink 3D Animation"                      "25.2"      true      "VR"                                  
+    "Vision HDL Toolbox"                         "25.2"      true      "VT"                                  
+    "Simulink Check"                             "25.2"      true      "VV"                                  
+    "Wavelet Toolbox"                            "25.2"      true      "WA"                                  
+    "Wireless Testbench"                         "25.2"      true      "WB"                                  
+    "WLAN Toolbox"                               "25.2"      true      "WL"                                  
+    "Simulink Desktop Real-Time"                 "25.2"      true      "WT"                                  
+    "Simulink Real-Time"                         "25.2"      true      "XP"                                  
+    "System Composer"                            "25.2"      true      "ZC"                                  
+
+== the installed app folder
+  <addons>\Apps\AcceptFormApp\AcceptForm.mlapp (11596 bytes)
+  <addons>\Apps\AcceptFormApp\AcceptFormAppApp.m (4375 bytes)
+  <addons>\Apps\AcceptFormApp\resources\addons_core.xml (568 bytes)
+  <addons>\Apps\AcceptFormApp\resources\icon_16.png (446 bytes)
+  <addons>\Apps\AcceptFormApp\resources\icon_24.png (737 bytes)
+  <addons>\Apps\AcceptFormApp\resources\icon_48.png (1559 bytes)
+  <addons>\Apps\AcceptFormApp\resources\matlab_compatibility.xml (258 bytes)
+  <addons>\Apps\AcceptFormApp\resources\mlappinstall_app_gallery_registration.xml (543 bytes)
+---- AcceptFormAppApp.m
+classdef AcceptFormAppApp < handle
+    %
+    % Usage:
+    %     app.AcceptFormAppApp
+    
+    properties
+        AppHandle;
+        AppCount = 0;
+        Output;
+        CurrClass;
+    end
+    
+    properties (Constant)
+        AppPathBase = {'/AcceptFormApp'};
+        AppClass = 'AcceptFormAppApp';
+        Increment = 1;
+        Decrement = 0;
+        Version = '13a';
+    end
+    
+    properties (Dependent)
+        AppPath;
+    end
+    
+    methods (Static)
+        function count = refcount(increment)
+            persistent AppCount;
+            if(isempty(AppCount))
+                AppCount = 1;
+            else
+                if(increment)
+                    AppCount = plus(AppCount,1);
+                else
+                    AppCount = minus(AppCount,1);
+                    if AppCount < 0
+                        AppCount = 0;
+                    end
+                end
+            end
+            count = AppCount;
+        end
+    end
+    
+    methods
+        % Create the application object
+        function obj = AcceptFormAppApp()
+            obj.CurrClass = metaclass(obj);
+            startApp(obj)
+        end
+        
+        function value = get.AppPath(obj)
+            myAppsLocation = char(com.mathworks.appmanagement.MlappinstallUtil.getAppInstallationFolder);
+            value = cellfun(@(x) fullfile(myAppsLocation, x), obj.AppPathBase, 'UniformOutput', false);
+        end
+        
+        % Start the application
+        function startApp(obj)
+            % Increment the reference count by one and lock the file
+            mlock;
+            AcceptFormAppApp.refcount(obj.Increment);
+            
+            % Verify we are about to execute the correct function - if not we
+            % should error and exit now.  We need to make sure the paths are
+            % equal using canonical paths.
+            existVal = exist(fullfile(pwd,'AcceptForm')); %#ok<EXIST>
+            doesShadowExist = existVal >= 2 && existVal <= 6;
+            
+            pathOne = java.io.File(pwd);
+            pathOne = pathOne.getCanonicalPath();
+            pathTwo = java.io.File(obj.AppPath{1});
+            pathTwo = pathTwo.getCanonicalPath();
+            
+            if (doesShadowExist && ~pathOne.equals(pathTwo))
+                % We are trying to execute the wrong AcceptForm
+                errordlg(message('MATLAB:apps:runapp:WrongEntryPoint', 'AcceptForm').getString, ...
+                    message('MATLAB:apps:runapp:WrongEntryPointTitle').getString);
+                appinstall.internal.stopapp([],[],obj)
+                return;
+            end
+            
+            % Must load function (force by using function handle) or nargout lies.
+            % Check if the app is a GUIDE app
+            if nargout(@AcceptForm) == 0
+                eval('AcceptForm');
+            else
+                obj.AppHandle = eval('AcceptForm');
+            end
+            
+            if(ishandle(obj.AppHandle))
+                % Traditional graphics handle based app
+                obj.attachOncleanupToFigure(obj.AppHandle);
+            elseif isa(obj.AppHandle, 'matlab.apps.AppBase')
+                % appdesigner based app
+                obj.attachOncleanupToFigure(appdesigner.internal.service.AppManagementService.getFigure(obj.AppHandle));
+            elseif isa(obj.AppHandle,'handle') && ~isvalid(obj.AppHandle)
+                % Cleanup in the case where the handle was invalidated before here
+                appinstall.internal.stopapp([],[],obj)
+            else
+                % There will be no call to stopapp, instead decrease the refcount
+                % now to prevent future clearing issues
+                AcceptFormAppApp.refcount(obj.Increment);
+                munlock;
+            end
+        end
+        
+        function attachOncleanupToFigure(obj, fig)
+            % Setup cleanup code on figure handle using onCleanup object
+            cleanupObj = onCleanup(@()appinstall.internal.stopapp([],[],obj));
+            appdata = getappdata(fig);
+            appfields = fields(appdata);
+            found = cellfun(@(x) strcmp(x,'AppCleanupCode'), appfields);
+            if(~any(found))
+                setappdata(fig, 'AppCleanupCode', cleanupObj);
+            end
+        end
+    end
+end
+
+== install again (an update)
+          id: 'AcceptFormAppAPP'
+        name: 'AcceptFormApp'
+      status: 'updated'
+    location: 'C:\Users\Carpe\AppData\Roaming\MathWorks\MATLAB Add-Ons\Apps\AcceptFormApp'
+
+uninstalled; getInstalledAppInfo now 0
+== refusals
+installToolbox(missing) -> toolboxmanagement_matlab_api:installToolbox:invalidFilePath: Unable to find toolbox file <apps>\nothere.mltbx.
+installToolbox(txt) -> toolboxmanagement_matlab_api:installToolbox:invalidFileType: File must be a toolbox file (*.mltbx).
+[Warning: Unable to find installed toolbox with specified GUID.] 
+[> In matlab.addons.toolbox.uninstallToolbox
+In w13_apps>@()matlab.addons.toolbox.uninstallToolbox(struct('Name','x','Version','1','Guid','nothere-guid')) (line 145)
+In w13_apps>refuse (line 190)
+In w13_apps (line 145)] 
+uninstallToolbox(bogus) -> ran
+uninstallToolbox(text) -> MATLAB:matlab:addons:toolbox:uninstallToolbox:invalidType: Expected input number 1, InstalledToolbox, to be one of these types: /  / struct
+toolboxVersion(txt) -> MATLAB:toolbox_packaging:packaging:InvalidFile: Invalid file type.  File '<apps>\data.txt' must be a MATLAB toolbox (MLTBX) or toolbox project (PRJ) file.
+toolboxVersion(missing) -> MATLAB:toolbox_packaging:packaging:ToolboxFileNotFound: Unable to find file '<apps>\nothere.mltbx'.
+toolboxVersion(mltbx, new) -> MATLAB:toolbox_packaging:packaging:CannotSetVersionOnMLTBX: Version is read-only for MATLAB toolbox files (*.mltbx).
+ToolboxOptions() -> MATLAB:toolbox_packaging:packaging:ToolboxPathCannotBeEmpty: Toolbox project or folder must be non-empty.
+ToolboxOptions(folder) -> MATLAB:toolbox_packaging:packaging:ToolboxIdentifierMissing: Unique toolbox identifier must be specified.
+ToolboxOptions(missing folder, id) -> MATLAB:toolbox_packaging:packaging:ToolboxRootNotFound: Toolbox folder "<apps>\nothere" does not exist.
+ToolboxOptions(folder, bad id) -> MATLAB:toolbox_packaging:packaging:InvalidIdentifier: Invalid toolbox identifier 'bad id!'.  Identifier must be alphanumeric and may contain hyphens ('-').
+ToolboxOptions(folder, id, missing file) -> MATLAB:toolbox_packaging:packaging:FileMustExist: Specified file does not exist: <apps>\nothere.m
+ToolboxOptions(folder, id, no files) -> MATLAB:toolbox_packaging:packaging:ToolboxFolderCannotBeEmpty: ToolboxFiles cannot be empty.
+ToolboxVersion = x -> MATLAB:toolbox_packaging:packaging:InvalidToolboxVersion: Invalid version 'x'. The version must be a scalar string or character vector of the form Major.Minor.Bug.Build. Bug and Build are optional.
+MinimumMatlabRelease = R20 -> MATLAB:toolbox_packaging:packaging:InvalidReleaseString: Release must be a string with the format 'RXXXXx', for example 'R2022b'.
+MinimumMatlabRelease = R2010a -> MATLAB:toolbox_packaging:packaging:InvalidMinimumRelease: Minimum release must either be between R2014b and the specified maximum release (R2025b), or be empty ('').
+MaximumMatlabRelease = R2015a (min R2020a) -> MATLAB:toolbox_packaging:packaging:InvalidMaximumRelease: Maximum release must either be between the specified minimum release (R2020a) and the current MATLAB release (R2025b), or be empty ('').
+AppGalleryFiles = txt -> MATLAB:toolbox_packaging:packaging:InvalidAppGalleryFile: Invalid file '<apps>\data.txt'. App gallery files must be valid MATLAB code files (.m, .mlapp, .mlx, .p)
+AppGalleryFiles = not in files -> MATLAB:toolbox_packaging:packaging:FileMissingFromToolboxFiles: File is missing from the ToolboxFiles list: <apps>\helper.m
+ToolboxImageFile = txt -> MATLAB:toolbox_packaging:packaging:InvalidToolboxImageFileFormat: Unsupported toolbox image file format '<apps>\data.txt'.  Format must be 'bmp', 'gif', 'jpg', 'jpeg', or 'png'.
+ToolboxMatlabPath = folder with no file -> MATLAB:toolbox_packaging:packaging:ParentFolderMissingFromToolboxFiles: MATLAB path folder does not contain any files that will be packaged: <apps>\release
+OutputFile = empty -> MATLAB:validators:mustBeNonzeroLengthText: Error setting property 'OutputFile' of class 'matlab.addons.toolbox.ToolboxOptions'. Value must be text with one or more characters.
+packageToolbox(opts, out) -> MATLAB:toolbox_packaging:packaging:NoOutputWithOptions: Specify the output file location in the toolbox options object.
+packageToolbox(txt) -> MATLAB:toolbox_packaging:packaging:NotValidToolboxPRJ: Project file must be a toolbox project (PRJ) file.
+packageToolbox(missing) -> MATLAB:toolbox_packaging:packaging:ToolboxFileNotFound: Unable to find file '<apps>\nothere.prj'.
+apputil.run(bogus) -> MATLAB:apputil:run:notinstalled: The specified app "bogusAPP" cannot be found. Please install apps before running them. Refer to matlab.apputil.install for information on installing apps.
+apputil.uninstall(bogus) -> MATLAB:apputil:uninstall:notinstalled: The specified ID cannot be found.  When uninstalling an app, the specified ID must exactly match the installed ID.  Use <a href="matlab:matlab.apputil.getInstalledAppInfo">matlab.apputil.getInstalledAppInfo</a> to determine the installed apps and their IDs.
+apputil.install(txt) -> MATLAB:apputil:create:filenotfound: The specified file '<apps>\data.txt' could not be found.
+apputil.install(mltbx) -> MATLAB:apputil:create:filenotfound: The specified file '<apps>\release\AcceptForm.mltbx' could not be found.
+apputil.package(mltbx) -> MATLAB:apputil:create:filenotfound: The specified file '<apps>\release\AcceptForm.mltbx' could not be found.
+addons.install(mlappinstall) -> matlab_addons:install:invalidFileType: File must be a toolbox file (*.mltbx).
+addons.install(missing) -> matlab_addons:install:invalidFilePath: Unable to find <apps>\nothere.mltbx.
+addons.uninstall(bogus) -> matlab_addons:enableDisableManagement:invalidIdentifier: Unable to find add-on with specified identifier.
+addons.isAddonEnabled(bogus) -> matlab_addons:enableDisableManagement:invalidIdentifier: Unable to find add-on with specified identifier.
+addons.enableAddon(bogus) -> matlab_addons:enableDisableManagement:invalidIdentifier: Unable to find add-on with specified identifier.
+== matlab.addons.install of the share mltbx (the table)
+        Name         Version    Enabled                  Identifier              
+    _____________    _______    _______    ______________________________________
+
+    "Accept Form"     "2.1"      true      "079c16c6-1827-4ad5-9249-17eaa4de3a27"
+
+uninstalled through matlab.addons.uninstall
+done

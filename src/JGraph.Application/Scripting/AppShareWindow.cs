@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using JGraph.Controls.Themes;
 using JGraph.Deploy;
+using JGraph.Scripting.Designer;
 using Microsoft.Win32;
 
 namespace JGraph.Application.Scripting;
@@ -16,19 +17,23 @@ internal enum AppShareKind
 {
     /// <summary>Share &gt; Standalone Desktop App: <c>StandalonePreviewWindow</c>.</summary>
     Standalone,
+
+    /// <summary>Share &gt; MATLAB App: <c>MatlabAppPreviewWindow</c>.</summary>
+    MatlabApp,
 }
 
 /// <summary>
-/// App Designer's "Configure Standalone App for Sharing" (App Designer window plan W12): R2025b's
-/// <c>compiler.internal.ui.StandalonePreviewWindow</c>, whose page is the share window bundle's preview widgets
-/// with <c>compiler_ui_common</c>'s words. App Appearance holds the app's name and version from App Details and
-/// the images to be included (the splash screen and the icon, each with Browse and Remove); the files required
-/// for the app to run are the analysis's (<c>runFileAnalysisWithProgressDialog</c>, here the session's
-/// <c>requiredFilesAndProducts</c>) and the user's own files and folders; Package runs the script
-/// <c>deployAppDesignerProject</c> writes (<see cref="AppShareScript"/>) in the MATLAB session, its two steps
-/// under the packaging dialog with Show Log and Open Output Folder. JGraph adds the package type (the runtime
-/// delivery of compiler plan K18) and Show Code, and leaves out R2025b's "Manage App Sharing with a MATLAB
-/// Project" pane.
+/// App Designer's share windows (App Designer window plan W12 and W13): R2025b's
+/// <c>compiler.internal.ui.StandalonePreviewWindow</c> ("Configure Standalone App for Sharing") and
+/// <c>matlab.internal.deployment.MatlabAppPreviewWindow</c> ("Configure MATLAB App for Sharing"), whose pages are the share
+/// window bundle's preview widgets with <c>compiler_ui_common</c>'s words. App Appearance holds, for a standalone app, the
+/// app's name and version from App Details and the images to be included (the splash screen and the icon, each with Browse
+/// and Remove), and for a MATLAB app the words that it is packaged as a toolbox and the app card (its thumbnail, name, author,
+/// summary and version); the files required for the app to run are the analysis's (<c>runFileAnalysisWithProgressDialog</c>,
+/// here the session's <c>requiredFilesAndProducts</c>) and the user's own files and folders; Package runs the script
+/// <c>deployAppDesignerProject</c> writes (<see cref="AppShareScript"/>) in the MATLAB session under the packaging dialog with
+/// Show Log and Open Output Folder. JGraph adds the package type (the runtime delivery of compiler plan K18) to the standalone
+/// window and Show Code to both, and leaves out R2025b's "Manage App Sharing with a MATLAB Project" pane.
 /// </summary>
 internal sealed class AppShareWindow : Window
 {
@@ -37,6 +42,8 @@ internal sealed class AppShareWindow : Window
     private readonly AppShareKind _kind;
     private readonly string _appPath;
     private readonly AppShareDetails _details;
+    private readonly string _thumbnail;
+    private readonly string _uuid = Guid.NewGuid().ToString();
     private readonly List<string> _analysed = [];
     private readonly List<string> _custom = [];
     private readonly ListBox _files = new() { MinHeight = 110, MaxHeight = 240 };
@@ -58,21 +65,27 @@ internal sealed class AppShareWindow : Window
         Visibility = Visibility.Collapsed,
     };
     private readonly Dictionary<RuntimeDeliveryChoice, RadioButton> _delivery = [];
-    private readonly ImageChoice _splash;
-    private readonly ImageChoice _icon;
+    private ImageChoice? _splash;
+    private ImageChoice? _icon;
     private bool _busy;
 
-    public AppShareWindow(AppShareKind kind, string appPath, AppShareDetails details)
+    /// <summary>Makes the window for <paramref name="kind"/> over the saved app at <paramref name="appPath"/>.</summary>
+    /// <param name="kind">Which share window.</param>
+    /// <param name="appPath">The saved app's path.</param>
+    /// <param name="details">App Details, the name standing in for an empty one.</param>
+    /// <param name="thumbnail">The app's thumbnail as a data URI, for the MATLAB app's card; empty for none.</param>
+    public AppShareWindow(AppShareKind kind, string appPath, AppShareDetails details, string thumbnail = "")
     {
         ArgumentException.ThrowIfNullOrEmpty(appPath);
         ArgumentNullException.ThrowIfNull(details);
         _kind = kind;
         _appPath = Path.GetFullPath(appPath);
         _details = details;
-        Title = "Configure Standalone App for Sharing";
-        // getCenteredPosition(675, 880, 0.8): the size, held to 80% of the screen.
+        _thumbnail = thumbnail ?? string.Empty;
+        Title = kind == AppShareKind.Standalone ? "Configure Standalone App for Sharing" : "Configure MATLAB App for Sharing";
+        // getCenteredPosition(675, 880 | 990, 0.8): the size, held to 80% of the screen.
         Width = Math.Min(SystemParameters.PrimaryScreenWidth * 0.8, 675);
-        Height = Math.Min(SystemParameters.PrimaryScreenHeight * 0.8, 880);
+        Height = Math.Min(SystemParameters.PrimaryScreenHeight * 0.8, kind == AppShareKind.Standalone ? 880 : 990);
         MinWidth = 500;
         MinHeight = 280;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -81,8 +94,6 @@ internal sealed class AppShareWindow : Window
         SetResourceReference(ForegroundProperty, ThemeKeys.Text);
         AutomationProperties.SetAutomationId(this, "ShareWindow." + kind);
 
-        _splash = new ImageChoice(this, "Splash Screen", "SplashScreen", "default_splash.png");
-        _icon = new ImageChoice(this, "Icon", "Icon", "default_icon_48.png");
         Content = BuildContent();
         Loaded += async (_, _) => await AnalyzeAsync();
     }
@@ -93,37 +104,23 @@ internal sealed class AppShareWindow : Window
     /// <summary>Runs a script in the MATLAB session, as Package needs; null with no session.</summary>
     public Func<string, Task<CompilerRunOutcome>>? Runner { get; set; }
 
-    /// <summary>How the installer brings the runtime (JGraph's own choice on this window; R2025b's script takes the default).</summary>
+    /// <summary>How the installer brings the runtime (JGraph's own choice on the standalone window; R2025b's script takes the default).</summary>
     public RuntimeDeliveryChoice RuntimeDelivery { get; private set; } = RuntimeDeliveryChoice.Web;
 
     /// <summary>The files required for the app to run as the window lists them: the analysis's, then the user's own.</summary>
     public IReadOnlyList<string> Files => [.. _analysed, .. _custom];
 
     /// <summary>The whole script Package runs, as Show Code shows it.</summary>
-    public string Script => AppShareScript.Standalone(_appPath, Files, _splash.File, _icon.File, _details, RuntimeDelivery);
+    public string Script => _kind == AppShareKind.Standalone
+        ? AppShareScript.Standalone(_appPath, Files, _splash?.File, _icon?.File, _details, RuntimeDelivery)
+        : AppShareScript.MatlabApp(_appPath, Files, _uuid, _details);
 
     // --- The page --------------------------------------------------------------------------------------
 
     private UIElement BuildContent()
     {
         var page = new StackPanel { Margin = new Thickness(15) };
-
-        // App Appearance: the name and version from App Details, the images to be included in the app.
-        var appearance = new StackPanel();
-        var heads = new Grid { Margin = new Thickness(0, 4, 0, 0) };
-        heads.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-        heads.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50) });
-        heads.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-        heads.Children.Add(Property("App Name", "Share.AppName", _details.Name, 0));
-        heads.Children.Add(Property("Version", "Share.Version", _details.Version, 2));
-        appearance.Children.Add(heads);
-        appearance.Children.Add(new TextBlock { Text = "Images to be included in the app", FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 20, 0, 7) });
-        var images = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 10, 0, 4) };
-        images.Children.Add(_splash.Panel);
-        _icon.Panel.Margin = new Thickness(50, 0, 0, 0);
-        images.Children.Add(_icon.Panel);
-        appearance.Children.Add(images);
-        page.Children.Add(Pane("App Appearance", appearance));
+        page.Children.Add(Pane("App Appearance", _kind == AppShareKind.Standalone ? StandaloneAppearance() : MatlabAppAppearance()));
 
         // The files required for the app to run.
         var required = new StackPanel();
@@ -146,22 +143,25 @@ internal sealed class AppShareWindow : Window
         required.Children.Add(list);
         page.Children.Add(Pane("Files required for the app to run", required));
 
-        // JGraph's own: the package type (R2025b's page takes the installer options' default).
-        var delivery = new StackPanel();
-        foreach (RuntimeDeliveryChoice choice in new[] { RuntimeDeliveryChoice.Web, RuntimeDeliveryChoice.Installer, RuntimeDeliveryChoice.None })
+        if (_kind == AppShareKind.Standalone)
         {
-            var radio = new RadioButton { Content = CompilerTargets.RuntimeDeliveryText(choice), GroupName = "Share.Runtime", Margin = new Thickness(4, 2, 0, 2), IsChecked = choice == RuntimeDelivery };
-            AutomationProperties.SetAutomationId(radio, "Share.Runtime" + choice);
-            radio.Checked += (_, _) =>
+            // JGraph's own: the package type (R2025b's page takes the installer options' default).
+            var delivery = new StackPanel();
+            foreach (RuntimeDeliveryChoice choice in new[] { RuntimeDeliveryChoice.Web, RuntimeDeliveryChoice.Installer, RuntimeDeliveryChoice.None })
             {
-                RuntimeDelivery = choice;
-                RefreshCode();
-            };
-            _delivery[choice] = radio;
-            delivery.Children.Add(radio);
-        }
+                var radio = new RadioButton { Content = CompilerTargets.RuntimeDeliveryText(choice), GroupName = "Share.Runtime", Margin = new Thickness(4, 2, 0, 2), IsChecked = choice == RuntimeDelivery };
+                AutomationProperties.SetAutomationId(radio, "Share.Runtime" + choice);
+                radio.Checked += (_, _) =>
+                {
+                    RuntimeDelivery = choice;
+                    RefreshCode();
+                };
+                _delivery[choice] = radio;
+                delivery.Children.Add(radio);
+            }
 
-        page.Children.Add(Pane("Package Type", delivery));
+            page.Children.Add(Pane("Package Type", delivery));
+        }
 
         // The bar: the status, Show Code, Package; the code under it.
         var bar = new DockPanel { Margin = new Thickness(0, 10, 0, 0) };
@@ -183,6 +183,65 @@ internal sealed class AppShareWindow : Window
 
         Refresh();
         return new ScrollViewer { Content = page, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
+    }
+
+    /// <summary>The standalone page's App Appearance: the name and version from App Details, the images to be included in the app.</summary>
+    private StackPanel StandaloneAppearance()
+    {
+        _splash = new ImageChoice(this, "Splash Screen", "SplashScreen", "default_splash.png");
+        _icon = new ImageChoice(this, "Icon", "Icon", "default_icon_48.png");
+        var appearance = new StackPanel();
+        var heads = new Grid { Margin = new Thickness(0, 4, 0, 0) };
+        heads.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        heads.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50) });
+        heads.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        heads.Children.Add(Property("App Name", "Share.AppName", _details.Name, 0));
+        heads.Children.Add(Property("Version", "Share.Version", _details.Version, 2));
+        appearance.Children.Add(heads);
+        appearance.Children.Add(new TextBlock { Text = "Images to be included in the app", FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 20, 0, 7) });
+        var images = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 10, 0, 4) };
+        images.Children.Add(_splash.Panel);
+        _icon.Panel.Margin = new Thickness(50, 0, 0, 0);
+        images.Children.Add(_icon.Panel);
+        appearance.Children.Add(images);
+        return appearance;
+    }
+
+    /// <summary>
+    /// The MATLAB app page's App Appearance (<c>mw-share-matlabapp-appearance-widget</c>): the words that the app is packaged as
+    /// a toolbox, and the app card (<c>AppCard</c>): the thumbnail or the default app icon, the name, "by" the author, the
+    /// summary and "version" the version, each line shown only with words.
+    /// </summary>
+    private StackPanel MatlabAppAppearance()
+    {
+        var appearance = new StackPanel();
+        appearance.Children.Add(new TextBlock { Text = "The app will be packaged as a MATLAB toolbox and installed in the Apps tab.", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 4, 0, 7) });
+        var card = new Border { BorderThickness = new Thickness(1), Padding = new Thickness(10), Width = 320, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 10, 0, 4) };
+        card.SetResourceReference(Border.BorderBrushProperty, ThemeKeys.Border);
+        AutomationProperties.SetAutomationId(card, "Share.AppCard");
+        var inside = new DockPanel();
+        var picture = new Image { Stretch = Stretch.Uniform, Width = 80, Height = 60, Margin = new Thickness(0, 0, 10, 0), VerticalAlignment = VerticalAlignment.Top };
+        picture.Source = (DesignAppDetails.OfDataUri(_thumbnail) is { } thumb && thumb.Bytes.Length > 0 ? Picture(thumb.Bytes) : null)
+            ?? Picture(Path.Combine(AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar), "toolbox", "compiler", PackagingResources, "default_icon_48.png"));
+        AutomationProperties.SetAutomationId(picture, "Share.CardImage");
+        DockPanel.SetDock(picture, Dock.Left);
+        inside.Children.Add(picture);
+        var lines = new StackPanel();
+        lines.Children.Add(CardLine("Share.CardTitle", _details.Name, FontWeights.SemiBold, 14));
+        lines.Children.Add(CardLine("Share.CardAuthor", _details.Author.Length > 0 ? "by " + _details.Author : string.Empty, FontWeights.Normal, 12));
+        lines.Children.Add(CardLine("Share.CardSummary", _details.Summary, FontWeights.Normal, 12));
+        lines.Children.Add(CardLine("Share.CardVersion", _details.Version.Length > 0 ? "version " + _details.Version : string.Empty, FontWeights.Normal, 11));
+        inside.Children.Add(lines);
+        card.Child = inside;
+        appearance.Children.Add(card);
+        return appearance;
+    }
+
+    private static TextBlock CardLine(string id, string text, FontWeight weight, double size)
+    {
+        var line = new TextBlock { Text = text, FontWeight = weight, FontSize = size, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 1, 0, 1), Visibility = text.Length > 0 ? Visibility.Visible : Visibility.Collapsed };
+        AutomationProperties.SetAutomationId(line, id);
+        return line;
     }
 
     /// <summary>A titled pane, as R2025b's <c>mw-titlepane</c> opens: the title, its content under it.</summary>
@@ -309,8 +368,8 @@ internal sealed class AppShareWindow : Window
 
     /// <summary>
     /// Package (<c>_onPackageClick</c>, then <c>deployAppDesignerProject</c>): the button rests, the packaging dialog opens, the
-    /// build runs and then the installer, each its own run so that each step reports on its own, and the dialog ends with the
-    /// result and Open Output Folder on the app's release folder.
+    /// script runs - a standalone app's build and then its installer, each its own run so that each step reports on its own; a
+    /// MATLAB app's packaging as one - and the dialog ends with the result and Open Output Folder on the app's release folder.
     /// </summary>
     private async Task PackageAsync()
     {
@@ -327,15 +386,17 @@ internal sealed class AppShareWindow : Window
 
         _busy = true;
         _package.IsEnabled = false;
-        var dialog = new CompilerPackagingDialog("Standalone App Packaging Progress", _details.Name, _details.Version,
-            [("Building Standalone App", "Step.Build"), ("Creating Installer", "Step.Package")]) { Owner = this };
+        bool standalone = _kind == AppShareKind.Standalone;
+        var dialog = new CompilerPackagingDialog(
+            standalone ? "Standalone App Packaging Progress" : "MATLAB App Packaging Progress", _details.Name, _details.Version,
+            standalone ? [("Building Standalone App", "Step.Build"), ("Creating Installer", "Step.Package")] : [("Packaging MATLAB App", "Step.Build")]) { Owner = this };
         dialog.Show();
         try
         {
             dialog.StartStep(0);
-            CompilerRunOutcome outcome = await runner(AppShareScript.StandaloneBuild(_appPath, Files, _splash.File, _icon.File, _details));
+            CompilerRunOutcome outcome = await runner(standalone ? AppShareScript.StandaloneBuild(_appPath, Files, _splash?.File, _icon?.File, _details) : Script);
             dialog.EndStep(0, outcome);
-            if (outcome.Success)
+            if (outcome.Success && standalone)
             {
                 dialog.StartStep(1);
                 CompilerRunOutcome packaged = await runner(AppShareScript.StandalonePackage(_appPath, _details, RuntimeDelivery));
@@ -353,11 +414,32 @@ internal sealed class AppShareWindow : Window
         }
     }
 
+    private static BitmapImage? Picture(string path) => File.Exists(path) ? Picture(File.ReadAllBytes(path)) : null;
+
+    private static BitmapImage? Picture(byte[] bytes)
+    {
+        try
+        {
+            using var stream = new MemoryStream(bytes);
+            var image = new BitmapImage();
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.StreamSource = stream;
+            image.EndInit();
+            image.Freeze();
+            return image;
+        }
+        catch (Exception ex) when (ex is IOException or NotSupportedException or ArgumentException or InvalidOperationException or System.Runtime.InteropServices.COMException)
+        {
+            return null;
+        }
+    }
+
     // --- The images ------------------------------------------------------------------------------------
 
     /// <summary>
-    /// One of the page's image selectors (the bundle's <c>ImageSelector</c>): the picture, the default's until one is chosen, the
-    /// type's words under it and Browse or Remove; an image of another type is refused in the selector's words.
+    /// One of the standalone page's image selectors (the bundle's <c>ImageSelector</c>): the picture, the default's until one is
+    /// chosen, the type's words under it and Browse or Remove; an image of another type is refused in the selector's words.
     /// </summary>
     private sealed class ImageChoice
     {
@@ -425,29 +507,6 @@ internal sealed class AppShareWindow : Window
             _file.Text = File.Length > 0 ? Path.GetFileName(File) : "Default";
             _file.ToolTip = File.Length > 0 ? File : null;
             _action.Content = File.Length > 0 ? "Remove" : "Browse";
-        }
-
-        private static BitmapImage? Picture(string path)
-        {
-            if (!System.IO.File.Exists(path))
-            {
-                return null;
-            }
-
-            try
-            {
-                var image = new BitmapImage();
-                image.BeginInit();
-                image.CacheOption = BitmapCacheOption.OnLoad;
-                image.UriSource = new Uri(path);
-                image.EndInit();
-                image.Freeze();
-                return image;
-            }
-            catch (Exception ex) when (ex is IOException or NotSupportedException or UnauthorizedAccessException)
-            {
-                return null;
-            }
         }
     }
 }

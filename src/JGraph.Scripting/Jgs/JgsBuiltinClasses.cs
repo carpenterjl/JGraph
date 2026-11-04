@@ -41,6 +41,7 @@ internal static partial class JgsBuiltinClasses
         PythonPackageOptions => PythonPackageOptionsDeclaration(interpreter),
         ProductionServerArchiveOptions => ProductionServerArchiveOptionsDeclaration(interpreter),
         InstallerOptions => InstallerOptionsDeclaration(interpreter),
+        ToolboxOptions => ToolboxOptionsDeclaration(interpreter),
         BuildResults => BuildResultsDeclaration(),
         RuntimeDependencies => RuntimeDependenciesDeclaration(),
         _ => null,

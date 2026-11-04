@@ -94,8 +94,9 @@ internal sealed partial class AppDesignerWindow
         "AD_EDITOR_SPLIT_NONE" or "AD_EDITOR_SPLIT_LEFTRIGHT" or "AD_EDITOR_SPLIT_TOPBOTTOM"
             or "AD_EDITOR_HIGHLIGHT_CURRENT_LINE" or "AD_EDITOR_LINE_NUMBERS" or "AD_EDITOR_DATATIPS" => null,
         "AD_RUN" => RunApp,
-        // The SHARE drop-down (W12): Standalone Desktop App; Web App stays disabled (X2).
+        // The SHARE drop-down (W12, W13): Standalone Desktop App and MATLAB App; Web App stays disabled (X2).
         "AD_SHARE_DESKTOP" => ShareDesktop,
+        "AD_SHARE_MATLAB" => ShareMatlabApp,
         "OPEN_STARTSCREEN_DIALOG" => ShowStartPage,
         "AD_INPUT_ARGUMENTS" => CodeOptions,
         "AD_APP_DETAILS" => AppDetails,

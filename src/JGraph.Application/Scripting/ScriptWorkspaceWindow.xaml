@@ -86,6 +86,7 @@
                 <Separator />
                 <MenuItem Header="Compiler Apps _Gallery (deploytool)" Command="{x:Static local:WorkspaceCommands.OpenCompilerApp}" CommandParameter="deploytool" />
             </MenuItem>
+            <MenuItem x:Name="AppsMenu" Header="_Apps" />
             <MenuItem Header="_Tools">
                 <MenuItem Header="New _Figure Window"
                           Command="{x:Static local:WorkspaceCommands.NewFigureWindow}" />

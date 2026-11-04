@@ -1,0 +1,88 @@
+== the toolbox's resources
+---- <addons>\Toolboxes\Accept Form\resources\addons_core.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<addonCore>
+  <label>Accept Form</label>
+  <version>2.1</version>
+  <type>Toolbox</type>
+  <identifier>079c16c6-1827-4ad5-9249-17eaa4de3a27</identifier>
+  <summary>A form that adds or multiplies.</summary>
+  <description>One line.</description>
+  <createdBy name="W13 Probe"/>
+  <image>resources/screenshot.png</image>
+</addonCore>
+
+---- <addons>\Toolboxes\Accept Form\resources\matlab_path_entries.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<paths>
+  <path>.</path>
+  <path>sub</path>
+</paths>
+
+---- <addons>\Toolboxes\Accept Form\resources\mltbx_app_gallery_registration.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<toolset id="user_apps_toolset" template="false">
+    <tool app_file_path="AcceptForm.mlapp" handler_class="com.mathworks.deployment.desktop.toolstrip.ToolboxToolSetExtensionHandler" id="4caa76ce-c63e-42ba-9889-05fe82cd083b:AcceptForm.mlapp" label="Accept Form" quick_access_eligible="false" toolset_id="user_apps_toolset">
+        <callback>AcceptForm</callback>
+        <summary>A form that adds or multiplies.</summary>
+        <description>One line.</description>
+        <icon filename="matlab_app_generic_icon_24" id="app"/>
+        <icon filename="matlab_app_generic_icon_16"/>
+        <parent_tool id="my_apps" toolset_id="apps_toolset"/>
+    </tool>
+</toolset>
+
+---- <addons>\Toolboxes\Accept Form\resources\screenshot.png (832 bytes)
+path has the folder: 1
+path has sub: 1
+path has the folder after uninstall: 0; folder exists: 0
+== the app's resources
+---- <addons>\Apps\AcceptFormApp\resources\addons_core.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<addonCore>
+  <label>AcceptFormApp</label>
+  <version>2.1</version>
+  <type>app</type>
+  <packagedBy>(R2025b)</packagedBy>
+  <identifier>4e716c9a-8857-448e-b536-fb847eec6f66</identifier>
+  <summary>A form that adds or multiplies.</summary>
+  <description>One line.</description>
+  <createdBy name="W13 Probe" company="JGraph" email="probe@example.com"/>
+  <icons>
+    <icon tag="0">resources/icon_48.png</icon>
+    <icon tag="1">resources/icon_24.png</icon>
+    <icon tag="2">resources/icon_16.png</icon>
+  </icons>
+</addonCore>
+
+---- <addons>\Apps\AcceptFormApp\resources\icon_16.png (446 bytes)
+---- <addons>\Apps\AcceptFormApp\resources\icon_24.png (737 bytes)
+---- <addons>\Apps\AcceptFormApp\resources\icon_48.png (1559 bytes)
+---- <addons>\Apps\AcceptFormApp\resources\matlab_compatibility.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<compatibility>
+  <requiredProducts>
+    <requiredProduct name="MATLAB" version="25.2" identifier="1"/>
+  </requiredProducts>
+  <platformCompatibility windows="1" linux="1" macos="1" matlabonline="1"/>
+</compatibility>
+
+---- <addons>\Apps\AcceptFormApp\resources\mlappinstall_app_gallery_registration.xml
+<?xml version="1.0" encoding="utf-8"?>
+<toolset id="user_apps_toolset" template="false">
+   <tool app_file_path="./" handler_class="com.mathworks.appmanagement.desktop.ToolboxToolSetExtensionHandler" id="4e716c9a-8857-448e-b536-fb847eec6f66" label="AcceptFormApp" toolset_id="user_apps_toolset">
+      <callback>matlab.apputil.run('AcceptFormAppAPP')</callback>
+      <summary>A form that adds or multiplies.</summary>
+      <description>One line.</description>
+      <parent_tool id="my_apps" toolset_id="apps_toolset"/>
+   </tool>
+</toolset>
+path has the app folder: 0
+== install again
+          id: 'AcceptFormAppAPP'
+        name: 'AcceptFormApp'
+      status: 'updated'
+    location: 'C:\Users\Carpe\AppData\Roaming\MathWorks\MATLAB Add-Ons\Apps\AcceptFormApp'
+
+folder exists after uninstall: 0
+done

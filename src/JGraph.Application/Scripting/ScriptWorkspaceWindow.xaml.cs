@@ -117,6 +117,7 @@ public partial class ScriptWorkspaceWindow : Window
         BuildNewScriptMenu(engines);
         BuildConsoleLanguages(engines);
         BuildViewMenu();
+        BuildAppsMenu();
         InitializeDevicePanes();
         UpdateCommandStates();
 

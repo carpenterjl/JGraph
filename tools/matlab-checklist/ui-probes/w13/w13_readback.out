@@ -1,0 +1,54 @@
+== <jgraph>\W4App.mltbx
+toolboxVersion: 1.0
+                  type: 'MATLAB Toolbox'
+                  name: 'W4App'
+               version: '1.0'
+         MATLABRelease: 'R2025b'
+               summary: ''
+            authorName: ''
+         authorContact: ''
+    authorOrganization: ''
+                  GUID: 'w13-readback-id'
+           description: ''
+
+parts: 12
+  <jgraph>\unzipped\[Content_Types].xml
+  <jgraph>\unzipped\_rels\.rels
+  <jgraph>\unzipped\fsroot\DesktopToolset.xml
+  <jgraph>\unzipped\fsroot\W4App.m
+  <jgraph>\unzipped\metadata\addonProperties.xml
+  <jgraph>\unzipped\metadata\configuration.xml
+  <jgraph>\unzipped\metadata\coreProperties.xml
+  <jgraph>\unzipped\metadata\filesystemManifest.xml
+  <jgraph>\unzipped\metadata\mwcoreProperties.xml
+  <jgraph>\unzipped\metadata\mwcorePropertiesExtension.xml
+  <jgraph>\unzipped\metadata\mwcorePropertiesReleaseInfo.xml
+  <jgraph>\unzipped\metadata\systemRequirements.xml
+       Name: 'W4App'
+    Version: '1.0'
+       Guid: 'w13-readback-id'
+
+installed folder exists: 1
+  <addons>\Toolboxes\W4App\DesktopToolset.xml (640 bytes)
+  <addons>\Toolboxes\W4App\W4App.m (2057 bytes)
+  <addons>\Toolboxes\W4App\resources\addons_core.xml (220 bytes)
+  <addons>\Toolboxes\W4App\resources\matlab_path_entries.xml (73 bytes)
+  <addons>\Toolboxes\W4App\resources\mltbx_app_gallery_registration.xml (640 bytes)
+  <addons>\Toolboxes\W4App\resources\screenshot.png (832 bytes)
+---- gallery registration
+<?xml version="1.0" encoding="UTF-8"?>
+<toolset id="user_apps_toolset" template="false">
+    <tool app_file_path="W4App.m" handler_class="com.mathworks.deployment.desktop.toolstrip.ToolboxToolSetExtensionHandler" id="a68791da-6e6f-4c1d-bc44-5a09a803d6f2:W4App.m" label="W4App" quick_access_eligible="false" toolset_id="user_apps_toolset">
+        <callback>W4App</callback>
+        <summary></summary>
+        <description></description>
+        <icon filename="matlab_app_generic_icon_24" id="app"/>
+        <icon filename="matlab_app_generic_icon_16"/>
+        <parent_tool id="my_apps" toolset_id="apps_toolset"/>
+    </tool>
+</toolset>
+
+path has the folder: 1
+installedAddons lists it: 1
+uninstalled; folder exists: 0
+done

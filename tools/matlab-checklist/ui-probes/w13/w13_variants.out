@@ -1,0 +1,25 @@
+== v1_theirs_unsigned.mltbx
+mlAddonGetProperties ok: Accept Form 2.1 079c16c6-1827-4ad5-9249-17eaa4de3a27
+toolboxVersion: 2.1
+MltbxMetadataReader ok
+== v2_theirs_rezipped.mltbx
+mlAddonGetProperties ok: Accept Form 2.1 079c16c6-1827-4ad5-9249-17eaa4de3a27
+toolboxVersion: 2.1
+MltbxMetadataReader ok
+== v3_ours_rezipped.mltbx
+mlAddonGetProperties -> mladdon_builtins:mladdon_builtins:MLADDON_BUILTINS_ERROR_GET_PROPERTIES: Failed to get properties from 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w13\rt\jgraph\variants\v3_ours_rezipped.mltbx': ReleaseInfo is invalid
+toolboxVersion -> MATLAB:toolbox_packaging:packaging:InvalidToolboxFile
+MltbxMetadataReader ok
+== v4_ours_their_release.mltbx
+mlAddonGetProperties ok: W4App 1.0 044a9fdc-a8b3-49f0-9a21-91f2d7d223f4
+toolboxVersion: 1.0
+MltbxMetadataReader ok
+== v5_ours_stored.mltbx
+mlAddonGetProperties -> mladdon_builtins:mladdon_builtins:MLADDON_BUILTINS_ERROR_GET_PROPERTIES: Failed to get properties from 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w13\rt\jgraph\variants\v5_ours_stored.mltbx': ReleaseInfo is invalid
+toolboxVersion -> MATLAB:toolbox_packaging:packaging:InvalidToolboxFile
+MltbxMetadataReader ok
+== v6_ours_no_m_type.mltbx
+mlAddonGetProperties -> mladdon_builtins:mladdon_builtins:MLADDON_BUILTINS_ERROR_GET_PROPERTIES: Failed to get properties from 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w13\rt\jgraph\variants\v6_ours_no_m_type.mltbx': No content type was found for part:/fsroot/W4App.m
+toolboxVersion -> MATLAB:toolbox_packaging:packaging:InvalidToolboxFile
+MltbxMetadataReader ok
+done

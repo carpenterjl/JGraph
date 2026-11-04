@@ -114,6 +114,52 @@ public static class AppShareScript
         return text.ToString();
     }
 
+    /// <summary>Where Share &gt; MATLAB App writes the toolbox: <c>release\&lt;app&gt;.mltbx</c>.</summary>
+    public static string MatlabAppFile(string appPath) => Path.Combine(OutputFolder(appPath), Path.GetFileNameWithoutExtension(appPath) + ".mltbx");
+
+    /// <summary>
+    /// The script Share &gt; MATLAB App runs (<c>MatlabAppDesignerScriptBuilder.getPackageScript</c>, App Designer window
+    /// plan W13): the toolbox options over the app's folder with a fresh identifier and the files - the app first, then
+    /// <paramref name="files"/> (R2025b's top-level analysis and the window's own files) - the name, version, author, summary
+    /// and description from App Details, the app as the Apps gallery's file, the files' folders as the path, and
+    /// <c>release\&lt;app&gt;.mltbx</c> as the output, between the two lines the packaging dialog prints. R2025b prints
+    /// those lines through its message catalog; JGraph prints the words.
+    /// </summary>
+    public static string MatlabApp(string appPath, IReadOnlyList<string> files, string uuid, AppShareDetails details)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(appPath);
+        ArgumentNullException.ThrowIfNull(files);
+        ArgumentException.ThrowIfNullOrEmpty(uuid);
+        ArgumentNullException.ThrowIfNull(details);
+        string full = Path.GetFullPath(appPath);
+        string folder = Path.GetDirectoryName(full) ?? string.Empty;
+        var all = new List<string> { full };
+        all.AddRange(files.Select(Path.GetFullPath).Where(f => !all.Contains(f, StringComparer.OrdinalIgnoreCase)));
+        var folders = new List<string>();
+        foreach (string file in all)
+        {
+            string? parent = Path.GetDirectoryName(file);
+            if (parent is not null && !folders.Contains(parent, StringComparer.OrdinalIgnoreCase))
+            {
+                folders.Add(parent);
+            }
+        }
+
+        var text = new StringBuilder();
+        text.Append("disp(\"Packaging MATLAB App...\");packageOpts=matlab.addons.toolbox.ToolboxOptions(").Append(Quoted(folder)).Append(", ").Append(Quoted(uuid))
+            .Append(", ToolboxFiles={").Append(string.Join(", ", all.Select(Quoted))).Append("});\n");
+        text.Append("packageOpts.ToolboxName = ").Append(Quoted(details.Name)).Append(";\n");
+        text.Append("packageOpts.ToolboxVersion = ").Append(Quoted(details.Version)).Append(";\n");
+        text.Append("packageOpts.AuthorName = ").Append(Quoted(details.Author)).Append(";\n");
+        text.Append("packageOpts.Summary = ").Append(Quoted(details.Summary)).Append(";\n");
+        text.Append("packageOpts.Description = ").Append(Quoted(details.Description)).Append(";\n");
+        text.Append("packageOpts.AppGalleryFiles = {").Append(Quoted(full)).Append("};\n");
+        text.Append("packageOpts.ToolboxMatlabPath = {").Append(string.Join(", ", folders.Select(Quoted))).Append("};\n");
+        text.Append("packageOpts.OutputFile = ").Append(Quoted(MatlabAppFile(full))).Append(";\n");
+        text.Append("matlab.addons.toolbox.packageToolbox(packageOpts);disp(\"MATLAB App packaging complete\");");
+        return text.ToString();
+    }
+
     /// <summary>
     /// A double-quoted MATLAB string holding <paramref name="text"/>: a quote doubled, and the lines of a text with
     /// line breaks joined with <c>newline</c>, so that what App Details holds reaches the options as it is.

@@ -115,6 +115,7 @@ internal static partial class JgsBuiltins
             RegisterCompilerBuiltins(env, interpreter, host);
             RegisterProjectBuiltins(env, interpreter, host); // MATLAB Projects and compiler tasks (stage K20)
             RegisterLegacyProjectBuiltins(env, interpreter, host); // legacy deployment projects, createDeploymentScript (stage K21)
+            RegisterAddOnBuiltins(env, interpreter, host); // toolboxes and apps as add-ons (App Designer window plan W13)
         }
 
         // MATLAB Production Server's metrics and cache helpers (stage K15), in every session: a deployed function emits metrics.
