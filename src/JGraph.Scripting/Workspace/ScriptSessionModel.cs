@@ -52,9 +52,22 @@ public sealed class ScriptSessionModel
     public bool CanStep => State == ScriptSessionState.Paused;
 
     /// <summary>Marks the running script as paused (debugger hit a breakpoint or completed a step).</summary>
-    public void MarkPaused()
+    public void MarkPaused() => MarkPaused(null);
+
+    /// <summary>
+    /// Marks the session paused: a running script's debugger hit a breakpoint or completed a step, or - with
+    /// <paramref name="language"/> - a callback of that language's session paused while the session was idle
+    /// (App Designer window plan W11: an app's button pushed with a breakpoint in its callback). Resuming
+    /// from the latter goes back to idle.
+    /// </summary>
+    public void MarkPaused(string? language)
     {
-        if (State != ScriptSessionState.Running)
+        if (State == ScriptSessionState.Idle && language is not null)
+        {
+            _pausedFromIdle = true;
+            RunningLanguage = language;
+        }
+        else if (State != ScriptSessionState.Running)
         {
             return;
         }
@@ -63,7 +76,7 @@ public sealed class ScriptSessionModel
         StateChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    /// <summary>Marks the paused script as running again.</summary>
+    /// <summary>Marks the paused script as running again - or idle again, when the pause came in an idle session's callback.</summary>
     public void MarkResumed()
     {
         if (State != ScriptSessionState.Paused)
@@ -71,9 +84,21 @@ public sealed class ScriptSessionModel
             return;
         }
 
-        State = ScriptSessionState.Running;
+        if (_pausedFromIdle)
+        {
+            _pausedFromIdle = false;
+            State = ScriptSessionState.Idle;
+            RunningLanguage = null;
+        }
+        else
+        {
+            State = ScriptSessionState.Running;
+        }
+
         StateChanged?.Invoke(this, EventArgs.Empty);
     }
+
+    private bool _pausedFromIdle;
 
     /// <summary>Enters the running state; returns false when a run is already in flight
     /// or the language's engine is unavailable.</summary>

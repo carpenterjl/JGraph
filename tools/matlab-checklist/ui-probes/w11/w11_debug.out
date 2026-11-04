@@ -1,0 +1,196 @@
+== function file: where breakpoints land
+dbstop in w11fun -> ok
+Breakpoint for w11fun is on line {<debug>\w11fun.m:4}.
+dbstop in w11fun at 2 -> ok
+dbstop in w11fun at 3 -> ok
+dbstop in w11fun at 5 -> ok
+dbstop in w11fun at 8 -> ok
+dbstop in w11fun at 9 -> ok
+dbstop in w11fun at 11 -> ok
+Breakpoints for w11fun are on lines {<debug>\w11fun.m:4}, {<debug>\w11fun.m:6}, {<debug>\w11fun.m:8}.
+Breakpoint for w11fun>helper is on line {<debug>\w11fun.m:12}.
+dbstop in w11fun at 4 -> ok
+dbstop in w11fun at 4 -> ok
+dbstop in w11fun.m at 6 -> ok
+dbstop in w11fun>helper -> ok
+dbstop in w11fun>helper at 12 -> MATLAB:dbstop:lineNumberAndLocalNestedCombinationInvalid: Invalid option combination. Specify the line number or specify the local or nested function.
+dbstop in D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w11\rt\debug\w11fun.m at 7 -> ok
+Breakpoints for w11fun are on lines {<debug>\w11fun.m:4}, {<debug>\w11fun.m:6}, {<debug>\w11fun.m:7}.
+Breakpoint for w11fun>helper is on line {<debug>\w11fun.m:12}.
+== dbstatus w11fun, dbstatus('w11fun'), -completenames
+Breakpoints for w11fun are on lines <a href="matlab: opentoline('<debug>\w11fun.m',4,1)">4</a>, <a href="matlab: opentoline('<debug>\w11fun.m',6,1)">6</a>, <a href="matlab: opentoline('<debug>\w11fun.m',7,1)">7</a>.
+Breakpoint for w11fun>helper is on line <a href="matlab: opentoline('<debug>\w11fun.m',12,1)">12</a>.
+struct: {name=w11fun file=<debug>\w11fun.m line=[4 6 7] anonymous=[0 0 0] expression=["";"";""] cond= identifier=[]} {name=w11fun>helper file=<debug>\w11fun.m line=12 anonymous=0 expression=[""] cond= identifier=[]}
+Breakpoint for <debug>\w11fun.m>helper is on line <a href="matlab: opentoline('<debug>\w11fun.m',12,1)">12</a>.
+Breakpoints for <debug>\w11fun.m>w11fun are on lines <a href="matlab: opentoline('<debug>\w11fun.m',4,1)">4</a>, <a href="matlab: opentoline('<debug>\w11fun.m',6,1)">6</a>, <a href="matlab: opentoline('<debug>\w11fun.m',7,1)">7</a>.
+struct: {name=<debug>\w11fun.m>helper file=<debug>\w11fun.m line=12 anonymous=0 expression=[""] cond= identifier=[]} {name=<debug>\w11fun.m>w11fun file=<debug>\w11fun.m line=[4 6 7] anonymous=[0 0 0] expression=["";"";""] cond= identifier=[]}
+== dbclear forms
+dbclear in w11fun at 4 -> ok
+Breakpoints for w11fun are on lines {<debug>\w11fun.m:6}, {<debug>\w11fun.m:7}.
+Breakpoint for w11fun>helper is on line {<debug>\w11fun.m:12}.
+dbclear in w11fun>helper -> ok
+Breakpoints for w11fun are on lines {<debug>\w11fun.m:6}, {<debug>\w11fun.m:7}.
+dbclear in w11fun -> ok
+(dbstatus prints nothing)
+dbclear in w11fun -> ok
+dbclear all in w11fun -> ok
+dbclear in NoSuchW11 -> MATLAB:dispatcher:cannotFindFunction: Cannot find function "NoSuchW11".
+dbclear in w11fun at 100 -> MATLAB:lineBeyondFileEnd: Setting or clearing breakpoints past the start of the last expression is not supported.
+dbclear if error -> ok
+== conditions on a line
+dbstop in w11fun at 4 if x > 1 -> ok
+Breakpoint for w11fun is on line {<debug>\w11fun.m:4}.
+  Breakpoint on line {<debug>\w11fun.m:4} has conditional expression "x > 1".
+
+dbstop in w11fun at 4 if x > 2 -> ok
+Breakpoint for w11fun is on line {<debug>\w11fun.m:4}.
+  Breakpoint on line {<debug>\w11fun.m:4} has conditional expression "x > 2".
+
+dbstop in w11fun at 4 -> ok
+Breakpoint for w11fun is on line {<debug>\w11fun.m:4}.
+dbstop in w11fun at 6 if y > 1 && x < 3 -> ok
+struct: {name=w11fun file=<debug>\w11fun.m line=[4 6] anonymous=[0 0] expression=["";"y > 1 && x < 3"] cond= identifier=[]}
+== refusals
+dbstop (nothing) -> MATLAB:minrhs: Not enough input arguments.
+dbstop in -> MATLAB:badopt: Unknown command option.
+dbstop at -> MATLAB:badopt: Unknown command option.
+dbstop at 3 -> ok
+dbstop if -> MATLAB:badopt: Unknown command option.
+dbstop in w11fun at -> MATLAB:badopt: Unknown command option.
+dbstop in w11fun at 0 -> ok
+dbstop in w11fun at -1 -> MATLAB:dispatcher:cannotFindFunction: Cannot find function "-1" within "w11fun".
+dbstop in w11fun at abc -> MATLAB:dispatcher:cannotFindFunction: Cannot find function "abc" within "w11fun".
+dbstop in w11fun at 4 if -> MATLAB:badopt: Unknown command option.
+dbstop in w11fun at 100 -> MATLAB:lineBeyondFileEnd: Setting or clearing breakpoints past the start of the last expression is not supported.
+dbstop in w11fun at 13 -> ok
+dbstop in w11fun at 12 extra -> MATLAB:badopt: Unknown command option.
+dbstop in NoSuchW11 at 3 -> MATLAB:dispatcher:cannotFindFunction: Cannot find function "NoSuchW11".
+dbstop in w11fun>nosuch -> MATLAB:dispatcher:cannotFindFunction: Cannot find function "nosuch" within "w11fun".
+dbstop in w11fun at 4 if  -> ok
+dbstop bogus w11fun -> MATLAB:dispatcher:cannotFindFunction: Cannot find function "bogus".
+dbstop in <double 42> -> MATLAB:string:MustBeStringScalarOrCharacterVector: Argument must be a text scalar.
+dbstop in w11fun at <double 4> -> MATLAB:string:MustBeStringScalarOrCharacterVector: Argument must be a text scalar.
+dbstop if error MATLAB:a MATLAB:b -> MATLAB:badopt: Unknown command option.
+dbstop if warning nocolon -> MATLAB:badopt: Unknown command option.
+== functional forms
+dbstop w11fun 4 -> ok
+Breakpoint for w11fun is on line {<debug>\w11fun.m:4}.
+dbstop w11fun <double 4> -> MATLAB:string:MustBeStringScalarOrCharacterVector: Argument must be a text scalar.
+dbstop w11fun -> ok
+Breakpoint for w11fun is on line {<debug>\w11fun.m:4}.
+dbstop in w11fun at 6 -> ok
+Breakpoint for w11fun is on line {<debug>\w11fun.m:6}.
+== a script and a class
+dbstop in w11script at 1 -> ok
+dbstop in w11script at 2 -> ok
+dbstop in w11script -> ok
+dbstop in W11Class at 7 -> ok
+dbstop in W11Class>W11Class.twice -> ok
+dbstop in W11Class at 3 -> ok
+dbstop in W11Class at 1 -> ok
+dbstop in AcceptFormPlain at 29 -> ok
+dbstop in AcceptFormPlain>AcceptFormPlain.ComputeButtonPushed -> ok
+Breakpoint for AcceptFormPlain>AcceptFormPlain.ComputeButtonPushed is on line {<debug>\AcceptFormPlain.m:34}.
+Breakpoint for AcceptFormPlain>AcceptFormPlain.startupFcn is on line {<debug>\AcceptFormPlain.m:29}.
+Breakpoint for W11Class>W11Class.W11Class is on line {<debug>\W11Class.m:7}.
+Breakpoint for W11Class>W11Class.twice is on line {<debug>\W11Class.m:10}.
+Breakpoint for w11script is on line {<debug>\w11script.m:2}.
+struct: {name=AcceptFormPlain>AcceptFormPlain.ComputeButtonPushed file=<debug>\AcceptFormPlain.m line=34 anonymous=0 expression=[""] cond= identifier=[]} {name=AcceptFormPlain>AcceptFormPlain.startupFcn file=<debug>\AcceptFormPlain.m line=29 anonymous=0 expression=[""] cond= identifier=[]} {name=W11Class>W11Class.W11Class file=<debug>\W11Class.m line=7 anonymous=0 expression=[""] cond= identifier=[]} {name=W11Class>W11Class.twice file=<debug>\W11Class.m line=10 anonymous=0 expression=[""] cond= identifier=[]} {name=w11script file=<debug>\w11script.m line=2 anonymous=0 expression=[""] cond= identifier=[]}
+== dbstop if
+dbstop if error -> ok
+dbstop if error MATLAB:badsubscript -> ok
+Stop if error.
+dbstop if error MATLAB:nomem -> ok
+dbstop if caught error MATLAB:badsubscript -> ok
+dbstop if warning MATLAB:singularMatrix -> ok
+dbstop if warning -> ok
+dbstop if infnan -> ok
+dbstop if naninf -> ok
+Stop if error.
+Stop if caught error with identifier MATLAB:badsubscript.
+Stop if warning.
+Stop if naninf.
+struct: {name= file= line=[] anonymous=[] expression=[] cond=error identifier=[all]} {name= file= line=[] anonymous=[] expression=[] cond=caught error identifier=[MATLAB:badsubscript]} {name= file= line=[] anonymous=[] expression=[] cond=warning identifier=[all]} {name= file= line=[] anonymous=[] expression=[] cond=naninf identifier=[]}
+dbclear if error MATLAB:nomem -> MATLAB:dbclear:cannotClearWhenAllEnabled: Cannot clear the 'dbstop if error' setting for 'MATLAB:nomem' when the setting is enabled for all identifiers. Use 'dbclear if error' to clear the setting for all identifiers.
+Stop if error.
+Stop if caught error with identifier MATLAB:badsubscript.
+Stop if warning.
+Stop if naninf.
+dbclear if error -> ok
+Stop if caught error with identifier MATLAB:badsubscript.
+Stop if warning.
+Stop if naninf.
+dbclear if warning MATLAB:singularMatrix -> MATLAB:dbclear:cannotClearWhenAllEnabled: Cannot clear the 'dbstop if warning' setting for 'MATLAB:singularMatrix' when the setting is enabled for all identifiers. Use 'dbclear if warning' to clear the setting for all identifiers.
+Stop if caught error with identifier MATLAB:badsubscript.
+Stop if warning.
+Stop if naninf.
+dbclear if infnan -> ok
+Stop if caught error with identifier MATLAB:badsubscript.
+Stop if warning.
+== empty dbstatus
+size [0 1] class struct fields name,file,line,anonymous,expression,cond,identifier
+printed: []
+dbstatus w11fun printed: []
+dbstop if error -> ok
+one condition: {name= file= line=[] anonymous=[] expression=[] cond=error identifier=[all]}
+== the prompt words outside the debugger
+dbcont -> MATLAB:dbOnlyInDebugMode: Debug commands only allowed when stopped in debug mode.
+dbstep -> MATLAB:dbOnlyInDebugMode: Debug commands only allowed when stopped in debug mode.
+dbstep in -> MATLAB:dbOnlyInDebugMode: Debug commands only allowed when stopped in debug mode.
+dbstep out -> MATLAB:dbOnlyInDebugMode: Debug commands only allowed when stopped in debug mode.
+dbstep 3 -> MATLAB:dbOnlyInDebugMode: Debug commands only allowed when stopped in debug mode.
+dbquit -> MATLAB:dbOnlyInDebugMode: Debug commands only allowed when stopped in debug mode.
+dbquit all -> MATLAB:dbOnlyInDebugMode: Debug commands only allowed when stopped in debug mode.
+dbstack -> [> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('w11_debug', 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w11\w11_debug.m', 157)" style="font-weight:bold">w11_debug</a> (<a href="matlab: opentoline('D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w11\w11_debug.m',157,0)">line 157</a>)]
+dbup -> MATLAB:dbOnlyInDebugMode: Debug commands only allowed when stopped in debug mode.
+dbdown -> MATLAB:dbOnlyInDebugMode: Debug commands only allowed when stopped in debug mode.
+dbstack -completenames -> [> In D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w11\w11_debug.m>w11_debug (<a href="matlab: opentoline('D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w11\w11_debug.m',157,0)">line 157</a>)]
+s = dbstack: size [1 1] class struct fields file,name,line
+[s, i] = dbstack: i = 1
+== dbtype
+
+1     function y = w11fun(x)
+2     % a comment
+3     
+4     y = helper(x) + 1;
+5     
+6     z = y * 2;
+7     y = z;
+8     end
+9     
+10    function r = helper(x)
+11    % help
+12    r = x + 1;
+13    end
+---
+
+4     y = helper(x) + 1;
+5     
+6     z = y * 2;
+---
+
+10    function r = helper(x)
+11    % help
+12    r = x + 1;
+dbtype NoSuchW11 -> MATLAB:type:fileNotFound: File 'NoSuchW11' not found.
+dbtype w11fun 50:60 -> MATLAB:dbtype:dbLineBeyondEnd: Line number(s) beyond end-of-file.
+
+28            function startupFcn(app, n)
+29                app.EditField.Value = n;
+30            end
+
+33            function ComputeButtonPushed(app, event)
+34                a = app.EditField.Value;
+35                b = app.Spinner.Value;
+== nargout/exist
+dbstop: nargout 0 exist 5 which built-in (C:\Program Files\MATLAB\R2025b\toolbox\matlab\codetools\dbstop)
+dbclear: nargout 0 exist 5 which built-in (C:\Program Files\MATLAB\R2025b\toolbox\matlab\codetools\dbclear)
+dbstatus: nargout 1 exist 5 which built-in (C:\Program Files\MATLAB\R2025b\toolbox\matlab\codetools\dbstatus)
+dbcont: nargout 0 exist 5 which built-in (C:\Program Files\MATLAB\R2025b\toolbox\matlab\codetools\dbcont)
+dbstep: nargout 0 exist 5 which built-in (C:\Program Files\MATLAB\R2025b\toolbox\matlab\codetools\dbstep)
+dbquit: nargout 0 exist 5 which built-in (C:\Program Files\MATLAB\R2025b\toolbox\matlab\codetools\dbquit)
+dbstack: nargout 2 exist 5 which built-in (C:\Program Files\MATLAB\R2025b\toolbox\matlab\codetools\dbstack)
+dbup: nargout 0 exist 5 which built-in (C:\Program Files\MATLAB\R2025b\toolbox\matlab\codetools\dbup)
+dbdown: nargout 0 exist 5 which built-in (C:\Program Files\MATLAB\R2025b\toolbox\matlab\codetools\dbdown)
+dbtype: nargout 0 exist 5 which built-in (C:\Program Files\MATLAB\R2025b\toolbox\matlab\codetools\dbtype)
+done

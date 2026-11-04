@@ -92,7 +92,11 @@ public partial class ScriptEditorControl : UserControl
         Editor.TextArea.LeftMargins.Insert(1, _bookmarkMargin);
         Editor.TextArea.TextView.BackgroundRenderers.Add(_generatedCodeRenderer);
         Editor.TextArea.TextView.BackgroundRenderers.Add(_currentLineRenderer);
-        _breakpointMargin.BreakpointToggled += (_, _) => BreakpointsChanged?.Invoke(this, EventArgs.Empty);
+        _breakpointMargin.BreakpointToggled += (_, _) =>
+        {
+            ShowStatus();
+            BreakpointsChanged?.Invoke(this, EventArgs.Empty);
+        };
         _breakpointMargin.SetNextLineRequested += (_, line) => SetNextStatementRequested?.Invoke(this, line);
         _bookmarkMargin.Changed += (_, _) =>
         {
@@ -221,6 +225,17 @@ public partial class ScriptEditorControl : UserControl
         if (marks.Count > 0)
         {
             status += "; Bookmarks " + string.Join(" ", marks);
+        }
+
+        // The debugger's state (W11), readable through automation: the breakpoints' lines and the paused line.
+        if (_breakpointMargin.Breakpoints.Count > 0)
+        {
+            status += "; Breakpoints " + string.Join(" ", _breakpointMargin.Breakpoints.OrderBy(static l => l));
+        }
+
+        if (_pausedLine is int paused)
+        {
+            status += $"; Paused at line {paused}";
         }
 
         status += ViewStatus();
@@ -598,7 +613,16 @@ public partial class ScriptEditorControl : UserControl
 
     /// <summary>Replaces the breakpoint set (e.g. restoring persisted breakpoints). Does not raise
     /// <see cref="BreakpointsChanged"/> — the host initiated it.</summary>
-    public void SetBreakpoints(IEnumerable<int> lines) => _breakpointMargin.SetBreakpoints(lines);
+    public void SetBreakpoints(IEnumerable<int> lines)
+    {
+        _breakpointMargin.SetBreakpoints(lines);
+        ShowStatus();
+    }
+
+    private int? _pausedLine;
+
+    /// <summary>Which breakpoints are drawn disabled (hollow) and which conditional (W11); visual only, the host owns the states.</summary>
+    public void SetBreakpointStates(IEnumerable<int> disabled, IEnumerable<int> conditional) => _breakpointMargin.SetStates(disabled, conditional);
 
     /// <summary>Toggles a breakpoint on the caret's line (the F9 gesture).</summary>
     public void ToggleBreakpointAtCaret() => _breakpointMargin.Toggle(Editor.TextArea.Caret.Line);
@@ -609,8 +633,10 @@ public partial class ScriptEditorControl : UserControl
     /// </summary>
     public void SetCurrentLine(int? line)
     {
+        _pausedLine = line;
         _breakpointMargin.SetCurrentLine(line);
         _currentLineRenderer.SetCurrentLine(line);
+        ShowStatus();
         Editor.TextArea.TextView.InvalidateLayer(ICSharpCode.AvalonEdit.Rendering.KnownLayer.Background);
         if (line is int target && target >= 1 && target <= Editor.Document.LineCount)
         {

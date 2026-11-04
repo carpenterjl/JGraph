@@ -1401,67 +1401,38 @@ internal sealed class Parser
             return false;
         }
 
-        int p = _pos + 1;
-        int words = 0;
-        while (p < _tokens.Count)
-        {
-            switch (_tokens[p].Type)
-            {
-                // 'global' is a keyword token, and a word of 'clear global g' all the same.
-                case TokenType.Identifier or TokenType.Number or TokenType.String or TokenType.Global:
-                    words++;
-                    p++;
-                    // A file name glues on through its dot: 'load results.mat' is one word as long
-                    // as nothing separates the pieces.
-                    while (GluedDotAt(p))
-                    {
-                        p += 2;
-                    }
-
-                    break;
-                case TokenType.Minus when p + 1 < _tokens.Count
-                    && _tokens[p + 1].Type == TokenType.Identifier
-                    && !_tokens[p + 1].PrecededByWhitespace:
-                    // An option word: 'save data.txt -ascii'.
-                    words++;
-                    p += 2;
-                    break;
-                case TokenType.Newline or TokenType.Semicolon or TokenType.Comma or TokenType.Eof:
-                    return words > 0;
-                default:
-                    return false;
-            }
-        }
-
-        return words > 0;
+        // The first word decides, as MATLAB's rule has it: a word - an identifier, a number, a
+        // literal, a keyword such as the 'if' of 'dbstop if error' - or an option glued to its minus
+        // ('save data.txt -ascii'); an operator with its operand ('x - 1', 'x -1') is an expression.
+        // After that, everything to the end of the statement is words, whatever the tokens: 'dbstop in
+        // f at 4 if x > 1', 'dbtype f 4:6', 'dbstop in Class>Class.method' (App Designer window plan W11).
+        Token first = _tokens[_pos + 1];
+        return IsCommandWord(first.Type)
+            || (first.Type == TokenType.Minus && _pos + 2 < _tokens.Count
+                && _tokens[_pos + 2].Type == TokenType.Identifier && !_tokens[_pos + 2].PrecededByWhitespace);
     }
 
-    /// <summary>Whether a glued <c>.piece</c> continues the word ending at <paramref name="p"/>.</summary>
-    private bool GluedDotAt(int p) =>
-        p + 1 < _tokens.Count
-        && _tokens[p].Type == TokenType.Dot && !_tokens[p].PrecededByWhitespace
-        && _tokens[p + 1].Type is TokenType.Identifier or TokenType.Number
-        && !_tokens[p + 1].PrecededByWhitespace;
+    /// <summary>A token that begins a command word: an identifier, a number, a literal, or any keyword ('global' in 'clear global g', 'if' in 'dbstop if error').</summary>
+    private static bool IsCommandWord(TokenType type) => type is TokenType.Identifier or TokenType.Number or TokenType.ImaginaryNumber or TokenType.String
+        or TokenType.Let or TokenType.Fn or TokenType.Return or TokenType.If or TokenType.Else or TokenType.For or TokenType.While or TokenType.In
+        or TokenType.Break or TokenType.Continue or TokenType.True or TokenType.False or TokenType.End or TokenType.ElseIf
+        or TokenType.Function or TokenType.Switch or TokenType.Case or TokenType.Otherwise or TokenType.Try or TokenType.Catch or TokenType.Global;
+
+    private static bool EndsCommand(TokenType type) => type is TokenType.Newline or TokenType.Semicolon or TokenType.Comma or TokenType.Eof;
 
     private Stmt ParseCommandSyntax(Token start)
     {
         Token name = Advance();
         var arguments = new List<Expr>();
-        while (Current.Type is TokenType.Identifier or TokenType.Number or TokenType.String
-               or TokenType.Minus or TokenType.Global)
+        while (!EndsCommand(Current.Type))
         {
+            // A word runs from one whitespace to the next, its tokens' text glued back together:
+            // 'results.mat', '-ascii', 'Class>Class.method', '4:6'; a quoted literal is its content.
             Token word = Advance();
             string text = word.Text;
-            if (word.Type == TokenType.Minus)
+            while (!EndsCommand(Current.Type) && !Current.PrecededByWhitespace)
             {
-                text = "-" + Advance().Text; // '-ascii' — the detector guaranteed the glued word
-            }
-
-            // Reassemble a dotted file name: 'results' '.' 'mat' → "results.mat".
-            while (GluedDotAt(_pos))
-            {
-                Advance();
-                text += "." + Advance().Text;
+                text += Advance().Text;
             }
 
             // A command word is a char row, as R2025b passes it (`class abc` is 'char'; open item 15).

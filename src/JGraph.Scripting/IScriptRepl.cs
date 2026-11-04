@@ -103,6 +103,21 @@ public interface IScriptAppRunner
 }
 
 /// <summary>
+/// A session with a debugger of its own (App Designer window plan W11): its breakpoints, which <c>dbstop</c>,
+/// the host's editors and App Designer's code views share, and the debugger hooked into its interpreter
+/// while they hold anything, which pauses whatever runs in the session. A host feature-detects with
+/// <c>is IScriptDebuggerHost</c>, as for <see cref="IScriptAppRunner"/>.
+/// </summary>
+public interface IScriptDebuggerHost
+{
+    /// <summary>The session's breakpoints and <c>dbstop if</c> conditions.</summary>
+    Jgs.Debug.JgsBreakpointStore Breakpoints { get; }
+
+    /// <summary>The session's own debugger: its pauses and resumes, Continue, the steps, Quit.</summary>
+    Jgs.Debug.JgsDebugSession Debugger { get; }
+}
+
+/// <summary>
 /// A session that runs the dependency analysis of files as <c>matlab.codetools.requiredFilesAndProducts</c>
 /// answers it from the session's current folder, path and built-ins (compiler plan K2): what App
 /// Designer's Share windows list as the files required for the app to run (App Designer window plan

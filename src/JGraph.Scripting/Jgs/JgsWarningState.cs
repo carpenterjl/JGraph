@@ -74,10 +74,17 @@ internal sealed class JgsWarningState
         }
     }
 
-    /// <summary>Records what the last warning was, for <c>lastwarn</c>.</summary>
+    /// <summary>Records what the last warning was, for <c>lastwarn</c>, and tells <see cref="Raised"/>.</summary>
     public void Record(string identifier, string message)
     {
         LastIdentifier = identifier;
         LastMessage = message;
+        Raised?.Invoke(identifier, message);
     }
+
+    /// <summary>
+    /// Told of every warning as it is recorded, on the thread raising it: the debugger's <c>dbstop if warning</c>
+    /// (App Designer window plan W11), which may pause the raising statement inside the call.
+    /// </summary>
+    public Action<string, string>? Raised { get; set; }
 }

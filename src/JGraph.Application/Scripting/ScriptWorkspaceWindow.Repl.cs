@@ -97,6 +97,11 @@ public partial class ScriptWorkspaceWindow
     /// </summary>
     private void StopRun()
     {
+        if (_cts is null)
+        {
+            QuitPausedDebugger(); // paused with no run token to cancel: Quit Debugging unwinds the statement (W11)
+        }
+
         _cts?.Cancel();
         foreach (GraphicsEvent abandoned in ScriptEventQueue.Flush())
         {
@@ -392,6 +397,7 @@ public partial class ScriptWorkspaceWindow
 
         IScriptSession session = repl.CreateSession(SessionContext());
         _sessions[language] = session;
+        AttachDebugger(session); // the session's own debugger and breakpoints (W11)
         return session;
     }
 

@@ -90,6 +90,9 @@ internal sealed partial class Interpreter
     private CancellationToken _cancellationToken;
     private IJgsDebugHook? _hook;
     private readonly Action<string>? _echo;
+
+    /// <summary>How many <c>try</c> bodies are executing, across frames: an error raised inside one is a caught error to the debugger (W11).</summary>
+    private int _tryDepth;
     // 'end' resolves against the top entry: the extents of the value being subscripted, and which
     // subscript slot is being evaluated. Two entries make A(end, end) mean the last row and the last
     // column rather than the last element twice.
@@ -279,6 +282,35 @@ internal sealed partial class Interpreter
         }
 
         return JgsBuiltins.StackValue(listed);
+    }
+
+    /// <summary>
+    /// The functions running now, innermost first, each with the line executing in it (<c>dbstack</c>, App
+    /// Designer window plan W11): the innermost at <paramref name="line"/>, the line the call was made from,
+    /// and every caller at the call it is waiting on; the script whose top level is running last, as
+    /// <see cref="StackOf"/> lists it for an error. Empty at a prompt with nothing running.
+    /// </summary>
+    internal List<(string Name, string File, int Line)> CurrentStack(int line)
+    {
+        var listed = new List<(string Name, string File, int Line)>();
+        for (int i = _activeFunctions.Count - 1; i >= 0; i--)
+        {
+            FnStmt active = _activeFunctions[i];
+            string name = AnyClasses && CurrentFrame.ClassContext is { } running && i == _activeFunctions.Count - 1 && running.DeclaresMethod(active)
+                ? $"{running.Name}.{active.Name}"
+                : active.Name;
+            listed.Add((name, FileOfFrame(active.SourceId), line));
+            line = _activeCallLines[i];
+        }
+
+        if (Dialect.IsMatlab && MainScriptPath.Length > 0 && Path.GetExtension(MainScriptPath).Equals(".m", StringComparison.OrdinalIgnoreCase)
+            && !listed.Exists(frame => frame.File.Equals(MainScriptPath, StringComparison.OrdinalIgnoreCase)
+                && frame.Name == Path.GetFileNameWithoutExtension(MainScriptPath)))
+        {
+            listed.Add((Path.GetFileNameWithoutExtension(MainScriptPath), MainScriptPath, line));
+        }
+
+        return listed;
     }
 
     /// <summary>The file this run's own code came from, for the frames whose code carries no source id.</summary>
@@ -1134,6 +1166,7 @@ internal sealed partial class Interpreter
             EnterImports(declaration, local);
             enter?.Invoke();
             Completion completion = ExecuteBlock(declaration.Body, local);
+            _hook?.FunctionReturning(declaration, local, _callDepth); // a breakpoint on the function's end line (W11)
             return completion.Kind switch
             {
                 CompletionKind.Return => completion.Value,
@@ -1512,8 +1545,12 @@ internal sealed partial class Interpreter
 
     private Completion ExecuteBlockHooked(IReadOnlyList<Stmt> statements, JgsEnvironment env)
     {
+        // The block keeps the hook it began with: a session's debugger may be taken out of the
+        // interpreter by a statement of this very block (dbclear all, W11), and the block still
+        // owes it its exit.
+        IJgsDebugHook hook = _hook!;
         var block = new BlockExecution(statements);
-        _hook!.EnterBlock(block);
+        hook.EnterBlock(block);
         _blockDepth++;
         try
         {
@@ -1527,13 +1564,27 @@ internal sealed partial class Interpreter
 
                 // The hook may block (pause), edit the block's statement list in place (live edit),
                 // or redirect execution (set next statement) by returning a jump index.
-                if (_hook.BeforeStatement(block, i, env, _callDepth) is int jump)
+                if (hook.BeforeStatement(block, i, env, _callDepth) is int jump)
                 {
                     i = jump - 1; // loop increment re-enters BeforeStatement at the jump target
                     continue;
                 }
 
-                Completion completion = Execute(block.Statements[i], env);
+                Completion completion;
+                try
+                {
+                    completion = Execute(block.Statements[i], env);
+                }
+                catch (JgsRuntimeException error) when (!error.DebuggerSaw)
+                {
+                    // dbstop if error (W11): the innermost block the error passes through is the one
+                    // whose statement failed; the hook pauses there with the frame standing, once.
+                    error.DebuggerSaw = true;
+                    hook.StatementFailed(block, i, env, _callDepth, error, _tryDepth > 0);
+                    throw;
+                }
+
+                hook.AfterStatement(block, i, env, _callDepth);
                 if (completion.Kind != CompletionKind.Normal)
                 {
                     return completion;
@@ -1545,7 +1596,7 @@ internal sealed partial class Interpreter
         finally
         {
             _blockDepth--;
-            _hook.ExitBlock();
+            hook.ExitBlock();
         }
     }
 
@@ -2539,12 +2590,17 @@ internal sealed partial class Interpreter
     /// </summary>
     private Completion ExecuteTry(TryStmt statement, JgsEnvironment env)
     {
+        // The body runs one try deeper, which is what tells dbstop if error from dbstop if caught error
+        // (W11); the handler runs at the depth outside.
+        _tryDepth++;
+        Completion completion;
         try
         {
-            return ExecuteBlock(statement.Body, BlockScope(env));
+            completion = ExecuteBlock(statement.Body, BlockScope(env));
         }
         catch (JgsRuntimeException error)
         {
+            _tryDepth--;
             return ExecuteHandler(statement, error, env);
         }
         catch (Exception fault) when (IsInternalFault(fault))
@@ -2552,9 +2608,18 @@ internal sealed partial class Interpreter
             // A defect in this build — a bad cast, an index off the end — used to fly past every
             // catch in the script and end the run (audit 6.1). It is still reported as a defect, in
             // the words the top level uses, but a script that guarded the call gets to handle it.
+            _tryDepth--;
             return ExecuteHandler(statement, new JgsRuntimeException(statement.Line, statement.Column,
                 "JGraph:internalError", $"Internal error: {fault.GetType().Name}: {fault.Message}"), env);
         }
+        catch
+        {
+            _tryDepth--;
+            throw;
+        }
+
+        _tryDepth--;
+        return completion;
     }
 
     /// <summary>The kinds of exception that mean a defect in the runtime rather than a way a run ends.</summary>

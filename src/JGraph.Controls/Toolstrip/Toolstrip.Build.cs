@@ -646,28 +646,41 @@ public sealed partial class Toolstrip
 
         if (entry.Kind == ToolstripPopupEntryKind.CheckItem)
         {
+            // The host's word for the state comes first (SetSelected by the action id, W11), then what
+            // the item was last clicked to, then the layout's start.
             menuItem.IsCheckable = true;
-            menuItem.IsChecked = _selected.TryGetValue(id, out bool on) ? on : entry.Selected;
+            menuItem.IsChecked = entry.ActionId is { } checkAction && _selected.TryGetValue(checkAction, out bool byAction) ? byAction
+                : _selected.TryGetValue(id, out bool on) ? on : entry.Selected;
             menuItem.StaysOpenOnClick = !entry.ClosePopupOnClick;
-        }
 
-        menuItem.Click += (_, _) =>
-        {
-            object? value = entry.Kind == ToolstripPopupEntryKind.CheckItem ? menuItem.IsChecked : entry.ActionId is null ? text : null;
-            if (entry.Kind == ToolstripPopupEntryKind.CheckItem)
+            // The state's change is the event, whether a click toggled it or automation's TogglePattern set
+            // it: both end in Checked or Unchecked, and only one of them raises.
+            RoutedEventHandler changed = (_, _) =>
             {
                 _selected[id] = menuItem.IsChecked;
                 if (entry.ActionId is { } a)
                 {
                     _selected[a] = menuItem.IsChecked;
                 }
-            }
 
-            if (entry.Kind != ToolstripPopupEntryKind.CheckItem || entry.ClosePopupOnClick)
+                Raise(entry.Tag, entry.ActionId, menuItem.IsChecked);
+            };
+            menuItem.Checked += changed;
+            menuItem.Unchecked += changed;
+            menuItem.Click += (_, _) =>
             {
-                CloseTransients();
-            }
+                if (entry.ClosePopupOnClick)
+                {
+                    CloseTransients();
+                }
+            };
+            return menuItem;
+        }
 
+        menuItem.Click += (_, _) =>
+        {
+            object? value = entry.ActionId is null ? text : null;
+            CloseTransients();
             Raise(entry.Tag, entry.ActionId, value);
         };
         return menuItem;

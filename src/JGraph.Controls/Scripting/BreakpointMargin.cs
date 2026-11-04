@@ -36,6 +36,8 @@ internal sealed class BreakpointMargin : AbstractMargin
     public static readonly DependencyProperty GhostArrowBrushProperty = Register(nameof(GhostArrowBrush));
 
     private readonly HashSet<int> _breakpoints = new();
+    private readonly HashSet<int> _disabled = new();
+    private readonly HashSet<int> _conditional = new();
     private Pen _arrowPen = new(Brushes.Transparent, 1);
     private int? _currentLine;
     private int? _dragTargetLine;
@@ -126,6 +128,27 @@ internal sealed class BreakpointMargin : AbstractMargin
         InvalidateVisual();
     }
 
+    /// <summary>
+    /// Which of the breakpoints are disabled (drawn hollow) and which carry a condition (drawn with a
+    /// pale centre), as App Designer's Enable/Disable and Set Condition leave them (W11). Visual only.
+    /// </summary>
+    public void SetStates(IEnumerable<int> disabled, IEnumerable<int> conditional)
+    {
+        _disabled.Clear();
+        foreach (int line in disabled)
+        {
+            _disabled.Add(line);
+        }
+
+        _conditional.Clear();
+        foreach (int line in conditional)
+        {
+            _conditional.Add(line);
+        }
+
+        InvalidateVisual();
+    }
+
     /// <summary>Toggles the breakpoint on <paramref name="line"/> and notifies the host.</summary>
     public void Toggle(int line)
     {
@@ -184,7 +207,19 @@ internal sealed class BreakpointMargin : AbstractMargin
 
             if (_breakpoints.Contains(line))
             {
-                drawingContext.DrawEllipse(BreakpointBrush, null, new Point(MarginWidth / 2, centerY), 5, 5);
+                var centre = new Point(MarginWidth / 2, centerY);
+                if (_disabled.Contains(line))
+                {
+                    drawingContext.DrawEllipse(null, new Pen(BreakpointBrush, 1.5), centre, 4.5, 4.5);
+                }
+                else
+                {
+                    drawingContext.DrawEllipse(BreakpointBrush, null, centre, 5, 5);
+                    if (_conditional.Contains(line))
+                    {
+                        drawingContext.DrawEllipse(MarginBrush, null, centre, 1.8, 1.8);
+                    }
+                }
             }
 
             if (_currentLine == line)

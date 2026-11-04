@@ -96,6 +96,10 @@ public static class DesignActions
         "AD_SHARE_ALL_OPTIONS", "AD_SHARE_DESKTOP", "AD_SHARE_MATLAB",
         // Compare To (W14).
         "OPEN_FILE_COMPARISON_DIALOG",
+        // Stage W11: the debugger - the RUN section's execution controls, the BREAKPOINTS and ERROR HANDLING groups.
+        "AD_EDITOR_PAUSE", "AD_EDITOR_CONTINUE", "AD_EDITOR_STEP", "AD_EDITOR_STEP_IN", "AD_EDITOR_STEP_OUT", "AD_EDITOR_STOP",
+        "AD_EDITOR_CLEAR_ALL_BREAKPOINTS", "AD_EDITOR_TOGGLE_BREAKPOINT", "AD_EDITOR_TOGGLE_ENABLE_BREAKPOINT", "AD_EDITOR_TOGGLE_CONDITIONAL",
+        "AD_EDITOR_TOGGLE_STOP_IF_ERROR", "AD_EDITOR_TOGGLE_STOP_IF_WARNING", "AD_EDITOR_TOGGLE_STOP_IF_NAN_INF", "AD_EDITOR_TOGGLE_STOP_IF_UNSUPPRESSED_OUTPUT",
         // Stage W9c: the VIEW tab - the split, the display toggles, the folds, the zoom - and Print.
         "AD_EDITOR_SPLIT_NONE", "AD_EDITOR_SPLIT_LEFTRIGHT", "AD_EDITOR_SPLIT_TOPBOTTOM",
         "AD_EDITOR_HIGHLIGHT_CURRENT_LINE", "AD_EDITOR_LINE_NUMBERS", "AD_EDITOR_DATATIPS",
@@ -154,9 +158,6 @@ public static class DesignActions
                 || name.StartsWith("DESIGN_TOOL", StringComparison.Ordinal) || name.StartsWith("DESIGN_REORDER_", StringComparison.Ordinal) => "W5",
             "APP_DETAILS" or "HELP_COMMENTS" or "SAVECOPY_AS" or "EXPORT" => "W8",
             _ when name.StartsWith("RESPONSIFY", StringComparison.Ordinal) || name.StartsWith("UNRESPONSIFY", StringComparison.Ordinal) => "W8",
-            "EDITOR_PAUSE" or "EDITOR_CONTINUE" or "EDITOR_STEP" or "EDITOR_STEP_IN" or "EDITOR_STEP_OUT" or "EDITOR_STOP" => "W11",
-            _ when name.Contains("BREAKPOINT", StringComparison.Ordinal) || name.StartsWith("EDITOR_TOGGLE_STOP_IF", StringComparison.Ordinal)
-                || name == "EDITOR_TOGGLE_CONDITIONAL" => "W11",
             _ => "W15", // Configure for Apps, events, the managed properties of a custom component
         };
     }

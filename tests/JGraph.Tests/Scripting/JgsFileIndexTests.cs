@@ -513,5 +513,17 @@ public class JgsFileIndexTests : IDisposable
         public void EnterContext(
             string name, string file, int callLine, JgsEnvironment local, JgsEnvironment callerFrame, string callerFile) { }
         public void ExitContext() { }
+
+        public void AfterStatement(BlockExecution block, int index, JgsEnvironment env, int callDepth)
+        {
+        }
+
+        public void StatementFailed(BlockExecution block, int index, JgsEnvironment env, int callDepth, JgsRuntimeException error, bool caught)
+        {
+        }
+
+        public void FunctionReturning(FnStmt declaration, JgsEnvironment local, int callDepth)
+        {
+        }
     }
 }

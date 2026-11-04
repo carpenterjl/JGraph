@@ -1,0 +1,11 @@
+name,kind,method_classes
+dbstop,builtin,
+dbclear,builtin,
+dbstatus,builtin,
+dbcont,builtin,
+dbstep,builtin,
+dbquit,builtin,
+dbstack,builtin,
+dbup,builtin,
+dbdown,builtin,
+dbtype,builtin,

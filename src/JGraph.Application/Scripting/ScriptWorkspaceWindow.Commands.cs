@@ -37,8 +37,9 @@ public partial class ScriptWorkspaceWindow
 
         Bind(WorkspaceCommands.RunOrContinue, (_, _) => RunOrContinue(), CanRun);
         Bind(WorkspaceCommands.Stop, (_, _) => StopRun(), (_, e) => e.CanExecute = _session.CanStop);
-        Bind(WorkspaceCommands.Pause, (_, _) => _debugSession?.Pause(),
-            (_, e) => e.CanExecute = _session.CanPause && _debugSession is not null);
+        // Pause reaches the running language's own debugger (W11): a run, a typed statement or an app's callback alike.
+        Bind(WorkspaceCommands.Pause, (_, _) => ActiveDebugger?.Pause(),
+            (_, e) => e.CanExecute = _session.CanPause && ActiveDebugger is not null);
         Bind(WorkspaceCommands.StepOver, (_, _) => StepCommand(static s => s.StepOver()), CanStep);
         Bind(WorkspaceCommands.StepIn, (_, _) => StepCommand(static s => s.StepIn()), CanStep);
         Bind(WorkspaceCommands.StepOut, (_, _) => StepCommand(static s => s.StepOut()), CanStep);

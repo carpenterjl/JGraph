@@ -1,3 +1,4 @@
+using System.IO;
 using System.Linq;
 using System.Threading;
 
@@ -62,6 +63,132 @@ public sealed class JgsDebugSession
         _dialect = dialect ?? JgsDialect.Jgs;
         _pausedDialect = _dialect;
         _hook = new Hook(this);
+    }
+
+    // --- The attached form (App Designer window plan W11) -------------------------------------------
+    //
+    // A session's own debugger: it lives as long as the session, reads the session's breakpoint
+    // store before every statement - a typed statement's, a run's, an app callback's - and pauses
+    // wherever one of them is hit, so dbstop at the prompt and a breakpoint set in App Designer's
+    // code view both pause a callback that runs later. It is active, and so hooked into the
+    // interpreter, only while the store has something in it or a pause is wanted: the hook costs
+    // the interpreter its fast path.
+
+    private JgsBreakpointStore? _store;
+    private volatile IReadOnlyDictionary<string, IReadOnlyDictionary<int, string>> _storeLines = new Dictionary<string, IReadOnlyDictionary<int, string>>();
+    private readonly Dictionary<string, JgsSourceMap?> _maps = new(SourceIdComparer);
+    private CancellationTokenSource? _quit;
+    private bool _pauseWanted;
+
+    // Where the interpreter is between the hook's calls, for a pause raised inside a statement (a
+    // warning, output): read on the interpreter thread only.
+    private BlockExecution? _currentBlock;
+    private int _currentIndex;
+    private JgsEnvironment? _currentEnv;
+    private int _currentDepth;
+
+    /// <summary>
+    /// Makes the debugger a <see cref="JgsReplSession"/> keeps for its whole life, over the session's
+    /// <paramref name="store"/> of breakpoints. The session binds it to each interpreter it builds
+    /// (<see cref="Bind"/>) and installs its <see cref="Hook"/> while <see cref="IsActive"/>.
+    /// </summary>
+    internal static JgsDebugSession Attached(JgsBreakpointStore store, JgsDialect dialect, string language)
+    {
+        ArgumentNullException.ThrowIfNull(store);
+        var session = new JgsDebugSession(dialect) { _store = store, Language = language, _started = 1 };
+        session._storeLines = store.EnabledLines();
+        store.Changed += session.OnStoreChanged;
+        return session;
+    }
+
+    /// <summary>Whether this is a session's own debugger rather than one run's.</summary>
+    public bool IsAttached => _store is not null;
+
+    /// <summary>The language of the session an attached debugger belongs to; null for one run's.</summary>
+    public string? Language { get; private init; }
+
+    /// <summary>The breakpoints an attached debugger reads; null for one run's, which takes them through <see cref="SetBreakpoints"/>.</summary>
+    public JgsBreakpointStore? Breakpoints => _store;
+
+    /// <summary>Whether an attached debugger wants its hook in the interpreter: something is set, or a pause is wanted, or it is paused.</summary>
+    public bool IsActive => _store is { IsEmpty: false } || _pauseWanted || _isPaused;
+
+    /// <summary>Raised when <see cref="IsActive"/> may have changed, on the thread that changed it; the session re-installs or removes the hook.</summary>
+    public event EventHandler? ActiveChanged;
+
+    /// <summary>The interpreter-side hook, for the session to install.</summary>
+    internal IJgsDebugHook InterpreterHook => _hook;
+
+    /// <summary>
+    /// Points an attached debugger at the interpreter a session built (again after <c>clear</c> rebuilds it) and
+    /// listens for its warnings and output, for <c>dbstop if warning</c> and Pause on Output.
+    /// </summary>
+    internal void Bind(Interpreter interpreter, JgsEnvironment globals)
+    {
+        ArgumentNullException.ThrowIfNull(interpreter);
+        _interpreter = interpreter;
+        if (interpreter.Host is { } host)
+        {
+            host.Warnings.Raised = OnWarningRaised;
+            host.OutputHook = OnOutputWritten;
+        }
+
+        _ = globals;
+    }
+
+    private void OnStoreChanged(object? sender, EventArgs e)
+    {
+        _storeLines = _store!.EnabledLines();
+        lock (_maps)
+        {
+            _maps.Clear(); // the files' lines may have changed since they were read
+        }
+
+        ActiveChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Ends the pause by unwinding the paused statement or callback (<c>dbquit</c>, Quit Debugging): a
+    /// <see cref="JgsDebugQuitException"/> flies out of the interpreter, which the session swallows
+    /// quietly. Nothing happens when not paused.
+    /// </summary>
+    public void Quit()
+    {
+        CancellationTokenSource? quit;
+        lock (_stateLock)
+        {
+            if (!_isPaused)
+            {
+                return;
+            }
+
+            quit = _quit;
+        }
+
+        quit?.Cancel();
+    }
+
+    /// <summary>The source map of a file whose lines the debugger needs (a function's end line), read once and dropped when the store changes; null when the file does not parse.</summary>
+    private JgsSourceMap? MapOf(string sourceId)
+    {
+        lock (_maps)
+        {
+            if (!_maps.TryGetValue(sourceId, out JgsSourceMap? map))
+            {
+                try
+                {
+                    map = sourceId.Length > 0 && File.Exists(sourceId) ? JgsSourceMap.Load(sourceId) : null;
+                }
+                catch (Exception ex) when (ex is JgsException or IOException or UnauthorizedAccessException or InvalidDataException)
+                {
+                    map = null;
+                }
+
+                _maps[sourceId] = map;
+            }
+
+            return map;
+        }
     }
 
     private static StringComparer SourceIdComparer =>
@@ -284,15 +411,23 @@ public sealed class JgsDebugSession
         }
     }
 
-    /// <summary>Requests a pause at the next statement of the running script.</summary>
+    /// <summary>Requests a pause at the next statement of the running script - or, for a session's own debugger, of whatever runs next in the session.</summary>
     public void Pause()
     {
+        bool activate = false;
         lock (_stateLock)
         {
             if (!_isPaused)
             {
                 _mode = DebugMode.PausePending;
+                activate = _store is not null && !_pauseWanted;
+                _pauseWanted = _store is not null;
             }
+        }
+
+        if (activate)
+        {
+            ActiveChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -798,44 +933,19 @@ public sealed class JgsDebugSession
         _blocks[^1].Index = index;
         Stmt statement = block.Statements[index];
         _currentSourceId = statement.SourceId;
+        _currentBlock = block;
+        _currentIndex = index;
+        _currentEnv = env;
+        _currentDepth = callDepth;
+        _statementThread = Environment.CurrentManagedThreadId;
 
-        PauseReason? reason = ShouldPause(statement, callDepth);
+        PauseReason? reason = ShouldPause(statement, env, callDepth);
         if (reason is null)
         {
             return null;
         }
 
-        var location = new JgsDebugLocation(statement.SourceId, statement.Line, statement.Column);
-        JgsPausedEventArgs args;
-        lock (_stateLock)
-        {
-            _mode = DebugMode.Run; // each step command re-arms; a pause request is now satisfied
-            _pausedLocation = location;
-            _pausedEnvironment = env;
-            _pausedFile = _interpreter!.CurrentFile;
-            _pausedDialect = _interpreter.Dialect;
-            _pausedDepth = callDepth;
-            _pausedCallStack = BuildCallStack(location, callDepth);
-            args = new JgsPausedEventArgs(location, _pausedCallStack, reason.Value);
-            _gate.Reset();
-            _isPaused = true;
-        }
-
-        try
-        {
-            Paused?.Invoke(this, args);
-            _gate.Wait(_runToken); // Stop-while-paused cancels this wait and unwinds the run
-        }
-        finally
-        {
-            // Stop can arrive while a typed statement holds the interpreter. Its linked token has
-            // already told it to finish; the unwinding must not start until it has, or two threads
-            // are tearing down one interpreter.
-            _evaluationDone.Wait();
-            _isPaused = false;
-            _pausedEnvironment = null;
-            Resumed?.Invoke(this, EventArgs.Empty);
-        }
+        PauseAt(new JgsDebugLocation(statement.SourceId, statement.Line, statement.Column), env, callDepth, reason.Value, detail: null);
 
         lock (_stateLock)
         {
@@ -851,7 +961,65 @@ public sealed class JgsDebugSession
         return null;
     }
 
-    private PauseReason? ShouldPause(Stmt statement, int callDepth)
+    /// <summary>
+    /// Blocks the interpreter thread at <paramref name="location"/> until a resume, a quit or the run's cancellation:
+    /// every pause - a breakpoint, a step, an error, a warning, a function's end - comes through here.
+    /// </summary>
+    private void PauseAt(JgsDebugLocation location, JgsEnvironment env, int callDepth, PauseReason reason, string? detail)
+    {
+        JgsPausedEventArgs args;
+        var quit = new CancellationTokenSource();
+        lock (_stateLock)
+        {
+            _mode = DebugMode.Run; // each step command re-arms; a pause request is now satisfied
+            _pauseWanted = false;
+            _pausedLocation = location;
+            _pausedEnvironment = env;
+            _pausedFile = _interpreter!.CurrentFile;
+            _pausedDialect = _interpreter.Dialect;
+            _pausedDepth = callDepth;
+            _pausedCallStack = BuildCallStack(location, callDepth);
+            args = new JgsPausedEventArgs(location, _pausedCallStack, reason, detail);
+            _quit = quit;
+            _gate.Reset();
+            _isPaused = true;
+        }
+
+        // Stop-while-paused cancels this wait and unwinds the run: the run's own token for one run's
+        // debugger, the statement's for a session's; Quit Debugging does the same through its own.
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(_runToken, _interpreter.Cancellation, quit.Token);
+        try
+        {
+            Paused?.Invoke(this, args);
+            _gate.Wait(linked.Token);
+        }
+        catch (OperationCanceledException) when (quit.IsCancellationRequested && !_runToken.IsCancellationRequested && !_interpreter.Cancellation.IsCancellationRequested)
+        {
+            throw new JgsDebugQuitException();
+        }
+        finally
+        {
+            // Stop can arrive while a typed statement holds the interpreter. Its linked token has
+            // already told it to finish; the unwinding must not start until it has, or two threads
+            // are tearing down one interpreter.
+            _evaluationDone.Wait();
+            lock (_stateLock)
+            {
+                _isPaused = false;
+                _pausedEnvironment = null;
+                _quit = null;
+            }
+
+            quit.Dispose();
+            Resumed?.Invoke(this, EventArgs.Empty);
+            if (_store is not null)
+            {
+                ActiveChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+    }
+
+    private PauseReason? ShouldPause(Stmt statement, JgsEnvironment env, int callDepth)
     {
         DebugMode mode;
         int stepDepth;
@@ -867,15 +1035,34 @@ public sealed class JgsDebugSession
             stepDepth = _stepDepth;
         }
 
+        // A function's declaration is hoisted, not run: no pause on its line (R2025b moves such a
+        // breakpoint to the first statement of the body).
+        if (statement is FnStmt or ClassdefStmt)
+        {
+            return null;
+        }
+
         if (mode == DebugMode.PausePending)
         {
             return PauseReason.PauseRequest;
         }
 
-        Dictionary<string, HashSet<int>> breakpoints = _breakpoints;
-        if (breakpoints.TryGetValue(statement.SourceId, out HashSet<int>? lines) && lines.Contains(statement.Line))
+        if (_store is not null)
         {
-            return PauseReason.Breakpoint;
+            IReadOnlyDictionary<string, IReadOnlyDictionary<int, string>> lines = _storeLines;
+            if (lines.TryGetValue(statement.SourceId, out IReadOnlyDictionary<int, string>? set) && set.TryGetValue(statement.Line, out string? condition)
+                && ConditionHolds(condition, env))
+            {
+                return PauseReason.Breakpoint;
+            }
+        }
+        else
+        {
+            Dictionary<string, HashSet<int>> breakpoints = _breakpoints;
+            if (breakpoints.TryGetValue(statement.SourceId, out HashSet<int>? set) && set.Contains(statement.Line))
+            {
+                return PauseReason.Breakpoint;
+            }
         }
 
         // The hook fires exactly once per statement execution, so stepping is pure depth comparison:
@@ -921,9 +1108,224 @@ public sealed class JgsDebugSession
         // The call site lives in the statement the interpreter last announced; the caller's
         // workspace and file are what the interpreter handed over, not a reconstruction, and the
         // caller's dialect is the one still running - the callee enters its own after this (V11).
+        // A method's frame is named Class.method, as the error stack names it (W11).
+        string name = local.ClassContext is { } running && running.DeclaresMethod(declaration)
+            ? $"{running.Name}.{declaration.Name}"
+            : declaration.Name;
         _frames.Add(new FrameEntry(
-            declaration.Name, _currentSourceId, callLine, local, callerFrame, callerFile, _interpreter!.Dialect));
+            name, _currentSourceId, callLine, local, callerFrame, callerFile, _interpreter!.Dialect));
         _pendingFunction = declaration; // the next EnterBlock is this function's body
+    }
+
+    // --- The conditions (W11): dbstop if error, caught error, warning, naninf; Pause on Output; a function's end ---
+
+    /// <summary>Whether a breakpoint's condition holds in <paramref name="env"/>: "" always; an expression by its truth, an error in it pausing with the error reported, as R2025b's does.</summary>
+    private bool ConditionHolds(string condition, JgsEnvironment env)
+    {
+        if (condition.Length == 0)
+        {
+            return true;
+        }
+
+        _evaluating = true; // the debugger stands aside for its own expression
+        try
+        {
+            return _interpreter!.EvaluateSourceIn(condition, env, 0, 0).IsTruthy;
+        }
+        catch (JgsException ex)
+        {
+            _output?.WriteError($"Error evaluating breakpoint condition \"{condition}\": {ex.Message}");
+            return true;
+        }
+        finally
+        {
+            _evaluating = false;
+        }
+    }
+
+    private void OnAfterStatement(BlockExecution block, int index, JgsEnvironment env, int callDepth)
+    {
+        if (_evaluating || _store is null || !_store.IsOn(StopCondition.NanInf))
+        {
+            return;
+        }
+
+        // The conditions pause code in files, as R2025b's do; a statement typed at the prompt has no
+        // line to show and is reported as it is.
+        Stmt statement = block.Statements[index];
+        if (statement.SourceId.Length == 0)
+        {
+            return;
+        }
+
+        foreach (string name in AssignedNames(statement))
+        {
+            if (env.TryGet(name, out JgsValue value) && HasNanOrInf(value))
+            {
+                PauseAt(new JgsDebugLocation(statement.SourceId, statement.Line, statement.Column), env, callDepth, PauseReason.NanInf, $"{name} holds NaN or Inf");
+                return;
+            }
+        }
+    }
+
+    private void OnStatementFailed(BlockExecution block, int index, JgsEnvironment env, int callDepth, JgsRuntimeException error, bool caught)
+    {
+        if (_evaluating || _store is null)
+        {
+            return;
+        }
+
+        StopCondition condition = caught ? StopCondition.CaughtError : StopCondition.Error;
+        Stmt statement = block.Statements[index];
+        if (statement.SourceId.Length == 0 || !_store.Stops(condition, error.Identifier))
+        {
+            return; // an error at the prompt is reported, not paused at (R2025b stops in files)
+        }
+
+        _output?.WriteError(error.Message);
+        PauseAt(new JgsDebugLocation(statement.SourceId, statement.Line, statement.Column), env, callDepth, PauseReason.Error, error.Message);
+    }
+
+    private void OnFunctionReturning(FnStmt declaration, JgsEnvironment local, int callDepth)
+    {
+        if (_evaluating || _store is null)
+        {
+            return;
+        }
+
+        IReadOnlyDictionary<string, IReadOnlyDictionary<int, string>> lines = _storeLines;
+        if (!lines.TryGetValue(declaration.SourceId, out IReadOnlyDictionary<int, string>? set) || MapOf(declaration.SourceId) is not { } map)
+        {
+            return;
+        }
+
+        foreach (JgsFunctionSpan function in map.Functions)
+        {
+            if (function.HasEnd && function.Signature == declaration.Line && set.TryGetValue(function.End, out string? condition) && ConditionHolds(condition, local))
+            {
+                PauseAt(new JgsDebugLocation(declaration.SourceId, function.End, 0), local, callDepth, PauseReason.FunctionEnd, detail: null);
+                return;
+            }
+        }
+    }
+
+    /// <summary>A warning raised by the running statement: <c>dbstop if warning</c> pauses it inside the call, where R2025b does.</summary>
+    private void OnWarningRaised(string identifier, string message)
+    {
+        if (_evaluating || _isPaused || _store is null || _currentBlock is null || !_store.Stops(StopCondition.Warning, identifier)
+            || _interpreter?.Host is not { } host || !host.Warnings.IsOn(identifier) || !OnInterpreterThread())
+        {
+            return;
+        }
+
+        Stmt statement = _currentBlock.Statements[_currentIndex];
+        if (statement.SourceId.Length == 0)
+        {
+            return;
+        }
+
+        PauseAt(new JgsDebugLocation(statement.SourceId, statement.Line, statement.Column), _currentEnv!, _currentDepth, PauseReason.Warning, message);
+    }
+
+    /// <summary>Something reached the output console from the running statement: Pause on Output pauses it there.</summary>
+    private void OnOutputWritten()
+    {
+        if (_evaluating || _isPaused || _store is not { PauseOnOutput: true } || _currentBlock is null || !OnInterpreterThread())
+        {
+            return;
+        }
+
+        Stmt statement = _currentBlock.Statements[_currentIndex];
+        if (statement.SourceId.Length == 0)
+        {
+            return;
+        }
+
+        PauseAt(new JgsDebugLocation(statement.SourceId, statement.Line, statement.Column), _currentEnv!, _currentDepth, PauseReason.Output, detail: null);
+    }
+
+    /// <summary>Whether this is the thread the hook last saw a statement begin on: a pause from any other thread (a window's) would block the wrong one.</summary>
+    private bool OnInterpreterThread() => _interpreter is { DebugHook: not null } && Environment.CurrentManagedThreadId == _statementThread;
+
+    private int _statementThread = -1;
+
+    /// <summary>The variables a statement writes, by their root names.</summary>
+    private static IEnumerable<string> AssignedNames(Stmt statement)
+    {
+        switch (statement)
+        {
+            case LetStmt let:
+                yield return let.Name;
+                break;
+            case DestructuringLetStmt destructuring:
+                foreach (string name in destructuring.Names)
+                {
+                    yield return name;
+                }
+
+                break;
+            case ExprStmt { Expression: AssignExpr assign } when RootOf(assign.Target) is { } root:
+                yield return root;
+                break;
+            case ExprStmt { Expression: AssignExpr }:
+                break;
+            case ExprStmt expression when expression.Expression is not AssignExpr:
+                yield return "ans";
+                break;
+            case MultiAssignStmt multi:
+                foreach (Expr? target in multi.Targets)
+                {
+                    if (target is not null && RootOf(target) is { } root)
+                    {
+                        yield return root;
+                    }
+                }
+
+                break;
+        }
+    }
+
+    private static string? RootOf(Expr target) => target switch
+    {
+        VariableExpr variable => variable.Name,
+        IndexExpr index => RootOf(index.Target),
+        BraceIndexExpr brace => RootOf(brace.Target),
+        MemberExpr member => RootOf(member.Target),
+        _ => null,
+    };
+
+    /// <summary>Whether a real or complex number, or an array of them, holds NaN or Inf anywhere.</summary>
+    private static bool HasNanOrInf(JgsValue value)
+    {
+        switch (value.Type)
+        {
+            case JgsType.Number:
+                return !double.IsFinite(value.AsNumber);
+            case JgsType.Complex:
+                return !double.IsFinite(value.AsComplex.Real) || !double.IsFinite(value.AsComplex.Imaginary);
+            case JgsType.Array when value.IsPacked:
+                foreach (double element in value.AsBuffer.AsSpan())
+                {
+                    if (!double.IsFinite(element))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            case JgsType.Array when !value.IsStringArray && !value.IsCharMatrix:
+                foreach (JgsValue element in value.AsArray)
+                {
+                    if (element.Type is JgsType.Number or JgsType.Complex && HasNanOrInf(element))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            default:
+                return false;
+        }
     }
 
     private void OnExitFunction()
@@ -1010,5 +1412,14 @@ public sealed class JgsDebugSession
             _session.OnEnterContext(name, file, callLine, local, callerFrame, callerFile);
 
         public void ExitContext() => _session.OnExitContext();
+
+        public void AfterStatement(BlockExecution block, int index, JgsEnvironment env, int callDepth) =>
+            _session.OnAfterStatement(block, index, env, callDepth);
+
+        public void StatementFailed(BlockExecution block, int index, JgsEnvironment env, int callDepth, JgsRuntimeException error, bool caught) =>
+            _session.OnStatementFailed(block, index, env, callDepth, error, caught);
+
+        public void FunctionReturning(FnStmt declaration, JgsEnvironment local, int callDepth) =>
+            _session.OnFunctionReturning(declaration, local, callDepth);
     }
 }

@@ -194,6 +194,10 @@ internal sealed class JgsFunctionPath
         {
             _loaded.Remove(name);
         }
+
+        // clear name for a class file forgets the class too (W11: App Designer's Run clears the
+        // app's class and runs the file as saved); objects made before keep the class they were made with.
+        _interpreter.ForgetClassFromFile(name);
     }
 
     /// <summary>The file <paramref name="name"/> would resolve to, or null when no folder holds one.</summary>

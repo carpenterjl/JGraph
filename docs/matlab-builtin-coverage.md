@@ -34,7 +34,7 @@ so long. The live tracker is `matlab-r2021b-documented.html` in the demo workspa
 `tools/matlab-checklist/build-checklist.py`; this file is the standing summary, so the shape of what
 is left does not have to be re-derived each time.
 
-**440 of 514 builtins implemented** (438 before the compiler and SDK plan's stage K12, which added `subsref` and `subsasgn`; 437 before its stage K9, which added `namedargs2cell`; 434 from app-building stage U6 to U7b; 433 from app-building stage U2 to U5; 432 at app-building stage U1; 431 from interop stage I8 to device classes stage D13; 428 from interop stage I4 to I7; 427 at interop stage I3; 424 at interop stage I2; 422 at interop stage I1; 417 from V10 to Z2; 416 from M87 to M144; 415 from M71 to M86; 413 from M68 to M70; 386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
+**450 of 514 builtins implemented** (440 before the App Designer window plan's stage W11, which added the ten debug words; 438 before the compiler and SDK plan's stage K12, which added `subsref` and `subsasgn`; 437 before its stage K9, which added `namedargs2cell`; 434 from app-building stage U6 to U7b; 433 from app-building stage U2 to U5; 432 at app-building stage U1; 431 from interop stage I8 to device classes stage D13; 428 from interop stage I4 to I7; 427 at interop stage I3; 424 at interop stage I2; 422 at interop stage I1; 417 from V10 to Z2; 416 from M87 to M144; 415 from M71 to M86; 413 from M68 to M70; 386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
 M39, 326 after M38, 185 after M37, 109 after M36) — M46 through M53 all added names MATLAB documents
 as *functions*, which this table does not hold. M45's eight are the drawing primitives the "handle
 graphics" section below used to list as missing and call the most useful thing left: `plot3`, `line`,
@@ -103,8 +103,8 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,261 of
-2,024** as of the App Designer window plan's stage W14 (ADR 0302), which added `visdiff`; 1,260 as of its stage W13 (ADR 0301), which added the `matlab.addons.toolbox`, `matlab.apputil` and
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,271 of
+2,024** as of the App Designer window plan's stage W11 (ADR 0303), which added the ten debug words; 1,261 as of its stage W14 (ADR 0302), which added `visdiff`; 1,260 as of its stage W13 (ADR 0301), which added the `matlab.addons.toolbox`, `matlab.apputil` and
 `matlab.addons` names (fifteen, `matlab.addons.toolbox.ToolboxOptions` being a class beyond them); 1,245 as of the compiler and SDK plan's stage K20 (ADR 0275), which added `matlab.project.createProject`, `openProject`,
 `currentProject`, `matlab.project.loadProject`, `matlab.project.rootProject` and `matlab.project.deleteProject`; 1,239 as of its stage K12 (ADR 0268), which added `substruct`, `subsref` and
 `subsasgn`; 1,236 as of its stage K9 (ADR 0265), which added `namedargs2cell`; 1,235 as of its stage K3b (ADR 0259), which added `pcode`; 1,234 as of its
@@ -429,6 +429,7 @@ plus a short list of eleven odds and ends. Every one of them is accounted for be
 | The compiler apps | K19 (ADR 0274) | `standaloneApplicationCompiler` `productionServerArchiveCompiler` `excelAddinCompiler` `dotNetAssemblyCompiler` `pythonPackageCompiler` `cppSharedLibraryCompiler` `cSharedLibraryCompiler` `javaPackageCompiler` `comComponentCompiler` `applicationCompiler` `libraryCompiler` `productionServerCompiler` `deploytool` `webAppCompiler` `hadoopCompiler` — MATLAB Compiler's, outside the 2,024, so the total does not move; each opens a JGraph window (the Java, COM and web app ones and `hadoopCompiler` refuse) |
 | Toolboxes and apps as add-ons | W13 (ADR 0301) | `matlab.addons.toolbox.ToolboxOptions` `matlab.addons.toolbox.packageToolbox` `matlab.addons.toolbox.toolboxVersion` `matlab.addons.toolbox.installToolbox` `matlab.addons.toolbox.installedToolboxes` `matlab.addons.toolbox.uninstallToolbox` `matlab.apputil.create` `matlab.apputil.package` `matlab.apputil.install` `matlab.apputil.uninstall` `matlab.apputil.run` `matlab.apputil.getInstalledAppInfo` `matlab.addons.installedAddons` `matlab.addons.install` `matlab.addons.uninstall` `matlab.addons.isAddonEnabled` — MATLAB's add-on and app packaging names: fifteen are among the 2,024 (the total moves to 1,260), `matlab.addons.toolbox.ToolboxOptions` is a class beyond them; the `.mltbx` is written unsigned, an `.mlappinstall` is read and installed but never written, and a toolbox or apps project file is refused (JGraph has none) |
 | The Comparison Tool | W14 (ADR 0302) | `visdiff` — two files compared: with an output a `comparisons.TextComparison` or, for two apps, a `comparisons.MlappComparison` with `Left`, `Right`, `publish` (HTML only) and `filter`'s refusal; without one the Comparison Tool window, refused in a session with no window; the type `'text'`; folders refused |
+| The debugger's words | W11 (ADR 0303) | `dbstop` (`in file at line`, `in file`, `in file>function`, `if expression`, `if error|caught error|warning|naninf [identifier]`), `dbclear` (the same forms, `all`, `all in file`), `dbstatus` (printed as R2025b prints it, or the struct array; `file`, `-completenames`), `dbstack` (printed or `[stack, index]`; `N`, `-completenames`), `dbtype` (`file`, `file start:end`); `dbcont`, `dbstep`, `dbquit`, `dbup` and `dbdown` answered at the K>> prompt and refused anywhere else, as R2025b refuses them |
 | The MATLAB Data API | K9 (ADR 0265) | `namedargs2cell` — a builtin among the 2,024 (the total moves to 1,236); `keyHash` `configureDictionary` — newer than the 2,024, so the total does not move; `arguments` blocks with name-value, repeating and output lines, and enumeration classes, which are language rather than callables |
 | Stress-test numerics and sparse | M42 | `sparse` `sprand` `eigs` `spy` `hilb` `polyval` `peaks` `cond` `sqrtm` `logm` `ode45` `int8`…`uint64` (with `.empty` statics) — plus complex `det`/`inv`/`trace`/`eig`/`svd`/`exp`/`log`/`sqrt` and the parallel dense product |
 | Stress-test data types and verbs | M43 | `table` `timetable` `seconds` `categorical` `summary` `string` `cellstr` `compose` `missing` `ismissing` `tiledlayout` `nexttile` `axis` `shading` `lighting` `camlight` `rotate3d` — plus sprintf format cycling, element-wise `~`, and `colormap turbo` |
@@ -1095,7 +1096,7 @@ M52 left these behind, each named rather than silent (the full table is in
   scoped out of M52 deliberately.~~ **`interp2` and `'SamplePoints'` closed in M66**; `'native'`
   output classes and the `histogram` object options are still out.
 
-## Not implemented — 74
+## Not implemented — 64
 
 ### Handle graphics and app building — 2
 
@@ -1302,19 +1303,16 @@ on top of it. Where the algorithm is not MATLAB's, the name says which one it is
 minimum degree rather than the approximate one, and `dissect` bisects on breadth-first level sets
 (ADR 0066).
 
-### Console debugger — 11
+### Console debugger — 1
 
-`dbclear` `dbcont` `dbdown` `dbquit` `dbstack` `dbstatus` `dbstep` `dbstop` `dbtype` `dbup`
 `keyboard`
 
-JGraph debugs through the editor: breakpoints in the margin, step buttons, a Workspace pane. Six
-of these words — `dbcont` `dbdown` `dbquit` `dbstack` `dbstep` `dbup` — are nonetheless answered
-at the JGraph console while a script is paused (ADR 0128), because at a `K>>` prompt they are what
-a MATLAB hand types. They are host commands rather than builtins: each drives the debugger the
-paused script is under, which the interpreter alone cannot reach, so a `-batch` run still does not
-know them and this count does not move. The other five stay out for the reason above — `dbstop`,
-`dbclear` and `dbstatus` are the breakpoint margin, `dbtype` prints a file the editor already
-shows, and `keyboard` would pause a run that is not under the debugger.
+**The App Designer window plan's stage W11 (ADR 0303) took the ten debug words** — `dbstop`,
+`dbclear` and `dbstatus` over each console session's breakpoint store, which the editors' margins
+and App Designer's code view share; `dbstack` and `dbtype`; and `dbcont` `dbdown` `dbquit`
+`dbstep` `dbup`, answered at the `K>>` prompt while a script is paused (ADR 0128) and refused
+anywhere else in R2025b's words, as R2025b refuses them outside debug mode. `keyboard` stays out:
+it would pause a run that is not under the debugger, which the interpreter alone cannot do.
 
 ### The remaining seven
 

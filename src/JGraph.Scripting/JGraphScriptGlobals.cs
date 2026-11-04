@@ -88,6 +88,12 @@ public sealed class JGraphScriptGlobals
     /// <summary>The host's Comparison Tool, or null without windows (App Designer window plan W14).</summary>
     internal IScriptComparisonTool? ComparisonTool => _context.ComparisonTool;
 
+    /// <summary>The session's breakpoints, which <c>dbstop</c>, <c>dbclear</c> and <c>dbstatus</c> work on (App Designer window plan W11); null in a one-shot run, which has none.</summary>
+    internal Jgs.Debug.JgsBreakpointStore? Breakpoints { get; set; }
+
+    /// <summary>The session's own debugger, which the debug words ask whether it is paused (W11); null in a one-shot run.</summary>
+    internal Jgs.Debug.JgsDebugSession? Debugger { get; set; }
+
     /// <summary>The host's compiler apps, or null when it has none (compiler and SDK plan, stage K19).</summary>
     internal IScriptCompilerApps? CompilerApps => _context.CompilerApps;
 
@@ -103,9 +109,16 @@ public sealed class JGraphScriptGlobals
             return;
         }
 
+        OutputHook?.Invoke();
         _context.Output.WriteLine(text);
         Record(text + "\n");
     }
+
+    /// <summary>
+    /// Told before a line or text reaches the output console, on the writing thread: App Designer's Pause on
+    /// Output (W11), which pauses the statement displaying it. Captured output (<c>evalc</c>) is not output.
+    /// </summary>
+    internal Action? OutputHook { get; set; }
 
     /// <summary>Writes raw text (no newline) to the output console. Backs Python's redirected stdout.</summary>
     public void WriteOut(string text)
@@ -116,6 +129,7 @@ public sealed class JGraphScriptGlobals
             return;
         }
 
+        OutputHook?.Invoke();
         _context.Output.Write(text);
         Record(text);
     }

@@ -68,6 +68,26 @@ internal interface IJgsDebugHook
 
     /// <summary>Called when the innermost context exits (normally or by unwinding).</summary>
     void ExitContext();
+
+    /// <summary>
+    /// Called after the statement at <paramref name="index"/> of <paramref name="block"/> ran to its end
+    /// (App Designer window plan W11): where <c>dbstop if naninf</c> looks at what it assigned. May block.
+    /// </summary>
+    void AfterStatement(BlockExecution block, int index, JgsEnvironment env, int callDepth);
+
+    /// <summary>
+    /// Called when the statement at <paramref name="index"/> of <paramref name="block"/> threw
+    /// <paramref name="error"/>, before the block unwinds (W11): where <c>dbstop if error</c> and
+    /// <c>dbstop if caught error</c> pause, the frame still standing. <paramref name="caught"/> says a
+    /// <c>try</c> up the stack will take it. May block; the error is rethrown after.
+    /// </summary>
+    void StatementFailed(BlockExecution block, int index, JgsEnvironment env, int callDepth, JgsRuntimeException error, bool caught);
+
+    /// <summary>
+    /// Called when a user function's body ran to its end and the function is about to return (W11): where a
+    /// breakpoint on the function's <c>end</c> line pauses, as R2025b's does, the frame still standing. May block.
+    /// </summary>
+    void FunctionReturning(FnStmt declaration, JgsEnvironment local, int callDepth);
 }
 
 /// <summary>

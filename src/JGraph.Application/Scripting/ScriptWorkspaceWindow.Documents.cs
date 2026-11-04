@@ -216,6 +216,8 @@ public partial class ScriptWorkspaceWindow
         editor.BreakpointsChanged += (_, _) =>
         {
             RememberBreakpoints(entry);
+            // The session's store takes the margin's lines (W11); a one-shot debug run, when there is one, takes them too.
+            OnEditorBreakpointsToggled(entry);
             _debugSession?.SetBreakpoints(SourceIdOf(entry), entry.Editor.Breakpoints);
         };
 
@@ -403,6 +405,9 @@ public partial class ScriptWorkspaceWindow
                 // Run goes to the MATLAB session, as App Designer's Run goes to the base workspace (designer plan DS8).
                 Runner = RunAppFromDesignerAsync,
                 Capturer = CaptureAppFromDesignerAsync,
+                // The MATLAB session's own debugger and its breakpoints, which the code views share (W11); Stop while the app's code runs.
+                Debugger = (SessionFor("MATLAB") as IScriptDebuggerHost)?.Debugger,
+                StopRunner = StopRun,
                 // Share runs its packaging script in the MATLAB session as the compiler apps do, and asks it for the files the app needs (W12).
                 ScriptRunner = RunCompilerScriptAsync,
                 Analyzer = AnalyzeForDesignerAsync,

@@ -224,8 +224,9 @@ internal sealed partial class AppDesignerWindow : Window
             (_, e) => e.CanExecute = Active is { } a && a.Document.Selection.Any(a.Document.CanDelete)));
         CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, (_, _) => CloseTab(Active),
             (_, e) => e.CanExecute = Active is not null));
+        // Shift+F7 rests while the debugger is paused in the app (W11), as R2025b's does.
         CommandBindings.Add(new CommandBinding(ToggleView, (_, _) => SetView(Active, Active?.InCodeView == false),
-            (_, e) => e.CanExecute = Active is not null));
+            (_, e) => e.CanExecute = Active is not null && !_debugging));
         CommandBindings.Add(new CommandBinding(AddCallback, (_, _) => ShowAddCallback(),
             (_, e) => e.CanExecute = Active is { Document.Code: not null }));
         CommandBindings.Add(new CommandBinding(AddFunction, (_, _) => Declared(Active?.Document.InsertUserFunction("private"), function: true),
@@ -251,7 +252,7 @@ internal sealed partial class AppDesignerWindow : Window
         InputBindings.Add(new KeyBinding(ApplicationCommands.Close, Key.W, ModifierKeys.Control));
         InputBindings.Add(new KeyBinding(ApplicationCommands.Redo, Key.Z, ModifierKeys.Control | ModifierKeys.Shift));
         InputBindings.Add(new KeyBinding(ToggleView, Key.F7, ModifierKeys.Shift));
-        CommandBindings.Add(new CommandBinding(RunApp, (_, _) => RunActive(), (_, e) => e.CanExecute = Active is not null));
+        CommandBindings.Add(new CommandBinding(RunApp, (_, _) => RunActive(), (_, e) => e.CanExecute = Active is not null && !_debugging));
         InputBindings.Add(new KeyBinding(RunApp, Key.F5, ModifierKeys.None));
 
         // The grouping actions (GroupingAction, open item 150).
@@ -405,6 +406,7 @@ internal sealed partial class AppDesignerWindow : Window
                 _status.Text = problem;
             }
         };
+        WireDebug(app);
         document.Changed += (_, _) =>
         {
             ShowHeader(app);
@@ -1124,14 +1126,23 @@ internal sealed partial class AppDesignerWindow : Window
 
         try
         {
+            // Saving while paused in the app quits debugging first (R2025b's SaveAction: debugExit before performSave, W11).
+            if (_debugging && ReferenceEquals(app, _pausedApp))
+            {
+                _debugger?.Quit();
+                app.CodeView.Locked = false;
+            }
+
             // Text the document would not take is not saved over: the status line says what to put right.
             if (!app.CodeView.Push())
             {
                 return false;
             }
 
+            string? fileBefore = FileTextOf(app); // the lines the breakpoints sit on, before the file is written again (W11)
             Saving(app, () => _status.Text = app.Document.Save());
             AppSaved?.Invoke(app.Document.Path!, app.Document.Text);
+            ReanchorAfterSave(app, fileBefore);
             RememberRecent(app.Document);
             ShowHeader(app);
             ShowTitle();

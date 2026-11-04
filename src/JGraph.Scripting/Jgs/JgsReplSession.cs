@@ -16,7 +16,7 @@ namespace JGraph.Scripting.Jgs;
 /// <c>figure(1)</c> at the prompt must keep meaning the window it already opened), releasing packed
 /// buffers (live variables still point at them), and rebuilding the built-in scope. See ADR 0035.
 /// </remarks>
-internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IScriptDependencyAnalysis, IGraphicsEventSession, IWorkspaceCellEditor, JGraph.Scripting.Completion.IScriptCompletionSource
+internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IScriptDependencyAnalysis, IScriptDebuggerHost, IGraphicsEventSession, IWorkspaceCellEditor, JGraph.Scripting.Completion.IScriptCompletionSource
 {
     private readonly ScriptContext _context;
     private readonly JgsDialect _dialect;
@@ -50,6 +50,9 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IScript
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _dialect = dialect ?? throw new ArgumentNullException(nameof(dialect));
         Language = language ?? throw new ArgumentNullException(nameof(language));
+        Breakpoints = new Debug.JgsBreakpointStore();
+        Debugger = Debug.JgsDebugSession.Attached(Breakpoints, _dialect, Language);
+        Debugger.ActiveChanged += (_, _) => InstallDebugHook();
         JG.Reset();
         JgsHandleRegistry.Clear();
         Build();
@@ -57,6 +60,35 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IScript
 
     /// <inheritdoc />
     public string Language { get; }
+
+    /// <summary>
+    /// The session's breakpoints (App Designer window plan W11): what <c>dbstop</c>, <c>dbclear</c> and
+    /// <c>dbstatus</c> work on, what the host's editors show, what <see cref="Debugger"/> pauses at. They
+    /// outlive <c>clear</c>, which rebuilds the interpreter.
+    /// </summary>
+    public Debug.JgsBreakpointStore Breakpoints { get; }
+
+    /// <summary>
+    /// The session's own debugger (W11): hooked into the interpreter while <see cref="Breakpoints"/> holds
+    /// anything or a pause is wanted, it pauses whatever runs in the session - a typed statement, a run, an
+    /// app's callback - and the host drives it through its Paused and Resumed events and its verbs.
+    /// </summary>
+    public Debug.JgsDebugSession Debugger { get; }
+
+    /// <summary>Whether a one-shot debug run's hook holds the interpreter (<see cref="ExecuteFileAsync(string, string, IJgsDebugHook, CancellationToken)"/>): the session's own waits.</summary>
+    private volatile bool _runHookInstalled;
+
+    /// <summary>The hook the interpreter should carry now: the session's debugger's while it is active, else none.</summary>
+    private IJgsDebugHook? ActiveHook => Debugger.IsActive ? Debugger.InterpreterHook : null;
+
+    /// <summary>Puts the session's debugger's hook in, or takes it out, as the debugger's state asks - unless a one-shot run holds the interpreter with its own.</summary>
+    private void InstallDebugHook()
+    {
+        if (!_runHookInstalled && _interpreter is { } interpreter)
+        {
+            interpreter.DebugHook = ActiveHook;
+        }
+    }
 
     // The editor's completion asks the console session for the names only it knows (ADR 0183): the
     // .NET types its assemblies added and the libraries it loaded. Clear rebuilds the interpreter
@@ -217,6 +249,11 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IScript
                 Net.NetCallbackQueue.DrainCurrent();
                 Devices.DeviceEventQueue.DrainCurrent(); // and a device's callbacks (device classes plan)
             }
+            catch (Debug.JgsDebugQuitException)
+            {
+                // Quit Debugging inside a callback (W11): the callback is unwound, the rest of the queue waits for the next drain.
+                return ScriptRunResult.Ok(_globals.FiguresShown, GetVariables());
+            }
             catch (OperationCanceledException)
             {
                 return ScriptRunResult.Failed("Statement was cancelled.");
@@ -240,7 +277,10 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IScript
     {
         Interlocked.Exchange(ref _busy, 1);
         _dispatcher.StatementThreadId = Environment.CurrentManagedThreadId;
-        _interpreter.DebugHook = hook;
+        // A one-shot debug run brings its own hook for this file; otherwise the session's debugger's
+        // hook stays in while it is active (W11), so a breakpoint pauses a typed statement too.
+        _runHookInstalled = hook is not null;
+        _interpreter.DebugHook = hook ?? ActiveHook;
         try
         {
             hook?.RunStarting(_interpreter, _environment);
@@ -248,7 +288,8 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IScript
         }
         finally
         {
-            _interpreter.DebugHook = null;
+            _runHookInstalled = false;
+            _interpreter.DebugHook = ActiveHook;
             _dispatcher.StatementThreadId = null;
             Interlocked.Exchange(ref _busy, 0);
         }
@@ -440,6 +481,12 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IScript
             _globals.ShowTouchedFigures();
             return ScriptRunResult.Failed(ex.Message, new[] { diagnostic }, (ex as JgsRuntimeException)?.Identifier);
         }
+        catch (Debug.JgsDebugQuitException)
+        {
+            // dbquit, Quit Debugging (W11): the paused statement is unwound and nothing is said of it, as R2025b says nothing.
+            _globals.ShowTouchedFigures();
+            return ScriptRunResult.Ok(_globals.FiguresShown, GetVariables());
+        }
         catch (OperationCanceledException)
         {
             _globals.ShowTouchedFigures();
@@ -479,6 +526,12 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IScript
         _interpreter = new Interpreter(_environment, CancellationToken.None, hook: null,
             echo: line => globals.print(line), _dialect);
         _interpreter.Host = _globals;
+        // The session's debugger follows the interpreter through clear's rebuild (W11); the debug
+        // words reach the store and the debugger through the host.
+        _globals.Breakpoints = Breakpoints;
+        _globals.Debugger = Debugger;
+        Debugger.Bind(_interpreter, _environment);
+        _interpreter.DebugHook = ActiveHook;
         JgsRunner.DefineRunBuiltin(_environment, _interpreter, _globals);
         JgsBuiltins.RegisterEvalBuiltins(_environment, _interpreter, _globals);
         JgsBuiltins.RegisterSessionBuiltins(_environment, _globals);

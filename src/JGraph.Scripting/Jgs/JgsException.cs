@@ -83,6 +83,9 @@ public sealed class JgsRuntimeException : JgsException
     /// </remarks>
     public string Identifier { get; } = string.Empty;
 
+    /// <summary>Whether the debugger's hook has already seen this error at the statement that raised it (W11): it pauses for an error once, at the innermost block.</summary>
+    internal bool DebuggerSaw { get; set; }
+
     private readonly List<(string Name, string File, int Line)> _frames = [];
     private int _lineForNextFrame = -1;
 

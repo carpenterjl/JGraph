@@ -162,6 +162,12 @@ internal sealed class JgsClass
     /// <summary>The parsed <c>classdef</c> this class was built from.</summary>
     public ClassdefStmt Declaration { get; }
 
+    /// <summary>When the class's file was last written as the class was defined from it, or null for a class that came from no file (W11: a changed file is loaded again at its next mention).</summary>
+    internal DateTime? FileWritten { get; set; }
+
+    /// <summary>The statement at which the file's time was last compared, so the check runs once per statement.</summary>
+    internal int CheckedEpoch { get; set; } = -1;
+
     /// <summary>The class name, which is what <c>class(obj)</c> answers.</summary>
     public string Name => Declaration.Name;
 

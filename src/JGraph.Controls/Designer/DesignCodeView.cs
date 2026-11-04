@@ -29,8 +29,9 @@ public sealed partial class DesignCodeView : UserControl
     public DesignCodeView()
     {
         _editor.ScriptLanguage = "MATLAB";
-        // Nothing is editable while the code cannot be worked on (the design is view only).
-        _editor.EditableLines = text => _document?.Code is null ? new HashSet<int>() : EditableLinesOf(text);
+        // Nothing is editable while the code cannot be worked on (the design is view only), nor while
+        // the debugger is paused in the app (W11, as R2025b's code view locks while debugging).
+        _editor.EditableLines = text => _document?.Code is null || Locked ? new HashSet<int>() : EditableLinesOf(text);
         _editor.TextChanged += (_, _) =>
         {
             if (!_showing && _document is not null)
@@ -51,6 +52,30 @@ public sealed partial class DesignCodeView : UserControl
 
     /// <summary>Raised with what an edit could not do, for the window's status line.</summary>
     public event EventHandler<string>? Problem;
+
+    /// <summary>
+    /// Raised after the class was written again around the user's code and the editor shows the new text (W11): the text
+    /// before and after, for the breakpoints to find their lines again.
+    /// </summary>
+    public event EventHandler<(string Before, string After)>? TextReplaced;
+
+    private bool _locked;
+
+    /// <summary>Whether every line is read-only for now: the debugger is paused in the app (W11).</summary>
+    public bool Locked
+    {
+        get => _locked;
+        set
+        {
+            if (_locked == value)
+            {
+                return;
+            }
+
+            _locked = value;
+            _editor.InvalidateEditableLines();
+        }
+    }
 
     /// <summary>The editor itself.</summary>
     public ScriptEditorControl Editor => _editor;
@@ -278,12 +303,14 @@ public sealed partial class DesignCodeView : UserControl
             return;
         }
 
+        string before = _editor.ScriptText;
         _showing = true;
         try
         {
             _pending.Stop();
             _editor.ReplaceText(text, _document?.TakeKeepEditorUndo() ?? false);
             _editor.InvalidateEditableLines();
+            TextReplaced?.Invoke(this, (before, text));
             // Every block of the code can be folded (W9c); App Designer's default folds (W8d) start closed, and a plain-text app's
             // appendix sections, which are no MATLAB block, fold too.
             IReadOnlyList<(int First, int Last)> closed = DesignCodeFolds.ClosedByDefault(text, _document?.Code);

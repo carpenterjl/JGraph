@@ -94,6 +94,18 @@ internal sealed partial class AppDesignerWindow
         "AD_EDITOR_SPLIT_NONE" or "AD_EDITOR_SPLIT_LEFTRIGHT" or "AD_EDITOR_SPLIT_TOPBOTTOM"
             or "AD_EDITOR_HIGHLIGHT_CURRENT_LINE" or "AD_EDITOR_LINE_NUMBERS" or "AD_EDITOR_DATATIPS" => null,
         "AD_RUN" => RunApp,
+        // The debugger (W11): the RUN section's execution controls and the BREAKPOINTS group; the ERROR HANDLING checks answer through Invoked.
+        "AD_EDITOR_PAUSE" => PauseRun,
+        "AD_EDITOR_CONTINUE" => ContinueRun,
+        "AD_EDITOR_STEP" => StepOverLine,
+        "AD_EDITOR_STEP_IN" => StepIntoLine,
+        "AD_EDITOR_STEP_OUT" => StepOutOfFunction,
+        "AD_EDITOR_STOP" => StopDebugging,
+        "AD_EDITOR_TOGGLE_BREAKPOINT" => ToggleBreakpoint,
+        "AD_EDITOR_CLEAR_ALL_BREAKPOINTS" => ClearAllBreakpoints,
+        "AD_EDITOR_TOGGLE_ENABLE_BREAKPOINT" => ToggleBreakpointEnabled,
+        "AD_EDITOR_TOGGLE_CONDITIONAL" => SetBreakpointCondition,
+        "AD_EDITOR_TOGGLE_STOP_IF_ERROR" or "AD_EDITOR_TOGGLE_STOP_IF_WARNING" or "AD_EDITOR_TOGGLE_STOP_IF_NAN_INF" or "AD_EDITOR_TOGGLE_STOP_IF_UNSUPPRESSED_OUTPUT" => null,
         // The SHARE drop-down (W12, W13): Standalone Desktop App and MATLAB App; Web App stays disabled (X2).
         "AD_SHARE_DESKTOP" => ShareDesktop,
         "AD_SHARE_MATLAB" => ShareMatlabApp,
@@ -194,6 +206,7 @@ internal sealed partial class AppDesignerWindow
         BindClipboardCommands();
         BindShareCommands();
         BindCompareCommands();
+        BindDebugCommands();
 
         // The editor's display settings are every editor's (W9c): read from App Designer's settings, kept there when a toggle or the zoom changes them.
         EditorDisplay.Load(Settings.Values);
@@ -296,6 +309,10 @@ internal sealed partial class AppDesignerWindow
             case "AD_EDITOR_DATATIPS" when e.Value is bool on:
                 EditorDisplay.Datatips = on;
                 break;
+            // ERROR HANDLING (W11): each check is a dbstop if condition of the session's breakpoints.
+            case "AD_EDITOR_TOGGLE_STOP_IF_ERROR" or "AD_EDITOR_TOGGLE_STOP_IF_WARNING" or "AD_EDITOR_TOGGLE_STOP_IF_NAN_INF" or "AD_EDITOR_TOGGLE_STOP_IF_UNSUPPRESSED_OUTPUT" when e.Value is bool on:
+                SetStopIf(e.ActionId!, on);
+                break;
             case "AD_EDITOR_SPLIT_NONE" when e.Value is true:
                 SetCodeViewSplit(SplitDirection.None);
                 break;
@@ -391,16 +408,19 @@ internal sealed partial class AppDesignerWindow
         }
 
         _toolstrip.SetEnabled("appDesignerToolstrip.layoutTab.arrange.groupButton", app is not null);
-        // The SHARE drop-down wants an app (enabledWithNoApp false), and rests while the app's code runs (W12).
-        _toolstrip.SetEnabled("AD_SHARE_ALL_OPTIONS", app is not null && !_running);
+        // The SHARE drop-down wants an app (enabledWithNoApp false), and rests while the app's code runs (W12) or is paused in the debugger (W11).
+        _toolstrip.SetEnabled("AD_SHARE_ALL_OPTIONS", app is not null && !_running && !_debugging);
         ShowArrangeState();
-        _toolstrip.SetEnabled(DesignToolstrip.AddCallbackButton, app is { Document.Code: not null });
+        // The insertions rest while debugging, as R2025b's actions do (W11).
+        _toolstrip.SetEnabled(DesignToolstrip.AddCallbackButton, app is { Document.Code: not null } && !_debugging);
+        foreach (string id in new[] { "AD_EDITOR_ADD_CALLBACK", "AD_EDITOR_ADD_FUNCTION", "AD_EDITOR_ADD_PRIVATE_FUNCTION", "AD_EDITOR_ADD_PUBLIC_FUNCTION", "AD_EDITOR_ADD_PROPERTY", "AD_EDITOR_ADD_PRIVATE_PROPERTY", "AD_EDITOR_ADD_PUBLIC_PROPERTY", "AD_INPUT_ARGUMENTS" })
+        {
+            _toolstrip.SetEnabled(id, app is { Document.Code: not null } && !_debugging);
+        }
+
         _toolstrip.SetEnabled(DesignToolstrip.GoToButton, app is { Document.Code: not null });
         _toolstrip.SetIcon("AD_RUN", app is not null && !DesignRunArguments.IsNoArguments(app.Document.RunArguments.MostRecent) ? "runConfiguration" : "playControl");
-        foreach ((string tag, bool shown) in DesignToolstrip.ExecutionControls(_running, debugging: false))
-        {
-            _toolstrip.SetVisible(tag, shown);
-        }
+        ShowDebugState(app);
 
         CommandManager.InvalidateRequerySuggested();
     }

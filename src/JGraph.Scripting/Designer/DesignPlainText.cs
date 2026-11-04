@@ -212,10 +212,13 @@ public static partial class DesignPlainText
         style ??= DesignCodeStyle.Default;
         var lines = new List<string>(DesignClassWriter.Lines(design, code, style, sizeOf, DesignFileFormat.PlainText));
         lines.AddRange(AppendixLines(design, code, details, style));
-        string text = string.Join(newline, lines);
+        // Joined with a line feed first and given the file's line ending after, so that a value with a
+        // line break of its own (an app detail of several lines) ends its lines as the file does - and
+        // so that a CRLF file is not given a second carriage return on every line (W11 found the code
+        // view of such an app showing each line twice).
+        string text = string.Join("\n", lines);
         if (newline != "\n")
         {
-            // A value with a line break of its own (an app detail of several lines) ends its lines as the file does.
             text = text.Replace("\n", newline, StringComparison.Ordinal);
         }
 

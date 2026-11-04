@@ -85,7 +85,7 @@ public partial class ScriptWorkspaceWindow
 
         _cts = new System.Threading.CancellationTokenSource();
         ScriptRunResult result;
-        bool debugged = WantsDebugger(engine);
+        bool debugged = WantsDebugger(engine, language);
         try
         {
             // Three ways to run, in priority order. A script with breakpoints goes under the debugger,
@@ -148,14 +148,14 @@ public partial class ScriptWorkspaceWindow
     }
 
     /// <summary>
-    /// Whether this run should go under the debugger. Only our own interpreter can be debugged, and
-    /// only when a breakpoint is actually set somewhere: attaching the debugger unconditionally would
-    /// mean an ordinary F5 never shared the console's workspace, which is the behaviour the whole
-    /// session model exists to provide. Pause (Break All) is the escape hatch for a run that turns out
-    /// to need stopping.
+    /// Whether this run should go under a one-shot debugger of its own. A language with a console
+    /// session needs none (W11): the session's own debugger is hooked in while its breakpoint store
+    /// holds anything and pauses the run inside the session's workspace. Only an engine that could not
+    /// open a session, with a breakpoint set somewhere, still gets the one-shot run (ADR 0128).
     /// </summary>
-    private bool WantsDebugger(IScriptEngine engine) =>
+    private bool WantsDebugger(IScriptEngine engine, string language) =>
         engine is IJgsDebuggable
+        && SessionFor(language) is null
         && (_documents.Any(static d => d.Editor.Breakpoints.Count > 0)
             || _persistedBreakpoints.Values.Any(static lines => lines.Count > 0));
 
@@ -369,6 +369,12 @@ public partial class ScriptWorkspaceWindow
         // BeginInvoke, never Invoke: the interpreter thread must reach its gate without waiting on the UI.
         Dispatcher.BeginInvoke(() =>
         {
+            // The session's own debugger (W11) or a one-shot run's: whichever paused is the one the prompt and the steps talk to.
+            if (sender is JgsDebugSession paused)
+            {
+                _debugSession = paused;
+            }
+
             JgsDebugSession? session = _debugSession;
             if (session is null)
             {
@@ -385,7 +391,7 @@ public partial class ScriptWorkspaceWindow
             }
 
             _stepsRemaining = 0;
-            _session.MarkPaused();
+            _session.MarkPaused(session.Language);
             PromptLabel.Text = PausedPrompt;
 
             // The innermost frame is selected first; selecting it is what shows its variables and
@@ -405,6 +411,14 @@ public partial class ScriptWorkspaceWindow
             if (_session.State == ScriptSessionState.Running)
             {
                 SetStatus("Running…");
+            }
+            else if (_session.State == ScriptSessionState.Idle && _debugSession is { IsAttached: true } attached)
+            {
+                // A pause in an idle session's callback (W11) is over: the prompt is the base workspace's again.
+                _debugSession = null;
+                _selectedFrame = 0;
+                ShowVariables(_sessions.GetValueOrDefault(attached.Language ?? string.Empty)?.GetVariables(), attached.Language);
+                SetStatus("Continuing.");
             }
         });
 

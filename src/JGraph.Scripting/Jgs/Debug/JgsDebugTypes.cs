@@ -27,6 +27,34 @@ public enum PauseReason
 
     /// <summary>Execution was redirected by set-next-statement and is paused at the new target.</summary>
     EntryJump,
+
+    /// <summary><c>dbstop if error</c> or <c>dbstop if caught error</c>: the statement raised an error (App Designer window plan W11).</summary>
+    Error,
+
+    /// <summary><c>dbstop if warning</c>: the statement raised a warning (W11).</summary>
+    Warning,
+
+    /// <summary><c>dbstop if naninf</c>: the statement assigned NaN or Inf (W11).</summary>
+    NanInf,
+
+    /// <summary>App Designer's Pause on Output: the statement displayed something (W11).</summary>
+    Output,
+
+    /// <summary>A breakpoint on a function's <c>end</c> line: the function is about to return (W11).</summary>
+    FunctionEnd,
+}
+
+/// <summary>
+/// Thrown through the paused statement when the debugger is quit (<c>dbquit</c>, Quit Debugging; App Designer window
+/// plan W11): the run or callback unwinds as a cancelled one does, and the session reports nothing for it.
+/// </summary>
+public sealed class JgsDebugQuitException : OperationCanceledException
+{
+    /// <summary>Creates the exception.</summary>
+    public JgsDebugQuitException()
+        : base("Debugging was quit.")
+    {
+    }
 }
 
 /// <summary>The outcome of <see cref="JgsDebugSession.TryApplyEdit"/>.</summary>
@@ -58,12 +86,16 @@ public sealed class LiveEditResult
 /// <summary>Payload of <see cref="JgsDebugSession.Paused"/>. Raised on the interpreter thread.</summary>
 public sealed class JgsPausedEventArgs : EventArgs
 {
-    internal JgsPausedEventArgs(JgsDebugLocation location, IReadOnlyList<JgsStackFrame> callStack, PauseReason reason)
+    internal JgsPausedEventArgs(JgsDebugLocation location, IReadOnlyList<JgsStackFrame> callStack, PauseReason reason, string? detail = null)
     {
         Location = location;
         CallStack = callStack;
         Reason = reason;
+        Detail = detail;
     }
+
+    /// <summary>What the pause is about, for a status line: the error's or warning's text, the variable that holds NaN or Inf; null for a breakpoint or a step.</summary>
+    public string? Detail { get; }
 
     /// <summary>Where execution is paused (the statement about to run).</summary>
     public JgsDebugLocation Location { get; }

@@ -1,0 +1,10 @@
+dbstop	0	5
+dbclear	0	5
+dbstatus	1	5
+dbcont	0	5
+dbstep	0	5
+dbquit	0	5
+dbstack	2	5
+dbup	0	5
+dbdown	0	5
+dbtype	0	5

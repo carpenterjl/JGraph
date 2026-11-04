@@ -26,8 +26,62 @@ internal sealed partial class Interpreter
     internal JgsClass DefineClass(ClassdefStmt declaration, JgsEnvironment scope)
     {
         var built = new JgsClass(declaration, scope, this);
+        if (declaration.SourceId.Length > 0 && System.IO.Path.IsPathRooted(declaration.SourceId))
+        {
+            try
+            {
+                built.FileWritten = System.IO.File.GetLastWriteTimeUtc(declaration.SourceId);
+            }
+            catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException)
+            {
+                // a class from a file that cannot be stamped is never found stale
+            }
+        }
+
         _classes[declaration.Name] = built;
         return built;
+    }
+
+    /// <summary>
+    /// Forgets the class <paramref name="name"/> when it came from a file (<c>clear name</c>; App
+    /// Designer's Run, W11): the next mention loads the file as it stands. A class defined by a
+    /// script's own <c>classdef</c>, or a built-in one, stays.
+    /// </summary>
+    internal void ForgetClassFromFile(string name)
+    {
+        if (_classes.TryGetValue(name, out JgsClass? definition) && definition.FileWritten is not null)
+        {
+            _classes.Remove(name);
+        }
+    }
+
+    /// <summary>
+    /// Drops the class <paramref name="name"/> when its file has been written since it was defined, so that
+    /// the next mention loads the new text - as R2025b picks up an edited class file at its next use (W11:
+    /// App Designer saves the app before Run; a breakpoint then counts the saved file's lines). Asked once
+    /// per statement for a name, so a loop over a class costs one file time at most.
+    /// </summary>
+    private void DropClassIfFileChanged(string name)
+    {
+        if (!_classes.TryGetValue(name, out JgsClass? definition) || definition.FileWritten is not DateTime written || definition.CheckedEpoch == StatementEpoch)
+        {
+            return;
+        }
+
+        definition.CheckedEpoch = StatementEpoch;
+        try
+        {
+            string path = definition.Declaration.SourceId;
+            if (System.IO.File.Exists(path) && System.IO.File.GetLastWriteTimeUtc(path) != written && !IsFileActive(path))
+            {
+                _classes.Remove(name);
+                FunctionPath?.Unload(name);
+            }
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException)
+        {
+            // the file is unreadable just now: the class stands
+        }
     }
 
     /// <summary>
@@ -79,6 +133,7 @@ internal sealed partial class Interpreter
     /// </summary>
     internal bool KnowsClass(string name)
     {
+        DropClassIfFileChanged(name);
         if (!_classes.ContainsKey(name))
         {
             _ = TryResolveOnPath(name, out _);
@@ -448,6 +503,7 @@ internal sealed partial class Interpreter
             return null; // a variable holding data outranks a class, as it does a function
         }
 
+        DropClassIfFileChanged(name);
         if (!_classes.ContainsKey(name) && !env.Contains(name))
         {
             _ = TryResolveOnPath(name, out _);
@@ -464,6 +520,7 @@ internal sealed partial class Interpreter
     /// </summary>
     internal JgsClass? ClassForLoad(string name)
     {
+        DropClassIfFileChanged(name);
         if (!_classes.ContainsKey(name))
         {
             _ = TryResolveOnPath(name, out _);

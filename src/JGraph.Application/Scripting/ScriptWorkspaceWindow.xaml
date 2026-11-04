@@ -187,6 +187,7 @@
                                         <!-- ">>" when idle, "K>>" while a debugged script is paused: the
                                              prompt then talks to the paused frame, as MATLAB's does. -->
                                         <TextBlock x:Name="PromptLabel" DockPanel.Dock="Left" Text="&gt;&gt;" Margin="0,0,4,0"
+                                                   AutomationProperties.AutomationId="Console.Prompt"
                                                    FontFamily="{DynamicResource JG.Font.Mono}"
                                                    Foreground="{DynamicResource JG.Brush.Accent}"
                                                    VerticalAlignment="Center" />
