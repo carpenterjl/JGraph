@@ -16,7 +16,7 @@ namespace JGraph.Scripting.Jgs;
 /// <c>figure(1)</c> at the prompt must keep meaning the window it already opened), releasing packed
 /// buffers (live variables still point at them), and rebuilding the built-in scope. See ADR 0035.
 /// </remarks>
-internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IGraphicsEventSession, IWorkspaceCellEditor, JGraph.Scripting.Completion.IScriptCompletionSource
+internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IScriptDependencyAnalysis, IGraphicsEventSession, IWorkspaceCellEditor, JGraph.Scripting.Completion.IScriptCompletionSource
 {
     private readonly ScriptContext _context;
     private readonly JgsDialect _dialect;
@@ -322,6 +322,15 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IGraphi
         ObjectDisposedException.ThrowIf(_disposed, this);
         string key = System.IO.Path.GetFullPath(fullFileName);
         return ScriptThread.Run(() => DesignRun.Capture(_globals, key));
+    }
+
+    /// <inheritdoc />
+    public Task<JGraph.Deploy.DependencyReport> AnalyzeDependenciesAsync(IReadOnlyList<string> files, bool topOnly, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(files);
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        // On the script thread, as a statement runs: the analysis reads the interpreter's path and built-ins.
+        return ScriptThread.Run(() => JgsBuiltins.AnalyzeDependencies(_environment, _interpreter, _globals, files, topOnly), cancellationToken);
     }
 
     /// <inheritdoc />

@@ -94,6 +94,8 @@ internal sealed partial class AppDesignerWindow
         "AD_EDITOR_SPLIT_NONE" or "AD_EDITOR_SPLIT_LEFTRIGHT" or "AD_EDITOR_SPLIT_TOPBOTTOM"
             or "AD_EDITOR_HIGHLIGHT_CURRENT_LINE" or "AD_EDITOR_LINE_NUMBERS" or "AD_EDITOR_DATATIPS" => null,
         "AD_RUN" => RunApp,
+        // The SHARE drop-down (W12): Standalone Desktop App; Web App stays disabled (X2).
+        "AD_SHARE_DESKTOP" => ShareDesktop,
         "OPEN_STARTSCREEN_DIALOG" => ShowStartPage,
         "AD_INPUT_ARGUMENTS" => CodeOptions,
         "AD_APP_DETAILS" => AppDetails,
@@ -187,6 +189,7 @@ internal sealed partial class AppDesignerWindow
         }
 
         BindClipboardCommands();
+        BindShareCommands();
 
         // The editor's display settings are every editor's (W9c): read from App Designer's settings, kept there when a toggle or the zoom changes them.
         EditorDisplay.Load(Settings.Values);
@@ -384,6 +387,8 @@ internal sealed partial class AppDesignerWindow
         }
 
         _toolstrip.SetEnabled("appDesignerToolstrip.layoutTab.arrange.groupButton", app is not null);
+        // The SHARE drop-down wants an app (enabledWithNoApp false), and rests while the app's code runs (W12).
+        _toolstrip.SetEnabled("AD_SHARE_ALL_OPTIONS", app is not null && !_running);
         ShowArrangeState();
         _toolstrip.SetEnabled(DesignToolstrip.AddCallbackButton, app is { Document.Code: not null });
         _toolstrip.SetEnabled(DesignToolstrip.GoToButton, app is { Document.Code: not null });

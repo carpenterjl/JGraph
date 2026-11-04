@@ -403,6 +403,9 @@ public partial class ScriptWorkspaceWindow
                 // Run goes to the MATLAB session, as App Designer's Run goes to the base workspace (designer plan DS8).
                 Runner = RunAppFromDesignerAsync,
                 Capturer = CaptureAppFromDesignerAsync,
+                // Share runs its packaging script in the MATLAB session as the compiler apps do, and asks it for the files the app needs (W12).
+                ScriptRunner = RunCompilerScriptAsync,
+                Analyzer = AnalyzeForDesignerAsync,
                 // The tab menu's cd, addpath and rmpath run in the MATLAB session, unechoed (W2).
                 SessionStatement = code => RunWorkspaceStatementAsync("MATLAB", code),
                 Placement = _settings?.Current.AppDesignerPlacement,
@@ -423,6 +426,12 @@ public partial class ScriptWorkspaceWindow
 
         return _appDesigner;
     }
+
+    /// <summary>The dependency analysis a Share window asks for (W12), run by the MATLAB session as <c>requiredFilesAndProducts</c> runs it.</summary>
+    private Task<JGraph.Deploy.DependencyReport> AnalyzeForDesignerAsync(IReadOnlyList<string> files, bool topOnly) =>
+        SessionFor("MATLAB") is IScriptDependencyAnalysis analysis
+            ? analysis.AnalyzeDependenciesAsync(files, topOnly, System.Threading.CancellationToken.None)
+            : Task.FromException<JGraph.Deploy.DependencyReport>(new InvalidOperationException("There is no MATLAB session to analyse the app's files in."));
 
     /// <summary>Keeps App Designer's settings in the user's settings file when the designer changed one (a toggle on its toolstrip, WO7).</summary>
     private void SaveAppDesignerSettings(JGraph.Scripting.Designer.DesignSettings designSettings)

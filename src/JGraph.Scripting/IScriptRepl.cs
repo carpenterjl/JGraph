@@ -103,6 +103,19 @@ public interface IScriptAppRunner
 }
 
 /// <summary>
+/// A session that runs the dependency analysis of files as <c>matlab.codetools.requiredFilesAndProducts</c>
+/// answers it from the session's current folder, path and built-ins (compiler plan K2): what App
+/// Designer's Share windows list as the files required for the app to run (App Designer window plan
+/// W12, R2025b's <c>runFileAnalysisWithProgressDialog</c>). A capability hosts feature-detect with
+/// <c>is IScriptDependencyAnalysis</c>, as for <see cref="IScriptAppRunner"/>.
+/// </summary>
+public interface IScriptDependencyAnalysis
+{
+    /// <summary>The analysis over <paramref name="files"/>; <paramref name="topOnly"/> stops at what the files themselves name.</summary>
+    Task<JGraph.Deploy.DependencyReport> AnalyzeDependenciesAsync(IReadOnlyList<string> files, bool topOnly, CancellationToken cancellationToken);
+}
+
+/// <summary>
 /// A session that can deliver queued graphics events (<see cref="ScriptEventQueue"/>) to script
 /// callbacks while it is otherwise idle. A capability, not part of <see cref="IScriptSession"/> —
 /// hosts feature-detect with <c>is IGraphicsEventSession</c>, the way they do for

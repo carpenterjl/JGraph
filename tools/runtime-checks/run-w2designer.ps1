@@ -189,7 +189,7 @@ try {
     $new = Find-InProcess $p.Id 'appDesignerToolstrip.designerTab.file.newButton'
     Check ($new -and $new.Current.IsEnabled) 'New is enabled (W3: the Start Page)'
     $share = Find-InProcess $p.Id 'appDesignerToolstrip.designerTab.share.shareAllOptions'
-    Check ($share -and -not $share.Current.IsEnabled) 'Share is disabled (W12, W13)'
+    Check ($share -and $share.Current.IsEnabled) 'Share is enabled with an app open (W12)'
     Check (Save-Picture $hwnd (Join-Path $WorkRoot 'designer.png')) 'a picture of the DESIGNER tab'
 
     $canvasTab = Pattern (Find-InProcess $p.Id 'appDesignerToolstrip.layoutTab') ([System.Windows.Automation.SelectionItemPattern]::Pattern)

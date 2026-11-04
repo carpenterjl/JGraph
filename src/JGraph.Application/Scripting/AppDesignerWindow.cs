@@ -1000,24 +1000,12 @@ internal sealed partial class AppDesignerWindow : Window
             return;
         }
 
-        if (app.Document.Path is null)
+        if (!SaveBeforeRun(app))
         {
-            PromptSaveAs(app);
-            if (app.Document.Path is null)
-            {
-                return;
-            }
-        }
-        else
-        {
-            // Text typed into the Code View is taken first, so that the save sees every change.
-            if (!app.CodeView.Push() || (app.Document.IsDirty && !Save(app)))
-            {
-                return;
-            }
+            return;
         }
 
-        string path = app.Document.Path;
+        string path = app.Document.Path!;
         if (!File.Exists(path))
         {
             // AppModel.runApp: an app whose file was deleted or renamed on disk is saved again,
@@ -1102,6 +1090,22 @@ internal sealed partial class AppDesignerWindow : Window
         }
 
         app.Document.RanSinceSave();
+    }
+
+    /// <summary>
+    /// The save before an app is run or shared (<c>AppModel.runApp</c>, the Share items): Save As for an app
+    /// with no file yet, else the Code View's text taken first, so that the save sees every change, and the
+    /// file written when it differs; false when the user cancelled or the text would not do.
+    /// </summary>
+    private bool SaveBeforeRun(AppTab app)
+    {
+        if (app.Document.Path is null)
+        {
+            PromptSaveAs(app);
+            return app.Document.Path is not null;
+        }
+
+        return app.CodeView.Push() && (!app.Document.IsDirty || Save(app));
     }
 
     private bool Save(AppTab? app)

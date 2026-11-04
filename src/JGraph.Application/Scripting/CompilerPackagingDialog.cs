@@ -35,9 +35,23 @@ internal sealed class CompilerPackagingDialog : Window
     private string? _outputFolder;
 
     public CompilerPackagingDialog(CompilerTaskModel task, bool package)
+        : this(ProgressTitle(task?.Target ?? throw new ArgumentNullException(nameof(task))), task.EffectiveName, task.Version,
+            package ? [(CompilerTargets.BuildStep(task.Target), "Step.Build"), (CompilerTargets.PackageStep, "Step.Package")] : [(CompilerTargets.BuildStep(task.Target), "Step.Build")])
     {
-        ArgumentNullException.ThrowIfNull(task);
-        Title = ProgressTitle(task.Target);
+    }
+
+    /// <summary>
+    /// The dialog over any run of steps: what App Designer's Share windows show while they package
+    /// (R2025b's <c>StandalonePackageWindow</c> and <c>MatlabAppPackageWindow</c>, App Designer window plan W12).
+    /// </summary>
+    /// <param name="title">The window's title ("Standalone App Packaging Progress").</param>
+    /// <param name="name">The app's name, shown large.</param>
+    /// <param name="version">The app's version, under the name.</param>
+    /// <param name="steps">Each step's words and automation id, in order.</param>
+    public CompilerPackagingDialog(string title, string name, string version, IReadOnlyList<(string Text, string Id)> steps)
+    {
+        ArgumentNullException.ThrowIfNull(steps);
+        Title = title;
         Width = 580;
         SizeToContent = SizeToContent.Height;
         ResizeMode = ResizeMode.NoResize;
@@ -47,14 +61,13 @@ internal sealed class CompilerPackagingDialog : Window
         AutomationProperties.SetAutomationId(this, "PackagingDialog");
 
         var panel = new StackPanel { Margin = new Thickness(14) };
-        var name = new TextBlock { Text = task.EffectiveName, FontSize = 18, FontWeight = FontWeights.SemiBold };
-        AutomationProperties.SetAutomationId(name, "PackagingName");
-        panel.Children.Add(name);
-        panel.Children.Add(new TextBlock { Text = task.Version, Margin = new Thickness(0, 0, 0, 10) });
-        AddStep(panel, CompilerTargets.BuildStep(task.Target), "Step.Build");
-        if (package)
+        var nameBlock = new TextBlock { Text = name, FontSize = 18, FontWeight = FontWeights.SemiBold };
+        AutomationProperties.SetAutomationId(nameBlock, "PackagingName");
+        panel.Children.Add(nameBlock);
+        panel.Children.Add(new TextBlock { Text = version, Margin = new Thickness(0, 0, 0, 10) });
+        foreach ((string text, string id) in steps)
         {
-            AddStep(panel, CompilerTargets.PackageStep, "Step.Package");
+            AddStep(panel, text, id);
         }
 
         AutomationProperties.SetAutomationId(_result, "PackagingResult");

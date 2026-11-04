@@ -183,7 +183,7 @@ if ($selected -contains 'standalone') {
             Check (Toggle-ById $window 'ShowCode') 'Show Code toggled'
             $code = Wait-Text $window 'Code' 'compiler.build.standaloneApplication(buildOpts)' 10
             Check ($code -and $code.Contains('buildOpts = compiler.build.StandaloneApplicationOptions(fullfile(projectRoot, "k19win_hello.m"));')) 'the code view shows the build options over the main file'
-            Check ($code -and $code.Contains('compiler.package.installer(buildResults, "Options", packageOpts);')) 'the code view shows the installer'
+            Check ($code -and $code.Contains('compiler.package.installer(buildResult, "Options", packageOpts);')) 'the code view shows the installer'
             Check (Invoke-ById $window 'Build') 'Build invoked'
             $dialogRoot = Find-Window $p.Id 'Standalone App Packaging Progress'
             Check ($null -ne $dialogRoot) "the packaging dialog 'Standalone App Packaging Progress' opened"

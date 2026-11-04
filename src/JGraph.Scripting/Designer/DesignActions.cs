@@ -92,6 +92,8 @@ public static class DesignActions
         "AD_EDITOR_TOGGLE_BOOKMARK", "AD_EDITOR_PREV_BOOKMARK", "AD_EDITOR_NEXT_BOOKMARK",
         // Stage W9b: the CODE section.
         "AD_EDITOR_COMMENT", "AD_EDITOR_UNCOMMENT", "AD_EDITOR_WRAP_COMMENT", "AD_EDITOR_SMART_INDENT", "AD_EDITOR_INDENT_MORE", "AD_EDITOR_INDENT_LESS",
+        // Stage W12: the SHARE drop-down and its Standalone Desktop App (Web App stays disabled, as R2025b's is without a compiler: X2).
+        "AD_SHARE_ALL_OPTIONS", "AD_SHARE_DESKTOP",
         // Stage W9c: the VIEW tab - the split, the display toggles, the folds, the zoom - and Print.
         "AD_EDITOR_SPLIT_NONE", "AD_EDITOR_SPLIT_LEFTRIGHT", "AD_EDITOR_SPLIT_TOPBOTTOM",
         "AD_EDITOR_HIGHLIGHT_CURRENT_LINE", "AD_EDITOR_LINE_NUMBERS", "AD_EDITOR_DATATIPS",
@@ -153,7 +155,6 @@ public static class DesignActions
             "EDITOR_PAUSE" or "EDITOR_CONTINUE" or "EDITOR_STEP" or "EDITOR_STEP_IN" or "EDITOR_STEP_OUT" or "EDITOR_STOP" => "W11",
             _ when name.Contains("BREAKPOINT", StringComparison.Ordinal) || name.StartsWith("EDITOR_TOGGLE_STOP_IF", StringComparison.Ordinal)
                 || name == "EDITOR_TOGGLE_CONDITIONAL" => "W11",
-            "SHARE_ALL_OPTIONS" or "SHARE_DESKTOP" => "W12",
             "SHARE_MATLAB" => "W13",
             "OPEN_FILE_COMPARISON_DIALOG" => "W14",
             _ => "W15", // Configure for Apps, events, the managed properties of a custom component
