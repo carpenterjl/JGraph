@@ -90,6 +90,7 @@ internal static partial class JgsBuiltins
         "serialport", "serialportlist", "serialportfind", "internal",
         "serialExplorer", // Stage D13: the host's Serial Explorer pane
         "appdesigner", // Designer plan DS2: the host's App Designer window
+        "visdiff", // App Designer window plan W14: the host's Comparison Tool, or a comparison object
 
         // Stage D2: the network clients and servers, their finds, the echo servers and resolvehost.
         "tcpclient", "tcpserver", "udpport", "tcpclientfind", "tcpserverfind", "udpportfind", "echotcpip", "echoudp", "resolvehost",
@@ -162,6 +163,7 @@ internal static partial class JgsBuiltins
         RegisterSharedLibraryBuiltins(env, interpreter);
         RegisterDeviceBuiltins(env, interpreter, host);
         RegisterAppDesignerBuiltin(env, interpreter, host); // designer plan DS2
+        RegisterComparisonBuiltins(env, interpreter, host); // App Designer window plan W14
         RegisterFigFileBuiltins(env, interpreter, host); // U11
         RegisterTableVerbs(env, interpreter); // open item 122
         RegisterTableLeftovers(env, interpreter, host); // open item 128: over the missing-value verbs and summary

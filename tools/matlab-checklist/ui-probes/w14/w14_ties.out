@@ -1,0 +1,98 @@
+dup insert flat              L[a|X|b]  R[a|X|X|b]
+                             1=1 2=2 +R3 3=4
+dup delete flat              L[a|X|X|b]  R[a|X|b]
+                             1=1 2=2 -L3 4=3
+dup insert indented          L[a|X|b]  R[a|X|X|b]
+                             1=1 2=2 +R3 3=4
+dup insert two of three      L[a|X|X|b]  R[a|X|X|X|b]
+                             1=1 2=2 3=3 +R4 4=5
+dup delete two of three      L[a|X|X|X|b]  R[a|X|X|b]
+                             1=1 2=2 3=3 -L4 5=4
+dup insert at start          L[X|b]  R[X|X|b]
+                             +R1 1=2 2=3
+dup insert at end            L[a|X]  R[a|X|X]
+                             1=1 2=2 +R3
+dup delete at start          L[X|X|b]  R[X|b]
+                             -L1 2=1 3=2
+dup delete at end            L[a|X|X]  R[a|X]
+                             1=1 2=2 -L3
+dup insert blank before      L[a||X|b]  R[a||X|X|b]
+                             1=1 2=2 3=3 +R4 4=5
+dup insert blank after       L[a|X||b]  R[a|X|X||b]
+                             1=1 2=2 +R3 3=4 4=5
+blank dup insert             L[a||b]  R[a|||b]
+                             1=1 2=2 +R3 3=4
+blank dup delete             L[a|||b]  R[a||b]
+                             1=1 2=2 -L3 4=3
+block dup insert flat        L[a|X|Y|b]  R[a|X|Y|X|Y|b]
+                             1=1 +R2 +R3 2=4 3=5 4=6
+block dup delete flat        L[a|X|Y|X|Y|b]  R[a|X|Y|b]
+                             1=1 -L2 -L3 4=2 5=3 6=4
+block dup insert Y indented  L[a|X|Y|b]  R[a|X|Y|X|Y|b]
+                             1=1 +R2 +R3 2=4 3=5 4=6
+block dup insert X indented  L[a|X|Y|b]  R[a|X|Y|X|Y|b]
+                             1=1 +R2 +R3 2=4 3=5 4=6
+loop dup flat                L[a|for k|body|end|b]  R[a|for k|body|end|for k|body|end|b]
+                             1=1 2=2 3=3 4=4 +R5 +R6 +R7 5=8
+loop dup indented body       L[a|for k|body|end|b]  R[a|for k|body|end|for k|body|end|b]
+                             1=1 2=2 3=3 4=4 +R5 +R6 +R7 5=8
+loop dup other name          L[a|for j|body|end|b]  R[a|for j|body|end|for k|body|end|b]
+                             1=1 2=2 3=3 4=4 +R5 +R6 +R7 5=8
+loop dup other name flat     L[a|for j|body|end|b]  R[a|for j|body|end|for k|body|end|b]
+                             1=1 2=2 3=3 4=4 +R5 +R6 +R7 5=8
+shape A                      L[w|h|m|r]  R[w|h|t|m|h|m|r]
+                             1=1 2=2 +R3 3=4 +R5 +R6 4=7
+shape A indented t           L[w|h|m|r]  R[w|h|t|m|h|m|r]
+                             1=1 2=2 +R3 3=4 +R5 +R6 4=7
+shape A real                 L[while y > 0|hold on|x = mod(x, 7);|z = x * y;]  R[while y > 0|hold on|title('t');|x = mod(x, 7);|hold on|x = mod(x, 7);|z = x * y;]
+                             1=1 2=2 +R3 3=4 +R5 +R6 4=7
+shape E                      L[p|h|h|f|q]  R[p|h|h|h|q]
+                             1=1 +R2 2=3 3=4 -L4 5=5
+shape E no deletion          L[p|h|h|q]  R[p|h|h|h|q]
+                             1=1 2=2 3=3 +R4 4=5
+shape C4                     L[f|z|y]  R[f|d|p|z|z|y]
+                             1=1 +R2 +R3 2=4 +R5 3=6
+shape C4 no lead             L[f|z|y]  R[f|z|z|y]
+                             1=1 2=2 +R3 3=4
+shape C7                     L[r|e|e|y]  R[r|e|y]
+                             1=1 2=2 -L3 4=3
+shape C26                    L[k|z|w|h]  R[k|z|w|i|z|w|h]
+                             1=1 2=2 3=3 +R4 +R5 +R6 4=7
+shape C26 real               L[y = y + k;|z = x * y;|while y > 0|hold on]  R[y = y + k;|z = x * y;|while y > 0|if x > y|z = x * y;|while y > 0|hold on]
+                             1=1 2=2 3=3 +R4 +R5 +R6 4=7
+ends only                    L[end|end|end]  R[end|end]
+                             1=1 2=2 -L3
+ends only reversed           L[end|end]  R[end|end|end]
+                             1=1 2=2 +R3
+swap                         L[p|A|B|q]  R[p|B|A|q]
+                             1=1 +R2 2=3 -L3 4=4
+swap at start                L[A|B|q]  R[B|A|q]
+                             +R1 1=2 -L2 3=3
+swap at end                  L[p|A|B]  R[p|B|A]
+                             1=1 +R2 2=3 -L3
+rotate                       L[A|B|C]  R[C|A|B]
+                             +R1 1=2 2=3 -L3
+rotate back                  L[C|A|B]  R[A|B|C]
+                             -L1 2=1 3=2 +R3
+move one down                L[p|A|B|C|q]  R[p|B|C|A|q]
+                             1=1 -L2 3=2 4=3 +R4 5=5
+move one up                  L[p|B|C|A|q]  R[p|A|B|C|q]
+                             1=1 +R2 2=3 3=4 -L4 5=5
+block moved                  L[1|2|if|r10|end|for|rrk|end|d]  R[1|2|for|rrk|end|if|r10|end|d]
+                             1=1 2=2 +R3 +R4 +R5 3=6 4=7 -L5 -L6 -L7 8=8 9=9
+block moved flat ends        L[1|if|x|E|for|y|E|d]  R[1|for|y|E|if|x|E|d]
+                             1=1 +R2 +R3 +R4 2=5 3=6 -L4 -L5 -L6 7=7 8=8
+far dup insert               L[a|X|b|c|d|e]  R[a|X|b|c|d|X|e]
+                             1=1 2=2 3=3 4=4 5=5 +R6 6=7
+far dup delete               L[a|X|b|c|d|X|e]  R[a|X|b|c|d|e]
+                             1=1 2=2 3=3 4=4 5=5 -L6 7=6
+ambiguous middle             L[a|X|b|X|c]  R[a|X|c]
+                             1=1 -L2 -L3 4=2 5=3
+ambiguous middle insert      L[a|X|c]  R[a|X|b|X|c]
+                             1=1 +R2 +R3 2=4 3=5
+X then Xb                    L[a|X|b]  R[a|X|q|X|b]
+                             1=1 +R2 +R3 2=4 3=5
+two groups                   L[a|X|b|Y|c]  R[a|X|X|b|Y|Y|c]
+                             1=1 +R2 2=3 3=4 +R5 4=6 5=7
+oracle: 48 cases
+done

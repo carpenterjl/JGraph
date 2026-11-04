@@ -112,7 +112,7 @@ public class AppDesignerToolstripTests
     [InlineData("AD_SHARE_DESKTOP", null)]
     [InlineData("AD_SHARE_ALL_OPTIONS", null)]
     [InlineData("AD_SHARE_MATLAB", null)]
-    [InlineData("OPEN_FILE_COMPARISON_DIALOG", "W14")]
+    [InlineData("OPEN_FILE_COMPARISON_DIALOG", null)]
     [InlineData("AD_CONFIGURE_METADATA", "W15")]
     [InlineData("AD_SHARE_WEB", "X2")]
     [InlineData("AD_OPEN_GUIDE_APP", "X3")]

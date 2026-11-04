@@ -254,41 +254,10 @@ public sealed partial class DesignCodeView : UserControl
     }
 
     /// <summary>
-    /// The one-based lines of the class <paramref name="text"/> that are the user's: the editable
-    /// section - without the one empty line App Designer keeps on each side of it, which are its
-    /// own - and the callbacks' bodies.
+    /// The one-based lines of the class <paramref name="text"/> that are the user's: the editable section and the
+    /// callbacks' bodies (<see cref="DesignCompare.EditableLinesOf"/>, which a merge uses too).
     /// </summary>
-    public static IReadOnlySet<int> EditableLinesOf(string text)
-    {
-        ArgumentNullException.ThrowIfNull(text);
-        var editable = new HashSet<int>();
-        JgsMlappLayout layout = JgsMlappLayout.Of(text);
-        foreach (MlappRegion region in layout.Regions.Where(static r => r.IsUserCode))
-        {
-            int first = region.FirstLine;
-            int count = region.LineCount;
-            if (region.Kind == MlappRegionKind.EditableSection)
-            {
-                if (count > 0 && layout.Lines[first].Length == 0)
-                {
-                    first++;
-                    count--;
-                }
-
-                if (count > 0 && layout.Lines[first + count - 1].Length == 0)
-                {
-                    count--;
-                }
-            }
-
-            for (int i = first; i < first + count; i++)
-            {
-                editable.Add(i + 1);
-            }
-        }
-
-        return editable;
-    }
+    public static IReadOnlySet<int> EditableLinesOf(string text) => DesignCompare.EditableLinesOf(text);
 
     private void OnChanged(object? sender, EventArgs e)
     {

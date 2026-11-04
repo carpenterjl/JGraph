@@ -1676,6 +1676,7 @@ internal static class JgsBuiltinOutputCounts
         ["visadevlist"] = (1, true),
         ["visboundaries"] = (1, true),
         ["viscircles"] = (1, true),
+        ["visdiff"] = (1, true),
         ["volumebounds"] = (1, true),
         ["voronoi"] = (2, true),
         ["voronoin"] = (2, true),

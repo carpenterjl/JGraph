@@ -97,6 +97,8 @@ internal sealed partial class AppDesignerWindow
         // The SHARE drop-down (W12, W13): Standalone Desktop App and MATLAB App; Web App stays disabled (X2).
         "AD_SHARE_DESKTOP" => ShareDesktop,
         "AD_SHARE_MATLAB" => ShareMatlabApp,
+        // Compare To on the DESIGNER and EDITOR tabs (W14).
+        "OPEN_FILE_COMPARISON_DIALOG" => CompareTo,
         "OPEN_STARTSCREEN_DIALOG" => ShowStartPage,
         "AD_INPUT_ARGUMENTS" => CodeOptions,
         "AD_APP_DETAILS" => AppDetails,
@@ -191,6 +193,7 @@ internal sealed partial class AppDesignerWindow
 
         BindClipboardCommands();
         BindShareCommands();
+        BindCompareCommands();
 
         // The editor's display settings are every editor's (W9c): read from App Designer's settings, kept there when a toggle or the zoom changes them.
         EditorDisplay.Load(Settings.Values);

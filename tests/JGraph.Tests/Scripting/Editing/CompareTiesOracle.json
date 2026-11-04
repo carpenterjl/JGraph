@@ -1,0 +1,2298 @@
+[
+  {
+    "name": "dup insert flat",
+    "left": [
+      "a",
+      "X",
+      "b"
+    ],
+    "right": [
+      "a",
+      "X",
+      "X",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 4
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "dup delete flat",
+    "left": [
+      "a",
+      "X",
+      "X",
+      "b"
+    ],
+    "right": [
+      "a",
+      "X",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "deleted",
+        "left": 3,
+        "right": 0
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 3
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "dup insert indented",
+    "left": [
+      "a",
+      "    X",
+      "b"
+    ],
+    "right": [
+      "a",
+      "    X",
+      "    X",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 4
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "dup insert two of three",
+    "left": [
+      "a",
+      "X",
+      "X",
+      "b"
+    ],
+    "right": [
+      "a",
+      "X",
+      "X",
+      "X",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 3
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 4
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 5
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "dup delete two of three",
+    "left": [
+      "a",
+      "X",
+      "X",
+      "X",
+      "b"
+    ],
+    "right": [
+      "a",
+      "X",
+      "X",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 3
+      },
+      {
+        "kind": "deleted",
+        "left": 4,
+        "right": 0
+      },
+      {
+        "kind": "same",
+        "left": 5,
+        "right": 4
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "dup insert at start",
+    "left": [
+      "X",
+      "b"
+    ],
+    "right": [
+      "X",
+      "X",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 3
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "dup insert at end",
+    "left": [
+      "a",
+      "X"
+    ],
+    "right": [
+      "a",
+      "X",
+      "X"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "dup delete at start",
+    "left": [
+      "X",
+      "X",
+      "b"
+    ],
+    "right": [
+      "X",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "deleted",
+        "left": 1,
+        "right": 0
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 2
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "dup delete at end",
+    "left": [
+      "a",
+      "X",
+      "X"
+    ],
+    "right": [
+      "a",
+      "X"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "deleted",
+        "left": 3,
+        "right": 0
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "dup insert blank before",
+    "left": [
+      "a",
+      "",
+      "X",
+      "b"
+    ],
+    "right": [
+      "a",
+      "",
+      "X",
+      "X",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 3
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 4
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 5
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "dup insert blank after",
+    "left": [
+      "a",
+      "X",
+      "",
+      "b"
+    ],
+    "right": [
+      "a",
+      "X",
+      "X",
+      "",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 4
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 5
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "blank dup insert",
+    "left": [
+      "a",
+      "",
+      "b"
+    ],
+    "right": [
+      "a",
+      "",
+      "",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 4
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "blank dup delete",
+    "left": [
+      "a",
+      "",
+      "",
+      "b"
+    ],
+    "right": [
+      "a",
+      "",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "deleted",
+        "left": 3,
+        "right": 0
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 3
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "block dup insert flat",
+    "left": [
+      "a",
+      "X",
+      "Y",
+      "b"
+    ],
+    "right": [
+      "a",
+      "X",
+      "Y",
+      "X",
+      "Y",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 4
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 5
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 6
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "block dup delete flat",
+    "left": [
+      "a",
+      "X",
+      "Y",
+      "X",
+      "Y",
+      "b"
+    ],
+    "right": [
+      "a",
+      "X",
+      "Y",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "deleted",
+        "left": 2,
+        "right": 0
+      },
+      {
+        "kind": "deleted",
+        "left": 3,
+        "right": 0
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 5,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 6,
+        "right": 4
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "block dup insert Y indented",
+    "left": [
+      "a",
+      "X",
+      "    Y",
+      "b"
+    ],
+    "right": [
+      "a",
+      "X",
+      "    Y",
+      "X",
+      "    Y",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 4
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 5
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 6
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "block dup insert X indented",
+    "left": [
+      "a",
+      "    X",
+      "Y",
+      "b"
+    ],
+    "right": [
+      "a",
+      "    X",
+      "Y",
+      "    X",
+      "Y",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 4
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 5
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 6
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "loop dup flat",
+    "left": [
+      "a",
+      "for k",
+      "body",
+      "end",
+      "b"
+    ],
+    "right": [
+      "a",
+      "for k",
+      "body",
+      "end",
+      "for k",
+      "body",
+      "end",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 4
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 5
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 6
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 7
+      },
+      {
+        "kind": "same",
+        "left": 5,
+        "right": 8
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "loop dup indented body",
+    "left": [
+      "a",
+      "for k",
+      "    body",
+      "end",
+      "b"
+    ],
+    "right": [
+      "a",
+      "for k",
+      "    body",
+      "end",
+      "for k",
+      "    body",
+      "end",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 4
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 5
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 6
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 7
+      },
+      {
+        "kind": "same",
+        "left": 5,
+        "right": 8
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "loop dup other name",
+    "left": [
+      "a",
+      "for j",
+      "    body",
+      "end",
+      "b"
+    ],
+    "right": [
+      "a",
+      "for j",
+      "    body",
+      "end",
+      "for k",
+      "    body",
+      "end",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 4
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 5
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 6
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 7
+      },
+      {
+        "kind": "same",
+        "left": 5,
+        "right": 8
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "loop dup other name flat",
+    "left": [
+      "a",
+      "for j",
+      "body",
+      "end",
+      "b"
+    ],
+    "right": [
+      "a",
+      "for j",
+      "body",
+      "end",
+      "for k",
+      "body",
+      "end",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 4
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 5
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 6
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 7
+      },
+      {
+        "kind": "same",
+        "left": 5,
+        "right": 8
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "shape A",
+    "left": [
+      "w",
+      "h",
+      "m",
+      "r"
+    ],
+    "right": [
+      "w",
+      "h",
+      "t",
+      "m",
+      "h",
+      "m",
+      "r"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 4
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 5
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 6
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 7
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "shape A indented t",
+    "left": [
+      "w",
+      "h",
+      "m",
+      "r"
+    ],
+    "right": [
+      "w",
+      "h",
+      "    t",
+      "m",
+      "h",
+      "m",
+      "r"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 4
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 5
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 6
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 7
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "shape A real",
+    "left": [
+      "while y > 0",
+      "hold on",
+      "x = mod(x, 7);",
+      "    z = x * y;"
+    ],
+    "right": [
+      "while y > 0",
+      "hold on",
+      "title('t');",
+      "x = mod(x, 7);",
+      "hold on",
+      "x = mod(x, 7);",
+      "    z = x * y;"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 4
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 5
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 6
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 7
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "shape E",
+    "left": [
+      "p",
+      "h",
+      "h",
+      "f",
+      "q"
+    ],
+    "right": [
+      "p",
+      "h",
+      "h",
+      "h",
+      "q"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 4
+      },
+      {
+        "kind": "deleted",
+        "left": 4,
+        "right": 0
+      },
+      {
+        "kind": "same",
+        "left": 5,
+        "right": 5
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "shape E no deletion",
+    "left": [
+      "p",
+      "h",
+      "h",
+      "q"
+    ],
+    "right": [
+      "p",
+      "h",
+      "h",
+      "h",
+      "q"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 3
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 4
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 5
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "shape C4",
+    "left": [
+      "f",
+      "z",
+      "y"
+    ],
+    "right": [
+      "f",
+      "d",
+      "p",
+      "z",
+      "z",
+      "y"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 4
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 5
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 6
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "shape C4 no lead",
+    "left": [
+      "f",
+      "z",
+      "y"
+    ],
+    "right": [
+      "f",
+      "z",
+      "z",
+      "y"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 4
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "shape C7",
+    "left": [
+      "r",
+      "e",
+      "e",
+      "y"
+    ],
+    "right": [
+      "r",
+      "e",
+      "y"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "deleted",
+        "left": 3,
+        "right": 0
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 3
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "shape C26",
+    "left": [
+      "k",
+      "z",
+      "w",
+      "h"
+    ],
+    "right": [
+      "k",
+      "z",
+      "w",
+      "i",
+      "z",
+      "w",
+      "h"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 3
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 4
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 5
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 6
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 7
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "shape C26 real",
+    "left": [
+      "y = y + k;",
+      "    z = x * y;",
+      "while y > 0",
+      "hold on"
+    ],
+    "right": [
+      "y = y + k;",
+      "    z = x * y;",
+      "while y > 0",
+      "if x > y",
+      "    z = x * y;",
+      "while y > 0",
+      "hold on"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 3
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 4
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 5
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 6
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 7
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "ends only",
+    "left": [
+      "end",
+      "end",
+      "end"
+    ],
+    "right": [
+      "end",
+      "end"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "deleted",
+        "left": 3,
+        "right": 0
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "ends only reversed",
+    "left": [
+      "end",
+      "end"
+    ],
+    "right": [
+      "end",
+      "end",
+      "end"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "swap",
+    "left": [
+      "p",
+      "A",
+      "B",
+      "q"
+    ],
+    "right": [
+      "p",
+      "B",
+      "A",
+      "q"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 3
+      },
+      {
+        "kind": "deleted",
+        "left": 3,
+        "right": 0
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 4
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "swap at start",
+    "left": [
+      "A",
+      "B",
+      "q"
+    ],
+    "right": [
+      "B",
+      "A",
+      "q"
+    ],
+    "rows": [
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 2
+      },
+      {
+        "kind": "deleted",
+        "left": 2,
+        "right": 0
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 3
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "swap at end",
+    "left": [
+      "p",
+      "A",
+      "B"
+    ],
+    "right": [
+      "p",
+      "B",
+      "A"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 3
+      },
+      {
+        "kind": "deleted",
+        "left": 3,
+        "right": 0
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "rotate",
+    "left": [
+      "A",
+      "B",
+      "C"
+    ],
+    "right": [
+      "C",
+      "A",
+      "B"
+    ],
+    "rows": [
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 3
+      },
+      {
+        "kind": "deleted",
+        "left": 3,
+        "right": 0
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "rotate back",
+    "left": [
+      "C",
+      "A",
+      "B"
+    ],
+    "right": [
+      "A",
+      "B",
+      "C"
+    ],
+    "rows": [
+      {
+        "kind": "deleted",
+        "left": 1,
+        "right": 0
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "move one down",
+    "left": [
+      "p",
+      "A",
+      "B",
+      "C",
+      "q"
+    ],
+    "right": [
+      "p",
+      "B",
+      "C",
+      "A",
+      "q"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "deleted",
+        "left": 2,
+        "right": 0
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 3
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 4
+      },
+      {
+        "kind": "same",
+        "left": 5,
+        "right": 5
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "move one up",
+    "left": [
+      "p",
+      "B",
+      "C",
+      "A",
+      "q"
+    ],
+    "right": [
+      "p",
+      "A",
+      "B",
+      "C",
+      "q"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 4
+      },
+      {
+        "kind": "deleted",
+        "left": 4,
+        "right": 0
+      },
+      {
+        "kind": "same",
+        "left": 5,
+        "right": 5
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "block moved",
+    "left": [
+      "1",
+      "2",
+      "if",
+      "r10",
+      "end",
+      "for",
+      "rrk",
+      "end",
+      "d"
+    ],
+    "right": [
+      "1",
+      "2",
+      "for",
+      "rrk",
+      "end",
+      "if",
+      "r10",
+      "end",
+      "d"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 4
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 5
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 6
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 7
+      },
+      {
+        "kind": "deleted",
+        "left": 5,
+        "right": 0
+      },
+      {
+        "kind": "deleted",
+        "left": 6,
+        "right": 0
+      },
+      {
+        "kind": "deleted",
+        "left": 7,
+        "right": 0
+      },
+      {
+        "kind": "same",
+        "left": 8,
+        "right": 8
+      },
+      {
+        "kind": "same",
+        "left": 9,
+        "right": 9
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "block moved flat ends",
+    "left": [
+      "1",
+      "if",
+      "x",
+      "E",
+      "for",
+      "y",
+      "E",
+      "d"
+    ],
+    "right": [
+      "1",
+      "for",
+      "y",
+      "E",
+      "if",
+      "x",
+      "E",
+      "d"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 4
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 5
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 6
+      },
+      {
+        "kind": "deleted",
+        "left": 4,
+        "right": 0
+      },
+      {
+        "kind": "deleted",
+        "left": 5,
+        "right": 0
+      },
+      {
+        "kind": "deleted",
+        "left": 6,
+        "right": 0
+      },
+      {
+        "kind": "same",
+        "left": 7,
+        "right": 7
+      },
+      {
+        "kind": "same",
+        "left": 8,
+        "right": 8
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "far dup insert",
+    "left": [
+      "a",
+      "X",
+      "b",
+      "c",
+      "d",
+      "e"
+    ],
+    "right": [
+      "a",
+      "X",
+      "b",
+      "c",
+      "d",
+      "X",
+      "e"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 4
+      },
+      {
+        "kind": "same",
+        "left": 5,
+        "right": 5
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 6
+      },
+      {
+        "kind": "same",
+        "left": 6,
+        "right": 7
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "far dup delete",
+    "left": [
+      "a",
+      "X",
+      "b",
+      "c",
+      "d",
+      "X",
+      "e"
+    ],
+    "right": [
+      "a",
+      "X",
+      "b",
+      "c",
+      "d",
+      "e"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 4
+      },
+      {
+        "kind": "same",
+        "left": 5,
+        "right": 5
+      },
+      {
+        "kind": "deleted",
+        "left": 6,
+        "right": 0
+      },
+      {
+        "kind": "same",
+        "left": 7,
+        "right": 6
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "ambiguous middle",
+    "left": [
+      "a",
+      "X",
+      "b",
+      "X",
+      "c"
+    ],
+    "right": [
+      "a",
+      "X",
+      "c"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "deleted",
+        "left": 2,
+        "right": 0
+      },
+      {
+        "kind": "deleted",
+        "left": 3,
+        "right": 0
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 5,
+        "right": 3
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "ambiguous middle insert",
+    "left": [
+      "a",
+      "X",
+      "c"
+    ],
+    "right": [
+      "a",
+      "X",
+      "b",
+      "X",
+      "c"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 4
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 5
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "X then Xb",
+    "left": [
+      "a",
+      "X",
+      "b"
+    ],
+    "right": [
+      "a",
+      "X",
+      "q",
+      "X",
+      "b"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 2
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 4
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 5
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  },
+  {
+    "name": "two groups",
+    "left": [
+      "a",
+      "X",
+      "b",
+      "Y",
+      "c"
+    ],
+    "right": [
+      "a",
+      "X",
+      "X",
+      "b",
+      "Y",
+      "Y",
+      "c"
+    ],
+    "rows": [
+      {
+        "kind": "same",
+        "left": 1,
+        "right": 1
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 2
+      },
+      {
+        "kind": "same",
+        "left": 2,
+        "right": 3
+      },
+      {
+        "kind": "same",
+        "left": 3,
+        "right": 4
+      },
+      {
+        "kind": "inserted",
+        "left": 0,
+        "right": 5
+      },
+      {
+        "kind": "same",
+        "left": 4,
+        "right": 6
+      },
+      {
+        "kind": "same",
+        "left": 5,
+        "right": 7
+      }
+    ],
+    "class": "comparisons.TextComparison",
+    "identical": false
+  }
+]

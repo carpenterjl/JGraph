@@ -413,6 +413,7 @@ public partial class ScriptWorkspaceWindow
         DeviceWindows = _deviceWindows,
         AppDesigner = AppDesignerDoor,
         CompilerApps = CompilerAppsDoor,
+        ComparisonTool = ComparisonDoor,
     };
 
     /// <summary>

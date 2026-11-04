@@ -2370,6 +2370,7 @@ visadevfind,measured,mfile,,file,file,file,file,file,file,file,file,file,file,fi
 visadevlist,measured,mfile,,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file
 visboundaries,measured,mfile,,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file
 viscircles,measured,mfile,,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file
+visdiff,measured,other,,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file
 volumebounds,measured,mfile,,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file
 voronoi,measured,mfile,,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file
 voronoin,measured,mfile,,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file

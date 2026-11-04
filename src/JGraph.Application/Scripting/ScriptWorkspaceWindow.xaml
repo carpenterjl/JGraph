@@ -16,6 +16,7 @@
                 <MenuItem Header="_Save" Command="{x:Static local:WorkspaceCommands.Save}" />
                 <MenuItem Header="Save _As…" Command="{x:Static local:WorkspaceCommands.SaveAs}" />
                 <MenuItem Header="_Export to .m File…" Command="{x:Static local:WorkspaceCommands.ExportAppCode}" />
+                <MenuItem Header="Compare _To…" Command="{x:Static local:WorkspaceCommands.CompareTo}" />
                 <Separator />
                 <!-- The editor's Print and Print Selection (App Designer window plan W9c). -->
                 <MenuItem Header="_Print…" Command="Print" />

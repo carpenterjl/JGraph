@@ -171,6 +171,9 @@ internal sealed partial class AppDesignerWindow
             case DesignTabMenuCommand.NewApp:
                 OpenStartPage();
                 break;
+            case DesignTabMenuCommand.CompareTo:
+                CompareApp(app);
+                break;
             case DesignTabMenuCommand.Close:
                 CloseTab(app);
                 break;

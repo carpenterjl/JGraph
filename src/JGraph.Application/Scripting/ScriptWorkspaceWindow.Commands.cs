@@ -26,6 +26,8 @@ public partial class ScriptWorkspaceWindow
         Bind(WorkspaceCommands.SaveAs, (_, _) => SaveAsActive(), CanSave);
         Bind(WorkspaceCommands.ExportAppCode, (_, _) => ExportActiveAppCode(),
             (_, e) => e.CanExecute = ActiveDocument?.Model.IsAppDesignerFile == true);
+        Bind(WorkspaceCommands.CompareTo, (_, _) => CompareActiveTo(),
+            (_, e) => e.CanExecute = ActiveDocument is { Model.FilePath: not null });
         Bind(WorkspaceCommands.OpenInAppDesigner, (_, _) => OpenActiveInAppDesigner(),
             (_, e) => e.CanExecute = ActiveDocument is { Model: { FilePath: not null } model } && (model.IsAppDesignerFile || model.IsPlainTextApp));
         Bind(WorkspaceCommands.DesignApp, (_, _) => DesignApp());

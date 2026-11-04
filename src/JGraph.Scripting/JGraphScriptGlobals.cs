@@ -85,6 +85,9 @@ public sealed class JGraphScriptGlobals
     /// <summary>The host's App Designer window, or null when it has none (designer plan DS2).</summary>
     internal IScriptAppDesigner? AppDesigner => _context.AppDesigner;
 
+    /// <summary>The host's Comparison Tool, or null without windows (App Designer window plan W14).</summary>
+    internal IScriptComparisonTool? ComparisonTool => _context.ComparisonTool;
+
     /// <summary>The host's compiler apps, or null when it has none (compiler and SDK plan, stage K19).</summary>
     internal IScriptCompilerApps? CompilerApps => _context.CompilerApps;
 

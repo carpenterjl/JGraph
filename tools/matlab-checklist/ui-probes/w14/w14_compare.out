@@ -1,0 +1,176 @@
+== identical                             11 rows: inserted 0, deleted 0, changed 0 (identical)
+== one line changed                      11 rows: inserted 0, deleted 0, changed 1
+     changed    3   3
+== one line inserted                     12 rows: inserted 1, deleted 0, changed 0
+     inserted   0   4
+== one line deleted                      11 rows: inserted 0, deleted 1, changed 0
+     deleted    3   0
+== two lines become three                12 rows: inserted 1, deleted 0, changed 2
+     changed    4   4
+     changed    5   5
+     inserted   0   6
+== three lines become two                12 rows: inserted 0, deleted 1, changed 2
+     changed    4   4
+     changed    5   5
+     deleted    6   0
+== block moved                           14 rows: inserted 3, deleted 3, changed 0
+     inserted   0   4
+     inserted   0   5
+     inserted   0   6
+     deleted    6   0
+     deleted    7   0
+     deleted    8   0
+== block appended                        13 rows: inserted 3, deleted 0, changed 0
+     inserted   0  11
+     inserted   0  12
+     inserted   0  13
+== block prepended                       14 rows: inserted 3, deleted 0, changed 0
+     inserted   0   1
+     inserted   0   2
+     inserted   0   3
+== first line changed                    11 rows: inserted 0, deleted 0, changed 1
+     changed    1   1
+== last line changed                     11 rows: inserted 0, deleted 0, changed 1
+     changed   11  11
+== white space only                      11 rows: inserted 0, deleted 0, changed 1
+     changed    3   3
+== indent only                           11 rows: inserted 0, deleted 0, changed 1
+     changed    3   3
+== blank line inserted                   12 rows: inserted 1, deleted 0, changed 0
+     inserted   0   4
+== blank line deleted                    12 rows: inserted 0, deleted 1, changed 0
+     deleted    4   0
+== empty left                            12 rows: inserted 11, deleted 1, changed 0
+     deleted    1   0
+     inserted   0   1
+     inserted   0   2
+     inserted   0   3
+     inserted   0   4
+     inserted   0   5
+     inserted   0   6
+     inserted   0   7
+     inserted   0   8
+     inserted   0   9
+     inserted   0  10
+     inserted   0  11
+== empty right                           12 rows: inserted 1, deleted 11, changed 0
+     deleted    1   0
+     deleted    2   0
+     deleted    3   0
+     deleted    4   0
+     deleted    5   0
+     deleted    6   0
+     deleted    7   0
+     deleted    8   0
+     deleted    9   0
+     deleted   10   0
+     deleted   11   0
+     inserted   0   1
+== all different                         13 rows: inserted 2, deleted 10, changed 1
+     deleted    1   0
+     deleted    2   0
+     deleted    3   0
+     deleted    4   0
+     deleted    5   0
+     deleted    6   0
+     changed    7   1
+     deleted    8   0
+     deleted    9   0
+     deleted   10   0
+     deleted   11   0
+     inserted   0   2
+     inserted   0   3
+== repeated lines, one body changed      11 rows: inserted 0, deleted 0, changed 1
+     changed    6   6
+== repeated lines, a loop removed        11 rows: inserted 0, deleted 3, changed 0
+     deleted    5   0
+     deleted    6   0
+     deleted    7   0
+== repeated lines, a loop added          14 rows: inserted 3, deleted 0, changed 0
+     inserted   0   8
+     inserted   0   9
+     inserted   0  10
+== ends only                              3 rows: inserted 0, deleted 1, changed 0
+     deleted    3   0
+== swap two lines                        12 rows: inserted 1, deleted 1, changed 0
+     inserted   0   3
+     deleted    4   0
+== change then insert                    12 rows: inserted 1, deleted 0, changed 1
+     changed    3   3
+     inserted   0   4
+== delete then change                    11 rows: inserted 0, deleted 1, changed 1
+     deleted    2   0
+     changed    3   2
+== change far apart                      11 rows: inserted 0, deleted 0, changed 2
+     changed    3   3
+     changed   10  10
+== tab and spaces                         3 rows: inserted 0, deleted 0, changed 1
+     changed    2   2
+== case only                             11 rows: inserted 0, deleted 0, changed 1
+     changed   10  10
+== corpus 1                              40 rows: inserted 0, deleted 1, changed 0
+== corpus 2                              48 rows: inserted 8, deleted 5, changed 0
+== corpus 3                              44 rows: inserted 4, deleted 0, changed 1
+== corpus 4                              47 rows: inserted 7, deleted 2, changed 0
+== corpus 5                              45 rows: inserted 5, deleted 5, changed 0
+== corpus 6                              47 rows: inserted 7, deleted 1, changed 3
+== corpus 7                              44 rows: inserted 4, deleted 7, changed 1
+== corpus 8                              43 rows: inserted 3, deleted 5, changed 0
+== corpus 9                              45 rows: inserted 5, deleted 8, changed 0
+== corpus 10                             49 rows: inserted 9, deleted 4, changed 0
+== corpus 11                             45 rows: inserted 5, deleted 2, changed 0
+== corpus 12                             43 rows: inserted 3, deleted 5, changed 1
+== corpus 13                             48 rows: inserted 8, deleted 7, changed 1
+== corpus 14                             41 rows: inserted 1, deleted 1, changed 0
+== corpus 15                             48 rows: inserted 8, deleted 4, changed 0
+== corpus 16                             40 rows: inserted 0, deleted 1, changed 0
+== corpus 17                             41 rows: inserted 1, deleted 1, changed 0
+== corpus 18                             49 rows: inserted 9, deleted 7, changed 0
+== corpus 19                             41 rows: inserted 1, deleted 5, changed 2
+== corpus 20                             50 rows: inserted 10, deleted 8, changed 1
+== corpus 21                             41 rows: inserted 1, deleted 0, changed 0
+== corpus 22                             41 rows: inserted 1, deleted 1, changed 0
+== corpus 23                             45 rows: inserted 5, deleted 3, changed 0
+== corpus 24                             54 rows: inserted 14, deleted 14, changed 0
+== corpus 25                             50 rows: inserted 10, deleted 8, changed 0
+== corpus 26                             51 rows: inserted 11, deleted 8, changed 0
+== corpus 27                             41 rows: inserted 1, deleted 1, changed 0
+== corpus 28                             43 rows: inserted 3, deleted 0, changed 0
+== corpus 29                             47 rows: inserted 7, deleted 8, changed 0
+== corpus 30                             44 rows: inserted 4, deleted 3, changed 0
+== app: one callback line               177 rows: inserted 0, deleted 0, changed 1
+== app: another app                     183 rows: inserted 6, deleted 79, changed 47
+== text comparison: class comparisons.TextComparison; properties Left, Right; methods addlistener, delete, eq, findobj, findprop, ge, gt, isvalid, le, listener, lt, ne, notify, publish
+   Left <compare>\p02\l\prog.m; Right <compare>\p02\r\prog.m
+  TextComparison with properties:
+
+     Left: 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w14\rt\compare\p02\l\prog.m'
+    Right: 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w14\rt\compare\p02\r\prog.m'
+
+   filter -> comparisons:FilterNotSupported: Filtering is not supported for this comparison type.
+== missing left -> comparisons:mldesktop:FileNotFound: Unable to load file '<compare>\nowhere.m'.
+== missing left, output -> comparisons:mldesktop:FileNotFound: Unable to load file '<compare>\nowhere.m'.
+== one argument -> MATLAB:minrhs: Invalid argument list. Function requires 1 more input(s).
+== unknown type -> comparisons:mldesktop:UnknownComparisonTypeForNoDisplay: Comparison type 'nosuchtype' not available for the specified files without opening the Comparison Tool.
+== type text -> comparisons.TextComparison
+== type binary -> comparisons:mldesktop:UnknownComparisonTypeForNoDisplay: Comparison type 'binary' not available for the specified files without opening the Comparison Tool.
+== folders, output -> comparisons:mldesktop:CannotCompareWithoutDisplay: Unable to compare '<compare>\p02\l' and '<compare>\p02\r' without opening the Comparison Tool.
+== mlapp vs m -> comparisons:mldesktop:CannotCompareWithoutDisplay: Unable to compare '<compare>\AcceptForm.mlapp' and '<compare>\p02\r\prog.m' without opening the Comparison Tool.
+== mlapp vs mlapp as text -> comparisons:mldesktop:UnknownComparisonTypeForNoDisplay: Comparison type 'text' not available for the specified files without opening the Comparison Tool.
+== numbers -> MATLAB:invalidType: The value of 'filename1' is invalid. Expected input to be one of these types:
+
+char, string
+
+Instead its type was double.
+== publish bad format -> MATLAB:unrecognizedStringChoice: Expected input to match one of these values:
+
+'html', 'docx', 'pdf'
+
+The input, 'nosuch', did not match any of the valid values.
+== publish bad folder -> MATLAB:validators:mustBeFolder: Invalid argument at position 2. These folders do not exist: '<compare>\nowhere'.
+== publish defaults -> D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w14\prog_prog.html
+== publish docx -> <compare>\word.docx
+== trailing newline vs none: 3 rows, kinds same same deleted; identical words 0
+== CRLF vs LF: 3 rows, kinds same same same
+oracle: 60 pairs
+done

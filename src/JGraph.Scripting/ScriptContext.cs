@@ -93,6 +93,12 @@ public sealed class ScriptContext
     public IScriptCompilerApps? CompilerApps { get; init; }
 
     /// <summary>
+    /// The host's Comparison Tool, which <c>visdiff</c> opens without an output, or null when the host has no
+    /// windows and the call is refused (App Designer window plan W14).
+    /// </summary>
+    public IScriptComparisonTool? ComparisonTool { get; init; }
+
+    /// <summary>
     /// The compiled component this session runs, or null for an ordinary session. A deployed
     /// session answers <c>isdeployed</c> true, keeps its search path frozen, and calls its main
     /// function with the deployment's arguments (compiler and SDK plan, stage K1).
