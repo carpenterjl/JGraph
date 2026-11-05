@@ -1,0 +1,19 @@
+== W16Blank installed as a MATLAB App
+installed: W16Blank_<run> 1.0
+installedToolboxes lists it: 1; apputil lists apps: 0 (a toolbox's app is the gallery's, not apputil's)
+resolves to W16Blank.mlapp under the add-ons Toolboxes folder: 1
+runs from the install: class W16Blank
+after uninstall: installedToolboxes is a struct [0 0] with 0 field(s), resolves to W16Blank.mlapp under the add-ons Toolboxes folder: 0
+== W16Panels installed as a MATLAB App
+installed: W16Panels_<run> 1.0
+installedToolboxes lists it: 1; apputil lists apps: 0 (a toolbox's app is the gallery's, not apputil's)
+resolves to W16Panels.mlapp under the add-ons Toolboxes folder: 1
+runs from the install: class W16Panels
+after uninstall: installedToolboxes is a struct [0 0] with 0 field(s), resolves to W16Panels.mlapp under the add-ons Toolboxes folder: 0
+== W16Composite installed as a MATLAB App
+installed: W16Composite_<run> 1.0
+installedToolboxes lists it: 1; apputil lists apps: 0 (a toolbox's app is the gallery's, not apputil's)
+resolves to W16Composite.mlapp under the add-ons Toolboxes folder: 1
+runs from the install: class W16Composite
+after uninstall: installedToolboxes is a struct [0 0] with 0 field(s), resolves to W16Composite.mlapp under the add-ons Toolboxes folder: 0
+done

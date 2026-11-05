@@ -1,0 +1,10 @@
+== W16Blank packaged as a MATLAB App
+packaged: <release>\W16Blank.mltbx exists 1, version 1.0
+== W16Panels packaged as a MATLAB App
+packaged: <release>\W16Panels.mltbx exists 1, version 1.0
+== W16Composite packaged as a MATLAB App
+packaged: <release>\W16Composite.mltbx exists 1, version 1.0
+== W16Blank as a standalone program
+built: <release>/build/W16Blank.exe, <release>/build/readme.txt, <release>/build/splash.png
+program exists: 1
+done

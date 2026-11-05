@@ -133,6 +133,11 @@ public static class ScriptComponentFrames
             Jgs.JgsGraphicsProperties.SettleSliders(figure);
             UiFrame frame = figure.TakeComponentFrame();
             figure.ComponentFrameInFlight = true;
+            if (ScriptUiTrace.Enabled)
+            {
+                ScriptUiTrace.Write($"frames: figure {number} frame {frame.Sequence} sent (force {force})");
+            }
+
             sink(frame);
 
             // A container a script resized, or one shown for the first time, is told (U2).

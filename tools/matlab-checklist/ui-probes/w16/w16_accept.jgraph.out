@@ -1,0 +1,14 @@
+blank: figure W16 Blank, field 2, slider 3 in [0 10], label -, 1 line(s), last y 25
+blank: scale -> 6
+blank: 1.5 x 7 -> 10.5
+panels: AutoResizeChildren off, 2 columns, items Red,Green,Blue, value Green, label none
+panels: chose -> Blue
+panels: narrow -> 2 rows, 1 columns, right panel row 2 column 1
+counter: class W16Counter, Position [1 1 320 240], Count 0, Step 1, has CountedFcn 1, empty 1
+counter: Step 0 refused: Error setting property 'Step' of class 'W16Counter'. Value must be positive.
+counter: CountedFcn called, Count 3, Step 2
+counter: the button inside is private: 0 found by findall
+typed: Comp is W16Counter [0 0], Num is double [0 0], Words is string [0 0]
+composite: figure W16 Composite, component W16Counter, Step 5, Count 0, label 0, 2 children
+composite: the public callback -> label 10, Count 10
+done

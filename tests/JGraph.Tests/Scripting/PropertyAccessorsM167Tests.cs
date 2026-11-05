@@ -308,11 +308,11 @@ public class PropertyAccessorsM167Tests : IDisposable
     {
         WriteClass("AccHidden", """
             classdef AccHidden
-                properties (GetObservable)
+                properties (Bogus)
                     p = 1
                 end
             end
             """);
-        Assert.Contains("'GetObservable' is not supported", RunExpectingError("o = AccHidden();"), StringComparison.Ordinal); // Hidden is understood since U6 (ADR 0203)
+        Assert.Contains("'Bogus' is not supported", RunExpectingError("o = AccHidden();"), StringComparison.Ordinal); // Hidden is understood since U6 (ADR 0203), GetObservable since W15 (ADR 0305)
     }
 }

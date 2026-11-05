@@ -30,6 +30,13 @@ internal sealed class JgsComponentContainerState
     /// <summary>Whether <c>update</c> is running, when a write marks nothing (R2025b, probe <c>u10_matrix</c>).</summary>
     public bool Updating { get; set; }
 
+    /// <summary>
+    /// Whether the owed <c>update</c> was owed by a callback a drain delivered (W16): the callback ran on the draining
+    /// thread in this component's own interpreter, whichever session's pump drained, so the update it owes runs there
+    /// too, as R2025b runs it before the window is drawn again.
+    /// </summary>
+    public bool OwedByCallback { get; set; }
+
     /// <summary>The object.</summary>
     public JgsObject Owner => Self.AsObject;
 }
@@ -125,6 +132,11 @@ internal static class JgsComponentContainers
     {
         if (!States.TryGetValue(instance, out JgsComponentContainerState? state) || state.Updating)
         {
+            if (ScriptUiTrace.Enabled)
+            {
+                ScriptUiTrace.Write($"owed: {instance.Class.Name} not marked ({(state is null ? "no state" : "updating")})");
+            }
+
             return;
         }
 
@@ -134,6 +146,38 @@ internal static class JgsComponentContainers
             {
                 Owed.Add(state);
             }
+
+            if (_draining > 0)
+            {
+                state.OwedByCallback = true;
+            }
+        }
+    }
+
+    [ThreadStatic]
+    private static int _draining;
+
+    /// <summary>
+    /// Marks the drain running on this thread (W16): a component whose <c>update</c> a delivered callback owes is
+    /// updated by that drain whatever session's pump it is, since the callback itself ran there.
+    /// </summary>
+    internal static IDisposable Draining()
+    {
+        _draining++;
+        return new DrainScope();
+    }
+
+    private sealed class DrainScope : IDisposable
+    {
+        private bool _done;
+
+        public void Dispose()
+        {
+            if (!_done)
+            {
+                _done = true;
+                _draining--;
+            }
         }
     }
 
@@ -142,7 +186,11 @@ internal static class JgsComponentContainers
     /// <c>drawnow</c>, a <c>pause</c> and the prompt's return do first. One that fails is reported
     /// in R2025b's words and the rest still run.
     /// </summary>
-    public static void RunUpdates(JGraphScriptGlobals? host = null)
+    /// <param name="host">The session asking; null for the one running on this thread.</param>
+    /// <param name="owedByCallbacks">Whether the updates callbacks of a drain owed run too, whatever session's they
+    /// are (W16): the shell's pump drains in its active session, and an app run in another session has its
+    /// callbacks delivered there all the same.</param>
+    public static void RunUpdates(JGraphScriptGlobals? host = null, bool owedByCallbacks = false)
     {
         // A session runs its own components' updates - the one whose host asks, or the one
         // running on this thread - and another session's wait for it (a test host runs several,
@@ -162,8 +210,19 @@ internal static class JgsComponentContainers
                 return;
             }
 
-            due = [.. Owed.Where(s => ReferenceEquals(s.Interpreter.Host, host) && !s.Interpreter.Cancellation.IsCancellationRequested)];
+            due = [.. Owed.Where(s => (ReferenceEquals(s.Interpreter.Host, host) || (owedByCallbacks && s.OwedByCallback))
+                && !s.Interpreter.Cancellation.IsCancellationRequested)];
+            if (ScriptUiTrace.Enabled)
+            {
+                ScriptUiTrace.Write($"updates: {Owed.Count} owed, {due.Length} due for host {host.GetHashCode():x} ("
+                    + string.Join("; ", Owed.Select(s => $"{s.Owner.Class.Name} host {s.Interpreter.Host?.GetHashCode() ?? 0:x} by callback {s.OwedByCallback} cancelled {s.Interpreter.Cancellation.IsCancellationRequested} deleted {s.Owner.Deleted}")) + ")");
+            }
+
             Owed.RemoveAll(s => s.Owner.Deleted || due.Contains(s));
+            foreach (JgsComponentContainerState state in due)
+            {
+                state.OwedByCallback = false;
+            }
         }
 
         foreach (JgsComponentContainerState state in due)
@@ -176,6 +235,11 @@ internal static class JgsComponentContainers
             }
 
             state.Updating = true;
+            if (ScriptUiTrace.Enabled)
+            {
+                ScriptUiTrace.Write($"update: {owner.Class.Name}");
+            }
+
             try
             {
                 owner.Class.Callable(update).Call([state.Self], 0, 0);

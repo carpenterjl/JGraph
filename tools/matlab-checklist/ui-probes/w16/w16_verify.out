@@ -1,0 +1,52 @@
+release 2025b
+== W16Counter
+loadApp: status success, warning ""
+metadata: AppType CustomUIComponent, Name , Min R2022a
+code: class W16Counter, callbacks 1, startup 0, editable lines 0
+  callback CountButtonPushed bound to CountButton.ButtonPushedFcn
+AppTypeData: {"HasCallbackEvents":{"Name":"Counted","Description":"Fires after each count"},"Methods":{"update":{"Name":"update","Code":["            comp.CountButton.Text = sprintf('%g', comp.Count);"]},"postSetup":[]},"ManagedUserProperties":[{"Name":"Count","Description":"The count so far","DataType":"double","DefaultValue":"0","Size":[],"Attributes":[],"ValidationFunctions":[],"InferredDataType":"double","InferredDefaultValue":0,"InferredInspectorRenderer":{"Editor":"","InPlaceEditor":"rendererseditors/editors/BaseOpenvarEditor","CellRenderer":"rendererseditors/editors/BaseOpenvarEditor","EditorConverter":""}},{"Name":"Step","Description":"Added per push","DataType":"double","DefaultValue":"1","Size":[],"Attributes":[],"ValidationFunctions":{"Name":"mustBePositive"},"InferredDataType":"double","InferredDefaultValue":1,"InferredInspectorRenderer":{"Editor":"","InPlaceEditor":"rendererseditors/editors/BaseOpenvarEditor","CellRenderer":"rendererseditors/editors/BaseOpenvarEditor","EditorConverter":""}}],"CallbackPropertyEvents":{},"AllowTestCaseAccess":false}
+ComponentData: struct with Type,PropertyValues,Children
+  matlab.ui.Figure CustomUIComponent
+    matlab.ui.container.GridLayout GridLayout
+      matlab.ui.control.Button CountButton
+== W16Blank
+loadApp: status success, warning ""
+metadata: AppType Standard, Name W16 Blank, Min R2018a
+code: class W16Blank, callbacks 1, startup 1, editable lines 0
+  callback ScaleButtonPushed bound to ScaleButton.ButtonPushedFcn
+ComponentData: struct with Type,PropertyValues,Children
+  matlab.ui.Figure W16BlankUIFigure
+    matlab.ui.control.UIAxes UIAxes
+    matlab.ui.control.Label EditFieldLabel
+    matlab.ui.control.NumericEditField EditField
+    matlab.ui.control.Label SliderLabel
+    matlab.ui.control.Slider Slider Step 0.01
+    matlab.ui.control.Button ScaleButton
+    matlab.ui.control.Label ResultLabel
+== W16Panels
+loadApp: status success, warning ""
+metadata: AppType Responsive, Name , Min R2019a
+code: class W16Panels, callbacks 2, startup 0, editable lines 0
+  callback ListBoxValueChanged bound to ListBox.ValueChangedFcn
+  callback updateAppLayout bound to UIFigure.SizeChangedFcn
+ComponentData: struct with Type,PropertyValues,Children
+  matlab.ui.Figure UIFigure
+    matlab.ui.container.GridLayout GridLayout
+      matlab.ui.container.Panel RightPanel
+        matlab.ui.control.Label ChoiceLabel
+      matlab.ui.container.Panel LeftPanel
+        matlab.ui.control.Label ListBoxLabel
+        matlab.ui.control.ListBox ListBox
+== W16Composite
+loadApp: status success, warning ""
+metadata: AppType Standard, Name , Min R2018a
+code: class W16Composite, callbacks 1, startup 0, editable lines 0
+  callback W16CounterCounted bound to W16Counter.CountedFcn
+ComponentData: struct with Type,PropertyValues,Children
+  matlab.ui.Figure W16CompositeUIFigure
+    W16Counter W16Counter
+    matlab.ui.control.Label TotalLabel
+== the registry
+registry: schema 3, R2025b; W16Counter as Counter in W16, version 1.0, defaultPosition [1 1 320 240], icon 178 chars, avatar 0 chars
+Model: validity true, categories W16
+Model: className W16Counter, componentName Counter, category W16, version 1.0, defaultPosition [1 1 320 240]

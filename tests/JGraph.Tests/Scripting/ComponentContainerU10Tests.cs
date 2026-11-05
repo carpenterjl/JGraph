@@ -50,6 +50,34 @@ public class ComponentContainerU10Tests : IAsyncLifetime
         end
         """;
 
+    /// <summary>A component whose own button writes its own property, as App Designer's component callbacks do (W16).</summary>
+    private const string Counter = """
+        classdef U10TCounter < matlab.ui.componentcontainer.ComponentContainer
+            properties
+                Value (1,1) double = 0
+            end
+            properties (Access = private)
+                Grid
+                Button
+            end
+            methods (Access = private)
+                function pushed(comp, ~)
+                    comp.Value = comp.Value + 1;
+                end
+            end
+            methods (Access = protected)
+                function setup(comp)
+                    comp.Grid = uigridlayout(comp, [1 1], 'Padding', 0);
+                    comp.Button = uibutton(comp.Grid, 'push', 'Text', 'Count');
+                    comp.Button.ButtonPushedFcn = @(s, e) pushed(comp, e);
+                end
+                function update(comp)
+                    comp.Button.Text = sprintf('%d', comp.Value);
+                end
+            end
+        end
+        """;
+
     private readonly RecordingScriptOutput _output = new();
     private readonly string _folder = Path.Combine(Path.GetTempPath(), "jgraph-u10-" + Guid.NewGuid().ToString("N"));
     private JgsReplSession _session = null!;
@@ -59,6 +87,7 @@ public class ComponentContainerU10Tests : IAsyncLifetime
         JG.Reset();
         Directory.CreateDirectory(_folder);
         File.WriteAllText(Path.Combine(_folder, "U10TGauge.m"), Gauge);
+        File.WriteAllText(Path.Combine(_folder, "U10TCounter.m"), Counter);
         _session = Assert.IsType<JgsReplSession>(((IScriptRepl)new MatlabScriptEngine()).CreateSession(
             new ScriptContext(_output, (_, _) => { }, _folder)));
         return Task.CompletedTask;
@@ -116,6 +145,37 @@ public class ComponentContainerU10Tests : IAsyncLifetime
         await Exec("order = []; f = uifigure('Visible', 'off'); a = U10TGauge(f, 'Value', 1); b = U10TGauge(f, 'Value', 2); drawnow;");
         await Exec("order = []; b.Value = 20; a.Value = 10; b.Value = 21; drawnow; drawnow;");
         Assert.Equal("[21 10]", await Show("mat2str(order)"));
+    }
+
+    /// <summary>
+    /// A button inside a component whose callback writes the component's own property (W16, the acceptance
+    /// set's Counter): the update it owes runs in the drain that ran the callback - R2025b runs it before the
+    /// window is drawn again - not at the next drawnow. Read from the model, before any statement can drain.
+    /// </summary>
+    [Fact]
+    public async Task AnUpdateOwedByAComponentsOwnCallbackRunsInTheSameDrain()
+    {
+        // A second session beside the first, as the shell has its languages' sessions from the start (made before
+        // the app, since a new engine starts the shared registries afresh).
+        await using JgsReplSession other = Assert.IsType<JgsReplSession>(((IScriptRepl)new MatlabScriptEngine()).CreateSession(
+            new ScriptContext(new RecordingScriptOutput(), (_, _) => { }, _folder)));
+        await Exec("order = []; f = uifigure('Visible', 'off'); c = U10TCounter(f); drawnow;");
+        UiComponentContainerModel area = TheArea();
+        UiGridLayoutModel grid = Assert.IsType<UiGridLayoutModel>(Assert.Single(area.Components));
+        UiCaptionModel button = Assert.IsAssignableFrom<UiCaptionModel>(Assert.Single(grid.Components));
+        Assert.Equal("0", button.Text.Joined);
+
+        ScriptGraphicsCallbacks.NotifyComponent(button, "pushed");
+        await _session.DrainGraphicsEventsAsync(null, CancellationToken.None);
+        Assert.Equal("1", button.Text.Joined);
+        Assert.Equal("1", await Show("mat2str(c.Value)"));
+
+        // The shell's pump drains in its active session, which may not be the one that made the app (W16, found in
+        // the window): the callback runs there all the same, and so does the update it owes.
+        ScriptGraphicsCallbacks.NotifyComponent(button, "pushed");
+        await other.DrainGraphicsEventsAsync(null, CancellationToken.None);
+        Assert.Equal("2", await Show("mat2str(c.Value)")); // the callback ran in the other session's drain
+        Assert.Equal("2", button.Text.Joined); // and so did the update it owed
     }
 
     [Fact]

@@ -110,6 +110,50 @@ public class MatlabClassdefTests : IDisposable
         return Printed(result);
     }
 
+    // --- Typed properties with no default (App Designer window plan W16) -------------------------------
+
+    /// <summary>
+    /// A property typed with a class of the user's and given no default starts as a 0-by-0 of that class,
+    /// as MATLAB's <c>ClassName.empty</c> makes one without calling the constructor (measured in R2025b by
+    /// the W16 probe <c>w16_accept</c> over a handle class whose constructor wants a parent): App Designer
+    /// declares a custom component's property <c>Counter Counter</c> so, and the app's constructor fills it in.
+    /// A property typed with a built-in class still starts as an empty of that class.
+    /// </summary>
+    [Fact]
+    public void APropertyTypedWithAUserClassStartsAsAnEmptyOfIt()
+    {
+        WriteClass("Needy", """
+            classdef Needy < handle
+                properties
+                    Parent
+                end
+                methods
+                    function obj = Needy(parent)
+                        obj.Parent = parent; % a constructor that cannot run without its argument
+                    end
+                end
+            end
+            """);
+        WriteClass("Holder", """
+            classdef Holder < handle
+                properties
+                    Thing Needy
+                    Num double
+                    Words string
+                    Circle Circle
+                end
+            end
+            """);
+        string printed = RunAndRead("""
+            h = Holder;
+            fprintf('%s %s|%s %s|%s %s|%s %s|%d\n', class(h.Thing), mat2str(size(h.Thing)), class(h.Num), mat2str(size(h.Num)), ...
+                class(h.Words), mat2str(size(h.Words)), class(h.Circle), mat2str(size(h.Circle)), isempty(h.Thing));
+            h.Thing = Needy(7);
+            fprintf('%s %d\n', class(h.Thing), h.Thing.Parent);
+            """);
+        Assert.Equal("Needy [0 0]|double [0 0]|string [0 0]|Circle [0 0]|1\nNeedy 7\n", printed.Replace("\r\n", "\n", StringComparison.Ordinal));
+    }
+
     // --- Parsing ------------------------------------------------------------------------------------
 
     [Fact]

@@ -226,7 +226,7 @@ public class ClassInheritanceU6Tests : IDisposable
 
     [Theory]
     [InlineData("classdef (Bogus) W\nend", "the class attribute 'Bogus' is not supported")]
-    [InlineData("classdef W\nproperties (GetObservable)\nP\nend\nend", "the 'properties' attribute 'GetObservable' is not supported")]
+    [InlineData("classdef W\nproperties (Bogus)\nP\nend\nend", "the 'properties' attribute 'Bogus' is not supported")] // GetObservable is taken since W15 (ADR 0305)
     [InlineData("classdef W\nmethods (TestMethod)\nend\nend", "the 'methods' attribute 'TestMethod' is not supported")]
     [InlineData("classdef W < handle\nevents (Bogus)\nE\nend\nend", "the 'events' attribute 'Bogus' is not supported")]
     [InlineData("classdef W\nproperties (Access = immutable)\nP\nend\nend", "'public', 'protected', 'private' or a list of classes")]

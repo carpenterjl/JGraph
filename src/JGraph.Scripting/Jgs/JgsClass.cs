@@ -651,11 +651,14 @@ internal sealed class JgsClass
     {
         JgsClass owner = property.Owner ?? this;
 
-        // With no default, a property typed as an enumeration starts as a 0-by-0 of its class (W7c, measured).
+        // With no default, a property typed with a class of the user's starts as a 0-by-0 of that class, as
+        // MATLAB's `ClassName.empty` makes one without the constructor: an enumeration (W7c, measured) and any
+        // other class alike (W16, measured: App Designer declares a custom component's property `Counter Counter`
+        // with no default, and the app's constructor fills it in).
         if (property.Spec.Default is null && property.Spec.ClassName is { } typed
-            && _interpreter.ClassForLoad(typed) is { IsEnumeration: true } enumeration)
+            && _interpreter.ClassForLoad(typed) is { } typedClass)
         {
-            return JgsObjectArray.ValueOf(enumeration, [], 0, 0);
+            return JgsObjectArray.ValueOf(typedClass, [], 0, 0);
         }
 
         JgsValue start = property.Spec.Default is { } expression

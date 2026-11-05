@@ -765,7 +765,8 @@ internal static partial class JgsBuiltins
         IReadOnlyList<InstalledToolbox> toolboxes = InstalledAddOns.Default.Toolboxes();
         if (toolboxes.Count == 0)
         {
-            return JgsValue.StructArray(new JgsStructArray([], ["Name", "Version", "Guid"]), 0, 0);
+            // With none installed, R2025b answers a 0-by-0 struct with no fields at all (W16, measured).
+            return JgsValue.StructArray(new JgsStructArray([]), 0, 0);
         }
 
         return JgsValue.StructArray([.. toolboxes.Select(t => ToolboxStruct(t).AsStruct)]);

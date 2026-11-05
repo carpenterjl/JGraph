@@ -1,0 +1,15 @@
+mltbx exists 1
+    Name    Version    Enabled    Identifier
+    ____    _______    _______    __________
+
+
+installedToolboxes: struct [0 0], fields 
+       Name: 'W16Blank_8b0952ac'
+    Version: '1.0'
+       Guid: 'd59d5b98-4eea-ba93-a3b6-4d1d7d7e06f3'
+
+install and uninstall ran
+    Name    Version    Enabled    Identifier
+    ____    _______    _______    __________
+
+

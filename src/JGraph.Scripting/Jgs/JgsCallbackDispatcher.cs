@@ -210,12 +210,23 @@ internal sealed class JgsCallbackDispatcher
         JgsComponentContainers.RunUpdates(_globals);
         JgsUiHtml.Flush(_globals);
 
+        // What the callbacks below owe their components is run by this drain, whichever session's it is (W16).
+        using IDisposable draining = JgsComponentContainers.Draining();
         int budget = ScriptEventQueue.Count;
         for (int i = 0; i < budget; i++)
         {
             StatementToken.ThrowIfCancellationRequested();
             if (yieldRequested?.Invoke() == true || !ScriptEventQueue.TryDequeue(out GraphicsEvent next))
             {
+                if (i > 0)
+                {
+                    // What the callbacks this drain ran owe their custom components (W16): a button inside a
+                    // component whose callback writes the component's own property leaves `update` owed, and
+                    // R2025b runs it before the window is drawn again, not at the next event - in whichever
+                    // session's pump the callback ran (the shell drains in its active session, the app's may be another).
+                    JgsComponentContainers.RunUpdates(_globals, owedByCallbacks: true);
+                }
+
                 return;
             }
 
@@ -302,6 +313,11 @@ internal sealed class JgsCallbackDispatcher
             }
 
             Deliver(next);
+        }
+
+        if (budget > 0)
+        {
+            JgsComponentContainers.RunUpdates(_globals, owedByCallbacks: true); // the budget's last callback's writes (W16), as above
         }
 
         // A window's close that queued its figure's deletion left the figure's handles for after
