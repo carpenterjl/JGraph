@@ -250,6 +250,7 @@ internal static class JgsBuiltinOutputCounts
         ["cmap2gray"] = (1, true),
         ["cmpermute"] = (2, true),
         ["cmunique"] = (2, true),
+        ["codeIssues"] = (1, true),
         ["cohere"] = (2, true),
         ["col2im"] = (1, true),
         ["colfilt"] = (1, true),

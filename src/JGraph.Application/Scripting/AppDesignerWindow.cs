@@ -407,6 +407,7 @@ internal sealed partial class AppDesignerWindow : Window
             }
         };
         WireDebug(app);
+        WireAnalysis(app);
         document.Changed += (_, _) =>
         {
             ShowHeader(app);

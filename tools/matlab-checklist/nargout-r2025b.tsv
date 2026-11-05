@@ -256,6 +256,7 @@ cheb2ord	2	2
 chebwin	1	2
 cheby1	-1	2
 cheby2	-1	2
+checkcode	-1	2
 checkerboard	1	2
 chi2cdf	ERR:MATLAB:narginout:notValidMfile	0
 chi2gof	ERR:MATLAB:narginout:notValidMfile	0
@@ -288,6 +289,7 @@ cmap2gray	1	2
 cmdscale	ERR:MATLAB:narginout:notValidMfile	0
 cmpermute	2	2
 cmunique	2	2
+codeIssues	1	2
 cohere	2	2
 col2im	1	2
 colfilt	1	2
@@ -314,6 +316,7 @@ compiler.build.dotNETAssembly	-1	0
 compiler.build.DotNETAssemblyOptions	1	8
 compiler.build.pythonPackage	-1	0
 compiler.build.PythonPackageOptions	1	8
+mlint	-1	2
 mps.json.encode	1	0
 mps.json.decode	ERR:MATLAB:narginout:notValidMfile	0
 mps.json.encoderequest	1	0

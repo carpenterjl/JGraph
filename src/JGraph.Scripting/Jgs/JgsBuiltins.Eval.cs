@@ -93,6 +93,8 @@ internal static partial class JgsBuiltins
         "visdiff", // App Designer window plan W14: the host's Comparison Tool, or a comparison object
         // App Designer window plan W11: the debugger's words over the session's breakpoints.
         "dbstop", "dbclear", "dbstatus", "dbcont", "dbstep", "dbquit", "dbstack", "dbup", "dbdown", "dbtype",
+        // App Designer window plan W10: the Code Analyzer from the prompt.
+        "checkcode", "mlint", "codeIssues",
 
         // Stage D2: the network clients and servers, their finds, the echo servers and resolvehost.
         "tcpclient", "tcpserver", "udpport", "tcpclientfind", "tcpserverfind", "udpportfind", "echotcpip", "echoudp", "resolvehost",
@@ -167,6 +169,7 @@ internal static partial class JgsBuiltins
         RegisterAppDesignerBuiltin(env, interpreter, host); // designer plan DS2
         RegisterComparisonBuiltins(env, interpreter, host); // App Designer window plan W14
         RegisterDebugBuiltins(env, interpreter, host); // App Designer window plan W11
+        RegisterCodeAnalyzerBuiltins(env, interpreter, host); // App Designer window plan W10
         RegisterFigFileBuiltins(env, interpreter, host); // U11
         RegisterTableVerbs(env, interpreter); // open item 122
         RegisterTableLeftovers(env, interpreter, host); // open item 128: over the missing-value verbs and summary

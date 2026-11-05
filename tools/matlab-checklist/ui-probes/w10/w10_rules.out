@@ -1,0 +1,180 @@
+== messages: b1_defnu
+MSG|b1_defnu|EVLCS|2|[1 4]|0|'eval' is inefficient and makes code less clear. Call the statement directly.
+== messages: b2_defnu
+MSG|b2_defnu|FVAL|4|[1 5]|1|Calling functions using 'feval' is usually not necessary. Call the function directly instead.
+== messages: b3_clearload
+MSG|b3_clearload|CLEAR0ARGS|2|[1 5]|0|Avoid using 'clear' to clear more than necessary, this decreases code performance and is usually unnecessary.
+MSG|b3_clearload|CLALL|3|[7 9]|0|Using 'clear' with the 'all' option usually decreases code performance and is often unnecessary.
+MSG|b3_clearload|CLFUNC|7|[7 15]|0|Using 'clear' with the 'functions' option usually decreases code performance and is often unnecessary.
+MSG|b3_clearload|LOAD|9|[1 4]|0|To avoid conflicts with functions on the path, specify variables to load from file.
+MSG|b3_clearload|LOAD|10|[1 4]|0|To avoid conflicts with functions on the path, specify variables to load from file.
+MSG|b3_clearload|NASGU|11|[12 12]|0|Value assigned to variable might be unused.
+MSG|b3_clearload|NASGU|12|[15 17]|0|Value assigned to variable might be unused.
+== messages: b4_comma
+MSG|b4_comma|NOCOMMA|6|[9 9]|1|Extra comma is unnecessary.
+MSG|b4_comma|NOCOMMA|7|[26 26]|1|Extra comma is unnecessary.
+MSG|b4_comma|BDLGI|8|[4 4]|0|Variable might be set by a nonlogical operator.
+MSG|b4_comma|BDSCI|8|[4 4]|0|Variable might be set by a nonscalar operator.
+MSG|b4_comma|NOSEMI|8|[19 19]|1|Extra semicolon is unnecessary.
+MSG|b4_comma|NOSEMI|9|[7 7]|1|Extra semicolon is unnecessary.
+== messages: b5_stci
+MSG|b5_stci|STCI|2|[6 11]|1|Use STRCMPI(str1,str2) instead of using UPPER/LOWER in a call to STRCMP.
+MSG|b5_stci|STCI|3|[6 11]|1|Use STRCMPI(str1,str2) instead of using UPPER/LOWER in a call to STRCMP.
+MSG|b5_stci|STCI|4|[6 11]|1|Use STRCMPI(str1,str2) instead of using UPPER/LOWER in a call to STRCMP.
+MSG|b5_stci|STCUL|5|[6 11]|0|The comparison will likely fail due to case mismatch.
+MSG|b5_stci|STLOW|6|[6 12]|1|In this comparison the call to UPPER/LOWER is unnecessary.
+MSG|b5_stci|STLOW|7|[6 12]|1|In this comparison the call to UPPER/LOWER is unnecessary.
+MSG|b5_stci|STCI|8|[6 11]|1|Use STRCMPI(str1,str2) instead of using UPPER/LOWER in a call to STRCMP.
+MSG|b5_stci|STNCI|9|[6 12]|1|Use STRNCMPI(str1,str2) instead of using UPPER/LOWER in a call to STRNCMP.
+== messages: b6_iscl
+MSG|b6_iscl|ISMT|6|[6 11]|1|Using ISEMPTY is usually faster than comparing LENGTH to 0.
+MSG|b6_iscl|ISCL|7|[6 18]|1|To improve performance, use 'isscalar' instead of length comparison.
+MSG|b6_iscl|ISMAT|9|[6 10]|1|When checking if a variable is a matrix consider using ISMATRIX.
+MSG|b6_iscl|ISMAT|10|[6 10]|1|When checking if a variable is a matrix consider using ISMATRIX.
+== messages: b7_elarlog
+MSG|b7_elarlog|ELARLOG|2|[13 17]|0|The + operator in the expression length(A + B) is unexpected. Should this be length(A) + B?
+MSG|b7_elarlog|ELARLOG|3|[12 16]|0|The - operator in the expression ndims(A - B) is unexpected. Should this be ndims(A) - B?
+MSG|b7_elarlog|ELARLOG|6|[12 17]|0|The .^ operator in the expression numel(A .^ B) is unexpected. Should this be numel(A) .^ B?
+MSG|b7_elarlog|ELARLOG|7|[11 16]|0|The == operator in the expression size(A == B) is unexpected. Should this be size(A) == B?
+== messages: b8_eval
+MSG|b8_eval|EVLCS|2|[1 4]|0|'eval' is inefficient and makes code less clear. Call the statement directly.
+MSG|b8_eval|EVLEQ|3|[1 4]|0|'eval' is inefficient and makes code less clear. Assign to the variable directly.
+MSG|b8_eval|EVLCS|5|[1 4]|0|'eval' is inefficient and makes code less clear. Call the statement directly.
+MSG|b8_eval|EV2IN|6|[1 4]|0|Using 'eval' with two arguments is not recommended. Use try/catch statements instead to make code more clear and efficient.
+MSG|b8_eval|EVLCS|9|[5 8]|0|'eval' is inefficient and makes code less clear. Call the statement directly.
+MSG|b8_eval|FVAL|11|[1 5]|0|Calling functions using 'feval' is usually not necessary. Call the function directly instead.
+== messages: b9_nasgu
+MSG|b9_nasgu|ASGLU|10|[2 2]|1|Value assigned to variable might be unused. Consider replacing the variable with ~ instead.
+MSG|b9_nasgu|STRNU|14|[1 1]|0|This variable, apparently a structure, is changed but the value might be unused.
+MSG|b9_nasgu|STRNU|15|[1 1]|0|This variable, apparently a structure, is changed but the value might be unused.
+MSG|b9_nasgu|NASGU|16|[1 2]|0|Value assigned to variable might be unused.
+MSG|b9_nasgu|NASGU|21|[1 3]|0|Value assigned to variable might be unused.
+MSG|b9_nasgu|NASGU|23|[9 10]|0|Value assigned to variable might be unused.
+MSG|b9_nasgu|GVMIS|27|[1 6]|0|Global variables are inefficient and make errors difficult to diagnose. Use a function with input variables instead.
+MSG|b9_nasgu|NUSED|29|[12 13]|1|Global or persistent variable might be unused or unset in this function or script.
+MSG|b9_nasgu|PUSE|30|[12 13]|1|Persistent variable might be unused.
+MSG|b9_nasgu|DEFNU|39|[10 16]|0|Function might be unused.
+MSG|b9_nasgu|DEFNU|42|[10 18]|0|Function might be unused.
+MSG|b9_nasgu|INUSD|42|[20 20]|1|Input argument might be unused. Consider replacing the argument with ~ instead.
+MSG|b9_nasgu|INUSD|42|[23 23]|1|Input argument might be unused. Consider replacing the argument with ~ instead.
+MSG|b9_nasgu|DEFNU|46|[10 17]|0|Function might be unused.
+MSG|b9_nasgu|DEFNU|50|[14 21]|0|Function might be unused.
+MSG|b9_nasgu|DEFNU|58|[10 17]|0|Function might be unused.
+MSG|b9_nasgu|UNRCH|61|[5 11]|0|This statement (and possibly following ones) cannot be reached.
+MSG|b9_nasgu|UNRCH|65|[5 11]|0|This statement (and possibly following ones) cannot be reached.
+MSG|b9_nasgu|UNRCH|70|[1 7]|0|This statement (and possibly following ones) cannot be reached.
+MSG|b9_nasgu|DEFNU|73|[14 21]|0|Function might be unused.
+MSG|b9_nasgu|AGROW|76|[5 5]|0|Variable appears to change size on every loop iteration. Consider preallocating for speed.
+MSG|b9_nasgu|AGROW|77|[5 5]|0|Variable appears to change size on every loop iteration. Consider preallocating for speed.
+MSG|b9_nasgu|AGROW|78|[5 5]|0|Variable appears to change size on every loop iteration. Consider preallocating for speed.
+MSG|b9_nasgu|AGROW|79|[5 5]|0|Variable appears to change size on every loop iteration. Consider preallocating for speed.
+MSG|b9_nasgu|AGROW|80|[5 5]|0|Variable appears to change size on every loop iteration. Consider preallocating for speed.
+MSG|b9_nasgu|AGROW|81|[5 5]|0|Variable appears to change size on every loop iteration. Consider preallocating for speed.
+MSG|b9_nasgu|AGROW|86|[5 5]|0|Variable appears to change size on every loop iteration. Consider preallocating for speed.
+MSG|b9_nasgu|STOUT|91|[14 14]|0|Function return value might be unset.
+MSG|b9_nasgu|DEFNU|91|[19 26]|0|Function might be unused.
+MSG|b9_nasgu|STOUT|97|[10 18]|0|Function return value might be unset.
+MSG|b9_nasgu|DEFNU|97|[22 30]|0|Function might be unused.
+MSG|b9_nasgu|DEFNU|100|[10 19]|0|Function might be unused.
+MSG|b9_nasgu|VUNUS|102|[2 2]|0|'{' produces a value that might be unused.
+MSG|b9_nasgu|VUNUS|106|[2 2]|0|' produces a value that might be unused.
+MSG|b9_nasgu|VUNUS|107|[1 1]|0|'-' produces a value that might be unused.
+MSG|b9_nasgu|EQEFF|108|[3 4]|1|To assign values to variables, use =. The == operator compares equality of values.
+MSG|b9_nasgu|VUNUS|109|[6 6]|0|'+' produces a value that might be unused.
+MSG|b9_nasgu|VUNUS|110|[2 2]|0|':' produces a value that might be unused.
+MSG|b9_nasgu|VUNUS|111|[1 1]|0|'[' produces a value that might be unused.
+MSG|b9_nasgu|VUNUS|112|[1 1]|0|'{' produces a value that might be unused.
+MSG|b9_nasgu|NOPRT|114|[1 1]|1|Add a semicolon after the statement to hide the output (in a function).
+MSG|b9_nasgu|NOPRT|115|[1 1]|1|Add a semicolon after the statement to hide the output (in a function).
+MSG|b9_nasgu|VUNUS|116|[1 1]|0|'x' produces a value that might be unused.
+MSG|b9_nasgu|DEFNU|119|[10 14]|0|Function might be unused.
+MSG|b9_nasgu|MSNE|119|[19 27]|1|No Code Analyzer check is found for this check ID.
+MSG|b9_nasgu|NASGU|120|[1 1]|0|Value assigned to variable might be unused.
+MSG|b9_nasgu|MSNE|121|[19 21]|1|No Code Analyzer check is found for this check ID.
+MSG|b9_nasgu|DEFNU|126|[10 17]|0|Function might be unused.
+MSG|b9_nasgu|LAXES|131|[5 8]|0|Calling AXES(h) in a loop can be slow. Consider moving the call to AXES outside the loop.
+MSG|b9_nasgu|LAXES|133|[9 12]|0|Calling AXES(h) in a loop can be slow. Consider moving the call to AXES outside the loop.
+MSG|b9_nasgu|DEFNU|139|[10 16]|0|Function might be unused.
+MSG|b9_nasgu|DSPSP|140|[1 22]|1|'disp(sprintf(...))' can usually be replaced by 'fprintf(...\n)'.
+MSG|b9_nasgu|DSPSP|141|[1 24]|1|'disp(sprintf(...))' can usually be replaced by 'fprintf(...\n)'.
+MSG|b9_nasgu|CHARTEN|142|[5 12]|1|For readability, consider using 'newline' instead of 'char(10)'.
+MSG|b9_nasgu|CHARTEN|143|[6 13]|1|For readability, consider using 'newline' instead of 'char(10)'.
+MSG|b9_nasgu|EXIST|144|[5 9]|0|EXIST with two input arguments is generally faster and clearer than with one input argument.
+MSG|b9_nasgu|ST2NM|147|[5 11]|0|If you are operating on scalar values, consider using 'str2double' for faster performance.
+MSG|b9_nasgu|ISCL|148|[5 18]|1|To improve performance, use 'isscalar' instead of length comparison.
+MSG|b9_nasgu|RPMT1|149|[5 10]|1|For readability, consider using 'ones(x,y)' instead of 'repmat(1,x,y)'.
+MSG|b9_nasgu|RPMT1|150|[6 11]|1|For readability, consider using 'ones(x,y)' instead of 'repmat(1,x,y)'.
+MSG|b9_nasgu|DQUAD|153|[5 8]|0|'quad' is not recommended. With appropriate code changes, use 'integral' instead.
+MSG|b9_nasgu|LOGL|154|[5 11]|1|Use 'true' or 'false' instead of 'logical(1)' or 'logical(0)'.
+MSG|b9_nasgu|ISMAT|157|[5 9]|1|When checking if a variable is a matrix consider using ISMATRIX.
+MSG|b9_nasgu|ISMAT|158|[11 15]|1|When checking if a variable is a matrix consider using ISMATRIX.
+MSG|b9_nasgu|STRQUOT|159|[6 16]|1|string('...') is not recommended. Use "..." instead.
+MSG|b9_nasgu|STRQUOT|161|[7 17]|1|string('...') is not recommended. Use "..." instead.
+MSG|b9_nasgu|DATST|162|[6 12]|0|'datestr' is not recommended. With appropriate code changes, use 'datetime' instead.
+MSG|b9_nasgu|HIST|165|[7 10]|0|'hist' is not recommended. With appropriate code changes, use 'histogram' instead.
+MSG|b9_nasgu|SFLD|167|[6 13]|0|Use dynamic fieldnames with structures instead of SETFIELD.
+== messages: c1_cyc
+MSG|c1_cyc|DEFNU|29|[10 16]|0|Function might be unused.
+== messages: c3_script
+MSG|c3_script|NOPTS|1|[3 3]|1|Add a semicolon after the statement to hide the output (in a script).
+MSG|c3_script|NBRAK2|2|[5 5]|1|Use of brackets [] is unnecessary.
+== the outputs
+two outputs: m struct [1 1], f cell [1 1] = <work>\c1_cyc.m
+fields: message,fix,line,column
+message char, line double 1, column double [3 3], fix double 1
+fields -id: id,message,fix,line,column
+clean struct: struct size [0 0] fields message,line,column,fix
+clean struct -id: struct size [0 0] fields message,line,column,fix,id
+cell struct: cell size [2 1]; {1} struct [1 1]; {2} struct [0 0]
+cell two outputs: f cell [2 1] = <work>\c1_cyc.m;<work>\c2_clean.m
+two names two outputs: m cell [2 1] f cell [2 1]
+one-cell struct: cell size [1 1]
+column cell struct: cell size [2 1]
+string array struct: cell size [2 1]
+MSG|c1_cyc -cyc -id|CABE|1|[14 19]|0|The McCabe cyclomatic complexity of 'c1_cyc' is 10.
+MSG|c1_cyc -cyc -id|CABE|29|[10 16]|0|The McCabe cyclomatic complexity of 'helper2' is 2.
+MSG|c1_cyc -cyc -id|DEFNU|29|[10 16]|0|Function might be unused.
+MSG|c1_cyc -modcyc -id|MCABE|1|[14 19]|0|The modified cyclomatic complexity of 'c1_cyc' is 9.
+MSG|c1_cyc -modcyc -id|DEFNU|29|[10 16]|0|Function might be unused.
+MSG|c1_cyc -modcyc -id|MCABE|29|[10 16]|0|The modified cyclomatic complexity of 'helper2' is 2.
+MSG|c1_cyc -cyc -modcyc -id|CABE|1|[14 19]|0|The McCabe cyclomatic complexity of 'c1_cyc' is 10.
+MSG|c1_cyc -cyc -modcyc -id|MCABE|1|[14 19]|0|The modified cyclomatic complexity of 'c1_cyc' is 9.
+MSG|c1_cyc -cyc -modcyc -id|CABE|29|[10 16]|0|The McCabe cyclomatic complexity of 'helper2' is 2.
+MSG|c1_cyc -cyc -modcyc -id|DEFNU|29|[10 16]|0|Function might be unused.
+MSG|c1_cyc -cyc -modcyc -id|MCABE|29|[10 16]|0|The modified cyclomatic complexity of 'helper2' is 2.
+MSG|c3_script -cyc -id|SCABE|1|[1 1]|0|The McCabe cyclomatic complexity is 1.
+MSG|c3_script -cyc -id|NOPTS|1|[3 3]|1|Add a semicolon after the statement to hide the output (in a script).
+MSG|c3_script -cyc -id|NBRAK2|2|[5 5]|1|Use of brackets [] is unnecessary.
+multi-file string: ========== <work>\c1_cyc.m ==========\nL 29 (C 10-16): Function might be unused.\n========== <work>\c2_clean.m ==========\n
+multi-file string -id: ========== <work>\c2_clean.m ==========\n========== <work>\c1_cyc.m ==========\nL 29 (C 10-16): DEFNU: Function might be unused.\n
+one-file string: L 29 (C 10-16): Function might be unused.\n
+clean string: [] [0 0]
+absolute string: L 29 (C 10-16): Function might be unused.\n
+absolute display: <a href="matlab: opentoline('<work>/c1_cyc.m',29)">L 29</a> (C 10-16): Function might be unused.\n\n
+absolute -fullpath display: <a href="matlab: opentoline('<work>/c1_cyc.m',29)">L 29</a> (C 10-16): Function might be unused.\n\n
+name -fullpath display: <a href="matlab: opentoline('c1_cyc',0)">L 0</a> (C 0): Unable to run code analysis. 'c1_cyc' has an invalid file extension.\n\n
+name.m -fullpath display: <a href="matlab: opentoline('c1_cyc.m',29)">L 29</a> (C 10-16): Function might be unused.\n\n
+-text -id display: L 2 (C 1): NASGU: Value assigned to variable might be unused.\n\n
+MSG|-text struct|NASGU|2|[1 1]|0|Value assigned to variable might be unused.
+-text files: function t()
+x = 1;
+end
+;t.m
+-text .txt display: L 0 (C 0): Unable to run code analysis. 'anything.txt' has an invalid file extension.\n\n
+-notok display: <a href="matlab: opentoline('<work>/c1_cyc.m',29)">L 29</a> (C 10-16): DEFNU: Function might be unused.\n\n
+== refusals
+REFUSED: x = checkcode('c1_cyc', '-disp') -> MATLAB:TooManyOutputs: Too many output arguments.
+REFUSED: [a,b,c] = checkcode('c1_cyc') -> MATLAB:TooManyOutputs: Too many output arguments.
+REFUSED: checkcode('c1_cyc', '-text') -> MATLAB:mlint:InvalidInput: -TEXT requires one argument with text, and a second one with a .m filename
+REFUSED: checkcode('-text', 5, 't.m') -> MATLAB:mlint:CheckCodeInputMustBeOfCharType: Arguments must be character vectors or string scalars. File name arguments can also be string arrays or cell arrays of character vectors.
+REFUSED: checkcode('c1_cyc', 5) -> MATLAB:mlint:CheckCodeInputMustBeOfCharType: Arguments must be character vectors or string scalars. File name arguments can also be string arrays or cell arrays of character vectors.
+REFUSED: checkcode('c1_cyc', '') -> MATLAB:mlint:EmptyInput: Empty arguments not supported.
+REFUSED: checkcode('c1_cyc', '-id', '-string', '-struct') -> MATLAB:err_static_workspace_violation: Attempt to add "q" to a static workspace.
+ACCEPTED: checkcode('c1_cyc', '-string', '-disp') -> <a href="matlab: opentoline('<work>/c1_cyc.m',29)">L 29</a> (C 10-16): Function might be unused.
+
+<EOS>
+ACCEPTED: codeIssues('c1_cyc') -> <work>\c1_cyc.m<EOS>
+ACCEPTED: codeIssues(work, IncludeSubfolders=false) -> 12 files; with subfolders 13 files<EOS>
+REFUSED: codeIssues('c1_cyc.m', 'c2_clean.m') -> MATLAB:TooManyInputs: Invalid argument at position 2. Function requires 0 to 1 positional input(s).
+REFUSED: codeIssues(5) -> MATLAB:validators:mustBeNonzeroLengthText: Invalid argument at position 1. Value must be a character vector, string array, or cell array of character vectors.
+done

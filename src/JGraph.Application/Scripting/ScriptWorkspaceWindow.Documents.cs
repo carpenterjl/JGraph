@@ -245,6 +245,7 @@ public partial class ScriptWorkspaceWindow
             editor.FoldSource = static lines => JGraph.Scripting.Editing.CodeFoldRules.Candidates(lines);
         }
         editor.CompletionWorkspaceSymbols = () => HarvestWorkspaceSymbols(entry);
+        WireAnalysis(entry); // the Code Analyzer over a MATLAB file (W10)
 
         // A MATLAB buffer completes .NET names and calllib's library and function names from the
         // console's session once it has one (ADR 0183), and from the .NET framework before that.

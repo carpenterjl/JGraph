@@ -1,0 +1,1822 @@
+{
+ "source": "w10_analyzer.m and w10_rules.m run headless in R2025b (checkcode -id -struct per file)",
+ "cases": [
+  {
+   "name": "a1_unused.m",
+   "text": "function [out1, out2, out3] = a1_unused(a, b, c, d)\n% the unused family\nx = 1;\n[p, q] = size(a);\nout1 = q + c;\ns.f = 2;\nt = struct();\nt.g = 3;\nout2 = helper1(d);\ndisp(out2)\ny = 1; %#ok<NASGU>\nz = 1; %#ok\nw = 1; %#ok<INUSD>\nout3 = helper2(1);\nu1 = 1;\nu1 = 2;\ndisp(u1)\nv1(2) = 3;\nhelper6(3);\nhelper7(gca);\nhelper4();\nhelper5(1);\nend\n\nfunction r = helper1(v)\nglobal G1\nglobal G2\npersistent P1\nr = v + G2 + P1;\nend\n\nfunction r = helper2(v, u)\ndisp(v)\nend\n\nfunction helper3(a, b)\ndisp(b)\nend\n\nfunction r = helper4()\nif rand > 0.5\n    m = 1;\nend\nr = m;\nr = r + k;\nk = 2;\nend\n\nfunction r = helper5(v)\nr = v;\nreturn\ndisp(v)\nend\n\nfunction r = helper6(n)\nr = [];\nfor k = 1:n\n    r(end+1) = k;\n    r = [r k];\n    if k > 2\n        break\n        disp(k)\n    end\nend\nend\n\nfunction helper7(h)\nfor k = 1:3\n    axes(h);\n    plot(k)\nend\nend\n",
+   "messages": [
+    {
+     "id": "INUSD",
+     "line": 1,
+     "start": 44,
+     "end": 44,
+     "fix": true,
+     "text": "Input argument might be unused. Consider replacing the argument with ~ instead."
+    },
+    {
+     "id": "NASGU",
+     "line": 3,
+     "start": 1,
+     "end": 1,
+     "fix": false,
+     "text": "Value assigned to variable might be unused."
+    },
+    {
+     "id": "ASGLU",
+     "line": 4,
+     "start": 2,
+     "end": 2,
+     "fix": true,
+     "text": "Value assigned to variable might be unused. Consider replacing the variable with ~ instead."
+    },
+    {
+     "id": "STRNU",
+     "line": 6,
+     "start": 1,
+     "end": 1,
+     "fix": false,
+     "text": "This variable, apparently a structure, is changed but the value might be unused."
+    },
+    {
+     "id": "STRNU",
+     "line": 8,
+     "start": 1,
+     "end": 1,
+     "fix": false,
+     "text": "This variable, apparently a structure, is changed but the value might be unused."
+    },
+    {
+     "id": "NASGU",
+     "line": 13,
+     "start": 1,
+     "end": 1,
+     "fix": false,
+     "text": "Value assigned to variable might be unused."
+    },
+    {
+     "id": "MSNU",
+     "line": 13,
+     "start": 8,
+     "end": 18,
+     "fix": true,
+     "text": "A Code Analyzer message was once suppressed here, but the message is no longer generated."
+    },
+    {
+     "id": "NASGU",
+     "line": 15,
+     "start": 1,
+     "end": 2,
+     "fix": false,
+     "text": "Value assigned to variable might be unused."
+    },
+    {
+     "id": "NASGU",
+     "line": 18,
+     "start": 1,
+     "end": 2,
+     "fix": false,
+     "text": "Value assigned to variable might be unused."
+    },
+    {
+     "id": "GVMIS",
+     "line": 26,
+     "start": 1,
+     "end": 6,
+     "fix": false,
+     "text": "Global variables are inefficient and make errors difficult to diagnose. Use a function with input variables instead."
+    },
+    {
+     "id": "NUSED",
+     "line": 26,
+     "start": 8,
+     "end": 9,
+     "fix": true,
+     "text": "Global or persistent variable might be unused or unset in this function or script."
+    },
+    {
+     "id": "GVMIS",
+     "line": 27,
+     "start": 1,
+     "end": 6,
+     "fix": false,
+     "text": "Global variables are inefficient and make errors difficult to diagnose. Use a function with input variables instead."
+    },
+    {
+     "id": "PSET",
+     "line": 28,
+     "start": 12,
+     "end": 13,
+     "fix": false,
+     "text": "Persistent variable is used, but might be unset."
+    },
+    {
+     "id": "STOUT",
+     "line": 32,
+     "start": 10,
+     "end": 10,
+     "fix": false,
+     "text": "Function return value might be unset."
+    },
+    {
+     "id": "INUSD",
+     "line": 32,
+     "start": 25,
+     "end": 25,
+     "fix": true,
+     "text": "Input argument might be unused. Consider replacing the argument with ~ instead."
+    },
+    {
+     "id": "DEFNU",
+     "line": 36,
+     "start": 10,
+     "end": 16,
+     "fix": false,
+     "text": "Function might be unused."
+    },
+    {
+     "id": "INUSD",
+     "line": 36,
+     "start": 18,
+     "end": 18,
+     "fix": true,
+     "text": "Input argument might be unused. Consider replacing the argument with ~ instead."
+    },
+    {
+     "id": "NODEF",
+     "line": 45,
+     "start": 9,
+     "end": 9,
+     "fix": false,
+     "text": "Variable might be used before it is defined."
+    },
+    {
+     "id": "NASGU",
+     "line": 46,
+     "start": 1,
+     "end": 1,
+     "fix": false,
+     "text": "Value assigned to variable might be unused."
+    },
+    {
+     "id": "UNRCH",
+     "line": 52,
+     "start": 1,
+     "end": 7,
+     "fix": false,
+     "text": "This statement (and possibly following ones) cannot be reached."
+    },
+    {
+     "id": "AGROW",
+     "line": 58,
+     "start": 5,
+     "end": 5,
+     "fix": false,
+     "text": "Variable appears to change size on every loop iteration. Consider preallocating for speed."
+    },
+    {
+     "id": "AGROW",
+     "line": 59,
+     "start": 5,
+     "end": 5,
+     "fix": false,
+     "text": "Variable appears to change size on every loop iteration. Consider preallocating for speed."
+    },
+    {
+     "id": "UNRCH",
+     "line": 62,
+     "start": 9,
+     "end": 15,
+     "fix": false,
+     "text": "This statement (and possibly following ones) cannot be reached."
+    },
+    {
+     "id": "LAXES",
+     "line": 69,
+     "start": 5,
+     "end": 8,
+     "fix": false,
+     "text": "Calling AXES(h) in a loop can be slow. Consider moving the call to AXES outside the loop."
+    }
+   ]
+  },
+  {
+   "name": "a2_patterns.m",
+   "text": "% a2_patterns: a script of patterns\nx = 1; a = 2; b = 3; s = 'abc'; st.f = 1; v = [1 2 3];\nc1 = char(10);\nc2 = ['a' char(10) 'b'];\nc3 = char(13);\nf1 = feval('sin', 1);\nf2 = feval(@sin, 1);\nfn = 'sin'; f3 = feval(fn, 1);\ne1 = exist('x');\ne2 = exist('x', 'var');\ni1 = length(v) == 1;\ni2 = 1 == length(v);\ni3 = length(v) ~= 1;\ni4 = numel(v) == 1;\nd1 = datestr(now);\nd2 = datenum(2020, 1, 1);\nd3 = date;\nh1 = hist(v);\nhist(v)\nq1 = quad(@sin, 0, 1);\nq2 = quadl(@sin, 0, 1);\nq3 = quadv(@sin, 0, 1);\nq4 = dblquad(@(x, y) x + y, 0, 1, 0, 1);\nq5 = triplequad(@(x, y, z) x + y + z, 0, 1, 0, 1, 0, 1);\ncompass(1, 2)\nin1 = inline('x+1');\nfc = fcnchk('x+1');\nn1 = str2num('5');\nn2 = str2num(s);\ns1 = string('abc');\ns2 = string(s);\ng1 = getfield(st, 'f');\nst = setfield(st, 'f', 2);\nm1 = ndims(v) == 2;\nm2 = length(size(v)) == 2;\nl1 = logical(1);\nl2 = logical(0);\nr1 = repmat(1, 2, 3);\nr2 = repmat(true, 2, 3);\nr3 = repmat(0, 2, 3);\nr4 = repmat(false, 2, 3);\nt1 = strcmp(upper(s), upper('ABC'));\nt2 = strcmp(lower(s), 'abc');\nt3 = strcmpi(upper(s), 'ABC');\nk1 = [1];\nk2 = [x];\n[k3] = size(v);\nk4 = [x, a];\nk5 = [x,];\nk6 = 1,;\nk7 = 2,\nfor (ii = 1:3)\n    disp(ii)\nend\nclear\nclear all\nclear variables\nclear x\nload\nload a.mat\nload('a.mat')\ndd = load('a.mat');\neval('x = 1;')\neval(['x = ' '1;'])\neval(['load ' s])\neval(s)\nz1 = size(a + b);\nz2 = size(a .* b);\nz3 = numel(a + b);\nz4 = size(a, 1) + b;\nans = 1;\ny1 = ans;\nglobal GS\nglobal GS\n[1 2]\n{1}\nv(2);\nx;\nx + 1;\nsubsasgn(st, substruct('.', 'f'), 3);\nls1 = sum(v > 1);\ndisp(sprintf('%d', x))\nnw = now;\nif x == 1, disp(1), end\nif (x == 1) disp(2), end\nwhile (x < 0) x = x + 1; end\nfprintf('%s\\n', num2str(x));\ncc = cellfun(@(c) c, {1}, 'UniformOutput', 0);\nxx = x';\nyy = isempty(v) == 0;\nss = strrep(s, 'a', 'b');\nswitch x\n    case 1\n        disp(1)\n    case 1\n        disp(2)\nend\n",
+   "messages": [
+    {
+     "id": "CHARTEN",
+     "line": 3,
+     "start": 6,
+     "end": 13,
+     "fix": true,
+     "text": "For readability, consider using 'newline' instead of 'char(10)'."
+    },
+    {
+     "id": "CHARTEN",
+     "line": 4,
+     "start": 11,
+     "end": 18,
+     "fix": true,
+     "text": "For readability, consider using 'newline' instead of 'char(10)'."
+    },
+    {
+     "id": "FVAL",
+     "line": 6,
+     "start": 6,
+     "end": 10,
+     "fix": true,
+     "text": "Calling functions using 'feval' is usually not necessary. Call the function directly instead."
+    },
+    {
+     "id": "FVAL",
+     "line": 7,
+     "start": 6,
+     "end": 10,
+     "fix": true,
+     "text": "Calling functions using 'feval' is usually not necessary. Call the function directly instead."
+    },
+    {
+     "id": "FVAL",
+     "line": 8,
+     "start": 18,
+     "end": 22,
+     "fix": false,
+     "text": "Calling functions using 'feval' is usually not necessary. Call the function directly instead."
+    },
+    {
+     "id": "EXIST",
+     "line": 9,
+     "start": 6,
+     "end": 10,
+     "fix": false,
+     "text": "EXIST with two input arguments is generally faster and clearer than with one input argument."
+    },
+    {
+     "id": "ISCL",
+     "line": 11,
+     "start": 6,
+     "end": 19,
+     "fix": true,
+     "text": "To improve performance, use 'isscalar' instead of length comparison."
+    },
+    {
+     "id": "ISCL",
+     "line": 12,
+     "start": 6,
+     "end": 19,
+     "fix": true,
+     "text": "To improve performance, use 'isscalar' instead of length comparison."
+    },
+    {
+     "id": "ISCL",
+     "line": 14,
+     "start": 6,
+     "end": 18,
+     "fix": true,
+     "text": "To improve performance, use 'isscalar' instead of length comparison."
+    },
+    {
+     "id": "DATST",
+     "line": 15,
+     "start": 6,
+     "end": 12,
+     "fix": false,
+     "text": "'datestr' is not recommended. With appropriate code changes, use 'datetime' instead."
+    },
+    {
+     "id": "TNOW1",
+     "line": 15,
+     "start": 14,
+     "end": 16,
+     "fix": false,
+     "text": "'now' is not recommended. With appropriate code changes, use 'datetime(\"now\")' instead."
+    },
+    {
+     "id": "DATNM",
+     "line": 16,
+     "start": 6,
+     "end": 12,
+     "fix": false,
+     "text": "'datenum' is not recommended. With appropriate code changes, use 'datetime' instead."
+    },
+    {
+     "id": "DATE",
+     "line": 17,
+     "start": 6,
+     "end": 9,
+     "fix": false,
+     "text": "'date' is not recommended. With appropriate code changes, use 'datetime(\"today\")' instead."
+    },
+    {
+     "id": "HIST",
+     "line": 18,
+     "start": 6,
+     "end": 9,
+     "fix": false,
+     "text": "'hist' is not recommended. With appropriate code changes, use 'histogram' instead."
+    },
+    {
+     "id": "HIST",
+     "line": 19,
+     "start": 1,
+     "end": 4,
+     "fix": false,
+     "text": "'hist' is not recommended. With appropriate code changes, use 'histogram' instead."
+    },
+    {
+     "id": "DQUAD",
+     "line": 20,
+     "start": 6,
+     "end": 9,
+     "fix": false,
+     "text": "'quad' is not recommended. With appropriate code changes, use 'integral' instead."
+    },
+    {
+     "id": "DQUADL",
+     "line": 21,
+     "start": 6,
+     "end": 10,
+     "fix": false,
+     "text": "'quadl' is not recommended. With appropriate code changes, use 'integral' instead."
+    },
+    {
+     "id": "DQUADV",
+     "line": 22,
+     "start": 6,
+     "end": 10,
+     "fix": false,
+     "text": "'quadv' is not recommended. With appropriate code changes, use 'integral' instead."
+    },
+    {
+     "id": "DDBLQD",
+     "line": 23,
+     "start": 6,
+     "end": 12,
+     "fix": false,
+     "text": "'dblquad' is not recommended. With appropriate code changes, use 'integral2' instead."
+    },
+    {
+     "id": "DTRIQD",
+     "line": 24,
+     "start": 6,
+     "end": 15,
+     "fix": false,
+     "text": "'triplequad' is not recommended. With appropriate code changes, use 'integral3' instead."
+    },
+    {
+     "id": "COMPASS",
+     "line": 25,
+     "start": 1,
+     "end": 7,
+     "fix": false,
+     "text": "'compass' is not recommended. With appropriate code changes, use 'compassplot' instead."
+    },
+    {
+     "id": "DINLN",
+     "line": 26,
+     "start": 7,
+     "end": 12,
+     "fix": false,
+     "text": "INLINE will be removed in a future release. Use anonymous functions instead."
+    },
+    {
+     "id": "ST2NM",
+     "line": 28,
+     "start": 6,
+     "end": 12,
+     "fix": false,
+     "text": "If you are operating on scalar values, consider using 'str2double' for faster performance."
+    },
+    {
+     "id": "ST2NM",
+     "line": 29,
+     "start": 6,
+     "end": 12,
+     "fix": false,
+     "text": "If you are operating on scalar values, consider using 'str2double' for faster performance."
+    },
+    {
+     "id": "STRQUOT",
+     "line": 30,
+     "start": 6,
+     "end": 18,
+     "fix": true,
+     "text": "string('...') is not recommended. Use \"...\" instead."
+    },
+    {
+     "id": "GFLD",
+     "line": 32,
+     "start": 6,
+     "end": 13,
+     "fix": false,
+     "text": "Use dynamic fieldnames with structures instead of GETFIELD."
+    },
+    {
+     "id": "SFLD",
+     "line": 33,
+     "start": 6,
+     "end": 13,
+     "fix": false,
+     "text": "Use dynamic fieldnames with structures instead of SETFIELD."
+    },
+    {
+     "id": "ISMAT",
+     "line": 34,
+     "start": 6,
+     "end": 10,
+     "fix": true,
+     "text": "When checking if a variable is a matrix consider using ISMATRIX."
+    },
+    {
+     "id": "LOGL",
+     "line": 36,
+     "start": 6,
+     "end": 12,
+     "fix": true,
+     "text": "Use 'true' or 'false' instead of 'logical(1)' or 'logical(0)'."
+    },
+    {
+     "id": "LOGL",
+     "line": 37,
+     "start": 6,
+     "end": 12,
+     "fix": true,
+     "text": "Use 'true' or 'false' instead of 'logical(1)' or 'logical(0)'."
+    },
+    {
+     "id": "RPMT1",
+     "line": 38,
+     "start": 6,
+     "end": 11,
+     "fix": true,
+     "text": "For readability, consider using 'ones(x,y)' instead of 'repmat(1,x,y)'."
+    },
+    {
+     "id": "RPMTT",
+     "line": 39,
+     "start": 6,
+     "end": 11,
+     "fix": true,
+     "text": "For readability, consider using 'true(x,y)' instead of 'repmat(true,x,y)'."
+    },
+    {
+     "id": "RPMT0",
+     "line": 40,
+     "start": 6,
+     "end": 11,
+     "fix": true,
+     "text": "For readability, consider using 'zeros(x,y)' instead of 'repmat(0,x,y)'."
+    },
+    {
+     "id": "RPMTF",
+     "line": 41,
+     "start": 6,
+     "end": 11,
+     "fix": true,
+     "text": "For readability, consider using 'false(x,y)' instead of 'repmat(false,x,y)'."
+    },
+    {
+     "id": "STCI",
+     "line": 42,
+     "start": 6,
+     "end": 11,
+     "fix": true,
+     "text": "Use STRCMPI(str1,str2) instead of using UPPER/LOWER in a call to STRCMP."
+    },
+    {
+     "id": "STLOW",
+     "line": 44,
+     "start": 6,
+     "end": 12,
+     "fix": true,
+     "text": "In this comparison the call to UPPER/LOWER is unnecessary."
+    },
+    {
+     "id": "NBRAK2",
+     "line": 45,
+     "start": 6,
+     "end": 6,
+     "fix": true,
+     "text": "Use of brackets [] is unnecessary."
+    },
+    {
+     "id": "NBRAK2",
+     "line": 46,
+     "start": 6,
+     "end": 6,
+     "fix": true,
+     "text": "Use of brackets [] is unnecessary."
+    },
+    {
+     "id": "NBRAK2",
+     "line": 49,
+     "start": 6,
+     "end": 6,
+     "fix": true,
+     "text": "Use of brackets [] is unnecessary."
+    },
+    {
+     "id": "NOPTS",
+     "line": 50,
+     "start": 4,
+     "end": 4,
+     "fix": true,
+     "text": "Add a semicolon after the statement to hide the output (in a script)."
+    },
+    {
+     "id": "NOSEMI",
+     "line": 50,
+     "start": 8,
+     "end": 8,
+     "fix": true,
+     "text": "Extra semicolon is unnecessary."
+    },
+    {
+     "id": "NOPTS",
+     "line": 51,
+     "start": 4,
+     "end": 4,
+     "fix": true,
+     "text": "Add a semicolon after the statement to hide the output (in a script)."
+    },
+    {
+     "id": "NO4LP",
+     "line": 52,
+     "start": 5,
+     "end": 5,
+     "fix": false,
+     "text": "Parentheses are not needed in a FOR statement."
+    },
+    {
+     "id": "CLALL",
+     "line": 56,
+     "start": 7,
+     "end": 9,
+     "fix": false,
+     "text": "Using 'clear' with the 'all' option usually decreases code performance and is often unnecessary."
+    },
+    {
+     "id": "EVLCS",
+     "line": 63,
+     "start": 1,
+     "end": 4,
+     "fix": false,
+     "text": "'eval' is inefficient and makes code less clear. Call the statement directly."
+    },
+    {
+     "id": "EVLEQ",
+     "line": 64,
+     "start": 1,
+     "end": 4,
+     "fix": false,
+     "text": "'eval' is inefficient and makes code less clear. Assign to the variable directly."
+    },
+    {
+     "id": "EVLDUAL",
+     "line": 65,
+     "start": 1,
+     "end": 4,
+     "fix": false,
+     "text": "This use of 'eval' is unnecessary and can be removed. Call the evaluated function directly using parentheses. For example, use 'load(filename)' instead of 'eval(['load ' filename])'."
+    },
+    {
+     "id": "EVLCS",
+     "line": 66,
+     "start": 1,
+     "end": 4,
+     "fix": false,
+     "text": "'eval' is inefficient and makes code less clear. Call the statement directly."
+    },
+    {
+     "id": "ELARLOG",
+     "line": 67,
+     "start": 11,
+     "end": 15,
+     "fix": false,
+     "text": "The + operator in the expression size(A + B) is unexpected. Should this be size(A) + B?"
+    },
+    {
+     "id": "ELARLOG",
+     "line": 68,
+     "start": 11,
+     "end": 16,
+     "fix": false,
+     "text": "The .* operator in the expression size(A .* B) is unexpected. Should this be size(A) .* B?"
+    },
+    {
+     "id": "ELARLOG",
+     "line": 69,
+     "start": 12,
+     "end": 16,
+     "fix": false,
+     "text": "The + operator in the expression numel(A + B) is unexpected. Should this be numel(A) + B?"
+    },
+    {
+     "id": "NOANS",
+     "line": 71,
+     "start": 1,
+     "end": 3,
+     "fix": false,
+     "text": "Using ANS as a variable is not recommended as ANS is frequently overwritten by MATLAB."
+    },
+    {
+     "id": "NOANS",
+     "line": 72,
+     "start": 6,
+     "end": 8,
+     "fix": false,
+     "text": "Using ANS as a variable is not recommended as ANS is frequently overwritten by MATLAB."
+    },
+    {
+     "id": "GVMIS",
+     "line": 73,
+     "start": 1,
+     "end": 6,
+     "fix": false,
+     "text": "Global variables are inefficient and make errors difficult to diagnose. Use a function with input variables instead."
+    },
+    {
+     "id": "NUSED",
+     "line": 73,
+     "start": 8,
+     "end": 9,
+     "fix": true,
+     "text": "Global or persistent variable might be unused or unset in this function or script."
+    },
+    {
+     "id": "GVMIS",
+     "line": 74,
+     "start": 1,
+     "end": 6,
+     "fix": false,
+     "text": "Global variables are inefficient and make errors difficult to diagnose. Use a function with input variables instead."
+    },
+    {
+     "id": "REDEFGG",
+     "line": 74,
+     "start": 8,
+     "end": 9,
+     "fix": false,
+     "text": "Declaring a variable to be global more than once might not be supported in a future release."
+    },
+    {
+     "id": "NOPTS",
+     "line": 75,
+     "start": 1,
+     "end": 1,
+     "fix": true,
+     "text": "Add a semicolon after the statement to hide the output (in a script)."
+    },
+    {
+     "id": "NOPTS",
+     "line": 76,
+     "start": 1,
+     "end": 1,
+     "fix": true,
+     "text": "Add a semicolon after the statement to hide the output (in a script)."
+    },
+    {
+     "id": "NOEFF",
+     "line": 77,
+     "start": 1,
+     "end": 5,
+     "fix": false,
+     "text": "The operation or expression 'v(2);' has no evident effect."
+    },
+    {
+     "id": "VUNUS",
+     "line": 79,
+     "start": 3,
+     "end": 3,
+     "fix": false,
+     "text": "'+' produces a value that might be unused."
+    },
+    {
+     "id": "SUBSASGN",
+     "line": 80,
+     "start": 1,
+     "end": 8,
+     "fix": false,
+     "text": "Output of SUBSASGN must be assigned to a variable."
+    },
+    {
+     "id": "DSPSP",
+     "line": 82,
+     "start": 1,
+     "end": 22,
+     "fix": true,
+     "text": "'disp(sprintf(...))' can usually be replaced by 'fprintf(...\\n)'."
+    },
+    {
+     "id": "TNOW1",
+     "line": 83,
+     "start": 6,
+     "end": 8,
+     "fix": false,
+     "text": "'now' is not recommended. With appropriate code changes, use 'datetime(\"now\")' instead."
+    },
+    {
+     "id": "SEPEX",
+     "line": 85,
+     "start": 13,
+     "end": 16,
+     "fix": false,
+     "text": "Consider using newline, semicolon, or comma before this statement for readability."
+    },
+    {
+     "id": "SEPEX",
+     "line": 86,
+     "start": 15,
+     "end": 15,
+     "fix": false,
+     "text": "Consider using newline, semicolon, or comma before this statement for readability."
+    },
+    {
+     "id": "MDUPC",
+     "line": 95,
+     "start": 10,
+     "end": 10,
+     "fix": false,
+     "text": "The case value '1' is a duplicate of one on line 93."
+    }
+   ]
+  },
+  {
+   "name": "A3Class.m",
+   "text": "classdef A3Class < handle\n    properties\n        P = 1\n    end\n    methods\n        function r = m1(obj, a)\n            r = obj.P;\n        end\n        function r = m2(obj)\n            r = 2;\n        end\n        function r = m3(obj, a)\n            disp(obj.P + a)\n        end\n        function set.P(obj, v)\n            obj.P = v;\n        end\n    end\n    methods (Static)\n        function r = s1(a, b)\n            r = a;\n        end\n    end\nend\n",
+   "messages": [
+    {
+     "id": "INUSD",
+     "line": 6,
+     "start": 30,
+     "end": 30,
+     "fix": true,
+     "text": "Input argument might be unused. Consider replacing the argument with ~ instead."
+    },
+    {
+     "id": "MANU",
+     "line": 9,
+     "start": 25,
+     "end": 27,
+     "fix": false,
+     "text": "Input argument might be unused. Consider replacing the argument with ~, or make this method Static instead."
+    },
+    {
+     "id": "STOUT",
+     "line": 12,
+     "start": 18,
+     "end": 18,
+     "fix": false,
+     "text": "Function return value might be unset."
+    },
+    {
+     "id": "INUSD",
+     "line": 20,
+     "start": 28,
+     "end": 28,
+     "fix": true,
+     "text": "Input argument might be unused. Consider replacing the argument with ~ instead."
+    }
+   ]
+  },
+  {
+   "name": "a4_error.m",
+   "text": "function a4_error()\nx = (1 + ;\ndisp(x)\nend\n",
+   "messages": [
+    {
+     "id": "SYNER",
+     "line": 2,
+     "start": 10,
+     "end": 10,
+     "fix": false,
+     "text": "Parse error at ';': usage might be invalid MATLAB syntax."
+    }
+   ]
+  },
+  {
+   "name": "a5_suppress.m",
+   "text": "function a5_suppress(a, b) %#ok<INUSD>\n%#ok<*NASGU>\nx = 1;\ny = char(10); %#ok<CHARTEN,NASGU>\nz = char(10); %#ok<INUSD>\nw = 1; %#ok<NASGU> a comment after\nq = 1;  %#ok  <NASGU>\nend\n",
+   "messages": [
+    {
+     "id": "MSNU",
+     "line": 4,
+     "start": 28,
+     "end": 32,
+     "fix": true,
+     "text": "A Code Analyzer message was once suppressed here, but the message is no longer generated."
+    },
+    {
+     "id": "CHARTEN",
+     "line": 5,
+     "start": 5,
+     "end": 12,
+     "fix": true,
+     "text": "For readability, consider using 'newline' instead of 'char(10)'."
+    },
+    {
+     "id": "MSNU",
+     "line": 5,
+     "start": 15,
+     "end": 25,
+     "fix": true,
+     "text": "A Code Analyzer message was once suppressed here, but the message is no longer generated."
+    },
+    {
+     "id": "MSNU",
+     "line": 6,
+     "start": 8,
+     "end": 18,
+     "fix": true,
+     "text": "A Code Analyzer message was once suppressed here, but the message is no longer generated."
+    },
+    {
+     "id": "MSNU",
+     "line": 7,
+     "start": 9,
+     "end": 12,
+     "fix": true,
+     "text": "A Code Analyzer message was once suppressed here, but the message is no longer generated."
+    }
+   ]
+  },
+  {
+   "name": "a6_scopes.m",
+   "text": "function r = a6_scopes(a, b, varargin)\nif nargin < 2\n    b = 1;\nend\nf = @(t) t + a;\nr = f(b) + nested1();\nfor k = 1:3\n    disp(1)\nend\ntry\n    c = 1;\ncatch err\n    c = 2;\nend\ndisp(c)\nev = 1;\neval('disp(ev)')\nhold on\nshared = 5;\n    function n = nested1()\n        n = shared;\n    end\nend\n\nfunction varargout = a6_local(varargin)\nvarargout{1} = numel(varargin);\nend\n",
+   "messages": [
+    {
+     "id": "NASGU",
+     "line": 16,
+     "start": 1,
+     "end": 2,
+     "fix": false,
+     "text": "Value assigned to variable might be unused."
+    },
+    {
+     "id": "EVLCS",
+     "line": 17,
+     "start": 1,
+     "end": 4,
+     "fix": false,
+     "text": "'eval' is inefficient and makes code less clear. Call the statement directly."
+    }
+   ]
+  },
+  {
+   "name": "a7_cyc.m",
+   "text": "function r = a7_cyc(x)\nif x > 1\n    r = 1;\nelseif x > 0\n    r = 2;\nelse\n    r = 3;\nend\nfor k = 1:x\n    r = r + k;\nend\nend\n\nfunction helper(a)\ndisp(a)\nend\n",
+   "messages": [
+    {
+     "id": "DEFNU",
+     "line": 14,
+     "start": 10,
+     "end": 15,
+     "fix": false,
+     "text": "Function might be unused."
+    }
+   ]
+  },
+  {
+   "name": "a8_clean.m",
+   "text": "function r = a8_clean(x)\nr = x + 1;\nend\n",
+   "messages": []
+  },
+  {
+   "name": "b1_defnu.m",
+   "text": "function b1_defnu()\neval('disp(1)')\nend\nfunction unused1()\nend\n",
+   "messages": [
+    {
+     "id": "EVLCS",
+     "line": 2,
+     "start": 1,
+     "end": 4,
+     "fix": false,
+     "text": "'eval' is inefficient and makes code less clear. Call the statement directly."
+    }
+   ]
+  },
+  {
+   "name": "b2_defnu.m",
+   "text": "function b2_defnu()\nf = @unused2;\ncellfun(@unused3, {1});\nfeval('unused4');\ndisp(f)\n    function nestedUnused()\n    end\nend\nfunction unused2()\nend\nfunction unused3(a)\ndisp(a)\nend\nfunction unused4()\nend\nfunction unused5(varargin)\nend\n",
+   "messages": [
+    {
+     "id": "FVAL",
+     "line": 4,
+     "start": 1,
+     "end": 5,
+     "fix": true,
+     "text": "Calling functions using 'feval' is usually not necessary. Call the function directly instead."
+    }
+   ]
+  },
+  {
+   "name": "b3_clearload.m",
+   "text": "function b3_clearload()\nclear\nclear all\nclear variables\nclear x\nclear global\nclear functions\nclear('y')\nload a.mat\nload('a.mat')\nload a.mat x\nload('a.mat', 'x')\nd = load('a.mat');\ndisp(d)\nend\n",
+   "messages": [
+    {
+     "id": "CLEAR0ARGS",
+     "line": 2,
+     "start": 1,
+     "end": 5,
+     "fix": false,
+     "text": "Avoid using 'clear' to clear more than necessary, this decreases code performance and is usually unnecessary."
+    },
+    {
+     "id": "CLALL",
+     "line": 3,
+     "start": 7,
+     "end": 9,
+     "fix": false,
+     "text": "Using 'clear' with the 'all' option usually decreases code performance and is often unnecessary."
+    },
+    {
+     "id": "CLFUNC",
+     "line": 7,
+     "start": 7,
+     "end": 15,
+     "fix": false,
+     "text": "Using 'clear' with the 'functions' option usually decreases code performance and is often unnecessary."
+    },
+    {
+     "id": "LOAD",
+     "line": 9,
+     "start": 1,
+     "end": 4,
+     "fix": false,
+     "text": "To avoid conflicts with functions on the path, specify variables to load from file."
+    },
+    {
+     "id": "LOAD",
+     "line": 10,
+     "start": 1,
+     "end": 4,
+     "fix": false,
+     "text": "To avoid conflicts with functions on the path, specify variables to load from file."
+    },
+    {
+     "id": "NASGU",
+     "line": 11,
+     "start": 12,
+     "end": 12,
+     "fix": false,
+     "text": "Value assigned to variable might be unused."
+    },
+    {
+     "id": "NASGU",
+     "line": 12,
+     "start": 15,
+     "end": 17,
+     "fix": false,
+     "text": "Value assigned to variable might be unused."
+    }
+   ]
+  },
+  {
+   "name": "b4_comma.m",
+   "text": "x = [1, 2,];\ny = {1, 2,};\nz = [1, 2; 3, 4,];\nw = [1, 2,; 3, 4];\ndisp(x), disp(y),\ndisp(z);,\nfor k = 1:2, disp(k), end,\nif w, disp(1), end;\nq = 1;;\ndisp(q);\n",
+   "messages": [
+    {
+     "id": "NOCOMMA",
+     "line": 6,
+     "start": 9,
+     "end": 9,
+     "fix": true,
+     "text": "Extra comma is unnecessary."
+    },
+    {
+     "id": "NOCOMMA",
+     "line": 7,
+     "start": 26,
+     "end": 26,
+     "fix": true,
+     "text": "Extra comma is unnecessary."
+    },
+    {
+     "id": "BDLGI",
+     "line": 8,
+     "start": 4,
+     "end": 4,
+     "fix": false,
+     "text": "Variable might be set by a nonlogical operator."
+    },
+    {
+     "id": "BDSCI",
+     "line": 8,
+     "start": 4,
+     "end": 4,
+     "fix": false,
+     "text": "Variable might be set by a nonscalar operator."
+    },
+    {
+     "id": "NOSEMI",
+     "line": 8,
+     "start": 19,
+     "end": 19,
+     "fix": true,
+     "text": "Extra semicolon is unnecessary."
+    },
+    {
+     "id": "NOSEMI",
+     "line": 9,
+     "start": 7,
+     "end": 7,
+     "fix": true,
+     "text": "Extra semicolon is unnecessary."
+    }
+   ]
+  },
+  {
+   "name": "b5_stci.m",
+   "text": "function b5_stci(a, b)\nt1 = strcmp(upper(a), upper(b));\nt2 = strcmp(lower(a), b);\nt3 = strcmp(upper(a), 'ABC');\nt4 = strcmp(upper(a), 'abc');\nt5 = strcmpi(upper(a), b);\nt6 = strcmpi(a, lower(b));\nt7 = strcmp(lower(a), lower(b));\nt8 = strncmp(upper(a), upper(b), 2);\nt9 = isequal(upper(a), upper(b));\ndisp([t1 t2 t3 t4 t5 t6 t7 t8 t9])\nend\n",
+   "messages": [
+    {
+     "id": "STCI",
+     "line": 2,
+     "start": 6,
+     "end": 11,
+     "fix": true,
+     "text": "Use STRCMPI(str1,str2) instead of using UPPER/LOWER in a call to STRCMP."
+    },
+    {
+     "id": "STCI",
+     "line": 3,
+     "start": 6,
+     "end": 11,
+     "fix": true,
+     "text": "Use STRCMPI(str1,str2) instead of using UPPER/LOWER in a call to STRCMP."
+    },
+    {
+     "id": "STCI",
+     "line": 4,
+     "start": 6,
+     "end": 11,
+     "fix": true,
+     "text": "Use STRCMPI(str1,str2) instead of using UPPER/LOWER in a call to STRCMP."
+    },
+    {
+     "id": "STCUL",
+     "line": 5,
+     "start": 6,
+     "end": 11,
+     "fix": false,
+     "text": "The comparison will likely fail due to case mismatch."
+    },
+    {
+     "id": "STLOW",
+     "line": 6,
+     "start": 6,
+     "end": 12,
+     "fix": true,
+     "text": "In this comparison the call to UPPER/LOWER is unnecessary."
+    },
+    {
+     "id": "STLOW",
+     "line": 7,
+     "start": 6,
+     "end": 12,
+     "fix": true,
+     "text": "In this comparison the call to UPPER/LOWER is unnecessary."
+    },
+    {
+     "id": "STCI",
+     "line": 8,
+     "start": 6,
+     "end": 11,
+     "fix": true,
+     "text": "Use STRCMPI(str1,str2) instead of using UPPER/LOWER in a call to STRCMP."
+    },
+    {
+     "id": "STNCI",
+     "line": 9,
+     "start": 6,
+     "end": 12,
+     "fix": true,
+     "text": "Use STRNCMPI(str1,str2) instead of using UPPER/LOWER in a call to STRNCMP."
+    }
+   ]
+  },
+  {
+   "name": "b6_iscl.m",
+   "text": "function b6_iscl(v)\ni1 = numel(v) ~= 1;\ni2 = length(v) > 1;\ni3 = 1 ~= numel(v);\ni4 = isequal(length(v), 1);\ni5 = length(v) == 0;\ni6 = numel(v) == 1 && v > 0;\ni7 = size(v, 1) == 1;\ni8 = ndims(v) ~= 2;\ni9 = ndims(v) > 2;\ndisp([i1 i2 i3 i4 i5 i6 i7 i8 i9])\nend\n",
+   "messages": [
+    {
+     "id": "ISMT",
+     "line": 6,
+     "start": 6,
+     "end": 11,
+     "fix": true,
+     "text": "Using ISEMPTY is usually faster than comparing LENGTH to 0."
+    },
+    {
+     "id": "ISCL",
+     "line": 7,
+     "start": 6,
+     "end": 18,
+     "fix": true,
+     "text": "To improve performance, use 'isscalar' instead of length comparison."
+    },
+    {
+     "id": "ISMAT",
+     "line": 9,
+     "start": 6,
+     "end": 10,
+     "fix": true,
+     "text": "When checking if a variable is a matrix consider using ISMATRIX."
+    },
+    {
+     "id": "ISMAT",
+     "line": 10,
+     "start": 6,
+     "end": 10,
+     "fix": true,
+     "text": "When checking if a variable is a matrix consider using ISMATRIX."
+    }
+   ]
+  },
+  {
+   "name": "b7_elarlog.m",
+   "text": "function b7_elarlog(a, b)\nz1 = length(a + b);\nz2 = ndims(a - b);\nz3 = size(a * b);\nz4 = size(a / b);\nz5 = numel(a .^ b);\nz6 = size(a == b);\nz7 = size(a & b);\nz8 = size(-a);\nz9 = size(a');\nz10 = size(a + b, 1);\nz11 = isempty(a + b);\nz12 = size([a b]);\ndisp({z1 z2 z3 z4 z5 z6 z7 z8 z9 z10 z11 z12})\nend\n",
+   "messages": [
+    {
+     "id": "ELARLOG",
+     "line": 2,
+     "start": 13,
+     "end": 17,
+     "fix": false,
+     "text": "The + operator in the expression length(A + B) is unexpected. Should this be length(A) + B?"
+    },
+    {
+     "id": "ELARLOG",
+     "line": 3,
+     "start": 12,
+     "end": 16,
+     "fix": false,
+     "text": "The - operator in the expression ndims(A - B) is unexpected. Should this be ndims(A) - B?"
+    },
+    {
+     "id": "ELARLOG",
+     "line": 6,
+     "start": 12,
+     "end": 17,
+     "fix": false,
+     "text": "The .^ operator in the expression numel(A .^ B) is unexpected. Should this be numel(A) .^ B?"
+    },
+    {
+     "id": "ELARLOG",
+     "line": 7,
+     "start": 11,
+     "end": 16,
+     "fix": false,
+     "text": "The == operator in the expression size(A == B) is unexpected. Should this be size(A) == B?"
+    }
+   ]
+  },
+  {
+   "name": "b8_eval.m",
+   "text": "function b8_eval(s)\neval('a')\neval(['x=' num2str(1)])\neval(['disp(' s ')'])\neval('y = 2')\neval(s, 'disp(0)')\nevalin('base', 'x')\nevalc('disp(1)');\nr = eval('1+1');\ndisp(r)\nfeval(@(x) x, 1);\nfeval(s, 1);\nend\n",
+   "messages": [
+    {
+     "id": "EVLCS",
+     "line": 2,
+     "start": 1,
+     "end": 4,
+     "fix": false,
+     "text": "'eval' is inefficient and makes code less clear. Call the statement directly."
+    },
+    {
+     "id": "EVLEQ",
+     "line": 3,
+     "start": 1,
+     "end": 4,
+     "fix": false,
+     "text": "'eval' is inefficient and makes code less clear. Assign to the variable directly."
+    },
+    {
+     "id": "EVLCS",
+     "line": 5,
+     "start": 1,
+     "end": 4,
+     "fix": false,
+     "text": "'eval' is inefficient and makes code less clear. Call the statement directly."
+    },
+    {
+     "id": "EV2IN",
+     "line": 6,
+     "start": 1,
+     "end": 4,
+     "fix": false,
+     "text": "Using 'eval' with two arguments is not recommended. Use try/catch statements instead to make code more clear and efficient."
+    },
+    {
+     "id": "EVLCS",
+     "line": 9,
+     "start": 5,
+     "end": 8,
+     "fix": false,
+     "text": "'eval' is inefficient and makes code less clear. Call the statement directly."
+    },
+    {
+     "id": "FVAL",
+     "line": 11,
+     "start": 1,
+     "end": 5,
+     "fix": false,
+     "text": "Calling functions using 'feval' is usually not necessary. Call the function directly instead."
+    }
+   ]
+  },
+  {
+   "name": "b9_nasgu.m",
+   "text": "function out = b9_nasgu(c, f)\nx = 1;\nif c\n    x = 2;\nend\ndisp(x)\nfor k = 1:3\nend\ndisp(k)\n[a, b] = f();\ndisp(b)\n[~, b2] = f();\ndisp(b2)\np(1).f = 2;\nq.f(2) = 3;\ncl{1} = 2;\nn = 0;\nfor k2 = 1:3\n    n = n + 1;\nend\nout = 1;\nout = 2;\nm1 = 1; m1 = m1 + 1;\npersistent pp\nif isempty(pp), pp = 0; end\npp = pp + 1;\nglobal gg\ngg = 1;\npersistent p2\npersistent p3\np3 = 1;\nw = 5;\nnested();\n    function nested()\n        disp(w)\n    end\nend\n\nfunction b9_varg(varargin)\nend\n\nfunction b9_nargin(a, b)\nif nargin > 1, disp(1), end\nend\n\nfunction b9_tilde(~, b)\ndisp(b)\nend\n\nfunction r = b9_nodef()\nfor i = 1:3\n    if i > 1, disp(prev), end\n    prev = i;\nend\nr = i;\nend\n\nfunction b9_unrch(c)\nif c\n    error('x:y', 'boom');\n    disp(1)\nend\nfor k = 1:3\n    continue\n    disp(k)\nend\nwhile true\n    disp(1)\nend\ndisp(2)\nend\n\nfunction x = b9_agrow(n)\nx = [];\nfor k = 1:n\n    x(k) = k;\n    x = [x; k];\n    x{end+1} = k;\n    x(end+1, :) = [1 2];\n    x(end+1).f = 1;\n    y(k) = k;\nend\nz = zeros(1, n);\nfor k = 1:n\n    z(k) = k;\n    z(end+1) = k;\nend\ndisp(z); disp(y)\nend\n\nfunction [r, s] = b9_stout(c)\nif c\n    r = 1;\nend\nend\n\nfunction varargout = b9_varout()\nend\n\nfunction b9_effects(x, s, c)\nx.f;\nc{1};\ns(1).a;\nx(1);\nsin(x);\nx';\n-x;\nx == 1;\nx(1) + 1;\n1:3;\n[1 2];\n{1};\n@sin;\nx\n[1 2]\nx;\nend\n\nfunction b9_ok(a) %#ok<FOO>\nx = 1; %#ok<*FOO>\ny = 2; %#ok<NASGU,FOO>\nz = 3; %#ok<NASGU> %#ok<INUSD>\ndisp(a)\nend\n\nfunction b9_loops(h)\nfor k = 1:3\n    figure(h);\n    hold on\n    plot(k)\n    axes(h)\n    while k > 5\n        axes(h);\n    end\nend\naxes(h);\nend\n\nfunction b9_misc(v, s, x)\ndisp(sprintf('%d', x));\ndisp(sprintf('%d\\n', x))\nc = char(10);\nd = [char(10)];\ne = exist(v);\ng = exist('v', 'var', 3);\nf = isempty(v) == 0;\nn = str2num(num2str(1));\nl = length(s) == 1;\nr = repmat(1, 3);\nr2 = repmat(1, [2 3]);\nr3 = repmat(2, 2, 3);\nr4 = repmat('a', 2, 3);\nq = quad('sin', 0, 1);\nk = logical(1);\nk2 = logical(2);\nk3 = logical([1 0]);\nm = ndims(v) == 2;\nm2 = 2 == ndims(v);\nst = string('a');\nst2 = string('a', 'b');\nst3 = string(\"a\");\ndt = datestr(1);\ndt2 = x.datestr;\ndt3 = x.datestr(1);\nhh = @hist;\ngf = getfield(x, 'a', {1});\nsf = setfield(x, 'a', 1);\ndisp({c d e g f n l r r2 r3 r4 q k k2 k3 m m2 st st2 st3 dt dt2 dt3 hh gf sf})\nend\n",
+   "messages": [
+    {
+     "id": "ASGLU",
+     "line": 10,
+     "start": 2,
+     "end": 2,
+     "fix": true,
+     "text": "Value assigned to variable might be unused. Consider replacing the variable with ~ instead."
+    },
+    {
+     "id": "STRNU",
+     "line": 14,
+     "start": 1,
+     "end": 1,
+     "fix": false,
+     "text": "This variable, apparently a structure, is changed but the value might be unused."
+    },
+    {
+     "id": "STRNU",
+     "line": 15,
+     "start": 1,
+     "end": 1,
+     "fix": false,
+     "text": "This variable, apparently a structure, is changed but the value might be unused."
+    },
+    {
+     "id": "NASGU",
+     "line": 16,
+     "start": 1,
+     "end": 2,
+     "fix": false,
+     "text": "Value assigned to variable might be unused."
+    },
+    {
+     "id": "NASGU",
+     "line": 21,
+     "start": 1,
+     "end": 3,
+     "fix": false,
+     "text": "Value assigned to variable might be unused."
+    },
+    {
+     "id": "NASGU",
+     "line": 23,
+     "start": 9,
+     "end": 10,
+     "fix": false,
+     "text": "Value assigned to variable might be unused."
+    },
+    {
+     "id": "GVMIS",
+     "line": 27,
+     "start": 1,
+     "end": 6,
+     "fix": false,
+     "text": "Global variables are inefficient and make errors difficult to diagnose. Use a function with input variables instead."
+    },
+    {
+     "id": "NUSED",
+     "line": 29,
+     "start": 12,
+     "end": 13,
+     "fix": true,
+     "text": "Global or persistent variable might be unused or unset in this function or script."
+    },
+    {
+     "id": "PUSE",
+     "line": 30,
+     "start": 12,
+     "end": 13,
+     "fix": true,
+     "text": "Persistent variable might be unused."
+    },
+    {
+     "id": "DEFNU",
+     "line": 39,
+     "start": 10,
+     "end": 16,
+     "fix": false,
+     "text": "Function might be unused."
+    },
+    {
+     "id": "DEFNU",
+     "line": 42,
+     "start": 10,
+     "end": 18,
+     "fix": false,
+     "text": "Function might be unused."
+    },
+    {
+     "id": "INUSD",
+     "line": 42,
+     "start": 20,
+     "end": 20,
+     "fix": true,
+     "text": "Input argument might be unused. Consider replacing the argument with ~ instead."
+    },
+    {
+     "id": "INUSD",
+     "line": 42,
+     "start": 23,
+     "end": 23,
+     "fix": true,
+     "text": "Input argument might be unused. Consider replacing the argument with ~ instead."
+    },
+    {
+     "id": "DEFNU",
+     "line": 46,
+     "start": 10,
+     "end": 17,
+     "fix": false,
+     "text": "Function might be unused."
+    },
+    {
+     "id": "DEFNU",
+     "line": 50,
+     "start": 14,
+     "end": 21,
+     "fix": false,
+     "text": "Function might be unused."
+    },
+    {
+     "id": "DEFNU",
+     "line": 58,
+     "start": 10,
+     "end": 17,
+     "fix": false,
+     "text": "Function might be unused."
+    },
+    {
+     "id": "UNRCH",
+     "line": 61,
+     "start": 5,
+     "end": 11,
+     "fix": false,
+     "text": "This statement (and possibly following ones) cannot be reached."
+    },
+    {
+     "id": "UNRCH",
+     "line": 65,
+     "start": 5,
+     "end": 11,
+     "fix": false,
+     "text": "This statement (and possibly following ones) cannot be reached."
+    },
+    {
+     "id": "UNRCH",
+     "line": 70,
+     "start": 1,
+     "end": 7,
+     "fix": false,
+     "text": "This statement (and possibly following ones) cannot be reached."
+    },
+    {
+     "id": "DEFNU",
+     "line": 73,
+     "start": 14,
+     "end": 21,
+     "fix": false,
+     "text": "Function might be unused."
+    },
+    {
+     "id": "AGROW",
+     "line": 76,
+     "start": 5,
+     "end": 5,
+     "fix": false,
+     "text": "Variable appears to change size on every loop iteration. Consider preallocating for speed."
+    },
+    {
+     "id": "AGROW",
+     "line": 77,
+     "start": 5,
+     "end": 5,
+     "fix": false,
+     "text": "Variable appears to change size on every loop iteration. Consider preallocating for speed."
+    },
+    {
+     "id": "AGROW",
+     "line": 78,
+     "start": 5,
+     "end": 5,
+     "fix": false,
+     "text": "Variable appears to change size on every loop iteration. Consider preallocating for speed."
+    },
+    {
+     "id": "AGROW",
+     "line": 79,
+     "start": 5,
+     "end": 5,
+     "fix": false,
+     "text": "Variable appears to change size on every loop iteration. Consider preallocating for speed."
+    },
+    {
+     "id": "AGROW",
+     "line": 80,
+     "start": 5,
+     "end": 5,
+     "fix": false,
+     "text": "Variable appears to change size on every loop iteration. Consider preallocating for speed."
+    },
+    {
+     "id": "AGROW",
+     "line": 81,
+     "start": 5,
+     "end": 5,
+     "fix": false,
+     "text": "Variable appears to change size on every loop iteration. Consider preallocating for speed."
+    },
+    {
+     "id": "AGROW",
+     "line": 86,
+     "start": 5,
+     "end": 5,
+     "fix": false,
+     "text": "Variable appears to change size on every loop iteration. Consider preallocating for speed."
+    },
+    {
+     "id": "STOUT",
+     "line": 91,
+     "start": 14,
+     "end": 14,
+     "fix": false,
+     "text": "Function return value might be unset."
+    },
+    {
+     "id": "DEFNU",
+     "line": 91,
+     "start": 19,
+     "end": 26,
+     "fix": false,
+     "text": "Function might be unused."
+    },
+    {
+     "id": "STOUT",
+     "line": 97,
+     "start": 10,
+     "end": 18,
+     "fix": false,
+     "text": "Function return value might be unset."
+    },
+    {
+     "id": "DEFNU",
+     "line": 97,
+     "start": 22,
+     "end": 30,
+     "fix": false,
+     "text": "Function might be unused."
+    },
+    {
+     "id": "DEFNU",
+     "line": 100,
+     "start": 10,
+     "end": 19,
+     "fix": false,
+     "text": "Function might be unused."
+    },
+    {
+     "id": "VUNUS",
+     "line": 102,
+     "start": 2,
+     "end": 2,
+     "fix": false,
+     "text": "'{' produces a value that might be unused."
+    },
+    {
+     "id": "VUNUS",
+     "line": 106,
+     "start": 2,
+     "end": 2,
+     "fix": false,
+     "text": "' produces a value that might be unused."
+    },
+    {
+     "id": "VUNUS",
+     "line": 107,
+     "start": 1,
+     "end": 1,
+     "fix": false,
+     "text": "'-' produces a value that might be unused."
+    },
+    {
+     "id": "EQEFF",
+     "line": 108,
+     "start": 3,
+     "end": 4,
+     "fix": true,
+     "text": "To assign values to variables, use =. The == operator compares equality of values."
+    },
+    {
+     "id": "VUNUS",
+     "line": 109,
+     "start": 6,
+     "end": 6,
+     "fix": false,
+     "text": "'+' produces a value that might be unused."
+    },
+    {
+     "id": "VUNUS",
+     "line": 110,
+     "start": 2,
+     "end": 2,
+     "fix": false,
+     "text": "':' produces a value that might be unused."
+    },
+    {
+     "id": "VUNUS",
+     "line": 111,
+     "start": 1,
+     "end": 1,
+     "fix": false,
+     "text": "'[' produces a value that might be unused."
+    },
+    {
+     "id": "VUNUS",
+     "line": 112,
+     "start": 1,
+     "end": 1,
+     "fix": false,
+     "text": "'{' produces a value that might be unused."
+    },
+    {
+     "id": "NOPRT",
+     "line": 114,
+     "start": 1,
+     "end": 1,
+     "fix": true,
+     "text": "Add a semicolon after the statement to hide the output (in a function)."
+    },
+    {
+     "id": "NOPRT",
+     "line": 115,
+     "start": 1,
+     "end": 1,
+     "fix": true,
+     "text": "Add a semicolon after the statement to hide the output (in a function)."
+    },
+    {
+     "id": "VUNUS",
+     "line": 116,
+     "start": 1,
+     "end": 1,
+     "fix": false,
+     "text": "'x' produces a value that might be unused."
+    },
+    {
+     "id": "DEFNU",
+     "line": 119,
+     "start": 10,
+     "end": 14,
+     "fix": false,
+     "text": "Function might be unused."
+    },
+    {
+     "id": "MSNE",
+     "line": 119,
+     "start": 19,
+     "end": 27,
+     "fix": true,
+     "text": "No Code Analyzer check is found for this check ID."
+    },
+    {
+     "id": "NASGU",
+     "line": 120,
+     "start": 1,
+     "end": 1,
+     "fix": false,
+     "text": "Value assigned to variable might be unused."
+    },
+    {
+     "id": "MSNE",
+     "line": 121,
+     "start": 19,
+     "end": 21,
+     "fix": true,
+     "text": "No Code Analyzer check is found for this check ID."
+    },
+    {
+     "id": "DEFNU",
+     "line": 126,
+     "start": 10,
+     "end": 17,
+     "fix": false,
+     "text": "Function might be unused."
+    },
+    {
+     "id": "LAXES",
+     "line": 131,
+     "start": 5,
+     "end": 8,
+     "fix": false,
+     "text": "Calling AXES(h) in a loop can be slow. Consider moving the call to AXES outside the loop."
+    },
+    {
+     "id": "LAXES",
+     "line": 133,
+     "start": 9,
+     "end": 12,
+     "fix": false,
+     "text": "Calling AXES(h) in a loop can be slow. Consider moving the call to AXES outside the loop."
+    },
+    {
+     "id": "DEFNU",
+     "line": 139,
+     "start": 10,
+     "end": 16,
+     "fix": false,
+     "text": "Function might be unused."
+    },
+    {
+     "id": "DSPSP",
+     "line": 140,
+     "start": 1,
+     "end": 22,
+     "fix": true,
+     "text": "'disp(sprintf(...))' can usually be replaced by 'fprintf(...\\n)'."
+    },
+    {
+     "id": "DSPSP",
+     "line": 141,
+     "start": 1,
+     "end": 24,
+     "fix": true,
+     "text": "'disp(sprintf(...))' can usually be replaced by 'fprintf(...\\n)'."
+    },
+    {
+     "id": "CHARTEN",
+     "line": 142,
+     "start": 5,
+     "end": 12,
+     "fix": true,
+     "text": "For readability, consider using 'newline' instead of 'char(10)'."
+    },
+    {
+     "id": "CHARTEN",
+     "line": 143,
+     "start": 6,
+     "end": 13,
+     "fix": true,
+     "text": "For readability, consider using 'newline' instead of 'char(10)'."
+    },
+    {
+     "id": "EXIST",
+     "line": 144,
+     "start": 5,
+     "end": 9,
+     "fix": false,
+     "text": "EXIST with two input arguments is generally faster and clearer than with one input argument."
+    },
+    {
+     "id": "ST2NM",
+     "line": 147,
+     "start": 5,
+     "end": 11,
+     "fix": false,
+     "text": "If you are operating on scalar values, consider using 'str2double' for faster performance."
+    },
+    {
+     "id": "ISCL",
+     "line": 148,
+     "start": 5,
+     "end": 18,
+     "fix": true,
+     "text": "To improve performance, use 'isscalar' instead of length comparison."
+    },
+    {
+     "id": "RPMT1",
+     "line": 149,
+     "start": 5,
+     "end": 10,
+     "fix": true,
+     "text": "For readability, consider using 'ones(x,y)' instead of 'repmat(1,x,y)'."
+    },
+    {
+     "id": "RPMT1",
+     "line": 150,
+     "start": 6,
+     "end": 11,
+     "fix": true,
+     "text": "For readability, consider using 'ones(x,y)' instead of 'repmat(1,x,y)'."
+    },
+    {
+     "id": "DQUAD",
+     "line": 153,
+     "start": 5,
+     "end": 8,
+     "fix": false,
+     "text": "'quad' is not recommended. With appropriate code changes, use 'integral' instead."
+    },
+    {
+     "id": "LOGL",
+     "line": 154,
+     "start": 5,
+     "end": 11,
+     "fix": true,
+     "text": "Use 'true' or 'false' instead of 'logical(1)' or 'logical(0)'."
+    },
+    {
+     "id": "ISMAT",
+     "line": 157,
+     "start": 5,
+     "end": 9,
+     "fix": true,
+     "text": "When checking if a variable is a matrix consider using ISMATRIX."
+    },
+    {
+     "id": "ISMAT",
+     "line": 158,
+     "start": 11,
+     "end": 15,
+     "fix": true,
+     "text": "When checking if a variable is a matrix consider using ISMATRIX."
+    },
+    {
+     "id": "STRQUOT",
+     "line": 159,
+     "start": 6,
+     "end": 16,
+     "fix": true,
+     "text": "string('...') is not recommended. Use \"...\" instead."
+    },
+    {
+     "id": "STRQUOT",
+     "line": 161,
+     "start": 7,
+     "end": 17,
+     "fix": true,
+     "text": "string('...') is not recommended. Use \"...\" instead."
+    },
+    {
+     "id": "DATST",
+     "line": 162,
+     "start": 6,
+     "end": 12,
+     "fix": false,
+     "text": "'datestr' is not recommended. With appropriate code changes, use 'datetime' instead."
+    },
+    {
+     "id": "HIST",
+     "line": 165,
+     "start": 7,
+     "end": 10,
+     "fix": false,
+     "text": "'hist' is not recommended. With appropriate code changes, use 'histogram' instead."
+    },
+    {
+     "id": "SFLD",
+     "line": 167,
+     "start": 6,
+     "end": 13,
+     "fix": false,
+     "text": "Use dynamic fieldnames with structures instead of SETFIELD."
+    }
+   ]
+  },
+  {
+   "name": "c1_cyc.m",
+   "text": "function r = c1_cyc(x)\nr = 0;\nif x > 1 && x < 5\n    r = 1;\nelseif x > 0 || x == -1\n    r = 2;\nend\nfor k = 1:x\n    r = r + k;\nend\nwhile r > 100\n    r = r - 1;\nend\nswitch r\n    case 1\n        r = 2;\n    case {2, 3}\n        r = 3;\n    otherwise\n        r = 4;\nend\ntry\n    r = r + 1;\ncatch\n    r = 0;\nend\nend\n\nfunction helper2(a)\nif a, disp(1), end\nend\n",
+   "messages": [
+    {
+     "id": "DEFNU",
+     "line": 29,
+     "start": 10,
+     "end": 16,
+     "fix": false,
+     "text": "Function might be unused."
+    }
+   ]
+  },
+  {
+   "name": "c3_script.m",
+   "text": "x = 1\ny = [1];\ndisp(y)\n",
+   "messages": [
+    {
+     "id": "NOPTS",
+     "line": 1,
+     "start": 3,
+     "end": 3,
+     "fix": true,
+     "text": "Add a semicolon after the statement to hide the output (in a script)."
+    },
+    {
+     "id": "NBRAK2",
+     "line": 2,
+     "start": 5,
+     "end": 5,
+     "fix": true,
+     "text": "Use of brackets [] is unnecessary."
+    }
+   ]
+  }
+ ]
+}

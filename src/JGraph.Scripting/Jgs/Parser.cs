@@ -417,13 +417,26 @@ internal sealed class Parser
     private Stmt ParseFor(Token start)
     {
         Advance(); // 'for'
+        // MATLAB takes the header in parentheses too: for (k = 1:n) (the analyzer's NO4LP; App Designer window plan W10).
+        bool parenthesized = _matlab && Check(TokenType.LParen) && _pos + 2 < _tokens.Count
+            && _tokens[_pos + 1].Type == TokenType.Identifier && _tokens[_pos + 2].Type == TokenType.Assign;
+        if (parenthesized)
+        {
+            Advance(); // '('
+        }
+
         Token variable = Expect(TokenType.Identifier, "a loop variable name");
         if (!Match(TokenType.In))
         {
             Expect(TokenType.Assign, "'in' or '='"); // MATLAB header: for k = 2:n
         }
 
-        Expr iterable = ParseExpression();
+        Expr iterable = parenthesized ? OutsideLiteral(ParseExpression) : ParseExpression();
+        if (parenthesized)
+        {
+            Expect(TokenType.RParen, "')'");
+        }
+
         IReadOnlyList<Stmt> body = ParseBody(out bool braced);
         if (!braced)
         {
@@ -1868,7 +1881,15 @@ internal sealed class Parser
                 if (Match(TokenType.Comma))
                 {
                     SkipLeadingRowBreaks(); // a trailing comma may be followed by a continuation
-                    continue;
+                    if (Check(closer))
+                    {
+                        break; // MATLAB takes a trailing comma: [1, 2,] (App Designer window plan W10)
+                    }
+
+                    if (!IsRowSeparator())
+                    {
+                        continue;
+                    }
                 }
 
                 // ';' (and a line break in MATLAB) starts a new row: [1, 2; 3, 4], or vertical

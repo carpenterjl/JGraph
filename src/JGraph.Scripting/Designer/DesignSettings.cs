@@ -71,6 +71,9 @@ public sealed class DesignSettings
     /// <summary>The editor's zoom factor (<c>CurrentZoomFactor</c>).</summary>
     public const string EditorZoomFactor = "matlab.editor.displaysettings.CurrentZoomFactor";
 
+    /// <summary>Whether the Code View shows App Designer's coding alerts (W10; R2025b's view state <c>ShowProgrammingTips</c>, cleared by "Disable coding alerts").</summary>
+    public const string ShowProgrammingTips = "matlab.appdesigner.codeview.ShowProgrammingTips";
+
     /// <summary>Every setting, with its factory value: the listed eight, then the ones read by name.</summary>
     public static IReadOnlyList<DesignSettingDefinition> Definitions { get; } =
     [
@@ -99,6 +102,7 @@ public sealed class DesignSettings
         new(EditorHighlightCurrentLine, "false", false),
         new(EditorDatatips, "false", false),
         new(EditorZoomFactor, "1", false),
+        new(ShowProgrammingTips, "true", false),
     ];
 
     private readonly Dictionary<string, string> _values = new(StringComparer.Ordinal);

@@ -1671,6 +1671,12 @@ internal sealed class JgsValue
             sb.Append("\n\n  Show all properties");
         }
 
+        // codeIssues shows its Issues table under the properties (App Designer window plan W10, measured).
+        if (instance.Class.Name == JgsBuiltinClasses.CodeIssues)
+        {
+            sb.Append(JgsBuiltins.CodeIssuesFooter(instance));
+        }
+
         // R2025b's options for a library add the class map as a group of its own (k8_build: main.options).
         if (instance.Class.Name == JgsBuiltinClasses.DotNetOptions)
         {
@@ -1697,6 +1703,12 @@ internal sealed class JgsValue
         if (JgsBuiltins.IsKeyedCollection(held) && held.ClassName == JgsBuiltins.MapClassName)
         {
             return "[" + held.AsStruct["keys"].AsCell.Length + "×1 containers.Map]"; // a map's size is its count by 1 (k8_build)
+        }
+
+        // A string array of several elements is its size and class (codeIssues' Files: [10×1 string]; W10).
+        if (held.Type == JgsType.Array && held.IsStringArray && held.ArrayLength != 1)
+        {
+            return "[" + held.Rows + "×" + held.Cols + " string]";
         }
 
         return held.Type switch

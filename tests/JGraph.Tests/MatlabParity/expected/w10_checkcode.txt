@@ -1,0 +1,36 @@
+CHK|count|25|exact
+CHK|m01|NASGU L5 C1-1 fix0 sev1|exact
+CHK|m02|ASGLU L6 C2-2 fix1 sev1|exact
+CHK|m03|STRNU L8 C1-1 fix0 sev1|exact
+CHK|m04|NASGU L10 C1-1 fix0 sev1|exact
+CHK|m05|MSNU L10 C8-18 fix1 sev0|exact
+CHK|m06|GVMIS L11 C1-6 fix0 sev1|exact
+CHK|m07|NUSED L11 C8-9 fix1 sev1|exact
+CHK|m08|PSET L12 C12-13 fix0 sev1|exact
+CHK|m09|NASGU L14 C1-2 fix0 sev1|exact
+CHK|m10|CHARTEN L14 C6-13 fix1 sev0|exact
+CHK|m11|FVAL L15 C6-10 fix1 sev1|exact
+CHK|m12|EXIST L16 C6-10 fix0 sev0|exact
+CHK|m13|ISCL L17 C6-19 fix1 sev0|exact
+CHK|m14|DATST L18 C6-12 fix0 sev0|exact
+CHK|m15|STRQUOT L19 C6-18 fix1 sev0|exact
+CHK|m16|LOGL L20 C6-12 fix1 sev0|exact
+CHK|m17|RPMT1 L21 C6-11 fix1 sev0|exact
+CHK|m18|ELARLOG L22 C11-15 fix0 sev1|exact
+CHK|m19|AGROW L29 C5-5 fix0 sev0|exact
+CHK|m20|LAXES L30 C5-8 fix0 sev0|exact
+CHK|m21|EVLCS L37 C1-4 fix0 sev1|exact
+CHK|m22|NASGU L38 C1-3 fix0 sev1|exact
+CHK|m23|NOANS L38 C1-3 fix0 sev1|exact
+CHK|m24|UNRCH L44 C1-7 fix0 sev1|exact
+CHK|m25|INUSD L47 C17-17 fix1 sev1|exact
+CHK|string|L 1 (C 25-36): CABE: The McCabe cyclomatic complexity of 'w10_analyzed' is 6. / L 5 (C 1): NASGU: Value assigned to variable might be unused. / L 6 (C 2): ASGLU: Value assigned to variable might be unused. Consider replacing the variable with ~ instead. / L 8 (C 1): STRNU: This variable, apparently a structure, is changed but the value might be unused. / L 10 (C 1): NASGU: Value assigned to variable might be unused. / L 10 (C 8-18): MSNU: A Code Analyzer message was once suppressed here, but the message is no longer generated. / L 11 (C 1-6): GVMIS: Global variables are inefficient and make errors difficult to diagnose. Use a function with input variables instead. / L 11 (C 8-9): NUSED: Global or persistent variable might be unused or unset in this function or script. / L 12 (C 12-13): PSET: Persistent variable is used, but might be unset. / L 14 (C 1-2): NASGU: Value assigned to variable might be unused. / L 14 (C 6-13): CHARTEN: For readability, consider using 'newline' instead of 'char(10)'. / L 15 (C 6-10): FVAL: Calling functions using 'feval' is usually not necessary. Call the function directly instead. / L 16 (C 6-10): EXIST: EXIST with two input arguments is generally faster and clearer than with one input argument. / L 17 (C 6-19): ISCL: To improve performance, use 'isscalar' instead of length comparison. / L 18 (C 6-12): DATST: 'datestr' is not recommended. With appropriate code changes, use 'datetime' instead. / L 19 (C 6-18): STRQUOT: string('...') is not recommended. Use "..." instead. / L 20 (C 6-12): LOGL: Use 'true' or 'false' instead of 'logical(1)' or 'logical(0)'. / L 21 (C 6-11): RPMT1: For readability, consider using 'ones(x,y)' instead of 'repmat(1,x,y)'. / L 22 (C 11-15): ELARLOG: The + operator in the expression size(A + B) is unexpected. Should this be size(A) + B? / L 29 (C 5): AGROW: Variable appears to change size on every loop iteration. Consider preallocating for speed. / L 30 (C 5-8): LAXES: Calling AXES(h) in a loop can be slow. Consider moving the call to AXES outside the loop. / L 37 (C 1-4): EVLCS: 'eval' is inefficient and makes code less clear. Call the statement directly. / L 38 (C 1-3): NASGU: Value assigned to variable might be unused. / L 38 (C 1-3): NOANS: Using ANS as a variable is not recommended as ANS is frequently overwritten by MATLAB. / L 41 (C 14-19): CABE: The McCabe cyclomatic complexity of 'helper' is 1. / L 44 (C 1-7): UNRCH: This statement (and possibly following ones) cannot be reached. / L 47 (C 10-15): CABE: The McCabe cyclomatic complexity of 'unused' is 1. / L 47 (C 17): INUSD: Input argument might be unused. Consider replacing the argument with ~ instead. / |exact
+CHK|notok|25|exact
+CHK|issues|25 Location,Severity,Fixability,Description,CheckID,LineStart,LineEnd,ColumnStart,ColumnEnd,FullFilename|exact
+CHK|severities|warning,warning,warning,warning,info,warning,warning,warning,warning,info,warning,info,info,info,info,info,info,warning,info,info,warning,warning,warning,warning,warning|exact
+CHK|fixability|manual,auto,manual,manual,auto,manual,auto,manual,manual,auto,auto,manual,auto,manual,auto,auto,auto,manual,manual,manual,manual,manual,manual,manual,auto|exact
+CHK|checks|NASGU,ASGLU,STRNU,NASGU,MSNU,GVMIS,NUSED,PSET,NASGU,CHARTEN,FVAL,EXIST,ISCL,DATST,STRQUOT,LOGL,RPMT1,ELARLOG,AGROW,LAXES,EVLCS,NASGU,NOANS,UNRCH,INUSD|exact
+CHK|lines|[5 6 8 10 10 11 11 12 14 14 15 16 17 18 19 20 21 22 29 30 37 38 38 44 47]|exact
+CHK|location|w10_analyzed.m|exact
+CHK|suppressed|1 Location,Severity,Fixability,Description,Suppression,CheckID,LineStart,LineEnd,ColumnStart,ColumnEnd,FullFilename|exact
+CHK|suppression|line|exact

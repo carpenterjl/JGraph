@@ -43,6 +43,7 @@ internal static partial class JgsBuiltinClasses
         InstallerOptions => InstallerOptionsDeclaration(interpreter),
         ToolboxOptions => ToolboxOptionsDeclaration(interpreter),
         TextComparison or MlappComparison => ComparisonDeclaration(name, interpreter),
+        CodeIssues => CodeIssuesDeclaration(interpreter),
         BuildResults => BuildResultsDeclaration(),
         RuntimeDependencies => RuntimeDependenciesDeclaration(),
         _ => null,

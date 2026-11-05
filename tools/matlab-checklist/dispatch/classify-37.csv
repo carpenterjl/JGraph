@@ -1,0 +1,4 @@
+name,kind,method_classes
+checkcode,mfile,
+mlint,mfile,
+codeIssues,mfile,codeIssues

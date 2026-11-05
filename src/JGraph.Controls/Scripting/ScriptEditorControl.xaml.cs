@@ -114,6 +114,7 @@ public partial class ScriptEditorControl : UserControl
         InstallCodeTools();
         InstallViewTools();
         InstallContextMenu();
+        InstallAnalysis(); // the Code Analyzer's marks, bar and Fix (W10), after the menu it adds its item to
         InstallDatatips();
         Editor.TextArea.Caret.PositionChanged += (_, _) => ShowStatus();
         ShowStatus();
@@ -238,7 +239,7 @@ public partial class ScriptEditorControl : UserControl
             status += $"; Paused at line {paused}";
         }
 
-        status += ViewStatus();
+        status += AnalysisStatus() + ViewStatus();
         System.Windows.Automation.AutomationProperties.SetItemStatus(Editor, status);
         CommandManager.InvalidateRequerySuggested();
     }
@@ -261,14 +262,20 @@ public partial class ScriptEditorControl : UserControl
         view.MouseHover += (_, e) =>
         {
             CloseDatatip();
-            if (DatatipProvider is null
-                || Editor.GetPositionFromPoint(e.GetPosition(Editor)) is not { } position)
+            if (Editor.GetPositionFromPoint(e.GetPosition(Editor)) is not { } position)
             {
                 return;
             }
 
-            string? name = IdentifierAt(Editor.Document.GetOffset(position.Location));
-            string? text = name is null ? null : DatatipProvider(name);
+            // A Code Analyzer message under the pointer shows its text (W10); else the host's datatip for the name.
+            int offset = Editor.Document.GetOffset(position.Location);
+            string? text = MessageTextAt(offset);
+            if (text is null && DatatipProvider is not null)
+            {
+                string? name = IdentifierAt(offset);
+                text = name is null ? null : DatatipProvider(name);
+            }
+
             if (text is null)
             {
                 return;

@@ -1,0 +1,697 @@
+== messages: a1_unused
+MSG|a1_unused|INUSD|1|[44 44]|1|Input argument might be unused. Consider replacing the argument with ~ instead.
+MSG|a1_unused|NASGU|3|[1 1]|0|Value assigned to variable might be unused.
+MSG|a1_unused|ASGLU|4|[2 2]|1|Value assigned to variable might be unused. Consider replacing the variable with ~ instead.
+MSG|a1_unused|STRNU|6|[1 1]|0|This variable, apparently a structure, is changed but the value might be unused.
+MSG|a1_unused|STRNU|8|[1 1]|0|This variable, apparently a structure, is changed but the value might be unused.
+MSG|a1_unused|NASGU|13|[1 1]|0|Value assigned to variable might be unused.
+MSG|a1_unused|MSNU|13|[8 18]|1|A Code Analyzer message was once suppressed here, but the message is no longer generated.
+MSG|a1_unused|NASGU|15|[1 2]|0|Value assigned to variable might be unused.
+MSG|a1_unused|NASGU|18|[1 2]|0|Value assigned to variable might be unused.
+MSG|a1_unused|GVMIS|26|[1 6]|0|Global variables are inefficient and make errors difficult to diagnose. Use a function with input variables instead.
+MSG|a1_unused|NUSED|26|[8 9]|1|Global or persistent variable might be unused or unset in this function or script.
+MSG|a1_unused|GVMIS|27|[1 6]|0|Global variables are inefficient and make errors difficult to diagnose. Use a function with input variables instead.
+MSG|a1_unused|PSET|28|[12 13]|0|Persistent variable is used, but might be unset.
+MSG|a1_unused|STOUT|32|[10 10]|0|Function return value might be unset.
+MSG|a1_unused|INUSD|32|[25 25]|1|Input argument might be unused. Consider replacing the argument with ~ instead.
+MSG|a1_unused|DEFNU|36|[10 16]|0|Function might be unused.
+MSG|a1_unused|INUSD|36|[18 18]|1|Input argument might be unused. Consider replacing the argument with ~ instead.
+MSG|a1_unused|NODEF|45|[9 9]|0|Variable might be used before it is defined.
+MSG|a1_unused|NASGU|46|[1 1]|0|Value assigned to variable might be unused.
+MSG|a1_unused|UNRCH|52|[1 7]|0|This statement (and possibly following ones) cannot be reached.
+MSG|a1_unused|AGROW|58|[5 5]|0|Variable appears to change size on every loop iteration. Consider preallocating for speed.
+MSG|a1_unused|AGROW|59|[5 5]|0|Variable appears to change size on every loop iteration. Consider preallocating for speed.
+MSG|a1_unused|UNRCH|62|[9 15]|0|This statement (and possibly following ones) cannot be reached.
+MSG|a1_unused|LAXES|69|[5 8]|0|Calling AXES(h) in a loop can be slow. Consider moving the call to AXES outside the loop.
+== messages: a2_patterns
+MSG|a2_patterns|CHARTEN|3|[6 13]|1|For readability, consider using 'newline' instead of 'char(10)'.
+MSG|a2_patterns|CHARTEN|4|[11 18]|1|For readability, consider using 'newline' instead of 'char(10)'.
+MSG|a2_patterns|FVAL|6|[6 10]|1|Calling functions using 'feval' is usually not necessary. Call the function directly instead.
+MSG|a2_patterns|FVAL|7|[6 10]|1|Calling functions using 'feval' is usually not necessary. Call the function directly instead.
+MSG|a2_patterns|FVAL|8|[18 22]|0|Calling functions using 'feval' is usually not necessary. Call the function directly instead.
+MSG|a2_patterns|EXIST|9|[6 10]|0|EXIST with two input arguments is generally faster and clearer than with one input argument.
+MSG|a2_patterns|ISCL|11|[6 19]|1|To improve performance, use 'isscalar' instead of length comparison.
+MSG|a2_patterns|ISCL|12|[6 19]|1|To improve performance, use 'isscalar' instead of length comparison.
+MSG|a2_patterns|ISCL|14|[6 18]|1|To improve performance, use 'isscalar' instead of length comparison.
+MSG|a2_patterns|DATST|15|[6 12]|0|'datestr' is not recommended. With appropriate code changes, use 'datetime' instead.
+MSG|a2_patterns|TNOW1|15|[14 16]|0|'now' is not recommended. With appropriate code changes, use 'datetime("now")' instead.
+MSG|a2_patterns|DATNM|16|[6 12]|0|'datenum' is not recommended. With appropriate code changes, use 'datetime' instead.
+MSG|a2_patterns|DATE|17|[6 9]|0|'date' is not recommended. With appropriate code changes, use 'datetime("today")' instead.
+MSG|a2_patterns|HIST|18|[6 9]|0|'hist' is not recommended. With appropriate code changes, use 'histogram' instead.
+MSG|a2_patterns|HIST|19|[1 4]|0|'hist' is not recommended. With appropriate code changes, use 'histogram' instead.
+MSG|a2_patterns|DQUAD|20|[6 9]|0|'quad' is not recommended. With appropriate code changes, use 'integral' instead.
+MSG|a2_patterns|DQUADL|21|[6 10]|0|'quadl' is not recommended. With appropriate code changes, use 'integral' instead.
+MSG|a2_patterns|DQUADV|22|[6 10]|0|'quadv' is not recommended. With appropriate code changes, use 'integral' instead.
+MSG|a2_patterns|DDBLQD|23|[6 12]|0|'dblquad' is not recommended. With appropriate code changes, use 'integral2' instead.
+MSG|a2_patterns|DTRIQD|24|[6 15]|0|'triplequad' is not recommended. With appropriate code changes, use 'integral3' instead.
+MSG|a2_patterns|COMPASS|25|[1 7]|0|'compass' is not recommended. With appropriate code changes, use 'compassplot' instead.
+MSG|a2_patterns|DINLN|26|[7 12]|0|INLINE will be removed in a future release. Use anonymous functions instead.
+MSG|a2_patterns|ST2NM|28|[6 12]|0|If you are operating on scalar values, consider using 'str2double' for faster performance.
+MSG|a2_patterns|ST2NM|29|[6 12]|0|If you are operating on scalar values, consider using 'str2double' for faster performance.
+MSG|a2_patterns|STRQUOT|30|[6 18]|1|string('...') is not recommended. Use "..." instead.
+MSG|a2_patterns|GFLD|32|[6 13]|0|Use dynamic fieldnames with structures instead of GETFIELD.
+MSG|a2_patterns|SFLD|33|[6 13]|0|Use dynamic fieldnames with structures instead of SETFIELD.
+MSG|a2_patterns|ISMAT|34|[6 10]|1|When checking if a variable is a matrix consider using ISMATRIX.
+MSG|a2_patterns|LOGL|36|[6 12]|1|Use 'true' or 'false' instead of 'logical(1)' or 'logical(0)'.
+MSG|a2_patterns|LOGL|37|[6 12]|1|Use 'true' or 'false' instead of 'logical(1)' or 'logical(0)'.
+MSG|a2_patterns|RPMT1|38|[6 11]|1|For readability, consider using 'ones(x,y)' instead of 'repmat(1,x,y)'.
+MSG|a2_patterns|RPMTT|39|[6 11]|1|For readability, consider using 'true(x,y)' instead of 'repmat(true,x,y)'.
+MSG|a2_patterns|RPMT0|40|[6 11]|1|For readability, consider using 'zeros(x,y)' instead of 'repmat(0,x,y)'.
+MSG|a2_patterns|RPMTF|41|[6 11]|1|For readability, consider using 'false(x,y)' instead of 'repmat(false,x,y)'.
+MSG|a2_patterns|STCI|42|[6 11]|1|Use STRCMPI(str1,str2) instead of using UPPER/LOWER in a call to STRCMP.
+MSG|a2_patterns|STLOW|44|[6 12]|1|In this comparison the call to UPPER/LOWER is unnecessary.
+MSG|a2_patterns|NBRAK2|45|[6 6]|1|Use of brackets [] is unnecessary.
+MSG|a2_patterns|NBRAK2|46|[6 6]|1|Use of brackets [] is unnecessary.
+MSG|a2_patterns|NBRAK2|49|[6 6]|1|Use of brackets [] is unnecessary.
+MSG|a2_patterns|NOPTS|50|[4 4]|1|Add a semicolon after the statement to hide the output (in a script).
+MSG|a2_patterns|NOSEMI|50|[8 8]|1|Extra semicolon is unnecessary.
+MSG|a2_patterns|NOPTS|51|[4 4]|1|Add a semicolon after the statement to hide the output (in a script).
+MSG|a2_patterns|NO4LP|52|[5 5]|0|Parentheses are not needed in a FOR statement.
+MSG|a2_patterns|CLALL|56|[7 9]|0|Using 'clear' with the 'all' option usually decreases code performance and is often unnecessary.
+MSG|a2_patterns|EVLCS|63|[1 4]|0|'eval' is inefficient and makes code less clear. Call the statement directly.
+MSG|a2_patterns|EVLEQ|64|[1 4]|0|'eval' is inefficient and makes code less clear. Assign to the variable directly.
+MSG|a2_patterns|EVLDUAL|65|[1 4]|0|This use of 'eval' is unnecessary and can be removed. Call the evaluated function directly using parentheses. For example, use 'load(filename)' instead of 'eval(['load ' filename])'.
+MSG|a2_patterns|EVLCS|66|[1 4]|0|'eval' is inefficient and makes code less clear. Call the statement directly.
+MSG|a2_patterns|ELARLOG|67|[11 15]|0|The + operator in the expression size(A + B) is unexpected. Should this be size(A) + B?
+MSG|a2_patterns|ELARLOG|68|[11 16]|0|The .* operator in the expression size(A .* B) is unexpected. Should this be size(A) .* B?
+MSG|a2_patterns|ELARLOG|69|[12 16]|0|The + operator in the expression numel(A + B) is unexpected. Should this be numel(A) + B?
+MSG|a2_patterns|NOANS|71|[1 3]|0|Using ANS as a variable is not recommended as ANS is frequently overwritten by MATLAB.
+MSG|a2_patterns|NOANS|72|[6 8]|0|Using ANS as a variable is not recommended as ANS is frequently overwritten by MATLAB.
+MSG|a2_patterns|GVMIS|73|[1 6]|0|Global variables are inefficient and make errors difficult to diagnose. Use a function with input variables instead.
+MSG|a2_patterns|NUSED|73|[8 9]|1|Global or persistent variable might be unused or unset in this function or script.
+MSG|a2_patterns|GVMIS|74|[1 6]|0|Global variables are inefficient and make errors difficult to diagnose. Use a function with input variables instead.
+MSG|a2_patterns|REDEFGG|74|[8 9]|0|Declaring a variable to be global more than once might not be supported in a future release.
+MSG|a2_patterns|NOPTS|75|[1 1]|1|Add a semicolon after the statement to hide the output (in a script).
+MSG|a2_patterns|NOPTS|76|[1 1]|1|Add a semicolon after the statement to hide the output (in a script).
+MSG|a2_patterns|NOEFF|77|[1 5]|0|The operation or expression 'v(2);' has no evident effect.
+MSG|a2_patterns|VUNUS|79|[3 3]|0|'+' produces a value that might be unused.
+MSG|a2_patterns|SUBSASGN|80|[1 8]|0|Output of SUBSASGN must be assigned to a variable.
+MSG|a2_patterns|DSPSP|82|[1 22]|1|'disp(sprintf(...))' can usually be replaced by 'fprintf(...\n)'.
+MSG|a2_patterns|TNOW1|83|[6 8]|0|'now' is not recommended. With appropriate code changes, use 'datetime("now")' instead.
+MSG|a2_patterns|SEPEX|85|[13 16]|0|Consider using newline, semicolon, or comma before this statement for readability.
+MSG|a2_patterns|SEPEX|86|[15 15]|0|Consider using newline, semicolon, or comma before this statement for readability.
+MSG|a2_patterns|MDUPC|95|[10 10]|0|The case value '1' is a duplicate of one on line 93.
+== messages: A3Class
+MSG|A3Class|INUSD|6|[30 30]|1|Input argument might be unused. Consider replacing the argument with ~ instead.
+MSG|A3Class|MANU|9|[25 27]|0|Input argument might be unused. Consider replacing the argument with ~, or make this method Static instead.
+MSG|A3Class|STOUT|12|[18 18]|0|Function return value might be unset.
+MSG|A3Class|INUSD|20|[28 28]|1|Input argument might be unused. Consider replacing the argument with ~ instead.
+== messages: a4_error
+MSG|a4_error|SYNER|2|[10 10]|0|Parse error at ';': usage might be invalid MATLAB syntax.
+== messages: a5_suppress
+MSG|a5_suppress|MSNU|4|[28 32]|1|A Code Analyzer message was once suppressed here, but the message is no longer generated.
+MSG|a5_suppress|CHARTEN|5|[5 12]|1|For readability, consider using 'newline' instead of 'char(10)'.
+MSG|a5_suppress|MSNU|5|[15 25]|1|A Code Analyzer message was once suppressed here, but the message is no longer generated.
+MSG|a5_suppress|MSNU|6|[8 18]|1|A Code Analyzer message was once suppressed here, but the message is no longer generated.
+MSG|a5_suppress|MSNU|7|[9 12]|1|A Code Analyzer message was once suppressed here, but the message is no longer generated.
+== messages: a6_scopes
+MSG|a6_scopes|NASGU|16|[1 2]|0|Value assigned to variable might be unused.
+MSG|a6_scopes|EVLCS|17|[1 4]|0|'eval' is inefficient and makes code less clear. Call the statement directly.
+== messages: a7_cyc
+MSG|a7_cyc|DEFNU|14|[10 15]|0|Function might be unused.
+== messages: a8_clean
+MSG|a8_clean|none
+== messages: AcceptFormPlain
+MSG|AcceptFormPlain|INUSD|33|[43 47]|1|Input argument might be unused. Consider replacing the argument with ~ instead.
+== messages: AcceptForm.mlapp
+MSG|AcceptForm.mlapp|INUSD|33|[43 47]|1|Input argument might be unused. Consider replacing the argument with ~ instead.
+== -severity: a1_unused
+fields: id,message,fix,severity,line,column
+SEV|INUSD|1|1
+SEV|NASGU|3|1
+SEV|ASGLU|4|1
+SEV|STRNU|6|1
+SEV|STRNU|8|1
+SEV|NASGU|13|1
+SEV|MSNU|13|0
+SEV|NASGU|15|1
+SEV|NASGU|18|1
+SEV|GVMIS|26|1
+SEV|NUSED|26|1
+SEV|GVMIS|27|1
+SEV|PSET|28|1
+SEV|STOUT|32|1
+SEV|INUSD|32|1
+SEV|DEFNU|36|1
+SEV|INUSD|36|1
+SEV|NODEF|45|1
+SEV|NASGU|46|1
+SEV|UNRCH|52|1
+SEV|AGROW|58|0
+SEV|AGROW|59|0
+SEV|UNRCH|62|1
+SEV|LAXES|69|0
+== display: checkcode('a8_clean')
+<EOS>
+== display: checkcode('a7_cyc')
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): Function might be unused.
+
+<EOS>
+== display: checkcode a7_cyc -id
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): DEFNU: Function might be unused.
+
+<EOS>
+== display: checkcode('a7_cyc', '-fullpath')
+<a href="matlab: opentoline('a7_cyc',0)">L 0</a> (C 0): Unable to run code analysis. 'a7_cyc' has an invalid file extension.
+
+<EOS>
+== display: checkcode('a7_cyc.m')
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): Function might be unused.
+
+<EOS>
+== display: checkcode(fullfile(work, 'a7_cyc.m'))
+ERR|MATLAB:UndefinedFunction|Unrecognized function or variable 'work'.
+== display: checkcode('a7_cyc', '-cyc')
+<a href="matlab: opentoline('<work>/a7_cyc.m',1)">L 1</a> (C 14-19): The McCabe cyclomatic complexity of 'a7_cyc' is 4.
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): The McCabe cyclomatic complexity of 'helper' is 1.
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): Function might be unused.
+
+<EOS>
+== display: checkcode('a7_cyc', '-modcyc')
+<a href="matlab: opentoline('<work>/a7_cyc.m',1)">L 1</a> (C 14-19): The modified cyclomatic complexity of 'a7_cyc' is 4.
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): Function might be unused.
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): The modified cyclomatic complexity of 'helper' is 1.
+
+<EOS>
+== display: checkcode('a7_cyc', '-cyc', '-id')
+<a href="matlab: opentoline('<work>/a7_cyc.m',1)">L 1</a> (C 14-19): CABE: The McCabe cyclomatic complexity of 'a7_cyc' is 4.
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): CABE: The McCabe cyclomatic complexity of 'helper' is 1.
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): DEFNU: Function might be unused.
+
+<EOS>
+== display: checkcode('a5_suppress', '-notok')
+<a href="matlab: opentoline('<work>/a5_suppress.m',1)">L 1</a> (C 22): Input argument might be unused. Consider replacing the argument with ~ instead.
+<a href="matlab: opentoline('<work>/a5_suppress.m',1)">L 1</a> (C 25): Input argument might be unused. Consider replacing the argument with ~ instead.
+<a href="matlab: opentoline('<work>/a5_suppress.m',3)">L 3</a> (C 1): Value assigned to variable might be unused.
+<a href="matlab: opentoline('<work>/a5_suppress.m',4)">L 4</a> (C 1): Value assigned to variable might be unused.
+<a href="matlab: opentoline('<work>/a5_suppress.m',4)">L 4</a> (C 5-12): For readability, consider using 'newline' instead of 'char(10)'.
+<a href="matlab: opentoline('<work>/a5_suppress.m',5)">L 5</a> (C 1): Value assigned to variable might be unused.
+<a href="matlab: opentoline('<work>/a5_suppress.m',5)">L 5</a> (C 5-12): For readability, consider using 'newline' instead of 'char(10)'.
+<a href="matlab: opentoline('<work>/a5_suppress.m',6)">L 6</a> (C 1): Value assigned to variable might be unused.
+<a href="matlab: opentoline('<work>/a5_suppress.m',7)">L 7</a> (C 1): Value assigned to variable might be unused.
+
+<EOS>
+== display: checkcode('a5_suppress', '-notok', '-id')
+<a href="matlab: opentoline('<work>/a5_suppress.m',1)">L 1</a> (C 22): INUSD: Input argument might be unused. Consider replacing the argument with ~ instead.
+<a href="matlab: opentoline('<work>/a5_suppress.m',1)">L 1</a> (C 25): INUSD: Input argument might be unused. Consider replacing the argument with ~ instead.
+<a href="matlab: opentoline('<work>/a5_suppress.m',3)">L 3</a> (C 1): NASGU: Value assigned to variable might be unused.
+<a href="matlab: opentoline('<work>/a5_suppress.m',4)">L 4</a> (C 1): NASGU: Value assigned to variable might be unused.
+<a href="matlab: opentoline('<work>/a5_suppress.m',4)">L 4</a> (C 5-12): CHARTEN: For readability, consider using 'newline' instead of 'char(10)'.
+<a href="matlab: opentoline('<work>/a5_suppress.m',5)">L 5</a> (C 1): NASGU: Value assigned to variable might be unused.
+<a href="matlab: opentoline('<work>/a5_suppress.m',5)">L 5</a> (C 5-12): CHARTEN: For readability, consider using 'newline' instead of 'char(10)'.
+<a href="matlab: opentoline('<work>/a5_suppress.m',6)">L 6</a> (C 1): NASGU: Value assigned to variable might be unused.
+<a href="matlab: opentoline('<work>/a5_suppress.m',7)">L 7</a> (C 1): NASGU: Value assigned to variable might be unused.
+
+<EOS>
+== display: checkcode({'a7_cyc', 'a8_clean'})
+========== <a href="matlab: edit('<work>\a7_cyc.m')"><work>\a7_cyc.m</a> ==========
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): Function might be unused.
+
+========== <a href="matlab: edit('<work>\a8_clean.m')"><work>\a8_clean.m</a> ==========
+
+
+<EOS>
+== display: checkcode({'a7_cyc', 'a8_clean'}, '-id')
+========== <a href="matlab: edit('<work>\a7_cyc.m')"><work>\a7_cyc.m</a> ==========
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): DEFNU: Function might be unused.
+
+========== <a href="matlab: edit('<work>\a8_clean.m')"><work>\a8_clean.m</a> ==========
+
+
+<EOS>
+== display: checkcode('a7_cyc', 'a8_clean')
+========== <a href="matlab: edit('<work>\a7_cyc.m')"><work>\a7_cyc.m</a> ==========
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): Function might be unused.
+
+========== <a href="matlab: edit('<work>\a8_clean.m')"><work>\a8_clean.m</a> ==========
+
+
+<EOS>
+== display: checkcode('a4_error')
+<a href="matlab: opentoline('<work>/a4_error.m',2)">L 2</a> (C 10): Parse error at ';': usage might be invalid MATLAB syntax.
+
+<EOS>
+== display: checkcode('A3Class')
+<a href="matlab: opentoline('<work>/A3Class.m',6)">L 6</a> (C 30): Input argument might be unused. Consider replacing the argument with ~ instead.
+<a href="matlab: opentoline('<work>/A3Class.m',9)">L 9</a> (C 25-27): Input argument might be unused. Consider replacing the argument with ~, or make this method Static instead.
+<a href="matlab: opentoline('<work>/A3Class.m',12)">L 12</a> (C 18): Function return value might be unset.
+<a href="matlab: opentoline('<work>/A3Class.m',20)">L 20</a> (C 28): Input argument might be unused. Consider replacing the argument with ~ instead.
+
+<EOS>
+== display: mlint('a7_cyc')
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): Function might be unused.
+
+<EOS>
+== display: checkcode('a7_cyc', '-disp')
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): Function might be unused.
+
+<EOS>
+== display: checkcode('a7_cyc', '-config=factory')
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): Function might be unused.
+
+<EOS>
+== display: checkcode('a7_cyc', '-eml')
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): Function might be unused.
+
+<EOS>
+== display: checkcode('a7_cyc', '-codegen')
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): Function might be unused.
+
+<EOS>
+== display: -text form A
+L 2 (C 1): Value assigned to variable might be unused.
+
+<EOS>
+== display: -text form B
+L 2 (C 1): Value assigned to variable might be unused.
+
+<EOS>
+== display: -text form C
+ERR|MATLAB:mlint:InvalidInput|-TEXT requires one argument with text, and a second one with a .m filename
+== the outputs
+string class char size [1 42]
+L 14 (C 10-15): Function might be unused.
+<EOS>
+L 14 (C 10-15): DEFNU: Function might be unused.
+<EOS>
+empty string class char size [0 0] []
+cell string class char size [1 262]
+ERR|MATLAB:cellRefFromNonCell|Brace indexing is not supported for variables of this type.
+== refusals
+REFUSED: checkcode() -> MATLAB:narginchk:notEnoughInputs: Not enough input arguments.
+REFUSED: checkcode('nosuch_w10') -> MATLAB:mlint:FileNotFound: Unable to open file "nosuch_w10". File is not found or is not a supported MATLAB code file.
+REFUSED: checkcode('nosuch_w10.m') -> MATLAB:mlint:FileNotFound: Unable to open file "nosuch_w10.m". File is not found or is not a supported MATLAB code file.
+REFUSED: checkcode(5) -> MATLAB:mlint:CheckCodeInputMustBeOfCharType: Arguments must be character vectors or string scalars. File name arguments can also be string arrays or cell arrays of character vectors.
+REFUSED: checkcode('') -> MATLAB:mlint:EmptyInput: Empty arguments not supported.
+ACCEPTED: checkcode({})
+REFUSED: x = checkcode({}) -> MATLAB:err_static_workspace_violation: Attempt to add "x" to a static workspace.
+REFUSED: checkcode('-id') -> MATLAB:mlint:NoFile: No file name provided.
+ACCEPTED: checkcode({'a7_cyc'}, 'a8_clean') -> [Warning: The following arguments were ignored: a8_clean.] 
+[> In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('matlab.internal.codeanalyzer/inputParser/parse', 'C:\Program Files\MATLAB\R2025b\toolbox\matlab\codetools\+matlab\+internal\+codeanalyzer\inputParser.m', 85)" style="font-weight:bold">matlab.internal.codeanalyzer/inputParser/parse</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2025b\toolbox\matlab\codetools\+matlab\+internal\+codeanalyzer\inputParser.m',85,0)">line 85</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('checkcode', 'C:\Program Files\MATLAB\R2025b\toolbox\matlab\codetools\checkcode.m', 20)" style="font-weight:bold">checkcode</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2025b\toolbox\matlab\codetools\checkcode.m',20,0)">line 20</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('w10_analyzer>@()evalc(''checkcode({''''a7_cyc''''}, ''''a8_clean'''')'')', 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w10\w10_analyzer.m', 399)" style="font-weight:bold">w10_analyzer>@()evalc('checkcode({''a7_cyc''}, ''a8_clean'')')</a> (<a href="matlab: opentoline('D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w10\w10_analyzer.m',399,0)">line 399</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('w10_analyzer>refuse', 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w10\w10_analyzer.m', 546)" style="font-weight:bold">w10_analyzer>refuse</a> (<a href="matlab: opentoline('D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w10\w10_analyzer.m',546,0)">line 546</a>)
+In <a href="matlab:matlab.lang.internal.introspective.errorDocCallback('w10_analyzer', 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w10\w10_analyzer.m', 399)" style="font-weight:bold">w10_analyzer</a> (<a href="matlab: opentoline('D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w10\w10_analyzer.m',399,0)">line 399</a>)] 
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): Function might be unused.
+
+<EOS>
+REFUSED: checkcode({'a7_cyc'}, {'a8_clean'}) -> MATLAB:mlint:TooManyCellArgs: Multiple cell arrays of character vectors or string arrays not supported. Specify file name as one or more character vectors, one string array, or one cell array of character vectors. All other arguments must be either a character vector or a scalar string.
+REFUSED: checkcode({{'a7_cyc'}}) -> MATLAB:mlint:NestedCell: Input arguments to checkcode should not contain nested cell arrays.
+REFUSED: checkcode({'a7_cyc', 5}) -> MATLAB:mlint:CheckCodeInputMustBeOfCharType: Arguments must be character vectors or string scalars. File name arguments can also be string arrays or cell arrays of character vectors.
+ACCEPTED: checkcode('a7_cyc', '-bogus') -> <a href="matlab: opentoline('<work>/a7_cyc.m',0)">L 0</a> (C 0): Option '-bogus' is ignored because it is invalid.
+<a href="matlab: opentoline('<work>/a7_cyc.m',14)">L 14</a> (C 10-15): Function might be unused.
+
+<EOS>
+REFUSED: [a,b,c] = checkcode('a7_cyc') -> MATLAB:nargoutchk:tooManyOutputs: Too many output arguments.
+REFUSED: x = checkcode('a7_cyc', '-disp') -> MATLAB:err_static_workspace_violation: Attempt to add "x" to a static workspace.
+REFUSED: checkcode(string(missing)) -> MATLAB:mlint:MissingString: <missing> string element not supported.
+REFUSED: checkcode(['a'; 'b']) -> MATLAB:mlint:NotCharacterRowVector: Character vector arguments must be row vectors.
+REFUSED: checkcode('a7_cyc', 'a8_clean', '-string') outputs -> MATLAB:err_static_workspace_violation: Attempt to add "x" to a static workspace.
+REFUSED: checkcode(work) folder -> MATLAB:mlint:FileNotFound: Unable to open file "<work>". File is not found or is not a supported MATLAB code file.
+REFUSED: checkcode('a2_patterns.txt') -> MATLAB:mlint:FileNotFound: Unable to open file "a2_patterns.txt". File is not found or is not a supported MATLAB code file.
+REFUSED: mlint() -> MATLAB:narginchk:notEnoughInputs: Not enough input arguments.
+== codeIssues
+class codeIssues
+--- display c
+
+c = 
+
+  <a href="matlab:helpPopup('codeIssues')" style="font-weight:bold">codeIssues</a> with properties:
+
+                         Date: 04-Nov-2026 17:35:31
+                      Release: "R2025b"
+                        Files: "<work>\a7_cyc.m"
+    CodeAnalyzerConfiguration: "active"
+                       Issues: [1×10 table]
+             SuppressedIssues: [0×11 table]
+
+
+    Issues table preview
+
+     <strong>Location</strong>     <strong>Severity</strong>    <strong>Fixability</strong>            <strong>Description</strong>            <strong>CheckID</strong>    <strong>LineStart</strong>    <strong>LineEnd</strong>    <strong>ColumnStart</strong>    <strong>ColumnEnd</strong>                                          <strong>FullFilename</strong>                                      
+    <strong>__________</strong>    <strong>________</strong>    <strong>__________</strong>    <strong>___________________________</strong>    <strong>_______</strong>    <strong>_________</strong>    <strong>_______</strong>    <strong>___________</strong>    <strong>_________</strong>    <strong>________________________________________________________________________________________</strong>
+
+    "a7_cyc.m"    warning       manual      "Function might be unused."     DEFNU        14          14           10            15        "<work>\a7_cyc.m"
+
+
+
+<EOS>
+--- disp(c)
+  <a href="matlab:helpPopup('codeIssues')" style="font-weight:bold">codeIssues</a> with properties:
+
+                         Date: 04-Nov-2026 17:35:31
+                      Release: "R2025b"
+                        Files: "<work>\a7_cyc.m"
+    CodeAnalyzerConfiguration: "active"
+                       Issues: [1×10 table]
+             SuppressedIssues: [0×11 table]
+
+
+    Issues table preview
+
+     <strong>Location</strong>     <strong>Severity</strong>    <strong>Fixability</strong>            <strong>Description</strong>            <strong>CheckID</strong>    <strong>LineStart</strong>    <strong>LineEnd</strong>    <strong>ColumnStart</strong>    <strong>ColumnEnd</strong>                                          <strong>FullFilename</strong>                                      
+    <strong>__________</strong>    <strong>________</strong>    <strong>__________</strong>    <strong>___________________________</strong>    <strong>_______</strong>    <strong>_________</strong>    <strong>_______</strong>    <strong>___________</strong>    <strong>_________</strong>    <strong>________________________________________________________________________________________</strong>
+
+    "a7_cyc.m"    warning       manual      "Function might be unused."     DEFNU        14          14           10            15        "<work>\a7_cyc.m"
+
+
+
+<EOS>
+Date class datetime; Release string R2025b; Files string [1 1] <work>\a7_cyc.m; Configuration string active
+Issues table [1 10] vars Location,Severity,Fixability,Description,CheckID,LineStart,LineEnd,ColumnStart,ColumnEnd,FullFilename
+  Location: string [1 1]
+  Severity: matlab.codeanalysis.IssueSeverity [1 1]
+  Fixability: matlab.codeanalysis.IssueFixability [1 1]
+  Description: string [1 1]
+  CheckID: categorical [1 1]
+  LineStart: double [1 1]
+  LineEnd: double [1 1]
+  ColumnStart: double [1 1]
+  ColumnEnd: double [1 1]
+  FullFilename: string [1 1]
+--- Issues display
+     <strong>Location</strong>     <strong>Severity</strong>    <strong>Fixability</strong>            <strong>Description</strong>            <strong>CheckID</strong>    <strong>LineStart</strong>    <strong>LineEnd</strong>    <strong>ColumnStart</strong>    <strong>ColumnEnd</strong>                                          <strong>FullFilename</strong>                                      
+    <strong>__________</strong>    <strong>________</strong>    <strong>__________</strong>    <strong>___________________________</strong>    <strong>_______</strong>    <strong>_________</strong>    <strong>_______</strong>    <strong>___________</strong>    <strong>_________</strong>    <strong>________________________________________________________________________________________</strong>
+
+    "a7_cyc.m"    warning       manual      "Function might be unused."     DEFNU        14          14           10            15        "<work>\a7_cyc.m"
+
+<EOS>
+ISSUE|a7_cyc.m|warning|manual|Function might be unused.|DEFNU|14|14|10|15|<work>\a7_cyc.m
+SuppressedIssues table [0 11] vars Location,Severity,Fixability,Description,Suppression,CheckID,LineStart,LineEnd,ColumnStart,ColumnEnd,FullFilename
+--- a5 SuppressedIssues display
+       <strong>Location</strong>        <strong>Severity</strong>    <strong>Fixability</strong>                                       <strong>Description</strong>                                       <strong>Suppression</strong>    <strong>CheckID</strong>    <strong>LineStart</strong>    <strong>LineEnd</strong>    <strong>ColumnStart</strong>    <strong>ColumnEnd</strong>                                            <strong>FullFilename</strong>                                         
+    <strong>_______________</strong>    <strong>________</strong>    <strong>__________</strong>    <strong>_________________________________________________________________________________</strong>    <strong>___________</strong>    <strong>_______</strong>    <strong>_________</strong>    <strong>_______</strong>    <strong>___________</strong>    <strong>_________</strong>    <strong>_____________________________________________________________________________________________</strong>
+
+    "a5_suppress.m"    warning       auto        "Input argument might be unused. Consider replacing the argument with ~ instead."       line        INUSD          1           1           22            22        "<work>\a5_suppress.m"
+    "a5_suppress.m"    warning       auto        "Input argument might be unused. Consider replacing the argument with ~ instead."       line        INUSD          1           1           25            25        "<work>\a5_suppress.m"
+    "a5_suppress.m"    warning       manual      "Value assigned to variable might be unused."                                           file        NASGU          3           3            1             1        "<work>\a5_suppress.m"
+    "a5_suppress.m"    warning       manual      "Value assigned to variable might be unused."                                           file        NASGU          4           4            1             1        "<work>\a5_suppress.m"
+    "a5_suppress.m"    info          auto        "For readability, consider using 'newline' instead of 'char(10)'."                      line        CHARTEN        4           4            5            12        "<work>\a5_suppress.m"
+    "a5_suppress.m"    warning       manual      "Value assigned to variable might be unused."                                           file        NASGU          5           5            1             1        "<work>\a5_suppress.m"
+    "a5_suppress.m"    warning       manual      "Value assigned to variable might be unused."                                           file        NASGU          6           6            1             1        "<work>\a5_suppress.m"
+    "a5_suppress.m"    warning       manual      "Value assigned to variable might be unused."                                           file        NASGU          7           7            1             1        "<work>\a5_suppress.m"
+
+<EOS>
+SUPP|line|warning|auto|Input argument might be unused. Consider replacing the argument with ~ instead.|INUSD|1|1|22|22
+SUPP|line|warning|auto|Input argument might be unused. Consider replacing the argument with ~ instead.|INUSD|1|1|25|25
+SUPP|file|warning|manual|Value assigned to variable might be unused.|NASGU|3|3|1|1
+SUPP|file|warning|manual|Value assigned to variable might be unused.|NASGU|4|4|1|1
+SUPP|line|info|auto|For readability, consider using 'newline' instead of 'char(10)'.|CHARTEN|4|4|5|12
+SUPP|file|warning|manual|Value assigned to variable might be unused.|NASGU|5|5|1|1
+SUPP|file|warning|manual|Value assigned to variable might be unused.|NASGU|6|6|1|1
+SUPP|file|warning|manual|Value assigned to variable might be unused.|NASGU|7|7|1|1
+--- a5 display
+
+c5 = 
+
+  <a href="matlab:helpPopup('codeIssues')" style="font-weight:bold">codeIssues</a> with properties:
+
+                         Date: 04-Nov-2026 17:35:35
+                      Release: "R2025b"
+                        Files: "<work>\a5_suppress.m"
+    CodeAnalyzerConfiguration: "active"
+                       Issues: [5×10 table]
+             SuppressedIssues: [8×11 table]
+
+
+    Issues table preview
+
+       <strong>Location</strong>        <strong>Severity</strong>    <strong>Fixability</strong>                                            <strong>Description</strong>                                            <strong>CheckID</strong>    <strong>LineStart</strong>    <strong>LineEnd</strong>    <strong>ColumnStart</strong>    <strong>ColumnEnd</strong>                                            <strong>FullFilename</strong>                                         
+    <strong>_______________</strong>    <strong>________</strong>    <strong>__________</strong>    <strong>___________________________________________________________________________________________</strong>    <strong>_______</strong>    <strong>_________</strong>    <strong>_______</strong>    <strong>___________</strong>    <strong>_________</strong>    <strong>_____________________________________________________________________________________________</strong>
+
+    "a5_suppress.m"      info         auto       "A Code Analyzer message was once suppressed here, but the message is no longer generated."    MSNU           4           4           28            32        "<work>\a5_suppress.m"
+    "a5_suppress.m"      info         auto       "For readability, consider using 'newline' instead of 'char(10)'."                             CHARTEN        5           5            5            12        "<work>\a5_suppress.m"
+    "a5_suppress.m"      info         auto       "A Code Analyzer message was once suppressed here, but the message is no longer generated."    MSNU           5           5           15            25        "<work>\a5_suppress.m"
+    "a5_suppress.m"      info         auto       "A Code Analyzer message was once suppressed here, but the message is no longer generated."    MSNU           6           6            8            18        "<work>\a5_suppress.m"
+    "a5_suppress.m"      info         auto       "A Code Analyzer message was once suppressed here, but the message is no longer generated."    MSNU           7           7            9            12        "<work>\a5_suppress.m"
+
+
+
+<EOS>
+--- a8 (clean) display
+
+c8 = 
+
+  <a href="matlab:helpPopup('codeIssues')" style="font-weight:bold">codeIssues</a> with properties:
+
+                         Date: 04-Nov-2026 17:35:35
+                      Release: "R2025b"
+                        Files: "<work>\a8_clean.m"
+    CodeAnalyzerConfiguration: "active"
+                       Issues: [0×10 table]
+             SuppressedIssues: [0×11 table]
+
+<EOS>
+clean Issues [0 10]; Suppressed [0 11]
+folder: Files [10 1] = <work>\a1_unused.m;<work>\a2_patterns.m;<work>\A3Class.m;<work>\a4_error.m;<work>\a5_suppress.m;<work>\a6_scopes.m;<work>\a7_cyc.m;<work>\a8_clean.m;<work>\AcceptForm.mlapp;<work>\AcceptFormPlain.m
+folder issues 106; by file: A3Class.m,AcceptForm.mlapp,AcceptFormPlain.m,a1_unused.m,a2_patterns.m,a4_error.m,a5_suppress.m,a6_scopes.m,a7_cyc.m
+--- folder display (head)
+
+cf = 
+
+  <a href="matlab:helpPopup('codeIssues')" style="font-weight:bold">codeIssues</a> with properties:
+
+                         Date: 04-Nov-2026 17:35:35
+                      Release: "R2025b"
+                        Files: [10×1 string]
+    CodeAnalyzerConfiguration: "active"
+                       Issues: [106×10 table]
+             SuppressedIssues: [10×11 table]
+
+
+    Issues table preview
+
+         <strong>Location</strong>          <strong>Severity</strong>    <strong>Fixability</strong>                                                     <strong>Description</strong>                                                     <strong>CheckID</strong>    <strong>LineStart</strong>    <strong>LineEnd</strong>    <strong>ColumnStart</strong>    <strong>ColumnEnd</strong>                                              <strong>FullFilename</strong>                                           
+    <strong>___________________</strong>    <strong>________</strong>    <strong>__________</strong>    <strong>_____________________________________________________________________________________________________________</strong>    <strong>_______</strong>    <strong>_________</strong>    <strong>_______</strong>    <strong>___________</strong>    <strong>_________</strong>    <strong>_________________________________________________________________________________________________</strong>
+
+    "A3Class.m"            warning       auto        "Input argument might be unused. Consider replacing the argument with ~ instead."                                INUSD          6           6           30            30        "<work>\A3Class.m"        
+    "A3Class.m"            warning       manual      "Input argument might be unused. Consider replacing the argument with ~, or make this method Static instead."    MANU           9           9           25            27        "<work>\A3Class.m"        
+    "A3Class.m"            warning       manual      "Function return value might be unset."                                                                          STOUT         12          12           18            18        "<work>\A3Class.m"        
+    "A3Class.m"            warning       auto        "Input argument might be unused. Consider replacing the argument <EOS>
+cell: Files [2 1] = <work>\a7_cyc.m;<work>\a8_clean.m
+no args: Files 10
+--- a4 (error) issues
+ISSUE|a4_error.m|error|manual|Parse error at ';': usage might be invalid MATLAB syntax.|SYNER|2|2|10|10
+--- a1 issues (codeIssues descriptions)
+ISSUE|a1_unused.m|warning|auto|Input argument might be unused. Consider replacing the argument with ~ instead.|INUSD|1|1|44|44
+ISSUE|a1_unused.m|warning|manual|Value assigned to variable might be unused.|NASGU|3|3|1|1
+ISSUE|a1_unused.m|warning|auto|Value assigned to variable might be unused. Consider replacing the variable with ~ instead.|ASGLU|4|4|2|2
+ISSUE|a1_unused.m|warning|manual|This variable, apparently a structure, is changed but the value might be unused.|STRNU|6|6|1|1
+ISSUE|a1_unused.m|warning|manual|This variable, apparently a structure, is changed but the value might be unused.|STRNU|8|8|1|1
+ISSUE|a1_unused.m|warning|manual|Value assigned to variable might be unused.|NASGU|13|13|1|1
+ISSUE|a1_unused.m|info|auto|A Code Analyzer message was once suppressed here, but the message is no longer generated.|MSNU|13|13|8|18
+ISSUE|a1_unused.m|warning|manual|Value assigned to variable might be unused.|NASGU|15|15|1|2
+ISSUE|a1_unused.m|warning|manual|Value assigned to variable might be unused.|NASGU|18|18|1|2
+ISSUE|a1_unused.m|warning|manual|Global variables are inefficient and make errors difficult to diagnose. Use a function with input variables instead.|GVMIS|26|26|1|6
+ISSUE|a1_unused.m|warning|auto|Global or persistent variable might be unused or unset in this function or script.|NUSED|26|26|8|9
+ISSUE|a1_unused.m|warning|manual|Global variables are inefficient and make errors difficult to diagnose. Use a function with input variables instead.|GVMIS|27|27|1|6
+ISSUE|a1_unused.m|warning|manual|Persistent variable is used, but might be unset.|PSET|28|28|12|13
+ISSUE|a1_unused.m|warning|manual|Function return value might be unset.|STOUT|32|32|10|10
+ISSUE|a1_unused.m|warning|auto|Input argument might be unused. Consider replacing the argument with ~ instead.|INUSD|32|32|25|25
+ISSUE|a1_unused.m|warning|manual|Function might be unused.|DEFNU|36|36|10|16
+ISSUE|a1_unused.m|warning|auto|Input argument might be unused. Consider replacing the argument with ~ instead.|INUSD|36|36|18|18
+ISSUE|a1_unused.m|warning|manual|Variable might be used before it is defined.|NODEF|45|45|9|9
+ISSUE|a1_unused.m|warning|manual|Value assigned to variable might be unused.|NASGU|46|46|1|1
+ISSUE|a1_unused.m|warning|manual|This statement (and possibly following ones) cannot be reached.|UNRCH|52|52|1|7
+ISSUE|a1_unused.m|info|manual|Variable appears to change size on every loop iteration. Consider preallocating for speed.|AGROW|58|58|5|5
+ISSUE|a1_unused.m|info|manual|Variable appears to change size on every loop iteration. Consider preallocating for speed.|AGROW|59|59|5|5
+ISSUE|a1_unused.m|warning|manual|This statement (and possibly following ones) cannot be reached.|UNRCH|62|62|9|15
+ISSUE|a1_unused.m|info|manual|Calling AXES(h) in a loop can be slow. Consider moving the call to AXES outside the loop.|LAXES|69|69|5|8
+--- a1 display (many rows)
+
+c1 = 
+
+  <a href="matlab:helpPopup('codeIssues')" style="font-weight:bold">codeIssues</a> with properties:
+
+                         Date: 04-Nov-2026 17:35:37
+                      Release: "R2025b"
+                        Files: "<work>\a1_unused.m"
+    CodeAnalyzerConfiguration: "active"
+                       Issues: [24×10 table]
+             SuppressedIssues: [2×11 table]
+
+
+    Issues table preview
+
+      <strong>Location</strong>       <strong>Severity</strong>    <strong>Fixability</strong>                                             <strong>Description</strong>                                             <strong>CheckID</strong>    <strong>LineStart</strong>    <strong>LineEnd</strong>    <strong>ColumnStart</strong>    <strong>ColumnEnd</strong>                                           <strong>FullFilename</strong>                                        
+    <strong>_____________</strong>    <strong>________</strong>    <strong>__________</strong>    <strong>_____________________________________________________________________________________________</strong>    <strong>_______</strong>    <strong>_________</strong>    <strong>_______</strong>    <strong>___________</strong>    <strong>_________</strong>    <strong>___________________________________________________________________________________________</strong>
+
+    "a1_unused.m"    warning       auto        "Input argument might be unused. Consider replacing the argument with ~ instead."                 INUSD         1           1           44            44        "<work>\a1_unused.m"
+    "a1_unused.m"    warning       manual      "Value assigned to variable might be unused."                                                     NASGU         3           3            1             1        "<work>\a1_unused.m"
+    "a1_unused.m"    warning       auto        "Value assigned to variable might be unused. Consider replacing the variable with ~ instead."     ASGLU         4           4            2             2        "<work>\a1_unused.m"
+    "a1_unused.m"    warning       manual      "This variable, apparently a structure, is changed but the value might be unused."                STRNU         6           6            1             1        "<work>\a1_unused.m"
+    "a1_unused.m"    warning       manual      "This variable, apparently a structure, is changed but the value might be unused."                STRNU         8           8            1             1        "<work>\a1_unused.m"
+    "a1_unused.m"    warning       manual      "Value assigned to variable might be unused."                                                     NASGU        13          13            1             1        "<work>\a1_unused.m"
+    "a1_unused.m"    info          auto        "A Code Analyzer message was once suppressed here, but the message is no longer generated."       MSNU         13          13            8            18        "<work>\a1_unused.m"
+    "a1_unused.m"    warning       manual      "Value assigned to variable might be unused."                                                     NASGU        15          15            1             2        "<work>\a1_unused.m"
+    "a1_unused.m"    warning       manual      "Value assigned to variable might be unused."                                                     NASGU        18          18            1             2        "<work>\a1_unused.m"
+
+          :             :            :                                                       :                                                     :           :           :            :             :                                                     :                                             
+
+    "a1_unused.m"    warning       manual      "Function might be unused."                                                                       DEFNU        36          36           10            16        "<work>\a1_unused.m"
+    "a1_unused.m"    warning       auto        "Input argument might be unused. Consider replacing the argument with ~ instead."                 INUSD        36          36           18            18        "<work>\a1_unused.m"
+    "a1_unused.m"    warning       manual      "Variable might be used before it is defined."                                                    NODEF        45          45            9             9        "<work>\a1_unused.m"
+    "a1_unused.m"    warning       manual      "Value assigned to variable might be unused."                                                     NASGU        46          46            1             1        "<work>\a1_unused.m"
+    "a1_unused.m"    warning       manual      "This statement (and possibly following ones) cannot be reached."                                 UNRCH        52          52            1             7        "<work>\a1_unused.m"
+    "a1_unused.m"    info          manual      "Variable appears to change size on every loop iteration. Consider preallocating for speed."      AGROW        58          58            5             5        "<work>\a1_unused.m"
+    "a1_unused.m"    info          manual      "Variable appears to change size on every loop iteration. Consider preallocating for speed."      AGROW        59          59            5             5        "<work>\a1_unused.m"
+    "a1_unused.m"    warning       manual      "This statement (and possibly following ones) cannot be reached."                                 UNRCH        62          62            9            15        "<work>\a1_unused.m"
+    "a1_unused.m"    info          manual      "Calling AXES(h) in a loop can be slow. Consider moving the call to AXES outside the loop."       LAXES        69          69            5             8        "<work>\a1_unused.m"
+
+	<a href="matlab:if exist('c1','var'), displayWholeObj(c1.Issues), else, fprintf('Unable to display variable c1.Issues because it no longer exists.\n');end">Display all 24 rows.</a>
+
+
+<EOS>
+--- a2 issues (codeIssues descriptions)
+ISSUE|a2_patterns.m|info|auto|For readability, consider using 'newline' instead of 'char(10)'.|CHARTEN|3|3|6|13
+ISSUE|a2_patterns.m|info|auto|For readability, consider using 'newline' instead of 'char(10)'.|CHARTEN|4|4|11|18
+ISSUE|a2_patterns.m|warning|auto|Calling functions using 'feval' is usually not necessary. Call the function directly instead.|FVAL|6|6|6|10
+ISSUE|a2_patterns.m|warning|auto|Calling functions using 'feval' is usually not necessary. Call the function directly instead.|FVAL|7|7|6|10
+ISSUE|a2_patterns.m|warning|manual|Calling functions using 'feval' is usually not necessary. Call the function directly instead.|FVAL|8|8|18|22
+ISSUE|a2_patterns.m|info|manual|EXIST with two input arguments is generally faster and clearer than with one input argument.|EXIST|9|9|6|10
+ISSUE|a2_patterns.m|info|auto|To improve performance, use 'isscalar' instead of length comparison.|ISCL|11|11|6|19
+ISSUE|a2_patterns.m|info|auto|To improve performance, use 'isscalar' instead of length comparison.|ISCL|12|12|6|19
+ISSUE|a2_patterns.m|info|auto|To improve performance, use 'isscalar' instead of length comparison.|ISCL|14|14|6|18
+ISSUE|a2_patterns.m|info|manual|'datestr' is not recommended. With appropriate code changes, use 'datetime' instead.|DATST|15|15|6|12
+ISSUE|a2_patterns.m|info|manual|'now' is not recommended. With appropriate code changes, use 'datetime("now")' instead.|TNOW1|15|15|14|16
+ISSUE|a2_patterns.m|info|manual|'datenum' is not recommended. With appropriate code changes, use 'datetime' instead.|DATNM|16|16|6|12
+ISSUE|a2_patterns.m|info|manual|'date' is not recommended. With appropriate code changes, use 'datetime("today")' instead.|DATE|17|17|6|9
+ISSUE|a2_patterns.m|info|manual|'hist' is not recommended. With appropriate code changes, use 'histogram' instead.|HIST|18|18|6|9
+ISSUE|a2_patterns.m|info|manual|'hist' is not recommended. With appropriate code changes, use 'histogram' instead.|HIST|19|19|1|4
+ISSUE|a2_patterns.m|info|manual|'quad' is not recommended. With appropriate code changes, use 'integral' instead.|DQUAD|20|20|6|9
+ISSUE|a2_patterns.m|info|manual|'quadl' is not recommended. With appropriate code changes, use 'integral' instead.|DQUADL|21|21|6|10
+ISSUE|a2_patterns.m|info|manual|'quadv' is not recommended. With appropriate code changes, use 'integral' instead.|DQUADV|22|22|6|10
+ISSUE|a2_patterns.m|info|manual|'dblquad' is not recommended. With appropriate code changes, use 'integral2' instead.|DDBLQD|23|23|6|12
+ISSUE|a2_patterns.m|info|manual|'triplequad' is not recommended. With appropriate code changes, use 'integral3' instead.|DTRIQD|24|24|6|15
+ISSUE|a2_patterns.m|info|manual|'compass' is not recommended. With appropriate code changes, use 'compassplot' instead.|COMPASS|25|25|1|7
+ISSUE|a2_patterns.m|warning|manual|INLINE will be removed in a future release. Use anonymous functions instead.|DINLN|26|26|7|12
+ISSUE|a2_patterns.m|info|manual|If you are operating on scalar values, consider using 'str2double' for faster performance.|ST2NM|28|28|6|12
+ISSUE|a2_patterns.m|info|manual|If you are operating on scalar values, consider using 'str2double' for faster performance.|ST2NM|29|29|6|12
+ISSUE|a2_patterns.m|info|auto|string('...') is not recommended. Use "..." instead.|STRQUOT|30|30|6|18
+ISSUE|a2_patterns.m|info|manual|Use dynamic fieldnames with structures instead of GETFIELD.|GFLD|32|32|6|13
+ISSUE|a2_patterns.m|info|manual|Use dynamic fieldnames with structures instead of SETFIELD.|SFLD|33|33|6|13
+ISSUE|a2_patterns.m|info|auto|When checking if a variable is a matrix consider using ISMATRIX.|ISMAT|34|34|6|10
+ISSUE|a2_patterns.m|info|auto|Use 'true' or 'false' instead of 'logical(1)' or 'logical(0)'.|LOGL|36|36|6|12
+ISSUE|a2_patterns.m|info|auto|Use 'true' or 'false' instead of 'logical(1)' or 'logical(0)'.|LOGL|37|37|6|12
+ISSUE|a2_patterns.m|info|auto|For readability, consider using 'ones(x,y)' instead of 'repmat(1,x,y)'.|RPMT1|38|38|6|11
+ISSUE|a2_patterns.m|info|auto|For readability, consider using 'true(x,y)' instead of 'repmat(true,x,y)'.|RPMTT|39|39|6|11
+ISSUE|a2_patterns.m|info|auto|For readability, consider using 'zeros(x,y)' instead of 'repmat(0,x,y)'.|RPMT0|40|40|6|11
+ISSUE|a2_patterns.m|info|auto|For readability, consider using 'false(x,y)' instead of 'repmat(false,x,y)'.|RPMTF|41|41|6|11
+ISSUE|a2_patterns.m|warning|auto|Use STRCMPI(str1,str2) instead of using UPPER/LOWER in a call to STRCMP.|STCI|42|42|6|11
+ISSUE|a2_patterns.m|info|auto|In this comparison the call to UPPER/LOWER is unnecessary.|STLOW|44|44|6|12
+ISSUE|a2_patterns.m|info|auto|Use of brackets [] is unnecessary.|NBRAK2|45|45|6|6
+ISSUE|a2_patterns.m|info|auto|Use of brackets [] is unnecessary.|NBRAK2|46|46|6|6
+ISSUE|a2_patterns.m|info|auto|Use of brackets [] is unnecessary.|NBRAK2|49|49|6|6
+ISSUE|a2_patterns.m|info|auto|Add a semicolon after the statement to hide the output (in a script).|NOPTS|50|50|4|4
+ISSUE|a2_patterns.m|info|auto|Extra semicolon is unnecessary.|NOSEMI|50|50|8|8
+ISSUE|a2_patterns.m|info|auto|Add a semicolon after the statement to hide the output (in a script).|NOPTS|51|51|4|4
+ISSUE|a2_patterns.m|info|manual|Parentheses are not needed in a FOR statement.|NO4LP|52|52|5|5
+ISSUE|a2_patterns.m|info|manual|Using 'clear' with the 'all' option usually decreases code performance and is often unnecessary.|CLALL|56|56|7|9
+ISSUE|a2_patterns.m|warning|manual|'eval' is inefficient and makes code less clear. Call the statement directly.|EVLCS|63|63|1|4
+ISSUE|a2_patterns.m|warning|manual|'eval' is inefficient and makes code less clear. Assign to the variable directly.|EVLEQ|64|64|1|4
+ISSUE|a2_patterns.m|warning|manual|This use of 'eval' is unnecessary and can be removed. Call the evaluated function directly using parentheses. For example, use 'load(filename)' instead of 'eval(['load ' filename])'.|EVLDUAL|65|65|1|4
+ISSUE|a2_patterns.m|warning|manual|'eval' is inefficient and makes code less clear. Call the statement directly.|EVLCS|66|66|1|4
+ISSUE|a2_patterns.m|warning|manual|The + operator in the expression size(A + B) is unexpected. Should this be size(A) + B?|ELARLOG|67|67|11|15
+ISSUE|a2_patterns.m|warning|manual|The .* operator in the expression size(A .* B) is unexpected. Should this be size(A) .* B?|ELARLOG|68|68|11|16
+ISSUE|a2_patterns.m|warning|manual|The + operator in the expression numel(A + B) is unexpected. Should this be numel(A) + B?|ELARLOG|69|69|12|16
+ISSUE|a2_patterns.m|warning|manual|Using ANS as a variable is not recommended as ANS is frequently overwritten by MATLAB.|NOANS|71|71|1|3
+ISSUE|a2_patterns.m|warning|manual|Using ANS as a variable is not recommended as ANS is frequently overwritten by MATLAB.|NOANS|72|72|6|8
+ISSUE|a2_patterns.m|warning|manual|Global variables are inefficient and make errors difficult to diagnose. Use a function with input variables instead.|GVMIS|73|73|1|6
+ISSUE|a2_patterns.m|warning|auto|Global or persistent variable might be unused or unset in this function or script.|NUSED|73|73|8|9
+ISSUE|a2_patterns.m|warning|manual|Global variables are inefficient and make errors difficult to diagnose. Use a function with input variables instead.|GVMIS|74|74|1|6
+ISSUE|a2_patterns.m|warning|manual|Declaring a variable to be global more than once might not be supported in a future release.|REDEFGG|74|74|8|9
+ISSUE|a2_patterns.m|info|auto|Add a semicolon after the statement to hide the output (in a script).|NOPTS|75|75|1|1
+ISSUE|a2_patterns.m|info|auto|Add a semicolon after the statement to hide the output (in a script).|NOPTS|76|76|1|1
+ISSUE|a2_patterns.m|warning|manual|The operation or expression 'v(2);' has no evident effect.|NOEFF|77|77|1|5
+ISSUE|a2_patterns.m|warning|manual|'+' produces a value that might be unused.|VUNUS|79|79|3|3
+ISSUE|a2_patterns.m|error|manual|Output of SUBSASGN must be assigned to a variable.|SUBSASGN|80|80|1|8
+ISSUE|a2_patterns.m|info|auto|'disp(sprintf(...))' can usually be replaced by 'fprintf(...\n)'.|DSPSP|82|82|1|22
+ISSUE|a2_patterns.m|info|manual|'now' is not recommended. With appropriate code changes, use 'datetime("now")' instead.|TNOW1|83|83|6|8
+ISSUE|a2_patterns.m|warning|manual|Consider using newline, semicolon, or comma before this statement for readability.|SEPEX|85|85|13|16
+ISSUE|a2_patterns.m|warning|manual|Consider using newline, semicolon, or comma before this statement for readability.|SEPEX|86|86|15|15
+ISSUE|a2_patterns.m|error|manual|The case value '1' is a duplicate of one on line 93.|MDUPC|95|95|10|10
+--- a2 display (many rows)
+
+c2 = 
+
+  <a href="matlab:helpPopup('codeIssues')" style="font-weight:bold">codeIssues</a> with properties:
+
+                         Date: 04-Nov-2026 17:35:37
+                      Release: "R2025b"
+                        Files: "<work>\a2_patterns.m"
+    CodeAnalyzerConfiguration: "active"
+                       Issues: [67×10 table]
+             SuppressedIssues: [0×11 table]
+
+
+    Issues table preview
+
+       <strong>Location</strong>        <strong>Severity</strong>    <strong>Fixability</strong>                                              <strong>Description</strong>                                              <strong>CheckID</strong>     <strong>LineStart</strong>    <strong>LineEnd</strong>    <strong>ColumnStart</strong>    <strong>ColumnEnd</strong>                                            <strong>FullFilename</strong>                                         
+    <strong>_______________</strong>    <strong>________</strong>    <strong>__________</strong>    <strong>_______________________________________________________________________________________________</strong>    <strong>________</strong>    <strong>_________</strong>    <strong>_______</strong>    <strong>___________</strong>    <strong>_________</strong>    <strong>_____________________________________________________________________________________________</strong>
+
+    "a2_patterns.m"    info          auto        "For readability, consider using 'newline' instead of 'char(10)'."                                 CHARTEN         3           3            6            13        "<work>\a2_patterns.m"
+    "a2_patterns.m"    info          auto        "For readability, consider using 'newline' instead of 'char(10)'."                                 CHARTEN         4           4           11            18        "<work>\a2_patterns.m"
+    "a2_patterns.m"    warning       auto        "Calling functions using 'feval' is usually not necessary. Call the function directly instead."    FVAL            6           6            6            10        "<work>\a2_patterns.m"
+    "a2_patterns.m"    warning       auto        "Calling functions using 'feval' is usually not necessary. Call the function directly instead."    FVAL            7           7            6            10        "<work>\a2_patterns.m"
+    "a2_patterns.m"    warning       manual      "Calling functions using 'feval' is usually not necessary. Call the function directly instead."    FVAL            8           8           18            22        "<work>\a2_patterns.m"
+    "a2_patterns.m"    info          manual      "EXIST with two input arguments is generally faster and clearer than with one input argument."     EXIST           9           9            6            10        "<work>\a2_patterns.m"
+    "a2_patterns.m"    info          auto        "To improve performance, use 'isscalar' instead of length comparison."                             ISCL           11          11            6            19        "<work>\a2_patterns.m"
+    "a2_patterns.m"    info          auto        "To improve performance, use 'isscalar' instead of length comparison."                             ISCL           12          12            6            19        "<work>\a2_patterns.m"
+    "a2_patterns.m"    info          auto        "To improve performance, use 'isscalar' instead of length comparison."                             ISCL           14          14            6            18        "<work>\a2_patterns.m"
+
+           :              :            :                                                        :                                                      :            :           :            :             :                                                      :                                              
+
+    "a2_patterns.m"    info          auto        "Add a semicolon after the statement to hide the output (in a script)."                            NOPTS          76          76            1             1        "<work>\a2_patterns.m"
+    "a2_patterns.m"    warning       manual      "The operation or expression 'v(2);' has no evident effect."                                       NOEFF          77          77            1             5        "<work>\a2_patterns.m"
+    "a2_patterns.m"    warning       manual      "'+' produces a value that might be unused."                                                       VUNUS          79          79            3             3        "<work>\a2_patterns.m"
+    "a2_patterns.m"    error         manual      "Output of SUBSASGN must be assigned to a variable."                                               SUBSASGN       80          80            1             8        "<work>\a2_patterns.m"
+    "a2_patterns.m"    info          auto        "'disp(sprintf(...))' can usually be replaced by 'fprintf(...\n)'."                                DSPSP          82          82            1            22        "<work>\a2_patterns.m"
+    "a2_patterns.m"    info          manual      "'now' is not recommended. With appropriate code changes, use 'datetime("now")' instead."          TNOW1          83          83            6             8        "<work>\a2_patterns.m"
+    "a2_patterns.m"    warning       manual      "Consider using newline, semicolon, or comma before this statement for readability."               SEPEX          85          85           13            16        "<work>\a2_patterns.m"
+    "a2_patterns.m"    warning       manual      "Consider using newline, semicolon, or comma before this statement for readability."               SEPEX          86          86           15            15        "<work>\a2_patterns.m"
+    "a2_patterns.m"    error         manual      "The case value '1' is a duplicate of one on line 93."                                             MDUPC          95          95           10            10        "<work>\a2_patterns.m"
+
+	<a href="matlab:if exist('c2','var'), displayWholeObj(c2.Issues), else, fprintf('Unable to display variable c2.Issues because it no longer exists.\n');end">Display all 67 rows.</a>
+
+
+<EOS>
+methods: codeIssues,export,fix,loadobj,saveobj
+properties: Date,Release,Files,CodeAnalyzerConfiguration,Issues,SuppressedIssues
+fix CHARTEN: 67 -> 65 issues; status table [2 9] vars Success,ErrorMessage,FullFilename,CheckID,LineStart,LineEnd,ColumnStart,ColumnEnd,ErrorID
+--- fixed lines 3-4
+c1 = newline;
+c2 = ['a' newline 'b'];
+--- after more fixes: lines 6-7, 30, 36-39, 42-43, 45-47, 49-51
+f1 = sin(1);
+f2 = sin(1);
+s1 = "abc";
+l1 = true;
+l2 = false;
+r1 = ones(2, 3);
+r2 = true(2, 3);
+t1 = strcmpi(s, upper('ABC'));
+t2 = strcmp(lower(s), 'abc');
+k1 = 1;
+k2 = x;
+[k3] = size(v);
+k5 = x,;
+k6 = 1,;
+k7 = 2,
+--- a1 after fixes: lines 1, 4, 13, 26, 32
+function [out1, out2, out3] = a1_unused(a, ~, c, d)
+[~, q] = size(a);
+w = 1; 
+global G2
+disp(v)
+remaining: NASGU,STRNU,STRNU,NASGU,NASGU,NASGU,GVMIS,PSET,STOUT,DEFNU,NODEF,NASGU,UNRCH,AGROW,AGROW,UNRCH,LAXES
+== codeIssues refusals
+REFUSED: codeIssues('nosuch_w10.m') -> codeanalysis:reports:ccrAnalysis:FileNotFound: Unable to open file 'nosuch_w10.m'. File is not found or is not a supported MATLAB code file.
+REFUSED: codeIssues('a7_cyc') -> MATLAB:err_static_workspace_violation: Attempt to add "q" to a static workspace.
+REFUSED: codeIssues(5) -> MATLAB:validators:mustBeNonzeroLengthText: Invalid argument at position 1. Value must be a character vector, string array, or cell array of character vectors.
+REFUSED: codeIssues('') -> MATLAB:validators:mustBeNonzeroLengthText: Invalid argument at position 1. Value must be text with one or more characters.
+REFUSED: codeIssues('a2_patterns.txt') -> codeanalysis:reports:ccrAnalysis:InvalidFile: Unable to open file 'a2_patterns.txt'. MATLAB file names (*.m, *.mlx, *.mlapp) must start with a letter, and can only contain letters, digits, or underscores.
+== nargout and exist
+checkcode: nargout -1 exist 2 which C:\Program Files\MATLAB\R2025b\toolbox\matlab\codetools\checkcode.m
+mlint: nargout -1 exist 2 which C:\Program Files\MATLAB\R2025b\toolbox\matlab\codetools\mlint.m
+codeIssues: nargout 1 exist 2 which C:\Program Files\MATLAB\R2025b\toolbox\matlab\codeanalysis\tools\@codeIssues\codeIssues.m
+done
