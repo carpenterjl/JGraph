@@ -1,0 +1,16 @@
+release 2025b
+loadApp: status success, warning ""
+loadApp: code fields ClassName,EditableSectionCode,Callbacks,AppTypeData,codeFormatting,HelpComments,StartupFcn,InputParameters,SingletonMode,Bindings,DigestOfLastSavedCodeText
+loadApp: AppType CustomUIComponent, Min R2022a, Name 
+loaded AppTypeData json: {"HasCallbackEvents":[{"Name":"Cleared","Description":""},{"Name":"ValueChanged","Description":"Fires when the value changes"}],"Methods":{"update":{"Name":"update","Code":["            comp.Button.Text = num2str(comp.Value);"]},"postSetup":[]},"ManagedUserProperties":[{"Name":"Scale","Description":"A private scale","DataType":"double","DefaultValue":"1","Size":[],"Attributes":["Access = private"],"ValidationFunctions":[],"InferredDataType":"double","InferredDefaultValue":1,"InferredInspectorRenderer":{"Editor":"","InPlaceEditor":"rendererseditors/editors/BaseOpenvarEditor","CellRenderer":"rendererseditors/editors/BaseOpenvarEditor","EditorConverter":""}},{"Name":"Limits","Description":"The range","DataType":"double","DefaultValue":"[0 100]","Size":["1","2"],"Attributes":[],"ValidationFunctions":{"Name":"mustBeNumeric"},"InferredDataType":"double","InferredDefaultValue":[0,100],"InferredInspectorRenderer":{"Editor":"","InPlaceEditor":"rendererseditors/editors/BaseOpenvarEditor","CellRenderer":"rendererseditors/editors/BaseOpenvarEditor","EditorConverter":""}},{"Name":"Value","Description":"","DataType":"double","DefaultValue":"0","Size":["1","1"],"Attributes":[],"ValidationFunctions":{"Name":"mustBeInRange","InputArguments":"0, 100, \"inclusive\""},"InferredDataType":"double","InferredDefaultValue":0,"InferredInspectorRenderer":{"Editor":"","InPlaceEditor":"rendererseditors/editors/BaseOpenvarEditor","CellRenderer":"rendererseditors/editors/BaseOpenvarEditor","EditorConverter":""}}],"CallbackPropertyEvents":{},"AllowTestCaseAccess":false}
+loaded Callbacks: {"Name":"ButtonPushed","Code":["            comp.Value = comp.Value + 1;","            notify(comp, 'ValueChanged');"],"ComponentData":{"CodeName":"Button","CallbackPropertyName":"ButtonPushedFcn","ComponentType":"matlab.ui.control.Button"}}
+loaded StartupFcn: {"Name":"postSetupFcn","Code":["            comp.Count = 0;"]}
+loaded EditableSectionCode: ["    properties (Access = private)","        Count % Description","    end"]
+loadApp: ComponentData fields Type,PropertyValues,Children
+loadApp: FAILED MATLAB:structRefFromNonStruct | Dot indexing is not supported for variables of this type.
+AppTypeData equals control: 1
+class text equals control: 1
+[Warning: File 'matlab.ui.Figure' not found.] 
+[> In w15_verify (line 51)] 
+mlapp class: which D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w15\rt\jgraph\comp3.mlapp, Position [1    1  320  240], Value 0, events Cleared,ValueChanged,ObjectBeingDestroyed,PropertyAdded,PropertyRemoved
+mlapp class: Value set to 7 and update run (the button is private)

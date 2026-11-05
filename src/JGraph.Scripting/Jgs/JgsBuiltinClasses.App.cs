@@ -15,7 +15,7 @@ namespace JGraph.Scripting.Jgs;
 /// <c>SingleRunningInstance</c> answers the instance already running instead, its figure focused.
 /// Here the appendix is read by <see cref="DesignPlainText"/> into the design, the components are
 /// made by the same generated lines an <c>.mlapp</c>'s <c>createComponents</c> holds
-/// (<see cref="DesignCodeWriter.Method"/>), and the registration, the callbacks and the startup
+/// (<see cref="DesignCodeWriter.Method(AppDesign, DesignCodeStyle?)"/>), and the registration, the callbacks and the startup
 /// function are <c>matlab.apps.AppBase</c>'s (U7).
 /// </summary>
 /// <remarks>

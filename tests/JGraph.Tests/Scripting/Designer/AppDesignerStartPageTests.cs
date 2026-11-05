@@ -61,12 +61,12 @@ public sealed class AppDesignerStartPageTests(ITestOutputHelper output) : IAsync
         Assert.Equal(["Link Data to a Tree", "Analyze an Image", "Configure a Timer", "Display Specialized Axes", "Create a Table", "Pass Data Between Apps"],
             apps.Examples[1].Examples.Select(e => e.Title));
 
-        // A new custom component waits for W15; its section has no examples, so R2025b drops that part.
+        // The custom components (live since W15); their section has no examples, so R2025b drops that part.
         DesignStartSection components = DesignStartPage.Sections[1];
         Assert.Equal(["Blank Component", "Blank Component with Grid Layout"], components.Tiles.Select(t => t.Text));
-        Assert.All(components.Tiles, t => Assert.Equal("W15", t.Stage));
+        Assert.All(components.Tiles, t => Assert.True(t.IsLive));
         Assert.Empty(components.Examples);
-        Assert.Throws<NotSupportedException>(() => DesignStartPage.NewText(DesignNewKind.BlankComponent, "comp1"));
+        Assert.StartsWith("classdef comp1 < matlab.ui.componentcontainer.ComponentContainer", DesignStartPage.NewText(DesignNewKind.BlankComponent, "comp1"), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public sealed class AppDesignerStartPageTests(ITestOutputHelper output) : IAsync
         Assert.Equal("X8", DesignActions.Find("AD_EXAMPLE_MORTGAGE")!.Stage);
         Assert.Equal("X8", DesignActions.Find("AD_TUTORIAL_BASICCODING")!.Stage);
         Assert.True(DesignActions.IsLive("OPEN_STARTSCREEN_DIALOG"));
-        Assert.Equal("W15", DesignActions.Find("AD_NEW_COMP_GRID_APP")!.Stage);
+        Assert.True(DesignActions.IsLive("AD_NEW_COMP_GRID_APP")); // live since W15
         Assert.Equal(["Getting Started", "GUIDE Migration Strategies", "Display Graphics in App Designer", "Find and Create UI Components"],
             DesignStartPage.Links.Select(l => l.Text));
         Assert.Equal(("App", "Custom UI Component"), (DesignStartPage.EntryType(DesignAppType.Responsive), DesignStartPage.EntryType(DesignAppType.CustomUIComponent)));

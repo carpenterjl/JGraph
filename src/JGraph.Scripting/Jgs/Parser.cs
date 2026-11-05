@@ -806,6 +806,11 @@ internal sealed class Parser
                 case "SetObservable":
                     observable = AttributeFlag(attribute, value);
                     break;
+                case "GetObservable":
+                    // Taken and kept nowhere: no PreGet/PostGet listener is attached in this build (W15: App Designer's
+                    // Add Property dialog writes it with AbortSet).
+                    _ = AttributeFlag(attribute, value);
+                    break;
                 case "Dependent":
                     dependent = AttributeFlag(attribute, value);
                     break;
@@ -833,8 +838,6 @@ internal sealed class Parser
                 case "SetAccess":
                     set = AttributeAccess(attribute, value, allowImmutable: true);
                     break;
-                case "GetObservable" when value is BoolLiteral { Value: false }:
-                    break; // saying out loud what leaving the attribute off already means
                 default:
                     throw Error(attribute,
                         $"'{className}': the '{block.Text}' attribute '{attribute.Text}' is not supported — this build understands "

@@ -1,0 +1,31 @@
+release 2025b
+property A <- [1 2]: MATLAB:validation:IncompatibleSize | Error setting property 'A' of class 'W15Sized'. Value must be a scalar.
+property A <- [0 0]: MATLAB:validation:IncompatibleSize | Error setting property 'A' of class 'W15Sized'. Value must be a scalar.
+property A <- [2 1]: MATLAB:validation:IncompatibleSize | Error setting property 'A' of class 'W15Sized'. Value must be a scalar.
+property B <- [1 3]: MATLAB:validation:IncompatibleSize | Error setting property 'B' of class 'W15Sized'. Value must be a vector with 2 elements.
+property B <- [2 1]: ok ([1 2])
+property B <- [1 1]: ok ([1 2])
+property B <- [0 0]: MATLAB:validation:IncompatibleSize | Error setting property 'B' of class 'W15Sized'. Value must be a vector with 2 elements.
+property C <- [1 2]: ok ([2 1])
+property C <- [2 2]: MATLAB:validation:IncompatibleSize | Error setting property 'C' of class 'W15Sized'. Value must be a vector.
+property D <- [2 1]: ok ([1 2])
+property D <- [2 3]: MATLAB:validation:IncompatibleSize | Error setting property 'D' of class 'W15Sized'. Value must be a vector.
+property E <- [1 2]: MATLAB:validation:IncompatibleSize | Error setting property 'E' of class 'W15Sized'. Value must be a matrix of size 2-by-2.
+property E <- [3 3]: MATLAB:validation:IncompatibleSize | Error setting property 'E' of class 'W15Sized'. Value must be a matrix of size 2-by-2.
+property E <- [1 1]: ok ([2 2])
+property F <- [1 2]: MATLAB:validation:IncompatibleSize | Error setting property 'F' of class 'W15Sized'. Value must be a vector with 3 elements.
+property F <- [3 1]: ok ([1 3])
+property G <- [1 3]: ok ([3 1])
+property G <- [2 2]: MATLAB:validation:IncompatibleSize | Error setting property 'G' of class 'W15Sized'. Value must be a vector with 3 elements.
+property H <- [2 2 2]: MATLAB:validation:IncompatibleSize | Error setting property 'H' of class 'W15Sized'. Value must be a matrix.
+property I <- [1 2]: MATLAB:validation:IncompatibleSize | Error setting property 'I' of class 'W15Sized'. Value must be a scalar.
+property J <- [3 2]: MATLAB:validation:IncompatibleSize | Error setting property 'J' of class 'W15Sized'. Value must be a matrix with 2 rows.
+property J <- [1 2]: MATLAB:validation:IncompatibleSize | Error setting property 'J' of class 'W15Sized'. Value must be a matrix with 2 rows.
+property K <- [1 2]: MATLAB:validation:IncompatibleSize | Error setting property 'K' of class 'W15Sized'. Value must be a scalar.
+argument 1 <- [1 2]: MATLAB:validation:IncompatibleSize | Invalid argument at position 1. Value must be a scalar.
+argument 2 <- [1 3]: MATLAB:validation:IncompatibleSize | Invalid argument at position 2. Value must be a vector with 2 elements.
+argument 2 <- [2 1]: ok
+argument 3 <- [1 2]: ok
+argument 4 <- [1 2]: MATLAB:validation:IncompatibleSize | Invalid argument at position 4. Value must be a matrix of size 2-by-2.
+argument 5 <- [3 1]: ok
+w15_sizes done

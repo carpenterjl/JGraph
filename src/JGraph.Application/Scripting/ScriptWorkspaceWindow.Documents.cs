@@ -535,6 +535,22 @@ public partial class ScriptWorkspaceWindow
     {
         // Waits for the window, so that a design the canvas cannot read is the script's error.
         public string? Open(string? path) => window.Dispatcher.Invoke(() => window.OpenInAppDesigner(path));
+
+        // The "App Designer Custom UI Component Metadata" dialog (W15), modeless, over the designer's window when it is up.
+        public string? ConfigureMetadata(string fullFileName) => window.Dispatcher.Invoke(() => window.ShowComponentMetadata(fullFileName));
+    }
+
+    /// <summary>
+    /// Brings up the "App Designer Custom UI Component Metadata" dialog for the component class <paramref name="fullFileName"/>
+    /// (App Designer window plan W15): its check of the component runs in the MATLAB session, Add to Path runs there too, and a
+    /// registration refreshes the designer's library.
+    /// </summary>
+    private string? ShowComponentMetadata(string fullFileName)
+    {
+        Window owner = _appDesigner is { IsVisible: true } designer ? designer : this;
+        AppDesignerDialogs.ConfigureMetadata(owner, fullFileName, CheckComponentFromDesignerAsync, code => RunWorkspaceStatementAsync("MATLAB", code),
+            _ => _appDesigner?.RefreshUserComponents());
+        return null;
     }
 
     /// <summary>

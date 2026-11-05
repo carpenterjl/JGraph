@@ -101,7 +101,7 @@ public static partial class JgsMlapp
         if (model is not null)
         {
             Part design = parts.First(p => p.Name == model);
-            inStep = JgsMlappModel.Update(design.Bytes, was, now, out byte[]? updated);
+            inStep = JgsMlappModel.Update(design.Bytes, was, now, AppTypeDataOf(written), out byte[]? updated);
             if (updated is not null)
             {
                 design.Bytes = updated;

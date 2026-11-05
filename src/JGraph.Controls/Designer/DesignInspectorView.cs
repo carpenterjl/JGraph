@@ -211,7 +211,14 @@ public sealed partial class DesignInspectorView : UserControl
             if (_document is { AppSelected: true } app)
             {
                 _header.Children.Add(new TextBlock { Text = app.AppName, FontWeight = FontWeights.SemiBold, Margin = new Thickness(2, 2, 2, 6) });
-                BuildAppRows(app);
+                if (app.IsComponent)
+                {
+                    BuildComponentRows(app); // a custom UI component's root (W15)
+                }
+                else
+                {
+                    BuildAppRows(app);
+                }
             }
 
             ShowView();

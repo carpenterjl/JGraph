@@ -200,7 +200,8 @@ internal static partial class JgsMlappModel
             TextValue text => Text(text.Text),
             LinesValue lines => Lines(lines.Lines),
             FunctionsValue functions => Functions(functions.Functions),
-            _ => throw new InvalidOperationException("a value this did not read must be text, lines or functions"),
+            DataValue data => MatMcosWriter.Element(data.Data),
+            _ => throw new InvalidOperationException("a value this did not read must be text, lines, functions or data"),
         };
 
         /// <summary>A function's body: the bytes the file held, or its lines, or the empty char App Designer records for a body with no lines.</summary>

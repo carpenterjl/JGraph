@@ -65,10 +65,24 @@ public sealed partial class DesignDocument : IDisposable
     }
 
     /// <summary>The custom components registered for the app (designer plan DS7b): those in its folder and on the session's path.</summary>
-    public IReadOnlyList<DesignUserComponent> UserComponents { get; }
+    public IReadOnlyList<DesignUserComponent> UserComponents { get; private set; }
 
     /// <summary>The library entries the custom components make, section by section after App Designer's own, each section's entries by name.</summary>
-    public IReadOnlyList<DesignPaletteEntry> UserPaletteEntries { get; }
+    public IReadOnlyList<DesignPaletteEntry> UserPaletteEntries { get; private set; }
+
+    /// <summary>
+    /// Reads the registries again (App Designer window plan W15: a component configured for apps while the app is open), the
+    /// library's entries and the classes of the design's custom components with them.
+    /// </summary>
+    public void RefreshUserComponents(IReadOnlyList<string>? pathFolders)
+    {
+        string? folder = Path is null ? null : System.IO.Path.GetDirectoryName(Path);
+        UserComponents = DesignUserComponents.Discover(folder is null ? pathFolders ?? [] : [folder, .. pathFolders ?? []]);
+        UserPaletteEntries = DesignUserComponents.Sections(UserComponents)
+            .SelectMany(static s => s.Entries.Select(c => new DesignPaletteEntry(c.ComponentName, s.Title, c.ClassName) { UserComponent = c }))
+            .ToArray();
+        AttachUserClasses();
+    }
 
     /// <summary>The library entry keyed <paramref name="key"/> (<see cref="DesignPaletteEntry.Key"/>): one of App Designer's, or a custom component's; null for none.</summary>
     public DesignPaletteEntry? FindPaletteEntry(string key)
@@ -1258,6 +1272,15 @@ public sealed partial class DesignDocument : IDisposable
         names.AddRange(DesignNames.AppDesignerKeywords);
         names.AddRange(Design.Components.SelectMany(static c => c.Properties).Select(static p => p.Value).OfType<CallbackValue>().Select(static c => c.Method));
         names.AddRange(Callbacks.Select(static c => c.Name));
+        if (Code is { IsComponent: true } component)
+        {
+            // A custom UI component's own names (W15): its events and their public callbacks, its managed properties, and the methods it reserves.
+            names.AddRange(component.Events.Select(static e => e.Name));
+            names.AddRange(component.Events.Select(static e => e.CallbackProperty));
+            names.AddRange(component.ManagedProperties.Select(static p => p.Name));
+            names.AddRange(DesignComponentCode.ReservedMethods);
+        }
+
         bool inProperties = false;
         foreach (string raw in CurrentText.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n'))
         {
@@ -1423,7 +1446,7 @@ public sealed partial class DesignDocument : IDisposable
         }
         else
         {
-            Text = Regex.Replace(Text, @"\b" + DesignValueText.AppObjectName + @"\." + Regex.Escape(from) + @"\b", DesignValueText.AppObjectName + "." + to);
+            Text = Regex.Replace(Text, @"\b" + ObjectName + @"\." + Regex.Escape(from) + @"\b", ObjectName + "." + to);
         }
     }
 

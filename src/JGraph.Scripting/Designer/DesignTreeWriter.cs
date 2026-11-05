@@ -152,7 +152,14 @@ public static partial class DesignTreeWriter
         var late = new List<(string Name, McosValue Value)>();
         bool user = DesignUserComponents.IsUserComponent(component);
         var userCallbacks = new List<string>();
-        foreach ((string name, DesignValue value) in properties ?? DesignCodeWriter.WrittenProperties(component, style.Theme))
+        IEnumerable<(string Name, DesignValue Value)> source = properties ?? DesignCodeWriter.WrittenProperties(component, style.Theme);
+        if (component.IsComponentRoot)
+        {
+            // A custom UI component's design-time figure holds the component's BackgroundColor as its Color (W15, InspectableComponentNodeTranslator).
+            source = source.Select(static p => p.Name == "BackgroundColor" ? ("Color", p.Value) : p);
+        }
+
+        foreach ((string name, DesignValue value) in source)
         {
             switch (name)
             {

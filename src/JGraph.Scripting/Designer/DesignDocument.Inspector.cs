@@ -19,7 +19,7 @@ public sealed partial class DesignDocument
     }
 
     /// <summary>What the inspector's first tab says.</summary>
-    public string InspectorTab => AppSelected ? "App" : SelectionIsEmpty ? DesignInspectorSheet.NoComponent : DesignInspectorSheet.TabOf(_picks);
+    public string InspectorTab => AppSelected ? (IsComponent ? DesignComponentCode.DefaultText : "App") : SelectionIsEmpty ? DesignInspectorSheet.NoComponent : DesignInspectorSheet.TabOf(_picks);
 
     /// <summary>Sets <paramref name="name"/> as the inspector edits it: on whoever <see cref="DesignInspectorSheet.EditTargets"/> says, as one step.</summary>
     /// <returns>Null when done; else what refused it, and nothing changed.</returns>

@@ -25,7 +25,13 @@ public sealed partial class DesignDocument
         {
             if (AppSelected)
             {
-                return new DesignCallbackSheet([], null, [new DesignCallbackGroup(null, [DesignCallbackRules.StartupProperty])], null);
+                // A custom UI component's own row (W15, InspectableComponentNodeModel): its public callbacks over PostSetupFcn in PRIVATE CALLBACKS.
+                return IsComponent
+                    ? new DesignCallbackSheet([], null, [new DesignCallbackGroup(DesignComponentCode.StartupGroupTitle, [DesignComponentCode.StartupProperty])], null)
+                    {
+                        PublicCallbacks = Events.Select(static e => e.CallbackProperty).OrderBy(static n => n, StringComparer.Ordinal).ToArray(),
+                    }
+                    : new DesignCallbackSheet([], null, [new DesignCallbackGroup(null, [DesignCallbackRules.StartupProperty])], null);
             }
 
             if (Inspection is not { } inspection)

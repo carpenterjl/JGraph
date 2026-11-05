@@ -109,11 +109,13 @@ internal sealed partial class AppDesignerWindow : Window
             // The first tab says what is selected, and the panel hides with nothing selected (_updateContentPaneTitle).
             inspectorTab.Header = _inspector.Tab;
             _right.Visibility = _inspector.HasSelection ? Visibility.Visible : Visibility.Hidden;
+            ShowComponentPanel();
         };
         _right.Items.Add(inspectorTab);
         var callbacksTab = new TabItem { Header = "Callbacks", Content = _callbacks };
         System.Windows.Automation.AutomationProperties.SetAutomationId(callbacksTab, "PropertiesPanel.Callbacks");
         _right.Items.Add(callbacksTab);
+        BuildComponentPanel(); // a custom UI component's Event–Callback Pairs tab (W15)
         System.Windows.Automation.AutomationProperties.SetAutomationId(_right, "PropertiesPanel");
         var right = new Grid();
         var browserRow = new RowDefinition { Height = new GridLength(98) };
@@ -231,7 +233,7 @@ internal sealed partial class AppDesignerWindow : Window
             (_, e) => e.CanExecute = Active is { Document.Code: not null }));
         CommandBindings.Add(new CommandBinding(AddFunction, (_, _) => Declared(Active?.Document.InsertUserFunction("private"), function: true),
             (_, e) => e.CanExecute = Active is { Document.Code: not null }));
-        CommandBindings.Add(new CommandBinding(AddProperty, (_, _) => Declared(Active?.Document.InsertUserProperty("private"), function: false),
+        CommandBindings.Add(new CommandBinding(AddProperty, (_, _) => AddPropertyOrManaged("private"),
             (_, e) => e.CanExecute = Active is { Document.Code: not null }));
         CommandBindings.Add(new CommandBinding(CodeOptions, (_, _) => ShowCodeOptions(),
             (_, e) => e.CanExecute = Active is { Document.Code: not null }));
@@ -713,8 +715,8 @@ internal sealed partial class AppDesignerWindow : Window
         var dialog = new Microsoft.Win32.SaveFileDialog
         {
             Title = DesignConversion.SaveCopyTitle,
-            Filter = "MATLAB App (*.mlapp)|*.mlapp|MATLAB App, plain text (*.m)|*.m",
-            FilterIndex = document.Format == DesignFileFormat.PlainText ? 2 : 1,
+            Filter = document.IsComponent ? "MATLAB App (*.mlapp)|*.mlapp" : "MATLAB App (*.mlapp)|*.mlapp|MATLAB App, plain text (*.m)|*.m",
+            FilterIndex = document.Format == DesignFileFormat.PlainText && !document.IsComponent ? 2 : 1,
             FileName = document.AppName,
             InitialDirectory = document.Path is { } here ? Path.GetDirectoryName(here) : _currentFolder,
             AddExtension = true,
@@ -856,6 +858,7 @@ internal sealed partial class AppDesignerWindow : Window
             [{ Group: { IsLabeled: true, Field: { } field, Label: { } label } }] => $"{field.CodeName} ({field.Type}) with its label {label.CodeName}"
                 + (document.Runtime.PositionOf(field) is { } fp ? $"  Position [{Whole(fp.X)} {Whole(fp.Y)} {Whole(fp.Width)} {Whole(fp.Height)}]" : string.Empty),
             [{ Group: { } group }] => $"A group of {group.AllComponents().Count()} components",
+            [{ Component: { IsComponentRoot: true } }] => $"{document.AppName} ({DesignComponentCode.DefaultText})", // a custom UI component's root (W15)
             [{ Component: { } one }] => $"{one.CodeName} ({one.Type})" + (document.Runtime.PositionOf(one) is { } p && one.Parent is not null
                 ? $"  Position [{Whole(p.X)} {Whole(p.Y)} {Whole(p.Width)} {Whole(p.Height)}]"
                 : string.Empty),
@@ -894,9 +897,9 @@ internal sealed partial class AppDesignerWindow : Window
 
         var dialog = new Microsoft.Win32.SaveFileDialog
         {
-            Title = "Save app as",
-            Filter = "MATLAB App (*.mlapp)|*.mlapp|MATLAB App, plain text (*.m)|*.m",
-            FilterIndex = app.Document.Format == DesignFileFormat.PlainText ? 2 : 1,
+            Title = app.Document.IsComponent ? "Save component as" : "Save app as",
+            Filter = app.Document.IsComponent ? "MATLAB App (*.mlapp)|*.mlapp" : "MATLAB App (*.mlapp)|*.mlapp|MATLAB App, plain text (*.m)|*.m",
+            FilterIndex = app.Document.Format == DesignFileFormat.PlainText && !app.Document.IsComponent ? 2 : 1,
             FileName = app.Document.Path is { } current ? Path.GetFileName(current) : app.Document.Code?.ClassName,
             InitialDirectory = app.Document.Path is { } here ? Path.GetDirectoryName(here) : _currentFolder,
             AddExtension = true,

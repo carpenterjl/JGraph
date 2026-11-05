@@ -42,6 +42,17 @@ public sealed class AppDesign
     /// </summary>
     public bool IsResponsive { get; set; }
 
+    /// <summary>
+    /// Whether the design is a custom UI component's (App Designer window plan W15): the root
+    /// figure then stands for the component itself - its <c>Position</c> and inherited properties
+    /// are the component's, set in <c>setup(comp)</c>, and its children are made under <c>comp</c>.
+    /// </summary>
+    public bool IsComponent
+    {
+        get => Figure.IsComponentRoot;
+        set => Figure.IsComponentRoot = value;
+    }
+
     /// <summary>Every component in the order <c>createComponents</c> makes them: each before its children.</summary>
     public IEnumerable<DesignComponent> Components => Walk(Figure);
 
@@ -437,6 +448,31 @@ public sealed class DesignComponent
 
     /// <summary>The container the component is in; null for the figure.</summary>
     public DesignComponent? Parent { get; private set; }
+
+    /// <summary>
+    /// Whether this is the root of a custom UI component's design (App Designer window plan W15):
+    /// the design-time figure that stands for the component, named <c>comp</c> in the generated
+    /// code and never declared among the underlying components.
+    /// </summary>
+    public bool IsComponentRoot { get; internal set; }
+
+    /// <summary>The root of the tree this component is in: the figure.</summary>
+    public DesignComponent Root
+    {
+        get
+        {
+            DesignComponent at = this;
+            while (at.Parent is { } parent)
+            {
+                at = parent;
+            }
+
+            return at;
+        }
+    }
+
+    /// <summary>The name the generated code calls the app or component this is part of: <c>app</c>, or <c>comp</c> for a custom UI component's.</summary>
+    public string ObjectName => Root.IsComponentRoot ? DesignComponentCode.ObjectName : DesignValueText.AppObjectName;
 
     /// <summary>The components inside this one, in the order they are made.</summary>
     public IReadOnlyList<DesignComponent> Children => _children;

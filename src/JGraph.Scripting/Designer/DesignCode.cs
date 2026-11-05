@@ -209,6 +209,43 @@ public sealed partial class DesignCode
     /// <summary>Whether the app allows one running instance (App Designer's <c>SingletonMode</c> FOCUS).</summary>
     public bool SingleInstance { get; set; }
 
+    /// <summary>
+    /// Whether the class is a custom UI component's (App Designer window plan W15): derived from
+    /// <c>matlab.ui.componentcontainer.ComponentContainer</c>, its components made in <c>setup(comp)</c>,
+    /// its events and managed properties generated from <see cref="Events"/> and
+    /// <see cref="ManagedProperties"/>, its <c>update</c> body the user's, and its startup function
+    /// <c>postSetupFcn</c>, called at the end of <c>setup</c>.
+    /// </summary>
+    public bool IsComponent { get; init; }
+
+    /// <summary>The name the generated code calls the object: <c>app</c>, or <c>comp</c> for a custom UI component.</summary>
+    public string ObjectName => IsComponent ? DesignComponentCode.ObjectName : DesignValueText.AppObjectName;
+
+    /// <summary>The startup function's default name: <c>startupFcn</c> for an app, <c>postSetupFcn</c> for a component.</summary>
+    public string DefaultStartupName => IsComponent ? DesignComponentCode.DefaultStartupName : StartupName;
+
+    /// <summary>A component's events with public callbacks (App Designer's <c>CallbackPropertyEventCollection</c>), in the order added; written sorted by name.</summary>
+    public List<DesignCodeEvent> Events { get; } = [];
+
+    /// <summary>A component's managed properties (App Designer's <c>ManagedUserPropertyCollection</c>), in the order added; written by block and name.</summary>
+    public List<DesignManagedProperty> ManagedProperties { get; } = [];
+
+    /// <summary>
+    /// The lines of a component's <c>update</c> method, as the text holds them (App Designer's
+    /// <c>Methods.update.Code</c>); empty for the method as a new component has it, which is written
+    /// as its help comment and an empty line.
+    /// </summary>
+    public List<string> UpdateBody { get; } = [];
+
+    /// <summary>Whether a component gives test cases access to its underlying components (the inspector's <c>Give Test Cases Access</c>, <c>AllowTestCaseAccess</c>).</summary>
+    public bool AllowTestCaseAccess { get; set; }
+
+    /// <summary>The event named <paramref name="name"/>, or null.</summary>
+    public DesignCodeEvent? FindEvent(string name) => Events.FirstOrDefault(e => string.Equals(e.Name, name, StringComparison.Ordinal));
+
+    /// <summary>The managed property named <paramref name="name"/>, or null.</summary>
+    public DesignManagedProperty? FindManagedProperty(string name) => ManagedProperties.FirstOrDefault(p => string.Equals(p.Name, name, StringComparison.Ordinal));
+
     /// <summary>The input parameters' names, in order.</summary>
     public IReadOnlyList<string> InputParameterNames =>
         InputParameters.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
@@ -235,14 +272,21 @@ public sealed partial class DesignCode
             InputParameters = layout.InputParameters,
             SingleInstance = layout.SingleInstance,
             UnplacedStartup = layout.UnplacedStartup,
+            IsComponent = layout.IsComponentLayout,
         };
 
         IReadOnlyList<string> lines = layout.Lines;
         int classLine = Index(lines, 0, static l => ClassLine().IsMatch(l));
-        int properties = Index(lines, classLine + 1, static l => l.Trim() == DesignCodeReader.ComponentPropertiesComment);
+        string propertiesComment = code.IsComponent ? DesignComponentCode.PropertiesComment : DesignCodeReader.ComponentPropertiesComment;
+        int properties = Index(lines, classLine + 1, l => l.Trim() == propertiesComment);
         if (classLine >= 0 && properties > classLine)
         {
             code.HeadComments.AddRange(lines.Skip(classLine + 1).Take(properties - classLine - 1).Where(static l => l.TrimStart().StartsWith('%')));
+        }
+
+        if (code.IsComponent)
+        {
+            ReadComponentParts(code, layout, properties);
         }
 
         // The component properties block, and the generated blocks after it, each to its end.
@@ -279,13 +323,61 @@ public sealed partial class DesignCode
         }
 
         code.EditableSection.AddRange(layout.EditableSectionCode);
-        foreach (MlappRegion region in layout.Regions.Where(static r => r.Kind != MlappRegionKind.EditableSection))
+        foreach (MlappRegion region in layout.Regions.Where(static r => r.Kind is not (MlappRegionKind.EditableSection or MlappRegionKind.Update)))
         {
             bool startup = region.Kind == MlappRegionKind.Startup && code.Startup is null;
             code.Callbacks.Add(new DesignCallback(region.Name, layout.CodeOf(region), region.Kind == MlappRegionKind.GeneratedCallback, startup));
         }
 
         return code;
+    }
+
+    /// <summary>
+    /// A component's generated parts as the text holds them (App Designer window plan W15): whether
+    /// test cases get access (the properties block's <c>GetAccess</c>), the events with their
+    /// descriptions, the managed properties of each block, and <c>update</c>'s body - which is the
+    /// new component's help comment and an empty line, kept as none.
+    /// </summary>
+    private static void ReadComponentParts(DesignCode code, JgsMlappLayout layout, int properties)
+    {
+        IReadOnlyList<string> lines = layout.Lines;
+        if (properties >= 0 && properties + 1 < lines.Count)
+        {
+            code.AllowTestCaseAccess = lines[properties + 1].Contains("GetAccess = " + DesignComponentCode.TestCaseGetAccess, StringComparison.Ordinal);
+        }
+
+        if (layout.EventsBlock is { } events)
+        {
+            for (int i = events.FirstLine + 2; i < events.LastLine; i++)
+            {
+                if (!string.IsNullOrWhiteSpace(lines[i]) && DesignCodeEvent.Parse(lines[i]) is { } declared)
+                {
+                    code.Events.Add(declared);
+                }
+            }
+        }
+
+        foreach ((int first, int last) in layout.ManagedBlocks)
+        {
+            IReadOnlyList<string> attributes = DesignComponentCode.AttributesOf(lines[first]) ?? [];
+            for (int i = first + 1; i < last; i++)
+            {
+                if (!string.IsNullOrWhiteSpace(lines[i]) && DesignManagedProperty.Parse(lines[i], attributes) is { } declared)
+                {
+                    code.ManagedProperties.Add(declared);
+                }
+            }
+        }
+
+        if (layout.Update is { } update)
+        {
+            IReadOnlyList<string> body = layout.CodeOf(update);
+            string[] trimmed = body.Select(static l => l.Trim()).Where(static l => l.Length > 0).ToArray();
+            if (!(trimmed.Length == 1 && trimmed[0] == DesignComponentCode.UpdateHelpComment))
+            {
+                code.UpdateBody.AddRange(body);
+            }
+        }
     }
 
     private static int Index(IReadOnlyList<string> lines, int from, Func<string, bool> test)

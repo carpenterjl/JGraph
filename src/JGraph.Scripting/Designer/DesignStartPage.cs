@@ -43,7 +43,7 @@ public enum DesignNewKind
 /// <param name="Description">Its description, R2025b's words.</param>
 public sealed record DesignStartTile(DesignNewKind Kind, string ActionId, string Text, string Description)
 {
-    /// <summary>Whether JGraph makes it: the app kinds since stage W3; a custom component waits for W15.</summary>
+    /// <summary>Whether JGraph makes it: the app kinds since stage W3, the custom components since W15.</summary>
     public bool IsLive => DesignActions.IsLive(ActionId);
 
     /// <summary>The stage that will make it, or null when it is live.</summary>
@@ -164,15 +164,17 @@ public static class DesignStartPage
     /// <summary>
     /// The class text of a new document of <paramref name="kind"/> named <paramref name="name"/>: a
     /// blank app as <c>StandardAppFactory</c> makes it, a 2- or 3-panel app as
-    /// <c>ResponsiveAppFactory</c> does (designer plan DS4b). A custom component waits for W15.
+    /// <c>ResponsiveAppFactory</c> does (designer plan DS4b), a blank component with or without its grid
+    /// as <c>ComponentAppFactory</c> does over <c>ComponentFactoryTemplateData</c> (App Designer window plan W15).
     /// </summary>
-    /// <exception cref="NotSupportedException">The kind is a custom component.</exception>
     public static string NewText(DesignNewKind kind, string name) => kind switch
     {
         DesignNewKind.BlankApp => AppDesignerDocument.NewAppText(name),
         DesignNewKind.TwoPanelApp => DesignResponsive.NewAppText(2, name),
         DesignNewKind.ThreePanelApp => DesignResponsive.NewAppText(3, name),
-        _ => throw new NotSupportedException("A new custom UI component waits for stage W15 of the App Designer window plan."),
+        DesignNewKind.BlankComponent => DesignComponentCode.NewText(name, withGrid: false),
+        DesignNewKind.BlankComponentWithGrid => DesignComponentCode.NewText(name, withGrid: true),
+        _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null),
     };
 
     /// <summary>

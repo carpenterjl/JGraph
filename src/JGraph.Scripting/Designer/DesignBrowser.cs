@@ -178,7 +178,7 @@ public static class DesignBrowser
     public static string LabelOf(DesignComponent component)
     {
         ArgumentNullException.ThrowIfNull(component);
-        return "app." + component.CodeName;
+        return component.ObjectName + "." + component.CodeName;
     }
 
     /// <summary>
@@ -192,7 +192,13 @@ public static class DesignBrowser
         ArgumentNullException.ThrowIfNull(design);
         ArgumentNullException.ThrowIfNull(appName);
         DesignComponent? hidden = DesignResponsive.Grid(design);
-        var rows = new List<DesignBrowserRow> { new(null, null, appName), new(design.Figure, null, LabelOf(design.Figure)) };
+        // A custom UI component's root is not listed (ComponentContainerCanvasModel, IsInvisibleToUser): its
+        // children stand under the component's own row (W15).
+        var rows = new List<DesignBrowserRow> { new(null, null, appName) };
+        if (!design.IsComponent)
+        {
+            rows.Add(new(design.Figure, null, LabelOf(design.Figure)));
+        }
         var shown = new HashSet<DesignComponent>(ReferenceEqualityComparer.Instance) { design.Figure };
         IEnumerable<DesignComponent> order = view == DesignBrowserList.TabOrder ? Depth(design.Figure) : DesignCodeWriter.ViewOrder(design).Skip(1);
         foreach (DesignComponent c in order)
@@ -274,7 +280,7 @@ public static class DesignBrowser
             keep.Add(row);
             for (DesignBrowserRow? up = row; up is { IsApp: false };)
             {
-                up = up.Parent is { } parent ? byComponent[parent] : app;
+                up = up.Parent is { } parent && byComponent.TryGetValue(parent, out DesignBrowserRow? above) ? above : app;
                 keep.Add(up);
             }
         }

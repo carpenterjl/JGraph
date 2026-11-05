@@ -216,6 +216,41 @@ public partial class ScriptWorkspaceWindow
         return new DesignRunOutcome(result.Success ? null : result.Message, result.ErrorIdentifier);
     }
 
+    /// <summary>
+    /// The metadata dialog's check of a custom UI component (W15): made once in the MATLAB session while it is idle, under the
+    /// prompt's ceremony as Run is; an error in the component's code is the check's answer, not the console's.
+    /// </summary>
+    private async Task<JGraph.Scripting.Designer.DesignComponentCheck> CheckComponentFromDesignerAsync(string path)
+    {
+        if (SessionFor("MATLAB") is not IScriptAppRunner runner)
+        {
+            return new JGraph.Scripting.Designer.DesignComponentCheck(null, "There is no MATLAB session to make the component in.");
+        }
+
+        await YieldPumpAsync().ConfigureAwait(true);
+        if (!_session.TryBeginRun("MATLAB"))
+        {
+            return new JGraph.Scripting.Designer.DesignComponentCheck(null, "MATLAB is busy; wait for the prompt before configuring the component.");
+        }
+
+        _cts = new System.Threading.CancellationTokenSource();
+        try
+        {
+            return await runner.CheckComponentAsync(path, _cts.Token).ConfigureAwait(true);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or IOException or OperationCanceledException)
+        {
+            return new JGraph.Scripting.Designer.DesignComponentCheck(null, ex.Message);
+        }
+        finally
+        {
+            _cts.Dispose();
+            _cts = null;
+            _session.EndRun();
+            PumpGraphicsEventsWhenIdle();
+        }
+    }
+
     /// <summary>The picture of a running app the designer's Run asks for: nothing while MATLAB is busy.</summary>
     private async Task<byte[]?> CaptureAppFromDesignerAsync(string path)
     {

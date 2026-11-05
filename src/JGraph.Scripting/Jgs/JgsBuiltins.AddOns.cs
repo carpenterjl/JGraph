@@ -88,6 +88,10 @@ internal static partial class JgsBuiltins
         {
             KeepsStringArguments = true,
             BindsAnsAsStatement = false,
+            // An m-file with no outputs: x = name(...) is refused before the body runs, as R2025b refuses it (W15 found
+            // the single-output road reaching the body).
+            MatlabOutputCount = 0,
+            IsMatlabFile = true,
             MultiOutput = (args, wanted, line, col) =>
             {
                 if (wanted > 0)

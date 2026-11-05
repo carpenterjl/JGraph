@@ -53,10 +53,24 @@ public static class DesignCodeWriter
     /// the order they were made, a figure's menus and toolbars ahead of its other components and its
     /// context menus after them, and a responsive app's own panels in the order made.
     /// </summary>
-    public static IReadOnlyList<string> PropertiesBlock(AppDesign design, DesignCodeStyle? style = null)
+    public static IReadOnlyList<string> PropertiesBlock(AppDesign design, DesignCodeStyle? style = null) => PropertiesBlock(design, style, testCaseAccess: false);
+
+    /// <summary>
+    /// <see cref="PropertiesBlock(AppDesign, DesignCodeStyle?)"/>; for a custom UI component (App
+    /// Designer window plan W15, <c>ComponentPropertiesBlockNoFigureBehavior</c>) the block is the
+    /// underlying components' - under its own comment, <c>Access = private</c> (or get access for test
+    /// cases when <paramref name="testCaseAccess"/>) with <c>Transient, NonCopyable</c>, the root left out.
+    /// </summary>
+    public static IReadOnlyList<string> PropertiesBlock(AppDesign design, DesignCodeStyle? style, bool testCaseAccess)
     {
         ArgumentNullException.ThrowIfNull(design);
-        return PropertiesBlock(ViewOrder(design), style);
+        if (!design.IsComponent)
+        {
+            return PropertiesBlock(ViewOrder(design), style);
+        }
+
+        string access = testCaseAccess ? $"GetAccess = {DesignComponentCode.TestCaseGetAccess}, SetAccess = private" : "Access = private";
+        return PropertiesBlock(ViewOrder(design).Skip(1), style, DesignComponentCode.PropertiesComment, $"properties ({access}, Transient, NonCopyable)");
     }
 
     /// <summary>
@@ -65,16 +79,22 @@ public static class DesignCodeWriter
     /// (a component moved; a file of an older release). The names are padded as
     /// <c>_padNames</c> pads them: up to 30 characters, two spaces past the longest; longer, two of their own.
     /// </summary>
-    public static IReadOnlyList<string> PropertiesBlock(IEnumerable<DesignComponent> components, DesignCodeStyle? style = null)
+    public static IReadOnlyList<string> PropertiesBlock(IEnumerable<DesignComponent> components, DesignCodeStyle? style = null) =>
+        PropertiesBlock(components, style, DesignCodeReader.ComponentPropertiesComment, "properties (Access = public)");
+
+    /// <summary>The block over <paramref name="components"/> under <paramref name="comment"/>, opened by <paramref name="blockLine"/>.</summary>
+    public static IReadOnlyList<string> PropertiesBlock(IEnumerable<DesignComponent> components, DesignCodeStyle? style, string comment, string blockLine)
     {
         ArgumentNullException.ThrowIfNull(components);
+        ArgumentNullException.ThrowIfNull(comment);
+        ArgumentNullException.ThrowIfNull(blockLine);
         style ??= DesignCodeStyle.Default;
         DesignComponent[] declared = components.ToArray();
         int longest = declared.Select(static c => c.CodeName.Length).Where(static n => n <= 30).DefaultIfEmpty(int.MinValue).Max();
         var lines = new List<string>
         {
-            style.Indent(1) + DesignCodeReader.ComponentPropertiesComment,
-            style.Indent(1) + "properties (Access = public)",
+            style.Indent(1) + comment,
+            style.Indent(1) + blockLine,
         };
         foreach (DesignComponent c in declared)
         {
@@ -184,16 +204,29 @@ public static class DesignCodeWriter
             .Concat(children.Where(Context));
     }
 
-    /// <summary><c>createComponents</c>, from the comment above it to its <c>end</c>.</summary>
-    public static IReadOnlyList<string> Method(AppDesign design, DesignCodeStyle? style = null)
+    /// <summary><c>createComponents</c>, from the comment above it to its <c>end</c>; a custom UI component's <c>setup</c> (<see cref="Method(AppDesign, DesignCodeStyle?, string?)"/>).</summary>
+    public static IReadOnlyList<string> Method(AppDesign design, DesignCodeStyle? style = null) => Method(design, style, null);
+
+    /// <summary>
+    /// <c>createComponents(app)</c> for an app, or <c>setup(comp)</c> for a custom UI component (App
+    /// Designer window plan W15, <c>ComponentSetupMethodBehavior</c>): the component's own lines first
+    /// - its <c>Position</c>, then the inherited properties set off their defaults
+    /// (<c>ComponentInheritedPropertiesInitBehavior</c>) - then each underlying component under
+    /// <c>% Create Name</c>, made in <c>comp</c>, and at the end the startup function
+    /// <paramref name="postSetup"/>'s call under its comment when the component has one; no figure
+    /// is made or shown.
+    /// </summary>
+    public static IReadOnlyList<string> Method(AppDesign design, DesignCodeStyle? style, string? postSetup)
     {
         ArgumentNullException.ThrowIfNull(design);
         style ??= DesignCodeStyle.Default;
         string at = style.Indent(3);
+        bool component = design.IsComponent;
+        string objectName = component ? DesignComponentCode.ObjectName : App;
         var lines = new List<string>
         {
-            style.Indent(2) + "% Create UIFigure and components",
-            style.Indent(2) + "function createComponents(app)",
+            style.Indent(2) + (component ? DesignComponentCode.SetupComment : "% Create UIFigure and components"),
+            style.Indent(2) + (component ? "function setup(comp)" : "function createComponents(app)"),
         };
 
         if (design.UsesImageFiles)
@@ -204,6 +237,26 @@ public static class DesignCodeWriter
         }
 
         DesignComponent[] all = design.Components.ToArray();
+        if (component)
+        {
+            lines.Add(string.Empty);
+            lines.AddRange(RootLines(design, style.Theme).Select(l => at + l));
+            foreach (DesignComponent child in design.Figure.Children)
+            {
+                Write(child);
+            }
+
+            if (postSetup is not null)
+            {
+                lines.Add(at); // the whitespace builder at the function's depth
+                lines.Add(at + DesignComponentCode.PostSetupComment);
+                lines.Add(at + $"{postSetup}({objectName})");
+            }
+
+            lines.Add(style.Indent(2) + "end");
+            return lines;
+        }
+
         Write(design.Figure);
 
         lines.Add(string.Empty);
@@ -216,9 +269,9 @@ public static class DesignCodeWriter
         {
             // The code model writes a component's end properties - a check box tree's checked
             // nodes - after its children, which they name.
-            IReadOnlyList<string> code = ComponentCode(component, style);
+            IReadOnlyList<string> code = ComponentCode(component, style, objectName);
             bool hasEnd = component.Type == "matlab.ui.container.CheckBoxTree";
-            bool IsEnd(string line) => hasEnd && line.StartsWith($"{App}.{component.CodeName}.CheckedNodes = ", StringComparison.Ordinal);
+            bool IsEnd(string line) => hasEnd && line.StartsWith($"{objectName}.{component.CodeName}.CheckedNodes = ", StringComparison.Ordinal);
 
             lines.Add(string.Empty);
             lines.Add(at + (ReferenceEquals(component, design.Figure)
@@ -246,11 +299,62 @@ public static class DesignCodeWriter
                 if (assigned.Length > 0)
                 {
                     lines.Add(at); // App Designer indents this one blank line
-                    lines.Add(at + $"% Assign {App}.{component.CodeName}");
-                    lines.AddRange(assigned.Select(c => at + $"{App}.{c.CodeName}.ContextMenu = {App}.{component.CodeName};"));
+                    lines.Add(at + $"% Assign {objectName}.{component.CodeName}");
+                    lines.AddRange(assigned.Select(c => at + $"{objectName}.{c.CodeName}.ContextMenu = {objectName}.{component.CodeName};"));
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// A custom UI component's own lines at the top of <c>setup</c> (<c>ComponentInheritedPropertiesInitBehavior</c>):
+    /// <c>comp.Position</c> always, then <c>BackgroundColor</c>, <c>Visible</c>, <c>Interruptible</c>,
+    /// <c>BusyAction</c> and <c>HandleVisibility</c> each when set and not its default under
+    /// <paramref name="theme"/>; the root's other properties are not the component's.
+    /// </summary>
+    public static IReadOnlyList<string> RootLines(AppDesign design, DesignTheme theme)
+    {
+        ArgumentNullException.ThrowIfNull(design);
+        DesignComponent root = design.Figure;
+        string target = DesignComponentCode.ObjectName;
+        var lines = new List<string>
+        {
+            $"{target}.Position = {DesignValueText.Format(root.Get("Position") ?? NumericValue.Row(DesignComponentCode.DefaultPosition), target)};",
+        };
+        foreach (string name in DesignComponentCode.InheritedProperties)
+        {
+            if (root.Get(name) is { } value && !IsRootDefault(name, value, theme))
+            {
+                lines.Add($"{target}.{name} = {DesignValueText.Format(value, target)};");
+            }
+        }
+
+        return lines;
+    }
+
+    /// <summary>Whether an inherited property of a component's root holds its default (the figure adapter's defaults by theme: the background colour, and <c>on</c>, <c>on</c>, <c>queue</c>, <c>on</c>).</summary>
+    public static bool IsRootDefault(string name, DesignValue value, DesignTheme theme)
+    {
+        ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNull(value);
+        DesignValue? fallback = name switch
+        {
+            "BackgroundColor" => NumericValue.Row(theme == DesignTheme.Dark ? [0.1294, 0.1294, 0.1294] : [0.94, 0.94, 0.94]),
+            "Visible" or "Interruptible" or "HandleVisibility" => new CharValue("on"),
+            "BusyAction" => new CharValue("queue"),
+            _ => null,
+        };
+        if (fallback is null)
+        {
+            return false;
+        }
+
+        if (value is OnOffValue on && fallback is CharValue c)
+        {
+            return on.IsOn == (c.Text == "on");
+        }
+
+        return DesignValueText.IsEqual(value, fallback);
     }
 
     /// <summary>
@@ -261,15 +365,33 @@ public static class DesignCodeWriter
     /// <c>DesignTimeProperties.ComponentCode</c>, once its placeholders are filled in. Properties the
     /// catalog does not order come last, in the order they were set, so that nothing set is lost.
     /// </summary>
-    public static IReadOnlyList<string> ComponentCode(DesignComponent component, DesignCodeStyle? style = null)
+    public static IReadOnlyList<string> ComponentCode(DesignComponent component, DesignCodeStyle? style = null) => ComponentCode(component, style, null);
+
+    /// <summary>
+    /// <see cref="ComponentCode(DesignComponent, DesignCodeStyle?)"/> with the object named
+    /// <paramref name="objectName"/>: <c>app</c>, or <c>comp</c> for a custom UI component's, under
+    /// which a child of the component's root is made in <c>comp</c> itself
+    /// (<c>ComponentInitComponentParentBehavior</c>); null for the component's own name. The
+    /// design-time runtime names every design <c>app</c>, its root among them.
+    /// </summary>
+    public static IReadOnlyList<string> ComponentCode(DesignComponent component, DesignCodeStyle? style, string? objectName)
     {
         ArgumentNullException.ThrowIfNull(component);
         style ??= DesignCodeStyle.Default;
-        string target = $"{App}.{component.CodeName}";
-        var lines = new List<string> { $"{target} = {Creation(component, component.Parent is { } p ? $"{App}.{p.CodeName}" : string.Empty)};" };
-        lines.AddRange(WrittenProperties(component, style.Theme).Select(w => PropertyLine(target, component.Type, w.Name, w.Value, stored: false)));
+        objectName ??= component.ObjectName;
+        string target = $"{objectName}.{component.CodeName}";
+        var lines = new List<string> { $"{target} = {Creation(component, ParentText(component, objectName))};" };
+        lines.AddRange(WrittenProperties(component, style.Theme).Select(w => PropertyLine(target, component.Type, w.Name, w.Value, stored: false, objectName: objectName)));
         return lines;
     }
+
+    /// <summary>The parent in a creation call: <c>app.Parent</c>; <c>comp</c> alone for a child of a custom UI component's root written as <c>comp</c>; empty for the root.</summary>
+    private static string ParentText(DesignComponent component, string objectName) => component.Parent switch
+    {
+        null => string.Empty,
+        { IsComponentRoot: true } when objectName == DesignComponentCode.ObjectName => objectName,
+        { } parent => $"{objectName}.{parent.CodeName}",
+    };
 
     /// <summary>
     /// One component's lines as App Designer keeps them in its <c>DesignTimeProperties.ComponentCode</c>
@@ -283,9 +405,11 @@ public static class DesignCodeWriter
     {
         ArgumentNullException.ThrowIfNull(component);
         style ??= DesignCodeStyle.Default;
-        const string Target = App + ".ad_CODENAME_ad";
-        var lines = new List<string> { $"{Target} = {Creation(component, component.Parent is null ? string.Empty : App + ".ad_PARENTCODENAME_ad")};" };
-        lines.AddRange(WrittenProperties(component, style.Theme).Select(w => PropertyLine(Target, component.Type, w.Name, w.Value, stored: true, appFolder)));
+        // A custom UI component's tree stores its lines under comp, the parent token kept (measured: the generator under the CustomUIComponent type, probe w15_component).
+        string objectName = component.ObjectName;
+        string target = objectName + ".ad_CODENAME_ad";
+        var lines = new List<string> { $"{target} = {Creation(component, component.Parent is null ? string.Empty : objectName + ".ad_PARENTCODENAME_ad")};" };
+        lines.AddRange(WrittenProperties(component, style.Theme).Select(w => PropertyLine(target, component.Type, w.Name, w.Value, stored: true, appFolder, objectName)));
         return lines;
     }
 
@@ -413,15 +537,19 @@ public static class DesignCodeWriter
     {
         ArgumentNullException.ThrowIfNull(component);
         ArgumentNullException.ThrowIfNull(value);
-        return PropertyLine(App + ".ad_CODENAME_ad", component.Type, name, value, stored: true, appFolder);
+        return PropertyLine(component.ObjectName + ".ad_CODENAME_ad", component.Type, name, value, stored: true, appFolder, component.ObjectName);
     }
 
-    /// <summary>The line that sets <paramref name="name"/> to <paramref name="value"/>, unindented.</summary>
-    public static string PropertyLine(DesignComponent component, string name, DesignValue value)
+    /// <summary>The line that sets <paramref name="name"/> to <paramref name="value"/>, unindented, under the object's own name (<c>app</c>, or <c>comp</c> for a custom UI component's).</summary>
+    public static string PropertyLine(DesignComponent component, string name, DesignValue value) => PropertyLine(component, name, value, null);
+
+    /// <summary>The line that sets <paramref name="name"/> to <paramref name="value"/>, unindented, under <paramref name="objectName"/> (the object's own when null).</summary>
+    public static string PropertyLine(DesignComponent component, string name, DesignValue value, string? objectName)
     {
         ArgumentNullException.ThrowIfNull(component);
         ArgumentNullException.ThrowIfNull(value);
-        return PropertyLine($"{App}.{component.CodeName}", component.Type, name, value, stored: false);
+        objectName ??= component.ObjectName;
+        return PropertyLine($"{objectName}.{component.CodeName}", component.Type, name, value, stored: false, objectName: objectName);
     }
 
     /// <summary>
@@ -429,12 +557,12 @@ public static class DesignCodeWriter
     /// <paramref name="stored"/>, in the form App Designer stores (a callback's method name and an
     /// image's relative path in quotes).
     /// </summary>
-    private static string PropertyLine(string target, string type, string name, DesignValue value, bool stored, string? appFolder = null)
+    private static string PropertyLine(string target, string type, string name, DesignValue value, bool stored, string? appFolder = null, string objectName = App)
     {
         value = WrittenValue(type, name, value);
         string text = stored && value is CallbackValue callback ? $"'{callback.Method}'"
             : stored && value is ImageFileValue image ? DesignValueText.Format(new CharValue(ImagePath(image, appFolder)))
-            : DesignValueText.Format(value);
+            : DesignValueText.Format(value, objectName);
         if (DesignCodeReader.LabelAliases.FirstOrDefault(a => a.Value == name) is { Key: { } labelFunction })
         {
             return $"{labelFunction}({target}, {text})";

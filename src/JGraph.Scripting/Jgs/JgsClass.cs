@@ -603,10 +603,14 @@ internal sealed class JgsClass
         JgsValue verified;
         try
         {
-            verified = JgsBuiltins.CheckArgument(property.Spec, value, line, col, _interpreter.Globals, _interpreter);
+            verified = JgsBuiltins.CheckArgument(property.Spec, value, line, col, _interpreter.Globals, _interpreter, property: true);
             using Interpreter.FileContext classFile = _interpreter.EnterFile(owner.Declaration.SourceId);
             using Interpreter.DialectContext classCode = _interpreter.EnterDialect(owner.Declaration.Dialect); // V11
-            _interpreter.RunValidators(property.Spec.Validators, verified, owner._scope);
+            // A validator written with the property's name among its arguments - Limits {mustBeNumeric(Limits)},
+            // Value {mustBeInRange(Value, 0, 100)}, as MATLAB's property validation and App Designer's code engine
+            // write them (W15) - reads the value under validation by that name: the name is replaced in the call
+            // by the value itself, never bound in a scope, which would hold a handle alive past its owner.
+            _interpreter.RunValidators(WithPropertyValue(property.Spec.Validators, property.Spec.Name, verified), verified, owner._scope);
         }
         catch (JgsRuntimeException failure)
         {
@@ -625,6 +629,21 @@ internal sealed class JgsClass
         }
 
         return verified;
+    }
+
+    /// <summary>The validators with the property's own name among a call's arguments standing for <paramref name="value"/>.</summary>
+    private static IReadOnlyList<Expr> WithPropertyValue(IReadOnlyList<Expr> validators, string name, JgsValue value)
+    {
+        if (!validators.Any(v => v is CallExpr call && call.Arguments.Any(a => a is VariableExpr { } named && named.Name == name)))
+        {
+            return validators;
+        }
+
+        return validators.Select(v => v is CallExpr call && call.Arguments.Any(a => a is VariableExpr { } named && named.Name == name)
+            ? new CallExpr(call.Callee, call.Arguments.Select(a => a is VariableExpr { } named && named.Name == name
+                ? new PreEvaluated(value) { Line = a.Line, Column = a.Column }
+                : a).ToList()) { Line = call.Line, Column = call.Column }
+            : v).ToList();
     }
 
     /// <summary>The value a property starts with: its default, evaluated in its own class's file and checked as a write would be.</summary>

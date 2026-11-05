@@ -55,6 +55,11 @@ internal static class DesignRun
                 $"Error running '{fileName}'.\n{fullFileName} not found.");
         }
 
+        if (IsComponentFile(fullFileName))
+        {
+            return RunComponent(interpreter, fullFileName, launched, remember); // App Designer's UserComponentRunner (W15)
+        }
+
         JgsObject? own = launched is { Type: JgsType.Object } l && !l.AsObject.Deleted ? l.AsObject : null;
 
         // isSameNameAppRunning: an app of this class running from another file (case blind on
@@ -159,6 +164,194 @@ internal static class DesignRun
 
             throw;
         }
+    }
+
+    /// <summary>Whether the file's class derives from <c>matlab.ui.componentcontainer.ComponentContainer</c> directly (App Designer runs such a file as a component).</summary>
+    private static bool IsComponentFile(string fullFileName)
+    {
+        try
+        {
+            return DesignComponentMetadata.Superclasses(JgsMlapp.ReadSource(fullFileName), out _).Contains(DesignComponentMetadata.Superclass, StringComparer.Ordinal);
+        }
+        catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// App Designer's Run of a custom UI component (App Designer window plan W15; R2025b's
+    /// <c>UserComponentRunner.run</c> and <c>UserComponentInstantiator.run</c>, measured by the probe
+    /// <c>w15_component</c>): the one it launched before is closed by deleting its parent figure
+    /// (<c>UserComponentInstanceCloser</c>); the class is cleared and the component's folder put at the
+    /// front of the path; the class is called with no arguments in the base workspace, which makes a
+    /// figure for it; that figure is marked <c>IsRunningInAppDesigner</c> (1) and
+    /// <c>RunningInstanceFullFileName</c> and sized to the component's far corner; the instance is
+    /// answered and not bound.
+    /// </summary>
+    /// <exception cref="JgsRuntimeException">What the component's class raises, or the missing file's refusal.</exception>
+    public static JgsValue RunComponent(Interpreter interpreter, string fullFileName, JgsValue? launched, Action<JgsValue?> remember)
+    {
+        ArgumentNullException.ThrowIfNull(interpreter);
+        ArgumentNullException.ThrowIfNull(fullFileName);
+        ArgumentNullException.ThrowIfNull(remember);
+        fullFileName = Path.GetFullPath(fullFileName);
+        (string name, string folder) = CommandOf(fullFileName);
+        if (!File.Exists(fullFileName))
+        {
+            throw new JgsRuntimeException(0, 0, "MATLAB:appdesigner:appdesigner:RunFailedFileNotFound",
+                $"Error running '{Path.GetFileName(fullFileName)}'.\n{fullFileName} not found.");
+        }
+
+        if (launched is { Type: JgsType.Object } before && !before.AsObject.Deleted
+            && JgsComponentContainers.TryState(before.AsObject, out JgsComponentContainerState? state) && state.Model.Figure is { BeingDeleted: false } old
+            && interpreter.Host is JGraphScriptGlobals closer)
+        {
+            JgsBuiltins.TryDeleteGraphics(JgsHandleRegistry.For(old), closer);
+        }
+
+        remember(null);
+        interpreter.FunctionPath?.Unload(name);
+        interpreter.FunctionPath?.Add(folder, atEnd: false);
+        JgsValue component = interpreter.EvaluateSourceIn(name, interpreter.Globals, 0, 0);
+        if (component.Type == JgsType.Object && JgsComponentContainers.TryState(component.AsObject, out JgsComponentContainerState? made) && made.Model.Figure is { } figure
+            && JgsHandleRegistry.TryGetEntry(figure, out JgsHandleEntry? entry))
+        {
+            entry.AddedProperties ??= new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+            entry.AddedProperties["IsRunningInAppDesigner"] = JgsValue.Number(1);
+            entry.AddedProperties[JgsBuiltinClasses.RunningInstanceFullFileName] = JgsValue.Str(fullFileName);
+            double[]? at = NumbersOf(JgsGraphicsProperties.Get(entry, "Position", 0, 0));
+            double[]? own = NumbersOf(JgsGraphicsProperties.Get(made.Entry, "Position", 0, 0));
+            if (at is [var x, var y, _, _] && own is [var cx, var cy, var cw, var ch])
+            {
+                JgsGraphicsProperties.Set(entry, "Position", JgsMatrix.FromColumnMajor([x, y, cx + cw, cy + ch], 1, 4), 0, 0);
+            }
+
+            remember(component);
+        }
+
+        return component;
+    }
+
+    /// <summary>
+    /// What the "App Designer Custom UI Component Metadata" dialog learns by making the component once
+    /// (<c>MetadataUIViewModel.getAvatar</c> and <c>validateComponent</c>, App Designer window plan W15): the class
+    /// at <paramref name="fullFileName"/> constructed with an invisible figure as its parent, from its folder (the
+    /// one above its packages) put first on the path; then its <c>Units</c> must be pixels, the figure must hold no
+    /// other child than it and its context menus, and none of its public callbacks may hold a value. The figure is
+    /// deleted afterwards. An abstract class and a failing construction are the check's error, in R2025b's words.
+    /// R2025b also photographs the component for the library's drag preview; JGraph leaves the avatars empty.
+    /// </summary>
+    public static DesignComponentCheck CheckComponent(Interpreter interpreter, string fullFileName)
+    {
+        ArgumentNullException.ThrowIfNull(interpreter);
+        ArgumentNullException.ThrowIfNull(fullFileName);
+        (string directory, string className, string componentName) = DesignComponentMetadata.PackageParts(fullFileName);
+        interpreter.FunctionPath?.Unload(componentName);
+        interpreter.FunctionPath?.Add(directory, atEnd: false);
+        var scratch = new JgsEnvironment(interpreter.Globals);
+        JgsValue figure = JgsValue.Null;
+        try
+        {
+            interpreter.EvaluateSourceIn("jgMetadataFigure__ = uifigure('Visible', 'off');", scratch, 0, 0);
+            scratch.TryGet("jgMetadataFigure__", out figure);
+            interpreter.EvaluateSourceIn($"jgMetadataComponent__ = {className}('Parent', jgMetadataFigure__);", scratch, 0, 0);
+            if (!scratch.TryGet("jgMetadataComponent__", out JgsValue component) || component.Type != JgsType.Object
+                || !JgsComponentContainers.TryState(component.AsObject, out JgsComponentContainerState? state))
+            {
+                return new DesignComponentCheck(null, $"{className} did not make a custom UI component.");
+            }
+
+            if (JgsGraphicsProperties.Get(state.Entry, "Units", 0, 0) is { Type: JgsType.String } units && units.AsString != "pixels")
+            {
+                return new DesignComponentCheck(null, DesignComponentMetadata.InvalidUnits);
+            }
+
+            if (JgsHandleRegistry.TryGet(figure, out JgsHandleEntry? figureEntry))
+            {
+                foreach (JgsValue child in Elements(JgsGraphicsProperties.Get(figureEntry, "Children", 0, 0)))
+                {
+                    if (JgsHandleRegistry.TryGet(child, out JgsHandleEntry? childEntry) && !ReferenceEquals(childEntry, state.Entry)
+                        && !ReferenceEquals(childEntry.Target, state.Entry.Target)
+                        && !(JgsGraphicsProperties.Get(childEntry, "Type", 0, 0) is { Type: JgsType.String } type && type.AsString == "uicontextmenu"))
+                    {
+                        return new DesignComponentCheck(null, DesignComponentMetadata.RogueComponent);
+                    }
+                }
+            }
+
+            string[] assigned = state.Callbacks.Where(static kv => !IsEmptyCallback(kv.Value)).Select(static kv => kv.Key).OrderBy(static n => n, StringComparer.Ordinal).ToArray();
+            if (assigned.Length > 0)
+            {
+                return new DesignComponentCheck(null, DesignComponentMetadata.CallbackHasValue(assigned.Select(static n => n + "Fcn"), assigned));
+            }
+
+            double[]? position = NumbersOf(JgsGraphicsProperties.Get(state.Entry, "Position", 0, 0));
+            return position is { Length: 4 } ? new DesignComponentCheck(position, null) : new DesignComponentCheck(null, $"{className} has no Position.");
+        }
+        catch (JgsRuntimeException ex)
+        {
+            return new DesignComponentCheck(null, ex.Identifier == "MATLAB:class:abstract" ? DesignComponentMetadata.AbstractComponent(className) : ex.Message);
+        }
+        finally
+        {
+            if (figure.Type != JgsType.Null && interpreter.Host is JGraphScriptGlobals host)
+            {
+                JgsBuiltins.TryDeleteGraphics(figure, host);
+            }
+        }
+    }
+
+    private static IEnumerable<JgsValue> Elements(JgsValue value)
+    {
+        if (value.Type is JgsType.Number or JgsType.Object)
+        {
+            yield return value;
+        }
+        else if (value.Type is JgsType.Array or JgsType.Cell)
+        {
+            for (int i = 0; i < value.ArrayLength; i++)
+            {
+                yield return value.ElementAt(i);
+            }
+        }
+    }
+
+    private static bool IsEmptyCallback(JgsValue value) => value.Type switch
+    {
+        JgsType.Null => true,
+        JgsType.Array => value.ArrayLength == 0,
+        JgsType.Cell => value.AsCell.Length == 0,
+        JgsType.String => value.AsString.Length == 0,
+        _ => false,
+    };
+
+    /// <summary>A value's numbers as a flat array; null when it is not numbers.</summary>
+    private static double[]? NumbersOf(JgsValue value)
+    {
+        if (value.Type == JgsType.Number)
+        {
+            return [value.AsNumber];
+        }
+
+        if (value.Type != JgsType.Array || value.IsStringArray || value.IsCharMatrix)
+        {
+            return null;
+        }
+
+        var numbers = new double[value.ArrayLength];
+        for (int i = 0; i < numbers.Length; i++)
+        {
+            JgsValue element = value.ElementAt(i);
+            if (element.Type != JgsType.Number)
+            {
+                return null;
+            }
+
+            numbers[i] = element.AsNumber;
+        }
+
+        return numbers;
     }
 
     /// <summary>

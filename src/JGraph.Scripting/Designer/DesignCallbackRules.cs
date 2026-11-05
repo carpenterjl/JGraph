@@ -63,7 +63,14 @@ public readonly record struct DesignCallbackChoice(string Label, string Value)
 /// <param name="Anchor">The component whose rows' values are shown; null for the app's own row.</param>
 /// <param name="Groups">The rows in their groups, titled when there are several.</param>
 /// <param name="Message">What it says with no rows.</param>
-public sealed record DesignCallbackSheet(List<DesignComponent> Peers, DesignComponent? Anchor, IReadOnlyList<DesignCallbackGroup> Groups, string? Message);
+public sealed record DesignCallbackSheet(List<DesignComponent> Peers, DesignComponent? Anchor, IReadOnlyList<DesignCallbackGroup> Groups, string? Message)
+{
+    /// <summary>
+    /// A custom UI component's own row (W15, <c>PublicCallbackSection</c>): the public callbacks its events
+    /// give it, each <c>NameFcn</c>, listed over its private callbacks; null for anything else.
+    /// </summary>
+    public IReadOnlyList<string>? PublicCallbacks { get; init; }
+}
 
 /// <summary>
 /// App Designer's rules for callbacks over a selection (the App Designer window plan's stage W7d), free of the screen and of
@@ -98,6 +105,9 @@ public static class DesignCallbackRules
 
     /// <summary>The app's own callback property (<c>isStartupCallbackByName</c>).</summary>
     public const string StartupProperty = "StartupFcn";
+
+    /// <summary>Whether <paramref name="property"/> is the startup function's row: an app's <c>StartupFcn</c>, or a custom UI component's <c>PostSetupFcn</c> (<c>isStartupCallbackByName</c>, W15).</summary>
+    public static bool IsStartupProperty(string property) => property is StartupProperty or DesignComponentCode.StartupProperty;
 
     /// <summary>What the startup function's name is refused for when another function has it (<c>invalidAttributeNameMessage_StartupCannotShare</c>).</summary>
     public const string StartupCannotShare = "Startup function name must be unique.";
@@ -293,7 +303,7 @@ public static class DesignCallbackRules
             choices.Add(new DesignCallbackChoice(current, current));
         }
 
-        bool startup = property == StartupProperty;
+        bool startup = IsStartupProperty(property);
         choices.AddRange(functions.Where(f => f.IsStartup == startup && f.Name != current).Select(static f => f.Name)
             .Order(StringComparer.CurrentCulture).Select(static n => new DesignCallbackChoice(n, n)));
         return choices;
@@ -308,7 +318,7 @@ public static class DesignCallbackRules
         ArgumentNullException.ThrowIfNull(properties);
         ArgumentNullException.ThrowIfNull(common);
         ArgumentNullException.ThrowIfNull(boundTo);
-        return properties.Where(p => p != StartupProperty && common.Contains(p) && boundTo(p).Length == 0).ToArray();
+        return properties.Where(p => !IsStartupProperty(p) && common.Contains(p) && boundTo(p).Length == 0).ToArray();
     }
 
     /// <summary>
@@ -326,12 +336,12 @@ public static class DesignCallbackRules
         ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(startupName);
         ArgumentNullException.ThrowIfNull(whyNotName);
-        if (property == StartupProperty && exists)
+        if (IsStartupProperty(property) && exists)
         {
             return StartupCannotShare;
         }
 
-        if (property != StartupProperty && name == startupName)
+        if (!IsStartupProperty(property) && name == startupName)
         {
             return CannotShareStartup;
         }

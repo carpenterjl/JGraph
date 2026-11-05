@@ -41,6 +41,10 @@ public static partial class JgsMlapp
     /// <summary>The release whose App Designer format this writes.</summary>
     private const string Release = "R2025b";
 
+    /// <summary>A custom UI component's <c>AppTypeData</c> for the class <paramref name="text"/> (App Designer window plan W15); null for an app's.</summary>
+    private static MatData? AppTypeDataOf(string text) =>
+        DesignCode.Read(text) is { IsComponent: true } code ? DesignComponentModel.AppTypeData(code) : null;
+
     /// <summary>
     /// Writes a new <c>.mlapp</c> holding <paramref name="text"/> as App Designer writes one: the
     /// code, and App Designer's model of it - the component tree built from its
@@ -77,7 +81,7 @@ public static partial class JgsMlapp
         static string X(string value) => System.Security.SecurityElement.Escape(value);
         string code = text.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n');
         DesignReadResult read = DesignCodeReader.Read(code);
-        byte[]? copy = JgsMlappModel.NewCode(JgsMlappLayout.Of(code));
+        byte[]? copy = JgsMlappModel.NewCode(JgsMlappLayout.Of(code), AppTypeDataOf(code));
         if (read.Design is not { } design || copy is null)
         {
             WritePackage(path, text);
@@ -94,7 +98,8 @@ public static partial class JgsMlapp
             appData.Set(empty, new McosValue.Value(new MatData.Numbers("double", [0, 0], [])));
         }
 
-        string minimum = design.IsResponsive ? "R2019a" : "R2018a";
+        // A custom UI component opens in R2022a on (ComponentAppFactory.getNewAppData), a responsive app in R2019a, any other in R2018a.
+        string minimum = design.IsComponent ? "R2022a" : design.IsResponsive ? "R2019a" : "R2018a";
         appData.Set("MinimumSupportedVersion", new McosValue.Value(MatData.Text(minimum)));
         byte[] model = MatMcosWriter.WriteFile(
         [
@@ -122,7 +127,7 @@ public static partial class JgsMlapp
                 + "<metadata xmlns=\"http://schemas.mathworks.com/appDesigner/app/2017/appMetadata\"><description>" + X(metadata.Description) + "</description>"
                 + "<MLAPPVersion>2</MLAPPVersion><minimumSupportedMATLABRelease>" + minimum + "</minimumSupportedMATLABRelease>"
                 + "<screenshotMode>" + X(metadata.ScreenshotMode) + "</screenshotMode><uuid>" + uuid + "</uuid>"
-                + "<AppType>" + (design.IsResponsive ? "Responsive" : "Standard") + "</AppType>"
+                + "<AppType>" + (design.IsComponent ? "CustomUIComponent" : design.IsResponsive ? "Responsive" : "Standard") + "</AppType>"
                 + "<componentProducts/><imageRelativePaths/>" + UserComponentsElement(DesignUserComponents.ClassesOf(design)) + "</metadata>"),
             Xml("metadata/coreProperties.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\n"
                 + "<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\" "

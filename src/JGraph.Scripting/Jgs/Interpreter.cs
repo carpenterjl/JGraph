@@ -10028,6 +10028,18 @@ internal sealed partial class Interpreter
             return onNet;
         }
 
+        // appdesigner.customcomponent.configureMetadata(file): a dotted built-in whose head is a built-in
+        // function of its own (App Designer window plan W15). The whole name is the one meant, as long as
+        // no variable holds the head; read bare, a self-calling one calls itself.
+        if (DottedName(member) is { } wholeName && RootName(member) is { } headName
+            && LookUp(headName, env, out JgsValue headValue) && headValue is { Type: JgsType.Function } && headValue.AsCallable is BuiltinFunction
+            && LookUp(wholeName, env, out JgsValue wholeValue) && wholeValue.Type == JgsType.Function)
+        {
+            return autoCall && wholeValue.AsCallable is BuiltinFunction { AutoCallsBare: true } wholeMaker
+                ? wholeMaker.Call([], member.Line, member.Column)
+                : wholeValue;
+        }
+
         string field = FieldName(member, env);
 
         // midimsgtype.NoteOn and midicontrols.trace name the class, for the same reason (stage D10b).
@@ -10054,6 +10066,14 @@ internal sealed partial class Interpreter
 
         return MemberOf(EvaluateOne(member.Target, env, ListUse.Intermediate), field, member, autoCall, use);
     }
+
+    /// <summary>The name at the head of a chain of plain dots (<c>a</c> of <c>a.b.c</c>); null for any other head.</summary>
+    private static string? RootName(MemberExpr member) => member.Target switch
+    {
+        VariableExpr root => root.Name,
+        MemberExpr inner => RootName(inner),
+        _ => null,
+    };
 
     /// <summary>
     /// What a dot names on a target that has already been read. Split out of

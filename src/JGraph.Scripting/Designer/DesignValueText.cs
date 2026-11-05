@@ -53,7 +53,10 @@ public static class DesignValueText
             CellValue cell => CellText(cell, objectName),
             OnOffValue o => o.IsOn ? "'on'" : "'off'",
             DatetimeValue d => DatetimeText(d),
-            CallbackValue cb => $"createCallbackFcn({objectName}, @{cb.Method}, true)",
+            // A custom UI component's code calls the package function (ComponentInitComponentParentBehavior).
+            CallbackValue cb => objectName == DesignComponentCode.ObjectName
+                ? $"matlab.apps.createCallbackFcn({objectName}, @{cb.Method}, true)"
+                : $"createCallbackFcn({objectName}, @{cb.Method}, true)",
             ComponentsValue refs => refs.Bracketed
                 ? "[" + string.Join(", ", refs.CodeNames.Select(n => objectName + "." + n)) + "]"
                 : string.Join(", ", refs.CodeNames.Select(n => objectName + "." + n)),
@@ -278,7 +281,7 @@ public static class DesignValueText
                     break;
             }
 
-            if (Accept("createCallbackFcn(" + objectName + ", @"))
+            if (Accept("createCallbackFcn(" + objectName + ", @") || Accept("matlab.apps.createCallbackFcn(" + objectName + ", @"))
             {
                 string method = Name();
                 Expect(", true)");

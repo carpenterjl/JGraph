@@ -83,7 +83,7 @@ internal static partial class JgsBuiltinClasses
     /// property is given. Called with the component and its event, it calls the method with the
     /// app and the event, or with the app alone; the component is not passed on.
     /// </summary>
-    private static JgsValue CreateCallbackFcn(Interpreter interpreter, IReadOnlyList<JgsValue> args, int line, int col)
+    internal static JgsValue CreateCallbackFcn(Interpreter interpreter, IReadOnlyList<JgsValue> args, int line, int col)
     {
         _ = App("createCallbackFcn", args, 3, line, col);
         JgsEnvironment scope = interpreter.NewFileScope();

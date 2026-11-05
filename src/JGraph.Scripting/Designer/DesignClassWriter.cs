@@ -58,13 +58,19 @@ public static class DesignClassWriter
         bool plain = format == DesignFileFormat.PlainText;
         string i1 = style.Indent(1);
         string i2 = style.Indent(2);
-        var lines = new List<string> { $"classdef {code.ClassName} < {(plain ? DesignPlainText.Superclass : AppBase)}" };
+        bool component = design.IsComponent || code.IsComponent;
+        var lines = new List<string> { $"classdef {code.ClassName} < {(component ? DesignComponentCode.Superclass : plain ? DesignPlainText.Superclass : AppBase)}" };
         lines.AddRange(code.HeadComments);
         lines.Add(string.Empty);
 
         // The component properties, as the text had them when they still declare the design's components.
-        IReadOnlyList<string> block = DesignCodeWriter.PropertiesBlock(design, style);
-        lines.AddRange(code.PropertiesBlockAsRead is { } held && SameDeclarations(held, block) ? held : block);
+        IReadOnlyList<string> block = DesignCodeWriter.PropertiesBlock(design, style, code.AllowTestCaseAccess);
+        lines.AddRange(code.PropertiesBlockAsRead is { } held && SameDeclarations(held, block) && (!component || held.Take(2).SequenceEqual(block.Take(2), StringComparer.Ordinal)) ? held : block);
+        if (component)
+        {
+            lines.AddRange(ComponentLines(design, code, style));
+            return lines;
+        }
 
         // A responsive template's widths are written again; any other generated block is kept, with
         // the empty lines App Designer left before it.
@@ -137,6 +143,82 @@ public static class DesignClassWriter
         return lines;
     }
 
+    /// <summary>
+    /// A custom UI component's class after its underlying components' block (App Designer window plan
+    /// W15; <c>ComponentClassBehavior</c>'s groups): the events block under its comment with the events
+    /// by name, each managed properties' block by the key of its attributes with its properties by
+    /// name - each block followed by the whitespace line its group leaves, an empty one or an indented
+    /// one - the editable section, the callbacks block, and the lifecycle block
+    /// (<c>ComponentLifecycleMethodBlockBehavior</c>): <c>methods (Access = protected)</c> with
+    /// <c>update</c>, whose body is the user's or a new component's comment and empty line, and
+    /// <c>setup</c>, generated from the design, the startup function called at its end.
+    /// </summary>
+    private static IEnumerable<string> ComponentLines(AppDesign design, DesignCode code, DesignCodeStyle style)
+    {
+        string i1 = style.Indent(1);
+        string i2 = style.Indent(2);
+        string i3 = style.Indent(3);
+        var lines = new List<string> { string.Empty };
+
+        if (code.Events.Count > 0)
+        {
+            lines.Add(i1 + DesignComponentCode.EventsComment);
+            lines.Add(i1 + DesignComponentCode.EventsBlockLine);
+            lines.AddRange(code.Events.OrderBy(static e => e.Name, StringComparer.Ordinal).Select(e => i2 + e.Declaration));
+            lines.Add(i1 + "end");
+            lines.Add(string.Empty);
+        }
+
+        foreach (IGrouping<string, DesignManagedProperty> block in code.ManagedProperties.GroupBy(static p => p.BlockId).OrderBy(static g => g.Key, StringComparer.Ordinal))
+        {
+            lines.Add(i1 + block.First().BlockLine);
+            lines.AddRange(block.OrderBy(static p => p.Name, StringComparer.Ordinal).Select(p => i2 + p.Declaration));
+            lines.Add(i1 + "end");
+            lines.Add(i1); // the group's whitespace builder stands one level in
+        }
+
+        if (code.EditableSection.Count > 0)
+        {
+            lines.AddRange(code.EditableSection);
+            lines.Add(string.Empty);
+        }
+
+        if (code.Callbacks.Count > 0)
+        {
+            lines.Add(i1 + CallbacksComment);
+            lines.Add(i1 + "methods (Access = private)");
+            foreach (DesignCallback function in code.Callbacks)
+            {
+                lines.Add(string.Empty);
+                lines.AddRange(Function(design, code, function, style, null, false));
+            }
+
+            lines.Add(i1 + "end");
+            lines.Add(string.Empty);
+        }
+
+        lines.Add(i1 + "methods (Access = protected)");
+        lines.Add(i2); // the block's whitespace builder, two levels in
+        lines.Add(i2 + DesignComponentCode.UpdateComment);
+        lines.Add(i2 + "function update(comp)");
+        if (code.UpdateBody.Count > 0)
+        {
+            lines.AddRange(code.UpdateBody);
+        }
+        else
+        {
+            lines.Add(i3 + DesignComponentCode.UpdateHelpComment);
+            lines.Add(i3);
+        }
+
+        lines.Add(i2 + "end");
+        lines.Add(string.Empty);
+        lines.AddRange(DesignCodeWriter.Method(design, style, code.Startup?.Name));
+        lines.Add(i1 + "end");
+        lines.Add("end");
+        return lines;
+    }
+
     /// <summary>Whether <paramref name="held"/>, a component properties block, declares what <paramref name="written"/> declares, in any order.</summary>
     public static bool SameDeclarations(IReadOnlyList<string> held, IReadOnlyList<string> written)
     {
@@ -187,9 +269,10 @@ public static class DesignClassWriter
     {
         ArgumentNullException.ThrowIfNull(code);
         ArgumentNullException.ThrowIfNull(function);
+        string self = code.ObjectName;
         IEnumerable<string> arguments = function.IsStartup
-            ? [App, .. code.InputParameterNames]
-            : [App, "event"];
+            ? [self, .. code.InputParameterNames]
+            : [self, "event"];
         return $"function {function.Name}({string.Join(", ", arguments)})";
     }
 

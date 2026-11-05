@@ -585,7 +585,7 @@ internal static class JgsJson
         }
     }
 
-    private static void Quote(StringBuilder text, string value)
+    internal static void Quote(StringBuilder text, string value)
     {
         text.Append('"');
         foreach (char c in value)

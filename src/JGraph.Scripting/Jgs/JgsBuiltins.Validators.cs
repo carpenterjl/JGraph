@@ -15,14 +15,71 @@ internal static partial class JgsBuiltins
     /// hold — which is the same value unless a class conversion or an empty's refitting happened.
     /// </summary>
     internal static JgsValue CheckArgument(
-        ArgumentSpec spec, JgsValue value, int line, int col, JgsEnvironment env, Interpreter? interpreter = null)
+        ArgumentSpec spec, JgsValue value, int line, int col, JgsEnvironment env, Interpreter? interpreter = null, bool property = false)
     {
         if (spec.Dims is { } dims)
         {
-            value = CheckSize(spec.Name, dims, value, line, col);
+            value = CheckSize(spec.Name, dims, value, line, col, property);
         }
 
         return spec.ClassName is { } className ? CoerceToClass(spec.Name, className, value, line, col, env, interpreter) : value;
+    }
+
+    /// <summary>
+    /// R2025b's words for a value that does not fit a property's declared size (<c>MATLAB:validation:IncompatibleSize</c>,
+    /// measured by probe <c>w15_sizes</c> over the sizes App Designer's Add Property dialog writes): "Value must be a scalar.",
+    /// "Value must be a vector with N elements.", "Value must be a vector.", "Value must be a matrix of size M-by-N.",
+    /// "Value must be a matrix.", "Value must be a matrix with M rows." (and "with N columns", by the same rule). Null for a
+    /// declared size the probe did not cover, which keeps the argument block's words.
+    /// </summary>
+    private static string? PropertySizeWords(IReadOnlyList<Expr?> declared)
+    {
+        if (declared.Count != 2)
+        {
+            return null;
+        }
+
+        int? rows = declared[0] is NumberLiteral r ? (int)System.Math.Round(r.Value) : null;
+        int? cols = declared[1] is NumberLiteral c ? (int)System.Math.Round(c.Value) : null;
+        return (rows, cols) switch
+        {
+            (1, 1) => "Value must be a scalar.",
+            (1, int n) => $"Value must be a vector with {n} elements.",
+            (int n, 1) => $"Value must be a vector with {n} elements.",
+            (1, null) or (null, 1) => "Value must be a vector.",
+            (null, null) => "Value must be a matrix.",
+            (int m, int n) => $"Value must be a matrix of size {m}-by-{n}.",
+            (int m, null) => $"Value must be a matrix with {m} rows.",
+            (null, int n) => $"Value must be a matrix with {n} columns.",
+        };
+    }
+
+    /// <summary>
+    /// A vector handed to a declared vector shape of the other orientation - a column to <c>(1,2)</c>, a row to <c>(:,1)</c> -
+    /// is turned to the declared one, as MATLAB turns it for properties and arguments alike (measured, <c>w15_sizes</c>); null
+    /// when the shapes do not fit that rule.
+    /// </summary>
+    private static JgsValue? TryFitVector(IReadOnlyList<Expr?> declared, JgsValue value, int[] actual, int line, int col)
+    {
+        if (declared.Count != 2 || actual.Length != 2 || (actual[0] != 1 && actual[1] != 1) || actual[0] * actual[1] <= 1)
+        {
+            return null;
+        }
+
+        int count = actual[0] * actual[1];
+        bool rowDeclared = declared[0] is NumberLiteral { Value: 1 } && declared[1] is null or NumberLiteral;
+        bool columnDeclared = declared[1] is NumberLiteral { Value: 1 } && declared[0] is null or NumberLiteral;
+        if (rowDeclared && actual[0] != 1 && (declared[1] is not NumberLiteral n1 || (int)System.Math.Round(n1.Value) == count))
+        {
+            return Reshape([value, JgsValue.Number(1), JgsValue.Number(count)], line, col);
+        }
+
+        if (columnDeclared && actual[1] != 1 && (declared[0] is not NumberLiteral n0 || (int)System.Math.Round(n0.Value) == count))
+        {
+            return Reshape([value, JgsValue.Number(count), JgsValue.Number(1)], line, col);
+        }
+
+        return null;
     }
 
     /// <summary>
@@ -32,9 +89,10 @@ internal static partial class JgsBuiltins
     /// measured is an empty — see <see cref="TryFitEmpty"/>.
     /// </summary>
     private static JgsValue CheckSize(
-        string name, IReadOnlyList<Expr?> declared, JgsValue value, int line, int col)
+        string name, IReadOnlyList<Expr?> declared, JgsValue value, int line, int col, bool property = false)
     {
         int[] actual = SizeDims(value);
+        string Refusal() => property && PropertySizeWords(declared) is { } words ? words : $"'{name}' must be {DescribeSize(declared)}, but it is {string.Join("-by-", actual)}.";
 
         // An empty argument is fitted to a declared size that can hold nothing rather than refused
         // (M96b). MATLAB reshapes it: f([]) against `x (1,:) double` sees a 1-by-0, and against
@@ -45,6 +103,11 @@ internal static partial class JgsBuiltins
         if (TryFitEmpty(declared, value, actual, out JgsValue fitted))
         {
             return fitted;
+        }
+
+        if (TryFitVector(declared, value, actual, line, col) is { } turned)
+        {
+            return turned;
         }
 
         for (int i = 0; i < declared.Count; i++)
@@ -66,8 +129,7 @@ internal static partial class JgsBuiltins
             int have = i < actual.Length ? actual[i] : 1;
             if (want != have)
             {
-                throw new JgsRuntimeException(line, col, "MATLAB:validation:IncompatibleSize",
-                    $"'{name}' must be {DescribeSize(declared)}, but it is {string.Join("-by-", actual)}.");
+                throw new JgsRuntimeException(line, col, "MATLAB:validation:IncompatibleSize", Refusal());
             }
         }
 
@@ -77,8 +139,7 @@ internal static partial class JgsBuiltins
         {
             if (actual[i] != 1)
             {
-                throw new JgsRuntimeException(line, col,
-                    $"'{name}' must be {DescribeSize(declared)}, but it is {string.Join("-by-", actual)}.");
+                throw new JgsRuntimeException(line, col, "MATLAB:validation:IncompatibleSize", Refusal());
             }
         }
 

@@ -113,7 +113,7 @@ public class AppDesignerToolstripTests
     [InlineData("AD_SHARE_ALL_OPTIONS", null)]
     [InlineData("AD_SHARE_MATLAB", null)]
     [InlineData("OPEN_FILE_COMPARISON_DIALOG", null)]
-    [InlineData("AD_CONFIGURE_METADATA", "W15")]
+    [InlineData("AD_CONFIGURE_METADATA", null)]
     [InlineData("AD_SHARE_WEB", "X2")]
     [InlineData("AD_OPEN_GUIDE_APP", "X3")]
     [InlineData("AD_SELECT_SIMULINK_MODEL", "X1")]
@@ -124,13 +124,15 @@ public class AppDesignerToolstripTests
     }
 
     [Fact]
-    public void OnlyACustomComponentsActionsWaitForW15()
+    public void ACustomComponentsActionsAreLiveSinceW15()
     {
-        // The Start Page's new components too (W3 leaves them to W15).
-        Assert.Equal(
-            ["AD_CONFIGURE_METADATA", "AD_EDITOR_ADD_CALLBACK_EVENT_PAIR", "AD_EDITOR_ADD_MANAGED_USER_PROPERTY", "AD_EDITOR_ADD_PRIVATE_MANAGED_USER_PROPERTY", "AD_EDITOR_ADD_PUBLIC_MANAGED_USER_PROPERTY",
-             "AD_NEW_COMP_APP", "AD_NEW_COMP_GRID_APP"],
-            DesignActions.All.Values.Where(a => a.Stage == "W15").Select(a => a.Id).Order(StringComparer.Ordinal));
+        // The Start Page's new components too (W3 left them to W15).
+        foreach (string id in new[] { "AD_CONFIGURE_METADATA", "AD_EDITOR_ADD_CALLBACK_EVENT_PAIR", "AD_EDITOR_ADD_MANAGED_USER_PROPERTY", "AD_EDITOR_ADD_PRIVATE_MANAGED_USER_PROPERTY", "AD_EDITOR_ADD_PUBLIC_MANAGED_USER_PROPERTY", "AD_NEW_COMP_APP", "AD_NEW_COMP_GRID_APP" })
+        {
+            Assert.True(DesignActions.IsLive(id), id);
+        }
+
+        Assert.DoesNotContain(DesignActions.All.Values, a => a.Stage == "W15");
     }
 
     [Fact]

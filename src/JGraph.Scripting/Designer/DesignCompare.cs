@@ -530,16 +530,7 @@ public static class DesignCompare
             int count = region.LineCount;
             if (region.Kind == MlappRegionKind.EditableSection)
             {
-                if (count > 0 && layout.Lines[first].Length == 0)
-                {
-                    first++;
-                    count--;
-                }
-
-                if (count > 0 && layout.Lines[first + count - 1].Length == 0)
-                {
-                    count--;
-                }
+                (first, count) = layout.EditableSectionBounds;
             }
 
             for (int i = first; i < first + count; i++)

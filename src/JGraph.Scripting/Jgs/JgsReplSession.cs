@@ -366,6 +366,15 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IScript
     }
 
     /// <inheritdoc />
+    public Task<Designer.DesignComponentCheck> CheckComponentAsync(string fullFileName, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(fullFileName);
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        string key = System.IO.Path.GetFullPath(fullFileName);
+        return ScriptThread.Run(() => Designer.DesignRun.CheckComponent(_interpreter, key), cancellationToken);
+    }
+
+    /// <inheritdoc />
     public Task<JGraph.Deploy.DependencyReport> AnalyzeDependenciesAsync(IReadOnlyList<string> files, bool topOnly, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(files);

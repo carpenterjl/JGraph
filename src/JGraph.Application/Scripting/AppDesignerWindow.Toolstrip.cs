@@ -125,6 +125,11 @@ internal sealed partial class AppDesignerWindow
         "AD_EDITOR_ADD_PUBLIC_FUNCTION" => AddPublicFunction,
         "AD_EDITOR_ADD_PROPERTY" or "AD_EDITOR_ADD_PRIVATE_PROPERTY" => AddProperty,
         "AD_EDITOR_ADD_PUBLIC_PROPERTY" => AddPublicProperty,
+        // A custom UI component's (W15): the managed property ids R2025b swaps in reach the same dialog through the Property commands.
+        "AD_EDITOR_ADD_MANAGED_USER_PROPERTY" or "AD_EDITOR_ADD_PRIVATE_MANAGED_USER_PROPERTY" => AddProperty,
+        "AD_EDITOR_ADD_PUBLIC_MANAGED_USER_PROPERTY" => AddPublicProperty,
+        "AD_EDITOR_ADD_CALLBACK_EVENT_PAIR" => AddEventPair,
+        "AD_CONFIGURE_METADATA" => ConfigureForApps,
         "AD_DESIGN_GROUP_GROUP" => GroupSelection,
         "AD_DESIGN_GROUP_ADD" => AddToGroup,
         "AD_DESIGN_GROUP_REMOVE" => RemoveFromGroup,
@@ -173,7 +178,7 @@ internal sealed partial class AppDesignerWindow
         CommandBindings.Add(new CommandBinding(NotYet, static (_, _) => { }, static (_, e) => e.CanExecute = false));
         CommandBindings.Add(new CommandBinding(AddPublicFunction, (_, _) => Declared(Active?.Document.InsertUserFunction("public"), function: true),
             (_, e) => e.CanExecute = Active is { Document.Code: not null }));
-        CommandBindings.Add(new CommandBinding(AddPublicProperty, (_, _) => Declared(Active?.Document.InsertUserProperty("public"), function: false),
+        CommandBindings.Add(new CommandBinding(AddPublicProperty, (_, _) => AddPropertyOrManaged("public"),
             (_, e) => e.CanExecute = Active is { Document.Code: not null }));
         CommandBindings.Add(new CommandBinding(Quit, (_, _) => Close()));
         CommandBindings.Add(new CommandBinding(ShowShortcuts, (_, _) => AppDesignerDialogs.Shortcuts(this, Settings)));
@@ -322,8 +327,11 @@ internal sealed partial class AppDesignerWindow
             case "AD_EDITOR_SPLIT_TOPBOTTOM" when e.Value is true:
                 SetCodeViewSplit(SplitDirection.TopBottom);
                 break;
-            case null when e.Tag == DesignToolstrip.AddCallbackButton:
+            case null when e.Tag == DesignToolstrip.AddCallbackButton || e.Tag == DesignToolstrip.AddCallbackSplitButton:
                 ShowAddCallback();
+                break;
+            case null when e.Tag == DesignToolstrip.AddEventButton:
+                ShowAddEvent();
                 break;
             case null when DesignToolstrip.GoToFunctionOf(e.Tag) is { } function:
                 GoToFunction(function);
@@ -419,6 +427,7 @@ internal sealed partial class AppDesignerWindow
         }
 
         _toolstrip.SetEnabled(DesignToolstrip.GoToButton, app is { Document.Code: not null });
+        ShowComponentToolstrip(app);
         _toolstrip.SetIcon("AD_RUN", app is not null && !DesignRunArguments.IsNoArguments(app.Document.RunArguments.MostRecent) ? "runConfiguration" : "playControl");
         ShowDebugState(app);
 

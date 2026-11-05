@@ -1,0 +1,27 @@
+CHK|class|W15Counter|exact
+CHK|position|[1 1 320 240]|exact
+CHK|units|pixels|exact
+CHK|events|Cleared,ObjectBeingDestroyed,PropertyAdded,PropertyRemoved,ValueChanged|exact
+CHK|callbacks|1 1 0|exact
+CHK|value|0|exact
+CHK|limits|[0 100]|exact
+CHK|text_after_setup|0|exact
+CHK|text_after_value|5|exact
+CHK|value_after_push|6|exact
+CHK|fired|1|exact
+CHK|value_500|MATLAB:validators:mustBeInRange :: Error setting property 'Value' of class 'W15Counter'. Value must be greater than or equal to 0, and less than or equal to 100.|exact
+CHK|limits_3|MATLAB:validation:IncompatibleSize :: Error setting property 'Limits' of class 'W15Counter'. Value must be a vector with 2 elements.|exact
+CHK|no_args|MATLAB:narginchk:notEnoughInputs :: Not enough input arguments.|exact
+CHK|number|MATLAB:appdesigner:appdesigner:InvalidInput :: The input argument must be a full or partial file path, or a file name.|exact
+CHK|missing|MATLAB:appdesigner:appdesigner:InvalidFileName :: File '<fixtures>\w15nosuch.m' not found.|exact
+CHK|missing_no_ext|MATLAB:appdesigner:appdesigner:InvalidFileName :: File '<fixtures>\w15nosuch.mlapp' not found.|exact
+CHK|keyword|MATLAB:appdesigner:appdesigner:FileNameFailsIsKeyword :: Name cannot be a MATLAB keyword.  Rename file, and then open.|exact
+CHK|bad_name|MATLAB:appdesigner:appdesigner:FileNameFailsIsVarName :: File name '1bad' must start with a letter, contain only letters, numbers and underscores, and be shorter than 2048 characters.|exact
+CHK|two_args|MATLAB:TooManyInputs :: Too many input arguments.|exact
+CHK|txt|MATLAB:appdesigner:appdesigner:InvalidGeneralFileExtension :: File 'w15fn.txt' must have a .txt extension|div=ADR0305|diverges|MATLAB:appdesigner:appdesigner:InvalidGeneralFileExtension :: File 'w15fn.txt' must have a .m or .mlapp extension.
+CHK|function_file|MATLAB:appdesigner:usercomponentmetadata:NotValidCustomComponentClass :: File <w15fn> is not a valid custom UI component class.|exact
+CHK|plain_class|MATLAB:appdesigner:usercomponentmetadata:NotCustomComponentClass :: File <W15Plain> is not a valid custom UI component class because it does not inherit from matlab.ui.componentcontainer.ComponentContainer.|exact
+CHK|remove_no_registry|MATLAB:UndefinedFunction :: Undefined function 'isKey' for input arguments of type 'double'.|div=ADR0305|diverges|no error
+CHK|remove_invalid_id|MATLAB:appdesigner:usercomponentmetadata:InvalidModelErrorMsg|exact
+CHK|removed_one|{\n  "components": [\n    {\n      "className": "Other",\n      "componentName": "Other",\n      "version": "1.0",\n      "description": "",\n      "category": "Widgets",\n      "icon": "",\n      "authorName": "",\n      "authorEmail": "",\n      "avatar": "",\n      "avatarDark": "",\n      "defaultPosition": [\n        1,\n        1,\n        100,\n        100\n      ]\n    }\n  ],\n  "schema": 3,\n  "MATLABRelease": "R2025b"\n}|exact
+CHK|removed_again|{\n  "components": [\n    {\n      "className": "Other",\n      "componentName": "Other",\n      "version": "1.0",\n      "description": "",\n      "category": "Widgets",\n      "icon": "",\n      "authorName": "",\n      "authorEmail": "",\n      "avatar": "",\n      "avatarDark": "",\n      "defaultPosition": [\n        1,\n        1,\n        100,\n        100\n      ]\n    }\n  ],\n  "schema": 3,\n  "MATLABRelease": "R2025b"\n}|exact

@@ -240,8 +240,69 @@ internal static partial class JgsMlappModel
             TextValue text => splice.Value(JgsValue.Str(text.Text)),
             LinesValue lines => Cell(splice, lines.Lines, Reusable(HeldLines(field))),
             FunctionsValue functions => Functions(splice, field, functions.Functions),
-            _ => throw new InvalidOperationException("a value this did not read must be text, lines or functions"),
+            DataValue data => Data(splice, data.Data),
+            _ => throw new InvalidOperationException("a value this did not read must be text, lines, functions or data"),
         };
+
+        /// <summary>
+        /// Plain MAT data appended as MATLAB writes it: a char row as a dataset, numbers as a dataset,
+        /// a cell as a dataset of references, a 1-by-1 struct as a group of its values and a struct
+        /// array as a group of reference datasets, one per field (W15).
+        /// </summary>
+        private static long Data(MatV73Splice splice, MatData data)
+        {
+            switch (data)
+            {
+                case MatData.Chars chars:
+                    return splice.Value(JgsValue.Str(chars.Characters));
+                case MatData.Numbers numbers:
+                    return splice.Value(NumbersValue(numbers));
+                case MatData.Cells cells:
+                    return cells.Items.Length == 0
+                        ? splice.Value(JgsValue.Cell([]))
+                        : splice.Cell([.. cells.Items.Select(i => Data(splice, i))], cells.Size);
+                case MatData.Structs structs:
+                    if (structs.Elements.Length == 1)
+                    {
+                        var fields = new List<(string Name, long Header)>();
+                        for (int i = 0; i < structs.Fields.Length; i++)
+                        {
+                            fields.Add((structs.Fields[i], Data(splice, structs.Elements[0][i])));
+                        }
+
+                        return splice.Struct(fields).Header;
+                    }
+
+                    var columns = new List<(string Name, long Header)>();
+                    for (int i = 0; i < structs.Fields.Length; i++)
+                    {
+                        var addresses = new List<long>();
+                        foreach (MatData[] element in structs.Elements)
+                        {
+                            addresses.Add(Data(splice, element[i]));
+                        }
+
+                        columns.Add((structs.Fields[i], splice.References(addresses, structs.Size)));
+                    }
+
+                    return splice.Struct(columns).Header;
+                default:
+                    throw new InvalidOperationException($"a {data.GetType().Name} cannot be written into a version 7.3 model");
+            }
+        }
+
+        /// <summary>Numbers as a value the writer takes: a logical scalar, or a double matrix (the empty one included).</summary>
+        private static JgsValue NumbersValue(MatData.Numbers numbers)
+        {
+            if (numbers.ClassName == "logical" && numbers.Data.Length == 1)
+            {
+                return JgsValue.Bool(numbers.Data[0] != 0);
+            }
+
+            int rows = numbers.Size.Length > 0 ? numbers.Size[0] : 0;
+            int cols = numbers.Size.Length > 1 ? numbers.Size[1] : (numbers.Data.Length == 0 ? 0 : 1);
+            return JgsMatrix.FromColumnMajor(numbers.Data, rows, cols);
+        }
 
         /// <summary>A <c>Name</c>/<c>Code</c> array: one element as a group of its values, more as a group of reference datasets, as MATLAB writes them.</summary>
         private long Functions(MatV73Splice splice, string field, IReadOnlyList<FunctionEntry> functions)

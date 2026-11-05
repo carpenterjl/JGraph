@@ -57,7 +57,15 @@ internal static partial class JgsMlappModel
     /// <param name="now">The layout of the text being saved.</param>
     /// <param name="updated">The file to write in its place; null when it is to be left as it is.</param>
     /// <exception cref="InvalidDataException">The bytes are a MAT-file that ends inside an element.</exception>
-    public static bool Update(byte[] mat, JgsMlappLayout before, JgsMlappLayout now, out byte[]? updated)
+    public static bool Update(byte[] mat, JgsMlappLayout before, JgsMlappLayout now, out byte[]? updated) => Update(mat, before, now, null, out updated);
+
+    /// <summary>
+    /// <see cref="Update(byte[], JgsMlappLayout, JgsMlappLayout, out byte[])"/> with a custom UI
+    /// component's <c>AppTypeData</c> (App Designer window plan W15), which is written whenever it is
+    /// not already held byte for byte: its events, managed properties and <c>update</c> body come
+    /// from the text, which is the truth here, and the field is the client's record of them.
+    /// </summary>
+    public static bool Update(byte[] mat, JgsMlappLayout before, JgsMlappLayout now, MatFile.MatData? appTypeData, out byte[]? updated)
     {
         updated = null;
         if (!now.IsAppLayout || !now.IsComplete || Open(mat) is not { } copy)
@@ -65,13 +73,24 @@ internal static partial class JgsMlappModel
             return false;
         }
 
-        if (Rewrite(copy.Fields, before, now))
+        bool changed = Rewrite(copy.Fields, before, now);
+        if (appTypeData is not null && !HoldsAlready(copy.Fields.Get("AppTypeData"), appTypeData))
+        {
+            copy.Fields.Set("AppTypeData", new DataValue(appTypeData, null));
+            changed = true;
+        }
+
+        if (changed)
         {
             updated = copy.Write();
         }
 
         return true;
     }
+
+    /// <summary>Whether the field already holds <paramref name="data"/> as this would write it (a level-5 element byte for byte; a version 7.3 object is written again).</summary>
+    private static bool HoldsAlready(FieldValue? held, MatFile.MatData data) =>
+        held?.Origin is byte[] bytes && bytes.AsSpan().SequenceEqual(MatFile.MatMcosWriter.Element(data));
 
     /// <summary>
     /// The <c>code</c> variable of a new model, as a level-5 matrix element (designer plan DS6, ADR
@@ -80,7 +99,10 @@ internal static partial class JgsMlappModel
     /// and the startup function with their bodies, the input parameters, each field present only when
     /// it holds something. Null when the text is not laid out as an app.
     /// </summary>
-    public static byte[]? NewCode(JgsMlappLayout now)
+    public static byte[]? NewCode(JgsMlappLayout now) => NewCode(now, null);
+
+    /// <summary><see cref="NewCode(JgsMlappLayout)"/> with a custom UI component's <c>AppTypeData</c> (W15), after <c>SingletonMode</c> as the serializer orders it.</summary>
+    public static byte[]? NewCode(JgsMlappLayout now, MatFile.MatData? appTypeData)
     {
         ArgumentNullException.ThrowIfNull(now);
         if (!now.IsAppLayout || !now.IsComplete)
@@ -90,6 +112,11 @@ internal static partial class JgsMlappModel
 
         var fields = new CodeFields([("ClassName", new TextValue(string.Empty, null))]);
         Rewrite(fields, JgsMlappLayout.Of(string.Empty), now);
+        if (appTypeData is not null)
+        {
+            fields.Set("AppTypeData", new DataValue(appTypeData, null));
+        }
+
         return Level5Copy.NewElement(fields);
     }
 
@@ -168,6 +195,9 @@ internal static partial class JgsMlappModel
 
     /// <summary>Anything else, written back as it was.</summary>
     private sealed record OpaqueValue(object Origin) : FieldValue(Origin);
+
+    /// <summary>A value made here as plain MAT data (a custom UI component's <c>AppTypeData</c>, W15): chars, numbers, cells and structs.</summary>
+    private sealed record DataValue(MatFile.MatData Data, object? Origin) : FieldValue(Origin);
 
     /// <summary>One function of a <c>Name</c>/<c>Code</c> array: its body as lines when it is lines, how the file held the body, and how it held each line where lines are objects of their own.</summary>
     private sealed record FunctionEntry(string Name, IReadOnlyList<string>? Lines, object? Body, IReadOnlyList<object>? LineOrigins = null);

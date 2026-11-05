@@ -40,7 +40,7 @@ public static class DesignActions
     /// The actions JGraph runs since stage W2: the file commands it had, the grid and grouping
     /// commands, the Code View's insertions and Code Options, Find (the code editor's own search),
     /// cut, copy and paste in the Code View, help, the shortcuts dialog and the document tab's menu;
-    /// since W3, the Start Page and its new apps (a new custom component waits for W15); since W4, the
+    /// since W3, the Start Page and its new apps; since W4, the
     /// arrange actions; since W6, the zoom and Resizing Hints; since W5, cut, copy, paste, Duplicate and
     /// Select All on the canvas, since W5c, Move for tabs and tree nodes and a tree's nodes added and
     /// indented, and since W5d, a figure's menus and tools built on the canvas; since W8, App Details, Help
@@ -96,6 +96,9 @@ public static class DesignActions
         "AD_SHARE_ALL_OPTIONS", "AD_SHARE_DESKTOP", "AD_SHARE_MATLAB",
         // Compare To (W14).
         "OPEN_FILE_COMPARISON_DIALOG",
+        // Stage W15: a custom UI component - the Start Page's components, the managed properties, the events and Configure for Apps.
+        "AD_NEW_COMP_APP", "AD_NEW_COMP_GRID_APP", "AD_CONFIGURE_METADATA", "AD_EDITOR_ADD_CALLBACK_EVENT_PAIR",
+        "AD_EDITOR_ADD_MANAGED_USER_PROPERTY", "AD_EDITOR_ADD_PRIVATE_MANAGED_USER_PROPERTY", "AD_EDITOR_ADD_PUBLIC_MANAGED_USER_PROPERTY",
         // Stage W11: the debugger - the RUN section's execution controls, the BREAKPOINTS and ERROR HANDLING groups.
         "AD_EDITOR_PAUSE", "AD_EDITOR_CONTINUE", "AD_EDITOR_STEP", "AD_EDITOR_STEP_IN", "AD_EDITOR_STEP_OUT", "AD_EDITOR_STOP",
         "AD_EDITOR_CLEAR_ALL_BREAKPOINTS", "AD_EDITOR_TOGGLE_BREAKPOINT", "AD_EDITOR_TOGGLE_ENABLE_BREAKPOINT", "AD_EDITOR_TOGGLE_CONDITIONAL",
@@ -158,7 +161,7 @@ public static class DesignActions
                 || name.StartsWith("DESIGN_TOOL", StringComparison.Ordinal) || name.StartsWith("DESIGN_REORDER_", StringComparison.Ordinal) => "W5",
             "APP_DETAILS" or "HELP_COMMENTS" or "SAVECOPY_AS" or "EXPORT" => "W8",
             _ when name.StartsWith("RESPONSIFY", StringComparison.Ordinal) || name.StartsWith("UNRESPONSIFY", StringComparison.Ordinal) => "W8",
-            _ => "W15", // Configure for Apps, events, the managed properties of a custom component
+            _ => "W15", // nothing is left to W15: every custom component action is live
         };
     }
 

@@ -2410,3 +2410,5 @@ dbstack	2	5
 dbup	0	5
 dbdown	0	5
 dbtype	0	5
+appdesigner.customcomponent.configureMetadata	0	0
+appdesigner.customcomponent.removeMetadata	0	0

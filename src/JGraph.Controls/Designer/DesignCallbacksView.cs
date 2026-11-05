@@ -115,7 +115,7 @@ public sealed class DesignCallbacksView : UserControl
             return;
         }
 
-        bool titled = sheet.Groups.Count > 1;
+        bool titled = sheet.Groups.Count > 1 || sheet.PublicCallbacks is not null;
         foreach (DesignCallbackGroup group in sheet.Groups)
         {
             var grid = new Grid { Margin = new Thickness(0, 2, 0, 2) };
@@ -139,6 +139,40 @@ public sealed class DesignCallbacksView : UserControl
             {
                 _panel.Children.Add(grid);
             }
+        }
+
+        // A custom UI component's public callbacks (W15): one per event, named for the apps that will hold it; they are
+        // the events' and are made and edited in the Event–Callback Pairs tab, so the rows only say so.
+        if (sheet.PublicCallbacks is { } publicCallbacks)
+        {
+            var grid = new Grid { Margin = new Thickness(0, 2, 0, 2) };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto, MinWidth = 60, SharedSizeGroup = "Property" });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            foreach (string property in publicCallbacks)
+            {
+                int row = grid.RowDefinitions.Count;
+                grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                var label = new TextBlock { Text = property, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 1, 6, 1) };
+                var note = new TextBlock { Text = $"public callback of the event {property[..^3]}", VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 1, 0, 1), Opacity = 0.7 };
+                System.Windows.Automation.AutomationProperties.SetAutomationId(note, $"Callbacks.comp.{property}");
+                Grid.SetRow(label, row);
+                Grid.SetRow(note, row);
+                Grid.SetColumn(note, 1);
+                grid.Children.Add(label);
+                grid.Children.Add(note);
+            }
+
+            if (publicCallbacks.Count == 0)
+            {
+                grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                var none = new TextBlock { Text = DesignComponentCode.AddEventHelpText, Margin = new Thickness(0, 1, 0, 1), Opacity = 0.7, TextWrapping = TextWrapping.Wrap };
+                Grid.SetColumnSpan(none, 2);
+                grid.Children.Add(none);
+            }
+
+            var expander = new Expander { Header = "PUBLIC CALLBACKS", IsExpanded = true, Content = grid, Margin = new Thickness(0, 0, 0, 4) };
+            System.Windows.Automation.AutomationProperties.SetName(expander, "PUBLIC CALLBACKS");
+            _panel.Children.Add(expander);
         }
     }
 
@@ -230,7 +264,7 @@ public sealed class DesignCallbacksView : UserControl
             return null;
         }
 
-        return property == StartupProperty ? document.Callbacks.FirstOrDefault(static c => c.IsStartup)?.Name
+        return DesignCallbackRules.IsStartupProperty(property) ? document.Callbacks.FirstOrDefault(static c => c.IsStartup)?.Name
             : _sheet?.Anchor is { } anchor ? document.CallbackOf(anchor, property) : null;
     }
 
@@ -281,8 +315,8 @@ public sealed class DesignCallbacksView : UserControl
         }
 
         string? made = null;
-        string? refused = row.Property == StartupProperty
-            ? CommitStartup(document, value, out made)
+        string? refused = DesignCallbackRules.IsStartupProperty(row.Property)
+            ? CommitStartup(document, row.Property, value, out made)
             : document.EditCallbackRow(sheet.Peers, sheet.Anchor!, row.Property, value, out made);
         Show(row);
         if (refused is not null)
@@ -295,7 +329,7 @@ public sealed class DesignCallbacksView : UserControl
         }
     }
 
-    private static string? CommitStartup(DesignDocument document, string value, out string? made)
+    private static string? CommitStartup(DesignDocument document, string property, string value, out string? made)
     {
         made = null;
         DesignCallback? startup = document.Callbacks.FirstOrDefault(static c => c.IsStartup);
@@ -312,9 +346,9 @@ public sealed class DesignCallbacksView : UserControl
         // The default's name is free among the names as they stand, the old function's still among them.
         if (value == DesignCallbackRules.UseDefault)
         {
-            value = DesignCallbacks.Unique(DesignCode.StartupName, document.NamesInUse());
+            value = DesignCallbacks.Unique(document.DefaultStartupName, document.NamesInUse());
         }
-        else if (document.WhyNotCallbackName(StartupProperty, value) is { } why)
+        else if (document.WhyNotCallbackName(property, value) is { } why)
         {
             return why;
         }

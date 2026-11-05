@@ -37,7 +37,7 @@ public readonly record struct DesignBox(DesignComponent Component, Rect2D Box, R
 /// Every call runs on the calling thread; one thread at a time, which the canvas's is.
 /// </para>
 /// </remarks>
-public sealed class DesignRuntime : IDisposable
+public sealed partial class DesignRuntime : IDisposable
 {
     private const string ValueVariable = "designer__value";
 
@@ -411,8 +411,16 @@ public sealed class DesignRuntime : IDisposable
         }
 
         using Scope scope = Enter();
-        return Run(DesignCodeWriter.PropertyLine(component, name, value));
+        return Run(DesignCodeWriter.PropertyLine(component, RuntimeName(component, name), value, App));
     }
+
+    /// <summary>
+    /// The property the runtime's figure holds <paramref name="name"/> of a custom UI component's root
+    /// under (App Designer window plan W15): its <c>BackgroundColor</c> is the figure's <c>Color</c>, as
+    /// App Designer's translator maps it; anything else by its own name.
+    /// </summary>
+    private static string RuntimeName(DesignComponent component, string name) =>
+        component.IsComponentRoot && name == "BackgroundColor" ? "Color" : name;
 
     /// <summary>
     /// The numbers <paramref name="component"/>'s <paramref name="name"/> holds, as the runtime reads
@@ -1100,7 +1108,7 @@ public sealed class DesignRuntime : IDisposable
         {
             // A custom component whose construction fails part way leaves its parts in the figure (DS7b).
             UiObject[] before = DesignUserComponents.IsUserComponent(component) ? [.. Figure.Components] : [];
-            string creation = DesignCodeWriter.ComponentCode(component)[0];
+            string creation = DesignCodeWriter.ComponentCode(component, null, App)[0];
             if (Run(creation) is { } refused)
             {
                 problems.Add($"{component.CodeName}: {refused}");
@@ -1131,7 +1139,7 @@ public sealed class DesignRuntime : IDisposable
                 continue;
             }
 
-            if (Run(DesignCodeWriter.PropertyLine(component, name, value)) is { } refused)
+            if (Run(DesignCodeWriter.PropertyLine(component, RuntimeName(component, name), value, App)) is { } refused)
             {
                 problems.Add($"{component.CodeName}.{name}: {refused}");
             }
@@ -1143,7 +1151,7 @@ public sealed class DesignRuntime : IDisposable
         foreach ((string name, DesignValue value) in DesignCodeWriter.WrittenProperties(component, Theme))
         {
             if (IsEnd(component, name) && _objects.ContainsKey(component)
-                && Run(DesignCodeWriter.PropertyLine(component, name, value)) is { } refused)
+                && Run(DesignCodeWriter.PropertyLine(component, name, value, App)) is { } refused)
             {
                 problems.Add($"{component.CodeName}.{name}: {refused}");
             }

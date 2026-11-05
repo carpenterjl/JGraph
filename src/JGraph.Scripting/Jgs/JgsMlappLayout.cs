@@ -20,6 +20,9 @@ public enum MlappRegionKind
     /// is listed with the callbacks and is not the user's code.
     /// </summary>
     GeneratedCallback,
+
+    /// <summary>The body of a custom UI component's <c>update</c> method (App Designer window plan W15), which the user writes.</summary>
+    Update,
 }
 
 /// <summary>
@@ -66,6 +69,12 @@ public sealed record MlappRegion(MlappRegionKind Kind, string Name, int FirstLin
 public sealed partial class JgsMlappLayout
 {
     private const string ComponentProperties = "% Properties that correspond to app components";
+    private const string UnderlyingComponents = JGraph.Scripting.Designer.DesignComponentCode.PropertiesComment;
+    private const string EventsComment = JGraph.Scripting.Designer.DesignComponentCode.EventsComment;
+    private const string EventsBlockLine = JGraph.Scripting.Designer.DesignComponentCode.EventsBlockLine;
+    private const string LifecycleBlockLine = "methods (Access = protected)";
+    private const string SetupSignature = "function setup(comp)";
+    private const string UpdateSignature = "function update(comp)";
     private const string CallbacksBlock = "% Callbacks that handle component events";
     private const string ComponentInitialization = "% Component initialization";
     private const string StartupComment = "% Code that executes after component creation";
@@ -78,7 +87,10 @@ public sealed partial class JgsMlappLayout
     public const string RunConfigurationMarker = "%[app:runConfiguration]";
 
     private readonly List<MlappRegion> _regions = [];
+    private readonly List<(int FirstLine, int LastLine)> _managedBlocks = [];
     private int _componentPropertiesEnd;
+    private int _editableFirst;
+    private int _editableCount;
 
     private JgsMlappLayout(string[] lines)
     {
@@ -88,8 +100,33 @@ public sealed partial class JgsMlappLayout
     /// <summary>The text's lines, without their line endings.</summary>
     public IReadOnlyList<string> Lines { get; }
 
-    /// <summary>Whether the text is laid out as App Designer lays out an app.</summary>
+    /// <summary>Whether the text is laid out as App Designer lays out an app (a custom UI component's class included).</summary>
     public bool IsAppLayout { get; private set; }
+
+    /// <summary>
+    /// Whether the class is a custom UI component's as App Designer lays one out (App Designer
+    /// window plan W15): its properties block under <c>% Properties that correspond to underlying
+    /// components</c>, then the events block and the managed properties' blocks it generates, the
+    /// editable section, the callbacks block, and the <c>methods (Access = protected)</c> block
+    /// holding <c>update</c>, whose body is the user's, and <c>setup</c>, which is generated.
+    /// </summary>
+    public bool IsComponentLayout { get; private set; }
+
+    /// <summary>A component's events block, as the zero-based lines of its comment and its <c>end</c>; null when the class has none.</summary>
+    public (int FirstLine, int LastLine)? EventsBlock { get; private set; }
+
+    /// <summary>A component's managed properties' blocks, each as the zero-based lines of its <c>properties</c> line and its <c>end</c>, in text order.</summary>
+    public IReadOnlyList<(int FirstLine, int LastLine)> ManagedBlocks => _managedBlocks;
+
+    /// <summary>The <c>update</c> method's body of a component; null for an app, or a component whose <c>update</c> was not found.</summary>
+    public MlappRegion? Update => _regions.FirstOrDefault(static r => r.Kind == MlappRegionKind.Update);
+
+    /// <summary>
+    /// The editable section's lines as App Designer records them, as (first line, count): the
+    /// region without the one whitespace line the generated code puts before it (empty for an app;
+    /// a component's last managed block leaves an indented one) and the empty line after it.
+    /// </summary>
+    public (int FirstLine, int LineCount) EditableSectionBounds => (_editableFirst, _editableCount);
 
     /// <summary>
     /// Whether the app is in App Designer's plain-text format (designer plan DS7a): a class under
@@ -162,8 +199,8 @@ public sealed partial class JgsMlappLayout
     /// Empty when there is none.
     /// </summary>
     public IReadOnlyList<string> EditableSectionCode =>
-        _regions.FirstOrDefault(static r => r.Kind == MlappRegionKind.EditableSection) is { } section
-            ? Between(section.FirstLine, section.LineCount)
+        _regions.Any(static r => r.Kind == MlappRegionKind.EditableSection)
+            ? new ArraySegment<string>((string[])Lines, _editableFirst, _editableCount)
             : [];
 
     /// <summary>
@@ -179,7 +216,18 @@ public sealed partial class JgsMlappLayout
     /// <summary>A run of lines without the one empty line App Designer puts on each side of it.</summary>
     private IReadOnlyList<string> Between(int first, int count)
     {
-        if (count > 0 && Lines[first].Length == 0)
+        (first, count) = Strip(first, count, leadingBlank: false);
+        return new ArraySegment<string>((string[])Lines, first, count);
+    }
+
+    /// <summary>
+    /// The user's lines of a region: without the whitespace line the generated code leaves before
+    /// it - an empty one, or for a component any blank one when <paramref name="leadingBlank"/> -
+    /// and without the empty line after it.
+    /// </summary>
+    private (int First, int Count) Strip(int first, int count, bool leadingBlank)
+    {
+        if (count > 0 && (Lines[first].Length == 0 || (leadingBlank && string.IsNullOrWhiteSpace(Lines[first]))))
         {
             first++;
             count--;
@@ -190,7 +238,7 @@ public sealed partial class JgsMlappLayout
             count--;
         }
 
-        return new ArraySegment<string>((string[])Lines, first, count);
+        return (first, count);
     }
 
     /// <summary>
@@ -268,6 +316,12 @@ public sealed partial class JgsMlappLayout
         }
 
         int properties = IndexOfLine(ComponentProperties, 0);
+        if (properties < 0 && IndexOfLine(UnderlyingComponents, 0) is var underlying && underlying >= 0)
+        {
+            properties = underlying;
+            IsComponentLayout = true;
+        }
+
         int head = properties < 0 ? -1 : IndexOfLine("end", properties + 1);
         if (head < 0)
         {
@@ -275,6 +329,11 @@ public sealed partial class JgsMlappLayout
         }
 
         _componentPropertiesEnd = head;
+        if (IsComponentLayout)
+        {
+            ReadComponent(head);
+            return;
+        }
 
         // Further generated properties blocks - a responsive app's, a Simulink app's - each after
         // any number of empty lines and under a comment of the same wording.
@@ -335,6 +394,7 @@ public sealed partial class JgsMlappLayout
         int anchor = callbacks < 0 ? initialization : callbacks;
         IsAppLayout = true;
         _regions.Add(new MlappRegion(MlappRegionKind.EditableSection, string.Empty, head + 1, anchor - head - 1));
+        (_editableFirst, _editableCount) = Strip(head + 1, anchor - head - 1, leadingBlank: false);
         IsComplete = callbacks < 0 || ReadCallbacks(callbacks, initialization);
         if (!IsPlainText)
         {
@@ -365,6 +425,155 @@ public sealed partial class JgsMlappLayout
                 UnplacedStartup = plainStartup;
             }
         }
+    }
+
+    /// <summary>
+    /// The cut of a custom UI component's class (App Designer window plan W15), after its underlying
+    /// components' block ending at <paramref name="head"/>: the generated events block and managed
+    /// properties' blocks, each followed by its whitespace line; the editable section up to the
+    /// callbacks block or the lifecycle block; the callbacks; and the lifecycle block's <c>update</c>,
+    /// whose body is the user's, before the generated <c>setup</c>.
+    /// </summary>
+    private void ReadComponent(int head)
+    {
+        int at = head + 1;
+
+        // The events block, under its comment, after the properties block's empty line.
+        int look = SkipBlank(at);
+        if (look + 1 < Lines.Count && Lines[look].Trim() == EventsComment && Lines[look + 1].Trim() == EventsBlockLine)
+        {
+            int end = IndexOfLine("end", look + 2);
+            if (end < 0)
+            {
+                return;
+            }
+
+            EventsBlock = (look, end);
+            at = end + 1;
+        }
+
+        // The managed properties' blocks: each a properties block of the attributes the dialog
+        // writes whose every declaration is one the dialog makes, after its predecessor's one
+        // whitespace line, the blocks in the order of their attributes as the group writes them; the
+        // first block that is anything else - a user's own, typed into the editable section - begins
+        // the editable section. (A user's block that looks like the dialog's and stands where the
+        // next managed block would is read as managed; the .mlapp's own record would tell, open item.)
+        string lastKey = string.Empty;
+        while (true)
+        {
+            look = SkipBlank(at);
+            if (look >= Lines.Count || look > at + 1)
+            {
+                break;
+            }
+
+            IReadOnlyList<string>? attributes = JGraph.Scripting.Designer.DesignComponentCode.AttributesOf(Lines[look]);
+            if (attributes is null || !JGraph.Scripting.Designer.DesignComponentCode.IsManagedBlock(attributes))
+            {
+                break;
+            }
+
+            string key = string.Concat(attributes.Order(StringComparer.Ordinal));
+            if (string.CompareOrdinal(key, lastKey) <= 0)
+            {
+                break;
+            }
+
+            int end = IndexOfLine("end", look + 1);
+            if (end < 0)
+            {
+                return;
+            }
+
+            bool managed = true;
+            for (int i = look + 1; i < end && managed; i++)
+            {
+                managed = string.IsNullOrWhiteSpace(Lines[i]) || JGraph.Scripting.Designer.DesignManagedProperty.Parse(Lines[i], attributes) is not null;
+            }
+
+            if (!managed)
+            {
+                break;
+            }
+
+            _managedBlocks.Add((look, end));
+            lastKey = key;
+            at = end + 1;
+        }
+
+        // The lifecycle block: the methods (Access = protected) line over setup.
+        int setup = IndexOfLine(SetupSignature, at);
+        if (setup < 0)
+        {
+            return;
+        }
+
+        int lifecycle = -1;
+        for (int i = setup - 1; i >= at; i--)
+        {
+            if (Lines[i].Trim() == LifecycleBlockLine)
+            {
+                lifecycle = i;
+                break;
+            }
+        }
+
+        if (lifecycle < 0)
+        {
+            return;
+        }
+
+        int callbacks = IndexOfLine(CallbacksBlock, at);
+        if (callbacks > lifecycle)
+        {
+            callbacks = -1;
+        }
+
+        int anchor = callbacks < 0 ? lifecycle : callbacks;
+        IsAppLayout = true;
+        _regions.Add(new MlappRegion(MlappRegionKind.EditableSection, string.Empty, at, Math.Max(0, anchor - at)));
+        (_editableFirst, _editableCount) = Strip(at, Math.Max(0, anchor - at), leadingBlank: true);
+        bool complete = callbacks < 0 || ReadCallbacks(callbacks, lifecycle);
+
+        // update's body: between its signature and the last end at its indentation before setup.
+        int update = IndexOfLine(UpdateSignature, lifecycle + 1);
+        if (update < 0 || update > setup)
+        {
+            IsComplete = false;
+            return;
+        }
+
+        string indent = IndentOf(Lines[update]);
+        int close = -1;
+        for (int i = update + 1; i < setup; i++)
+        {
+            if (IsEndAt(Lines[i], indent))
+            {
+                close = i;
+            }
+        }
+
+        if (close < 0)
+        {
+            IsComplete = false;
+            return;
+        }
+
+        _regions.Add(new MlappRegion(MlappRegionKind.Update, "update", update + 1, Math.Max(0, close - update - 1)));
+        SortRegions();
+        IsComplete = complete;
+    }
+
+    /// <summary>The first line at or after <paramref name="from"/> that is not blank; the count when there is none.</summary>
+    private int SkipBlank(int from)
+    {
+        int i = from;
+        while (i < Lines.Count && string.IsNullOrWhiteSpace(Lines[i]))
+        {
+            i++;
+        }
+
+        return i;
     }
 
     /// <summary>
@@ -544,6 +753,9 @@ public sealed partial class JgsMlappLayout
         _regions.AddRange(found);
         return true;
     }
+
+    /// <summary>The regions in text order, which the update region added after the callbacks may not be in.</summary>
+    private void SortRegions() => _regions.Sort(static (a, b) => a.FirstLine.CompareTo(b.FirstLine));
 
     /// <summary>The whitespace a line begins with.</summary>
     private static string IndentOf(string line) => line[..(line.Length - line.TrimStart().Length)];

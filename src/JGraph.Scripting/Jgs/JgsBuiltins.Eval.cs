@@ -167,6 +167,7 @@ internal static partial class JgsBuiltins
         RegisterSharedLibraryBuiltins(env, interpreter);
         RegisterDeviceBuiltins(env, interpreter, host);
         RegisterAppDesignerBuiltin(env, interpreter, host); // designer plan DS2
+        RegisterComponentMetadataBuiltins(env, interpreter, host); // a custom UI component's library metadata (App Designer window plan W15)
         RegisterComparisonBuiltins(env, interpreter, host); // App Designer window plan W14
         RegisterDebugBuiltins(env, interpreter, host); // App Designer window plan W11
         RegisterCodeAnalyzerBuiltins(env, interpreter, host); // App Designer window plan W10

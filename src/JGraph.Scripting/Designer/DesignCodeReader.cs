@@ -78,7 +78,7 @@ public static partial class DesignCodeReader
         ["subtitle"] = "SubtitleString",
     };
 
-    /// <summary>Reads the class text <paramref name="text"/>.</summary>
+    /// <summary>Reads the class text <paramref name="text"/>: an app's <c>createComponents(app)</c>, or a custom UI component's <c>setup(comp)</c> (App Designer window plan W15).</summary>
     public static DesignReadResult Read(string text, DesignCatalog? catalog = null)
     {
         ArgumentNullException.ThrowIfNull(text);
@@ -88,21 +88,40 @@ public static partial class DesignCodeReader
 
         Dictionary<string, string> declared = DeclaredTypes(lines);
         int start = Array.FindIndex(lines, static l => CreateComponentsLine().IsMatch(l));
+        bool component = false;
+        if (start < 0)
+        {
+            start = Array.FindIndex(lines, static l => SetupLine().IsMatch(l));
+            component = start >= 0;
+        }
+
         if (start < 0)
         {
             return new DesignReadResult(null, DesignCodeStyle.Default, ["The code has no createComponents method."]);
         }
 
-        string indent = CreateComponentsLine().Match(lines[start]).Groups[1].Value;
+        string indent = (component ? SetupLine() : CreateComponentsLine()).Match(lines[start]).Groups[1].Value;
         var style = new DesignCodeStyle(IndentUnitOf(indent));
         int end = Array.FindIndex(lines, start + 1, l => l == indent + "end");
         if (end < 0)
         {
-            return new DesignReadResult(null, style, ["createComponents is not closed."]);
+            return new DesignReadResult(null, style, [component ? "setup is not closed." : "createComponents is not closed."]);
         }
 
         AppDesign? design = null;
         var byName = new Dictionary<string, DesignComponent>(StringComparer.Ordinal);
+        if (component)
+        {
+            // The root stands for the component: a figure named as App Designer's template names it,
+            // which setup's first lines set the Position and inherited properties of.
+            DesignComponentClass figureClass = catalog.ByType("matlab.ui.Figure") ?? throw new InvalidOperationException("The catalog has no figure.");
+            var root = new DesignComponent(DesignComponentCode.RootCodeName, figureClass);
+            design = new AppDesign(root) { IsComponent = true };
+            byName[root.CodeName] = root;
+        }
+
+        Regex creation = component ? CreationOfComponent() : Creation();
+        Regex parentArguments = component ? ParentArgumentsOfComponent() : ParentArguments();
         for (int i = start + 1; i < end; i++)
         {
             string line = lines[i].Trim();
@@ -113,7 +132,7 @@ public static partial class DesignCodeReader
             }
 
             Match m;
-            if ((m = Creation().Match(line)).Success)
+            if ((m = creation.Match(line)).Success)
             {
                 string name = m.Groups["name"].Value;
                 string function = m.Groups["fn"].Value;
@@ -139,8 +158,14 @@ public static partial class DesignCodeReader
                     continue;
                 }
 
-                Match call = ParentArguments().Match(arguments);
-                if (!call.Success || !byName.TryGetValue(call.Groups["parent"].Value, out DesignComponent? parent))
+                Match call = parentArguments.Match(arguments);
+                DesignComponent? parent = null;
+                if (call.Success)
+                {
+                    parent = call.Groups["parent"].Success ? byName.GetValueOrDefault(call.Groups["parent"].Value) : component ? design.Figure : null;
+                }
+
+                if (parent is null)
                 {
                     problems.Add(where + " (its parent is not a component made before it)");
                     continue;
@@ -154,11 +179,11 @@ public static partial class DesignCodeReader
                     cls = null; // the declared class wins over a guess from the call
                 }
 
-                var component = cls is not null
+                var made = cls is not null
                     ? new DesignComponent(name, cls)
                     : new DesignComponent(name, declared.GetValueOrDefault(name, function), function, extra);
-                parent.Add(component);
-                byName[name] = component;
+                parent.Add(made);
+                byName[name] = made;
                 continue;
             }
 
@@ -168,7 +193,12 @@ public static partial class DesignCodeReader
                 continue;
             }
 
-            if (!TryReadSet(line, design, byName, out string? problem))
+            if (component && PostSetupCall().IsMatch(line))
+            {
+                continue; // the startup function's call, which the writer puts back from the callbacks block
+            }
+
+            if (!TryReadSet(line, design, byName, component, out string? problem))
             {
                 problems.Add(where + (problem is null ? string.Empty : $" ({problem})"));
             }
@@ -186,7 +216,7 @@ public static partial class DesignCodeReader
             // template gives it on load (ResponsiveAppFactory.applyDesignTimeData), whatever the code
             // says - where there is one: in a class that still has it, or in a template laid out as App
             // Designer lays an app out, whose callback a save puts back (DesignResponsive.Splice).
-            design.IsResponsive = Array.Exists(lines, static l => l.Trim() == ResponsivePropertiesComment);
+            design.IsResponsive = !component && Array.Exists(lines, static l => l.Trim() == ResponsivePropertiesComment);
             if (design.IsResponsive && design.Figure.Get("SizeChangedFcn") is not CallbackValue
                 && (Array.Exists(lines, static l => LayoutFunction().IsMatch(l))
                     || (DesignResponsive.IsTemplate(design) && JGraph.Scripting.Jgs.JgsMlappLayout.Of(text) is { IsAppLayout: true, IsComplete: true })))
@@ -199,22 +229,35 @@ public static partial class DesignCodeReader
         return new DesignReadResult(design, style, problems);
     }
 
-    /// <summary>Reads one statement that sets something on a component already made.</summary>
-    private static bool TryReadSet(string line, AppDesign design, Dictionary<string, DesignComponent> byName, out string? problem)
+    /// <summary>Reads one statement that sets something on a component already made; for a custom UI component (<paramref name="component"/>), a <c>comp.Name</c> line sets the root.</summary>
+    private static bool TryReadSet(string line, AppDesign design, Dictionary<string, DesignComponent> byName, bool component, out string? problem)
     {
         problem = null;
+        string objectName = component ? DesignComponentCode.ObjectName : DesignValueText.AppObjectName;
         Match m;
-        if ((m = Label().Match(line)).Success)
+        if ((m = (component ? LabelOfComponent() : Label()).Match(line)).Success)
         {
             return Put(m.Groups["name"].Value, LabelAliases[m.Groups["fn"].Value], m.Groups["value"].Value, out problem);
         }
 
-        if ((m = Colormap().Match(line)).Success)
+        if ((m = (component ? ColormapOfComponent() : Colormap()).Match(line)).Success)
         {
             return Put(m.Groups["name"].Value, "AD_ColormapString", m.Groups["value"].Value, out problem);
         }
 
-        if (!(m = PropertySet().Match(line)).Success)
+        if (component && (m = RootSet().Match(line)).Success)
+        {
+            string own = m.Groups["property"].Value;
+            if (own == "Position" || DesignComponentCode.InheritedProperties.Contains(own, StringComparer.Ordinal))
+            {
+                return Put(design.Figure.CodeName, own, m.Groups["value"].Value, out problem);
+            }
+
+            problem = "the component sets a property of its own that setup does not write";
+            return false;
+        }
+
+        if (!(m = (component ? PropertySetOfComponent() : PropertySet()).Match(line)).Success)
         {
             return false;
         }
@@ -228,37 +271,37 @@ public static partial class DesignCodeReader
                 return Put(name, property, value, out problem);
             case "Toolbar.Visible":
                 return Put(name, "ToolbarVisible", value, out problem);
-            case "Visible" when name == design.Figure.CodeName && value == "'on'":
+            case "Visible" when !component && name == design.Figure.CodeName && value == "'on'":
                 return true; // the figure shown once every component is made: the writer's to write
-            case "ThemeChangedFcn" when name == design.Figure.CodeName:
+            case "ThemeChangedFcn" when !component && name == design.Figure.CodeName:
                 return Put(name, "AD_AliasedThemeChangedFcn", value, out problem);
             default:
                 return !property.Contains('.', StringComparison.Ordinal) && Put(name, property, value, out problem);
         }
 
-        bool Put(string component, string key, string rhs, out string? why)
+        bool Put(string target, string key, string rhs, out string? why)
         {
             why = null;
-            if (!byName.TryGetValue(component, out DesignComponent? target))
+            if (!byName.TryGetValue(target, out DesignComponent? found))
             {
                 why = "no component of that name is made before it";
                 return false;
             }
 
-            if (target.Get(key) is not null)
+            if (found.Get(key) is not null)
             {
                 why = "the property is set twice";
                 return false;
             }
 
-            DesignValue parsed = DesignValueText.Parse(rhs);
+            DesignValue parsed = DesignValueText.Parse(rhs, objectName);
             if (key == "ContextMenu" && parsed is not ComponentsValue { Bracketed: false, CodeNames.Count: 1 })
             {
                 why = "a context menu is assigned as something other than a component of the app";
                 return false;
             }
 
-            target.Set(key, parsed);
+            found.Set(key, parsed);
             return true;
         }
     }
@@ -267,7 +310,7 @@ public static partial class DesignCodeReader
     internal static Dictionary<string, string> DeclaredTypes(string[] lines)
     {
         var declared = new Dictionary<string, string>(StringComparer.Ordinal);
-        int comment = Array.FindIndex(lines, static l => l.Trim() == ComponentPropertiesComment);
+        int comment = Array.FindIndex(lines, static l => l.Trim() is ComponentPropertiesComment or DesignComponentCode.PropertiesComment);
         if (comment < 0 || comment + 1 >= lines.Length || !lines[comment + 1].Trim().StartsWith("properties", StringComparison.Ordinal))
         {
             return declared;
@@ -295,6 +338,34 @@ public static partial class DesignCodeReader
 
     [GeneratedRegex(@"^(\s*)function createComponents\(app\)\s*$")]
     private static partial Regex CreateComponentsLine();
+
+    /// <summary>A custom UI component's <c>setup</c> signature (W15).</summary>
+    [GeneratedRegex(@"^(\s*)function setup\(comp\)\s*$")]
+    private static partial Regex SetupLine();
+
+    [GeneratedRegex(@"^comp\.(?<name>[A-Za-z]\w*) = (?<fn>[A-Za-z][\w.]*)\((?<args>.*)\);$")]
+    private static partial Regex CreationOfComponent();
+
+    /// <summary>A component's parent in a creation call: <c>comp</c> itself for a child of the root, else <c>comp.Parent</c>.</summary>
+    [GeneratedRegex(@"^comp(?:\.(?<parent>[A-Za-z]\w*))?(?:, (?<extra>.*))?$")]
+    private static partial Regex ParentArgumentsOfComponent();
+
+    [GeneratedRegex(@"^comp\.(?<name>[A-Za-z]\w*)\.(?<property>[A-Za-z]\w*(?:\.[A-Za-z]\w*)?) = (?<value>.*);$")]
+    private static partial Regex PropertySetOfComponent();
+
+    /// <summary>A property of the component itself: <c>comp.Position = ...;</c>.</summary>
+    [GeneratedRegex(@"^comp\.(?<property>[A-Za-z]\w*) = (?<value>.*);$")]
+    private static partial Regex RootSet();
+
+    [GeneratedRegex(@"^(?<fn>title|xlabel|ylabel|zlabel|subtitle)\(comp\.(?<name>[A-Za-z]\w*), (?<value>.*)\)$")]
+    private static partial Regex LabelOfComponent();
+
+    [GeneratedRegex(@"^colormap\(comp\.(?<name>[A-Za-z]\w*), (?<value>.*)\);$")]
+    private static partial Regex ColormapOfComponent();
+
+    /// <summary>The startup function's call at the end of <c>setup</c>: <c>postSetupFcn(comp)</c>.</summary>
+    [GeneratedRegex(@"^[A-Za-z]\w*\(comp\)\s*;?$")]
+    private static partial Regex PostSetupCall();
 
     /// <summary>The signature of a responsive app's layout callback, its parameters however written.</summary>
     [GeneratedRegex(@"^\s*function\s+updateAppLayout\s*\(")]

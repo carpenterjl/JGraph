@@ -100,6 +100,14 @@ public interface IScriptAppRunner
 
     /// <summary>A PNG picture of the window of the app the designer last ran from <paramref name="fullFileName"/> (<c>DesktopFigureService.captureScreenshot</c>), or null with none to capture.</summary>
     Task<byte[]?> CaptureAppAsync(string fullFileName, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Makes the custom UI component class at <paramref name="fullFileName"/> once in an invisible figure, for the
+    /// "App Designer Custom UI Component Metadata" dialog (App Designer window plan W15): its position, or why it
+    /// cannot be configured for apps (<see cref="Designer.DesignRun.CheckComponent"/>).
+    /// </summary>
+    Task<Designer.DesignComponentCheck> CheckComponentAsync(string fullFileName, CancellationToken cancellationToken) =>
+        Task.FromResult(new Designer.DesignComponentCheck(null, "This session cannot make the component."));
 }
 
 /// <summary>

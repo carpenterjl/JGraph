@@ -1,0 +1,338 @@
+release 2025b
+== 1 texts
+comp1: superclasses matlab.ui.componentcontainer.ComponentContainer
+comp1: Position [1    1  320  240], Units pixels, class comp1
+comp1: properties Visible,BackgroundColor,SizeChangedFcn,Children,Parent,HandleVisibility
+comp1: events ObjectBeingDestroyed,PropertyAdded,PropertyRemoved
+comp1: callback props SizeChangedFcn
+comp2: superclasses matlab.ui.componentcontainer.ComponentContainer
+comp2: Position [1    1  320  240], Units pixels, class comp2
+comp2: properties Visible,BackgroundColor,SizeChangedFcn,Children,Parent,HandleVisibility
+comp2: events ObjectBeingDestroyed,PropertyAdded,PropertyRemoved
+comp2: callback props SizeChangedFcn
+comp3: superclasses matlab.ui.componentcontainer.ComponentContainer
+comp3: Position [1    1  320  240], Units pixels, class comp3
+comp3: properties Limits,Value,ClearedFcn,ValueChangedFcn,Visible,BackgroundColor
+comp3: events Cleared,ValueChanged,ObjectBeingDestroyed,PropertyAdded,PropertyRemoved
+comp3: callback props ClearedFcn,ValueChangedFcn,SizeChangedFcn
+comp3: Value 0 after postSetup (Count, Button and Scale are private, as they should be: 1 1 1)
+comp3: after Value=5 (the button is private; its text is read in w15_verify through the fixture helper)
+comp3: the button is private; its callback is run through the fixture helper W15Counter.pushButton in the parity fixture
+comp3: FAILED MATLAB:class:NotifyRestricted | Cannot notify listeners of event 'ValueChanged' in class 'comp3'.
+comp4: superclasses matlab.ui.componentcontainer.ComponentContainer
+comp4: Position [1    1  200   60], Units pixels, class comp4
+comp4: properties Visible,BackgroundColor,SizeChangedFcn,Children,Parent,HandleVisibility
+comp4: events ObjectBeingDestroyed,PropertyAdded,PropertyRemoved
+comp4: callback props SizeChangedFcn
+comp4: BackgroundColor [1           1         0.8], Visible off, Title Hello, Label private 0, Hidden props 
+comp4: Label read refused MATLAB:class:GetProhibited
+no parent: parent class matlab.ui.Figure, parent Position [680  578  560  420], comp Position [1    1  320  240], parent Visible on, Name ""
+== 1b generator
+generated matlab.ui.Figure (component):
+  | comp.ad_CODENAME_ad = uifigure('Visible', 'off');
+  | comp.ad_CODENAME_ad.Position = [1 1 320 240];
+generated matlab.ui.Figure (app):
+  | app.ad_CODENAME_ad = uifigure('Visible', 'off');
+  | app.ad_CODENAME_ad.Position = [1 1 320 240];
+generated matlab.ui.container.GridLayout (component):
+  | comp.ad_CODENAME_ad = uigridlayout(comp.ad_PARENTCODENAME_ad);
+generated matlab.ui.container.GridLayout (app):
+  | app.ad_CODENAME_ad = uigridlayout(app.ad_PARENTCODENAME_ad);
+generated matlab.ui.control.Button (component):
+  | comp.ad_CODENAME_ad = uibutton(comp.ad_PARENTCODENAME_ad, 'push');
+  | comp.ad_CODENAME_ad.Layout.Row = 1;
+  | comp.ad_CODENAME_ad.Layout.Column = 1;
+generated matlab.ui.control.Button (app):
+  | app.ad_CODENAME_ad = uibutton(app.ad_PARENTCODENAME_ad, 'push');
+  | app.ad_CODENAME_ad.Layout.Row = 1;
+  | app.ad_CODENAME_ad.Layout.Column = 1;
+generated matlab.ui.control.Label (component):
+  | comp.ad_CODENAME_ad = uilabel(comp.ad_PARENTCODENAME_ad);
+  | comp.ad_CODENAME_ad.Position = [10 10 100 22];
+generated matlab.ui.control.Label (app):
+  | app.ad_CODENAME_ad = uilabel(app.ad_PARENTCODENAME_ad);
+  | app.ad_CODENAME_ad.Position = [10 10 100 22];
+== 2 control
+  sent AppTypeData: struct [1 1] fields HasCallbackEvents,Methods,ManagedUserProperties
+    sent AppTypeData(1).HasCallbackEvents: struct [2 1] fields Name,Description
+      sent AppTypeData(1).HasCallbackEvents(1).Name: char [1 7] = 'Cleared'
+      sent AppTypeData(1).HasCallbackEvents(1).Description: char [0 0] = ''
+      sent AppTypeData(1).HasCallbackEvents(2).Name: char [1 12] = 'ValueChanged'
+      sent AppTypeData(1).HasCallbackEvents(2).Description: char [1 28] = 'Fires when the value changes'
+    sent AppTypeData(1).Methods: struct [1 1] fields update
+      sent AppTypeData(1).Methods(1).update: struct [1 1] fields Name,Code
+        sent AppTypeData(1).Methods(1).update(1).Name: char [1 6] = 'update'
+        sent AppTypeData(1).Methods(1).update(1).Code: cell [1 1]
+          sent AppTypeData(1).Methods(1).update(1).Code{1}: char [1 51] = '            comp.Button.Text = num2str(comp.Value);'
+    sent AppTypeData(1).ManagedUserProperties: struct [3 1] fields Name,Description,DataType,DefaultValue,Size,Attributes,ValidationFunctions
+      sent AppTypeData(1).ManagedUserProperties(1).Name: char [1 5] = 'Scale'
+      sent AppTypeData(1).ManagedUserProperties(1).Description: char [1 15] = 'A private scale'
+      sent AppTypeData(1).ManagedUserProperties(1).DataType: char [1 6] = 'double'
+      sent AppTypeData(1).ManagedUserProperties(1).DefaultValue: char [1 1] = '1'
+      sent AppTypeData(1).ManagedUserProperties(1).Size: double [0 0] = []
+      sent AppTypeData(1).ManagedUserProperties(1).Attributes: cell [1 1]
+        sent AppTypeData(1).ManagedUserProperties(1).Attributes{1}: char [1 16] = 'Access = private'
+      sent AppTypeData(1).ManagedUserProperties(1).ValidationFunctions: double [0 0] = []
+      sent AppTypeData(1).ManagedUserProperties(2).Name: char [1 6] = 'Limits'
+      sent AppTypeData(1).ManagedUserProperties(2).Description: char [1 9] = 'The range'
+      sent AppTypeData(1).ManagedUserProperties(2).DataType: char [1 6] = 'double'
+      sent AppTypeData(1).ManagedUserProperties(2).DefaultValue: char [1 7] = '[0 100]'
+      sent AppTypeData(1).ManagedUserProperties(2).Size: cell [2 1]
+        sent AppTypeData(1).ManagedUserProperties(2).Size{1}: char [1 1] = '1'
+        sent AppTypeData(1).ManagedUserProperties(2).Size{2}: char [1 1] = '2'
+      sent AppTypeData(1).ManagedUserProperties(2).Attributes: double [0 0] = []
+      sent AppTypeData(1).ManagedUserProperties(2).ValidationFunctions: struct [1 1] fields Name
+        sent AppTypeData(1).ManagedUserProperties(2).ValidationFunctions(1).Name: char [1 13] = 'mustBeNumeric'
+      sent AppTypeData(1).ManagedUserProperties(3).Name: char [1 5] = 'Value'
+      sent AppTypeData(1).ManagedUserProperties(3).Description: char [0 0] = ''
+      sent AppTypeData(1).ManagedUserProperties(3).DataType: char [1 6] = 'double'
+      sent AppTypeData(1).ManagedUserProperties(3).DefaultValue: char [1 1] = '0'
+      sent AppTypeData(1).ManagedUserProperties(3).Size: cell [2 1]
+        sent AppTypeData(1).ManagedUserProperties(3).Size{1}: char [1 1] = '1'
+        sent AppTypeData(1).ManagedUserProperties(3).Size{2}: char [1 1] = '1'
+      sent AppTypeData(1).ManagedUserProperties(3).Attributes: double [0 0] = []
+      sent AppTypeData(1).ManagedUserProperties(3).ValidationFunctions: struct [1 1] fields Name,InputArguments
+        sent AppTypeData(1).ManagedUserProperties(3).ValidationFunctions(1).Name: char [1 13] = 'mustBeInRange'
+        sent AppTypeData(1).ManagedUserProperties(3).ValidationFunctions(1).InputArguments: char [1 19] = '0, 100, "inclusive"'
+control saved: 12260 bytes
+loadApp: outcome fields Status; status success
+loadApp: warning ""
+loadApp: data fields ComponentData,GroupData,RunConfigurations,AppMetaData,CompatibilityData,AppNameData,CodeData
+loadApp: code fields ClassName,EditableSectionCode,Callbacks,AppTypeData,codeFormatting,HelpComments,StartupFcn,InputParameters,SingletonMode,Bindings,DigestOfLastSavedCodeText
+loadApp: metadata class struct, fields Name,Author,Version,Summary,Description,MATLABRelease,MinimumSupportedMATLABRelease,MLAPPVersion,AppType,RequiredProducts,UserComponents,ImageRelativePaths,ScreenshotMode,Uuid
+loadApp: metadata AppType CustomUIComponent, Min R2022a, Name comp3
+  loaded AppTypeData: struct [1 1] fields HasCallbackEvents,Methods,ManagedUserProperties,CallbackPropertyEvents,AllowTestCaseAccess
+    loaded AppTypeData(1).HasCallbackEvents: struct [2 1] fields Name,Description
+      loaded AppTypeData(1).HasCallbackEvents(1).Name: char [1 7] = 'Cleared'
+      loaded AppTypeData(1).HasCallbackEvents(1).Description: char [0 0] = ''
+      loaded AppTypeData(1).HasCallbackEvents(2).Name: char [1 12] = 'ValueChanged'
+      loaded AppTypeData(1).HasCallbackEvents(2).Description: char [1 28] = 'Fires when the value changes'
+    loaded AppTypeData(1).Methods: struct [1 1] fields update,postSetup
+      loaded AppTypeData(1).Methods(1).update: struct [1 1] fields Name,Code
+        loaded AppTypeData(1).Methods(1).update(1).Name: char [1 6] = 'update'
+        loaded AppTypeData(1).Methods(1).update(1).Code: cell [1 1]
+          loaded AppTypeData(1).Methods(1).update(1).Code{1}: char [1 51] = '            comp.Button.Text = num2str(comp.Value);'
+      loaded AppTypeData(1).Methods(1).postSetup: cell [0 0]
+    loaded AppTypeData(1).ManagedUserProperties: struct [3 1] fields Name,Description,DataType,DefaultValue,Size,Attributes,ValidationFunctions,InferredDataType,InferredDefaultValue,InferredInspectorRenderer
+      loaded AppTypeData(1).ManagedUserProperties(1).Name: char [1 5] = 'Scale'
+      loaded AppTypeData(1).ManagedUserProperties(1).Description: char [1 15] = 'A private scale'
+      loaded AppTypeData(1).ManagedUserProperties(1).DataType: char [1 6] = 'double'
+      loaded AppTypeData(1).ManagedUserProperties(1).DefaultValue: char [1 1] = '1'
+      loaded AppTypeData(1).ManagedUserProperties(1).Size: double [0 0] = []
+      loaded AppTypeData(1).ManagedUserProperties(1).Attributes: cell [1 1]
+        loaded AppTypeData(1).ManagedUserProperties(1).Attributes{1}: char [1 16] = 'Access = private'
+      loaded AppTypeData(1).ManagedUserProperties(1).ValidationFunctions: double [0 0] = []
+      loaded AppTypeData(1).ManagedUserProperties(1).InferredDataType: char [1 6] = 'double'
+      loaded AppTypeData(1).ManagedUserProperties(1).InferredDefaultValue: double [1 1] = 1
+      loaded AppTypeData(1).ManagedUserProperties(1).InferredInspectorRenderer: struct [1 1] fields Editor,InPlaceEditor,CellRenderer,EditorConverter
+        loaded AppTypeData(1).ManagedUserProperties(1).InferredInspectorRenderer(1).Editor: char [0 0] = ''
+        loaded AppTypeData(1).ManagedUserProperties(1).InferredInspectorRenderer(1).InPlaceEditor: char [1 42] = 'rendererseditors/editors/BaseOpenvarEditor'
+        loaded AppTypeData(1).ManagedUserProperties(1).InferredInspectorRenderer(1).CellRenderer: char [1 42] = 'rendererseditors/editors/BaseOpenvarEditor'
+        loaded AppTypeData(1).ManagedUserProperties(1).InferredInspectorRenderer(1).EditorConverter: char [0 0] = ''
+      loaded AppTypeData(1).ManagedUserProperties(2).Name: char [1 6] = 'Limits'
+      loaded AppTypeData(1).ManagedUserProperties(2).Description: char [1 9] = 'The range'
+      loaded AppTypeData(1).ManagedUserProperties(2).DataType: char [1 6] = 'double'
+      loaded AppTypeData(1).ManagedUserProperties(2).DefaultValue: char [1 7] = '[0 100]'
+      loaded AppTypeData(1).ManagedUserProperties(2).Size: cell [2 1]
+        loaded AppTypeData(1).ManagedUserProperties(2).Size{1}: char [1 1] = '1'
+        loaded AppTypeData(1).ManagedUserProperties(2).Size{2}: char [1 1] = '2'
+      loaded AppTypeData(1).ManagedUserProperties(2).Attributes: double [0 0] = []
+      loaded AppTypeData(1).ManagedUserProperties(2).ValidationFunctions: struct [1 1] fields Name
+        loaded AppTypeData(1).ManagedUserProperties(2).ValidationFunctions(1).Name: char [1 13] = 'mustBeNumeric'
+      loaded AppTypeData(1).ManagedUserProperties(2).InferredDataType: char [1 6] = 'double'
+      loaded AppTypeData(1).ManagedUserProperties(2).InferredDefaultValue: double [1 2] = [0 100]
+      loaded AppTypeData(1).ManagedUserProperties(2).InferredInspectorRenderer: struct [1 1] fields Editor,InPlaceEditor,CellRenderer,EditorConverter
+        loaded AppTypeData(1).ManagedUserProperties(2).InferredInspectorRenderer(1).Editor: char [0 0] = ''
+        loaded AppTypeData(1).ManagedUserProperties(2).InferredInspectorRenderer(1).InPlaceEditor: char [1 42] = 'rendererseditors/editors/BaseOpenvarEditor'
+        loaded AppTypeData(1).ManagedUserProperties(2).InferredInspectorRenderer(1).CellRenderer: char [1 42] = 'rendererseditors/editors/BaseOpenvarEditor'
+        loaded AppTypeData(1).ManagedUserProperties(2).InferredInspectorRenderer(1).EditorConverter: char [0 0] = ''
+      loaded AppTypeData(1).ManagedUserProperties(3).Name: char [1 5] = 'Value'
+      loaded AppTypeData(1).ManagedUserProperties(3).Description: char [0 0] = ''
+      loaded AppTypeData(1).ManagedUserProperties(3).DataType: char [1 6] = 'double'
+      loaded AppTypeData(1).ManagedUserProperties(3).DefaultValue: char [1 1] = '0'
+      loaded AppTypeData(1).ManagedUserProperties(3).Size: cell [2 1]
+        loaded AppTypeData(1).ManagedUserProperties(3).Size{1}: char [1 1] = '1'
+        loaded AppTypeData(1).ManagedUserProperties(3).Size{2}: char [1 1] = '1'
+      loaded AppTypeData(1).ManagedUserProperties(3).Attributes: double [0 0] = []
+      loaded AppTypeData(1).ManagedUserProperties(3).ValidationFunctions: struct [1 1] fields Name,InputArguments
+        loaded AppTypeData(1).ManagedUserProperties(3).ValidationFunctions(1).Name: char [1 13] = 'mustBeInRange'
+        loaded AppTypeData(1).ManagedUserProperties(3).ValidationFunctions(1).InputArguments: char [1 19] = '0, 100, "inclusive"'
+      loaded AppTypeData(1).ManagedUserProperties(3).InferredDataType: char [1 6] = 'double'
+      loaded AppTypeData(1).ManagedUserProperties(3).InferredDefaultValue: double [1 1] = 0
+      loaded AppTypeData(1).ManagedUserProperties(3).InferredInspectorRenderer: struct [1 1] fields Editor,InPlaceEditor,CellRenderer,EditorConverter
+        loaded AppTypeData(1).ManagedUserProperties(3).InferredInspectorRenderer(1).Editor: char [0 0] = ''
+        loaded AppTypeData(1).ManagedUserProperties(3).InferredInspectorRenderer(1).InPlaceEditor: char [1 42] = 'rendererseditors/editors/BaseOpenvarEditor'
+        loaded AppTypeData(1).ManagedUserProperties(3).InferredInspectorRenderer(1).CellRenderer: char [1 42] = 'rendererseditors/editors/BaseOpenvarEditor'
+        loaded AppTypeData(1).ManagedUserProperties(3).InferredInspectorRenderer(1).EditorConverter: char [0 0] = ''
+    loaded AppTypeData(1).CallbackPropertyEvents: struct [1 1] fields 
+    loaded AppTypeData(1).AllowTestCaseAccess: logical [1 1] = false
+loaded AppTypeData json: {"HasCallbackEvents":[{"Name":"Cleared","Description":""},{"Name":"ValueChanged","Description":"Fires when the value changes"}],"Methods":{"update":{"Name":"update","Code":["            comp.Button.Text = num2str(comp.Value);"]},"postSetup":[]},"ManagedUserProperties":[{"Name":"Scale","Description":"A private scale","DataType":"double","DefaultValue":"1","Size":[],"Attributes":["Access = private"],"ValidationFunctions":[],"InferredDataType":"double","InferredDefaultValue":1,"InferredInspectorRenderer":{"Editor":"","InPlaceEditor":"rendererseditors/editors/BaseOpenvarEditor","CellRenderer":"rendererseditors/editors/BaseOpenvarEditor","EditorConverter":""}},{"Name":"Limits","Description":"The range","DataType":"double","DefaultValue":"[0 100]","Size":["1","2"],"Attributes":[],"ValidationFunctions":{"Name":"mustBeNumeric"},"InferredDataType":"double","InferredDefaultValue":[0,100],"InferredInspectorRenderer":{"Editor":"","InPlaceEditor":"rendererseditors/editors/BaseOpenvarEditor","CellRenderer":"rendererseditors/editors/BaseOpenvarEditor","EditorConverter":""}},{"Name":"Value","Description":"","DataType":"double","DefaultValue":"0","Size":["1","1"],"Attributes":[],"ValidationFunctions":{"Name":"mustBeInRange","InputArguments":"0, 100, \"inclusive\""},"InferredDataType":"double","InferredDefaultValue":0,"InferredInspectorRenderer":{"Editor":"","InPlaceEditor":"rendererseditors/editors/BaseOpenvarEditor","CellRenderer":"rendererseditors/editors/BaseOpenvarEditor","EditorConverter":""}}],"CallbackPropertyEvents":{},"AllowTestCaseAccess":false}
+  loaded StartupFcn: struct [1 1] fields Name,Code
+    loaded StartupFcn(1).Name: char [1 12] = 'postSetupFcn'
+    loaded StartupFcn(1).Code: cell [1 1]
+      loaded StartupFcn(1).Code{1}: char [1 27] = '            comp.Count = 0;'
+  loaded Callbacks: struct [1 1] fields Name,Code,ComponentData
+    loaded Callbacks(1).Name: char [1 12] = 'ButtonPushed'
+    loaded Callbacks(1).Code: cell [2 1]
+      loaded Callbacks(1).Code{1}: char [1 40] = '            comp.Value = comp.Value + 1;'
+      loaded Callbacks(1).Code{2}: char [1 41] = '            notify(comp, 'ValueChanged');'
+    loaded Callbacks(1).ComponentData: struct [1 1] fields CodeName,CallbackPropertyName,ComponentType
+      loaded Callbacks(1).ComponentData(1).CodeName: char [1 6] = 'Button'
+      loaded Callbacks(1).ComponentData(1).CallbackPropertyName: char [1 15] = 'ButtonPushedFcn'
+      loaded Callbacks(1).ComponentData(1).ComponentType: char [1 24] = 'matlab.ui.control.Button'
+  loaded EditableSectionCode: cell [4 1]
+    loaded EditableSectionCode{1}: char [1 33] = '    properties (Access = private)'
+    loaded EditableSectionCode{2}: char [1 27] = '        Count % Description'
+    loaded EditableSectionCode{3}: char [1 7] = '    end'
+    loaded EditableSectionCode{4}: char [1 4] = '    '
+loadApp: ComponentData class struct, fields Type,PropertyValues,Children
+loadApp: AppNameData {"AppName":"comp3","SerializedAppName":"comp3"}; CompatibilityData {"CompatibilityType":"SAME","LoadedVersion":"R2025b","CurrentVersion":"R2025b","MLAPPVersion":"2"}; GroupData class double
+loadApp: FAILED MATLAB:nonExistentField | Unrecognized field name "UIFigure".
+mlapp class: which D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w15\rt\w15\ctl\comp3.mlapp, Value 0
+== 3 run
+run: comp class comp3, parent class matlab.ui.Figure, parent Position [680  578  560  420], comp Position [1    1  320  240], Visible on
+run: IsRunningInAppDesigner 1 (double), RunningInstanceFullFileName D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w15\rt\w15\comp3.m
+run: RunningAppInstance prop 0
+run: parent resized to [680  578  321  241]
+run: closer class appdesigner.internal.appcloser.UserComponentInstanceCloser
+run: after close comp valid 0, parent valid 0
+== 4 metadata
+no args: MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+number: MATLAB:appdesigner:appdesigner:InvalidInput | The input argument must be a full or partial file path, or a file name.
+cell: MATLAB:appdesigner:appdesigner:InvalidInput | The input argument must be a full or partial file path, or a file name.
+txt: MATLAB:appdesigner:appdesigner:InvalidGeneralFileExtension | File 'comp1.txt' must have a .txt extension
+missing: MATLAB:appdesigner:appdesigner:InvalidFileName | File 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w15\rt\w15\nosuch.m' not found.
+missing no ext: MATLAB:appdesigner:appdesigner:InvalidFileName | File 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w15\rt\w15\nosuch.mlapp' not found.
+keyword: MATLAB:appdesigner:appdesigner:FileNameFailsIsKeyword | Name cannot be a MATLAB keyword.  Rename file, and then open.
+bad name: MATLAB:appdesigner:appdesigner:FileNameFailsIsVarName | File name '1bad' must start with a letter, contain only letters, numbers and underscores, and be shorter than 2048 characters.
+bad folder: MATLAB:appdesigner:appdesigner:InvalidFilePath | Invalid file path.
+function file: MATLAB:appdesigner:usercomponentmetadata:NotValidCustomComponentClass | File D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w15\rt\w15\plainfn.m is not a valid custom UI component class.
+plain class: MATLAB:appdesigner:usercomponentmetadata:NotCustomComponentClass | File D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w15\rt\w15\PlainClass.m is not a valid custom UI component class because it does not inherit from matlab.ui.componentcontainer.ComponentContainer.
+remove plain class: MATLAB:appdesigner:usercomponentmetadata:NotCustomComponentClass | File D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w15\rt\w15\PlainClass.m is not a valid custom UI component class because it does not inherit from matlab.ui.componentcontainer.ComponentContainer.
+remove missing: MATLAB:appdesigner:appdesigner:InvalidFileName | File 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w15\rt\w15\nosuch.m' not found.
+remove no args: MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+remove two args: MATLAB:TooManyInputs | Too many input arguments.
+removeMetadata comp1 (no json): MATLAB:UndefinedFunction | Undefined function 'isKey' for input arguments of type 'double'.
+remove with invalid json: MATLAB:appdesigner:usercomponentmetadata:InvalidModelErrorMsg | <message unreadable: Unable to find message key 'InvalidModelErrorMsg' in catalog 'MATLAB:appdesigner:usercomponentmetadata'.>
+model over invalid json: valid 0
+configureMetadata comp1 headless: returned; new figures 1
+  figure Name "App Designer Custom UI Component Metadata", Visible on, Position [718.5           281           485           617]
+comp3 defaults: description "Properties that correspond to underlying components", category My Components, version 1.0, icon data\default_component_icon.png
+validate: name "" 0, name " " 0, name "x" 1; category "" 0; version "1" 0 "1.0" 1 "1.0.1" 0 "a.b" 0; email "" 1 "a@b" 0 "a@b.cd" 1
+file path shown "D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w15...\comp3.m" (full 80 chars)
+registered comp3: json follows
+  484 chars, CR 0, trailing newline 0
+  json| {
+  json|   "components": [
+  json|     {
+  json|       "className": "comp3",
+  json|       "componentName": "Counter",
+  json|       "category": "Widgets",
+  json|       "description": "Line one\nLine two",
+  json|       "icon": "data:image/png;base64,iVBORw0KGgo=",
+  json|       "authorName": "Pat",
+  json|       "authorEmail": "pat@example.com",
+  json|       "version": "2.3",
+  json|       "avatar": "",
+  json|       "avatarDark": "",
+  json|       "defaultPosition": [
+  json|         1,
+  json|         1,
+  json|         320,
+  json|         240
+  json|       ]
+  json|     }
+  json|   ],
+  json|   "schema": 3,
+  json|   "MATLABRelease": "R2025b"
+  json| }
+updated comp3: json follows
+  485 chars, CR 0, trailing newline 0
+  json| {
+  json|   "components": [
+  json|     {
+  json|       "className": "comp3",
+  json|       "componentName": "Counter2",
+  json|       "category": "Widgets",
+  json|       "description": "Line one\nLine two",
+  json|       "icon": "data:image/png;base64,iVBORw0KGgo=",
+  json|       "authorName": "Pat",
+  json|       "authorEmail": "pat@example.com",
+  json|       "version": "2.4",
+  json|       "avatar": "",
+  json|       "avatarDark": "",
+  json|       "defaultPosition": [
+  json|         1,
+  json|         1,
+  json|         320,
+  json|         240
+  json|       ]
+  json|     }
+  json|   ],
+  json|   "schema": 3,
+  json|   "MATLABRelease": "R2025b"
+  json| }
+register Broken: error "Unable to execute 'setup' method."
+register Abstr: error "The class Abstr cannot be instantiated because it is abstract. Ensure you have implemented all abstract methods, including the setup and update methods inherited from matlab.ui.componentcontainer.ComponentContainer."
+[Warning: Unable to capture UI component avatar. Users will be unable to see the component preview when dragging the UI component from the
+Component Library onto the canvas.] 
+[> In w15_component (line 319)] 
+register comp4: UpdateModelEvent, defaultPosition [1    1  200   60], warning "Unable to capture UI component avatar. Users will be unable to see the component preview when dragging the UI component from the Component Library onto the canvas."
+removed comp3: json follows
+  66 chars, CR 0, trailing newline 0
+  json| {
+  json|   "components": [],
+  json|   "schema": 3,
+  json|   "MATLABRelease": "R2025b"
+  json| }
+validated mlapp: D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w15\rt\w15\ctl\comp3.mlapp
+validated mlapp no ext: D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\w15\rt\w15\ctl\comp3.mlapp
+== 5 property validation
+case 1 [double | 0 | size {} | ] -> class "double", default "'0'", inferred 0 (double [1 1]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/BaseOpenvarEditor';CellRenderer='rendererseditors/editors/BaseOpenvarEditor';EditorConverter=''}
+case 2 [double |  | size {} | ] -> class "double", default "'[]'", inferred [] (double [0 0]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/BaseOpenvarEditor';CellRenderer='rendererseditors/editors/BaseOpenvarEditor';EditorConverter=''}
+case 3 [ |  | size {} | ] -> class "", default "[]", inferred [] (double [0 0]), renderer {}
+case 4 [ | 5 | size {} | ] -> class "double", default "'5'", inferred 5 (double [1 1]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/BaseOpenvarEditor';CellRenderer='rendererseditors/editors/BaseOpenvarEditor';EditorConverter=''}
+case 5 [ | 'abc' | size {} | ] -> class "char", default "''abc''", inferred 'abc' (char [1 3]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/CharEditor';CellRenderer='rendererseditors/editors/CharEditor';EditorConverter=''}
+case 6 [double | abc | size {} | ] -> ERROR MATLAB:UndefinedFunction | Unrecognized function or variable 'abc'.
+case 7 [double | 'abc' | size {} | ] -> class "double", default "'[97 98 99]'", inferred [97 98 99] (double [1 3]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/BaseOpenvarEditor';CellRenderer='rendererseditors/editors/BaseOpenvarEditor';EditorConverter=''}
+case 8 [double | 5 | size {} | mustBePositive(Value)] -> class "double", default "'5'", inferred 5 (double [1 1]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/BaseOpenvarEditor';CellRenderer='rendererseditors/editors/BaseOpenvarEditor';EditorConverter=''}
+case 9 [double | -5 | size {} | mustBePositive(Value)] -> ERROR MATLAB:validators:mustBePositive | Value must be positive.
+case 10 [double | 5 | size {} | mustBeLessThan(Value, 3)] -> ERROR MATLAB:validators:mustBeLessThan | Value must be less than 3.
+case 11 [double | [1 2] | size {1,2} | ] -> class "double", default "'[1 2]'", inferred [1 2] (double [1 2]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/BaseOpenvarEditor';CellRenderer='rendererseditors/editors/BaseOpenvarEditor';EditorConverter=''}
+case 12 [double | [1 2 3] | size {1,2} | ] -> ERROR MATLAB:validation:IncompatibleSize | Value must be a vector with 2 elements.
+case 13 [double | 7 | size {:,1} | ] -> class "double", default "'7'", inferred 7 (double [1 1]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/BaseOpenvarEditor';CellRenderer='rendererseditors/editors/BaseOpenvarEditor';EditorConverter=''}
+case 14 [char | 'hi' | size {} | ] -> class "char", default "''hi''", inferred 'hi' (char [1 2]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/CharEditor';CellRenderer='rendererseditors/editors/CharEditor';EditorConverter=''}
+case 15 [char | "hi" | size {} | ] -> class "char", default "''hi''", inferred 'hi' (char [1 2]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/CharEditor';CellRenderer='rendererseditors/editors/CharEditor';EditorConverter=''}
+case 16 [string | "hi" | size {} | ] -> class "string", default "'"hi"'", inferred "hi" (string [1 1]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/TextBoxEditor';CellRenderer='rendererseditors/editors/TextBoxEditor';EditorConverter=''}
+case 17 [string | 'hi' | size {} | ] -> class "string", default "'"hi"'", inferred "hi" (string [1 1]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/TextBoxEditor';CellRenderer='rendererseditors/editors/TextBoxEditor';EditorConverter=''}
+case 18 [logical | true | size {} | ] -> class "logical", default "'true'", inferred true (logical [1 1]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/CheckBoxEditor';CellRenderer='rendererseditors/editors/CheckBoxEditor';EditorConverter=''}
+case 19 [logical | 1 | size {} | ] -> class "logical", default "'true'", inferred true (logical [1 1]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/CheckBoxEditor';CellRenderer='rendererseditors/editors/CheckBoxEditor';EditorConverter=''}
+case 20 [logical | 2 | size {} | ] -> class "logical", default "'true'", inferred true (logical [1 1]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/CheckBoxEditor';CellRenderer='rendererseditors/editors/CheckBoxEditor';EditorConverter=''}
+case 21 [cell | {'a', 'b'} | size {} | ] -> class "cell", default "'{'a', 'b'}'", inferred {'a', 'b'} (cell [1 2]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/TextAreaEditor';CellRenderer='rendererseditors/editors/TextBoxEditor';EditorConverter='internal.matlab.editorconverters.ItemsValueEditor';InPlaceEditorProperties=struct(outputType,editValue,richEditorDependencies)}
+case 22 [cell | {'a'; 'b'} | size {} | ] -> class "cell", default "'{'a'; 'b'}'", inferred {'a', 'b'} (cell [2 1]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/TextAreaEditor';CellRenderer='rendererseditors/editors/TextBoxEditor';EditorConverter='internal.matlab.editorconverters.ItemsValueEditor';InPlaceEditorProperties=struct(outputType,editValue,richEditorDependencies)}
+case 23 [cell | {'a', 'b'; 'c', 'd'} | size {} | ] -> class "cell", default "[]", inferred [] (double [0 0]), renderer {}
+case 24 [int32 | 3 | size {} | ] -> ERROR  | This compare class has not been implemented: int32
+case 25 [single | 2.5 | size {} | ] -> ERROR  | This compare class has not been implemented: single
+case 26 [datetime | datetime(2020,1,1) | size {} | ] -> class "datetime", default "[]", inferred [] (double [0 0]), renderer {}
+case 27 [double | 1:3 | size {1,:} | ] -> class "double", default "'[1 2 3]'", inferred [1 2 3] (double [1 3]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/BaseOpenvarEditor';CellRenderer='rendererseditors/editors/BaseOpenvarEditor';EditorConverter=''}
+case 28 [double | 0.1 | size {} | mustBeInRange(Value, 0, 1)] -> class "double", default "'0.1'", inferred 0.1 (double [1 1]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/BaseOpenvarEditor';CellRenderer='rendererseditors/editors/BaseOpenvarEditor';EditorConverter=''}
+case 29 [matlab.lang.OnOffSwitchState | 'on' | size {} | ] -> class "matlab.lang.OnOffSwitchState", default "''on''", inferred 'on' (char [1 2]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/ComboBoxEditor';CellRenderer='rendererseditors/editors/ComboBoxEditor';EditorConverter='internal.matlab.editorconverters.ComboBoxEditor';InPlaceEditorProperties=struct(categories,isProtected,showUndefined,clientValidation)}
+case 30 [double | [] | size {} | ] -> class "double", default "'[]'", inferred [] (double [0 0]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/BaseOpenvarEditor';CellRenderer='rendererseditors/editors/BaseOpenvarEditor';EditorConverter=''}
+case 31 [struct | struct('a', 1) | size {} | ] -> class "struct", default "[]", inferred [] (double [0 0]), renderer {}
+case 32 [double | 1e3 | size {} | ] -> class "double", default "'1000'", inferred 1000 (double [1 1]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/BaseOpenvarEditor';CellRenderer='rendererseditors/editors/BaseOpenvarEditor';EditorConverter=''}
+case 33 [double | pi | size {} | ] -> class "double", default "'3.14159265358979'", inferred 3.14159265358979 (double [1 1]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/BaseOpenvarEditor';CellRenderer='rendererseditors/editors/BaseOpenvarEditor';EditorConverter=''}
+case 34 [double | 2+3 | size {} | ] -> class "double", default "'5'", inferred 5 (double [1 1]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/BaseOpenvarEditor';CellRenderer='rendererseditors/editors/BaseOpenvarEditor';EditorConverter=''}
+case 35 [string | ["a" "b"] | size {} | ] -> class "string", default "[]", inferred [] (double [0 0]), renderer {}
+case 36 [char | ['ab'; 'cd'] | size {} | ] -> class "char", default "[]", inferred [] (double [0 0]), renderer {}
+case 37 [double | 1 | size {1} | ] -> class "double", default "'1'", inferred 1 (double [1 1]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/BaseOpenvarEditor';CellRenderer='rendererseditors/editors/BaseOpenvarEditor';EditorConverter=''}
+case 38 [double | true | size {} | ] -> class "double", default "'1'", inferred 1 (double [1 1]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/BaseOpenvarEditor';CellRenderer='rendererseditors/editors/BaseOpenvarEditor';EditorConverter=''}
+case 39 [logical | false | size {1,1} | mustBeNumericOrLogical(Flag)] -> class "logical", default "'false'", inferred false (logical [1 1]), renderer {Editor='';InPlaceEditor='rendererseditors/editors/CheckBoxEditor';CellRenderer='rendererseditors/editors/CheckBoxEditor';EditorConverter=''}
+inspector 1 [double | 0 -> '5'] -> class "double", default "'5'", inferred 5 (double)
+inspector 2 [double | 0 -> 'abc'] -> ERROR MATLAB:UndefinedFunction | Unrecognized function or variable 'abc'.
+inspector 3 [double | 0 -> '[1 2]'] -> class "double", default "'[1 2]'", inferred [1 2] (double)
+inspector 4 [logical | true -> false] -> class "logical", default "'false'", inferred false (logical)
+inspector 5 [char | 'hi' -> 'there'] -> class "char", default "''there''", inferred 'there' (char)
+inspector 6 [string | "hi" -> 'there'] -> class "string", default "'"there"'", inferred "there" (string)
+inspector 7 [cell | {'a'} -> {'x', 'y'}] -> ERROR MATLAB:maxrhs | Too many input arguments.
+inspector 8 [double | 5 -> '-1'] -> ERROR MATLAB:validators:mustBePositive | Value must be positive.
+w15_component done

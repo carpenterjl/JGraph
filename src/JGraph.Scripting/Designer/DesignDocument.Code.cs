@@ -57,6 +57,9 @@ public sealed partial class DesignDocument
     /// <summary>Whether the app runs as a single instance.</summary>
     public bool SingleInstance => Code?.SingleInstance ?? false;
 
+    /// <summary>The startup function's default name: <c>startupFcn</c>, or a custom UI component's <c>postSetupFcn</c> (W15).</summary>
+    public string DefaultStartupName => Code?.DefaultStartupName ?? DesignCode.StartupName;
+
     /// <summary>
     /// The callback properties of <paramref name="component"/>, as App Designer's inspector lists
     /// them: none for a class its table has no row for (a label, a lamp, a gauge); a custom component's are its class's.
@@ -133,6 +136,22 @@ public sealed partial class DesignDocument
         if (name == Code?.ClassName)
         {
             return DesignNames.AppNameInUse;
+        }
+
+        // A custom UI component's own names (App Designer window plan W15): an event, its callback property, a managed property.
+        if (Code?.FindEvent(name) is not null)
+        {
+            return "event";
+        }
+
+        if (Code?.Events.Any(e => e.CallbackProperty == name) is true)
+        {
+            return "callback property";
+        }
+
+        if (Code?.FindManagedProperty(name) is not null)
+        {
+            return "property";
         }
 
         return UserProperties().Contains(name, StringComparer.Ordinal) ? "property" : "function";
@@ -273,7 +292,7 @@ public sealed partial class DesignDocument
             return $"The app already has a startup function, {have.Name}.";
         }
 
-        name ??= DesignCallbacks.Unique(DesignCode.StartupName, NamesInUse());
+        name ??= DesignCallbacks.Unique(Code.DefaultStartupName, NamesInUse());
         if (WhyNotFunctionName(name) is { } why)
         {
             return why;
@@ -449,7 +468,7 @@ public sealed partial class DesignDocument
         }
         else if (names.Length > 0)
         {
-            string name = DesignCallbacks.Unique(DesignCode.StartupName, NamesInUse());
+            string name = DesignCallbacks.Unique(Code.DefaultStartupName, NamesInUse());
             edits.Add(new CallbackListEdit(Design.Figure, new DesignCallback(name, [Style.Indent(3)], isStartup: true), 0, Add: true));
         }
 
@@ -525,6 +544,14 @@ public sealed partial class DesignDocument
                 to.Body.AddRange(from.Body);
                 changed = true;
             }
+        }
+
+        // A custom UI component's update method is the user's too (W15).
+        if (Code.IsComponent && edited.IsComponent && !edited.UpdateBody.SequenceEqual(Code.UpdateBody, StringComparer.Ordinal))
+        {
+            Code.UpdateBody.Clear();
+            Code.UpdateBody.AddRange(edited.UpdateBody);
+            changed = true;
         }
 
         if (changed)
@@ -761,23 +788,23 @@ public sealed partial class DesignDocument
         UserLines().Select(l => (l.Line, l.Text, rewrite(l.Text))).Where(static c => c.Item2 != c.Item3).ToArray();
 
     /// <summary><c>app.from</c> renamed on a line (<c>_Behavior._renameUserCode</c> for a component).</summary>
-    private static Func<string, string> ComponentRewrite(string from, string to)
+    private Func<string, string> ComponentRewrite(string from, string to)
     {
-        Regex reference = ComponentReference(from);
+        Regex reference = ComponentReference(from, ObjectName);
         return line => reference.Replace(line, m => m.Groups[1].Value + to);
     }
 
     /// <summary><c>app.from</c> and <c>from(app</c> renamed on a line (<c>_renameUserCode</c> for a callback or method).</summary>
-    private static Func<string, string> CallbackRewrite(string from, string to)
+    private Func<string, string> CallbackRewrite(string from, string to)
     {
-        Regex reference = CallbackReference(from);
+        Regex reference = CallbackReference(from, ObjectName);
         return line => reference.Replace(line, m => m.Groups[1].Success ? m.Groups[1].Value + to : to + m.Groups[2].Value);
     }
 
     /// <summary><c>app.from</c> renamed on a line, and the bare name on the line that is its declaration alone (<c>_renameUserCode</c> for a property).</summary>
-    private static Func<string, string> PropertyRewrite(string from, string to)
+    private Func<string, string> PropertyRewrite(string from, string to)
     {
-        Regex reference = ComponentReference(from);
+        Regex reference = ComponentReference(from, ObjectName);
         return line =>
         {
             string renamed = reference.Replace(line, m => m.Groups[1].Value + to);
@@ -1188,7 +1215,7 @@ public sealed partial class DesignDocument
     public IReadOnlyList<(int Line, string Text)> UserCodeReferences(string codeName)
     {
         ArgumentNullException.ThrowIfNull(codeName);
-        Regex reference = ComponentReference(codeName);
+        Regex reference = ComponentReference(codeName, ObjectName);
         return UserLines().Where(l => reference.IsMatch(l.Text)).ToArray();
     }
 
@@ -1196,7 +1223,7 @@ public sealed partial class DesignDocument
     public IReadOnlyList<(int Line, string Text)> CallbackReferences(string name)
     {
         ArgumentNullException.ThrowIfNull(name);
-        Regex reference = CallbackReference(name);
+        Regex reference = CallbackReference(name, ObjectName);
         return UserLines().Where(l => reference.IsMatch(l.Text)).ToArray();
     }
 
@@ -1270,19 +1297,27 @@ public sealed partial class DesignDocument
         }
 
         yield return Code.EditableSection;
+        if (Code.IsComponent)
+        {
+            yield return Code.UpdateBody; // a custom UI component's update method is the user's too (W15)
+        }
+
         foreach (DesignCallback callback in Code.Callbacks.Where(static c => !c.IsGenerated))
         {
             yield return callback.Body;
         }
     }
 
+    /// <summary>The name the code calls the object: <c>app</c>, or <c>comp</c> for a custom UI component (W15).</summary>
+    private string ObjectName => Code?.ObjectName ?? (Design.IsComponent ? DesignComponentCode.ObjectName : DesignValueText.AppObjectName);
+
     /// <summary><c>app.Name</c>, the dot taken as a dot (App Designer's pattern takes it as any character; see ADR 0250).</summary>
-    private static Regex ComponentReference(string codeName) =>
-        new(@"(\b" + DesignValueText.AppObjectName + @"\.\s*)" + Regex.Escape(codeName) + @"\b");
+    private static Regex ComponentReference(string codeName, string objectName) =>
+        new(@"(\b" + objectName + @"\.\s*)" + Regex.Escape(codeName) + @"\b");
 
     /// <summary><c>app.Name</c> or <c>Name(app</c>, the two forms App Designer renames a function by.</summary>
-    private static Regex CallbackReference(string name) =>
-        new(@"(\b" + DesignValueText.AppObjectName + @"\.\s*)" + Regex.Escape(name) + @"\b|\b" + Regex.Escape(name) + @"(\s*\(\s*" + DesignValueText.AppObjectName + @"\b)");
+    private static Regex CallbackReference(string name, string objectName) =>
+        new(@"(\b" + objectName + @"\.\s*)" + Regex.Escape(name) + @"\b|\b" + Regex.Escape(name) + @"(\s*\(\s*" + objectName + @"\b)");
 
     /// <summary>A callback put into or taken out of the block at <paramref name="Index"/>.</summary>
     private sealed record CallbackListEdit(DesignComponent Component, DesignCallback Callback, int Index, bool Add) : CodeEdit(Component)

@@ -62,6 +62,9 @@ public static class DesignUserComponents
     private const string DefaultDescription = "This is a custom component created by MATLAB user";
     private const string DefaultCategory = "My Category";
 
+    /// <summary>The icon R2025b's schema (<c>appDesignerSchema.json</c>) fills a record in with when it has none: written back as such by <see cref="DesignComponentMetadata"/>.</summary>
+    internal const string SchemaDefaultIcon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsSAAALEgHS3X78AAABGUlEQVRIiWNsaGj4z0ACqK+vZwSp7ujouPPz509lbDrZ2dnvVlRUqIDYLAwQTUTZsHz5cjgbZDgufY2NjXCLWWAMR0cnnAbv378Pq/i3b98IOgpuAS5DcAFQMHR3d+MMIpJ8gM0BsDCmmQ9IimQGMuKA5Egm1QcMpEYyqXFALBgcqQib5TRPRcQCiuKA1bUVazn2e3c1I9V80NWRicIvq5iOwmdRU1NDKcSoDVgiIyMZaWY6AwMDEy0NBwHG9vZ2nGUKCCCXKyCgWMaJNWIrV//Bqp8FX5kCAsjlCgy0Fbeh8Kt6q8B0SOsUFPE11TmQVERMmUIuoHkc0NwCFnyFFgggF1wwAAtzdAAKc3TA+P8/Sa0W0gADAwMAacOCsonAW8UAAAAASUVORK5CYII=";
+
     /// <summary>
     /// The components registered under each of <paramref name="folders"/>, in the folders' order;
     /// a class registered twice is the later set's, as the library keeps the later set's defaults.

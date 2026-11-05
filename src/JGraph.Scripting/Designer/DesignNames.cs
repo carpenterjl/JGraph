@@ -43,6 +43,9 @@ public static partial class DesignNames
     /// component, callback, function or property may take (the <c>AppBaseProperty</c> and
     /// <c>AppBaseMethod</c> entries of App Designer's name map; <c>AppDesignerInitializationData</c>).
     /// </summary>
+    /// <summary>Whether <paramref name="name"/> is a MATLAB keyword (<c>iskeyword</c>), which no name may be.</summary>
+    public static bool IsKeyword(string name) => Keywords.Contains(name);
+
     public static IReadOnlySet<string> AppDesignerKeywords { get; } = new HashSet<string>(StringComparer.Ordinal)
     {
         "AppBase", "saveobj", "delete", "loadobj", "getRunningApp", "setAutoResize", "registerApp", "runStartupFcn",
