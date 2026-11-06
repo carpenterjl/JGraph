@@ -21,6 +21,9 @@ internal static partial class JgsBuiltins
         "vartype", "convertvars", "table2cell", "innerjoin", "stack",
         "exist", "who", "which", "builtin", "narginchk", "nargoutchk", "nargchk",
 
+        // P5: edit, silent headless as R2025b's is; the Script Workspace reads it at the prompt.
+        "edit",
+
         // M145: feval resolves the name it is handed through the interpreter, so it moved here.
         "feval",
         "nargin", "nargout",
@@ -1081,6 +1084,30 @@ internal static partial class JgsBuiltins
 
                 return [];
             },
+        }));
+
+        // edit: a headless R2025b opens nothing and says nothing (stage P5, measured: edit('pkg.f'),
+        // edit pkg.f, edit('Thing/extent'), edit('Thing'), edit('Thing.extent'), edit('@Thing/extent')
+        // and edit('good.m') all silent; a non-text argument refused; a function handle reaches
+        // function_handle's edit method, which opens the handle's file - dispatch sweep 39). The
+        // Script Workspace reads edit at its prompt before the interpreter sees it and opens the file
+        // the name resolves to. A name with no file asks R2025b's user whether to create it, even in
+        // -batch, so it is not measured.
+        env.Builtins.Register("edit", JgsValue.Function(new BuiltinFunction("edit", (args, line, col) =>
+        {
+            for (int i = 0; i < args.Count; i++)
+            {
+                if (!IsTextScalar(args[i]) && args[i].Type != JgsType.Function)
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeTextScalar", $"Invalid argument at position {i + 1}. Value must be a character vector or string scalar.");
+                }
+            }
+
+            return JgsValue.Null;
+        })
+        {
+            KeepsStringArguments = true,
+            BindsAnsAsStatement = false,
         }));
 
         // which f(args): the call's arguments evaluated in the caller's workspace, and the user

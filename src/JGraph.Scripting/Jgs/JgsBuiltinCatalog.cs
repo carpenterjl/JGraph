@@ -203,6 +203,7 @@ public static class JgsBuiltinCatalog
         Add("exist", "What a name is: 1 a variable, 2 a file, 5 a builtin, 7 a folder, 0 nothing.", P("name"), Opt("kind"));
         Add("who", "The names of the variables in scope, as a cell array.", Opt("pattern"));
         Add("which", "Where a name comes from — the file that answers it, or 'is a built-in function'; which(name, '-all') lists every layer holding it, files first.", P("name"), Opt("'-all'"));
+        Add("edit", "Opens a file in the Script Workspace: a path, a name on the path, pkg.f, Thing/extent or +pkg/f. Headless it opens nothing and says nothing, as R2025b's does.", Opt("name"));
         Add("builtin", "Calls the built-in of that name past any file or variable that shadows it: builtin('size', A) reaches size while size.m takes every written call.", P("function"), Opt("args..."));
         Add("nargin", "How many inputs a function declares: nargin('name') or nargin(@f), negative when the last is varargin. Inside a function body the bare name is how many the call passed.", P("f"));
         Add("nargout", "How many outputs a function declares: nargout('name') or nargout(@f), negative when the last is varargout. Inside a function body the bare name is how many the caller asked for.", P("f"));

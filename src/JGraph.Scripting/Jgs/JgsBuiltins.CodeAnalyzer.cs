@@ -200,7 +200,7 @@ internal static partial class JgsBuiltins
                 }
                 else
                 {
-                    path = ResolveCodeFile(interpreter, host, asked) ?? throw MlintFileNotFound(asked, line, col);
+                    path = ResolveCodeFile(interpreter, host, asked, partialPaths: true) ?? throw MlintFileNotFound(asked, line, col);
                     shown = path;
                     files[i] = path;
                 }
@@ -273,8 +273,47 @@ internal static partial class JgsBuiltins
     private static JgsRuntimeException MlintFileNotFound(string asked, int line, int col) =>
         new(line, col, "MATLAB:mlint:FileNotFound", $"Unable to open file \"{asked}\". File is not found or is not a supported MATLAB code file.");
 
-    /// <summary>A code file named to the prompt: a path as given or against the current folder, or a name on the path, with or without its extension.</summary>
-    internal static string? ResolveCodeFile(Interpreter interpreter, JGraphScriptGlobals host, string asked)
+    /// <summary>
+    /// A code file named to the prompt: a path as given or against the current folder, or a name on the path, with or
+    /// without its extension. With <paramref name="partialPaths"/>, the forms <c>checkcode</c> and <c>edit</c> take as well
+    /// (stage P5, measured): <c>Thing/extent</c> (a class folder's method file by its slash name), <c>+pkg/g</c> and
+    /// <c>@Thing/extent</c> (a relative path under a search folder, with or without its extension) and <c>extent</c> (a
+    /// bare method name, the first class folder's file as <c>which</c> names it) - where <c>codeIssues</c> refuses them all,
+    /// and a dotted <c>pkg.f</c> or <c>Thing.extent</c> is a file for neither.
+    /// </summary>
+    internal static string? ResolveCodeFile(Interpreter interpreter, JGraphScriptGlobals host, string asked, bool partialPaths = false)
+    {
+        string? found = ResolveCodeFileByName(interpreter, host, asked);
+        if (found is not null || !partialPaths || interpreter.FunctionPath is not { } search)
+        {
+            return found;
+        }
+
+        if (JgsFunctionPath.SlashForm(asked) is { } slashed && search.ClassMethodFile(slashed.Class, slashed.Member) is { } methodFile)
+        {
+            return methodFile;
+        }
+
+        if (search.FindRelative(asked) is { } relative)
+        {
+            return relative;
+        }
+
+        if (Path.GetExtension(asked).Length == 0)
+        {
+            foreach (string extension in CodeFileExtensions)
+            {
+                if (search.FindRelative(asked + extension) is { } withExtension)
+                {
+                    return withExtension;
+                }
+            }
+        }
+
+        return search.MethodFilesByBareName(asked).FirstOrDefault();
+    }
+
+    private static string? ResolveCodeFileByName(Interpreter interpreter, JGraphScriptGlobals host, string asked)
     {
         if (asked.Length == 0)
         {

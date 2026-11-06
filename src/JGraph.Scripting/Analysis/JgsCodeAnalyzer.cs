@@ -12,7 +12,11 @@ namespace JGraph.Scripting.Analysis;
 /// </summary>
 public static class JgsCodeAnalyzer
 {
-    /// <summary>Analyzes <paramref name="text"/>, a MATLAB file's content; <paramref name="fileName"/> names the file for a script's complexity line.</summary>
+    /// <summary>
+    /// Analyzes <paramref name="text"/>, a MATLAB file's content; <paramref name="fileName"/> names the file for a script's
+    /// complexity line, for the checks of a function's or class's name against it (FNDEF, MCFIL) and, when it is a path, for
+    /// a class file's against its <c>@</c> folder (MCDIR; stage P5, ADR 0311).
+    /// </summary>
     public static CodeAnalysis Analyze(string text, string? fileName = null)
     {
         ArgumentNullException.ThrowIfNull(text);
@@ -54,7 +58,7 @@ public static class JgsCodeAnalyzer
         var sink = new List<CodeMessage>();
         var complexity = new List<CodeComplexity>();
         bool isScript = program.Count == 0 || program[0] is not (FnStmt or ClassdefStmt);
-        new ScopeAnalysis(spans, sink, complexity, stem).Run(program, isScript);
+        new ScopeAnalysis(spans, sink, complexity, stem, fileName).Run(program, isScript);
         Separators(spans, sink);
         (List<CodeMessage> active, List<CodeMessage> suppressed) = Suppressions.Apply(sink, pragmas, lines);
         return new CodeAnalysis(CodeAnalysis.Sort(active), CodeAnalysis.Sort(suppressed), complexity, isScript);

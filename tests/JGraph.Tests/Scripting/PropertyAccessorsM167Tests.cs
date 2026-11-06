@@ -298,9 +298,14 @@ public class PropertyAccessorsM167Tests : IDisposable
     // --- the parser ---------------------------------------------------------------------------------
 
     [Fact]
-    public void ADotAfterAFunctionNameOutsideAMethodsBlockIsStillRefused()
+    public void ADotAfterAFunctionNameOutsideAMethodsBlockIsAnalyzerErrorNotASyntaxError()
     {
-        Assert.Contains("Expected an expression", RunExpectingError("function v = get.p(x)\nv = x;\nend\n"), StringComparison.Ordinal);
+        // R2025b parses a dotted function name in a plain file and leaves it to the Code Analyzer:
+        // FNDOT (an error) on the whole name, FNDEF beside it (stage P5, ADR 0311, measured).
+        const string code = "function v = get.p(x)\nv = x;\nend\n";
+        Assert.NotEmpty(Parser.Parse(code, "get.m", JgsDialect.Matlab));
+        var messages = JGraph.Scripting.Analysis.JgsCodeAnalyzer.Analyze(code, "get.m").Messages.Select(static m => (m.Id, m.Line, m.StartColumn, m.EndColumn)).ToList();
+        Assert.Equal([("FNDEF", 1, 14, 18), ("FNDOT", 1, 14, 18)], messages);
     }
 
     [Fact]

@@ -1,5 +1,5 @@
 {
- "source": "w10_analyzer.m and w10_rules.m run headless in R2025b (checkcode -id -struct per file)",
+ "source": "w10_analyzer.m and w10_rules.m run headless in R2025b (checkcode -id -struct per file); p5_analyzer.m and p5_more.m for the p5/ and p5more/ cases (stage P5)",
  "cases": [
   {
    "name": "a1_unused.m",
@@ -1815,6 +1815,447 @@
      "end": 5,
      "fix": true,
      "text": "Use of brackets [] is unnecessary."
+    }
+   ]
+  },
+  {
+   "name": "p5/plain/Wrongclass.m",
+   "text": "classdef Other\nend\n",
+   "messages": [
+    {
+     "id": "MCFIL",
+     "line": 1,
+     "start": 10,
+     "end": 14,
+     "fix": true,
+     "text": "Class name 'Other' and file name do not agree: 'Wrongclass'. Update the class name and constructor, if defined, or change the file name to match the class name."
+    }
+   ]
+  },
+  {
+   "name": "p5/plain/Wrongclass2.m",
+   "text": "classdef (Sealed) Other2 < handle\n    properties\n        A\n    end\nend\n",
+   "messages": [
+    {
+     "id": "MCFIL",
+     "line": 1,
+     "start": 19,
+     "end": 24,
+     "fix": true,
+     "text": "Class name 'Other2' and file name do not agree: 'Wrongclass2'. Update the class name and constructor, if defined, or change the file name to match the class name."
+    }
+   ]
+  },
+  {
+   "name": "p5/plain/casename.m",
+   "text": "function r = Casename(x)\nr = x;\nend\n",
+   "messages": [
+    {
+     "id": "FNDEF",
+     "line": 1,
+     "start": 14,
+     "end": 21,
+     "fix": true,
+     "text": "Function name 'Casename' is known to MATLAB by its file name: 'casename'."
+    }
+   ]
+  },
+  {
+   "name": "p5/plain/dotted.m",
+   "text": "function r = pkg.dotted(x)\nr = x;\nend\n",
+   "messages": [
+    {
+     "id": "FNDEF",
+     "line": 1,
+     "start": 14,
+     "end": 23,
+     "fix": true,
+     "text": "Function name 'pkg.dotted' is known to MATLAB by its file name: 'dotted'."
+    },
+    {
+     "id": "FNDOT",
+     "line": 1,
+     "start": 14,
+     "end": 23,
+     "fix": false,
+     "text": "Function name can only contain dots if it is a class method."
+    }
+   ]
+  },
+  {
+   "name": "p5/plain/good.m",
+   "text": "function r = good(x)\nr = x;\nend\n",
+   "messages": []
+  },
+  {
+   "name": "p5/plain/misnamed.m",
+   "text": "function r = othername(x)\nr = x;\nend\n",
+   "messages": [
+    {
+     "id": "FNDEF",
+     "line": 1,
+     "start": 14,
+     "end": 22,
+     "fix": true,
+     "text": "Function name 'othername' is known to MATLAB by its file name: 'misnamed'."
+    }
+   ]
+  },
+  {
+   "name": "p5/plain/nested.m",
+   "text": "function r = othernested(x)\nr = inner(x);\n    function y = inner(z)\n    y = z;\n    end\nend\n",
+   "messages": [
+    {
+     "id": "FNDEF",
+     "line": 1,
+     "start": 14,
+     "end": 24,
+     "fix": true,
+     "text": "Function name 'othernested' is known to MATLAB by its file name: 'nested'."
+    }
+   ]
+  },
+  {
+   "name": "p5/plain/noargs.m",
+   "text": "function othernoargs\ndisp(1)\nend\n",
+   "messages": [
+    {
+     "id": "FNDEF",
+     "line": 1,
+     "start": 10,
+     "end": 20,
+     "fix": true,
+     "text": "Function name 'othernoargs' is known to MATLAB by its file name: 'noargs'."
+    }
+   ]
+  },
+  {
+   "name": "p5/plain/noend.m",
+   "text": "function r = othernoend(x)\nr = x;\n",
+   "messages": [
+    {
+     "id": "FNDEF",
+     "line": 1,
+     "start": 14,
+     "end": 23,
+     "fix": true,
+     "text": "Function name 'othernoend' is known to MATLAB by its file name: 'noend'."
+    }
+   ]
+  },
+  {
+   "name": "p5/plain/scriptfile.m",
+   "text": "x = 1;\ndisp(x)\n",
+   "messages": []
+  },
+  {
+   "name": "p5/plain/twoout.m",
+   "text": "function [a, b] = othertwo(x)\na = x;\nb = x;\nend\n",
+   "messages": [
+    {
+     "id": "FNDEF",
+     "line": 1,
+     "start": 19,
+     "end": 26,
+     "fix": true,
+     "text": "Function name 'othertwo' is known to MATLAB by its file name: 'twoout'."
+    }
+   ]
+  },
+  {
+   "name": "p5/plain/withlocal.m",
+   "text": "function r = otherlocal(x)\nr = helper(x);\nend\nfunction y = helper(z)\ny = z;\nend\n",
+   "messages": [
+    {
+     "id": "FNDEF",
+     "line": 1,
+     "start": 14,
+     "end": 23,
+     "fix": true,
+     "text": "Function name 'otherlocal' is known to MATLAB by its file name: 'withlocal'."
+    }
+   ]
+  },
+  {
+   "name": "p5/lib/Both.m",
+   "text": "function r = Both(x)\nr = x;\nend\n",
+   "messages": []
+  },
+  {
+   "name": "p5/lib/@Thing/Thing.m",
+   "text": "classdef Thing\n    properties\n        W = 1\n    end\n    methods\n        function o = Thing(w)\n            if nargin > 0, o.W = w; end\n        end\n        r = extent(o)\n        r = scale(o, k)\n        [a, b] = two(o)\n        noout(o)\n        bare\n        function r = inline1(o)\n            r = o.W;\n        end\n    end\n    methods (Static)\n        r = staticOne(x)\n    end\n    methods (Access = private)\n        r = secret(o)\n    end\n    methods (Abstract)\n        r = abs1(o)\n    end\nend\n",
+   "messages": [
+    {
+     "id": "NOIN",
+     "line": 13,
+     "start": 9,
+     "end": 12,
+     "fix": false,
+     "text": "Method 'bare' should either be a static method or have at least one input argument."
+    }
+   ]
+  },
+  {
+   "name": "p5/lib/@Thing/extent.m",
+   "text": "function r = extent(o)\nr = o.W * 2;\nend\n",
+   "messages": []
+  },
+  {
+   "name": "p5/lib/@Thing/misnamed.m",
+   "text": "function r = othername(o)\nr = o.W;\nend\n",
+   "messages": [
+    {
+     "id": "FNDEF",
+     "line": 1,
+     "start": 14,
+     "end": 22,
+     "fix": true,
+     "text": "Function name 'othername' is known to MATLAB by its file name: 'misnamed'."
+    }
+   ]
+  },
+  {
+   "name": "p5/lib/@Thing/scale.m",
+   "text": "function r = scale(o, k)\nr = o.W * k;\nend\n",
+   "messages": []
+  },
+  {
+   "name": "p5/lib/@Thing/staticOne.m",
+   "text": "function r = staticOne(x)\nr = x;\nend\n",
+   "messages": []
+  },
+  {
+   "name": "p5/lib/@Thing/undeclared.m",
+   "text": "function r = undeclared(o)\nr = o.W;\nend\n",
+   "messages": []
+  },
+  {
+   "name": "p5/lib/@Thing/private/misprivate.m",
+   "text": "function r = otherprivate(o)\nr = o.W;\nend\n",
+   "messages": [
+    {
+     "id": "FNDEF",
+     "line": 1,
+     "start": 14,
+     "end": 25,
+     "fix": true,
+     "text": "Function name 'otherprivate' is known to MATLAB by its file name: 'misprivate'."
+    }
+   ]
+  },
+  {
+   "name": "p5/lib/@Thing/private/p5hidden.m",
+   "text": "function r = p5hidden(o)\nr = o.W;\nend\n",
+   "messages": []
+  },
+  {
+   "name": "p5/lib/@Lone/method1.m",
+   "text": "function r = other1(o)\nr = o;\nend\n",
+   "messages": [
+    {
+     "id": "FNDEF",
+     "line": 1,
+     "start": 14,
+     "end": 19,
+     "fix": true,
+     "text": "Function name 'other1' is known to MATLAB by its file name: 'method1'."
+    }
+   ]
+  },
+  {
+   "name": "p5/lib/+pkg/C.m",
+   "text": "classdef C\n    methods (Static)\n        function r = stat(x)\n            r = x;\n        end\n    end\nend\n",
+   "messages": []
+  },
+  {
+   "name": "p5/lib/+pkg/Wrongc.m",
+   "text": "classdef C\nend\n",
+   "messages": [
+    {
+     "id": "MCFIL",
+     "line": 1,
+     "start": 10,
+     "end": 10,
+     "fix": true,
+     "text": "Class name 'C' and file name do not agree: 'Wrongc'. Update the class name and constructor, if defined, or change the file name to match the class name."
+    }
+   ]
+  },
+  {
+   "name": "p5/lib/+pkg/f.m",
+   "text": "function r = f(x)\nr = x * 10;\nend\n",
+   "messages": []
+  },
+  {
+   "name": "p5/lib/+pkg/g.m",
+   "text": "function r = g(x)\nr = f(x);\nend\n",
+   "messages": []
+  },
+  {
+   "name": "p5/lib/+pkg/misnamed.m",
+   "text": "function r = othername(x)\nr = x;\nend\n",
+   "messages": [
+    {
+     "id": "FNDEF",
+     "line": 1,
+     "start": 14,
+     "end": 22,
+     "fix": true,
+     "text": "Function name 'othername' is known to MATLAB by its file name: 'misnamed'."
+    }
+   ]
+  },
+  {
+   "name": "p5/lib/+pkg/s.m",
+   "text": "disp(1)\n",
+   "messages": []
+  },
+  {
+   "name": "p5/lib/+pkg/@D/D.m",
+   "text": "classdef D\n    methods\n        r = dm(o)\n    end\nend\n",
+   "messages": []
+  },
+  {
+   "name": "p5/lib/+pkg/@D/dm.m",
+   "text": "function r = dm(o)\nr = o;\nend\n",
+   "messages": []
+  },
+  {
+   "name": "p5/lib/+pkg/@D/wrongdm.m",
+   "text": "function r = otherdm(o)\nr = o;\nend\n",
+   "messages": [
+    {
+     "id": "FNDEF",
+     "line": 1,
+     "start": 14,
+     "end": 20,
+     "fix": true,
+     "text": "Function name 'otherdm' is known to MATLAB by its file name: 'wrongdm'."
+    }
+   ]
+  },
+  {
+   "name": "p5/lib/+pkg/private/ph.m",
+   "text": "function r = ph(x)\nr = x;\nend\n",
+   "messages": []
+  },
+  {
+   "name": "p5/lib/+pkg/private/wrongph.m",
+   "text": "function r = otherph(x)\nr = x;\nend\n",
+   "messages": [
+    {
+     "id": "FNDEF",
+     "line": 1,
+     "start": 14,
+     "end": 20,
+     "fix": true,
+     "text": "Function name 'otherph' is known to MATLAB by its file name: 'wrongph'."
+    }
+   ]
+  },
+  {
+   "name": "p5more/misnamed.m",
+   "text": "function r = othername(x)\nr = x;\nend\n",
+   "messages": [
+    {
+     "id": "FNDEF",
+     "line": 1,
+     "start": 14,
+     "end": 22,
+     "fix": true,
+     "text": "Function name 'othername' is known to MATLAB by its file name: 'misnamed'."
+    }
+   ]
+  },
+  {
+   "name": "p5more/commented.m",
+   "text": "% a comment first\n\nfunction r = othercommented(x)\nr = x;\nend\n",
+   "messages": [
+    {
+     "id": "FNDEF",
+     "line": 3,
+     "start": 14,
+     "end": 27,
+     "fix": true,
+     "text": "Function name 'othercommented' is known to MATLAB by its file name: 'commented'."
+    }
+   ]
+  },
+  {
+   "name": "p5more/suppressed.m",
+   "text": "function r = othersupp(x) %#ok<FNDEF>\nr = x;\nend\n",
+   "messages": []
+  },
+  {
+   "name": "p5more/Wrongctor.m",
+   "text": "classdef Otherctor\n    methods\n        function o = Otherctor()\n            o;\n        end\n    end\nend\n",
+   "messages": [
+    {
+     "id": "MCFIL",
+     "line": 1,
+     "start": 10,
+     "end": 18,
+     "fix": true,
+     "text": "Class name 'Otherctor' and file name do not agree: 'Wrongctor'. Update the class name and constructor, if defined, or change the file name to match the class name."
+    },
+    {
+     "id": "VUNUS",
+     "line": 4,
+     "start": 13,
+     "end": 13,
+     "fix": false,
+     "text": "'o' produces a value that might be unused."
+    }
+   ]
+  },
+  {
+   "name": "p5more/Sig.m",
+   "text": "classdef Sig\n    methods\n        r = m(o)\n        r = n(o, k)\n    end\nend\n",
+   "messages": []
+  },
+  {
+   "name": "p5more/Noin.m",
+   "text": "classdef Noin\n    methods\n        function bodied\n            disp(1)\n        end\n        function r = bodiedout\n            r = 1;\n        end\n        sigline\n        r = sigout\n        function withtilde(~)\n            disp(2)\n        end\n    end\n    methods (Static)\n        function s()\n            disp(3)\n        end\n        t\n    end\n    methods (Abstract)\n        a\n    end\n    methods (Access = private)\n        function p\n            disp(4)\n        end\n    end\nend\n",
+   "messages": [
+    {
+     "id": "NOIN",
+     "line": 3,
+     "start": 18,
+     "end": 23,
+     "fix": false,
+     "text": "Method 'bodied' should either be a static method or have at least one input argument."
+    },
+    {
+     "id": "NOIN",
+     "line": 6,
+     "start": 22,
+     "end": 30,
+     "fix": false,
+     "text": "Method 'bodiedout' should either be a static method or have at least one input argument."
+    },
+    {
+     "id": "NOIN",
+     "line": 9,
+     "start": 9,
+     "end": 15,
+     "fix": false,
+     "text": "Method 'sigline' should either be a static method or have at least one input argument."
+    },
+    {
+     "id": "NOIN",
+     "line": 10,
+     "start": 13,
+     "end": 18,
+     "fix": false,
+     "text": "Method 'sigout' should either be a static method or have at least one input argument."
+    },
+    {
+     "id": "NOIN",
+     "line": 25,
+     "start": 18,
+     "end": 18,
+     "fix": false,
+     "text": "Method 'p' should either be a static method or have at least one input argument."
     }
    ]
   }

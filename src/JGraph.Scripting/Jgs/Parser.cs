@@ -1205,6 +1205,18 @@ internal sealed class Parser
             Token property = Expect(TokenType.Identifier, "a property name");
             name = name with { Text = name.Text + "." + property.Text };
         }
+        else if (_matlab)
+        {
+            // 'function r = pkg.dotted(x)' in a plain file: R2025b parses the dotted name and leaves
+            // it to the Code Analyzer (FNDEF and FNDOT on the whole name; stage P5, measured), so
+            // the file is not a syntax error here either.
+            while (Check(TokenType.Dot) && NextType == TokenType.Identifier && !Current.PrecededByWhitespace)
+            {
+                Advance();
+                Token part = Advance();
+                name = name with { Text = name.Text + "." + part.Text };
+            }
+        }
 
         var parameters = new List<string>();
         if (Match(TokenType.LParen))

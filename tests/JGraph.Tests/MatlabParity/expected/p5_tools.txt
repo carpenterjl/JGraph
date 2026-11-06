@@ -1,0 +1,104 @@
+CHK|an_misnamed|FNDEF L1 C14-22 fix1: Function name 'othername' is known to MATLAB by its file name: 'misnamed'.|exact
+CHK|an_casename|FNDEF L1 C14-21 fix1: Function name 'Casename' is known to MATLAB by its file name: 'casename'.|exact
+CHK|an_noargs|FNDEF L1 C10-20 fix1: Function name 'othernoargs' is known to MATLAB by its file name: 'noargs'.|exact
+CHK|an_twoout|FNDEF L1 C19-26 fix1: Function name 'othertwo' is known to MATLAB by its file name: 'twoout'.|exact
+CHK|an_withlocal|FNDEF L1 C14-23 fix1: Function name 'otherlocal' is known to MATLAB by its file name: 'withlocal'.|exact
+CHK|an_nested|FNDEF L1 C14-24 fix1: Function name 'othernested' is known to MATLAB by its file name: 'nested'.|exact
+CHK|an_dotted|FNDEF L1 C14-23 fix1: Function name 'pkg.dotted' is known to MATLAB by its file name: 'dotted'. / FNDOT L1 C14-23 fix0: Function name can only contain dots if it is a class method.|exact
+CHK|an_commented|FNDEF L3 C14-27 fix1: Function name 'othercommented' is known to MATLAB by its file name: 'commented'.|exact
+CHK|an_suppressed|none|exact
+CHK|an_suppressed_notok|FNDEF L1 C14-22 fix1: Function name 'othersupp' is known to MATLAB by its file name: 'suppressed'.|exact
+CHK|an_wrongclass|MCFIL L1 C10-14 fix1: Class name 'Other' and file name do not agree: 'Wrongclass'. Update the class name and constructor, if defined, or change the file name to match the class name.|exact
+CHK|an_wrongclass2|MCFIL L1 C19-24 fix1: Class name 'Other2' and file name do not agree: 'Wrongclass2'. Update the class name and constructor, if defined, or change the file name to match the class name.|exact
+CHK|an_wrongctor|MCFIL L1 C10-18 fix1: Class name 'Otherctor' and file name do not agree: 'Wrongctor'. Update the class name and constructor, if defined, or change the file name to match the class name.|exact
+CHK|an_sig|none|exact
+CHK|an_noin|NOIN L3 C18-23 fix0: Method 'bodied' should either be a static method or have at least one input argument. / NOIN L6 C22-30 fix0: Method 'bodiedout' should either be a static method or have at least one input argument. / NOIN L9 C9-15 fix0: Method 'sigline' should either be a static method or have at least one input argument. / NOIN L10 C13-18 fix0: Method 'sigout' should either be a static method or have at least one input argument. / NOIN L25 C18-18 fix0: Method 'p' should either be a static method or have at least one input argument.|exact
+CHK|an_scriptfile|none|exact
+CHK|an_good|none|exact
+CHK|an_thing_class|NOIN L13 C9-12 fix0: Method 'bare' should either be a static method or have at least one input argument.|exact
+CHK|an_thing_extent|none|exact
+CHK|an_thing_misnamed|FNDEF L1 C14-22 fix1: Function name 'othername' is known to MATLAB by its file name: 'misnamed'.|exact
+CHK|an_thing_undeclared|none|exact
+CHK|an_thing_private|none|exact
+CHK|an_thing_misprivate|FNDEF L1 C14-25 fix1: Function name 'otherprivate' is known to MATLAB by its file name: 'misprivate'.|exact
+CHK|an_mis_class|MCDIR L1 C10-14 fix0: Class name 'Wrong' and @directory name do not agree: '<root>\lib\@P5Mis\P5Mis.m'. / MCFIL L1 C10-14 fix1: Class name 'Wrong' and file name do not agree: 'P5Mis'. Update the class name and constructor, if defined, or change the file name to match the class name.|exact
+CHK|an_lone_method|FNDEF L1 C14-19 fix1: Function name 'other1' is known to MATLAB by its file name: 'method1'.|exact
+CHK|an_pkg_f|none|exact
+CHK|an_pkg_g|none|exact
+CHK|an_pkg_misnamed|FNDEF L1 C14-22 fix1: Function name 'othername' is known to MATLAB by its file name: 'misnamed'.|exact
+CHK|an_pkg_c|none|exact
+CHK|an_pkg_wrongc|MCFIL L1 C10-10 fix1: Class name 'C' and file name do not agree: 'Wrongc'. Update the class name and constructor, if defined, or change the file name to match the class name.|exact
+CHK|an_pkg_s|none|exact
+CHK|an_pkg_d|none|exact
+CHK|an_pkg_dm|none|exact
+CHK|an_pkg_wrongdm|FNDEF L1 C14-20 fix1: Function name 'otherdm' is known to MATLAB by its file name: 'wrongdm'.|exact
+CHK|an_pkg_ph|none|exact
+CHK|an_pkg_wrongph|FNDEF L1 C14-20 fix1: Function name 'otherph' is known to MATLAB by its file name: 'wrongph'.|exact
+CHK|an_both|none|exact
+CHK|sev_misnamed|FNDEF=1|exact
+CHK|sev_dotted|FNDEF=1,FNDOT=2|exact
+CHK|sev_wrongclass|MCFIL=2|exact
+CHK|sev_noin|NOIN=1,NOIN=1,NOIN=1,NOIN=1,NOIN=1|exact
+CHK|sev_mis|MCDIR=2,MCFIL=2|exact
+CHK|str_misnamed|L 1 (C 14-22): Function name 'othername' is known to MATLAB by its file name: 'misnamed'.|exact
+CHK|str_misnamed_id|L 1 (C 14-22): FNDEF: Function name 'othername' is known to MATLAB by its file name: 'misnamed'.|exact
+CHK|str_misnamed_cyc|L 1 (C 14-22): The McCabe cyclomatic complexity of 'othername' is 1./L 1 (C 14-22): Function name 'othername' is known to MATLAB by its file name: 'misnamed'.|exact
+CHK|str_wrongclass|L 1 (C 10-14): Class name 'Other' and file name do not agree: 'Wrongclass'. Update the class name and constructor, if defined, or change the file name to match the class name.|exact
+CHK|str_noin|L 3 (C 18-23): NOIN: Method 'bodied' should either be a static method or have at least one input argument./L 6 (C 22-30): NOIN: Method 'bodiedout' should either be a static method or have at least one input argument./L 9 (C 9-15): NOIN: Method 'sigline' should either be a static method or have at least one input argument./L 10 (C 13-18): NOIN: Method 'sigout' should either be a static method or have at least one input argument./L 25 (C 18): NOIN: Method 'p' should either be a static method or have at least one input argument.|exact
+CHK|str_mis|L 1 (C 10-14): MCDIR: Class name 'Wrong' and @directory name do not agree: '<root>\lib\@P5Mis\P5Mis.m'./L 1 (C 10-14): MCFIL: Class name 'Wrong' and file name do not agree: 'P5Mis'. Update the class name and constructor, if defined, or change the file name to match the class name.|exact
+CHK|name_slash|<root>\lib\@P5Thing\extent.m|exact
+CHK|name_class|<root>\lib\@P5Thing\P5Thing.m|exact
+CHK|name_bare_method|<root>\lib\@P5Thing\extent.m|exact
+CHK|name_cur_first|<root>\cur\misnamed.m|exact
+CHK|name_relative_pkg|<root>\lib\+p5pkg\g.m|exact
+CHK|name_relative_at|<root>\lib\@P5Thing\extent.m|exact
+CHK|name_relative_at_ext|<root>\lib\@P5Thing\extent.m|exact
+CHK|name_relative_class|<root>\lib\@P5Mis\P5Mis.m|exact
+CHK|name_dotted_id|MATLAB:mlint:FileNotFound|exact
+CHK|name_dotted_msg|Unable to open file "p5pkg.f". File is not found or is not a supported MATLAB code file.|exact
+CHK|name_dotted_class_id|MATLAB:mlint:FileNotFound|exact
+CHK|name_dotted_method_id|MATLAB:mlint:FileNotFound|exact
+CHK|name_function_id|MATLAB:mlint:FileNotFound|exact
+CHK|name_no_plus_id|MATLAB:mlint:FileNotFound|exact
+CHK|name_no_plus_msg|Unable to open file "p5pkg/g". File is not found or is not a supported MATLAB code file.|exact
+CHK|name_slash_nosuch_id|MATLAB:mlint:FileNotFound|exact
+CHK|name_two_files|<root>\lib\+p5pkg\g.m;<root>\lib\@P5Thing\extent.m|exact
+CHK|issues_dotted_id|codeanalysis:reports:ccrAnalysis:InvalidFile|exact
+CHK|issues_dotted_msg|Unable to open file 'p5pkg.f'. MATLAB file names (*.m, *.mlx, *.mlapp) must start with a letter, and can only contain letters, digits, or underscores.|exact
+CHK|issues_slash_id|codeanalysis:reports:ccrAnalysis:FileNotFound|exact
+CHK|issues_slash_msg|Unable to open file 'P5Thing/extent'. File is not found or is not a supported MATLAB code file.|exact
+CHK|issues_relative_id|codeanalysis:reports:ccrAnalysis:FileNotFound|exact
+CHK|issues_plain|<root>\cur\misnamed.m|exact
+CHK|name_in_lib_relative|<root>\lib\+p5pkg\g.m|exact
+CHK|name_in_lib_at|<root>\lib\@P5Thing\misnamed.m|exact
+CHK|name_in_lib_slash|<root>\lib\@P5Thing\extent.m|exact
+CHK|name_in_lib_both|<root>\lib\P5Both.m|exact
+CHK|issues_lib_files|<root>\lib\+p5pkg\@D\D.m;<root>\lib\+p5pkg\@D\dm.m;<root>\lib\+p5pkg\@D\wrongdm.m;<root>\lib\+p5pkg\C.m;<root>\lib\+p5pkg\f.m;<root>\lib\+p5pkg\g.m;<root>\lib\+p5pkg\misnamed.m;<root>\lib\+p5pkg\private\ph.m;<root>\lib\+p5pkg\private\wrongph.m;<root>\lib\+p5pkg\s.m;<root>\lib\+p5pkg\Wrongc.m;<root>\lib\@P5Lone\method1.m;<root>\lib\@P5Mis\P5Mis.m;<root>\lib\@P5Thing\extent.m;<root>\lib\@P5Thing\misnamed.m;<root>\lib\@P5Thing\P5Thing.m;<root>\lib\@P5Thing\private\misprivate.m;<root>\lib\@P5Thing\private\p5hidden.m;<root>\lib\@P5Thing\scale.m;<root>\lib\@P5Thing\staticOne.m;<root>\lib\@P5Thing\undeclared.m;<root>\lib\P5Both.m;<root>\lib\sub\plainsub.m|exact
+CHK|issues_lib_rows|<root>\lib\+p5pkg\@D\wrongdm.m FNDEF L1 C14-20 / <root>\lib\+p5pkg\Wrongc.m MCFIL L1 C10-10 / <root>\lib\+p5pkg\misnamed.m FNDEF L1 C14-22 / <root>\lib\+p5pkg\private\wrongph.m FNDEF L1 C14-20 / <root>\lib\@P5Lone\method1.m FNDEF L1 C14-19 / <root>\lib\@P5Mis\P5Mis.m MCDIR L1 C10-14 / <root>\lib\@P5Mis\P5Mis.m MCFIL L1 C10-14 / <root>\lib\@P5Thing\P5Thing.m NOIN L13 C9-12 / <root>\lib\@P5Thing\misnamed.m FNDEF L1 C14-22 / <root>\lib\@P5Thing\private\misprivate.m FNDEF L1 C14-25 / <root>\lib\sub\plainsub.m FNDEF L1 C14-21|exact
+CHK|issues_lib_all_files|<root>\lib\+p5pkg\@D\D.m;<root>\lib\+p5pkg\@D\dm.m;<root>\lib\+p5pkg\@D\wrongdm.m;<root>\lib\+p5pkg\C.m;<root>\lib\+p5pkg\f.m;<root>\lib\+p5pkg\g.m;<root>\lib\+p5pkg\misnamed.m;<root>\lib\+p5pkg\private\ph.m;<root>\lib\+p5pkg\private\wrongph.m;<root>\lib\+p5pkg\s.m;<root>\lib\+p5pkg\Wrongc.m;<root>\lib\@P5Lone\method1.m;<root>\lib\@P5Mis\P5Mis.m;<root>\lib\@P5Thing\extent.m;<root>\lib\@P5Thing\misnamed.m;<root>\lib\@P5Thing\P5Thing.m;<root>\lib\@P5Thing\private\misprivate.m;<root>\lib\@P5Thing\private\p5hidden.m;<root>\lib\@P5Thing\scale.m;<root>\lib\@P5Thing\staticOne.m;<root>\lib\@P5Thing\undeclared.m;<root>\lib\P5Both.m;<root>\lib\sub\plainsub.m|exact
+CHK|issues_thing_files|<root>\lib\@P5Thing\extent.m;<root>\lib\@P5Thing\misnamed.m;<root>\lib\@P5Thing\P5Thing.m;<root>\lib\@P5Thing\private\misprivate.m;<root>\lib\@P5Thing\private\p5hidden.m;<root>\lib\@P5Thing\scale.m;<root>\lib\@P5Thing\staticOne.m;<root>\lib\@P5Thing\undeclared.m|exact
+CHK|issues_pkg_files|<root>\lib\+p5pkg\@D\D.m;<root>\lib\+p5pkg\@D\dm.m;<root>\lib\+p5pkg\@D\wrongdm.m;<root>\lib\+p5pkg\C.m;<root>\lib\+p5pkg\f.m;<root>\lib\+p5pkg\g.m;<root>\lib\+p5pkg\misnamed.m;<root>\lib\+p5pkg\private\ph.m;<root>\lib\+p5pkg\private\wrongph.m;<root>\lib\+p5pkg\s.m;<root>\lib\+p5pkg\Wrongc.m|exact
+CHK|issues_misnamed_severity|warning|exact
+CHK|issues_misnamed_fixability|auto|exact
+CHK|issues_misnamed_checkid|FNDEF|exact
+CHK|issues_misnamed_columns|1 1 14 22|exact
+CHK|fix_fndef_status|1 FNDEF 1 1 14 22|exact
+CHK|fix_fndef_issues_left|0|exact
+CHK|fix_fndef_line1|function r = misnamed(x)|exact
+CHK|fix_mcfil_line1|classdef Wrongctor|exact
+CHK|fix_mcfil_line3|        function o = Wrongctor()|exact
+CHK|fix_mcfil_issues_left|0|exact
+CHK|fix_fndef_commented_line3|function r = commented(x)|exact
+CHK|help_slash_method|EXTENT  twice the width|exact
+CHK|type_slash_method|function r = extent(o)|exact
+CHK|type_relative_method|function r = scale(o, k)|exact
+CHK|edit_dotted||exact
+CHK|edit_dotted_command||exact
+CHK|edit_slash||exact
+CHK|edit_class||exact
+CHK|edit_dotted_method||exact
+CHK|edit_relative||exact
+CHK|edit_file||exact
+CHK|edit_plain||exact
+CHK|edit_number_id|MATLAB:validators:mustBeTextScalar|exact
+CHK|edit_number_msg|Invalid argument at position 1. Value must be a character vector or string scalar.|exact

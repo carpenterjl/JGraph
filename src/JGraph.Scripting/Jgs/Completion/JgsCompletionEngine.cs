@@ -35,9 +35,11 @@ public static class JgsCompletionEngine
     /// <param name="live">In a MATLAB buffer, the names a session knows (ADR 0183): what follows a dotted
     /// .NET name, and the libraries and functions inside <c>calllib('…'</c>. Null asks
     /// <see cref="InteropCompletion.Framework"/>, which knows the .NET framework and no library.</param>
+    /// <param name="filePath">The buffer's file, when it has one: a method file in an <c>@Class</c> folder
+    /// completes its object's members after a dot (stage P5, ADR 0311).</param>
     public static JgsCompletionResult GetCompletions(
         string code, int offset, IReadOnlyList<CompletionItem>? workspaceSymbols = null, bool matlab = false,
-        IScriptCompletionSource? live = null)
+        IScriptCompletionSource? live = null, string? filePath = null)
     {
         ArgumentNullException.ThrowIfNull(code);
         offset = System.Math.Clamp(offset, 0, code.Length);
@@ -65,13 +67,17 @@ public static class JgsCompletionEngine
             if (!IsInStringOrComment(code, replaceStart, matlab) && DottedQualifier(code, replaceStart) is { } qualifier)
             {
                 string typed = code[replaceStart..offset];
-                // app. in a class file is the class's own members (U7). jgraph and its packages are
-                // JGraph's own (ADR 0197); every other dotted name is .NET's.
-                IEnumerable<CompletionItem> offered = ClassCompletion.Members(code, qualifier) is { } ofClass
-                    ? ofClass
-                    : DeviceCompletion.PackageMembers(qualifier) is { } package
-                        ? package.Concat(names.Members(qualifier))
-                        : names.Members(qualifier);
+                // app. in a class file is the class's own members (U7), with what its @ folder holds
+                // when a session can read it (P5); o. in a method file is the folder's class's members;
+                // jgraph and its packages are JGraph's own (ADR 0197); every other dotted name is the
+                // session's packages and classes (P5) and then .NET's.
+                IEnumerable<CompletionItem> offered = ClassCompletion.Members(code, qualifier, out string? ownClass) is { } ofClass
+                    ? live is null ? ofClass : ofClass.Concat(live.ClassMembers(ownClass!))
+                    : live is not null && filePath is not null && JgsCodeTree.ClassFolderOf(filePath) is { } folderClass && ClassCompletion.IsMethodFileObject(code, qualifier)
+                        ? live.ClassMembers(JgsCodeTree.PackagePrefix(filePath) + folderClass)
+                        : DeviceCompletion.PackageMembers(qualifier) is { } package
+                            ? package.Concat(names.Members(qualifier))
+                            : names.Members(qualifier);
                 var members = offered
                     .Where(i => i.Text.StartsWith(typed, StringComparison.OrdinalIgnoreCase))
                     .DistinctBy(static i => i.Text)

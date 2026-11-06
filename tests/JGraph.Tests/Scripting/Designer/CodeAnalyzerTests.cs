@@ -95,6 +95,45 @@ public class CodeAnalyzerTests
         Assert.Equal("SCABE", script.Complexity[0].McCabeMessage.Id);
     }
 
+    /// <summary>
+    /// The checks of a name against its file (stage P5, ADR 0311): FNDEF's fix writes the file's name over
+    /// the function's; MCFIL's renames the class and its constructor; MCDIR names the file's path when its
+    /// <c>@</c> folder disagrees and offers no fix; NOIN sits on a signature line's name as on a bodied
+    /// method's; a signature line raises nothing else.
+    /// </summary>
+    [Fact]
+    public void NameChecks_FixTheNameAndReadTheClassFolder()
+    {
+        const string misnamed = "function r = othername(x)\nr = x;\nend\n";
+        CodeAnalysis analysis = JgsCodeAnalyzer.Analyze(misnamed, "misnamed.m");
+        CodeMessage fndef = Assert.Single(analysis.Messages);
+        Assert.Equal(("FNDEF", CodeSeverity.Warning, 1, 14, 22, true), (fndef.Id, fndef.Severity, fndef.Line, fndef.StartColumn, fndef.EndColumn, fndef.Fixable));
+        Assert.Equal("function r = misnamed(x)\nr = x;\nend\n", CodeFixer.Apply(misnamed, fndef.Fix!));
+
+        const string wrongCtor = "classdef Otherctor\n    methods\n        function o = Otherctor()\n            disp(o)\n        end\n    end\nend\n";
+        CodeMessage mcfil = Assert.Single(JgsCodeAnalyzer.Analyze(wrongCtor, "Wrongctor.m").Messages);
+        Assert.Equal(("MCFIL", CodeSeverity.Error, 1, 10, 18, true), (mcfil.Id, mcfil.Severity, mcfil.Line, mcfil.StartColumn, mcfil.EndColumn, mcfil.Fixable));
+        string[] renamed = CodeFixer.Apply(wrongCtor, mcfil.Fix!).Split('\n');
+        Assert.Equal("classdef Wrongctor", renamed[0]);
+        Assert.Equal("        function o = Wrongctor()", renamed[2]);
+
+        string folder = Path.Combine(Path.GetTempPath(), "jgraph-p5-mcdir-" + Guid.NewGuid().ToString("N"), "@Mis");
+        string file = Path.Combine(folder, "Mis.m");
+        List<CodeMessage> inFolder = [.. JgsCodeAnalyzer.Analyze("classdef Wrong\nend\n", file).Messages];
+        Assert.Equal(["MCDIR", "MCFIL"], inFolder.Select(static m => m.Id));
+        Assert.Equal($"Class name 'Wrong' and @directory name do not agree: '{file}'.", inFolder[0].Text);
+        Assert.Equal((CodeSeverity.Error, 1, 10, 14, false), (inFolder[0].Severity, inFolder[0].Line, inFolder[0].StartColumn, inFolder[0].EndColumn, inFolder[0].Fixable));
+        Assert.Empty(JgsCodeAnalyzer.Analyze("classdef Mis\nend\n", file).Messages); // nothing when they agree
+
+        const string signatures = "classdef Sig\n    methods\n        r = m(o)\n        [a, b] = two(o, k)\n        bare\n        r = noin\n    end\n    methods (Static)\n        s\n    end\n    methods (Abstract)\n        a\n    end\nend\n";
+        var noin = JgsCodeAnalyzer.Analyze(signatures, "Sig.m").Messages.Select(static m => (m.Id, m.Line, m.StartColumn, m.EndColumn, m.Text)).ToList();
+        Assert.Equal(
+        [
+            ("NOIN", 5, 9, 12, "Method 'bare' should either be a static method or have at least one input argument."),
+            ("NOIN", 6, 13, 16, "Method 'noin' should either be a static method or have at least one input argument."),
+        ], noin);
+    }
+
     [Fact]
     public void ParseError_IsOneSynerMessageAtTheToken()
     {

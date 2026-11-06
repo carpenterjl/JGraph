@@ -24,13 +24,17 @@ internal sealed partial class ScopeAnalysis
     private readonly List<(FnStmt Function, Scope Scope)> _candidates = [];
     private bool _usesEval;
 
-    public ScopeAnalysis(SourceSpans spans, List<CodeMessage> sink, List<CodeComplexity> complexity, string stem)
+    public ScopeAnalysis(SourceSpans spans, List<CodeMessage> sink, List<CodeComplexity> complexity, string stem, string? fileName = null)
     {
         _spans = spans;
         _sink = sink;
         _complexity = complexity;
         _stem = stem;
+        _fileName = fileName;
     }
+
+    /// <summary>The file's name or path as the analysis was asked, for MCDIR's text and the <c>@</c> folder it reads.</summary>
+    private readonly string? _fileName;
 
     private enum AssignKind
     {
@@ -75,6 +79,9 @@ internal sealed partial class ScopeAnalysis
         public bool IsMethod;
         public bool IsStatic;
         public bool IsMain;
+
+        /// <summary>A class's constructor: its output is the object being built, never unset (R2025b raises no STOUT there; stage P5, measured).</summary>
+        public bool IsConstructor;
         public readonly List<string> Parameters = [];
         public readonly List<string> Outputs = [];
         public readonly HashSet<string> Assigned = new(StringComparer.Ordinal);
@@ -167,15 +174,31 @@ internal sealed partial class ScopeAnalysis
                 switch (statement)
                 {
                     case FnStmt function:
+                        if (first)
+                        {
+                            CheckMainName(function);
+                        }
+
                         AnalyzeFunction(function, parent: null, isMethod: false, isStatic: false, isMain: first, candidate: !first);
                         first = false;
                         break;
                     case ClassdefStmt classdef:
+                        CheckClassName(classdef);
                         foreach (ClassMethod method in classdef.Methods)
                         {
-                            if (!method.Abstract && method.Function.Body.Count + method.Function.Parameters.Count > 0)
+                            bool constructor = string.Equals(method.Function.Name, classdef.Name, StringComparison.Ordinal);
+
+                            // A method with no input in a block that is not Static (or Abstract): R2025b's NOIN
+                            // over a bodied method and a signature line alike, the constructor excepted (stage P5, measured).
+                            if (!method.Static && !method.Abstract && !constructor && method.Function.Parameters.Count == 0)
                             {
-                                AnalyzeFunction(method.Function, parent: null, isMethod: true, isStatic: method.Static, isMain: false, candidate: false);
+                                Emit(CodeChecks.NOIN, _spans.SignatureName(method.Function), text: string.Format(CodeChecks.NOIN.Text, method.Function.Name));
+                            }
+
+                            // A signature line has no body to walk: its file is a function of its own (P4).
+                            if (!method.Abstract && !method.Signature && method.Function.Body.Count + method.Function.Parameters.Count > 0)
+                            {
+                                AnalyzeFunction(method.Function, parent: null, isMethod: true, isStatic: method.Static, isMain: false, candidate: false, isConstructor: constructor);
                             }
                         }
 
@@ -191,9 +214,65 @@ internal sealed partial class ScopeAnalysis
         Resolve();
     }
 
-    private void AnalyzeFunction(FnStmt function, Scope? parent, bool isMethod, bool isStatic, bool isMain, bool candidate)
+    /// <summary>
+    /// FNDEF and FNDOT over a file's main function (the packages and class folders plan, stage P5, ADR 0311):
+    /// a name that is not the file's, case and all, is known by the file's name (a fix writes the file's);
+    /// a dotted name is refused as well, at the same span. R2025b checks the first function alone, in a
+    /// package, a class folder and a private folder as in a plain one (measured).
+    /// </summary>
+    private void CheckMainName(FnStmt function)
     {
-        var scope = new Scope { Function = function, Parent = parent, IsMethod = isMethod, IsStatic = isStatic, IsMain = isMain };
+        if (_stem.Length == 0)
+        {
+            return;
+        }
+
+        Span name = _spans.Signature(function).Name;
+        if (!string.Equals(function.Name, _stem, StringComparison.Ordinal))
+        {
+            Emit(CodeChecks.FNDEF, name, CodeFix.Of(name.Line, name.Start, name.End, _stem), string.Format(CodeChecks.FNDEF.Text, function.Name, _stem));
+        }
+
+        if (function.Name.Contains('.', StringComparison.Ordinal))
+        {
+            Emit(CodeChecks.FNDOT, name);
+        }
+    }
+
+    /// <summary>
+    /// MCDIR and MCFIL over a class file (stage P5, ADR 0311): a class named otherwise than its <c>@</c>
+    /// folder is refused with the file's path in the text and no fix; one named otherwise than its file
+    /// is refused with a fix that renames the class and its constructor. Both sit on the class name.
+    /// </summary>
+    private void CheckClassName(ClassdefStmt classdef)
+    {
+        if (_stem.Length == 0 || string.Equals(classdef.Name, _stem, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        var name = new Span(classdef.Line, classdef.NameColumn, classdef.NameColumn + classdef.Name.Length - 1);
+        if (_fileName is { } file && Path.GetFileName(Path.GetDirectoryName(file) ?? string.Empty) is { Length: > 1 } folder && folder[0] == '@')
+        {
+            Emit(CodeChecks.MCDIR, name, text: string.Format(CodeChecks.MCDIR.Text, classdef.Name, file));
+        }
+
+        var edits = new List<CodeEdit> { new(name.Line, name.Start, name.End, _stem) };
+        foreach (ClassMethod method in classdef.Methods)
+        {
+            if (string.Equals(method.Function.Name, classdef.Name, StringComparison.Ordinal))
+            {
+                Span constructor = _spans.SignatureName(method.Function);
+                edits.Add(new CodeEdit(constructor.Line, constructor.Start, constructor.End, _stem));
+            }
+        }
+
+        Emit(CodeChecks.MCFIL, name, new CodeFix(edits), string.Format(CodeChecks.MCFIL.Text, classdef.Name, _stem));
+    }
+
+    private void AnalyzeFunction(FnStmt function, Scope? parent, bool isMethod, bool isStatic, bool isMain, bool candidate, bool isConstructor = false)
+    {
+        var scope = new Scope { Function = function, Parent = parent, IsMethod = isMethod, IsStatic = isStatic, IsMain = isMain, IsConstructor = isConstructor };
         scope.Parameters.AddRange(function.Parameters);
         scope.Outputs.AddRange(function.Outputs);
         PreScan(function.Body, scope);
@@ -1310,7 +1389,7 @@ internal sealed partial class ScopeAnalysis
             for (int i = 0; i < function.Outputs.Count && i < outputs.Count; i++)
             {
                 string o = function.Outputs[i];
-                if (!assignsByName.ContainsKey(o) && !scope.Shared.Contains(o) && !scope.MentionedByNested.Contains(o))
+                if (!assignsByName.ContainsKey(o) && !scope.Shared.Contains(o) && !scope.MentionedByNested.Contains(o) && !scope.IsConstructor)
                 {
                     Emit(CodeChecks.STOUT, outputs[i]);
                 }

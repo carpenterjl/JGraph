@@ -444,6 +444,7 @@ internal static class JgsBuiltinOutputCounts
         ["edge"] = (4, true),
         ["edge3"] = (1, true),
         ["edgetaper"] = (1, true),
+        ["edit"] = (1, true),
         ["edr"] = (3, true),
         ["eig"] = (3, false),
         ["eigs"] = (3, true),

@@ -1,0 +1,105 @@
+MSG|misnamed.m|FNDEF|1|[14 22]|1|1|Function name 'othername' is known to MATLAB by its file name: 'misnamed'.
+== checkcode misnamed.m
+<a href="matlab: opentoline('<work>/misnamed.m',1)">L 1</a> (C 14-22): Function name 'othername' is known to MATLAB by its file name: 'misnamed'.
+
+<EOS>
+== checkcode -id misnamed.m
+<a href="matlab: opentoline('<work>/misnamed.m',1)">L 1</a> (C 14-22): FNDEF: Function name 'othername' is known to MATLAB by its file name: 'misnamed'.
+
+<EOS>
+== mlint misnamed.m
+<a href="matlab: opentoline('<work>/misnamed.m',1)">L 1</a> (C 14-22): Function name 'othername' is known to MATLAB by its file name: 'misnamed'.
+
+<EOS>
+MSG|dotted.m|FNDEF|1|[14 23]|1|1|Function name 'pkg.dotted' is known to MATLAB by its file name: 'dotted'.
+MSG|dotted.m|FNDOT|1|[14 23]|0|2|Function name can only contain dots if it is a class method.
+== checkcode dotted.m
+<a href="matlab: opentoline('<work>/dotted.m',1)">L 1</a> (C 14-23): Function name 'pkg.dotted' is known to MATLAB by its file name: 'dotted'.
+<a href="matlab: opentoline('<work>/dotted.m',1)">L 1</a> (C 14-23): Function name can only contain dots if it is a class method.
+
+<EOS>
+== checkcode -id dotted.m
+<a href="matlab: opentoline('<work>/dotted.m',1)">L 1</a> (C 14-23): FNDEF: Function name 'pkg.dotted' is known to MATLAB by its file name: 'dotted'.
+<a href="matlab: opentoline('<work>/dotted.m',1)">L 1</a> (C 14-23): FNDOT: Function name can only contain dots if it is a class method.
+
+<EOS>
+== mlint dotted.m
+<a href="matlab: opentoline('<work>/dotted.m',1)">L 1</a> (C 14-23): Function name 'pkg.dotted' is known to MATLAB by its file name: 'dotted'.
+<a href="matlab: opentoline('<work>/dotted.m',1)">L 1</a> (C 14-23): Function name can only contain dots if it is a class method.
+
+<EOS>
+MSG|Wrongctor.m|MCFIL|1|[10 18]|1|2|Class name 'Otherctor' and file name do not agree: 'Wrongctor'. Update the class name and constructor, if defined, or change the file name to match the class name.
+== checkcode Wrongctor.m
+<a href="matlab: opentoline('<work>/Wrongctor.m',1)">L 1</a> (C 10-18): Class name 'Otherctor' and file name do not agree: 'Wrongctor'. Update the class name and constructor, if defined, or change the file name to match the class name.
+
+<EOS>
+== checkcode -id Wrongctor.m
+<a href="matlab: opentoline('<work>/Wrongctor.m',1)">L 1</a> (C 10-18): MCFIL: Class name 'Otherctor' and file name do not agree: 'Wrongctor'. Update the class name and constructor, if defined, or change the file name to match the class name.
+
+<EOS>
+== mlint Wrongctor.m
+<a href="matlab: opentoline('<work>/Wrongctor.m',1)">L 1</a> (C 10-18): Class name 'Otherctor' and file name do not agree: 'Wrongctor'. Update the class name and constructor, if defined, or change the file name to match the class name.
+
+<EOS>
+MSG|Noin.m|NOIN|3|[18 23]|0|1|Method 'bodied' should either be a static method or have at least one input argument.
+MSG|Noin.m|NOIN|6|[9 15]|0|1|Method 'sigline' should either be a static method or have at least one input argument.
+== checkcode Noin.m
+<a href="matlab: opentoline('<work>/Noin.m',3)">L 3</a> (C 18-23): Method 'bodied' should either be a static method or have at least one input argument.
+<a href="matlab: opentoline('<work>/Noin.m',6)">L 6</a> (C 9-15): Method 'sigline' should either be a static method or have at least one input argument.
+
+<EOS>
+== checkcode -id Noin.m
+<a href="matlab: opentoline('<work>/Noin.m',3)">L 3</a> (C 18-23): NOIN: Method 'bodied' should either be a static method or have at least one input argument.
+<a href="matlab: opentoline('<work>/Noin.m',6)">L 6</a> (C 9-15): NOIN: Method 'sigline' should either be a static method or have at least one input argument.
+
+<EOS>
+== mlint Noin.m
+<a href="matlab: opentoline('<work>/Noin.m',3)">L 3</a> (C 18-23): Method 'bodied' should either be a static method or have at least one input argument.
+<a href="matlab: opentoline('<work>/Noin.m',6)">L 6</a> (C 9-15): Method 'sigline' should either be a static method or have at least one input argument.
+
+<EOS>
+MSG|@Mis\Mis.m|MCDIR|1|[10 14]|0|2|Class name 'Wrong' and @directory name do not agree: '<work>\@Mis\Mis.m'.
+MSG|@Mis\Mis.m|MCFIL|1|[10 14]|1|2|Class name 'Wrong' and file name do not agree: 'Mis'. Update the class name and constructor, if defined, or change the file name to match the class name.
+== checkcode @Mis\Mis.m
+<a href="matlab: opentoline('<work>/@Mis/Mis.m',1)">L 1</a> (C 10-14): Class name 'Wrong' and @directory name do not agree: '<work>\@Mis\Mis.m'.
+<a href="matlab: opentoline('<work>/@Mis/Mis.m',1)">L 1</a> (C 10-14): Class name 'Wrong' and file name do not agree: 'Mis'. Update the class name and constructor, if defined, or change the file name to match the class name.
+
+<EOS>
+== checkcode -id @Mis\Mis.m
+<a href="matlab: opentoline('<work>/@Mis/Mis.m',1)">L 1</a> (C 10-14): MCDIR: Class name 'Wrong' and @directory name do not agree: '<work>\@Mis\Mis.m'.
+<a href="matlab: opentoline('<work>/@Mis/Mis.m',1)">L 1</a> (C 10-14): MCFIL: Class name 'Wrong' and file name do not agree: 'Mis'. Update the class name and constructor, if defined, or change the file name to match the class name.
+
+<EOS>
+== mlint @Mis\Mis.m
+<a href="matlab: opentoline('<work>/@Mis/Mis.m',1)">L 1</a> (C 10-14): Class name 'Wrong' and @directory name do not agree: '<work>\@Mis\Mis.m'.
+<a href="matlab: opentoline('<work>/@Mis/Mis.m',1)">L 1</a> (C 10-14): Class name 'Wrong' and file name do not agree: 'Mis'. Update the class name and constructor, if defined, or change the file name to match the class name.
+
+<EOS>
+== codeIssues display
+  <a href="matlab:helpPopup('codeIssues')" style="font-weight:bold">codeIssues</a> with properties:
+
+                         Date: 06-Nov-2026 07:53:11
+                      Release: "R2025b"
+                        Files: "<work>\misnamed.m"
+    CodeAnalyzerConfiguration: "active"
+                       Issues: [1×10 table]
+             SuppressedIssues: [0×11 table]
+
+
+    Issues table preview
+
+      <strong>Location</strong>      <strong>Severity</strong>    <strong>Fixability</strong>                                    <strong>Description</strong>                                     <strong>CheckID</strong>    <strong>LineStart</strong>    <strong>LineEnd</strong>    <strong>ColumnStart</strong>    <strong>ColumnEnd</strong>                                           <strong>FullFilename</strong>                                       
+    <strong>____________</strong>    <strong>________</strong>    <strong>__________</strong>    <strong>____________________________________________________________________________</strong>    <strong>_______</strong>    <strong>_________</strong>    <strong>_______</strong>    <strong>___________</strong>    <strong>_________</strong>    <strong>__________________________________________________________________________________________</strong>
+
+    "misnamed.m"    warning        auto       "Function name 'othername' is known to MATLAB by its file name: 'misnamed'."     FNDEF         1           1           14            22        "<work>\misnamed.m"
+
+
+
+<EOS>
+      <strong>Location</strong>      <strong>Severity</strong>    <strong>Fixability</strong>                                    <strong>Description</strong>                                     <strong>CheckID</strong>    <strong>LineStart</strong>    <strong>LineEnd</strong>    <strong>ColumnStart</strong>    <strong>ColumnEnd</strong>                                           <strong>FullFilename</strong>                                       
+    <strong>____________</strong>    <strong>________</strong>    <strong>__________</strong>    <strong>____________________________________________________________________________</strong>    <strong>_______</strong>    <strong>_________</strong>    <strong>_______</strong>    <strong>___________</strong>    <strong>_________</strong>    <strong>__________________________________________________________________________________________</strong>
+
+    "misnamed.m"    warning        auto       "Function name 'othername' is known to MATLAB by its file name: 'misnamed'."     FNDEF         1           1           14            22        "<work>\misnamed.m"
+
+<EOS>
+done

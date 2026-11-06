@@ -1,0 +1,103 @@
+== messages
+MSG|<work>\plain\Wrongclass.m|MCFIL|1|[10 14]|1|Class name 'Other' and file name do not agree: 'Wrongclass'. Update the class name and constructor, if defined, or change the file name to match the class name.
+MSG|<work>\plain\Wrongclass2.m|MCFIL|1|[19 24]|1|Class name 'Other2' and file name do not agree: 'Wrongclass2'. Update the class name and constructor, if defined, or change the file name to match the class name.
+MSG|<work>\plain\casename.m|FNDEF|1|[14 21]|1|Function name 'Casename' is known to MATLAB by its file name: 'casename'.
+MSG|<work>\plain\dotted.m|FNDEF|1|[14 23]|1|Function name 'pkg.dotted' is known to MATLAB by its file name: 'dotted'.
+MSG|<work>\plain\dotted.m|FNDOT|1|[14 23]|0|Function name can only contain dots if it is a class method.
+MSG|<work>\plain\good.m|none
+MSG|<work>\plain\misnamed.m|FNDEF|1|[14 22]|1|Function name 'othername' is known to MATLAB by its file name: 'misnamed'.
+MSG|<work>\plain\nested.m|FNDEF|1|[14 24]|1|Function name 'othernested' is known to MATLAB by its file name: 'nested'.
+MSG|<work>\plain\noargs.m|FNDEF|1|[10 20]|1|Function name 'othernoargs' is known to MATLAB by its file name: 'noargs'.
+MSG|<work>\plain\noend.m|FNDEF|1|[14 23]|1|Function name 'othernoend' is known to MATLAB by its file name: 'noend'.
+MSG|<work>\plain\scriptfile.m|none
+MSG|<work>\plain\twoout.m|FNDEF|1|[19 26]|1|Function name 'othertwo' is known to MATLAB by its file name: 'twoout'.
+MSG|<work>\plain\withlocal.m|FNDEF|1|[14 23]|1|Function name 'otherlocal' is known to MATLAB by its file name: 'withlocal'.
+MSG|<work>\lib\Both.m|none
+MSG|<work>\lib\@Thing\Thing.m|NOIN|13|[9 12]|0|Method 'bare' should either be a static method or have at least one input argument.
+MSG|<work>\lib\@Thing\extent.m|none
+MSG|<work>\lib\@Thing\misnamed.m|FNDEF|1|[14 22]|1|Function name 'othername' is known to MATLAB by its file name: 'misnamed'.
+MSG|<work>\lib\@Thing\scale.m|none
+MSG|<work>\lib\@Thing\staticOne.m|none
+MSG|<work>\lib\@Thing\undeclared.m|none
+MSG|<work>\lib\@Thing\private\misprivate.m|FNDEF|1|[14 25]|1|Function name 'otherprivate' is known to MATLAB by its file name: 'misprivate'.
+MSG|<work>\lib\@Thing\private\p5hidden.m|none
+MSG|<work>\lib\@Mis\Mis.m|MCDIR|1|[10 14]|0|Class name 'Wrong' and @directory name do not agree: 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\p5\rt\p5\lib\@Mis\Mis.m'.
+MSG|<work>\lib\@Mis\Mis.m|MCFIL|1|[10 14]|1|Class name 'Wrong' and file name do not agree: 'Mis'. Update the class name and constructor, if defined, or change the file name to match the class name.
+MSG|<work>\lib\@Lone\method1.m|FNDEF|1|[14 19]|1|Function name 'other1' is known to MATLAB by its file name: 'method1'.
+MSG|<work>\lib\+pkg\C.m|none
+MSG|<work>\lib\+pkg\Wrongc.m|MCFIL|1|[10 10]|1|Class name 'C' and file name do not agree: 'Wrongc'. Update the class name and constructor, if defined, or change the file name to match the class name.
+MSG|<work>\lib\+pkg\f.m|none
+MSG|<work>\lib\+pkg\g.m|none
+MSG|<work>\lib\+pkg\misnamed.m|FNDEF|1|[14 22]|1|Function name 'othername' is known to MATLAB by its file name: 'misnamed'.
+MSG|<work>\lib\+pkg\s.m|none
+MSG|<work>\lib\+pkg\@D\D.m|none
+MSG|<work>\lib\+pkg\@D\dm.m|none
+MSG|<work>\lib\+pkg\@D\wrongdm.m|FNDEF|1|[14 20]|1|Function name 'otherdm' is known to MATLAB by its file name: 'wrongdm'.
+MSG|<work>\lib\+pkg\private\ph.m|none
+MSG|<work>\lib\+pkg\private\wrongph.m|FNDEF|1|[14 20]|1|Function name 'otherph' is known to MATLAB by its file name: 'wrongph'.
+== display
+== checkcode plain/misnamed.m
+ERR|MATLAB:UndefinedFunction|Unrecognized function or variable 'plain'.
+== checkcode -id plain/misnamed.m
+ERR|MATLAB:UndefinedFunction|Unrecognized function or variable 'plain'.
+== mlint plain/misnamed.m
+ERR|MATLAB:UndefinedFunction|Unrecognized function or variable 'plain'.
+== checkcode -string Wrongclass.m
+L 1 (C 10-14): Class name 'Other' and file name do not agree: 'Wrongclass'. Update the class name and constructor, if defined, or change the file name to match the class name.
+<EOS>
+== checkcode -struct -severity misnamed
+ERR|MATLAB:UndefinedFunction|Unrecognized function or variable 'plain'.
+== name forms (lib on the path, cwd = plain)
+REFUSED: checkcode('pkg.f') -> MATLAB:mlint:FileNotFound: Unable to open file "pkg.f". File is not found or is not a supported MATLAB code file.
+REFUSED: checkcode('pkg.C') -> MATLAB:mlint:FileNotFound: Unable to open file "pkg.C". File is not found or is not a supported MATLAB code file.
+ACCEPTED: checkcode('Thing/extent') -> struct
+ACCEPTED: checkcode('Thing') -> struct
+ACCEPTED: checkcode('extent') -> struct
+ACCEPTED: checkcode('Both') -> struct
+ACCEPTED: checkcode('misnamed') -> struct
+REFUSED: checkcode('othername') -> MATLAB:mlint:FileNotFound: Unable to open file "othername". File is not found or is not a supported MATLAB code file.
+ACCEPTED: checkcode('+pkg/g') -> struct
+ACCEPTED: checkcode('@Thing/extent') -> struct
+REFUSED: codeIssues('pkg.f') -> codeanalysis:reports:ccrAnalysis:InvalidFile: Unable to open file 'pkg.f'. MATLAB file names (*.m, *.mlx, *.mlapp) must start with a letter, and can only contain letters, digits, or underscores.
+REFUSED: codeIssues('Thing/extent') -> codeanalysis:reports:ccrAnalysis:FileNotFound: Unable to open file 'Thing/extent'. File is not found or is not a supported MATLAB code file.
+== name forms (cwd = lib)
+ACCEPTED: checkcode('+pkg/g') -> struct
+ACCEPTED: checkcode('+pkg/g.m') -> struct
+ACCEPTED: checkcode('@Thing/extent') -> struct
+ACCEPTED: checkcode('@Thing/misnamed') -> <a href="matlab: opentoline('<work>/lib/@Thing/misnamed.m',1)">L 1</a> (C 14-22): Function name 'othername' is known to MATLAB by its file name: 'misnamed'.
+
+<EOS>
+ACCEPTED: checkcode('Thing/extent') -> struct
+REFUSED: checkcode('pkg/g') -> MATLAB:mlint:FileNotFound: Unable to open file "pkg/g". File is not found or is not a supported MATLAB code file.
+ACCEPTED: checkcode('Both') -> struct
+two files: <work>\lib\+pkg\g.m ; <work>\lib\@Thing\extent.m
+== codeIssues
+Files (22): <work>\lib\+pkg\@D\D.m ; <work>\lib\+pkg\@D\dm.m ; <work>\lib\+pkg\@D\wrongdm.m ; <work>\lib\+pkg\C.m ; <work>\lib\+pkg\f.m ; <work>\lib\+pkg\g.m ; <work>\lib\+pkg\misnamed.m ; <work>\lib\+pkg\private\ph.m ; <work>\lib\+pkg\private\wrongph.m ; <work>\lib\+pkg\s.m ; <work>\lib\+pkg\Wrongc.m ; <work>\lib\@Lone\method1.m ; <work>\lib\@Mis\Mis.m ; <work>\lib\@Thing\extent.m ; <work>\lib\@Thing\misnamed.m ; <work>\lib\@Thing\private\misprivate.m ; <work>\lib\@Thing\private\p5hidden.m ; <work>\lib\@Thing\scale.m ; <work>\lib\@Thing\staticOne.m ; <work>\lib\@Thing\Thing.m ; <work>\lib\@Thing\undeclared.m ; <work>\lib\Both.m
+ISSUE|<work>\lib\+pkg\@D\wrongdm.m|FNDEF|1|14|20|Function name 'otherdm' is known to MATLAB by its file name: 'wrongdm'.
+ISSUE|<work>\lib\+pkg\Wrongc.m|MCFIL|1|10|10|Class name 'C' and file name do not agree: 'Wrongc'. Update the class name and constructor, if defined, or change the file name to match the class name.
+ISSUE|<work>\lib\+pkg\misnamed.m|FNDEF|1|14|22|Function name 'othername' is known to MATLAB by its file name: 'misnamed'.
+ISSUE|<work>\lib\+pkg\private\wrongph.m|FNDEF|1|14|20|Function name 'otherph' is known to MATLAB by its file name: 'wrongph'.
+ISSUE|<work>\lib\@Lone\method1.m|FNDEF|1|14|19|Function name 'other1' is known to MATLAB by its file name: 'method1'.
+ISSUE|<work>\lib\@Mis\Mis.m|MCDIR|1|10|14|Class name 'Wrong' and @directory name do not agree: 'D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\p5\rt\p5\lib\@Mis\Mis.m'.
+ISSUE|<work>\lib\@Mis\Mis.m|MCFIL|1|10|14|Class name 'Wrong' and file name do not agree: 'Mis'. Update the class name and constructor, if defined, or change the file name to match the class name.
+ISSUE|<work>\lib\@Thing\Thing.m|NOIN|13|9|12|Method 'bare' should either be a static method or have at least one input argument.
+ISSUE|<work>\lib\@Thing\misnamed.m|FNDEF|1|14|22|Function name 'othername' is known to MATLAB by its file name: 'misnamed'.
+ISSUE|<work>\lib\@Thing\private\misprivate.m|FNDEF|1|14|25|Function name 'otherprivate' is known to MATLAB by its file name: 'misprivate'.
+@Thing Files (8): <work>\lib\@Thing\extent.m ; <work>\lib\@Thing\misnamed.m ; <work>\lib\@Thing\private\misprivate.m ; <work>\lib\@Thing\private\p5hidden.m ; <work>\lib\@Thing\scale.m ; <work>\lib\@Thing\staticOne.m ; <work>\lib\@Thing\Thing.m ; <work>\lib\@Thing\undeclared.m
++pkg Files (11): <work>\lib\+pkg\@D\D.m ; <work>\lib\+pkg\@D\dm.m ; <work>\lib\+pkg\@D\wrongdm.m ; <work>\lib\+pkg\C.m ; <work>\lib\+pkg\f.m ; <work>\lib\+pkg\g.m ; <work>\lib\+pkg\misnamed.m ; <work>\lib\+pkg\private\ph.m ; <work>\lib\+pkg\private\wrongph.m ; <work>\lib\+pkg\s.m ; <work>\lib\+pkg\Wrongc.m
+== fix
+misnamed Fixability: auto
+    Success    ErrorMessage                                         FullFilename                                          CheckID    LineStart    LineEnd    ColumnStart    ColumnEnd     ErrorID 
+    _______    ____________    _______________________________________________________________________________________    _______    _________    _______    ___________    _________    _________
+
+     true       <missing>      "D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\p5\rt\p5\fix\misnamed.m"     FNDEF         1           1           14            22        <missing>
+
+after fix line 1: function r = misnamed(x)
+Wrongclass CheckID: MCFIL Fixability: auto
+after fix line 1: classdef Wrongclass
+== edit
+ACCEPTED: edit('pkg.f') -> <EOS>
+ACCEPTED: edit pkg.f -> <EOS>
+ACCEPTED: edit('Thing/extent') -> <EOS>
+ACCEPTED: edit('Thing') -> <EOS>
+ACCEPTED: edit('pkg.C.stat') -> <EOS>

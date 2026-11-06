@@ -91,6 +91,13 @@ public static class CodeChecks
     public static readonly Check ST2NM = Add("ST2NM", CodeSeverity.Info, "If you are operating on scalar values, consider using 'str2double' for faster performance.");
     public static readonly Check LAXES = Add("LAXES", CodeSeverity.Info, "Calling AXES(h) in a loop can be slow. Consider moving the call to AXES outside the loop.");
 
+    // --- names against their files (packages and class folders plan, stage P5, ADR 0311) ------------
+    public static readonly Check FNDEF = Add("FNDEF", CodeSeverity.Warning, "Function name '{0}' is known to MATLAB by its file name: '{1}'.");
+    public static readonly Check FNDOT = Add("FNDOT", CodeSeverity.Error, "Function name can only contain dots if it is a class method.");
+    public static readonly Check MCFIL = Add("MCFIL", CodeSeverity.Error, "Class name '{0}' and file name do not agree: '{1}'. Update the class name and constructor, if defined, or change the file name to match the class name.");
+    public static readonly Check MCDIR = Add("MCDIR", CodeSeverity.Error, "Class name '{0}' and @directory name do not agree: '{1}'.");
+    public static readonly Check NOIN = Add("NOIN", CodeSeverity.Warning, "Method '{0}' should either be a static method or have at least one input argument.");
+
     // --- functions not recommended or to be removed -------------------------------------------------
     public static readonly Check DATST = Add("DATST", CodeSeverity.Info, "'datestr' is not recommended. With appropriate code changes, use 'datetime' instead.");
     public static readonly Check DATNM = Add("DATNM", CodeSeverity.Info, "'datenum' is not recommended. With appropriate code changes, use 'datetime' instead.");

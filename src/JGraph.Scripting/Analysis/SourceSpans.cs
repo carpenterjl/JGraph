@@ -337,6 +337,44 @@ internal sealed class SourceSpans
     /// The identifiers of a <c>function</c> line: the outputs, the name and the parameters with their spans, read from
     /// the tokens after the keyword (a <c>~</c> parameter is the word <c>~</c>).
     /// </summary>
+    /// <summary>
+    /// The span of a method's name whether it is written with a body (<c>function r = name(o)</c>) or as a
+    /// signature line of a <c>methods</c> block (<c>r = name(o)</c>, <c>[a, b] = name</c>, <c>name</c>; stage P5).
+    /// </summary>
+    public Span SignatureName(FnStmt function)
+    {
+        int i = IndexOf(function);
+        if (i < 0)
+        {
+            return new Span(function.Line, function.Column, function.Column);
+        }
+
+        if (_tokens[i].Type == TokenType.Function)
+        {
+            return Signature(function).Name;
+        }
+
+        // A signature line: '[a, b] = name', 'r = name' or 'name', the name the identifier after any '='.
+        if (_tokens[i].Type == TokenType.LBracket)
+        {
+            int close = MatchingClose(i);
+            i = close < 0 ? i : close + 1;
+        }
+        else if (i + 1 < _tokens.Count && _tokens[i].Type == TokenType.Identifier && _tokens[i + 1].Type == TokenType.Assign)
+        {
+            i++;
+        }
+
+        if (i < _tokens.Count && _tokens[i].Type == TokenType.Assign)
+        {
+            i++;
+        }
+
+        return i < _tokens.Count && _tokens[i].Type == TokenType.Identifier
+            ? TokenSpan(i)
+            : new Span(function.Line, function.Column, function.Column);
+    }
+
     public (List<Span> Outputs, Span Name, List<(string Text, Span Span)> Parameters) Signature(FnStmt function)
     {
         var outputs = new List<Span>();

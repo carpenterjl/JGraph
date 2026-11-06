@@ -34,4 +34,13 @@ public interface IScriptCompletionSource
     /// </summary>
     IReadOnlyList<CompletionItem> DeviceNames(string function) =>
         JGraph.Scripting.Jgs.Completion.DeviceCompletion.MachineNames(function);
+
+    /// <summary>
+    /// The members an instance of the user class <paramref name="className"/> offers after a dot
+    /// (the packages and class folders plan, stage P5, ADR 0311): its properties and methods as the
+    /// class file declares them and, for an <c>@Class</c> folder, the folder's method files. Read from
+    /// the files the session's path names, or from the class if it is loaded; nothing is run. Empty
+    /// when the session knows no such class.
+    /// </summary>
+    IReadOnlyList<CompletionItem> ClassMembers(string className) => [];
 }

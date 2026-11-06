@@ -1,0 +1,57 @@
+== severities
+MSG|misnamed.m|FNDEF|1|[14 22]|1|1|Function name 'othername' is known to MATLAB by its file name: 'misnamed'.
+MSG|commented.m|FNDEF|3|[14 27]|1|1|Function name 'othercommented' is known to MATLAB by its file name: 'commented'.
+MSG|suppressed.m|none
+MSG|Wrongctor.m|MCFIL|1|[10 18]|1|2|Class name 'Otherctor' and file name do not agree: 'Wrongctor'. Update the class name and constructor, if defined, or change the file name to match the class name.
+MSG|Wrongctor.m|VUNUS|4|[13 13]|0|1|'o' produces a value that might be unused.
+MSG|Sig.m|none
+MSG|Noin.m|NOIN|3|[18 23]|0|1|Method 'bodied' should either be a static method or have at least one input argument.
+MSG|Noin.m|NOIN|6|[22 30]|0|1|Method 'bodiedout' should either be a static method or have at least one input argument.
+MSG|Noin.m|NOIN|9|[9 15]|0|1|Method 'sigline' should either be a static method or have at least one input argument.
+MSG|Noin.m|NOIN|10|[13 18]|0|1|Method 'sigout' should either be a static method or have at least one input argument.
+MSG|Noin.m|NOIN|25|[18 18]|0|1|Method 'p' should either be a static method or have at least one input argument.
+Thing.m: 0 messages
+suppressed -notok: FNDEF
+fields: message,fix,severity,line,column
+== display
+== checkcode
+ERR|MATLAB:UndefinedFunction|Unrecognized function or variable 'p'.
+== checkcode -id
+ERR|MATLAB:UndefinedFunction|Unrecognized function or variable 'p'.
+== mlint
+ERR|MATLAB:UndefinedFunction|Unrecognized function or variable 'p'.
+== checkcode -string
+L 1 (C 14-22): Function name 'othername' is known to MATLAB by its file name: 'misnamed'.
+<EOS>
+== checkcode -cyc
+L 1 (C 14-22): The McCabe cyclomatic complexity of 'othername' is 1.
+L 1 (C 14-22): Function name 'othername' is known to MATLAB by its file name: 'misnamed'.
+<EOS>
+== checkcode -id Wrongctor
+ERR|MATLAB:UndefinedFunction|Unrecognized function or variable 'q'.
+== checkcode -id Noin
+ERR|MATLAB:UndefinedFunction|Unrecognized function or variable 'w'.
+== name forms from plain
+Thing/extent -> <work>\lib\@Thing\extent.m
+Thing -> <work>\lib\@Thing\Thing.m
+extent -> <work>\lib\@Thing\extent.m
+misnamed -> <work>\plain\misnamed.m
+@Thing/extent -> <work>\lib\@Thing\extent.m
+@Thing/extent.m -> <work>\lib\@Thing\extent.m
+REFUSED: checkcode('Thing.extent') -> MATLAB:mlint:FileNotFound: Unable to open file "Thing.extent". File is not found or is not a supported MATLAB code file.
+REFUSED: checkcode('Thing/nosuch') -> MATLAB:mlint:FileNotFound: Unable to open file "Thing/nosuch". File is not found or is not a supported MATLAB code file.
+ACCEPTED: codeIssues('misnamed') -> codeIssues
+REFUSED: codeIssues('@Thing/extent.m') -> codeanalysis:reports:ccrAnalysis:FileNotFound: Unable to open file '@Thing/extent.m'. File is not found or is not a supported MATLAB code file.
+codeIssues(misnamed) Files: <work>\plain\misnamed.m
+== fix
+Wrongctor after fix: classdef Wrongctor /     methods /         function o = Wrongctor()
+commented after fix line 3: function r = commented(x)
+== edit
+REFUSED: edit(1) -> MATLAB:validators:mustBeTextScalar: Invalid argument at position 1. Value must be a character vector or string scalar.
+REFUSED: r = edit('good') -> MATLAB:err_static_workspace_violation: Attempt to add "r" to a static workspace.
+ACCEPTED: edit('misnamed') -> <EOS>
+ACCEPTED: edit('good.m') -> <EOS>
+ACCEPTED: edit('@Thing/extent') -> <EOS>
+ACCEPTED: edit('Thing.extent') -> <EOS>
+nargin edit 1 nargout edit 1 exist 2
+done

@@ -44,14 +44,37 @@ internal static partial class ClassCompletion
     /// The members to offer after <paramref name="qualifier"/><c>.</c>, or null when the buffer
     /// is not a class file or the name is not what its methods call the object.
     /// </summary>
-    public static IReadOnlyList<CompletionItem>? Members(string code, string qualifier)
+    public static IReadOnlyList<CompletionItem>? Members(string code, string qualifier) => Members(code, qualifier, out _);
+
+    /// <summary>
+    /// Whether <paramref name="qualifier"/> is the object of a method file: the first parameter of the
+    /// buffer's first <c>function</c> header, in a buffer with no <c>classdef</c> (<c>o</c> in
+    /// <c>@Thing/extent.m</c>'s <c>function r = extent(o)</c>; stage P5).
+    /// </summary>
+    public static bool IsMethodFileObject(string code, string qualifier)
     {
+        if (qualifier.Contains('.', StringComparison.Ordinal) || ClassHeader().IsMatch(code) || FunctionHeader().Match(code) is not { Success: true } header)
+        {
+            return false;
+        }
+
+        string[] arguments = [.. header.Groups["args"].Value.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)];
+        return arguments.Length > 0 && arguments[0] == qualifier;
+    }
+
+    /// <summary>
+    /// <see cref="Members(string, string)"/>, naming the buffer's class in <paramref name="className"/> when it
+    /// answers, so a live session can add what the class's folder holds (stage P5).
+    /// </summary>
+    public static IReadOnlyList<CompletionItem>? Members(string code, string qualifier, out string? className)
+    {
+        className = null;
         if (qualifier.Contains('.', StringComparison.Ordinal) || ClassHeader().Match(code) is not { Success: true } header)
         {
             return null;
         }
 
-        string className = header.Groups["name"].Value;
+        className = header.Groups["name"].Value;
         var selves = new HashSet<string>(StringComparer.Ordinal);
         var items = new List<CompletionItem>();
         var seen = new HashSet<string>(StringComparer.Ordinal);

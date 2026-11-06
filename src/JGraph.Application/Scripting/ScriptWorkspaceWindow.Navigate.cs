@@ -167,6 +167,15 @@ public partial class ScriptWorkspaceWindow
             return;
         }
 
+        // The MATLAB session names the file a name at its prompt stands for (stage P5): pkg.f,
+        // Thing/extent, +pkg/f, @Thing/extent, a bare method name, a name on the path.
+        if (_sessions.TryGetValue(DefaultConsoleLanguage, out IScriptSession? matlab) && matlab is IScriptCodeLocator locator
+            && locator.LocateCodeFile(argument) is { } located && File.Exists(located))
+        {
+            OpenDocumentAt(located, line: 1);
+            return;
+        }
+
         if (FunctionLocator.IsIdentifier(argument))
         {
             OpenSymbol(ActiveDocument, argument);

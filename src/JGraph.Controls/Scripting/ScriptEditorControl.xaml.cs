@@ -689,6 +689,16 @@ public partial class ScriptEditorControl : UserControl
         set => _completion.LiveNames = value;
     }
 
+    /// <summary>
+    /// Supplies the document's file path, or null while it is unsaved: a MATLAB method file in an
+    /// <c>@Class</c> folder completes its object's members after a dot (stage P5, ADR 0311).
+    /// </summary>
+    public Func<string?>? CompletionFilePath
+    {
+        get => _completion.FilePath;
+        set => _completion.FilePath = value;
+    }
+
     /// <summary>The shade behind the generated lines of an App Designer file.</summary>
     public Brush GeneratedCodeBrush
     {

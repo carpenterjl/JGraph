@@ -97,6 +97,10 @@ internal sealed class CompletionSupport
     /// <c>calllib('…'</c> completion, ADR 0183); null, or a null answer, means the framework alone.</summary>
     public Func<IScriptCompletionSource?>? LiveNames { get; set; }
 
+    /// <summary>Supplies the buffer's file path, or null for an unsaved buffer: a method file in an
+    /// <c>@Class</c> folder completes its object's members (stage P5).</summary>
+    public Func<string?>? FilePath { get; set; }
+
     /// <summary>Supplies the workspace's files and folders for path completion inside the string
     /// arguments of the file builtins (<c>readcsv("…</c>). Null when no workspace is open.</summary>
     public Func<IReadOnlyList<WorkspaceFileEntry>>? WorkspaceFiles { get; set; }
@@ -185,7 +189,7 @@ internal sealed class CompletionSupport
         else if (UsesOurInterpreter)
         {
             JgsCompletionResult result = JgsCompletionEngine.GetCompletions(
-                _editor.Text, offset, CurrentWorkspaceSymbols(), IsMatlab, IsMatlab ? LiveNames?.Invoke() : null);
+                _editor.Text, offset, CurrentWorkspaceSymbols(), IsMatlab, IsMatlab ? LiveNames?.Invoke() : null, IsMatlab ? FilePath?.Invoke() : null);
             replaceStart = result.ReplaceStart;
             items = result.Items;
         }

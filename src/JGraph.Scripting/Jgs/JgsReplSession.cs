@@ -16,7 +16,7 @@ namespace JGraph.Scripting.Jgs;
 /// <c>figure(1)</c> at the prompt must keep meaning the window it already opened), releasing packed
 /// buffers (live variables still point at them), and rebuilding the built-in scope. See ADR 0035.
 /// </remarks>
-internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IScriptDependencyAnalysis, IScriptDebuggerHost, IGraphicsEventSession, IWorkspaceCellEditor, JGraph.Scripting.Completion.IScriptCompletionSource
+internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IScriptDependencyAnalysis, IScriptDebuggerHost, IGraphicsEventSession, IWorkspaceCellEditor, JGraph.Scripting.Completion.IScriptCompletionSource, IScriptCodeLocator
 {
     private readonly ScriptContext _context;
     private readonly JgsDialect _dialect;
@@ -97,7 +97,53 @@ internal sealed class JgsReplSession : IScriptSession, IScriptAppRunner, IScript
         JGraph.Scripting.Jgs.Completion.InteropCompletion.For(_interpreter.NetTypes, () => OperatingSystem.IsWindows() ? _globals.Native : null);
 
     /// <inheritdoc />
-    public IReadOnlyList<JGraph.Scripting.Completion.CompletionItem> Members(string qualifier) => Names.Members(qualifier);
+    /// <remarks>The session's own packages and classes first (stage P5), then the .NET names.</remarks>
+    public IReadOnlyList<JGraph.Scripting.Completion.CompletionItem> Members(string qualifier)
+    {
+        IReadOnlyList<JGraph.Scripting.Completion.CompletionItem> own = JGraph.Scripting.Jgs.Completion.PackageCompletion.Members(_interpreter, qualifier);
+        IReadOnlyList<JGraph.Scripting.Completion.CompletionItem> net = Names.Members(qualifier);
+        return own.Count == 0 ? net : net.Count == 0 ? own : [.. own, .. net];
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<JGraph.Scripting.Completion.CompletionItem> ClassMembers(string className) =>
+        JGraph.Scripting.Jgs.Completion.PackageCompletion.ClassMembers(_interpreter, className);
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// The forms <c>edit</c> takes (stage P5): a path, a name on the path, <c>pkg.f</c>, <c>Thing/extent</c>,
+    /// <c>+pkg/f</c>, <c>@Thing/extent</c>, a bare method name, and <c>Thing.extent</c> or <c>pkg.C.stat</c>
+    /// read as the class's method file or else its class file. Null for a name no file stands for.
+    /// </remarks>
+    public string? LocateCodeFile(string name)
+    {
+        try
+        {
+            if (JgsCodeTree.DottedParts(name) is { } parts && _interpreter.FunctionPath is { } path)
+            {
+                if (path.FindDotted(name, out _) is { } member)
+                {
+                    return member;
+                }
+
+                if (parts.Length == 2 && path.ClassMethodFile(parts[0], parts[1]) is { } methodFile)
+                {
+                    return methodFile;
+                }
+
+                string owner = string.Join('.', parts[..^1]);
+                return parts.Length > 2
+                    ? path.FindDotted(owner, out _)
+                    : path.FindAll(owner).FirstOrDefault();
+            }
+
+            return JgsBuiltins.ResolveCodeFile(_interpreter, _globals, name, partialPaths: true);
+        }
+        catch (Exception ex) when (ex is JgsRuntimeException or IOException or UnauthorizedAccessException or ArgumentException or InvalidOperationException)
+        {
+            return null;
+        }
+    }
 
     /// <inheritdoc />
     public IReadOnlyList<string> Libraries() => Names.Libraries();

@@ -139,6 +139,21 @@ public interface IScriptDependencyAnalysis
 }
 
 /// <summary>
+/// A session that names the code file a name at its prompt stands for, the way <c>edit name</c>
+/// finds it (the packages and class folders plan, stage P5, ADR 0311): a file against the current
+/// folder, a name on the path, a package member by its dotted name (<c>pkg.f</c>), a class folder's
+/// method by its slash name (<c>Thing/extent</c>), a relative path under a search folder
+/// (<c>+pkg/f</c>, <c>@Thing/extent</c>) or a bare method name. A capability hosts feature-detect
+/// with <c>is IScriptCodeLocator</c>. Called from the UI thread while the session may be running a
+/// statement: it reads the path's index and runs none of the script's code.
+/// </summary>
+public interface IScriptCodeLocator
+{
+    /// <summary>The full path of the file <paramref name="name"/> stands for, or null when no file does.</summary>
+    string? LocateCodeFile(string name);
+}
+
+/// <summary>
 /// A session that can deliver queued graphics events (<see cref="ScriptEventQueue"/>) to script
 /// callbacks while it is otherwise idle. A capability, not part of <see cref="IScriptSession"/> —
 /// hosts feature-detect with <c>is IGraphicsEventSession</c>, the way they do for
