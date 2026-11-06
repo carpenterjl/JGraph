@@ -235,8 +235,9 @@ public class MatlabClassdefTests : IDisposable
     [Fact]
     public void AClassFileMustBeNamedAfterItsClass()
     {
+        // R2025b's words and position (the packages and class folders plan, stage P4, measured).
         WriteClass("Wrong", "classdef Different\nend\n");
-        Assert.Contains("named after its class", Error("x = Wrong();"), StringComparison.Ordinal);
+        Assert.Contains("Line: 1 Column: 10\nClass name and filename must match.", Error("x = Wrong();"), StringComparison.Ordinal);
     }
 
     // --- Instances ----------------------------------------------------------------------------------

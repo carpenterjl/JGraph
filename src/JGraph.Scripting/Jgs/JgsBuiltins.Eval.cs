@@ -800,8 +800,17 @@ internal static partial class JgsBuiltins
                 }
                 catch (JgsException)
                 {
-                    return JgsValue.Number(0); // a file that does not load is not a class
+                    // A classdef file that does not load is still a class to exist (stage P4,
+                    // measured: @Mis/Mis.m holding `classdef Wrong` is 8 as 'class' and 2 plainly).
+                    return JgsValue.Number(interpreter.FunctionPath?.Find(name) is { } classFile && KindOfFile(classFile) == "class" ? 8 : 0);
                 }
+            }
+
+            // Thing/extent: a class folder's method file by its slash name is a file (stage P4, measured: 2 plainly and as 'file').
+            if (wantFile && JgsFunctionPath.SlashForm(name) is { } slashed
+                && interpreter.FunctionPath?.ClassMethodFile(slashed.Class, slashed.Member) is not null)
+            {
+                return JgsValue.Number(2);
             }
 
             JgsClass? PackageClassOf(string dotted)
@@ -894,8 +903,14 @@ internal static partial class JgsBuiltins
         // which(name) is the layer that would answer the name; which(name, '-all') is every layer
         // that holds it, files first, as a cell column — the shape R2025b hands back, and 0-by-0
         // when nothing does. A built-in keeps JGraph's phrasing: there is no file path to print.
-        Define("which", (args, line, col) =>
+        JgsValue WhichValue(IReadOnlyList<JgsValue> args, int line, int col)
         {
+            // which f(a, b) in command form arrives as the words 'f(a,' and 'b)': one text (stage P4).
+            if (args.Count >= 2 && IsTextScalar(args[0]) && TextOf(args[0]).Contains('(') && !TextOf(args[0]).Contains(')'))
+            {
+                args = [JgsValue.Str(string.Join(' ', args.Select(TextOf)))];
+            }
+
             ArityRange("which", args, 1, 2, line, col);
             string first = Str("which", args, 0, line, col);
             string? second = args.Count == 2 ? Str("which", args, 1, line, col) : null;
@@ -908,16 +923,40 @@ internal static partial class JgsBuiltins
                 _ => throw new JgsRuntimeException(line, col, $"which: '{second}' is not an option; only '-all' is."),
             };
 
-            var where = new List<string>();
-            foreach (Resolution found in interpreter.Resolver.Query(name, interpreter.CurrentFrame))
+            // which extent(t): the argument form names the method the call would dispatch to,
+            // with the class after a comment sign (stage P4, measured: "<file>  % Thing method").
+            if (!all && WhichOfCall(interpreter, name, line, col) is { } dispatched)
             {
-                where.Add(found.Layer == ResolutionLayer.Builtin
-                    ? $"{name} is a built-in function."
-                    : found.File is { Length: > 0 } file ? file : $"{name} is a local function.");
-                if (!all)
+                return JgsValue.Str(dispatched);
+            }
+
+            var where = new List<string>();
+            try
+            {
+                foreach (Resolution found in interpreter.Resolver.Query(name, interpreter.CurrentFrame))
                 {
-                    break;
+                    where.Add(found.Layer == ResolutionLayer.Builtin
+                        ? $"{name} is a built-in function."
+                        : found.File is { Length: > 0 } file ? file : $"{name} is a local function.");
+                    if (!all)
+                    {
+                        break;
+                    }
                 }
+            }
+            catch (JgsRuntimeException) when (interpreter.FunctionPath?.Find(name) is { } unloadable)
+            {
+                // A file that is there and does not load is still what which names (P4, measured:
+                // @Mis/Mis.m holding `classdef Wrong` is which('Mis')).
+                where.Add(unloadable);
+            }
+
+            // Thing/extent: a class folder's method file by its slash name, read off the folder
+            // without loading the class (stage P4, measured: Lone/method1 answers with no Lone.m).
+            if (where.Count == 0 && JgsFunctionPath.SlashForm(name) is { } slashed
+                && interpreter.FunctionPath?.ClassMethodFile(slashed.Class, slashed.Member) is { } methodFile)
+            {
+                where.Add(methodFile);
             }
 
             // A package member by its dotted name (packages plan, P1): its file - one line under
@@ -928,11 +967,30 @@ internal static partial class JgsBuiltins
                 where.Add(packaged);
             }
 
-            // A static method of a class in a package (pkg.C.stat) is the class's file; an instance
-            // method, a Constant or an enumeration member is nothing (P2, measured).
-            if (where.Count == 0 && name.Contains('.', StringComparison.Ordinal) && interpreter.PackageStatic(name) is { } packagedStatic)
+            // A static method named through its class (pkg.C.stat, Thing.staticOne) is the file
+            // its body is in - the class's, or its own method file (P2 and P4, measured); an
+            // instance method, a Constant or an enumeration member is nothing (P2, measured).
+            if (where.Count == 0 && name.Contains('.', StringComparison.Ordinal) && interpreter.ClassStatic(name) is { } classStatic)
             {
-                where.Add(interpreter.FileOfClass(packagedStatic.Class));
+                where.Add(classStatic.Method.File ?? interpreter.FileOfClass(classStatic.Class));
+            }
+
+            // A bare method name answers a class folder's file of that name, the loaded classes'
+            // folders first (stage P4, measured: which extent is @Thing\extent.m, -all every one).
+            if ((where.Count == 0 || all) && !name.Contains('.', StringComparison.Ordinal) && interpreter.FunctionPath is { } byMethod)
+            {
+                foreach (string file in byMethod.MethodFilesByBareName(name))
+                {
+                    if (!where.Contains(file, JgsFunctionPath.PathComparer))
+                    {
+                        where.Add(file);
+                    }
+
+                    if (!all)
+                    {
+                        break;
+                    }
+                }
             }
 
             // A .NET type: R2025b calls its constructor a built-in method (ADR 0174), and a static
@@ -994,7 +1052,76 @@ internal static partial class JgsBuiltins
             }
 
             return all ? CellColumn(where) : JgsValue.Str(where.Count > 0 ? where[0] : string.Empty);
-        });
+        }
+
+        // As a statement, which prints what it found and binds no ans (R2025b: `which x` prints the
+        // path alone; stage P4, measured for the argument form); asked for a value, it answers it.
+        env.Builtins.Register("which", JgsValue.Function(new BuiltinFunction("which", WhichValue)
+        {
+            TakesOutputCount = true,
+            MultiOutput = (args, wanted, line, col) =>
+            {
+                JgsValue found = WhichValue(args, line, col);
+                if (wanted > 0)
+                {
+                    return [found];
+                }
+
+                if (found.Type == JgsType.Cell)
+                {
+                    foreach (JgsValue row in found.AsCell)
+                    {
+                        host.print(TextOf(row));
+                    }
+                }
+                else if (TextOf(found).Length > 0)
+                {
+                    host.print(TextOf(found));
+                }
+
+                return [];
+            },
+        }));
+
+        // which f(args): the call's arguments evaluated in the caller's workspace, and the user
+        // method the dominant object's class answers with, named as R2025b names it (stage P4,
+        // measured). Null for any other text, or a call no user class answers for, so the plain
+        // reading goes ahead.
+        static string? WhichOfCall(Interpreter interpreter, string text, int line, int col)
+        {
+            int paren = text.IndexOf('(');
+            if (paren <= 0 || !text.EndsWith(')') || JgsCodeTree.DottedParts("a." + text[..paren].Trim()) is null || !interpreter.AnyClasses)
+            {
+                return null;
+            }
+
+            string name = text[..paren].Trim();
+            JgsValue arguments;
+            try
+            {
+                arguments = interpreter.EvaluateSource("{" + text[(paren + 1)..^1] + "}", interpreter.CurrentFrame, line, col);
+            }
+            catch (JgsException)
+            {
+                return null;
+            }
+
+            if (arguments.Type != JgsType.Cell)
+            {
+                return null;
+            }
+
+            foreach (JgsValue argument in arguments.AsCell)
+            {
+                if (argument.Type == JgsType.Object && argument.ObjectClass is { } owner && owner.TryMethod(name, out ClassMethod? method) && !method.Static)
+                {
+                    string file = method.File ?? interpreter.FileOfClass(method.Owner ?? owner);
+                    return $"{file}  % {(method.Owner ?? owner).Name} method";
+                }
+            }
+
+            return null;
+        }
 
         // narginchk and its relatives read the nargin/nargout the current frame was called with, so
         // they only mean anything inside a function — exactly as in MATLAB.
@@ -1126,6 +1253,13 @@ internal static partial class JgsBuiltins
                 {
                     given = JgsValue.Function(packagedStatic.Class.Callable(packagedStatic.Method)); // pkg.C.stat (P2)
                 }
+            }
+
+            // nargin('Thing/extent'): a class's method by its slash name, declared or not (stage P4, measured).
+            if (given.Type != JgsType.Function && JgsFunctionPath.SlashForm(name) is { } slashed
+                && interpreter.ClassFolderMethod(slashed.Class, slashed.Member) is { } folderMethod)
+            {
+                given = JgsValue.Function(folderMethod.Class.Callable(folderMethod.Method));
             }
         }
 

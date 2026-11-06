@@ -36,6 +36,13 @@ internal sealed class JgsSourceMap
         SourceId = sourceId;
         Lines = lines;
         _stem = Path.GetFileNameWithoutExtension(sourceId);
+
+        // A file in an @Class folder is named by the class (stage P4, measured: dbstatus prints
+        // "Breakpoint for Thing.extent", and the class file's own as "Thing.Thing>Thing.Thing").
+        if (JgsCodeTree.ClassFolderOf(sourceId) is { } classFolder)
+        {
+            _stem = $"{classFolder}.{_stem}";
+        }
         IReadOnlyList<SmartIndent.Block> blocks = SmartIndent.Blocks(lines);
         var executable = new SortedSet<int>();
         _className = program.OfType<ClassdefStmt>().FirstOrDefault()?.Name;

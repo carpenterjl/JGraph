@@ -122,6 +122,22 @@ internal sealed class Parser
     }
 
     /// <summary>
+    /// Parses a method file of a class folder (<c>@Thing/extent.m</c>; the packages and class
+    /// folders plan, stage P4, ADR 0310): a MATLAB function file whose functions are a class's
+    /// methods, so <c>name@Superclass(...)</c> reaches a superclass in them as it does in a
+    /// <c>methods</c> block.
+    /// </summary>
+    /// <exception cref="JgsSyntaxException">On any lexing or parsing error.</exception>
+    internal static IReadOnlyList<Stmt> ParseMethodFile(string source, string sourceId)
+    {
+        var parser = new Parser(Lexer.Tokenize(source, tolerant: false, JgsDialect.Matlab), sourceId, JgsDialect.Matlab)
+        {
+            _inMethodsBlock = true,
+        };
+        return parser.ParseProgram();
+    }
+
+    /// <summary>
     /// Parses as <see cref="Parse(string, string, JgsDialect?, int)"/> does, adding the source's
     /// <c>%#word</c> pragmas to <paramref name="pragmas"/> (stage K2: what the compiler reads).
     /// </summary>
@@ -758,6 +774,7 @@ internal sealed class Parser
         {
             Line = start.Line,
             Column = start.Column,
+            NameColumn = name.Column,
             EventSpecs = events,
             Superclasses = supers,
             Sealed = sealedClass,
@@ -969,17 +986,19 @@ internal sealed class Parser
             {
                 Token header = Current;
                 FnStmt function;
+                bool signature = false;
                 if (Check(TokenType.Function))
                 {
                     function = (FnStmt)ParseMatlabFunction(header);
                 }
-                else if (isAbstract)
-                {
-                    function = ParseMethodSignature(header); // an abstract method is its signature
-                }
                 else
                 {
-                    throw Error(header, "A 'methods' block holds functions and nothing else.");
+                    // An abstract method is its signature; in any other block a signature line
+                    // declares a method whose body is the file of its name in the class folder
+                    // (the packages and class folders plan, stage P4, ADR 0310: R2025b's
+                    // @Thing/Thing.m declares `r = extent(o)` and @Thing/extent.m holds the body).
+                    function = ParseMethodSignature(header);
+                    signature = !isAbstract;
                 }
 
                 // A method is built here, not by ParseStatement, so it is told its file here: the
@@ -993,6 +1012,7 @@ internal sealed class Parser
                     Sealed = isSealed,
                     Hidden = hidden,
                     Block = blockIndex,
+                    Signature = signature,
                 });
                 SkipSeparators();
             }
@@ -1461,11 +1481,25 @@ internal sealed class Parser
         {
             // A word runs from one whitespace to the next, its tokens' text glued back together:
             // 'results.mat', '-ascii', 'Class>Class.method', '4:6'; a quoted literal is its content.
+            // Inside a parenthesis a word runs on over spaces and commas to the closing one:
+            // 'which scale(t, 1)' is one word, as R2025b reads it (stage P4, measured).
             Token word = Advance();
             string text = word.Text;
-            while (!EndsCommand(Current.Type) && !Current.PrecededByWhitespace)
+            int depth = word.Type == TokenType.LParen ? 1 : 0;
+            while (Current.Type != TokenType.Eof && Current.Type != TokenType.Newline
+                && (depth > 0 ? Current.Type != TokenType.Semicolon : !EndsCommand(Current.Type) && !Current.PrecededByWhitespace))
             {
-                text += Advance().Text;
+                Token next = Advance();
+                if (next.Type == TokenType.LParen)
+                {
+                    depth++;
+                }
+                else if (next.Type == TokenType.RParen && depth > 0)
+                {
+                    depth--;
+                }
+
+                text += (next.PrecededByWhitespace && depth > 0 ? " " : string.Empty) + next.Text;
             }
 
             // A command word is a char row, as R2025b passes it (`class abc` is 'char'; open item 15).

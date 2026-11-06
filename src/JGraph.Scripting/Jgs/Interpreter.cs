@@ -2198,6 +2198,17 @@ internal sealed partial class Interpreter
                 return true;
             }
 
+            // @Thing.staticOne: a handle to a class's static method, named in full (stage P4,
+            // measured: nargin(@Thing.staticOne) is the method's count).
+            if (Dialect.IsMatlab && AnyClasses && name.Contains('.', StringComparison.Ordinal) && ClassStatic(name) is { } classStatic)
+            {
+                handle = JgsValue.Function(new NamedHandle(name, ResolutionLayer.UserMethod, classStatic.Class.Callable(classStatic.Method), null, null, _resolver)
+                {
+                    Context = env.ClassContext,
+                });
+                return true;
+            }
+
             // @System.Math.Max: a .NET static method group, or a type's constructor (ADR 0174).
             if (TryNetHandle(name, env, out handle))
             {

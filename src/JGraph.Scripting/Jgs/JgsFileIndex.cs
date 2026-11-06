@@ -73,6 +73,7 @@ internal sealed class JgsFileIndex
 
     private HashSet<string>? _shadowing;
     private bool _anyPackages;
+    private bool _anyClassFolders;
     private List<string> _lastSearched = [];
     private int _checkedEpoch = -1;
     private readonly HashSet<string> _reported = new(StringComparer.Ordinal);
@@ -149,6 +150,20 @@ internal sealed class JgsFileIndex
         {
             Refresh();
             return _anyPackages;
+        }
+    }
+
+    /// <summary>
+    /// Whether any search folder holds an <c>@Class</c> folder at all (the packages and class
+    /// folders plan, stage P4) - false in nearly every session, so a bare name's lookup pays one
+    /// field read before the plain files are probed.
+    /// </summary>
+    internal bool AnyClassFolders
+    {
+        get
+        {
+            Refresh();
+            return _anyClassFolders;
         }
     }
 
@@ -375,10 +390,12 @@ internal sealed class JgsFileIndex
 
         var shadowing = new HashSet<string>(StringComparer.Ordinal);
         bool anyPackages = false;
+        bool anyClassFolders = false;
         foreach (string folder in searched)
         {
             Folder entry = _folders[folder];
             anyPackages |= entry.Packages.Count > 0;
+            anyClassFolders |= entry.ClassFolders.Count > 0;
             foreach (string stem in entry.Stems)
             {
                 if (_isBuiltin(stem))
@@ -390,6 +407,7 @@ internal sealed class JgsFileIndex
 
         _shadowing = shadowing;
         _anyPackages = anyPackages;
+        _anyClassFolders = anyClassFolders;
         _unreported.Clear();
         foreach (string name in shadowing)
         {

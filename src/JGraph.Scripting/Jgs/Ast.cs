@@ -711,6 +711,26 @@ internal sealed record ClassMethod(FnStmt Function, bool Static)
     /// <summary>Which of the file's <c>methods</c> blocks the method is written in, 0 first: R2025b's <c>meta.class</c> lists them by block (stage K9).</summary>
     public int Block { get; init; }
 
+    /// <summary>
+    /// Whether the method was written as a signature line with no body in a block that is not
+    /// <c>(Abstract)</c> (the packages and class folders plan, stage P4, ADR 0310): the body is the
+    /// file of the method's name in the class folder, bound when the class is built.
+    /// </summary>
+    public bool Signature { get; init; }
+
+    /// <summary>
+    /// The method file the body came from (<c>@Thing/extent.m</c>), or null for a method written in
+    /// the classdef itself (stage P4). A file method's frame is named by its bare name, as
+    /// R2025b's stack names it, where a classdef method's is <c>Class.method</c>.
+    /// </summary>
+    public string? File { get; init; }
+
+    /// <summary>
+    /// Whether the method is a file the classdef never declared (stage P4): public, with the
+    /// signature R2025b shows as <c>varargout name(varargin)</c> under <c>methods -full</c>.
+    /// </summary>
+    public bool Undeclared { get; init; }
+
     /// <summary>The property this method is the <c>get.p</c> or <c>set.p</c> of, or null for an ordinary method (V6, #27).</summary>
     public string? AccessorProperty =>
         Function.Name.StartsWith("get.", StringComparison.Ordinal) || Function.Name.StartsWith("set.", StringComparison.Ordinal)
@@ -743,6 +763,9 @@ internal sealed class ClassdefStmt(
     bool isEventData = false) : Stmt
 {
     public string Name { get; } = name;
+
+    /// <summary>The column the class name is written at on the <c>classdef</c> line (10 for <c>classdef Wrong</c>): where R2025b points its "Class name and filename must match." (stage P4, measured).</summary>
+    public int NameColumn { get; init; }
 
     /// <summary>Whether the header read <c>&lt; handle</c>: two names for one object, not two objects.</summary>
     public bool IsHandle { get; } = isHandle;

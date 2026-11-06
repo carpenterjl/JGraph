@@ -232,7 +232,7 @@ public class ClassInheritanceU6Tests : IDisposable
     [InlineData("classdef W\nproperties (Access = immutable)\nP\nend\nend", "'public', 'protected', 'private' or a list of classes")]
     [InlineData("classdef W\nproperties (Hidden = 3)\nP\nend\nend", "is true or false")]
     [InlineData("classdef W < A && B\nend", "joined with '&'")]
-    [InlineData("classdef W\nmethods\nr = f(obj)\nend\nend", "holds functions and nothing else")]
+    [InlineData("classdef W\nmethods\nr = 1\nend\nend", "a method name")] // `r = f(obj)` is a signature line since P4 (ADR 0310): the body is @W/f.m
     public void WhatTheParserDoesNotKnowIsRefusedByName(string source, string expected)
     {
         JgsSyntaxException refusal = Assert.Throws<JgsSyntaxException>(() => Parser.Parse(source, "test.m", JgsDialect.Matlab));

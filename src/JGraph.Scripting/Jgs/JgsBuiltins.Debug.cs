@@ -618,6 +618,13 @@ internal static partial class JgsBuiltins
             return packaged;
         }
 
+        // A class folder's method file by its slash name: dbstop in Thing/extent (stage P4, measured;
+        // the form stops at a package - pkg.D/dm is refused - so only a plain class name is read).
+        if (JgsFunctionPath.SlashForm(file) is { } slashed && interpreter.FunctionPath?.ClassMethodFile(slashed.Class, slashed.Member) is { } methodFile)
+        {
+            return methodFile;
+        }
+
         foreach (string extension in Path.GetExtension(file).Length > 0 ? [string.Empty] : (string[])[string.Empty, .. JgsFunctionPath.CodeExtensions])
         {
             string beside = host.Resolve(file + extension);
@@ -635,7 +642,8 @@ internal static partial class JgsBuiltins
     /// it when it is a plain or dotted name (<c>pkg.C</c>, measured in P2), else the file's stem.
     /// </summary>
     private static string WithinName(string fileWord) =>
-        fileWord.IndexOfAny(['/', '\\']) < 0 && !JgsFunctionPath.CodeExtensions.Any(e => fileWord.EndsWith(e, StringComparison.OrdinalIgnoreCase))
+        (fileWord.IndexOfAny(['/', '\\']) < 0 || JgsFunctionPath.SlashForm(fileWord) is not null) // Thing/withlocal as written (stage P4, measured)
+        && !JgsFunctionPath.CodeExtensions.Any(e => fileWord.EndsWith(e, StringComparison.OrdinalIgnoreCase))
             ? fileWord
             : Path.GetFileNameWithoutExtension(fileWord);
 

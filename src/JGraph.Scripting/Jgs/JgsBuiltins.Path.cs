@@ -95,6 +95,13 @@ internal static partial class JgsBuiltins
                 path = inFolder;
             }
 
+            // type Thing/extent: a class folder's method file by its slash name (stage P4, measured).
+            if (!File.Exists(path) && JgsFunctionPath.SlashForm(asked) is { } slashed
+                && search.ClassMethodFile(slashed.Class, slashed.Member) is { } methodFile)
+            {
+                path = methodFile;
+            }
+
             if (!File.Exists(path))
             {
                 throw new JgsRuntimeException(line, col, "MATLAB:type:fileNotFound", $"File '{asked}' not found.");

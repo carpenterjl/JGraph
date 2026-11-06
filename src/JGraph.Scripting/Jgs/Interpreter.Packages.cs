@@ -120,6 +120,41 @@ internal sealed partial class Interpreter
         return definition.TryMethod(dotted[(last + 1)..], out ClassMethod? method) && method.Static ? (definition, method) : null;
     }
 
+    /// <summary>
+    /// The same for a class in a package or a plain class (<c>Thing.staticOne</c>; stage P4,
+    /// measured: <c>which Thing.staticOne</c> is the method's file, <c>@Thing.staticOne</c> a
+    /// handle). Null for a name whose head is no class.
+    /// </summary>
+    internal (JgsClass Class, ClassMethod Method)? ClassStatic(string dotted)
+    {
+        int last = dotted.LastIndexOf('.');
+        if (last <= 0 || JgsCodeTree.DottedParts(dotted) is null)
+        {
+            return null;
+        }
+
+        string owner = dotted[..last];
+        JgsClass? definition = owner.Contains('.', StringComparison.Ordinal) ? PackageClass(owner) : ClassForLoad(owner);
+        return definition is not null && definition.TryMethod(dotted[(last + 1)..], out ClassMethod? method) && method.Static
+            ? (definition, method)
+            : null;
+    }
+
+    /// <summary>
+    /// The method <c>Class/member</c> names on a class the path holds (stage P4): the class loaded
+    /// on first mention and its method of the name, static or not, or null for a class or a member
+    /// that is not there.
+    /// </summary>
+    internal (JgsClass Class, ClassMethod Method)? ClassFolderMethod(string className, string member)
+    {
+        if (JgsCodeTree.DottedParts($"{className}.{member}") is null || ClassForLoad(className) is not { } definition)
+        {
+            return null;
+        }
+
+        return definition.TryMethod(member, out ClassMethod? method) ? (definition, method) : null;
+    }
+
     /// <summary>The class whose constructor <paramref name="callable"/> is, or null for any other callable (what nargin of a class name counts).</summary>
     internal JgsClass? ClassOfConstructor(IJgsCallable callable) =>
         AnyClasses ? _classes.Values.FirstOrDefault(c => ReferenceEquals(c.ConstructorValue.AsCallable, callable)) : null;
@@ -144,13 +179,26 @@ internal sealed partial class Interpreter
     {
         string prefix = JgsCodeTree.PackagePrefix(file);
         string stem = file.Length > 0 ? Path.GetFileNameWithoutExtension(file) : string.Empty;
-        if (AnyClasses && stem.Length > 0 && name.StartsWith(stem + ".", StringComparison.Ordinal)
-            && _classes.TryGetValue(prefix + stem, out JgsClass? owner))
+        if (AnyClasses && stem.Length > 0)
         {
-            string method = name[(stem.Length + 1)..];
-            return owner.TryMethod(method, out ClassMethod? declared) && declared.Static
-                ? $"{owner.Name}.{method}"
-                : $"{owner.Name.Replace('.', '/')}/{method}";
+            JgsClass? owner = null;
+            string? method = null;
+            if (name.StartsWith(stem + ".", StringComparison.Ordinal) && _classes.TryGetValue(prefix + stem, out owner))
+            {
+                method = name[(stem.Length + 1)..];
+            }
+            else if (JgsCodeTree.ClassFolderOf(file) is { } classFolder && string.Equals(stem, name, StringComparison.Ordinal)
+                && _classes.TryGetValue(prefix + classFolder, out owner))
+            {
+                method = name; // a method file of the class folder: its frame is the bare name (stage P4, measured: In Thing/stk)
+            }
+
+            if (owner is not null && method is not null)
+            {
+                return owner.TryMethod(method, out ClassMethod? declared) && declared.Static
+                    ? $"{owner.Name}.{method}"
+                    : $"{owner.Name.Replace('.', '/')}/{method}";
+            }
         }
 
         return prefix + (IsLocalFunctionOf(file, name) ? $"{stem}>{name}" : name);

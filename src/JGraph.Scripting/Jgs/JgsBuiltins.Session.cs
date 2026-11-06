@@ -236,6 +236,14 @@ internal static partial class JgsBuiltins
             string folder = args.Count == 1 ? host.Resolve(Str("what", args, 0, line, col)) : host.CurrentDirectory;
             if (!Directory.Exists(folder))
             {
+                // what Thing, what @Thing: the first @Thing folder on the path (stage P4, measured; a
+                // folder of that name under the current folder wins, and @Thing/private is nothing).
+                if (args.Count == 1 && host.FunctionPath is { } byClass
+                    && ClassFolderWhat(byClass.Tree, Str("what", args, 0, line, col)) is { } classFolder)
+                {
+                    return classFolder;
+                }
+
                 // MATLAB answers a 0-by-1 struct array rather than raising, so a caller can ask about
                 // a folder that may not be there and test isempty on the answer.
                 return JgsValue.StructArray(new JgsStructArray([], WhatFields), 0, 1);
@@ -289,12 +297,28 @@ internal static partial class JgsBuiltins
         });
     }
 
-    /// <summary>The file names matching a pattern, as a cell of strings.</summary>
+    /// <summary>The file names matching a pattern, as a cell of strings, by character code (R2025b lists <c>Thing.m</c> before <c>extent.m</c>; stage P4, measured).</summary>
     private static JgsValue NamesIn(string folder, string pattern)
     {
         string[] files = Directory.GetFiles(folder, pattern);
-        Array.Sort(files, StringComparer.OrdinalIgnoreCase);
+        Array.Sort(files, static (a, b) => string.CompareOrdinal(Path.GetFileName(a), Path.GetFileName(b)));
         return ColumnOfNames(files, static f => Path.GetFileName(f));
+    }
+
+    /// <summary>
+    /// <c>what</c> of a class folder named as <c>Thing</c> or <c>@Thing</c> (stage P4, measured): the
+    /// first <c>@Thing</c> folder on the path as one row, or null when the text is no plain name or
+    /// no search folder holds the class folder.
+    /// </summary>
+    private static JgsValue? ClassFolderWhat(JgsCodeTree tree, string asked)
+    {
+        string name = asked.StartsWith('@') ? asked[1..] : asked;
+        if (name.Length == 0 || JgsCodeTree.DottedParts("a." + name) is null)
+        {
+            return null;
+        }
+
+        return tree.ClassFolder(name) is { } hit ? JgsValue.Struct(WhatRow(hit.Folder)) : null;
     }
 
     /// <summary>

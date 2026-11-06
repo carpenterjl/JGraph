@@ -50,11 +50,16 @@ internal sealed class JgsClass
         "addlistener", "delete", "eq", "findobj", "findprop", "ge", "gt", "isvalid", "le", "listener", "lt", "ne", "notify",
     ];
 
-    /// <summary>Builds the class from its parsed definition, over the environment its methods see.</summary>
-    public JgsClass(ClassdefStmt declaration, JgsEnvironment scope, Interpreter interpreter)
+    /// <summary>
+    /// Builds the class from its parsed definition, over the environment its methods see; with
+    /// <paramref name="folder"/>, the <c>@Class</c> folder the definition sits in, whose method
+    /// files and <c>private/</c> functions are the class's methods too (stage P4, ADR 0310).
+    /// </summary>
+    public JgsClass(ClassdefStmt declaration, JgsEnvironment scope, Interpreter interpreter, JgsClassFolder? folder = null)
     {
         Declaration = declaration;
         Name = QualifiedName(declaration);
+        Folder = folder;
         _scope = scope;
         _interpreter = interpreter;
         _lineage.Add(this);
@@ -120,6 +125,11 @@ internal sealed class JgsClass
             _methods[method.Function.Name] = method;
         }
 
+        if (folder is not null)
+        {
+            BindFolder(folder, declaration);
+        }
+
         foreach (ClassEvent declared in EventsOf(declaration))
         {
             declared.Owner = this;
@@ -169,6 +179,61 @@ internal sealed class JgsClass
 
     /// <summary>The parsed <c>classdef</c> this class was built from.</summary>
     public ClassdefStmt Declaration { get; }
+
+    /// <summary>The <c>@Class</c> folder the class was built from, or null for a class file on its own (stage P4).</summary>
+    internal JgsClassFolder? Folder { get; }
+
+    /// <summary>
+    /// Binds the class folder's files (stage P4, measured in R2025b): a method the classdef
+    /// declared by a signature line takes the file of its name as its body, with the attributes of
+    /// the block it was declared in; a file the classdef never declared is a public instance method
+    /// with the file's name; a function under <c>private/</c> is a private method. A declared
+    /// signature with no file stays a signature, refused when called.
+    /// </summary>
+    private void BindFolder(JgsClassFolder folder, ClassdefStmt declaration)
+    {
+        foreach (string name in _own.Keys.ToList())
+        {
+            ClassMethod declared = _own[name];
+            if (declared.Signature && folder.MethodFiles.TryGetValue(name, out string? file))
+            {
+                (FnStmt body, IJgsCallable? refusal) = folder.LoadMethod(file, name, _interpreter);
+                ClassMethod bound = declared with { Function = body, File = file, Native = refusal };
+                _own[name] = bound;
+                _methods[name] = bound;
+            }
+        }
+
+        int block = declaration.Methods.Count == 0 ? 0 : declaration.Methods.Max(static m => m.Block) + 1;
+        foreach ((string stem, string file) in folder.MethodFiles)
+        {
+            if (_own.ContainsKey(stem) || string.Equals(stem, declaration.Name, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            (FnStmt body, IJgsCallable? refusal) = folder.LoadMethod(file, stem, _interpreter);
+            var undeclared = new ClassMethod(body, Static: false) { Block = block, File = file, Undeclared = true, Native = refusal, Owner = this };
+            _own[stem] = undeclared;
+            _methods[stem] = undeclared;
+        }
+
+        foreach ((string stem, string file) in folder.PrivateFiles)
+        {
+            if (_own.ContainsKey(stem) || string.Equals(stem, declaration.Name, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            (FnStmt body, IJgsCallable? refusal) = folder.LoadMethod(file, stem, _interpreter);
+            var hidden = new ClassMethod(body, Static: false)
+            {
+                Access = new MemberAccess(MemberAccessKind.Private), Block = block + 1, File = file, Undeclared = true, Native = refusal, Owner = this,
+            };
+            _own[stem] = hidden;
+            _methods[stem] = hidden;
+        }
+    }
 
     /// <summary>When the class's file was last written as the class was defined from it, or null for a class that came from no file (W11: a changed file is loaded again at its next mention).</summary>
     internal DateTime? FileWritten { get; set; }
@@ -514,6 +579,15 @@ internal sealed class JgsClass
         {
             throw new JgsRuntimeException(Declaration.Line, Declaration.Column,
                 $"The method '{method.Function.Name}' of class '{owner.Name}' is abstract, so there is nothing to call.");
+        }
+
+        // A signature line whose file the class folder does not hold (stage P4; not measured in
+        // R2025b): the call is the refusal, so the class itself still loads.
+        if (method.Signature && method.File is null)
+        {
+            string name = method.Function.Name;
+            return new BuiltinFunction(name, (_, line, col) => throw new JgsRuntimeException(line, col,
+                $"The method '{name}' of class '{owner.Name}' is declared without a body, and no file '{name}.m' in its class folder defines it."));
         }
 
         return new UserFunction(method.Function, owner._scope, _interpreter)
@@ -885,9 +959,13 @@ internal sealed class JgsClass
         return result;
     }
 
-    /// <summary>Whether <paramref name="function"/> is one of the methods this class's own file declares.</summary>
+    /// <summary>
+    /// Whether <paramref name="function"/> is one of the methods this class's own classdef writes -
+    /// not a method file of its class folder, whose frame R2025b's stack names by the bare name
+    /// (<c>terr</c>, <c>info</c>; stage P4, measured) where a classdef method's is <c>Class.method</c>.
+    /// </summary>
     internal bool DeclaresMethod(FnStmt function) =>
-        _own.TryGetValue(function.Name, out ClassMethod? method) && ReferenceEquals(method.Function, function);
+        _own.TryGetValue(function.Name, out ClassMethod? method) && ReferenceEquals(method.Function, function) && method.File is null;
 
     /// <summary>Whether <paramref name="function"/> is this class's constructor - the one place an immutable property is written.</summary>
     internal bool IsConstructor(FnStmt? function) =>

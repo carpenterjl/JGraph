@@ -1,0 +1,167 @@
+CHK|extent_fn|9|exact
+CHK|extent_dot|9|exact
+CHK|extent_dot_parens|9|exact
+CHK|scale_fn|7|exact
+CHK|scale_dot|7|exact
+CHK|static_class|6|exact
+CHK|static_instance|6|exact
+CHK|static_bare_id|MATLAB:UndefinedFunction|exact
+CHK|static_bare_msg|Undefined function 'staticOne' for input arguments of type 'double'.|exact
+CHK|size_method|[3 1]|exact
+CHK|size_plain|[1 3]|exact
+CHK|numel_object|1|exact
+CHK|plus_operator_w|3|exact
+CHK|plus_fn_class|P4Thing|exact
+CHK|plus_fn_w|3|exact
+CHK|withlocal|14|exact
+CHK|local_helper_id|MATLAB:UndefinedFunction|exact
+CHK|local_helper_msg|Undefined function 'helper' for input arguments of type 'double'.|exact
+CHK|info_mfilename|info|exact
+CHK|info_fullpath|<root>\lib\@P4Thing\info|exact
+CHK|info_stack_name|info|exact
+CHK|secret_fn_id|MATLAB:class:MethodRestricted|exact
+CHK|secret_fn_msg|Cannot access method 'secret' in class 'P4Thing'.|exact
+CHK|secret_dot_id|MATLAB:class:MethodRestricted|exact
+CHK|secret_via_public|secret|exact
+CHK|hidden_fn_id|MATLAB:UndefinedFunction|exact
+CHK|hidden_fn_msg|Undefined function 'p4hidden' for input arguments of type 'double'.|exact
+CHK|hidden_dot_id|MATLAB:class:MethodRestricted|exact
+CHK|hidden_dot_msg|Cannot access method 'p4hidden' in class 'P4Thing'.|exact
+CHK|hidden_class_id|MATLAB:subscripting:classHasNoPropertyOrMethod|exact
+CHK|hidden_class_msg|The class P4Thing has no Constant property or Static method named 'p4hidden'.|exact
+CHK|extent_double_id|MATLAB:UndefinedFunction|exact
+CHK|extent_double_msg|Undefined function 'extent' for input arguments of type 'double'.|exact
+CHK|scale_double_msg|Undefined function 'scale' for input arguments of type 'double'.|exact
+CHK|misnamed_by_file|misnamed|exact
+CHK|othername_id|MATLAB:UndefinedFunction|exact
+CHK|othername_msg|Undefined function 'othername' for input arguments of type 'P4Thing'.|exact
+CHK|empty_size|1|exact
+CHK|class_of_name|P4Thing|exact
+CHK|property|2|exact
+CHK|isa_thing|1|exact
+CHK|used_from_cur_function|5|exact
+CHK|after_clear|9|exact
+CHK|atcd_extent|4|exact
+CHK|atcd_bare_id|MATLAB:UndefinedFunction|exact
+CHK|atcd_which|<root>\lib\@P4Thing\extent.m|exact
+CHK|sub_extent|-1|exact
+CHK|sub_scale|5|exact
+CHK|sub_size|[2 1]|exact
+CHK|sub_class|P4Sub|exact
+CHK|sub_isa|1|exact
+CHK|sub_superclasses|P4Thing|exact
+CHK|hthing_n|2|exact
+CHK|hthing_isa_handle|1|exact
+CHK|cur_twice|4|exact
+CHK|cur_twice_dot|4|exact
+CHK|cur_class|P4Cur|exact
+CHK|pkg_class_method_dot|1001|exact
+CHK|pkg_class_method_fn|1001|exact
+CHK|pkg_class_name|p4pkg.D|exact
+CHK|pkg_class_methods|D,dm|exact
+CHK|pkg_class_which|<root>\lib\+p4pkg\@D\D.m|exact
+CHK|pkg_class_which_slash||exact
+CHK|pkg_class_dbstop_slash_msg|Cannot find function "p4pkg.D/dm".|exact
+CHK|pkg_class_exist|8|exact
+CHK|pkg_help_listing|Contents of p4pkg namespace://f - p4pkg.f is a function./D - p4pkg.D is a class./|exact
+CHK|both_class|P4Both|exact
+CHK|both_warning|Warning: Class 'P4Both' is defined in a class folder and takes precedence over a function with the same name that is earlier on the MATLAB path. In a future release, class 'P4Both' will no longer be given precedence. Click here for the locations of the conflicting items. Click here for guidelines to avoid this warning.|exact
+CHK|both_warning_once||exact
+CHK|both_lastwarn_id|MATLAB:class:AtFolderPrecedence|exact
+CHK|both_which|<root>\lib\@P4Both\P4Both.m|exact
+CHK|both_which_all|<root>\lib\@P4Both\P4Both.m,<root>\lib\P4Both.m|exact
+CHK|both_exist|2|exact
+CHK|both_exist_class|8|exact
+CHK|both_property|1|exact
+CHK|mis_id|MATLAB:m_class_filename|exact
+CHK|mis_msg|Error: File: <root>\lib\@P4Mis\P4Mis.m Line: 1 Column: 10/Class name and filename must match.|exact
+CHK|mis_exist|2|exact
+CHK|mis_exist_class|8|exact
+CHK|mis_which|<root>\lib\@P4Mis\P4Mis.m|exact
+CHK|lone_id|MATLAB:UndefinedFunction|exact
+CHK|lone_msg|Unrecognized function or variable 'P4Lone'.|exact
+CHK|lone_method_id|MATLAB:UndefinedFunction|exact
+CHK|lone_exist|0|exact
+CHK|lone_exist_class|0|exact
+CHK|lone_which||exact
+CHK|lone_which_method|<root>\lib\@P4Lone\method1.m|exact
+CHK|lone_methods_size|[0 0]|exact
+CHK|which_class|<root>\lib\@P4Thing\P4Thing.m|exact
+CHK|which_bare_method|<root>\lib\@P4Sub\extent.m|exact
+CHK|which_all_bare_method|<root>\lib\@P4Sub\extent.m,<root>\lib\@P4Thing\extent.m|exact
+CHK|which_slash_declared|<root>\lib\@P4Thing\extent.m|exact
+CHK|which_slash_undeclared|<root>\lib\@P4Thing\scale.m|exact
+CHK|which_slash_builtin_name|<root>\lib\@P4Thing\size.m|exact
+CHK|which_slash_private_folder||exact
+CHK|which_slash_private_method|<root>\lib\@P4Thing\secret.m|exact
+CHK|which_slash_static|<root>\lib\@P4Thing\staticOne.m|exact
+CHK|which_dot_static|<root>\lib\@P4Thing\staticOne.m|exact
+CHK|which_slash_ctor|<root>\lib\@P4Thing\P4Thing.m|exact
+CHK|which_slash_sub|<root>\lib\@P4Sub\extent.m|exact
+CHK|which_slash_cur|<root>\cur\@P4Cur\twice.m|exact
+CHK|which_slash_nosuch||exact
+CHK|which_arg_declared|<root>\lib\@P4Thing\extent.m  % P4Thing method/|exact
+CHK|which_arg_undeclared|<root>\lib\@P4Thing\scale.m  % P4Thing method/|exact
+CHK|which_arg_builtin_name|<root>\lib\@P4Thing\size.m  % P4Thing method/|exact
+CHK|which_arg_sub|<root>\lib\@P4Sub\extent.m  % P4Sub method/|exact
+CHK|exist_class|2|exact
+CHK|exist_class_kind|8|exact
+CHK|exist_class_file|2|exact
+CHK|exist_at_folder|0|exact
+CHK|exist_slash_method|2|exact
+CHK|exist_slash_method_file|2|exact
+CHK|exist_bare_method|0|exact
+CHK|exist_bare_undeclared|0|exact
+CHK|exist_sub|2|exact
+CHK|exist_sub_class|8|exact
+CHK|exist_cur|2|exact
+CHK|exist_cur_class|8|exact
+CHK|what_class_path|<root>\lib\@P4Thing|exact
+CHK|what_class_m|P4Thing.m,extent.m,info.m,misnamed.m,plus.m,scale.m,secret.m,size.m,staticOne.m,stk.m,terr.m,withlocal.m|exact
+CHK|what_class_classes_count|0|exact
+CHK|what_at_path|<root>\lib\@P4Thing|exact
+CHK|what_full_path|<root>\lib\@P4Thing|exact
+CHK|what_full_m|P4Thing.m,extent.m,info.m,misnamed.m,plus.m,scale.m,secret.m,size.m,staticOne.m,stk.m,terr.m,withlocal.m|exact
+CHK|what_lib_classes|P4Both,P4HThing,P4Lone,P4Mis,P4Sub,P4Thing|exact
+CHK|what_lib_m|P4Both.m|exact
+CHK|what_lib_packages|p4pkg|exact
+CHK|what_private_empty|1|exact
+CHK|help_class_folder|P4Thing methods://  P4Thing - is a class./   extent - P4Thing/extent is a function./     info - P4Thing/info is a function./ misnamed - P4Thing/misnamed is a function./     plus - P4Thing/plus is a function./    scale - not declared in the classdef/   secret - P4Thing/secret is a function./     size - P4Thing/size is a function./staticOne - P4Thing.staticOne is a function./      stk - P4Thing/stk is a function./     terr - P4Thing/terr is a function./withlocal - P4Thing/withlocal is a function.//    Documentation for P4Thing/       doc P4Thing//|exact
+CHK|help_slash_declared|P4Thing/extent is a function./    r = extent(o)/|exact
+CHK|help_slash_undeclared|  not declared in the classdef/|exact
+CHK|help_dot_undeclared|  not declared in the classdef/|exact
+CHK|help_slash_static|P4Thing.staticOne is a function./    r = P4Thing.staticOne(x)/|exact
+CHK|help_sub_folder|P4Sub methods:// P4Sub - is a class./extent - P4Sub/extent is a function.//    Documentation for P4Sub/       doc P4Sub//|exact
+CHK|type_slash|/function r = extent(o)/r = o.W * o.W;/end/|exact
+CHK|type_relative|/function r = extent(o)/r = o.W * o.W;/end/|exact
+CHK|nargin_slash_declared|1|exact
+CHK|nargin_slash_undeclared|2|exact
+CHK|nargin_class|1|exact
+CHK|nargin_static_handle|1|exact
+CHK|nargin_dot_id|MATLAB:narginout:notValidMfile|exact
+CHK|dbstatus_slash_declared|Breakpoint for P4Thing.extent is on line 2./|exact
+CHK|dbstatus_slash_undeclared|Breakpoint for P4Thing.scale is on line 3./|exact
+CHK|dbstatus_class|Breakpoint for P4Thing.P4Thing>P4Thing.P4Thing is on line 7./|exact
+CHK|dbstatus_class_slash|Breakpoint for P4Thing.P4Thing>P4Thing.P4Thing is on line 7./|exact
+CHK|dbstatus_local|Breakpoint for P4Thing.withlocal>helper is on line 5./|exact
+CHK|dbstop_dot_msg|Cannot find function "P4Thing.extent".|exact
+CHK|dbstop_gt_msg|Cannot find function "extent" within "P4Thing".|exact
+CHK|dbstop_local_dot_msg|Cannot find function "withlocal.helper" within "P4Thing/withlocal".|exact
+CHK|dbstack_method_file|> In P4Thing/stk (line 2)|exact
+CHK|dbstack_method_file_dot|> In P4Thing/stk (line 2)|exact
+CHK|terr_id|P4Thing:terr|exact
+CHK|terr_stack_name|terr|exact
+CHK|terr_stack_file|<root>\lib\@P4Thing\terr.m|exact
+CHK|methods_names|P4Thing,extent,info,misnamed,plus,scale,size,staticOne,stk,terr,viaSecret,withlocal|exact
+CHK|methods_printed|/Methods for class P4Thing://P4Thing    extent     info       misnamed   plus       scale      size       stk        terr       viaSecret  withlocal  //Static methods://staticOne  //|exact
+CHK|methods_full|/Methods for class P4Thing://o P4Thing(w)/r extent(o)/varargout info(varargin)/varargout misnamed(varargin)/r plus(a, b)/varargout scale(varargin)/r size(o, varargin)/Static r staticOne(x)/varargout stk(varargin)/varargout terr(varargin)/r viaSecret(o)/varargout withlocal(varargin)//|exact
+CHK|methods_sub|P4Sub,extent,info,misnamed,plus,scale,size,staticOne,stk,terr,viaSecret,withlocal|exact
+CHK|methods_hthing_own|P4HThing,bump|exact
+CHK|ismethod_undeclared|1|exact
+CHK|ismethod_static|1|exact
+CHK|ismethod_nosuch|0|exact
+CHK|metaclass_name|P4Thing|exact
+CHK|question_name|P4Thing|exact
+CHK|question_sub_name|P4Sub|exact
+CHK|late_before_rehash|Undefined function 'late' for input arguments of type 'P4Thing'.|div=ADR0310|diverges|
+CHK|late_after_rehash|Undefined function 'late' for input arguments of type 'P4Thing'.|div=ADR0310|diverges|

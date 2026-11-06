@@ -27,11 +27,17 @@ internal static partial class JgsBuiltins
             return MethodHelp(slashed, name[..slash], name[(slash + 1)..]);
         }
 
+        // Thing/extent, Thing.scale: a class folder's method file (stage P4, measured).
+        if (JgsFunctionPath.SlashForm(name) is { } slashForm && search.ClassMethodFile(slashForm.Class, slashForm.Member) is { } methodFile)
+        {
+            return ClassFolderMethodHelp(search, methodFile, slashForm.Class, slashForm.Member);
+        }
+
         if (JgsCodeTree.DottedParts(name) is { } parts)
         {
             if (search.FindDotted(name, out _) is { } memberFile)
             {
-                return FileHelp(memberFile, name);
+                return FileHelp(search, memberFile, name);
             }
 
             // pkg.C.m, pkg.C.stat: a method of a class in a package, named with a dot (P2, measured).
@@ -40,6 +46,11 @@ internal static partial class JgsBuiltins
                 && MethodHelp(classFile, owner, parts[^1]) is { } method)
             {
                 return method;
+            }
+
+            if (parts.Length == 2 && search.ClassMethodFile(parts[0], parts[1]) is { } dottedMethodFile)
+            {
+                return ClassFolderMethodHelp(search, dottedMethodFile, parts[0], parts[1]);
             }
 
             return search.Tree.IsPackage(parts) ? PackageHelp(search, parts) : null;
@@ -52,10 +63,137 @@ internal static partial class JgsBuiltins
 
         if (search.Find(name) is { } file)
         {
-            return FileHelp(file, name);
+            return FileHelp(search, file, name);
         }
 
         return search.Tree.IsPackage([name]) ? PackageHelp(search, [name]) : null;
+    }
+
+    /// <summary>
+    /// <c>help Thing</c> for a class defined by an <c>@Thing</c> folder (stage P4, measured):
+    /// "Thing methods:", a blank line, then one line per file of the folder - the class file as
+    /// "Thing - is a class.", each method file by its H1 line when it has one, else "Thing/name is a
+    /// function." (or "Thing.name is a function." for a static method) - the names right-aligned to
+    /// the longest, the class file first and the rest by character code, then the "Documentation
+    /// for" and "doc" lines.
+    /// </summary>
+    private static string ClassFolderHelp(JgsFunctionPath search, string classFile, string className)
+    {
+        JgsClass? loaded = LoadedClassOf(search, className);
+        var entries = new List<(string Name, string Description)> { (className, H1Of(classFile) ?? "is a class.") };
+        string folder = Path.GetDirectoryName(classFile) ?? string.Empty;
+        foreach (string stem in search.Index.StemsOfFullPath(folder).Order(StringComparer.Ordinal))
+        {
+            if (string.Equals(stem, className, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            bool isStatic = loaded is not null && loaded.TryMethod(stem, out ClassMethod? method) && method.Static;
+            entries.Add((stem, H1Of(Path.Combine(folder, stem + ".m")) ?? $"{className}{(isStatic ? '.' : '/')}{stem} is a function."));
+        }
+
+        int width = entries.Max(static e => e.Name.Length);
+        var text = new StringBuilder();
+        text.Append($"{className} methods:\n\n");
+        foreach ((string entryName, string description) in entries)
+        {
+            text.Append(entryName.PadLeft(width)).Append(" - ").Append(description).Append('\n');
+        }
+
+        text.Append($"\n    Documentation for {className}\n       doc {className}\n\n");
+        return text.ToString();
+    }
+
+    /// <summary>
+    /// <c>help Thing/extent</c>, <c>help Thing.scale</c> (stage P4, measured): the method file's
+    /// comment block when it has one, else "Thing/extent is a function." with the header as written
+    /// (<c>r = extent(o)</c>), or for a static method "Thing.staticOne is a function." with the
+    /// header under the dotted name (<c>r = Thing.staticOne(x)</c>).
+    /// </summary>
+    private static string ClassFolderMethodHelp(JgsFunctionPath search, string methodFile, string className, string member)
+    {
+        if (string.Equals(member, className, StringComparison.Ordinal))
+        {
+            return FileHelp(search, methodFile, className);
+        }
+
+        string block = FileHelp(search, methodFile, member);
+        if (!block.StartsWith($"{member} is a ", StringComparison.Ordinal))
+        {
+            return block; // the file's own comment block
+        }
+
+        bool isStatic = LoadedClassOf(search, className) is { } loaded && loaded.TryMethod(member, out ClassMethod? method) && method.Static;
+        string header = FunctionLineOf(methodFile) is { } functionLine
+            ? QualifiedHeader(functionLine, isStatic ? $"{className}.{member}" : member)
+            : member;
+        return isStatic
+            ? $"{className}.{member} is a function.\n    {header}\n"
+            : $"{className}/{member} is a function.\n    {header}\n";
+    }
+
+    /// <summary>The class <paramref name="className"/> names, loaded from the path if need be; null when it cannot be loaded (help still lists the folder).</summary>
+    private static JgsClass? LoadedClassOf(JgsFunctionPath search, string className)
+    {
+        try
+        {
+            return search.Interpreter.ClassForLoad(className);
+        }
+        catch (JgsException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>A file's H1 line - the text of the first comment line of its comment block, trimmed - or null when it has no block.</summary>
+    private static string? H1Of(string file)
+    {
+        string[] lines;
+        try
+        {
+            lines = JgsMlapp.ReadSource(file).ReplaceLineEndings("\n").Split('\n');
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+        {
+            return null;
+        }
+
+        int first = 0;
+        while (first < lines.Length && lines[first].Trim().Length == 0)
+        {
+            first++;
+        }
+
+        if (first >= lines.Length)
+        {
+            return null;
+        }
+
+        int blockAt = lines[first].TrimStart().StartsWith('%') ? first : first + 1;
+        return blockAt < lines.Length && lines[blockAt].TrimStart().StartsWith('%') ? lines[blockAt].TrimStart()[1..].Trim() : null;
+    }
+
+    /// <summary>The first <c>function</c> line of a code file, trimmed, or null.</summary>
+    private static string? FunctionLineOf(string file)
+    {
+        try
+        {
+            foreach (string line in JgsMlapp.ReadSource(file).ReplaceLineEndings("\n").Split('\n'))
+            {
+                string code = line.TrimStart();
+                if (StartsWithWord(code, "function"))
+                {
+                    return code;
+                }
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+        {
+            return null;
+        }
+
+        return null;
     }
 
     /// <summary>
@@ -109,7 +247,7 @@ internal static partial class JgsBuiltins
     /// none, "name is a function." with the header on the next line under four spaces, the name
     /// written as it was asked for (<c>r = pkg.f(x)</c>), or "name is a script." (R2025b, measured).
     /// </summary>
-    private static string FileHelp(string file, string asked)
+    private static string FileHelp(JgsFunctionPath search, string file, string asked)
     {
         string[] lines;
         try
@@ -152,7 +290,10 @@ internal static partial class JgsBuiltins
 
         if (StartsWithWord(head, "classdef"))
         {
-            return ClassHelp(lines, asked);
+            // A class in an @Class folder lists the folder's files (stage P4, measured).
+            return string.Equals(JgsCodeTree.ClassFolderOf(file), asked, StringComparison.Ordinal)
+                ? ClassFolderHelp(search, file, asked)
+                : ClassHelp(lines, asked);
         }
 
         return $"{asked} is a script.\n";
@@ -295,7 +436,7 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>What a code file is, read from its first line of code: a class, a function, or a script.</summary>
-    private static string KindOfFile(string file)
+    internal static string KindOfFile(string file)
     {
         string[] lines;
         try

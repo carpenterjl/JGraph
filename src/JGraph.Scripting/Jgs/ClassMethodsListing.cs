@@ -126,7 +126,9 @@ internal static class ClassMethodsListing
         var lines = new List<(string Name, string Text)>();
         foreach (ClassMethod method in cls.ListedMethods)
         {
-            string text = method.Native is not null
+            string text = method.Undeclared
+                ? $"varargout {method.Function.Name}(varargin)" // a class folder's file the classdef never declared (stage P4, measured)
+                : method.Native is not null
                 ? $"lhs1 {method.Function.Name}(rhs1)" // measured on matlab.mixin.Copyable's copy
                 : Signature(method.Function);
             if (method.Static)

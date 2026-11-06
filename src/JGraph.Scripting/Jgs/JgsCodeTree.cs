@@ -125,6 +125,119 @@ internal sealed class JgsCodeTree
         return ([.. members], [.. subPackages], [.. classFolders]);
     }
 
+    // --- Class folders (the packages and class folders plan, stage P4, ADR 0310) -----------------
+
+    /// <summary>One <c>@Class</c> folder: the search folder it sits under (or the package folder, for <c>+pkg/@D</c>), the folder itself and its index entry.</summary>
+    internal readonly record struct ClassFolderHit(string SearchFolder, string Folder, JgsFileIndex.Folder Entry);
+
+    /// <summary>
+    /// The first search folder holding <c>@<paramref name="name"/></c>, in search order, or null.
+    /// With <paramref name="package"/> given, the folder is looked for inside that package
+    /// (<c>+pkg/@D</c>) through the folders holding the package, in the same order.
+    /// </summary>
+    public ClassFolderHit? ClassFolder(string name, IReadOnlyList<string>? package = null)
+    {
+        foreach (ClassFolderHit hit in ClassFolders(name, package))
+        {
+            return hit;
+        }
+
+        return null;
+    }
+
+    /// <summary>Every folder holding <c>@<paramref name="name"/></c>, in search order.</summary>
+    public IEnumerable<ClassFolderHit> ClassFolders(string name, IReadOnlyList<string>? package = null)
+    {
+        if (package is { Count: > 0 })
+        {
+            foreach (PackageHit packageHit in Hits(package))
+            {
+                if (packageHit.Entry.ClassFolders.Contains(name))
+                {
+                    yield return Track(packageHit.Folder, name);
+                }
+            }
+
+            yield break;
+        }
+
+        if (!_index.AnyClassFolders)
+        {
+            yield break;
+        }
+
+        foreach (string root in _index.SearchFolders)
+        {
+            JgsFileIndex.Folder entry = _index.Track(root);
+            _index.StemsOf(entry);
+            if (entry.ClassFolders.Contains(name))
+            {
+                yield return Track(root, name);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Every <c>@Class</c> folder of every search folder, in search order and by name within one
+    /// (what <c>which</c> walks for a bare method name - R2025b's <c>which extent</c> answers a
+    /// method file, measured in P4).
+    /// </summary>
+    public IEnumerable<ClassFolderHit> AllClassFolders()
+    {
+        if (!_index.AnyClassFolders)
+        {
+            yield break;
+        }
+
+        foreach (string root in _index.SearchFolders)
+        {
+            JgsFileIndex.Folder entry = _index.Track(root);
+            _index.StemsOf(entry);
+            foreach (string name in entry.ClassFolders.Order(StringComparer.Ordinal))
+            {
+                yield return Track(root, name);
+            }
+        }
+    }
+
+    private ClassFolderHit Track(string parent, string name)
+    {
+        string folder = Path.Combine(parent, "@" + name);
+        JgsFileIndex.Folder entry = _index.Track(folder);
+        _index.StemsOf(entry);
+        return new ClassFolderHit(parent, folder, entry);
+    }
+
+    /// <summary>
+    /// The class folder <paramref name="file"/> sits in, as the class's name (<c>Thing</c> for
+    /// <c>…/@Thing/extent.m</c> and for <c>…/@Thing/private/p.m</c>), or null for a file in none -
+    /// read off the path alone.
+    /// </summary>
+    public static string? ClassFolderOf(string file)
+    {
+        if (file.Length == 0)
+        {
+            return null;
+        }
+
+        string? folder;
+        try
+        {
+            folder = Path.GetDirectoryName(file);
+            if (folder is not null && string.Equals(Path.GetFileName(folder), "private", StringComparison.OrdinalIgnoreCase))
+            {
+                folder = Path.GetDirectoryName(folder);
+            }
+        }
+        catch (Exception ex) when (ex is ArgumentException or PathTooLongException)
+        {
+            return null;
+        }
+
+        string leaf = folder is null ? string.Empty : Path.GetFileName(folder);
+        return leaf.Length > 1 && leaf[0] == '@' ? leaf[1..] : null;
+    }
+
     /// <summary>
     /// The package a file sits in, as the prefix a qualified name carries (<c>pkg.sub.</c> for a
     /// file under <c>+pkg/+sub/</c>), or "" for a file in no package — read off the path alone, so a
@@ -146,6 +259,12 @@ internal sealed class JgsCodeTree
         catch (Exception ex) when (ex is ArgumentException or PathTooLongException)
         {
             return string.Empty;
+        }
+
+        // A class folder's files sit one level under their package (+pkg/@D/D.m is pkg.D; stage P4).
+        if (folder is not null && Path.GetFileName(folder) is { Length: > 1 } first && first[0] == '@')
+        {
+            folder = Path.GetDirectoryName(folder);
         }
 
         while (folder is not null)

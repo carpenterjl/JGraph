@@ -21,8 +21,11 @@ namespace JGraph.Scripting.Jgs;
 /// </remarks>
 internal sealed class JgsFunctionPath
 {
-    /// <summary>A loaded file: what it resolved to, when it was last written, and the callable built from it.</summary>
-    private sealed record Loaded(string Path, DateTime Written, JgsValue Value);
+    /// <summary>A loaded file: what it resolved to, when it was last written, the callable built from it, and for a class file in an <c>@Class</c> folder the folder as it was read (stage P4).</summary>
+    private sealed record Loaded(string Path, DateTime Written, JgsValue Value, JgsClassFolder? Folder = null);
+
+    // The class folders whose class-folder-wins warning has been raised (PD3: once per session per name).
+    private readonly HashSet<string> _warnedClassFolders = new(StringComparer.Ordinal);
 
     internal static readonly StringComparer PathComparer = OperatingSystem.IsWindows()
         ? StringComparer.OrdinalIgnoreCase
@@ -244,6 +247,16 @@ internal sealed class JgsFunctionPath
             return null;
         }
 
+        // A class defined by an @Name folder takes the name over a function file of the same name
+        // anywhere on the path, an earlier one included, and R2025b warns once about the earlier
+        // one (the packages and class folders plan, stage P4, decision PD3; ADR 0310, measured).
+        if (_index.AnyClassFolders && ClassFile(name, out JgsCodeTree.ClassFolderHit hit) is { } classFile)
+        {
+            fromAddedFolder = _folders.Contains(hit.SearchFolder, PathComparer);
+            WarnIfAFunctionIsEarlier(name, hit.SearchFolder);
+            return classFile;
+        }
+
         // The current folder and the running script's own folder come first, exactly as they do for
         // every other file a script names — Resolve already knows that order, so it is not repeated.
         // In one folder an .mlapp is found before an .m of the same name (U7, measured in R2025b).
@@ -341,6 +354,141 @@ internal sealed class JgsFunctionPath
     /// </summary>
     internal static readonly string[] CodeExtensions = [JgsMlapp.Extension, JgsPcode.Extension, ".m"];
 
+    // --- Class folders (the packages and class folders plan, stage P4, ADR 0310) -----------------
+
+    /// <summary>
+    /// The class file of the first <c>@<paramref name="name"/></c> folder on the path that holds
+    /// one (<c>@Thing/Thing.m</c>), or null: a folder without its class file defines nothing
+    /// (R2025b, measured: <c>@Lone/method1.m</c> alone leaves <c>Lone</c> unrecognized).
+    /// </summary>
+    private string? ClassFile(string name, out JgsCodeTree.ClassFolderHit found)
+    {
+        foreach (JgsCodeTree.ClassFolderHit hit in _tree.ClassFolders(name))
+        {
+            if (hit.Entry.Stems.Contains(name))
+            {
+                found = hit;
+                return MemberFile(hit.Folder, name, hit.Entry);
+            }
+        }
+
+        found = default;
+        return null;
+    }
+
+    /// <summary>
+    /// R2025b's warning when a function file of the class's name sits in a search folder at or
+    /// before the class folder's (measured: <c>@Both/Both.m</c> and <c>Both.m</c> in one folder):
+    /// raised once per session for the name, through the warning state so <c>lastwarn</c> keeps it
+    /// (as R2025b's does, measured), with the two link lines as their text.
+    /// </summary>
+    private void WarnIfAFunctionIsEarlier(string name, string classSearchFolder)
+    {
+        if (_warnedClassFolders.Contains(name) || !_interpreter.SessionDialect.IsMatlab)
+        {
+            return;
+        }
+
+        foreach (string folder in _index.SearchFolders)
+        {
+            if (_index.StemsOfFullPath(folder).Contains(name))
+            {
+                _warnedClassFolders.Add(name);
+                JgsBuiltins.Warn(_host, "MATLAB:class:AtFolderPrecedence",
+                    $"Class '{name}' is defined in a class folder and takes precedence over a function with the same name that is earlier on the MATLAB path. "
+                    + $"In a future release, class '{name}' will no longer be given precedence.\n\n"
+                    + "Click here for the locations of the conflicting items.\nClick here for guidelines to avoid this warning.");
+                return;
+            }
+
+            if (PathComparer.Equals(folder, classSearchFolder))
+            {
+                return;
+            }
+        }
+    }
+
+    /// <summary>
+    /// The file <c>Class/member</c> names (<c>which Thing/extent</c>, <c>dbstop in Thing/extent</c>,
+    /// <c>help Thing/scale</c>, measured in P4): the method file of that name in the first
+    /// <c>@Class</c> folder holding one, the class file for <c>Thing/Thing</c>, and nothing for the
+    /// folder's <c>private/</c> (<c>which Thing/hidden</c> is empty, measured). Class-agnostic: a
+    /// folder without its class file still answers for its files (<c>which Lone/method1</c>).
+    /// </summary>
+    internal string? ClassMethodFile(string className, string member)
+    {
+        if (!IsPlainName(className) || !IsPlainName(member) || JgsCodeTree.DottedParts($"{className}.{member}") is null)
+        {
+            return null;
+        }
+
+        foreach (JgsCodeTree.ClassFolderHit hit in _tree.ClassFolders(className))
+        {
+            if (hit.Entry.Stems.Contains(member))
+            {
+                return MemberFile(hit.Folder, member, hit.Entry);
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// The method files named <paramref name="name"/> in every class folder on the path - what
+    /// <c>which</c> answers for a bare method name (R2025b's <c>which extent</c> is
+    /// <c>@Thing\extent.m</c>, measured): the folders of the classes loaded so far first, by the
+    /// classes' names, then every other class folder in search order.
+    /// </summary>
+    internal IReadOnlyList<string> MethodFilesByBareName(string name)
+    {
+        var found = new List<string>();
+        if (!IsPlainName(name) || !_index.AnyClassFolders)
+        {
+            return found;
+        }
+
+        // The loaded classes by name: R2025b answered @Sub\extent.m with Sub and Thing loaded and
+        // @Thing\extent.m with Thing alone (measured in p4_classfolders) - a rule the rows fit, as
+        // "the class loaded last" would; the folder walk after is for classes nothing has loaded.
+        foreach (JgsClass loaded in _interpreter.Classes.Values.OrderBy(static c => c.Name, StringComparer.Ordinal))
+        {
+            if (loaded.Folder is { } folder && folder.MethodFiles.TryGetValue(name, out string? file) && !found.Contains(file, PathComparer))
+            {
+                found.Add(file);
+            }
+        }
+
+        foreach (JgsCodeTree.ClassFolderHit hit in _tree.AllClassFolders())
+        {
+            if (hit.Entry.Stems.Contains(name))
+            {
+                string file = MemberFile(hit.Folder, name, hit.Entry);
+                if (!found.Contains(file, PathComparer))
+                {
+                    found.Add(file);
+                }
+            }
+        }
+
+        return found;
+    }
+
+    /// <summary>The two halves of <c>Class/member</c> when <paramref name="name"/> has that shape - one slash between two plain names - or null.</summary>
+    internal static (string Class, string Member)? SlashForm(string name)
+    {
+        int slash = name.IndexOf('/');
+        if (slash <= 0 || slash == name.Length - 1 || name.IndexOf('/', slash + 1) >= 0 || name.Contains('\\'))
+        {
+            return null;
+        }
+
+        // The slash forms stop at a package (measured: which pkg.D/dm is empty, dbstop in pkg.D/dm
+        // and nargin('pkg.C/m') are refused), so the class part is a plain name.
+        string className = name[..slash];
+        string member = name[(slash + 1)..];
+        return className.Contains('.') || JgsCodeTree.DottedParts($"{className}.{member}") is null ? null : (className, member);
+    }
+
     // --- Packages (the packages and class folders plan, stage P1, ADR 0307) ----------------------
 
     /// <summary>
@@ -359,6 +507,16 @@ internal sealed class JgsFunctionPath
         string member = parts[^1];
         if (_tree.MemberFolder(parts[..^1], member) is not { } hit)
         {
+            // +pkg/@D/D.m: a class folder inside the package (stage P4, measured: pkg.D(1).dm()).
+            foreach (JgsCodeTree.ClassFolderHit classFolder in _tree.ClassFolders(member, parts[..^1]))
+            {
+                if (classFolder.Entry.Stems.Contains(member))
+                {
+                    fromAddedFolder = _folders.Contains(classFolder.SearchFolder, PathComparer);
+                    return MemberFile(classFolder.Folder, member, classFolder.Entry);
+                }
+            }
+
             return null;
         }
 
@@ -460,9 +618,18 @@ internal sealed class JgsFunctionPath
             }
         }
 
+        // The class folders of the name first (which -all Both lists @Both\Both.m before Both.m, measured in P4).
+        foreach (JgsCodeTree.ClassFolderHit hit in _tree.ClassFolders(name))
+        {
+            if (hit.Entry.Stems.Contains(name))
+            {
+                Add(MemberFile(hit.Folder, name, hit.Entry));
+            }
+        }
+
         string? first = Find(name);
         string? firstFolder = first is null ? null : Path.GetDirectoryName(first);
-        if (firstFolder is not null)
+        if (firstFolder is not null && !JgsFileIndex.IsMcosFolder(firstFolder))
         {
             foreach (string extension in CodeExtensions)
             {
@@ -568,16 +735,17 @@ internal sealed class JgsFunctionPath
         }
 
         bool loadedBefore = cached is not null && PathComparer.Equals(cached.Path, path);
-        if (loadedBefore && cached!.Written == written)
+        if (loadedBefore && cached!.Written == written && !(cached.Folder is { } classFolder && classFolder.Changed(_interpreter.StatementEpoch)))
         {
             loaded = cached;
             return true;
         }
 
         JgsValue value;
+        JgsClassFolder? folder;
         try
         {
-            value = Load(name, path);
+            value = Load(name, path, out folder);
         }
         catch (JgsRuntimeException) when (loadedBefore && !CanRead(path))
         {
@@ -588,7 +756,7 @@ internal sealed class JgsFunctionPath
             throw new JgsRuntimeException(0, 0, $"Previously accessible file \"{path}\" is now inaccessible.");
         }
 
-        loaded = new Loaded(path, written, value);
+        loaded = new Loaded(path, written, value, folder);
         return true;
     }
 
@@ -611,7 +779,7 @@ internal sealed class JgsFunctionPath
     /// local to it. A script file becomes something that runs the file's statements in the caller's
     /// own workspace, because that is what running a script by name means.
     /// </summary>
-    private JgsValue Load(string name, string path)
+    private JgsValue Load(string name, string path, out JgsClassFolder? folder)
     {
         IReadOnlyList<Stmt> program;
         if (JgsPcode.IsPcode(path))
@@ -626,7 +794,7 @@ internal sealed class JgsFunctionPath
             }
 
             WarnIfOlderThanSource(path);
-            return Define(name, path, program);
+            return Define(name, path, program, out folder);
         }
 
         string source;
@@ -661,7 +829,7 @@ internal sealed class JgsFunctionPath
             throw load;
         }
 
-        return Define(name, path, program);
+        return Define(name, path, program, out folder);
     }
 
     /// <summary>
@@ -688,8 +856,10 @@ internal sealed class JgsFunctionPath
     }
 
     /// <summary>The callable a file's parsed program defines, whether it came from source or P-code.</summary>
-    private JgsValue Define(string name, string path, IReadOnlyList<Stmt> program)
+    private JgsValue Define(string name, string path, IReadOnlyList<Stmt> program, out JgsClassFolder? folder)
     {
+        folder = null;
+
         // A class file holds one classdef, followed by nothing but the file's local functions, and
         // the name it answers to is the file's. What the path hands back for it is the constructor,
         // which is what makes `Circle(2)` an ordinary call: the interpreter never learns a new kind
@@ -698,9 +868,20 @@ internal sealed class JgsFunctionPath
         {
             if (!string.Equals(classFile.Name, name, StringComparison.Ordinal))
             {
-                throw new JgsRuntimeException(classFile.Line, classFile.Column, "MATLAB:m_class_filename",
-                    $"'{Path.GetFileName(path)}' defines class '{classFile.Name}', so it answers to "
-                    + $"'{classFile.Name}' and not to '{name}' — a class file is named after its class.");
+                // R2025b's refusal, headed like its other parse-time refusals and pointing at the
+                // name on the classdef line (P4, measured: @Mis/Mis.m holding `classdef Wrong` is
+                // "Error: File: <path> Line: 1 Column: 10 / Class name and filename must match.").
+                var mismatch = new JgsRuntimeException(classFile.Line, classFile.NameColumn, "MATLAB:m_class_filename",
+                    $"Error: File: {path} Line: {classFile.Line} Column: {classFile.NameColumn}\nClass name and filename must match.");
+                mismatch.AttributeTo(path);
+                throw mismatch;
+            }
+
+            // A class file in an @Name folder takes the folder's method files and private/
+            // functions as its methods (stage P4).
+            if (string.Equals(JgsCodeTree.ClassFolderOf(path), name, StringComparison.Ordinal))
+            {
+                folder = JgsClassFolder.Read(path, name, _index);
             }
 
             // The class's scope sits under the built-in layer like a file's: a method or a property
@@ -719,7 +900,7 @@ internal sealed class JgsFunctionPath
                 scope.DeclareFunction(local.Name, JgsValue.Function(new UserFunction(local, scope, _interpreter)));
             }
 
-            return _interpreter.DefineClass(classFile, scope).ConstructorValue;
+            return _interpreter.DefineClass(classFile, scope, folder).ConstructorValue;
         }
 
         if (!JgsRunner.IsFunctionFile(program))

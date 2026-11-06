@@ -22,10 +22,10 @@ internal sealed partial class Interpreter
     /// <summary>Whether any class has been defined at all — the guard every dispatch site opens with.</summary>
     internal bool AnyClasses => _classes.Count > 0 || _builtinClasses.Count > 0;
 
-    /// <summary>Records a class built from a file, replacing an earlier definition of the same name.</summary>
-    internal JgsClass DefineClass(ClassdefStmt declaration, JgsEnvironment scope)
+    /// <summary>Records a class built from a file, replacing an earlier definition of the same name; <paramref name="folder"/> is the <c>@Class</c> folder it sits in, or null (stage P4).</summary>
+    internal JgsClass DefineClass(ClassdefStmt declaration, JgsEnvironment scope, JgsClassFolder? folder = null)
     {
-        var built = new JgsClass(declaration, scope, this);
+        var built = new JgsClass(declaration, scope, this, folder);
         if (declaration.SourceId.Length > 0 && System.IO.Path.IsPathRooted(declaration.SourceId))
         {
             try
@@ -71,8 +71,10 @@ internal sealed partial class Interpreter
         definition.CheckedEpoch = StatementEpoch;
         try
         {
+            // A class folder's method file written, added or removed is a changed class too (stage P4).
             string path = definition.Declaration.SourceId;
-            if (System.IO.File.Exists(path) && System.IO.File.GetLastWriteTimeUtc(path) != written && !IsFileActive(path))
+            bool changed = System.IO.File.Exists(path) && System.IO.File.GetLastWriteTimeUtc(path) != written;
+            if ((changed || (definition.Folder is { } folder && folder.Changed(StatementEpoch))) && !IsFileActive(path))
             {
                 _classes.Remove(name);
                 FunctionPath?.Unload(name);
@@ -440,8 +442,27 @@ internal sealed partial class Interpreter
         value = JgsValue.Null;
         if (member.Target is VariableExpr name)
         {
-            return ClassNamed(name.Name, env) is { } definition
-                && TryClassMember(definition, FieldName(member, env), member, autoCall, out value);
+            if (ClassNamed(name.Name, env) is not { } definition)
+            {
+                return false;
+            }
+
+            string field = FieldName(member, env);
+            if (TryClassMember(definition, field, member, autoCall, out value))
+            {
+                return true;
+            }
+
+            // An instance method - a private one of the class folder included - is no static
+            // method, whatever its access: R2025b's refusal (P2 for a class in a package, P4
+            // measured for a plain class: Thing.hidden(2)).
+            if (Dialect.IsMatlab && definition.TryMethod(field, out ClassMethod? instanceMethod) && !instanceMethod.Static)
+            {
+                throw new JgsRuntimeException(member.Line, member.Column, "MATLAB:subscripting:classHasNoPropertyOrMethod",
+                    $"The class {definition.Name} has no Constant property or Static method named '{field}'.");
+            }
+
+            return false;
         }
 
         // pkg.C.K, pkg.C.stat(…), pkg.C.empty, pkg.E.A: a class in a package named in full in front
