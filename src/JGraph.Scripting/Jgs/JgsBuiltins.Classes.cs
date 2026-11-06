@@ -753,7 +753,8 @@ internal static partial class JgsBuiltins
     private static JgsClass? NamedClass(JgsValue value, Interpreter interpreter) =>
         value.Type != JgsType.String ? null
         : interpreter.Classes.TryGetValue(value.AsString, out JgsClass? definition) ? definition
-        : interpreter.ClassForLoad(value.AsString); // the first mention of the class loads its file (U6)
+        : interpreter.ClassForLoad(value.AsString) // the first mention of the class loads its file (U6)
+            ?? interpreter.ImportedClass(value.AsString, interpreter.CurrentFrame); // the short name an import gives (P3)
 
     /// <summary>A cell column of names — the shape MATLAB's <c>properties</c> and <c>methods</c> answer.</summary>
     private static JgsValue CellColumn(IEnumerable<string> names)

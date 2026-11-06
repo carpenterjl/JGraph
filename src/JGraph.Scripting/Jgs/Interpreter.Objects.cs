@@ -525,6 +525,13 @@ internal sealed partial class Interpreter
             return null; // a variable holding data outranks a class, as it does a function
         }
 
+        // C.K, C.stat(1), E.A under import pkg.C or pkg.*: the class the import gives the short
+        // name (P3, measured), before any file of the name on the path.
+        if (AnyImports && ImportedClass(name, env) is { } imported)
+        {
+            return imported;
+        }
+
         DropClassIfFileChanged(name);
         if (!_classes.ContainsKey(name) && !env.Contains(name))
         {

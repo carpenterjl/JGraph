@@ -371,8 +371,11 @@ internal static partial class JgsBuiltins
                     || JgsUiEventData.IsBuiltinEventData(args[0])
                     || (args[0].Type == JgsType.Object && args[0].ObjectClass.IsEventData),
                 // An instance is one of each of its superclasses too (U6).
+                // isa(o, 'C') under import pkg.C or pkg.*: the short name an import gives the class (P3, measured).
                 _ => string.Equals(actual, wanted, StringComparison.Ordinal)
-                    || (args[0].Type == JgsType.Object && args[0].ObjectClass.IsA(wanted)),
+                    || (args[0].Type == JgsType.Object && (args[0].ObjectClass.IsA(wanted)
+                        || (args[0].ObjectClass.Interpreter.ImportedClass(wanted, args[0].ObjectClass.Interpreter.CurrentFrame) is { } imported
+                            && args[0].ObjectClass.IsA(imported.Name)))),
             });
         });
 

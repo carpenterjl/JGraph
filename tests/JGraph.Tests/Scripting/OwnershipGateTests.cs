@@ -211,7 +211,7 @@ public class OwnershipGateTests
          "local.Declare(output, built);",
          "the object a constructor is building: fresh, what a superclass's constructor left in a frame that has ended, or a share the caller took (U6)"),
         ("JgsClass.cs",
-         "scope.DeclareFunction(Name, _constructor);",
+         "scope.DeclareFunction(declaration.Name, _constructor);",
          "a class constructor bound by name: a callable is immutable"),
         ("JgsCallable.cs",
          "snapshot.DeclareFunction(name, value);",

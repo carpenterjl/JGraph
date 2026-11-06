@@ -2378,7 +2378,7 @@ public static class JgsBuiltinCatalog
         Add("mexext", "The MEX file extension of this platform, 'mexw64'; mexext('all') lists every platform's.", Opt("'all'"));
         Add("mex", "The namespace holding mex.getCompilerConfigurations(lang, list): the C compilers loadlibrary can preprocess headers with, as mex.CompilerConfiguration values. Building MEX files is out of scope.");
 
-        Add("import", "Imports .NET names into the running function: 'import System.IO.*' or 'import System.Math.Max'; with no argument, the list of what is imported.", Opt("names"));
+        Add("import", "Imports .NET or package names into the running function: 'import System.IO.*', 'import System.Math.Max', 'import pkg.*' or 'import pkg.f'; with no argument, the list of what is imported.", Opt("names"));
         Add("enumeration", "Prints the members of a .NET enumeration named by text or by a member; asked for an output, answers the member when there is only one.", P("className"));
         Add("meta", "The namespace holding meta.class.fromName: the metaclass of a class or a .NET type named by text, or an empty for neither.");
         Add("throwAsCaller", "Raises an MException, reported against the caller.", P("exception"));

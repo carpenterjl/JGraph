@@ -1,0 +1,120 @@
+CHK|explicit_f|20|exact
+CHK|wild_f|20|exact
+CHK|wild_ctor|3|exact
+CHK|wild_const|7|exact
+CHK|wild_static|101|exact
+CHK|wild_two|4|exact
+CHK|wild_enum|pkg.E|exact
+CHK|wild_class_name|pkg.C|exact
+CHK|wild_class_method|6|exact
+CHK|explicit_class_ctor|4|exact
+CHK|explicit_class_const|7|exact
+CHK|explicit_class_static|101|exact
+CHK|explicit_class_name|pkg.C|exact
+CHK|explicit_enum|pkg.E|exact
+CHK|sub_wild_h|4|exact
+CHK|sub_wild_class|pkg.sub.K|exact
+CHK|sub_explicit_id|MATLAB:mir_illegal_import_argument|exact
+CHK|sub_explicit_msg|Error: File: <root>\cur2\imp_sub_explicit.m Line: 2 Column: 8/Unable to find or import 'pkg.sub'. Imported names must end with '.*' or be fully qualified.|exact
+CHK|class_wild_static|101|exact
+CHK|class_wild_const_id|MATLAB:UndefinedFunction|exact
+CHK|wild_sub_dotted|3|exact
+CHK|wild_script|42|exact
+CHK|explicit_script|42|exact
+CHK|builtin_wild|pkg max|exact
+CHK|builtin_explicit|pkg max|exact
+CHK|after_use|20|exact
+CHK|nosuch_pkg_wild|1|exact
+CHK|in_pkg_fn|10|exact
+CHK|in_pkg_fn_explicit|2|exact
+CHK|in_static_method|10|exact
+CHK|two_wild_pkg_first|20|exact
+CHK|two_wild_other_first|2000|exact
+CHK|two_wild_only|other only|exact
+CHK|explicit_over_wild|20|exact
+CHK|wild_over_explicit|20|exact
+CHK|twice_pkg_first|20|exact
+CHK|twice_other_first|2000|exact
+CHK|net_wild_first|pkg Pow|exact
+CHK|pkg_wild_first|pkg Pow|exact
+CHK|wild_var|20|exact
+CHK|var_clash_id|MATLAB:lang:ImportedFunctionAndVariableHaveSameName|exact
+CHK|var_clash_msg|Error: File: <root>\cur2\imp_var.m Line: 3 Column: 1/Declaring a variable with the same name as the imported function "f" is not supported.|exact
+CHK|nested_clash_id|MATLAB:lang:ImportedFunctionAndNestedFunctionHaveSameName|exact
+CHK|nested_clash_msg|Error: File: <root>\cur2\imp_shadow_nested.m Line: 2 Column: 8/Importing a class or a function with the same name as that of a nested function "f" is not supported.|exact
+CHK|shadow_local|local f|exact
+CHK|pkg_bare_id|MATLAB:mir_illegal_import_argument|exact
+CHK|pkg_bare_msg|Error: File: <root>\cur2\imp_pkg_bare.m Line: 2 Column: 8/Unable to find or import 'pkg'. Imported names must end with '.*' or be fully qualified.|exact
+CHK|nosuch_id|MATLAB:mir_illegal_import_argument|exact
+CHK|nosuch_msg|Error: File: <root>\cur2\imp_nosuch.m Line: 2 Column: 8/Unable to find or import 'pkg.nosuch'. Imported names must end with '.*' or be fully qualified.|exact
+CHK|two_names_msg|Error: File: <root>\cur2\imp_two_names.m Line: 2 Column: 14/Unable to find or import 'pkg.nosuch'. Imported names must end with '.*' or be fully qualified.|exact
+CHK|list|pkg.f,other.*|exact
+CHK|list_fn|pkg.f,other.*|exact
+CHK|list_empty|0x1 cell|exact
+CHK|clear_in_fn_id|MATLAB:cannotClear|exact
+CHK|clear_in_fn_msg|Invalid use of CLEAR IMPORT. Call CLEAR IMPORT only from the command prompt.|exact
+CHK|nested_sees|30|exact
+CHK|local_id|MATLAB:UndefinedFunction|exact
+CHK|local_msg|Undefined function 'f' for input arguments of type 'double'.|exact
+CHK|anon_sees|30|exact
+CHK|callee_id|MATLAB:UndefinedFunction|exact
+CHK|clear_all_keeps|20|exact
+CHK|script_from_fn_value|40|exact
+CHK|script_from_fn_list||exact
+CHK|which_f|<root>\lib\+pkg\f.m|exact
+CHK|exist_f|0|exact
+CHK|exist_f_file|0|exact
+CHK|exist_C|8|exact
+CHK|exist_C_class|8|exact
+CHK|which_C|<root>\lib\+pkg\C.m|exact
+CHK|isa_short|1|exact
+CHK|isa_qualified|1|exact
+CHK|class_C|pkg.C|exact
+CHK|isa_short_wild|1|exact
+CHK|exist_C_wild|8|exact
+CHK|exist_C_class_wild|8|exact
+CHK|exist_f_wild|0|exact
+CHK|which_f_wild|<root>\lib\+pkg\f.m|exact
+CHK|nargin_f|1|exact
+CHK|methods_C|1|exact
+CHK|handle_name|pkg.f|exact
+CHK|handle_value|20|exact
+CHK|handle_explicit_name|pkg.f|exact
+CHK|handle_explicit_value|20|exact
+CHK|handle_builtin_name|pkg.max|exact
+CHK|handle_builtin_value|pkg max|exact
+CHK|str2func_name|pkg.f|exact
+CHK|str2func_value|20|exact
+CHK|feval_value|20|exact
+CHK|eval_value|20|exact
+CHK|pathfile_call|20|exact
+CHK|pathfile_call_explicit|20|exact
+CHK|pathfile_handle_name|pkg.f|exact
+CHK|pathfile_handle_value|20|exact
+CHK|pathfile_handle_explicit_name|pkg.f|exact
+CHK|pathfile_handle_explicit_value|20|exact
+CHK|pathfile_feval|20|exact
+CHK|pathfile_eval|20|exact
+CHK|pathfile_which_f|<root>\lib\+pkg\f.m|exact
+CHK|pathfile_exist_f|2|exact
+CHK|private_call|20|exact
+CHK|private_call_explicit|20|exact
+CHK|curfolder_wild|other only|exact
+CHK|private_handle_name|f|exact
+CHK|private_handle_value|private f|exact
+CHK|private_handle_explicit_name|pkg.f|exact
+CHK|private_handle_explicit_value|20|exact
+CHK|private_str2func_name|f|exact
+CHK|private_str2func_value|private f|exact
+CHK|private_feval|private f|exact
+CHK|private_eval|private f|exact
+CHK|private_cellfun_id|MATLAB:cellfun:NotAScalarOutput|exact
+CHK|private_which_f|<root>\lib\+pkg\f.m|exact
+CHK|private_exist_f|2|exact
+CHK|script_wild_f|20|exact
+CHK|script_wild_const|7|exact
+CHK|script_list|pkg.*,other.*|exact
+CHK|script_two_wild_f|20|exact
+CHK|script_wild_only|other only|exact
+CHK|script_clear_import_id|MATLAB:cannotClear|exact
+CHK|script_list_after|pkg.*,other.*|exact

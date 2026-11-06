@@ -285,7 +285,7 @@ internal sealed class JgsEnvironment
     /// entry, or the base workspace's and a script's, made as their <c>import</c> statements run.
     /// Null in nearly every scope.
     /// </summary>
-    internal Net.NetImports? Imports { get; set; }
+    internal JgsImports? Imports { get; set; }
 
     /// <summary>
     /// Whether this scope is an anonymous function's workspace: the snapshot taken when the handle

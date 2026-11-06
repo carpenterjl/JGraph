@@ -839,15 +839,24 @@ internal sealed partial class Interpreter
         }
 
         JgsValue result = JgsValue.Null;
-        for (int i = 0; i < program.Count; i++)
+        JgsEnvironment? outerEval = _evalEnv;
+        _evalEnv = env; // the text's names resolve as text does, see InEvalText (P3)
+        try
         {
-            if (!asStatement && i == program.Count - 1 && program[i] is ExprStmt tail && tail.Expression is not AssignExpr)
+            for (int i = 0; i < program.Count; i++)
             {
-                result = Evaluate(tail.Expression, env);
-                continue;
-            }
+                if (!asStatement && i == program.Count - 1 && program[i] is ExprStmt tail && tail.Expression is not AssignExpr)
+                {
+                    result = Evaluate(tail.Expression, env);
+                    continue;
+                }
 
-            Execute(program[i], env);
+                Execute(program[i], env);
+            }
+        }
+        finally
+        {
+            _evalEnv = outerEval;
         }
 
         return result;
@@ -1018,6 +1027,7 @@ internal sealed partial class Interpreter
         // run() from JGS indexes 1-based and auto-declares, and its functions hoist into its file.
         using DialectContext code = EnterDialect(DialectOf(program));
         HoistAll(program, file);
+        HoistImports(program, _globals); // a script's imports hold from its first line (P3, measured)
 
         // The top level runs through the same block executor as everything else, so a debug hook sees
         // top-level statements too. (Reaching a hoisted FnStmt is a no-op; see the statement arm.)
@@ -1076,8 +1086,14 @@ internal sealed partial class Interpreter
         _inScript = true;
         JgsLifetime? outerLifetimes = JgsLifetime.Current;
         JgsLifetime.Current = Lifetimes;
+
+        // The script's imports are a list of its own over the workspace's, for its run alone: its
+        // statements see them and the caller's list never shows them (P3, measured).
+        JgsImports? outerImports = scope.Imports;
+        scope.Imports = new JgsImports(dynamic: true) { Outer = outerImports };
         try
         {
+            HoistImports(program, scope); // the whole file's, from its first line (measured)
             completion = ExecuteBlock(program, scope);
         }
         catch (JgsException error)
@@ -1087,6 +1103,7 @@ internal sealed partial class Interpreter
         }
         finally
         {
+            scope.Imports = outerImports;
             JgsLifetime.Current = outerLifetimes;
             _inScript = wasScript;
             _runningScripts.RemoveAt(_runningScripts.Count - 1);
@@ -2191,6 +2208,19 @@ internal sealed partial class Interpreter
             // handle is later called with (U6): @area in a script, before any shape exists. The
             // handle is made, as R2025b makes it, and a call nothing answers is the error.
             return Dialect.IsMatlab && AnyClasses && TryMethodHandle(name, env, out handle);
+        }
+
+        // A handle to a name an import reaches is the handle to the member itself: named in
+        // full and naming no file, as @pkg.f is (P3, measured: func2str '@f' under import pkg.*
+        // is 'pkg.f', and '@max' there 'pkg.max').
+        if (Dialect.IsMatlab && referenced.Layer is ResolutionLayer.ExplicitImport or ResolutionLayer.WildcardImport
+            && ImportFor(name, env, head: false) is { QualifiedName: { } qualified })
+        {
+            handle = JgsValue.Function(new NamedHandle(qualified, referenced.Layer, referenced.Value.AsCallable, null, null, _resolver)
+            {
+                Context = AnyClasses ? env.ClassContext : null,
+            });
+            return true;
         }
 
         handle = Dialect.IsMatlab

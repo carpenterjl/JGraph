@@ -137,7 +137,14 @@ internal sealed class JgsNameResolver
     /// hand to phase two with the arguments, or <see cref="Resolution.None"/> when nothing but a
     /// user method could hold the name.
     /// </summary>
-    public Resolution Invoke(string name, JgsEnvironment env)
+    public Resolution Invoke(string name, JgsEnvironment env) => Invoke(name, env, dynamic: false);
+
+    /// <summary>
+    /// <see cref="Invoke(string, JgsEnvironment)"/> for a name given as text rather than written as a
+    /// call - <c>feval('f', …)</c> - where the running file's <c>private/</c> folder answers before a
+    /// wildcard import (P3, measured); eval'd code resolves the same way (<see cref="Interpreter.InEvalText"/>).
+    /// </summary>
+    public Resolution Invoke(string name, JgsEnvironment env, bool dynamic)
     {
         if (!_interpreter.Dialect.IsMatlab)
         {
@@ -172,7 +179,10 @@ internal sealed class JgsNameResolver
 
         if (_interpreter.AnyImports && Imported(name, env, explicitOnly: false) is { } reached)
         {
-            return reached;
+            // A name resolved from text - feval's, eval'd code's - gives the file's private/
+            // folder the first word over a wildcard import; a written call gives it to the
+            // import (packages plan, P3, measured both ways).
+            return (dynamic || _interpreter.InEvalText(env)) && TryPrivate(name, out Resolution privateFirst) ? privateFirst : reached;
         }
 
         if (scope is not null)
@@ -325,14 +335,17 @@ internal sealed class JgsNameResolver
             return new Resolution(ResolutionLayer.Local, held, file);
         }
 
-        if (_interpreter.AnyImports && Imported(name, env, explicitOnly: false) is { } reached)
-        {
-            return reached;
-        }
-
         if (TryPrivate(name, out Resolution privately))
         {
             return privately;
+        }
+
+        // A wildcard import below the file's own private/ folder and above the search folders
+        // (P3, measured: @f under import pkg.* is private/f.m where there is one, and pkg.f over a
+        // plain f.m on the path); an explicit import, above, beats the private file.
+        if (_interpreter.AnyImports && Imported(name, env, explicitOnly: false) is { } reached)
+        {
+            return reached;
         }
 
         if (ownFile)
@@ -365,6 +378,14 @@ internal sealed class JgsNameResolver
             }
 
             yield break;
+        }
+
+        // A package member or class an import reaches answers which and nargin first, by its
+        // file (P3, measured: which('f') under import pkg.f or pkg.* is +pkg\f.m over the private
+        // folder and the path); exist leaves this layer out (AFileAnswers).
+        if (_interpreter.AnyImports && Imported(name, env, explicitOnly: false) is { File.Length: > 0 } imported)
+        {
+            yield return imported;
         }
 
         Resolution lexical = Invoke(name, env);
@@ -552,7 +573,7 @@ internal sealed class JgsNameResolver
             return null;
         }
 
-        return new Resolution(imported.Explicit ? ResolutionLayer.ExplicitImport : ResolutionLayer.WildcardImport, value, null);
+        return new Resolution(imported.Explicit ? ResolutionLayer.ExplicitImport : ResolutionLayer.WildcardImport, value, imported.File);
     }
 
     /// <summary>

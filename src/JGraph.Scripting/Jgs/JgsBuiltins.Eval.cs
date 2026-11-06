@@ -621,7 +621,7 @@ internal static partial class JgsBuiltins
             // Both phases, as a written call: a bound handle is called, and anything else is resolved
             // with the classes of the arguments feval will pass on.
             string name = args[0].AsString;
-            Resolution found = interpreter.Resolver.Invoke(name, interpreter.CurrentFrame);
+            Resolution found = interpreter.Resolver.Invoke(name, interpreter.CurrentFrame, dynamic: true); // by text: private/ before a wildcard import (P3)
             if (found.Layer != ResolutionLayer.Bound)
             {
                 found = interpreter.Resolver.Invoke(name, found, args.Skip(1).ToArray());
@@ -726,7 +726,7 @@ internal static partial class JgsBuiltins
         bool AFileAnswers(string name) =>
             interpreter.Dialect.IsMatlab
             && interpreter.Resolver.Query(name, interpreter.CurrentFrame)
-                .Any(found => found.Layer != ResolutionLayer.Builtin);
+                .Any(found => found.Layer is not (ResolutionLayer.Builtin or ResolutionLayer.ExplicitImport or ResolutionLayer.WildcardImport)); // an imported function is no file exist knows (P3, measured 0)
 
         Define("exist", (args, line, col) =>
         {
@@ -780,6 +780,15 @@ internal static partial class JgsBuiltins
                 {
                     return JgsValue.Number(8);
                 }
+            }
+
+            // A class an import gives the short name is 8, plain and as 'class'; an imported
+            // function is nothing to exist (P3, measured: exist('C') 8 and exist('f') 0 under
+            // import pkg.*, exist('f') 2 only where a file f.m is in reach).
+            if ((kind is null or "class") && !name.Contains('.', StringComparison.Ordinal)
+                && interpreter.ImportedClass(name, interpreter.CurrentFrame) is not null)
+            {
+                return JgsValue.Number(8);
             }
 
             // A class file, asked about as a class (U7, measured: 8 for a class in an .m or an .mlapp).
@@ -1100,6 +1109,16 @@ internal static partial class JgsBuiltins
             // the files, as the resolver orders them.
             string name = TextOf(given);
             given = interpreter.Resolver.Query(name, env).FirstOrDefault(Resolution.None).Value;
+
+            // A name an import of the running code gives (P3, measured: nargin('f') under import
+            // pkg.f is the member's count) - asked of the frame, where the imports are.
+            if (interpreter.AnyImports && !name.Contains('.', StringComparison.Ordinal)
+                && interpreter.ImportFor(name, interpreter.CurrentFrame, head: false) is { } imported
+                && interpreter.ImportedValue(imported) is { } throughImport)
+            {
+                given = throughImport;
+            }
+
             if (given.Type != JgsType.Function && name.Contains('.', StringComparison.Ordinal))
             {
                 given = interpreter.Resolver.Dotted(name).Value; // a package member by its dotted name (P1)

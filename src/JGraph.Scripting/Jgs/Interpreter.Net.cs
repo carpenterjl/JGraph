@@ -110,8 +110,8 @@ internal sealed partial class Interpreter
 
         // An imported head (ADR 0176): an explicit import above everything but a variable, a
         // wildcard's type or namespace below nested and local functions only.
-        NetImported? imported = null;
-        if (AnyImports && ImportFor(root.Name, env, head: true) is { } candidate)
+        JgsImported? imported = null;
+        if (AnyImports && ImportFor(root.Name, env, head: true) is { IsPackage: false } candidate)
         {
             Resolution held = _resolver.Lookup(root.Name, env);
             if (held.Layer != ResolutionLayer.Bound

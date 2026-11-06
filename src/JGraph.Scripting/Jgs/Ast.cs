@@ -519,6 +519,12 @@ internal sealed class GlobalStmt(IReadOnlyList<string> names) : Stmt
 internal sealed class ImportStmt(IReadOnlyList<string> names) : Stmt
 {
     public IReadOnlyList<string> Names { get; } = names;
+
+    /// <summary>Each name's column, where R2025b points a refusal of it (P3, measured: column 14 for the second name).</summary>
+    public IReadOnlyList<int> Columns { get; init; } = [];
+
+    /// <summary>The column of the name at <paramref name="index"/>, or the statement's when none was kept.</summary>
+    public int ColumnOf(int index) => index < Columns.Count ? Columns[index] : Column;
 }
 
 /// <summary>

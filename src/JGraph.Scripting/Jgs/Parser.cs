@@ -1313,8 +1313,10 @@ internal sealed class Parser
     {
         Advance(); // 'import'
         var names = new List<string>();
+        var columns = new List<int>();
         while (Check(TokenType.Identifier))
         {
+            columns.Add(Current.Column);
             var name = new System.Text.StringBuilder(Advance().Text);
             while (true)
             {
@@ -1343,7 +1345,7 @@ internal sealed class Parser
             throw Error(Current, "An import names a type, a type's static method, or a namespace or type followed by '.*'.");
         }
 
-        return new ImportStmt(names) { Line = start.Line, Column = start.Column };
+        return new ImportStmt(names) { Line = start.Line, Column = start.Column, Columns = columns };
     }
 
     private Stmt ParsePersistent(Token start)

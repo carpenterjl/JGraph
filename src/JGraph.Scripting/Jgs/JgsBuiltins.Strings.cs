@@ -626,9 +626,14 @@ internal static partial class JgsBuiltins
         {
             if (values[i].Type is not (JgsType.Number or JgsType.Bool))
             {
-                throw new JgsRuntimeException(line, col,
-                    $"{name}: element {i + 1} produced a {values[i].TypeName}. " +
-                    "Add 'UniformOutput', false to collect a cell.");
+                // R2025b's refusal, with its identifier, as arrayfun's (p3_imports: a handle to a
+                // private function answering a char row under the uniform default).
+                throw JgsRunningDialect.ThreadIsMatlab
+                    ? new JgsRuntimeException(line, col, $"MATLAB:{name}:NotAScalarOutput",
+                        $"Non-scalar in Uniform output, at index {i + 1}, output 1. Set 'UniformOutput' to false.")
+                    : new JgsRuntimeException(line, col,
+                        $"{name}: element {i + 1} produced a {values[i].TypeName}. " +
+                        "Add 'UniformOutput', false to collect a cell.");
             }
         }
 

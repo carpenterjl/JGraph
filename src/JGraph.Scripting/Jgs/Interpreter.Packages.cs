@@ -67,6 +67,12 @@ internal sealed partial class Interpreter
             return false;
         }
 
+        // sub.h(4) under import pkg.*: the sub-package an import gives the head (P3, measured).
+        if (AnyImports && ImportFor(head, env, head: true) is { Package: { } imported })
+        {
+            dotted = imported + dotted[head.Length..];
+        }
+
         if (!path.TryResolveDotted(dotted, out JgsValue value, out _, out _) || value.Type != JgsType.Function)
         {
             return false;
