@@ -141,7 +141,7 @@ internal static partial class JgsBuiltins
                 "Invalid option combination. Specify the line number or specify the local or nested function.");
         }
 
-        int target = DebugLineOf(path, Path.GetFileNameWithoutExtension(file.Split('>')[0]), function, lineWord, line, col);
+        int target = DebugLineOf(path, WithinName(file.Split('>')[0]), function, lineWord, line, col);
         store?.Set(path, target, condition ?? string.Empty);
     }
 
@@ -630,6 +630,15 @@ internal static partial class JgsBuiltins
         return null;
     }
 
+    /// <summary>
+    /// The name a refusal says a function was looked for "within": the file word as the user wrote
+    /// it when it is a plain or dotted name (<c>pkg.C</c>, measured in P2), else the file's stem.
+    /// </summary>
+    private static string WithinName(string fileWord) =>
+        fileWord.IndexOfAny(['/', '\\']) < 0 && !JgsFunctionPath.CodeExtensions.Any(e => fileWord.EndsWith(e, StringComparison.OrdinalIgnoreCase))
+            ? fileWord
+            : Path.GetFileNameWithoutExtension(fileWord);
+
     /// <summary>The source map of a code file for the debug words; a file that does not parse is refused as a load error of that file.</summary>
     private static JgsSourceMap MapOf(string path, int line, int col)
     {
@@ -671,6 +680,13 @@ internal static partial class JgsBuiltins
         {
             return map.FirstLineOf(function)
                 ?? throw new JgsRuntimeException(line, col, "MATLAB:dispatcher:cannotFindFunction", $"Cannot find function \"{function}\" within \"{stem}\".");
+        }
+
+        // dbstop in a class file lands on the constructor's first line, or line 1 when it writes
+        // none (R2025b, measured in P2: C>C.C on line 10, K>K.K on line 1).
+        if (lineWord is null && map.IsClass)
+        {
+            return map.ClassEntryLine;
         }
 
         int asked = 1;

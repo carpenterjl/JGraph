@@ -12,6 +12,9 @@ namespace JGraph.Scripting.Jgs;
 /// function and a sub-package of one name coexist, the function answering unless another dot
 /// follows; members never see each other by bare name; a package's <c>private/</c> is its
 /// members' alone and never a sub-package; a bare dotted function name is a call.
+/// Stage P2 (ADR 0308) adds the classes: a class file in a package is the class
+/// <c>pkg.C</c>, keyed and named by its qualified name, its statics and constants read through
+/// <see cref="PackageClass"/>, and its frames printed as R2025b prints them.
 /// </summary>
 internal sealed partial class Interpreter
 {
@@ -74,6 +77,48 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
+    /// The class a dotted name stands for when it is a class file in a package (<c>pkg.C</c>,
+    /// <c>pkg.sub.K</c>), loaded under its qualified name on first mention; null for anything else
+    /// (P2, ADR 0308). Asked by the readings of <c>pkg.C.member</c> and by the tools that take the
+    /// name as text; a file that fails to load raises its own refusal, as the plain road does.
+    /// </summary>
+    internal JgsClass? PackageClass(string dotted)
+    {
+        if (FunctionPath is not { Index.AnyPackages: true } || JgsCodeTree.DottedParts(dotted) is null)
+        {
+            return null;
+        }
+
+        DropClassIfFileChanged(dotted);
+        if (!_classes.ContainsKey(dotted))
+        {
+            _ = TryResolveOnPath(dotted, out _);
+        }
+
+        return _classes.GetValueOrDefault(dotted);
+    }
+
+    /// <summary>
+    /// The static method a dotted name reaches through a class in a package (<c>pkg.C.stat</c>):
+    /// the class and the method, or null when the name is not one. What <c>which</c> and
+    /// <c>nargin</c> answer for (measured: the class's file, and the method's own count).
+    /// </summary>
+    internal (JgsClass Class, ClassMethod Method)? PackageStatic(string dotted)
+    {
+        int last = dotted.LastIndexOf('.');
+        if (last <= 0 || PackageClass(dotted[..last]) is not { } definition)
+        {
+            return null;
+        }
+
+        return definition.TryMethod(dotted[(last + 1)..], out ClassMethod? method) && method.Static ? (definition, method) : null;
+    }
+
+    /// <summary>The class whose constructor <paramref name="callable"/> is, or null for any other callable (what nargin of a class name counts).</summary>
+    internal JgsClass? ClassOfConstructor(IJgsCallable callable) =>
+        AnyClasses ? _classes.Values.FirstOrDefault(c => ReferenceEquals(c.ConstructorValue.AsCallable, callable)) : null;
+
+    /// <summary>
     /// Whether <paramref name="name"/> is a local function of the file <paramref name="file"/> — a
     /// function the file holds that is not its main one — which R2025b's <c>dbstack</c> prints as
     /// <c>file&gt;name</c>.
@@ -83,14 +128,25 @@ internal sealed partial class Interpreter
         && storage.TryGet(name, out _) && !storage.IsMain(name);
 
     /// <summary>
-    /// A frame's name as <c>dbstack</c> prints it (R2025b, measured in the packages plan's P1):
-    /// qualified by the package its file sits in, a local function as <c>file&gt;name</c>
-    /// (<c>pkg.stkloc&gt;inner</c>), a method as the class's own naming.
+    /// A frame's name as <c>dbstack</c> prints it (R2025b, measured in the packages plan's P1 and
+    /// P2): qualified by the package its file sits in, a local function as <c>file&gt;name</c>
+    /// (<c>pkg.stkloc&gt;inner</c>), an instance method as the class's qualified name with slashes
+    /// for its dots (<c>pkg/W/stk</c>, <c>P2Plain/stk</c>) and a static method with dots
+    /// (<c>pkg.W.sstk</c>), where the stack's own name for either is the bare <c>W.stk</c>.
     /// </summary>
     internal string PrintedFrameName(string name, string file)
     {
         string prefix = JgsCodeTree.PackagePrefix(file);
         string stem = file.Length > 0 ? Path.GetFileNameWithoutExtension(file) : string.Empty;
+        if (AnyClasses && stem.Length > 0 && name.StartsWith(stem + ".", StringComparison.Ordinal)
+            && _classes.TryGetValue(prefix + stem, out JgsClass? owner))
+        {
+            string method = name[(stem.Length + 1)..];
+            return owner.TryMethod(method, out ClassMethod? declared) && declared.Static
+                ? $"{owner.Name}.{method}"
+                : $"{owner.Name.Replace('.', '/')}/{method}";
+        }
+
         return prefix + (IsLocalFunctionOf(file, name) ? $"{stem}>{name}" : name);
     }
 }

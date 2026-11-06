@@ -255,7 +255,7 @@ internal static class JgsRunner
             && string.Equals(
                 Path.GetFileNameWithoutExtension(classFile.SourceId.Length > 0 ? classFile.SourceId : interpreter.MainScriptPath),
                 classFile.Name, StringComparison.Ordinal)
-            && interpreter.Classes.TryGetValue(classFile.Name, out JgsClass? definition) && !definition.IsAbstract)
+            && interpreter.Classes.TryGetValue(JgsClass.QualifiedName(classFile), out JgsClass? definition) && !definition.IsAbstract)
         {
             JgsCallbacks.Invoke(definition.ConstructorValue.AsCallable, arguments, classFile.Line, classFile.Column);
             return;

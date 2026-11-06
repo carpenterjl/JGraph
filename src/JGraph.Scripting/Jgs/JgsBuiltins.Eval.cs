@@ -773,6 +773,13 @@ internal static partial class JgsBuiltins
                 {
                     return JgsValue.Number(8);
                 }
+
+                // A class in a package by its qualified name is 8 asked plainly (packages plan, P2,
+                // measured: exist('pkg.C') 8, 'file' 0; a member that is no class 0); 'class' below.
+                if (kind is null && PackageClassOf(name) is not null)
+                {
+                    return JgsValue.Number(8);
+                }
             }
 
             // A class file, asked about as a class (U7, measured: 8 for a class in an .m or an .mlapp).
@@ -785,6 +792,18 @@ internal static partial class JgsBuiltins
                 catch (JgsException)
                 {
                     return JgsValue.Number(0); // a file that does not load is not a class
+                }
+            }
+
+            JgsClass? PackageClassOf(string dotted)
+            {
+                try
+                {
+                    return interpreter.PackageClass(dotted);
+                }
+                catch (JgsException)
+                {
+                    return null; // a member file that does not load is not a class
                 }
             }
 
@@ -898,6 +917,13 @@ internal static partial class JgsBuiltins
                 && interpreter.Resolver.Dotted(name) is { File: { Length: > 0 } packaged })
             {
                 where.Add(packaged);
+            }
+
+            // A static method of a class in a package (pkg.C.stat) is the class's file; an instance
+            // method, a Constant or an enumeration member is nothing (P2, measured).
+            if (where.Count == 0 && name.Contains('.', StringComparison.Ordinal) && interpreter.PackageStatic(name) is { } packagedStatic)
+            {
+                where.Add(interpreter.FileOfClass(packagedStatic.Class));
             }
 
             // A .NET type: R2025b calls its constructor a built-in method (ADR 0174), and a static
@@ -1077,6 +1103,10 @@ internal static partial class JgsBuiltins
             if (given.Type != JgsType.Function && name.Contains('.', StringComparison.Ordinal))
             {
                 given = interpreter.Resolver.Dotted(name).Value; // a package member by its dotted name (P1)
+                if (given.Type != JgsType.Function && interpreter.PackageStatic(name) is { } packagedStatic)
+                {
+                    given = JgsValue.Function(packagedStatic.Class.Callable(packagedStatic.Method)); // pkg.C.stat (P2)
+                }
             }
         }
 
@@ -1108,6 +1138,15 @@ internal static partial class JgsBuiltins
                 // back, which is what MATLAB's -1 says and is measured rather than assumed —
                 // nargout(@(x) x) answers -1 in R2024a, not 1.
                 return inputs ? Counted(anonymous.Declaration.Parameters, true) : -1;
+
+            case BuiltinFunction constructor when interpreter.ClassOfConstructor(constructor) is { } owner:
+                // A class's constructor counts its own parameters, or none when the class writes
+                // no constructor, and answers one object (nargin('pkg.C') is 1, measured in P2).
+                return inputs
+                    ? owner.Declaration.Methods.FirstOrDefault(m => m.Function.Name == owner.Declaration.Name) is { } written
+                        ? Counted(written.Function.Parameters, true)
+                        : 0
+                    : 1;
 
             case BuiltinFunction builtin when !inputs:
                 // R2025b's own count for the name when the audit recorded one (V9.3); otherwise

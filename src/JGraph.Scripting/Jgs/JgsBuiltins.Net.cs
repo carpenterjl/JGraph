@@ -89,9 +89,19 @@ internal static partial class JgsBuiltins
                 return interpreter.MetaClassFromName(TextOf(args[0]));
             }),
         };
+        // meta.package.fromName: a +package folder's listing as a struct (packages plan, P2, PD5).
+        var metaPackage = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["fromName"] = Builtin("meta.package.fromName", (args, line, col) =>
+            {
+                Arity("meta.package.fromName", args, 1, line, col);
+                return PackageMeta(interpreter.FunctionPath, TextOf(args[0]));
+            }),
+        };
         env.Builtins.RegisterConstant("meta", JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {
             ["class"] = JgsValue.Struct(metaClass),
+            ["package"] = JgsValue.Struct(metaPackage),
         }));
 
         // A .NET call sees the folder cd moved to (ADR 0176).

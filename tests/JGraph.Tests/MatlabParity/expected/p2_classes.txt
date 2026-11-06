@@ -1,0 +1,174 @@
+CHK|ctor_property|3|exact
+CHK|ctor_default|0|exact
+CHK|constant|7|exact
+CHK|static_call|101|exact
+CHK|static_bare_id|MATLAB:minrhs|exact
+CHK|method_dot|6|exact
+CHK|method_dot_noparens|6|exact
+CHK|method_fn|6|exact
+CHK|static_via_instance|101|exact
+CHK|static_via_instance_bare_id|MATLAB:minrhs|exact
+CHK|instance_method_via_class_id|MATLAB:subscripting:classHasNoPropertyOrMethod|exact
+CHK|instance_method_via_class_msg|The class pkg.C has no Constant property or Static method named 'm'.|exact
+CHK|class_nosuch_member_id|MATLAB:subscripting:classHasNoPropertyOrMethod|exact
+CHK|class_nosuch_member_msg|The class pkg.C has no Constant property or Static method named 'nosuch'.|exact
+CHK|bare_dotted_constructs|pkg.C|exact
+CHK|cur_pkg_class|4|exact
+CHK|sub_class_method|3|exact
+CHK|sub_class_ctor_inherited|2|exact
+CHK|sub_class_constant|7|exact
+CHK|sub_class_static|101|exact
+CHK|self_bare_id|MATLAB:UndefinedFunction|exact
+CHK|self_bare_msg|Undefined function 'C' for input arguments of type 'double'.|exact
+CHK|self_qualified|5|exact
+CHK|member_fn_sees_no_bare_class_id|MATLAB:UndefinedFunction|exact
+CHK|isequal_same|1|exact
+CHK|isequal_differ|0|exact
+CHK|pkg_as_value_id|MATLAB:undefinedVarOrClass|exact
+CHK|pkg_as_value_msg|Unable to resolve the name 'pkg.sub'.|exact
+CHK|plain_E_class|E|exact
+CHK|plain_E_property|-1|exact
+CHK|plain_E_not_pkg|0|exact
+CHK|pkg_E_not_plain|0|exact
+CHK|pkg_E_after_plain|pkg.E|exact
+CHK|class_o|pkg.C|exact
+CHK|class_k|pkg.sub.K|exact
+CHK|isa_qualified|1|exact
+CHK|isa_bare|0|exact
+CHK|isa_sub_of_super|1|exact
+CHK|isa_sub_of_self|1|exact
+CHK|isobject|1|exact
+CHK|superclasses_k|pkg.C|exact
+CHK|superclasses_o||exact
+CHK|metaclass_name|pkg.C|exact
+CHK|metaclass_name_sub|pkg.sub.K|exact
+CHK|question_name|pkg.C|exact
+CHK|question_name_sub|pkg.sub.K|exact
+CHK|fromname_name|pkg.C|exact
+CHK|fromname_nosuch_empty|1|exact
+CHK|whos_class|pkg.C|exact
+CHK|func2str_ctor|pkg.C|exact
+CHK|str2func_ctor|3|exact
+CHK|feval_ctor|4|exact
+CHK|nargin_ctor|1|exact
+CHK|nargin_static|1|exact
+CHK|nargin_method_slash_id|MATLAB:narginout:notValidMfile|exact
+CHK|nargin_method_dot_id|MATLAB:narginout:notValidMfile|exact
+CHK|array_class|pkg.C|exact
+CHK|array_size|[1 2]|exact
+CHK|array_element|2|exact
+CHK|array_values|[1 2]|exact
+CHK|empty_class|pkg.C|exact
+CHK|empty_size|[0 0]|exact
+CHK|empty_sized|[0 3]|exact
+CHK|enum_class|pkg.E|exact
+CHK|enum_char|A|exact
+CHK|enum_string|A|exact
+CHK|enum_eq|1|exact
+CHK|enum_ne|0|exact
+CHK|enum_isa|1|exact
+CHK|enum_disp|A|exact
+CHK|enum_listing|/Enumeration members for class 'pkg.E'://    A/    B//|exact
+CHK|enum_members_class|pkg.E|exact
+CHK|enum_members_names|A,B|exact
+CHK|enum_nosuch_member_id|MATLAB:subscripting:classHasNoPropertyOrMethod|exact
+CHK|enum_nosuch_member_msg|The class pkg.E has no Constant property or Static method named 'Z'.|exact
+CHK|handle_class|pkg.H|exact
+CHK|handle_count|2|exact
+CHK|handle_isa_handle|1|exact
+CHK|handle_isa_qualified|1|exact
+CHK|handle_ismethod|1|exact
+CHK|handle_valid|1|exact
+CHK|handle_deleted|0|exact
+CHK|handle_deleted_display|handle to deleted H|exact
+CHK|methods_name|C,m,selfbare,selfqual,stat|exact
+CHK|methods_instance|C,m,selfbare,selfqual,stat|exact
+CHK|methods_sub|K,m,selfbare,selfqual,stat|exact
+CHK|methods_printed|/Methods for class pkg.C://C         m         selfbare  selfqual  //Static methods://stat      //|exact
+CHK|properties_name|K,V|exact
+CHK|properties_instance|K,V|exact
+CHK|fieldnames_instance|K,V|exact
+CHK|ismethod_m|1|exact
+CHK|ismethod_stat|1|exact
+CHK|ismethod_nosuch|0|exact
+CHK|display_object|C with properties: K: 7 V: 3|exact
+CHK|display_sub|K with properties: K: 7 V: 1|exact
+CHK|display_array|1×2 C array with properties: K V|exact
+CHK|display_empty|0×0 C array with properties: K V|exact
+CHK|display_class_text|pkg.C|exact
+CHK|help_pkg_listing|Contents of pkg namespace://  C - pkg.C is a class./  E - pkg.E is a class./  H - pkg.H is a class./  W - pkg.W is a class./  f - pkg.f is a function./ mk - pkg.mk is a function./  s - pkg.s is a script./  D - pkg.D is a class./sub - pkg.sub is a namespace./|exact
+CHK|metapkg_name|pkg|exact
+CHK|metapkg_description|pkg|exact
+CHK|metapkg_functions|f,mk,s|exact
+CHK|metapkg_classes|pkg.C,pkg.D,pkg.E,pkg.H,pkg.W|exact
+CHK|metapkg_packages|pkg.sub|exact
+CHK|metapkg_inner|pkg.sub|exact
+CHK|metapkg_no_parent|1|exact
+CHK|metapkg_no_outer|1|exact
+CHK|metapkg_class|matlab.metadata.Namespace|div=ADR0308|diverges|meta.package
+CHK|metapkg_functionlist_class|matlab.metadata.Method|div=ADR0308|diverges|struct
+CHK|metapkg_sub_name|pkg.sub|exact
+CHK|metapkg_sub_parent|pkg|exact
+CHK|metapkg_sub_outer|pkg|exact
+CHK|metapkg_sub_classes|pkg.sub.K|exact
+CHK|metapkg_sub_functions_count|0|exact
+CHK|metapkg_sub_packages_count|0|exact
+CHK|metapkg_nosuch_empty|1|exact
+CHK|metapkg_cpkg_classes|cpkg.Q|exact
+CHK|load_v5_class|pkg.C|exact
+CHK|load_v5_value|3|exact
+CHK|load_v5_sub_class|pkg.sub.K|exact
+CHK|load_v5_sub_method|3|exact
+CHK|load_v5_enum_class|pkg.E|exact
+CHK|load_v5_enum_member|B|exact
+CHK|load_v5_cur_class|cpkg.Q|exact
+CHK|load_v5_plain|18|exact
+CHK|help_class|pkg.C is a class./    o = pkg.C(v)//    Documentation for pkg.C/       doc pkg.C//|exact
+CHK|help_class_sub|pkg.sub.K is a class./    obj = pkg.sub.K//    Documentation for pkg.sub.K/       doc pkg.sub.K//|exact
+CHK|help_enum|pkg.E is a class./    obj = pkg.E//    Documentation for pkg.E/       doc pkg.E//|exact
+CHK|help_method_dot|pkg.C/m is a function./    r = m(o)/|exact
+CHK|help_method_slash|pkg.C/m is a function./    r = m(o)/|exact
+CHK|help_static_dot|pkg.C.stat is a function./    r = pkg.C.stat(x)/|exact
+CHK|help_ctor_slash|pkg.C/C is a constructor./    o = C(v)//    Documentation for pkg.C/C/       doc pkg.C//|exact
+CHK|help_nosuch_method_id||exact
+CHK|help_plain_class|P2Plain is a class./    o = P2Plain(v)//    Documentation for P2Plain/       doc P2Plain//|exact
+CHK|which_class|<root>\lib\+pkg\C.m|exact
+CHK|which_class_sub|<root>\lib\+pkg\+sub\K.m|exact
+CHK|which_static|<root>\lib\+pkg\C.m|exact
+CHK|which_method_slash||exact
+CHK|which_method_dot||exact
+CHK|which_constant||exact
+CHK|which_enum_member||exact
+CHK|which_enum|<root>\lib\+pkg\E.m|exact
+CHK|exist_class|8|exact
+CHK|exist_class_kind|8|exact
+CHK|exist_class_file|0|exact
+CHK|exist_enum|8|exact
+CHK|exist_sub_class|8|exact
+CHK|exist_static|0|exact
+CHK|exist_constant|0|exact
+CHK|exist_nosuch|0|exact
+CHK|exist_plain_class|2|exact
+CHK|exist_plain_class_kind|8|exact
+CHK|dbstatus_class|Breakpoint for C>C.C is on line 10./|exact
+CHK|dbstatus_plain_class|Breakpoint for P2Plain>P2Plain.P2Plain is on line 7./|exact
+CHK|dbstatus_sub_class|Breakpoint for K>K.K is on line 1./|exact
+CHK|dbstop_method_gt_id|MATLAB:dispatcher:cannotFindFunction|exact
+CHK|dbstop_method_gt_msg|Cannot find function "m" within "pkg.C".|exact
+CHK|dbstop_method_slash_msg|Cannot find function "pkg.C/m".|exact
+CHK|dbstop_method_dot_msg|Cannot find function "pkg.C.m".|exact
+CHK|dbstop_plain_method_slash_msg|Cannot find function "P2Plain/m".|exact
+CHK|dbstop_plain_method_gt_msg|Cannot find function "m" within "P2Plain".|exact
+CHK|dbstack_method|> In pkg/W/stk (line 4)|exact
+CHK|dbstack_static|> In pkg.W.sstk (line 16)|exact
+CHK|dbstack_plain_method|> In P2Plain/stk (line 10)|exact
+CHK|dbstack_plain_static|> In P2Plain.sstk (line 18)|exact
+CHK|dbstack_struct_name|W.stkn|exact
+CHK|method_error_id|pkg:W|exact
+CHK|method_error_stack_name|W.err|exact
+CHK|method_error_stack_file|<root>\lib\+pkg\W.m|exact
+CHK|clear_before|2|exact
+CHK|clear_after|2|exact
+CHK|clear_functions_after|2|exact
+CHK|late_class_first|1|exact
+CHK|late_class_changed|2|exact

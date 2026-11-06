@@ -468,6 +468,10 @@ internal sealed class MatWorkspaceBinder(Interpreter interpreter, JGraphScriptGl
     }
 
     /// <inheritdoc />
+    public JgsValue? EnumerationMember(string className, string member, string variable) =>
+        interpreter.ClassForLoad(className) is { IsEnumeration: true } enumeration && enumeration.TryMember(member, out JgsValue held) ? held : null;
+
+    /// <inheritdoc />
     public void SetProperties(JgsValue instance, IReadOnlyDictionary<string, JgsValue> properties)
     {
         if (instance.Type != JgsType.Object)

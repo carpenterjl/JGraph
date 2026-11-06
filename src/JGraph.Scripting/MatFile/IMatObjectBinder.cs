@@ -23,6 +23,9 @@ internal interface IMatObjectBinder
     /// <summary>Sets the saved property values on an instance <see cref="NewObject"/> made.</summary>
     void SetProperties(JgsValue instance, IReadOnlyDictionary<string, JgsValue> properties);
 
+    /// <summary>The member <paramref name="member"/> of the enumeration class <paramref name="className"/>, or null when there is no such class or member (P2).</summary>
+    JgsValue? EnumerationMember(string className, string member, string variable) => null;
+
     /// <summary>
     /// A function handle re-made from what was saved: the text of an anonymous function with the
     /// variables it captured, or the name of a function (<paramref name="type"/> is

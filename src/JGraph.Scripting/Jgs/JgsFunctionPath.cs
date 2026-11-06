@@ -120,6 +120,9 @@ internal sealed class JgsFunctionPath
     /// <summary>The <c>+package</c> folders the search folders hold, by kind (packages plan, stage P1).</summary>
     public JgsCodeTree Tree => _tree;
 
+    /// <summary>The interpreter this path loads for, whose loaded classes a package listing consults (P2).</summary>
+    internal Interpreter Interpreter => _interpreter;
+
     /// <summary>
     /// Adds <paramref name="folder"/> to the search path, at the front unless
     /// <paramref name="atEnd"/>. Adding a folder that is already there moves it, which is what

@@ -297,7 +297,7 @@ internal sealed partial class Interpreter
         {
             FnStmt active = _activeFunctions[i];
             string name = AnyClasses && CurrentFrame.ClassContext is { } running && i == _activeFunctions.Count - 1 && running.DeclaresMethod(active)
-                ? $"{running.Name}.{active.Name}"
+                ? $"{running.StackName}.{active.Name}" // W.stkn for a method of pkg.W (P2, measured)
                 : active.Name;
             listed.Add((name, FileOfFrame(active.SourceId), line));
             line = _activeCallLines[i];
@@ -1187,9 +1187,10 @@ internal sealed partial class Interpreter
             // every frame it passed through has already been torn down by the finally below. Each
             // frame records the line that was running in it: this one's own failing line for the
             // innermost, and the call it was waiting on for everything outside.
-            // A method's frame is named Class.method, as R2025b's stack names it (U7, measured).
+            // A method's frame is named Class.method, as R2025b's stack names it (U7, measured) - by
+            // the class's short name for a class in a package (W.err for pkg.W, measured in P2).
             string frameName = AnyClasses && local.ClassContext is { } running && running.DeclaresMethod(declaration)
-                ? $"{running.Name}.{declaration.Name}"
+                ? $"{running.StackName}.{declaration.Name}"
                 : declaration.Name;
             error.PushFrame(frameName, FileOfFrame(declaration.SourceId), callLine);
             error.AttributeTo(declaration.SourceId);
@@ -2214,7 +2215,15 @@ internal sealed partial class Interpreter
     {
         if (FunctionPath is { } path)
         {
-            return path.TryResolve(name, out value);
+            // A dotted name is a package member (P2: pkg.C loads under its qualified name), which
+            // costs nothing while no search folder holds a package.
+            if (!name.Contains('.', StringComparison.Ordinal))
+            {
+                return path.TryResolve(name, out value);
+            }
+
+            value = JgsValue.Null;
+            return path.Index.AnyPackages && path.TryResolveDotted(name, out value, out _, out _);
         }
 
         value = JgsValue.Null;

@@ -88,6 +88,9 @@ internal sealed class JgsSourceMap
     /// <summary>Whether the file declares a class.</summary>
     public bool IsClass => _className is not null;
 
+    /// <summary>Where <c>dbstop in</c> a class file lands: the constructor's first line, or line 1 when the class writes none (R2025b, measured in P2).</summary>
+    public int ClassEntryLine => _className is not null ? FirstLineOf($"{_className}.{_className}") ?? 1 : 1;
+
     /// <summary>Reads and parses the code file at <paramref name="path"/> (an <c>.mlapp</c>'s class text, any other file's own text).</summary>
     /// <exception cref="JgsSyntaxException">The file does not parse.</exception>
     /// <exception cref="IOException">The file cannot be read.</exception>
@@ -155,7 +158,8 @@ internal sealed class JgsSourceMap
         JgsFunctionSpan? function = FunctionAt(line);
         if (function is null)
         {
-            return completeNames ? $"{prefix}>{_stem}" : prefix;
+            // A class file's line outside any method is the constructor's (K>K.K for a class that writes none: P2, measured).
+            return _className is not null ? $"{prefix}>{_className}.{_className}" : completeNames ? $"{prefix}>{_stem}" : prefix;
         }
 
         return function.IsMain && !completeNames ? prefix : $"{prefix}>{function.Name}";

@@ -38,7 +38,7 @@ internal sealed partial class Interpreter
             }
         }
 
-        _classes[declaration.Name] = built;
+        _classes[built.Name] = built; // the qualified name for a class in a package (P2)
         return built;
     }
 
@@ -107,7 +107,8 @@ internal sealed partial class Interpreter
             return supplied;
         }
 
-        if (!_classesBeingBuilt.Add(from.Name))
+        string building = JgsClass.QualifiedName(from);
+        if (!_classesBeingBuilt.Add(building))
         {
             throw new JgsRuntimeException(from.Line, from.Column,
                 $"Class '{from.Name}' inherits from itself through '{name}'.");
@@ -119,7 +120,7 @@ internal sealed partial class Interpreter
         }
         finally
         {
-            _classesBeingBuilt.Remove(from.Name);
+            _classesBeingBuilt.Remove(building);
         }
     }
 
@@ -361,9 +362,10 @@ internal sealed partial class Interpreter
         {
             if (method.Static)
             {
-                // A static method read off an instance is the class's (R2025b allows the spelling).
+                // A static method read off an instance is the class's (R2025b allows the spelling),
+                // and a bare mention calls it (o.stat is "Not enough input arguments", measured in P2).
                 IJgsCallable unbound = definition.Callable(method);
-                return autoCall && method.Function.Parameters.Count == 0
+                return autoCall
                     ? unbound.Call([], member.Line, member.Column)
                     : JgsValue.Function(unbound);
             }
@@ -440,6 +442,26 @@ internal sealed partial class Interpreter
         {
             return ClassNamed(name.Name, env) is { } definition
                 && TryClassMember(definition, FieldName(member, env), member, autoCall, out value);
+        }
+
+        // pkg.C.K, pkg.C.stat(…), pkg.C.empty, pkg.E.A: a class in a package named in full in front
+        // of the dot (packages plan, P2, ADR 0308). Asked only while some search folder holds a
+        // package and nothing binds the head; the class loads under its qualified name on its first
+        // mention. A member the class has not got is R2025b's refusal (measured), as for an
+        // enumeration, rather than an instance built to be asked.
+        if (member.Target is MemberExpr && FunctionPath is { Index.AnyPackages: true }
+            && DottedName(member) is { } packaged && RootName(member) is { } head
+            && _resolver.Lookup(head, env).Layer != ResolutionLayer.Bound
+            && PackageClass(packaged[..packaged.LastIndexOf('.')]) is { } inPackage)
+        {
+            string asked = FieldName(member, env);
+            if (TryClassMember(inPackage, asked, member, autoCall, out value))
+            {
+                return true;
+            }
+
+            throw new JgsRuntimeException(member.Line, member.Column, "MATLAB:subscripting:classHasNoPropertyOrMethod",
+                $"The class {inPackage.Name} has no Constant property or Static method named '{asked}'.");
         }
 
         // matlab.apps.AppBase and matlab.apps.AppBase.loadobj(s): a class this build supplies,
@@ -553,8 +575,10 @@ internal sealed partial class Interpreter
                 throw JgsClass.Restricted(field, method.Owner ?? definition, member.Line, member.Column);
             }
 
+            // A static method mentioned bare is a call, as a bare function name is (R2025b: pkg.C.stat
+            // with one parameter is "Not enough input arguments", measured in P2).
             IJgsCallable callable = definition.Callable(method);
-            value = autoCall && method.Function.Parameters.Count == 0
+            value = autoCall
                 ? callable.Call([], member.Line, member.Column)
                 : JgsValue.Function(callable);
             return true;

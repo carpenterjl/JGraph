@@ -545,14 +545,26 @@ internal static class MatFileWriter
         WriteName(w, name);
         WriteDataElement(w, MiInt8, Encoding.ASCII.GetBytes(instance.Class.Name));
 
-        // A Transient property is not saved (U6), so load finds its default.
+        // A Transient property is not saved (U6), so load finds its default. An enumeration member
+        // is its name (packages plan, P2: pkg.E.B loads as the member B), written as a field of its
+        // own that no class declares.
         string[] names = seen ? [] : [.. instance.Fields.Keys.Where(name => instance.Class.Property(name) is not { Transient: true })];
+        IReadOnlyDictionary<string, JgsValue> fields = instance.Fields;
+        if (!seen && instance.EnumerationName is { } member)
+        {
+            names = [EnumerationMemberField, .. names];
+            fields = new Dictionary<string, JgsValue>(instance.Fields, StringComparer.Ordinal) { [EnumerationMemberField] = JgsValue.Str(member) };
+        }
+
         WriteFieldNames(w, names);
         if (!seen)
         {
-            WriteFields(session, w, names, instance.Fields);
+            WriteFields(session, w, names, fields);
         }
     }
+
+    /// <summary>The field under which an enumeration member's name is saved beside its properties (P2).</summary>
+    internal const string EnumerationMemberField = "__enumerationMember";
 
     /// <summary>
     /// A categorical (open item 122): an object element of class <c>categorical</c> whose fields are

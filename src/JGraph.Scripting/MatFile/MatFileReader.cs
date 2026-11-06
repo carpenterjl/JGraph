@@ -674,6 +674,21 @@ internal sealed class MatFileReader
             return known;
         }
 
+        // An enumeration member saved by name is the class's member of that name (P2).
+        if (Array.IndexOf(names, MatFileWriter.EnumerationMemberField) >= 0)
+        {
+            Dictionary<string, JgsValue> saved = ReadFields(ref at, end, names);
+            if (saved.TryGetValue(MatFileWriter.EnumerationMemberField, out JgsValue? memberName) && memberName.Type == JgsType.String
+                && _binder.EnumerationMember(className, memberName.AsString, name) is { } member)
+            {
+                return member;
+            }
+
+            JgsValue stand = _binder.NewObject(className, deleted, name);
+            _binder.SetProperties(stand, saved);
+            return stand;
+        }
+
         JgsValue instance = _binder.NewObject(className, deleted, name);
         if (id > 0)
         {

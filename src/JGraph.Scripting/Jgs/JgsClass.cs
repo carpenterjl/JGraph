@@ -54,6 +54,7 @@ internal sealed class JgsClass
     public JgsClass(ClassdefStmt declaration, JgsEnvironment scope, Interpreter interpreter)
     {
         Declaration = declaration;
+        Name = QualifiedName(declaration);
         _scope = scope;
         _interpreter = interpreter;
         _lineage.Add(this);
@@ -141,9 +142,13 @@ internal sealed class JgsClass
                 MultiOutput = (args, wanted, line, col) =>
                     ConstructAsked(args, wanted, line, col) is { } made ? [made] : [],
             });
+        // A class in a package does not see itself by its bare name, not even from its own methods
+        // (packages plan, P2, measured: `C(5)` inside pkg.C is "Undefined function 'C'"); its
+        // constructor is reached as pkg.C(5) through the package reading.
+        bool packaged = IsPackaged;
         foreach (ClassMethod method in _own.Values)
         {
-            if (!method.Abstract)
+            if (!method.Abstract && !(packaged && method.Function.Name == declaration.Name))
             {
                 scope.DeclareFunction(method.Function.Name, JgsValue.Function(Callable(method)));
             }
@@ -152,7 +157,10 @@ internal sealed class JgsClass
         // Last, so that the class's own name means the constructor and not the constructor's raw
         // body. Declaring it first let the loop above overwrite it, and `Money(3)` inside a method
         // then ran the body with no object to fill in — which quietly built a struct instead.
-        scope.DeclareFunction(Name, _constructor);
+        if (!packaged)
+        {
+            scope.DeclareFunction(declaration.Name, _constructor);
+        }
 
         // What runs under this scope runs as the class (U6): its methods, the local functions of
         // its file, and every handle made in either.
@@ -168,8 +176,29 @@ internal sealed class JgsClass
     /// <summary>The statement at which the file's time was last compared, so the check runs once per statement.</summary>
     internal int CheckedEpoch { get; set; } = -1;
 
-    /// <summary>The class name, which is what <c>class(obj)</c> answers.</summary>
-    public string Name => Declaration.Name;
+    /// <summary>
+    /// The class name, which is what <c>class(obj)</c> answers: the qualified name for a class file
+    /// in a <c>+package</c> folder (<c>pkg.C</c>), the declared name for any other (the packages
+    /// plan, P2, ADR 0308: the qualified name is the class's name everywhere, and the bare name
+    /// is not it - <c>isa(pkg.C(1), 'C')</c> is false, measured).
+    /// </summary>
+    public string Name { get; }
+
+    /// <summary>The name after the last dot: what the object header shows and the constructor is called.</summary>
+    public string ShortName => ConstructorName;
+
+    /// <summary>The class's name in a stack frame (<c>W.err</c> for a method of <c>pkg.W</c>, measured in P2); a class in no package keeps its whole name.</summary>
+    internal string StackName => IsPackaged ? ShortName : Name;
+
+    /// <summary>
+    /// The name a <c>classdef</c> answers to: its declared name under the package its file sits in
+    /// (<c>+pkg/+sub/K.m</c> declares <c>K</c> and is <c>pkg.sub.K</c>), read from the file's path.
+    /// </summary>
+    internal static string QualifiedName(ClassdefStmt declaration) =>
+        JgsCodeTree.PackagePrefix(declaration.SourceId) + declaration.Name;
+
+    /// <summary>Whether the class file sits in a <c>+package</c> folder: its name is qualified by the folder, where a built-in class's dotted name is its own.</summary>
+    internal bool IsPackaged => JgsCodeTree.PackagePrefix(Declaration.SourceId).Length > 0;
 
     /// <summary>Whether the class is a handle class: its header names <c>handle</c>, or a superclass is one.</summary>
     public bool IsHandle { get; private set; }
@@ -229,7 +258,7 @@ internal sealed class JgsClass
                 .Select(static m => m.Function.Name);
 
             // A class that wrote no constructor still has one (measured: methods lists 'U6Doc').
-            if (!_own.ContainsKey(Name) && !Declaration.Abstract)
+            if (!_own.ContainsKey(Declaration.Name) && !Declaration.Abstract)
             {
                 listed = listed.Append(Name[(Name.LastIndexOf('.') + 1)..]); // matlab.apps.AppBase lists 'AppBase'
             }
@@ -247,7 +276,7 @@ internal sealed class JgsClass
     internal IEnumerable<ClassMethod> ListedMethods => _methods.Values.Where(static m => m.Access.IsPublic && !m.Hidden);
 
     /// <summary>Whether the class wrote no constructor and still has one (it is not abstract).</summary>
-    internal bool HasImplicitConstructor => !_own.ContainsKey(Name) && !Declaration.Abstract;
+    internal bool HasImplicitConstructor => !_own.ContainsKey(Declaration.Name) && !Declaration.Abstract;
 
     /// <summary>The constructor's name as a listing shows it: the class name after its last dot.</summary>
     internal string ConstructorName => Name[(Name.LastIndexOf('.') + 1)..];
@@ -576,7 +605,7 @@ internal sealed class JgsClass
             _buildingMember = true;
             try
             {
-                built = _own.ContainsKey(Name) ? Construct(arguments, declared.Line, 0) : JgsValue.Object(NewDefault(declared.Line, 0));
+                built = _own.ContainsKey(Declaration.Name) ? Construct(arguments, declared.Line, 0) : JgsValue.Object(NewDefault(declared.Line, 0));
             }
             finally
             {
@@ -717,7 +746,7 @@ internal sealed class JgsClass
                 $"Input does not correspond to a member of the enumeration class '{Name}'.");
         }
 
-        if (_own.TryGetValue(Name, out ClassMethod? constructor) && !constructor.Access.IsPublic
+        if (_own.TryGetValue(Declaration.Name, out ClassMethod? constructor) && !constructor.Access.IsPublic
             && !Allows(constructor.Access, this, _interpreter.ContextClass(), Name))
         {
             throw Restricted(Name, this, line, col);
@@ -751,7 +780,7 @@ internal sealed class JgsClass
     {
         // A built-in class's constructor written in C# (U10: ComponentContainer's), handed the
         // object being made and the arguments.
-        if (_own.TryGetValue(Name, out ClassMethod? native) && native.Native is { } body && native.Function.Outputs.Count == 1)
+        if (_own.TryGetValue(Declaration.Name, out ClassMethod? native) && native.Native is { } body && native.Function.Outputs.Count == 1)
         {
             // The constructor may answer another object of its class in place of the one being made:
             // matlab.apps.App's hands back the instance already running (DS7a).
@@ -762,7 +791,7 @@ internal sealed class JgsClass
                 : built;
         }
 
-        if (!_own.TryGetValue(Name, out ClassMethod? constructor) || constructor.Native is not null)
+        if (!_own.TryGetValue(Declaration.Name, out ClassMethod? constructor) || constructor.Native is not null)
         {
             if (arguments.Count > 0 && _supers.Count != 1)
             {
@@ -862,7 +891,7 @@ internal sealed class JgsClass
 
     /// <summary>Whether <paramref name="function"/> is this class's constructor - the one place an immutable property is written.</summary>
     internal bool IsConstructor(FnStmt? function) =>
-        function is not null && _own.TryGetValue(Name, out ClassMethod? constructor) && ReferenceEquals(constructor.Function, function);
+        function is not null && _own.TryGetValue(Declaration.Name, out ClassMethod? constructor) && ReferenceEquals(constructor.Function, function);
 
     /// <summary>R2025b's refusal of a method the caller may not have (U6).</summary>
     internal static JgsRuntimeException Restricted(string method, JgsClass owner, int line, int col) =>
@@ -1069,7 +1098,7 @@ internal sealed class JgsClass
 
             foreach ((string name, ClassMethod inherited) in super._methods)
             {
-                if (inherited.Owner is { } definer && name == definer.Name)
+                if (inherited.Owner is { } definer && name == definer.Declaration.Name)
                 {
                     continue; // a constructor is not inherited
                 }

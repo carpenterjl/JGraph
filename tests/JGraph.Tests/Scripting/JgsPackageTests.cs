@@ -207,4 +207,93 @@ public class JgsPackageTests : IDisposable
         Assert.Equal("MATLAB:m_missing_operator", Value(result, "id"));
         Assert.Equal(4.0, Value(result, "k"));
     }
+
+    // --- Stage P2 (ADR 0308): classes in packages, their qualified names and the words over them -------
+
+    /// <summary>An enumeration member keeps its name through save and load, in and out of a package (found in P2: a loaded member came back as a default instance).</summary>
+    [Fact]
+    public async Task AnEnumerationMemberSurvivesSaveAndLoad()
+    {
+        File.WriteAllText(Path.Combine(_library, "+pkg", "E.m"), "classdef E\n    enumeration\n        A, B\n    end\nend\n");
+        File.WriteAllText(Path.Combine(_folder, "P2PlainEnum.m"), "classdef P2PlainEnum\n    enumeration\n        Red, Green\n    end\nend\n");
+        string file = Escaped(Path.Combine(_folder, "enums.mat"));
+        ScriptRunResult result = await RunMatlab($"""
+            addpath('{Escaped(_library)}');
+            e = pkg.E.B;
+            p = P2PlainEnum.Green;
+            save('{file}', 'e', 'p');
+            clear e p pkg.E P2PlainEnum
+            S = load('{file}');
+            eClass = class(S.e);
+            eName = char(S.e);
+            eSame = S.e == pkg.E.B;
+            pName = char(S.p);
+            pClass = class(S.p);
+            """);
+
+        Assert.True(result.Success, result.Message + _output.ErrorText);
+        Assert.Equal("pkg.E", Value(result, "eClass"));
+        Assert.Equal("B", Value(result, "eName"));
+        Assert.Equal(true, Value(result, "eSame"));
+        Assert.Equal("Green", Value(result, "pName"));
+        Assert.Equal("P2PlainEnum", Value(result, "pClass"));
+    }
+
+    /// <summary>nargin of a class name counts its constructor's parameters (R2025b: nargin('pkg.C') is 1), and none for a class that writes no constructor; every constructor answered -1 before P2.</summary>
+    [Fact]
+    public async Task NarginOfAClassNameCountsItsConstructor()
+    {
+        File.WriteAllText(Path.Combine(_library, "+pkg", "C.m"), "classdef C\n    methods\n        function o = C(a, b)\n        end\n        function r = m(o)\n            r = 1;\n        end\n    end\nend\n");
+        File.WriteAllText(Path.Combine(_folder, "P2Bare.m"), "classdef P2Bare\n    properties\n        V = 0\n    end\nend\n");
+        ScriptRunResult result = await RunMatlab($"""
+            addpath('{Escaped(_library)}');
+            packaged = nargin('pkg.C');
+            packagedOut = nargout('pkg.C');
+            bare = nargin('P2Bare');
+            notAFile = '';
+            try
+                nargin('pkg.C.m');
+            catch e
+                notAFile = e.identifier;
+            end
+            """);
+
+        Assert.True(result.Success, result.Message + _output.ErrorText);
+        Assert.Equal(2.0, Value(result, "packaged"));
+        Assert.Equal(1.0, Value(result, "packagedOut"));
+        Assert.Equal(0.0, Value(result, "bare"));
+        Assert.Equal("MATLAB:narginout:notValidMfile", Value(result, "notAFile"));
+    }
+
+    /// <summary>meta.package.fromName answers the plan's struct (decision PD5): the lists by qualified name, scripts among the functions, the parent chain, and a 0-by-0 for no package.</summary>
+    [Fact]
+    public async Task MetaPackageFromNameIsAStructOfTheListing()
+    {
+        File.WriteAllText(Path.Combine(_library, "+pkg", "C.m"), "classdef C\nend\n");
+        ScriptRunResult result = await RunMatlab($$"""
+            addpath('{{Escaped(_library)}}');
+            p = meta.package.fromName('pkg');
+            name = p.Name;
+            classes = strjoin({p.ClassList.Name}, ',');
+            functions = strjoin({p.FunctionList.Name}, ',');
+            inner = strjoin({p.InnerNamespaces.Name}, ',');
+            legacy = strjoin({p.PackageList.Name}, ',');
+            noParent = isempty(p.OuterNamespace) && isempty(p.ContainingPackage);
+            sub = meta.package.fromName('pkg.sub');
+            parent = sub.ContainingPackage.Name;
+            grandparentEmpty = isempty(sub.ContainingPackage.ContainingPackage);
+            none = isempty(meta.package.fromName('nosuchpkg'));
+            """);
+
+        Assert.True(result.Success, result.Message + _output.ErrorText);
+        Assert.Equal("pkg", Value(result, "name"));
+        Assert.Equal("pkg.C", Value(result, "classes"));
+        Assert.Equal("dup,f,q,s", Value(result, "functions"));
+        Assert.Equal("pkg.sub", Value(result, "inner"));
+        Assert.Equal("pkg.sub", Value(result, "legacy"));
+        Assert.Equal(true, Value(result, "noParent"));
+        Assert.Equal("pkg", Value(result, "parent"));
+        Assert.Equal(true, Value(result, "grandparentEmpty"));
+        Assert.Equal(true, Value(result, "none"));
+    }
 }
