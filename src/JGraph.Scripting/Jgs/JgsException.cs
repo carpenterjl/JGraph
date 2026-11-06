@@ -53,6 +53,13 @@ public sealed class JgsSyntaxException : JgsException
         : base(line, column, message)
     {
     }
+
+    /// <summary>
+    /// MATLAB's identifier for the error, when the refusal is one MATLAB makes with an identifier
+    /// of its own (<c>MATLAB:m_missing_operator</c>), so that <c>eval</c> of the text raises it under
+    /// that identifier; null for JGraph's own refusals.
+    /// </summary>
+    public string? Identifier { get; init; }
 }
 
 /// <summary>An error raised while interpreting a script (a well-formed program that failed at run time).</summary>

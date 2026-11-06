@@ -1,0 +1,149 @@
+CHK|call_f|20|exact
+CHK|call_g2|21|exact
+CHK|call_sub_h|4|exact
+CHK|call_q_private|private p|exact
+CHK|call_pkg_max|pkg max|exact
+CHK|builtin_max_unshadowed|9|exact
+CHK|call_dup_first_folder_wins|cur dup|exact
+CHK|call_fromcur|pkg fromcur|exact
+CHK|call_cpkg|cur extra|exact
+CHK|call_two_one_output|3|exact
+CHK|call_two_both|3,-3|exact
+CHK|bare_dotted_is_a_call|MATLAB:minrhs|exact
+CHK|fn_vs_subpkg_call|function x|exact
+CHK|fn_vs_subpkg_sub|sub x y|exact
+CHK|var_struct_wins|-2|exact
+CHK|var_number_id|MATLAB:structRefFromNonStruct|exact
+CHK|var_number_msg|Dot indexing is not supported for variables of this type.|exact
+CHK|nosuch_member_id|MATLAB:undefinedVarOrClass|exact
+CHK|nosuch_member_msg|Unable to resolve the name 'pkg.nosuch'.|exact
+CHK|nosuch_pkg_msg|Unable to resolve the name 'nosuchpkg.f'.|exact
+CHK|nosuch_sub_member_msg|Unable to resolve the name 'pkg.sub.nosuch'.|exact
+CHK|sibling_bare_id|MATLAB:UndefinedFunction|exact
+CHK|sibling_bare_msg|Undefined function 'f' for input arguments of type 'double'.|exact
+CHK|private_as_subpkg_msg|Unable to resolve the name 'pkg.private.p'.|exact
+CHK|private_from_outside_id|MATLAB:UndefinedFunction|exact
+CHK|too_few_id|MATLAB:minrhs|exact
+CHK|too_many_id|MATLAB:TooManyInputs|exact
+CHK|cmd_syntax_id|MATLAB:m_missing_operator|exact
+CHK|sibling_stack_names|g,p1_packages|exact
+CHK|serr_id|pkg:serr|exact
+CHK|serr_msg|raised in serr|exact
+CHK|serr_stack_name|serr|exact
+CHK|serr_stack_file|<root>\lib\+pkg\serr.m|exact
+CHK|handle_call|20|exact
+CHK|handle_func2str|pkg.f|exact
+CHK|handle_function|pkg.f|exact
+CHK|handle_type|simple|exact
+CHK|handle_file||exact
+CHK|handle_cellfun|[10 20]|exact
+CHK|handle_arrayfun|[10 20]|exact
+CHK|handle_equal|1|exact
+CHK|handle_unequal|0|exact
+CHK|str2func_name|20|exact
+CHK|str2func_at|20|exact
+CHK|feval_name|20|exact
+CHK|feval_handle|40|exact
+CHK|eval_dotted|20|exact
+CHK|evalin_dotted|30|exact
+CHK|nargin_name|1|exact
+CHK|nargin_handle|1|exact
+CHK|nargout_name|2|exact
+CHK|nargout_handle|2|exact
+CHK|nargin_nosuch_id|MATLAB:narginout:notValidMfile|exact
+CHK|mfilename_bare|info|exact
+CHK|mfilename_full|<root>\lib\+pkg\info|exact
+CHK|dbstack_names|info,p1_packages|exact
+CHK|dbstack_printed|> In pkg.stk (line 2)|exact
+CHK|dbstack_printed_sub|> In pkg.sub.stk (line 2)|exact
+CHK|dbstack_printed_local|> In pkg.stkloc>inner (line 5)|exact
+CHK|dbstatus_dotted|Breakpoint for f is on line 2./Breakpoint for h is on line 2./|exact
+CHK|dbstop_nosuch_id|MATLAB:dispatcher:cannotFindFunction|exact
+CHK|dbstop_nosuch_msg|Cannot find function "pkg.nosuch".|exact
+CHK|script_runs|script s ran/|exact
+CHK|script_var_exists|1|exact
+CHK|script_var|42|exact
+CHK|script_mfilename_full|<root>\lib\+pkg\sm|exact
+CHK|script_mfilename_bare|sm|exact
+CHK|script_as_value_id|MATLAB:scriptNotAFunction|exact
+CHK|script_as_value_msg|Execution of script s as a function is not supported:/<root>\lib\+pkg\s.m|exact
+CHK|script_with_arg_id|MATLAB:scriptNotAFunction|exact
+CHK|script_feval_id||exact
+CHK|script_run_id|MATLAB:run:FileNotFound|exact
+CHK|script_which|<root>\lib\+pkg\s.m|exact
+CHK|script_exist|0|exact
+CHK|which_f|<root>\lib\+pkg\f.m|exact
+CHK|which_dup|<root>\cur\+pkg\dup.m|exact
+CHK|which_all_dup|1|exact
+CHK|which_sub_h|<root>\lib\+pkg\+sub\h.m|exact
+CHK|which_q|<root>\lib\+pkg\q.m|exact
+CHK|which_nosuch||exact
+CHK|which_sub||exact
+CHK|which_pkg||exact
+CHK|exist_f|0|exact
+CHK|exist_f_file|0|exact
+CHK|exist_pkg|0|exact
+CHK|exist_sub|0|exact
+CHK|exist_sub_h|0|exact
+CHK|exist_plus_pkg|7|exact
+CHK|exist_plus_pkg_dir|7|exact
+CHK|what_pkg_count|2|exact
+CHK|what_pkg_1|<root>\cur\+pkg|exact
+CHK|what_pkg_2|<root>\lib\+pkg|exact
+CHK|what_pkg_2_m|dup.m,f.m,g.m,g2.m,info.m,max.m,q.m,s.m,serr.m,sm.m,stk.m,stkloc.m,two.m,x.m|exact
+CHK|what_pkg_2_classes|D|exact
+CHK|what_pkg_2_packages|sub,x|exact
+CHK|what_plus_pkg_count|2|exact
+CHK|what_dotted_sub_count|0|exact
+CHK|what_slash_sub|<root>\lib\+pkg\+sub|exact
+CHK|what_slash_sub_m|h.m,stk.m|exact
+CHK|what_plus_slash_sub|<root>\lib\+pkg\+sub|exact
+CHK|what_cpkg|<root>\cur\+cpkg|exact
+CHK|what_nosuch_count|0|exact
+CHK|what_lib_classes|P1Cls|exact
+CHK|what_lib_packages|pkg|exact
+CHK|help_pkg|Contents of pkg namespace://    dup - pkg.dup is a function./      f - pkg.f is a function./fromcur - pkg.fromcur is a function./      g - pkg.g is a function./     g2 - pkg.g2 is a function./   info - pkg.info is a function./    max - pkg.max is a function./      q - pkg.q is a function./      s - pkg.s is a script./   serr - pkg.serr is a function./     sm - pkg.sm is a script./    stk - pkg.stk is a function./ stkloc - pkg.stkloc is a function./    two - pkg.two is a function./      x - pkg.x is a function./      D - +pkg\@D is a folder./    sub - pkg.sub is a namespace./      x - pkg.x is a namespace./|exact
+CHK|help_pkg_sub|Contents of pkg.sub namespace://  h - pkg.sub.h is a function./stk - pkg.sub.stk is a function./|exact
+CHK|help_pkg_f|pkg.f is a function./    r = pkg.f(x)/|exact
+CHK|help_pkg_g|  calls a sibling unqualified/|exact
+CHK|help_pkg_s|pkg.s is a script./|exact
+CHK|help_pkg_nosuch_id||exact
+CHK|help_plain|p1plain is a function./    r = p1plain(x)/|exact
+CHK|help_doc| P1DOC  Doubles its input./    r = p1doc(x) is twice x./|exact
+CHK|type_dotted_id|MATLAB:type:fileNotFound|exact
+CHK|type_dotted_msg|File 'pkg.f' not found.|exact
+CHK|type_relative|/function r = f(x)/r = x * 10;/end/|exact
+CHK|type_relative_cur_first|/function r = dup()/r = 'cur dup';/end/|exact
+CHK|type_plain|/function r = p1plain(x)/r = x + 1;/end/|exact
+CHK|addpath_pkg_msg|Namespace directories not allowed in MATLAB path: <root>\lib\+pkg|exact
+CHK|addpath_pkg_id|MATLAB:mpath:packageDirectoriesNotAllowedOnPath|exact
+CHK|addpath_pkg_not_added|0|exact
+CHK|addpath_class_msg|Method directories not allowed in MATLAB path: <root>\lib\@P1Cls|exact
+CHK|addpath_class_id|MATLAB:mpath:methodDirectoriesNotAllowedOnPath|exact
+CHK|addpath_class_not_added|0|exact
+CHK|addpath_private_msg|Private directories not allowed in MATLAB path: <root>\lib\+pkg\private|exact
+CHK|addpath_private_id|MATLAB:mpath:privateDirectoriesNotAllowedOnPath|exact
+CHK|rmpath_msg|"<root>\lib\+pkg" not found in path.|exact
+CHK|rmpath_id|MATLAB:rmpath:DirNotFound|exact
+CHK|genpath_skips_pkg|<root>\lib;|exact
+CHK|cd_bare_output|1|exact
+CHK|cd_output_is_the_folder_left|1|exact
+CHK|cd_in_pkg_bare_id|MATLAB:UndefinedFunction|exact
+CHK|cd_in_pkg_dotted|20|exact
+CHK|cd_in_pkg_which||exact
+CHK|cd_back|1|exact
+CHK|fnshadow_member|20|exact
+CHK|fnshadow_call|function pkg|exact
+CHK|fnshadow_bare|function pkg|exact
+CHK|fnshadow_which|<root>\lib\pkg.m|exact
+CHK|fnshadow_which_member|<root>\lib\+pkg\f.m|exact
+CHK|fnshadow_exist|2|exact
+CHK|fnshadow_feval|20|exact
+CHK|classshadow_member|20|exact
+CHK|classshadow_bare_id|MATLAB:minrhs|exact
+CHK|classshadow_which|<root>\lib\pkg.m|exact
+CHK|clear_before|20|exact
+CHK|clear_after|20|exact
+CHK|clear_functions_after|20|exact
+CHK|late_before_rehash|MATLAB:undefinedVarOrClass|div=ADR0307|diverges|
+CHK|late_after_rehash|late|exact

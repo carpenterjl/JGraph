@@ -224,6 +224,15 @@ internal static partial class JgsBuiltins
         Query("what", (args, line, col) =>
         {
             ArityRange("what", args, 0, 1, line, col);
+
+            // what pkg, what +pkg, what pkg/sub: one struct per search folder holding the package, in
+            // search order (packages plan, P1; R2025b measured, and what('pkg.sub') is empty).
+            if (args.Count == 1 && host.FunctionPath is { } search
+                && PackageWhat(search.Tree, Str("what", args, 0, line, col)) is { } packaged)
+            {
+                return packaged;
+            }
+
             string folder = args.Count == 1 ? host.Resolve(Str("what", args, 0, line, col)) : host.CurrentDirectory;
             if (!Directory.Exists(folder))
             {
@@ -232,26 +241,7 @@ internal static partial class JgsBuiltins
                 return JgsValue.StructArray(new JgsStructArray([], WhatFields), 0, 1);
             }
 
-            // MATLAB's field set, in MATLAB's order, so `w.m` and `fieldnames(w)` read the same here
-            // as there. The kinds JGraph has no notion of — MATLAB apps, live scripts, MEX binaries,
-            // Simulink models, p-code — are still asked for by name and answer empty, and `jgs` is
-            // appended for JGraph's own scripts (ADR 0110).
-            return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
-            {
-                ["path"] = JgsValue.Str(folder),
-                ["m"] = NamesIn(folder, "*.m"),
-                ["mlapp"] = NamesIn(folder, "*.mlapp"),
-                ["mlx"] = NamesIn(folder, "*.mlx"),
-                ["mat"] = NamesIn(folder, "*.mat"),
-                ["mex"] = NamesIn(folder, "*.mex*"),
-                ["mdl"] = NamesIn(folder, "*.mdl"),
-                ["slx"] = NamesIn(folder, "*.slx"),
-                ["sfx"] = NamesIn(folder, "*.sfx"),
-                ["p"] = NamesIn(folder, "*.p"),
-                ["classes"] = FoldersIn(folder, "@*"),
-                ["packages"] = FoldersIn(folder, "+*"),
-                ["jgs"] = NamesIn(folder, "*.jgs"),
-            });
+            return JgsValue.Struct(WhatRow(folder));
         });
 
         Command("pack", (args, line, col) =>
@@ -324,6 +314,76 @@ internal static partial class JgsBuiltins
         JgsValue cell = JgsValue.Cell([.. paths.Select(p => JgsValue.Str(name(p)))]);
         cell.Reshape(paths.Length, 1);
         return cell;
+    }
+
+    /// <summary>
+    /// One folder as <c>what</c> describes it: MATLAB's field set, in MATLAB's order, so <c>w.m</c> and
+    /// <c>fieldnames(w)</c> read the same here as there. The kinds JGraph has no notion of — MATLAB
+    /// apps, live scripts, MEX binaries, Simulink models, p-code — are still asked for by name and
+    /// answer empty, and <c>jgs</c> is appended for JGraph's own scripts (ADR 0110).
+    /// </summary>
+    private static Dictionary<string, JgsValue> WhatRow(string folder) => new(StringComparer.Ordinal)
+    {
+        ["path"] = JgsValue.Str(folder),
+        ["m"] = NamesIn(folder, "*.m"),
+        ["mlapp"] = NamesIn(folder, "*.mlapp"),
+        ["mlx"] = NamesIn(folder, "*.mlx"),
+        ["mat"] = NamesIn(folder, "*.mat"),
+        ["mex"] = NamesIn(folder, "*.mex*"),
+        ["mdl"] = NamesIn(folder, "*.mdl"),
+        ["slx"] = NamesIn(folder, "*.slx"),
+        ["sfx"] = NamesIn(folder, "*.sfx"),
+        ["p"] = NamesIn(folder, "*.p"),
+        ["classes"] = FoldersIn(folder, "@*"),
+        ["packages"] = FoldersIn(folder, "+*"),
+        ["jgs"] = NamesIn(folder, "*.jgs"),
+    };
+
+    /// <summary>
+    /// <c>what</c> of a package named as <c>pkg</c>, <c>+pkg</c>, <c>pkg/sub</c> or <c>+pkg/+sub</c>:
+    /// one row per search folder holding it, in search order, as a struct for one and an N-by-1
+    /// struct array for several (R2025b, measured in P1). Null when the text names no package —
+    /// a rooted path, a dotted name (<c>what('pkg.sub')</c> is empty there), a class folder's
+    /// segment (stage P4), or a name no search folder holds — so the folder reading goes ahead.
+    /// </summary>
+    private static JgsValue? PackageWhat(JgsCodeTree tree, string asked)
+    {
+        if (asked.Length == 0 || Path.IsPathRooted(asked) || asked.Contains('.', StringComparison.Ordinal))
+        {
+            return null;
+        }
+
+        string[] parts = asked.Split(['/', '\\'], StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < parts.Length; i++)
+        {
+            if (parts[i].StartsWith('+'))
+            {
+                parts[i] = parts[i][1..];
+            }
+
+            if (parts[i].Length == 0 || parts[i][0] == '@' || JgsCodeTree.DottedParts("a." + parts[i]) is null)
+            {
+                return null;
+            }
+        }
+
+        var rows = new List<Dictionary<string, JgsValue>>();
+        foreach (JgsCodeTree.PackageHit hit in tree.Hits(parts))
+        {
+            rows.Add(WhatRow(hit.Folder));
+        }
+
+        return rows.Count switch
+        {
+            0 => null,
+            1 => JgsValue.Struct(rows[0]),
+            _ => JgsValue.StructArray(new JgsStructArray(rows.ToArray(), WhatFields), rows.Count, 1),
+        };
     }
 
     /// <summary>The fields <c>what</c> answers with, remembered for the empty answer (M109).</summary>

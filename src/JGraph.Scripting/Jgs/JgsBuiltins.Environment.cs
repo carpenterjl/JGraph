@@ -57,6 +57,7 @@ internal static partial class JgsBuiltins
                 return JgsValue.Str(host.CurrentDirectory); // bare cd reports rather than moves
             }
 
+            string left = host.CurrentDirectory;
             try
             {
                 host.ChangeDirectory(Str("cd", args, 0, line, col));
@@ -66,7 +67,9 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, $"cd: {ex.Message}");
             }
 
-            return JgsValue.Str(host.CurrentDirectory);
+            // cd's output is the folder left, so `old = cd(d); cd(old)` puts it back (R2025b; open
+            // item 244: it used to answer the folder entered, and an onCleanup restored nothing).
+            return JgsValue.Str(left);
         });
 
         Define("mkdir", (args, line, col) =>

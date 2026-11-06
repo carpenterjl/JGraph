@@ -379,6 +379,13 @@ internal static class JgsRunner
                 }
             }
 
+            // R2025b's refusal of a file that is not there, a dotted name included: run('pkg.s')
+            // is "pkg.s not found." (measured, packages plan P1).
+            if (!File.Exists(resolved))
+            {
+                throw new JgsRuntimeException(line, column, "MATLAB:run:FileNotFound", $"{args[0].AsString} not found.");
+            }
+
             string fullPath;
             string? source;
             try

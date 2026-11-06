@@ -32,6 +32,7 @@ internal sealed class JgsFunctionPath
     private readonly JGraphScriptGlobals _host;
     private readonly List<string> _folders = [];
     private readonly JgsFileIndex _index;
+    private readonly JgsCodeTree _tree;
 
     // Names are case-sensitive the way MATLAB's are; the *paths* they resolve to are not, on Windows.
     private readonly Dictionary<string, Loaded> _loaded = new(StringComparer.Ordinal);
@@ -39,17 +40,25 @@ internal sealed class JgsFunctionPath
     // Private files are keyed by their path: the same name means a different file under every folder.
     private readonly Dictionary<string, Loaded> _private = new(PathComparer);
 
+    // Package members are keyed by their dotted name (P1), apart from the plain names: a plain-name
+    // miss evicts its own entry, and must not evict pkg.f's, or two @pkg.f handles never compare equal.
+    private readonly Dictionary<string, Loaded> _dotted = new(StringComparer.Ordinal);
+
     /// <summary>Creates the path over the interpreter whose globals its functions close over.</summary>
     public JgsFunctionPath(Interpreter interpreter, JGraphScriptGlobals host)
     {
         _interpreter = interpreter;
         _host = host;
+        // A +package or @Class folder made current with cd gives its files no bare names (packages
+        // plan, P1; measured in R2025b), so it is no search folder; the package it is still answers
+        // through the folder that holds it.
         _index = new JgsFileIndex(
-            () => host.ImplicitCodeFolders.Concat(_folders),
+            () => host.ImplicitCodeFolders.Where(static folder => !JgsFileIndex.IsMcosFolder(folder)).Concat(_folders),
             () => interpreter.StatementEpoch,
             name => interpreter.Globals.Builtins.TryGet(name, out _),
             message => host.WriteErr(message + "\n"));
         _index.ShadowingFound = WarnShadowing;
+        _tree = new JgsCodeTree(_index);
         host.FileChanging += path =>
         {
             _index.Invalidate(path);
@@ -107,6 +116,9 @@ internal sealed class JgsFunctionPath
     /// its way to an unshadowed built-in, and the loop compiler's guard.
     /// </summary>
     public JgsFileIndex Index => _index;
+
+    /// <summary>The <c>+package</c> folders the search folders hold, by kind (packages plan, stage P1).</summary>
+    public JgsCodeTree Tree => _tree;
 
     /// <summary>
     /// Adds <paramref name="folder"/> to the search path, at the front unless
@@ -180,6 +192,14 @@ internal sealed class JgsFunctionPath
             }
         }
 
+        foreach ((string name, Loaded loaded) in _dotted.ToList())
+        {
+            if (!_interpreter.IsFileActive(loaded.Path))
+            {
+                _dotted.Remove(name);
+            }
+        }
+
         _index.Invalidate(null);
     }
 
@@ -193,6 +213,12 @@ internal sealed class JgsFunctionPath
         if (_loaded.TryGetValue(name, out Loaded? loaded) && _interpreter.ForgetPersistentsOf(loaded.Path))
         {
             _loaded.Remove(name);
+        }
+
+        // clear pkg.f: the member by its dotted name (P1).
+        if (_dotted.TryGetValue(name, out Loaded? member) && _interpreter.ForgetPersistentsOf(member.Path))
+        {
+            _dotted.Remove(name);
         }
 
         // clear name for a class file forgets the class too (W11: App Designer's Run clears the
@@ -221,17 +247,29 @@ internal sealed class JgsFunctionPath
         // A deployed session's code is on its frozen path alone (stage K1).
         // A P-file is probed for only where the index has seen one (stage K3b).
         bool pcode = _index.HoldsPcode(name);
-        foreach (string extension in _host.Deployment is null ? CodeExtensions : [])
+        if (_host.Deployment is null)
         {
-            if (!pcode && extension == JgsPcode.Extension)
+            foreach (string folder in _host.ImplicitCodeFolders)
             {
-                continue;
-            }
+                // A +package or @Class folder made current gives its files no bare names (P1, measured).
+                if (JgsFileIndex.IsMcosFolder(folder))
+                {
+                    continue;
+                }
 
-            string beside = _host.Resolve(name + extension);
-            if (File.Exists(beside))
-            {
-                return Path.GetFullPath(beside);
+                foreach (string extension in CodeExtensions)
+                {
+                    if (!pcode && extension == JgsPcode.Extension)
+                    {
+                        continue;
+                    }
+
+                    string beside = Path.Combine(folder, name + extension);
+                    if (File.Exists(beside))
+                    {
+                        return Path.GetFullPath(beside);
+                    }
+                }
             }
         }
 
@@ -299,6 +337,104 @@ internal sealed class JgsFunctionPath
     /// probe_k3b_pcode); an .mlapp before a P-file is MATLAB's documented order, not measured.
     /// </summary>
     internal static readonly string[] CodeExtensions = [JgsMlapp.Extension, JgsPcode.Extension, ".m"];
+
+    // --- Packages (the packages and class folders plan, stage P1, ADR 0307) ----------------------
+
+    /// <summary>
+    /// The file a dotted name (<c>pkg.sub.h</c>) resolves to - the code file <c>h</c> in the package
+    /// <c>pkg.sub</c>, in the first search folder holding one - or null when no package holds it.
+    /// <paramref name="fromAddedFolder"/> says whether that folder was added with <c>addpath</c>.
+    /// </summary>
+    internal string? FindDotted(string dotted, out bool fromAddedFolder)
+    {
+        fromAddedFolder = false;
+        if (JgsCodeTree.DottedParts(dotted) is not { } parts)
+        {
+            return null;
+        }
+
+        string member = parts[^1];
+        if (_tree.MemberFolder(parts[..^1], member) is not { } hit)
+        {
+            return null;
+        }
+
+        fromAddedFolder = _folders.Contains(hit.SearchFolder, PathComparer);
+        return MemberFile(hit.Folder, member, hit.Entry);
+    }
+
+    /// <summary>The code file <paramref name="stem"/> in <paramref name="folder"/>, an .mlapp before a P-file before the .m, as <see cref="Find(string)"/> orders them.</summary>
+    private static string MemberFile(string folder, string stem, JgsFileIndex.Folder entry)
+    {
+        foreach (string extension in CodeExtensions)
+        {
+            if (extension == JgsPcode.Extension && !entry.PcodeStems.Contains(stem))
+            {
+                continue;
+            }
+
+            string candidate = Path.Combine(folder, stem + extension);
+            if (File.Exists(candidate))
+            {
+                return candidate;
+            }
+        }
+
+        return Path.Combine(folder, stem + ".m");
+    }
+
+    /// <summary>
+    /// Resolves a dotted name to the callable its package member defines, loading and caching the
+    /// file under the dotted name — so <c>clear pkg.f</c> finds it — and re-reading it when it has
+    /// been written since. The member's own name is the bare stem: a script in a package is the
+    /// script callable, a function file its main function, a class file its constructor.
+    /// </summary>
+    public bool TryResolveDotted(string dotted, out JgsValue value, out string? file, out bool fromAddedFolder)
+    {
+        value = JgsValue.Null;
+        file = null;
+        if (FindDotted(dotted, out fromAddedFolder) is not { } path)
+        {
+            _dotted.Remove(dotted);
+            return false;
+        }
+
+        file = path;
+        _dotted.TryGetValue(dotted, out Loaded? cached);
+        string stem = dotted[(dotted.LastIndexOf('.') + 1)..];
+        if (!TryLoadCurrent(stem, path, cached, out Loaded loaded))
+        {
+            return false;
+        }
+
+        _dotted[dotted] = loaded;
+        value = loaded.Value;
+        return true;
+    }
+
+    /// <summary>
+    /// A relative path with a folder in it (<c>+pkg/f.m</c>, <c>@Thing/extent.m</c>) looked for under
+    /// each search folder in order - what <c>type('+pkg/f.m')</c> reads (R2025b, measured) when the
+    /// current folder has no such file. Null for a rooted path, a plain name, or a miss.
+    /// </summary>
+    internal string? FindRelative(string relative)
+    {
+        if (relative.Length == 0 || Path.IsPathRooted(relative) || relative.IndexOfAny(['/', '\\']) < 0)
+        {
+            return null;
+        }
+
+        foreach (string folder in _index.SearchFolders)
+        {
+            string candidate = Path.Combine(folder, relative);
+            if (File.Exists(candidate))
+            {
+                return Path.GetFullPath(candidate);
+            }
+        }
+
+        return null;
+    }
 
     /// <summary>
     /// Every file <paramref name="name"/> names, in the order MATLAB's <c>which -all</c> lists them:
@@ -588,19 +724,36 @@ internal sealed class JgsFunctionPath
             // A script's functions are hoisted into its storage on each run; a re-read starts it over
             // so a function the edit removed does not linger.
             _interpreter.ReplaceFile(path);
-            return JgsValue.Function(new BuiltinFunction(name, (args, line, column) =>
-            {
-                if (args.Count > 0)
-                {
-                    throw new JgsRuntimeException(line, column,
-                        $"'{name}' is a script file, not a function, so it takes no arguments.");
-                }
+            JgsRuntimeException NotAFunction(int line, int column) =>
+                // R2025b's words for a script called with arguments or asked for a value (measured,
+                // packages plan P1: x = pkg.s, pkg.s(1)).
+                new(line, column, "MATLAB:scriptNotAFunction", $"Execution of script {name} as a function is not supported:\n{path}");
 
+            void RunScript()
+            {
                 // The script's statements carry the MATLAB dialect they were parsed in, and the run
                 // enters it (V11, ADR 0172) - whoever named the script.
                 _interpreter.RunScriptFile(program, _interpreter.CurrentFrame, path);
-                return JgsValue.Null;
-            }));
+            }
+
+            // The single-output road is a value wanted (x = s): refused, as R2025b refuses; a
+            // statement's mention arrives on the multi-output road asked for nothing, and runs.
+            return JgsValue.Function(new BuiltinFunction(name, (_, line, column) => throw NotAFunction(line, column))
+            {
+                ScriptFile = path,
+                KnowsWhenDiscarded = true,
+                BindsAnsAsStatement = false,
+                MultiOutput = (args, wanted, line, column) =>
+                {
+                    if (args.Count > 0 || wanted > 0)
+                    {
+                        throw NotAFunction(line, column);
+                    }
+
+                    RunScript();
+                    return [];
+                },
+            });
         }
 
         // The file's functions live with the file: they see each other through the resolver, the

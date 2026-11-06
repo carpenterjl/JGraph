@@ -88,8 +88,17 @@ public sealed class JGraphScriptGlobals
     /// <summary>The host's Comparison Tool, or null without windows (App Designer window plan W14).</summary>
     internal IScriptComparisonTool? ComparisonTool => _context.ComparisonTool;
 
-    /// <summary>The session's breakpoints, which <c>dbstop</c>, <c>dbclear</c> and <c>dbstatus</c> work on (App Designer window plan W11); null in a one-shot run, which has none.</summary>
-    internal Jgs.Debug.JgsBreakpointStore? Breakpoints { get; set; }
+    /// <summary>The session's breakpoints, which <c>dbstop</c>, <c>dbclear</c> and <c>dbstatus</c> work on (App Designer window plan W11); a one-shot run gets a store of its own at the first word.</summary>
+    internal Jgs.Debug.JgsBreakpointStore? Breakpoints
+    {
+        // A run with no session - a batch, a parity fixture - still keeps the breakpoints dbstop
+        // sets, so dbstatus lists them as R2025b's -batch does (packages plan P1, measured); a
+        // session installs its own store before anything runs.
+        get => _breakpoints ??= new Jgs.Debug.JgsBreakpointStore();
+        set => _breakpoints = value;
+    }
+
+    private Jgs.Debug.JgsBreakpointStore? _breakpoints;
 
     /// <summary>The session's own debugger, which the debug words ask whether it is paused (W11); null in a one-shot run.</summary>
     internal Jgs.Debug.JgsDebugSession? Debugger { get; set; }
@@ -288,6 +297,13 @@ public sealed class JGraphScriptGlobals
 
     /// <summary>Tells <see cref="FileChanging"/> listeners that <paramref name="path"/> is about to change.</summary>
     internal void NoteFileChanging(string? path) => FileChanging?.Invoke(path);
+
+    /// <summary>
+    /// The session's function path, once the path built-ins have made it: what <c>help</c> and
+    /// <c>what</c>, registered without an interpreter in hand, read the <c>+package</c> folders
+    /// through (packages plan, P1). Null in a workspace built without one.
+    /// </summary>
+    internal Jgs.JgsFunctionPath? FunctionPath { get; set; }
 
     /// <summary>
     /// The folders a bare <c>name.m</c> is looked for in before the search path proper, in the order

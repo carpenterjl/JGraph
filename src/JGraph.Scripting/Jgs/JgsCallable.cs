@@ -170,6 +170,13 @@ internal sealed class BuiltinFunction : IJgsCallable, IJgsMultiCallable
     public bool KnowsWhenDiscarded { get; init; }
 
     /// <summary>
+    /// The script file this callable runs, when it is the callable the function path makes for a
+    /// script named by its file (packages plan, P1): what <c>feval</c> and a dotted mention read
+    /// to tell a script from a function. Null for every other builtin.
+    /// </summary>
+    public string? ScriptFile { get; init; }
+
+    /// <summary>
     /// Whether this builtin takes the output count it was asked for through
     /// <see cref="MultiOutput"/> at every count, zero included, because the count is part of what
     /// it does (V9.1, ADR 0170): <c>feval</c>, <c>cellfun</c>, <c>arrayfun</c> and <c>structfun</c>

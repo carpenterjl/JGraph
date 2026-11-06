@@ -822,11 +822,15 @@ internal sealed partial class Interpreter
         IReadOnlyList<Stmt> program;
         try
         {
-            program = Parser.Parse(code, sourceId: "eval", Dialect);
+            // The text's lines count from the eval's own line: an error or a dbstack inside it
+            // reports the line of the eval statement in the file (R2025b, measured in P1).
+            program = Parser.Parse(code, sourceId: "eval", Dialect, firstLine: Math.Max(line, 1));
         }
         catch (JgsException ex)
         {
-            throw new JgsRuntimeException(line, column, ex.Message);
+            throw ex is JgsSyntaxException { Identifier: { } identifier }
+                ? new JgsRuntimeException(line, column, identifier, ex.Message)
+                : new JgsRuntimeException(line, column, ex.Message);
         }
 
         if (Dialect.IsMatlab && program.Any(static s => s is ClassdefStmt))
@@ -2164,6 +2168,18 @@ internal sealed partial class Interpreter
         Resolution referenced = _resolver.Handle(name, env);
         if (!referenced.Found || referenced.Value.Type != JgsType.Function)
         {
+            // @pkg.f: a handle to a package member (packages plan, P1). It names no file, as
+            // R2025b's does not (functions(@pkg.f).file is '', measured).
+            if (Dialect.IsMatlab && name.Contains('.', StringComparison.Ordinal)
+                && _resolver.Dotted(name) is { Found: true } packaged && packaged.Value.Type == JgsType.Function)
+            {
+                handle = JgsValue.Function(new NamedHandle(name, packaged.Layer, packaged.Value.AsCallable, null, null, _resolver)
+                {
+                    Context = AnyClasses ? env.ClassContext : null,
+                });
+                return true;
+            }
+
             // @System.Math.Max: a .NET static method group, or a type's constructor (ADR 0174).
             if (TryNetHandle(name, env, out handle))
             {
@@ -3070,6 +3086,15 @@ internal sealed partial class Interpreter
             callee = named.Value.AsCallable;
             JgsOutputDemand.Refuse(callee, wanted, bare.Line, bare.Column);
             return zeroArgument.CallMultiple(System.Array.Empty<JgsValue>(), wanted, bare.Line, bare.Column);
+        }
+
+        // [a, b] = pkg.two: a user package's member named bare is the call, asked for every output
+        // (packages plan, P1).
+        if (call is MemberExpr dottedUser && TryPackageCallable(dottedUser, env, out IJgsCallable? packagedUser))
+        {
+            callee = packagedUser;
+            JgsOutputDemand.Refuse(callee, wanted, dottedUser.Line, dottedUser.Column);
+            return CallMultipleHeld(callee, System.Array.Empty<JgsValue>(), wanted, dottedUser.Line, dottedUser.Column);
         }
 
         // The same for a package function named bare, `[disks, volumes] = jgraph.usb.storage`: the
@@ -10011,6 +10036,15 @@ internal sealed partial class Interpreter
     /// <param name="use">Where the dot stands, which decides a struct array's field (open item 98).</param>
     private JgsValue EvaluateMember(MemberExpr member, JgsEnvironment env, bool autoCall = true, ListUse use = ListUse.Value)
     {
+        // pkg.f, pkg.sub.h: a +package folder's member (packages plan, P1, ADR 0307). Asked before the
+        // class and .NET readings, because a file pkg.m beside +pkg - a function, or a class with a
+        // Constant property f - never takes the dotted name from the package (measured, R2025b);
+        // a variable pkg wins, which the reading checks for itself.
+        if (TryPackageInFront(member, env, autoCall, out JgsValue onPackage))
+        {
+            return onPackage;
+        }
+
         // `Circle.unit()` and `Circle.Sides` name the class, not an instance of it — and that has to
         // be settled before the target is evaluated, because evaluating a class name *builds* one
         // (the constructor auto-calls bare, which is what makes `c = Circle;` a default instance).
@@ -10221,8 +10255,12 @@ internal sealed partial class Interpreter
                     "Attempt to reference field of non-structure array."); // open item 123
             }
 
-            throw new JgsRuntimeException(member.Line, member.Column,
-                $"'.{field}' needs a struct, but this is a {target.TypeName}.");
+            // R2025b's words for a dot on a number (measured, packages plan P1: pkg = 3; pkg.f(2)).
+            throw Dialect.IsMatlab
+                ? new JgsRuntimeException(member.Line, member.Column, "MATLAB:structRefFromNonStruct",
+                    "Dot indexing is not supported for variables of this type.")
+                : new JgsRuntimeException(member.Line, member.Column,
+                    $"'.{field}' needs a struct, but this is a {target.TypeName}.");
         }
 
         if (target.AsStruct.TryGetValue(field, out JgsValue? value))

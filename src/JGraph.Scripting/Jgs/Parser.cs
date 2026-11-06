@@ -112,16 +112,17 @@ internal sealed class Parser
     /// <param name="source">The source text.</param>
     /// <param name="sourceId">The identity of <paramref name="source"/> — a file path, or "".</param>
     /// <param name="dialect">The language variant to parse, or null for <see cref="JgsDialect.Jgs"/>.</param>
+    /// <param name="firstLine">The line number the source's first line carries: 1 for a file, the eval's own line for eval'd text.</param>
     /// <exception cref="JgsSyntaxException">On any lexing or parsing error.</exception>
-    public static IReadOnlyList<Stmt> Parse(string source, string sourceId = "", JgsDialect? dialect = null)
+    public static IReadOnlyList<Stmt> Parse(string source, string sourceId = "", JgsDialect? dialect = null, int firstLine = 1)
     {
         dialect ??= JgsDialect.Jgs;
-        var parser = new Parser(Lexer.Tokenize(source, tolerant: false, dialect), sourceId, dialect);
+        var parser = new Parser(Lexer.Tokenize(source, tolerant: false, dialect, firstLine: firstLine), sourceId, dialect);
         return parser.ParseProgram();
     }
 
     /// <summary>
-    /// Parses as <see cref="Parse(string, string, JgsDialect?)"/> does, adding the source's
+    /// Parses as <see cref="Parse(string, string, JgsDialect?, int)"/> does, adding the source's
     /// <c>%#word</c> pragmas to <paramref name="pragmas"/> (stage K2: what the compiler reads).
     /// </summary>
     /// <exception cref="JgsSyntaxException">On any lexing or parsing error.</exception>
@@ -233,6 +234,20 @@ internal sealed class Parser
         if (Check(TokenType.Semicolon))
         {
             statement.Suppressed = true; // the separator itself is consumed by the caller's SkipSeparators
+        }
+        else if (_matlab && _pos > 0 && Current.Line == _tokens[_pos - 1].Line
+            && Current.Type is not (TokenType.Newline or TokenType.Comma or TokenType.Eof or TokenType.End
+                or TokenType.Else or TokenType.ElseIf or TokenType.Case or TokenType.Otherwise or TokenType.Catch
+                or TokenType.RBrace))
+        {
+            // Two statements on one line with nothing between them (`pkg.f 2`, `f(2) 3`): MATLAB's
+            // refusal, with its identifier (packages plan P1, measured on evalc('pkg.f 2')).
+            throw new JgsSyntaxException(Current.Line, Current.Column,
+                "Invalid expression. Check for missing multiplication operator, missing or unbalanced delimiters, "
+                + "or other syntax error. To construct matrices, use brackets instead of parentheses.")
+            {
+                Identifier = "MATLAB:m_missing_operator",
+            };
         }
 
         return statement;

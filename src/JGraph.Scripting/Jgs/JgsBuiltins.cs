@@ -674,24 +674,23 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         });
 
-        Define("help", (args, line, col) =>
+        // help prints its text when the answer is discarded and hands it back when one is asked for
+        // (R2025b: h = help('pkg')); a code file's help and a package's listing are read from the
+        // folders in the MATLAB dialect (packages plan, P1).
+        string HelpText(IReadOnlyList<JgsValue> args, int line, int col)
         {
             ArityRange("help", args, 0, 1, line, col);
             if (args.Count == 0)
             {
-                host.print("Type help followed by a name, like: help plot");
-                host.print("Functions: " + string.Join(", ",
-                    JgsBuiltinCatalog.All.Select(static info => info.Name)));
-                return JgsValue.Null;
+                return "Type help followed by a name, like: help plot\nFunctions: "
+                    + string.Join(", ", JgsBuiltinCatalog.All.Select(static info => info.Name)) + "\n";
             }
 
             string name = Str("help", args, 0, line, col);
             JgsBuiltinInfo? info = JgsBuiltinCatalog.Find(name);
             if (info is not null)
             {
-                host.print(info.Signature);
-                host.print("  " + info.Summary);
-                return JgsValue.Null;
+                return info.Signature + "\n  " + info.Summary + "\n";
             }
 
             IReadOnlyList<string> keywords = dialect.IsMatlab
@@ -699,13 +698,35 @@ internal static partial class JgsBuiltins
                 : JgsBuiltinCatalog.Keywords;
             if (keywords.Contains(name, StringComparer.Ordinal))
             {
-                host.print($"'{name}' is a language keyword.");
-                return JgsValue.Null;
+                return $"'{name}' is a language keyword.\n";
             }
 
-            host.print($"No help found for '{name}'.");
-            return JgsValue.Null;
-        });
+            if (dialect.IsMatlab && host.FunctionPath is { } search && UserHelp(search, name) is { } text)
+            {
+                return text;
+            }
+
+            return $"No help found for '{name}'.\n";
+        }
+
+        env.Builtins.Register("help", JgsValue.Function(new BuiltinFunction(
+            "help", (args, line, col) => JgsValue.Str(HelpText(args, line, col)))
+        {
+            AutoCallsBare = true,
+            KnowsWhenDiscarded = true,
+            BindsAnsAsStatement = false,
+            MultiOutput = (args, wanted, line, col) =>
+            {
+                string text = HelpText(args, line, col);
+                if (wanted != 0)
+                {
+                    return [JgsValue.Str(text)];
+                }
+
+                host.print(text.TrimEnd('\n'));
+                return [JgsValue.Null];
+            },
+        }));
 
         // dir and ls answer when asked and print when not, so both carry KnowsWhenDiscarded: `dir` on
         // its own line is the listing a console session expects, and `d = dir(...)` is the struct

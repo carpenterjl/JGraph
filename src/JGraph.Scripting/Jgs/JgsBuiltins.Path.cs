@@ -20,6 +20,7 @@ internal static partial class JgsBuiltins
     {
         var search = new JgsFunctionPath(interpreter, host);
         interpreter.FunctionPath = search;
+        host.FunctionPath = search;
 
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
@@ -86,9 +87,17 @@ internal static partial class JgsBuiltins
                 path = onPath;
             }
 
+            // A relative path through a +package folder is looked for under each search folder
+            // (packages plan, P1; R2025b reads type('+pkg/f.m') from the path, measured), where the
+            // dotted name is not: type pkg.f is "File 'pkg.f' not found."
+            if (!File.Exists(path) && search.FindRelative(asked) is { } inFolder)
+            {
+                path = inFolder;
+            }
+
             if (!File.Exists(path))
             {
-                throw new JgsRuntimeException(line, col, $"type: there is no file '{path}'.");
+                throw new JgsRuntimeException(line, col, "MATLAB:type:fileNotFound", $"File '{asked}' not found.");
             }
 
             // A P-file a name found is named, not listed; one asked for by its file name is listed
@@ -99,13 +108,24 @@ internal static partial class JgsBuiltins
                 return JgsValue.Null;
             }
 
+            string source;
             try
             {
-                host.print(JgsMlapp.ReadSource(path));
+                source = JgsMlapp.ReadSource(path);
             }
             catch (InvalidDataException)
             {
                 throw new JgsRuntimeException(line, col, "MATLAB:fileio:cantOpenFile", $"{path}: Can't open file.");
+            }
+
+            // R2025b prints an empty line before the text (measured, P1).
+            if (interpreter.Dialect.IsMatlab)
+            {
+                host.WriteOut("\n" + source + (source.EndsWith('\n') ? string.Empty : "\n"));
+            }
+            else
+            {
+                host.print(source);
             }
 
             return JgsValue.Null;
@@ -147,7 +167,17 @@ internal static partial class JgsBuiltins
 
             foreach (string folder in folders)
             {
-                AddFolder(search, Locate(folder), atEnd, "addpath", line, col);
+                string located = Locate(folder);
+
+                // A +package, @Class or private folder is never on the path: R2025b warns and adds
+                // nothing (measured, packages plan P1).
+                if (McosPathRefusal(located) is { } refusal)
+                {
+                    Warn(host, refusal.Identifier, refusal.Message);
+                    continue;
+                }
+
+                AddFolder(search, located, atEnd, "addpath", line, col);
             }
 
             return JgsValue.Null;
@@ -165,10 +195,11 @@ internal static partial class JgsBuiltins
                 foreach (string folder in Split(Str("rmpath", args, i, line, col)))
                 {
                     // MATLAB warns rather than fails here, and it is right to: removing a folder that
-                    // is already absent has got the caller what they asked for.
-                    if (!search.Remove(Locate(folder)))
+                    // is already absent has got the caller what they asked for (R2025b's words, measured in P1).
+                    string located = Locate(folder);
+                    if (!search.Remove(located))
                     {
-                        host.WriteErr($"Warning: '{folder}' is not on the search path.\n");
+                        Warn(host, "MATLAB:rmpath:DirNotFound", $"\"{located}\" not found in path.");
                     }
                 }
             }
@@ -196,7 +227,8 @@ internal static partial class JgsBuiltins
                 }
             }
 
-            return JgsValue.Str(string.Join(Path.PathSeparator, found));
+            // R2025b's list ends with a separator (measured, P1).
+            return JgsValue.Str(string.Join(Path.PathSeparator, found) + Path.PathSeparator);
         });
 
         Query("pathsep", (args, line, col) =>
@@ -208,6 +240,32 @@ internal static partial class JgsBuiltins
         // rehash stays with the session builtins, where it was declared as a no-op before M145 gave
         // it a cache to drop: it now tells the host, and through it the file index, to re-read the
         // search folders.
+    }
+
+    /// <summary>
+    /// R2025b's refusal of a folder <c>addpath</c> never takes - a <c>+package</c>, an <c>@Class</c> or
+    /// a <c>private</c> folder, told by its name - as the warning's identifier and words (measured,
+    /// packages plan P1); null for any other folder.
+    /// </summary>
+    private static (string Identifier, string Message)? McosPathRefusal(string folder)
+    {
+        string leaf = Path.GetFileName(Path.TrimEndingDirectorySeparator(folder));
+        if (leaf.Length > 1 && leaf[0] == '+')
+        {
+            return ("MATLAB:mpath:packageDirectoriesNotAllowedOnPath", $"Namespace directories not allowed in MATLAB path: {folder}");
+        }
+
+        if (leaf.Length > 1 && leaf[0] == '@')
+        {
+            return ("MATLAB:mpath:methodDirectoriesNotAllowedOnPath", $"Method directories not allowed in MATLAB path: {folder}");
+        }
+
+        if (leaf.Equals("private", StringComparison.OrdinalIgnoreCase))
+        {
+            return ("MATLAB:mpath:privateDirectoriesNotAllowedOnPath", $"Private directories not allowed in MATLAB path: {folder}");
+        }
+
+        return null;
     }
 
     /// <summary>Adds one folder to <paramref name="search"/>, refusing a folder that is not there.</summary>

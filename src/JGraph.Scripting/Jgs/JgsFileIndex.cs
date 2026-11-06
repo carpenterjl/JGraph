@@ -31,6 +31,15 @@ internal sealed class JgsFileIndex
 
         /// <summary>The stems of the folder's P-files (stage K3b), so a lookup probes for a .p only where one is.</summary>
         public readonly HashSet<string> PcodeStems = new(StringComparer.Ordinal);
+
+        /// <summary>
+        /// The names of the folder's <c>+name</c> sub-folders without the marker - the packages it
+        /// holds (packages plan, stage P1): what a dotted name's head is looked for in.
+        /// </summary>
+        public readonly HashSet<string> Packages = new(StringComparer.Ordinal);
+
+        /// <summary>The names of the folder's <c>@Name</c> sub-folders without the marker - its class folders (listed by <c>what</c> and <c>help</c>; stage P4 reads them).</summary>
+        public readonly HashSet<string> ClassFolders = new(StringComparer.Ordinal);
         public string Path = "";
         public DateTime Written;
         public bool Dirty = true;
@@ -63,6 +72,7 @@ internal sealed class JgsFileIndex
     private readonly Action<string> _warn;
 
     private HashSet<string>? _shadowing;
+    private bool _anyPackages;
     private List<string> _lastSearched = [];
     private int _checkedEpoch = -1;
     private readonly HashSet<string> _reported = new(StringComparer.Ordinal);
@@ -98,8 +108,49 @@ internal sealed class JgsFileIndex
     internal Func<string, IEnumerable<string>> EnumerateFiles { get; set; } =
         static folder => Directory.EnumerateFiles(folder, "*.m").Concat(Directory.EnumerateFiles(folder, "*" + JgsPcode.Extension));
 
+    /// <summary>How a folder's sub-folders are listed - its <c>+package</c> and <c>@Class</c> folders are read off the listing; a test can stand in.</summary>
+    internal Func<string, IEnumerable<string>> EnumerateFolders { get; set; } = static folder => Directory.EnumerateDirectories(folder);
+
     /// <summary>How a folder's write time is read; a test can freeze it.</summary>
     internal Func<string, DateTime> LastWrite { get; set; } = Directory.GetLastWriteTimeUtc;
+
+    /// <summary>
+    /// Whether a folder's name marks it as one MATLAB never searches for bare names: a <c>+package</c>
+    /// or an <c>@Class</c> folder. Made current with <c>cd</c>, such a folder gives its files no bare
+    /// names (measured, R2025b: <c>cd lib/+pkg; f(2)</c> is undefined while <c>pkg.f(2)</c> answers).
+    /// </summary>
+    internal static bool IsMcosFolder(string folder)
+    {
+        string leaf = System.IO.Path.GetFileName(System.IO.Path.TrimEndingDirectorySeparator(folder));
+        return leaf.Length > 1 && (leaf[0] == '+' || leaf[0] == '@');
+    }
+
+    /// <summary>
+    /// The search folders as of this statement, in search order, full paths - the roots a package
+    /// is looked for under. Refreshed on the way out, as <see cref="Shadowing"/> is.
+    /// </summary>
+    internal IReadOnlyList<string> SearchFolders
+    {
+        get
+        {
+            Refresh();
+            return _lastSearched;
+        }
+    }
+
+    /// <summary>
+    /// Whether any search folder holds a <c>+package</c> folder at all - false in almost every
+    /// session, which is what lets a dotted name's reading skip the package walk at the cost of
+    /// one field read.
+    /// </summary>
+    internal bool AnyPackages
+    {
+        get
+        {
+            Refresh();
+            return _anyPackages;
+        }
+    }
 
     /// <summary>The clock a folder time is compared with to decide it is racy; a test can freeze it.</summary>
     internal Func<DateTime> UtcNow { get; set; } = static () => DateTime.UtcNow;
@@ -323,9 +374,12 @@ internal sealed class JgsFileIndex
         }
 
         var shadowing = new HashSet<string>(StringComparer.Ordinal);
+        bool anyPackages = false;
         foreach (string folder in searched)
         {
-            foreach (string stem in _folders[folder].Stems)
+            Folder entry = _folders[folder];
+            anyPackages |= entry.Packages.Count > 0;
+            foreach (string stem in entry.Stems)
             {
                 if (_isBuiltin(stem))
                 {
@@ -335,6 +389,7 @@ internal sealed class JgsFileIndex
         }
 
         _shadowing = shadowing;
+        _anyPackages = anyPackages;
         _unreported.Clear();
         foreach (string name in shadowing)
         {
@@ -386,6 +441,8 @@ internal sealed class JgsFileIndex
     {
         var stems = new HashSet<string>(StringComparer.Ordinal);
         var pcodeStems = new HashSet<string>(StringComparer.Ordinal);
+        var packages = new HashSet<string>(StringComparer.Ordinal);
+        var classFolders = new HashSet<string>(StringComparer.Ordinal);
         DateTime written;
         try
         {
@@ -404,6 +461,21 @@ internal sealed class JgsFileIndex
                     }
                 }
             }
+
+            // The folder's +package and @Class sub-folders (packages plan, stage P1): a folder made
+            // or removed moves the folder's time as a file does, so the same refresh sees it.
+            foreach (string sub in EnumerateFolders(folder))
+            {
+                string leaf = Path.GetFileName(Path.TrimEndingDirectorySeparator(sub));
+                if (leaf.Length > 1 && leaf[0] == '+')
+                {
+                    packages.Add(leaf[1..]);
+                }
+                else if (leaf.Length > 1 && leaf[0] == '@')
+                {
+                    classFolders.Add(leaf[1..]);
+                }
+            }
         }
         catch (DirectoryNotFoundException)
         {
@@ -414,6 +486,8 @@ internal sealed class JgsFileIndex
             entry.Racy = false;
             entry.Stems.Clear();
             entry.PcodeStems.Clear();
+            entry.Packages.Clear();
+            entry.ClassFolders.Clear();
             entry.Dirty = false;
             entry.Read = true;
             return;
@@ -438,6 +512,10 @@ internal sealed class JgsFileIndex
         entry.Stems.UnionWith(stems);
         entry.PcodeStems.Clear();
         entry.PcodeStems.UnionWith(pcodeStems);
+        entry.Packages.Clear();
+        entry.Packages.UnionWith(packages);
+        entry.ClassFolders.Clear();
+        entry.ClassFolders.UnionWith(classFolders);
         entry.Dirty = false;
         entry.Read = true;
         entry.Warned = false;

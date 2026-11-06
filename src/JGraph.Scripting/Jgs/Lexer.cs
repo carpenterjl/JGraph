@@ -76,10 +76,12 @@ internal static class Lexer
     /// <param name="dialect">The language variant to lex, or null for <see cref="JgsDialect.Jgs"/>.</param>
     /// <param name="pragmas">When given, receives every MATLAB <c>%#word</c> comment the source holds
     /// (stage K2: the compiler's <c>%#function</c> and <c>%#exclude</c>).</param>
+    /// <param name="firstLine">The line number the first line of <paramref name="source"/> carries: 1 for a
+    /// file, the eval's own line for eval'd text (packages plan P1).</param>
     /// <exception cref="JgsSyntaxException">On an unterminated string or an unexpected character (only when
     /// <paramref name="tolerant"/> is false).</exception>
     public static IReadOnlyList<Token> Tokenize(
-        string source, bool tolerant = false, JgsDialect? dialect = null, ICollection<SourcePragma>? pragmas = null)
+        string source, bool tolerant = false, JgsDialect? dialect = null, ICollection<SourcePragma>? pragmas = null, int firstLine = 1)
     {
         ArgumentNullException.ThrowIfNull(source);
 
@@ -89,7 +91,7 @@ internal static class Lexer
 
         var tokens = new List<Token>();
         int i = 0;
-        int line = 1;
+        int line = firstLine; // eval'd text counts from the line of the eval that runs it (R2025b's stack and dbstack say so)
         int lineStart = 0;      // index where the current line begins, for column computation
         int parenDepth = 0;     // '(' nesting; newlines inside a call or grouping are insignificant
         int matrixDepth = 0;    // '[' nesting (and '{' where braces build cells)

@@ -422,7 +422,9 @@ internal static partial class JgsBuiltins
             var text = new StringBuilder();
             foreach ((string name, string file, int at) in frames)
             {
-                string shown = completeNames && file.Length > 0 ? $"{file}>{name}" : name;
+                // The printed frame is qualified by its package and a local function by its file
+                // (pkg.stkloc>inner), where the struct's name stays bare (R2025b, measured in P1).
+                string shown = completeNames && file.Length > 0 ? $"{file}>{name}" : interpreter.PrintedFrameName(name, file);
                 text.Append($"> In {shown} (line {at})").Append('\n');
             }
 
@@ -607,6 +609,13 @@ internal static partial class JgsBuiltins
         if (found is not null)
         {
             return found;
+        }
+
+        // A package member by its dotted name: dbstop in pkg.f (packages plan, P1, measured).
+        if (file.Contains('.', StringComparison.Ordinal) && file.IndexOfAny(['/', '\\']) < 0
+            && interpreter.Resolver.Dotted(file) is { File: { Length: > 0 } packaged })
+        {
+            return packaged;
         }
 
         foreach (string extension in Path.GetExtension(file).Length > 0 ? [string.Empty] : (string[])[string.Empty, .. JgsFunctionPath.CodeExtensions])

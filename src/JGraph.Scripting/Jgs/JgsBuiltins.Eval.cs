@@ -892,6 +892,14 @@ internal static partial class JgsBuiltins
                 }
             }
 
+            // A package member by its dotted name (packages plan, P1): its file - one line under
+            // -all as well, as R2025b lists one where two folders hold the member (measured).
+            if (where.Count == 0 && name.Contains('.', StringComparison.Ordinal)
+                && interpreter.Resolver.Dotted(name) is { File: { Length: > 0 } packaged })
+            {
+                where.Add(packaged);
+            }
+
             // A .NET type: R2025b calls its constructor a built-in method (ADR 0174), and a static
             // method named in full, a NET.* function and an imported name are built-in methods too,
             // named by their last piece (probe3, ADR 0176).
@@ -1066,6 +1074,10 @@ internal static partial class JgsBuiltins
             // the files, as the resolver orders them.
             string name = TextOf(given);
             given = interpreter.Resolver.Query(name, env).FirstOrDefault(Resolution.None).Value;
+            if (given.Type != JgsType.Function && name.Contains('.', StringComparison.Ordinal))
+            {
+                given = interpreter.Resolver.Dotted(name).Value; // a package member by its dotted name (P1)
+            }
         }
 
         // A named handle answers for what it captured, which has a header — or a catalog entry — to read.

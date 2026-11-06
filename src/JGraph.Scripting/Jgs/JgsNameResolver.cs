@@ -398,6 +398,25 @@ internal sealed class JgsNameResolver
     }
 
     /// <summary>
+    /// A dotted user name given as text — a package member, <c>pkg.sub.h</c> (packages plan, P1) —
+    /// for the sites that take a name rather than read an expression: <c>nargin('pkg.f')</c>,
+    /// <c>feval('pkg.f', …)</c>, <c>str2func</c>, <c>which</c>, <c>dbstop</c>. The folder layer that
+    /// holds it, with its file, or <see cref="Resolution.None"/>. No import and no variable comes
+    /// into a dotted name (measured: a variable <c>pkg</c> is a variable only when the chain is
+    /// written, which the interpreter reads for itself).
+    /// </summary>
+    public Resolution Dotted(string name)
+    {
+        if (_interpreter.FunctionPath is { } path
+            && path.TryResolveDotted(name, out JgsValue value, out string? file, out bool added))
+        {
+            return new Resolution(added ? ResolutionLayer.PathFolder : ResolutionLayer.CurrentFolder, value, file);
+        }
+
+        return Resolution.None;
+    }
+
+    /// <summary>
     /// Everything but the disk: the workspace walk — a variable or a nested function, honouring a
     /// <c>global</c> declaration that redirects the name — then the running file's own functions,
     /// then the built-in layer. What <c>exist</c> and <c>which</c> ask (a file is their own probe),
