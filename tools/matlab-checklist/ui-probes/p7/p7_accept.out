@@ -1,0 +1,30 @@
+name	bench A
+data	[3 1 4 1 5]
+peak	5
+scaled	[6 2 8 2 10]
+class	signal.Trace signal.Trace
+fromfile	bench A
+summary	bench A: 5 samples, peak 10
+values	[6 2 8 2 10]
+total	44
+smooth	[2.667 5.333 4 6.667 4]
+describe	Series of 5, total 44 | bench A: 5 samples, peak 10
+isa	1 1 1 1
+handle	signal.io.readTrace signal.Trace
+which.readTrace	lib/+signal/+io/readTrace.m
+which.Trace	lib/+signal/Trace.m
+which.summarize	lib/+signal/summarize.m
+which.total	lib/@Series/total.m
+which.describe	lib/@Series/describe.m
+which.Series	lib/@Series/Series.m
+exist	8 2 0 0
+methods.Series	Series describe ofTrace smooth total
+super	handle
+what.m	Trace.m summarize.m
+what.classes	
+what.packages	io
+private.outside	MATLAB:UndefinedFunction | Undefined function 'weight' for input arguments of type 'double'.
+private.pkg	MATLAB:UndefinedFunction | Undefined function 'parseNumbers' for input arguments of type 'cell'.
+bare.member	MATLAB:UndefinedFunction | Undefined function 'readTrace' for input arguments of type 'char'.
+nargin	1 2 2
+EXIT	

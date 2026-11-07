@@ -1,0 +1,80 @@
+P7 acceptance: 93 keys, 69 agree, 24 differ
+
+DIV ARCHIVE p7_build/archive.n
+  R2025b: 20
+  JGraph: 9
+DIV ARCHIVE p7_build/archive[1]
+  R2025b: fsroot/.META/buildresult.json
+  JGraph: fsroot/p7_tool/lib/+signal/+io/private/parseNumbers.m
+DIV ARCHIVE p7_build/archive[2]
+  R2025b: fsroot/.META/includedSupportPackages.txt
+  JGraph: fsroot/p7_tool/lib/+signal/+io/readTrace.m
+DIV ARCHIVE p7_build/archive[3]
+  R2025b: fsroot/.META/requiredMCRProducts.txt
+  JGraph: fsroot/p7_tool/lib/+signal/Trace.m
+DIV ARCHIVE p7_build/archive[4]
+  R2025b: fsroot/.META/unresolvedSymbols.txt
+  JGraph: fsroot/p7_tool/lib/@Series/Series.m
+DIV ARCHIVE p7_build/archive[5]
+  R2025b: fsroot/p7_tool/lib/+signal/+io/private/parseNumbers.m
+  JGraph: fsroot/p7_tool/lib/@Series/describe.m
+DIV ARCHIVE p7_build/archive[6]
+  R2025b: fsroot/p7_tool/lib/+signal/+io/readTrace.m
+  JGraph: fsroot/p7_tool/lib/@Series/private/weight.m
+DIV ARCHIVE p7_build/archive[7]
+  R2025b: fsroot/p7_tool/lib/+signal/Trace.m
+  JGraph: fsroot/p7_tool/lib/@Series/smooth.m
+DIV ARCHIVE p7_build/archive[8]
+  R2025b: fsroot/p7_tool/lib/@Series/Series.m
+  JGraph: fsroot/p7_tool/lib/@Series/total.m
+DIV ARCHIVE p7_build/archive[9]
+  R2025b: fsroot/p7_tool/lib/@Series/describe.m
+  JGraph: fsroot/p7_tool/p7_tool.m
+DIV ARCHIVE p7_build/archive[10]
+  R2025b: fsroot/p7_tool/lib/@Series/private/weight.m
+  JGraph: <missing>
+DIV ARCHIVE p7_build/archive[11]
+  R2025b: fsroot/p7_tool/lib/@Series/smooth.m
+  JGraph: <missing>
+DIV ARCHIVE p7_build/archive[12]
+  R2025b: fsroot/p7_tool/lib/@Series/total.m
+  JGraph: <missing>
+DIV ARCHIVE p7_build/archive[13]
+  R2025b: fsroot/p7_tool/p7_tool.m
+  JGraph: <missing>
+DIV ARCHIVE p7_build/archive[14]
+  R2025b: fsroot/toolbox/compiler/Contents.m
+  JGraph: <missing>
+DIV ARCHIVE p7_build/archive[15]
+  R2025b: fsroot/toolbox/compiler/ctfroot.m
+  JGraph: <missing>
+DIV ARCHIVE p7_build/archive[16]
+  R2025b: fsroot/toolbox/compiler/get_features_at_compile_time.m
+  JGraph: <missing>
+DIV ARCHIVE p7_build/archive[17]
+  R2025b: fsroot/toolbox/compiler/patch/toolbox/matlab/graphics/hg/hgrc.m
+  JGraph: <missing>
+DIV ARCHIVE p7_build/archive[18]
+  R2025b: fsroot/toolbox/local/Contents.m
+  JGraph: <missing>
+DIV ARCHIVE p7_build/archive[19]
+  R2025b: fsroot/toolbox/local/matlabrc.m
+  JGraph: <missing>
+DIV ARCHIVE p7_build/archive[20]
+  R2025b: fsroot/toolbox/local/printopt.m
+  JGraph: <missing>
+DIV ARCHIVE p7_build/manifest.dirs
+  R2025b: toolbox/compiler/patch | toolbox/compiler/patch/toolbox/matlab/graphics/hg | p7_tool | p7_tool/lib | toolbox/local | toolbox/compiler | .matlab
+  JGraph: p7_tool | p7_tool/lib | .matlab
+DIV CLASS_FOLDER_CACHE p7_project/resolves.closed
+  R2025b: 0 2
+  JGraph: 0 0
+DIV CLASS_FOLDER_CACHE p7_project/resolves.rehash
+  R2025b: 0 2
+  JGraph: 0 0
+
+24 recorded divergences, 0 unexplained
+
+ARCHIVE: The archive's own entries - R2025b's .META files and its toolbox/compiler and toolbox/local patches, with their manifest folders - are the MATLAB Runtime's; JGraph's archive holds the program's files (ADR 0258). The library's files are the same in both.
+EXIT: The exit code line is the runner's, not the program's.
+CLASS_FOLDER_CACHE: After close(proj) takes the library off the path, R2025b still answers exist('Series') 2 for the class folder it had seen, rehash or not (its class-folder cache, the mirror of P4's 'a new method file needs clear classes'); JGraph forgets the folder with the path entry, as it sees a new one at once (ADR 0310).

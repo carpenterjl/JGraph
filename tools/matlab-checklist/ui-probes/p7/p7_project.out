@@ -1,0 +1,28 @@
+created	matlab.project.Project blank_project
+added	1 matlab.project.ProjectFile
+files.n	17
+files[1]	lib
+files[2]	lib/+signal
+files[3]	lib/+signal/+io
+files[4]	lib/+signal/+io/private
+files[5]	lib/+signal/+io/private/parseNumbers.m
+files[6]	lib/+signal/+io/readTrace.m
+files[7]	lib/+signal/Trace.m
+files[8]	lib/+signal/summarize.m
+files[9]	lib/@Series
+files[10]	lib/@Series/Series.m
+files[11]	lib/@Series/describe.m
+files[12]	lib/@Series/private
+files[13]	lib/@Series/private/weight.m
+files[14]	lib/@Series/smooth.m
+files[15]	lib/@Series/total.m
+files[16]	p7_main.m
+files[17]	p7_tool.m
+inproject	1 1 0
+path.n	1
+resolves.open	8 2
+resolves.closed	0 2
+resolves.rehash	0 2
+reopened	blank_project 17 1
+runs	bench A 22
+EXIT	

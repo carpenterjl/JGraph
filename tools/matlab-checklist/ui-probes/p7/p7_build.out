@@ -1,0 +1,27 @@
+build	ok
+deliverables	p7_tool.ctf | p7_tool.exe
+archive.n	20
+archive[1]	fsroot/.META/buildresult.json
+archive[2]	fsroot/.META/includedSupportPackages.txt
+archive[3]	fsroot/.META/requiredMCRProducts.txt
+archive[4]	fsroot/.META/unresolvedSymbols.txt
+archive[5]	fsroot/p7_tool/lib/+signal/+io/private/parseNumbers.m
+archive[6]	fsroot/p7_tool/lib/+signal/+io/readTrace.m
+archive[7]	fsroot/p7_tool/lib/+signal/Trace.m
+archive[8]	fsroot/p7_tool/lib/@Series/Series.m
+archive[9]	fsroot/p7_tool/lib/@Series/describe.m
+archive[10]	fsroot/p7_tool/lib/@Series/private/weight.m
+archive[11]	fsroot/p7_tool/lib/@Series/smooth.m
+archive[12]	fsroot/p7_tool/lib/@Series/total.m
+archive[13]	fsroot/p7_tool/p7_tool.m
+archive[14]	fsroot/toolbox/compiler/Contents.m
+archive[15]	fsroot/toolbox/compiler/ctfroot.m
+archive[16]	fsroot/toolbox/compiler/get_features_at_compile_time.m
+archive[17]	fsroot/toolbox/compiler/patch/toolbox/matlab/graphics/hg/hgrc.m
+archive[18]	fsroot/toolbox/local/Contents.m
+archive[19]	fsroot/toolbox/local/matlabrc.m
+archive[20]	fsroot/toolbox/local/printopt.m
+manifest.dirs	toolbox/compiler/patch | toolbox/compiler/patch/toolbox/matlab/graphics/hg | p7_tool | p7_tool/lib | toolbox/local | toolbox/compiler | .matlab
+manifest.functions	p7_tool | 
+manifest.main	FUNCTION_p7_tool
+EXIT	

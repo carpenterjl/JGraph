@@ -1,0 +1,8 @@
+name	bench A
+data	[6 2 8 2 10]
+total	44
+describe	Series of 5, total 44 | bench A: 5 samples, peak 10
+deployed	1
+which	Trace.m total.m
+end
+EXIT	0

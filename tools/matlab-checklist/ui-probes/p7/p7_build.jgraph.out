@@ -1,0 +1,16 @@
+build	ok
+deliverables	p7_tool.ctf | p7_tool.exe
+archive.n	9
+archive[1]	fsroot/p7_tool/lib/+signal/+io/private/parseNumbers.m
+archive[2]	fsroot/p7_tool/lib/+signal/+io/readTrace.m
+archive[3]	fsroot/p7_tool/lib/+signal/Trace.m
+archive[4]	fsroot/p7_tool/lib/@Series/Series.m
+archive[5]	fsroot/p7_tool/lib/@Series/describe.m
+archive[6]	fsroot/p7_tool/lib/@Series/private/weight.m
+archive[7]	fsroot/p7_tool/lib/@Series/smooth.m
+archive[8]	fsroot/p7_tool/lib/@Series/total.m
+archive[9]	fsroot/p7_tool/p7_tool.m
+manifest.dirs	p7_tool | p7_tool/lib | .matlab
+manifest.functions	p7_tool | 
+manifest.main	FUNCTION_p7_tool
+EXIT	
