@@ -214,3 +214,29 @@
   EXIT	0
 == excel
   built; not run (stage K17: no Excel client here)
+== pkg.factor
+  beep.default	on
+  nargin	1
+  isdeployed	1
+  fold	[6 8 16 18 28]
+  class	AccSeries
+  total	56
+  total2	6
+  handle	acc.fold [1 2]
+  exist	8 0
+  which	fold.m
+  end
+  EXIT	0
+== pkg.none
+  beep.default	on
+  nargin	0
+  isdeployed	1
+  fold	[3 4 8 9 14]
+  class	AccSeries
+  total	28
+  total2	6
+  handle	acc.fold [1 2]
+  exist	8 0
+  which	fold.m
+  end
+  EXIT	0

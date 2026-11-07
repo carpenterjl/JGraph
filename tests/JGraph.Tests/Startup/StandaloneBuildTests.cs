@@ -108,6 +108,38 @@ public sealed class StandaloneBuildTests : IDisposable
         Assert.Equal(["nargin\t2", "arg1\ta", "arg2\tb c", "isdeployed\t1", "end"], _output.NormalLines);
     }
 
+    /// <summary>
+    /// A program over a <c>+package</c> member and an <c>@Class</c> folder (packages and class folders
+    /// plan, stage P6): the archive keeps the folders under the library's path, the path holds the
+    /// library and never the <c>+</c> or <c>@</c> folder, and the deployed session resolves the dotted
+    /// name and the class through its frozen path as a live one does (p6_depend: mcc.usepkg, run.usepkg).
+    /// </summary>
+    [Fact]
+    public async Task MccBuildsAProgramOverAPackageAndAClassFolderThatRunsThem()
+    {
+        string lib = Path.Combine(_root, "lib");
+        Put(Path.Combine(lib, "+p6pkg"), "f.m", "function r = f(x)\nr = x * 10;\nend\n");
+        Put(Path.Combine(lib, "@P6Thing"), "P6Thing.m", "classdef P6Thing\n    properties\n        W = 0\n    end\n    methods\n        function o = P6Thing(w)\n            if nargin, o.W = w; end\n        end\n        r = extent(o)\n    end\nend\n");
+        Put(Path.Combine(lib, "@P6Thing"), "extent.m", "function r = extent(o)\nr = o.W * o.W;\nend\n");
+        Put(Path.Combine(lib, "@P6Thing"), "scale.m", "function r = scale(o, k)\nr = hidden(o.W) * k;\nend\n");
+        Put(Path.Combine(lib, "@P6Thing", "private"), "hidden.m", "function r = hidden(w)\nr = w + 0.5;\nend\n");
+        Put(Src, "p6_usepkg.m", "function p6_usepkg()\nfprintf('f\\t%g\\n', p6pkg.f(2));\nt = P6Thing(3);\nfprintf('extent\\t%g\\n', t.extent());\nfprintf('scale\\t%g\\n', scale(t, 2));\nfprintf('deployed\\t%d\\n', isdeployed);\nend\n");
+        await Session($"addpath('{lib}'); mcc -m p6_usepkg.m -d out");
+        string program = Path.Combine(Src, "out", "p6_usepkg.exe");
+        using (CtfArchiveReader archive = CtfArchiveReader.Open(program))
+        {
+            string place = lib[(Path.GetPathRoot(lib)!.Length)..].Replace('\\', '/');
+            Assert.Equal(
+                [place + "/+p6pkg/f.m", place + "/@P6Thing/P6Thing.m", place + "/@P6Thing/extent.m", place + "/@P6Thing/private/hidden.m", place + "/@P6Thing/scale.m", "p6_usepkg/p6_usepkg.m"],
+                archive.Manifest.Files.Select(f => f.Path).Where(p => !p.StartsWith('.')).Order(StringComparer.Ordinal));
+            Assert.Equal(["p6_usepkg", place], archive.Manifest.MatlabPath);
+        }
+
+        _output.Normal.Clear();
+        Assert.Equal(0, await Run(program));
+        Assert.Equal(["f\t20", "extent\t9", "scale\t7", "deployed\t1"], _output.NormalLines);
+    }
+
     [Fact]
     public async Task MccSearchesTheMainsOwnFolderAndPlacesFilesByWhereItRuns()
     {

@@ -89,6 +89,21 @@ public sealed class CtfArchiveTests : IDisposable
     }
 
     [Fact]
+    public void FromReport_NamesAMainInsideAPackageByItsDottedName_AndKeepsThePackageFolderOffThePath()
+    {
+        // p6_app: mcc.papp - fsroot/papp/+pkg/papp.mlapp, the path "papp", the function pkg.papp, the main FUNCTION_pkg_papp.
+        string main = Put("work/+pkg/papp.m", "function papp\nend\n");
+        var report = new DependencyReport([new DependencyFile(main, DependencyReason.Root, null)], [], [], []);
+        CtfBuild build = CtfLayout.FromReport("papp", main, report, rootFolder: Path.Combine(_root, "work"));
+        Assert.Equal(["papp"], build.MatlabPath);
+        Assert.Equal("pkg.papp", build.MainFunction);
+        CtfFunction function = Assert.Single(build.PublicFunctions);
+        Assert.Equal(("pkg.papp", "papp/+pkg/papp.m"), (function.Name, function.File));
+        Assert.Equal("pkg.sub.g2", CtfLayout.QualifiedName(Path.Combine(_root, "lib", "+pkg", "+sub", "g2.m")));
+        Assert.Equal("g2", CtfLayout.QualifiedName(Path.Combine(_root, "lib", "+pkg", "sub", "g2.m")));
+    }
+
+    [Fact]
     public void Package_HoldsR2025bsParts_AndTheFilesUnderTheFileRoot_DatedAsR2025bDatesThem()
     {
         (string archive, CtfManifest manifest) = Build();

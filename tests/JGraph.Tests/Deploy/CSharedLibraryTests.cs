@@ -74,6 +74,21 @@ public sealed class CSharedLibraryTests
     }
 
     [Fact]
+    public void APackageFunctionsWrappersJoinItsNameWithUnderscores_AndCallItByItsDottedName()
+    {
+        // p6_libs: mlxPkg_f, mlfPkg_f, mclFeval(_mcr_inst, "pkg.f", ...) for lib/+pkg/f.m (packages and class folders plan, stage P6).
+        CSharedLibraryOptions options = Options("p6clib", [new CLibraryFunction("pkg.f", ["x"], ["r"], "f.m"), new CLibraryFunction("pkg.g2", ["x"], ["r"], "g2.m")]);
+        string header = CSharedLibrary.Header(options).Replace("\r\n", "\n", StringComparison.Ordinal);
+        Assert.Contains("bool MW_CALL_CONV mlxPkg_f(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);\n", header, StringComparison.Ordinal);
+        Assert.Contains("extern LIB_p6clib_C_API bool MW_CALL_CONV mlfPkg_g2(int nargout, mxArray** r, mxArray* x);\n", header, StringComparison.Ordinal);
+        string source = CSharedLibrary.Source(options).Replace("\r\n", "\n", StringComparison.Ordinal);
+        Assert.Contains("    return mclFeval(_mcr_inst, \"pkg.f\", nlhs, plhs, nrhs, prhs);\n", source, StringComparison.Ordinal);
+        Assert.Contains("    return mclMlfFeval(_mcr_inst, \"pkg.g2\", nargout, 1, 1, r, x);\n", source, StringComparison.Ordinal);
+        Assert.Equal("p6clibInitialize\np6clibInitializeWithHandlers\np6clibTerminate\np6clibPrintStackTrace\nmlxPkg_f\nmlfPkg_f\nmlxPkg_g2\nmlfPkg_g2\n\n",
+            CSharedLibrary.Exports(options));
+    }
+
+    [Fact]
     public void TheHeaderNamesJGraphsCompilerAndWrapsMccsWordsAsR2025bDoes()
     {
         CSharedLibraryOptions options = Options("k11lib", MainFunctions) with

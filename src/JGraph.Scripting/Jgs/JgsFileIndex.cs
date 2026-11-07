@@ -107,7 +107,8 @@ internal sealed class JgsFileIndex
 
     /// <summary>How a folder is listed - its code files and P-files; a test can stand in for a folder that cannot be read.</summary>
     internal Func<string, IEnumerable<string>> EnumerateFiles { get; set; } =
-        static folder => Directory.EnumerateFiles(folder, "*.m").Concat(Directory.EnumerateFiles(folder, "*" + JgsPcode.Extension));
+        static folder => Directory.EnumerateFiles(folder, "*.m").Concat(Directory.EnumerateFiles(folder, "*" + JgsPcode.Extension))
+            .Concat(Directory.EnumerateFiles(folder, "*" + JgsMlapp.Extension)); // an .mlapp in a +package is a member too (P6, measured: pkg.papp runs)
 
     /// <summary>How a folder's sub-folders are listed - its <c>+package</c> and <c>@Class</c> folders are read off the listing; a test can stand in.</summary>
     internal Func<string, IEnumerable<string>> EnumerateFolders { get; set; } = static folder => Directory.EnumerateDirectories(folder);

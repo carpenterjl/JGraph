@@ -1,4 +1,4 @@
-acceptance set (stage K22): 245 keys, 218 agree, 27 differ (27 recorded divergences, 0 unexplained)
+acceptance set (stage K22): 271 keys, 244 agree, 27 differ (27 recorded divergences, 0 unexplained)
 
 EXCEL (4): The Excel add-in is stage K17's: R2025b builds it and JGraph has no compiler.build.excelAddIn yet.
   build.excel

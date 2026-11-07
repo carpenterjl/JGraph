@@ -78,8 +78,11 @@ internal static class DesignRun
         interpreter.FunctionPath?.Unload(name);
         interpreter.FunctionPath?.Add(folder, atEnd: false);
 
-        // isAppNameShadowed: what the name resolves to, from the base workspace, must be this file.
-        Resolution found = interpreter.Resolver.Query(name, interpreter.Globals).FirstOrDefault(Resolution.None);
+        // isAppNameShadowed: what the name resolves to, from the base workspace, must be this file;
+        // an app in a +package resolves by its dotted name (stage P6).
+        Resolution found = name.Contains('.')
+            ? interpreter.Resolver.Dotted(name)
+            : interpreter.Resolver.Query(name, interpreter.Globals).FirstOrDefault(Resolution.None);
         if (found.Found && !SameFile(found.File ?? string.Empty, fullFileName))
         {
             string shadower = found.File is { Length: > 0 } file ? file
@@ -355,21 +358,45 @@ internal static class DesignRun
     }
 
     /// <summary>
-    /// What Run calls an app at <paramref name="fullFileName"/>, and the folder that goes on the path (<c>PathUtil.getAppRunCommandFromFileName</c>, <c>getPathToApp</c>):
-    /// its name, with the packages its folders name before it, and the folder above them.
+    /// What Run calls an app at <paramref name="fullFileName"/>, and the folder that goes on the path,
+    /// as R2025b's <c>PathUtil.getAppRunCommandFromFileName</c> and <c>getPathToApp</c> read them
+    /// (packages and class folders plan, stage P6, decision PD4; <c>p6_app</c> measured every case):
+    /// a file whose own folder is not a <c>+package</c> or <c>@Class</c> folder runs by its name from
+    /// that folder; otherwise the path is split at its first <c>\+</c> (or, with none, its first
+    /// <c>\@</c>), the part after it is read with dots for separators, <c>@foo.foo</c> becomes
+    /// <c>foo</c>, every other <c>@</c> and every <c>+</c> is dropped, and the part before it is the
+    /// folder: <c>C:\work\+foo\@bar\bar.m</c> is <c>foo.bar</c> from <c>C:\work</c>,
+    /// <c>C:\work\@bar\method.m</c> is <c>bar.method</c>, <c>C:\work\+foo\sub\bar.mlapp</c> is
+    /// <c>bar</c> from <c>C:\work\+foo\sub</c>.
     /// </summary>
     public static (string Command, string Folder) CommandOf(string fullFileName)
     {
         ArgumentNullException.ThrowIfNull(fullFileName);
-        string command = Path.GetFileNameWithoutExtension(fullFileName);
-        string folder = Path.GetDirectoryName(fullFileName)!;
-        while (Path.GetFileName(folder) is { Length: > 1 } part && part[0] == '+' && Path.GetDirectoryName(folder) is { } above)
+        string name = Path.GetFileNameWithoutExtension(fullFileName);
+        string folder = Path.GetDirectoryName(fullFileName) ?? string.Empty;
+        string parent = Path.GetFileName(folder);
+        if (parent.Length == 0 || (parent[0] != '+' && parent[0] != '@'))
         {
-            command = part[1..] + "." + command;
-            folder = above;
+            return (name, folder);
         }
 
-        return (command, folder);
+        // splitPathAtMCOSDirs over the path without the extension: the first "\+" or else the first "\@".
+        string path = Path.Combine(folder, name).Replace('/', '\\');
+        int split = path.IndexOf("\\+", StringComparison.Ordinal);
+        if (split < 0)
+        {
+            split = path.IndexOf("\\@", StringComparison.Ordinal);
+        }
+
+        if (split < 0)
+        {
+            return (name, folder);
+        }
+
+        string mcos = path[(split + 1)..].Replace('\\', '.');
+        mcos = System.Text.RegularExpressions.Regex.Replace(mcos, @"@(?<classname>.*?)\.\k<classname>", "${classname}");
+        mcos = mcos.Replace("@", string.Empty, StringComparison.Ordinal).Replace("+", string.Empty, StringComparison.Ordinal);
+        return (mcos, path[..split]);
     }
 
     /// <summary>
@@ -430,7 +457,8 @@ internal static class DesignRun
             return false;
         }
 
-        string className = app.Class.Name;
+        // A packaged app's frames carry its short name (P2's measured forms), a plain one's its name.
+        string className = app.Class.StackName;
         string Method(string frame) => frame.StartsWith(className + ".", StringComparison.Ordinal) ? frame[(className.Length + 1)..] : frame;
         string inner = Method(ex.Frames[0].Name);
         return inner != className && Method(ex.Frames[1].Name) == className

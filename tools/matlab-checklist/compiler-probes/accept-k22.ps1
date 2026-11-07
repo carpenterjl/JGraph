@@ -10,12 +10,15 @@
     Steps (each can be left out with -Skip, or chosen alone with -Only):
 
       build     build_k22.m, the same file under matlab -batch -noFigureWindows or jgraph -batch:
-                the console tool with its data file, the windowed app, the .NET assembly for the
+                the console tool with its data file, the console program over a package and a
+                class folder, the windowed app, the .NET assembly for the
                 MWArray API, the .NET archive for the MATLAB Data API with its strongly typed
                 interface, the C and C++ shared libraries, the Python package, the Production
                 Server archive with its discovery file, and the Excel add-in (R2025b builds it;
                 JGraph has no such function until stage K17)
       console   acc_tool.exe with arguments and on its error, through run-quiet.ps1
+      pkg       acc_pkgtool.exe, the program over the +acc package and the @AccSeries class
+                folder (packages and class folders plan, stage P6), with and without its factor
       windowed  acc_app.exe watched by k6-windows.ps1, its Compute button pressed through UI
                 Automation's InvokePattern. JGraph's window runs as JGraph windows do; R2025b's
                 is a MATLAB window and runs only with -AllowMatlabWindows, with the user's leave
@@ -229,6 +232,16 @@ if (Wanted 'console') {
         $all += Run-Quiet 'console.fail' $exe @('-fail') (Join-Path $build 'console')
     }
     else { $all += @('== console.args', '  not built', '== console.none', '  not built', '== console.fail', '  not built') }
+}
+
+if (Wanted 'pkg') {
+    # The program over the +acc package and the @AccSeries class folder (stage P6), with and without its factor.
+    $exe = Join-Path $build 'pkg\acc_pkgtool.exe'
+    if (Test-Path $exe) {
+        $all += Run-Quiet 'pkg.factor' $exe @('2') (Join-Path $build 'pkg')
+        $all += Run-Quiet 'pkg.none' $exe @() (Join-Path $build 'pkg')
+    }
+    else { $all += @('== pkg.factor', '  not built', '== pkg.none', '  not built') }
 }
 
 if (Wanted 'windowed') {

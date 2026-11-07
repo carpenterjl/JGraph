@@ -98,17 +98,16 @@ public static class CtfLayout
         string mainFolder = rootFolder is null ? Path.GetDirectoryName(main) ?? main : Path.GetFullPath(rootFolder);
         var files = report.Files.Select(f => (f.Path, ArchivePath(f.Path, mainFolder, componentName))).ToList();
         string mainPlace = ArchivePath(main, mainFolder, componentName);
-        var path = new List<string> { mainPlace.Contains('/') ? mainPlace[..mainPlace.LastIndexOf('/')] : componentName };
+        var path = new List<string> { PathFolder(mainPlace) ?? componentName };
         foreach ((_, string archivePath) in files)
         {
-            string folder = archivePath.Contains('/') ? archivePath[..archivePath.LastIndexOf('/')] : "";
-            if (folder.Length > 0 && !folder.Split('/').Any(IsOffPathFolder) && !path.Contains(folder, StringComparer.Ordinal))
+            if (PathFolder(archivePath) is { } folder && !path.Contains(folder, StringComparer.Ordinal))
             {
                 path.Add(folder);
             }
         }
 
-        string mainName = Path.GetFileNameWithoutExtension(main);
+        string mainName = QualifiedName(main);
         (IReadOnlyList<string> Inputs, IReadOnlyList<string> Outputs) parameters = signature?.Invoke(main) ?? ([], []);
         return new CtfBuild
         {
@@ -122,6 +121,46 @@ public static class CtfLayout
 
     private static bool IsOffPathFolder(string leaf) =>
         leaf == "private" || leaf.StartsWith('@') || leaf.StartsWith('+') || leaf.StartsWith('.');
+
+    /// <summary>
+    /// The folder of <paramref name="archivePath"/> that goes on the path: its folder up to the first
+    /// <c>private</c>, <c>@Class</c>, <c>+package</c> or dot folder, which is never on a path but
+    /// whose parent is (p6_depend: a build of <c>lib/+pkg/g2.m</c> alone put <c>lib</c> on the path;
+    /// a main under <c>work/+pkg</c> put <c>papp</c>); null for a file at the root or under such a
+    /// folder at the root.
+    /// </summary>
+    private static string? PathFolder(string archivePath)
+    {
+        string[] parts = archivePath.Split('/');
+        int folders = parts.Length - 1;
+        for (int i = 0; i < folders; i++)
+        {
+            if (IsOffPathFolder(parts[i]))
+            {
+                folders = i;
+            }
+        }
+
+        return folders > 0 ? string.Join('/', parts, 0, folders) : null;
+    }
+
+    /// <summary>
+    /// A code file's name with the packages its <c>+folders</c> put it in (<c>pkg.g2</c> for
+    /// <c>+pkg/g2.m</c>): what R2025b's manifest names a main inside a package (packages and class
+    /// folders plan, stage P6; p6_depend: mcc.pkgmain, p6_app: mcc.papp).
+    /// </summary>
+    public static string QualifiedName(string file)
+    {
+        string name = Path.GetFileNameWithoutExtension(file);
+        for (string? folder = Path.GetDirectoryName(Path.GetFullPath(file));
+             folder is not null && Path.GetFileName(folder) is { Length: > 1 } leaf && leaf[0] == '+';
+             folder = Path.GetDirectoryName(folder))
+        {
+            name = leaf[1..] + "." + name;
+        }
+
+        return name;
+    }
 }
 
 /// <summary>

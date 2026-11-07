@@ -30,8 +30,19 @@ namespace JGraph.Scripting.Jgs;
 /// of a name with no extension takes its <c>.mat</c>.
 /// </para>
 /// <para>
-/// Packages, <c>@Class</c> folders and imports are not followed: JGraph does not have them
-/// (ADR 0149), and a program that uses them fails to build here as it fails to run.
+/// A dotted name (<c>pkg.f(2)</c>, <c>pkg.sub.h</c>, <c>pkg.C.K</c>, <c>@pkg.f</c>, <c>?pkg.C</c>, a
+/// superclass, an <c>arguments</c> class, <c>%#function pkg.f</c>) is followed to the member it
+/// reaches in a <c>+package</c> folder of the folders above, the longest chain first, and that
+/// member alone is taken - a package is never taken whole (packages and class folders plan, stage
+/// P6; <c>p6_depend</c> measured <c>requiredFilesAndProducts</c>). A class defined by an
+/// <c>@Class</c> folder is taken whole, its <c>private/</c> and its unused method files included,
+/// whether reached by its name, by a static through its name, by a handle, by a bare method name
+/// (<c>@extent</c> where <c>@Thing/extent.m</c> is the method file <c>which</c> would name), by
+/// <c>?Thing</c>, by a subclass or as a root (a class file or a method file of the folder); its
+/// method files are analysed as any code file is. An <c>import pkg.f</c> gives the file's bare
+/// <c>f</c> that member, above the file's own functions; <c>import pkg.*</c> gives a bare name the
+/// package's member of that name, above the private folder and the path. A name only in a string
+/// (<c>feval('pkg.f')</c>) and a dotted chain on a variable name nothing, as before.
 /// </para>
 /// </remarks>
 internal sealed class JgsDependencyAnalyzer
@@ -42,6 +53,7 @@ internal sealed class JgsDependencyAnalyzer
     private readonly Func<string, bool> _isBuiltin;
     private readonly List<string> _folders = [];
     private readonly Dictionary<string, Dictionary<string, string>> _listings = new(PathComparer);
+    private readonly Dictionary<string, Dictionary<string, string>> _subfolders = new(PathComparer);
     private readonly Dictionary<string, DependencyFile> _taken = new(PathComparer);
     private readonly HashSet<string> _forced = new(PathComparer);
     private readonly HashSet<string> _analysed = new(PathComparer);
@@ -89,6 +101,14 @@ internal sealed class JgsDependencyAnalyzer
             foreach (string file in Expand(root))
             {
                 Force(file, DependencyReason.Root);
+
+                // A class file or a method file of an @Class folder as a root brings the folder whole
+                // (p6_depend: rfp.classfile, rfp.methodfile).
+                if (IsCode(file) && ClassFolderOf(file) is { } classFolder)
+                {
+                    TakeFolder(classFolder, DependencyReason.Code, file);
+                }
+
                 if (Path.GetExtension(file).Equals(".fig", StringComparison.OrdinalIgnoreCase))
                 {
                     foreach (string extension in JgsFunctionPath.CodeExtensions)
@@ -215,6 +235,133 @@ internal sealed class JgsDependencyAnalyzer
 
     private static bool IsCode(string file) =>
         JgsFunctionPath.CodeExtensions.Contains(Path.GetExtension(file), StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>The <c>@Class</c> folder <paramref name="file"/> sits in, directly or under its <c>private/</c>, or null.</summary>
+    private static string? ClassFolderOf(string file)
+    {
+        string? folder = Path.GetDirectoryName(file);
+        if (folder is not null && Path.GetFileName(folder).Equals("private", StringComparison.OrdinalIgnoreCase))
+        {
+            folder = Path.GetDirectoryName(folder);
+        }
+
+        return folder is not null && Path.GetFileName(folder) is { Length: > 1 } leaf && leaf[0] == '@' ? folder : null;
+    }
+
+    /// <summary>
+    /// Takes every file under <paramref name="folder"/>, an <c>@Class</c> folder, its <c>private/</c>
+    /// included, in ordinal path order; each code file is analysed as any taken code file is.
+    /// </summary>
+    private void TakeFolder(string folder, DependencyReason reason, string? namedBy)
+    {
+        if (!Directory.Exists(folder))
+        {
+            return;
+        }
+
+        foreach (string file in Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories).Select(Path.GetFullPath).OrderBy(f => f, StringComparer.Ordinal))
+        {
+            Take(file, reason, namedBy);
+        }
+    }
+
+    /// <summary>The sub-folders of <paramref name="folder"/> by name, as the files are listed (exactly, case and all).</summary>
+    private Dictionary<string, string> Subfolders(string folder)
+    {
+        if (!_subfolders.TryGetValue(folder, out Dictionary<string, string>? listing))
+        {
+            listing = new Dictionary<string, string>(StringComparer.Ordinal);
+            if (Directory.Exists(folder))
+            {
+                foreach (string sub in Directory.EnumerateDirectories(folder))
+                {
+                    listing[Path.GetFileName(sub)] = Path.GetFullPath(sub);
+                }
+            }
+
+            _subfolders[folder] = listing;
+        }
+
+        return listing;
+    }
+
+    /// <summary>
+    /// What a dotted chain of names reaches in the folders names are looked for in: the member file
+    /// <c>+a/+b/c.m</c> (an .mlapp before a P-file before the .m) or the class folder <c>+a/+b/@c</c>
+    /// for the longest chain any folder holds, as a call resolves it - <c>pkg.C.K</c> is the class
+    /// file <c>+pkg/C.m</c> once <c>+pkg/+C/K.m</c> and <c>+pkg/+C/@K</c> are not there. Null when no
+    /// chain of at least two names is a member of a package.
+    /// </summary>
+    private (string? File, string? ClassFolder) FindDotted(IReadOnlyList<string> parts)
+    {
+        for (int length = parts.Count; length >= 2; length--)
+        {
+            foreach (string searchFolder in _folders)
+            {
+                string? folder = searchFolder;
+                for (int i = 0; i < length - 1 && folder is not null; i++)
+                {
+                    folder = Subfolders(folder).TryGetValue("+" + parts[i], out string? package) ? package : null;
+                }
+
+                if (folder is null)
+                {
+                    continue;
+                }
+
+                string member = parts[length - 1];
+                foreach (string extension in JgsFunctionPath.CodeExtensions)
+                {
+                    if (Listing(folder).TryGetValue(member + extension, out string? found))
+                    {
+                        return (found, null);
+                    }
+                }
+
+                if (Subfolders(folder).TryGetValue("@" + member, out string? classFolder))
+                {
+                    return (null, classFolder);
+                }
+            }
+        }
+
+        return (null, null);
+    }
+
+    /// <summary>Takes what a dotted chain reaches (<see cref="FindDotted"/>): the member file, or the class folder whole.</summary>
+    private void Dotted(IReadOnlyList<string> parts, string from, DependencyReason reason = DependencyReason.Code)
+    {
+        (string? file, string? classFolder) = FindDotted(parts);
+        if (file is not null)
+        {
+            Take(file, reason, from);
+        }
+        else if (classFolder is not null)
+        {
+            TakeFolder(classFolder, reason, from);
+        }
+    }
+
+    /// <summary>The <c>@name</c> folder of the first folder names are looked for in that holds one, or null.</summary>
+    private string? FindClassFolder(string name)
+    {
+        foreach (string folder in _folders)
+        {
+            if (Subfolders(folder).TryGetValue("@" + name, out string? classFolder))
+            {
+                return classFolder;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>The parts of a dotted name, a single plain name included (<c>pkg</c> for <c>import pkg.*</c>), or null when a part is not an identifier.</summary>
+    private static string[]? Parts(string dotted)
+    {
+        string[] parts = dotted.Split('.');
+        return parts.All(IsIdentifier) ? parts : null;
+    }
 
     /// <summary>The file at <paramref name="path"/> when its folder holds that name exactly, case and all.</summary>
     private string? Exists(string path)
@@ -357,6 +504,15 @@ internal sealed class JgsDependencyAnalyzer
             return;
         }
 
+        // A class defined by its @ folder takes the folder whole (stage P6, measured). A bare method
+        // name reaches nothing on its own: p6_which's extent(t) with four folders holding extent.m
+        // took none of them (the handle case took @Thing for its Thing(2), not for @extent).
+        if (FindClassFolder(name) is { } classFolder)
+        {
+            TakeFolder(classFolder, DependencyReason.Code, from);
+            return;
+        }
+
         if (DeploymentRules.NonDeployableFile(name) is { } excluded)
         {
             if (_excludedNames.Add(name))
@@ -407,6 +563,12 @@ internal sealed class JgsDependencyAnalyzer
         private readonly IReadOnlyList<Stmt> _program;
         private readonly HashSet<string> _ownFunctions = new(StringComparer.Ordinal);
 
+        /// <summary>The file's explicit package imports: each bare name and the chain it stands for (<c>import pkg.f</c>, <c>import pkg.C</c>).</summary>
+        private readonly Dictionary<string, string[]> _explicitImports = new(StringComparer.Ordinal);
+
+        /// <summary>The packages the file's wildcard imports name (<c>import pkg.*</c>, <c>import pkg.sub.*</c>), in order.</summary>
+        private readonly List<string[]> _wildcardImports = [];
+
         public FileWalk(JgsDependencyAnalyzer owner, string file, IReadOnlyList<Stmt> program)
         {
             _owner = owner;
@@ -437,18 +599,59 @@ internal sealed class JgsDependencyAnalyzer
                     }
 
                     break;
+                case ImportStmt import:
+                    // Read with the file's functions, as MATLAB reads a function's imports before its
+                    // body runs: an import below a use still counts.
+                    foreach (string name in import.Names)
+                    {
+                        if (name.EndsWith(".*", StringComparison.Ordinal))
+                        {
+                            if (Parts(name[..^2]) is { } package)
+                            {
+                                _wildcardImports.Add(package);
+                            }
+                        }
+                        else if (JgsCodeTree.DottedParts(name) is { Length: >= 2 } chain)
+                        {
+                            _explicitImports.TryAdd(chain[^1], chain);
+                        }
+                    }
+
+                    break;
+                case IfStmt ifStmt:
+                    foreach (Stmt inner in ifStmt.Then) CollectFunctions(inner);
+                    foreach (Stmt inner in ifStmt.Else ?? []) CollectFunctions(inner);
+                    break;
+                case ForStmt forStmt:
+                    foreach (Stmt inner in forStmt.Body) CollectFunctions(inner);
+                    break;
+                case WhileStmt whileStmt:
+                    foreach (Stmt inner in whileStmt.Body) CollectFunctions(inner);
+                    break;
+                case TryStmt tryStmt:
+                    foreach (Stmt inner in tryStmt.Body) CollectFunctions(inner);
+                    foreach (Stmt inner in tryStmt.Handler) CollectFunctions(inner);
+                    break;
             }
         }
 
-        /// <summary>A <c>%#function</c> name: a function, or a data file with its extension.</summary>
+        /// <summary>A <c>%#function</c> name: a function, a dotted package member, a class folder, or a data file with its extension.</summary>
         public void Pragma(string name)
         {
             string extension = Path.GetExtension(name);
-            if (extension.Length == 0)
+            if (JgsCodeTree.DottedParts(name) is { Length: >= 2 } chain)
+            {
+                _owner.Dotted(chain, _file, DependencyReason.Pragma); // %#function pkg.f (measured)
+            }
+            else if (extension.Length == 0)
             {
                 if (_owner.FindCode(name, _file) is { } code)
                 {
                     _owner.Take(code, DependencyReason.Pragma, _file);
+                }
+                else if (_owner.FindClassFolder(name) is { } classFolder)
+                {
+                    _owner.TakeFolder(classFolder, DependencyReason.Pragma, _file); // %#function Thing (measured)
                 }
             }
             else if (_owner.FindData(name, addMat: false) is { } data)
@@ -487,9 +690,9 @@ internal sealed class JgsDependencyAnalyzer
         {
             foreach (string superclass in classdef.Superclasses)
             {
-                if (!superclass.Contains('.', StringComparison.Ordinal) && superclass != "handle")
+                if (superclass != "handle")
                 {
-                    Name(superclass, null);
+                    DottedOrName(superclass, null); // classdef K < pkg.C takes +pkg/C.m (measured)
                 }
             }
 
@@ -507,9 +710,9 @@ internal sealed class JgsDependencyAnalyzer
 
         private void Spec(ArgumentSpec spec, Scope scope)
         {
-            if (spec.ClassName is { } className && !className.Contains('.', StringComparison.Ordinal))
+            if (spec.ClassName is { } className)
             {
-                Name(className, null);
+                DottedOrName(className, null);
             }
 
             if (spec.Default is not null)
@@ -540,15 +743,71 @@ internal sealed class JgsDependencyAnalyzer
             Statements(function.Body, scope);
         }
 
-        /// <summary>A name in code: a reference unless the file or a variable answers it.</summary>
+        /// <summary>
+        /// A name in code: what an explicit import gives it, above the file's own functions (P3's
+        /// measured order); else nothing when the file or a variable answers it; else the member a
+        /// wildcard import reaches, above the private folder and the path; else a reference.
+        /// </summary>
         private void Name(string name, Scope? scope)
         {
+            if (_explicitImports.TryGetValue(name, out string[]? imported))
+            {
+                _owner.Dotted(imported, _file);
+                return;
+            }
+
             if (_ownFunctions.Contains(name) || (scope is not null && scope.IsVariable(name)))
             {
                 return;
             }
 
+            foreach (string[] package in _wildcardImports)
+            {
+                (string? file, string? classFolder) = _owner.FindDotted([.. package, name]);
+                if (file is not null || classFolder is not null)
+                {
+                    _owner.Dotted([.. package, name], _file);
+                    return;
+                }
+            }
+
             _owner.Reference(name, _file);
+        }
+
+        /// <summary>A name that may be dotted (a superclass, an <c>arguments</c> class, a handle's, a metaclass's): the chain's member, or the bare name.</summary>
+        private void DottedOrName(string name, Scope? scope)
+        {
+            if (JgsCodeTree.DottedParts(name) is { Length: >= 2 } chain)
+            {
+                if (scope is null || !scope.IsVariable(chain[0]))
+                {
+                    _owner.Dotted(chain, _file);
+                }
+            }
+            else
+            {
+                Name(name, scope);
+            }
+        }
+
+        /// <summary>The literal chain of names a member expression spells from a bare name (<c>pkg.sub.h</c>), or null when a field is dynamic or the root is not a name.</summary>
+        private static string[]? Chain(MemberExpr member)
+        {
+            var parts = new List<string>();
+            Expr current = member;
+            while (current is MemberExpr { Field: { } field } step)
+            {
+                parts.Insert(0, field);
+                current = step.Target;
+            }
+
+            if (current is not VariableExpr root)
+            {
+                return null;
+            }
+
+            parts.Insert(0, root.Name);
+            return [.. parts];
         }
 
         private void Statements(IReadOnlyList<Stmt> statements, Scope scope)
@@ -651,10 +910,16 @@ internal sealed class JgsDependencyAnalyzer
                     Expressions(call.Arguments, scope);
                     break;
                 case FunctionHandleExpr handle:
-                    // A handle is never a variable: max = 7; @max is the function.
-                    if (!handle.Name.Contains('.', StringComparison.Ordinal) && !_ownFunctions.Contains(handle.Name))
+                    // A handle is never a variable: max = 7; @max is the function. @pkg.f and
+                    // @Thing.staticOne are the member and the class folder (measured).
+                    if (JgsCodeTree.DottedParts(handle.Name) is { Length: >= 2 } handleChain)
                     {
-                        _owner.Reference(handle.Name, _file);
+                        _owner.Dotted(handleChain, _file);
+                        Name(handleChain[0], null);
+                    }
+                    else if (_explicitImports.ContainsKey(handle.Name) || !_ownFunctions.Contains(handle.Name))
+                    {
+                        Name(handle.Name, null);
                     }
 
                     break;
@@ -662,7 +927,7 @@ internal sealed class JgsDependencyAnalyzer
                     Expression(anonymous.Body, new Scope(scope, new HashSet<string>(anonymous.Parameters, StringComparer.Ordinal)));
                     break;
                 case MetaClassExpr meta:
-                    if (!meta.Name.Contains('.', StringComparison.Ordinal)) Name(meta.Name, scope);
+                    DottedOrName(meta.Name, scope);
                     break;
                 case AssignExpr assign:
                     Expression(assign.Value, scope);
@@ -670,6 +935,13 @@ internal sealed class JgsDependencyAnalyzer
                     if (assign.Target is VariableExpr target) scope.Assign(target.Name, assign.Op == TokenType.Assign ? assign.Value : null);
                     break;
                 case MemberExpr member:
+                    // pkg.f(2), pkg.sub.h, pkg.C.K, pkg.s: the chain's member, unless the root is a
+                    // variable or one of the file's own functions (measured: a struct pkg names nothing).
+                    if (Chain(member) is { Length: >= 2 } chain && !_ownFunctions.Contains(chain[0]) && !scope.IsVariable(chain[0]))
+                    {
+                        _owner.Dotted(chain, _file);
+                    }
+
                     Expression(member.Target, scope);
                     if (member.FieldName is not null) Expression(member.FieldName, scope);
                     break;

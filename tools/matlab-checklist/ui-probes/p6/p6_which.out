@@ -1,0 +1,5 @@
+rfp.handle.fresh	<T>\cur\usemethodhandle.m ; <T>\lib\@Thing\Thing.m ; <T>\lib\@Thing\extent.m
+rfp.barecall.fresh	<T>\cur\usebarecall.m
+which.extent	<T>\lib\@Alpha\extent.m
+which.all	<T>\lib\@Alpha\extent.m | <T>\lib\@Sub\extent.m | <T>\lib\@Thing\extent.m | <T>\lib\@Zed\extent.m
+rfp.handle.again	<T>\cur\usemethodhandle.m ; <T>\lib\@Thing\Thing.m ; <T>\lib\@Thing\extent.m

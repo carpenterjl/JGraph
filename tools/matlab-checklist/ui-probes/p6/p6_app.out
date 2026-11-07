@@ -1,0 +1,55 @@
+cmd	C:\work\+foo\@bar\bar.m => foo.bar
+path	C:\work\+foo\@bar\bar.m => C:\work
+cmd	C:\work\+foo\+baz\@bar\bar.m => foo.baz.bar
+path	C:\work\+foo\+baz\@bar\bar.m => C:\work
+cmd	C:\work\+foo\+baz\@bar\bat.m => foo.baz.bar.bat
+path	C:\work\+foo\+baz\@bar\bat.m => C:\work
+cmd	C:\work\+foo\baz.m => foo.baz
+path	C:\work\+foo\baz.m => C:\work
+cmd	C:\work\@bar\bar.m => bar
+path	C:\work\@bar\bar.m => C:\work
+cmd	C:\work\@bar\method.m => bar.method
+path	C:\work\@bar\method.m => C:\work
+cmd	C:\work\@bar\blah\foo.m => foo
+path	C:\work\@bar\blah\foo.m => C:\work\@bar\blah
+cmd	C:\+work\blah\foo.m => foo
+path	C:\+work\blah\foo.m => C:\+work\blah
+cmd	C:\work\foo.m => foo
+path	C:\work\foo.m => C:\work
+cmd	C:\work\+foo\bar.mlapp => foo.bar
+path	C:\work\+foo\bar.mlapp => C:\work
+cmd	C:\work\@foo\foo.mlapp => foo
+path	C:\work\@foo\foo.mlapp => C:\work
+cmd	C:\work\+foo\+bar\@baz\baz.mlapp => foo.bar.baz
+path	C:\work\+foo\+bar\@baz\baz.mlapp => C:\work
+cmd	C:\work\@foo\other.mlapp => foo.other
+path	C:\work\@foo\other.mlapp => C:\work
+cmd	C:\work\+foo\private\bar.mlapp => bar
+path	C:\work\+foo\private\bar.mlapp => C:\work\+foo\private
+cmd	C:\work\+foo\sub\bar.mlapp => bar
+path	C:\work\+foo\sub\bar.mlapp => C:\work\+foo\sub
+cmd	C:\work\+\bar.mlapp => .bar
+path	C:\work\+\bar.mlapp => C:\work
+cmd	bar.mlapp => bar
+path	bar.mlapp => 
+cmd	C:\work\+a+b\c.mlapp => ab.c
+path	C:\work\+a+b\c.mlapp => C:\work
+mlapp	saved
+run.pkg.papp	pkg.papp valid=1 name=p6 app
+which.pkg.papp	<T>\work\+pkg\papp.mlapp
+exist.pkg.papp	8
+existclass.pkg.papp	8
+run.pkg.mapp	pkg.mapp valid=1 name=p6 app
+which.pkg.mapp	<T>\work\+pkg\mapp.m
+exist.pkg.mapp	8
+existclass.pkg.mapp	8
+meta.papp	pkg.papp super=matlab.apps.AppBase
+rfp.usepapp.m	<T>\work\+pkg\papp.mlapp ; <T>\work\usepapp.m
+rfp.usemapp.m	<T>\work\+pkg\mapp.m ; <T>\work\usemapp.m
+rfp.D:\EE Projects\JGraph\JGraph\tools\matlab-checklist\ui-probes\p6\rt\app\work\+pkg\papp.mlapp	<T>\work\+pkg\papp.mlapp
+mcc.papp	ok
+mcc.papp.files	buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | papp.ctf | papp.exe | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+mcc.papp.ctf	fsroot/.META/buildresult.json | fsroot/.META/includedSupportPackages.txt | fsroot/.META/requiredMCRProducts.txt | fsroot/.META/unresolvedSymbols.txt | fsroot/papp/+pkg/papp.mlapp | fsroot/toolbox/compiler/Contents.m | fsroot/toolbox/compiler/ctfroot.m | fsroot/toolbox/compiler/get_features_at_compile_time.m | fsroot/toolbox/local/Contents.m | fsroot/toolbox/local/matlabrc.m | fsroot/toolbox/local/printopt.m
+mcc.papp.dirs	toolbox/compiler/patch | papp | toolbox/local | toolbox/compiler | .matlab | 
+mcc.papp.functions	pkg.papp | 
+mcc.papp.main	FUNCTION_pkg_papp

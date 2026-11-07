@@ -2,6 +2,8 @@ build.console	ok standaloneApplication
 files.console	acc_tool.exe | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
 build.windowed	ok standaloneWindowsApplication
 files.windowed	acc_app.exe | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+build.pkg	ok standaloneApplication
+files.pkg	acc_pkgtool.exe | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
 build.net	ok dotNETAssembly
 files.net	AccNet.dll | AccNetNative.dll | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
 build.data	ok dotNETAssembly

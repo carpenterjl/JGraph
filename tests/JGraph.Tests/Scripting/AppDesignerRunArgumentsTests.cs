@@ -135,6 +135,34 @@ public sealed class AppDesignerRunArgumentsTests : IDisposable
         Assert.Equal(("one.two.app", _folder), DesignRun.CommandOf(Path.Combine(_folder, "+one", "+two", "app.mlapp")));
     }
 
+    /// <summary>
+    /// R2025b's <c>PathUtil.getAppRunCommandFromFileName</c> and <c>getPathToApp</c> over every path
+    /// their comment lists and over .mlapp paths, as the probe <c>p6_app</c> measured them (packages
+    /// and class folders plan, stage P6, decision PD4).
+    /// </summary>
+    [Theory]
+    [InlineData(@"C:\work\+foo\@bar\bar.m", "foo.bar", @"C:\work")]
+    [InlineData(@"C:\work\+foo\+baz\@bar\bar.m", "foo.baz.bar", @"C:\work")]
+    [InlineData(@"C:\work\+foo\+baz\@bar\bat.m", "foo.baz.bar.bat", @"C:\work")]
+    [InlineData(@"C:\work\+foo\baz.m", "foo.baz", @"C:\work")]
+    [InlineData(@"C:\work\@bar\bar.m", "bar", @"C:\work")]
+    [InlineData(@"C:\work\@bar\method.m", "bar.method", @"C:\work")]
+    [InlineData(@"C:\work\@bar\blah\foo.m", "foo", @"C:\work\@bar\blah")]
+    [InlineData(@"C:\+work\blah\foo.m", "foo", @"C:\+work\blah")]
+    [InlineData(@"C:\work\foo.m", "foo", @"C:\work")]
+    [InlineData(@"C:\work\+foo\bar.mlapp", "foo.bar", @"C:\work")]
+    [InlineData(@"C:\work\@foo\foo.mlapp", "foo", @"C:\work")]
+    [InlineData(@"C:\work\+foo\+bar\@baz\baz.mlapp", "foo.bar.baz", @"C:\work")]
+    [InlineData(@"C:\work\@foo\other.mlapp", "foo.other", @"C:\work")]
+    [InlineData(@"C:\work\+foo\private\bar.mlapp", "bar", @"C:\work\+foo\private")]
+    [InlineData(@"C:\work\+foo\sub\bar.mlapp", "bar", @"C:\work\+foo\sub")]
+    [InlineData(@"C:\work\+\bar.mlapp", ".bar", @"C:\work")]
+    [InlineData(@"C:\work\+a+b\c.mlapp", "ab.c", @"C:\work")]
+    public void TheRunCommandAndItsFolderAreR2025bs(string file, string command, string folder)
+    {
+        Assert.Equal((command, folder), DesignRun.CommandOf(file));
+    }
+
     [Fact]
     public void AThumbnailNeedsASaveAndAnAutomaticMode()
     {

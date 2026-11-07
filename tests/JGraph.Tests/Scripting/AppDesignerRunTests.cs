@@ -156,6 +156,50 @@ public sealed class AppDesignerRunTests : IAsyncLifetime
     }
 
     /// <summary>
+    /// An app saved in a <c>+package</c> folder runs by its dotted name from the folder above the
+    /// packages (packages and class folders plan, stage P6, decision PD4; <c>p6_app</c> measured
+    /// <c>pkg.papp</c> running, <c>which</c> naming the .mlapp and <c>exist</c> 8): its class is the
+    /// qualified name, the folder above goes on the path, a second run closes the first, and a
+    /// startup wanting an argument is refused in App Designer's words.
+    /// </summary>
+    [Fact]
+    public async Task RunRunsAnAppSavedInAPackageByItsDottedName()
+    {
+        string above = Path.Combine(_directory, "pkgs");
+        string path = SaveApp(Path.Combine(above, "+demo", "+inner"), "PkgApp");
+        ScriptRunResult first = await _session.RunAppAsync(path, false, CancellationToken.None);
+        Assert.True(first.Success, first.Message + _output.ErrorText);
+        Assert.Contains(above, _session.PathFolders);
+        Assert.DoesNotContain(Path.Combine(above, "+demo", "+inner"), _session.PathFolders);
+        Assert.Equal("demo.inner.PkgApp", await Eval("class(get(findall(groot, 'Type', 'figure', '-property', 'RunningAppInstance'), 'RunningAppInstance'))"));
+        Assert.Equal(path, await Eval("which('demo.inner.PkgApp')"));
+        Assert.Equal("8", await Eval("exist('demo.inner.PkgApp')"));
+
+        ScriptRunResult second = await _session.RunAppAsync(path, false, CancellationToken.None);
+        Assert.True(second.Success, second.Message + _output.ErrorText);
+        Assert.Equal("1", await Eval("numel(findall(groot, 'Type', 'figure', '-property', 'RunningAppInstance'))"));
+
+        string needs = SaveApp(Path.Combine(above, "+demo"), "NeedsArg");
+        using (DesignDocument document = DesignDocument.Open(needs))
+        {
+            Assert.Null(document.AddStartup());
+            Assert.Null(document.SetInputParameters("n"));
+            string empty = "        function startupFcn(app, n)\n            \n        end";
+            Assert.True(document.ApplyEditedText(document.CurrentText.Replace(empty,
+                "        function startupFcn(app, n)\n            app.UIFigure.Name = sprintf('%d', n);\n        end", StringComparison.Ordinal)));
+            Assert.StartsWith("Saved ", document.Save());
+        }
+
+        ScriptRunResult refused = await _session.RunAppAsync(needs, false, CancellationToken.None);
+        Assert.False(refused.Success);
+        Assert.Equal("Cannot run with provided input arguments.\nCaused by: Not enough input arguments.", refused.Message);
+        Assert.Equal("1", await Eval("numel(findall(groot, 'Type', 'figure', '-property', 'RunningAppInstance'))"));
+        ScriptRunResult given = await _session.RunAppAsync(needs, false, "7", false, CancellationToken.None);
+        Assert.True(given.Success, given.Message + _output.ErrorText);
+        Assert.Equal("7", await Eval("get(findall(groot, 'Type', 'figure', 'Name', '7'), 'Name')"));
+    }
+
+    /// <summary>
     /// Run closes the instance it launched and nothing else (App Designer's <c>RunningApp</c>): an
     /// instance started at the prompt stays up and valid through two runs, and the same-name check
     /// passes the designer's own instance by. A single-instance app the designer has none of has the

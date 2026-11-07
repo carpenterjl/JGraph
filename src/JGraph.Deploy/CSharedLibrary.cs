@@ -13,8 +13,12 @@ public sealed record CLibraryFunction(string Name, IReadOnlyList<string> Inputs,
     /// <summary>Whether the last output is varargout.</summary>
     public bool GivesVarargout => Outputs is [.., "varargout"];
 
-    /// <summary>The name its wrappers take after <c>mlx</c> and <c>mlf</c>: the first letter a capital (<c>mlxK11plain</c>).</summary>
-    public string WrapperName => char.ToUpperInvariant(Name[0]) + Name[1..];
+    /// <summary>
+    /// The name its wrappers take after <c>mlx</c> and <c>mlf</c>: the first letter a capital
+    /// (<c>mlxK11plain</c>), a package function's dots underscores (<c>mlxPkg_f</c> for <c>pkg.f</c>,
+    /// which the wrapper calls by its dotted name; p6_libs measured).
+    /// </summary>
+    public string WrapperName => char.ToUpperInvariant(Name[0]) + Name[1..].Replace('.', '_');
 }
 
 /// <summary>How far a C shared library build goes, as <c>-T</c> says (k11_build).</summary>

@@ -2,6 +2,8 @@ build.console	ok standaloneApplication
 files.console	acc_tool.exe | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
 build.windowed	ok standaloneWindowsApplication
 files.windowed	acc_app.exe | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+build.pkg	ok standaloneApplication
+files.pkg	acc_pkgtool.exe | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
 build.net	ok dotNETAssembly
 files.net	AccNet.dll | AccNetNative.dll | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
  
@@ -9,7 +11,7 @@ Build succeeded.
     1 Warning(s) 
     0 Error(s) 
  
-Time Elapsed 00:00:01.64 
+Time Elapsed 00:00:01.16 
 build.data	ok dotNETAssembly
 files.data	AccData.ctf | AccData.dll | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
 Building with 'Microsoft Visual C++ 2022 (C)'. 
@@ -26,9 +28,9 @@ Applications that run with full administrative privileges cannot access the comp
 To register the component for all users, run MATLAB or the mcc command as Administrator.] 
 [> In compiler.internal.build.builder/Generic/build (line 83)
 In compiler.build.excelAddIn (line 133)
-In build_k22>@()compiler.build.excelAddIn(lib,'AddInName','accxl','ClassName','AccXl','OutputDir',fullfile(work,'excel')) (line 34)
-In build_k22>built (line 40)
-In build_k22 (line 34)] 
+In build_k22>@()compiler.build.excelAddIn(lib,'AddInName','accxl','ClassName','AccXl','OutputDir',fullfile(work,'excel')) (line 38)
+In build_k22>built (line 44)
+In build_k22 (line 38)] 
 Building with 'Microsoft Visual C++ 2022'. 
 mwcomtypes.idl 
 oaidl.idl 

@@ -1,0 +1,24 @@
+build.c	ok
+files.c	buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | p6clib.c | p6clib.def | p6clib.dll | p6clib.exp | p6clib.exports | p6clib.h | p6clib.lib | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+c.header	bool MW_CALL_CONV mlxPkg_f(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+c.header	bool MW_CALL_CONV mlxPkg_g2(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+c.header	extern LIB_p6clib_C_API bool MW_CALL_CONV mlfPkg_f(int nargout, mxArray** r, mxArray* x);
+c.header	extern LIB_p6clib_C_API bool MW_CALL_CONV mlfPkg_g2(int nargout, mxArray** r, mxArray* x);
+build.cthing	ok
+files.cthing	buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | p6cthing.c | p6cthing.def | p6cthing.dll | p6cthing.exp | p6cthing.exports | p6cthing.h | p6cthing.lib | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+cthing.header	bool MW_CALL_CONV mlxStaticOne(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[]);
+cthing.header	extern LIB_p6cthing_C_API bool MW_CALL_CONV mlfStaticOne(int nargout, mxArray** r, mxArray* x);
+build.python	ok
+files.python	buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | pyproject.toml | readme.txt | requiredMCRProducts.txt | setup.py | unresolvedSymbols.txt
+python.init	self.instances_of_this_package.add(weakref.ref(package_handle))
+build.mps	ok
+files.mps	buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | p6mps.ctf | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+mps.ctf	fsroot/.META/buildresult.json | fsroot/.META/includedSupportPackages.txt | fsroot/.META/requiredMCRProducts.txt | fsroot/.META/unresolvedSymbols.txt | fsroot/EE%20Projects/JGraph/JGraph/tools/matlab-checklist/ui-probes/p6/rt/libs/lib/+pkg/f.m | fsroot/EE%20Projects/JGraph/JGraph/tools/matlab-checklist/ui-probes/p6/rt/libs/lib/+pkg/g2.m | fsroot/toolbox/compiler/Contents.m | fsroot/toolbox/compiler/ctfroot.m | fsroot/toolbox/compiler/get_features_at_compile_time.m | fsroot/toolbox/compiler/patch/toolbox/matlab/graphics/hg/hgrc.m | fsroot/toolbox/local/Contents.m | fsroot/toolbox/local/matlabrc.m | fsroot/toolbox/local/printopt.m
+mps.manifest.dirs	toolbox/compiler/patch | toolbox/compiler/patch/toolbox/matlab/graphics/hg | EE Projects/JGraph/JGraph/tools/matlab-checklist/ui-probes/p6/rt/libs/lib | toolbox/local | toolbox/compiler | .matlab
+mps.manifest.functions	pkg.f | pkg.g2 | 
+build.net	ok
+files.net	P6Net.csproj | P6Net.ctf | buildresult.json | includedSupportPackages.txt | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+net.typed	pkg_f.cs | pkg_g2.cs
+net.ctf	fsroot/.META/buildresult.json | fsroot/.META/includedSupportPackages.txt | fsroot/.META/requiredMCRProducts.txt | fsroot/.META/unresolvedSymbols.txt | fsroot/EE%20Projects/JGraph/JGraph/tools/matlab-checklist/ui-probes/p6/rt/libs/lib/+pkg/f.m | fsroot/EE%20Projects/JGraph/JGraph/tools/matlab-checklist/ui-probes/p6/rt/libs/lib/+pkg/g2.m | fsroot/toolbox/compiler/Contents.m | fsroot/toolbox/compiler/ctfroot.m | fsroot/toolbox/compiler/get_features_at_compile_time.m | fsroot/toolbox/compiler/patch/toolbox/matlab/graphics/hg/hgrc.m | fsroot/toolbox/local/Contents.m | fsroot/toolbox/local/matlabrc.m | fsroot/toolbox/local/printopt.m
+net.manifest.dirs	toolbox/compiler/patch | toolbox/compiler/patch/toolbox/matlab/graphics/hg | EE Projects/JGraph/JGraph/tools/matlab-checklist/ui-probes/p6/rt/libs/lib | toolbox/local | toolbox/compiler | .matlab
+net.manifest.functions	pkg.f | pkg.g2 | 

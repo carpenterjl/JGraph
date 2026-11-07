@@ -1,0 +1,38 @@
+CHK|rfp_usepkg|<root>/cur/usepkg.m ; <root>/lib/+p6pkg/f.m ; <root>/lib/@P6Thing/P6Thing.m ; <root>/lib/@P6Thing/extent.m ; <root>/lib/@P6Thing/private/hidden.m ; <root>/lib/@P6Thing/scale.m ; <root>/lib/@P6Thing/staticOne.m ; <root>/lib/@P6Thing/usesfar.m ; <root>/lib/p6farhelper.m|exact
+CHK|rfp_useclass|<root>/cur/useclass.m ; <root>/lib/+p6pkg/C.m|exact
+CHK|rfp_usesubclass|<root>/cur/usesubclass.m ; <root>/lib/+p6pkg/+sub/K.m ; <root>/lib/+p6pkg/C.m|exact
+CHK|rfp_usefolderclass|<root>/cur/usefolderclass.m ; <root>/lib/+p6pkg/@D/D.m ; <root>/lib/+p6pkg/@D/dm.m ; <root>/lib/+p6pkg/@D/private/dp.m ; <root>/lib/+p6pkg/@D/unused.m|exact
+CHK|rfp_usesub|<root>/cur/usesub.m ; <root>/lib/+p6pkg/+sub/h.m|exact
+CHK|rfp_usescript|<root>/cur/usescript.m ; <root>/lib/+p6pkg/s.m|exact
+CHK|rfp_usesubfolder|<root>/cur/usesubfolder.m ; <root>/lib/@P6Sub/P6Sub.m ; <root>/lib/@P6Sub/extent.m ; <root>/lib/@P6Thing/P6Thing.m ; <root>/lib/@P6Thing/extent.m ; <root>/lib/@P6Thing/private/hidden.m ; <root>/lib/@P6Thing/scale.m ; <root>/lib/@P6Thing/staticOne.m ; <root>/lib/@P6Thing/usesfar.m ; <root>/lib/p6farhelper.m|exact
+CHK|rfp_usehandle|<root>/cur/usehandle.m ; <root>/lib/+p6pkg/f.m ; <root>/lib/@P6Thing/P6Thing.m ; <root>/lib/@P6Thing/extent.m ; <root>/lib/@P6Thing/private/hidden.m ; <root>/lib/@P6Thing/scale.m ; <root>/lib/@P6Thing/staticOne.m ; <root>/lib/@P6Thing/usesfar.m ; <root>/lib/p6farhelper.m|exact
+CHK|rfp_usemeta|<root>/cur/usemeta.m ; <root>/lib/+p6pkg/C.m ; <root>/lib/@P6Thing/P6Thing.m ; <root>/lib/@P6Thing/extent.m ; <root>/lib/@P6Thing/private/hidden.m ; <root>/lib/@P6Thing/scale.m ; <root>/lib/@P6Thing/staticOne.m ; <root>/lib/@P6Thing/usesfar.m ; <root>/lib/p6farhelper.m|exact
+CHK|rfp_usestatic|<root>/cur/usestatic.m ; <root>/lib/+p6pkg/C.m|exact
+CHK|rfp_useenum|<root>/cur/useenum.m ; <root>/lib/+p6pkg/E.m|exact
+CHK|rfp_useimport|<root>/cur/useimport.m ; <root>/lib/+p6pkg/f.m|exact
+CHK|rfp_useimportclass|<root>/cur/useimportclass.m ; <root>/lib/+p6pkg/C.m|exact
+CHK|rfp_useimportsub|<root>/cur/useimportsub.m ; <root>/lib/+p6pkg/+sub/h.m|exact
+CHK|rfp_usewild|<root>/cur/usewild.m ; <root>/lib/+p6pkg/C.m ; <root>/lib/+p6pkg/f.m ; <root>/lib/+p6pkg/two.m|exact
+CHK|rfp_usefeval|<root>/cur/usefeval.m|exact
+CHK|rfp_usepragma|<root>/cur/usepragma.m ; <root>/lib/+p6pkg/f.m|exact
+CHK|rfp_usepragmaclass|<root>/cur/usepragmaclass.m ; <root>/lib/@P6Thing/P6Thing.m ; <root>/lib/@P6Thing/extent.m ; <root>/lib/@P6Thing/private/hidden.m ; <root>/lib/@P6Thing/scale.m ; <root>/lib/@P6Thing/staticOne.m ; <root>/lib/@P6Thing/usesfar.m ; <root>/lib/p6farhelper.m|exact
+CHK|rfp_usemax|<root>/cur/usemax.m ; <root>/lib/+p6pkg/max.m|exact
+CHK|rfp_usedotvar|<root>/cur/usedotvar.m|exact
+CHK|rfp_usenosuch|<root>/cur/usenosuch.m|exact
+CHK|rfp_usechain|<root>/cur/usechain.m ; <root>/lib/+p6pkg/f.m ; <root>/lib/+p6pkg/g2.m|exact
+CHK|rfp_useprivate|<root>/cur/useprivate.m ; <root>/lib/+p6pkg/private/p.m ; <root>/lib/+p6pkg/q.m|exact
+CHK|rfp_usehandleobj|<root>/cur/usehandleobj.m ; <root>/lib/@P6HThing/P6HThing.m ; <root>/lib/@P6HThing/bump.m|exact
+CHK|rfp_usemethodhandle|<root>/cur/usemethodhandle.m ; <root>/lib/@P6Thing/P6Thing.m ; <root>/lib/@P6Thing/extent.m ; <root>/lib/@P6Thing/private/hidden.m ; <root>/lib/@P6Thing/scale.m ; <root>/lib/@P6Thing/staticOne.m ; <root>/lib/@P6Thing/usesfar.m ; <root>/lib/p6farhelper.m|exact
+CHK|rfp_usebarestatic|<root>/cur/usebarestatic.m ; <root>/lib/@P6Thing/P6Thing.m ; <root>/lib/@P6Thing/extent.m ; <root>/lib/@P6Thing/private/hidden.m ; <root>/lib/@P6Thing/scale.m ; <root>/lib/@P6Thing/staticOne.m ; <root>/lib/@P6Thing/usesfar.m ; <root>/lib/p6farhelper.m|exact
+CHK|rfp_usetwo|<root>/cur/usetwo.m ; <root>/lib/+p6other/f.m ; <root>/lib/+p6pkg/f.m|exact
+CHK|rfp_useonlything|<root>/cur/useonlything.m ; <root>/lib/@P6Thing/P6Thing.m ; <root>/lib/@P6Thing/extent.m ; <root>/lib/@P6Thing/private/hidden.m ; <root>/lib/@P6Thing/scale.m ; <root>/lib/@P6Thing/staticOne.m ; <root>/lib/@P6Thing/usesfar.m ; <root>/lib/p6farhelper.m|exact
+CHK|rfp_usepkgscriptroot|<root>/cur/usepkgscriptroot.m ; <root>/lib/+p6pkg/f.m ; <root>/lib/@P6Thing/P6Thing.m ; <root>/lib/@P6Thing/extent.m ; <root>/lib/@P6Thing/private/hidden.m ; <root>/lib/@P6Thing/scale.m ; <root>/lib/@P6Thing/staticOne.m ; <root>/lib/@P6Thing/usesfar.m ; <root>/lib/p6farhelper.m|exact
+CHK|rfp_member|<root>/lib/+p6pkg/f.m ; <root>/lib/+p6pkg/g2.m|exact
+CHK|rfp_classfile|<root>/lib/@P6Thing/P6Thing.m ; <root>/lib/@P6Thing/extent.m ; <root>/lib/@P6Thing/private/hidden.m ; <root>/lib/@P6Thing/scale.m ; <root>/lib/@P6Thing/staticOne.m ; <root>/lib/@P6Thing/usesfar.m ; <root>/lib/p6farhelper.m|exact
+CHK|rfp_pkgfolder|<root>/lib/+p6pkg/+sub/K.m ; <root>/lib/+p6pkg/+sub/h.m ; <root>/lib/+p6pkg/@D/D.m ; <root>/lib/+p6pkg/@D/dm.m ; <root>/lib/+p6pkg/@D/private/dp.m ; <root>/lib/+p6pkg/@D/unused.m ; <root>/lib/+p6pkg/C.m ; <root>/lib/+p6pkg/E.m ; <root>/lib/+p6pkg/f.m ; <root>/lib/+p6pkg/g2.m ; <root>/lib/+p6pkg/max.m ; <root>/lib/+p6pkg/mk2.m ; <root>/lib/+p6pkg/private/p.m ; <root>/lib/+p6pkg/q.m ; <root>/lib/+p6pkg/s.m ; <root>/lib/+p6pkg/two.m|exact
+CHK|rfp_classfolder|<root>/lib/@P6Thing/P6Thing.m ; <root>/lib/@P6Thing/extent.m ; <root>/lib/@P6Thing/private/hidden.m ; <root>/lib/@P6Thing/scale.m ; <root>/lib/@P6Thing/staticOne.m ; <root>/lib/@P6Thing/usesfar.m ; <root>/lib/p6farhelper.m|exact
+CHK|rfp_dotted|<root>/lib/+p6pkg/f.m|exact
+CHK|rfp_dottedclass|<root>/lib/+p6pkg/C.m|exact
+CHK|rfp_toponly|<root>/cur/usepkg.m ; <root>/lib/+p6pkg/f.m ; <root>/lib/@P6Thing/P6Thing.m ; <root>/lib/@P6Thing/extent.m ; <root>/lib/@P6Thing/private/hidden.m ; <root>/lib/@P6Thing/scale.m ; <root>/lib/@P6Thing/staticOne.m ; <root>/lib/@P6Thing/usesfar.m|exact
+CHK|rfp_products|MATLAB|exact
+CHK|rfp_usepkg_nolib|<root>/cur/usepkg.m|exact

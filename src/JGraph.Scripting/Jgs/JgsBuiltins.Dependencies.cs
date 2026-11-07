@@ -215,6 +215,12 @@ internal static partial class JgsBuiltins
 
         if (interpreter.FunctionPath is { } path && name.IndexOfAny(['/', '\\']) < 0)
         {
+            // pkg.f and pkg.C are the member's file (stage P6; p6_depend: rfp.dotted, rfp.dottedclass).
+            if (name.Contains('.') && JgsCodeTree.DottedParts(name) is { Length: >= 2 } && path.FindDotted(name, out _) is { } member)
+            {
+                return Path.GetFullPath(member);
+            }
+
             if (path.FindFile(name) is { } code)
             {
                 return Path.GetFullPath(code);
@@ -228,6 +234,14 @@ internal static partial class JgsBuiltins
                     return Path.GetFullPath(candidate);
                 }
             }
+        }
+
+        // Thing/extent: the class folder's method file, and with it the folder (R2025b answered the
+        // class file alone for the slash form; the folder is JGraph's reading, recorded in ADR 0312).
+        if (interpreter.FunctionPath is { } search && JgsFunctionPath.SlashForm(name) is { } slashed
+            && search.ClassMethodFile(slashed.Class, slashed.Member) is { } methodFile)
+        {
+            return Path.GetFullPath(methodFile);
         }
 
         return null;

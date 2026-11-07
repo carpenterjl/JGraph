@@ -150,7 +150,7 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static CLibraryFunction CLibraryFunctionOf(string file)
     {
-        string name = Path.GetFileNameWithoutExtension(file);
+        string name = TypedInterfaceReader.FullName(file); // pkg.f for +pkg/f.m (stage P6, measured)
         bool pcode = Path.GetExtension(file).Equals(".p", StringComparison.OrdinalIgnoreCase);
         try
         {

@@ -1,0 +1,11 @@
+{Error using strjoin (line 15)
+First input must be a string array or cell array of character vectors.
+
+Error in p6_depend>listing (line 109)
+    fprintf('%s.manifest.functions\t%s\n', key, strjoin(tok, ' | '));
+                                                ^^^^^^^^^^^^^^^^^^^
+Error in p6_depend (line 50)
+listing('mcc.usepkg', out, root);
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+} 
+ERROR: MATLAB error Exit Status: 0x00000001

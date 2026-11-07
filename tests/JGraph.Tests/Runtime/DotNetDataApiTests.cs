@@ -172,6 +172,11 @@ public sealed class DotNetDataApiTests : IDisposable
         string first = Assert.Throws<MATLABExecutionException>(() => (string)matlab.k9nv(new RunOptions(quiet, quiet), Scale: 3.0)).Message;
         Assert.StartsWith("MATLAB:TooManyInputs: Invalid argument at position 1. Function requires exactly 1 positional input(s) before name 'Scale'.", first);
 
+        // A function in a +package by its dotted name, dynamic and typed (call.pkg.double, typed.pkg: 101; call.pkg.missing),
+        // which the deployed session resolves through the archive's +k9pkg folder (packages and class folders plan, stage P6).
+        Assert.Equal(101.0, (double)matlab.k9pkg.k9inner(1.0));
+        Assert.Equal("Function k9pkg.nosuch not found in the component.", Assert.Throws<MATLABExecutionException>(() => matlab.k9pkg.nosuch(1.0)).Message);
+
         // Errors, names not in the component, and a disposed instance (error.id, call.missing, after.dispose).
         string id = Assert.Throws<MATLABExecutionException>(() => matlab.k9err(new RunOptions(quiet, quiet), "id")).Message;
         Assert.StartsWith("k9:bad: An error with an identifier: 7.\nError in k9err (line 5) in file: ", id);
@@ -186,6 +191,9 @@ public sealed class DotNetDataApiTests : IDisposable
         object?[] nv = [m, new Complex(2, 0), new Complex(3, 0), null];
         Method(functions, "k9nv", 4).Invoke(null, nv);
         Assert.Equal("2 3 none", (string)(dynamic)nv[3]!); // R2025b's refused this (typed.nv.2, a divergence)
+        object?[] packaged = [m, 1.0, null];
+        Method(k9.GetType("K9.k9pkg.MATLABFunctions", throwOnError: true)!, "k9inner", 3).Invoke(null, packaged);
+        Assert.Equal(101.0, (double)(dynamic)packaged[2]!); // typed.pkg: the package wrapper calls through
 
         Type point = k9.GetType("K9.k9point", throwOnError: true)!;
         object p = Activator.CreateInstance(point, m, 3.0, 4.0)!;

@@ -1,0 +1,101 @@
+rfp.usepkg.files	<T>\cur\usepkg.m ; <T>\lib\+pkg\f.m ; <T>\lib\@Thing\Thing.m ; <T>\lib\@Thing\extent.m ; <T>\lib\@Thing\private\hidden.m ; <T>\lib\@Thing\scale.m ; <T>\lib\@Thing\staticOne.m ; <T>\lib\@Thing\usesfar.m ; <T>\lib\farhelper.m
+rfp.usepkg.products	MATLAB
+rfp.useclass.files	<T>\cur\useclass.m ; <T>\lib\+pkg\C.m
+rfp.useclass.products	MATLAB
+rfp.usesubclass.files	<T>\cur\usesubclass.m ; <T>\lib\+pkg\+sub\K.m ; <T>\lib\+pkg\C.m
+rfp.usesubclass.products	MATLAB
+rfp.usefolderclass.files	<T>\cur\usefolderclass.m ; <T>\lib\+pkg\@D\D.m ; <T>\lib\+pkg\@D\dm.m ; <T>\lib\+pkg\@D\private\dp.m ; <T>\lib\+pkg\@D\unused.m
+rfp.usefolderclass.products	MATLAB
+rfp.usesub.files	<T>\cur\usesub.m ; <T>\lib\+pkg\+sub\h.m
+rfp.usesub.products	MATLAB
+rfp.usescript.files	<T>\cur\usescript.m ; <T>\lib\+pkg\s.m
+rfp.usescript.products	MATLAB
+rfp.usesubfolder.files	<T>\cur\usesubfolder.m ; <T>\lib\@Sub\Sub.m ; <T>\lib\@Sub\extent.m ; <T>\lib\@Thing\Thing.m ; <T>\lib\@Thing\extent.m ; <T>\lib\@Thing\private\hidden.m ; <T>\lib\@Thing\scale.m ; <T>\lib\@Thing\staticOne.m ; <T>\lib\@Thing\usesfar.m ; <T>\lib\farhelper.m
+rfp.usesubfolder.products	MATLAB
+rfp.usehandle.files	<T>\cur\usehandle.m ; <T>\lib\+pkg\f.m ; <T>\lib\@Thing\Thing.m ; <T>\lib\@Thing\extent.m ; <T>\lib\@Thing\private\hidden.m ; <T>\lib\@Thing\scale.m ; <T>\lib\@Thing\staticOne.m ; <T>\lib\@Thing\usesfar.m ; <T>\lib\farhelper.m
+rfp.usehandle.products	MATLAB
+rfp.usemeta.files	<T>\cur\usemeta.m ; <T>\lib\+pkg\C.m ; <T>\lib\@Thing\Thing.m ; <T>\lib\@Thing\extent.m ; <T>\lib\@Thing\private\hidden.m ; <T>\lib\@Thing\scale.m ; <T>\lib\@Thing\staticOne.m ; <T>\lib\@Thing\usesfar.m ; <T>\lib\farhelper.m
+rfp.usemeta.products	MATLAB
+rfp.usestatic.files	<T>\cur\usestatic.m ; <T>\lib\+pkg\C.m
+rfp.usestatic.products	MATLAB
+rfp.useenum.files	<T>\cur\useenum.m ; <T>\lib\+pkg\E.m
+rfp.useenum.products	MATLAB
+rfp.useimport.files	<T>\cur\useimport.m ; <T>\lib\+pkg\f.m
+rfp.useimport.products	MATLAB
+rfp.useimportclass.files	<T>\cur\useimportclass.m ; <T>\lib\+pkg\C.m
+rfp.useimportclass.products	MATLAB
+rfp.useimportsub.files	<T>\cur\useimportsub.m ; <T>\lib\+pkg\+sub\h.m
+rfp.useimportsub.products	MATLAB
+rfp.usewild.files	<T>\cur\usewild.m ; <T>\lib\+pkg\C.m ; <T>\lib\+pkg\f.m ; <T>\lib\+pkg\two.m
+rfp.usewild.products	MATLAB
+rfp.usefeval.files	<T>\cur\usefeval.m
+rfp.usefeval.products	MATLAB
+rfp.usepragma.files	<T>\cur\usepragma.m ; <T>\lib\+pkg\f.m
+rfp.usepragma.products	MATLAB
+rfp.usepragmaclass.files	<T>\cur\usepragmaclass.m ; <T>\lib\@Thing\Thing.m ; <T>\lib\@Thing\extent.m ; <T>\lib\@Thing\private\hidden.m ; <T>\lib\@Thing\scale.m ; <T>\lib\@Thing\staticOne.m ; <T>\lib\@Thing\usesfar.m ; <T>\lib\farhelper.m
+rfp.usepragmaclass.products	MATLAB
+rfp.usemax.files	<T>\cur\usemax.m ; <T>\lib\+pkg\max.m
+rfp.usemax.products	MATLAB
+rfp.usedotvar.files	<T>\cur\usedotvar.m
+rfp.usedotvar.products	MATLAB
+rfp.usenosuch.files	<T>\cur\usenosuch.m
+rfp.usenosuch.products	MATLAB
+rfp.usechain.files	<T>\cur\usechain.m ; <T>\lib\+pkg\f.m ; <T>\lib\+pkg\g2.m
+rfp.usechain.products	MATLAB
+rfp.useprivate.files	<T>\cur\useprivate.m ; <T>\lib\+pkg\private\p.m ; <T>\lib\+pkg\q.m
+rfp.useprivate.products	MATLAB
+rfp.usehandleobj.files	<T>\cur\usehandleobj.m ; <T>\lib\@HThing\HThing.m ; <T>\lib\@HThing\bump.m
+rfp.usehandleobj.products	MATLAB
+rfp.usemethodhandle.files	<T>\cur\usemethodhandle.m ; <T>\lib\@Thing\Thing.m ; <T>\lib\@Thing\extent.m ; <T>\lib\@Thing\private\hidden.m ; <T>\lib\@Thing\scale.m ; <T>\lib\@Thing\staticOne.m ; <T>\lib\@Thing\usesfar.m ; <T>\lib\farhelper.m
+rfp.usemethodhandle.products	MATLAB
+rfp.usebarestatic.files	<T>\cur\usebarestatic.m ; <T>\lib\@Thing\Thing.m ; <T>\lib\@Thing\extent.m ; <T>\lib\@Thing\private\hidden.m ; <T>\lib\@Thing\scale.m ; <T>\lib\@Thing\staticOne.m ; <T>\lib\@Thing\usesfar.m ; <T>\lib\farhelper.m
+rfp.usebarestatic.products	MATLAB
+rfp.usetwo.files	<T>\cur\usetwo.m ; <T>\lib\+other\f.m ; <T>\lib\+pkg\f.m
+rfp.usetwo.products	MATLAB
+rfp.useonlything.files	<T>\cur\useonlything.m ; <T>\lib\@Thing\Thing.m ; <T>\lib\@Thing\extent.m ; <T>\lib\@Thing\private\hidden.m ; <T>\lib\@Thing\scale.m ; <T>\lib\@Thing\staticOne.m ; <T>\lib\@Thing\usesfar.m ; <T>\lib\farhelper.m
+rfp.useonlything.products	MATLAB
+rfp.usepkgscriptroot.files	<T>\cur\usepkgscriptroot.m ; <T>\lib\+pkg\f.m ; <T>\lib\@Thing\Thing.m ; <T>\lib\@Thing\extent.m ; <T>\lib\@Thing\private\hidden.m ; <T>\lib\@Thing\scale.m ; <T>\lib\@Thing\staticOne.m ; <T>\lib\@Thing\usesfar.m ; <T>\lib\farhelper.m
+rfp.usepkgscriptroot.products	MATLAB
+rfp.member.files	<T>\lib\+pkg\f.m ; <T>\lib\+pkg\g2.m
+rfp.member.products	MATLAB
+rfp.classfile.files	<T>\lib\@Thing\Thing.m ; <T>\lib\@Thing\extent.m ; <T>\lib\@Thing\private\hidden.m ; <T>\lib\@Thing\scale.m ; <T>\lib\@Thing\staticOne.m ; <T>\lib\@Thing\usesfar.m ; <T>\lib\farhelper.m
+rfp.classfile.products	MATLAB
+rfp.methodfile.files	<T>\lib\@Thing\Thing.m ; <T>\lib\@Thing\extent.m ; <T>\lib\@Thing\private\hidden.m ; <T>\lib\@Thing\scale.m ; <T>\lib\@Thing\staticOne.m ; <T>\lib\@Thing\usesfar.m
+rfp.methodfile.products	MATLAB
+rfp.pkgfolder.files	<T>\lib\+pkg\+sub\K.m ; <T>\lib\+pkg\+sub\h.m ; <T>\lib\+pkg\@D\D.m ; <T>\lib\+pkg\@D\dm.m ; <T>\lib\+pkg\@D\private\dp.m ; <T>\lib\+pkg\@D\unused.m ; <T>\lib\+pkg\C.m ; <T>\lib\+pkg\E.m ; <T>\lib\+pkg\f.m ; <T>\lib\+pkg\g2.m ; <T>\lib\+pkg\max.m ; <T>\lib\+pkg\mk2.m ; <T>\lib\+pkg\private\p.m ; <T>\lib\+pkg\q.m ; <T>\lib\+pkg\s.m ; <T>\lib\+pkg\two.m
+rfp.pkgfolder.products	MATLAB
+rfp.classfolder.files	<T>\lib\@Thing\Thing.m ; <T>\lib\@Thing\extent.m ; <T>\lib\@Thing\private\hidden.m ; <T>\lib\@Thing\scale.m ; <T>\lib\@Thing\staticOne.m ; <T>\lib\@Thing\usesfar.m ; <T>\lib\farhelper.m
+rfp.classfolder.products	MATLAB
+rfp.dotted.files	<T>\lib\+pkg\f.m
+rfp.dotted.products	MATLAB
+rfp.dottedclass.files	<T>\lib\+pkg\C.m
+rfp.dottedclass.products	MATLAB
+rfp.slash.files	<T>\lib\@Thing\Thing.m
+rfp.slash.products	MATLAB
+rfp.toponly.files	<T>\cur\usepkg.m ; <T>\lib\+pkg\f.m ; <T>\lib\@Thing\Thing.m ; <T>\lib\@Thing\extent.m ; <T>\lib\@Thing\private\hidden.m ; <T>\lib\@Thing\scale.m ; <T>\lib\@Thing\staticOne.m ; <T>\lib\@Thing\usesfar.m
+rfp.toponly.products	MATLAB
+rfp.usepkg.nolib.files	<T>\cur\usepkg.m
+rfp.usepkg.nolib.products	MATLAB
+mcc.usepkg	ok
+mcc.usepkg.ctf.n	20
+mcc.usepkg.ctf[1]	fsroot/.META/buildresult.json
+mcc.usepkg.ctf[2]	fsroot/.META/includedSupportPackages.txt
+mcc.usepkg.ctf[3]	fsroot/.META/requiredMCRProducts.txt
+mcc.usepkg.ctf[4]	fsroot/.META/unresolvedSymbols.txt
+mcc.usepkg.ctf[5]	fsroot/EE%20Projects/JGraph/JGraph/tools/matlab-checklist/ui-probes/p6/rt/depend/lib/+pkg/f.m
+mcc.usepkg.ctf[6]	fsroot/EE%20Projects/JGraph/JGraph/tools/matlab-checklist/ui-probes/p6/rt/depend/lib/@Thing/Thing.m
+mcc.usepkg.ctf[7]	fsroot/EE%20Projects/JGraph/JGraph/tools/matlab-checklist/ui-probes/p6/rt/depend/lib/@Thing/extent.m
+mcc.usepkg.ctf[8]	fsroot/EE%20Projects/JGraph/JGraph/tools/matlab-checklist/ui-probes/p6/rt/depend/lib/@Thing/private/hidden.m
+mcc.usepkg.ctf[9]	fsroot/EE%20Projects/JGraph/JGraph/tools/matlab-checklist/ui-probes/p6/rt/depend/lib/@Thing/scale.m
+mcc.usepkg.ctf[10]	fsroot/EE%20Projects/JGraph/JGraph/tools/matlab-checklist/ui-probes/p6/rt/depend/lib/@Thing/staticOne.m
+mcc.usepkg.ctf[11]	fsroot/EE%20Projects/JGraph/JGraph/tools/matlab-checklist/ui-probes/p6/rt/depend/lib/@Thing/usesfar.m
+mcc.usepkg.ctf[12]	fsroot/EE%20Projects/JGraph/JGraph/tools/matlab-checklist/ui-probes/p6/rt/depend/lib/farhelper.m
+mcc.usepkg.ctf[13]	fsroot/toolbox/compiler/Contents.m
+mcc.usepkg.ctf[14]	fsroot/toolbox/compiler/ctfroot.m
+mcc.usepkg.ctf[15]	fsroot/toolbox/compiler/get_features_at_compile_time.m
+mcc.usepkg.ctf[16]	fsroot/toolbox/compiler/patch/toolbox/matlab/graphics/hg/hgrc.m
+mcc.usepkg.ctf[17]	fsroot/toolbox/local/Contents.m
+mcc.usepkg.ctf[18]	fsroot/toolbox/local/matlabrc.m
+mcc.usepkg.ctf[19]	fsroot/toolbox/local/printopt.m
+mcc.usepkg.ctf[20]	fsroot/usepkg/usepkg.m
+mcc.usepkg.manifest.dirs	toolbox/compiler/patch | toolbox/compiler/patch/toolbox/matlab/graphics/hg | usepkg | EE Projects/JGraph/JGraph/tools/matlab-checklist/ui-probes/p6/rt/depend/lib | toolbox/local | toolbox/compiler | .matlab
