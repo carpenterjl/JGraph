@@ -73,6 +73,10 @@ def exe_report(label, data):
             print('%s.resource.%s\t%d bytes' % (label, name, len(blob)))
             if name.endswith('URL'):
                 print('%s.text.%s\t%s' % (label, name, blob.decode('utf-8', 'replace').strip()))
+            elif name.endswith('CONFIG'):
+                # The Excel client installer's _config.txt (stage K17a).
+                print('%s.text.%s' % (label, name))
+                lines(label, blob.decode('utf-8', 'replace'))
             elif name.endswith('SPLASH'):
                 print('%s.image.%s\t%s' % (label, name, image_kind(blob)))
             elif blob[:4] == b'PK\x03\x04':

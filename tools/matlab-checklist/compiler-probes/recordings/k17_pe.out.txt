@@ -1,0 +1,3343 @@
+b.additional._install.file	<W>\p\b\additional\_install.bat
+b.additional._install.ERR	not a PE file
+b.additional.buildresult.file	<W>\p\b\additional\buildresult.json
+b.additional.buildresult.ERR	not a PE file
+b.additional.dlldata.file	<W>\p\b\additional\dlldata.c
+b.additional.dlldata.ERR	not a PE file
+b.additional.GettingStarted.file	<W>\p\b\additional\GettingStarted.html
+b.additional.GettingStarted.ERR	not a PE file
+b.additional.includedSupportPackages.file	<W>\p\b\additional\includedSupportPackages.txt
+b.additional.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.additional.k17add.file	<W>\p\b\additional\k17add.ctf
+b.additional.k17add.ERR	not a PE file
+b.additional.k17add.file	<W>\p\b\additional\k17add.def
+b.additional.k17add.ERR	not a PE file
+b.additional.k17add.file	<W>\p\b\additional\k17add.rc
+b.additional.k17add.ERR	not a PE file
+b.additional.k17add_1_0.file	k17add_1_0.dll
+b.additional.k17add_1_0.bytes	193536
+b.additional.k17add_1_0.machine	0x8664
+b.additional.k17add_1_0.subsystem	windows-gui
+b.additional.k17add_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+b.additional.k17add_1_0.image.bytes	193536
+b.additional.k17add_1_0.overlay.bytes	0
+b.additional.k17add_1_0.certificate	no
+b.additional.k17add_1_0.import	KERNEL32.dll
+b.additional.k17add_1_0.import	USER32.dll
+b.additional.k17add_1_0.import	ole32.dll
+b.additional.k17add_1_0.import	OLEAUT32.dll
+b.additional.k17add_1_0.import	mclxlmain25_2.dll
+b.additional.k17add_1_0.import	mclmcrrt25_2.dll (delay)
+b.additional.k17add_1_0.resource	"TYPELIB" 1 lang 1033: 2604 bytes
+b.additional.k17add_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+b.additional.k17add_1_0.resource	VERSION 1 lang 1033: 320 bytes
+b.additional.k17add_1_0.  fixed.FileVersion	1.0.0.0
+b.additional.k17add_1_0.  fixed.ProductVersion	1.0.0.0
+b.additional.k17add_1_0.  fixed.FileFlags	0x0
+b.additional.k17add_1_0.  fixed.FileOS	0x0
+b.additional.k17add_1_0.  fixed.FileType	0x0
+b.additional.k17add_1_0.  table	040904b0
+b.additional.k17add_1_0.  string.FileVersion	1.0.0.0
+b.additional.k17add_1_0.  string.ProductVersion	1.0.0.0
+b.additional.k17add_1_0.  var.Translation	040904b0
+b.additional.k17add_1_0.file	<W>\p\b\additional\k17add_1_0.exp
+b.additional.k17add_1_0.ERR	not a PE file
+b.additional.k17add_1_0.file	<W>\p\b\additional\k17add_1_0.lib
+b.additional.k17add_1_0.ERR	not a PE file
+b.additional.K17Add_com.file	<W>\p\b\additional\K17Add_com.cpp
+b.additional.K17Add_com.ERR	not a PE file
+b.additional.K17Add_com.file	<W>\p\b\additional\K17Add_com.hpp
+b.additional.K17Add_com.ERR	not a PE file
+b.additional.k17add_dll.file	<W>\p\b\additional\k17add_dll.cpp
+b.additional.k17add_dll.ERR	not a PE file
+b.additional.k17add_idl.file	<W>\p\b\additional\k17add_idl.h
+b.additional.k17add_idl.ERR	not a PE file
+b.additional.k17add_idl.file	<W>\p\b\additional\k17add_idl.idl
+b.additional.k17add_idl.ERR	not a PE file
+b.additional.k17add_idl.file	<W>\p\b\additional\k17add_idl.tlb
+b.additional.k17add_idl.ERR	not a PE file
+b.additional.k17add_idl_i.file	<W>\p\b\additional\k17add_idl_i.c
+b.additional.k17add_idl_i.ERR	not a PE file
+b.additional.k17add_idl_p.file	<W>\p\b\additional\k17add_idl_p.c
+b.additional.k17add_idl_p.ERR	not a PE file
+b.additional.mccExcludedFiles.file	<W>\p\b\additional\mccExcludedFiles.log
+b.additional.mccExcludedFiles.ERR	not a PE file
+b.additional.mwcomtypes.file	<W>\p\b\additional\mwcomtypes.h
+b.additional.mwcomtypes.ERR	not a PE file
+b.additional.mwcomtypes_i.file	<W>\p\b\additional\mwcomtypes_i.c
+b.additional.mwcomtypes_i.ERR	not a PE file
+b.additional.mwcomtypes_p.file	<W>\p\b\additional\mwcomtypes_p.c
+b.additional.mwcomtypes_p.ERR	not a PE file
+b.additional.readme.file	<W>\p\b\additional\readme.txt
+b.additional.readme.ERR	not a PE file
+b.additional.requiredMCRProducts.file	<W>\p\b\additional\requiredMCRProducts.txt
+b.additional.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+b.additional.unresolvedSymbols.file	<W>\p\b\additional\unresolvedSymbols.txt
+b.additional.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+b.bas._install.file	<W>\p\b\bas\_install.bat
+b.bas._install.ERR	not a PE file
+b.bas.buildresult.file	<W>\p\b\bas\buildresult.json
+b.bas.buildresult.ERR	not a PE file
+b.bas.dlldata.file	<W>\p\b\bas\dlldata.c
+b.bas.dlldata.ERR	not a PE file
+b.bas.GettingStarted.file	<W>\p\b\bas\GettingStarted.html
+b.bas.GettingStarted.ERR	not a PE file
+b.bas.includedSupportPackages.file	<W>\p\b\bas\includedSupportPackages.txt
+b.bas.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.bas.k17bas.file	<W>\p\b\bas\k17bas.bas
+b.bas.k17bas.ERR	not a PE file
+b.bas.k17bas.file	<W>\p\b\bas\k17bas.def
+b.bas.k17bas.ERR	not a PE file
+b.bas.k17bas.file	<W>\p\b\bas\k17bas.rc
+b.bas.k17bas.ERR	not a PE file
+b.bas.k17bas_1_0.file	k17bas_1_0.dll
+b.bas.k17bas_1_0.bytes	382976
+b.bas.k17bas_1_0.machine	0x8664
+b.bas.k17bas_1_0.subsystem	windows-gui
+b.bas.k17bas_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+b.bas.k17bas_1_0.image.bytes	382976
+b.bas.k17bas_1_0.overlay.bytes	0
+b.bas.k17bas_1_0.certificate	no
+b.bas.k17bas_1_0.import	KERNEL32.dll
+b.bas.k17bas_1_0.import	USER32.dll
+b.bas.k17bas_1_0.import	ole32.dll
+b.bas.k17bas_1_0.import	OLEAUT32.dll
+b.bas.k17bas_1_0.import	mclxlmain25_2.dll
+b.bas.k17bas_1_0.import	mclmcrrt25_2.dll (delay)
+b.bas.k17bas_1_0.resource	"RT_RCDATA" 2 lang 1033: 180823 bytes
+b.bas.k17bas_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 d9 40
+b.bas.k17bas_1_0.resource	"TYPELIB" 1 lang 1033: 4576 bytes
+b.bas.k17bas_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+b.bas.k17bas_1_0.resource	VERSION 1 lang 1033: 320 bytes
+b.bas.k17bas_1_0.  fixed.FileVersion	1.0.0.0
+b.bas.k17bas_1_0.  fixed.ProductVersion	1.0.0.0
+b.bas.k17bas_1_0.  fixed.FileFlags	0x0
+b.bas.k17bas_1_0.  fixed.FileOS	0x0
+b.bas.k17bas_1_0.  fixed.FileType	0x0
+b.bas.k17bas_1_0.  table	040904b0
+b.bas.k17bas_1_0.  string.FileVersion	1.0.0.0
+b.bas.k17bas_1_0.  string.ProductVersion	1.0.0.0
+b.bas.k17bas_1_0.  var.Translation	040904b0
+b.bas.k17bas_1_0.file	<W>\p\b\bas\k17bas_1_0.exp
+b.bas.k17bas_1_0.ERR	not a PE file
+b.bas.k17bas_1_0.file	<W>\p\b\bas\k17bas_1_0.lib
+b.bas.k17bas_1_0.ERR	not a PE file
+b.bas.K17Bas_com.file	<W>\p\b\bas\K17Bas_com.cpp
+b.bas.K17Bas_com.ERR	not a PE file
+b.bas.K17Bas_com.file	<W>\p\b\bas\K17Bas_com.hpp
+b.bas.K17Bas_com.ERR	not a PE file
+b.bas.k17bas_dll.file	<W>\p\b\bas\k17bas_dll.cpp
+b.bas.k17bas_dll.ERR	not a PE file
+b.bas.k17bas_idl.file	<W>\p\b\bas\k17bas_idl.h
+b.bas.k17bas_idl.ERR	not a PE file
+b.bas.k17bas_idl.file	<W>\p\b\bas\k17bas_idl.idl
+b.bas.k17bas_idl.ERR	not a PE file
+b.bas.k17bas_idl.file	<W>\p\b\bas\k17bas_idl.tlb
+b.bas.k17bas_idl.ERR	not a PE file
+b.bas.k17bas_idl_i.file	<W>\p\b\bas\k17bas_idl_i.c
+b.bas.k17bas_idl_i.ERR	not a PE file
+b.bas.k17bas_idl_p.file	<W>\p\b\bas\k17bas_idl_p.c
+b.bas.k17bas_idl_p.ERR	not a PE file
+b.bas.mccExcludedFiles.file	<W>\p\b\bas\mccExcludedFiles.log
+b.bas.mccExcludedFiles.ERR	not a PE file
+b.bas.mwcomtypes.file	<W>\p\b\bas\mwcomtypes.h
+b.bas.mwcomtypes.ERR	not a PE file
+b.bas.mwcomtypes_i.file	<W>\p\b\bas\mwcomtypes_i.c
+b.bas.mwcomtypes_i.ERR	not a PE file
+b.bas.mwcomtypes_p.file	<W>\p\b\bas\mwcomtypes_p.c
+b.bas.mwcomtypes_p.ERR	not a PE file
+b.bas.readme.file	<W>\p\b\bas\readme.txt
+b.bas.readme.ERR	not a PE file
+b.bas.requiredMCRProducts.file	<W>\p\b\bas\requiredMCRProducts.txt
+b.bas.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 24)
+b.bas.unresolvedSymbols.file	<W>\p\b\bas\unresolvedSymbols.txt
+b.bas.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+b.classname._install.file	<W>\p\b\classname\_install.bat
+b.classname._install.ERR	not a PE file
+b.classname.buildresult.file	<W>\p\b\classname\buildresult.json
+b.classname.buildresult.ERR	not a PE file
+b.classname.dlldata.file	<W>\p\b\classname\dlldata.c
+b.classname.dlldata.ERR	not a PE file
+b.classname.GettingStarted.file	<W>\p\b\classname\GettingStarted.html
+b.classname.GettingStarted.ERR	not a PE file
+b.classname.includedSupportPackages.file	<W>\p\b\classname\includedSupportPackages.txt
+b.classname.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.classname.k17cls.file	<W>\p\b\classname\k17cls.def
+b.classname.k17cls.ERR	not a PE file
+b.classname.k17cls.file	<W>\p\b\classname\k17cls.rc
+b.classname.k17cls.ERR	not a PE file
+b.classname.k17cls_1_0.file	k17cls_1_0.dll
+b.classname.k17cls_1_0.bytes	345600
+b.classname.k17cls_1_0.machine	0x8664
+b.classname.k17cls_1_0.subsystem	windows-gui
+b.classname.k17cls_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+b.classname.k17cls_1_0.image.bytes	345600
+b.classname.k17cls_1_0.overlay.bytes	0
+b.classname.k17cls_1_0.certificate	no
+b.classname.k17cls_1_0.import	KERNEL32.dll
+b.classname.k17cls_1_0.import	USER32.dll
+b.classname.k17cls_1_0.import	ole32.dll
+b.classname.k17cls_1_0.import	OLEAUT32.dll
+b.classname.k17cls_1_0.import	mclxlmain25_2.dll
+b.classname.k17cls_1_0.import	mclmcrrt25_2.dll (delay)
+b.classname.k17cls_1_0.resource	"RT_RCDATA" 2 lang 1033: 153939 bytes
+b.classname.k17cls_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 72 31
+b.classname.k17cls_1_0.resource	"TYPELIB" 1 lang 1033: 2256 bytes
+b.classname.k17cls_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+b.classname.k17cls_1_0.resource	VERSION 1 lang 1033: 320 bytes
+b.classname.k17cls_1_0.  fixed.FileVersion	1.0.0.0
+b.classname.k17cls_1_0.  fixed.ProductVersion	1.0.0.0
+b.classname.k17cls_1_0.  fixed.FileFlags	0x0
+b.classname.k17cls_1_0.  fixed.FileOS	0x0
+b.classname.k17cls_1_0.  fixed.FileType	0x0
+b.classname.k17cls_1_0.  table	040904b0
+b.classname.k17cls_1_0.  string.FileVersion	1.0.0.0
+b.classname.k17cls_1_0.  string.ProductVersion	1.0.0.0
+b.classname.k17cls_1_0.  var.Translation	040904b0
+b.classname.k17cls_1_0.file	<W>\p\b\classname\k17cls_1_0.exp
+b.classname.k17cls_1_0.ERR	not a PE file
+b.classname.k17cls_1_0.file	<W>\p\b\classname\k17cls_1_0.lib
+b.classname.k17cls_1_0.ERR	not a PE file
+b.classname.k17cls_com.file	<W>\p\b\classname\k17cls_com.cpp
+b.classname.k17cls_com.ERR	not a PE file
+b.classname.k17cls_com.file	<W>\p\b\classname\k17cls_com.hpp
+b.classname.k17cls_com.ERR	not a PE file
+b.classname.k17cls_dll.file	<W>\p\b\classname\k17cls_dll.cpp
+b.classname.k17cls_dll.ERR	not a PE file
+b.classname.k17cls_idl.file	<W>\p\b\classname\k17cls_idl.h
+b.classname.k17cls_idl.ERR	not a PE file
+b.classname.k17cls_idl.file	<W>\p\b\classname\k17cls_idl.idl
+b.classname.k17cls_idl.ERR	not a PE file
+b.classname.k17cls_idl.file	<W>\p\b\classname\k17cls_idl.tlb
+b.classname.k17cls_idl.ERR	not a PE file
+b.classname.k17cls_idl_i.file	<W>\p\b\classname\k17cls_idl_i.c
+b.classname.k17cls_idl_i.ERR	not a PE file
+b.classname.k17cls_idl_p.file	<W>\p\b\classname\k17cls_idl_p.c
+b.classname.k17cls_idl_p.ERR	not a PE file
+b.classname.mccExcludedFiles.file	<W>\p\b\classname\mccExcludedFiles.log
+b.classname.mccExcludedFiles.ERR	not a PE file
+b.classname.mwcomtypes.file	<W>\p\b\classname\mwcomtypes.h
+b.classname.mwcomtypes.ERR	not a PE file
+b.classname.mwcomtypes_i.file	<W>\p\b\classname\mwcomtypes_i.c
+b.classname.mwcomtypes_i.ERR	not a PE file
+b.classname.mwcomtypes_p.file	<W>\p\b\classname\mwcomtypes_p.c
+b.classname.mwcomtypes_p.ERR	not a PE file
+b.classname.readme.file	<W>\p\b\classname\readme.txt
+b.classname.readme.ERR	not a PE file
+b.classname.requiredMCRProducts.file	<W>\p\b\classname\requiredMCRProducts.txt
+b.classname.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+b.classname.unresolvedSymbols.file	<W>\p\b\classname\unresolvedSymbols.txt
+b.classname.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+b.debug._install.file	<W>\p\b\debug\_install.bat
+b.debug._install.ERR	not a PE file
+b.debug.buildresult.file	<W>\p\b\debug\buildresult.json
+b.debug.buildresult.ERR	not a PE file
+b.debug.dlldata.file	<W>\p\b\debug\dlldata.c
+b.debug.dlldata.ERR	not a PE file
+b.debug.GettingStarted.file	<W>\p\b\debug\GettingStarted.html
+b.debug.GettingStarted.ERR	not a PE file
+b.debug.includedSupportPackages.file	<W>\p\b\debug\includedSupportPackages.txt
+b.debug.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.debug.k17dbg.file	<W>\p\b\debug\k17dbg.def
+b.debug.k17dbg.ERR	not a PE file
+b.debug.k17dbg.file	<W>\p\b\debug\k17dbg.rc
+b.debug.k17dbg.ERR	not a PE file
+b.debug.k17dbg_1_0.file	k17dbg_1_0.dll
+b.debug.k17dbg_1_0.bytes	1029120
+b.debug.k17dbg_1_0.machine	0x8664
+b.debug.k17dbg_1_0.subsystem	windows-gui
+b.debug.k17dbg_1_0.sections	.text .rdata .data .pdata .idata .didat .00cfg .fptable .rsrc .reloc
+b.debug.k17dbg_1_0.image.bytes	1029120
+b.debug.k17dbg_1_0.overlay.bytes	0
+b.debug.k17dbg_1_0.certificate	no
+b.debug.k17dbg_1_0.import	KERNEL32.dll
+b.debug.k17dbg_1_0.import	USER32.dll
+b.debug.k17dbg_1_0.import	ole32.dll
+b.debug.k17dbg_1_0.import	OLEAUT32.dll
+b.debug.k17dbg_1_0.import	mclxlmain25_2.dll
+b.debug.k17dbg_1_0.import	mclmcrrt25_2.dll (delay)
+b.debug.k17dbg_1_0.resource	"RT_RCDATA" 2 lang 1033: 156391 bytes
+b.debug.k17dbg_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 24 02
+b.debug.k17dbg_1_0.resource	"TYPELIB" 1 lang 1033: 2604 bytes
+b.debug.k17dbg_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+b.debug.k17dbg_1_0.resource	VERSION 1 lang 1033: 320 bytes
+b.debug.k17dbg_1_0.  fixed.FileVersion	1.0.0.0
+b.debug.k17dbg_1_0.  fixed.ProductVersion	1.0.0.0
+b.debug.k17dbg_1_0.  fixed.FileFlags	0x0
+b.debug.k17dbg_1_0.  fixed.FileOS	0x0
+b.debug.k17dbg_1_0.  fixed.FileType	0x0
+b.debug.k17dbg_1_0.  table	040904b0
+b.debug.k17dbg_1_0.  string.FileVersion	1.0.0.0
+b.debug.k17dbg_1_0.  string.ProductVersion	1.0.0.0
+b.debug.k17dbg_1_0.  var.Translation	040904b0
+b.debug.k17dbg_1_0.dll.file	<W>\p\b\debug\k17dbg_1_0.dll.pdb
+b.debug.k17dbg_1_0.dll.ERR	not a PE file
+b.debug.k17dbg_1_0.file	<W>\p\b\debug\k17dbg_1_0.exp
+b.debug.k17dbg_1_0.ERR	not a PE file
+b.debug.k17dbg_1_0.file	<W>\p\b\debug\k17dbg_1_0.ilk
+b.debug.k17dbg_1_0.ERR	not a PE file
+b.debug.k17dbg_1_0.file	<W>\p\b\debug\k17dbg_1_0.lib
+b.debug.k17dbg_1_0.ERR	not a PE file
+b.debug.K17Dbg_com.file	<W>\p\b\debug\K17Dbg_com.cpp
+b.debug.K17Dbg_com.ERR	not a PE file
+b.debug.K17Dbg_com.file	<W>\p\b\debug\K17Dbg_com.hpp
+b.debug.K17Dbg_com.ERR	not a PE file
+b.debug.k17dbg_dll.file	<W>\p\b\debug\k17dbg_dll.cpp
+b.debug.k17dbg_dll.ERR	not a PE file
+b.debug.k17dbg_idl.file	<W>\p\b\debug\k17dbg_idl.h
+b.debug.k17dbg_idl.ERR	not a PE file
+b.debug.k17dbg_idl.file	<W>\p\b\debug\k17dbg_idl.idl
+b.debug.k17dbg_idl.ERR	not a PE file
+b.debug.k17dbg_idl.file	<W>\p\b\debug\k17dbg_idl.tlb
+b.debug.k17dbg_idl.ERR	not a PE file
+b.debug.k17dbg_idl_i.file	<W>\p\b\debug\k17dbg_idl_i.c
+b.debug.k17dbg_idl_i.ERR	not a PE file
+b.debug.k17dbg_idl_p.file	<W>\p\b\debug\k17dbg_idl_p.c
+b.debug.k17dbg_idl_p.ERR	not a PE file
+b.debug.mccExcludedFiles.file	<W>\p\b\debug\mccExcludedFiles.log
+b.debug.mccExcludedFiles.ERR	not a PE file
+b.debug.mwcomtypes.file	<W>\p\b\debug\mwcomtypes.h
+b.debug.mwcomtypes.ERR	not a PE file
+b.debug.mwcomtypes_i.file	<W>\p\b\debug\mwcomtypes_i.c
+b.debug.mwcomtypes_i.ERR	not a PE file
+b.debug.mwcomtypes_p.file	<W>\p\b\debug\mwcomtypes_p.c
+b.debug.mwcomtypes_p.ERR	not a PE file
+b.debug.readme.file	<W>\p\b\debug\readme.txt
+b.debug.readme.ERR	not a PE file
+b.debug.requiredMCRProducts.file	<W>\p\b\debug\requiredMCRProducts.txt
+b.debug.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+b.debug.unresolvedSymbols.file	<W>\p\b\debug\unresolvedSymbols.txt
+b.debug.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+b.defaults._install.file	<W>\p\b\defaults\_install.bat
+b.defaults._install.ERR	not a PE file
+b.defaults.buildresult.file	<W>\p\b\defaults\buildresult.json
+b.defaults.buildresult.ERR	not a PE file
+b.defaults.dlldata.file	<W>\p\b\defaults\dlldata.c
+b.defaults.dlldata.ERR	not a PE file
+b.defaults.GettingStarted.file	<W>\p\b\defaults\GettingStarted.html
+b.defaults.GettingStarted.ERR	not a PE file
+b.defaults.includedSupportPackages.file	<W>\p\b\defaults\includedSupportPackages.txt
+b.defaults.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.defaults.k17_one.file	<W>\p\b\defaults\k17_one.def
+b.defaults.k17_one.ERR	not a PE file
+b.defaults.k17_one.file	<W>\p\b\defaults\k17_one.rc
+b.defaults.k17_one.ERR	not a PE file
+b.defaults.k17_one_1_0.file	k17_one_1_0.dll
+b.defaults.k17_one_1_0.bytes	345600
+b.defaults.k17_one_1_0.machine	0x8664
+b.defaults.k17_one_1_0.subsystem	windows-gui
+b.defaults.k17_one_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+b.defaults.k17_one_1_0.image.bytes	345600
+b.defaults.k17_one_1_0.overlay.bytes	0
+b.defaults.k17_one_1_0.certificate	no
+b.defaults.k17_one_1_0.import	KERNEL32.dll
+b.defaults.k17_one_1_0.import	USER32.dll
+b.defaults.k17_one_1_0.import	ole32.dll
+b.defaults.k17_one_1_0.import	OLEAUT32.dll
+b.defaults.k17_one_1_0.import	mclxlmain25_2.dll
+b.defaults.k17_one_1_0.import	mclmcrrt25_2.dll (delay)
+b.defaults.k17_one_1_0.resource	"RT_RCDATA" 2 lang 1033: 153983 bytes
+b.defaults.k17_one_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 43 74
+b.defaults.k17_one_1_0.resource	"TYPELIB" 1 lang 1033: 2280 bytes
+b.defaults.k17_one_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+b.defaults.k17_one_1_0.resource	VERSION 1 lang 1033: 320 bytes
+b.defaults.k17_one_1_0.  fixed.FileVersion	1.0.0.0
+b.defaults.k17_one_1_0.  fixed.ProductVersion	1.0.0.0
+b.defaults.k17_one_1_0.  fixed.FileFlags	0x0
+b.defaults.k17_one_1_0.  fixed.FileOS	0x0
+b.defaults.k17_one_1_0.  fixed.FileType	0x0
+b.defaults.k17_one_1_0.  table	040904b0
+b.defaults.k17_one_1_0.  string.FileVersion	1.0.0.0
+b.defaults.k17_one_1_0.  string.ProductVersion	1.0.0.0
+b.defaults.k17_one_1_0.  var.Translation	040904b0
+b.defaults.k17_one_1_0.file	<W>\p\b\defaults\k17_one_1_0.exp
+b.defaults.k17_one_1_0.ERR	not a PE file
+b.defaults.k17_one_1_0.file	<W>\p\b\defaults\k17_one_1_0.lib
+b.defaults.k17_one_1_0.ERR	not a PE file
+b.defaults.k17_one_dll.file	<W>\p\b\defaults\k17_one_dll.cpp
+b.defaults.k17_one_dll.ERR	not a PE file
+b.defaults.k17_one_idl.file	<W>\p\b\defaults\k17_one_idl.h
+b.defaults.k17_one_idl.ERR	not a PE file
+b.defaults.k17_one_idl.file	<W>\p\b\defaults\k17_one_idl.idl
+b.defaults.k17_one_idl.ERR	not a PE file
+b.defaults.k17_one_idl.file	<W>\p\b\defaults\k17_one_idl.tlb
+b.defaults.k17_one_idl.ERR	not a PE file
+b.defaults.k17_one_idl_i.file	<W>\p\b\defaults\k17_one_idl_i.c
+b.defaults.k17_one_idl_i.ERR	not a PE file
+b.defaults.k17_one_idl_p.file	<W>\p\b\defaults\k17_one_idl_p.c
+b.defaults.k17_one_idl_p.ERR	not a PE file
+b.defaults.k17_oneClass_com.file	<W>\p\b\defaults\k17_oneClass_com.cpp
+b.defaults.k17_oneClass_com.ERR	not a PE file
+b.defaults.k17_oneClass_com.file	<W>\p\b\defaults\k17_oneClass_com.hpp
+b.defaults.k17_oneClass_com.ERR	not a PE file
+b.defaults.mccExcludedFiles.file	<W>\p\b\defaults\mccExcludedFiles.log
+b.defaults.mccExcludedFiles.ERR	not a PE file
+b.defaults.mwcomtypes.file	<W>\p\b\defaults\mwcomtypes.h
+b.defaults.mwcomtypes.ERR	not a PE file
+b.defaults.mwcomtypes_i.file	<W>\p\b\defaults\mwcomtypes_i.c
+b.defaults.mwcomtypes_i.ERR	not a PE file
+b.defaults.mwcomtypes_p.file	<W>\p\b\defaults\mwcomtypes_p.c
+b.defaults.mwcomtypes_p.ERR	not a PE file
+b.defaults.readme.file	<W>\p\b\defaults\readme.txt
+b.defaults.readme.ERR	not a PE file
+b.defaults.requiredMCRProducts.file	<W>\p\b\defaults\requiredMCRProducts.txt
+b.defaults.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+b.defaults.unresolvedSymbols.file	<W>\p\b\defaults\unresolvedSymbols.txt
+b.defaults.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+b.noembed..file	<W>\p\b\noembed\.deploy_lock
+b.noembed..ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.noembed._install.file	<W>\p\b\noembed\_install.bat
+b.noembed._install.ERR	not a PE file
+b.noembed.buildresult.file	<W>\p\b\noembed\buildresult.json
+b.noembed.buildresult.ERR	not a PE file
+b.noembed.dlldata.file	<W>\p\b\noembed\dlldata.c
+b.noembed.dlldata.ERR	not a PE file
+b.noembed.GettingStarted.file	<W>\p\b\noembed\GettingStarted.html
+b.noembed.GettingStarted.ERR	not a PE file
+b.noembed.includedSupportPackages.file	<W>\p\b\noembed\includedSupportPackages.txt
+b.noembed.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.noembed.k17sep.file	<W>\p\b\noembed\k17sep.bas
+b.noembed.k17sep.ERR	not a PE file
+b.noembed.k17sep.file	<W>\p\b\noembed\k17sep.ctf
+b.noembed.k17sep.ERR	not a PE file
+b.noembed.k17sep.file	<W>\p\b\noembed\k17sep.def
+b.noembed.k17sep.ERR	not a PE file
+b.noembed.k17sep.file	<W>\p\b\noembed\k17sep.rc
+b.noembed.k17sep.ERR	not a PE file
+b.noembed.k17sep_1_0.file	k17sep_1_0.dll
+b.noembed.k17sep_1_0.bytes	201728
+b.noembed.k17sep_1_0.machine	0x8664
+b.noembed.k17sep_1_0.subsystem	windows-gui
+b.noembed.k17sep_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+b.noembed.k17sep_1_0.image.bytes	201728
+b.noembed.k17sep_1_0.overlay.bytes	0
+b.noembed.k17sep_1_0.certificate	no
+b.noembed.k17sep_1_0.import	KERNEL32.dll
+b.noembed.k17sep_1_0.import	USER32.dll
+b.noembed.k17sep_1_0.import	ole32.dll
+b.noembed.k17sep_1_0.import	OLEAUT32.dll
+b.noembed.k17sep_1_0.import	mclxlmain25_2.dll
+b.noembed.k17sep_1_0.import	mclmcrrt25_2.dll (delay)
+b.noembed.k17sep_1_0.resource	"TYPELIB" 1 lang 1033: 4576 bytes
+b.noembed.k17sep_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+b.noembed.k17sep_1_0.resource	VERSION 1 lang 1033: 320 bytes
+b.noembed.k17sep_1_0.  fixed.FileVersion	1.0.0.0
+b.noembed.k17sep_1_0.  fixed.ProductVersion	1.0.0.0
+b.noembed.k17sep_1_0.  fixed.FileFlags	0x0
+b.noembed.k17sep_1_0.  fixed.FileOS	0x0
+b.noembed.k17sep_1_0.  fixed.FileType	0x0
+b.noembed.k17sep_1_0.  table	040904b0
+b.noembed.k17sep_1_0.  string.FileVersion	1.0.0.0
+b.noembed.k17sep_1_0.  string.ProductVersion	1.0.0.0
+b.noembed.k17sep_1_0.  var.Translation	040904b0
+b.noembed.k17sep_1_0.file	<W>\p\b\noembed\k17sep_1_0.exp
+b.noembed.k17sep_1_0.ERR	not a PE file
+b.noembed.k17sep_1_0.file	<W>\p\b\noembed\k17sep_1_0.lib
+b.noembed.k17sep_1_0.ERR	not a PE file
+b.noembed.K17Sep_com.file	<W>\p\b\noembed\K17Sep_com.cpp
+b.noembed.K17Sep_com.ERR	not a PE file
+b.noembed.K17Sep_com.file	<W>\p\b\noembed\K17Sep_com.hpp
+b.noembed.K17Sep_com.ERR	not a PE file
+b.noembed.k17sep_dll.file	<W>\p\b\noembed\k17sep_dll.cpp
+b.noembed.k17sep_dll.ERR	not a PE file
+b.noembed.k17sep_idl.file	<W>\p\b\noembed\k17sep_idl.h
+b.noembed.k17sep_idl.ERR	not a PE file
+b.noembed.k17sep_idl.file	<W>\p\b\noembed\k17sep_idl.idl
+b.noembed.k17sep_idl.ERR	not a PE file
+b.noembed.k17sep_idl.file	<W>\p\b\noembed\k17sep_idl.tlb
+b.noembed.k17sep_idl.ERR	not a PE file
+b.noembed.k17sep_idl_i.file	<W>\p\b\noembed\k17sep_idl_i.c
+b.noembed.k17sep_idl_i.ERR	not a PE file
+b.noembed.k17sep_idl_p.file	<W>\p\b\noembed\k17sep_idl_p.c
+b.noembed.k17sep_idl_p.ERR	not a PE file
+b.noembed.k17sep_mcr..matlab.matlab.file	<W>\p\b\noembed\k17sep_mcr\.matlab\matlab.mlsettings
+b.noembed.k17sep_mcr..matlab.matlab.ERR	not a PE file
+b.noembed.k17sep_mcr..matlab.matlab.file	<W>\p\b\noembed\k17sep_mcr\.matlab\matlab.prf
+b.noembed.k17sep_mcr..matlab.matlab.ERR	not a PE file
+b.noembed.k17sep_mcr..matlab.matlabprefs.file	<W>\p\b\noembed\k17sep_mcr\.matlab\matlabprefs.mat
+b.noembed.k17sep_mcr..matlab.matlabprefs.ERR	not a PE file
+b.noembed.k17sep_mcr..META.buildresult.file	<W>\p\b\noembed\k17sep_mcr\.META\buildresult.json
+b.noembed.k17sep_mcr..META.buildresult.ERR	not a PE file
+b.noembed.k17sep_mcr..META.includedSupportPackages.file	<W>\p\b\noembed\k17sep_mcr\.META\includedSupportPackages.txt
+b.noembed.k17sep_mcr..META.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.noembed.k17sep_mcr..META.manifest.file	<W>\p\b\noembed\k17sep_mcr\.META\manifest.xml
+b.noembed.k17sep_mcr..META.manifest.ERR	not a PE file
+b.noembed.k17sep_mcr..META.requiredMCRProducts.file	<W>\p\b\noembed\k17sep_mcr\.META\requiredMCRProducts.txt
+b.noembed.k17sep_mcr..META.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 24)
+b.noembed.k17sep_mcr..META.unresolvedSymbols.file	<W>\p\b\noembed\k17sep_mcr\.META\unresolvedSymbols.txt
+b.noembed.k17sep_mcr..META.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+b.noembed.k17sep_mcr.k17sep.k17_args.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_args.m
+b.noembed.k17sep_mcr.k17sep.k17_args.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_both.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_both.m
+b.noembed.k17sep_mcr.k17sep.k17_both.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_count.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_count.m
+b.noembed.k17sep_mcr.k17sep.k17_count.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_echo.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_echo.m
+b.noembed.k17sep_mcr.k17sep.k17_echo.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_err.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_err.m
+b.noembed.k17sep_mcr.k17sep.k17_err.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_h1.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_h1.m
+b.noembed.k17sep_mcr.k17sep.k17_h1.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_make.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_make.m
+b.noembed.k17sep_mcr.k17sep.k17_make.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_many.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_many.m
+b.noembed.k17sep_mcr.k17sep.k17_many.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_none.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_none.m
+b.noembed.k17sep_mcr.k17sep.k17_none.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_noout.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_noout.m
+b.noembed.k17sep_mcr.k17sep.k17_noout.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_one.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_one.m
+b.noembed.k17sep_mcr.k17sep.k17_one.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_opt.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_opt.m
+b.noembed.k17sep_mcr.k17sep.k17_opt.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_pass.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_pass.m
+b.noembed.k17sep_mcr.k17sep.k17_pass.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_plot.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_plot.m
+b.noembed.k17sep_mcr.k17sep.k17_plot.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_quiet.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_quiet.m
+b.noembed.k17sep_mcr.k17sep.k17_quiet.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_show.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_show.m
+b.noembed.k17sep_mcr.k17sep.k17_show.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_thing.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_thing.m
+b.noembed.k17sep_mcr.k17sep.k17_thing.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_two.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_two.m
+b.noembed.k17sep_mcr.k17sep.k17_two.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_varin.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_varin.m
+b.noembed.k17sep_mcr.k17sep.k17_varin.ERR	not a PE file
+b.noembed.k17sep_mcr.k17sep.k17_varout.file	<W>\p\b\noembed\k17sep_mcr\k17sep\k17_varout.m
+b.noembed.k17sep_mcr.k17sep.k17_varout.ERR	not a PE file
+b.noembed.k17sep_mcr.toolbox.compiler.Contents.file	<W>\p\b\noembed\k17sep_mcr\toolbox\compiler\Contents.m
+b.noembed.k17sep_mcr.toolbox.compiler.Contents.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 54)
+b.noembed.k17sep_mcr.toolbox.compiler.ctfroot.file	<W>\p\b\noembed\k17sep_mcr\toolbox\compiler\ctfroot.m
+b.noembed.k17sep_mcr.toolbox.compiler.ctfroot.ERR	not a PE file
+b.noembed.k17sep_mcr.toolbox.compiler.get_features_at_compile_time.file	<W>\p\b\noembed\k17sep_mcr\toolbox\compiler\get_features_at_compile_time.m
+b.noembed.k17sep_mcr.toolbox.compiler.get_features_at_compile_time.ERR	not a PE file
+b.noembed.k17sep_mcr.toolbox.local.Contents.file	<W>\p\b\noembed\k17sep_mcr\toolbox\local\Contents.m
+b.noembed.k17sep_mcr.toolbox.local.Contents.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 55)
+b.noembed.k17sep_mcr.toolbox.local.matlabrc.file	<W>\p\b\noembed\k17sep_mcr\toolbox\local\matlabrc.m
+b.noembed.k17sep_mcr.toolbox.local.matlabrc.ERR	not a PE file
+b.noembed.k17sep_mcr.toolbox.local.printopt.file	<W>\p\b\noembed\k17sep_mcr\toolbox\local\printopt.m
+b.noembed.k17sep_mcr.toolbox.local.printopt.ERR	not a PE file
+b.noembed.mccExcludedFiles.file	<W>\p\b\noembed\mccExcludedFiles.log
+b.noembed.mccExcludedFiles.ERR	not a PE file
+b.noembed.mwcomtypes.file	<W>\p\b\noembed\mwcomtypes.h
+b.noembed.mwcomtypes.ERR	not a PE file
+b.noembed.mwcomtypes_i.file	<W>\p\b\noembed\mwcomtypes_i.c
+b.noembed.mwcomtypes_i.ERR	not a PE file
+b.noembed.mwcomtypes_p.file	<W>\p\b\noembed\mwcomtypes_p.c
+b.noembed.mwcomtypes_p.ERR	not a PE file
+b.noembed.readme.file	<W>\p\b\noembed\readme.txt
+b.noembed.readme.ERR	not a PE file
+b.noembed.requiredMCRProducts.file	<W>\p\b\noembed\requiredMCRProducts.txt
+b.noembed.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 24)
+b.noembed.unresolvedSymbols.file	<W>\p\b\noembed\unresolvedSymbols.txt
+b.noembed.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+b.pfile._install.file	<W>\p\b\pfile\_install.bat
+b.pfile._install.ERR	not a PE file
+b.pfile.buildresult.file	<W>\p\b\pfile\buildresult.json
+b.pfile.buildresult.ERR	not a PE file
+b.pfile.dlldata.file	<W>\p\b\pfile\dlldata.c
+b.pfile.dlldata.ERR	not a PE file
+b.pfile.GettingStarted.file	<W>\p\b\pfile\GettingStarted.html
+b.pfile.GettingStarted.ERR	not a PE file
+b.pfile.includedSupportPackages.file	<W>\p\b\pfile\includedSupportPackages.txt
+b.pfile.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.pfile.k17p.file	<W>\p\b\pfile\k17p.bas
+b.pfile.k17p.ERR	not a PE file
+b.pfile.k17p.file	<W>\p\b\pfile\k17p.def
+b.pfile.k17p.ERR	not a PE file
+b.pfile.k17p.file	<W>\p\b\pfile\k17p.rc
+b.pfile.k17p.ERR	not a PE file
+b.pfile.k17p_1_0.file	k17p_1_0.dll
+b.pfile.k17p_1_0.bytes	347136
+b.pfile.k17p_1_0.machine	0x8664
+b.pfile.k17p_1_0.subsystem	windows-gui
+b.pfile.k17p_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+b.pfile.k17p_1_0.image.bytes	347136
+b.pfile.k17p_1_0.overlay.bytes	0
+b.pfile.k17p_1_0.certificate	no
+b.pfile.k17p_1_0.import	KERNEL32.dll
+b.pfile.k17p_1_0.import	USER32.dll
+b.pfile.k17p_1_0.import	ole32.dll
+b.pfile.k17p_1_0.import	OLEAUT32.dll
+b.pfile.k17p_1_0.import	mclxlmain25_2.dll
+b.pfile.k17p_1_0.import	mclmcrrt25_2.dll (delay)
+b.pfile.k17p_1_0.resource	"RT_RCDATA" 2 lang 1033: 155284 bytes
+b.pfile.k17p_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 e7 8a
+b.pfile.k17p_1_0.resource	"TYPELIB" 1 lang 1033: 2396 bytes
+b.pfile.k17p_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+b.pfile.k17p_1_0.resource	VERSION 1 lang 1033: 320 bytes
+b.pfile.k17p_1_0.  fixed.FileVersion	1.0.0.0
+b.pfile.k17p_1_0.  fixed.ProductVersion	1.0.0.0
+b.pfile.k17p_1_0.  fixed.FileFlags	0x0
+b.pfile.k17p_1_0.  fixed.FileOS	0x0
+b.pfile.k17p_1_0.  fixed.FileType	0x0
+b.pfile.k17p_1_0.  table	040904b0
+b.pfile.k17p_1_0.  string.FileVersion	1.0.0.0
+b.pfile.k17p_1_0.  string.ProductVersion	1.0.0.0
+b.pfile.k17p_1_0.  var.Translation	040904b0
+b.pfile.k17p_1_0.file	<W>\p\b\pfile\k17p_1_0.exp
+b.pfile.k17p_1_0.ERR	not a PE file
+b.pfile.k17p_1_0.file	<W>\p\b\pfile\k17p_1_0.lib
+b.pfile.k17p_1_0.ERR	not a PE file
+b.pfile.K17P_com.file	<W>\p\b\pfile\K17P_com.cpp
+b.pfile.K17P_com.ERR	not a PE file
+b.pfile.K17P_com.file	<W>\p\b\pfile\K17P_com.hpp
+b.pfile.K17P_com.ERR	not a PE file
+b.pfile.k17p_dll.file	<W>\p\b\pfile\k17p_dll.cpp
+b.pfile.k17p_dll.ERR	not a PE file
+b.pfile.k17p_idl.file	<W>\p\b\pfile\k17p_idl.h
+b.pfile.k17p_idl.ERR	not a PE file
+b.pfile.k17p_idl.file	<W>\p\b\pfile\k17p_idl.idl
+b.pfile.k17p_idl.ERR	not a PE file
+b.pfile.k17p_idl.file	<W>\p\b\pfile\k17p_idl.tlb
+b.pfile.k17p_idl.ERR	not a PE file
+b.pfile.k17p_idl_i.file	<W>\p\b\pfile\k17p_idl_i.c
+b.pfile.k17p_idl_i.ERR	not a PE file
+b.pfile.k17p_idl_p.file	<W>\p\b\pfile\k17p_idl_p.c
+b.pfile.k17p_idl_p.ERR	not a PE file
+b.pfile.mccExcludedFiles.file	<W>\p\b\pfile\mccExcludedFiles.log
+b.pfile.mccExcludedFiles.ERR	not a PE file
+b.pfile.mwcomtypes.file	<W>\p\b\pfile\mwcomtypes.h
+b.pfile.mwcomtypes.ERR	not a PE file
+b.pfile.mwcomtypes_i.file	<W>\p\b\pfile\mwcomtypes_i.c
+b.pfile.mwcomtypes_i.ERR	not a PE file
+b.pfile.mwcomtypes_p.file	<W>\p\b\pfile\mwcomtypes_p.c
+b.pfile.mwcomtypes_p.ERR	not a PE file
+b.pfile.readme.file	<W>\p\b\pfile\readme.txt
+b.pfile.readme.ERR	not a PE file
+b.pfile.requiredMCRProducts.file	<W>\p\b\pfile\requiredMCRProducts.txt
+b.pfile.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+b.pfile.unresolvedSymbols.file	<W>\p\b\pfile\unresolvedSymbols.txt
+b.pfile.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+b.plain._install.file	<W>\p\b\plain\_install.bat
+b.plain._install.ERR	not a PE file
+b.plain.buildresult.file	<W>\p\b\plain\buildresult.json
+b.plain.buildresult.ERR	not a PE file
+b.plain.dlldata.file	<W>\p\b\plain\dlldata.c
+b.plain.dlldata.ERR	not a PE file
+b.plain.GettingStarted.file	<W>\p\b\plain\GettingStarted.html
+b.plain.GettingStarted.ERR	not a PE file
+b.plain.includedSupportPackages.file	<W>\p\b\plain\includedSupportPackages.txt
+b.plain.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.plain.k17xl.file	<W>\p\b\plain\k17xl.def
+b.plain.k17xl.ERR	not a PE file
+b.plain.k17xl.file	<W>\p\b\plain\k17xl.rc
+b.plain.k17xl.ERR	not a PE file
+b.plain.k17xl_1_0.file	k17xl_1_0.dll
+b.plain.k17xl_1_0.bytes	382976
+b.plain.k17xl_1_0.machine	0x8664
+b.plain.k17xl_1_0.subsystem	windows-gui
+b.plain.k17xl_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+b.plain.k17xl_1_0.image.bytes	382976
+b.plain.k17xl_1_0.overlay.bytes	0
+b.plain.k17xl_1_0.certificate	no
+b.plain.k17xl_1_0.import	KERNEL32.dll
+b.plain.k17xl_1_0.import	USER32.dll
+b.plain.k17xl_1_0.import	ole32.dll
+b.plain.k17xl_1_0.import	OLEAUT32.dll
+b.plain.k17xl_1_0.import	mclxlmain25_2.dll
+b.plain.k17xl_1_0.import	mclmcrrt25_2.dll (delay)
+b.plain.k17xl_1_0.resource	"RT_RCDATA" 2 lang 1033: 180771 bytes
+b.plain.k17xl_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 fa be
+b.plain.k17xl_1_0.resource	"TYPELIB" 1 lang 1033: 4572 bytes
+b.plain.k17xl_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+b.plain.k17xl_1_0.resource	VERSION 1 lang 1033: 320 bytes
+b.plain.k17xl_1_0.  fixed.FileVersion	1.0.0.0
+b.plain.k17xl_1_0.  fixed.ProductVersion	1.0.0.0
+b.plain.k17xl_1_0.  fixed.FileFlags	0x0
+b.plain.k17xl_1_0.  fixed.FileOS	0x0
+b.plain.k17xl_1_0.  fixed.FileType	0x0
+b.plain.k17xl_1_0.  table	040904b0
+b.plain.k17xl_1_0.  string.FileVersion	1.0.0.0
+b.plain.k17xl_1_0.  string.ProductVersion	1.0.0.0
+b.plain.k17xl_1_0.  var.Translation	040904b0
+b.plain.k17xl_1_0.file	<W>\p\b\plain\k17xl_1_0.exp
+b.plain.k17xl_1_0.ERR	not a PE file
+b.plain.k17xl_1_0.file	<W>\p\b\plain\k17xl_1_0.lib
+b.plain.k17xl_1_0.ERR	not a PE file
+b.plain.K17Xl_com.file	<W>\p\b\plain\K17Xl_com.cpp
+b.plain.K17Xl_com.ERR	not a PE file
+b.plain.K17Xl_com.file	<W>\p\b\plain\K17Xl_com.hpp
+b.plain.K17Xl_com.ERR	not a PE file
+b.plain.k17xl_dll.file	<W>\p\b\plain\k17xl_dll.cpp
+b.plain.k17xl_dll.ERR	not a PE file
+b.plain.k17xl_idl.file	<W>\p\b\plain\k17xl_idl.h
+b.plain.k17xl_idl.ERR	not a PE file
+b.plain.k17xl_idl.file	<W>\p\b\plain\k17xl_idl.idl
+b.plain.k17xl_idl.ERR	not a PE file
+b.plain.k17xl_idl.file	<W>\p\b\plain\k17xl_idl.tlb
+b.plain.k17xl_idl.ERR	not a PE file
+b.plain.k17xl_idl_i.file	<W>\p\b\plain\k17xl_idl_i.c
+b.plain.k17xl_idl_i.ERR	not a PE file
+b.plain.k17xl_idl_p.file	<W>\p\b\plain\k17xl_idl_p.c
+b.plain.k17xl_idl_p.ERR	not a PE file
+b.plain.mccExcludedFiles.file	<W>\p\b\plain\mccExcludedFiles.log
+b.plain.mccExcludedFiles.ERR	not a PE file
+b.plain.mwcomtypes.file	<W>\p\b\plain\mwcomtypes.h
+b.plain.mwcomtypes.ERR	not a PE file
+b.plain.mwcomtypes_i.file	<W>\p\b\plain\mwcomtypes_i.c
+b.plain.mwcomtypes_i.ERR	not a PE file
+b.plain.mwcomtypes_p.file	<W>\p\b\plain\mwcomtypes_p.c
+b.plain.mwcomtypes_p.ERR	not a PE file
+b.plain.readme.file	<W>\p\b\plain\readme.txt
+b.plain.readme.ERR	not a PE file
+b.plain.requiredMCRProducts.file	<W>\p\b\plain\requiredMCRProducts.txt
+b.plain.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 24)
+b.plain.unresolvedSymbols.file	<W>\p\b\plain\unresolvedSymbols.txt
+b.plain.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+b.plain2._install.file	<W>\p\b\plain2\_install.bat
+b.plain2._install.ERR	not a PE file
+b.plain2.buildresult.file	<W>\p\b\plain2\buildresult.json
+b.plain2.buildresult.ERR	not a PE file
+b.plain2.dlldata.file	<W>\p\b\plain2\dlldata.c
+b.plain2.dlldata.ERR	not a PE file
+b.plain2.GettingStarted.file	<W>\p\b\plain2\GettingStarted.html
+b.plain2.GettingStarted.ERR	not a PE file
+b.plain2.includedSupportPackages.file	<W>\p\b\plain2\includedSupportPackages.txt
+b.plain2.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.plain2.k17xl.file	<W>\p\b\plain2\k17xl.def
+b.plain2.k17xl.ERR	not a PE file
+b.plain2.k17xl.file	<W>\p\b\plain2\k17xl.rc
+b.plain2.k17xl.ERR	not a PE file
+b.plain2.k17xl_1_0.file	k17xl_1_0.dll
+b.plain2.k17xl_1_0.bytes	382464
+b.plain2.k17xl_1_0.machine	0x8664
+b.plain2.k17xl_1_0.subsystem	windows-gui
+b.plain2.k17xl_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+b.plain2.k17xl_1_0.image.bytes	382464
+b.plain2.k17xl_1_0.overlay.bytes	0
+b.plain2.k17xl_1_0.certificate	no
+b.plain2.k17xl_1_0.import	KERNEL32.dll
+b.plain2.k17xl_1_0.import	USER32.dll
+b.plain2.k17xl_1_0.import	ole32.dll
+b.plain2.k17xl_1_0.import	OLEAUT32.dll
+b.plain2.k17xl_1_0.import	mclxlmain25_2.dll
+b.plain2.k17xl_1_0.import	mclmcrrt25_2.dll (delay)
+b.plain2.k17xl_1_0.resource	"RT_RCDATA" 2 lang 1033: 180683 bytes
+b.plain2.k17xl_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 7d bb
+b.plain2.k17xl_1_0.resource	"TYPELIB" 1 lang 1033: 4572 bytes
+b.plain2.k17xl_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+b.plain2.k17xl_1_0.resource	VERSION 1 lang 1033: 320 bytes
+b.plain2.k17xl_1_0.  fixed.FileVersion	1.0.0.0
+b.plain2.k17xl_1_0.  fixed.ProductVersion	1.0.0.0
+b.plain2.k17xl_1_0.  fixed.FileFlags	0x0
+b.plain2.k17xl_1_0.  fixed.FileOS	0x0
+b.plain2.k17xl_1_0.  fixed.FileType	0x0
+b.plain2.k17xl_1_0.  table	040904b0
+b.plain2.k17xl_1_0.  string.FileVersion	1.0.0.0
+b.plain2.k17xl_1_0.  string.ProductVersion	1.0.0.0
+b.plain2.k17xl_1_0.  var.Translation	040904b0
+b.plain2.k17xl_1_0.file	<W>\p\b\plain2\k17xl_1_0.exp
+b.plain2.k17xl_1_0.ERR	not a PE file
+b.plain2.k17xl_1_0.file	<W>\p\b\plain2\k17xl_1_0.lib
+b.plain2.k17xl_1_0.ERR	not a PE file
+b.plain2.K17Xl_com.file	<W>\p\b\plain2\K17Xl_com.cpp
+b.plain2.K17Xl_com.ERR	not a PE file
+b.plain2.K17Xl_com.file	<W>\p\b\plain2\K17Xl_com.hpp
+b.plain2.K17Xl_com.ERR	not a PE file
+b.plain2.k17xl_dll.file	<W>\p\b\plain2\k17xl_dll.cpp
+b.plain2.k17xl_dll.ERR	not a PE file
+b.plain2.k17xl_idl.file	<W>\p\b\plain2\k17xl_idl.h
+b.plain2.k17xl_idl.ERR	not a PE file
+b.plain2.k17xl_idl.file	<W>\p\b\plain2\k17xl_idl.idl
+b.plain2.k17xl_idl.ERR	not a PE file
+b.plain2.k17xl_idl.file	<W>\p\b\plain2\k17xl_idl.tlb
+b.plain2.k17xl_idl.ERR	not a PE file
+b.plain2.k17xl_idl_i.file	<W>\p\b\plain2\k17xl_idl_i.c
+b.plain2.k17xl_idl_i.ERR	not a PE file
+b.plain2.k17xl_idl_p.file	<W>\p\b\plain2\k17xl_idl_p.c
+b.plain2.k17xl_idl_p.ERR	not a PE file
+b.plain2.mccExcludedFiles.file	<W>\p\b\plain2\mccExcludedFiles.log
+b.plain2.mccExcludedFiles.ERR	not a PE file
+b.plain2.mwcomtypes.file	<W>\p\b\plain2\mwcomtypes.h
+b.plain2.mwcomtypes.ERR	not a PE file
+b.plain2.mwcomtypes_i.file	<W>\p\b\plain2\mwcomtypes_i.c
+b.plain2.mwcomtypes_i.ERR	not a PE file
+b.plain2.mwcomtypes_p.file	<W>\p\b\plain2\mwcomtypes_p.c
+b.plain2.mwcomtypes_p.ERR	not a PE file
+b.plain2.readme.file	<W>\p\b\plain2\readme.txt
+b.plain2.readme.ERR	not a PE file
+b.plain2.requiredMCRProducts.file	<W>\p\b\plain2\requiredMCRProducts.txt
+b.plain2.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 24)
+b.plain2.unresolvedSymbols.file	<W>\p\b\plain2\unresolvedSymbols.txt
+b.plain2.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+b.ra._install.file	<W>\p\b\ra\_install.bat
+b.ra._install.ERR	not a PE file
+b.ra.buildresult.file	<W>\p\b\ra\buildresult.json
+b.ra.buildresult.ERR	not a PE file
+b.ra.dlldata.file	<W>\p\b\ra\dlldata.c
+b.ra.dlldata.ERR	not a PE file
+b.ra.GettingStarted.file	<W>\p\b\ra\GettingStarted.html
+b.ra.GettingStarted.ERR	not a PE file
+b.ra.includedSupportPackages.file	<W>\p\b\ra\includedSupportPackages.txt
+b.ra.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.ra.k17ra.file	<W>\p\b\ra\k17ra.def
+b.ra.k17ra.ERR	not a PE file
+b.ra.k17ra.file	<W>\p\b\ra\k17ra.rc
+b.ra.k17ra.ERR	not a PE file
+b.ra.k17ra_1_0.file	k17ra_1_0.dll
+b.ra.k17ra_1_0.bytes	345600
+b.ra.k17ra_1_0.machine	0x8664
+b.ra.k17ra_1_0.subsystem	windows-gui
+b.ra.k17ra_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+b.ra.k17ra_1_0.image.bytes	345600
+b.ra.k17ra_1_0.overlay.bytes	0
+b.ra.k17ra_1_0.certificate	no
+b.ra.k17ra_1_0.import	KERNEL32.dll
+b.ra.k17ra_1_0.import	USER32.dll
+b.ra.k17ra_1_0.import	ole32.dll
+b.ra.k17ra_1_0.import	OLEAUT32.dll
+b.ra.k17ra_1_0.import	mclxlmain25_2.dll
+b.ra.k17ra_1_0.import	mclmcrrt25_2.dll (delay)
+b.ra.k17ra_1_0.resource	"RT_RCDATA" 2 lang 1033: 154010 bytes
+b.ra.k17ra_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 16 a6
+b.ra.k17ra_1_0.resource	"TYPELIB" 1 lang 1033: 2252 bytes
+b.ra.k17ra_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+b.ra.k17ra_1_0.resource	VERSION 1 lang 1033: 320 bytes
+b.ra.k17ra_1_0.  fixed.FileVersion	1.0.0.0
+b.ra.k17ra_1_0.  fixed.ProductVersion	1.0.0.0
+b.ra.k17ra_1_0.  fixed.FileFlags	0x0
+b.ra.k17ra_1_0.  fixed.FileOS	0x0
+b.ra.k17ra_1_0.  fixed.FileType	0x0
+b.ra.k17ra_1_0.  table	040904b0
+b.ra.k17ra_1_0.  string.FileVersion	1.0.0.0
+b.ra.k17ra_1_0.  string.ProductVersion	1.0.0.0
+b.ra.k17ra_1_0.  var.Translation	040904b0
+b.ra.k17ra_1_0.file	<W>\p\b\ra\k17ra_1_0.exp
+b.ra.k17ra_1_0.ERR	not a PE file
+b.ra.k17ra_1_0.file	<W>\p\b\ra\k17ra_1_0.lib
+b.ra.k17ra_1_0.ERR	not a PE file
+b.ra.K17Ra_com.file	<W>\p\b\ra\K17Ra_com.cpp
+b.ra.K17Ra_com.ERR	not a PE file
+b.ra.K17Ra_com.file	<W>\p\b\ra\K17Ra_com.hpp
+b.ra.K17Ra_com.ERR	not a PE file
+b.ra.k17ra_dll.file	<W>\p\b\ra\k17ra_dll.cpp
+b.ra.k17ra_dll.ERR	not a PE file
+b.ra.k17ra_idl.file	<W>\p\b\ra\k17ra_idl.h
+b.ra.k17ra_idl.ERR	not a PE file
+b.ra.k17ra_idl.file	<W>\p\b\ra\k17ra_idl.idl
+b.ra.k17ra_idl.ERR	not a PE file
+b.ra.k17ra_idl.file	<W>\p\b\ra\k17ra_idl.tlb
+b.ra.k17ra_idl.ERR	not a PE file
+b.ra.k17ra_idl_i.file	<W>\p\b\ra\k17ra_idl_i.c
+b.ra.k17ra_idl_i.ERR	not a PE file
+b.ra.k17ra_idl_p.file	<W>\p\b\ra\k17ra_idl_p.c
+b.ra.k17ra_idl_p.ERR	not a PE file
+b.ra.mccExcludedFiles.file	<W>\p\b\ra\mccExcludedFiles.log
+b.ra.mccExcludedFiles.ERR	not a PE file
+b.ra.mwcomtypes.file	<W>\p\b\ra\mwcomtypes.h
+b.ra.mwcomtypes.ERR	not a PE file
+b.ra.mwcomtypes_i.file	<W>\p\b\ra\mwcomtypes_i.c
+b.ra.mwcomtypes_i.ERR	not a PE file
+b.ra.mwcomtypes_p.file	<W>\p\b\ra\mwcomtypes_p.c
+b.ra.mwcomtypes_p.ERR	not a PE file
+b.ra.readme.file	<W>\p\b\ra\readme.txt
+b.ra.readme.ERR	not a PE file
+b.ra.requiredMCRProducts.file	<W>\p\b\ra\requiredMCRProducts.txt
+b.ra.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+b.ra.unresolvedSymbols.file	<W>\p\b\ra\unresolvedSymbols.txt
+b.ra.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+b.v05._install.file	<W>\p\b\v05\_install.bat
+b.v05._install.ERR	not a PE file
+b.v05.buildresult.file	<W>\p\b\v05\buildresult.json
+b.v05.buildresult.ERR	not a PE file
+b.v05.dlldata.file	<W>\p\b\v05\dlldata.c
+b.v05.dlldata.ERR	not a PE file
+b.v05.GettingStarted.file	<W>\p\b\v05\GettingStarted.html
+b.v05.GettingStarted.ERR	not a PE file
+b.v05.includedSupportPackages.file	<W>\p\b\v05\includedSupportPackages.txt
+b.v05.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.v05.k17v05.file	<W>\p\b\v05\k17v05.def
+b.v05.k17v05.ERR	not a PE file
+b.v05.k17v05.file	<W>\p\b\v05\k17v05.rc
+b.v05.k17v05.ERR	not a PE file
+b.v05.k17v05_1_0.file	k17v05_1_0.dll
+b.v05.k17v05_1_0.bytes	349696
+b.v05.k17v05_1_0.machine	0x8664
+b.v05.k17v05_1_0.subsystem	windows-gui
+b.v05.k17v05_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+b.v05.k17v05_1_0.image.bytes	349696
+b.v05.k17v05_1_0.overlay.bytes	0
+b.v05.k17v05_1_0.certificate	no
+b.v05.k17v05_1_0.import	KERNEL32.dll
+b.v05.k17v05_1_0.import	USER32.dll
+b.v05.k17v05_1_0.import	ole32.dll
+b.v05.k17v05_1_0.import	OLEAUT32.dll
+b.v05.k17v05_1_0.import	mclxlmain25_2.dll
+b.v05.k17v05_1_0.import	mclmcrrt25_2.dll (delay)
+b.v05.k17v05_1_0.resource	"RT_RCDATA" 2 lang 1033: 156415 bytes
+b.v05.k17v05_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 1d 2f
+b.v05.k17v05_1_0.resource	"TYPELIB" 1 lang 1033: 2604 bytes
+b.v05.k17v05_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+b.v05.k17v05_1_0.resource	VERSION 1 lang 1033: 320 bytes
+b.v05.k17v05_1_0.  fixed.FileVersion	1.0.0.0
+b.v05.k17v05_1_0.  fixed.ProductVersion	1.0.0.0
+b.v05.k17v05_1_0.  fixed.FileFlags	0x0
+b.v05.k17v05_1_0.  fixed.FileOS	0x0
+b.v05.k17v05_1_0.  fixed.FileType	0x0
+b.v05.k17v05_1_0.  table	040904b0
+b.v05.k17v05_1_0.  string.FileVersion	1.0.0.0
+b.v05.k17v05_1_0.  string.ProductVersion	1.0.0.0
+b.v05.k17v05_1_0.  var.Translation	040904b0
+b.v05.k17v05_1_0.file	<W>\p\b\v05\k17v05_1_0.exp
+b.v05.k17v05_1_0.ERR	not a PE file
+b.v05.k17v05_1_0.file	<W>\p\b\v05\k17v05_1_0.lib
+b.v05.k17v05_1_0.ERR	not a PE file
+b.v05.K17V05_com.file	<W>\p\b\v05\K17V05_com.cpp
+b.v05.K17V05_com.ERR	not a PE file
+b.v05.K17V05_com.file	<W>\p\b\v05\K17V05_com.hpp
+b.v05.K17V05_com.ERR	not a PE file
+b.v05.k17v05_dll.file	<W>\p\b\v05\k17v05_dll.cpp
+b.v05.k17v05_dll.ERR	not a PE file
+b.v05.k17v05_idl.file	<W>\p\b\v05\k17v05_idl.h
+b.v05.k17v05_idl.ERR	not a PE file
+b.v05.k17v05_idl.file	<W>\p\b\v05\k17v05_idl.idl
+b.v05.k17v05_idl.ERR	not a PE file
+b.v05.k17v05_idl.file	<W>\p\b\v05\k17v05_idl.tlb
+b.v05.k17v05_idl.ERR	not a PE file
+b.v05.k17v05_idl_i.file	<W>\p\b\v05\k17v05_idl_i.c
+b.v05.k17v05_idl_i.ERR	not a PE file
+b.v05.k17v05_idl_p.file	<W>\p\b\v05\k17v05_idl_p.c
+b.v05.k17v05_idl_p.ERR	not a PE file
+b.v05.mccExcludedFiles.file	<W>\p\b\v05\mccExcludedFiles.log
+b.v05.mccExcludedFiles.ERR	not a PE file
+b.v05.mwcomtypes.file	<W>\p\b\v05\mwcomtypes.h
+b.v05.mwcomtypes.ERR	not a PE file
+b.v05.mwcomtypes_i.file	<W>\p\b\v05\mwcomtypes_i.c
+b.v05.mwcomtypes_i.ERR	not a PE file
+b.v05.mwcomtypes_p.file	<W>\p\b\v05\mwcomtypes_p.c
+b.v05.mwcomtypes_p.ERR	not a PE file
+b.v05.readme.file	<W>\p\b\v05\readme.txt
+b.v05.readme.ERR	not a PE file
+b.v05.requiredMCRProducts.file	<W>\p\b\v05\requiredMCRProducts.txt
+b.v05.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+b.v05.unresolvedSymbols.file	<W>\p\b\v05\unresolvedSymbols.txt
+b.v05.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+b.v2._install.file	<W>\p\b\v2\_install.bat
+b.v2._install.ERR	not a PE file
+b.v2.buildresult.file	<W>\p\b\v2\buildresult.json
+b.v2.buildresult.ERR	not a PE file
+b.v2.dlldata.file	<W>\p\b\v2\dlldata.c
+b.v2.dlldata.ERR	not a PE file
+b.v2.GettingStarted.file	<W>\p\b\v2\GettingStarted.html
+b.v2.GettingStarted.ERR	not a PE file
+b.v2.includedSupportPackages.file	<W>\p\b\v2\includedSupportPackages.txt
+b.v2.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.v2.k17v2.file	<W>\p\b\v2\k17v2.def
+b.v2.k17v2.ERR	not a PE file
+b.v2.k17v2.file	<W>\p\b\v2\k17v2.rc
+b.v2.k17v2.ERR	not a PE file
+b.v2.k17v2_2_0.file	k17v2_2_0.dll
+b.v2.k17v2_2_0.bytes	349696
+b.v2.k17v2_2_0.machine	0x8664
+b.v2.k17v2_2_0.subsystem	windows-gui
+b.v2.k17v2_2_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+b.v2.k17v2_2_0.image.bytes	349696
+b.v2.k17v2_2_0.overlay.bytes	0
+b.v2.k17v2_2_0.certificate	no
+b.v2.k17v2_2_0.import	KERNEL32.dll
+b.v2.k17v2_2_0.import	USER32.dll
+b.v2.k17v2_2_0.import	ole32.dll
+b.v2.k17v2_2_0.import	OLEAUT32.dll
+b.v2.k17v2_2_0.import	mclxlmain25_2.dll
+b.v2.k17v2_2_0.import	mclmcrrt25_2.dll (delay)
+b.v2.k17v2_2_0.resource	"RT_RCDATA" 2 lang 1033: 156355 bytes
+b.v2.k17v2_2_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 6d 97
+b.v2.k17v2_2_0.resource	"TYPELIB" 1 lang 1033: 2600 bytes
+b.v2.k17v2_2_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+b.v2.k17v2_2_0.resource	VERSION 1 lang 1033: 320 bytes
+b.v2.k17v2_2_0.  fixed.FileVersion	2.0.0.0
+b.v2.k17v2_2_0.  fixed.ProductVersion	2.0.0.0
+b.v2.k17v2_2_0.  fixed.FileFlags	0x0
+b.v2.k17v2_2_0.  fixed.FileOS	0x0
+b.v2.k17v2_2_0.  fixed.FileType	0x0
+b.v2.k17v2_2_0.  table	040904b0
+b.v2.k17v2_2_0.  string.FileVersion	2.0.0.0
+b.v2.k17v2_2_0.  string.ProductVersion	2.0.0.0
+b.v2.k17v2_2_0.  var.Translation	040904b0
+b.v2.k17v2_2_0.file	<W>\p\b\v2\k17v2_2_0.exp
+b.v2.k17v2_2_0.ERR	not a PE file
+b.v2.k17v2_2_0.file	<W>\p\b\v2\k17v2_2_0.lib
+b.v2.k17v2_2_0.ERR	not a PE file
+b.v2.K17V2_com.file	<W>\p\b\v2\K17V2_com.cpp
+b.v2.K17V2_com.ERR	not a PE file
+b.v2.K17V2_com.file	<W>\p\b\v2\K17V2_com.hpp
+b.v2.K17V2_com.ERR	not a PE file
+b.v2.k17v2_dll.file	<W>\p\b\v2\k17v2_dll.cpp
+b.v2.k17v2_dll.ERR	not a PE file
+b.v2.k17v2_idl.file	<W>\p\b\v2\k17v2_idl.h
+b.v2.k17v2_idl.ERR	not a PE file
+b.v2.k17v2_idl.file	<W>\p\b\v2\k17v2_idl.idl
+b.v2.k17v2_idl.ERR	not a PE file
+b.v2.k17v2_idl.file	<W>\p\b\v2\k17v2_idl.tlb
+b.v2.k17v2_idl.ERR	not a PE file
+b.v2.k17v2_idl_i.file	<W>\p\b\v2\k17v2_idl_i.c
+b.v2.k17v2_idl_i.ERR	not a PE file
+b.v2.k17v2_idl_p.file	<W>\p\b\v2\k17v2_idl_p.c
+b.v2.k17v2_idl_p.ERR	not a PE file
+b.v2.mccExcludedFiles.file	<W>\p\b\v2\mccExcludedFiles.log
+b.v2.mccExcludedFiles.ERR	not a PE file
+b.v2.mwcomtypes.file	<W>\p\b\v2\mwcomtypes.h
+b.v2.mwcomtypes.ERR	not a PE file
+b.v2.mwcomtypes_i.file	<W>\p\b\v2\mwcomtypes_i.c
+b.v2.mwcomtypes_i.ERR	not a PE file
+b.v2.mwcomtypes_p.file	<W>\p\b\v2\mwcomtypes_p.c
+b.v2.mwcomtypes_p.ERR	not a PE file
+b.v2.readme.file	<W>\p\b\v2\readme.txt
+b.v2.readme.ERR	not a PE file
+b.v2.requiredMCRProducts.file	<W>\p\b\v2\requiredMCRProducts.txt
+b.v2.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+b.v2.unresolvedSymbols.file	<W>\p\b\v2\unresolvedSymbols.txt
+b.v2.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+b.v3456._install.file	<W>\p\b\v3456\_install.bat
+b.v3456._install.ERR	not a PE file
+b.v3456.buildresult.file	<W>\p\b\v3456\buildresult.json
+b.v3456.buildresult.ERR	not a PE file
+b.v3456.dlldata.file	<W>\p\b\v3456\dlldata.c
+b.v3456.dlldata.ERR	not a PE file
+b.v3456.GettingStarted.file	<W>\p\b\v3456\GettingStarted.html
+b.v3456.GettingStarted.ERR	not a PE file
+b.v3456.includedSupportPackages.file	<W>\p\b\v3456\includedSupportPackages.txt
+b.v3456.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.v3456.k17v3456.file	<W>\p\b\v3456\k17v3456.bas
+b.v3456.k17v3456.ERR	not a PE file
+b.v3456.k17v3456.file	<W>\p\b\v3456\k17v3456.def
+b.v3456.k17v3456.ERR	not a PE file
+b.v3456.k17v3456.file	<W>\p\b\v3456\k17v3456.rc
+b.v3456.k17v3456.ERR	not a PE file
+b.v3456.k17v3456_3_4.file	k17v3456_3_4.dll
+b.v3456.k17v3456_3_4.bytes	349696
+b.v3456.k17v3456_3_4.machine	0x8664
+b.v3456.k17v3456_3_4.subsystem	windows-gui
+b.v3456.k17v3456_3_4.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+b.v3456.k17v3456_3_4.image.bytes	349696
+b.v3456.k17v3456_3_4.overlay.bytes	0
+b.v3456.k17v3456_3_4.certificate	no
+b.v3456.k17v3456_3_4.import	KERNEL32.dll
+b.v3456.k17v3456_3_4.import	USER32.dll
+b.v3456.k17v3456_3_4.import	ole32.dll
+b.v3456.k17v3456_3_4.import	OLEAUT32.dll
+b.v3456.k17v3456_3_4.import	mclxlmain25_2.dll
+b.v3456.k17v3456_3_4.import	mclmcrrt25_2.dll (delay)
+b.v3456.k17v3456_3_4.resource	"RT_RCDATA" 2 lang 1033: 156451 bytes
+b.v3456.k17v3456_3_4.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 09 bc
+b.v3456.k17v3456_3_4.resource	"TYPELIB" 1 lang 1033: 2612 bytes
+b.v3456.k17v3456_3_4.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+b.v3456.k17v3456_3_4.resource	VERSION 1 lang 1033: 320 bytes
+b.v3456.k17v3456_3_4.  fixed.FileVersion	3.4.5.6
+b.v3456.k17v3456_3_4.  fixed.ProductVersion	3.4.5.6
+b.v3456.k17v3456_3_4.  fixed.FileFlags	0x0
+b.v3456.k17v3456_3_4.  fixed.FileOS	0x0
+b.v3456.k17v3456_3_4.  fixed.FileType	0x0
+b.v3456.k17v3456_3_4.  table	040904b0
+b.v3456.k17v3456_3_4.  string.FileVersion	3.4.5.6
+b.v3456.k17v3456_3_4.  string.ProductVersion	3.4.5.6
+b.v3456.k17v3456_3_4.  var.Translation	040904b0
+b.v3456.k17v3456_3_4.file	<W>\p\b\v3456\k17v3456_3_4.exp
+b.v3456.k17v3456_3_4.ERR	not a PE file
+b.v3456.k17v3456_3_4.file	<W>\p\b\v3456\k17v3456_3_4.lib
+b.v3456.k17v3456_3_4.ERR	not a PE file
+b.v3456.K17V3456_com.file	<W>\p\b\v3456\K17V3456_com.cpp
+b.v3456.K17V3456_com.ERR	not a PE file
+b.v3456.K17V3456_com.file	<W>\p\b\v3456\K17V3456_com.hpp
+b.v3456.K17V3456_com.ERR	not a PE file
+b.v3456.k17v3456_dll.file	<W>\p\b\v3456\k17v3456_dll.cpp
+b.v3456.k17v3456_dll.ERR	not a PE file
+b.v3456.k17v3456_idl.file	<W>\p\b\v3456\k17v3456_idl.h
+b.v3456.k17v3456_idl.ERR	not a PE file
+b.v3456.k17v3456_idl.file	<W>\p\b\v3456\k17v3456_idl.idl
+b.v3456.k17v3456_idl.ERR	not a PE file
+b.v3456.k17v3456_idl.file	<W>\p\b\v3456\k17v3456_idl.tlb
+b.v3456.k17v3456_idl.ERR	not a PE file
+b.v3456.k17v3456_idl_i.file	<W>\p\b\v3456\k17v3456_idl_i.c
+b.v3456.k17v3456_idl_i.ERR	not a PE file
+b.v3456.k17v3456_idl_p.file	<W>\p\b\v3456\k17v3456_idl_p.c
+b.v3456.k17v3456_idl_p.ERR	not a PE file
+b.v3456.mccExcludedFiles.file	<W>\p\b\v3456\mccExcludedFiles.log
+b.v3456.mccExcludedFiles.ERR	not a PE file
+b.v3456.mwcomtypes.file	<W>\p\b\v3456\mwcomtypes.h
+b.v3456.mwcomtypes.ERR	not a PE file
+b.v3456.mwcomtypes_i.file	<W>\p\b\v3456\mwcomtypes_i.c
+b.v3456.mwcomtypes_i.ERR	not a PE file
+b.v3456.mwcomtypes_p.file	<W>\p\b\v3456\mwcomtypes_p.c
+b.v3456.mwcomtypes_p.ERR	not a PE file
+b.v3456.readme.file	<W>\p\b\v3456\readme.txt
+b.v3456.readme.ERR	not a PE file
+b.v3456.requiredMCRProducts.file	<W>\p\b\v3456\requiredMCRProducts.txt
+b.v3456.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+b.v3456.unresolvedSymbols.file	<W>\p\b\v3456\unresolvedSymbols.txt
+b.v3456.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+b.vzero._install.file	<W>\p\b\vzero\_install.bat
+b.vzero._install.ERR	not a PE file
+b.vzero.buildresult.file	<W>\p\b\vzero\buildresult.json
+b.vzero.buildresult.ERR	not a PE file
+b.vzero.dlldata.file	<W>\p\b\vzero\dlldata.c
+b.vzero.dlldata.ERR	not a PE file
+b.vzero.GettingStarted.file	<W>\p\b\vzero\GettingStarted.html
+b.vzero.GettingStarted.ERR	not a PE file
+b.vzero.includedSupportPackages.file	<W>\p\b\vzero\includedSupportPackages.txt
+b.vzero.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.vzero.k17vz.file	<W>\p\b\vzero\k17vz.def
+b.vzero.k17vz.ERR	not a PE file
+b.vzero.k17vz.file	<W>\p\b\vzero\k17vz.rc
+b.vzero.k17vz.ERR	not a PE file
+b.vzero.k17vz_1_0.file	k17vz_1_0.dll
+b.vzero.k17vz_1_0.bytes	349696
+b.vzero.k17vz_1_0.machine	0x8664
+b.vzero.k17vz_1_0.subsystem	windows-gui
+b.vzero.k17vz_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+b.vzero.k17vz_1_0.image.bytes	349696
+b.vzero.k17vz_1_0.overlay.bytes	0
+b.vzero.k17vz_1_0.certificate	no
+b.vzero.k17vz_1_0.import	KERNEL32.dll
+b.vzero.k17vz_1_0.import	USER32.dll
+b.vzero.k17vz_1_0.import	ole32.dll
+b.vzero.k17vz_1_0.import	OLEAUT32.dll
+b.vzero.k17vz_1_0.import	mclxlmain25_2.dll
+b.vzero.k17vz_1_0.import	mclmcrrt25_2.dll (delay)
+b.vzero.k17vz_1_0.resource	"RT_RCDATA" 2 lang 1033: 156361 bytes
+b.vzero.k17vz_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 99 31
+b.vzero.k17vz_1_0.resource	"TYPELIB" 1 lang 1033: 2600 bytes
+b.vzero.k17vz_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+b.vzero.k17vz_1_0.resource	VERSION 1 lang 1033: 320 bytes
+b.vzero.k17vz_1_0.  fixed.FileVersion	1.0.0.0
+b.vzero.k17vz_1_0.  fixed.ProductVersion	1.0.0.0
+b.vzero.k17vz_1_0.  fixed.FileFlags	0x0
+b.vzero.k17vz_1_0.  fixed.FileOS	0x0
+b.vzero.k17vz_1_0.  fixed.FileType	0x0
+b.vzero.k17vz_1_0.  table	040904b0
+b.vzero.k17vz_1_0.  string.FileVersion	1.0.0.0
+b.vzero.k17vz_1_0.  string.ProductVersion	1.0.0.0
+b.vzero.k17vz_1_0.  var.Translation	040904b0
+b.vzero.k17vz_1_0.file	<W>\p\b\vzero\k17vz_1_0.exp
+b.vzero.k17vz_1_0.ERR	not a PE file
+b.vzero.k17vz_1_0.file	<W>\p\b\vzero\k17vz_1_0.lib
+b.vzero.k17vz_1_0.ERR	not a PE file
+b.vzero.K17Vz_com.file	<W>\p\b\vzero\K17Vz_com.cpp
+b.vzero.K17Vz_com.ERR	not a PE file
+b.vzero.K17Vz_com.file	<W>\p\b\vzero\K17Vz_com.hpp
+b.vzero.K17Vz_com.ERR	not a PE file
+b.vzero.k17vz_dll.file	<W>\p\b\vzero\k17vz_dll.cpp
+b.vzero.k17vz_dll.ERR	not a PE file
+b.vzero.k17vz_idl.file	<W>\p\b\vzero\k17vz_idl.h
+b.vzero.k17vz_idl.ERR	not a PE file
+b.vzero.k17vz_idl.file	<W>\p\b\vzero\k17vz_idl.idl
+b.vzero.k17vz_idl.ERR	not a PE file
+b.vzero.k17vz_idl.file	<W>\p\b\vzero\k17vz_idl.tlb
+b.vzero.k17vz_idl.ERR	not a PE file
+b.vzero.k17vz_idl_i.file	<W>\p\b\vzero\k17vz_idl_i.c
+b.vzero.k17vz_idl_i.ERR	not a PE file
+b.vzero.k17vz_idl_p.file	<W>\p\b\vzero\k17vz_idl_p.c
+b.vzero.k17vz_idl_p.ERR	not a PE file
+b.vzero.mccExcludedFiles.file	<W>\p\b\vzero\mccExcludedFiles.log
+b.vzero.mccExcludedFiles.ERR	not a PE file
+b.vzero.mwcomtypes.file	<W>\p\b\vzero\mwcomtypes.h
+b.vzero.mwcomtypes.ERR	not a PE file
+b.vzero.mwcomtypes_i.file	<W>\p\b\vzero\mwcomtypes_i.c
+b.vzero.mwcomtypes_i.ERR	not a PE file
+b.vzero.mwcomtypes_p.file	<W>\p\b\vzero\mwcomtypes_p.c
+b.vzero.mwcomtypes_p.ERR	not a PE file
+b.vzero.readme.file	<W>\p\b\vzero\readme.txt
+b.vzero.readme.ERR	not a PE file
+b.vzero.requiredMCRProducts.file	<W>\p\b\vzero\requiredMCRProducts.txt
+b.vzero.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+b.vzero.unresolvedSymbols.file	<W>\p\b\vzero\unresolvedSymbols.txt
+b.vzero.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+c.arch.buildresult.file	<W>\p\c\arch\buildresult.json
+c.arch.buildresult.ERR	not a PE file
+c.arch.includedSupportPackages.file	<W>\p\c\arch\includedSupportPackages.txt
+c.arch.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.arch.k17arch.file	<W>\p\c\arch\k17arch.ctf
+c.arch.k17arch.ERR	not a PE file
+c.arch.mccExcludedFiles.file	<W>\p\c\arch\mccExcludedFiles.log
+c.arch.mccExcludedFiles.ERR	not a PE file
+c.arch.readme.file	<W>\p\c\arch\readme.txt
+c.arch.readme.ERR	not a PE file
+c.arch.requiredMCRProducts.file	<W>\p\c\arch\requiredMCRProducts.txt
+c.arch.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 24)
+c.arch.unresolvedSymbols.file	<W>\p\c\arch\unresolvedSymbols.txt
+c.arch.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+c.blank.buildresult.file	<W>\p\c\blank\buildresult.json
+c.blank.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+c.blank.includedSupportPackages.file	<W>\p\c\blank\includedSupportPackages.txt
+c.blank.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.blank.k17blank.file	<W>\p\c\blank\k17blank.bas
+c.blank.k17blank.ERR	not a PE file
+c.blank.K17Blank.file	<W>\p\c\blank\K17Blank.cs
+c.blank.K17Blank.ERR	not a PE file
+c.blank.k17blank.file	k17blank.dll
+c.blank.k17blank.bytes	954368
+c.blank.k17blank.machine	0x14c
+c.blank.k17blank.subsystem	windows-console
+c.blank.k17blank.sections	.text .rsrc .reloc
+c.blank.k17blank.image.bytes	954368
+c.blank.k17blank.overlay.bytes	0
+c.blank.k17blank.certificate	no
+c.blank.k17blank.import	mscoree.dll
+c.blank.k17blank.resource	VERSION 1 lang 0: 320 bytes
+c.blank.k17blank.  fixed.FileVersion	1.0.0.0
+c.blank.k17blank.  fixed.ProductVersion	1.0.0.0
+c.blank.k17blank.  fixed.FileFlags	0x0
+c.blank.k17blank.  fixed.FileOS	0x40004
+c.blank.k17blank.  fixed.FileType	0x0
+c.blank.k17blank.  table	000004B0
+c.blank.k17blank.  string.FileVersion	1.0.0.0
+c.blank.k17blank.  string.ProductVersion	1.0.0.0
+c.blank.k17blank.  var.Translation	000004b0
+c.blank.k17blank.file	<W>\p\c\blank\k17blank.reg
+c.blank.k17blank.ERR	not a PE file
+c.blank.readme.file	<W>\p\c\blank\readme.txt
+c.blank.readme.ERR	not a PE file
+c.cdebug.buildresult.file	<W>\p\c\cdebug\buildresult.json
+c.cdebug.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+c.cdebug.includedSupportPackages.file	<W>\p\c\cdebug\includedSupportPackages.txt
+c.cdebug.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.cdebug.k17cdbg.file	<W>\p\c\cdebug\k17cdbg.bas
+c.cdebug.k17cdbg.ERR	not a PE file
+c.cdebug.K17Cdbg.file	<W>\p\c\cdebug\K17Cdbg.cs
+c.cdebug.K17Cdbg.ERR	not a PE file
+c.cdebug.k17cdbg.file	k17cdbg.dll
+c.cdebug.k17cdbg.bytes	955904
+c.cdebug.k17cdbg.machine	0x14c
+c.cdebug.k17cdbg.subsystem	windows-console
+c.cdebug.k17cdbg.sections	.text .rsrc .reloc
+c.cdebug.k17cdbg.image.bytes	955904
+c.cdebug.k17cdbg.overlay.bytes	0
+c.cdebug.k17cdbg.certificate	no
+c.cdebug.k17cdbg.import	mscoree.dll
+c.cdebug.k17cdbg.resource	VERSION 1 lang 0: 320 bytes
+c.cdebug.k17cdbg.  fixed.FileVersion	1.0.0.0
+c.cdebug.k17cdbg.  fixed.ProductVersion	1.0.0.0
+c.cdebug.k17cdbg.  fixed.FileFlags	0x0
+c.cdebug.k17cdbg.  fixed.FileOS	0x40004
+c.cdebug.k17cdbg.  fixed.FileType	0x0
+c.cdebug.k17cdbg.  table	000004B0
+c.cdebug.k17cdbg.  string.FileVersion	1.0.0.0
+c.cdebug.k17cdbg.  string.ProductVersion	1.0.0.0
+c.cdebug.k17cdbg.  var.Translation	000004b0
+c.cdebug.k17cdbg.file	<W>\p\c\cdebug\k17cdbg.pdb
+c.cdebug.k17cdbg.ERR	not a PE file
+c.cdebug.k17cdbg.file	<W>\p\c\cdebug\k17cdbg.reg
+c.cdebug.k17cdbg.ERR	not a PE file
+c.cdebug.readme.file	<W>\p\c\cdebug\readme.txt
+c.cdebug.readme.ERR	not a PE file
+c.cdefaults.buildresult.file	<W>\p\c\cdefaults\buildresult.json
+c.cdefaults.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+c.cdefaults.includedSupportPackages.file	<W>\p\c\cdefaults\includedSupportPackages.txt
+c.cdefaults.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.cdefaults.k17_quiet.file	<W>\p\c\cdefaults\k17_quiet.bas
+c.cdefaults.k17_quiet.ERR	not a PE file
+c.cdefaults.k17_quiet.file	k17_quiet.dll
+c.cdefaults.k17_quiet.bytes	985088
+c.cdefaults.k17_quiet.machine	0x14c
+c.cdefaults.k17_quiet.subsystem	windows-console
+c.cdefaults.k17_quiet.sections	.text .rsrc .reloc
+c.cdefaults.k17_quiet.image.bytes	985088
+c.cdefaults.k17_quiet.overlay.bytes	0
+c.cdefaults.k17_quiet.certificate	no
+c.cdefaults.k17_quiet.import	mscoree.dll
+c.cdefaults.k17_quiet.resource	VERSION 1 lang 0: 320 bytes
+c.cdefaults.k17_quiet.  fixed.FileVersion	1.0.0.0
+c.cdefaults.k17_quiet.  fixed.ProductVersion	1.0.0.0
+c.cdefaults.k17_quiet.  fixed.FileFlags	0x0
+c.cdefaults.k17_quiet.  fixed.FileOS	0x40004
+c.cdefaults.k17_quiet.  fixed.FileType	0x0
+c.cdefaults.k17_quiet.  table	000004B0
+c.cdefaults.k17_quiet.  string.FileVersion	1.0.0.0
+c.cdefaults.k17_quiet.  string.ProductVersion	1.0.0.0
+c.cdefaults.k17_quiet.  var.Translation	000004b0
+c.cdefaults.k17_quiet.file	<W>\p\c\cdefaults\k17_quiet.reg
+c.cdefaults.k17_quiet.ERR	not a PE file
+c.cdefaults.k17_quietClass.file	<W>\p\c\cdefaults\k17_quietClass.cs
+c.cdefaults.k17_quietClass.ERR	not a PE file
+c.cdefaults.readme.file	<W>\p\c\cdefaults\readme.txt
+c.cdefaults.readme.ERR	not a PE file
+c.cpfile.buildresult.file	<W>\p\c\cpfile\buildresult.json
+c.cpfile.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+c.cpfile.includedSupportPackages.file	<W>\p\c\cpfile\includedSupportPackages.txt
+c.cpfile.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.cpfile.k17cp.file	<W>\p\c\cpfile\k17cp.bas
+c.cpfile.k17cp.ERR	not a PE file
+c.cpfile.K17Cp.file	<W>\p\c\cpfile\K17Cp.cs
+c.cpfile.K17Cp.ERR	not a PE file
+c.cpfile.k17cp.file	k17cp.dll
+c.cpfile.k17cp.bytes	951808
+c.cpfile.k17cp.machine	0x14c
+c.cpfile.k17cp.subsystem	windows-console
+c.cpfile.k17cp.sections	.text .rsrc .reloc
+c.cpfile.k17cp.image.bytes	951808
+c.cpfile.k17cp.overlay.bytes	0
+c.cpfile.k17cp.certificate	no
+c.cpfile.k17cp.import	mscoree.dll
+c.cpfile.k17cp.resource	VERSION 1 lang 0: 320 bytes
+c.cpfile.k17cp.  fixed.FileVersion	1.0.0.0
+c.cpfile.k17cp.  fixed.ProductVersion	1.0.0.0
+c.cpfile.k17cp.  fixed.FileFlags	0x0
+c.cpfile.k17cp.  fixed.FileOS	0x40004
+c.cpfile.k17cp.  fixed.FileType	0x0
+c.cpfile.k17cp.  table	000004B0
+c.cpfile.k17cp.  string.FileVersion	1.0.0.0
+c.cpfile.k17cp.  string.ProductVersion	1.0.0.0
+c.cpfile.k17cp.  var.Translation	000004b0
+c.cpfile.k17cp.file	<W>\p\c\cpfile\k17cp.reg
+c.cpfile.k17cp.ERR	not a PE file
+c.cpfile.readme.file	<W>\p\c\cpfile\readme.txt
+c.cpfile.readme.ERR	not a PE file
+c.cv05.buildresult.file	<W>\p\c\cv05\buildresult.json
+c.cv05.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+c.cv05.includedSupportPackages.file	<W>\p\c\cv05\includedSupportPackages.txt
+c.cv05.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.cv05.k17cv05.file	<W>\p\c\cv05\k17cv05.bas
+c.cv05.k17cv05.ERR	not a PE file
+c.cv05.K17Cv05.file	<W>\p\c\cv05\K17Cv05.cs
+c.cv05.K17Cv05.ERR	not a PE file
+c.cv05.k17cv05.file	k17cv05.dll
+c.cv05.k17cv05.bytes	954368
+c.cv05.k17cv05.machine	0x14c
+c.cv05.k17cv05.subsystem	windows-console
+c.cv05.k17cv05.sections	.text .rsrc .reloc
+c.cv05.k17cv05.image.bytes	954368
+c.cv05.k17cv05.overlay.bytes	0
+c.cv05.k17cv05.certificate	no
+c.cv05.k17cv05.import	mscoree.dll
+c.cv05.k17cv05.resource	VERSION 1 lang 0: 320 bytes
+c.cv05.k17cv05.  fixed.FileVersion	1.0.0.0
+c.cv05.k17cv05.  fixed.ProductVersion	1.0.0.0
+c.cv05.k17cv05.  fixed.FileFlags	0x0
+c.cv05.k17cv05.  fixed.FileOS	0x40004
+c.cv05.k17cv05.  fixed.FileType	0x0
+c.cv05.k17cv05.  table	000004B0
+c.cv05.k17cv05.  string.FileVersion	1.0.0.0
+c.cv05.k17cv05.  string.ProductVersion	1.0.0.0
+c.cv05.k17cv05.  var.Translation	000004b0
+c.cv05.k17cv05.file	<W>\p\c\cv05\k17cv05.reg
+c.cv05.k17cv05.ERR	not a PE file
+c.cv05.readme.file	<W>\p\c\cv05\readme.txt
+c.cv05.readme.ERR	not a PE file
+c.cv2.buildresult.file	<W>\p\c\cv2\buildresult.json
+c.cv2.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+c.cv2.includedSupportPackages.file	<W>\p\c\cv2\includedSupportPackages.txt
+c.cv2.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.cv2.k17cv2.file	<W>\p\c\cv2\k17cv2.bas
+c.cv2.k17cv2.ERR	not a PE file
+c.cv2.K17Cv2.file	<W>\p\c\cv2\K17Cv2.cs
+c.cv2.K17Cv2.ERR	not a PE file
+c.cv2.k17cv2.file	k17cv2.dll
+c.cv2.k17cv2.bytes	954368
+c.cv2.k17cv2.machine	0x14c
+c.cv2.k17cv2.subsystem	windows-console
+c.cv2.k17cv2.sections	.text .rsrc .reloc
+c.cv2.k17cv2.image.bytes	954368
+c.cv2.k17cv2.overlay.bytes	0
+c.cv2.k17cv2.certificate	no
+c.cv2.k17cv2.import	mscoree.dll
+c.cv2.k17cv2.resource	VERSION 1 lang 0: 320 bytes
+c.cv2.k17cv2.  fixed.FileVersion	2.0.0.0
+c.cv2.k17cv2.  fixed.ProductVersion	2.0.0.0
+c.cv2.k17cv2.  fixed.FileFlags	0x0
+c.cv2.k17cv2.  fixed.FileOS	0x40004
+c.cv2.k17cv2.  fixed.FileType	0x0
+c.cv2.k17cv2.  table	000004B0
+c.cv2.k17cv2.  string.FileVersion	2.0.0.0
+c.cv2.k17cv2.  string.ProductVersion	2.0.0.0
+c.cv2.k17cv2.  var.Translation	000004b0
+c.cv2.k17cv2.file	<W>\p\c\cv2\k17cv2.reg
+c.cv2.k17cv2.ERR	not a PE file
+c.cv2.readme.file	<W>\p\c\cv2\readme.txt
+c.cv2.readme.ERR	not a PE file
+c.fromfiles.buildresult.file	<W>\p\c\fromfiles\buildresult.json
+c.fromfiles.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+c.fromfiles.includedSupportPackages.file	<W>\p\c\fromfiles\includedSupportPackages.txt
+c.fromfiles.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.fromfiles.k17mpsf.file	<W>\p\c\fromfiles\k17mpsf.bas
+c.fromfiles.k17mpsf.ERR	not a PE file
+c.fromfiles.K17MpsF.file	<W>\p\c\fromfiles\K17MpsF.cs
+c.fromfiles.K17MpsF.ERR	not a PE file
+c.fromfiles.k17mpsf.file	k17mpsf.dll
+c.fromfiles.k17mpsf.bytes	985088
+c.fromfiles.k17mpsf.machine	0x14c
+c.fromfiles.k17mpsf.subsystem	windows-console
+c.fromfiles.k17mpsf.sections	.text .rsrc .reloc
+c.fromfiles.k17mpsf.image.bytes	985088
+c.fromfiles.k17mpsf.overlay.bytes	0
+c.fromfiles.k17mpsf.certificate	no
+c.fromfiles.k17mpsf.import	mscoree.dll
+c.fromfiles.k17mpsf.resource	VERSION 1 lang 0: 320 bytes
+c.fromfiles.k17mpsf.  fixed.FileVersion	1.0.0.0
+c.fromfiles.k17mpsf.  fixed.ProductVersion	1.0.0.0
+c.fromfiles.k17mpsf.  fixed.FileFlags	0x0
+c.fromfiles.k17mpsf.  fixed.FileOS	0x40004
+c.fromfiles.k17mpsf.  fixed.FileType	0x0
+c.fromfiles.k17mpsf.  table	000004B0
+c.fromfiles.k17mpsf.  string.FileVersion	1.0.0.0
+c.fromfiles.k17mpsf.  string.ProductVersion	1.0.0.0
+c.fromfiles.k17mpsf.  var.Translation	000004b0
+c.fromfiles.k17mpsf.file	<W>\p\c\fromfiles\k17mpsf.reg
+c.fromfiles.k17mpsf.ERR	not a PE file
+c.fromfiles.readme.file	<W>\p\c\fromfiles\readme.txt
+c.fromfiles.readme.ERR	not a PE file
+c.fromresults.buildresult.file	<W>\p\c\fromresults\buildresult.json
+c.fromresults.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+c.fromresults.includedSupportPackages.file	<W>\p\c\fromresults\includedSupportPackages.txt
+c.fromresults.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.fromresults.k17mps.file	<W>\p\c\fromresults\k17mps.bas
+c.fromresults.k17mps.ERR	not a PE file
+c.fromresults.K17Mps.file	<W>\p\c\fromresults\K17Mps.cs
+c.fromresults.K17Mps.ERR	not a PE file
+c.fromresults.k17mps.file	k17mps.dll
+c.fromresults.k17mps.bytes	985088
+c.fromresults.k17mps.machine	0x14c
+c.fromresults.k17mps.subsystem	windows-console
+c.fromresults.k17mps.sections	.text .rsrc .reloc
+c.fromresults.k17mps.image.bytes	985088
+c.fromresults.k17mps.overlay.bytes	0
+c.fromresults.k17mps.certificate	no
+c.fromresults.k17mps.import	mscoree.dll
+c.fromresults.k17mps.resource	VERSION 1 lang 0: 320 bytes
+c.fromresults.k17mps.  fixed.FileVersion	1.0.0.0
+c.fromresults.k17mps.  fixed.ProductVersion	1.0.0.0
+c.fromresults.k17mps.  fixed.FileFlags	0x0
+c.fromresults.k17mps.  fixed.FileOS	0x40004
+c.fromresults.k17mps.  fixed.FileType	0x0
+c.fromresults.k17mps.  table	000004B0
+c.fromresults.k17mps.  string.FileVersion	1.0.0.0
+c.fromresults.k17mps.  string.ProductVersion	1.0.0.0
+c.fromresults.k17mps.  var.Translation	000004b0
+c.fromresults.k17mps.file	<W>\p\c\fromresults\k17mps.reg
+c.fromresults.k17mps.ERR	not a PE file
+c.fromresults.readme.file	<W>\p\c\fromresults\readme.txt
+c.fromresults.readme.ERR	not a PE file
+c.nobas.buildresult.file	<W>\p\c\nobas\buildresult.json
+c.nobas.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+c.nobas.includedSupportPackages.file	<W>\p\c\nobas\includedSupportPackages.txt
+c.nobas.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.nobas.k17cnb.file	<W>\p\c\nobas\k17cnb.bas
+c.nobas.k17cnb.ERR	not a PE file
+c.nobas.K17Cnb.file	<W>\p\c\nobas\K17Cnb.cs
+c.nobas.K17Cnb.ERR	not a PE file
+c.nobas.k17cnb.file	k17cnb.dll
+c.nobas.k17cnb.bytes	954368
+c.nobas.k17cnb.machine	0x14c
+c.nobas.k17cnb.subsystem	windows-console
+c.nobas.k17cnb.sections	.text .rsrc .reloc
+c.nobas.k17cnb.image.bytes	954368
+c.nobas.k17cnb.overlay.bytes	0
+c.nobas.k17cnb.certificate	no
+c.nobas.k17cnb.import	mscoree.dll
+c.nobas.k17cnb.resource	VERSION 1 lang 0: 320 bytes
+c.nobas.k17cnb.  fixed.FileVersion	1.0.0.0
+c.nobas.k17cnb.  fixed.ProductVersion	1.0.0.0
+c.nobas.k17cnb.  fixed.FileFlags	0x0
+c.nobas.k17cnb.  fixed.FileOS	0x40004
+c.nobas.k17cnb.  fixed.FileType	0x0
+c.nobas.k17cnb.  table	000004B0
+c.nobas.k17cnb.  string.FileVersion	1.0.0.0
+c.nobas.k17cnb.  string.ProductVersion	1.0.0.0
+c.nobas.k17cnb.  var.Translation	000004b0
+c.nobas.k17cnb.file	<W>\p\c\nobas\k17cnb.reg
+c.nobas.k17cnb.ERR	not a PE file
+c.nobas.readme.file	<W>\p\c\nobas\readme.txt
+c.nobas.readme.ERR	not a PE file
+c.onefileall.buildresult.file	<W>\p\c\onefileall\buildresult.json
+c.onefileall.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+c.onefileall.includedSupportPackages.file	<W>\p\c\onefileall\includedSupportPackages.txt
+c.onefileall.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.onefileall.k17one.file	<W>\p\c\onefileall\k17one.bas
+c.onefileall.k17one.ERR	not a PE file
+c.onefileall.K17One.file	<W>\p\c\onefileall\K17One.cs
+c.onefileall.K17One.ERR	not a PE file
+c.onefileall.k17one.file	k17one.dll
+c.onefileall.k17one.bytes	949760
+c.onefileall.k17one.machine	0x14c
+c.onefileall.k17one.subsystem	windows-console
+c.onefileall.k17one.sections	.text .rsrc .reloc
+c.onefileall.k17one.image.bytes	949760
+c.onefileall.k17one.overlay.bytes	0
+c.onefileall.k17one.certificate	no
+c.onefileall.k17one.import	mscoree.dll
+c.onefileall.k17one.resource	VERSION 1 lang 0: 320 bytes
+c.onefileall.k17one.  fixed.FileVersion	1.0.0.0
+c.onefileall.k17one.  fixed.ProductVersion	1.0.0.0
+c.onefileall.k17one.  fixed.FileFlags	0x0
+c.onefileall.k17one.  fixed.FileOS	0x40004
+c.onefileall.k17one.  fixed.FileType	0x0
+c.onefileall.k17one.  table	000004B0
+c.onefileall.k17one.  string.FileVersion	1.0.0.0
+c.onefileall.k17one.  string.ProductVersion	1.0.0.0
+c.onefileall.k17one.  var.Translation	000004b0
+c.onefileall.k17one.file	<W>\p\c\onefileall\k17one.reg
+c.onefileall.k17one.ERR	not a PE file
+c.onefileall.readme.file	<W>\p\c\onefileall\readme.txt
+c.onefileall.readme.ERR	not a PE file
+m.mcc_badclass.mwcomutil.file	<W>\p\m\mcc_badclass\mwcomutil.tlb
+m.mcc_badclass.mwcomutil.ERR	not a PE file
+m.mcc_badname.mwcomutil.file	<W>\p\m\mcc_badname\mwcomutil.tlb
+m.mcc_badname.mwcomutil.ERR	not a PE file
+m.mcc_bundle.buildresult.file	<W>\p\m\mcc_bundle\buildresult.json
+m.mcc_bundle.buildresult.ERR	not a PE file
+m.mcc_bundle.dlldata.file	<W>\p\m\mcc_bundle\dlldata.c
+m.mcc_bundle.dlldata.ERR	not a PE file
+m.mcc_bundle.includedSupportPackages.file	<W>\p\m\mcc_bundle\includedSupportPackages.txt
+m.mcc_bundle.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+m.mcc_bundle.k17mb.file	<W>\p\m\mcc_bundle\k17mb.bas
+m.mcc_bundle.k17mb.ERR	not a PE file
+m.mcc_bundle.k17mb.file	<W>\p\m\mcc_bundle\k17mb.def
+m.mcc_bundle.k17mb.ERR	not a PE file
+m.mcc_bundle.k17mb.file	<W>\p\m\mcc_bundle\k17mb.rc
+m.mcc_bundle.k17mb.ERR	not a PE file
+m.mcc_bundle.k17mb_1_0.file	k17mb_1_0.dll
+m.mcc_bundle.k17mb_1_0.bytes	345600
+m.mcc_bundle.k17mb_1_0.machine	0x8664
+m.mcc_bundle.k17mb_1_0.subsystem	windows-gui
+m.mcc_bundle.k17mb_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+m.mcc_bundle.k17mb_1_0.image.bytes	345600
+m.mcc_bundle.k17mb_1_0.overlay.bytes	0
+m.mcc_bundle.k17mb_1_0.certificate	no
+m.mcc_bundle.k17mb_1_0.import	KERNEL32.dll
+m.mcc_bundle.k17mb_1_0.import	USER32.dll
+m.mcc_bundle.k17mb_1_0.import	ole32.dll
+m.mcc_bundle.k17mb_1_0.import	OLEAUT32.dll
+m.mcc_bundle.k17mb_1_0.import	mclxlmain25_2.dll
+m.mcc_bundle.k17mb_1_0.import	mclmcrrt25_2.dll (delay)
+m.mcc_bundle.k17mb_1_0.resource	"RT_RCDATA" 2 lang 1033: 153976 bytes
+m.mcc_bundle.k17mb_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 24 fa
+m.mcc_bundle.k17mb_1_0.resource	"TYPELIB" 1 lang 1033: 2252 bytes
+m.mcc_bundle.k17mb_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+m.mcc_bundle.k17mb_1_0.resource	VERSION 1 lang 1033: 320 bytes
+m.mcc_bundle.k17mb_1_0.  fixed.FileVersion	1.0.0.0
+m.mcc_bundle.k17mb_1_0.  fixed.ProductVersion	1.0.0.0
+m.mcc_bundle.k17mb_1_0.  fixed.FileFlags	0x0
+m.mcc_bundle.k17mb_1_0.  fixed.FileOS	0x0
+m.mcc_bundle.k17mb_1_0.  fixed.FileType	0x0
+m.mcc_bundle.k17mb_1_0.  table	040904b0
+m.mcc_bundle.k17mb_1_0.  string.FileVersion	1.0.0.0
+m.mcc_bundle.k17mb_1_0.  string.ProductVersion	1.0.0.0
+m.mcc_bundle.k17mb_1_0.  var.Translation	040904b0
+m.mcc_bundle.k17mb_1_0.file	<W>\p\m\mcc_bundle\k17mb_1_0.exp
+m.mcc_bundle.k17mb_1_0.ERR	not a PE file
+m.mcc_bundle.k17mb_1_0.file	<W>\p\m\mcc_bundle\k17mb_1_0.lib
+m.mcc_bundle.k17mb_1_0.ERR	not a PE file
+m.mcc_bundle.K17Mb_com.file	<W>\p\m\mcc_bundle\K17Mb_com.cpp
+m.mcc_bundle.K17Mb_com.ERR	not a PE file
+m.mcc_bundle.K17Mb_com.file	<W>\p\m\mcc_bundle\K17Mb_com.hpp
+m.mcc_bundle.K17Mb_com.ERR	not a PE file
+m.mcc_bundle.k17mb_dll.file	<W>\p\m\mcc_bundle\k17mb_dll.cpp
+m.mcc_bundle.k17mb_dll.ERR	not a PE file
+m.mcc_bundle.k17mb_idl.file	<W>\p\m\mcc_bundle\k17mb_idl.h
+m.mcc_bundle.k17mb_idl.ERR	not a PE file
+m.mcc_bundle.k17mb_idl.file	<W>\p\m\mcc_bundle\k17mb_idl.idl
+m.mcc_bundle.k17mb_idl.ERR	not a PE file
+m.mcc_bundle.k17mb_idl.file	<W>\p\m\mcc_bundle\k17mb_idl.tlb
+m.mcc_bundle.k17mb_idl.ERR	not a PE file
+m.mcc_bundle.k17mb_idl_i.file	<W>\p\m\mcc_bundle\k17mb_idl_i.c
+m.mcc_bundle.k17mb_idl_i.ERR	not a PE file
+m.mcc_bundle.k17mb_idl_p.file	<W>\p\m\mcc_bundle\k17mb_idl_p.c
+m.mcc_bundle.k17mb_idl_p.ERR	not a PE file
+m.mcc_bundle.mccExcludedFiles.file	<W>\p\m\mcc_bundle\mccExcludedFiles.log
+m.mcc_bundle.mccExcludedFiles.ERR	not a PE file
+m.mcc_bundle.mwcomtypes.file	<W>\p\m\mcc_bundle\mwcomtypes.h
+m.mcc_bundle.mwcomtypes.ERR	not a PE file
+m.mcc_bundle.mwcomtypes_i.file	<W>\p\m\mcc_bundle\mwcomtypes_i.c
+m.mcc_bundle.mwcomtypes_i.ERR	not a PE file
+m.mcc_bundle.mwcomtypes_p.file	<W>\p\m\mcc_bundle\mwcomtypes_p.c
+m.mcc_bundle.mwcomtypes_p.ERR	not a PE file
+m.mcc_bundle.readme.file	<W>\p\m\mcc_bundle\readme.txt
+m.mcc_bundle.readme.ERR	not a PE file
+m.mcc_bundle.requiredMCRProducts.file	<W>\p\m\mcc_bundle\requiredMCRProducts.txt
+m.mcc_bundle.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+m.mcc_bundle.unresolvedSymbols.file	<W>\p\m\mcc_bundle\unresolvedSymbols.txt
+m.mcc_bundle.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+m.mcc_codegen.buildresult.file	<W>\p\m\mcc_codegen\buildresult.json
+m.mcc_codegen.buildresult.ERR	not a PE file
+m.mcc_codegen.includedSupportPackages.file	<W>\p\m\mcc_codegen\includedSupportPackages.txt
+m.mcc_codegen.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+m.mcc_codegen.k17mcg.file	<W>\p\m\mcc_codegen\k17mcg.ctf
+m.mcc_codegen.k17mcg.ERR	not a PE file
+m.mcc_codegen.k17mcg.file	<W>\p\m\mcc_codegen\k17mcg.def
+m.mcc_codegen.k17mcg.ERR	not a PE file
+m.mcc_codegen.k17mcg.file	<W>\p\m\mcc_codegen\k17mcg.rc
+m.mcc_codegen.k17mcg.ERR	not a PE file
+m.mcc_codegen.K17Mcg_com.file	<W>\p\m\mcc_codegen\K17Mcg_com.cpp
+m.mcc_codegen.K17Mcg_com.ERR	not a PE file
+m.mcc_codegen.K17Mcg_com.file	<W>\p\m\mcc_codegen\K17Mcg_com.hpp
+m.mcc_codegen.K17Mcg_com.ERR	not a PE file
+m.mcc_codegen.k17mcg_dll.file	<W>\p\m\mcc_codegen\k17mcg_dll.cpp
+m.mcc_codegen.k17mcg_dll.ERR	not a PE file
+m.mcc_codegen.k17mcg_idl.file	<W>\p\m\mcc_codegen\k17mcg_idl.idl
+m.mcc_codegen.k17mcg_idl.ERR	not a PE file
+m.mcc_codegen.mccExcludedFiles.file	<W>\p\m\mcc_codegen\mccExcludedFiles.log
+m.mcc_codegen.mccExcludedFiles.ERR	not a PE file
+m.mcc_codegen.readme.file	<W>\p\m\mcc_codegen\readme.txt
+m.mcc_codegen.readme.ERR	not a PE file
+m.mcc_codegen.requiredMCRProducts.file	<W>\p\m\mcc_codegen\requiredMCRProducts.txt
+m.mcc_codegen.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+m.mcc_codegen.unresolvedSymbols.file	<W>\p\m\mcc_codegen\unresolvedSymbols.txt
+m.mcc_codegen.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+m.mcc_debug.buildresult.file	<W>\p\m\mcc_debug\buildresult.json
+m.mcc_debug.buildresult.ERR	not a PE file
+m.mcc_debug.dlldata.file	<W>\p\m\mcc_debug\dlldata.c
+m.mcc_debug.dlldata.ERR	not a PE file
+m.mcc_debug.includedSupportPackages.file	<W>\p\m\mcc_debug\includedSupportPackages.txt
+m.mcc_debug.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+m.mcc_debug.k17md.file	<W>\p\m\mcc_debug\k17md.def
+m.mcc_debug.k17md.ERR	not a PE file
+m.mcc_debug.k17md.file	<W>\p\m\mcc_debug\k17md.rc
+m.mcc_debug.k17md.ERR	not a PE file
+m.mcc_debug.k17md_1_0.file	k17md_1_0.dll
+m.mcc_debug.k17md_1_0.bytes	1024512
+m.mcc_debug.k17md_1_0.machine	0x8664
+m.mcc_debug.k17md_1_0.subsystem	windows-gui
+m.mcc_debug.k17md_1_0.sections	.text .rdata .data .pdata .idata .didat .00cfg .fptable .rsrc .reloc
+m.mcc_debug.k17md_1_0.image.bytes	1024512
+m.mcc_debug.k17md_1_0.overlay.bytes	0
+m.mcc_debug.k17md_1_0.certificate	no
+m.mcc_debug.k17md_1_0.import	KERNEL32.dll
+m.mcc_debug.k17md_1_0.import	USER32.dll
+m.mcc_debug.k17md_1_0.import	ole32.dll
+m.mcc_debug.k17md_1_0.import	OLEAUT32.dll
+m.mcc_debug.k17md_1_0.import	mclxlmain25_2.dll
+m.mcc_debug.k17md_1_0.import	mclmcrrt25_2.dll (delay)
+m.mcc_debug.k17md_1_0.resource	"RT_RCDATA" 2 lang 1033: 154037 bytes
+m.mcc_debug.k17md_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 83 96
+m.mcc_debug.k17md_1_0.resource	"TYPELIB" 1 lang 1033: 2252 bytes
+m.mcc_debug.k17md_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+m.mcc_debug.k17md_1_0.resource	VERSION 1 lang 1033: 320 bytes
+m.mcc_debug.k17md_1_0.  fixed.FileVersion	1.0.0.0
+m.mcc_debug.k17md_1_0.  fixed.ProductVersion	1.0.0.0
+m.mcc_debug.k17md_1_0.  fixed.FileFlags	0x0
+m.mcc_debug.k17md_1_0.  fixed.FileOS	0x0
+m.mcc_debug.k17md_1_0.  fixed.FileType	0x0
+m.mcc_debug.k17md_1_0.  table	040904b0
+m.mcc_debug.k17md_1_0.  string.FileVersion	1.0.0.0
+m.mcc_debug.k17md_1_0.  string.ProductVersion	1.0.0.0
+m.mcc_debug.k17md_1_0.  var.Translation	040904b0
+m.mcc_debug.k17md_1_0.dll.file	<W>\p\m\mcc_debug\k17md_1_0.dll.pdb
+m.mcc_debug.k17md_1_0.dll.ERR	not a PE file
+m.mcc_debug.k17md_1_0.file	<W>\p\m\mcc_debug\k17md_1_0.exp
+m.mcc_debug.k17md_1_0.ERR	not a PE file
+m.mcc_debug.k17md_1_0.file	<W>\p\m\mcc_debug\k17md_1_0.ilk
+m.mcc_debug.k17md_1_0.ERR	not a PE file
+m.mcc_debug.k17md_1_0.file	<W>\p\m\mcc_debug\k17md_1_0.lib
+m.mcc_debug.k17md_1_0.ERR	not a PE file
+m.mcc_debug.K17Md_com.file	<W>\p\m\mcc_debug\K17Md_com.cpp
+m.mcc_debug.K17Md_com.ERR	not a PE file
+m.mcc_debug.K17Md_com.file	<W>\p\m\mcc_debug\K17Md_com.hpp
+m.mcc_debug.K17Md_com.ERR	not a PE file
+m.mcc_debug.k17md_dll.file	<W>\p\m\mcc_debug\k17md_dll.cpp
+m.mcc_debug.k17md_dll.ERR	not a PE file
+m.mcc_debug.k17md_idl.file	<W>\p\m\mcc_debug\k17md_idl.h
+m.mcc_debug.k17md_idl.ERR	not a PE file
+m.mcc_debug.k17md_idl.file	<W>\p\m\mcc_debug\k17md_idl.idl
+m.mcc_debug.k17md_idl.ERR	not a PE file
+m.mcc_debug.k17md_idl.file	<W>\p\m\mcc_debug\k17md_idl.tlb
+m.mcc_debug.k17md_idl.ERR	not a PE file
+m.mcc_debug.k17md_idl_i.file	<W>\p\m\mcc_debug\k17md_idl_i.c
+m.mcc_debug.k17md_idl_i.ERR	not a PE file
+m.mcc_debug.k17md_idl_p.file	<W>\p\m\mcc_debug\k17md_idl_p.c
+m.mcc_debug.k17md_idl_p.ERR	not a PE file
+m.mcc_debug.mccExcludedFiles.file	<W>\p\m\mcc_debug\mccExcludedFiles.log
+m.mcc_debug.mccExcludedFiles.ERR	not a PE file
+m.mcc_debug.mwcomtypes.file	<W>\p\m\mcc_debug\mwcomtypes.h
+m.mcc_debug.mwcomtypes.ERR	not a PE file
+m.mcc_debug.mwcomtypes_i.file	<W>\p\m\mcc_debug\mwcomtypes_i.c
+m.mcc_debug.mwcomtypes_i.ERR	not a PE file
+m.mcc_debug.mwcomtypes_p.file	<W>\p\m\mcc_debug\mwcomtypes_p.c
+m.mcc_debug.mwcomtypes_p.ERR	not a PE file
+m.mcc_debug.readme.file	<W>\p\m\mcc_debug\readme.txt
+m.mcc_debug.readme.ERR	not a PE file
+m.mcc_debug.requiredMCRProducts.file	<W>\p\m\mcc_debug\requiredMCRProducts.txt
+m.mcc_debug.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+m.mcc_debug.unresolvedSymbols.file	<W>\p\m\mcc_debug\unresolvedSymbols.txt
+m.mcc_debug.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+m.mcc_default.buildresult.file	<W>\p\m\mcc_default\buildresult.json
+m.mcc_default.buildresult.ERR	not a PE file
+m.mcc_default.dlldata.file	<W>\p\m\mcc_default\dlldata.c
+m.mcc_default.dlldata.ERR	not a PE file
+m.mcc_default.includedSupportPackages.file	<W>\p\m\mcc_default\includedSupportPackages.txt
+m.mcc_default.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+m.mcc_default.k17m.file	<W>\p\m\mcc_default\k17m.bas
+m.mcc_default.k17m.ERR	not a PE file
+m.mcc_default.k17m.file	<W>\p\m\mcc_default\k17m.def
+m.mcc_default.k17m.ERR	not a PE file
+m.mcc_default.k17m.file	<W>\p\m\mcc_default\k17m.rc
+m.mcc_default.k17m.ERR	not a PE file
+m.mcc_default.k17m_1_0.file	k17m_1_0.dll
+m.mcc_default.k17m_1_0.bytes	345600
+m.mcc_default.k17m_1_0.machine	0x8664
+m.mcc_default.k17m_1_0.subsystem	windows-gui
+m.mcc_default.k17m_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+m.mcc_default.k17m_1_0.image.bytes	345600
+m.mcc_default.k17m_1_0.overlay.bytes	0
+m.mcc_default.k17m_1_0.certificate	no
+m.mcc_default.k17m_1_0.import	KERNEL32.dll
+m.mcc_default.k17m_1_0.import	USER32.dll
+m.mcc_default.k17m_1_0.import	ole32.dll
+m.mcc_default.k17m_1_0.import	OLEAUT32.dll
+m.mcc_default.k17m_1_0.import	mclxlmain25_2.dll
+m.mcc_default.k17m_1_0.import	mclmcrrt25_2.dll (delay)
+m.mcc_default.k17m_1_0.resource	"RT_RCDATA" 2 lang 1033: 153967 bytes
+m.mcc_default.k17m_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 1a 8a
+m.mcc_default.k17m_1_0.resource	"TYPELIB" 1 lang 1033: 2244 bytes
+m.mcc_default.k17m_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+m.mcc_default.k17m_1_0.resource	VERSION 1 lang 1033: 320 bytes
+m.mcc_default.k17m_1_0.  fixed.FileVersion	1.0.0.0
+m.mcc_default.k17m_1_0.  fixed.ProductVersion	1.0.0.0
+m.mcc_default.k17m_1_0.  fixed.FileFlags	0x0
+m.mcc_default.k17m_1_0.  fixed.FileOS	0x0
+m.mcc_default.k17m_1_0.  fixed.FileType	0x0
+m.mcc_default.k17m_1_0.  table	040904b0
+m.mcc_default.k17m_1_0.  string.FileVersion	1.0.0.0
+m.mcc_default.k17m_1_0.  string.ProductVersion	1.0.0.0
+m.mcc_default.k17m_1_0.  var.Translation	040904b0
+m.mcc_default.k17m_1_0.file	<W>\p\m\mcc_default\k17m_1_0.exp
+m.mcc_default.k17m_1_0.ERR	not a PE file
+m.mcc_default.k17m_1_0.file	<W>\p\m\mcc_default\k17m_1_0.lib
+m.mcc_default.k17m_1_0.ERR	not a PE file
+m.mcc_default.K17M_com.file	<W>\p\m\mcc_default\K17M_com.cpp
+m.mcc_default.K17M_com.ERR	not a PE file
+m.mcc_default.K17M_com.file	<W>\p\m\mcc_default\K17M_com.hpp
+m.mcc_default.K17M_com.ERR	not a PE file
+m.mcc_default.k17m_dll.file	<W>\p\m\mcc_default\k17m_dll.cpp
+m.mcc_default.k17m_dll.ERR	not a PE file
+m.mcc_default.k17m_idl.file	<W>\p\m\mcc_default\k17m_idl.h
+m.mcc_default.k17m_idl.ERR	not a PE file
+m.mcc_default.k17m_idl.file	<W>\p\m\mcc_default\k17m_idl.idl
+m.mcc_default.k17m_idl.ERR	not a PE file
+m.mcc_default.k17m_idl.file	<W>\p\m\mcc_default\k17m_idl.tlb
+m.mcc_default.k17m_idl.ERR	not a PE file
+m.mcc_default.k17m_idl_i.file	<W>\p\m\mcc_default\k17m_idl_i.c
+m.mcc_default.k17m_idl_i.ERR	not a PE file
+m.mcc_default.k17m_idl_p.file	<W>\p\m\mcc_default\k17m_idl_p.c
+m.mcc_default.k17m_idl_p.ERR	not a PE file
+m.mcc_default.mccExcludedFiles.file	<W>\p\m\mcc_default\mccExcludedFiles.log
+m.mcc_default.mccExcludedFiles.ERR	not a PE file
+m.mcc_default.mwcomtypes.file	<W>\p\m\mcc_default\mwcomtypes.h
+m.mcc_default.mwcomtypes.ERR	not a PE file
+m.mcc_default.mwcomtypes_i.file	<W>\p\m\mcc_default\mwcomtypes_i.c
+m.mcc_default.mwcomtypes_i.ERR	not a PE file
+m.mcc_default.mwcomtypes_p.file	<W>\p\m\mcc_default\mwcomtypes_p.c
+m.mcc_default.mwcomtypes_p.ERR	not a PE file
+m.mcc_default.readme.file	<W>\p\m\mcc_default\readme.txt
+m.mcc_default.readme.ERR	not a PE file
+m.mcc_default.requiredMCRProducts.file	<W>\p\m\mcc_default\requiredMCRProducts.txt
+m.mcc_default.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+m.mcc_default.unresolvedSymbols.file	<W>\p\m\mcc_default\unresolvedSymbols.txt
+m.mcc_default.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+m.mcc_noclass.buildresult.file	<W>\p\m\mcc_noclass\buildresult.json
+m.mcc_noclass.buildresult.ERR	not a PE file
+m.mcc_noclass.dlldata.file	<W>\p\m\mcc_noclass\dlldata.c
+m.mcc_noclass.dlldata.ERR	not a PE file
+m.mcc_noclass.includedSupportPackages.file	<W>\p\m\mcc_noclass\includedSupportPackages.txt
+m.mcc_noclass.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+m.mcc_noclass.k17mnc.file	<W>\p\m\mcc_noclass\k17mnc.def
+m.mcc_noclass.k17mnc.ERR	not a PE file
+m.mcc_noclass.k17mnc.file	<W>\p\m\mcc_noclass\k17mnc.rc
+m.mcc_noclass.k17mnc.ERR	not a PE file
+m.mcc_noclass.k17mnc_1_0.file	k17mnc_1_0.dll
+m.mcc_noclass.k17mnc_1_0.bytes	345600
+m.mcc_noclass.k17mnc_1_0.machine	0x8664
+m.mcc_noclass.k17mnc_1_0.subsystem	windows-gui
+m.mcc_noclass.k17mnc_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+m.mcc_noclass.k17mnc_1_0.image.bytes	345600
+m.mcc_noclass.k17mnc_1_0.overlay.bytes	0
+m.mcc_noclass.k17mnc_1_0.certificate	no
+m.mcc_noclass.k17mnc_1_0.import	KERNEL32.dll
+m.mcc_noclass.k17mnc_1_0.import	USER32.dll
+m.mcc_noclass.k17mnc_1_0.import	ole32.dll
+m.mcc_noclass.k17mnc_1_0.import	OLEAUT32.dll
+m.mcc_noclass.k17mnc_1_0.import	mclxlmain25_2.dll
+m.mcc_noclass.k17mnc_1_0.import	mclmcrrt25_2.dll (delay)
+m.mcc_noclass.k17mnc_1_0.resource	"RT_RCDATA" 2 lang 1033: 154002 bytes
+m.mcc_noclass.k17mnc_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 37 fb
+m.mcc_noclass.k17mnc_1_0.resource	"TYPELIB" 1 lang 1033: 2256 bytes
+m.mcc_noclass.k17mnc_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+m.mcc_noclass.k17mnc_1_0.resource	VERSION 1 lang 1033: 320 bytes
+m.mcc_noclass.k17mnc_1_0.  fixed.FileVersion	1.0.0.0
+m.mcc_noclass.k17mnc_1_0.  fixed.ProductVersion	1.0.0.0
+m.mcc_noclass.k17mnc_1_0.  fixed.FileFlags	0x0
+m.mcc_noclass.k17mnc_1_0.  fixed.FileOS	0x0
+m.mcc_noclass.k17mnc_1_0.  fixed.FileType	0x0
+m.mcc_noclass.k17mnc_1_0.  table	040904b0
+m.mcc_noclass.k17mnc_1_0.  string.FileVersion	1.0.0.0
+m.mcc_noclass.k17mnc_1_0.  string.ProductVersion	1.0.0.0
+m.mcc_noclass.k17mnc_1_0.  var.Translation	040904b0
+m.mcc_noclass.k17mnc_1_0.file	<W>\p\m\mcc_noclass\k17mnc_1_0.exp
+m.mcc_noclass.k17mnc_1_0.ERR	not a PE file
+m.mcc_noclass.k17mnc_1_0.file	<W>\p\m\mcc_noclass\k17mnc_1_0.lib
+m.mcc_noclass.k17mnc_1_0.ERR	not a PE file
+m.mcc_noclass.k17mnc_com.file	<W>\p\m\mcc_noclass\k17mnc_com.cpp
+m.mcc_noclass.k17mnc_com.ERR	not a PE file
+m.mcc_noclass.k17mnc_com.file	<W>\p\m\mcc_noclass\k17mnc_com.hpp
+m.mcc_noclass.k17mnc_com.ERR	not a PE file
+m.mcc_noclass.k17mnc_dll.file	<W>\p\m\mcc_noclass\k17mnc_dll.cpp
+m.mcc_noclass.k17mnc_dll.ERR	not a PE file
+m.mcc_noclass.k17mnc_idl.file	<W>\p\m\mcc_noclass\k17mnc_idl.h
+m.mcc_noclass.k17mnc_idl.ERR	not a PE file
+m.mcc_noclass.k17mnc_idl.file	<W>\p\m\mcc_noclass\k17mnc_idl.idl
+m.mcc_noclass.k17mnc_idl.ERR	not a PE file
+m.mcc_noclass.k17mnc_idl.file	<W>\p\m\mcc_noclass\k17mnc_idl.tlb
+m.mcc_noclass.k17mnc_idl.ERR	not a PE file
+m.mcc_noclass.k17mnc_idl_i.file	<W>\p\m\mcc_noclass\k17mnc_idl_i.c
+m.mcc_noclass.k17mnc_idl_i.ERR	not a PE file
+m.mcc_noclass.k17mnc_idl_p.file	<W>\p\m\mcc_noclass\k17mnc_idl_p.c
+m.mcc_noclass.k17mnc_idl_p.ERR	not a PE file
+m.mcc_noclass.mccExcludedFiles.file	<W>\p\m\mcc_noclass\mccExcludedFiles.log
+m.mcc_noclass.mccExcludedFiles.ERR	not a PE file
+m.mcc_noclass.mwcomtypes.file	<W>\p\m\mcc_noclass\mwcomtypes.h
+m.mcc_noclass.mwcomtypes.ERR	not a PE file
+m.mcc_noclass.mwcomtypes_i.file	<W>\p\m\mcc_noclass\mwcomtypes_i.c
+m.mcc_noclass.mwcomtypes_i.ERR	not a PE file
+m.mcc_noclass.mwcomtypes_p.file	<W>\p\m\mcc_noclass\mwcomtypes_p.c
+m.mcc_noclass.mwcomtypes_p.ERR	not a PE file
+m.mcc_noclass.readme.file	<W>\p\m\mcc_noclass\readme.txt
+m.mcc_noclass.readme.ERR	not a PE file
+m.mcc_noclass.requiredMCRProducts.file	<W>\p\m\mcc_noclass\requiredMCRProducts.txt
+m.mcc_noclass.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+m.mcc_noclass.unresolvedSymbols.file	<W>\p\m\mcc_noclass\unresolvedSymbols.txt
+m.mcc_noclass.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+m.mcc_notarget.buildresult.file	<W>\p\m\mcc_notarget\buildresult.json
+m.mcc_notarget.buildresult.ERR	not a PE file
+m.mcc_notarget.dlldata.file	<W>\p\m\mcc_notarget\dlldata.c
+m.mcc_notarget.dlldata.ERR	not a PE file
+m.mcc_notarget.includedSupportPackages.file	<W>\p\m\mcc_notarget\includedSupportPackages.txt
+m.mcc_notarget.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+m.mcc_notarget.k17mnt.file	<W>\p\m\mcc_notarget\k17mnt.def
+m.mcc_notarget.k17mnt.ERR	not a PE file
+m.mcc_notarget.k17mnt.file	<W>\p\m\mcc_notarget\k17mnt.rc
+m.mcc_notarget.k17mnt.ERR	not a PE file
+m.mcc_notarget.k17mnt_1_0.file	k17mnt_1_0.dll
+m.mcc_notarget.k17mnt_1_0.bytes	345600
+m.mcc_notarget.k17mnt_1_0.machine	0x8664
+m.mcc_notarget.k17mnt_1_0.subsystem	windows-gui
+m.mcc_notarget.k17mnt_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+m.mcc_notarget.k17mnt_1_0.image.bytes	345600
+m.mcc_notarget.k17mnt_1_0.overlay.bytes	0
+m.mcc_notarget.k17mnt_1_0.certificate	no
+m.mcc_notarget.k17mnt_1_0.import	KERNEL32.dll
+m.mcc_notarget.k17mnt_1_0.import	USER32.dll
+m.mcc_notarget.k17mnt_1_0.import	ole32.dll
+m.mcc_notarget.k17mnt_1_0.import	OLEAUT32.dll
+m.mcc_notarget.k17mnt_1_0.import	mclxlmain25_2.dll
+m.mcc_notarget.k17mnt_1_0.import	mclmcrrt25_2.dll (delay)
+m.mcc_notarget.k17mnt_1_0.resource	"RT_RCDATA" 2 lang 1033: 154003 bytes
+m.mcc_notarget.k17mnt_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 67 49
+m.mcc_notarget.k17mnt_1_0.resource	"TYPELIB" 1 lang 1033: 2256 bytes
+m.mcc_notarget.k17mnt_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+m.mcc_notarget.k17mnt_1_0.resource	VERSION 1 lang 1033: 320 bytes
+m.mcc_notarget.k17mnt_1_0.  fixed.FileVersion	1.0.0.0
+m.mcc_notarget.k17mnt_1_0.  fixed.ProductVersion	1.0.0.0
+m.mcc_notarget.k17mnt_1_0.  fixed.FileFlags	0x0
+m.mcc_notarget.k17mnt_1_0.  fixed.FileOS	0x0
+m.mcc_notarget.k17mnt_1_0.  fixed.FileType	0x0
+m.mcc_notarget.k17mnt_1_0.  table	040904b0
+m.mcc_notarget.k17mnt_1_0.  string.FileVersion	1.0.0.0
+m.mcc_notarget.k17mnt_1_0.  string.ProductVersion	1.0.0.0
+m.mcc_notarget.k17mnt_1_0.  var.Translation	040904b0
+m.mcc_notarget.k17mnt_1_0.file	<W>\p\m\mcc_notarget\k17mnt_1_0.exp
+m.mcc_notarget.k17mnt_1_0.ERR	not a PE file
+m.mcc_notarget.k17mnt_1_0.file	<W>\p\m\mcc_notarget\k17mnt_1_0.lib
+m.mcc_notarget.k17mnt_1_0.ERR	not a PE file
+m.mcc_notarget.K17Mnt_com.file	<W>\p\m\mcc_notarget\K17Mnt_com.cpp
+m.mcc_notarget.K17Mnt_com.ERR	not a PE file
+m.mcc_notarget.K17Mnt_com.file	<W>\p\m\mcc_notarget\K17Mnt_com.hpp
+m.mcc_notarget.K17Mnt_com.ERR	not a PE file
+m.mcc_notarget.k17mnt_dll.file	<W>\p\m\mcc_notarget\k17mnt_dll.cpp
+m.mcc_notarget.k17mnt_dll.ERR	not a PE file
+m.mcc_notarget.k17mnt_idl.file	<W>\p\m\mcc_notarget\k17mnt_idl.h
+m.mcc_notarget.k17mnt_idl.ERR	not a PE file
+m.mcc_notarget.k17mnt_idl.file	<W>\p\m\mcc_notarget\k17mnt_idl.idl
+m.mcc_notarget.k17mnt_idl.ERR	not a PE file
+m.mcc_notarget.k17mnt_idl.file	<W>\p\m\mcc_notarget\k17mnt_idl.tlb
+m.mcc_notarget.k17mnt_idl.ERR	not a PE file
+m.mcc_notarget.k17mnt_idl_i.file	<W>\p\m\mcc_notarget\k17mnt_idl_i.c
+m.mcc_notarget.k17mnt_idl_i.ERR	not a PE file
+m.mcc_notarget.k17mnt_idl_p.file	<W>\p\m\mcc_notarget\k17mnt_idl_p.c
+m.mcc_notarget.k17mnt_idl_p.ERR	not a PE file
+m.mcc_notarget.mccExcludedFiles.file	<W>\p\m\mcc_notarget\mccExcludedFiles.log
+m.mcc_notarget.mccExcludedFiles.ERR	not a PE file
+m.mcc_notarget.mwcomtypes.file	<W>\p\m\mcc_notarget\mwcomtypes.h
+m.mcc_notarget.mwcomtypes.ERR	not a PE file
+m.mcc_notarget.mwcomtypes_i.file	<W>\p\m\mcc_notarget\mwcomtypes_i.c
+m.mcc_notarget.mwcomtypes_i.ERR	not a PE file
+m.mcc_notarget.mwcomtypes_p.file	<W>\p\m\mcc_notarget\mwcomtypes_p.c
+m.mcc_notarget.mwcomtypes_p.ERR	not a PE file
+m.mcc_notarget.readme.file	<W>\p\m\mcc_notarget\readme.txt
+m.mcc_notarget.readme.ERR	not a PE file
+m.mcc_notarget.requiredMCRProducts.file	<W>\p\m\mcc_notarget\requiredMCRProducts.txt
+m.mcc_notarget.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+m.mcc_notarget.unresolvedSymbols.file	<W>\p\m\mcc_notarget\unresolvedSymbols.txt
+m.mcc_notarget.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+m.mcc_noversion.buildresult.file	<W>\p\m\mcc_noversion\buildresult.json
+m.mcc_noversion.buildresult.ERR	not a PE file
+m.mcc_noversion.dlldata.file	<W>\p\m\mcc_noversion\dlldata.c
+m.mcc_noversion.dlldata.ERR	not a PE file
+m.mcc_noversion.includedSupportPackages.file	<W>\p\m\mcc_noversion\includedSupportPackages.txt
+m.mcc_noversion.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+m.mcc_noversion.k17mnv.file	<W>\p\m\mcc_noversion\k17mnv.def
+m.mcc_noversion.k17mnv.ERR	not a PE file
+m.mcc_noversion.k17mnv.file	<W>\p\m\mcc_noversion\k17mnv.rc
+m.mcc_noversion.k17mnv.ERR	not a PE file
+m.mcc_noversion.k17mnv_1_0.file	k17mnv_1_0.dll
+m.mcc_noversion.k17mnv_1_0.bytes	345600
+m.mcc_noversion.k17mnv_1_0.machine	0x8664
+m.mcc_noversion.k17mnv_1_0.subsystem	windows-gui
+m.mcc_noversion.k17mnv_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+m.mcc_noversion.k17mnv_1_0.image.bytes	345600
+m.mcc_noversion.k17mnv_1_0.overlay.bytes	0
+m.mcc_noversion.k17mnv_1_0.certificate	no
+m.mcc_noversion.k17mnv_1_0.import	KERNEL32.dll
+m.mcc_noversion.k17mnv_1_0.import	USER32.dll
+m.mcc_noversion.k17mnv_1_0.import	ole32.dll
+m.mcc_noversion.k17mnv_1_0.import	OLEAUT32.dll
+m.mcc_noversion.k17mnv_1_0.import	mclxlmain25_2.dll
+m.mcc_noversion.k17mnv_1_0.import	mclmcrrt25_2.dll (delay)
+m.mcc_noversion.k17mnv_1_0.resource	"RT_RCDATA" 2 lang 1033: 153987 bytes
+m.mcc_noversion.k17mnv_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 b5 5f
+m.mcc_noversion.k17mnv_1_0.resource	"TYPELIB" 1 lang 1033: 2256 bytes
+m.mcc_noversion.k17mnv_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+m.mcc_noversion.k17mnv_1_0.resource	VERSION 1 lang 1033: 320 bytes
+m.mcc_noversion.k17mnv_1_0.  fixed.FileVersion	1.0.0.0
+m.mcc_noversion.k17mnv_1_0.  fixed.ProductVersion	1.0.0.0
+m.mcc_noversion.k17mnv_1_0.  fixed.FileFlags	0x0
+m.mcc_noversion.k17mnv_1_0.  fixed.FileOS	0x0
+m.mcc_noversion.k17mnv_1_0.  fixed.FileType	0x0
+m.mcc_noversion.k17mnv_1_0.  table	040904b0
+m.mcc_noversion.k17mnv_1_0.  string.FileVersion	1.0.0.0
+m.mcc_noversion.k17mnv_1_0.  string.ProductVersion	1.0.0.0
+m.mcc_noversion.k17mnv_1_0.  var.Translation	040904b0
+m.mcc_noversion.k17mnv_1_0.file	<W>\p\m\mcc_noversion\k17mnv_1_0.exp
+m.mcc_noversion.k17mnv_1_0.ERR	not a PE file
+m.mcc_noversion.k17mnv_1_0.file	<W>\p\m\mcc_noversion\k17mnv_1_0.lib
+m.mcc_noversion.k17mnv_1_0.ERR	not a PE file
+m.mcc_noversion.K17Mnv_com.file	<W>\p\m\mcc_noversion\K17Mnv_com.cpp
+m.mcc_noversion.K17Mnv_com.ERR	not a PE file
+m.mcc_noversion.K17Mnv_com.file	<W>\p\m\mcc_noversion\K17Mnv_com.hpp
+m.mcc_noversion.K17Mnv_com.ERR	not a PE file
+m.mcc_noversion.k17mnv_dll.file	<W>\p\m\mcc_noversion\k17mnv_dll.cpp
+m.mcc_noversion.k17mnv_dll.ERR	not a PE file
+m.mcc_noversion.k17mnv_idl.file	<W>\p\m\mcc_noversion\k17mnv_idl.h
+m.mcc_noversion.k17mnv_idl.ERR	not a PE file
+m.mcc_noversion.k17mnv_idl.file	<W>\p\m\mcc_noversion\k17mnv_idl.idl
+m.mcc_noversion.k17mnv_idl.ERR	not a PE file
+m.mcc_noversion.k17mnv_idl.file	<W>\p\m\mcc_noversion\k17mnv_idl.tlb
+m.mcc_noversion.k17mnv_idl.ERR	not a PE file
+m.mcc_noversion.k17mnv_idl_i.file	<W>\p\m\mcc_noversion\k17mnv_idl_i.c
+m.mcc_noversion.k17mnv_idl_i.ERR	not a PE file
+m.mcc_noversion.k17mnv_idl_p.file	<W>\p\m\mcc_noversion\k17mnv_idl_p.c
+m.mcc_noversion.k17mnv_idl_p.ERR	not a PE file
+m.mcc_noversion.mccExcludedFiles.file	<W>\p\m\mcc_noversion\mccExcludedFiles.log
+m.mcc_noversion.mccExcludedFiles.ERR	not a PE file
+m.mcc_noversion.mwcomtypes.file	<W>\p\m\mcc_noversion\mwcomtypes.h
+m.mcc_noversion.mwcomtypes.ERR	not a PE file
+m.mcc_noversion.mwcomtypes_i.file	<W>\p\m\mcc_noversion\mwcomtypes_i.c
+m.mcc_noversion.mwcomtypes_i.ERR	not a PE file
+m.mcc_noversion.mwcomtypes_p.file	<W>\p\m\mcc_noversion\mwcomtypes_p.c
+m.mcc_noversion.mwcomtypes_p.ERR	not a PE file
+m.mcc_noversion.readme.file	<W>\p\m\mcc_noversion\readme.txt
+m.mcc_noversion.readme.ERR	not a PE file
+m.mcc_noversion.requiredMCRProducts.file	<W>\p\m\mcc_noversion\requiredMCRProducts.txt
+m.mcc_noversion.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+m.mcc_noversion.unresolvedSymbols.file	<W>\p\m\mcc_noversion\unresolvedSymbols.txt
+m.mcc_noversion.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+m.mcc_samefiles.buildresult.file	<W>\p\m\mcc_samefiles\buildresult.json
+m.mcc_samefiles.buildresult.ERR	not a PE file
+m.mcc_samefiles.dlldata.file	<W>\p\m\mcc_samefiles\dlldata.c
+m.mcc_samefiles.dlldata.ERR	not a PE file
+m.mcc_samefiles.includedSupportPackages.file	<W>\p\m\mcc_samefiles\includedSupportPackages.txt
+m.mcc_samefiles.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+m.mcc_samefiles.k17m.file	<W>\p\m\mcc_samefiles\k17m.def
+m.mcc_samefiles.k17m.ERR	not a PE file
+m.mcc_samefiles.k17m.file	<W>\p\m\mcc_samefiles\k17m.rc
+m.mcc_samefiles.k17m.ERR	not a PE file
+m.mcc_samefiles.k17m_1_0.file	k17m_1_0.dll
+m.mcc_samefiles.k17m_1_0.bytes	347648
+m.mcc_samefiles.k17m_1_0.machine	0x8664
+m.mcc_samefiles.k17m_1_0.subsystem	windows-gui
+m.mcc_samefiles.k17m_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+m.mcc_samefiles.k17m_1_0.image.bytes	347648
+m.mcc_samefiles.k17m_1_0.overlay.bytes	0
+m.mcc_samefiles.k17m_1_0.certificate	no
+m.mcc_samefiles.k17m_1_0.import	KERNEL32.dll
+m.mcc_samefiles.k17m_1_0.import	USER32.dll
+m.mcc_samefiles.k17m_1_0.import	ole32.dll
+m.mcc_samefiles.k17m_1_0.import	OLEAUT32.dll
+m.mcc_samefiles.k17m_1_0.import	mclxlmain25_2.dll
+m.mcc_samefiles.k17m_1_0.import	mclmcrrt25_2.dll (delay)
+m.mcc_samefiles.k17m_1_0.resource	"RT_RCDATA" 2 lang 1033: 155069 bytes
+m.mcc_samefiles.k17m_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 9c 49
+m.mcc_samefiles.k17m_1_0.resource	"TYPELIB" 1 lang 1033: 2404 bytes
+m.mcc_samefiles.k17m_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+m.mcc_samefiles.k17m_1_0.resource	VERSION 1 lang 1033: 320 bytes
+m.mcc_samefiles.k17m_1_0.  fixed.FileVersion	1.0.0.0
+m.mcc_samefiles.k17m_1_0.  fixed.ProductVersion	1.0.0.0
+m.mcc_samefiles.k17m_1_0.  fixed.FileFlags	0x0
+m.mcc_samefiles.k17m_1_0.  fixed.FileOS	0x0
+m.mcc_samefiles.k17m_1_0.  fixed.FileType	0x0
+m.mcc_samefiles.k17m_1_0.  table	040904b0
+m.mcc_samefiles.k17m_1_0.  string.FileVersion	1.0.0.0
+m.mcc_samefiles.k17m_1_0.  string.ProductVersion	1.0.0.0
+m.mcc_samefiles.k17m_1_0.  var.Translation	040904b0
+m.mcc_samefiles.k17m_1_0.file	<W>\p\m\mcc_samefiles\k17m_1_0.exp
+m.mcc_samefiles.k17m_1_0.ERR	not a PE file
+m.mcc_samefiles.k17m_1_0.file	<W>\p\m\mcc_samefiles\k17m_1_0.lib
+m.mcc_samefiles.k17m_1_0.ERR	not a PE file
+m.mcc_samefiles.K17M_com.file	<W>\p\m\mcc_samefiles\K17M_com.cpp
+m.mcc_samefiles.K17M_com.ERR	not a PE file
+m.mcc_samefiles.K17M_com.file	<W>\p\m\mcc_samefiles\K17M_com.hpp
+m.mcc_samefiles.K17M_com.ERR	not a PE file
+m.mcc_samefiles.k17m_dll.file	<W>\p\m\mcc_samefiles\k17m_dll.cpp
+m.mcc_samefiles.k17m_dll.ERR	not a PE file
+m.mcc_samefiles.k17m_idl.file	<W>\p\m\mcc_samefiles\k17m_idl.h
+m.mcc_samefiles.k17m_idl.ERR	not a PE file
+m.mcc_samefiles.k17m_idl.file	<W>\p\m\mcc_samefiles\k17m_idl.idl
+m.mcc_samefiles.k17m_idl.ERR	not a PE file
+m.mcc_samefiles.k17m_idl.file	<W>\p\m\mcc_samefiles\k17m_idl.tlb
+m.mcc_samefiles.k17m_idl.ERR	not a PE file
+m.mcc_samefiles.k17m_idl_i.file	<W>\p\m\mcc_samefiles\k17m_idl_i.c
+m.mcc_samefiles.k17m_idl_i.ERR	not a PE file
+m.mcc_samefiles.k17m_idl_p.file	<W>\p\m\mcc_samefiles\k17m_idl_p.c
+m.mcc_samefiles.k17m_idl_p.ERR	not a PE file
+m.mcc_samefiles.mccExcludedFiles.file	<W>\p\m\mcc_samefiles\mccExcludedFiles.log
+m.mcc_samefiles.mccExcludedFiles.ERR	not a PE file
+m.mcc_samefiles.mwcomtypes.file	<W>\p\m\mcc_samefiles\mwcomtypes.h
+m.mcc_samefiles.mwcomtypes.ERR	not a PE file
+m.mcc_samefiles.mwcomtypes_i.file	<W>\p\m\mcc_samefiles\mwcomtypes_i.c
+m.mcc_samefiles.mwcomtypes_i.ERR	not a PE file
+m.mcc_samefiles.mwcomtypes_p.file	<W>\p\m\mcc_samefiles\mwcomtypes_p.c
+m.mcc_samefiles.mwcomtypes_p.ERR	not a PE file
+m.mcc_samefiles.readme.file	<W>\p\m\mcc_samefiles\readme.txt
+m.mcc_samefiles.readme.ERR	not a PE file
+m.mcc_samefiles.requiredMCRProducts.file	<W>\p\m\mcc_samefiles\requiredMCRProducts.txt
+m.mcc_samefiles.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+m.mcc_samefiles.unresolvedSymbols.file	<W>\p\m\mcc_samefiles\unresolvedSymbols.txt
+m.mcc_samefiles.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+m.mcc_sameorder.buildresult.file	<W>\p\m\mcc_sameorder\buildresult.json
+m.mcc_sameorder.buildresult.ERR	not a PE file
+m.mcc_sameorder.dlldata.file	<W>\p\m\mcc_sameorder\dlldata.c
+m.mcc_sameorder.dlldata.ERR	not a PE file
+m.mcc_sameorder.includedSupportPackages.file	<W>\p\m\mcc_sameorder\includedSupportPackages.txt
+m.mcc_sameorder.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+m.mcc_sameorder.k17m.file	<W>\p\m\mcc_sameorder\k17m.def
+m.mcc_sameorder.k17m.ERR	not a PE file
+m.mcc_sameorder.k17m.file	<W>\p\m\mcc_sameorder\k17m.rc
+m.mcc_sameorder.k17m.ERR	not a PE file
+m.mcc_sameorder.k17m_1_0.file	k17m_1_0.dll
+m.mcc_sameorder.k17m_1_0.bytes	347648
+m.mcc_sameorder.k17m_1_0.machine	0x8664
+m.mcc_sameorder.k17m_1_0.subsystem	windows-gui
+m.mcc_sameorder.k17m_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+m.mcc_sameorder.k17m_1_0.image.bytes	347648
+m.mcc_sameorder.k17m_1_0.overlay.bytes	0
+m.mcc_sameorder.k17m_1_0.certificate	no
+m.mcc_sameorder.k17m_1_0.import	KERNEL32.dll
+m.mcc_sameorder.k17m_1_0.import	USER32.dll
+m.mcc_sameorder.k17m_1_0.import	ole32.dll
+m.mcc_sameorder.k17m_1_0.import	OLEAUT32.dll
+m.mcc_sameorder.k17m_1_0.import	mclxlmain25_2.dll
+m.mcc_sameorder.k17m_1_0.import	mclmcrrt25_2.dll (delay)
+m.mcc_sameorder.k17m_1_0.resource	"RT_RCDATA" 2 lang 1033: 155121 bytes
+m.mcc_sameorder.k17m_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 0d 8c
+m.mcc_sameorder.k17m_1_0.resource	"TYPELIB" 1 lang 1033: 2404 bytes
+m.mcc_sameorder.k17m_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+m.mcc_sameorder.k17m_1_0.resource	VERSION 1 lang 1033: 320 bytes
+m.mcc_sameorder.k17m_1_0.  fixed.FileVersion	1.0.0.0
+m.mcc_sameorder.k17m_1_0.  fixed.ProductVersion	1.0.0.0
+m.mcc_sameorder.k17m_1_0.  fixed.FileFlags	0x0
+m.mcc_sameorder.k17m_1_0.  fixed.FileOS	0x0
+m.mcc_sameorder.k17m_1_0.  fixed.FileType	0x0
+m.mcc_sameorder.k17m_1_0.  table	040904b0
+m.mcc_sameorder.k17m_1_0.  string.FileVersion	1.0.0.0
+m.mcc_sameorder.k17m_1_0.  string.ProductVersion	1.0.0.0
+m.mcc_sameorder.k17m_1_0.  var.Translation	040904b0
+m.mcc_sameorder.k17m_1_0.file	<W>\p\m\mcc_sameorder\k17m_1_0.exp
+m.mcc_sameorder.k17m_1_0.ERR	not a PE file
+m.mcc_sameorder.k17m_1_0.file	<W>\p\m\mcc_sameorder\k17m_1_0.lib
+m.mcc_sameorder.k17m_1_0.ERR	not a PE file
+m.mcc_sameorder.K17M_com.file	<W>\p\m\mcc_sameorder\K17M_com.cpp
+m.mcc_sameorder.K17M_com.ERR	not a PE file
+m.mcc_sameorder.K17M_com.file	<W>\p\m\mcc_sameorder\K17M_com.hpp
+m.mcc_sameorder.K17M_com.ERR	not a PE file
+m.mcc_sameorder.k17m_dll.file	<W>\p\m\mcc_sameorder\k17m_dll.cpp
+m.mcc_sameorder.k17m_dll.ERR	not a PE file
+m.mcc_sameorder.k17m_idl.file	<W>\p\m\mcc_sameorder\k17m_idl.h
+m.mcc_sameorder.k17m_idl.ERR	not a PE file
+m.mcc_sameorder.k17m_idl.file	<W>\p\m\mcc_sameorder\k17m_idl.idl
+m.mcc_sameorder.k17m_idl.ERR	not a PE file
+m.mcc_sameorder.k17m_idl.file	<W>\p\m\mcc_sameorder\k17m_idl.tlb
+m.mcc_sameorder.k17m_idl.ERR	not a PE file
+m.mcc_sameorder.k17m_idl_i.file	<W>\p\m\mcc_sameorder\k17m_idl_i.c
+m.mcc_sameorder.k17m_idl_i.ERR	not a PE file
+m.mcc_sameorder.k17m_idl_p.file	<W>\p\m\mcc_sameorder\k17m_idl_p.c
+m.mcc_sameorder.k17m_idl_p.ERR	not a PE file
+m.mcc_sameorder.mccExcludedFiles.file	<W>\p\m\mcc_sameorder\mccExcludedFiles.log
+m.mcc_sameorder.mccExcludedFiles.ERR	not a PE file
+m.mcc_sameorder.mwcomtypes.file	<W>\p\m\mcc_sameorder\mwcomtypes.h
+m.mcc_sameorder.mwcomtypes.ERR	not a PE file
+m.mcc_sameorder.mwcomtypes_i.file	<W>\p\m\mcc_sameorder\mwcomtypes_i.c
+m.mcc_sameorder.mwcomtypes_i.ERR	not a PE file
+m.mcc_sameorder.mwcomtypes_p.file	<W>\p\m\mcc_sameorder\mwcomtypes_p.c
+m.mcc_sameorder.mwcomtypes_p.ERR	not a PE file
+m.mcc_sameorder.readme.file	<W>\p\m\mcc_sameorder\readme.txt
+m.mcc_sameorder.readme.ERR	not a PE file
+m.mcc_sameorder.requiredMCRProducts.file	<W>\p\m\mcc_sameorder\requiredMCRProducts.txt
+m.mcc_sameorder.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+m.mcc_sameorder.unresolvedSymbols.file	<W>\p\m\mcc_sameorder\unresolvedSymbols.txt
+m.mcc_sameorder.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+m.mcc_samev2.buildresult.file	<W>\p\m\mcc_samev2\buildresult.json
+m.mcc_samev2.buildresult.ERR	not a PE file
+m.mcc_samev2.dlldata.file	<W>\p\m\mcc_samev2\dlldata.c
+m.mcc_samev2.dlldata.ERR	not a PE file
+m.mcc_samev2.includedSupportPackages.file	<W>\p\m\mcc_samev2\includedSupportPackages.txt
+m.mcc_samev2.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+m.mcc_samev2.k17m.file	<W>\p\m\mcc_samev2\k17m.def
+m.mcc_samev2.k17m.ERR	not a PE file
+m.mcc_samev2.k17m.file	<W>\p\m\mcc_samev2\k17m.rc
+m.mcc_samev2.k17m.ERR	not a PE file
+m.mcc_samev2.k17m_2_0.file	k17m_2_0.dll
+m.mcc_samev2.k17m_2_0.bytes	345600
+m.mcc_samev2.k17m_2_0.machine	0x8664
+m.mcc_samev2.k17m_2_0.subsystem	windows-gui
+m.mcc_samev2.k17m_2_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+m.mcc_samev2.k17m_2_0.image.bytes	345600
+m.mcc_samev2.k17m_2_0.overlay.bytes	0
+m.mcc_samev2.k17m_2_0.certificate	no
+m.mcc_samev2.k17m_2_0.import	KERNEL32.dll
+m.mcc_samev2.k17m_2_0.import	USER32.dll
+m.mcc_samev2.k17m_2_0.import	ole32.dll
+m.mcc_samev2.k17m_2_0.import	OLEAUT32.dll
+m.mcc_samev2.k17m_2_0.import	mclxlmain25_2.dll
+m.mcc_samev2.k17m_2_0.import	mclmcrrt25_2.dll (delay)
+m.mcc_samev2.k17m_2_0.resource	"RT_RCDATA" 2 lang 1033: 154002 bytes
+m.mcc_samev2.k17m_2_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 c2 b6
+m.mcc_samev2.k17m_2_0.resource	"TYPELIB" 1 lang 1033: 2244 bytes
+m.mcc_samev2.k17m_2_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+m.mcc_samev2.k17m_2_0.resource	VERSION 1 lang 1033: 320 bytes
+m.mcc_samev2.k17m_2_0.  fixed.FileVersion	2.0.0.0
+m.mcc_samev2.k17m_2_0.  fixed.ProductVersion	2.0.0.0
+m.mcc_samev2.k17m_2_0.  fixed.FileFlags	0x0
+m.mcc_samev2.k17m_2_0.  fixed.FileOS	0x0
+m.mcc_samev2.k17m_2_0.  fixed.FileType	0x0
+m.mcc_samev2.k17m_2_0.  table	040904b0
+m.mcc_samev2.k17m_2_0.  string.FileVersion	2.0.0.0
+m.mcc_samev2.k17m_2_0.  string.ProductVersion	2.0.0.0
+m.mcc_samev2.k17m_2_0.  var.Translation	040904b0
+m.mcc_samev2.k17m_2_0.file	<W>\p\m\mcc_samev2\k17m_2_0.exp
+m.mcc_samev2.k17m_2_0.ERR	not a PE file
+m.mcc_samev2.k17m_2_0.file	<W>\p\m\mcc_samev2\k17m_2_0.lib
+m.mcc_samev2.k17m_2_0.ERR	not a PE file
+m.mcc_samev2.K17M_com.file	<W>\p\m\mcc_samev2\K17M_com.cpp
+m.mcc_samev2.K17M_com.ERR	not a PE file
+m.mcc_samev2.K17M_com.file	<W>\p\m\mcc_samev2\K17M_com.hpp
+m.mcc_samev2.K17M_com.ERR	not a PE file
+m.mcc_samev2.k17m_dll.file	<W>\p\m\mcc_samev2\k17m_dll.cpp
+m.mcc_samev2.k17m_dll.ERR	not a PE file
+m.mcc_samev2.k17m_idl.file	<W>\p\m\mcc_samev2\k17m_idl.h
+m.mcc_samev2.k17m_idl.ERR	not a PE file
+m.mcc_samev2.k17m_idl.file	<W>\p\m\mcc_samev2\k17m_idl.idl
+m.mcc_samev2.k17m_idl.ERR	not a PE file
+m.mcc_samev2.k17m_idl.file	<W>\p\m\mcc_samev2\k17m_idl.tlb
+m.mcc_samev2.k17m_idl.ERR	not a PE file
+m.mcc_samev2.k17m_idl_i.file	<W>\p\m\mcc_samev2\k17m_idl_i.c
+m.mcc_samev2.k17m_idl_i.ERR	not a PE file
+m.mcc_samev2.k17m_idl_p.file	<W>\p\m\mcc_samev2\k17m_idl_p.c
+m.mcc_samev2.k17m_idl_p.ERR	not a PE file
+m.mcc_samev2.mccExcludedFiles.file	<W>\p\m\mcc_samev2\mccExcludedFiles.log
+m.mcc_samev2.mccExcludedFiles.ERR	not a PE file
+m.mcc_samev2.mwcomtypes.file	<W>\p\m\mcc_samev2\mwcomtypes.h
+m.mcc_samev2.mwcomtypes.ERR	not a PE file
+m.mcc_samev2.mwcomtypes_i.file	<W>\p\m\mcc_samev2\mwcomtypes_i.c
+m.mcc_samev2.mwcomtypes_i.ERR	not a PE file
+m.mcc_samev2.mwcomtypes_p.file	<W>\p\m\mcc_samev2\mwcomtypes_p.c
+m.mcc_samev2.mwcomtypes_p.ERR	not a PE file
+m.mcc_samev2.readme.file	<W>\p\m\mcc_samev2\readme.txt
+m.mcc_samev2.readme.ERR	not a PE file
+m.mcc_samev2.requiredMCRProducts.file	<W>\p\m\mcc_samev2\requiredMCRProducts.txt
+m.mcc_samev2.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+m.mcc_samev2.unresolvedSymbols.file	<W>\p\m\mcc_samev2\unresolvedSymbols.txt
+m.mcc_samev2.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+m.mcc_script.buildresult.file	<W>\p\m\mcc_script\buildresult.json
+m.mcc_script.buildresult.ERR	not a PE file
+m.mcc_script.dlldata.file	<W>\p\m\mcc_script\dlldata.c
+m.mcc_script.dlldata.ERR	not a PE file
+m.mcc_script.includedSupportPackages.file	<W>\p\m\mcc_script\includedSupportPackages.txt
+m.mcc_script.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+m.mcc_script.k17msc.file	<W>\p\m\mcc_script\k17msc.def
+m.mcc_script.k17msc.ERR	not a PE file
+m.mcc_script.k17msc.file	<W>\p\m\mcc_script\k17msc.rc
+m.mcc_script.k17msc.ERR	not a PE file
+m.mcc_script.k17msc_1_0.file	k17msc_1_0.dll
+m.mcc_script.k17msc_1_0.bytes	345088
+m.mcc_script.k17msc_1_0.machine	0x8664
+m.mcc_script.k17msc_1_0.subsystem	windows-gui
+m.mcc_script.k17msc_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+m.mcc_script.k17msc_1_0.image.bytes	345088
+m.mcc_script.k17msc_1_0.overlay.bytes	0
+m.mcc_script.k17msc_1_0.certificate	no
+m.mcc_script.k17msc_1_0.import	KERNEL32.dll
+m.mcc_script.k17msc_1_0.import	USER32.dll
+m.mcc_script.k17msc_1_0.import	ole32.dll
+m.mcc_script.k17msc_1_0.import	OLEAUT32.dll
+m.mcc_script.k17msc_1_0.import	mclxlmain25_2.dll
+m.mcc_script.k17msc_1_0.import	mclmcrrt25_2.dll (delay)
+m.mcc_script.k17msc_1_0.resource	"RT_RCDATA" 2 lang 1033: 153967 bytes
+m.mcc_script.k17msc_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 65 c3
+m.mcc_script.k17msc_1_0.resource	"TYPELIB" 1 lang 1033: 2168 bytes
+m.mcc_script.k17msc_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+m.mcc_script.k17msc_1_0.resource	VERSION 1 lang 1033: 320 bytes
+m.mcc_script.k17msc_1_0.  fixed.FileVersion	1.0.0.0
+m.mcc_script.k17msc_1_0.  fixed.ProductVersion	1.0.0.0
+m.mcc_script.k17msc_1_0.  fixed.FileFlags	0x0
+m.mcc_script.k17msc_1_0.  fixed.FileOS	0x0
+m.mcc_script.k17msc_1_0.  fixed.FileType	0x0
+m.mcc_script.k17msc_1_0.  table	040904b0
+m.mcc_script.k17msc_1_0.  string.FileVersion	1.0.0.0
+m.mcc_script.k17msc_1_0.  string.ProductVersion	1.0.0.0
+m.mcc_script.k17msc_1_0.  var.Translation	040904b0
+m.mcc_script.k17msc_1_0.file	<W>\p\m\mcc_script\k17msc_1_0.exp
+m.mcc_script.k17msc_1_0.ERR	not a PE file
+m.mcc_script.k17msc_1_0.file	<W>\p\m\mcc_script\k17msc_1_0.lib
+m.mcc_script.k17msc_1_0.ERR	not a PE file
+m.mcc_script.K17Msc_com.file	<W>\p\m\mcc_script\K17Msc_com.cpp
+m.mcc_script.K17Msc_com.ERR	not a PE file
+m.mcc_script.K17Msc_com.file	<W>\p\m\mcc_script\K17Msc_com.hpp
+m.mcc_script.K17Msc_com.ERR	not a PE file
+m.mcc_script.k17msc_dll.file	<W>\p\m\mcc_script\k17msc_dll.cpp
+m.mcc_script.k17msc_dll.ERR	not a PE file
+m.mcc_script.k17msc_idl.file	<W>\p\m\mcc_script\k17msc_idl.h
+m.mcc_script.k17msc_idl.ERR	not a PE file
+m.mcc_script.k17msc_idl.file	<W>\p\m\mcc_script\k17msc_idl.idl
+m.mcc_script.k17msc_idl.ERR	not a PE file
+m.mcc_script.k17msc_idl.file	<W>\p\m\mcc_script\k17msc_idl.tlb
+m.mcc_script.k17msc_idl.ERR	not a PE file
+m.mcc_script.k17msc_idl_i.file	<W>\p\m\mcc_script\k17msc_idl_i.c
+m.mcc_script.k17msc_idl_i.ERR	not a PE file
+m.mcc_script.k17msc_idl_p.file	<W>\p\m\mcc_script\k17msc_idl_p.c
+m.mcc_script.k17msc_idl_p.ERR	not a PE file
+m.mcc_script.mccExcludedFiles.file	<W>\p\m\mcc_script\mccExcludedFiles.log
+m.mcc_script.mccExcludedFiles.ERR	not a PE file
+m.mcc_script.mwcomtypes.file	<W>\p\m\mcc_script\mwcomtypes.h
+m.mcc_script.mwcomtypes.ERR	not a PE file
+m.mcc_script.mwcomtypes_i.file	<W>\p\m\mcc_script\mwcomtypes_i.c
+m.mcc_script.mwcomtypes_i.ERR	not a PE file
+m.mcc_script.mwcomtypes_p.file	<W>\p\m\mcc_script\mwcomtypes_p.c
+m.mcc_script.mwcomtypes_p.ERR	not a PE file
+m.mcc_script.readme.file	<W>\p\m\mcc_script\readme.txt
+m.mcc_script.readme.ERR	not a PE file
+m.mcc_script.requiredMCRProducts.file	<W>\p\m\mcc_script\requiredMCRProducts.txt
+m.mcc_script.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+m.mcc_script.unresolvedSymbols.file	<W>\p\m\mcc_script\unresolvedSymbols.txt
+m.mcc_script.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+m.mcc_separate.buildresult.file	<W>\p\m\mcc_separate\buildresult.json
+m.mcc_separate.buildresult.ERR	not a PE file
+m.mcc_separate.dlldata.file	<W>\p\m\mcc_separate\dlldata.c
+m.mcc_separate.dlldata.ERR	not a PE file
+m.mcc_separate.includedSupportPackages.file	<W>\p\m\mcc_separate\includedSupportPackages.txt
+m.mcc_separate.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+m.mcc_separate.k17ms.file	<W>\p\m\mcc_separate\k17ms.ctf
+m.mcc_separate.k17ms.ERR	not a PE file
+m.mcc_separate.k17ms.file	<W>\p\m\mcc_separate\k17ms.def
+m.mcc_separate.k17ms.ERR	not a PE file
+m.mcc_separate.k17ms.file	<W>\p\m\mcc_separate\k17ms.rc
+m.mcc_separate.k17ms.ERR	not a PE file
+m.mcc_separate.k17ms_1_0.file	k17ms_1_0.dll
+m.mcc_separate.k17ms_1_0.bytes	191488
+m.mcc_separate.k17ms_1_0.machine	0x8664
+m.mcc_separate.k17ms_1_0.subsystem	windows-gui
+m.mcc_separate.k17ms_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+m.mcc_separate.k17ms_1_0.image.bytes	191488
+m.mcc_separate.k17ms_1_0.overlay.bytes	0
+m.mcc_separate.k17ms_1_0.certificate	no
+m.mcc_separate.k17ms_1_0.import	KERNEL32.dll
+m.mcc_separate.k17ms_1_0.import	USER32.dll
+m.mcc_separate.k17ms_1_0.import	ole32.dll
+m.mcc_separate.k17ms_1_0.import	OLEAUT32.dll
+m.mcc_separate.k17ms_1_0.import	mclxlmain25_2.dll
+m.mcc_separate.k17ms_1_0.import	mclmcrrt25_2.dll (delay)
+m.mcc_separate.k17ms_1_0.resource	"TYPELIB" 1 lang 1033: 2252 bytes
+m.mcc_separate.k17ms_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+m.mcc_separate.k17ms_1_0.resource	VERSION 1 lang 1033: 320 bytes
+m.mcc_separate.k17ms_1_0.  fixed.FileVersion	1.0.0.0
+m.mcc_separate.k17ms_1_0.  fixed.ProductVersion	1.0.0.0
+m.mcc_separate.k17ms_1_0.  fixed.FileFlags	0x0
+m.mcc_separate.k17ms_1_0.  fixed.FileOS	0x0
+m.mcc_separate.k17ms_1_0.  fixed.FileType	0x0
+m.mcc_separate.k17ms_1_0.  table	040904b0
+m.mcc_separate.k17ms_1_0.  string.FileVersion	1.0.0.0
+m.mcc_separate.k17ms_1_0.  string.ProductVersion	1.0.0.0
+m.mcc_separate.k17ms_1_0.  var.Translation	040904b0
+m.mcc_separate.k17ms_1_0.file	<W>\p\m\mcc_separate\k17ms_1_0.exp
+m.mcc_separate.k17ms_1_0.ERR	not a PE file
+m.mcc_separate.k17ms_1_0.file	<W>\p\m\mcc_separate\k17ms_1_0.lib
+m.mcc_separate.k17ms_1_0.ERR	not a PE file
+m.mcc_separate.K17Ms_com.file	<W>\p\m\mcc_separate\K17Ms_com.cpp
+m.mcc_separate.K17Ms_com.ERR	not a PE file
+m.mcc_separate.K17Ms_com.file	<W>\p\m\mcc_separate\K17Ms_com.hpp
+m.mcc_separate.K17Ms_com.ERR	not a PE file
+m.mcc_separate.k17ms_dll.file	<W>\p\m\mcc_separate\k17ms_dll.cpp
+m.mcc_separate.k17ms_dll.ERR	not a PE file
+m.mcc_separate.k17ms_idl.file	<W>\p\m\mcc_separate\k17ms_idl.h
+m.mcc_separate.k17ms_idl.ERR	not a PE file
+m.mcc_separate.k17ms_idl.file	<W>\p\m\mcc_separate\k17ms_idl.idl
+m.mcc_separate.k17ms_idl.ERR	not a PE file
+m.mcc_separate.k17ms_idl.file	<W>\p\m\mcc_separate\k17ms_idl.tlb
+m.mcc_separate.k17ms_idl.ERR	not a PE file
+m.mcc_separate.k17ms_idl_i.file	<W>\p\m\mcc_separate\k17ms_idl_i.c
+m.mcc_separate.k17ms_idl_i.ERR	not a PE file
+m.mcc_separate.k17ms_idl_p.file	<W>\p\m\mcc_separate\k17ms_idl_p.c
+m.mcc_separate.k17ms_idl_p.ERR	not a PE file
+m.mcc_separate.mccExcludedFiles.file	<W>\p\m\mcc_separate\mccExcludedFiles.log
+m.mcc_separate.mccExcludedFiles.ERR	not a PE file
+m.mcc_separate.mwcomtypes.file	<W>\p\m\mcc_separate\mwcomtypes.h
+m.mcc_separate.mwcomtypes.ERR	not a PE file
+m.mcc_separate.mwcomtypes_i.file	<W>\p\m\mcc_separate\mwcomtypes_i.c
+m.mcc_separate.mwcomtypes_i.ERR	not a PE file
+m.mcc_separate.mwcomtypes_p.file	<W>\p\m\mcc_separate\mwcomtypes_p.c
+m.mcc_separate.mwcomtypes_p.ERR	not a PE file
+m.mcc_separate.readme.file	<W>\p\m\mcc_separate\readme.txt
+m.mcc_separate.readme.ERR	not a PE file
+m.mcc_separate.requiredMCRProducts.file	<W>\p\m\mcc_separate\requiredMCRProducts.txt
+m.mcc_separate.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+m.mcc_separate.unresolvedSymbols.file	<W>\p\m\mcc_separate\unresolvedSymbols.txt
+m.mcc_separate.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+m.mcc_twofiles.buildresult.file	<W>\p\m\mcc_twofiles\buildresult.json
+m.mcc_twofiles.buildresult.ERR	not a PE file
+m.mcc_twofiles.dlldata.file	<W>\p\m\mcc_twofiles\dlldata.c
+m.mcc_twofiles.dlldata.ERR	not a PE file
+m.mcc_twofiles.includedSupportPackages.file	<W>\p\m\mcc_twofiles\includedSupportPackages.txt
+m.mcc_twofiles.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+m.mcc_twofiles.k17mtwo.file	<W>\p\m\mcc_twofiles\k17mtwo.bas
+m.mcc_twofiles.k17mtwo.ERR	not a PE file
+m.mcc_twofiles.k17mtwo.file	<W>\p\m\mcc_twofiles\k17mtwo.def
+m.mcc_twofiles.k17mtwo.ERR	not a PE file
+m.mcc_twofiles.k17mtwo.file	<W>\p\m\mcc_twofiles\k17mtwo.rc
+m.mcc_twofiles.k17mtwo.ERR	not a PE file
+m.mcc_twofiles.k17mtwo_1_0.file	k17mtwo_1_0.dll
+m.mcc_twofiles.k17mtwo_1_0.bytes	347648
+m.mcc_twofiles.k17mtwo_1_0.machine	0x8664
+m.mcc_twofiles.k17mtwo_1_0.subsystem	windows-gui
+m.mcc_twofiles.k17mtwo_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+m.mcc_twofiles.k17mtwo_1_0.image.bytes	347648
+m.mcc_twofiles.k17mtwo_1_0.overlay.bytes	0
+m.mcc_twofiles.k17mtwo_1_0.certificate	no
+m.mcc_twofiles.k17mtwo_1_0.import	KERNEL32.dll
+m.mcc_twofiles.k17mtwo_1_0.import	USER32.dll
+m.mcc_twofiles.k17mtwo_1_0.import	ole32.dll
+m.mcc_twofiles.k17mtwo_1_0.import	OLEAUT32.dll
+m.mcc_twofiles.k17mtwo_1_0.import	mclxlmain25_2.dll
+m.mcc_twofiles.k17mtwo_1_0.import	mclmcrrt25_2.dll (delay)
+m.mcc_twofiles.k17mtwo_1_0.resource	"RT_RCDATA" 2 lang 1033: 155218 bytes
+m.mcc_twofiles.k17mtwo_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 6a 2b
+m.mcc_twofiles.k17mtwo_1_0.resource	"TYPELIB" 1 lang 1033: 2360 bytes
+m.mcc_twofiles.k17mtwo_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+m.mcc_twofiles.k17mtwo_1_0.resource	VERSION 1 lang 1033: 320 bytes
+m.mcc_twofiles.k17mtwo_1_0.  fixed.FileVersion	1.0.0.0
+m.mcc_twofiles.k17mtwo_1_0.  fixed.ProductVersion	1.0.0.0
+m.mcc_twofiles.k17mtwo_1_0.  fixed.FileFlags	0x0
+m.mcc_twofiles.k17mtwo_1_0.  fixed.FileOS	0x0
+m.mcc_twofiles.k17mtwo_1_0.  fixed.FileType	0x0
+m.mcc_twofiles.k17mtwo_1_0.  table	040904b0
+m.mcc_twofiles.k17mtwo_1_0.  string.FileVersion	1.0.0.0
+m.mcc_twofiles.k17mtwo_1_0.  string.ProductVersion	1.0.0.0
+m.mcc_twofiles.k17mtwo_1_0.  var.Translation	040904b0
+m.mcc_twofiles.k17mtwo_1_0.file	<W>\p\m\mcc_twofiles\k17mtwo_1_0.exp
+m.mcc_twofiles.k17mtwo_1_0.ERR	not a PE file
+m.mcc_twofiles.k17mtwo_1_0.file	<W>\p\m\mcc_twofiles\k17mtwo_1_0.lib
+m.mcc_twofiles.k17mtwo_1_0.ERR	not a PE file
+m.mcc_twofiles.k17mtwo_dll.file	<W>\p\m\mcc_twofiles\k17mtwo_dll.cpp
+m.mcc_twofiles.k17mtwo_dll.ERR	not a PE file
+m.mcc_twofiles.k17mtwo_idl.file	<W>\p\m\mcc_twofiles\k17mtwo_idl.h
+m.mcc_twofiles.k17mtwo_idl.ERR	not a PE file
+m.mcc_twofiles.k17mtwo_idl.file	<W>\p\m\mcc_twofiles\k17mtwo_idl.idl
+m.mcc_twofiles.k17mtwo_idl.ERR	not a PE file
+m.mcc_twofiles.k17mtwo_idl.file	<W>\p\m\mcc_twofiles\k17mtwo_idl.tlb
+m.mcc_twofiles.k17mtwo_idl.ERR	not a PE file
+m.mcc_twofiles.k17mtwo_idl_i.file	<W>\p\m\mcc_twofiles\k17mtwo_idl_i.c
+m.mcc_twofiles.k17mtwo_idl_i.ERR	not a PE file
+m.mcc_twofiles.k17mtwo_idl_p.file	<W>\p\m\mcc_twofiles\k17mtwo_idl_p.c
+m.mcc_twofiles.k17mtwo_idl_p.ERR	not a PE file
+m.mcc_twofiles.K17Two_com.file	<W>\p\m\mcc_twofiles\K17Two_com.cpp
+m.mcc_twofiles.K17Two_com.ERR	not a PE file
+m.mcc_twofiles.K17Two_com.file	<W>\p\m\mcc_twofiles\K17Two_com.hpp
+m.mcc_twofiles.K17Two_com.ERR	not a PE file
+m.mcc_twofiles.mccExcludedFiles.file	<W>\p\m\mcc_twofiles\mccExcludedFiles.log
+m.mcc_twofiles.mccExcludedFiles.ERR	not a PE file
+m.mcc_twofiles.mwcomtypes.file	<W>\p\m\mcc_twofiles\mwcomtypes.h
+m.mcc_twofiles.mwcomtypes.ERR	not a PE file
+m.mcc_twofiles.mwcomtypes_i.file	<W>\p\m\mcc_twofiles\mwcomtypes_i.c
+m.mcc_twofiles.mwcomtypes_i.ERR	not a PE file
+m.mcc_twofiles.mwcomtypes_p.file	<W>\p\m\mcc_twofiles\mwcomtypes_p.c
+m.mcc_twofiles.mwcomtypes_p.ERR	not a PE file
+m.mcc_twofiles.readme.file	<W>\p\m\mcc_twofiles\readme.txt
+m.mcc_twofiles.readme.ERR	not a PE file
+m.mcc_twofiles.requiredMCRProducts.file	<W>\p\m\mcc_twofiles\requiredMCRProducts.txt
+m.mcc_twofiles.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+m.mcc_twofiles.unresolvedSymbols.file	<W>\p\m\mcc_twofiles\unresolvedSymbols.txt
+m.mcc_twofiles.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+m.mcc_version2.buildresult.file	<W>\p\m\mcc_version2\buildresult.json
+m.mcc_version2.buildresult.ERR	not a PE file
+m.mcc_version2.dlldata.file	<W>\p\m\mcc_version2\dlldata.c
+m.mcc_version2.dlldata.ERR	not a PE file
+m.mcc_version2.includedSupportPackages.file	<W>\p\m\mcc_version2\includedSupportPackages.txt
+m.mcc_version2.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+m.mcc_version2.k17mv2.file	<W>\p\m\mcc_version2\k17mv2.def
+m.mcc_version2.k17mv2.ERR	not a PE file
+m.mcc_version2.k17mv2.file	<W>\p\m\mcc_version2\k17mv2.rc
+m.mcc_version2.k17mv2.ERR	not a PE file
+m.mcc_version2.k17mv2_2_0.file	k17mv2_2_0.dll
+m.mcc_version2.k17mv2_2_0.bytes	345600
+m.mcc_version2.k17mv2_2_0.machine	0x8664
+m.mcc_version2.k17mv2_2_0.subsystem	windows-gui
+m.mcc_version2.k17mv2_2_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+m.mcc_version2.k17mv2_2_0.image.bytes	345600
+m.mcc_version2.k17mv2_2_0.overlay.bytes	0
+m.mcc_version2.k17mv2_2_0.certificate	no
+m.mcc_version2.k17mv2_2_0.import	KERNEL32.dll
+m.mcc_version2.k17mv2_2_0.import	USER32.dll
+m.mcc_version2.k17mv2_2_0.import	ole32.dll
+m.mcc_version2.k17mv2_2_0.import	OLEAUT32.dll
+m.mcc_version2.k17mv2_2_0.import	mclxlmain25_2.dll
+m.mcc_version2.k17mv2_2_0.import	mclmcrrt25_2.dll (delay)
+m.mcc_version2.k17mv2_2_0.resource	"RT_RCDATA" 2 lang 1033: 154002 bytes
+m.mcc_version2.k17mv2_2_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 3b 6d
+m.mcc_version2.k17mv2_2_0.resource	"TYPELIB" 1 lang 1033: 2256 bytes
+m.mcc_version2.k17mv2_2_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+m.mcc_version2.k17mv2_2_0.resource	VERSION 1 lang 1033: 320 bytes
+m.mcc_version2.k17mv2_2_0.  fixed.FileVersion	2.0.0.0
+m.mcc_version2.k17mv2_2_0.  fixed.ProductVersion	2.0.0.0
+m.mcc_version2.k17mv2_2_0.  fixed.FileFlags	0x0
+m.mcc_version2.k17mv2_2_0.  fixed.FileOS	0x0
+m.mcc_version2.k17mv2_2_0.  fixed.FileType	0x0
+m.mcc_version2.k17mv2_2_0.  table	040904b0
+m.mcc_version2.k17mv2_2_0.  string.FileVersion	2.0.0.0
+m.mcc_version2.k17mv2_2_0.  string.ProductVersion	2.0.0.0
+m.mcc_version2.k17mv2_2_0.  var.Translation	040904b0
+m.mcc_version2.k17mv2_2_0.file	<W>\p\m\mcc_version2\k17mv2_2_0.exp
+m.mcc_version2.k17mv2_2_0.ERR	not a PE file
+m.mcc_version2.k17mv2_2_0.file	<W>\p\m\mcc_version2\k17mv2_2_0.lib
+m.mcc_version2.k17mv2_2_0.ERR	not a PE file
+m.mcc_version2.K17Mv2_com.file	<W>\p\m\mcc_version2\K17Mv2_com.cpp
+m.mcc_version2.K17Mv2_com.ERR	not a PE file
+m.mcc_version2.K17Mv2_com.file	<W>\p\m\mcc_version2\K17Mv2_com.hpp
+m.mcc_version2.K17Mv2_com.ERR	not a PE file
+m.mcc_version2.k17mv2_dll.file	<W>\p\m\mcc_version2\k17mv2_dll.cpp
+m.mcc_version2.k17mv2_dll.ERR	not a PE file
+m.mcc_version2.k17mv2_idl.file	<W>\p\m\mcc_version2\k17mv2_idl.h
+m.mcc_version2.k17mv2_idl.ERR	not a PE file
+m.mcc_version2.k17mv2_idl.file	<W>\p\m\mcc_version2\k17mv2_idl.idl
+m.mcc_version2.k17mv2_idl.ERR	not a PE file
+m.mcc_version2.k17mv2_idl.file	<W>\p\m\mcc_version2\k17mv2_idl.tlb
+m.mcc_version2.k17mv2_idl.ERR	not a PE file
+m.mcc_version2.k17mv2_idl_i.file	<W>\p\m\mcc_version2\k17mv2_idl_i.c
+m.mcc_version2.k17mv2_idl_i.ERR	not a PE file
+m.mcc_version2.k17mv2_idl_p.file	<W>\p\m\mcc_version2\k17mv2_idl_p.c
+m.mcc_version2.k17mv2_idl_p.ERR	not a PE file
+m.mcc_version2.mccExcludedFiles.file	<W>\p\m\mcc_version2\mccExcludedFiles.log
+m.mcc_version2.mccExcludedFiles.ERR	not a PE file
+m.mcc_version2.mwcomtypes.file	<W>\p\m\mcc_version2\mwcomtypes.h
+m.mcc_version2.mwcomtypes.ERR	not a PE file
+m.mcc_version2.mwcomtypes_i.file	<W>\p\m\mcc_version2\mwcomtypes_i.c
+m.mcc_version2.mwcomtypes_i.ERR	not a PE file
+m.mcc_version2.mwcomtypes_p.file	<W>\p\m\mcc_version2\mwcomtypes_p.c
+m.mcc_version2.mwcomtypes_p.ERR	not a PE file
+m.mcc_version2.readme.file	<W>\p\m\mcc_version2\readme.txt
+m.mcc_version2.readme.ERR	not a PE file
+m.mcc_version2.requiredMCRProducts.file	<W>\p\m\mcc_version2\requiredMCRProducts.txt
+m.mcc_version2.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+m.mcc_version2.unresolvedSymbols.file	<W>\p\m\mcc_version2\unresolvedSymbols.txt
+m.mcc_version2.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+p.cert.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.cert.k17mpsExcelClientInstaller.bytes	1320960
+p.cert.k17mpsExcelClientInstaller.machine	0x14c
+p.cert.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.cert.k17mpsExcelClientInstaller.sections	.text .rsrc .reloc
+p.cert.k17mpsExcelClientInstaller.image.bytes	1320960
+p.cert.k17mpsExcelClientInstaller.overlay.bytes	0
+p.cert.k17mpsExcelClientInstaller.certificate	yes
+p.cert.k17mpsExcelClientInstaller.import	mscoree.dll
+p.cert.k17mpsExcelClientInstaller.resource	ICON 1 lang 0: 38701 bytes
+p.cert.k17mpsExcelClientInstaller.resource	ICON 2 lang 0: 15182 bytes
+p.cert.k17mpsExcelClientInstaller.resource	ICON 3 lang 0: 3214 bytes
+p.cert.k17mpsExcelClientInstaller.resource	ICON 4 lang 0: 2085 bytes
+p.cert.k17mpsExcelClientInstaller.resource	ICON 5 lang 0: 1370 bytes
+p.cert.k17mpsExcelClientInstaller.resource	ICON 6 lang 0: 749 bytes
+p.cert.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE lang 0: 388300 bytes
+p.cert.k17mpsExcelClientInstaller.  starts	50 4b 03 04 14 00 08 00 08 00 4b b6 66 5d 00 00
+p.cert.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_UNZIP lang 0: 734560 bytes
+p.cert.k17mpsExcelClientInstaller.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+p.cert.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_ZLIB lang 0: 100192 bytes
+p.cert.k17mpsExcelClientInstaller.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+p.cert.k17mpsExcelClientInstaller.resource	RCDATA MW_MPS_EX_ADDIN_CONFIG lang 0: 250 bytes
+p.cert.k17mpsExcelClientInstaller.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+p.cert.k17mpsExcelClientInstaller.resource	GROUP_ICON 1 lang 0: 90 bytes
+p.cert.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 38701 id 1: png 256x256
+p.cert.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 15182 id 2: png 128x128
+p.cert.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 3214 id 3: png 48x48
+p.cert.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 2085 id 4: png 32x32
+p.cert.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 1370 id 5: png 24x24
+p.cert.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 749 id 6: png 16x16
+p.cert.k17mpsExcelClientInstaller.resource	VERSION 1 lang 0: 688 bytes
+p.cert.k17mpsExcelClientInstaller.  fixed.FileVersion	1.0.0.0
+p.cert.k17mpsExcelClientInstaller.  fixed.ProductVersion	1.0.0.0
+p.cert.k17mpsExcelClientInstaller.  fixed.FileFlags	0x0
+p.cert.k17mpsExcelClientInstaller.  fixed.FileOS	0x4
+p.cert.k17mpsExcelClientInstaller.  fixed.FileType	0x1
+p.cert.k17mpsExcelClientInstaller.  var.Translation	000004b0
+p.cert.k17mpsExcelClientInstaller.  table	000004b0
+p.cert.k17mpsExcelClientInstaller.  string.FileDescription	ExAddinInstl
+p.cert.k17mpsExcelClientInstaller.  string.FileVersion	1.0.0.0
+p.cert.k17mpsExcelClientInstaller.  string.InternalName	ExAddinInstl.exe
+p.cert.k17mpsExcelClientInstaller.  string.LegalCopyright	 
+p.cert.k17mpsExcelClientInstaller.  string.OriginalFilename	ExAddinInstl.exe
+p.cert.k17mpsExcelClientInstaller.  string.ProductName	ExAddinInstl
+p.cert.k17mpsExcelClientInstaller.  string.ProductVersion	1.0.0.0
+p.cert.k17mpsExcelClientInstaller.  string.Assembly Version	1.0.0.0
+p.cert.k17mpsExcelClientInstaller.resource	MANIFEST 1 lang 0: 490 bytes
+p.cert.k17mpsExcelClientInstaller.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+p.cert.k17mpsExcelClientInstaller.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+p.cert.k17mpsExcelClientInstaller.  manifest	<assemblyIdentity version="1.0.0.0" name="MyApplication.app"/>
+p.cert.k17mpsExcelClientInstaller.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+p.cert.k17mpsExcelClientInstaller.  manifest	<security>
+p.cert.k17mpsExcelClientInstaller.  manifest	<requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+p.cert.k17mpsExcelClientInstaller.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false"/>
+p.cert.k17mpsExcelClientInstaller.  manifest	</requestedPrivileges>
+p.cert.k17mpsExcelClientInstaller.  manifest	</security>
+p.cert.k17mpsExcelClientInstaller.  manifest	</trustInfo>
+p.cert.k17mpsExcelClientInstaller.  manifest	</assembly>
+p.default.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.default.k17mpsExcelClientInstaller.bytes	1320960
+p.default.k17mpsExcelClientInstaller.machine	0x14c
+p.default.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.default.k17mpsExcelClientInstaller.sections	.text .rsrc .reloc
+p.default.k17mpsExcelClientInstaller.image.bytes	1320960
+p.default.k17mpsExcelClientInstaller.overlay.bytes	0
+p.default.k17mpsExcelClientInstaller.certificate	yes
+p.default.k17mpsExcelClientInstaller.import	mscoree.dll
+p.default.k17mpsExcelClientInstaller.resource	ICON 1 lang 0: 38701 bytes
+p.default.k17mpsExcelClientInstaller.resource	ICON 2 lang 0: 15182 bytes
+p.default.k17mpsExcelClientInstaller.resource	ICON 3 lang 0: 3214 bytes
+p.default.k17mpsExcelClientInstaller.resource	ICON 4 lang 0: 2085 bytes
+p.default.k17mpsExcelClientInstaller.resource	ICON 5 lang 0: 1370 bytes
+p.default.k17mpsExcelClientInstaller.resource	ICON 6 lang 0: 749 bytes
+p.default.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE lang 0: 388300 bytes
+p.default.k17mpsExcelClientInstaller.  starts	50 4b 03 04 14 00 08 00 08 00 4b b6 66 5d 00 00
+p.default.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_UNZIP lang 0: 734560 bytes
+p.default.k17mpsExcelClientInstaller.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+p.default.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_ZLIB lang 0: 100192 bytes
+p.default.k17mpsExcelClientInstaller.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+p.default.k17mpsExcelClientInstaller.resource	RCDATA MW_MPS_EX_ADDIN_CONFIG lang 0: 137 bytes
+p.default.k17mpsExcelClientInstaller.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+p.default.k17mpsExcelClientInstaller.resource	GROUP_ICON 1 lang 0: 90 bytes
+p.default.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 38701 id 1: png 256x256
+p.default.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 15182 id 2: png 128x128
+p.default.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 3214 id 3: png 48x48
+p.default.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 2085 id 4: png 32x32
+p.default.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 1370 id 5: png 24x24
+p.default.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 749 id 6: png 16x16
+p.default.k17mpsExcelClientInstaller.resource	VERSION 1 lang 0: 688 bytes
+p.default.k17mpsExcelClientInstaller.  fixed.FileVersion	1.0.0.0
+p.default.k17mpsExcelClientInstaller.  fixed.ProductVersion	1.0.0.0
+p.default.k17mpsExcelClientInstaller.  fixed.FileFlags	0x0
+p.default.k17mpsExcelClientInstaller.  fixed.FileOS	0x4
+p.default.k17mpsExcelClientInstaller.  fixed.FileType	0x1
+p.default.k17mpsExcelClientInstaller.  var.Translation	000004b0
+p.default.k17mpsExcelClientInstaller.  table	000004b0
+p.default.k17mpsExcelClientInstaller.  string.FileDescription	ExAddinInstl
+p.default.k17mpsExcelClientInstaller.  string.FileVersion	1.0.0.0
+p.default.k17mpsExcelClientInstaller.  string.InternalName	ExAddinInstl.exe
+p.default.k17mpsExcelClientInstaller.  string.LegalCopyright	 
+p.default.k17mpsExcelClientInstaller.  string.OriginalFilename	ExAddinInstl.exe
+p.default.k17mpsExcelClientInstaller.  string.ProductName	ExAddinInstl
+p.default.k17mpsExcelClientInstaller.  string.ProductVersion	1.0.0.0
+p.default.k17mpsExcelClientInstaller.  string.Assembly Version	1.0.0.0
+p.default.k17mpsExcelClientInstaller.resource	MANIFEST 1 lang 0: 490 bytes
+p.default.k17mpsExcelClientInstaller.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+p.default.k17mpsExcelClientInstaller.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+p.default.k17mpsExcelClientInstaller.  manifest	<assemblyIdentity version="1.0.0.0" name="MyApplication.app"/>
+p.default.k17mpsExcelClientInstaller.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+p.default.k17mpsExcelClientInstaller.  manifest	<security>
+p.default.k17mpsExcelClientInstaller.  manifest	<requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+p.default.k17mpsExcelClientInstaller.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false"/>
+p.default.k17mpsExcelClientInstaller.  manifest	</requestedPrivileges>
+p.default.k17mpsExcelClientInstaller.  manifest	</security>
+p.default.k17mpsExcelClientInstaller.  manifest	</trustInfo>
+p.default.k17mpsExcelClientInstaller.  manifest	</assembly>
+p.files.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.files.k17mpsExcelClientInstaller.bytes	1320960
+p.files.k17mpsExcelClientInstaller.machine	0x14c
+p.files.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.files.k17mpsExcelClientInstaller.sections	.text .rsrc .reloc
+p.files.k17mpsExcelClientInstaller.image.bytes	1320960
+p.files.k17mpsExcelClientInstaller.overlay.bytes	0
+p.files.k17mpsExcelClientInstaller.certificate	yes
+p.files.k17mpsExcelClientInstaller.import	mscoree.dll
+p.files.k17mpsExcelClientInstaller.resource	ICON 1 lang 0: 38701 bytes
+p.files.k17mpsExcelClientInstaller.resource	ICON 2 lang 0: 15182 bytes
+p.files.k17mpsExcelClientInstaller.resource	ICON 3 lang 0: 3214 bytes
+p.files.k17mpsExcelClientInstaller.resource	ICON 4 lang 0: 2085 bytes
+p.files.k17mpsExcelClientInstaller.resource	ICON 5 lang 0: 1370 bytes
+p.files.k17mpsExcelClientInstaller.resource	ICON 6 lang 0: 749 bytes
+p.files.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE lang 0: 388300 bytes
+p.files.k17mpsExcelClientInstaller.  starts	50 4b 03 04 14 00 08 00 08 00 4b b6 66 5d 00 00
+p.files.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_UNZIP lang 0: 734560 bytes
+p.files.k17mpsExcelClientInstaller.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+p.files.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_ZLIB lang 0: 100192 bytes
+p.files.k17mpsExcelClientInstaller.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+p.files.k17mpsExcelClientInstaller.resource	RCDATA MW_MPS_EX_ADDIN_CONFIG lang 0: 137 bytes
+p.files.k17mpsExcelClientInstaller.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+p.files.k17mpsExcelClientInstaller.resource	GROUP_ICON 1 lang 0: 90 bytes
+p.files.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 38701 id 1: png 256x256
+p.files.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 15182 id 2: png 128x128
+p.files.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 3214 id 3: png 48x48
+p.files.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 2085 id 4: png 32x32
+p.files.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 1370 id 5: png 24x24
+p.files.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 749 id 6: png 16x16
+p.files.k17mpsExcelClientInstaller.resource	VERSION 1 lang 0: 688 bytes
+p.files.k17mpsExcelClientInstaller.  fixed.FileVersion	1.0.0.0
+p.files.k17mpsExcelClientInstaller.  fixed.ProductVersion	1.0.0.0
+p.files.k17mpsExcelClientInstaller.  fixed.FileFlags	0x0
+p.files.k17mpsExcelClientInstaller.  fixed.FileOS	0x4
+p.files.k17mpsExcelClientInstaller.  fixed.FileType	0x1
+p.files.k17mpsExcelClientInstaller.  var.Translation	000004b0
+p.files.k17mpsExcelClientInstaller.  table	000004b0
+p.files.k17mpsExcelClientInstaller.  string.FileDescription	ExAddinInstl
+p.files.k17mpsExcelClientInstaller.  string.FileVersion	1.0.0.0
+p.files.k17mpsExcelClientInstaller.  string.InternalName	ExAddinInstl.exe
+p.files.k17mpsExcelClientInstaller.  string.LegalCopyright	 
+p.files.k17mpsExcelClientInstaller.  string.OriginalFilename	ExAddinInstl.exe
+p.files.k17mpsExcelClientInstaller.  string.ProductName	ExAddinInstl
+p.files.k17mpsExcelClientInstaller.  string.ProductVersion	1.0.0.0
+p.files.k17mpsExcelClientInstaller.  string.Assembly Version	1.0.0.0
+p.files.k17mpsExcelClientInstaller.resource	MANIFEST 1 lang 0: 490 bytes
+p.files.k17mpsExcelClientInstaller.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+p.files.k17mpsExcelClientInstaller.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+p.files.k17mpsExcelClientInstaller.  manifest	<assemblyIdentity version="1.0.0.0" name="MyApplication.app"/>
+p.files.k17mpsExcelClientInstaller.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+p.files.k17mpsExcelClientInstaller.  manifest	<security>
+p.files.k17mpsExcelClientInstaller.  manifest	<requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+p.files.k17mpsExcelClientInstaller.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false"/>
+p.files.k17mpsExcelClientInstaller.  manifest	</requestedPrivileges>
+p.files.k17mpsExcelClientInstaller.  manifest	</security>
+p.files.k17mpsExcelClientInstaller.  manifest	</trustInfo>
+p.files.k17mpsExcelClientInstaller.  manifest	</assembly>
+p.filesplus.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.filesplus.k17mpsExcelClientInstaller.bytes	1636864
+p.filesplus.k17mpsExcelClientInstaller.machine	0x14c
+p.filesplus.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.filesplus.k17mpsExcelClientInstaller.sections	.text .rsrc .reloc
+p.filesplus.k17mpsExcelClientInstaller.image.bytes	1636864
+p.filesplus.k17mpsExcelClientInstaller.overlay.bytes	0
+p.filesplus.k17mpsExcelClientInstaller.certificate	yes
+p.filesplus.k17mpsExcelClientInstaller.import	mscoree.dll
+p.filesplus.k17mpsExcelClientInstaller.resource	ICON 1 lang 0: 38701 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource	ICON 2 lang 0: 15182 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource	ICON 3 lang 0: 3214 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource	ICON 4 lang 0: 2085 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource	ICON 5 lang 0: 1370 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource	ICON 6 lang 0: 749 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE lang 0: 704567 bytes
+p.filesplus.k17mpsExcelClientInstaller.  starts	50 4b 03 04 14 00 08 00 08 00 4b b6 66 5d 00 00
+p.filesplus.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_UNZIP lang 0: 734560 bytes
+p.filesplus.k17mpsExcelClientInstaller.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+p.filesplus.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_ZLIB lang 0: 100192 bytes
+p.filesplus.k17mpsExcelClientInstaller.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+p.filesplus.k17mpsExcelClientInstaller.resource	RCDATA MW_MPS_EX_ADDIN_CONFIG lang 0: 137 bytes
+p.filesplus.k17mpsExcelClientInstaller.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+p.filesplus.k17mpsExcelClientInstaller.resource	GROUP_ICON 1 lang 0: 90 bytes
+p.filesplus.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 38701 id 1: png 256x256
+p.filesplus.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 15182 id 2: png 128x128
+p.filesplus.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 3214 id 3: png 48x48
+p.filesplus.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 2085 id 4: png 32x32
+p.filesplus.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 1370 id 5: png 24x24
+p.filesplus.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 749 id 6: png 16x16
+p.filesplus.k17mpsExcelClientInstaller.resource	VERSION 1 lang 0: 688 bytes
+p.filesplus.k17mpsExcelClientInstaller.  fixed.FileVersion	1.0.0.0
+p.filesplus.k17mpsExcelClientInstaller.  fixed.ProductVersion	1.0.0.0
+p.filesplus.k17mpsExcelClientInstaller.  fixed.FileFlags	0x0
+p.filesplus.k17mpsExcelClientInstaller.  fixed.FileOS	0x4
+p.filesplus.k17mpsExcelClientInstaller.  fixed.FileType	0x1
+p.filesplus.k17mpsExcelClientInstaller.  var.Translation	000004b0
+p.filesplus.k17mpsExcelClientInstaller.  table	000004b0
+p.filesplus.k17mpsExcelClientInstaller.  string.FileDescription	ExAddinInstl
+p.filesplus.k17mpsExcelClientInstaller.  string.FileVersion	1.0.0.0
+p.filesplus.k17mpsExcelClientInstaller.  string.InternalName	ExAddinInstl.exe
+p.filesplus.k17mpsExcelClientInstaller.  string.LegalCopyright	 
+p.filesplus.k17mpsExcelClientInstaller.  string.OriginalFilename	ExAddinInstl.exe
+p.filesplus.k17mpsExcelClientInstaller.  string.ProductName	ExAddinInstl
+p.filesplus.k17mpsExcelClientInstaller.  string.ProductVersion	1.0.0.0
+p.filesplus.k17mpsExcelClientInstaller.  string.Assembly Version	1.0.0.0
+p.filesplus.k17mpsExcelClientInstaller.resource	MANIFEST 1 lang 0: 490 bytes
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<assemblyIdentity version="1.0.0.0" name="MyApplication.app"/>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<security>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false"/>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	</requestedPrivileges>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	</security>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	</trustInfo>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	</assembly>
+p.named.K17Setup.file	K17Setup.exe
+p.named.K17Setup.bytes	1261568
+p.named.K17Setup.machine	0x14c
+p.named.K17Setup.subsystem	windows-gui
+p.named.K17Setup.sections	.text .rsrc .reloc
+p.named.K17Setup.image.bytes	1261568
+p.named.K17Setup.overlay.bytes	0
+p.named.K17Setup.certificate	yes
+p.named.K17Setup.import	mscoree.dll
+p.named.K17Setup.resource	ICON 1 lang 0: 838 bytes
+p.named.K17Setup.resource	ICON 2 lang 0: 412 bytes
+p.named.K17Setup.resource	ICON 3 lang 0: 214 bytes
+p.named.K17Setup.resource	ICON 4 lang 0: 149 bytes
+p.named.K17Setup.resource	ICON 5 lang 0: 157 bytes
+p.named.K17Setup.resource	ICON 6 lang 0: 124 bytes
+p.named.K17Setup.resource	RCDATA MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE lang 0: 388300 bytes
+p.named.K17Setup.  starts	50 4b 03 04 14 00 08 00 08 00 4b b6 66 5d 00 00
+p.named.K17Setup.resource	RCDATA MW_COMPILER_EZDEPLOY_UNZIP lang 0: 734560 bytes
+p.named.K17Setup.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+p.named.K17Setup.resource	RCDATA MW_COMPILER_EZDEPLOY_ZLIB lang 0: 100192 bytes
+p.named.K17Setup.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+p.named.K17Setup.resource	RCDATA MW_MPS_EX_ADDIN_CONFIG lang 0: 168 bytes
+p.named.K17Setup.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+p.named.K17Setup.resource	GROUP_ICON 1 lang 0: 90 bytes
+p.named.K17Setup.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 838 id 1: png 256x256
+p.named.K17Setup.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 412 id 2: png 128x128
+p.named.K17Setup.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 214 id 3: png 48x48
+p.named.K17Setup.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 149 id 4: png 32x32
+p.named.K17Setup.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 157 id 5: png 24x24
+p.named.K17Setup.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 124 id 6: png 16x16
+p.named.K17Setup.resource	VERSION 1 lang 0: 688 bytes
+p.named.K17Setup.  fixed.FileVersion	1.0.0.0
+p.named.K17Setup.  fixed.ProductVersion	1.0.0.0
+p.named.K17Setup.  fixed.FileFlags	0x0
+p.named.K17Setup.  fixed.FileOS	0x4
+p.named.K17Setup.  fixed.FileType	0x1
+p.named.K17Setup.  var.Translation	000004b0
+p.named.K17Setup.  table	000004b0
+p.named.K17Setup.  string.FileDescription	ExAddinInstl
+p.named.K17Setup.  string.FileVersion	1.0.0.0
+p.named.K17Setup.  string.InternalName	ExAddinInstl.exe
+p.named.K17Setup.  string.LegalCopyright	 
+p.named.K17Setup.  string.OriginalFilename	ExAddinInstl.exe
+p.named.K17Setup.  string.ProductName	ExAddinInstl
+p.named.K17Setup.  string.ProductVersion	1.0.0.0
+p.named.K17Setup.  string.Assembly Version	1.0.0.0
+p.named.K17Setup.resource	MANIFEST 1 lang 0: 490 bytes
+p.named.K17Setup.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+p.named.K17Setup.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+p.named.K17Setup.  manifest	<assemblyIdentity version="1.0.0.0" name="MyApplication.app"/>
+p.named.K17Setup.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+p.named.K17Setup.  manifest	<security>
+p.named.K17Setup.  manifest	<requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+p.named.K17Setup.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false"/>
+p.named.K17Setup.  manifest	</requestedPrivileges>
+p.named.K17Setup.  manifest	</security>
+p.named.K17Setup.  manifest	</trustInfo>
+p.named.K17Setup.  manifest	</assembly>
+p.nolibrary.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.nolibrary.k17mpsExcelClientInstaller.bytes	953344
+p.nolibrary.k17mpsExcelClientInstaller.machine	0x14c
+p.nolibrary.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.nolibrary.k17mpsExcelClientInstaller.sections	.text .rsrc .reloc
+p.nolibrary.k17mpsExcelClientInstaller.image.bytes	953344
+p.nolibrary.k17mpsExcelClientInstaller.overlay.bytes	0
+p.nolibrary.k17mpsExcelClientInstaller.certificate	yes
+p.nolibrary.k17mpsExcelClientInstaller.import	mscoree.dll
+p.nolibrary.k17mpsExcelClientInstaller.resource	ICON 1 lang 0: 38701 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource	ICON 2 lang 0: 15182 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource	ICON 3 lang 0: 3214 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource	ICON 4 lang 0: 2085 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource	ICON 5 lang 0: 1370 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource	ICON 6 lang 0: 749 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE lang 0: 20776 bytes
+p.nolibrary.k17mpsExcelClientInstaller.  starts	50 4b 03 04 14 00 08 00 08 00 4a b6 66 5d 00 00
+p.nolibrary.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_UNZIP lang 0: 734560 bytes
+p.nolibrary.k17mpsExcelClientInstaller.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+p.nolibrary.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_ZLIB lang 0: 100192 bytes
+p.nolibrary.k17mpsExcelClientInstaller.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+p.nolibrary.k17mpsExcelClientInstaller.resource	RCDATA MW_MPS_EX_ADDIN_CONFIG lang 0: 137 bytes
+p.nolibrary.k17mpsExcelClientInstaller.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+p.nolibrary.k17mpsExcelClientInstaller.resource	GROUP_ICON 1 lang 0: 90 bytes
+p.nolibrary.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 38701 id 1: png 256x256
+p.nolibrary.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 15182 id 2: png 128x128
+p.nolibrary.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 3214 id 3: png 48x48
+p.nolibrary.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 2085 id 4: png 32x32
+p.nolibrary.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 1370 id 5: png 24x24
+p.nolibrary.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 749 id 6: png 16x16
+p.nolibrary.k17mpsExcelClientInstaller.resource	VERSION 1 lang 0: 688 bytes
+p.nolibrary.k17mpsExcelClientInstaller.  fixed.FileVersion	1.0.0.0
+p.nolibrary.k17mpsExcelClientInstaller.  fixed.ProductVersion	1.0.0.0
+p.nolibrary.k17mpsExcelClientInstaller.  fixed.FileFlags	0x0
+p.nolibrary.k17mpsExcelClientInstaller.  fixed.FileOS	0x4
+p.nolibrary.k17mpsExcelClientInstaller.  fixed.FileType	0x1
+p.nolibrary.k17mpsExcelClientInstaller.  var.Translation	000004b0
+p.nolibrary.k17mpsExcelClientInstaller.  table	000004b0
+p.nolibrary.k17mpsExcelClientInstaller.  string.FileDescription	ExAddinInstl
+p.nolibrary.k17mpsExcelClientInstaller.  string.FileVersion	1.0.0.0
+p.nolibrary.k17mpsExcelClientInstaller.  string.InternalName	ExAddinInstl.exe
+p.nolibrary.k17mpsExcelClientInstaller.  string.LegalCopyright	 
+p.nolibrary.k17mpsExcelClientInstaller.  string.OriginalFilename	ExAddinInstl.exe
+p.nolibrary.k17mpsExcelClientInstaller.  string.ProductName	ExAddinInstl
+p.nolibrary.k17mpsExcelClientInstaller.  string.ProductVersion	1.0.0.0
+p.nolibrary.k17mpsExcelClientInstaller.  string.Assembly Version	1.0.0.0
+p.nolibrary.k17mpsExcelClientInstaller.resource	MANIFEST 1 lang 0: 490 bytes
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<assemblyIdentity version="1.0.0.0" name="MyApplication.app"/>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<security>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false"/>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	</requestedPrivileges>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	</security>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	</trustInfo>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	</assembly>
+p.options.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.options.k17mpsExcelClientInstaller.bytes	1320960
+p.options.k17mpsExcelClientInstaller.machine	0x14c
+p.options.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.options.k17mpsExcelClientInstaller.sections	.text .rsrc .reloc
+p.options.k17mpsExcelClientInstaller.image.bytes	1320960
+p.options.k17mpsExcelClientInstaller.overlay.bytes	0
+p.options.k17mpsExcelClientInstaller.certificate	yes
+p.options.k17mpsExcelClientInstaller.import	mscoree.dll
+p.options.k17mpsExcelClientInstaller.resource	ICON 1 lang 0: 38701 bytes
+p.options.k17mpsExcelClientInstaller.resource	ICON 2 lang 0: 15182 bytes
+p.options.k17mpsExcelClientInstaller.resource	ICON 3 lang 0: 3214 bytes
+p.options.k17mpsExcelClientInstaller.resource	ICON 4 lang 0: 2085 bytes
+p.options.k17mpsExcelClientInstaller.resource	ICON 5 lang 0: 1370 bytes
+p.options.k17mpsExcelClientInstaller.resource	ICON 6 lang 0: 749 bytes
+p.options.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE lang 0: 388300 bytes
+p.options.k17mpsExcelClientInstaller.  starts	50 4b 03 04 14 00 08 00 08 00 4b b6 66 5d 00 00
+p.options.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_UNZIP lang 0: 734560 bytes
+p.options.k17mpsExcelClientInstaller.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+p.options.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_ZLIB lang 0: 100192 bytes
+p.options.k17mpsExcelClientInstaller.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+p.options.k17mpsExcelClientInstaller.resource	RCDATA MW_MPS_EX_ADDIN_CONFIG lang 0: 159 bytes
+p.options.k17mpsExcelClientInstaller.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+p.options.k17mpsExcelClientInstaller.resource	GROUP_ICON 1 lang 0: 90 bytes
+p.options.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 38701 id 1: png 256x256
+p.options.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 15182 id 2: png 128x128
+p.options.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 3214 id 3: png 48x48
+p.options.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 2085 id 4: png 32x32
+p.options.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 1370 id 5: png 24x24
+p.options.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 749 id 6: png 16x16
+p.options.k17mpsExcelClientInstaller.resource	VERSION 1 lang 0: 688 bytes
+p.options.k17mpsExcelClientInstaller.  fixed.FileVersion	1.0.0.0
+p.options.k17mpsExcelClientInstaller.  fixed.ProductVersion	1.0.0.0
+p.options.k17mpsExcelClientInstaller.  fixed.FileFlags	0x0
+p.options.k17mpsExcelClientInstaller.  fixed.FileOS	0x4
+p.options.k17mpsExcelClientInstaller.  fixed.FileType	0x1
+p.options.k17mpsExcelClientInstaller.  var.Translation	000004b0
+p.options.k17mpsExcelClientInstaller.  table	000004b0
+p.options.k17mpsExcelClientInstaller.  string.FileDescription	ExAddinInstl
+p.options.k17mpsExcelClientInstaller.  string.FileVersion	1.0.0.0
+p.options.k17mpsExcelClientInstaller.  string.InternalName	ExAddinInstl.exe
+p.options.k17mpsExcelClientInstaller.  string.LegalCopyright	 
+p.options.k17mpsExcelClientInstaller.  string.OriginalFilename	ExAddinInstl.exe
+p.options.k17mpsExcelClientInstaller.  string.ProductName	ExAddinInstl
+p.options.k17mpsExcelClientInstaller.  string.ProductVersion	1.0.0.0
+p.options.k17mpsExcelClientInstaller.  string.Assembly Version	1.0.0.0
+p.options.k17mpsExcelClientInstaller.resource	MANIFEST 1 lang 0: 490 bytes
+p.options.k17mpsExcelClientInstaller.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+p.options.k17mpsExcelClientInstaller.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+p.options.k17mpsExcelClientInstaller.  manifest	<assemblyIdentity version="1.0.0.0" name="MyApplication.app"/>
+p.options.k17mpsExcelClientInstaller.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+p.options.k17mpsExcelClientInstaller.  manifest	<security>
+p.options.k17mpsExcelClientInstaller.  manifest	<requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+p.options.k17mpsExcelClientInstaller.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false"/>
+p.options.k17mpsExcelClientInstaller.  manifest	</requestedPrivileges>
+p.options.k17mpsExcelClientInstaller.  manifest	</security>
+p.options.k17mpsExcelClientInstaller.  manifest	</trustInfo>
+p.options.k17mpsExcelClientInstaller.  manifest	</assembly>
+p.repeat.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.repeat.k17mpsExcelClientInstaller.bytes	1322496
+p.repeat.k17mpsExcelClientInstaller.machine	0x14c
+p.repeat.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.repeat.k17mpsExcelClientInstaller.sections	.text .rsrc .reloc
+p.repeat.k17mpsExcelClientInstaller.image.bytes	1322496
+p.repeat.k17mpsExcelClientInstaller.overlay.bytes	0
+p.repeat.k17mpsExcelClientInstaller.certificate	yes
+p.repeat.k17mpsExcelClientInstaller.import	mscoree.dll
+p.repeat.k17mpsExcelClientInstaller.resource	ICON 1 lang 0: 38701 bytes
+p.repeat.k17mpsExcelClientInstaller.resource	ICON 2 lang 0: 15182 bytes
+p.repeat.k17mpsExcelClientInstaller.resource	ICON 3 lang 0: 3214 bytes
+p.repeat.k17mpsExcelClientInstaller.resource	ICON 4 lang 0: 2085 bytes
+p.repeat.k17mpsExcelClientInstaller.resource	ICON 5 lang 0: 1370 bytes
+p.repeat.k17mpsExcelClientInstaller.resource	ICON 6 lang 0: 749 bytes
+p.repeat.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE lang 0: 389771 bytes
+p.repeat.k17mpsExcelClientInstaller.  starts	50 4b 03 04 14 00 08 00 08 00 4b b6 66 5d 00 00
+p.repeat.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_UNZIP lang 0: 734560 bytes
+p.repeat.k17mpsExcelClientInstaller.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+p.repeat.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_ZLIB lang 0: 100192 bytes
+p.repeat.k17mpsExcelClientInstaller.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+p.repeat.k17mpsExcelClientInstaller.resource	RCDATA MW_MPS_EX_ADDIN_CONFIG lang 0: 137 bytes
+p.repeat.k17mpsExcelClientInstaller.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+p.repeat.k17mpsExcelClientInstaller.resource	GROUP_ICON 1 lang 0: 90 bytes
+p.repeat.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 38701 id 1: png 256x256
+p.repeat.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 15182 id 2: png 128x128
+p.repeat.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 3214 id 3: png 48x48
+p.repeat.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 2085 id 4: png 32x32
+p.repeat.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 1370 id 5: png 24x24
+p.repeat.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 749 id 6: png 16x16
+p.repeat.k17mpsExcelClientInstaller.resource	VERSION 1 lang 0: 688 bytes
+p.repeat.k17mpsExcelClientInstaller.  fixed.FileVersion	1.0.0.0
+p.repeat.k17mpsExcelClientInstaller.  fixed.ProductVersion	1.0.0.0
+p.repeat.k17mpsExcelClientInstaller.  fixed.FileFlags	0x0
+p.repeat.k17mpsExcelClientInstaller.  fixed.FileOS	0x4
+p.repeat.k17mpsExcelClientInstaller.  fixed.FileType	0x1
+p.repeat.k17mpsExcelClientInstaller.  var.Translation	000004b0
+p.repeat.k17mpsExcelClientInstaller.  table	000004b0
+p.repeat.k17mpsExcelClientInstaller.  string.FileDescription	ExAddinInstl
+p.repeat.k17mpsExcelClientInstaller.  string.FileVersion	1.0.0.0
+p.repeat.k17mpsExcelClientInstaller.  string.InternalName	ExAddinInstl.exe
+p.repeat.k17mpsExcelClientInstaller.  string.LegalCopyright	 
+p.repeat.k17mpsExcelClientInstaller.  string.OriginalFilename	ExAddinInstl.exe
+p.repeat.k17mpsExcelClientInstaller.  string.ProductName	ExAddinInstl
+p.repeat.k17mpsExcelClientInstaller.  string.ProductVersion	1.0.0.0
+p.repeat.k17mpsExcelClientInstaller.  string.Assembly Version	1.0.0.0
+p.repeat.k17mpsExcelClientInstaller.resource	MANIFEST 1 lang 0: 490 bytes
+p.repeat.k17mpsExcelClientInstaller.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+p.repeat.k17mpsExcelClientInstaller.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+p.repeat.k17mpsExcelClientInstaller.  manifest	<assemblyIdentity version="1.0.0.0" name="MyApplication.app"/>
+p.repeat.k17mpsExcelClientInstaller.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+p.repeat.k17mpsExcelClientInstaller.  manifest	<security>
+p.repeat.k17mpsExcelClientInstaller.  manifest	<requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+p.repeat.k17mpsExcelClientInstaller.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false"/>
+p.repeat.k17mpsExcelClientInstaller.  manifest	</requestedPrivileges>
+p.repeat.k17mpsExcelClientInstaller.  manifest	</security>
+p.repeat.k17mpsExcelClientInstaller.  manifest	</trustInfo>
+p.repeat.k17mpsExcelClientInstaller.  manifest	</assembly>
+src.k17_anim.file	<W>\p\src\k17_anim.gif
+src.k17_anim.ERR	not a PE file
+src.k17_args.file	<W>\p\src\k17_args.m
+src.k17_args.ERR	not a PE file
+src.k17_both.file	<W>\p\src\k17_both.m
+src.k17_both.ERR	not a PE file
+src.k17_count.file	<W>\p\src\k17_count.m
+src.k17_count.ERR	not a PE file
+src.k17_echo.file	<W>\p\src\k17_echo.m
+src.k17_echo.ERR	not a PE file
+src.k17_err.file	<W>\p\src\k17_err.m
+src.k17_err.ERR	not a PE file
+src.k17_h1.file	<W>\p\src\k17_h1.m
+src.k17_h1.ERR	not a PE file
+src.k17_icon.file	<W>\p\src\k17_icon.png
+src.k17_icon.ERR	not a PE file
+src.k17_make.file	<W>\p\src\k17_make.m
+src.k17_make.ERR	not a PE file
+src.k17_many.file	<W>\p\src\k17_many.m
+src.k17_many.ERR	not a PE file
+src.k17_none.file	<W>\p\src\k17_none.m
+src.k17_none.ERR	not a PE file
+src.k17_noout.file	<W>\p\src\k17_noout.m
+src.k17_noout.ERR	not a PE file
+src.k17_one.file	<W>\p\src\k17_one.m
+src.k17_one.ERR	not a PE file
+src.k17_opt.file	<W>\p\src\k17_opt.m
+src.k17_opt.ERR	not a PE file
+src.k17_pass.file	<W>\p\src\k17_pass.m
+src.k17_pass.ERR	not a PE file
+src.k17_pfun.file	<W>\p\src\k17_pfun.p
+src.k17_pfun.ERR	not a PE file
+src.k17_plot.file	<W>\p\src\k17_plot.m
+src.k17_plot.ERR	not a PE file
+src.k17_quiet.file	<W>\p\src\k17_quiet.m
+src.k17_quiet.ERR	not a PE file
+src.k17_script.file	<W>\p\src\k17_script.m
+src.k17_script.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+src.k17_show.file	<W>\p\src\k17_show.m
+src.k17_show.ERR	not a PE file
+src.k17_thing.file	<W>\p\src\k17_thing.m
+src.k17_thing.ERR	not a PE file
+src.k17_two.file	<W>\p\src\k17_two.m
+src.k17_two.ERR	not a PE file
+src.k17_varin.file	<W>\p\src\k17_varin.m
+src.k17_varin.ERR	not a PE file
+src.k17_varout.file	<W>\p\src\k17_varout.m
+src.k17_varout.ERR	not a PE file
+src.k17cert.file	<W>\p\src\k17cert.pem
+src.k17cert.ERR	not a PE file
+src.k17data.file	<W>\p\src\k17data.txt
+src.k17data.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 5)
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.bytes	1320960
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.machine	0x14c
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.subsystem	windows-gui
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.sections	.text .rsrc .reloc
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.image.bytes	1320960
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.overlay.bytes	0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.certificate	yes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.import	mscoree.dll
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	ICON 1 lang 0: 38701 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	ICON 2 lang 0: 15182 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	ICON 3 lang 0: 3214 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	ICON 4 lang 0: 2085 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	ICON 5 lang 0: 1370 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	ICON 6 lang 0: 749 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE lang 0: 388300 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  starts	50 4b 03 04 14 00 08 00 08 00 4b b6 66 5d 00 00
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_UNZIP lang 0: 734560 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	RCDATA MW_COMPILER_EZDEPLOY_ZLIB lang 0: 100192 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  starts	4d 5a 90 00 03 00 00 00 04 00 00 00 ff ff 00 00
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	RCDATA MW_MPS_EX_ADDIN_CONFIG lang 0: 137 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	GROUP_ICON 1 lang 0: 90 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 38701 id 1: png 256x256
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 15182 id 2: png 128x128
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 3214 id 3: png 48x48
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 2085 id 4: png 32x32
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 1370 id 5: png 24x24
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  icon	13x0 colors 100 planes 18505 bits 21060 bytes 749 id 6: png 16x16
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	VERSION 1 lang 0: 688 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  fixed.FileVersion	1.0.0.0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  fixed.ProductVersion	1.0.0.0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  fixed.FileFlags	0x0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  fixed.FileOS	0x4
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  fixed.FileType	0x1
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  var.Translation	000004b0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  table	000004b0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  string.FileDescription	ExAddinInstl
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  string.FileVersion	1.0.0.0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  string.InternalName	ExAddinInstl.exe
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  string.LegalCopyright	 
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  string.OriginalFilename	ExAddinInstl.exe
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  string.ProductName	ExAddinInstl
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  string.ProductVersion	1.0.0.0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  string.Assembly Version	1.0.0.0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	MANIFEST 1 lang 0: 490 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<assemblyIdentity version="1.0.0.0" name="MyApplication.app"/>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<security>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false"/>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	</requestedPrivileges>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	</security>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	</trustInfo>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	</assembly>
+src.k17ownexcelAddIn._install.file	<W>\p\src\k17ownexcelAddIn\_install.bat
+src.k17ownexcelAddIn._install.ERR	not a PE file
+src.k17ownexcelAddIn.buildresult.file	<W>\p\src\k17ownexcelAddIn\buildresult.json
+src.k17ownexcelAddIn.buildresult.ERR	not a PE file
+src.k17ownexcelAddIn.dlldata.file	<W>\p\src\k17ownexcelAddIn\dlldata.c
+src.k17ownexcelAddIn.dlldata.ERR	not a PE file
+src.k17ownexcelAddIn.GettingStarted.file	<W>\p\src\k17ownexcelAddIn\GettingStarted.html
+src.k17ownexcelAddIn.GettingStarted.ERR	not a PE file
+src.k17ownexcelAddIn.includedSupportPackages.file	<W>\p\src\k17ownexcelAddIn\includedSupportPackages.txt
+src.k17ownexcelAddIn.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+src.k17ownexcelAddIn.k17_oneClass_com.file	<W>\p\src\k17ownexcelAddIn\k17_oneClass_com.cpp
+src.k17ownexcelAddIn.k17_oneClass_com.ERR	not a PE file
+src.k17ownexcelAddIn.k17_oneClass_com.file	<W>\p\src\k17ownexcelAddIn\k17_oneClass_com.hpp
+src.k17ownexcelAddIn.k17_oneClass_com.ERR	not a PE file
+src.k17ownexcelAddIn.k17own.file	<W>\p\src\k17ownexcelAddIn\k17own.def
+src.k17ownexcelAddIn.k17own.ERR	not a PE file
+src.k17ownexcelAddIn.k17own.file	<W>\p\src\k17ownexcelAddIn\k17own.rc
+src.k17ownexcelAddIn.k17own.ERR	not a PE file
+src.k17ownexcelAddIn.k17own_1_0.file	k17own_1_0.dll
+src.k17ownexcelAddIn.k17own_1_0.bytes	345600
+src.k17ownexcelAddIn.k17own_1_0.machine	0x8664
+src.k17ownexcelAddIn.k17own_1_0.subsystem	windows-gui
+src.k17ownexcelAddIn.k17own_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+src.k17ownexcelAddIn.k17own_1_0.image.bytes	345600
+src.k17ownexcelAddIn.k17own_1_0.overlay.bytes	0
+src.k17ownexcelAddIn.k17own_1_0.certificate	no
+src.k17ownexcelAddIn.k17own_1_0.import	KERNEL32.dll
+src.k17ownexcelAddIn.k17own_1_0.import	USER32.dll
+src.k17ownexcelAddIn.k17own_1_0.import	ole32.dll
+src.k17ownexcelAddIn.k17own_1_0.import	OLEAUT32.dll
+src.k17ownexcelAddIn.k17own_1_0.import	mclxlmain25_2.dll
+src.k17ownexcelAddIn.k17own_1_0.import	mclmcrrt25_2.dll (delay)
+src.k17ownexcelAddIn.k17own_1_0.resource	"RT_RCDATA" 2 lang 1033: 153982 bytes
+src.k17ownexcelAddIn.k17own_1_0.  starts	50 4b 03 04 14 00 00 00 08 00 00 00 21 00 4a d7
+src.k17ownexcelAddIn.k17own_1_0.resource	"TYPELIB" 1 lang 1033: 2300 bytes
+src.k17ownexcelAddIn.k17own_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+src.k17ownexcelAddIn.k17own_1_0.resource	VERSION 1 lang 1033: 320 bytes
+src.k17ownexcelAddIn.k17own_1_0.  fixed.FileVersion	1.0.0.0
+src.k17ownexcelAddIn.k17own_1_0.  fixed.ProductVersion	1.0.0.0
+src.k17ownexcelAddIn.k17own_1_0.  fixed.FileFlags	0x0
+src.k17ownexcelAddIn.k17own_1_0.  fixed.FileOS	0x0
+src.k17ownexcelAddIn.k17own_1_0.  fixed.FileType	0x0
+src.k17ownexcelAddIn.k17own_1_0.  table	040904b0
+src.k17ownexcelAddIn.k17own_1_0.  string.FileVersion	1.0.0.0
+src.k17ownexcelAddIn.k17own_1_0.  string.ProductVersion	1.0.0.0
+src.k17ownexcelAddIn.k17own_1_0.  var.Translation	040904b0
+src.k17ownexcelAddIn.k17own_1_0.file	<W>\p\src\k17ownexcelAddIn\k17own_1_0.exp
+src.k17ownexcelAddIn.k17own_1_0.ERR	not a PE file
+src.k17ownexcelAddIn.k17own_1_0.file	<W>\p\src\k17ownexcelAddIn\k17own_1_0.lib
+src.k17ownexcelAddIn.k17own_1_0.ERR	not a PE file
+src.k17ownexcelAddIn.k17own_dll.file	<W>\p\src\k17ownexcelAddIn\k17own_dll.cpp
+src.k17ownexcelAddIn.k17own_dll.ERR	not a PE file
+src.k17ownexcelAddIn.k17own_idl.file	<W>\p\src\k17ownexcelAddIn\k17own_idl.h
+src.k17ownexcelAddIn.k17own_idl.ERR	not a PE file
+src.k17ownexcelAddIn.k17own_idl.file	<W>\p\src\k17ownexcelAddIn\k17own_idl.idl
+src.k17ownexcelAddIn.k17own_idl.ERR	not a PE file
+src.k17ownexcelAddIn.k17own_idl.file	<W>\p\src\k17ownexcelAddIn\k17own_idl.tlb
+src.k17ownexcelAddIn.k17own_idl.ERR	not a PE file
+src.k17ownexcelAddIn.k17own_idl_i.file	<W>\p\src\k17ownexcelAddIn\k17own_idl_i.c
+src.k17ownexcelAddIn.k17own_idl_i.ERR	not a PE file
+src.k17ownexcelAddIn.k17own_idl_p.file	<W>\p\src\k17ownexcelAddIn\k17own_idl_p.c
+src.k17ownexcelAddIn.k17own_idl_p.ERR	not a PE file
+src.k17ownexcelAddIn.mccExcludedFiles.file	<W>\p\src\k17ownexcelAddIn\mccExcludedFiles.log
+src.k17ownexcelAddIn.mccExcludedFiles.ERR	not a PE file
+src.k17ownexcelAddIn.mwcomtypes.file	<W>\p\src\k17ownexcelAddIn\mwcomtypes.h
+src.k17ownexcelAddIn.mwcomtypes.ERR	not a PE file
+src.k17ownexcelAddIn.mwcomtypes_i.file	<W>\p\src\k17ownexcelAddIn\mwcomtypes_i.c
+src.k17ownexcelAddIn.mwcomtypes_i.ERR	not a PE file
+src.k17ownexcelAddIn.mwcomtypes_p.file	<W>\p\src\k17ownexcelAddIn\mwcomtypes_p.c
+src.k17ownexcelAddIn.mwcomtypes_p.ERR	not a PE file
+src.k17ownexcelAddIn.readme.file	<W>\p\src\k17ownexcelAddIn\readme.txt
+src.k17ownexcelAddIn.readme.ERR	not a PE file
+src.k17ownexcelAddIn.requiredMCRProducts.file	<W>\p\src\k17ownexcelAddIn\requiredMCRProducts.txt
+src.k17ownexcelAddIn.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 12)
+src.k17ownexcelAddIn.unresolvedSymbols.file	<W>\p\src\k17ownexcelAddIn\unresolvedSymbols.txt
+src.k17ownexcelAddIn.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+x.mpsxl_badswitch.k17xbs.file	<W>\p\x\mpsxl_badswitch\k17xbs.bas
+x.mpsxl_badswitch.k17xbs.ERR	not a PE file
+x.mpsxl_badswitch.K17Xbs.file	<W>\p\x\mpsxl_badswitch\K17Xbs.cs
+x.mpsxl_badswitch.K17Xbs.ERR	not a PE file
+x.mpsxl_badswitch.k17xbs.file	k17xbs.dll
+x.mpsxl_badswitch.k17xbs.bytes	949760
+x.mpsxl_badswitch.k17xbs.machine	0x14c
+x.mpsxl_badswitch.k17xbs.subsystem	windows-console
+x.mpsxl_badswitch.k17xbs.sections	.text .rsrc .reloc
+x.mpsxl_badswitch.k17xbs.image.bytes	949760
+x.mpsxl_badswitch.k17xbs.overlay.bytes	0
+x.mpsxl_badswitch.k17xbs.certificate	no
+x.mpsxl_badswitch.k17xbs.import	mscoree.dll
+x.mpsxl_badswitch.k17xbs.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_badswitch.k17xbs.  fixed.FileVersion	1.0.0.0
+x.mpsxl_badswitch.k17xbs.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_badswitch.k17xbs.  fixed.FileFlags	0x0
+x.mpsxl_badswitch.k17xbs.  fixed.FileOS	0x40004
+x.mpsxl_badswitch.k17xbs.  fixed.FileType	0x0
+x.mpsxl_badswitch.k17xbs.  table	000004B0
+x.mpsxl_badswitch.k17xbs.  string.FileVersion	1.0.0.0
+x.mpsxl_badswitch.k17xbs.  string.ProductVersion	1.0.0.0
+x.mpsxl_badswitch.k17xbs.  var.Translation	000004b0
+x.mpsxl_badswitch.k17xbs.file	<W>\p\x\mpsxl_badswitch\k17xbs.reg
+x.mpsxl_badswitch.k17xbs.ERR	not a PE file
+x.mpsxl_badswitch.readme.file	<W>\p\x\mpsxl_badswitch\readme.txt
+x.mpsxl_badswitch.readme.ERR	not a PE file
+x.mpsxl_bundle.k17xb.file	<W>\p\x\mpsxl_bundle\k17xb.bas
+x.mpsxl_bundle.k17xb.ERR	not a PE file
+x.mpsxl_bundle.K17Xb.file	<W>\p\x\mpsxl_bundle\K17Xb.cs
+x.mpsxl_bundle.K17Xb.ERR	not a PE file
+x.mpsxl_bundle.k17xb.file	k17xb.dll
+x.mpsxl_bundle.k17xb.bytes	949760
+x.mpsxl_bundle.k17xb.machine	0x14c
+x.mpsxl_bundle.k17xb.subsystem	windows-console
+x.mpsxl_bundle.k17xb.sections	.text .rsrc .reloc
+x.mpsxl_bundle.k17xb.image.bytes	949760
+x.mpsxl_bundle.k17xb.overlay.bytes	0
+x.mpsxl_bundle.k17xb.certificate	no
+x.mpsxl_bundle.k17xb.import	mscoree.dll
+x.mpsxl_bundle.k17xb.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_bundle.k17xb.  fixed.FileVersion	1.0.0.0
+x.mpsxl_bundle.k17xb.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_bundle.k17xb.  fixed.FileFlags	0x0
+x.mpsxl_bundle.k17xb.  fixed.FileOS	0x40004
+x.mpsxl_bundle.k17xb.  fixed.FileType	0x0
+x.mpsxl_bundle.k17xb.  table	000004B0
+x.mpsxl_bundle.k17xb.  string.FileVersion	1.0.0.0
+x.mpsxl_bundle.k17xb.  string.ProductVersion	1.0.0.0
+x.mpsxl_bundle.k17xb.  var.Translation	000004b0
+x.mpsxl_bundle.k17xb.file	<W>\p\x\mpsxl_bundle\k17xb.reg
+x.mpsxl_bundle.k17xb.ERR	not a PE file
+x.mpsxl_bundle.readme.file	<W>\p\x\mpsxl_bundle\readme.txt
+x.mpsxl_bundle.readme.ERR	not a PE file
+x.mpsxl_debug.k17xd.file	<W>\p\x\mpsxl_debug\k17xd.bas
+x.mpsxl_debug.k17xd.ERR	not a PE file
+x.mpsxl_debug.K17Xd.file	<W>\p\x\mpsxl_debug\K17Xd.cs
+x.mpsxl_debug.K17Xd.ERR	not a PE file
+x.mpsxl_debug.k17xd.file	k17xd.dll
+x.mpsxl_debug.k17xd.bytes	951296
+x.mpsxl_debug.k17xd.machine	0x14c
+x.mpsxl_debug.k17xd.subsystem	windows-console
+x.mpsxl_debug.k17xd.sections	.text .rsrc .reloc
+x.mpsxl_debug.k17xd.image.bytes	951296
+x.mpsxl_debug.k17xd.overlay.bytes	0
+x.mpsxl_debug.k17xd.certificate	no
+x.mpsxl_debug.k17xd.import	mscoree.dll
+x.mpsxl_debug.k17xd.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_debug.k17xd.  fixed.FileVersion	1.0.0.0
+x.mpsxl_debug.k17xd.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_debug.k17xd.  fixed.FileFlags	0x0
+x.mpsxl_debug.k17xd.  fixed.FileOS	0x40004
+x.mpsxl_debug.k17xd.  fixed.FileType	0x0
+x.mpsxl_debug.k17xd.  table	000004B0
+x.mpsxl_debug.k17xd.  string.FileVersion	1.0.0.0
+x.mpsxl_debug.k17xd.  string.ProductVersion	1.0.0.0
+x.mpsxl_debug.k17xd.  var.Translation	000004b0
+x.mpsxl_debug.k17xd.file	<W>\p\x\mpsxl_debug\k17xd.pdb
+x.mpsxl_debug.k17xd.ERR	not a PE file
+x.mpsxl_debug.k17xd.file	<W>\p\x\mpsxl_debug\k17xd.reg
+x.mpsxl_debug.k17xd.ERR	not a PE file
+x.mpsxl_debug.readme.file	<W>\p\x\mpsxl_debug\readme.txt
+x.mpsxl_debug.readme.ERR	not a PE file
+x.mpsxl_default.k17x.file	<W>\p\x\mpsxl_default\k17x.bas
+x.mpsxl_default.k17x.ERR	not a PE file
+x.mpsxl_default.K17X.file	<W>\p\x\mpsxl_default\K17X.cs
+x.mpsxl_default.K17X.ERR	not a PE file
+x.mpsxl_default.k17x.file	k17x.dll
+x.mpsxl_default.k17x.bytes	949760
+x.mpsxl_default.k17x.machine	0x14c
+x.mpsxl_default.k17x.subsystem	windows-console
+x.mpsxl_default.k17x.sections	.text .rsrc .reloc
+x.mpsxl_default.k17x.image.bytes	949760
+x.mpsxl_default.k17x.overlay.bytes	0
+x.mpsxl_default.k17x.certificate	no
+x.mpsxl_default.k17x.import	mscoree.dll
+x.mpsxl_default.k17x.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_default.k17x.  fixed.FileVersion	1.0.0.0
+x.mpsxl_default.k17x.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_default.k17x.  fixed.FileFlags	0x0
+x.mpsxl_default.k17x.  fixed.FileOS	0x40004
+x.mpsxl_default.k17x.  fixed.FileType	0x0
+x.mpsxl_default.k17x.  table	000004B0
+x.mpsxl_default.k17x.  string.FileVersion	1.0.0.0
+x.mpsxl_default.k17x.  string.ProductVersion	1.0.0.0
+x.mpsxl_default.k17x.  var.Translation	000004b0
+x.mpsxl_default.k17x.file	<W>\p\x\mpsxl_default\k17x.reg
+x.mpsxl_default.k17x.ERR	not a PE file
+x.mpsxl_default.readme.file	<W>\p\x\mpsxl_default\readme.txt
+x.mpsxl_default.readme.ERR	not a PE file
+x.mpsxl_group.k17xg.file	<W>\p\x\mpsxl_group\k17xg.bas
+x.mpsxl_group.k17xg.ERR	not a PE file
+x.mpsxl_group.K17Xg.file	<W>\p\x\mpsxl_group\K17Xg.cs
+x.mpsxl_group.K17Xg.ERR	not a PE file
+x.mpsxl_group.k17xg.file	k17xg.dll
+x.mpsxl_group.k17xg.bytes	952320
+x.mpsxl_group.k17xg.machine	0x14c
+x.mpsxl_group.k17xg.subsystem	windows-console
+x.mpsxl_group.k17xg.sections	.text .rsrc .reloc
+x.mpsxl_group.k17xg.image.bytes	952320
+x.mpsxl_group.k17xg.overlay.bytes	0
+x.mpsxl_group.k17xg.certificate	no
+x.mpsxl_group.k17xg.import	mscoree.dll
+x.mpsxl_group.k17xg.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_group.k17xg.  fixed.FileVersion	1.0.0.0
+x.mpsxl_group.k17xg.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_group.k17xg.  fixed.FileFlags	0x0
+x.mpsxl_group.k17xg.  fixed.FileOS	0x40004
+x.mpsxl_group.k17xg.  fixed.FileType	0x0
+x.mpsxl_group.k17xg.  table	000004B0
+x.mpsxl_group.k17xg.  string.FileVersion	1.0.0.0
+x.mpsxl_group.k17xg.  string.ProductVersion	1.0.0.0
+x.mpsxl_group.k17xg.  var.Translation	000004b0
+x.mpsxl_group.k17xg.file	<W>\p\x\mpsxl_group\k17xg.reg
+x.mpsxl_group.k17xg.ERR	not a PE file
+x.mpsxl_group.readme.file	<W>\p\x\mpsxl_group\readme.txt
+x.mpsxl_group.readme.ERR	not a PE file
+x.mpsxl_groupbug.k17xgb.file	<W>\p\x\mpsxl_groupbug\k17xgb.bas
+x.mpsxl_groupbug.k17xgb.ERR	not a PE file
+x.mpsxl_groupbug.K17Xgb.file	<W>\p\x\mpsxl_groupbug\K17Xgb.cs
+x.mpsxl_groupbug.K17Xgb.ERR	not a PE file
+x.mpsxl_groupbug.k17xgb.file	k17xgb.dll
+x.mpsxl_groupbug.k17xgb.bytes	951808
+x.mpsxl_groupbug.k17xgb.machine	0x14c
+x.mpsxl_groupbug.k17xgb.subsystem	windows-console
+x.mpsxl_groupbug.k17xgb.sections	.text .rsrc .reloc
+x.mpsxl_groupbug.k17xgb.image.bytes	951808
+x.mpsxl_groupbug.k17xgb.overlay.bytes	0
+x.mpsxl_groupbug.k17xgb.certificate	no
+x.mpsxl_groupbug.k17xgb.import	mscoree.dll
+x.mpsxl_groupbug.k17xgb.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_groupbug.k17xgb.  fixed.FileVersion	1.0.0.0
+x.mpsxl_groupbug.k17xgb.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_groupbug.k17xgb.  fixed.FileFlags	0x0
+x.mpsxl_groupbug.k17xgb.  fixed.FileOS	0x40004
+x.mpsxl_groupbug.k17xgb.  fixed.FileType	0x0
+x.mpsxl_groupbug.k17xgb.  table	000004B0
+x.mpsxl_groupbug.k17xgb.  string.FileVersion	1.0.0.0
+x.mpsxl_groupbug.k17xgb.  string.ProductVersion	1.0.0.0
+x.mpsxl_groupbug.k17xgb.  var.Translation	000004b0
+x.mpsxl_groupbug.k17xgb.file	<W>\p\x\mpsxl_groupbug\k17xgb.reg
+x.mpsxl_groupbug.k17xgb.ERR	not a PE file
+x.mpsxl_groupbug.readme.file	<W>\p\x\mpsxl_groupbug\readme.txt
+x.mpsxl_groupbug.readme.ERR	not a PE file
+x.mpsxl_noclass.k17xnc.file	<W>\p\x\mpsxl_noclass\k17xnc.bas
+x.mpsxl_noclass.k17xnc.ERR	not a PE file
+x.mpsxl_noclass.k17xnc.file	<W>\p\x\mpsxl_noclass\k17xnc.cs
+x.mpsxl_noclass.k17xnc.ERR	not a PE file
+x.mpsxl_noclass.k17xnc.file	k17xnc.dll
+x.mpsxl_noclass.k17xnc.bytes	949760
+x.mpsxl_noclass.k17xnc.machine	0x14c
+x.mpsxl_noclass.k17xnc.subsystem	windows-console
+x.mpsxl_noclass.k17xnc.sections	.text .rsrc .reloc
+x.mpsxl_noclass.k17xnc.image.bytes	949760
+x.mpsxl_noclass.k17xnc.overlay.bytes	0
+x.mpsxl_noclass.k17xnc.certificate	no
+x.mpsxl_noclass.k17xnc.import	mscoree.dll
+x.mpsxl_noclass.k17xnc.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_noclass.k17xnc.  fixed.FileVersion	1.0.0.0
+x.mpsxl_noclass.k17xnc.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_noclass.k17xnc.  fixed.FileFlags	0x0
+x.mpsxl_noclass.k17xnc.  fixed.FileOS	0x40004
+x.mpsxl_noclass.k17xnc.  fixed.FileType	0x0
+x.mpsxl_noclass.k17xnc.  table	000004B0
+x.mpsxl_noclass.k17xnc.  string.FileVersion	1.0.0.0
+x.mpsxl_noclass.k17xnc.  string.ProductVersion	1.0.0.0
+x.mpsxl_noclass.k17xnc.  var.Translation	000004b0
+x.mpsxl_noclass.k17xnc.file	<W>\p\x\mpsxl_noclass\k17xnc.reg
+x.mpsxl_noclass.k17xnc.ERR	not a PE file
+x.mpsxl_noclass.readme.file	<W>\p\x\mpsxl_noclass\readme.txt
+x.mpsxl_noclass.readme.ERR	not a PE file
+x.mpsxl_notarget.k17xnt.file	<W>\p\x\mpsxl_notarget\k17xnt.bas
+x.mpsxl_notarget.k17xnt.ERR	not a PE file
+x.mpsxl_notarget.K17Xnt.file	<W>\p\x\mpsxl_notarget\K17Xnt.cs
+x.mpsxl_notarget.K17Xnt.ERR	not a PE file
+x.mpsxl_notarget.k17xnt.file	k17xnt.dll
+x.mpsxl_notarget.k17xnt.bytes	949760
+x.mpsxl_notarget.k17xnt.machine	0x14c
+x.mpsxl_notarget.k17xnt.subsystem	windows-console
+x.mpsxl_notarget.k17xnt.sections	.text .rsrc .reloc
+x.mpsxl_notarget.k17xnt.image.bytes	949760
+x.mpsxl_notarget.k17xnt.overlay.bytes	0
+x.mpsxl_notarget.k17xnt.certificate	no
+x.mpsxl_notarget.k17xnt.import	mscoree.dll
+x.mpsxl_notarget.k17xnt.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_notarget.k17xnt.  fixed.FileVersion	1.0.0.0
+x.mpsxl_notarget.k17xnt.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_notarget.k17xnt.  fixed.FileFlags	0x0
+x.mpsxl_notarget.k17xnt.  fixed.FileOS	0x40004
+x.mpsxl_notarget.k17xnt.  fixed.FileType	0x0
+x.mpsxl_notarget.k17xnt.  table	000004B0
+x.mpsxl_notarget.k17xnt.  string.FileVersion	1.0.0.0
+x.mpsxl_notarget.k17xnt.  string.ProductVersion	1.0.0.0
+x.mpsxl_notarget.k17xnt.  var.Translation	000004b0
+x.mpsxl_notarget.k17xnt.file	<W>\p\x\mpsxl_notarget\k17xnt.reg
+x.mpsxl_notarget.k17xnt.ERR	not a PE file
+x.mpsxl_notarget.readme.file	<W>\p\x\mpsxl_notarget\readme.txt
+x.mpsxl_notarget.readme.ERR	not a PE file
+x.mpsxl_noversion.k17xnv.file	<W>\p\x\mpsxl_noversion\k17xnv.bas
+x.mpsxl_noversion.k17xnv.ERR	not a PE file
+x.mpsxl_noversion.K17Xnv.file	<W>\p\x\mpsxl_noversion\K17Xnv.cs
+x.mpsxl_noversion.K17Xnv.ERR	not a PE file
+x.mpsxl_noversion.k17xnv.file	k17xnv.dll
+x.mpsxl_noversion.k17xnv.bytes	949760
+x.mpsxl_noversion.k17xnv.machine	0x14c
+x.mpsxl_noversion.k17xnv.subsystem	windows-console
+x.mpsxl_noversion.k17xnv.sections	.text .rsrc .reloc
+x.mpsxl_noversion.k17xnv.image.bytes	949760
+x.mpsxl_noversion.k17xnv.overlay.bytes	0
+x.mpsxl_noversion.k17xnv.certificate	no
+x.mpsxl_noversion.k17xnv.import	mscoree.dll
+x.mpsxl_noversion.k17xnv.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_noversion.k17xnv.  fixed.FileVersion	1.0.0.0
+x.mpsxl_noversion.k17xnv.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_noversion.k17xnv.  fixed.FileFlags	0x0
+x.mpsxl_noversion.k17xnv.  fixed.FileOS	0x40004
+x.mpsxl_noversion.k17xnv.  fixed.FileType	0x0
+x.mpsxl_noversion.k17xnv.  table	000004B0
+x.mpsxl_noversion.k17xnv.  string.FileVersion	1.0.0.0
+x.mpsxl_noversion.k17xnv.  string.ProductVersion	1.0.0.0
+x.mpsxl_noversion.k17xnv.  var.Translation	000004b0
+x.mpsxl_noversion.k17xnv.file	<W>\p\x\mpsxl_noversion\k17xnv.reg
+x.mpsxl_noversion.k17xnv.ERR	not a PE file
+x.mpsxl_noversion.readme.file	<W>\p\x\mpsxl_noversion\readme.txt
+x.mpsxl_noversion.readme.ERR	not a PE file

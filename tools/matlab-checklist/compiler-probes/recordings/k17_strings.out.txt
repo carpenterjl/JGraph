@@ -1,0 +1,5388 @@
+ServerConfig.dll.streams	#~ (4140) | #Strings (5112) | #US (3312) | #GUID (16) | #Blob (2088)
+ServerConfig.dll.us	90
+  |label1
+  |Add-in Name:
+  |textBox1
+  |buttonOK
+  |OK
+  |buttonCancel
+  |Cancel
+  |AddAddinForm
+  |Add a Add-in
+  |Please enter a host name.
+  |Validation Error
+  |Please enter a port number.
+  |Please enter a CTF archive name.
+  |.CTF
+  |.ctf
+  |http://
+  |:
+  |/
+  |Host Name:
+  |textBoxHost
+  |label2
+  |Port Number:
+  |textBoxPort
+  |label3
+  |CTF Archive:
+  |textBoxCTF
+  |AddServerInfoForm
+  |Add New MATLAB Server Configuration
+  |Software\Microsoft\Office\Excel\Addins\ServerConfig.Connect
+  |FriendlyName
+  |ServerConfig.Connect
+  |Description
+  |
+  |LoadBehavior
+  |Software\MathWorks\MATLAB Builder EX\2.5\MPS Server Config\
+  |Software\MathWorks\MATLAB Builder EX\2.5\Logging\
+  |Enabled
+  |LoggingLevel
+  |LogFileFolder
+  |responseSizeLimit
+  |timeoutSeconds
+  |https://
+  |Error
+  |Information
+  |Verbose
+  |Response size limit must be an integer. The default is 64 MB
+  |Timeout in seconds must be an integer. The default is 120 seconds.
+  |Server URL should start with http:// or https://.
+  |Microsoft Sans Serif
+  |MATLAB Add-Ins Available
+  |buttonApply
+  |Apply
+  |listViewAddin
+  |Add-in Name
+  |buttonAddAddin
+  |Add
+  |buttonDeleteAddin
+  |Delete
+  |groupBox1
+  |tabControl1
+  |tabPage1
+  |Matlab Production Server Configuration
+  |groupBox3
+  |MATLAB Production Server Configuration
+  |textBoxServerURL
+  |labelServerURL
+  |Server URL
+  |groupBox2
+  |Optional Client Configuration
+  |labelTimeout
+  |Time the client waits for response before timing out(seconds)
+  |textBoxTimeout
+  |tabPage2
+  |Client Side Logging
+  |checkBoxEnableLogging
+  |Enable Logging
+  |buttonBrowse
+  |Browse...
+  |textBoxLogFileFolder
+  |label4
+  |Log File Folder
+  |Logging Level
+  |comboBoxLoggingLevel
+  |textBoxResponseLimit
+  |labelResponseLimit
+  |Maximum size in response the client accepts (MB)
+  |ServerConfigForm
+  |MATLAB Production Server Configuration Management
+  |ServerConfig.Properties.Resources
+  |Ribbon
+ServerConfig.dll.names	320
+  |tabPage1
+  |label1
+  |tabControl1
+  |groupBox1
+  |textBox1
+  |Microsoft.Win32
+  |Int32
+  |Dictionary`2
+  |tabPage2
+  |label2
+  |groupBox2
+  |IDTExtensibility2
+  |label3
+  |groupBox3
+  |label4
+  |columnHeader4
+  |<Module>
+  |RibbonID
+  |TIMEOUT_SECONDS_REGISTRY_NAME
+  |RESPONSE_SIZE_LIMIT_REGISTRY_NAME
+  |TIMEOUT_SECONDS_VALUE
+  |RESPONSE_SIZE_LIMIT_VALUE
+  |textBoxCTF
+  |SizeF
+  |Microsoft.Office.Core.IRibbonExtensibility.GetCustomUI
+  |buttonOK
+  |labelServerURL
+  |textBoxServerURL
+  |serverURL
+  |System.IO
+  |value__
+  |mscorlib
+  |System.Collections.Generic
+  |TypeProgId
+  |add_Load
+  |ServerConfigForm_Load
+  |Add
+  |add_TextChanged
+  |textBoxResponseLimit_TextChanged
+  |textBoxTimeout_TextChanged
+  |add_SelectedIndexChanged
+  |listViewAddin_SelectedIndexChanged
+  |get_Checked
+  |set_Checked
+  |loggingEnabled
+  |set_FormattingEnabled
+  |ext_dm_SolutionClosed
+  |ext_dm_UserClosed
+  |set_Selected
+  |RegistryValueKind
+  |addInInstance
+  |set_AutoScaleMode
+  |RemoveMode
+  |ext_ConnectMode
+  |ext_DisconnectMode
+  |disconnectMode
+  |TabPage
+  |updateServerConfigPage
+  |updateLoggingPage
+  |AddRange
+  |ApplyChange
+  |IDisposable
+  |set_Visible
+  |RuntimeTypeHandle
+  |GetTypeFromHandle
+  |set_FormBorderStyle
+  |FontStyle
+  |set_Name
+  |Logging_Enabled_Registry_Name
+  |Logging_Level_Registry_Name
+  |Log_File_Folder_Registry_Name
+  |addinName
+  |OfficeAddinKeyName
+  |keyName
+  |GetDirectoryName
+  |name
+  |ext_cm_CommandLine
+  |LocalMachine
+  |Type
+  |type
+  |Microsoft.Office.Core
+  |get_Culture
+  |set_Culture
+  |resourceCulture
+  |ButtonBase
+  |TextBoxBase
+  |Logging_Level_Verbose
+  |Dispose
+  |TryParse
+  |buttonBrowse
+  |EndUpdate
+  |BeginUpdate
+  |OnAddInsUpdate
+  |EditorBrowsableState
+  |ext_dm_UISetupComplete
+  |OnStartupComplete
+  |ProgIdAttribute
+  |DispIdAttribute
+  |CompilerGeneratedAttribute
+  |GuidAttribute
+  |GeneratedCodeAttribute
+  |DebuggerNonUserCodeAttribute
+  |DebuggableAttribute
+  |EditorBrowsableAttribute
+  |AssemblyKeyFileAttribute
+  |AssemblyTitleAttribute
+  |AssemblyKeyNameAttribute
+  |AssemblyTrademarkAttribute
+  |TargetFrameworkAttribute
+  |AssemblyDelaySignAttribute
+  |AssemblyConfigurationAttribute
+  |ComRegisterFunctionAttribute
+  |ComUnregisterFunctionAttribute
+  |AssemblyDescriptionAttribute
+  |TypeIdentifierAttribute
+  |CompilationRelaxationsAttribute
+  |AssemblyProductAttribute
+  |AssemblyCopyrightAttribute
+  |AssemblyCompanyAttribute
+  |RuntimeCompatibilityAttribute
+  |GetValue
+  |SetValue
+  |value
+  |RegistryHive
+  |Remove
+  |set_Size
+  |set_MaximumSize
+  |set_AutoSize
+  |set_ClientSize
+  |OnServerConfig
+  |set_Padding
+  |checkBoxEnableLogging
+  |System.Runtime.Versioning
+  |ToString
+  |GetString
+  |Substring
+  |disposing
+  |System.Drawing
+  |CommonDialog
+  |FolderBrowserDialog
+  |ShowDialog
+  |get_SelectedPath
+  |set_Width
+  |get_Length
+  |EndsWith
+  |StartsWith
+  |buttonOK_Click
+  |add_Click
+  |buttonBrowse_Click
+  |buttonCancel_Click
+  |buttonAddAddin_Click
+  |buttonDeleteAddin_Click
+  |buttonApply_Click
+  |ext_cm_External
+  |Label
+  |buttonCancel
+  |System.ComponentModel
+  |comboBoxLoggingLevel
+  |loggingLevel
+  |SelectAll
+  |ServerConfig.dll
+  |ServerConfig.Ribbon.xml
+  |TabControl
+  |IRibbonControl
+  |IButtonControl
+  |ContainerControl
+  |ListControl
+  |control
+  |url
+  |get_Item
+  |set_Item
+  |ListViewSubItem
+  |ListViewItem
+  |get_Is64BitOperatingSystem
+  |Trim
+  |custom
+  |ServerConfigForm
+  |AddAddinForm
+  |AddServerInfoForm
+  |Enum
+  |resourceMan
+  |buttonAddAddin
+  |buttonDeleteAddin
+  |listViewAddin
+  |get_Ribbon
+  |Application
+  |application
+  |get_Location
+  |set_Location
+  |Logging_Level_Information
+  |ClientServerConfiguration
+  |System.Globalization
+  |set_HideSelection
+  |System.Reflection
+  |ControlCollection
+  |ListViewSubItemCollection
+  |SelectedListViewItemCollection
+  |ColumnHeaderCollection
+  |ObjectCollection
+  |KeyCollection
+  |OnConnection
+  |OnDisconnection
+  |UnRegisterFunction
+  |set_StartPosition
+  |FormStartPosition
+  |ext_cm_Solution
+  |set_CancelButton
+  |set_AcceptButton
+  |OnBeginShutdown
+  |ext_dm_HostShutdown
+  |CultureInfo
+  |set_TabStop
+  |ext_cm_UISetup
+  |ext_cm_Startup
+  |ext_cm_AfterStartup
+  |Clear
+  |ColumnHeader
+  |textBoxLogFileFolder
+  |loggingFolder
+  |sender
+  |get_ResourceManager
+  |EventHandler
+  |System.CodeDom.Compiler
+  |IContainer
+  |CurrentUser
+  |ToLower
+  |set_UseCompatibleStateImageBehavior
+  |set_UseVisualStyleBackColor
+  |Logging_Level_Error
+  |GetEnumerator
+  |.ctor
+  |System.Diagnostics
+  |timeoutSeconds
+  |System.Runtime.InteropServices
+  |System.Runtime.CompilerServices
+  |System.Resources
+  |ServerConfig.ServerConfigForm.resources
+  |ServerConfig.AddAddinForm.resources
+  |ServerConfig.AddServerInfoForm.resources
+  |ServerConfig.Properties.Resources.resources
+  |DebuggingModes
+  |ServerConfig.Properties
+  |GetValueNames
+  |GetSubKeyNames
+  |set_GridLines
+  |EventArgs
+  |Equals
+  |get_Controls
+  |get_Items
+  |get_SubItems
+  |get_SelectedItems
+  |System.Windows.Forms
+  |get_Columns
+  |set_AutoScaleDimensions
+  |AddAddinConfigurations
+  |addinConfigurations
+  |components
+  |textBoxServerURL_LostFocus
+  |add_LostFocus
+  |get_Keys
+  |Concat
+  |applicationObject
+  |set_MultiSelect
+  |set_FullRowSelect
+  |Connect
+  |labelResponseLimit
+  |textBoxResponseLimit
+  |responseSizeLimit
+  |GraphicsUnit
+  |set_DialogResult
+  |Environment
+  |InitializeComponent
+  |get_Current
+  |Point
+  |set_Font
+  |get_Count
+  |Convert
+  |textBoxPort
+  |AddInInst
+  |addInInst
+  |textBoxHost
+  |labelTimeout
+  |textBoxTimeout
+  |SuspendLayout
+  |ResumeLayout
+  |PerformLayout
+  |MoveNext
+  |get_Text
+  |set_Text
+  |set_View
+  |ListView
+  |RegistryView
+  |IWin32Window
+  |Show
+  |set_TabIndex
+  |get_SelectedIndex
+  |set_SelectedIndex
+  |MessageBox
+  |set_MinimizeBox
+  |set_MaximizeBox
+  |CheckBox
+  |ComboBox
+  |GroupBox
+  |TextBox
+  |Array
+  |Server_Config_Registry_Key
+  |Logging_Registry_Key
+  |CreateSubKey
+  |DeleteSubKey
+  |OpenSubKey
+  |OpenBaseKey
+  |ContainsKey
+  |getRegistryKey
+  |key
+  |get_Assembly
+  |GetExecutingAssembly
+  |buttonApply
+  |Registry
+  |IRibbonExtensibility
+  |IsNullOrEmpty
+c.arch.buildresult.json.strings	ERR not a PE file
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.arch.k17arch.ctf.strings	ERR not a PE file
+c.arch.mccExcludedFiles.log.strings	ERR not a PE file
+c.arch.readme.txt.strings	ERR not a PE file
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 24)
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.blank.k17blank.bas.strings	ERR not a PE file
+c.blank.K17Blank.cs.strings	ERR not a PE file
+c.blank.k17blank.dll.streams	#~ (3964) | #Strings (5144) | #US (3608) | #GUID (16) | #Blob (2128)
+c.blank.k17blank.dll.us	83
+  |k17blank Add-in
+  |Software\MathWorks\MATLAB Builder EX\2.5\Logging\
+  |MathWorks.MATLAB.ProductionServer.Client
+  |.
+  |.dll
+  |Entered k17_none() function.
+  |Input {0} is {1}.
+  |Add
+  |TraceEvent
+  |Input {0} is Range with value of {1}.
+  |k17blank
+  |MPS server URL is {0}.
+  |MPS server url is not provided for k17blank
+  |MATLAB error thrown : MPS server url is not provided for k17blank
+  |MWHttpClient is disposed.
+  |New MWHttpClient is created.
+  |MWHttpClient.CreateProxy() succeeded.
+  |Call to k17_none function returned.
+  |Call to k17_none function failed.
+  |Catch MATLAB Exception: {0}
+  |MATLAB Exception stack trace is {0}
+  |MATLABException:
+  |Catch WebException: {0}
+  |WebException status is {0}
+  |HttpWebResponse status code: {0}
+  |HttpWebResponse status description: {0}
+  |WebException:
+  |No response received in WebException.
+  |Catch TargetInvocationException: {0}
+  |InnerException is {0}
+  |TargetInvocationException:
+  |MaxFileSize
+  |
+  | Delete or rename the log file 
+  | and run the function again.
+  |Catch InvalidOperationException: {0}
+  |InvalidOperationException:
+  |Catch Exception: {0}
+  |Exception:
+  |Entered k17_one() function.
+  |Call to k17_one function returned.
+  |Output y is {0}.
+  |Call to k17_one function failed.
+  |Entered k17_many() function.
+  |Call to k17_many function returned.
+  |Output s is {0}.
+  |Output d is {0}.
+  |Output p is {0}.
+  |Call to k17_many function failed.
+  |LogFileFolder
+  |Software\MathWorks\MATLAB Builder EX\2.5\MPS Server Config\
+  |Registry key 
+  | found
+  |Looking for mps server url for 
+  |timeoutSeconds
+  |responseSizeLimit
+  |Registry value name: 
+  | , value data: 
+  |.ctf
+  |http://
+  |https://
+  | doesn't exist
+  |Enabled
+  |LoggingLevel
+  |  
+  |Looking for 
+  | for 
+  |name
+  |Monitoring thread is already running
+  |hive
+  |HKEY_CLASSES_ROOT
+  |HKCR
+  |HKEY_CURRENT_USER
+  |HKCU
+  |HKEY_LOCAL_MACHINE
+  |HKLM
+  |HKEY_USERS
+  |HKEY_CURRENT_CONFIG
+  |The registry hive '
+  |' is not supported
+  |value
+  |\
+  |This instance is already disposed
+c.blank.k17blank.dll.names	349
+  |<Module>
+  |k17blank.dll
+  |IK17Blank
+  |k17blank
+  |K17Blank
+  |k17blankClientConfig
+  |RegistryMonitor
+  |RegChangeNotifyFilter
+  |mscorlib
+  |System
+  |Object
+  |MathWorks.MATLAB.ProductionServer.Client
+  |MWHttpClientDefaultConfig
+  |IDisposable
+  |Enum
+  |k17_none
+  |k17_one
+  |k17_many
+  |REGISTRY_LOGGING_KEY
+  |REGISTRY_MPS_SERVER_CONFIG_KEY
+  |REGISTRY_LOGGING_ENABLED
+  |REGISTRY_LOGGING_LEVEL
+  |REGISTRY_LOG_FILE_FOLDER
+  |REGISTRY_TIMEOUT_SECONDS
+  |REGISTRY_RESPONSE_SIZE_LIMIT
+  |DEFAULT_TIMEOUT_SECONDS
+  |DEFAULT_RESPONSE_SIZE_LIMIT
+  |System.Diagnostics
+  |TraceSource
+  |traceSource
+  |loggingEnabled
+  |loggingLevel
+  |logFileFolder
+  |registryMonitor
+  |serverUrl
+  |timeoutMilliSeconds
+  |responseSizeLimit
+  |MWClient
+  |mwClient
+  |interfaceObject
+  |.cctor
+  |Finalize
+  |System.Reflection
+  |Assembly
+  |ResolveEventArgs
+  |Resolver
+  |getLogFileLocation
+  |Microsoft.Win32
+  |RegistryKey
+  |getLoggingRegistryKey
+  |getAddinRegistryKey
+  |getServerConfig
+  |DoLogging
+  |InitializeTraceSourceListener
+  |TraceListener
+  |SetFileLogListenerFilter
+  |TraceEventType
+  |TraceEvent
+  |EventArgs
+  |OnRegChanged
+  |getRegistryIntValue
+  |getTimeoutMilliSeconds
+  |getResponseSizeLimit
+  |.ctor
+  |get_TimeoutMilliSeconds
+  |get_ResponseSizeLimit
+  |TimeoutMilliSeconds
+  |ResponseSizeLimit
+  |KEY_QUERY_VALUE
+  |KEY_NOTIFY
+  |STANDARD_RIGHTS_READ
+  |RegOpenKeyEx
+  |RegNotifyChangeKeyValue
+  |RegCloseKey
+  |HKEY_CLASSES_ROOT
+  |HKEY_CURRENT_USER
+  |HKEY_LOCAL_MACHINE
+  |HKEY_USERS
+  |HKEY_PERFORMANCE_DATA
+  |HKEY_CURRENT_CONFIG
+  |HKEY_DYN_DATA
+  |EventHandler
+  |RegChanged
+  |add_RegChanged
+  |remove_RegChanged
+  |System.IO
+  |ErrorEventHandler
+  |Error
+  |add_Error
+  |remove_Error
+  |Exception
+  |OnError
+  |_registryHive
+  |_registrySubName
+  |_threadLock
+  |System.Threading
+  |Thread
+  |_thread
+  |_disposed
+  |ManualResetEvent
+  |_eventTerminate
+  |_regFilter
+  |RegistryHive
+  |Dispose
+  |get_RegChangeNotifyFilter
+  |set_RegChangeNotifyFilter
+  |InitRegistryKey
+  |get_IsMonitoring
+  |Start
+  |Stop
+  |MonitorThread
+  |ThreadLoop
+  |IsMonitoring
+  |value__
+  |Key
+  |Attribute
+  |Value
+  |Security
+  |inputs
+  |ParamArrayAttribute
+  |y
+  |System.Runtime.InteropServices
+  |OutAttribute
+  |s
+  |d
+  |p
+  |sender
+  |args
+  |nargout
+  |addinName
+  |name
+  |listener
+  |eventType
+  |id
+  |format
+  |message
+  |e
+  |keyName
+  |valueName
+  |value
+  |hKey
+  |subKey
+  |options
+  |samDesired
+  |phkResult
+  |bWatchSubtree
+  |dwNotifyFilter
+  |hEvent
+  |fAsynchronous
+  |registryKey
+  |registryHive
+  |hive
+  |System.Runtime.CompilerServices
+  |CompilationRelaxationsAttribute
+  |RuntimeCompatibilityAttribute
+  |MWCoerceObjectToPrimitiveArrayIfHomogeneousAttribute
+  |MWPreserveOutputVectorDimensionsAttribute
+  |MWReplaceInputNullWithZeroAttribute
+  |GuidAttribute
+  |ClassInterfaceAttribute
+  |ClassInterfaceType
+  |ComVisibleAttribute
+  |AppDomain
+  |get_CurrentDomain
+  |ResolveEventHandler
+  |add_AssemblyResolve
+  |SourceSwitch
+  |get_Switch
+  |SourceLevels
+  |set_Level
+  |TraceListenerCollection
+  |get_Listeners
+  |Clear
+  |Registry
+  |CurrentUser
+  |CreateSubKey
+  |get_Item
+  |Microsoft.VisualBasic
+  |Microsoft.VisualBasic.Logging
+  |FileLogTraceListener
+  |Close
+  |get_Name
+  |AssemblyName
+  |String
+  |Equals
+  |GetExecutingAssembly
+  |get_FullName
+  |Concat
+  |Stream
+  |GetManifestResourceStream
+  |get_Length
+  |Byte
+  |Read
+  |Load
+  |<k17_none>o__SiteContainer0
+  |System.Core
+  |CallSite`1
+  |Action`3
+  |CallSite
+  |System.Collections
+  |ArrayList
+  |<>p__Site1
+  |Action`7
+  |<>p__Site2
+  |Type
+  |Missing
+  |Int32
+  |Range
+  |Microsoft.Office.Interop.Excel
+  |RuntimeTypeHandle
+  |GetTypeFromHandle
+  |Microsoft.CSharp
+  |Microsoft.CSharp.RuntimeBinder
+  |CSharpArgumentInfo
+  |CSharpArgumentInfoFlags
+  |Create
+  |Binder
+  |CallSiteBinder
+  |CSharpBinderFlags
+  |System.Collections.Generic
+  |IEnumerable`1
+  |InvokeMember
+  |Target
+  |get_Value
+  |Invoke
+  |Add
+  |IsNullOrEmpty
+  |System.Windows.Forms
+  |MessageBox
+  |DialogResult
+  |Show
+  |op_Inequality
+  |MWHttpClient
+  |MWHttpClientConfig
+  |Uri
+  |CreateProxy
+  |ToArray
+  |get_Message
+  |MATLABException
+  |get_MATLABStackTraceString
+  |get_MATLABIdentifier
+  |System.Net
+  |WebException
+  |WebExceptionStatus
+  |get_Status
+  |WebResponse
+  |get_Response
+  |HttpWebResponse
+  |HttpStatusCode
+  |get_StatusCode
+  |get_StatusDescription
+  |get_InnerException
+  |Contains
+  |get_FullLogFileName
+  |Flush
+  |TargetInvocationException
+  |InvalidOperationException
+  |<k17_one>o__SiteContainer3
+  |<>p__Site4
+  |<>p__Site5
+  |ToString
+  |<k17_many>o__SiteContainer6
+  |<>p__Site7
+  |<>p__Site8
+  |GetValue
+  |OpenSubKey
+  |Environment
+  |get_Is64BitOperatingSystem
+  |RegistryView
+  |OpenBaseKey
+  |LocalMachine
+  |GetValueNames
+  |EndsWith
+  |IndexOf
+  |Remove
+  |StartsWith
+  |Insert
+  |op_Equality
+  |get_Count
+  |set_CustomLocation
+  |set_AutoFlush
+  |set_Delimiter
+  |LogFileLocation
+  |set_Location
+  |TraceOptions
+  |set_TraceOutputOptions
+  |LogFileCreationScheduleOption
+  |set_LogFileCreationSchedule
+  |set_BaseFileName
+  |DiskSpaceExhaustedOption
+  |set_DiskSpaceExhaustedBehavior
+  |Trace
+  |EventTypeFilter
+  |TraceFilter
+  |set_Filter
+  |CompilerGeneratedAttribute
+  |DllImportAttribute
+  |advapi32.dll
+  |Delegate
+  |Combine
+  |Interlocked
+  |CompareExchange
+  |ErrorEventArgs
+  |ArgumentNullException
+  |GC
+  |SuppressFinalize
+  |Monitor
+  |Enter
+  |Exit
+  |System.ComponentModel
+  |InvalidEnumArgumentException
+  |Char
+  |Split
+  |<PrivateImplementationDetails>{<UUID>}
+  |Dictionary`2
+  |$$method0x600002b-1
+  |TryGetValue
+  |IntPtr
+  |Zero
+  |ArgumentException
+  |Join
+  |ObjectDisposedException
+  |EventWaitHandle
+  |Reset
+  |ThreadStart
+  |set_IsBackground
+  |Set
+  |Win32Exception
+  |AutoResetEvent
+  |WaitHandle
+  |Microsoft.Win32.SafeHandles
+  |SafeWaitHandle
+  |get_SafeWaitHandle
+  |SafeHandle
+  |DangerousGetHandle
+  |WaitAny
+  |WaitOne
+  |FlagsAttribute
+  |IEnumerable
+  |_VtblGap1_173
+  |DispIdAttribute
+  |RangeValueDataType
+  |set_Value
+  |DefaultMemberAttribute
+  |TypeIdentifierAttribute
+  |ComImportAttribute
+  |InterfaceTypeAttribute
+  |ComInterfaceType
+  |k17blank.MathWorks.MATLAB.ProductionServer.Client.dll
+c.blank.k17blank.reg.strings	ERR not a PE file
+c.blank.readme.txt.strings	ERR not a PE file
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.cdebug.k17cdbg.bas.strings	ERR not a PE file
+c.cdebug.K17Cdbg.cs.strings	ERR not a PE file
+c.cdebug.k17cdbg.dll.streams	#~ (3996) | #Strings (5172) | #US (3600) | #GUID (16) | #Blob (2084)
+c.cdebug.k17cdbg.dll.us	83
+  |k17cdbg Add-in
+  |Software\MathWorks\MATLAB Builder EX\2.5\Logging\
+  |MathWorks.MATLAB.ProductionServer.Client
+  |.
+  |.dll
+  |Entered k17_none() function.
+  |Input {0} is {1}.
+  |Add
+  |TraceEvent
+  |Input {0} is Range with value of {1}.
+  |k17cdbg
+  |MPS server URL is {0}.
+  |MPS server url is not provided for k17cdbg
+  |MATLAB error thrown : MPS server url is not provided for k17cdbg
+  |MWHttpClient is disposed.
+  |New MWHttpClient is created.
+  |MWHttpClient.CreateProxy() succeeded.
+  |Call to k17_none function returned.
+  |Call to k17_none function failed.
+  |Catch MATLAB Exception: {0}
+  |MATLAB Exception stack trace is {0}
+  |MATLABException:
+  |Catch WebException: {0}
+  |WebException status is {0}
+  |HttpWebResponse status code: {0}
+  |HttpWebResponse status description: {0}
+  |WebException:
+  |No response received in WebException.
+  |Catch TargetInvocationException: {0}
+  |InnerException is {0}
+  |TargetInvocationException:
+  |MaxFileSize
+  |
+  | Delete or rename the log file 
+  | and run the function again.
+  |Catch InvalidOperationException: {0}
+  |InvalidOperationException:
+  |Catch Exception: {0}
+  |Exception:
+  |Entered k17_one() function.
+  |Call to k17_one function returned.
+  |Output y is {0}.
+  |Call to k17_one function failed.
+  |Entered k17_many() function.
+  |Call to k17_many function returned.
+  |Output s is {0}.
+  |Output d is {0}.
+  |Output p is {0}.
+  |Call to k17_many function failed.
+  |LogFileFolder
+  |Software\MathWorks\MATLAB Builder EX\2.5\MPS Server Config\
+  |Registry key 
+  | found
+  |Looking for mps server url for 
+  |timeoutSeconds
+  |responseSizeLimit
+  |Registry value name: 
+  | , value data: 
+  |.ctf
+  |http://
+  |https://
+  | doesn't exist
+  |Enabled
+  |LoggingLevel
+  |  
+  |Looking for 
+  | for 
+  |name
+  |Monitoring thread is already running
+  |hive
+  |HKEY_CLASSES_ROOT
+  |HKCR
+  |HKEY_CURRENT_USER
+  |HKCU
+  |HKEY_LOCAL_MACHINE
+  |HKLM
+  |HKEY_USERS
+  |HKEY_CURRENT_CONFIG
+  |The registry hive '
+  |' is not supported
+  |value
+  |\
+  |This instance is already disposed
+c.cdebug.k17cdbg.dll.names	351
+  |<Module>
+  |k17cdbg.dll
+  |IK17Cdbg
+  |k17cdbg
+  |K17Cdbg
+  |k17cdbgClientConfig
+  |RegistryMonitor
+  |RegChangeNotifyFilter
+  |mscorlib
+  |System
+  |Object
+  |MathWorks.MATLAB.ProductionServer.Client
+  |MWHttpClientDefaultConfig
+  |IDisposable
+  |Enum
+  |k17_none
+  |k17_one
+  |k17_many
+  |REGISTRY_LOGGING_KEY
+  |REGISTRY_MPS_SERVER_CONFIG_KEY
+  |REGISTRY_LOGGING_ENABLED
+  |REGISTRY_LOGGING_LEVEL
+  |REGISTRY_LOG_FILE_FOLDER
+  |REGISTRY_TIMEOUT_SECONDS
+  |REGISTRY_RESPONSE_SIZE_LIMIT
+  |DEFAULT_TIMEOUT_SECONDS
+  |DEFAULT_RESPONSE_SIZE_LIMIT
+  |System.Diagnostics
+  |TraceSource
+  |traceSource
+  |loggingEnabled
+  |loggingLevel
+  |logFileFolder
+  |registryMonitor
+  |serverUrl
+  |timeoutMilliSeconds
+  |responseSizeLimit
+  |MWClient
+  |mwClient
+  |interfaceObject
+  |.cctor
+  |Finalize
+  |System.Reflection
+  |Assembly
+  |ResolveEventArgs
+  |Resolver
+  |getLogFileLocation
+  |Microsoft.Win32
+  |RegistryKey
+  |getLoggingRegistryKey
+  |getAddinRegistryKey
+  |getServerConfig
+  |DoLogging
+  |InitializeTraceSourceListener
+  |TraceListener
+  |SetFileLogListenerFilter
+  |TraceEventType
+  |TraceEvent
+  |EventArgs
+  |OnRegChanged
+  |getRegistryIntValue
+  |getTimeoutMilliSeconds
+  |getResponseSizeLimit
+  |.ctor
+  |get_TimeoutMilliSeconds
+  |get_ResponseSizeLimit
+  |TimeoutMilliSeconds
+  |ResponseSizeLimit
+  |KEY_QUERY_VALUE
+  |KEY_NOTIFY
+  |STANDARD_RIGHTS_READ
+  |RegOpenKeyEx
+  |RegNotifyChangeKeyValue
+  |RegCloseKey
+  |HKEY_CLASSES_ROOT
+  |HKEY_CURRENT_USER
+  |HKEY_LOCAL_MACHINE
+  |HKEY_USERS
+  |HKEY_PERFORMANCE_DATA
+  |HKEY_CURRENT_CONFIG
+  |HKEY_DYN_DATA
+  |EventHandler
+  |RegChanged
+  |add_RegChanged
+  |remove_RegChanged
+  |System.IO
+  |ErrorEventHandler
+  |Error
+  |add_Error
+  |remove_Error
+  |Exception
+  |OnError
+  |_registryHive
+  |_registrySubName
+  |_threadLock
+  |System.Threading
+  |Thread
+  |_thread
+  |_disposed
+  |ManualResetEvent
+  |_eventTerminate
+  |_regFilter
+  |RegistryHive
+  |Dispose
+  |get_RegChangeNotifyFilter
+  |set_RegChangeNotifyFilter
+  |InitRegistryKey
+  |get_IsMonitoring
+  |Start
+  |Stop
+  |MonitorThread
+  |ThreadLoop
+  |IsMonitoring
+  |value__
+  |Key
+  |Attribute
+  |Value
+  |Security
+  |inputs
+  |ParamArrayAttribute
+  |y
+  |System.Runtime.InteropServices
+  |OutAttribute
+  |s
+  |d
+  |p
+  |sender
+  |args
+  |nargout
+  |addinName
+  |name
+  |listener
+  |eventType
+  |id
+  |format
+  |message
+  |e
+  |keyName
+  |valueName
+  |value
+  |hKey
+  |subKey
+  |options
+  |samDesired
+  |phkResult
+  |bWatchSubtree
+  |dwNotifyFilter
+  |hEvent
+  |fAsynchronous
+  |registryKey
+  |registryHive
+  |hive
+  |DebuggableAttribute
+  |DebuggingModes
+  |System.Runtime.CompilerServices
+  |CompilationRelaxationsAttribute
+  |RuntimeCompatibilityAttribute
+  |MWCoerceObjectToPrimitiveArrayIfHomogeneousAttribute
+  |MWPreserveOutputVectorDimensionsAttribute
+  |MWReplaceInputNullWithZeroAttribute
+  |GuidAttribute
+  |ClassInterfaceAttribute
+  |ClassInterfaceType
+  |ComVisibleAttribute
+  |AppDomain
+  |get_CurrentDomain
+  |ResolveEventHandler
+  |add_AssemblyResolve
+  |SourceSwitch
+  |get_Switch
+  |SourceLevels
+  |set_Level
+  |TraceListenerCollection
+  |get_Listeners
+  |Clear
+  |Registry
+  |CurrentUser
+  |CreateSubKey
+  |get_Item
+  |Microsoft.VisualBasic
+  |Microsoft.VisualBasic.Logging
+  |FileLogTraceListener
+  |Close
+  |get_Name
+  |AssemblyName
+  |String
+  |Equals
+  |GetExecutingAssembly
+  |get_FullName
+  |Concat
+  |Stream
+  |GetManifestResourceStream
+  |get_Length
+  |Byte
+  |Read
+  |Load
+  |<k17_none>o__SiteContainer0
+  |System.Core
+  |CallSite`1
+  |Action`3
+  |CallSite
+  |System.Collections
+  |ArrayList
+  |<>p__Site1
+  |Action`7
+  |<>p__Site2
+  |Type
+  |Missing
+  |Int32
+  |Range
+  |Microsoft.Office.Interop.Excel
+  |RuntimeTypeHandle
+  |GetTypeFromHandle
+  |Microsoft.CSharp
+  |Microsoft.CSharp.RuntimeBinder
+  |CSharpArgumentInfo
+  |CSharpArgumentInfoFlags
+  |Create
+  |Binder
+  |CallSiteBinder
+  |CSharpBinderFlags
+  |System.Collections.Generic
+  |IEnumerable`1
+  |InvokeMember
+  |Target
+  |get_Value
+  |Invoke
+  |Add
+  |IsNullOrEmpty
+  |System.Windows.Forms
+  |MessageBox
+  |DialogResult
+  |Show
+  |op_Inequality
+  |MWHttpClient
+  |MWHttpClientConfig
+  |Uri
+  |CreateProxy
+  |ToArray
+  |get_Message
+  |MATLABException
+  |get_MATLABStackTraceString
+  |get_MATLABIdentifier
+  |System.Net
+  |WebException
+  |WebExceptionStatus
+  |get_Status
+  |WebResponse
+  |get_Response
+  |HttpWebResponse
+  |HttpStatusCode
+  |get_StatusCode
+  |get_StatusDescription
+  |get_InnerException
+  |Contains
+  |get_FullLogFileName
+  |Flush
+  |TargetInvocationException
+  |InvalidOperationException
+  |<k17_one>o__SiteContainer3
+  |<>p__Site4
+  |<>p__Site5
+  |ToString
+  |<k17_many>o__SiteContainer6
+  |<>p__Site7
+  |<>p__Site8
+  |GetValue
+  |OpenSubKey
+  |Environment
+  |get_Is64BitOperatingSystem
+  |RegistryView
+  |OpenBaseKey
+  |LocalMachine
+  |GetValueNames
+  |EndsWith
+  |IndexOf
+  |Remove
+  |StartsWith
+  |Insert
+  |op_Equality
+  |get_Count
+  |set_CustomLocation
+  |set_AutoFlush
+  |set_Delimiter
+  |LogFileLocation
+  |set_Location
+  |TraceOptions
+  |set_TraceOutputOptions
+  |LogFileCreationScheduleOption
+  |set_LogFileCreationSchedule
+  |set_BaseFileName
+  |DiskSpaceExhaustedOption
+  |set_DiskSpaceExhaustedBehavior
+  |Trace
+  |EventTypeFilter
+  |TraceFilter
+  |set_Filter
+  |CompilerGeneratedAttribute
+  |DllImportAttribute
+  |advapi32.dll
+  |Delegate
+  |Combine
+  |Interlocked
+  |CompareExchange
+  |ErrorEventArgs
+  |ArgumentNullException
+  |GC
+  |SuppressFinalize
+  |Monitor
+  |Enter
+  |Exit
+  |System.ComponentModel
+  |InvalidEnumArgumentException
+  |Char
+  |Split
+  |<PrivateImplementationDetails>{<UUID>}
+  |Dictionary`2
+  |$$method0x600002b-1
+  |TryGetValue
+  |IntPtr
+  |Zero
+  |ArgumentException
+  |Join
+  |ObjectDisposedException
+  |EventWaitHandle
+  |Reset
+  |ThreadStart
+  |set_IsBackground
+  |Set
+  |Win32Exception
+  |AutoResetEvent
+  |WaitHandle
+  |Microsoft.Win32.SafeHandles
+  |SafeWaitHandle
+  |get_SafeWaitHandle
+  |SafeHandle
+  |DangerousGetHandle
+  |WaitAny
+  |WaitOne
+  |FlagsAttribute
+  |IEnumerable
+  |_VtblGap1_173
+  |DispIdAttribute
+  |RangeValueDataType
+  |set_Value
+  |DefaultMemberAttribute
+  |TypeIdentifierAttribute
+  |ComImportAttribute
+  |InterfaceTypeAttribute
+  |ComInterfaceType
+  |k17cdbg.MathWorks.MATLAB.ProductionServer.Client.dll
+c.cdebug.k17cdbg.pdb.strings	ERR not a PE file
+c.cdebug.k17cdbg.reg.strings	ERR not a PE file
+c.cdebug.readme.txt.strings	ERR not a PE file
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.cdefaults.k17_quiet.bas.strings	ERR not a PE file
+c.cdefaults.k17_quiet.dll.streams	#~ (5816) | #Strings (6104) | #US (6888) | #GUID (16) | #Blob (2228)
+c.cdefaults.k17_quiet.dll.us	136
+  |k17_quiet Add-in
+  |Software\MathWorks\MATLAB Builder EX\2.5\Logging\
+  |MathWorks.MATLAB.ProductionServer.Client
+  |.
+  |.dll
+  |Entered k17_quiet() function.
+  |Input {0} is {1}.
+  |Add
+  |TraceEvent
+  |Input {0} is Range with value of {1}.
+  |k17_quiet
+  |MPS server URL is {0}.
+  |MPS server url is not provided for k17_quiet
+  |MATLAB error thrown : MPS server url is not provided for k17_quiet
+  |MWHttpClient is disposed.
+  |New MWHttpClient is created.
+  |MWHttpClient.CreateProxy() succeeded.
+  |Call to k17_quiet function returned.
+  |Call to k17_quiet function failed.
+  |Catch MATLAB Exception: {0}
+  |MATLAB Exception stack trace is {0}
+  |MATLABException:
+  |Catch WebException: {0}
+  |WebException status is {0}
+  |HttpWebResponse status code: {0}
+  |HttpWebResponse status description: {0}
+  |WebException:
+  |No response received in WebException.
+  |Catch TargetInvocationException: {0}
+  |InnerException is {0}
+  |TargetInvocationException:
+  |MaxFileSize
+  |
+  | Delete or rename the log file 
+  | and run the function again.
+  |Catch InvalidOperationException: {0}
+  |InvalidOperationException:
+  |Catch Exception: {0}
+  |Exception:
+  |Entered k17_none() function.
+  |Call to k17_none function returned.
+  |Call to k17_none function failed.
+  |Entered k17_one() function.
+  |Call to k17_one function returned.
+  |Output y is {0}.
+  |Call to k17_one function failed.
+  |Entered k17_many() function.
+  |Call to k17_many function returned.
+  |Output s is {0}.
+  |Output d is {0}.
+  |Output p is {0}.
+  |Call to k17_many function failed.
+  |Entered k17_two() function.
+  |Call to k17_two function returned.
+  |Output a is {0}.
+  |Output b is {0}.
+  |Call to k17_two function failed.
+  |Entered k17_opt() function.
+  |Call to k17_opt function returned.
+  |Output r is {0}.
+  |Call to k17_opt function failed.
+  |Entered k17_varin() function.
+  |Call to k17_varin function returned.
+  |Call to k17_varin function failed.
+  |Entered k17_varout() function.
+  |Call to k17_varout function returned.
+  |Output varargout is {0}.
+  |Call to k17_varout function failed.
+  |Entered k17_both() function.
+  |Call to k17_both function returned.
+  |Output first is {0}.
+  |Call to k17_both function failed.
+  |Entered k17_args() function.
+  |Call to k17_args function returned.
+  |Call to k17_args function failed.
+  |Entered k17_noout() function.
+  |Call to k17_noout function returned.
+  |Call to k17_noout function failed.
+  |Entered k17_err() function.
+  |Call to k17_err function returned.
+  |Call to k17_err function failed.
+  |Entered k17_plot() function.
+  |Call to k17_plot function returned.
+  |Output n is {0}.
+  |Call to k17_plot function failed.
+  |Entered k17_h1() function.
+  |Call to k17_h1 function returned.
+  |Output t is {0}.
+  |Call to k17_h1 function failed.
+  |Entered k17_echo() function.
+  |Call to k17_echo function returned.
+  |Call to k17_echo function failed.
+  |Entered k17_pass() function.
+  |Call to k17_pass function returned.
+  |Call to k17_pass function failed.
+  |Entered k17_count() function.
+  |Call to k17_count function returned.
+  |Call to k17_count function failed.
+  |Entered k17_make() function.
+  |Call to k17_make function returned.
+  |Output v is {0}.
+  |Call to k17_make function failed.
+  |LogFileFolder
+  |Software\MathWorks\MATLAB Builder EX\2.5\MPS Server Config\
+  |Registry key 
+  | found
+  |Looking for mps server url for 
+  |timeoutSeconds
+  |responseSizeLimit
+  |Registry value name: 
+  | , value data: 
+  |.ctf
+  |http://
+  |https://
+  | doesn't exist
+  |Enabled
+  |LoggingLevel
+  |  
+  |Looking for 
+  | for 
+  |name
+  |Monitoring thread is already running
+  |hive
+  |HKEY_CLASSES_ROOT
+  |HKCR
+  |HKEY_CURRENT_USER
+  |HKCU
+  |HKEY_LOCAL_MACHINE
+  |HKLM
+  |HKEY_USERS
+  |HKEY_CURRENT_CONFIG
+  |The registry hive '
+  |' is not supported
+  |value
+  |\
+  |This instance is already disposed
+c.cdefaults.k17_quiet.dll.names	416
+  |<Module>
+  |k17_quiet.dll
+  |Ik17_quietClass
+  |k17_quiet
+  |k17_quietClass
+  |k17_quietClientConfig
+  |RegistryMonitor
+  |RegChangeNotifyFilter
+  |mscorlib
+  |System
+  |Object
+  |MathWorks.MATLAB.ProductionServer.Client
+  |MWHttpClientDefaultConfig
+  |IDisposable
+  |Enum
+  |k17_none
+  |k17_one
+  |k17_many
+  |k17_two
+  |k17_opt
+  |k17_varin
+  |k17_varout
+  |k17_both
+  |k17_args
+  |k17_noout
+  |k17_err
+  |k17_plot
+  |k17_h1
+  |k17_echo
+  |k17_pass
+  |k17_count
+  |k17_make
+  |REGISTRY_LOGGING_KEY
+  |REGISTRY_MPS_SERVER_CONFIG_KEY
+  |REGISTRY_LOGGING_ENABLED
+  |REGISTRY_LOGGING_LEVEL
+  |REGISTRY_LOG_FILE_FOLDER
+  |REGISTRY_TIMEOUT_SECONDS
+  |REGISTRY_RESPONSE_SIZE_LIMIT
+  |DEFAULT_TIMEOUT_SECONDS
+  |DEFAULT_RESPONSE_SIZE_LIMIT
+  |System.Diagnostics
+  |TraceSource
+  |traceSource
+  |loggingEnabled
+  |loggingLevel
+  |logFileFolder
+  |registryMonitor
+  |serverUrl
+  |timeoutMilliSeconds
+  |responseSizeLimit
+  |MWClient
+  |mwClient
+  |interfaceObject
+  |.cctor
+  |Finalize
+  |System.Reflection
+  |Assembly
+  |ResolveEventArgs
+  |Resolver
+  |getLogFileLocation
+  |Microsoft.Win32
+  |RegistryKey
+  |getLoggingRegistryKey
+  |getAddinRegistryKey
+  |getServerConfig
+  |DoLogging
+  |InitializeTraceSourceListener
+  |TraceListener
+  |SetFileLogListenerFilter
+  |TraceEventType
+  |TraceEvent
+  |EventArgs
+  |OnRegChanged
+  |getRegistryIntValue
+  |getTimeoutMilliSeconds
+  |getResponseSizeLimit
+  |.ctor
+  |get_TimeoutMilliSeconds
+  |get_ResponseSizeLimit
+  |TimeoutMilliSeconds
+  |ResponseSizeLimit
+  |KEY_QUERY_VALUE
+  |KEY_NOTIFY
+  |STANDARD_RIGHTS_READ
+  |RegOpenKeyEx
+  |RegNotifyChangeKeyValue
+  |RegCloseKey
+  |HKEY_CLASSES_ROOT
+  |HKEY_CURRENT_USER
+  |HKEY_LOCAL_MACHINE
+  |HKEY_USERS
+  |HKEY_PERFORMANCE_DATA
+  |HKEY_CURRENT_CONFIG
+  |HKEY_DYN_DATA
+  |EventHandler
+  |RegChanged
+  |add_RegChanged
+  |remove_RegChanged
+  |System.IO
+  |ErrorEventHandler
+  |Error
+  |add_Error
+  |remove_Error
+  |Exception
+  |OnError
+  |_registryHive
+  |_registrySubName
+  |_threadLock
+  |System.Threading
+  |Thread
+  |_thread
+  |_disposed
+  |ManualResetEvent
+  |_eventTerminate
+  |_regFilter
+  |RegistryHive
+  |Dispose
+  |get_RegChangeNotifyFilter
+  |set_RegChangeNotifyFilter
+  |InitRegistryKey
+  |get_IsMonitoring
+  |Start
+  |Stop
+  |MonitorThread
+  |ThreadLoop
+  |IsMonitoring
+  |value__
+  |Key
+  |Attribute
+  |Value
+  |Security
+  |inputs
+  |ParamArrayAttribute
+  |y
+  |System.Runtime.InteropServices
+  |OutAttribute
+  |s
+  |d
+  |p
+  |a
+  |b
+  |r
+  |varargout
+  |first
+  |n
+  |t
+  |v
+  |sender
+  |args
+  |nargout
+  |addinName
+  |name
+  |listener
+  |eventType
+  |id
+  |format
+  |message
+  |e
+  |keyName
+  |valueName
+  |value
+  |hKey
+  |subKey
+  |options
+  |samDesired
+  |phkResult
+  |bWatchSubtree
+  |dwNotifyFilter
+  |hEvent
+  |fAsynchronous
+  |registryKey
+  |registryHive
+  |hive
+  |System.Runtime.CompilerServices
+  |CompilationRelaxationsAttribute
+  |RuntimeCompatibilityAttribute
+  |MWCoerceObjectToPrimitiveArrayIfHomogeneousAttribute
+  |MWPreserveOutputVectorDimensionsAttribute
+  |MWReplaceInputNullWithZeroAttribute
+  |GuidAttribute
+  |ClassInterfaceAttribute
+  |ClassInterfaceType
+  |ComVisibleAttribute
+  |AppDomain
+  |get_CurrentDomain
+  |ResolveEventHandler
+  |add_AssemblyResolve
+  |SourceSwitch
+  |get_Switch
+  |SourceLevels
+  |set_Level
+  |TraceListenerCollection
+  |get_Listeners
+  |Clear
+  |Registry
+  |CurrentUser
+  |CreateSubKey
+  |get_Item
+  |Microsoft.VisualBasic
+  |Microsoft.VisualBasic.Logging
+  |FileLogTraceListener
+  |Close
+  |get_Name
+  |AssemblyName
+  |String
+  |Equals
+  |GetExecutingAssembly
+  |get_FullName
+  |Concat
+  |Stream
+  |GetManifestResourceStream
+  |get_Length
+  |Byte
+  |Read
+  |Load
+  |<k17_quiet>o__SiteContainer0
+  |System.Core
+  |CallSite`1
+  |Action`3
+  |CallSite
+  |System.Collections
+  |ArrayList
+  |<>p__Site1
+  |Action`7
+  |<>p__Site2
+  |Type
+  |Missing
+  |Int32
+  |Range
+  |Microsoft.Office.Interop.Excel
+  |RuntimeTypeHandle
+  |GetTypeFromHandle
+  |Microsoft.CSharp
+  |Microsoft.CSharp.RuntimeBinder
+  |CSharpArgumentInfo
+  |CSharpArgumentInfoFlags
+  |Create
+  |Binder
+  |CallSiteBinder
+  |CSharpBinderFlags
+  |System.Collections.Generic
+  |IEnumerable`1
+  |InvokeMember
+  |Target
+  |get_Value
+  |Invoke
+  |Add
+  |IsNullOrEmpty
+  |System.Windows.Forms
+  |MessageBox
+  |DialogResult
+  |Show
+  |op_Inequality
+  |MWHttpClient
+  |MWHttpClientConfig
+  |Uri
+  |CreateProxy
+  |ToArray
+  |get_Message
+  |MATLABException
+  |get_MATLABStackTraceString
+  |get_MATLABIdentifier
+  |System.Net
+  |WebException
+  |WebExceptionStatus
+  |get_Status
+  |WebResponse
+  |get_Response
+  |HttpWebResponse
+  |HttpStatusCode
+  |get_StatusCode
+  |get_StatusDescription
+  |get_InnerException
+  |Contains
+  |get_FullLogFileName
+  |Flush
+  |TargetInvocationException
+  |InvalidOperationException
+  |<k17_none>o__SiteContainer3
+  |<>p__Site4
+  |<>p__Site5
+  |<k17_one>o__SiteContainer6
+  |<>p__Site7
+  |<>p__Site8
+  |ToString
+  |<k17_many>o__SiteContainer9
+  |<>p__Sitea
+  |<>p__Siteb
+  |<k17_two>o__SiteContainerc
+  |<>p__Sited
+  |<>p__Sitee
+  |<k17_opt>o__SiteContainerf
+  |<>p__Site10
+  |<>p__Site11
+  |<k17_varin>o__SiteContainer12
+  |<>p__Site13
+  |<>p__Site14
+  |<k17_varout>o__SiteContainer15
+  |<>p__Site16
+  |<>p__Site17
+  |<k17_both>o__SiteContainer18
+  |<>p__Site19
+  |<>p__Site1a
+  |<k17_args>o__SiteContainer1b
+  |<>p__Site1c
+  |<>p__Site1d
+  |<k17_noout>o__SiteContainer1e
+  |<>p__Site1f
+  |<>p__Site20
+  |<k17_err>o__SiteContainer21
+  |<>p__Site22
+  |<>p__Site23
+  |<k17_plot>o__SiteContainer24
+  |<>p__Site25
+  |<>p__Site26
+  |<k17_h1>o__SiteContainer27
+  |<>p__Site28
+  |<>p__Site29
+  |<k17_echo>o__SiteContainer2a
+  |<>p__Site2b
+  |<>p__Site2c
+  |<k17_pass>o__SiteContainer2d
+  |<>p__Site2e
+  |<>p__Site2f
+  |<k17_count>o__SiteContainer30
+  |<>p__Site31
+  |<>p__Site32
+  |<k17_make>o__SiteContainer33
+  |<>p__Site34
+  |<>p__Site35
+  |GetValue
+  |OpenSubKey
+  |Environment
+  |get_Is64BitOperatingSystem
+  |RegistryView
+  |OpenBaseKey
+  |LocalMachine
+  |GetValueNames
+  |EndsWith
+  |IndexOf
+  |Remove
+  |StartsWith
+  |Insert
+  |op_Equality
+  |get_Count
+  |set_CustomLocation
+  |set_AutoFlush
+  |set_Delimiter
+  |LogFileLocation
+  |set_Location
+  |TraceOptions
+  |set_TraceOutputOptions
+  |LogFileCreationScheduleOption
+  |set_LogFileCreationSchedule
+  |set_BaseFileName
+  |DiskSpaceExhaustedOption
+  |set_DiskSpaceExhaustedBehavior
+  |Trace
+  |EventTypeFilter
+  |TraceFilter
+  |set_Filter
+  |CompilerGeneratedAttribute
+  |DllImportAttribute
+  |advapi32.dll
+  |Delegate
+  |Combine
+  |Interlocked
+  |CompareExchange
+  |ErrorEventArgs
+  |ArgumentNullException
+  |GC
+  |SuppressFinalize
+  |Monitor
+  |Enter
+  |Exit
+  |System.ComponentModel
+  |InvalidEnumArgumentException
+  |Char
+  |Split
+  |<PrivateImplementationDetails>{<UUID>}
+  |Dictionary`2
+  |$$method0x6000049-1
+  |TryGetValue
+  |IntPtr
+  |Zero
+  |ArgumentException
+  |Join
+  |ObjectDisposedException
+  |EventWaitHandle
+  |Reset
+  |ThreadStart
+  |set_IsBackground
+  |Set
+  |Win32Exception
+  |AutoResetEvent
+  |WaitHandle
+  |Microsoft.Win32.SafeHandles
+  |SafeWaitHandle
+  |get_SafeWaitHandle
+  |SafeHandle
+  |DangerousGetHandle
+  |WaitAny
+  |WaitOne
+  |FlagsAttribute
+  |IEnumerable
+  |_VtblGap1_173
+  |DispIdAttribute
+  |RangeValueDataType
+  |set_Value
+  |DefaultMemberAttribute
+  |TypeIdentifierAttribute
+  |ComImportAttribute
+  |InterfaceTypeAttribute
+  |ComInterfaceType
+  |k17_quiet.MathWorks.MATLAB.ProductionServer.Client.dll
+c.cdefaults.k17_quiet.reg.strings	ERR not a PE file
+c.cdefaults.k17_quietClass.cs.strings	ERR not a PE file
+c.cdefaults.readme.txt.strings	ERR not a PE file
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.cpfile.k17cp.bas.strings	ERR not a PE file
+c.cpfile.K17Cp.cs.strings	ERR not a PE file
+c.cpfile.k17cp.dll.streams	#~ (3792) | #Strings (5012) | #US (3320) | #GUID (16) | #Blob (1928)
+c.cpfile.k17cp.dll.us	78
+  |k17cp Add-in
+  |Software\MathWorks\MATLAB Builder EX\2.5\Logging\
+  |MathWorks.MATLAB.ProductionServer.Client
+  |.
+  |.dll
+  |Entered k17_pfun() function.
+  |Input {0} is {1}.
+  |Add
+  |TraceEvent
+  |Input {0} is Range with value of {1}.
+  |k17cp
+  |MPS server URL is {0}.
+  |MPS server url is not provided for k17cp
+  |MATLAB error thrown : MPS server url is not provided for k17cp
+  |MWHttpClient is disposed.
+  |New MWHttpClient is created.
+  |MWHttpClient.CreateProxy() succeeded.
+  |Call to k17_pfun function returned.
+  |Output o0 is {0}.
+  |Call to k17_pfun function failed.
+  |Catch MATLAB Exception: {0}
+  |MATLAB Exception stack trace is {0}
+  |MATLABException:
+  |Catch WebException: {0}
+  |WebException status is {0}
+  |HttpWebResponse status code: {0}
+  |HttpWebResponse status description: {0}
+  |WebException:
+  |No response received in WebException.
+  |Catch TargetInvocationException: {0}
+  |InnerException is {0}
+  |TargetInvocationException:
+  |MaxFileSize
+  |
+  | Delete or rename the log file 
+  | and run the function again.
+  |Catch InvalidOperationException: {0}
+  |InvalidOperationException:
+  |Catch Exception: {0}
+  |Exception:
+  |Entered k17_one() function.
+  |Call to k17_one function returned.
+  |Output y is {0}.
+  |Call to k17_one function failed.
+  |LogFileFolder
+  |Software\MathWorks\MATLAB Builder EX\2.5\MPS Server Config\
+  |Registry key 
+  | found
+  |Looking for mps server url for 
+  |timeoutSeconds
+  |responseSizeLimit
+  |Registry value name: 
+  | , value data: 
+  |.ctf
+  |http://
+  |https://
+  | doesn't exist
+  |Enabled
+  |LoggingLevel
+  |  
+  |Looking for 
+  | for 
+  |name
+  |Monitoring thread is already running
+  |hive
+  |HKEY_CLASSES_ROOT
+  |HKCR
+  |HKEY_CURRENT_USER
+  |HKCU
+  |HKEY_LOCAL_MACHINE
+  |HKLM
+  |HKEY_USERS
+  |HKEY_CURRENT_CONFIG
+  |The registry hive '
+  |' is not supported
+  |value
+  |\
+  |This instance is already disposed
+c.cpfile.k17cp.dll.names	339
+  |<Module>
+  |k17cp.dll
+  |IK17Cp
+  |k17cp
+  |K17Cp
+  |k17cpClientConfig
+  |RegistryMonitor
+  |RegChangeNotifyFilter
+  |mscorlib
+  |System
+  |Object
+  |MathWorks.MATLAB.ProductionServer.Client
+  |MWHttpClientDefaultConfig
+  |IDisposable
+  |Enum
+  |k17_pfun
+  |k17_one
+  |REGISTRY_LOGGING_KEY
+  |REGISTRY_MPS_SERVER_CONFIG_KEY
+  |REGISTRY_LOGGING_ENABLED
+  |REGISTRY_LOGGING_LEVEL
+  |REGISTRY_LOG_FILE_FOLDER
+  |REGISTRY_TIMEOUT_SECONDS
+  |REGISTRY_RESPONSE_SIZE_LIMIT
+  |DEFAULT_TIMEOUT_SECONDS
+  |DEFAULT_RESPONSE_SIZE_LIMIT
+  |System.Diagnostics
+  |TraceSource
+  |traceSource
+  |loggingEnabled
+  |loggingLevel
+  |logFileFolder
+  |registryMonitor
+  |serverUrl
+  |timeoutMilliSeconds
+  |responseSizeLimit
+  |MWClient
+  |mwClient
+  |interfaceObject
+  |.cctor
+  |Finalize
+  |System.Reflection
+  |Assembly
+  |ResolveEventArgs
+  |Resolver
+  |getLogFileLocation
+  |Microsoft.Win32
+  |RegistryKey
+  |getLoggingRegistryKey
+  |getAddinRegistryKey
+  |getServerConfig
+  |DoLogging
+  |InitializeTraceSourceListener
+  |TraceListener
+  |SetFileLogListenerFilter
+  |TraceEventType
+  |TraceEvent
+  |EventArgs
+  |OnRegChanged
+  |getRegistryIntValue
+  |getTimeoutMilliSeconds
+  |getResponseSizeLimit
+  |.ctor
+  |get_TimeoutMilliSeconds
+  |get_ResponseSizeLimit
+  |TimeoutMilliSeconds
+  |ResponseSizeLimit
+  |KEY_QUERY_VALUE
+  |KEY_NOTIFY
+  |STANDARD_RIGHTS_READ
+  |RegOpenKeyEx
+  |RegNotifyChangeKeyValue
+  |RegCloseKey
+  |HKEY_CLASSES_ROOT
+  |HKEY_CURRENT_USER
+  |HKEY_LOCAL_MACHINE
+  |HKEY_USERS
+  |HKEY_PERFORMANCE_DATA
+  |HKEY_CURRENT_CONFIG
+  |HKEY_DYN_DATA
+  |EventHandler
+  |RegChanged
+  |add_RegChanged
+  |remove_RegChanged
+  |System.IO
+  |ErrorEventHandler
+  |Error
+  |add_Error
+  |remove_Error
+  |Exception
+  |OnError
+  |_registryHive
+  |_registrySubName
+  |_threadLock
+  |System.Threading
+  |Thread
+  |_thread
+  |_disposed
+  |ManualResetEvent
+  |_eventTerminate
+  |_regFilter
+  |RegistryHive
+  |Dispose
+  |get_RegChangeNotifyFilter
+  |set_RegChangeNotifyFilter
+  |InitRegistryKey
+  |get_IsMonitoring
+  |Start
+  |Stop
+  |MonitorThread
+  |ThreadLoop
+  |IsMonitoring
+  |value__
+  |Key
+  |Attribute
+  |Value
+  |Security
+  |o0
+  |System.Runtime.InteropServices
+  |OutAttribute
+  |inputs
+  |ParamArrayAttribute
+  |y
+  |sender
+  |args
+  |nargout
+  |addinName
+  |name
+  |listener
+  |eventType
+  |id
+  |format
+  |message
+  |e
+  |keyName
+  |valueName
+  |value
+  |hKey
+  |subKey
+  |options
+  |samDesired
+  |phkResult
+  |bWatchSubtree
+  |dwNotifyFilter
+  |hEvent
+  |fAsynchronous
+  |registryKey
+  |registryHive
+  |hive
+  |System.Runtime.CompilerServices
+  |CompilationRelaxationsAttribute
+  |RuntimeCompatibilityAttribute
+  |MWCoerceObjectToPrimitiveArrayIfHomogeneousAttribute
+  |MWPreserveOutputVectorDimensionsAttribute
+  |MWReplaceInputNullWithZeroAttribute
+  |GuidAttribute
+  |ClassInterfaceAttribute
+  |ClassInterfaceType
+  |ComVisibleAttribute
+  |AppDomain
+  |get_CurrentDomain
+  |ResolveEventHandler
+  |add_AssemblyResolve
+  |SourceSwitch
+  |get_Switch
+  |SourceLevels
+  |set_Level
+  |TraceListenerCollection
+  |get_Listeners
+  |Clear
+  |Registry
+  |CurrentUser
+  |CreateSubKey
+  |get_Item
+  |Microsoft.VisualBasic
+  |Microsoft.VisualBasic.Logging
+  |FileLogTraceListener
+  |Close
+  |get_Name
+  |AssemblyName
+  |String
+  |Equals
+  |GetExecutingAssembly
+  |get_FullName
+  |Concat
+  |Stream
+  |GetManifestResourceStream
+  |get_Length
+  |Byte
+  |Read
+  |Load
+  |<k17_pfun>o__SiteContainer0
+  |System.Core
+  |CallSite`1
+  |Action`3
+  |CallSite
+  |System.Collections
+  |ArrayList
+  |<>p__Site1
+  |Action`7
+  |<>p__Site2
+  |Type
+  |Missing
+  |Int32
+  |Range
+  |Microsoft.Office.Interop.Excel
+  |RuntimeTypeHandle
+  |GetTypeFromHandle
+  |Microsoft.CSharp
+  |Microsoft.CSharp.RuntimeBinder
+  |CSharpArgumentInfo
+  |CSharpArgumentInfoFlags
+  |Create
+  |Binder
+  |CallSiteBinder
+  |CSharpBinderFlags
+  |System.Collections.Generic
+  |IEnumerable`1
+  |InvokeMember
+  |Target
+  |get_Value
+  |Invoke
+  |Add
+  |IsNullOrEmpty
+  |op_Inequality
+  |MWHttpClient
+  |MWHttpClientConfig
+  |Uri
+  |CreateProxy
+  |ToArray
+  |ToString
+  |get_Message
+  |MATLABException
+  |get_MATLABStackTraceString
+  |get_MATLABIdentifier
+  |System.Net
+  |WebException
+  |WebExceptionStatus
+  |get_Status
+  |WebResponse
+  |get_Response
+  |HttpWebResponse
+  |HttpStatusCode
+  |get_StatusCode
+  |get_StatusDescription
+  |get_InnerException
+  |Contains
+  |get_FullLogFileName
+  |Flush
+  |TargetInvocationException
+  |InvalidOperationException
+  |<k17_one>o__SiteContainer3
+  |<>p__Site4
+  |<>p__Site5
+  |GetValue
+  |OpenSubKey
+  |Environment
+  |get_Is64BitOperatingSystem
+  |RegistryView
+  |OpenBaseKey
+  |LocalMachine
+  |GetValueNames
+  |EndsWith
+  |IndexOf
+  |Remove
+  |StartsWith
+  |Insert
+  |op_Equality
+  |get_Count
+  |set_CustomLocation
+  |set_AutoFlush
+  |set_Delimiter
+  |LogFileLocation
+  |set_Location
+  |TraceOptions
+  |set_TraceOutputOptions
+  |LogFileCreationScheduleOption
+  |set_LogFileCreationSchedule
+  |set_BaseFileName
+  |DiskSpaceExhaustedOption
+  |set_DiskSpaceExhaustedBehavior
+  |Trace
+  |EventTypeFilter
+  |TraceFilter
+  |set_Filter
+  |CompilerGeneratedAttribute
+  |DllImportAttribute
+  |advapi32.dll
+  |Delegate
+  |Combine
+  |Interlocked
+  |CompareExchange
+  |ErrorEventArgs
+  |ArgumentNullException
+  |GC
+  |SuppressFinalize
+  |Monitor
+  |Enter
+  |Exit
+  |System.ComponentModel
+  |InvalidEnumArgumentException
+  |Char
+  |Split
+  |<PrivateImplementationDetails>{<UUID>}
+  |Dictionary`2
+  |$$method0x6000029-1
+  |TryGetValue
+  |IntPtr
+  |Zero
+  |ArgumentException
+  |Join
+  |ObjectDisposedException
+  |EventWaitHandle
+  |Reset
+  |ThreadStart
+  |set_IsBackground
+  |Set
+  |Win32Exception
+  |AutoResetEvent
+  |WaitHandle
+  |Microsoft.Win32.SafeHandles
+  |SafeWaitHandle
+  |get_SafeWaitHandle
+  |SafeHandle
+  |DangerousGetHandle
+  |WaitAny
+  |WaitOne
+  |FlagsAttribute
+  |IEnumerable
+  |_VtblGap1_173
+  |DispIdAttribute
+  |RangeValueDataType
+  |set_Value
+  |DefaultMemberAttribute
+  |TypeIdentifierAttribute
+  |ComImportAttribute
+  |InterfaceTypeAttribute
+  |ComInterfaceType
+  |k17cp.MathWorks.MATLAB.ProductionServer.Client.dll
+c.cpfile.k17cp.reg.strings	ERR not a PE file
+c.cpfile.readme.txt.strings	ERR not a PE file
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.cv05.k17cv05.bas.strings	ERR not a PE file
+c.cv05.K17Cv05.cs.strings	ERR not a PE file
+c.cv05.k17cv05.dll.streams	#~ (3964) | #Strings (5136) | #US (3600) | #GUID (16) | #Blob (2128)
+c.cv05.k17cv05.dll.us	83
+  |k17cv05 Add-in
+  |Software\MathWorks\MATLAB Builder EX\2.5\Logging\
+  |MathWorks.MATLAB.ProductionServer.Client
+  |.
+  |.dll
+  |Entered k17_none() function.
+  |Input {0} is {1}.
+  |Add
+  |TraceEvent
+  |Input {0} is Range with value of {1}.
+  |k17cv05
+  |MPS server URL is {0}.
+  |MPS server url is not provided for k17cv05
+  |MATLAB error thrown : MPS server url is not provided for k17cv05
+  |MWHttpClient is disposed.
+  |New MWHttpClient is created.
+  |MWHttpClient.CreateProxy() succeeded.
+  |Call to k17_none function returned.
+  |Call to k17_none function failed.
+  |Catch MATLAB Exception: {0}
+  |MATLAB Exception stack trace is {0}
+  |MATLABException:
+  |Catch WebException: {0}
+  |WebException status is {0}
+  |HttpWebResponse status code: {0}
+  |HttpWebResponse status description: {0}
+  |WebException:
+  |No response received in WebException.
+  |Catch TargetInvocationException: {0}
+  |InnerException is {0}
+  |TargetInvocationException:
+  |MaxFileSize
+  |
+  | Delete or rename the log file 
+  | and run the function again.
+  |Catch InvalidOperationException: {0}
+  |InvalidOperationException:
+  |Catch Exception: {0}
+  |Exception:
+  |Entered k17_one() function.
+  |Call to k17_one function returned.
+  |Output y is {0}.
+  |Call to k17_one function failed.
+  |Entered k17_many() function.
+  |Call to k17_many function returned.
+  |Output s is {0}.
+  |Output d is {0}.
+  |Output p is {0}.
+  |Call to k17_many function failed.
+  |LogFileFolder
+  |Software\MathWorks\MATLAB Builder EX\2.5\MPS Server Config\
+  |Registry key 
+  | found
+  |Looking for mps server url for 
+  |timeoutSeconds
+  |responseSizeLimit
+  |Registry value name: 
+  | , value data: 
+  |.ctf
+  |http://
+  |https://
+  | doesn't exist
+  |Enabled
+  |LoggingLevel
+  |  
+  |Looking for 
+  | for 
+  |name
+  |Monitoring thread is already running
+  |hive
+  |HKEY_CLASSES_ROOT
+  |HKCR
+  |HKEY_CURRENT_USER
+  |HKCU
+  |HKEY_LOCAL_MACHINE
+  |HKLM
+  |HKEY_USERS
+  |HKEY_CURRENT_CONFIG
+  |The registry hive '
+  |' is not supported
+  |value
+  |\
+  |This instance is already disposed
+c.cv05.k17cv05.dll.names	349
+  |<Module>
+  |k17cv05.dll
+  |IK17Cv05
+  |k17cv05
+  |K17Cv05
+  |k17cv05ClientConfig
+  |RegistryMonitor
+  |RegChangeNotifyFilter
+  |mscorlib
+  |System
+  |Object
+  |MathWorks.MATLAB.ProductionServer.Client
+  |MWHttpClientDefaultConfig
+  |IDisposable
+  |Enum
+  |k17_none
+  |k17_one
+  |k17_many
+  |REGISTRY_LOGGING_KEY
+  |REGISTRY_MPS_SERVER_CONFIG_KEY
+  |REGISTRY_LOGGING_ENABLED
+  |REGISTRY_LOGGING_LEVEL
+  |REGISTRY_LOG_FILE_FOLDER
+  |REGISTRY_TIMEOUT_SECONDS
+  |REGISTRY_RESPONSE_SIZE_LIMIT
+  |DEFAULT_TIMEOUT_SECONDS
+  |DEFAULT_RESPONSE_SIZE_LIMIT
+  |System.Diagnostics
+  |TraceSource
+  |traceSource
+  |loggingEnabled
+  |loggingLevel
+  |logFileFolder
+  |registryMonitor
+  |serverUrl
+  |timeoutMilliSeconds
+  |responseSizeLimit
+  |MWClient
+  |mwClient
+  |interfaceObject
+  |.cctor
+  |Finalize
+  |System.Reflection
+  |Assembly
+  |ResolveEventArgs
+  |Resolver
+  |getLogFileLocation
+  |Microsoft.Win32
+  |RegistryKey
+  |getLoggingRegistryKey
+  |getAddinRegistryKey
+  |getServerConfig
+  |DoLogging
+  |InitializeTraceSourceListener
+  |TraceListener
+  |SetFileLogListenerFilter
+  |TraceEventType
+  |TraceEvent
+  |EventArgs
+  |OnRegChanged
+  |getRegistryIntValue
+  |getTimeoutMilliSeconds
+  |getResponseSizeLimit
+  |.ctor
+  |get_TimeoutMilliSeconds
+  |get_ResponseSizeLimit
+  |TimeoutMilliSeconds
+  |ResponseSizeLimit
+  |KEY_QUERY_VALUE
+  |KEY_NOTIFY
+  |STANDARD_RIGHTS_READ
+  |RegOpenKeyEx
+  |RegNotifyChangeKeyValue
+  |RegCloseKey
+  |HKEY_CLASSES_ROOT
+  |HKEY_CURRENT_USER
+  |HKEY_LOCAL_MACHINE
+  |HKEY_USERS
+  |HKEY_PERFORMANCE_DATA
+  |HKEY_CURRENT_CONFIG
+  |HKEY_DYN_DATA
+  |EventHandler
+  |RegChanged
+  |add_RegChanged
+  |remove_RegChanged
+  |System.IO
+  |ErrorEventHandler
+  |Error
+  |add_Error
+  |remove_Error
+  |Exception
+  |OnError
+  |_registryHive
+  |_registrySubName
+  |_threadLock
+  |System.Threading
+  |Thread
+  |_thread
+  |_disposed
+  |ManualResetEvent
+  |_eventTerminate
+  |_regFilter
+  |RegistryHive
+  |Dispose
+  |get_RegChangeNotifyFilter
+  |set_RegChangeNotifyFilter
+  |InitRegistryKey
+  |get_IsMonitoring
+  |Start
+  |Stop
+  |MonitorThread
+  |ThreadLoop
+  |IsMonitoring
+  |value__
+  |Key
+  |Attribute
+  |Value
+  |Security
+  |inputs
+  |ParamArrayAttribute
+  |y
+  |System.Runtime.InteropServices
+  |OutAttribute
+  |s
+  |d
+  |p
+  |sender
+  |args
+  |nargout
+  |addinName
+  |name
+  |listener
+  |eventType
+  |id
+  |format
+  |message
+  |e
+  |keyName
+  |valueName
+  |value
+  |hKey
+  |subKey
+  |options
+  |samDesired
+  |phkResult
+  |bWatchSubtree
+  |dwNotifyFilter
+  |hEvent
+  |fAsynchronous
+  |registryKey
+  |registryHive
+  |hive
+  |System.Runtime.CompilerServices
+  |CompilationRelaxationsAttribute
+  |RuntimeCompatibilityAttribute
+  |MWCoerceObjectToPrimitiveArrayIfHomogeneousAttribute
+  |MWPreserveOutputVectorDimensionsAttribute
+  |MWReplaceInputNullWithZeroAttribute
+  |GuidAttribute
+  |ClassInterfaceAttribute
+  |ClassInterfaceType
+  |ComVisibleAttribute
+  |AppDomain
+  |get_CurrentDomain
+  |ResolveEventHandler
+  |add_AssemblyResolve
+  |SourceSwitch
+  |get_Switch
+  |SourceLevels
+  |set_Level
+  |TraceListenerCollection
+  |get_Listeners
+  |Clear
+  |Registry
+  |CurrentUser
+  |CreateSubKey
+  |get_Item
+  |Microsoft.VisualBasic
+  |Microsoft.VisualBasic.Logging
+  |FileLogTraceListener
+  |Close
+  |get_Name
+  |AssemblyName
+  |String
+  |Equals
+  |GetExecutingAssembly
+  |get_FullName
+  |Concat
+  |Stream
+  |GetManifestResourceStream
+  |get_Length
+  |Byte
+  |Read
+  |Load
+  |<k17_none>o__SiteContainer0
+  |System.Core
+  |CallSite`1
+  |Action`3
+  |CallSite
+  |System.Collections
+  |ArrayList
+  |<>p__Site1
+  |Action`7
+  |<>p__Site2
+  |Type
+  |Missing
+  |Int32
+  |Range
+  |Microsoft.Office.Interop.Excel
+  |RuntimeTypeHandle
+  |GetTypeFromHandle
+  |Microsoft.CSharp
+  |Microsoft.CSharp.RuntimeBinder
+  |CSharpArgumentInfo
+  |CSharpArgumentInfoFlags
+  |Create
+  |Binder
+  |CallSiteBinder
+  |CSharpBinderFlags
+  |System.Collections.Generic
+  |IEnumerable`1
+  |InvokeMember
+  |Target
+  |get_Value
+  |Invoke
+  |Add
+  |IsNullOrEmpty
+  |System.Windows.Forms
+  |MessageBox
+  |DialogResult
+  |Show
+  |op_Inequality
+  |MWHttpClient
+  |MWHttpClientConfig
+  |Uri
+  |CreateProxy
+  |ToArray
+  |get_Message
+  |MATLABException
+  |get_MATLABStackTraceString
+  |get_MATLABIdentifier
+  |System.Net
+  |WebException
+  |WebExceptionStatus
+  |get_Status
+  |WebResponse
+  |get_Response
+  |HttpWebResponse
+  |HttpStatusCode
+  |get_StatusCode
+  |get_StatusDescription
+  |get_InnerException
+  |Contains
+  |get_FullLogFileName
+  |Flush
+  |TargetInvocationException
+  |InvalidOperationException
+  |<k17_one>o__SiteContainer3
+  |<>p__Site4
+  |<>p__Site5
+  |ToString
+  |<k17_many>o__SiteContainer6
+  |<>p__Site7
+  |<>p__Site8
+  |GetValue
+  |OpenSubKey
+  |Environment
+  |get_Is64BitOperatingSystem
+  |RegistryView
+  |OpenBaseKey
+  |LocalMachine
+  |GetValueNames
+  |EndsWith
+  |IndexOf
+  |Remove
+  |StartsWith
+  |Insert
+  |op_Equality
+  |get_Count
+  |set_CustomLocation
+  |set_AutoFlush
+  |set_Delimiter
+  |LogFileLocation
+  |set_Location
+  |TraceOptions
+  |set_TraceOutputOptions
+  |LogFileCreationScheduleOption
+  |set_LogFileCreationSchedule
+  |set_BaseFileName
+  |DiskSpaceExhaustedOption
+  |set_DiskSpaceExhaustedBehavior
+  |Trace
+  |EventTypeFilter
+  |TraceFilter
+  |set_Filter
+  |CompilerGeneratedAttribute
+  |DllImportAttribute
+  |advapi32.dll
+  |Delegate
+  |Combine
+  |Interlocked
+  |CompareExchange
+  |ErrorEventArgs
+  |ArgumentNullException
+  |GC
+  |SuppressFinalize
+  |Monitor
+  |Enter
+  |Exit
+  |System.ComponentModel
+  |InvalidEnumArgumentException
+  |Char
+  |Split
+  |<PrivateImplementationDetails>{<UUID>}
+  |Dictionary`2
+  |$$method0x600002b-1
+  |TryGetValue
+  |IntPtr
+  |Zero
+  |ArgumentException
+  |Join
+  |ObjectDisposedException
+  |EventWaitHandle
+  |Reset
+  |ThreadStart
+  |set_IsBackground
+  |Set
+  |Win32Exception
+  |AutoResetEvent
+  |WaitHandle
+  |Microsoft.Win32.SafeHandles
+  |SafeWaitHandle
+  |get_SafeWaitHandle
+  |SafeHandle
+  |DangerousGetHandle
+  |WaitAny
+  |WaitOne
+  |FlagsAttribute
+  |IEnumerable
+  |_VtblGap1_173
+  |DispIdAttribute
+  |RangeValueDataType
+  |set_Value
+  |DefaultMemberAttribute
+  |TypeIdentifierAttribute
+  |ComImportAttribute
+  |InterfaceTypeAttribute
+  |ComInterfaceType
+  |k17cv05.MathWorks.MATLAB.ProductionServer.Client.dll
+c.cv05.k17cv05.reg.strings	ERR not a PE file
+c.cv05.readme.txt.strings	ERR not a PE file
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.cv2.k17cv2.bas.strings	ERR not a PE file
+c.cv2.K17Cv2.cs.strings	ERR not a PE file
+c.cv2.k17cv2.dll.streams	#~ (3964) | #Strings (5132) | #US (3592) | #GUID (16) | #Blob (2128)
+c.cv2.k17cv2.dll.us	83
+  |k17cv2 Add-in
+  |Software\MathWorks\MATLAB Builder EX\2.5\Logging\
+  |MathWorks.MATLAB.ProductionServer.Client
+  |.
+  |.dll
+  |Entered k17_none() function.
+  |Input {0} is {1}.
+  |Add
+  |TraceEvent
+  |Input {0} is Range with value of {1}.
+  |k17cv2
+  |MPS server URL is {0}.
+  |MPS server url is not provided for k17cv2
+  |MATLAB error thrown : MPS server url is not provided for k17cv2
+  |MWHttpClient is disposed.
+  |New MWHttpClient is created.
+  |MWHttpClient.CreateProxy() succeeded.
+  |Call to k17_none function returned.
+  |Call to k17_none function failed.
+  |Catch MATLAB Exception: {0}
+  |MATLAB Exception stack trace is {0}
+  |MATLABException:
+  |Catch WebException: {0}
+  |WebException status is {0}
+  |HttpWebResponse status code: {0}
+  |HttpWebResponse status description: {0}
+  |WebException:
+  |No response received in WebException.
+  |Catch TargetInvocationException: {0}
+  |InnerException is {0}
+  |TargetInvocationException:
+  |MaxFileSize
+  |
+  | Delete or rename the log file 
+  | and run the function again.
+  |Catch InvalidOperationException: {0}
+  |InvalidOperationException:
+  |Catch Exception: {0}
+  |Exception:
+  |Entered k17_one() function.
+  |Call to k17_one function returned.
+  |Output y is {0}.
+  |Call to k17_one function failed.
+  |Entered k17_many() function.
+  |Call to k17_many function returned.
+  |Output s is {0}.
+  |Output d is {0}.
+  |Output p is {0}.
+  |Call to k17_many function failed.
+  |LogFileFolder
+  |Software\MathWorks\MATLAB Builder EX\2.5\MPS Server Config\
+  |Registry key 
+  | found
+  |Looking for mps server url for 
+  |timeoutSeconds
+  |responseSizeLimit
+  |Registry value name: 
+  | , value data: 
+  |.ctf
+  |http://
+  |https://
+  | doesn't exist
+  |Enabled
+  |LoggingLevel
+  |  
+  |Looking for 
+  | for 
+  |name
+  |Monitoring thread is already running
+  |hive
+  |HKEY_CLASSES_ROOT
+  |HKCR
+  |HKEY_CURRENT_USER
+  |HKCU
+  |HKEY_LOCAL_MACHINE
+  |HKLM
+  |HKEY_USERS
+  |HKEY_CURRENT_CONFIG
+  |The registry hive '
+  |' is not supported
+  |value
+  |\
+  |This instance is already disposed
+c.cv2.k17cv2.dll.names	349
+  |<Module>
+  |k17cv2.dll
+  |IK17Cv2
+  |k17cv2
+  |K17Cv2
+  |k17cv2ClientConfig
+  |RegistryMonitor
+  |RegChangeNotifyFilter
+  |mscorlib
+  |System
+  |Object
+  |MathWorks.MATLAB.ProductionServer.Client
+  |MWHttpClientDefaultConfig
+  |IDisposable
+  |Enum
+  |k17_none
+  |k17_one
+  |k17_many
+  |REGISTRY_LOGGING_KEY
+  |REGISTRY_MPS_SERVER_CONFIG_KEY
+  |REGISTRY_LOGGING_ENABLED
+  |REGISTRY_LOGGING_LEVEL
+  |REGISTRY_LOG_FILE_FOLDER
+  |REGISTRY_TIMEOUT_SECONDS
+  |REGISTRY_RESPONSE_SIZE_LIMIT
+  |DEFAULT_TIMEOUT_SECONDS
+  |DEFAULT_RESPONSE_SIZE_LIMIT
+  |System.Diagnostics
+  |TraceSource
+  |traceSource
+  |loggingEnabled
+  |loggingLevel
+  |logFileFolder
+  |registryMonitor
+  |serverUrl
+  |timeoutMilliSeconds
+  |responseSizeLimit
+  |MWClient
+  |mwClient
+  |interfaceObject
+  |.cctor
+  |Finalize
+  |System.Reflection
+  |Assembly
+  |ResolveEventArgs
+  |Resolver
+  |getLogFileLocation
+  |Microsoft.Win32
+  |RegistryKey
+  |getLoggingRegistryKey
+  |getAddinRegistryKey
+  |getServerConfig
+  |DoLogging
+  |InitializeTraceSourceListener
+  |TraceListener
+  |SetFileLogListenerFilter
+  |TraceEventType
+  |TraceEvent
+  |EventArgs
+  |OnRegChanged
+  |getRegistryIntValue
+  |getTimeoutMilliSeconds
+  |getResponseSizeLimit
+  |.ctor
+  |get_TimeoutMilliSeconds
+  |get_ResponseSizeLimit
+  |TimeoutMilliSeconds
+  |ResponseSizeLimit
+  |KEY_QUERY_VALUE
+  |KEY_NOTIFY
+  |STANDARD_RIGHTS_READ
+  |RegOpenKeyEx
+  |RegNotifyChangeKeyValue
+  |RegCloseKey
+  |HKEY_CLASSES_ROOT
+  |HKEY_CURRENT_USER
+  |HKEY_LOCAL_MACHINE
+  |HKEY_USERS
+  |HKEY_PERFORMANCE_DATA
+  |HKEY_CURRENT_CONFIG
+  |HKEY_DYN_DATA
+  |EventHandler
+  |RegChanged
+  |add_RegChanged
+  |remove_RegChanged
+  |System.IO
+  |ErrorEventHandler
+  |Error
+  |add_Error
+  |remove_Error
+  |Exception
+  |OnError
+  |_registryHive
+  |_registrySubName
+  |_threadLock
+  |System.Threading
+  |Thread
+  |_thread
+  |_disposed
+  |ManualResetEvent
+  |_eventTerminate
+  |_regFilter
+  |RegistryHive
+  |Dispose
+  |get_RegChangeNotifyFilter
+  |set_RegChangeNotifyFilter
+  |InitRegistryKey
+  |get_IsMonitoring
+  |Start
+  |Stop
+  |MonitorThread
+  |ThreadLoop
+  |IsMonitoring
+  |value__
+  |Key
+  |Attribute
+  |Value
+  |Security
+  |inputs
+  |ParamArrayAttribute
+  |y
+  |System.Runtime.InteropServices
+  |OutAttribute
+  |s
+  |d
+  |p
+  |sender
+  |args
+  |nargout
+  |addinName
+  |name
+  |listener
+  |eventType
+  |id
+  |format
+  |message
+  |e
+  |keyName
+  |valueName
+  |value
+  |hKey
+  |subKey
+  |options
+  |samDesired
+  |phkResult
+  |bWatchSubtree
+  |dwNotifyFilter
+  |hEvent
+  |fAsynchronous
+  |registryKey
+  |registryHive
+  |hive
+  |System.Runtime.CompilerServices
+  |CompilationRelaxationsAttribute
+  |RuntimeCompatibilityAttribute
+  |MWCoerceObjectToPrimitiveArrayIfHomogeneousAttribute
+  |MWPreserveOutputVectorDimensionsAttribute
+  |MWReplaceInputNullWithZeroAttribute
+  |GuidAttribute
+  |ClassInterfaceAttribute
+  |ClassInterfaceType
+  |ComVisibleAttribute
+  |AppDomain
+  |get_CurrentDomain
+  |ResolveEventHandler
+  |add_AssemblyResolve
+  |SourceSwitch
+  |get_Switch
+  |SourceLevels
+  |set_Level
+  |TraceListenerCollection
+  |get_Listeners
+  |Clear
+  |Registry
+  |CurrentUser
+  |CreateSubKey
+  |get_Item
+  |Microsoft.VisualBasic
+  |Microsoft.VisualBasic.Logging
+  |FileLogTraceListener
+  |Close
+  |get_Name
+  |AssemblyName
+  |String
+  |Equals
+  |GetExecutingAssembly
+  |get_FullName
+  |Concat
+  |Stream
+  |GetManifestResourceStream
+  |get_Length
+  |Byte
+  |Read
+  |Load
+  |<k17_none>o__SiteContainer0
+  |System.Core
+  |CallSite`1
+  |Action`3
+  |CallSite
+  |System.Collections
+  |ArrayList
+  |<>p__Site1
+  |Action`7
+  |<>p__Site2
+  |Type
+  |Missing
+  |Int32
+  |Range
+  |Microsoft.Office.Interop.Excel
+  |RuntimeTypeHandle
+  |GetTypeFromHandle
+  |Microsoft.CSharp
+  |Microsoft.CSharp.RuntimeBinder
+  |CSharpArgumentInfo
+  |CSharpArgumentInfoFlags
+  |Create
+  |Binder
+  |CallSiteBinder
+  |CSharpBinderFlags
+  |System.Collections.Generic
+  |IEnumerable`1
+  |InvokeMember
+  |Target
+  |get_Value
+  |Invoke
+  |Add
+  |IsNullOrEmpty
+  |System.Windows.Forms
+  |MessageBox
+  |DialogResult
+  |Show
+  |op_Inequality
+  |MWHttpClient
+  |MWHttpClientConfig
+  |Uri
+  |CreateProxy
+  |ToArray
+  |get_Message
+  |MATLABException
+  |get_MATLABStackTraceString
+  |get_MATLABIdentifier
+  |System.Net
+  |WebException
+  |WebExceptionStatus
+  |get_Status
+  |WebResponse
+  |get_Response
+  |HttpWebResponse
+  |HttpStatusCode
+  |get_StatusCode
+  |get_StatusDescription
+  |get_InnerException
+  |Contains
+  |get_FullLogFileName
+  |Flush
+  |TargetInvocationException
+  |InvalidOperationException
+  |<k17_one>o__SiteContainer3
+  |<>p__Site4
+  |<>p__Site5
+  |ToString
+  |<k17_many>o__SiteContainer6
+  |<>p__Site7
+  |<>p__Site8
+  |GetValue
+  |OpenSubKey
+  |Environment
+  |get_Is64BitOperatingSystem
+  |RegistryView
+  |OpenBaseKey
+  |LocalMachine
+  |GetValueNames
+  |EndsWith
+  |IndexOf
+  |Remove
+  |StartsWith
+  |Insert
+  |op_Equality
+  |get_Count
+  |set_CustomLocation
+  |set_AutoFlush
+  |set_Delimiter
+  |LogFileLocation
+  |set_Location
+  |TraceOptions
+  |set_TraceOutputOptions
+  |LogFileCreationScheduleOption
+  |set_LogFileCreationSchedule
+  |set_BaseFileName
+  |DiskSpaceExhaustedOption
+  |set_DiskSpaceExhaustedBehavior
+  |Trace
+  |EventTypeFilter
+  |TraceFilter
+  |set_Filter
+  |CompilerGeneratedAttribute
+  |DllImportAttribute
+  |advapi32.dll
+  |Delegate
+  |Combine
+  |Interlocked
+  |CompareExchange
+  |ErrorEventArgs
+  |ArgumentNullException
+  |GC
+  |SuppressFinalize
+  |Monitor
+  |Enter
+  |Exit
+  |System.ComponentModel
+  |InvalidEnumArgumentException
+  |Char
+  |Split
+  |<PrivateImplementationDetails>{<UUID>}
+  |Dictionary`2
+  |$$method0x600002b-1
+  |TryGetValue
+  |IntPtr
+  |Zero
+  |ArgumentException
+  |Join
+  |ObjectDisposedException
+  |EventWaitHandle
+  |Reset
+  |ThreadStart
+  |set_IsBackground
+  |Set
+  |Win32Exception
+  |AutoResetEvent
+  |WaitHandle
+  |Microsoft.Win32.SafeHandles
+  |SafeWaitHandle
+  |get_SafeWaitHandle
+  |SafeHandle
+  |DangerousGetHandle
+  |WaitAny
+  |WaitOne
+  |FlagsAttribute
+  |IEnumerable
+  |_VtblGap1_173
+  |DispIdAttribute
+  |RangeValueDataType
+  |set_Value
+  |DefaultMemberAttribute
+  |TypeIdentifierAttribute
+  |ComImportAttribute
+  |InterfaceTypeAttribute
+  |ComInterfaceType
+  |k17cv2.MathWorks.MATLAB.ProductionServer.Client.dll
+c.cv2.k17cv2.reg.strings	ERR not a PE file
+c.cv2.readme.txt.strings	ERR not a PE file
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.fromfiles.k17mpsf.bas.strings	ERR not a PE file
+c.fromfiles.K17MpsF.cs.strings	ERR not a PE file
+c.fromfiles.k17mpsf.dll.streams	#~ (5816) | #Strings (6092) | #US (6872) | #GUID (16) | #Blob (2228)
+c.fromfiles.k17mpsf.dll.us	136
+  |k17mpsf Add-in
+  |Software\MathWorks\MATLAB Builder EX\2.5\Logging\
+  |MathWorks.MATLAB.ProductionServer.Client
+  |.
+  |.dll
+  |Entered k17_quiet() function.
+  |Input {0} is {1}.
+  |Add
+  |TraceEvent
+  |Input {0} is Range with value of {1}.
+  |k17mpsf
+  |MPS server URL is {0}.
+  |MPS server url is not provided for k17mpsf
+  |MATLAB error thrown : MPS server url is not provided for k17mpsf
+  |MWHttpClient is disposed.
+  |New MWHttpClient is created.
+  |MWHttpClient.CreateProxy() succeeded.
+  |Call to k17_quiet function returned.
+  |Call to k17_quiet function failed.
+  |Catch MATLAB Exception: {0}
+  |MATLAB Exception stack trace is {0}
+  |MATLABException:
+  |Catch WebException: {0}
+  |WebException status is {0}
+  |HttpWebResponse status code: {0}
+  |HttpWebResponse status description: {0}
+  |WebException:
+  |No response received in WebException.
+  |Catch TargetInvocationException: {0}
+  |InnerException is {0}
+  |TargetInvocationException:
+  |MaxFileSize
+  |
+  | Delete or rename the log file 
+  | and run the function again.
+  |Catch InvalidOperationException: {0}
+  |InvalidOperationException:
+  |Catch Exception: {0}
+  |Exception:
+  |Entered k17_none() function.
+  |Call to k17_none function returned.
+  |Call to k17_none function failed.
+  |Entered k17_one() function.
+  |Call to k17_one function returned.
+  |Output y is {0}.
+  |Call to k17_one function failed.
+  |Entered k17_many() function.
+  |Call to k17_many function returned.
+  |Output s is {0}.
+  |Output d is {0}.
+  |Output p is {0}.
+  |Call to k17_many function failed.
+  |Entered k17_two() function.
+  |Call to k17_two function returned.
+  |Output a is {0}.
+  |Output b is {0}.
+  |Call to k17_two function failed.
+  |Entered k17_opt() function.
+  |Call to k17_opt function returned.
+  |Output r is {0}.
+  |Call to k17_opt function failed.
+  |Entered k17_varin() function.
+  |Call to k17_varin function returned.
+  |Call to k17_varin function failed.
+  |Entered k17_varout() function.
+  |Call to k17_varout function returned.
+  |Output varargout is {0}.
+  |Call to k17_varout function failed.
+  |Entered k17_both() function.
+  |Call to k17_both function returned.
+  |Output first is {0}.
+  |Call to k17_both function failed.
+  |Entered k17_args() function.
+  |Call to k17_args function returned.
+  |Call to k17_args function failed.
+  |Entered k17_noout() function.
+  |Call to k17_noout function returned.
+  |Call to k17_noout function failed.
+  |Entered k17_err() function.
+  |Call to k17_err function returned.
+  |Call to k17_err function failed.
+  |Entered k17_plot() function.
+  |Call to k17_plot function returned.
+  |Output n is {0}.
+  |Call to k17_plot function failed.
+  |Entered k17_h1() function.
+  |Call to k17_h1 function returned.
+  |Output t is {0}.
+  |Call to k17_h1 function failed.
+  |Entered k17_echo() function.
+  |Call to k17_echo function returned.
+  |Call to k17_echo function failed.
+  |Entered k17_pass() function.
+  |Call to k17_pass function returned.
+  |Call to k17_pass function failed.
+  |Entered k17_count() function.
+  |Call to k17_count function returned.
+  |Call to k17_count function failed.
+  |Entered k17_make() function.
+  |Call to k17_make function returned.
+  |Output v is {0}.
+  |Call to k17_make function failed.
+  |LogFileFolder
+  |Software\MathWorks\MATLAB Builder EX\2.5\MPS Server Config\
+  |Registry key 
+  | found
+  |Looking for mps server url for 
+  |timeoutSeconds
+  |responseSizeLimit
+  |Registry value name: 
+  | , value data: 
+  |.ctf
+  |http://
+  |https://
+  | doesn't exist
+  |Enabled
+  |LoggingLevel
+  |  
+  |Looking for 
+  | for 
+  |name
+  |Monitoring thread is already running
+  |hive
+  |HKEY_CLASSES_ROOT
+  |HKCR
+  |HKEY_CURRENT_USER
+  |HKCU
+  |HKEY_LOCAL_MACHINE
+  |HKLM
+  |HKEY_USERS
+  |HKEY_CURRENT_CONFIG
+  |The registry hive '
+  |' is not supported
+  |value
+  |\
+  |This instance is already disposed
+c.fromfiles.k17mpsf.dll.names	417
+  |<Module>
+  |k17mpsf.dll
+  |IK17MpsF
+  |k17mpsf
+  |K17MpsF
+  |k17mpsfClientConfig
+  |RegistryMonitor
+  |RegChangeNotifyFilter
+  |mscorlib
+  |System
+  |Object
+  |MathWorks.MATLAB.ProductionServer.Client
+  |MWHttpClientDefaultConfig
+  |IDisposable
+  |Enum
+  |k17_quiet
+  |k17_none
+  |k17_one
+  |k17_many
+  |k17_two
+  |k17_opt
+  |k17_varin
+  |k17_varout
+  |k17_both
+  |k17_args
+  |k17_noout
+  |k17_err
+  |k17_plot
+  |k17_h1
+  |k17_echo
+  |k17_pass
+  |k17_count
+  |k17_make
+  |REGISTRY_LOGGING_KEY
+  |REGISTRY_MPS_SERVER_CONFIG_KEY
+  |REGISTRY_LOGGING_ENABLED
+  |REGISTRY_LOGGING_LEVEL
+  |REGISTRY_LOG_FILE_FOLDER
+  |REGISTRY_TIMEOUT_SECONDS
+  |REGISTRY_RESPONSE_SIZE_LIMIT
+  |DEFAULT_TIMEOUT_SECONDS
+  |DEFAULT_RESPONSE_SIZE_LIMIT
+  |System.Diagnostics
+  |TraceSource
+  |traceSource
+  |loggingEnabled
+  |loggingLevel
+  |logFileFolder
+  |registryMonitor
+  |serverUrl
+  |timeoutMilliSeconds
+  |responseSizeLimit
+  |MWClient
+  |mwClient
+  |interfaceObject
+  |.cctor
+  |Finalize
+  |System.Reflection
+  |Assembly
+  |ResolveEventArgs
+  |Resolver
+  |getLogFileLocation
+  |Microsoft.Win32
+  |RegistryKey
+  |getLoggingRegistryKey
+  |getAddinRegistryKey
+  |getServerConfig
+  |DoLogging
+  |InitializeTraceSourceListener
+  |TraceListener
+  |SetFileLogListenerFilter
+  |TraceEventType
+  |TraceEvent
+  |EventArgs
+  |OnRegChanged
+  |getRegistryIntValue
+  |getTimeoutMilliSeconds
+  |getResponseSizeLimit
+  |.ctor
+  |get_TimeoutMilliSeconds
+  |get_ResponseSizeLimit
+  |TimeoutMilliSeconds
+  |ResponseSizeLimit
+  |KEY_QUERY_VALUE
+  |KEY_NOTIFY
+  |STANDARD_RIGHTS_READ
+  |RegOpenKeyEx
+  |RegNotifyChangeKeyValue
+  |RegCloseKey
+  |HKEY_CLASSES_ROOT
+  |HKEY_CURRENT_USER
+  |HKEY_LOCAL_MACHINE
+  |HKEY_USERS
+  |HKEY_PERFORMANCE_DATA
+  |HKEY_CURRENT_CONFIG
+  |HKEY_DYN_DATA
+  |EventHandler
+  |RegChanged
+  |add_RegChanged
+  |remove_RegChanged
+  |System.IO
+  |ErrorEventHandler
+  |Error
+  |add_Error
+  |remove_Error
+  |Exception
+  |OnError
+  |_registryHive
+  |_registrySubName
+  |_threadLock
+  |System.Threading
+  |Thread
+  |_thread
+  |_disposed
+  |ManualResetEvent
+  |_eventTerminate
+  |_regFilter
+  |RegistryHive
+  |Dispose
+  |get_RegChangeNotifyFilter
+  |set_RegChangeNotifyFilter
+  |InitRegistryKey
+  |get_IsMonitoring
+  |Start
+  |Stop
+  |MonitorThread
+  |ThreadLoop
+  |IsMonitoring
+  |value__
+  |Key
+  |Attribute
+  |Value
+  |Security
+  |inputs
+  |ParamArrayAttribute
+  |y
+  |System.Runtime.InteropServices
+  |OutAttribute
+  |s
+  |d
+  |p
+  |a
+  |b
+  |r
+  |varargout
+  |first
+  |n
+  |t
+  |v
+  |sender
+  |args
+  |nargout
+  |addinName
+  |name
+  |listener
+  |eventType
+  |id
+  |format
+  |message
+  |e
+  |keyName
+  |valueName
+  |value
+  |hKey
+  |subKey
+  |options
+  |samDesired
+  |phkResult
+  |bWatchSubtree
+  |dwNotifyFilter
+  |hEvent
+  |fAsynchronous
+  |registryKey
+  |registryHive
+  |hive
+  |System.Runtime.CompilerServices
+  |CompilationRelaxationsAttribute
+  |RuntimeCompatibilityAttribute
+  |MWCoerceObjectToPrimitiveArrayIfHomogeneousAttribute
+  |MWPreserveOutputVectorDimensionsAttribute
+  |MWReplaceInputNullWithZeroAttribute
+  |GuidAttribute
+  |ClassInterfaceAttribute
+  |ClassInterfaceType
+  |ComVisibleAttribute
+  |AppDomain
+  |get_CurrentDomain
+  |ResolveEventHandler
+  |add_AssemblyResolve
+  |SourceSwitch
+  |get_Switch
+  |SourceLevels
+  |set_Level
+  |TraceListenerCollection
+  |get_Listeners
+  |Clear
+  |Registry
+  |CurrentUser
+  |CreateSubKey
+  |get_Item
+  |Microsoft.VisualBasic
+  |Microsoft.VisualBasic.Logging
+  |FileLogTraceListener
+  |Close
+  |get_Name
+  |AssemblyName
+  |String
+  |Equals
+  |GetExecutingAssembly
+  |get_FullName
+  |Concat
+  |Stream
+  |GetManifestResourceStream
+  |get_Length
+  |Byte
+  |Read
+  |Load
+  |<k17_quiet>o__SiteContainer0
+  |System.Core
+  |CallSite`1
+  |Action`3
+  |CallSite
+  |System.Collections
+  |ArrayList
+  |<>p__Site1
+  |Action`7
+  |<>p__Site2
+  |Type
+  |Missing
+  |Int32
+  |Range
+  |Microsoft.Office.Interop.Excel
+  |RuntimeTypeHandle
+  |GetTypeFromHandle
+  |Microsoft.CSharp
+  |Microsoft.CSharp.RuntimeBinder
+  |CSharpArgumentInfo
+  |CSharpArgumentInfoFlags
+  |Create
+  |Binder
+  |CallSiteBinder
+  |CSharpBinderFlags
+  |System.Collections.Generic
+  |IEnumerable`1
+  |InvokeMember
+  |Target
+  |get_Value
+  |Invoke
+  |Add
+  |IsNullOrEmpty
+  |System.Windows.Forms
+  |MessageBox
+  |DialogResult
+  |Show
+  |op_Inequality
+  |MWHttpClient
+  |MWHttpClientConfig
+  |Uri
+  |CreateProxy
+  |ToArray
+  |get_Message
+  |MATLABException
+  |get_MATLABStackTraceString
+  |get_MATLABIdentifier
+  |System.Net
+  |WebException
+  |WebExceptionStatus
+  |get_Status
+  |WebResponse
+  |get_Response
+  |HttpWebResponse
+  |HttpStatusCode
+  |get_StatusCode
+  |get_StatusDescription
+  |get_InnerException
+  |Contains
+  |get_FullLogFileName
+  |Flush
+  |TargetInvocationException
+  |InvalidOperationException
+  |<k17_none>o__SiteContainer3
+  |<>p__Site4
+  |<>p__Site5
+  |<k17_one>o__SiteContainer6
+  |<>p__Site7
+  |<>p__Site8
+  |ToString
+  |<k17_many>o__SiteContainer9
+  |<>p__Sitea
+  |<>p__Siteb
+  |<k17_two>o__SiteContainerc
+  |<>p__Sited
+  |<>p__Sitee
+  |<k17_opt>o__SiteContainerf
+  |<>p__Site10
+  |<>p__Site11
+  |<k17_varin>o__SiteContainer12
+  |<>p__Site13
+  |<>p__Site14
+  |<k17_varout>o__SiteContainer15
+  |<>p__Site16
+  |<>p__Site17
+  |<k17_both>o__SiteContainer18
+  |<>p__Site19
+  |<>p__Site1a
+  |<k17_args>o__SiteContainer1b
+  |<>p__Site1c
+  |<>p__Site1d
+  |<k17_noout>o__SiteContainer1e
+  |<>p__Site1f
+  |<>p__Site20
+  |<k17_err>o__SiteContainer21
+  |<>p__Site22
+  |<>p__Site23
+  |<k17_plot>o__SiteContainer24
+  |<>p__Site25
+  |<>p__Site26
+  |<k17_h1>o__SiteContainer27
+  |<>p__Site28
+  |<>p__Site29
+  |<k17_echo>o__SiteContainer2a
+  |<>p__Site2b
+  |<>p__Site2c
+  |<k17_pass>o__SiteContainer2d
+  |<>p__Site2e
+  |<>p__Site2f
+  |<k17_count>o__SiteContainer30
+  |<>p__Site31
+  |<>p__Site32
+  |<k17_make>o__SiteContainer33
+  |<>p__Site34
+  |<>p__Site35
+  |GetValue
+  |OpenSubKey
+  |Environment
+  |get_Is64BitOperatingSystem
+  |RegistryView
+  |OpenBaseKey
+  |LocalMachine
+  |GetValueNames
+  |EndsWith
+  |IndexOf
+  |Remove
+  |StartsWith
+  |Insert
+  |op_Equality
+  |get_Count
+  |set_CustomLocation
+  |set_AutoFlush
+  |set_Delimiter
+  |LogFileLocation
+  |set_Location
+  |TraceOptions
+  |set_TraceOutputOptions
+  |LogFileCreationScheduleOption
+  |set_LogFileCreationSchedule
+  |set_BaseFileName
+  |DiskSpaceExhaustedOption
+  |set_DiskSpaceExhaustedBehavior
+  |Trace
+  |EventTypeFilter
+  |TraceFilter
+  |set_Filter
+  |CompilerGeneratedAttribute
+  |DllImportAttribute
+  |advapi32.dll
+  |Delegate
+  |Combine
+  |Interlocked
+  |CompareExchange
+  |ErrorEventArgs
+  |ArgumentNullException
+  |GC
+  |SuppressFinalize
+  |Monitor
+  |Enter
+  |Exit
+  |System.ComponentModel
+  |InvalidEnumArgumentException
+  |Char
+  |Split
+  |<PrivateImplementationDetails>{<UUID>}
+  |Dictionary`2
+  |$$method0x6000049-1
+  |TryGetValue
+  |IntPtr
+  |Zero
+  |ArgumentException
+  |Join
+  |ObjectDisposedException
+  |EventWaitHandle
+  |Reset
+  |ThreadStart
+  |set_IsBackground
+  |Set
+  |Win32Exception
+  |AutoResetEvent
+  |WaitHandle
+  |Microsoft.Win32.SafeHandles
+  |SafeWaitHandle
+  |get_SafeWaitHandle
+  |SafeHandle
+  |DangerousGetHandle
+  |WaitAny
+  |WaitOne
+  |FlagsAttribute
+  |IEnumerable
+  |_VtblGap1_173
+  |DispIdAttribute
+  |RangeValueDataType
+  |set_Value
+  |DefaultMemberAttribute
+  |TypeIdentifierAttribute
+  |ComImportAttribute
+  |InterfaceTypeAttribute
+  |ComInterfaceType
+  |k17mpsf.MathWorks.MATLAB.ProductionServer.Client.dll
+c.fromfiles.k17mpsf.reg.strings	ERR not a PE file
+c.fromfiles.readme.txt.strings	ERR not a PE file
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.fromresults.k17mps.bas.strings	ERR not a PE file
+c.fromresults.K17Mps.cs.strings	ERR not a PE file
+c.fromresults.k17mps.dll.streams	#~ (5816) | #Strings (6084) | #US (6864) | #GUID (16) | #Blob (2228)
+c.fromresults.k17mps.dll.us	136
+  |k17mps Add-in
+  |Software\MathWorks\MATLAB Builder EX\2.5\Logging\
+  |MathWorks.MATLAB.ProductionServer.Client
+  |.
+  |.dll
+  |Entered k17_quiet() function.
+  |Input {0} is {1}.
+  |Add
+  |TraceEvent
+  |Input {0} is Range with value of {1}.
+  |k17mps
+  |MPS server URL is {0}.
+  |MPS server url is not provided for k17mps
+  |MATLAB error thrown : MPS server url is not provided for k17mps
+  |MWHttpClient is disposed.
+  |New MWHttpClient is created.
+  |MWHttpClient.CreateProxy() succeeded.
+  |Call to k17_quiet function returned.
+  |Call to k17_quiet function failed.
+  |Catch MATLAB Exception: {0}
+  |MATLAB Exception stack trace is {0}
+  |MATLABException:
+  |Catch WebException: {0}
+  |WebException status is {0}
+  |HttpWebResponse status code: {0}
+  |HttpWebResponse status description: {0}
+  |WebException:
+  |No response received in WebException.
+  |Catch TargetInvocationException: {0}
+  |InnerException is {0}
+  |TargetInvocationException:
+  |MaxFileSize
+  |
+  | Delete or rename the log file 
+  | and run the function again.
+  |Catch InvalidOperationException: {0}
+  |InvalidOperationException:
+  |Catch Exception: {0}
+  |Exception:
+  |Entered k17_none() function.
+  |Call to k17_none function returned.
+  |Call to k17_none function failed.
+  |Entered k17_one() function.
+  |Call to k17_one function returned.
+  |Output y is {0}.
+  |Call to k17_one function failed.
+  |Entered k17_many() function.
+  |Call to k17_many function returned.
+  |Output s is {0}.
+  |Output d is {0}.
+  |Output p is {0}.
+  |Call to k17_many function failed.
+  |Entered k17_two() function.
+  |Call to k17_two function returned.
+  |Output a is {0}.
+  |Output b is {0}.
+  |Call to k17_two function failed.
+  |Entered k17_opt() function.
+  |Call to k17_opt function returned.
+  |Output r is {0}.
+  |Call to k17_opt function failed.
+  |Entered k17_varin() function.
+  |Call to k17_varin function returned.
+  |Call to k17_varin function failed.
+  |Entered k17_varout() function.
+  |Call to k17_varout function returned.
+  |Output varargout is {0}.
+  |Call to k17_varout function failed.
+  |Entered k17_both() function.
+  |Call to k17_both function returned.
+  |Output first is {0}.
+  |Call to k17_both function failed.
+  |Entered k17_args() function.
+  |Call to k17_args function returned.
+  |Call to k17_args function failed.
+  |Entered k17_noout() function.
+  |Call to k17_noout function returned.
+  |Call to k17_noout function failed.
+  |Entered k17_err() function.
+  |Call to k17_err function returned.
+  |Call to k17_err function failed.
+  |Entered k17_plot() function.
+  |Call to k17_plot function returned.
+  |Output n is {0}.
+  |Call to k17_plot function failed.
+  |Entered k17_h1() function.
+  |Call to k17_h1 function returned.
+  |Output t is {0}.
+  |Call to k17_h1 function failed.
+  |Entered k17_echo() function.
+  |Call to k17_echo function returned.
+  |Call to k17_echo function failed.
+  |Entered k17_pass() function.
+  |Call to k17_pass function returned.
+  |Call to k17_pass function failed.
+  |Entered k17_count() function.
+  |Call to k17_count function returned.
+  |Call to k17_count function failed.
+  |Entered k17_make() function.
+  |Call to k17_make function returned.
+  |Output v is {0}.
+  |Call to k17_make function failed.
+  |LogFileFolder
+  |Software\MathWorks\MATLAB Builder EX\2.5\MPS Server Config\
+  |Registry key 
+  | found
+  |Looking for mps server url for 
+  |timeoutSeconds
+  |responseSizeLimit
+  |Registry value name: 
+  | , value data: 
+  |.ctf
+  |http://
+  |https://
+  | doesn't exist
+  |Enabled
+  |LoggingLevel
+  |  
+  |Looking for 
+  | for 
+  |name
+  |Monitoring thread is already running
+  |hive
+  |HKEY_CLASSES_ROOT
+  |HKCR
+  |HKEY_CURRENT_USER
+  |HKCU
+  |HKEY_LOCAL_MACHINE
+  |HKLM
+  |HKEY_USERS
+  |HKEY_CURRENT_CONFIG
+  |The registry hive '
+  |' is not supported
+  |value
+  |\
+  |This instance is already disposed
+c.fromresults.k17mps.dll.names	417
+  |<Module>
+  |k17mps.dll
+  |IK17Mps
+  |k17mps
+  |K17Mps
+  |k17mpsClientConfig
+  |RegistryMonitor
+  |RegChangeNotifyFilter
+  |mscorlib
+  |System
+  |Object
+  |MathWorks.MATLAB.ProductionServer.Client
+  |MWHttpClientDefaultConfig
+  |IDisposable
+  |Enum
+  |k17_quiet
+  |k17_none
+  |k17_one
+  |k17_many
+  |k17_two
+  |k17_opt
+  |k17_varin
+  |k17_varout
+  |k17_both
+  |k17_args
+  |k17_noout
+  |k17_err
+  |k17_plot
+  |k17_h1
+  |k17_echo
+  |k17_pass
+  |k17_count
+  |k17_make
+  |REGISTRY_LOGGING_KEY
+  |REGISTRY_MPS_SERVER_CONFIG_KEY
+  |REGISTRY_LOGGING_ENABLED
+  |REGISTRY_LOGGING_LEVEL
+  |REGISTRY_LOG_FILE_FOLDER
+  |REGISTRY_TIMEOUT_SECONDS
+  |REGISTRY_RESPONSE_SIZE_LIMIT
+  |DEFAULT_TIMEOUT_SECONDS
+  |DEFAULT_RESPONSE_SIZE_LIMIT
+  |System.Diagnostics
+  |TraceSource
+  |traceSource
+  |loggingEnabled
+  |loggingLevel
+  |logFileFolder
+  |registryMonitor
+  |serverUrl
+  |timeoutMilliSeconds
+  |responseSizeLimit
+  |MWClient
+  |mwClient
+  |interfaceObject
+  |.cctor
+  |Finalize
+  |System.Reflection
+  |Assembly
+  |ResolveEventArgs
+  |Resolver
+  |getLogFileLocation
+  |Microsoft.Win32
+  |RegistryKey
+  |getLoggingRegistryKey
+  |getAddinRegistryKey
+  |getServerConfig
+  |DoLogging
+  |InitializeTraceSourceListener
+  |TraceListener
+  |SetFileLogListenerFilter
+  |TraceEventType
+  |TraceEvent
+  |EventArgs
+  |OnRegChanged
+  |getRegistryIntValue
+  |getTimeoutMilliSeconds
+  |getResponseSizeLimit
+  |.ctor
+  |get_TimeoutMilliSeconds
+  |get_ResponseSizeLimit
+  |TimeoutMilliSeconds
+  |ResponseSizeLimit
+  |KEY_QUERY_VALUE
+  |KEY_NOTIFY
+  |STANDARD_RIGHTS_READ
+  |RegOpenKeyEx
+  |RegNotifyChangeKeyValue
+  |RegCloseKey
+  |HKEY_CLASSES_ROOT
+  |HKEY_CURRENT_USER
+  |HKEY_LOCAL_MACHINE
+  |HKEY_USERS
+  |HKEY_PERFORMANCE_DATA
+  |HKEY_CURRENT_CONFIG
+  |HKEY_DYN_DATA
+  |EventHandler
+  |RegChanged
+  |add_RegChanged
+  |remove_RegChanged
+  |System.IO
+  |ErrorEventHandler
+  |Error
+  |add_Error
+  |remove_Error
+  |Exception
+  |OnError
+  |_registryHive
+  |_registrySubName
+  |_threadLock
+  |System.Threading
+  |Thread
+  |_thread
+  |_disposed
+  |ManualResetEvent
+  |_eventTerminate
+  |_regFilter
+  |RegistryHive
+  |Dispose
+  |get_RegChangeNotifyFilter
+  |set_RegChangeNotifyFilter
+  |InitRegistryKey
+  |get_IsMonitoring
+  |Start
+  |Stop
+  |MonitorThread
+  |ThreadLoop
+  |IsMonitoring
+  |value__
+  |Key
+  |Attribute
+  |Value
+  |Security
+  |inputs
+  |ParamArrayAttribute
+  |y
+  |System.Runtime.InteropServices
+  |OutAttribute
+  |s
+  |d
+  |p
+  |a
+  |b
+  |r
+  |varargout
+  |first
+  |n
+  |t
+  |v
+  |sender
+  |args
+  |nargout
+  |addinName
+  |name
+  |listener
+  |eventType
+  |id
+  |format
+  |message
+  |e
+  |keyName
+  |valueName
+  |value
+  |hKey
+  |subKey
+  |options
+  |samDesired
+  |phkResult
+  |bWatchSubtree
+  |dwNotifyFilter
+  |hEvent
+  |fAsynchronous
+  |registryKey
+  |registryHive
+  |hive
+  |System.Runtime.CompilerServices
+  |CompilationRelaxationsAttribute
+  |RuntimeCompatibilityAttribute
+  |MWCoerceObjectToPrimitiveArrayIfHomogeneousAttribute
+  |MWPreserveOutputVectorDimensionsAttribute
+  |MWReplaceInputNullWithZeroAttribute
+  |GuidAttribute
+  |ClassInterfaceAttribute
+  |ClassInterfaceType
+  |ComVisibleAttribute
+  |AppDomain
+  |get_CurrentDomain
+  |ResolveEventHandler
+  |add_AssemblyResolve
+  |SourceSwitch
+  |get_Switch
+  |SourceLevels
+  |set_Level
+  |TraceListenerCollection
+  |get_Listeners
+  |Clear
+  |Registry
+  |CurrentUser
+  |CreateSubKey
+  |get_Item
+  |Microsoft.VisualBasic
+  |Microsoft.VisualBasic.Logging
+  |FileLogTraceListener
+  |Close
+  |get_Name
+  |AssemblyName
+  |String
+  |Equals
+  |GetExecutingAssembly
+  |get_FullName
+  |Concat
+  |Stream
+  |GetManifestResourceStream
+  |get_Length
+  |Byte
+  |Read
+  |Load
+  |<k17_quiet>o__SiteContainer0
+  |System.Core
+  |CallSite`1
+  |Action`3
+  |CallSite
+  |System.Collections
+  |ArrayList
+  |<>p__Site1
+  |Action`7
+  |<>p__Site2
+  |Type
+  |Missing
+  |Int32
+  |Range
+  |Microsoft.Office.Interop.Excel
+  |RuntimeTypeHandle
+  |GetTypeFromHandle
+  |Microsoft.CSharp
+  |Microsoft.CSharp.RuntimeBinder
+  |CSharpArgumentInfo
+  |CSharpArgumentInfoFlags
+  |Create
+  |Binder
+  |CallSiteBinder
+  |CSharpBinderFlags
+  |System.Collections.Generic
+  |IEnumerable`1
+  |InvokeMember
+  |Target
+  |get_Value
+  |Invoke
+  |Add
+  |IsNullOrEmpty
+  |System.Windows.Forms
+  |MessageBox
+  |DialogResult
+  |Show
+  |op_Inequality
+  |MWHttpClient
+  |MWHttpClientConfig
+  |Uri
+  |CreateProxy
+  |ToArray
+  |get_Message
+  |MATLABException
+  |get_MATLABStackTraceString
+  |get_MATLABIdentifier
+  |System.Net
+  |WebException
+  |WebExceptionStatus
+  |get_Status
+  |WebResponse
+  |get_Response
+  |HttpWebResponse
+  |HttpStatusCode
+  |get_StatusCode
+  |get_StatusDescription
+  |get_InnerException
+  |Contains
+  |get_FullLogFileName
+  |Flush
+  |TargetInvocationException
+  |InvalidOperationException
+  |<k17_none>o__SiteContainer3
+  |<>p__Site4
+  |<>p__Site5
+  |<k17_one>o__SiteContainer6
+  |<>p__Site7
+  |<>p__Site8
+  |ToString
+  |<k17_many>o__SiteContainer9
+  |<>p__Sitea
+  |<>p__Siteb
+  |<k17_two>o__SiteContainerc
+  |<>p__Sited
+  |<>p__Sitee
+  |<k17_opt>o__SiteContainerf
+  |<>p__Site10
+  |<>p__Site11
+  |<k17_varin>o__SiteContainer12
+  |<>p__Site13
+  |<>p__Site14
+  |<k17_varout>o__SiteContainer15
+  |<>p__Site16
+  |<>p__Site17
+  |<k17_both>o__SiteContainer18
+  |<>p__Site19
+  |<>p__Site1a
+  |<k17_args>o__SiteContainer1b
+  |<>p__Site1c
+  |<>p__Site1d
+  |<k17_noout>o__SiteContainer1e
+  |<>p__Site1f
+  |<>p__Site20
+  |<k17_err>o__SiteContainer21
+  |<>p__Site22
+  |<>p__Site23
+  |<k17_plot>o__SiteContainer24
+  |<>p__Site25
+  |<>p__Site26
+  |<k17_h1>o__SiteContainer27
+  |<>p__Site28
+  |<>p__Site29
+  |<k17_echo>o__SiteContainer2a
+  |<>p__Site2b
+  |<>p__Site2c
+  |<k17_pass>o__SiteContainer2d
+  |<>p__Site2e
+  |<>p__Site2f
+  |<k17_count>o__SiteContainer30
+  |<>p__Site31
+  |<>p__Site32
+  |<k17_make>o__SiteContainer33
+  |<>p__Site34
+  |<>p__Site35
+  |GetValue
+  |OpenSubKey
+  |Environment
+  |get_Is64BitOperatingSystem
+  |RegistryView
+  |OpenBaseKey
+  |LocalMachine
+  |GetValueNames
+  |EndsWith
+  |IndexOf
+  |Remove
+  |StartsWith
+  |Insert
+  |op_Equality
+  |get_Count
+  |set_CustomLocation
+  |set_AutoFlush
+  |set_Delimiter
+  |LogFileLocation
+  |set_Location
+  |TraceOptions
+  |set_TraceOutputOptions
+  |LogFileCreationScheduleOption
+  |set_LogFileCreationSchedule
+  |set_BaseFileName
+  |DiskSpaceExhaustedOption
+  |set_DiskSpaceExhaustedBehavior
+  |Trace
+  |EventTypeFilter
+  |TraceFilter
+  |set_Filter
+  |CompilerGeneratedAttribute
+  |DllImportAttribute
+  |advapi32.dll
+  |Delegate
+  |Combine
+  |Interlocked
+  |CompareExchange
+  |ErrorEventArgs
+  |ArgumentNullException
+  |GC
+  |SuppressFinalize
+  |Monitor
+  |Enter
+  |Exit
+  |System.ComponentModel
+  |InvalidEnumArgumentException
+  |Char
+  |Split
+  |<PrivateImplementationDetails>{<UUID>}
+  |Dictionary`2
+  |$$method0x6000049-1
+  |TryGetValue
+  |IntPtr
+  |Zero
+  |ArgumentException
+  |Join
+  |ObjectDisposedException
+  |EventWaitHandle
+  |Reset
+  |ThreadStart
+  |set_IsBackground
+  |Set
+  |Win32Exception
+  |AutoResetEvent
+  |WaitHandle
+  |Microsoft.Win32.SafeHandles
+  |SafeWaitHandle
+  |get_SafeWaitHandle
+  |SafeHandle
+  |DangerousGetHandle
+  |WaitAny
+  |WaitOne
+  |FlagsAttribute
+  |IEnumerable
+  |_VtblGap1_173
+  |DispIdAttribute
+  |RangeValueDataType
+  |set_Value
+  |DefaultMemberAttribute
+  |TypeIdentifierAttribute
+  |ComImportAttribute
+  |InterfaceTypeAttribute
+  |ComInterfaceType
+  |k17mps.MathWorks.MATLAB.ProductionServer.Client.dll
+c.fromresults.k17mps.reg.strings	ERR not a PE file
+c.fromresults.readme.txt.strings	ERR not a PE file
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.nobas.k17cnb.bas.strings	ERR not a PE file
+c.nobas.K17Cnb.cs.strings	ERR not a PE file
+c.nobas.k17cnb.dll.streams	#~ (3964) | #Strings (5132) | #US (3592) | #GUID (16) | #Blob (2128)
+c.nobas.k17cnb.dll.us	83
+  |k17cnb Add-in
+  |Software\MathWorks\MATLAB Builder EX\2.5\Logging\
+  |MathWorks.MATLAB.ProductionServer.Client
+  |.
+  |.dll
+  |Entered k17_none() function.
+  |Input {0} is {1}.
+  |Add
+  |TraceEvent
+  |Input {0} is Range with value of {1}.
+  |k17cnb
+  |MPS server URL is {0}.
+  |MPS server url is not provided for k17cnb
+  |MATLAB error thrown : MPS server url is not provided for k17cnb
+  |MWHttpClient is disposed.
+  |New MWHttpClient is created.
+  |MWHttpClient.CreateProxy() succeeded.
+  |Call to k17_none function returned.
+  |Call to k17_none function failed.
+  |Catch MATLAB Exception: {0}
+  |MATLAB Exception stack trace is {0}
+  |MATLABException:
+  |Catch WebException: {0}
+  |WebException status is {0}
+  |HttpWebResponse status code: {0}
+  |HttpWebResponse status description: {0}
+  |WebException:
+  |No response received in WebException.
+  |Catch TargetInvocationException: {0}
+  |InnerException is {0}
+  |TargetInvocationException:
+  |MaxFileSize
+  |
+  | Delete or rename the log file 
+  | and run the function again.
+  |Catch InvalidOperationException: {0}
+  |InvalidOperationException:
+  |Catch Exception: {0}
+  |Exception:
+  |Entered k17_one() function.
+  |Call to k17_one function returned.
+  |Output y is {0}.
+  |Call to k17_one function failed.
+  |Entered k17_many() function.
+  |Call to k17_many function returned.
+  |Output s is {0}.
+  |Output d is {0}.
+  |Output p is {0}.
+  |Call to k17_many function failed.
+  |LogFileFolder
+  |Software\MathWorks\MATLAB Builder EX\2.5\MPS Server Config\
+  |Registry key 
+  | found
+  |Looking for mps server url for 
+  |timeoutSeconds
+  |responseSizeLimit
+  |Registry value name: 
+  | , value data: 
+  |.ctf
+  |http://
+  |https://
+  | doesn't exist
+  |Enabled
+  |LoggingLevel
+  |  
+  |Looking for 
+  | for 
+  |name
+  |Monitoring thread is already running
+  |hive
+  |HKEY_CLASSES_ROOT
+  |HKCR
+  |HKEY_CURRENT_USER
+  |HKCU
+  |HKEY_LOCAL_MACHINE
+  |HKLM
+  |HKEY_USERS
+  |HKEY_CURRENT_CONFIG
+  |The registry hive '
+  |' is not supported
+  |value
+  |\
+  |This instance is already disposed
+c.nobas.k17cnb.dll.names	349
+  |<Module>
+  |k17cnb.dll
+  |IK17Cnb
+  |k17cnb
+  |K17Cnb
+  |k17cnbClientConfig
+  |RegistryMonitor
+  |RegChangeNotifyFilter
+  |mscorlib
+  |System
+  |Object
+  |MathWorks.MATLAB.ProductionServer.Client
+  |MWHttpClientDefaultConfig
+  |IDisposable
+  |Enum
+  |k17_none
+  |k17_one
+  |k17_many
+  |REGISTRY_LOGGING_KEY
+  |REGISTRY_MPS_SERVER_CONFIG_KEY
+  |REGISTRY_LOGGING_ENABLED
+  |REGISTRY_LOGGING_LEVEL
+  |REGISTRY_LOG_FILE_FOLDER
+  |REGISTRY_TIMEOUT_SECONDS
+  |REGISTRY_RESPONSE_SIZE_LIMIT
+  |DEFAULT_TIMEOUT_SECONDS
+  |DEFAULT_RESPONSE_SIZE_LIMIT
+  |System.Diagnostics
+  |TraceSource
+  |traceSource
+  |loggingEnabled
+  |loggingLevel
+  |logFileFolder
+  |registryMonitor
+  |serverUrl
+  |timeoutMilliSeconds
+  |responseSizeLimit
+  |MWClient
+  |mwClient
+  |interfaceObject
+  |.cctor
+  |Finalize
+  |System.Reflection
+  |Assembly
+  |ResolveEventArgs
+  |Resolver
+  |getLogFileLocation
+  |Microsoft.Win32
+  |RegistryKey
+  |getLoggingRegistryKey
+  |getAddinRegistryKey
+  |getServerConfig
+  |DoLogging
+  |InitializeTraceSourceListener
+  |TraceListener
+  |SetFileLogListenerFilter
+  |TraceEventType
+  |TraceEvent
+  |EventArgs
+  |OnRegChanged
+  |getRegistryIntValue
+  |getTimeoutMilliSeconds
+  |getResponseSizeLimit
+  |.ctor
+  |get_TimeoutMilliSeconds
+  |get_ResponseSizeLimit
+  |TimeoutMilliSeconds
+  |ResponseSizeLimit
+  |KEY_QUERY_VALUE
+  |KEY_NOTIFY
+  |STANDARD_RIGHTS_READ
+  |RegOpenKeyEx
+  |RegNotifyChangeKeyValue
+  |RegCloseKey
+  |HKEY_CLASSES_ROOT
+  |HKEY_CURRENT_USER
+  |HKEY_LOCAL_MACHINE
+  |HKEY_USERS
+  |HKEY_PERFORMANCE_DATA
+  |HKEY_CURRENT_CONFIG
+  |HKEY_DYN_DATA
+  |EventHandler
+  |RegChanged
+  |add_RegChanged
+  |remove_RegChanged
+  |System.IO
+  |ErrorEventHandler
+  |Error
+  |add_Error
+  |remove_Error
+  |Exception
+  |OnError
+  |_registryHive
+  |_registrySubName
+  |_threadLock
+  |System.Threading
+  |Thread
+  |_thread
+  |_disposed
+  |ManualResetEvent
+  |_eventTerminate
+  |_regFilter
+  |RegistryHive
+  |Dispose
+  |get_RegChangeNotifyFilter
+  |set_RegChangeNotifyFilter
+  |InitRegistryKey
+  |get_IsMonitoring
+  |Start
+  |Stop
+  |MonitorThread
+  |ThreadLoop
+  |IsMonitoring
+  |value__
+  |Key
+  |Attribute
+  |Value
+  |Security
+  |inputs
+  |ParamArrayAttribute
+  |y
+  |System.Runtime.InteropServices
+  |OutAttribute
+  |s
+  |d
+  |p
+  |sender
+  |args
+  |nargout
+  |addinName
+  |name
+  |listener
+  |eventType
+  |id
+  |format
+  |message
+  |e
+  |keyName
+  |valueName
+  |value
+  |hKey
+  |subKey
+  |options
+  |samDesired
+  |phkResult
+  |bWatchSubtree
+  |dwNotifyFilter
+  |hEvent
+  |fAsynchronous
+  |registryKey
+  |registryHive
+  |hive
+  |System.Runtime.CompilerServices
+  |CompilationRelaxationsAttribute
+  |RuntimeCompatibilityAttribute
+  |MWCoerceObjectToPrimitiveArrayIfHomogeneousAttribute
+  |MWPreserveOutputVectorDimensionsAttribute
+  |MWReplaceInputNullWithZeroAttribute
+  |GuidAttribute
+  |ClassInterfaceAttribute
+  |ClassInterfaceType
+  |ComVisibleAttribute
+  |AppDomain
+  |get_CurrentDomain
+  |ResolveEventHandler
+  |add_AssemblyResolve
+  |SourceSwitch
+  |get_Switch
+  |SourceLevels
+  |set_Level
+  |TraceListenerCollection
+  |get_Listeners
+  |Clear
+  |Registry
+  |CurrentUser
+  |CreateSubKey
+  |get_Item
+  |Microsoft.VisualBasic
+  |Microsoft.VisualBasic.Logging
+  |FileLogTraceListener
+  |Close
+  |get_Name
+  |AssemblyName
+  |String
+  |Equals
+  |GetExecutingAssembly
+  |get_FullName
+  |Concat
+  |Stream
+  |GetManifestResourceStream
+  |get_Length
+  |Byte
+  |Read
+  |Load
+  |<k17_none>o__SiteContainer0
+  |System.Core
+  |CallSite`1
+  |Action`3
+  |CallSite
+  |System.Collections
+  |ArrayList
+  |<>p__Site1
+  |Action`7
+  |<>p__Site2
+  |Type
+  |Missing
+  |Int32
+  |Range
+  |Microsoft.Office.Interop.Excel
+  |RuntimeTypeHandle
+  |GetTypeFromHandle
+  |Microsoft.CSharp
+  |Microsoft.CSharp.RuntimeBinder
+  |CSharpArgumentInfo
+  |CSharpArgumentInfoFlags
+  |Create
+  |Binder
+  |CallSiteBinder
+  |CSharpBinderFlags
+  |System.Collections.Generic
+  |IEnumerable`1
+  |InvokeMember
+  |Target
+  |get_Value
+  |Invoke
+  |Add
+  |IsNullOrEmpty
+  |System.Windows.Forms
+  |MessageBox
+  |DialogResult
+  |Show
+  |op_Inequality
+  |MWHttpClient
+  |MWHttpClientConfig
+  |Uri
+  |CreateProxy
+  |ToArray
+  |get_Message
+  |MATLABException
+  |get_MATLABStackTraceString
+  |get_MATLABIdentifier
+  |System.Net
+  |WebException
+  |WebExceptionStatus
+  |get_Status
+  |WebResponse
+  |get_Response
+  |HttpWebResponse
+  |HttpStatusCode
+  |get_StatusCode
+  |get_StatusDescription
+  |get_InnerException
+  |Contains
+  |get_FullLogFileName
+  |Flush
+  |TargetInvocationException
+  |InvalidOperationException
+  |<k17_one>o__SiteContainer3
+  |<>p__Site4
+  |<>p__Site5
+  |ToString
+  |<k17_many>o__SiteContainer6
+  |<>p__Site7
+  |<>p__Site8
+  |GetValue
+  |OpenSubKey
+  |Environment
+  |get_Is64BitOperatingSystem
+  |RegistryView
+  |OpenBaseKey
+  |LocalMachine
+  |GetValueNames
+  |EndsWith
+  |IndexOf
+  |Remove
+  |StartsWith
+  |Insert
+  |op_Equality
+  |get_Count
+  |set_CustomLocation
+  |set_AutoFlush
+  |set_Delimiter
+  |LogFileLocation
+  |set_Location
+  |TraceOptions
+  |set_TraceOutputOptions
+  |LogFileCreationScheduleOption
+  |set_LogFileCreationSchedule
+  |set_BaseFileName
+  |DiskSpaceExhaustedOption
+  |set_DiskSpaceExhaustedBehavior
+  |Trace
+  |EventTypeFilter
+  |TraceFilter
+  |set_Filter
+  |CompilerGeneratedAttribute
+  |DllImportAttribute
+  |advapi32.dll
+  |Delegate
+  |Combine
+  |Interlocked
+  |CompareExchange
+  |ErrorEventArgs
+  |ArgumentNullException
+  |GC
+  |SuppressFinalize
+  |Monitor
+  |Enter
+  |Exit
+  |System.ComponentModel
+  |InvalidEnumArgumentException
+  |Char
+  |Split
+  |<PrivateImplementationDetails>{<UUID>}
+  |Dictionary`2
+  |$$method0x600002b-1
+  |TryGetValue
+  |IntPtr
+  |Zero
+  |ArgumentException
+  |Join
+  |ObjectDisposedException
+  |EventWaitHandle
+  |Reset
+  |ThreadStart
+  |set_IsBackground
+  |Set
+  |Win32Exception
+  |AutoResetEvent
+  |WaitHandle
+  |Microsoft.Win32.SafeHandles
+  |SafeWaitHandle
+  |get_SafeWaitHandle
+  |SafeHandle
+  |DangerousGetHandle
+  |WaitAny
+  |WaitOne
+  |FlagsAttribute
+  |IEnumerable
+  |_VtblGap1_173
+  |DispIdAttribute
+  |RangeValueDataType
+  |set_Value
+  |DefaultMemberAttribute
+  |TypeIdentifierAttribute
+  |ComImportAttribute
+  |InterfaceTypeAttribute
+  |ComInterfaceType
+  |k17cnb.MathWorks.MATLAB.ProductionServer.Client.dll
+c.nobas.k17cnb.reg.strings	ERR not a PE file
+c.nobas.readme.txt.strings	ERR not a PE file
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 33)
+Traceback (most recent call last):
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 104, in <module>
+    sys.exit(main(sys.argv))
+             ^^^^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 86, in main
+    streams = heaps(data)
+              ^^^^^^^^^^^
+  File "<REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17strings.py", line 21, in heaps
+    pe = struct.unpack_from('<I', data, 0x3C)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.onefileall.k17one.bas.strings	ERR not a PE file
+c.onefileall.K17One.cs.strings	ERR not a PE file
+c.onefileall.k17one.dll.streams	#~ (3704) | #Strings (5028) | #US (3092) | #GUID (16) | #Blob (1928)
+c.onefileall.k17one.dll.us	74
+  |k17one Add-in
+  |Software\MathWorks\MATLAB Builder EX\2.5\Logging\
+  |MathWorks.MATLAB.ProductionServer.Client
+  |.
+  |.dll
+  |Entered k17_one() function.
+  |Input {0} is {1}.
+  |Add
+  |TraceEvent
+  |Input {0} is Range with value of {1}.
+  |k17one
+  |MPS server URL is {0}.
+  |MPS server url is not provided for k17one
+  |MATLAB error thrown : MPS server url is not provided for k17one
+  |MWHttpClient is disposed.
+  |New MWHttpClient is created.
+  |MWHttpClient.CreateProxy() succeeded.
+  |Call to k17_one function returned.
+  |Output y is {0}.
+  |Call to k17_one function failed.
+  |Catch MATLAB Exception: {0}
+  |MATLAB Exception stack trace is {0}
+  |MATLABException:
+  |Catch WebException: {0}
+  |WebException status is {0}
+  |HttpWebResponse status code: {0}
+  |HttpWebResponse status description: {0}
+  |WebException:
+  |No response received in WebException.
+  |Catch TargetInvocationException: {0}
+  |InnerException is {0}
+  |TargetInvocationException:
+  |MaxFileSize
+  |
+  | Delete or rename the log file 
+  | and run the function again.
+  |Catch InvalidOperationException: {0}
+  |InvalidOperationException:
+  |Catch Exception: {0}
+  |Exception:
+  |LogFileFolder
+  |Software\MathWorks\MATLAB Builder EX\2.5\MPS Server Config\
+  |Registry key 
+  | found
+  |Looking for mps server url for 
+  |timeoutSeconds
+  |responseSizeLimit
+  |Registry value name: 
+  | , value data: 
+  |.ctf
+  |http://
+  |https://
+  | doesn't exist
+  |Enabled
+  |LoggingLevel
+  |  
+  |Looking for 
+  | for 
+  |name
+  |Monitoring thread is already running
+  |hive
+  |HKEY_CLASSES_ROOT
+  |HKCR
+  |HKEY_CURRENT_USER
+  |HKCU
+  |HKEY_LOCAL_MACHINE
+  |HKLM
+  |HKEY_USERS
+  |HKEY_CURRENT_CONFIG
+  |The registry hive '
+  |' is not supported
+  |value
+  |\
+  |This instance is already disposed
+c.onefileall.k17one.dll.names	336
+  |<Module>
+  |k17one.dll
+  |IK17One
+  |k17one
+  |K17One
+  |k17oneClientConfig
+  |RegistryMonitor
+  |RegChangeNotifyFilter
+  |mscorlib
+  |System
+  |Object
+  |MathWorks.MATLAB.ProductionServer.Client
+  |MWHttpClientDefaultConfig
+  |IDisposable
+  |Enum
+  |k17_one
+  |REGISTRY_LOGGING_KEY
+  |REGISTRY_MPS_SERVER_CONFIG_KEY
+  |REGISTRY_LOGGING_ENABLED
+  |REGISTRY_LOGGING_LEVEL
+  |REGISTRY_LOG_FILE_FOLDER
+  |REGISTRY_TIMEOUT_SECONDS
+  |REGISTRY_RESPONSE_SIZE_LIMIT
+  |DEFAULT_TIMEOUT_SECONDS
+  |DEFAULT_RESPONSE_SIZE_LIMIT
+  |System.Diagnostics
+  |TraceSource
+  |traceSource
+  |loggingEnabled
+  |loggingLevel
+  |logFileFolder
+  |registryMonitor
+  |serverUrl
+  |timeoutMilliSeconds
+  |responseSizeLimit
+  |MWClient
+  |mwClient
+  |interfaceObject
+  |.cctor
+  |Finalize
+  |System.Reflection
+  |Assembly
+  |ResolveEventArgs
+  |Resolver
+  |getLogFileLocation
+  |Microsoft.Win32
+  |RegistryKey
+  |getLoggingRegistryKey
+  |getAddinRegistryKey
+  |getServerConfig
+  |DoLogging
+  |InitializeTraceSourceListener
+  |TraceListener
+  |SetFileLogListenerFilter
+  |TraceEventType
+  |TraceEvent
+  |EventArgs
+  |OnRegChanged
+  |getRegistryIntValue
+  |getTimeoutMilliSeconds
+  |getResponseSizeLimit
+  |.ctor
+  |get_TimeoutMilliSeconds
+  |get_ResponseSizeLimit
+  |TimeoutMilliSeconds
+  |ResponseSizeLimit
+  |KEY_QUERY_VALUE
+  |KEY_NOTIFY
+  |STANDARD_RIGHTS_READ
+  |RegOpenKeyEx
+  |RegNotifyChangeKeyValue
+  |RegCloseKey
+  |HKEY_CLASSES_ROOT
+  |HKEY_CURRENT_USER
+  |HKEY_LOCAL_MACHINE
+  |HKEY_USERS
+  |HKEY_PERFORMANCE_DATA
+  |HKEY_CURRENT_CONFIG
+  |HKEY_DYN_DATA
+  |EventHandler
+  |RegChanged
+  |add_RegChanged
+  |remove_RegChanged
+  |System.IO
+  |ErrorEventHandler
+  |Error
+  |add_Error
+  |remove_Error
+  |Exception
+  |OnError
+  |_registryHive
+  |_registrySubName
+  |_threadLock
+  |System.Threading
+  |Thread
+  |_thread
+  |_disposed
+  |ManualResetEvent
+  |_eventTerminate
+  |_regFilter
+  |RegistryHive
+  |Dispose
+  |get_RegChangeNotifyFilter
+  |set_RegChangeNotifyFilter
+  |InitRegistryKey
+  |get_IsMonitoring
+  |Start
+  |Stop
+  |MonitorThread
+  |ThreadLoop
+  |IsMonitoring
+  |value__
+  |Key
+  |Attribute
+  |Value
+  |Security
+  |y
+  |System.Runtime.InteropServices
+  |OutAttribute
+  |inputs
+  |ParamArrayAttribute
+  |sender
+  |args
+  |nargout
+  |addinName
+  |name
+  |listener
+  |eventType
+  |id
+  |format
+  |message
+  |e
+  |keyName
+  |valueName
+  |value
+  |hKey
+  |subKey
+  |options
+  |samDesired
+  |phkResult
+  |bWatchSubtree
+  |dwNotifyFilter
+  |hEvent
+  |fAsynchronous
+  |registryKey
+  |registryHive
+  |hive
+  |System.Runtime.CompilerServices
+  |CompilationRelaxationsAttribute
+  |RuntimeCompatibilityAttribute
+  |MWCoerceObjectToPrimitiveArrayIfHomogeneousAttribute
+  |MWPreserveOutputVectorDimensionsAttribute
+  |MWReplaceInputNullWithZeroAttribute
+  |MWReplaceOutputNaNWithZeroAttribute
+  |MWConvertOutputToDateTimeAttribute
+  |GuidAttribute
+  |ClassInterfaceAttribute
+  |ClassInterfaceType
+  |ComVisibleAttribute
+  |AppDomain
+  |get_CurrentDomain
+  |ResolveEventHandler
+  |add_AssemblyResolve
+  |SourceSwitch
+  |get_Switch
+  |SourceLevels
+  |set_Level
+  |TraceListenerCollection
+  |get_Listeners
+  |Clear
+  |Registry
+  |CurrentUser
+  |CreateSubKey
+  |get_Item
+  |Microsoft.VisualBasic
+  |Microsoft.VisualBasic.Logging
+  |FileLogTraceListener
+  |Close
+  |get_Name
+  |AssemblyName
+  |String
+  |Equals
+  |GetExecutingAssembly
+  |get_FullName
+  |Concat
+  |Stream
+  |GetManifestResourceStream
+  |get_Length
+  |Byte
+  |Read
+  |Load
+  |<k17_one>o__SiteContainer0
+  |System.Core
+  |CallSite`1
+  |Action`3
+  |CallSite
+  |System.Collections
+  |ArrayList
+  |<>p__Site1
+  |Action`7
+  |<>p__Site2
+  |Type
+  |Missing
+  |Int32
+  |Range
+  |Microsoft.Office.Interop.Excel
+  |RuntimeTypeHandle
+  |GetTypeFromHandle
+  |Microsoft.CSharp
+  |Microsoft.CSharp.RuntimeBinder
+  |CSharpArgumentInfo
+  |CSharpArgumentInfoFlags
+  |Create
+  |Binder
+  |CallSiteBinder
+  |CSharpBinderFlags
+  |System.Collections.Generic
+  |IEnumerable`1
+  |InvokeMember
+  |Target
+  |get_Value
+  |Invoke
+  |Add
+  |IsNullOrEmpty
+  |op_Inequality
+  |MWHttpClient
+  |MWHttpClientConfig
+  |Uri
+  |CreateProxy
+  |ToArray
+  |ToString
+  |get_Message
+  |MATLABException
+  |get_MATLABStackTraceString
+  |get_MATLABIdentifier
+  |System.Net
+  |WebException
+  |WebExceptionStatus
+  |get_Status
+  |WebResponse
+  |get_Response
+  |HttpWebResponse
+  |HttpStatusCode
+  |get_StatusCode
+  |get_StatusDescription
+  |get_InnerException
+  |Contains
+  |get_FullLogFileName
+  |Flush
+  |TargetInvocationException
+  |InvalidOperationException
+  |GetValue
+  |OpenSubKey
+  |Environment
+  |get_Is64BitOperatingSystem
+  |RegistryView
+  |OpenBaseKey
+  |LocalMachine
+  |GetValueNames
+  |EndsWith
+  |IndexOf
+  |Remove
+  |StartsWith
+  |Insert
+  |op_Equality
+  |get_Count
+  |set_CustomLocation
+  |set_AutoFlush
+  |set_Delimiter
+  |LogFileLocation
+  |set_Location
+  |TraceOptions
+  |set_TraceOutputOptions
+  |LogFileCreationScheduleOption
+  |set_LogFileCreationSchedule
+  |set_BaseFileName
+  |DiskSpaceExhaustedOption
+  |set_DiskSpaceExhaustedBehavior
+  |Trace
+  |EventTypeFilter
+  |TraceFilter
+  |set_Filter
+  |CompilerGeneratedAttribute
+  |DllImportAttribute
+  |advapi32.dll
+  |Delegate
+  |Combine
+  |Interlocked
+  |CompareExchange
+  |ErrorEventArgs
+  |ArgumentNullException
+  |GC
+  |SuppressFinalize
+  |Monitor
+  |Enter
+  |Exit
+  |System.ComponentModel
+  |InvalidEnumArgumentException
+  |Char
+  |Split
+  |<PrivateImplementationDetails>{<UUID>}
+  |Dictionary`2
+  |$$method0x6000027-1
+  |TryGetValue
+  |IntPtr
+  |Zero
+  |ArgumentException
+  |Join
+  |ObjectDisposedException
+  |EventWaitHandle
+  |Reset
+  |ThreadStart
+  |set_IsBackground
+  |Set
+  |Win32Exception
+  |AutoResetEvent
+  |WaitHandle
+  |Microsoft.Win32.SafeHandles
+  |SafeWaitHandle
+  |get_SafeWaitHandle
+  |SafeHandle
+  |DangerousGetHandle
+  |WaitAny
+  |WaitOne
+  |FlagsAttribute
+  |IEnumerable
+  |_VtblGap1_173
+  |DispIdAttribute
+  |RangeValueDataType
+  |set_Value
+  |DefaultMemberAttribute
+  |TypeIdentifierAttribute
+  |ComImportAttribute
+  |InterfaceTypeAttribute
+  |ComInterfaceType
+  |k17one.MathWorks.MATLAB.ProductionServer.Client.dll
+c.onefileall.k17one.reg.strings	ERR not a PE file
+c.onefileall.readme.txt.strings	ERR not a PE file

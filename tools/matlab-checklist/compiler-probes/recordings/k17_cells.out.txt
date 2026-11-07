@@ -1,0 +1,10 @@
+excel.version	16.0 build 20527 Windows (64-bit) NT 10.00
+excel.visible	False
+excel.automationsecurity	msoAutomationSecurityLow
+bas.exists	True
+security.AccessVBOM	absent (programmatic access to the VBA project is not trusted)
+vbe.access	VBE ok, projects 0
+vbproject.access	VBProject is Nothing: Excel does not trust programmatic access to the VBA project object model
+bas.import	refused: VBProject is Nothing (AccessVBOM unset), so the .bas cannot be imported; the cells wait for the add-in workbook JGraph writes (K17e)
+bas.imported	False
+seconds	0.8

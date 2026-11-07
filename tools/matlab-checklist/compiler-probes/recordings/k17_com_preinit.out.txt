@@ -1,0 +1,28 @@
+host.powershell	5.1.26100.9711
+host.clr	4.0.30319.42000
+host.is64	True
+util.create	ok
+util.IsMCRInitialized.before	False
+util.IsMCRJVMEnabled	False
+create	ok
+create.seconds	3.1
+util.IsMCRInitialized.after	True
+members	k17_args,k17_both,k17_count,k17_echo,k17_err,k17_h1,k17_make,k17_many,k17_none,k17_noout,k17_one,k17_opt,k17_pass,k17_plot,k17_quiet,k17_two,k17_varin,k17_varout,MWFlags
+preinit.quiet	ok
+preinit.none	ok
+preinit.help	string 'K17_ONE Doubles its one input (compiler and SDK plan, stage K17).'
+preinit.flags	InputArrayFormat=1 InputArrayIndFlag=0 OutputArrayFormat=0 OutputArrayIndFlag=0 AutoResizeOutput=True TransposeOutput=False CoerceNumericToType=0 InputDateFormat=0 OutputAsDate=False DateBias=693960 ReplaceMissing=0 ReplaceMatlabNaN=0
+preinit.call	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[] type=COMException
+preinit.call.direct	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[] type=COMException
+preinit.init.dictionary	ERR 0x80004005 src=[System.Management.Automation] msg=[Error HRESULT E_FAIL has been returned from a call to a COM component.] type=COMException
+preinit.call.after.dictionary	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[] type=COMException
+preinit.init.excel	ok
+preinit.call.after.excel	double 4
+preinit.call.after.excel.direct	double 4
+preinit.fresh.after.excel	double 4
+preinit.noout.after.excel	ok
+preinit.terminate	ok
+preinit.excel.quit	ok
+preinit.next	preinit.crash.nargoutneg: k17_two with nargout -1; the process ends here if it crashes
+
+STDERR	Process is terminated due to StackOverflowException.

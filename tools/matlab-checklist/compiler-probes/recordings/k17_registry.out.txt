@@ -1,0 +1,67 @@
+registry.added.before.cleanup	0
+regsvr32.register	k17xl_1_0.dll exit 5
+mwregsvr.useronly	k17xl_1_0.dll exit 0 DllRegisterServer in <W>\p\b\plain\k17xl_1_0.dll succeeded
+regsvr32.registered.k17xl.K17Xl
+  |HKEY_CURRENT_USER\Software\Classes\k17xl.K17Xl
+  |    (Default)    REG_SZ    K17Xl
+  |HKEY_CURRENT_USER\Software\Classes\k17xl.K17Xl\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17xl.K17Xl\CurVer
+  |    (Default)    REG_SZ    k17xl.K17Xl.1_0
+regsvr32.registered.k17xl.K17Xl.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17xl.K17Xl.1_0
+  |    (Default)    REG_SZ    K17Xl
+  |HKEY_CURRENT_USER\Software\Classes\k17xl.K17Xl.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+regsvr32.registered.CLSID
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17Xl
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\plain\k17xl_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17xl.K17Xl.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17xl.K17Xl
+regsvr32.unregister	k17xl_1_0.dll exit 0
+regsvr32.after.k17xl.K17Xl	gone
+regsvr32.after.k17xl.K17Xl.1_0	gone
+regsvr32.after.{<UUID>}	gone
+unregister	b\additional\k17add_1_0.dll	exit 0
+unregister	b\bas\k17bas_1_0.dll	exit 0
+unregister	b\classname\k17cls_1_0.dll	exit 0
+unregister	b\debug\k17dbg_1_0.dll	exit 0
+unregister	b\defaults\k17_one_1_0.dll	exit 0
+unregister	b\noembed\k17sep_1_0.dll	exit 0
+unregister	b\pfile\k17p_1_0.dll	exit 0
+unregister	b\plain\k17xl_1_0.dll	exit 0
+unregister	b\plain2\k17xl_1_0.dll	exit 0
+unregister	b\ra\k17ra_1_0.dll	exit 0
+unregister	b\v05\k17v05_1_0.dll	exit 0
+unregister	b\v2\k17v2_2_0.dll	exit 0
+unregister	b\v3456\k17v3456_3_4.dll	exit 0
+unregister	b\vzero\k17vz_1_0.dll	exit 0
+unregister	m\mcc_bundle\k17mb_1_0.dll	exit 0
+unregister	m\mcc_debug\k17md_1_0.dll	exit 0
+unregister	m\mcc_default\k17m_1_0.dll	exit 0
+unregister	m\mcc_noclass\k17mnc_1_0.dll	exit 0
+unregister	m\mcc_notarget\k17mnt_1_0.dll	exit 0
+unregister	m\mcc_noversion\k17mnv_1_0.dll	exit 0
+unregister	m\mcc_samefiles\k17m_1_0.dll	exit 0
+unregister	m\mcc_sameorder\k17m_1_0.dll	exit 0
+unregister	m\mcc_samev2\k17m_2_0.dll	exit 0
+unregister	m\mcc_script\k17msc_1_0.dll	exit 0
+unregister	m\mcc_separate\k17ms_1_0.dll	exit 0
+unregister	m\mcc_twofiles\k17mtwo_1_0.dll	exit 0
+unregister	m\mcc_version2\k17mv2_2_0.dll	exit 0
+unregister	src\k17ownexcelAddIn\k17own_1_0.dll	exit 0
+leftover.removed	0 keys of this stage's that unregistration left
+excel.processes	1, 0 invisible ones of this run's ended
+registry.added	0
+registry.removed	0
