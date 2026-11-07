@@ -41,6 +41,15 @@ internal static partial class JgsBuiltins
     private readonly record struct SetSide(
         JgsValue Source, JgsValue[][] Keys, JgsValue[] Elements, bool Cells, int Columns);
 
+    /// <summary>
+    /// A character vector beside a cell of character vectors counts as a cell of one, as R2025b
+    /// takes it (measured 2026-11-07: <c>setdiff({}, 'CLSID')</c> is a 0-by-1 cell,
+    /// <c>setdiff({'x', 'CLSID'}, 'CLSID')</c> is <c>{'x'}</c>, <c>ismember({'x', 'CLSID'}, 'CLSID')</c>
+    /// <c>[false true]</c>); anything else is taken as it is.
+    /// </summary>
+    private static JgsValue CharBesideCell(JgsValue value, JgsValue other) =>
+        value.Type == JgsType.String && !value.IsCharMatrix && other.Type == JgsType.Cell ? JgsValue.Cell([value]) : value;
+
     private static SetSide SideOf(string name, JgsValue value, bool rows, int line, int col)
     {
         if (rows)
@@ -147,8 +156,8 @@ internal static partial class JgsBuiltins
 
         bool stable = parsed.OneOf("sorted", "sorted", "stable") == "stable";
         bool rows = parsed.Has("rows");
-        SetSide left = SideOf(name, parsed.Positional[0], rows, line, col);
-        SetSide right = SideOf(name, parsed.Positional[1], rows, line, col);
+        SetSide left = SideOf(name, CharBesideCell(parsed.Positional[0], parsed.Positional[1]), rows, line, col);
+        SetSide right = SideOf(name, CharBesideCell(parsed.Positional[1], parsed.Positional[0]), rows, line, col);
 
         if (left.Cells != right.Cells)
         {
@@ -205,7 +214,7 @@ internal static partial class JgsBuiltins
 
         JgsValue values = rows
             ? RowsOfPicks(name, picks, left.Columns, line, col)
-            : ElementsOfPicks(picks, left, right);
+            : ElementsOfPicks(name, picks, left, right);
 
         var fromLeft = new List<int>();
         var fromRight = new List<int>();
@@ -248,11 +257,14 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
-    /// The picked values as an array or a cell. MATLAB hands back a row only when both sets were
-    /// rows, and a column otherwise — which is why the answer's shape depends on both inputs rather
-    /// than on the one a value happened to come from.
+    /// The picked values as an array or a cell, shaped as R2025b shapes them (measured 2026-11-07):
+    /// <c>setdiff</c>'s answer is a row when A is a row vector (1-by-n, 1-by-0 included, 0-by-0 not)
+    /// and a column otherwise; <c>union</c>, <c>intersect</c> and <c>setxor</c>'s a row only when
+    /// both sets are row vectors. A cell follows the same rule (<c>union({'b', 'a'}, {'c'})</c> is
+    /// 1-by-3, <c>setdiff({}, 'CLSID')</c> 0-by-1), so the shape depends on the inputs rather than
+    /// on the side a value happened to come from.
     /// </summary>
-    private static JgsValue ElementsOfPicks(List<SetPick> picks, SetSide left, SetSide right)
+    private static JgsValue ElementsOfPicks(string name, List<SetPick> picks, SetSide left, SetSide right)
     {
         var chosen = new JgsValue[picks.Count];
         for (int i = 0; i < picks.Count; i++)
@@ -261,10 +273,12 @@ internal static partial class JgsBuiltins
         }
 
         JgsValue values = left.Cells ? JgsValue.Cell(chosen) : JgsValue.Array(chosen);
-        bool bothRows = !left.Cells
-            && JgsMatrix.RowCount(left.Source) <= 1
-            && JgsMatrix.RowCount(right.Source) <= 1;
-        if (chosen.Length > 1 && !bothRows)
+        bool row = IsRowVector(left.Source) && (name == "setdiff" || IsRowVector(right.Source));
+        if (row)
+        {
+            values.Reshape(1, chosen.Length);
+        }
+        else
         {
             values.Reshape(chosen.Length, 1);
         }
@@ -299,8 +313,8 @@ internal static partial class JgsBuiltins
             return [Ismember(parsed.Positional[0], parsed.Positional[1], line, col)];
         }
 
-        SetSide subject = SideOf("ismember", parsed.Positional[0], rows, line, col);
-        SetSide set = SideOf("ismember", parsed.Positional[1], rows, line, col);
+        SetSide subject = SideOf("ismember", CharBesideCell(parsed.Positional[0], parsed.Positional[1]), rows, line, col);
+        SetSide set = SideOf("ismember", CharBesideCell(parsed.Positional[1], parsed.Positional[0]), rows, line, col);
         if (rows && subject.Columns != set.Columns)
         {
             throw new JgsRuntimeException(line, col,

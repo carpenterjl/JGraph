@@ -23,6 +23,7 @@ internal static partial class JgsBuiltins
         "compiler.build.cSharedLibrary", "compiler.build.CSharedLibraryOptions", "compiler.build.cppSharedLibrary",
         "compiler.build.CppSharedLibraryOptions", "compiler.build.pythonPackage", "compiler.build.PythonPackageOptions",
         "compiler.build.productionServerArchive", "compiler.build.ProductionServerArchiveOptions",
+        "compiler.build.excelAddIn", "compiler.build.ExcelAddInOptions",
         "mps.json.encode", "mps.json.decode", "mps.json.encoderequest", "mps.json.decoderesponse",
         "compiler.package.installer", "compiler.package.InstallerOptions", "compiler.runtime.customInstaller",
         "compiler.runtime.download", "compiler.runtime.version", "mcrinstaller",
@@ -412,6 +413,11 @@ internal static partial class JgsBuiltins
         if (command.Target == MccTarget.CLibrary)
         {
             return CLibraryBuild(command, exported, main, report, folder, here, words, line, col, host);
+        }
+
+        if (command.Target == MccTarget.ExcelAddIn)
+        {
+            return ExcelAddInBuild(command, exported, main, report, folder, here, words, line, col, host);
         }
 
         CtfBuild build = CtfLayout.FromReport(component, main, report, rootFolder: here) with

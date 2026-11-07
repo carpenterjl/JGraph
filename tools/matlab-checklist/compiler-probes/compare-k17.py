@@ -24,6 +24,26 @@ KNOWN = {
     "excel": [
         (r"^.*\.seconds$", "a timing"),
         (r"^(matlab\.version|compiler\.version|mbuild\.cpp)$", "the engine's own version; JGraph's build needs no C++ compiler (KO9)"),
+        # Stage K17b (ADR 0315): the options, mcc -W excel and the output folder; the DLL is K17c's, the .bas K17e's, the client K17f's.
+        (r"^derived\.saveload$", "an options object is not saved to a MAT-file: its on/off properties are .NET values (open item 215)"),
+        (r"^set\.SupportPackages\.\d+$", "JGraph has no support packages, so a list of them is refused in JGraph's own words (stage K6; ADR 0315)"),
+        (r"^set\.AdditionalFiles\.4$", "AdditionalFiles set to '' is kept as {} where R2025b keeps the '' itself (ADR 0315)"),
+        (r"^opts\.superclasses$", "JGraph's options classes declare no superclasses; DependencyOptions and AllOptions are R2025b's own (ADR 0315)"),
+        (r"^opts\.(default|properties)$|^.*\.(results|Options|RuntimeDependencies)$|^set\.(FunctionFiles|AdditionalFiles)\.\d+$",
+         "an object's or a cell column's display is JGraph's own layout, not R2025b's aligned one (open item 194), and JGraph's runtime is one install, listed alone where R2025b lists its add-ons (ADR 0267)"),
+        (r"^.*\.file\.(readme\.txt|GettingStarted\.html)$", "readme.txt and GettingStarted.html are in JGraph's words, for the JGraph Runtime (ADR 0315)"),
+        (r"^.*\.file\.(buildresult\.json|requiredMCRProducts\.txt)$", "JGraph's runtime is one install (35010), listed alone where R2025b lists its add-ons (ADR 0267)"),
+        (r"^.*\.file\..*\.(cpp|hpp|idl|def|rc)$|^.*\.file\.dlldata\.c$|^mcc_noversion\.idl$|^mcc_version2\.rc$",
+         "no C++ source, IDL, module definition or resource script is generated: the add-in's DLL is a prebuilt template stamped by the build, stage K17c (decision KO9; ADR 0315)"),
+        (r"^.*\.file\..*\.bas$|^mcc_twofiles\.bas$", "the .bas module is stage K17e's (ADR 0315)"),
+        (r"^.*\.registry\.|^guids\.", "the DLL, its registration and its GUIDs are stage K17c's (ADR 0315)"),
+        (r"^mcc_(compile|badname|badclass)(\..*)?$",
+         "R2025b's build fails in mbuild (-T compile:lib; a name that is not an identifier); JGraph refuses such a name before writing anything and takes -T compile:lib as -T codegen (ADR 0315)"),
+        (r"^mcc_\w+$|^.*\.(printed|warn)$",
+         "R2025b prints its per-user registration warning, mbuild's transcript and the .xla failure; JGraph's build prints the mcc line and the analysis and warns that the DLL is pending until K17c (ADR 0315)"),
+        (r"^.*\.(files|Files)$", "the DLL and mbuild's files are stage K17c's, the .bas stage K17e's, and the archive is beside the add-in until the DLL embeds it (ADR 0315)"),
+        (r"^(copts|cset|cbuild|popts|pset|pkg)\.|^(fromresults|fromfiles|cdefaults|nobas|cdebug|cv2|cv05|cvtext|blank|date|nan|numdate|blankdate|allswitches|onefileall|cpfile|mpsxl_\w+|built)(\..*)?$",
+         "the Excel client for the Production Server is stage K17f's; JGraph's probe run stops after the add-in sections until then (run-k17.ps1 -UpTo addin)"),
     ],
     "com_preinit": [
         (r"^(create\.)?seconds$", "a timing"),
@@ -53,7 +73,13 @@ KNOWN = {
 
 # Keys JGraph's run cannot have at all (R2025b-only artifacts of the probe), which count neither way.
 SKIPPED = {
-    "excel": [r"^license\.java$"],
+    "excel": [
+        r"^license\.java$",
+        # mbuild's MIDL transcript and a warning's second line, which R2025b printed outside any key for
+        # the two builds the probe runs outside its capture (nooutdir, ra); JGraph runs no mbuild (KO9).
+        r"^\w+\.(idl|acf|h) ?$",
+        r"^Applications that run with full administrative privileges cannot access the component\.$",
+    ],
     "com": [],
     "cells": [],
     "mps": [],
@@ -89,13 +115,25 @@ def read(path):
 
 
 def canonical(value):
-    # MATLAB marks a warning's text as a link and follows it with '> In' stack lines that name the
-    # probe's frames and R2025b's files; JGraph prints the warning's text alone.
+    # A warning's printed text is not compared: R2025b prints it on standard output under whatever key
+    # ran last, as [Warning: ...] over one line or several with '> In' stack lines after it, and JGraph
+    # prints it on standard error, which the runner appends at the end. The warning each key raised is
+    # compared through its .warn row (lastwarn), the channel both engines share.
     out = []
+    skipping = False
     for l in value.replace("\x08", "").split("\n"):
-        if re.search(r"^\s*\|?\s*(\[> )?In |^\s*\|In |style=\"font-weight:bold\"", l):
+        if l.startswith("STDERR\t"):
             continue
-        l = re.sub(r"^(\s*\|?)\[Warning: (.*)\]\s*$", r"\1Warning: \2", l)
+        s = l.strip()
+        if re.match(r"^\|?\s*\[Warning:", s):
+            skipping = not re.search(r"\]\s*$", s)
+            continue
+        if skipping:
+            if re.search(r"\]\s*$", s):
+                skipping = False
+            continue
+        if re.search(r"^\s*\|?\s*(\[> )?In |^\s*\|In |style=\"font-weight:bold\"", l) or not s:
+            continue
         out.append(l)
     return "\n".join(out)
 

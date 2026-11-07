@@ -107,7 +107,7 @@ public sealed class CompilerAppsTests : IAsyncLifetime
         Assert.True(CompilerTargets.HasMainFile(CompilerTarget.StandaloneApplication));
         Assert.False(CompilerTargets.HasMainFile(CompilerTarget.PythonPackage));
         Assert.False(CompilerTargets.CanPackage(CompilerTarget.ProductionServerArchive));
-        Assert.False(CompilerTargets.IsBuilt(CompilerTarget.ExcelAddIn));
+        Assert.True(CompilerTargets.IsBuilt(CompilerTarget.ExcelAddIn)); // since stage K17b (ADR 0315)
         Assert.Equal("Fetch MATLAB Runtime from mathworks.com during application installation", CompilerTargets.RuntimeDeliveryText(RuntimeDeliveryChoice.Web));
     }
 

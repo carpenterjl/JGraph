@@ -40,6 +40,7 @@ internal static partial class JgsBuiltinClasses
         CppLibraryOptions => CppLibraryOptionsDeclaration(interpreter),
         PythonPackageOptions => PythonPackageOptionsDeclaration(interpreter),
         ProductionServerArchiveOptions => ProductionServerArchiveOptionsDeclaration(interpreter),
+        ExcelOptions => ExcelOptionsDeclaration(interpreter),
         InstallerOptions => InstallerOptionsDeclaration(interpreter),
         ToolboxOptions => ToolboxOptionsDeclaration(interpreter),
         TextComparison or MlappComparison => ComparisonDeclaration(name, interpreter),

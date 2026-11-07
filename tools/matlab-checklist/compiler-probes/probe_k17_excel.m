@@ -1,4 +1,4 @@
-function probe_k17_excel(work)
+function probe_k17_excel(work, upTo)
 %PROBE_K17_EXCEL Records R2025b's Excel builds (compiler and SDK plan, stage K17a): what
 %compiler.build.ExcelAddInOptions takes and refuses, what compiler.build.excelAddIn and mcc -W excel
 %write for the add-in over src\k17's functions (every argument shape, with and without the .bas,
@@ -8,7 +8,10 @@ function probe_k17_excel(work)
 %marshalling switch alone and together, and compiler.package.excelClientForProductionServer with
 %each option. Run under matlab -batch -noFigureWindows; nothing built is run here (record-k17.ps1
 %runs the add-in through src\k17client\k17com.ps1 and reads the installers). One key<TAB>value line
-%per question, a display or a file's text as indented lines under its key.
+%per question, a display or a file's text as indented lines under its key. A second argument
+%'addin' stops after the add-in sections (the options, the builds, mcc -W excel, the server archive
+%and the add-in beside it): run-k17.ps1 runs JGraph that far until stage K17f gives it the client.
+if nargin < 2, upTo = 'all'; end
 beep('off'); % the refusals below would each beep
 here = fileparts(mfilename('fullpath'));
 addpath(fullfile(here, 'src'));
@@ -31,9 +34,13 @@ pcode(fullfile(src, 'k17_pfun.m'), '-inplace');
 delete(fullfile(src, 'k17_pfun.m'));
 pfile = fullfile(src, 'k17_pfun.p');
 
-v = ver('compiler');
 fprintf('matlab.version\t%s\n', version);
-fprintf('compiler.version\t%s (%s)\n', v.Version, v.Release);
+try
+    v = ver('compiler');
+    fprintf('compiler.version\t%s (%s)\n', v.Version, v.Release);
+catch ME
+    fprintf('compiler.version\tERR %s | %s\n', ME.identifier, k0_flat(ME.message)); % JGraph has no ver (open item 245)
+end
 try
     cc = mex.getCompilerConfigurations('C++', 'Selected');
     fprintf('mbuild.cpp\t%s %s\n', cc(1).Name, cc(1).Version);
@@ -205,6 +212,7 @@ rArch = apiBuild('arch', @() compiler.build.productionServerArchive(files, 'Arch
 archive = fullfile(c, 'arch', 'k17arch.ctf');
 rAddin = compiler.build.excelAddIn(one, 'AddInName', 'k17ra', 'ClassName', 'K17Ra', 'OutputDir', fullfile(b, 'ra'));
 reg = regDelta('ra', reg);
+if strcmp(upTo, 'addin'), return, end
 
 show('copts.results', compiler.build.ExcelClientForProductionServerOptions(rArch));
 show('copts.files', compiler.build.ExcelClientForProductionServerOptions(one, archive));
@@ -590,7 +598,7 @@ end
 
 function names = subkeyNames(path)
 names = {};
-[status, out] = system(sprintf('reg query "HKCU\\%s" 2>nul', path));
+[status, out] = regQuery(sprintf('reg query "HKCU\\%s" 2>nul', path));
 if status ~= 0, return, end
 prefix = ['HKEY_CURRENT_USER\' path '\'];
 lines = splitlines(out);
@@ -631,9 +639,21 @@ for k = 1:numel(roots)
 end
 end
 
+function [status, out] = regQuery(command)
+% reg.exe's answer, or a failure where the engine runs no shell command (JGraph gives a script no
+% process execution, so under jgraph -batch every registry delta is empty; run-k17.ps1 reads the
+% registry around the whole run instead once stage K17c registers anything).
+try
+    [status, out] = system(command);
+catch
+    status = 1;
+    out = '';
+end
+end
+
 function dumpKey(path)
 % The key and everything under it, as reg query /s prints it.
-[status, out] = system(sprintf('reg query "HKCU\\%s" /s 2>nul', path));
+[status, out] = regQuery(sprintf('reg query "HKCU\\%s" /s 2>nul', path));
 if status ~= 0
     fprintf('  |+ %s (unreadable)\n', strrep(path, '\', '/'));
     return

@@ -1,0 +1,33 @@
+== excel: 1004 keys, 202 agree, 802 recorded divergences, 0 unexplained, 3 only in JGraph's
+  divergence (2): the engine's own version; JGraph's build needs no C++ compiler (KO9)
+    matlab.version, compiler.version
+  divergence (78): an object's or a cell column's display is JGraph's own layout, not R2025b's aligned one (open item 194), and JGraph's runtime is one install, listed alone where R2025b lists its add-ons (ADR 0267)
+    opts.default, opts.properties, set.FunctionFiles.2, set.AdditionalFiles.2, plain.results, plain.Options, plain.RuntimeDependencies, plain2.results, plain2.Options, plain2.RuntimeDependencies, bas.results, bas.Options ...
+  divergence (1): JGraph's options classes declare no superclasses; DependencyOptions and AllOptions are R2025b's own (ADR 0315)
+    opts.superclasses
+  divergence (1): AdditionalFiles set to '' is kept as {} where R2025b keeps the '' itself (ADR 0315)
+    set.AdditionalFiles.4
+  divergence (1): JGraph has no support packages, so a list of them is refused in JGraph's own words (stage K6; ADR 0315)
+    set.SupportPackages.3
+  divergence (1): an options object is not saved to a MAT-file: its on/off properties are .NET values (open item 215)
+    derived.saveload
+  divergence (93): R2025b prints its per-user registration warning, mbuild's transcript and the .xla failure; JGraph's build prints the mcc line and the analysis and warns that the DLL is pending until K17c (ADR 0315)
+    plain.printed, plain.warn, plain2.printed, plain2.warn, bas.printed, bas.warn, noembed.printed, noembed.warn, debug.printed, debug.warn, v2.printed, v2.warn ...
+  divergence (93): the DLL and mbuild's files are stage K17c's, the .bas stage K17e's, and the archive is beside the add-in until the DLL embeds it (ADR 0315)
+    plain.Files, plain.files, plain2.Files, plain2.files, bas.Files, bas.files, noembed.Files, noembed.files, debug.Files, debug.files, v2.Files, v2.files ...
+  divergence (71): a timing
+    plain.seconds, plain2.seconds, bas.seconds, noembed.seconds, debug.seconds, v2.seconds, v05.seconds, v3456.seconds, vtext.seconds, vzero.seconds, defaults.seconds, additional.seconds ...
+  divergence (39): readme.txt and GettingStarted.html are in JGraph's words, for the JGraph Runtime (ADR 0315)
+    plain.file.GettingStarted.html, plain.file.readme.txt, plain2.file.GettingStarted.html, plain2.file.readme.txt, bas.file.GettingStarted.html, bas.file.readme.txt, noembed.file.GettingStarted.html, noembed.file.readme.txt, debug.file.GettingStarted.html, debug.file.readme.txt, v2.file.GettingStarted.html, v2.file.readme.txt ...
+  divergence (85): no C++ source, IDL, module definition or resource script is generated: the add-in's DLL is a prebuilt template stamped by the build, stage K17c (decision KO9; ADR 0315)
+    plain.file.K17Xl_com.cpp, plain.file.K17Xl_com.hpp, plain.file.k17xl.def, plain.file.k17xl.rc, plain.file.k17xl_dll.cpp, plain.file.k17xl_idl.idl, plain2.file.K17Xl_com.cpp, plain2.file.K17Xl_com.hpp, plain2.file.k17xl.def, plain2.file.k17xl.rc, plain2.file.k17xl_dll.cpp, plain2.file.k17xl_idl.idl ...
+  divergence (38): JGraph's runtime is one install (35010), listed alone where R2025b lists its add-ons (ADR 0267)
+    plain.file.buildresult.json, plain.file.requiredMCRProducts.txt, plain2.file.buildresult.json, plain2.file.requiredMCRProducts.txt, bas.file.buildresult.json, bas.file.requiredMCRProducts.txt, noembed.file.buildresult.json, noembed.file.requiredMCRProducts.txt, debug.file.buildresult.json, debug.file.requiredMCRProducts.txt, v2.file.buildresult.json, v2.file.requiredMCRProducts.txt ...
+  divergence (97): the DLL, its registration and its GUIDs are stage K17c's (ADR 0315)
+    plain.registry.Software/Classes/CLSID, plain.registry.Software/Classes/TypeLib, plain.registry.Software/Classes/Interface, bas.registry.Software/Classes/CLSID, bas.registry.Software/Classes/TypeLib, bas.registry.Software/Classes/Interface, noembed.registry.Software/Classes/CLSID, noembed.registry.Software/Classes/TypeLib, noembed.registry.Software/Classes/Interface, debug.registry.Software/Classes/CLSID, debug.registry.Software/Classes/TypeLib, debug.registry.Software/Classes/Interface ...
+  divergence (18): the .bas module is stage K17e's (ADR 0315)
+    bas.file.k17bas.bas, noembed.file.k17sep.bas, v3456.file.k17v3456.bas, pfile.file.k17p.bas, mcc_default.file.k17m.bas, mcc_twofiles.bas, fromresults.file.k17mps.bas, fromfiles.file.k17mpsf.bas, cdefaults.file.k17_quiet.bas, nobas.file.k17cnb.bas, cdebug.file.k17cdbg.bas, cv2.file.k17cv2.bas ...
+  divergence (9): R2025b's build fails in mbuild (-T compile:lib; a name that is not an identifier); JGraph refuses such a name before writing anything and takes -T compile:lib as -T codegen (ADR 0315)
+    mcc_compile, mcc_compile.files, mcc_compile.warn, mcc_badname, mcc_badname.files, mcc_badname.warn, mcc_badclass, mcc_badclass.files, mcc_badclass.warn
+  divergence (175): the Excel client for the Production Server is stage K17f's; JGraph's probe run stops after the add-in sections until then (run-k17.ps1 -UpTo addin)
+    copts.properties, copts.class, copts.superclasses, copts.derived, copts.noargs, copts.onefile, copts.addinresults, copts.missingarchive, copts.txtarchive, copts.noext, copts.results.nv, copts.results.odd ...

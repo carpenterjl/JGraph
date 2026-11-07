@@ -82,6 +82,22 @@ internal static partial class JgsBuiltinClasses
     /// <summary>Where a name given for <c>ArchiveName</c> is kept (R2025b's UserProvidedArchiveName).</summary>
     public const string GivenArchiveName = "UserProvidedArchiveName";
 
+    /// <summary>The Excel add-in options class (stage K17b).</summary>
+    public const string ExcelOptions = "compiler.build.ExcelAddInOptions";
+
+    /// <summary>The Excel add-in options' public properties, in the order R2025b lists them (k17_excel: opts.properties).</summary>
+    public static readonly string[] ExcelOptionNames =
+    [
+        "AddInName", "ClassName", "AddInVersion", "DebugBuild", "EmbedArchive", "FunctionFiles", "GenerateVisualBasicFile", "AdditionalFiles",
+        "AutoDetectDataFiles", "ExternalEncryptionKey", "ObfuscateArchive", "SecretsManifest", "SupportPackages", "Verbose", "OutputDir",
+    ];
+
+    /// <summary>Where a name given for <c>AddInName</c> is kept (R2025b's UserProvidedAddInName).</summary>
+    public const string GivenAddInName = "UserProvidedAddInName";
+
+    /// <summary>Where a name given for <c>ClassName</c> is kept (R2025b's UserProvidedClassName).</summary>
+    public const string GivenClass = "UserProvidedClassName";
+
     /// <summary>The installer options class (stage K18).</summary>
     public const string InstallerOptions = "compiler.package.InstallerOptions";
 
@@ -443,6 +459,55 @@ internal static partial class JgsBuiltinClasses
         }
 
         return new ClassdefStmt(ProductionServerArchiveOptions, isHandle: false, properties, methods)
+        {
+            Dialect = JgsDialect.Matlab,
+            Superclasses = [],
+        };
+    }
+
+    /// <summary>
+    /// <c>compiler.build.ExcelAddInOptions</c> (stage K17b): R2025b's properties in its order, the
+    /// add-in's name, its class and the output folder dependent on what was given, each set checked
+    /// by <see cref="JgsBuiltins.SetExcelOption"/>, and its hidden <c>getName</c>.
+    /// </summary>
+    private static ClassdefStmt ExcelOptionsDeclaration(Interpreter interpreter)
+    {
+        var properties = new List<ClassProperty>();
+        var methods = new List<ClassMethod>();
+        foreach (string name in ExcelOptionNames)
+        {
+            bool derived = name is "AddInName" or "ClassName" or "OutputDir";
+            properties.Add(new ClassProperty(new ArgumentSpec(name, null, null, [], new PreEvaluated(JgsBuiltins.ExcelOptionDefault(name))),
+                Constant: false, Dependent: derived));
+            string captured = name;
+            methods.Add(Setter(name, (copy, value, line, col) => JgsBuiltins.SetExcelOption(interpreter, copy, captured, value, line, col)));
+            if (derived)
+            {
+                methods.Add(new ClassMethod(new FnStmt("get." + name, ["obj"], [], ["value"]) { Dialect = JgsDialect.Matlab }, Static: false)
+                {
+                    Native = new BuiltinFunction("get." + name, (args, line, col) => JgsBuiltins.ExcelOptionDerived(captured, args[0].AsObject)),
+                });
+            }
+        }
+
+        methods.Add(new ClassMethod(new FnStmt("getName", ["obj"], [], ["name"]) { Dialect = JgsDialect.Matlab }, Static: false)
+        {
+            Hidden = true,
+            Native = new BuiltinFunction("getName", (args, line, col) => JgsBuiltins.ExcelOptionDerived("AddInName", args[0].AsObject)),
+        });
+
+        var hidden = new MemberAccess(MemberAccessKind.Protected);
+        foreach (string field in new[] { GivenAddInName, GivenClass, GivenOutputDir })
+        {
+            properties.Add(new ClassProperty(new ArgumentSpec(field, null, null, [], new PreEvaluated(JgsValue.Str(""))), Constant: false)
+            {
+                GetAccess = hidden,
+                SetAccess = hidden,
+                Hidden = true,
+            });
+        }
+
+        return new ClassdefStmt(ExcelOptions, isHandle: false, properties, methods)
         {
             Dialect = JgsDialect.Matlab,
             Superclasses = [],

@@ -35,6 +35,9 @@ public enum MccTarget
 
     /// <summary>A Production Server archive: <c>-W CTF:</c> with <c>-U</c> (stage K14).</summary>
     ProductionServerArchive,
+
+    /// <summary>An Excel add-in: <c>-W excel:&lt;name&gt;,&lt;class&gt;[,version=v]</c> (stage K17).</summary>
+    ExcelAddIn,
 }
 
 /// <summary>Which interfaces <c>-W cpplib:name[,generic|legacy|all]</c> asks for (k12_build: mcc_*).</summary>
@@ -146,7 +149,7 @@ public sealed class MccCommandLine
         ["cpplib"] = ("a C++ shared library", "K12"),
         ["dotnet"] = ("a .NET assembly", "K8"),
         ["python"] = ("a Python package", "K13"),
-        ["excel"] = ("an Excel add-in", "K17"),
+        ["excel"] = ("an Excel add-in", "K17"), // built since stage K17b; the entry keeps the kind a valid -W option
         ["mpsxl"] = ("a Production Server archive for Excel", "K17"),
         ["java"] = ("Java packages", null),
         ["com"] = ("COM components", null),
@@ -292,6 +295,12 @@ public sealed class MccCommandLine
 
     /// <summary><c>-g</c> for a library: a debug build, with its symbols.</summary>
     public bool DebugBuild { get; private set; }
+
+    /// <summary>An Excel add-in's class, <c>-W excel:name,class</c>; the add-in's name when not given (stage K17).</summary>
+    public string? ExcelClassName { get; private set; }
+
+    /// <summary><c>-b</c>: an Excel add-in's Visual Basic module is asked for (stage K17).</summary>
+    public bool VisualBasicFile { get; private set; }
 
     /// <summary>Whether the build only prints something: help, the trace help or the warning table.</summary>
     public bool PrintsOnly => ShowHelp || ShowTraceHelp || Warnings.List;
@@ -488,7 +497,7 @@ public sealed class MccCommandLine
                     // A library's name is a component name, as -o's is: one after the other is refused,
                     // though a second -W lib: names the library again (k11_build: lib_o; k11_names: o_W, W_W;
                     // k12_build: mcc_o, mcc_twice; k13_build: mcc_o, mcc_ofirst).
-                    if (wrapperKind is "lib" or "cpplib" or "python")
+                    if (wrapperKind is "lib" or "cpplib" or "python" or "excel")
                     {
                         if (line.OutputName is { } named)
                         {
@@ -592,9 +601,14 @@ public sealed class MccCommandLine
                     }
 
                     break;
-                case "-b" or "-S" or "-u" or "-H" or "-P" or "-Y":
+                case "-b":
+                    // An Excel add-in's Visual Basic module (stage K17); a standalone build takes it and
+                    // does nothing with it, as R2025b's does (k7_switches: -b beside -m).
+                    line.VisualBasicFile = true;
+                    break;
+                case "-S" or "-u" or "-H" or "-P" or "-Y":
                     // A standalone build takes these and does nothing with them, as R2025b's does
-                    // (k7_switches: -b, -S, -u, -H, -P, -Y beside -m); -Y names a licence JGraph has no use for.
+                    // (k7_switches: -S, -u, -H, -P, -Y beside -m); -Y names a licence JGraph has no use for.
                     break;
                 case "-s" or "-k" or "-J":
                     throw new MccException("JGraph:mcc:optionNotBuilt",
@@ -640,7 +654,7 @@ public sealed class MccCommandLine
         }
 
         bool standalone = wrapperKind is "main" or "WinMain";
-        if (link is not null && link.Split(':').Contains(standalone ? "lib" : wrapperKind == "lib" ? "exe" : "\0"))
+        if (link is not null && link.Split(':').Contains(standalone ? "lib" : wrapperKind is "lib" or "excel" ? "exe" : "\0"))
         {
             throw Refuse("COM_ERR_WRAPPER_TARGET_MISMATCH",
                 "Error: The wrapper type specified with -W switch doesn't match with the target type specified with -T switch.");
@@ -713,6 +727,19 @@ public sealed class MccCommandLine
                 line.Target = MccTarget.PythonPackage;
                 link = null;
                 separateSwitch = false;
+            }
+        }
+        else if (wrapperKind == "excel")
+        {
+            // An add-in's -g is its debug build and -c its -T codegen, as a C library's (stage K17;
+            // k17_excel: mcc_debug, mcc_codegen); -b asks for the Visual Basic module.
+            line.Target = MccTarget.ExcelAddIn;
+            line.ComponentName = libraryName;
+            line.DebugBuild = line.IgnoredSwitches.Remove("g");
+            line.IgnoredSwitches.RemoveAll(static s => s == "g");
+            if (line.IgnoredSwitches.RemoveAll(static s => s == "c") > 0)
+            {
+                link = "codegen";
             }
         }
         else if (wrapperKind == "CTF")
@@ -979,7 +1006,32 @@ public sealed class MccCommandLine
                 break;
             }
 
-            case "com" or "CTF" or "excel" or "mpsxl":
+            case "excel":
+            {
+                // excel:name[,class[,version]] (stage K17; k17_excel: mcc_*): the class the name when not
+                // given; the third part the version, its "version=" dropped when it is the last part
+                // (mcc_default, mcc_bundle's bare 1.0) and read whole when more follow (mcc_extra: "version=1.0"
+                // is refused as a version); a dotted name R2025b's package refusal (mcc_dotted).
+                RequireName(name);
+                int dot = name.IndexOf('.', StringComparison.Ordinal);
+                if (dot >= 0)
+                {
+                    throw Refuse("COM_COM_EXCEL_NAMESPACE_ERROR", $"\"Package \"{name[..dot]}\" not supported for COM components and Excel addins\".");
+                }
+
+                ExcelClassName = parts.Length > 1 && parts[1].Length > 0 ? parts[1] : name;
+                if (parts.Length > 2)
+                {
+                    string text = parts.Length == 3 && parts[2].StartsWith("version=", StringComparison.Ordinal) ? parts[2]["version=".Length..] : parts[2];
+                    Version = ProgramVersion.Parse(text) ?? throw Refuse("COM_ERR_INVALID_VERSION", ProgramVersion.Refusal(text));
+                }
+
+                Target = MccTarget.ExcelAddIn;
+                ComponentName = name;
+                break;
+            }
+
+            case "com" or "CTF" or "mpsxl":
                 RequireName(name);
                 break;
         }
@@ -1221,9 +1273,12 @@ public sealed class MccCommandLine
         + "  A Python package, which a Python program imports to call the functions in it\n"
         + "  mcc -W python:<package> <file.m> [moreFiles...]\n"
         + "  A dotted name nests the package in its parts' folders.\n\n"
-        + "JGraph does not build these yet\n"
-        + "  Production Server archive    mcc -W CTF:<archive> -U <file.m>\n"
-        + "  Excel add-in                 mcc -W 'excel:<addin>,<class>' -b <file.m>\n\n"
+        + "  A Production Server archive, for jgraph-mps\n"
+        + "  mcc -W CTF:<archive> -U <file.m> [moreFiles...]\n\n"
+        + "  An Excel add-in, a COM component Excel's VBA calls\n"
+        + "  mcc -W 'excel:<addin>,<class>[,version=<v>]' -b <file.m> [moreFiles...]\n"
+        + "  -b writes the Visual Basic module, -C the archive beside the DLL, -g a debug build, and -T codegen\n"
+        + "  the archive and the texts alone.\n\n"
         + "From a Windows command prompt, run jgmcc (or jgraph mcc) and use double quotes where these use single.\n";
 
     /// <summary><c>mcc -/?</c>: the trace switches, in JGraph's words.</summary>

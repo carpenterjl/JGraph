@@ -21,6 +21,9 @@ public enum CtfTargetType
     /// <summary><c>-W lib</c>: a C shared library.</summary>
     CSharedLibrary = 3,
 
+    /// <summary><c>-W excel</c>: an Excel add-in (k17_excel: the separate archive's manifest).</summary>
+    ExcelAddIn = 5,
+
     /// <summary><c>-W dotnet</c>: a .NET assembly, either API.</summary>
     DotNetAssembly = 7,
 

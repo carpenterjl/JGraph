@@ -78,16 +78,36 @@ public class MatlabSetOperationTests : IDisposable
         assert(isequal(union([1 2; 3 4], [1 2], 'rows'), [1 2; 3 4]));
         assert(isequal(intersect([1 2; 3 4], [3 4; 9 9], 'rows'), [3 4]));
         assert(isequal(setdiff([1 2; 3 4], [1 2], 'rows'), [3 4]));
-        % A cell of text is a set like any other, and answers as a column the way unique does.
+        % A cell of text is a set like any other, shaped as an array's answer is: a row when both sets are
+        % row vectors (R2025b, measured 2026-11-07 by the compiler plan's stage K17b: union({'b', 'a'}, {'c'})
+        % is 1-by-3, union({}, {'a', 'b'}) 2-by-1, setdiff({'a', 'b'}, {}) 1-by-2).
         u = union({'b', 'a'}, {'c'});
-        assert(isequal(size(u), [3 1]));
+        assert(isequal(size(u), [1 3]));
         assert(strcmp(u{1}, 'a') && strcmp(u{3}, 'c'));
+        assert(isequal(size(union({}, {'a', 'b'})), [2 1]));
+        assert(isequal(size(setdiff({'a', 'b'}, {})), [1 2]));
+        % A character vector beside a cell of character vectors is one element (measured the same day:
+        % setdiff({}, 'CLSID') is a 0-by-1 cell, a 0-by-0 never being a row vector).
+        assert(isequal(size(setdiff({}, 'CLSID')), [0 1]));
+        assert(isequal(setdiff({'x', 'CLSID'}, 'CLSID'), {'x'}));
+        assert(isempty(setdiff('CLSID', {'x', 'CLSID'})));
+        assert(isequal(intersect({'x', 'CLSID'}, 'CLSID'), {'CLSID'}));
+        [tf, loc] = ismember({'x', 'CLSID'}, 'CLSID');
+        assert(isequal(tf, [false true]) && isequal(loc, [0 1]));
         """);
 
     [Fact]
     public Task ASetOperationAnswersARowOnlyWhenBothSetsWereRows() => RunAsserting("""
         assert(isequal(size(union([1 2], [2 3])), [1 3]));
         assert(isequal(size(union([1; 2], [2 3])), [3 1]));
+        % A 0-by-0 empty is not a row vector, and setdiff's shape follows A alone (R2025b, measured 2026-11-07:
+        % setdiff([], 1) is 0-by-1, union([], [1 2]) and union([1 2], []) 2-by-1, setdiff([1 2], []) 1-by-2,
+        % setdiff(zeros(1, 0), 1) 1-by-0).
+        assert(isequal(size(setdiff([], 1)), [0 1]));
+        assert(isequal(size(union([], [1 2])), [2 1]));
+        assert(isequal(size(union([1 2], [])), [2 1]));
+        assert(isequal(size(setdiff([1 2], [])), [1 2]));
+        assert(isequal(size(setdiff(zeros(1, 0), 1)), [1 0]));
         % A missing reading is in nothing, itself included, so it never survives an intersection.
         assert(isequal(intersect([1 NaN], [NaN 1]), 1));
         assert(numel(union([NaN NaN], [])) == 2);

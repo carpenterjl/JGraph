@@ -115,8 +115,8 @@ public static class CompilerTargets
     /// <summary>Whether the target's build can be packaged into an installer (an archive cannot: "Current target does not support package step").</summary>
     public static bool CanPackage(CompilerTarget target) => target != CompilerTarget.ProductionServerArchive;
 
-    /// <summary>Whether JGraph's compiler builds the target now (the Excel add-in waits for stage K17).</summary>
-    public static bool IsBuilt(CompilerTarget target) => target != CompilerTarget.ExcelAddIn;
+    /// <summary>Whether JGraph's compiler builds the target: every one since stage K17b (the Excel add-in's DLL itself comes with K17c).</summary>
+    public static bool IsBuilt(CompilerTarget target) => Enum.IsDefined(target);
 
     /// <summary>The window's info section: "Application Info" and its siblings.</summary>
     public static string InfoTitle(CompilerTarget target) => target switch

@@ -1,0 +1,2256 @@
+matlab.version	0.2.3 (JGraph)
+compiler.version	ERR MATLAB:UndefinedFunction | Undefined function 'ver' for input arguments of type 'char'.
+mbuild.cpp	Microsoft Visual C++ 2022 17.0
+opts.default
+  ExcelAddInOptions with properties:
+      AddInName: 'k17_quiet'
+      ClassName: 'k17_quietClass'
+      AddInVersion: '1.0.0.0'
+      DebugBuild: off
+      EmbedArchive: on
+      FunctionFiles: {18x1 cell}
+      GenerateVisualBasicFile: off
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0x0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '.\k17_quietexcelAddIn'
+opts.derived.AddInName	k17_one
+opts.derived.ClassName	k17_oneClass
+opts.derived.OutputDir	.\k17_oneexcelAddIn
+opts.properties
+  {'AddInName', 'ClassName', 'AddInVersion', 'DebugBuild', 'EmbedArchive', 'FunctionFiles', 'GenerateVisualBasicFile', 'AdditionalFiles', 'AutoDetectDataFiles', 'ExternalEncryptionKey', 'ObfuscateArchive', 'SecretsManifest', 'SupportPackages', 'Verbose', 'OutputDir'}
+opts.class	compiler.build.ExcelAddInOptions
+opts.superclasses	
+opts.noargs	ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+opts.odd	ERR MATLAB:InputParser:ParamMissingValue | No value was given for 'AddInName'. Name-value pair arguments require a name followed by a value.
+opts.unknown	ERR MATLAB:InputParser:UnmatchedParameter | 'Bogus' is not a recognized parameter. For a list of valid name-value pair arguments, see the documentation for this function.
+opts.missing	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / <W>\p\src\nosuch.m
+opts.txt	ERR Compiler:clishared:badExtension | Expected 'FunctionFiles' to have one of the following extensions: /  / .mexw64 / .mlapp / .mlx / .p / .m
+opts.pfile	char [1 69] 'cell{'<W>\p\src\k17_pfun.p'}'
+opts.pfile.warn	Compiler:build:shared:cannotAnalyzePFiles | P-files cannot be analyzed for dependent files. Manually add dependent files for: /  / <W>\p\src\k17_pfun.p / 
+opts.string	char [1 6] ''k17s''
+opts.case	char [1 6] ''k17c''
+opts.twice	char [1 8] ''second''
+opts.toomany	ERR MATLAB:narginchk:tooManyInputs | Too many input arguments.
+opts.folder	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / <W>\p\src
+opts.cellmixed	char [1 132] 'cell{'<W>\p\src\k17_one.m','<W>\p\src\k17_pfun.p'}'
+opts.cellmixed.warn	Compiler:build:shared:cannotAnalyzePFiles | P-files cannot be analyzed for dependent files. Manually add dependent files for: /  / <W>\p\src\k17_pfun.p / 
+set.AddInName.1	char [1 8] 'My Addin'
+set.AddInName.2	char [1 4] '1abc'
+set.AddInName.3	char [1 3] 'a-b'
+set.AddInName.4	char [1 3] 'a.b'
+set.AddInName.5	char [1 5] 'class'
+set.AddInName.6	char [1 3] 'end'
+set.AddInName.7	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.AddInName.8	ERR MATLAB:invalidType | Expected AddInName to be one of these types: /  / char, string /  / Instead its type was double.
+set.AddInName.9	char [1 6] 'k17str'
+set.AddInName.10	char [1 6] 'k17_ok'
+set.AddInName.11	char [1 8] 'K17UPPER'
+set.AddInName.12	char [1 3] 'a b'
+set.AddInName.13	ERR Compiler:clishared:noWhiteSpaceInProperty | 'AddInName' cannot contain any white space characters.
+set.AddInName.14	char [1 2] 'x_'
+set.ClassName.1	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.ClassName.2	char [1 3] 'a b'
+set.ClassName.3	ERR MATLAB:invalidType | Expected ClassName to be one of these types: /  / char, string /  / Instead its type was double.
+set.ClassName.4	char [1 6] 'K17Str'
+set.ClassName.5	char [1 5] 'K17Ok'
+set.ClassName.6	char [1 4] '1abc'
+set.ClassName.7	char [1 3] 'a.b'
+set.ClassName.8	char [1 5] 'class'
+set.AddInVersion.1	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.AddInVersion.2	ERR MATLAB:invalidType | Expected AddInVersion to be one of these types: /  / char, string /  / Instead its type was double.
+set.AddInVersion.3	char [1 3] '2.0'
+set.AddInVersion.4	char [1 3] 'abc'
+set.AddInVersion.5	char [1 9] '1.2.3.4.5'
+set.AddInVersion.6	char [1 7] '1.0.0.0'
+set.AddInVersion.7	char [1 1] '0'
+set.AddInVersion.8	char [1 2] '-1'
+set.AddInVersion.9	char [1 3] '1,2'
+set.AddInVersion.10	char [1 4] ' 1.0'
+set.AddInVersion.11	char [1 5] '70000'
+set.AddInVersion.12	char [1 7] '1.2.3.4'
+set.AddInVersion.13	char [1 1] '2'
+set.DebugBuild.1	char [1 2] 'on'
+set.DebugBuild.2	char [1 3] 'off'
+set.DebugBuild.3	char [1 2] 'on'
+set.DebugBuild.4	char [1 3] 'off'
+set.DebugBuild.5	ERR MATLAB:validation:UnableToConvert | Error setting property 'DebugBuild' of class 'compiler.build.ExcelAddInOptions'. 'maybe' is invalid. Value must be 'off' or 'on'.
+set.DebugBuild.6	char [1 2] 'on'
+set.DebugBuild.7	char [1 2] 'on'
+set.EmbedArchive.1	char [1 2] 'on'
+set.EmbedArchive.2	char [1 3] 'off'
+set.EmbedArchive.3	char [1 3] 'off'
+set.EmbedArchive.4	char [1 2] 'on'
+set.EmbedArchive.5	ERR MATLAB:validation:UnableToConvert | Error setting property 'EmbedArchive' of class 'compiler.build.ExcelAddInOptions'. 'x' is invalid. Value must be 'off' or 'on'.
+set.GenerateVisualBasicFile.1	char [1 2] 'on'
+set.GenerateVisualBasicFile.2	char [1 3] 'off'
+set.GenerateVisualBasicFile.3	char [1 2] 'on'
+set.GenerateVisualBasicFile.4	char [1 3] 'off'
+set.GenerateVisualBasicFile.5	ERR MATLAB:validation:UnableToConvert | Error setting property 'GenerateVisualBasicFile' of class 'compiler.build.ExcelAddInOptions'. 'x' is invalid. Value must be 'off' or 'on'.
+set.FunctionFiles.1	char [1 64] '{'<W>\p\src\k17_one.m'}'
+set.FunctionFiles.2	char [1 129] '{'<W>\p\src\k17_one.m', '<W>\p\src\k17_many.m'}'
+set.FunctionFiles.3	char [1 64] '{'<W>\p\src\k17_one.m'}'
+set.FunctionFiles.4	ERR MATLAB:expectedNonempty | Expected FunctionFiles to be nonempty.
+set.FunctionFiles.5	ERR MATLAB:expectedNonempty | Expected FunctionFiles to be nonempty.
+set.FunctionFiles.6	char [1 65] '{'<W>\p\src\k17_pfun.p'}'
+set.FunctionFiles.6.warn	Compiler:build:shared:cannotAnalyzePFiles | P-files cannot be analyzed for dependent files. Manually add dependent files for: /  / <W>\p\src\k17_pfun.p / 
+set.FunctionFiles.7	ERR Compiler:clishared:badExtension | Expected 'FunctionFiles' to have one of the following extensions: /  / .mexw64 / .mlapp / .mlx / .p / .m
+set.FunctionFiles.8	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / <W>\p\src\nosuch.m
+set.FunctionFiles.9	ERR MATLAB:invalidType | Expected FunctionFiles to be one of these types: /  / char, string, cell /  / Instead its type was double.
+set.OutputDir.1	char [1 48] '<W>\p\o'
+set.OutputDir.2	char [1 54] '<W>\p\src\rel'
+set.OutputDir.3	ERR MATLAB:validators:mustBeNonzeroLengthText | Value must be text with one or more characters.
+set.OutputDir.4	ERR MATLAB:invalidType | Expected OutputDir to be one of these types: /  / char, string /  / Instead its type was double.
+set.Verbose.1	char [1 2] 'on'
+set.Verbose.2	char [1 2] 'on'
+set.Verbose.3	ERR MATLAB:validation:UnableToConvert | Error setting property 'Verbose' of class 'compiler.internal.build.AllOptions'. 'x' is invalid. Value must be 'off' or 'on'.
+set.AdditionalFiles.1	char [1 66] '{'<W>\p\src\k17data.txt'}'
+set.AdditionalFiles.2	char [1 120] '{'<W>\p\src\k17data.txt', '<W>\p\src'}'
+set.AdditionalFiles.3	ERR Compiler:utils:shared:cannotFindFileOrFolder | Cannot find file or folder: /  / nosuch.txt
+set.AdditionalFiles.4	char [1 2] '{}'
+set.AutoDetectDataFiles.1	char [1 3] 'off'
+set.AutoDetectDataFiles.2	char [1 2] 'on'
+set.AutoDetectDataFiles.3	ERR MATLAB:validation:UnableToConvert | Error setting property 'AutoDetectDataFiles' of class 'compiler.internal.build.DependencyOptions'. 'x' is invalid. Value must be 'off' or 'on'.
+set.SupportPackages.1	char [1 8] '{'none'}'
+set.SupportPackages.2	char [1 14] '{'autodetect'}'
+set.SupportPackages.3	ERR JGraph:compiler:noSupportPackages | JGraph has no support packages, so 'SupportPackages' is 'autodetect' or 'none'; 'a', 'b' cannot be included.
+set.SupportPackages.4	char [1 8] '{'none'}'
+set.ObfuscateArchive.1	char [1 2] 'on'
+set.ObfuscateArchive.2	ERR MATLAB:validation:UnableToConvert | Error setting property 'ObfuscateArchive' of class 'compiler.internal.build.DependencyOptions'. 'x' is invalid. Value must be 'off' or 'on'.
+set.SecretsManifest.1	char [0 0] ''
+set.SecretsManifest.2	ERR Compiler:utils:shared:cannotFindFile | Cannot find file: /  / nosuch.json
+derived.afterfiles	k17_many | k17_manyClass
+derived.userkept	kept | k17_twoClass
+derived.saveload	ERR  | save: 'o' is a matlab.lang.OnOffSwitchState, a .NET value, which a MAT-file cannot hold.
+build.noargs	ERR MATLAB:narginchk:notEnoughInputs | Not enough input arguments.
+build.optsplus	ERR MATLAB:narginchk:tooManyInputs | Too many input arguments.
+build.nargout	ERR MATLAB:TooManyOutputs | Too many output arguments.
+build.toomany	ERR MATLAB:narginchk:tooManyInputs | Too many input arguments.
+plain.printed
+  |mcc -W 'excel:k17xl,K17Xl,version=1.0.0.0' -T link:lib -d <W>\p\b\plain -v -Z autodetect <W>\p\src\k17_quiet.m <W>\p\src\k17_none.m <W>\p\src\k17_one.m <W>\p\src\k17_many.m <W>\p\src\k17_two.m <W>\p\src\k17_opt.m <W>\p\src\k17_varin.m <W>\p\src\k17_varout.m <W>\p\src\k17_both.m <W>\p\src\k17_args.m <W>\p\src\k17_noout.m <W>\p\src\k17_err.m <W>\p\src\k17_plot.m <W>\p\src\k17_h1.m <W>\p\src\k17_echo.m <W>\p\src\k17_pass.m <W>\p\src\k17_count.m <W>\p\src\k17_make.m
+  |Compiler version: JGraph 0.2.3 (R2025b)
+  |Analyzing file dependencies. 
+  |Parsing file "<W>\p\src\k17_quiet.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\p\src\k17_none.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\p\src\k17_one.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\p\src\k17_many.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\p\src\k17_two.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\p\src\k17_opt.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\p\src\k17_varin.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\p\src\k17_varout.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\p\src\k17_both.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\p\src\k17_args.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\p\src\k17_noout.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\p\src\k17_err.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\p\src\k17_plot.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\p\src\k17_h1.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\p\src\k17_echo.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\p\src\k17_pass.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\p\src\k17_count.m"
+  |	(referenced from command line).
+  |Parsing file "<W>\p\src\k17_make.m"
+  |	(referenced from command line).
+  |Generating file "<W>\p\b\plain\readme.txt".
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17xl_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17xl.ctf.
+plain.results
+  Results with properties:
+      BuildType: 'excelAddIn'
+      Files: {3x1 cell}
+      IncludedSupportPackages: {}
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+plain.BuildType	excelAddIn
+plain.Files	<OUT>\_install.bat | <OUT>\k17xl.ctf | <OUT>\GettingStarted.html
+plain.Options
+  ExcelAddInOptions with properties:
+      AddInName: 'k17xl'
+      ClassName: 'K17Xl'
+      AddInVersion: '1.0.0.0'
+      DebugBuild: off
+      EmbedArchive: on
+      FunctionFiles: {18x1 cell}
+      GenerateVisualBasicFile: off
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0x0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: on
+      OutputDir: '<W>\p\b\plain'
+plain.RuntimeDependencies
+  Dependencies with properties:
+      Required: [1x2 table]
+      Optional: [0x0 table]
+plain.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17xl.ctf (12472) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+plain.seconds	0.2
+plain.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17xl_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17xl.ctf.
+plain.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <meta charset="utf-8">
+  |        <title>Getting Started with the k17xl Excel Add-In</title>
+  |    </head>
+  |    <body>
+  |        <h1>Getting Started with the k17xl Excel Add-In</h1>
+  |        <p>JGraph's compiler creates Excel add-ins that can be integrated with Excel applications. You can use this guide to set up your environment.</p>
+  |        <h2>Location of Installed Excel Component Files</h2>
+  |        <p>View k17xl Files</p>
+  |        <h2>Prerequisites</h2>
+  |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
+  |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
+  |        <h2>Register the Add-In</h2>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <h2>Additional Resources</h2>
+  |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
+  |    </body>
+  |</html>
+plain.file._install.bat	880 chars, CRLF 0, ends with newline 0
+  |@ECHO OFF
+  |
+  |:START
+  |SETLOCAL
+  |set FILE=k17xl_1_0.dll
+  |ECHO Registering %FILE%...
+  |where MWRegsvr 1>NUL 2>&1
+  |if ERRORLEVEL 1 GOTO USEREGSVR
+  |
+  |MWRegsvr %FILE%
+  |IF ERRORLEVEL 1 GOTO :USERONLYREG
+  |GOTO :SUCCESS
+  |
+  |:USERONLYREG
+  |ECHO.
+  |SET YOURINPUT=
+  |Set /P YOURINPUT=Do you want to register the component for YOU only? [Y]es or [N]o:
+  |IF NOT "%YOURINPUT%"=="" SET YOURINPUT=%YOURINPUT:~0,1%
+  |IF /I "%YOURINPUT%" == "Y" (
+  |  ECHO Registering the component for you only...
+  |    MWRegsvr /useronly %FILE%
+  |  if ERRORLEVEL 1 GOTO FAILURE
+  |  GOTO SUCCESS
+  |)
+  |ECHO Did not register the component.
+  |GOTO END
+  |
+  |:USEREGSVR
+  |REM if mwregsvr is not available use regsvr32
+  |ECHO Using regsvr32 to register the component...
+  |regsvr32 %FILE%
+  |GOTO SUCCESS
+  |
+  |:FAILURE
+  |ECHO Failed to register the component.
+  |GOTO END
+  |
+  |:SUCCESS
+  |ECHO Please refer to the documentation for any additional setup steps.
+  |GOTO END
+  |
+  |:END
+  |ENDLOCAL
+  |ECHO.
+plain.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"JGraph Runtime", "Optional":"no"}
+  |	]
+  |}
+plain.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+plain.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
+  |Excluded Files
+  |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
+plain.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
+  |k17xl JGraph Excel Add-in 
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed on the computer that
+  |runs Excel. If not, install it from its installer, or set JGRAPH_RUNTIME_ROOT to the folder
+  |of a JGraph Runtime carried along.
+  |
+  |The add-in is a COM server: register k17xl_1_0.dll once on that computer by running
+  |_install.bat beside it (for every user when run as an administrator, else for the current
+  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |
+  |2. Files to Deploy and Package
+  |
+  |-k17xl.ctf (component technology file)
+  |-k17xl_1_0.dll (output from mcc)
+  |-The JGraph Runtime installer, when the computer has no JGraph Runtime
+  |-This readme file
+  |
+  |NOTE: Verify that k17xl_1_0.dll is registered on the target machine. If registration fails,
+  |      run _install.bat from a command prompt and read what it prints.
+  |
+  |3. Definitions
+  |
+  |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
+  |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
+  |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
+  |workbook carries that module into Excel.
+plain.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
+  |35010	
+plain.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
+  |Path	Symbol	Reason
+plain2.printed
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17xl_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17xl.ctf.
+plain2.results
+  Results with properties:
+      BuildType: 'excelAddIn'
+      Files: {3x1 cell}
+      IncludedSupportPackages: {}
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+plain2.BuildType	excelAddIn
+plain2.Files	<OUT>\_install.bat | <OUT>\k17xl.ctf | <OUT>\GettingStarted.html
+plain2.Options
+  ExcelAddInOptions with properties:
+      AddInName: 'k17xl'
+      ClassName: 'K17Xl'
+      AddInVersion: '1.0.0.0'
+      DebugBuild: off
+      EmbedArchive: on
+      FunctionFiles: {18x1 cell}
+      GenerateVisualBasicFile: off
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0x0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<W>\p\b\plain2'
+plain2.RuntimeDependencies
+  Dependencies with properties:
+      Required: [1x2 table]
+      Optional: [0x0 table]
+plain2.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17xl.ctf (12473) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+plain2.seconds	0.0
+plain2.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17xl_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17xl.ctf.
+plain2.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <meta charset="utf-8">
+  |        <title>Getting Started with the k17xl Excel Add-In</title>
+  |    </head>
+  |    <body>
+  |        <h1>Getting Started with the k17xl Excel Add-In</h1>
+  |        <p>JGraph's compiler creates Excel add-ins that can be integrated with Excel applications. You can use this guide to set up your environment.</p>
+  |        <h2>Location of Installed Excel Component Files</h2>
+  |        <p>View k17xl Files</p>
+  |        <h2>Prerequisites</h2>
+  |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
+  |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
+  |        <h2>Register the Add-In</h2>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <h2>Additional Resources</h2>
+  |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
+  |    </body>
+  |</html>
+plain2.file._install.bat	880 chars, CRLF 0, ends with newline 0
+  |@ECHO OFF
+  |
+  |:START
+  |SETLOCAL
+  |set FILE=k17xl_1_0.dll
+  |ECHO Registering %FILE%...
+  |where MWRegsvr 1>NUL 2>&1
+  |if ERRORLEVEL 1 GOTO USEREGSVR
+  |
+  |MWRegsvr %FILE%
+  |IF ERRORLEVEL 1 GOTO :USERONLYREG
+  |GOTO :SUCCESS
+  |
+  |:USERONLYREG
+  |ECHO.
+  |SET YOURINPUT=
+  |Set /P YOURINPUT=Do you want to register the component for YOU only? [Y]es or [N]o:
+  |IF NOT "%YOURINPUT%"=="" SET YOURINPUT=%YOURINPUT:~0,1%
+  |IF /I "%YOURINPUT%" == "Y" (
+  |  ECHO Registering the component for you only...
+  |    MWRegsvr /useronly %FILE%
+  |  if ERRORLEVEL 1 GOTO FAILURE
+  |  GOTO SUCCESS
+  |)
+  |ECHO Did not register the component.
+  |GOTO END
+  |
+  |:USEREGSVR
+  |REM if mwregsvr is not available use regsvr32
+  |ECHO Using regsvr32 to register the component...
+  |regsvr32 %FILE%
+  |GOTO SUCCESS
+  |
+  |:FAILURE
+  |ECHO Failed to register the component.
+  |GOTO END
+  |
+  |:SUCCESS
+  |ECHO Please refer to the documentation for any additional setup steps.
+  |GOTO END
+  |
+  |:END
+  |ENDLOCAL
+  |ECHO.
+plain2.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"JGraph Runtime", "Optional":"no"}
+  |	]
+  |}
+plain2.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+plain2.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
+  |Excluded Files
+  |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
+plain2.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
+  |k17xl JGraph Excel Add-in 
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed on the computer that
+  |runs Excel. If not, install it from its installer, or set JGRAPH_RUNTIME_ROOT to the folder
+  |of a JGraph Runtime carried along.
+  |
+  |The add-in is a COM server: register k17xl_1_0.dll once on that computer by running
+  |_install.bat beside it (for every user when run as an administrator, else for the current
+  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |
+  |2. Files to Deploy and Package
+  |
+  |-k17xl.ctf (component technology file)
+  |-k17xl_1_0.dll (output from mcc)
+  |-The JGraph Runtime installer, when the computer has no JGraph Runtime
+  |-This readme file
+  |
+  |NOTE: Verify that k17xl_1_0.dll is registered on the target machine. If registration fails,
+  |      run _install.bat from a command prompt and read what it prints.
+  |
+  |3. Definitions
+  |
+  |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
+  |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
+  |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
+  |workbook carries that module into Excel.
+plain2.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
+  |35010	
+plain2.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
+  |Path	Symbol	Reason
+bas.printed
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17bas_1_0.dll and the module k17bas.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17bas.ctf.
+bas.results
+  Results with properties:
+      BuildType: 'excelAddIn'
+      Files: {3x1 cell}
+      IncludedSupportPackages: {}
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+bas.BuildType	excelAddIn
+bas.Files	<OUT>\_install.bat | <OUT>\k17bas.ctf | <OUT>\GettingStarted.html
+bas.Options
+  ExcelAddInOptions with properties:
+      AddInName: 'k17bas'
+      ClassName: 'K17Bas'
+      AddInVersion: '1.0.0.0'
+      DebugBuild: off
+      EmbedArchive: on
+      FunctionFiles: {18x1 cell}
+      GenerateVisualBasicFile: on
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0x0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<W>\p\b\bas'
+bas.RuntimeDependencies
+  Dependencies with properties:
+      Required: [1x2 table]
+      Optional: [0x0 table]
+bas.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17bas.ctf (12518) | mccExcludedFiles.log (90) | readme.txt (1279) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+bas.seconds	0.0
+bas.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17bas_1_0.dll and the module k17bas.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17bas.ctf.
+bas.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <meta charset="utf-8">
+  |        <title>Getting Started with the k17bas Excel Add-In</title>
+  |    </head>
+  |    <body>
+  |        <h1>Getting Started with the k17bas Excel Add-In</h1>
+  |        <p>JGraph's compiler creates Excel add-ins that can be integrated with Excel applications. You can use this guide to set up your environment.</p>
+  |        <h2>Location of Installed Excel Component Files</h2>
+  |        <p>View k17bas Files</p>
+  |        <h2>Prerequisites</h2>
+  |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
+  |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
+  |        <h2>Register the Add-In</h2>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <h2>Additional Resources</h2>
+  |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
+  |    </body>
+  |</html>
+bas.file._install.bat	881 chars, CRLF 0, ends with newline 0
+  |@ECHO OFF
+  |
+  |:START
+  |SETLOCAL
+  |set FILE=k17bas_1_0.dll
+  |ECHO Registering %FILE%...
+  |where MWRegsvr 1>NUL 2>&1
+  |if ERRORLEVEL 1 GOTO USEREGSVR
+  |
+  |MWRegsvr %FILE%
+  |IF ERRORLEVEL 1 GOTO :USERONLYREG
+  |GOTO :SUCCESS
+  |
+  |:USERONLYREG
+  |ECHO.
+  |SET YOURINPUT=
+  |Set /P YOURINPUT=Do you want to register the component for YOU only? [Y]es or [N]o:
+  |IF NOT "%YOURINPUT%"=="" SET YOURINPUT=%YOURINPUT:~0,1%
+  |IF /I "%YOURINPUT%" == "Y" (
+  |  ECHO Registering the component for you only...
+  |    MWRegsvr /useronly %FILE%
+  |  if ERRORLEVEL 1 GOTO FAILURE
+  |  GOTO SUCCESS
+  |)
+  |ECHO Did not register the component.
+  |GOTO END
+  |
+  |:USEREGSVR
+  |REM if mwregsvr is not available use regsvr32
+  |ECHO Using regsvr32 to register the component...
+  |regsvr32 %FILE%
+  |GOTO SUCCESS
+  |
+  |:FAILURE
+  |ECHO Failed to register the component.
+  |GOTO END
+  |
+  |:SUCCESS
+  |ECHO Please refer to the documentation for any additional setup steps.
+  |GOTO END
+  |
+  |:END
+  |ENDLOCAL
+  |ECHO.
+bas.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"JGraph Runtime", "Optional":"no"}
+  |	]
+  |}
+bas.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+bas.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
+  |Excluded Files
+  |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
+bas.file.readme.txt	1279 chars, CRLF 29, ends with newline 1
+  |k17bas JGraph Excel Add-in 
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed on the computer that
+  |runs Excel. If not, install it from its installer, or set JGRAPH_RUNTIME_ROOT to the folder
+  |of a JGraph Runtime carried along.
+  |
+  |The add-in is a COM server: register k17bas_1_0.dll once on that computer by running
+  |_install.bat beside it (for every user when run as an administrator, else for the current
+  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |
+  |2. Files to Deploy and Package
+  |
+  |-k17bas.ctf (component technology file)
+  |-k17bas_1_0.dll (output from mcc)
+  |-k17bas.bas (VBA module file created by mcc)
+  |-The JGraph Runtime installer, when the computer has no JGraph Runtime
+  |-This readme file
+  |
+  |NOTE: Verify that k17bas_1_0.dll is registered on the target machine. If registration fails,
+  |      run _install.bat from a command prompt and read what it prints.
+  |
+  |3. Definitions
+  |
+  |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
+  |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
+  |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
+  |workbook carries that module into Excel.
+bas.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
+  |35010	
+bas.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
+  |Path	Symbol	Reason
+noembed.printed
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17sep_1_0.dll and the module k17sep.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17sep.ctf.
+noembed.results
+  Results with properties:
+      BuildType: 'excelAddIn'
+      Files: {3x1 cell}
+      IncludedSupportPackages: {}
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+noembed.BuildType	excelAddIn
+noembed.Files	<OUT>\_install.bat | <OUT>\k17sep.ctf | <OUT>\GettingStarted.html
+noembed.Options
+  ExcelAddInOptions with properties:
+      AddInName: 'k17sep'
+      ClassName: 'K17Sep'
+      AddInVersion: '1.0.0.0'
+      DebugBuild: off
+      EmbedArchive: off
+      FunctionFiles: {18x1 cell}
+      GenerateVisualBasicFile: on
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0x0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<W>\p\b\noembed'
+noembed.RuntimeDependencies
+  Dependencies with properties:
+      Required: [1x2 table]
+      Optional: [0x0 table]
+noembed.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17sep.ctf (12514) | mccExcludedFiles.log (90) | readme.txt (1279) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+noembed.seconds	0.0
+noembed.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17sep_1_0.dll and the module k17sep.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17sep.ctf.
+noembed.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <meta charset="utf-8">
+  |        <title>Getting Started with the k17sep Excel Add-In</title>
+  |    </head>
+  |    <body>
+  |        <h1>Getting Started with the k17sep Excel Add-In</h1>
+  |        <p>JGraph's compiler creates Excel add-ins that can be integrated with Excel applications. You can use this guide to set up your environment.</p>
+  |        <h2>Location of Installed Excel Component Files</h2>
+  |        <p>View k17sep Files</p>
+  |        <h2>Prerequisites</h2>
+  |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
+  |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
+  |        <h2>Register the Add-In</h2>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <h2>Additional Resources</h2>
+  |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
+  |    </body>
+  |</html>
+noembed.file._install.bat	881 chars, CRLF 0, ends with newline 0
+  |@ECHO OFF
+  |
+  |:START
+  |SETLOCAL
+  |set FILE=k17sep_1_0.dll
+  |ECHO Registering %FILE%...
+  |where MWRegsvr 1>NUL 2>&1
+  |if ERRORLEVEL 1 GOTO USEREGSVR
+  |
+  |MWRegsvr %FILE%
+  |IF ERRORLEVEL 1 GOTO :USERONLYREG
+  |GOTO :SUCCESS
+  |
+  |:USERONLYREG
+  |ECHO.
+  |SET YOURINPUT=
+  |Set /P YOURINPUT=Do you want to register the component for YOU only? [Y]es or [N]o:
+  |IF NOT "%YOURINPUT%"=="" SET YOURINPUT=%YOURINPUT:~0,1%
+  |IF /I "%YOURINPUT%" == "Y" (
+  |  ECHO Registering the component for you only...
+  |    MWRegsvr /useronly %FILE%
+  |  if ERRORLEVEL 1 GOTO FAILURE
+  |  GOTO SUCCESS
+  |)
+  |ECHO Did not register the component.
+  |GOTO END
+  |
+  |:USEREGSVR
+  |REM if mwregsvr is not available use regsvr32
+  |ECHO Using regsvr32 to register the component...
+  |regsvr32 %FILE%
+  |GOTO SUCCESS
+  |
+  |:FAILURE
+  |ECHO Failed to register the component.
+  |GOTO END
+  |
+  |:SUCCESS
+  |ECHO Please refer to the documentation for any additional setup steps.
+  |GOTO END
+  |
+  |:END
+  |ENDLOCAL
+  |ECHO.
+noembed.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"JGraph Runtime", "Optional":"no"}
+  |	]
+  |}
+noembed.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+noembed.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
+  |Excluded Files
+  |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
+noembed.file.readme.txt	1279 chars, CRLF 29, ends with newline 1
+  |k17sep JGraph Excel Add-in 
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed on the computer that
+  |runs Excel. If not, install it from its installer, or set JGRAPH_RUNTIME_ROOT to the folder
+  |of a JGraph Runtime carried along.
+  |
+  |The add-in is a COM server: register k17sep_1_0.dll once on that computer by running
+  |_install.bat beside it (for every user when run as an administrator, else for the current
+  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |
+  |2. Files to Deploy and Package
+  |
+  |-k17sep.ctf (component technology file)
+  |-k17sep_1_0.dll (output from mcc)
+  |-k17sep.bas (VBA module file created by mcc)
+  |-The JGraph Runtime installer, when the computer has no JGraph Runtime
+  |-This readme file
+  |
+  |NOTE: Verify that k17sep_1_0.dll is registered on the target machine. If registration fails,
+  |      run _install.bat from a command prompt and read what it prints.
+  |
+  |3. Definitions
+  |
+  |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
+  |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
+  |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
+  |workbook carries that module into Excel.
+noembed.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
+  |35010	
+noembed.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
+  |Path	Symbol	Reason
+debug.printed
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17dbg_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17dbg.ctf.
+debug.results
+  Results with properties:
+      BuildType: 'excelAddIn'
+      Files: {3x1 cell}
+      IncludedSupportPackages: {}
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+debug.BuildType	excelAddIn
+debug.Files	<OUT>\_install.bat | <OUT>\k17dbg.ctf | <OUT>\GettingStarted.html
+debug.Options
+  ExcelAddInOptions with properties:
+      AddInName: 'k17dbg'
+      ClassName: 'K17Dbg'
+      AddInVersion: '1.0.0.0'
+      DebugBuild: on
+      EmbedArchive: on
+      FunctionFiles: {3x1 cell}
+      GenerateVisualBasicFile: off
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0x0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<W>\p\b\debug'
+debug.RuntimeDependencies
+  Dependencies with properties:
+      Required: [1x2 table]
+      Optional: [0x0 table]
+debug.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17dbg.ctf (4190) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+debug.seconds	0.0
+debug.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17dbg_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17dbg.ctf.
+debug.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <meta charset="utf-8">
+  |        <title>Getting Started with the k17dbg Excel Add-In</title>
+  |    </head>
+  |    <body>
+  |        <h1>Getting Started with the k17dbg Excel Add-In</h1>
+  |        <p>JGraph's compiler creates Excel add-ins that can be integrated with Excel applications. You can use this guide to set up your environment.</p>
+  |        <h2>Location of Installed Excel Component Files</h2>
+  |        <p>View k17dbg Files</p>
+  |        <h2>Prerequisites</h2>
+  |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
+  |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
+  |        <h2>Register the Add-In</h2>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <h2>Additional Resources</h2>
+  |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
+  |    </body>
+  |</html>
+debug.file._install.bat	881 chars, CRLF 0, ends with newline 0
+  |@ECHO OFF
+  |
+  |:START
+  |SETLOCAL
+  |set FILE=k17dbg_1_0.dll
+  |ECHO Registering %FILE%...
+  |where MWRegsvr 1>NUL 2>&1
+  |if ERRORLEVEL 1 GOTO USEREGSVR
+  |
+  |MWRegsvr %FILE%
+  |IF ERRORLEVEL 1 GOTO :USERONLYREG
+  |GOTO :SUCCESS
+  |
+  |:USERONLYREG
+  |ECHO.
+  |SET YOURINPUT=
+  |Set /P YOURINPUT=Do you want to register the component for YOU only? [Y]es or [N]o:
+  |IF NOT "%YOURINPUT%"=="" SET YOURINPUT=%YOURINPUT:~0,1%
+  |IF /I "%YOURINPUT%" == "Y" (
+  |  ECHO Registering the component for you only...
+  |    MWRegsvr /useronly %FILE%
+  |  if ERRORLEVEL 1 GOTO FAILURE
+  |  GOTO SUCCESS
+  |)
+  |ECHO Did not register the component.
+  |GOTO END
+  |
+  |:USEREGSVR
+  |REM if mwregsvr is not available use regsvr32
+  |ECHO Using regsvr32 to register the component...
+  |regsvr32 %FILE%
+  |GOTO SUCCESS
+  |
+  |:FAILURE
+  |ECHO Failed to register the component.
+  |GOTO END
+  |
+  |:SUCCESS
+  |ECHO Please refer to the documentation for any additional setup steps.
+  |GOTO END
+  |
+  |:END
+  |ENDLOCAL
+  |ECHO.
+debug.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"JGraph Runtime", "Optional":"no"}
+  |	]
+  |}
+debug.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+debug.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
+  |Excluded Files
+  |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
+debug.file.readme.txt	1233 chars, CRLF 28, ends with newline 1
+  |k17dbg JGraph Excel Add-in 
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed on the computer that
+  |runs Excel. If not, install it from its installer, or set JGRAPH_RUNTIME_ROOT to the folder
+  |of a JGraph Runtime carried along.
+  |
+  |The add-in is a COM server: register k17dbg_1_0.dll once on that computer by running
+  |_install.bat beside it (for every user when run as an administrator, else for the current
+  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |
+  |2. Files to Deploy and Package
+  |
+  |-k17dbg.ctf (component technology file)
+  |-k17dbg_1_0.dll (output from mcc)
+  |-The JGraph Runtime installer, when the computer has no JGraph Runtime
+  |-This readme file
+  |
+  |NOTE: Verify that k17dbg_1_0.dll is registered on the target machine. If registration fails,
+  |      run _install.bat from a command prompt and read what it prints.
+  |
+  |3. Definitions
+  |
+  |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
+  |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
+  |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
+  |workbook carries that module into Excel.
+debug.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
+  |35010	
+debug.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
+  |Path	Symbol	Reason
+v2.printed
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17v2_2_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17v2.ctf.
+v2.results
+  Results with properties:
+      BuildType: 'excelAddIn'
+      Files: {3x1 cell}
+      IncludedSupportPackages: {}
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+v2.BuildType	excelAddIn
+v2.Files	<OUT>\_install.bat | <OUT>\k17v2.ctf | <OUT>\GettingStarted.html
+v2.Options
+  ExcelAddInOptions with properties:
+      AddInName: 'k17v2'
+      ClassName: 'K17V2'
+      AddInVersion: '2'
+      DebugBuild: off
+      EmbedArchive: on
+      FunctionFiles: {3x1 cell}
+      GenerateVisualBasicFile: off
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0x0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<W>\p\b\v2'
+v2.RuntimeDependencies
+  Dependencies with properties:
+      Required: [1x2 table]
+      Optional: [0x0 table]
+v2.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v2.ctf (4178) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+v2.seconds	0.0
+v2.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17v2_2_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17v2.ctf.
+v2.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <meta charset="utf-8">
+  |        <title>Getting Started with the k17v2 Excel Add-In</title>
+  |    </head>
+  |    <body>
+  |        <h1>Getting Started with the k17v2 Excel Add-In</h1>
+  |        <p>JGraph's compiler creates Excel add-ins that can be integrated with Excel applications. You can use this guide to set up your environment.</p>
+  |        <h2>Location of Installed Excel Component Files</h2>
+  |        <p>View k17v2 Files</p>
+  |        <h2>Prerequisites</h2>
+  |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
+  |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
+  |        <h2>Register the Add-In</h2>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <h2>Additional Resources</h2>
+  |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
+  |    </body>
+  |</html>
+v2.file._install.bat	880 chars, CRLF 0, ends with newline 0
+  |@ECHO OFF
+  |
+  |:START
+  |SETLOCAL
+  |set FILE=k17v2_2_0.dll
+  |ECHO Registering %FILE%...
+  |where MWRegsvr 1>NUL 2>&1
+  |if ERRORLEVEL 1 GOTO USEREGSVR
+  |
+  |MWRegsvr %FILE%
+  |IF ERRORLEVEL 1 GOTO :USERONLYREG
+  |GOTO :SUCCESS
+  |
+  |:USERONLYREG
+  |ECHO.
+  |SET YOURINPUT=
+  |Set /P YOURINPUT=Do you want to register the component for YOU only? [Y]es or [N]o:
+  |IF NOT "%YOURINPUT%"=="" SET YOURINPUT=%YOURINPUT:~0,1%
+  |IF /I "%YOURINPUT%" == "Y" (
+  |  ECHO Registering the component for you only...
+  |    MWRegsvr /useronly %FILE%
+  |  if ERRORLEVEL 1 GOTO FAILURE
+  |  GOTO SUCCESS
+  |)
+  |ECHO Did not register the component.
+  |GOTO END
+  |
+  |:USEREGSVR
+  |REM if mwregsvr is not available use regsvr32
+  |ECHO Using regsvr32 to register the component...
+  |regsvr32 %FILE%
+  |GOTO SUCCESS
+  |
+  |:FAILURE
+  |ECHO Failed to register the component.
+  |GOTO END
+  |
+  |:SUCCESS
+  |ECHO Please refer to the documentation for any additional setup steps.
+  |GOTO END
+  |
+  |:END
+  |ENDLOCAL
+  |ECHO.
+v2.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"JGraph Runtime", "Optional":"no"}
+  |	]
+  |}
+v2.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+v2.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
+  |Excluded Files
+  |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
+v2.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
+  |k17v2 JGraph Excel Add-in 
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed on the computer that
+  |runs Excel. If not, install it from its installer, or set JGRAPH_RUNTIME_ROOT to the folder
+  |of a JGraph Runtime carried along.
+  |
+  |The add-in is a COM server: register k17v2_2_0.dll once on that computer by running
+  |_install.bat beside it (for every user when run as an administrator, else for the current
+  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |
+  |2. Files to Deploy and Package
+  |
+  |-k17v2.ctf (component technology file)
+  |-k17v2_2_0.dll (output from mcc)
+  |-The JGraph Runtime installer, when the computer has no JGraph Runtime
+  |-This readme file
+  |
+  |NOTE: Verify that k17v2_2_0.dll is registered on the target machine. If registration fails,
+  |      run _install.bat from a command prompt and read what it prints.
+  |
+  |3. Definitions
+  |
+  |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
+  |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
+  |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
+  |workbook carries that module into Excel.
+v2.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
+  |35010	
+v2.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
+  |Path	Symbol	Reason
+v05.printed
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17v05_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17v05.ctf.
+v05.results
+  Results with properties:
+      BuildType: 'excelAddIn'
+      Files: {3x1 cell}
+      IncludedSupportPackages: {}
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+v05.BuildType	excelAddIn
+v05.Files	<OUT>\_install.bat | <OUT>\k17v05.ctf | <OUT>\GettingStarted.html
+v05.Options
+  ExcelAddInOptions with properties:
+      AddInName: 'k17v05'
+      ClassName: 'K17V05'
+      AddInVersion: '0.5'
+      DebugBuild: off
+      EmbedArchive: on
+      FunctionFiles: {3x1 cell}
+      GenerateVisualBasicFile: off
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0x0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<W>\p\b\v05'
+v05.RuntimeDependencies
+  Dependencies with properties:
+      Required: [1x2 table]
+      Optional: [0x0 table]
+v05.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v05.ctf (4192) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+v05.seconds	0.0
+v05.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17v05_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17v05.ctf.
+v05.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <meta charset="utf-8">
+  |        <title>Getting Started with the k17v05 Excel Add-In</title>
+  |    </head>
+  |    <body>
+  |        <h1>Getting Started with the k17v05 Excel Add-In</h1>
+  |        <p>JGraph's compiler creates Excel add-ins that can be integrated with Excel applications. You can use this guide to set up your environment.</p>
+  |        <h2>Location of Installed Excel Component Files</h2>
+  |        <p>View k17v05 Files</p>
+  |        <h2>Prerequisites</h2>
+  |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
+  |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
+  |        <h2>Register the Add-In</h2>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <h2>Additional Resources</h2>
+  |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
+  |    </body>
+  |</html>
+v05.file._install.bat	881 chars, CRLF 0, ends with newline 0
+  |@ECHO OFF
+  |
+  |:START
+  |SETLOCAL
+  |set FILE=k17v05_1_0.dll
+  |ECHO Registering %FILE%...
+  |where MWRegsvr 1>NUL 2>&1
+  |if ERRORLEVEL 1 GOTO USEREGSVR
+  |
+  |MWRegsvr %FILE%
+  |IF ERRORLEVEL 1 GOTO :USERONLYREG
+  |GOTO :SUCCESS
+  |
+  |:USERONLYREG
+  |ECHO.
+  |SET YOURINPUT=
+  |Set /P YOURINPUT=Do you want to register the component for YOU only? [Y]es or [N]o:
+  |IF NOT "%YOURINPUT%"=="" SET YOURINPUT=%YOURINPUT:~0,1%
+  |IF /I "%YOURINPUT%" == "Y" (
+  |  ECHO Registering the component for you only...
+  |    MWRegsvr /useronly %FILE%
+  |  if ERRORLEVEL 1 GOTO FAILURE
+  |  GOTO SUCCESS
+  |)
+  |ECHO Did not register the component.
+  |GOTO END
+  |
+  |:USEREGSVR
+  |REM if mwregsvr is not available use regsvr32
+  |ECHO Using regsvr32 to register the component...
+  |regsvr32 %FILE%
+  |GOTO SUCCESS
+  |
+  |:FAILURE
+  |ECHO Failed to register the component.
+  |GOTO END
+  |
+  |:SUCCESS
+  |ECHO Please refer to the documentation for any additional setup steps.
+  |GOTO END
+  |
+  |:END
+  |ENDLOCAL
+  |ECHO.
+v05.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"JGraph Runtime", "Optional":"no"}
+  |	]
+  |}
+v05.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+v05.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
+  |Excluded Files
+  |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
+v05.file.readme.txt	1233 chars, CRLF 28, ends with newline 1
+  |k17v05 JGraph Excel Add-in 
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed on the computer that
+  |runs Excel. If not, install it from its installer, or set JGRAPH_RUNTIME_ROOT to the folder
+  |of a JGraph Runtime carried along.
+  |
+  |The add-in is a COM server: register k17v05_1_0.dll once on that computer by running
+  |_install.bat beside it (for every user when run as an administrator, else for the current
+  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |
+  |2. Files to Deploy and Package
+  |
+  |-k17v05.ctf (component technology file)
+  |-k17v05_1_0.dll (output from mcc)
+  |-The JGraph Runtime installer, when the computer has no JGraph Runtime
+  |-This readme file
+  |
+  |NOTE: Verify that k17v05_1_0.dll is registered on the target machine. If registration fails,
+  |      run _install.bat from a command prompt and read what it prints.
+  |
+  |3. Definitions
+  |
+  |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
+  |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
+  |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
+  |workbook carries that module into Excel.
+v05.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
+  |35010	
+v05.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
+  |Path	Symbol	Reason
+v3456.printed
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17v3456_3_4.dll and the module k17v3456.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17v3456.ctf.
+v3456.results
+  Results with properties:
+      BuildType: 'excelAddIn'
+      Files: {3x1 cell}
+      IncludedSupportPackages: {}
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+v3456.BuildType	excelAddIn
+v3456.Files	<OUT>\_install.bat | <OUT>\k17v3456.ctf | <OUT>\GettingStarted.html
+v3456.Options
+  ExcelAddInOptions with properties:
+      AddInName: 'k17v3456'
+      ClassName: 'K17V3456'
+      AddInVersion: '3.4.5.6'
+      DebugBuild: off
+      EmbedArchive: on
+      FunctionFiles: {3x1 cell}
+      GenerateVisualBasicFile: on
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0x0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<W>\p\b\v3456'
+v3456.RuntimeDependencies
+  Dependencies with properties:
+      Required: [1x2 table]
+      Optional: [0x0 table]
+v3456.files	GettingStarted.html (1253) | _install.bat (883) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v3456.ctf (4208) | mccExcludedFiles.log (90) | readme.txt (1291) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+v3456.seconds	0.0
+v3456.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17v3456_3_4.dll and the module k17v3456.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17v3456.ctf.
+v3456.file.GettingStarted.html	1253 chars, CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <meta charset="utf-8">
+  |        <title>Getting Started with the k17v3456 Excel Add-In</title>
+  |    </head>
+  |    <body>
+  |        <h1>Getting Started with the k17v3456 Excel Add-In</h1>
+  |        <p>JGraph's compiler creates Excel add-ins that can be integrated with Excel applications. You can use this guide to set up your environment.</p>
+  |        <h2>Location of Installed Excel Component Files</h2>
+  |        <p>View k17v3456 Files</p>
+  |        <h2>Prerequisites</h2>
+  |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
+  |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
+  |        <h2>Register the Add-In</h2>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <h2>Additional Resources</h2>
+  |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
+  |    </body>
+  |</html>
+v3456.file._install.bat	883 chars, CRLF 0, ends with newline 0
+  |@ECHO OFF
+  |
+  |:START
+  |SETLOCAL
+  |set FILE=k17v3456_3_4.dll
+  |ECHO Registering %FILE%...
+  |where MWRegsvr 1>NUL 2>&1
+  |if ERRORLEVEL 1 GOTO USEREGSVR
+  |
+  |MWRegsvr %FILE%
+  |IF ERRORLEVEL 1 GOTO :USERONLYREG
+  |GOTO :SUCCESS
+  |
+  |:USERONLYREG
+  |ECHO.
+  |SET YOURINPUT=
+  |Set /P YOURINPUT=Do you want to register the component for YOU only? [Y]es or [N]o:
+  |IF NOT "%YOURINPUT%"=="" SET YOURINPUT=%YOURINPUT:~0,1%
+  |IF /I "%YOURINPUT%" == "Y" (
+  |  ECHO Registering the component for you only...
+  |    MWRegsvr /useronly %FILE%
+  |  if ERRORLEVEL 1 GOTO FAILURE
+  |  GOTO SUCCESS
+  |)
+  |ECHO Did not register the component.
+  |GOTO END
+  |
+  |:USEREGSVR
+  |REM if mwregsvr is not available use regsvr32
+  |ECHO Using regsvr32 to register the component...
+  |regsvr32 %FILE%
+  |GOTO SUCCESS
+  |
+  |:FAILURE
+  |ECHO Failed to register the component.
+  |GOTO END
+  |
+  |:SUCCESS
+  |ECHO Please refer to the documentation for any additional setup steps.
+  |GOTO END
+  |
+  |:END
+  |ENDLOCAL
+  |ECHO.
+v3456.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"JGraph Runtime", "Optional":"no"}
+  |	]
+  |}
+v3456.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+v3456.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
+  |Excluded Files
+  |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
+v3456.file.readme.txt	1291 chars, CRLF 29, ends with newline 1
+  |k17v3456 JGraph Excel Add-in 
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed on the computer that
+  |runs Excel. If not, install it from its installer, or set JGRAPH_RUNTIME_ROOT to the folder
+  |of a JGraph Runtime carried along.
+  |
+  |The add-in is a COM server: register k17v3456_3_4.dll once on that computer by running
+  |_install.bat beside it (for every user when run as an administrator, else for the current
+  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |
+  |2. Files to Deploy and Package
+  |
+  |-k17v3456.ctf (component technology file)
+  |-k17v3456_3_4.dll (output from mcc)
+  |-k17v3456.bas (VBA module file created by mcc)
+  |-The JGraph Runtime installer, when the computer has no JGraph Runtime
+  |-This readme file
+  |
+  |NOTE: Verify that k17v3456_3_4.dll is registered on the target machine. If registration fails,
+  |      run _install.bat from a command prompt and read what it prints.
+  |
+  |3. Definitions
+  |
+  |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
+  |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
+  |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
+  |workbook carries that module into Excel.
+v3456.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
+  |35010	
+v3456.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
+  |Path	Symbol	Reason
+vtext	ERR Compiler:compiler:COM_ERR_INVALID_VERSION | Version string "abc" is invalid. Use at most four integers (0 to 65534), separated by ".", to specify the version.
+vtext.files	
+vtext.seconds	0.0
+v5parts	ERR Compiler:compiler:COM_ERR_INVALID_VERSION | Version string "1.2.3.4.5" is invalid. Use at most four integers (0 to 65534), separated by ".", to specify the version.
+v5parts.files	
+v5parts.seconds	0.0
+vbig	ERR Compiler:compiler:COM_ERR_INVALID_VERSION | Version string "70000" is invalid. Use at most four integers (0 to 65534), separated by ".", to specify the version.
+vbig.files	
+vbig.seconds	0.0
+vzero.printed
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17vz_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17vz.ctf.
+vzero.results
+  Results with properties:
+      BuildType: 'excelAddIn'
+      Files: {3x1 cell}
+      IncludedSupportPackages: {}
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+vzero.BuildType	excelAddIn
+vzero.Files	<OUT>\_install.bat | <OUT>\k17vz.ctf | <OUT>\GettingStarted.html
+vzero.Options
+  ExcelAddInOptions with properties:
+      AddInName: 'k17vz'
+      ClassName: 'K17Vz'
+      AddInVersion: '0'
+      DebugBuild: off
+      EmbedArchive: on
+      FunctionFiles: {3x1 cell}
+      GenerateVisualBasicFile: off
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0x0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<W>\p\b\vzero'
+vzero.RuntimeDependencies
+  Dependencies with properties:
+      Required: [1x2 table]
+      Optional: [0x0 table]
+vzero.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17vz.ctf (4185) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+vzero.seconds	0.0
+vzero.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17vz_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17vz.ctf.
+vzero.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <meta charset="utf-8">
+  |        <title>Getting Started with the k17vz Excel Add-In</title>
+  |    </head>
+  |    <body>
+  |        <h1>Getting Started with the k17vz Excel Add-In</h1>
+  |        <p>JGraph's compiler creates Excel add-ins that can be integrated with Excel applications. You can use this guide to set up your environment.</p>
+  |        <h2>Location of Installed Excel Component Files</h2>
+  |        <p>View k17vz Files</p>
+  |        <h2>Prerequisites</h2>
+  |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
+  |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
+  |        <h2>Register the Add-In</h2>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <h2>Additional Resources</h2>
+  |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
+  |    </body>
+  |</html>
+vzero.file._install.bat	880 chars, CRLF 0, ends with newline 0
+  |@ECHO OFF
+  |
+  |:START
+  |SETLOCAL
+  |set FILE=k17vz_1_0.dll
+  |ECHO Registering %FILE%...
+  |where MWRegsvr 1>NUL 2>&1
+  |if ERRORLEVEL 1 GOTO USEREGSVR
+  |
+  |MWRegsvr %FILE%
+  |IF ERRORLEVEL 1 GOTO :USERONLYREG
+  |GOTO :SUCCESS
+  |
+  |:USERONLYREG
+  |ECHO.
+  |SET YOURINPUT=
+  |Set /P YOURINPUT=Do you want to register the component for YOU only? [Y]es or [N]o:
+  |IF NOT "%YOURINPUT%"=="" SET YOURINPUT=%YOURINPUT:~0,1%
+  |IF /I "%YOURINPUT%" == "Y" (
+  |  ECHO Registering the component for you only...
+  |    MWRegsvr /useronly %FILE%
+  |  if ERRORLEVEL 1 GOTO FAILURE
+  |  GOTO SUCCESS
+  |)
+  |ECHO Did not register the component.
+  |GOTO END
+  |
+  |:USEREGSVR
+  |REM if mwregsvr is not available use regsvr32
+  |ECHO Using regsvr32 to register the component...
+  |regsvr32 %FILE%
+  |GOTO SUCCESS
+  |
+  |:FAILURE
+  |ECHO Failed to register the component.
+  |GOTO END
+  |
+  |:SUCCESS
+  |ECHO Please refer to the documentation for any additional setup steps.
+  |GOTO END
+  |
+  |:END
+  |ENDLOCAL
+  |ECHO.
+vzero.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"JGraph Runtime", "Optional":"no"}
+  |	]
+  |}
+vzero.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+vzero.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
+  |Excluded Files
+  |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
+vzero.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
+  |k17vz JGraph Excel Add-in 
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed on the computer that
+  |runs Excel. If not, install it from its installer, or set JGRAPH_RUNTIME_ROOT to the folder
+  |of a JGraph Runtime carried along.
+  |
+  |The add-in is a COM server: register k17vz_1_0.dll once on that computer by running
+  |_install.bat beside it (for every user when run as an administrator, else for the current
+  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |
+  |2. Files to Deploy and Package
+  |
+  |-k17vz.ctf (component technology file)
+  |-k17vz_1_0.dll (output from mcc)
+  |-The JGraph Runtime installer, when the computer has no JGraph Runtime
+  |-This readme file
+  |
+  |NOTE: Verify that k17vz_1_0.dll is registered on the target machine. If registration fails,
+  |      run _install.bat from a command prompt and read what it prints.
+  |
+  |3. Definitions
+  |
+  |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
+  |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
+  |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
+  |workbook carries that module into Excel.
+vzero.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
+  |35010	
+vzero.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
+  |Path	Symbol	Reason
+defaults.printed
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17_one_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17_one.ctf.
+defaults.results
+  Results with properties:
+      BuildType: 'excelAddIn'
+      Files: {3x1 cell}
+      IncludedSupportPackages: {}
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+defaults.BuildType	excelAddIn
+defaults.Files	<OUT>\_install.bat | <OUT>\k17_one.ctf | <OUT>\GettingStarted.html
+defaults.Options
+  ExcelAddInOptions with properties:
+      AddInName: 'k17_one'
+      ClassName: 'k17_oneClass'
+      AddInVersion: '1.0.0.0'
+      DebugBuild: off
+      EmbedArchive: on
+      FunctionFiles: {'<W>\p\src\k17_one.m'}
+      GenerateVisualBasicFile: off
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0x0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<W>\p\b\defaults'
+defaults.RuntimeDependencies
+  Dependencies with properties:
+      Required: [1x2 table]
+      Optional: [0x0 table]
+defaults.files	GettingStarted.html (1250) | _install.bat (882) | buildresult.json (102) | includedSupportPackages.txt (0) | k17_one.ctf (3465) | mccExcludedFiles.log (90) | readme.txt (1238) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+defaults.seconds	0.0
+defaults.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17_one_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17_one.ctf.
+defaults.file.GettingStarted.html	1250 chars, CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <meta charset="utf-8">
+  |        <title>Getting Started with the k17_one Excel Add-In</title>
+  |    </head>
+  |    <body>
+  |        <h1>Getting Started with the k17_one Excel Add-In</h1>
+  |        <p>JGraph's compiler creates Excel add-ins that can be integrated with Excel applications. You can use this guide to set up your environment.</p>
+  |        <h2>Location of Installed Excel Component Files</h2>
+  |        <p>View k17_one Files</p>
+  |        <h2>Prerequisites</h2>
+  |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
+  |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
+  |        <h2>Register the Add-In</h2>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <h2>Additional Resources</h2>
+  |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
+  |    </body>
+  |</html>
+defaults.file._install.bat	882 chars, CRLF 0, ends with newline 0
+  |@ECHO OFF
+  |
+  |:START
+  |SETLOCAL
+  |set FILE=k17_one_1_0.dll
+  |ECHO Registering %FILE%...
+  |where MWRegsvr 1>NUL 2>&1
+  |if ERRORLEVEL 1 GOTO USEREGSVR
+  |
+  |MWRegsvr %FILE%
+  |IF ERRORLEVEL 1 GOTO :USERONLYREG
+  |GOTO :SUCCESS
+  |
+  |:USERONLYREG
+  |ECHO.
+  |SET YOURINPUT=
+  |Set /P YOURINPUT=Do you want to register the component for YOU only? [Y]es or [N]o:
+  |IF NOT "%YOURINPUT%"=="" SET YOURINPUT=%YOURINPUT:~0,1%
+  |IF /I "%YOURINPUT%" == "Y" (
+  |  ECHO Registering the component for you only...
+  |    MWRegsvr /useronly %FILE%
+  |  if ERRORLEVEL 1 GOTO FAILURE
+  |  GOTO SUCCESS
+  |)
+  |ECHO Did not register the component.
+  |GOTO END
+  |
+  |:USEREGSVR
+  |REM if mwregsvr is not available use regsvr32
+  |ECHO Using regsvr32 to register the component...
+  |regsvr32 %FILE%
+  |GOTO SUCCESS
+  |
+  |:FAILURE
+  |ECHO Failed to register the component.
+  |GOTO END
+  |
+  |:SUCCESS
+  |ECHO Please refer to the documentation for any additional setup steps.
+  |GOTO END
+  |
+  |:END
+  |ENDLOCAL
+  |ECHO.
+defaults.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"JGraph Runtime", "Optional":"no"}
+  |	]
+  |}
+defaults.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+defaults.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
+  |Excluded Files
+  |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
+defaults.file.readme.txt	1238 chars, CRLF 28, ends with newline 1
+  |k17_one JGraph Excel Add-in 
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed on the computer that
+  |runs Excel. If not, install it from its installer, or set JGRAPH_RUNTIME_ROOT to the folder
+  |of a JGraph Runtime carried along.
+  |
+  |The add-in is a COM server: register k17_one_1_0.dll once on that computer by running
+  |_install.bat beside it (for every user when run as an administrator, else for the current
+  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |
+  |2. Files to Deploy and Package
+  |
+  |-k17_one.ctf (component technology file)
+  |-k17_one_1_0.dll (output from mcc)
+  |-The JGraph Runtime installer, when the computer has no JGraph Runtime
+  |-This readme file
+  |
+  |NOTE: Verify that k17_one_1_0.dll is registered on the target machine. If registration fails,
+  |      run _install.bat from a command prompt and read what it prints.
+  |
+  |3. Definitions
+  |
+  |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
+  |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
+  |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
+  |workbook carries that module into Excel.
+defaults.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
+  |35010	
+defaults.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
+  |Path	Symbol	Reason
+additional.printed
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17add_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17add.ctf.
+additional.results
+  Results with properties:
+      BuildType: 'excelAddIn'
+      Files: {3x1 cell}
+      IncludedSupportPackages: {}
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+additional.BuildType	excelAddIn
+additional.Files	<OUT>\_install.bat | <OUT>\k17add.ctf | <OUT>\GettingStarted.html
+additional.Options
+  ExcelAddInOptions with properties:
+      AddInName: 'k17add'
+      ClassName: 'K17Add'
+      AddInVersion: '1.0.0.0'
+      DebugBuild: off
+      EmbedArchive: off
+      FunctionFiles: {3x1 cell}
+      GenerateVisualBasicFile: off
+      AdditionalFiles: {'<W>\p\src\k17data.txt'}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0x0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<W>\p\b\additional'
+additional.RuntimeDependencies
+  Dependencies with properties:
+      Required: [1x2 table]
+      Optional: [0x0 table]
+additional.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17add.ctf (4401) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+additional.seconds	0.0
+additional.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17add_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17add.ctf.
+additional.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <meta charset="utf-8">
+  |        <title>Getting Started with the k17add Excel Add-In</title>
+  |    </head>
+  |    <body>
+  |        <h1>Getting Started with the k17add Excel Add-In</h1>
+  |        <p>JGraph's compiler creates Excel add-ins that can be integrated with Excel applications. You can use this guide to set up your environment.</p>
+  |        <h2>Location of Installed Excel Component Files</h2>
+  |        <p>View k17add Files</p>
+  |        <h2>Prerequisites</h2>
+  |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
+  |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
+  |        <h2>Register the Add-In</h2>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <h2>Additional Resources</h2>
+  |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
+  |    </body>
+  |</html>
+additional.file._install.bat	881 chars, CRLF 0, ends with newline 0
+  |@ECHO OFF
+  |
+  |:START
+  |SETLOCAL
+  |set FILE=k17add_1_0.dll
+  |ECHO Registering %FILE%...
+  |where MWRegsvr 1>NUL 2>&1
+  |if ERRORLEVEL 1 GOTO USEREGSVR
+  |
+  |MWRegsvr %FILE%
+  |IF ERRORLEVEL 1 GOTO :USERONLYREG
+  |GOTO :SUCCESS
+  |
+  |:USERONLYREG
+  |ECHO.
+  |SET YOURINPUT=
+  |Set /P YOURINPUT=Do you want to register the component for YOU only? [Y]es or [N]o:
+  |IF NOT "%YOURINPUT%"=="" SET YOURINPUT=%YOURINPUT:~0,1%
+  |IF /I "%YOURINPUT%" == "Y" (
+  |  ECHO Registering the component for you only...
+  |    MWRegsvr /useronly %FILE%
+  |  if ERRORLEVEL 1 GOTO FAILURE
+  |  GOTO SUCCESS
+  |)
+  |ECHO Did not register the component.
+  |GOTO END
+  |
+  |:USEREGSVR
+  |REM if mwregsvr is not available use regsvr32
+  |ECHO Using regsvr32 to register the component...
+  |regsvr32 %FILE%
+  |GOTO SUCCESS
+  |
+  |:FAILURE
+  |ECHO Failed to register the component.
+  |GOTO END
+  |
+  |:SUCCESS
+  |ECHO Please refer to the documentation for any additional setup steps.
+  |GOTO END
+  |
+  |:END
+  |ENDLOCAL
+  |ECHO.
+additional.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"JGraph Runtime", "Optional":"no"}
+  |	]
+  |}
+additional.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+additional.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
+  |Excluded Files
+  |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
+additional.file.readme.txt	1233 chars, CRLF 28, ends with newline 1
+  |k17add JGraph Excel Add-in 
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed on the computer that
+  |runs Excel. If not, install it from its installer, or set JGRAPH_RUNTIME_ROOT to the folder
+  |of a JGraph Runtime carried along.
+  |
+  |The add-in is a COM server: register k17add_1_0.dll once on that computer by running
+  |_install.bat beside it (for every user when run as an administrator, else for the current
+  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |
+  |2. Files to Deploy and Package
+  |
+  |-k17add.ctf (component technology file)
+  |-k17add_1_0.dll (output from mcc)
+  |-The JGraph Runtime installer, when the computer has no JGraph Runtime
+  |-This readme file
+  |
+  |NOTE: Verify that k17add_1_0.dll is registered on the target machine. If registration fails,
+  |      run _install.bat from a command prompt and read what it prints.
+  |
+  |3. Definitions
+  |
+  |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
+  |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
+  |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
+  |workbook carries that module into Excel.
+additional.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
+  |35010	
+additional.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
+  |Path	Symbol	Reason
+pfile.printed
+  |Warning: P-files cannot be analyzed for dependent files. Manually add dependent files for:
+  |
+  |<W>\p\src\k17_pfun.p
+  |
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17p_1_0.dll and the module k17p.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17p.ctf.
+pfile.results
+  Results with properties:
+      BuildType: 'excelAddIn'
+      Files: {3x1 cell}
+      IncludedSupportPackages: {}
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+pfile.BuildType	excelAddIn
+pfile.Files	<OUT>\_install.bat | <OUT>\k17p.ctf | <OUT>\GettingStarted.html
+pfile.Options
+  ExcelAddInOptions with properties:
+      AddInName: 'k17p'
+      ClassName: 'K17P'
+      AddInVersion: '1.0.0.0'
+      DebugBuild: off
+      EmbedArchive: on
+      FunctionFiles: {2x1 cell}
+      GenerateVisualBasicFile: on
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0x0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<W>\p\b\pfile'
+pfile.RuntimeDependencies
+  Dependencies with properties:
+      Required: [1x2 table]
+      Optional: [0x0 table]
+pfile.files	GettingStarted.html (1241) | _install.bat (879) | buildresult.json (102) | includedSupportPackages.txt (0) | k17p.ctf (3901) | mccExcludedFiles.log (90) | readme.txt (1267) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+pfile.seconds	0.0
+pfile.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17p_1_0.dll and the module k17p.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17p.ctf.
+pfile.file.GettingStarted.html	1241 chars, CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <meta charset="utf-8">
+  |        <title>Getting Started with the k17p Excel Add-In</title>
+  |    </head>
+  |    <body>
+  |        <h1>Getting Started with the k17p Excel Add-In</h1>
+  |        <p>JGraph's compiler creates Excel add-ins that can be integrated with Excel applications. You can use this guide to set up your environment.</p>
+  |        <h2>Location of Installed Excel Component Files</h2>
+  |        <p>View k17p Files</p>
+  |        <h2>Prerequisites</h2>
+  |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
+  |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
+  |        <h2>Register the Add-In</h2>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <h2>Additional Resources</h2>
+  |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
+  |    </body>
+  |</html>
+pfile.file._install.bat	879 chars, CRLF 0, ends with newline 0
+  |@ECHO OFF
+  |
+  |:START
+  |SETLOCAL
+  |set FILE=k17p_1_0.dll
+  |ECHO Registering %FILE%...
+  |where MWRegsvr 1>NUL 2>&1
+  |if ERRORLEVEL 1 GOTO USEREGSVR
+  |
+  |MWRegsvr %FILE%
+  |IF ERRORLEVEL 1 GOTO :USERONLYREG
+  |GOTO :SUCCESS
+  |
+  |:USERONLYREG
+  |ECHO.
+  |SET YOURINPUT=
+  |Set /P YOURINPUT=Do you want to register the component for YOU only? [Y]es or [N]o:
+  |IF NOT "%YOURINPUT%"=="" SET YOURINPUT=%YOURINPUT:~0,1%
+  |IF /I "%YOURINPUT%" == "Y" (
+  |  ECHO Registering the component for you only...
+  |    MWRegsvr /useronly %FILE%
+  |  if ERRORLEVEL 1 GOTO FAILURE
+  |  GOTO SUCCESS
+  |)
+  |ECHO Did not register the component.
+  |GOTO END
+  |
+  |:USEREGSVR
+  |REM if mwregsvr is not available use regsvr32
+  |ECHO Using regsvr32 to register the component...
+  |regsvr32 %FILE%
+  |GOTO SUCCESS
+  |
+  |:FAILURE
+  |ECHO Failed to register the component.
+  |GOTO END
+  |
+  |:SUCCESS
+  |ECHO Please refer to the documentation for any additional setup steps.
+  |GOTO END
+  |
+  |:END
+  |ENDLOCAL
+  |ECHO.
+pfile.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"JGraph Runtime", "Optional":"no"}
+  |	]
+  |}
+pfile.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+pfile.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
+  |Excluded Files
+  |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
+pfile.file.readme.txt	1267 chars, CRLF 29, ends with newline 1
+  |k17p JGraph Excel Add-in 
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed on the computer that
+  |runs Excel. If not, install it from its installer, or set JGRAPH_RUNTIME_ROOT to the folder
+  |of a JGraph Runtime carried along.
+  |
+  |The add-in is a COM server: register k17p_1_0.dll once on that computer by running
+  |_install.bat beside it (for every user when run as an administrator, else for the current
+  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |
+  |2. Files to Deploy and Package
+  |
+  |-k17p.ctf (component technology file)
+  |-k17p_1_0.dll (output from mcc)
+  |-k17p.bas (VBA module file created by mcc)
+  |-The JGraph Runtime installer, when the computer has no JGraph Runtime
+  |-This readme file
+  |
+  |NOTE: Verify that k17p_1_0.dll is registered on the target machine. If registration fails,
+  |      run _install.bat from a command prompt and read what it prints.
+  |
+  |3. Definitions
+  |
+  |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
+  |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
+  |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
+  |workbook carries that module into Excel.
+pfile.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
+  |35010	
+pfile.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
+  |Path	Symbol	Reason
+classname.printed
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17cls_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17cls.ctf.
+classname.results
+  Results with properties:
+      BuildType: 'excelAddIn'
+      Files: {3x1 cell}
+      IncludedSupportPackages: {}
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+classname.BuildType	excelAddIn
+classname.Files	<OUT>\_install.bat | <OUT>\k17cls.ctf | <OUT>\GettingStarted.html
+classname.Options
+  ExcelAddInOptions with properties:
+      AddInName: 'k17cls'
+      ClassName: 'k17cls'
+      AddInVersion: '1.0.0.0'
+      DebugBuild: off
+      EmbedArchive: on
+      FunctionFiles: {'<W>\p\src\k17_one.m'}
+      GenerateVisualBasicFile: off
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0x0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<W>\p\b\classname'
+classname.RuntimeDependencies
+  Dependencies with properties:
+      Required: [1x2 table]
+      Optional: [0x0 table]
+classname.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17cls.ctf (3471) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+classname.seconds	0.0
+classname.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17cls_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17cls.ctf.
+classname.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
+  |<!DOCTYPE html>
+  |<html>
+  |    <head>
+  |        <meta charset="utf-8">
+  |        <title>Getting Started with the k17cls Excel Add-In</title>
+  |    </head>
+  |    <body>
+  |        <h1>Getting Started with the k17cls Excel Add-In</h1>
+  |        <p>JGraph's compiler creates Excel add-ins that can be integrated with Excel applications. You can use this guide to set up your environment.</p>
+  |        <h2>Location of Installed Excel Component Files</h2>
+  |        <p>View k17cls Files</p>
+  |        <h2>Prerequisites</h2>
+  |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
+  |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
+  |        <h2>Register the Add-In</h2>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <h2>Additional Resources</h2>
+  |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
+  |    </body>
+  |</html>
+classname.file._install.bat	881 chars, CRLF 0, ends with newline 0
+  |@ECHO OFF
+  |
+  |:START
+  |SETLOCAL
+  |set FILE=k17cls_1_0.dll
+  |ECHO Registering %FILE%...
+  |where MWRegsvr 1>NUL 2>&1
+  |if ERRORLEVEL 1 GOTO USEREGSVR
+  |
+  |MWRegsvr %FILE%
+  |IF ERRORLEVEL 1 GOTO :USERONLYREG
+  |GOTO :SUCCESS
+  |
+  |:USERONLYREG
+  |ECHO.
+  |SET YOURINPUT=
+  |Set /P YOURINPUT=Do you want to register the component for YOU only? [Y]es or [N]o:
+  |IF NOT "%YOURINPUT%"=="" SET YOURINPUT=%YOURINPUT:~0,1%
+  |IF /I "%YOURINPUT%" == "Y" (
+  |  ECHO Registering the component for you only...
+  |    MWRegsvr /useronly %FILE%
+  |  if ERRORLEVEL 1 GOTO FAILURE
+  |  GOTO SUCCESS
+  |)
+  |ECHO Did not register the component.
+  |GOTO END
+  |
+  |:USEREGSVR
+  |REM if mwregsvr is not available use regsvr32
+  |ECHO Using regsvr32 to register the component...
+  |regsvr32 %FILE%
+  |GOTO SUCCESS
+  |
+  |:FAILURE
+  |ECHO Failed to register the component.
+  |GOTO END
+  |
+  |:SUCCESS
+  |ECHO Please refer to the documentation for any additional setup steps.
+  |GOTO END
+  |
+  |:END
+  |ENDLOCAL
+  |ECHO.
+classname.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"JGraph Runtime", "Optional":"no"}
+  |	]
+  |}
+classname.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+classname.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
+  |Excluded Files
+  |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
+classname.file.readme.txt	1233 chars, CRLF 28, ends with newline 1
+  |k17cls JGraph Excel Add-in 
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed on the computer that
+  |runs Excel. If not, install it from its installer, or set JGRAPH_RUNTIME_ROOT to the folder
+  |of a JGraph Runtime carried along.
+  |
+  |The add-in is a COM server: register k17cls_1_0.dll once on that computer by running
+  |_install.bat beside it (for every user when run as an administrator, else for the current
+  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |
+  |2. Files to Deploy and Package
+  |
+  |-k17cls.ctf (component technology file)
+  |-k17cls_1_0.dll (output from mcc)
+  |-The JGraph Runtime installer, when the computer has no JGraph Runtime
+  |-This readme file
+  |
+  |NOTE: Verify that k17cls_1_0.dll is registered on the target machine. If registration fails,
+  |      run _install.bat from a command prompt and read what it prints.
+  |
+  |3. Definitions
+  |
+  |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
+  |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
+  |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
+  |workbook carries that module into Excel.
+classname.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
+  |35010	
+classname.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
+  |Path	Symbol	Reason
+guids.plain.same_as_plain2	ERR MATLAB:fileread:cannotOpenFile | Could not open file <W>\p\b\plain\k17xl_idl.idl. No such file or directory.
+guids.plain.same_as_bas	ERR MATLAB:fileread:cannotOpenFile | Could not open file <W>\p\b\plain\k17xl_idl.idl. No such file or directory.
+nooutdir.Files	<SRC>\k17ownexcelAddIn\_install.bat | <SRC>\k17ownexcelAddIn\k17own.ctf | <SRC>\k17ownexcelAddIn\GettingStarted.html
+nooutdir.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17own.ctf (3471) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+nooutdir.seconds	0.0
+mcc_default	ok
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17m_1_0.dll and the module k17m.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17m.ctf.
+mcc_default.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m.ctf (3462) | mccExcludedFiles.log (90) | readme.txt (1267) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_default.seconds	0.0
+mcc_default.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17m_1_0.dll and the module k17m.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17m.ctf.
+mcc_noversion	ok
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17mnv_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mnv.ctf.
+mcc_noversion.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnv.ctf (3471) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_noversion.seconds	0.0
+mcc_noversion.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17mnv_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mnv.ctf.
+mcc_noclass	ok
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17mnc_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mnc.ctf.
+mcc_noclass.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnc.ctf (3470) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_noclass.seconds	0.0
+mcc_noclass.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17mnc_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mnc.ctf.
+mcc_empty	ERR Compiler:compiler:COM_ERR_ILLEGAL_COMPONENT_NAME | Error: Component name invalid or unspecified (specify with -n or -W).
+mcc_empty.files	
+mcc_empty.seconds	0.0
+mcc_nocolon	ERR Compiler:compiler:COM_ERR_ILLEGAL_COMPONENT_NAME | Error: Component name invalid or unspecified (specify with -n or -W).
+mcc_nocolon.files	
+mcc_nocolon.seconds	0.0
+mcc_badversion	ERR Compiler:compiler:COM_ERR_INVALID_VERSION | Version string "x.y" is invalid. Use at most four integers (0 to 65534), separated by ".", to specify the version.
+mcc_badversion.files	
+mcc_badversion.seconds	0.0
+mcc_version2	ok
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17mv2_2_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mv2.ctf.
+mcc_version2.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mv2.ctf (3473) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_version2.seconds	0.0
+mcc_version2.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17mv2_2_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mv2.ctf.
+mcc_extra	ERR Compiler:compiler:COM_ERR_INVALID_VERSION | Version string "version=1.0" is invalid. Use at most four integers (0 to 65534), separated by ".", to specify the version.
+mcc_extra.files	
+mcc_extra.seconds	0.0
+mcc_bundle	ok
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17mb_1_0.dll and the module k17mb.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mb.ctf.
+mcc_bundle.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mb.ctf (3466) | mccExcludedFiles.log (90) | readme.txt (1273) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_bundle.seconds	0.0
+mcc_bundle.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17mb_1_0.dll and the module k17mb.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mb.ctf.
+mcc_notarget	ok
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17mnt_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mnt.ctf.
+mcc_notarget.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnt.ctf (3471) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_notarget.seconds	0.0
+mcc_notarget.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17mnt_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mnt.ctf.
+mcc_separate	ok
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17ms_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17ms.ctf.
+mcc_separate.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17ms.ctf (3468) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_separate.seconds	0.0
+mcc_separate.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17ms_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17ms.ctf.
+mcc_debug	ok
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17md_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17md.ctf.
+mcc_debug.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17md.ctf (3467) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_debug.seconds	0.0
+mcc_debug.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17md_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17md.ctf.
+mcc_codegen	ok
+mcc_codegen.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mcg.ctf (3472) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_codegen.seconds	0.0
+mcc_compile	ok
+mcc_compile.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mcp.ctf (3471) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_compile.seconds	0.0
+mcc_badname	ERR JGraph:mcc:excelAddInName | An Excel add-in's name must begin with a letter or '_' and contain only letters, digits and '_', as its type library and ProgIDs do: '1bad' cannot be one.
+mcc_badname.files	
+mcc_badname.seconds	0.0
+mcc_badclass	ERR JGraph:mcc:excelClassName | An Excel add-in's class must begin with a letter or '_' and contain only letters, digits and '_', as its coclass and ProgIDs do: '1Bad' cannot be one.
+mcc_badclass.files	
+mcc_badclass.seconds	0.0
+mcc_dotted	ERR Compiler:compiler:COM_COM_EXCEL_NAMESPACE_ERROR | "Package "a" not supported for COM components and Excel addins".
+mcc_dotted.files	
+mcc_dotted.seconds	0.0
+mcc_twofiles	ok
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17mtwo_1_0.dll and the module k17mtwo.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mtwo.ctf.
+mcc_twofiles.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mtwo.ctf (3827) | mccExcludedFiles.log (90) | readme.txt (1285) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_twofiles.seconds	0.0
+mcc_twofiles.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17mtwo_1_0.dll and the module k17mtwo.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mtwo.ctf.
+mcc_o	ERR Compiler:compiler:COM_ERR_MULTIPLE_COMPONENT_NAMES | Error: Multiple component names. Processing "-o" switch. Component name "k17mo" already specified via "-W".
+mcc_o.files	
+mcc_o.seconds	0.0
+mcc_script	ok
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17msc_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17msc.ctf.
+mcc_script.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17msc.ctf (3394) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_script.seconds	0.0
+mcc_script.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17msc_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17msc.ctf.
+mcc_samev2	ok
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17m_2_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17m.ctf.
+mcc_samev2.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m.ctf (3463) | mccExcludedFiles.log (90) | readme.txt (1223) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_samev2.seconds	0.0
+mcc_samev2.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17m_2_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17m.ctf.
+mcc_samefiles	ok
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17m_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17m.ctf.
+mcc_samefiles.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m.ctf (3804) | mccExcludedFiles.log (90) | readme.txt (1223) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_samefiles.seconds	0.0
+mcc_samefiles.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17m_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17m.ctf.
+mcc_sameorder	ok
+  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17m_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17m.ctf.
+mcc_sameorder.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m.ctf (3808) | mccExcludedFiles.log (90) | readme.txt (1223) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_sameorder.seconds	0.0
+mcc_sameorder.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17m_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17m.ctf.
+guids.mcc_default.same_as_samev2	ERR MATLAB:fileread:cannotOpenFile | Could not open file <W>\p\m\mcc_default\k17m_idl.idl. No such file or directory.
+guids.mcc_default.same_as_samefiles	ERR MATLAB:fileread:cannotOpenFile | Could not open file <W>\p\m\mcc_default\k17m_idl.idl. No such file or directory.
+guids.mcc_default.same_as_sameorder	ERR MATLAB:fileread:cannotOpenFile | Could not open file <W>\p\m\mcc_default\k17m_idl.idl. No such file or directory.
+guids.mcc_default.samev2.which	ERR MATLAB:fileread:cannotOpenFile | Could not open file <W>\p\m\mcc_default\k17m_idl.idl. No such file or directory.
+mcc_default.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
+  |{
+  |	"RuntimeDependencies": [
+  |		{"ID":35010, "DisplayName":"JGraph Runtime", "Optional":"no"}
+  |	]
+  |}
+mcc_default.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+mcc_default.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
+  |Excluded Files
+  |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
+mcc_default.file.readme.txt	1267 chars, CRLF 29, ends with newline 1
+  |k17m JGraph Excel Add-in 
+  |
+  |1. Prerequisites for Deployment 
+  |
+  |Verify that the JGraph Runtime (0.2.3) is installed on the computer that
+  |runs Excel. If not, install it from its installer, or set JGRAPH_RUNTIME_ROOT to the folder
+  |of a JGraph Runtime carried along.
+  |
+  |The add-in is a COM server: register k17m_1_0.dll once on that computer by running
+  |_install.bat beside it (for every user when run as an administrator, else for the current
+  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |
+  |2. Files to Deploy and Package
+  |
+  |-k17m.ctf (component technology file)
+  |-k17m_1_0.dll (output from mcc)
+  |-k17m.bas (VBA module file created by mcc)
+  |-The JGraph Runtime installer, when the computer has no JGraph Runtime
+  |-This readme file
+  |
+  |NOTE: Verify that k17m_1_0.dll is registered on the target machine. If registration fails,
+  |      run _install.bat from a command prompt and read what it prints.
+  |
+  |3. Definitions
+  |
+  |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
+  |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
+  |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
+  |workbook carries that module into Excel.
+mcc_default.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
+  |35010	
+mcc_default.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
+  |Path	Symbol	Reason
+mcc_twofiles.bas	missing
+mcc_noversion.idl	missing
+mcc_version2.rc	missing
+arch.results
+  Results with properties:
+      BuildType: 'productionServerArchive'
+      Files: {'<W>\p\c\arch\k17arch.ctf'}
+      IncludedSupportPackages: {}
+      Options: [1x1 compiler.build.ProductionServerArchiveOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+arch.BuildType	productionServerArchive
+arch.Files	<OUT>\k17arch.ctf
+arch.Options
+  ProductionServerArchiveOptions with properties:
+      ArchiveName: 'k17arch'
+      FunctionFiles: {18x1 cell}
+      FunctionSignatures: ''
+      RoutesFile: ''
+      AdditionalFiles: {}
+      AutoDetectDataFiles: on
+      ExternalEncryptionKey: [0x0 struct]
+      ObfuscateArchive: off
+      SecretsManifest: ''
+      SupportPackages: {'autodetect'}
+      Verbose: off
+      OutputDir: '<W>\p\c\arch'
+arch.RuntimeDependencies
+  Dependencies with properties:
+      Required: [1x2 table]
+      Optional: [0x0 table]
+arch.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17arch.ctf (12554) | mccExcludedFiles.log (90) | readme.txt (1131) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+arch.seconds	0.0
+
+STDERR	Warning: P-files cannot be analyzed for dependent files. Manually add dependent files for:
+STDERR	
+STDERR	<W>\p\src\k17_pfun.p
+STDERR	
+STDERR	Warning: P-files cannot be analyzed for dependent files. Manually add dependent files for:
+STDERR	
+STDERR	<W>\p\src\k17_pfun.p
+STDERR	
+STDERR	Warning: P-files cannot be analyzed for dependent files. Manually add dependent files for:
+STDERR	
+STDERR	<W>\p\src\k17_pfun.p
+STDERR	
+STDERR	Warning: This build of JGraph writes the add-in without its COM server: the DLL k17own_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17own.ctf.
+STDERR	Warning: This build of JGraph writes the add-in without its COM server: the DLL k17ra_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17ra.ctf.

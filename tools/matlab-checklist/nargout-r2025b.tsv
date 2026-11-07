@@ -323,6 +323,8 @@ mps.json.encoderequest	1	0
 mps.json.decoderesponse	1	0
 compiler.build.productionServerArchive	-1	0
 compiler.build.ProductionServerArchiveOptions	1	8
+compiler.build.excelAddIn	-1	0
+compiler.build.ExcelAddInOptions	1	8
 compiler.build.standaloneApplication	-1	0
 compiler.build.StandaloneApplicationOptions	1	8
 compiler.build.standaloneWindowsApplication	-1	0

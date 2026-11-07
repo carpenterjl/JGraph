@@ -288,6 +288,7 @@ internal static partial class JgsBuiltins
         JgsBuiltinClasses.CppLibraryOptions => TextOf(CppLibraryOptionDerived("LibraryName", options)),
         JgsBuiltinClasses.PythonPackageOptions => PythonPackageShortName(TextOf(PythonPackageOptionDerived("PackageName", options))),
         JgsBuiltinClasses.ProductionServerArchiveOptions => TextOf(ProductionServerOptionDerived("ArchiveName", options)),
+        JgsBuiltinClasses.ExcelOptions => TextOf(ExcelOptionDerived("AddInName", options)),
         _ => "",
     };
 
