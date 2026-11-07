@@ -18,5 +18,8 @@ internal static class TestEnvironment
             string folder = Path.Combine(Path.GetTempPath(), $"jgraph-test-prefs-{Environment.ProcessId}");
             Environment.SetEnvironmentVariable("JGRAPH_PREFDIR", folder);
         }
+
+        // An Excel add-in a test builds is never registered in the person's registry (compiler and SDK plan, decision KO13).
+        JGraph.Deploy.ExcelAddIn.RegistrationEnabled = false;
     }
 }

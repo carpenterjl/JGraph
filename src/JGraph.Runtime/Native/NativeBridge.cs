@@ -8,13 +8,14 @@ namespace JGraph.Runtime.Native;
 /// stage K10). jgrt starts .NET in a C program's process, loads this assembly into the default load
 /// context and calls <see cref="Start"/>, which teaches the load context where the engine's other
 /// assemblies and native libraries are and hands back the table of entry points the mcl functions
-/// call. Everything after <see cref="Start"/> is <see cref="NativeCalls"/>'s, and the C++ shared library
-/// API's <see cref="NativeCppCalls"/>'s (stage K12).
+/// call. Everything after <see cref="Start"/> is <see cref="NativeCalls"/>'s, the C++ shared library
+/// API's <see cref="NativeCppCalls"/>'s (stage K12), and the Excel add-in's COM objects' <see cref="NativeComCalls"/>'s (stage K17c).
 /// </summary>
 /// <remarks>
 /// This class names no engine type: its statics and <see cref="Start"/> must load before the
 /// assemblies beside this one can be found.
 /// </remarks>
+[System.Runtime.Versioning.SupportedOSPlatform("windows")]
 internal static unsafe class NativeBridge
 {
     private static string? _bin;
@@ -41,6 +42,9 @@ internal static unsafe class NativeBridge
         public delegate* unmanaged<ulong, int, int> CppCancel;
         public delegate* unmanaged<ulong, void> CppForget;
         public delegate* unmanaged<char*, char**, nint> PyOpen;
+        public delegate* unmanaged<char*, nint, char**, nint> ComCreate;
+        public delegate* unmanaged<nint, char*, int, int, Com.Variant**, Com.Variant*, char**, char**, int> ComInvoke;
+        public delegate* unmanaged<nint, void> ComRelease;
     }
 
     /// <summary>
@@ -87,6 +91,7 @@ internal static unsafe class NativeBridge
     private static void Bind(Table* table, nint module)
     {
         NativeArrays.Bind(module);
+        NativeComCalls.Bind(module);
         table->InitializeApplication = &NativeCalls.InitializeApplication;
         table->TerminateApplication = &NativeCalls.TerminateApplication;
         table->LogFileName = &NativeCalls.LogFileName;
@@ -105,5 +110,8 @@ internal static unsafe class NativeBridge
         table->CppCancel = &NativeCppCalls.Cancel;
         table->CppForget = &NativeCppCalls.Forget;
         table->PyOpen = &NativeCppCalls.PyOpen;
+        table->ComCreate = &NativeComCalls.Create;
+        table->ComInvoke = &NativeComCalls.Invoke;
+        table->ComRelease = &NativeComCalls.Release;
     }
 }

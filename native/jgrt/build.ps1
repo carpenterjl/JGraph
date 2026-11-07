@@ -2,8 +2,9 @@
 # import library jgrt.lib into native\win-x64\jgrt, with SOURCE.md recording how:
 #
 #   jgrt.dll   the C API (mcl*, mx*) a C program, a C shared library built by mcc -W lib, a Python
-#              package and the Excel add-in call, and the entry points (jgrtCpp*) the C++ shared
-#              library headers call (stage K12); it hosts .NET to run the engine
+#              package and the Excel add-in call, the entry points (jgrtCpp*) the C++ shared
+#              library headers call (stage K12) and the COM objects an Excel add-in's template hands
+#              out (jgrtXl*, jgrtCom*; stage K17c); it hosts .NET to run the engine
 #   jgrt.lib   what such a program links with
 #
 # and NativeBridgeTests' C program, tests\JGraph.Tests\Runtime\native\win-x64\jgrtclient.exe.
@@ -49,12 +50,12 @@ New-Item -ItemType Directory -Force (Join-Path $client "win-x64") | Out-Null
 try {
     $flags = "/nologo /O2 /MT /EHsc /W4 /WX /permissive- /std:c++17 /Brepro /DUNICODE /D_UNICODE /DNETHOST_USE_AS_STATIC " +
         "/I`"$native`" /I`"$here\include`""
-    $sources = @("mxarray.cpp", "runtime.cpp", "cpplib.cpp")
+    $sources = @("mxarray.cpp", "runtime.cpp", "cpplib.cpp", "com.cpp")
     $objects = $sources | ForEach-Object { "`"$work\$([System.IO.Path]::ChangeExtension($_, '.obj'))`"" }
     $script = @("@echo off", "set `"PATH=$(Split-Path $vswhere -Parent);%PATH%`"", "call `"$vcvars`" >nul", "cd /d `"$here\src`"",
         "cl $flags /c $($sources -join ' ') /Fo`"$work\\`" || exit /b 1",
         # libnethost's objects export get_hostfxr_path; /NOEXP keeps that one out of jgrt's own exports.
-        "link /nologo /Brepro /DLL /OUT:`"$Output\jgrt.dll`" /IMPLIB:`"$Output\jgrt.lib`" $($objects -join ' ') `"$native\libnethost.lib`" advapi32.lib ole32.lib || exit /b 1",
+        "link /nologo /Brepro /DLL /OUT:`"$Output\jgrt.dll`" /IMPLIB:`"$Output\jgrt.lib`" $($objects -join ' ') `"$native\libnethost.lib`" advapi32.lib ole32.lib oleaut32.lib || exit /b 1",
         # NativeBridgeTests' C program, in mbuild's default (separate) complex model, checked in beside its source.
         ("cl /nologo /O2 /MT /W3 /Brepro /D_CRT_SECURE_NO_WARNINGS /DMATLAB_DEFAULT_RELEASE=R2017b /I`"$here\include`" /I`"$probes`" " +
             "`"$client\jgrtclient.c`" /Fo`"$work\jgrtclient.obj`" /Fe`"$client\win-x64\jgrtclient.exe`" /link /Brepro `"$Output\jgrt.lib`" || exit /b 1"),

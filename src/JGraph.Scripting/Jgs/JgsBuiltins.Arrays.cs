@@ -48,7 +48,7 @@ internal static partial class JgsBuiltins
 
         var inputs = new List<JgsValue[]>();
         int i = 1;
-        while (i < args.Count && args[i].Type != JgsType.String)
+        while (i < args.Count && !IsArrayOptionName(args, i))
         {
             // A categorical is walked one categorical element at a time, not code by code (open item 122).
             inputs.Add(args[i].IsCategorical ? JgsCategorical.Elements(args[i]) : ElementsOf("arrayfun", args[i]));
@@ -76,11 +76,27 @@ internal static partial class JgsBuiltins
         }
 
         int length = inputs[0].Length;
-        foreach (JgsValue[] input in inputs)
+        for (int a = 1; a < inputs.Count; a++)
         {
-            if (input.Length != length)
+            int[] first = JgsMatrix.DimsOf(args[1]);
+            int[] other = JgsMatrix.DimsOf(args[a + 1]);
+            int dimension = -1;
+            for (int k = 0; k < Math.Max(first.Length, other.Length) && dimension < 0; k++)
             {
-                throw new JgsRuntimeException(line, col, "arrayfun needs every array to be the same length.");
+                if ((k < first.Length ? first[k] : 1) != (k < other.Length ? other[k] : 1))
+                {
+                    dimension = k;
+                }
+            }
+
+            if (inputs[a].Length != length || dimension >= 0)
+            {
+                // R2025b's words (MATLAB:arrayfun:UnequalSize), naming the first dimension that differs and the input's number.
+                int at = dimension < 0 ? 0 : dimension;
+                throw JgsRunningDialect.ThreadIsMatlab
+                    ? new JgsRuntimeException(line, col, "MATLAB:arrayfun:UnequalSize",
+                        $"All of the input arguments must be of the same size and shape.\nPrevious inputs had size {(at < first.Length ? first[at] : 1)} in dimension {at + 1}. Input #{a + 2} has size {(at < other.Length ? other[at] : 1)}")
+                    : new JgsRuntimeException(line, col, "arrayfun needs every array to be the same length.");
             }
         }
 
@@ -157,6 +173,15 @@ internal static partial class JgsBuiltins
                     : UniformTextOrCategorical(collected[o], args[1], line, col)
                         ?? JgsMatrix.Like(args[1], JgsMatrix.FromElements(collected[o], 1, length))
                 : JgsMatrix.Like(args[1], JgsValue.Cell(collected[o]));
+            if (args[1].Type == JgsType.String && !args[1].IsStringArray && outputs[o].Type is JgsType.Cell or JgsType.Array)
+            {
+                // A char row is not a shaped array to Like: its answer takes its size ('' gives a 0-by-0).
+                int[] shape = SizeDims(args[1]);
+                if (shape.Length == 2 && outputs[o].ArrayLength == shape[0] * shape[1])
+                {
+                    outputs[o].Reshape(shape[0], shape[1]);
+                }
+            }
         }
 
         return outputs;
@@ -408,11 +433,25 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>A value's elements as a boxed list; a scalar is a one-element list.</summary>
+    /// <summary>
+    /// Whether <c>args[i]</c> starts the option tail: text naming an option with a value after it. A
+    /// char array otherwise is an array to walk, as R2025b walks it (arrayfun(@(c) double(c), 'ab') is
+    /// [97 98]; a trailing 'uniformoutput' with no value is one more array, and 'UniformOutput' alone
+    /// is walked; measured 2026-11-07).
+    /// </summary>
+    private static bool IsArrayOptionName(IReadOnlyList<JgsValue> args, int i) =>
+        args[i].Type == JgsType.String && !args[i].IsStringArray && !args[i].IsCharMatrix && i + 1 < args.Count
+        && (args[i].AsString.Equals("UniformOutput", StringComparison.OrdinalIgnoreCase)
+            || args[i].AsString.Equals("ErrorHandler", StringComparison.OrdinalIgnoreCase));
+
     private static JgsValue[] ElementsOf(string name, JgsValue value) => value.Type switch
     {
         JgsType.Array when value.IsCategorical => Elements(value), // one-element categoricals (open item 115)
+        // A char array is walked one character at a time, a char matrix column by column (R2025b, measured 2026-11-07).
+        JgsType.Array when value.IsCharMatrix => [.. value.CharMatrixText().Select(static c => JgsValue.Str(c.ToString()))],
         JgsType.Array => value.BoxedElements(),
         JgsType.Cell => value.AsCell,
+        JgsType.String when !value.IsStringArray => [.. value.AsString.Select(static c => JgsValue.Str(c.ToString()))],
 
         // A struct array walks element by element (M65), so arrayfun(@(s) s.a, stats) works — the
         // idiom for pulling one measurement out of a regionprops result.

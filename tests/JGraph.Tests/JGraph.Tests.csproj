@@ -7,6 +7,8 @@
     <IsTestProject>true</IsTestProject>
     <!-- xUnit theory data and generated test scaffolding trip doc-comment warnings. -->
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- The Excel add-in's served objects take VARIANT pointers (stage K17c): their tests build some. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

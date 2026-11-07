@@ -640,14 +640,80 @@ end
 end
 
 function [status, out] = regQuery(command)
-% reg.exe's answer, or a failure where the engine runs no shell command (JGraph gives a script no
-% process execution, so under jgraph -batch every registry delta is empty; run-k17.ps1 reads the
-% registry around the whole run instead once stage K17c registers anything).
+% reg.exe's answer, or, where the engine runs no shell command (JGraph gives a script no process
+% execution), the same lines read through .NET's Microsoft.Win32.Registry, so JGraph's run records
+% each build's registry delta as R2025b's did (stage K17c).
 try
     [status, out] = system(command);
 catch
+    try
+        [status, out] = regQueryDotNet(command);
+    catch
+        status = 1;
+        out = '';
+    end
+end
+end
+
+function [status, out] = regQueryDotNet(command)
+% The two forms the probe uses: reg query "HKCU\<path>" [/s] 2>nul, printed as reg.exe prints them.
+tokens = regexp(command, 'reg query "HKCU\\([^"]+)"( /s)?', 'tokens', 'once');
+path = tokens{1};
+recursive = numel(tokens) > 1 && ~isempty(tokens{2});
+key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(path);
+if isempty(key)
     status = 1;
     out = '';
+    return
+end
+lines = {};
+lines = regDump(key, ['HKEY_CURRENT_USER\' path], recursive, lines);
+key.Close();
+status = 0;
+out = [strjoin(lines, newline) newline];
+end
+
+function lines = regDump(key, name, recursive, lines)
+lines{end + 1} = name;
+values = cell(key.GetValueNames());
+for k = 1:numel(values)
+    v = values{k};
+    shown = v;
+    if isempty(shown), shown = '(Default)'; end
+    kind = char(key.GetValueKind(v).ToString());
+    switch kind
+        case 'String', type = 'REG_SZ';
+        case 'ExpandString', type = 'REG_EXPAND_SZ';
+        case 'DWord', type = 'REG_DWORD';
+        case 'QWord', type = 'REG_QWORD';
+        case 'Binary', type = 'REG_BINARY';
+        case 'MultiString', type = 'REG_MULTI_SZ';
+        otherwise, type = 'REG_NONE';
+    end
+    value = key.GetValue(v);
+    if strcmp(kind, 'DWord') || strcmp(kind, 'QWord')
+        text = sprintf('0x%x', double(value));
+    elseif strcmp(kind, 'Binary')
+        text = sprintf('%02X', double(value));
+    else
+        text = char(string(value));
+    end
+    lines{end + 1} = sprintf('    %s    %s    %s', shown, type, text); %#ok<AGROW>
+end
+subs = cell(key.GetSubKeyNames());
+if recursive
+    for k = 1:numel(subs)
+        child = key.OpenSubKey(subs{k});
+        if ~isempty(child)
+            lines{end + 1} = ''; %#ok<AGROW>
+            lines = regDump(child, [name '\' subs{k}], true, lines);
+            child.Close();
+        end
+    end
+else
+    for k = 1:numel(subs)
+        lines{end + 1} = [name '\' subs{k}]; %#ok<AGROW>
+    end
 end
 end
 

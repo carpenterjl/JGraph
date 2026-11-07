@@ -15,6 +15,8 @@
 #include <cstdint>
 #include <string>
 
+struct tagVARIANT;
+
 #include "../include/mclmcrrt.h"
 
 // The class an mxArray holding a value the engine keeps has, as R2025b's runtime gives one: an
@@ -91,6 +93,16 @@ struct JgrtManaged
     // A Python package's instance (stage K13, cpplib.cpp's jgrtPyOpen): a library whose calls take and
     // give datetimes, durations and dictionaries as values.
     intptr_t (*PyOpen)(const wchar_t* archive, wchar_t** error);
+
+    // The Excel add-in's COM objects (stage K17c, com.cpp): the component object of the add-in DLL at
+    // dllPath (0 and why when it cannot be opened), a member of an object called by name with its
+    // arguments as VARIANTs (an [in, out] one VT_BYREF | VT_VARIANT onto the caller's) and the result
+    // in `result` (an HRESULT; a failure's source and description as CoTaskMem strings), and the
+    // object let go when its last COM reference is released.
+    intptr_t (*ComCreate)(const wchar_t* dllPath, intptr_t module, wchar_t** error);
+    int (*ComInvoke)(intptr_t handle, const wchar_t* member, int kind, int argc, tagVARIANT** argv, tagVARIANT* result,
+        wchar_t** source, wchar_t** description);
+    void (*ComRelease)(intptr_t handle);
 };
 
 // What LastError answers.
@@ -99,6 +111,9 @@ const int JgrtLastStack = 1;
 
 // The engine's entry points, or null when .NET could not be started (the reason went to standard error).
 const JgrtManaged* JgrtEngine();
+
+// Why the engine could not start, for a caller with no standard error to read (a COM client); empty when it did.
+const std::wstring& JgrtLastComplaint();
 
 // The managed value an array references is released with it, and copied with it.
 void JgrtReleaseValue(intptr_t value);

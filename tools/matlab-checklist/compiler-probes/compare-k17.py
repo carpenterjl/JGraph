@@ -1,6 +1,6 @@
 """Compares JGraph's K17 recordings with R2025b's (compiler and SDK plan, stage K17).
 
-    python compare-k17.py <folder holding JGraph's k17_*.out.txt> [--only excel,com,cells,mps,payload,pe,strings,registry]
+    python compare-k17.py <folder holding JGraph's k17_*.out.txt> [--only excel,com_preinit,com,cells,mps,payload,pe,strings,registry]
 
 Each recording is key<TAB>value lines with a display, a file's text or what a call printed indented
 under its key (record-k17.ps1 writes R2025b's into recordings/; the later stages write JGraph's with
@@ -24,7 +24,7 @@ KNOWN = {
     "excel": [
         (r"^.*\.seconds$", "a timing"),
         (r"^(matlab\.version|compiler\.version|mbuild\.cpp)$", "the engine's own version; JGraph's build needs no C++ compiler (KO9)"),
-        # Stage K17b (ADR 0315): the options, mcc -W excel and the output folder; the DLL is K17c's, the .bas K17e's, the client K17f's.
+        # Stage K17b (ADR 0315): the options and mcc -W excel; the client is K17f's.
         (r"^derived\.saveload$", "an options object is not saved to a MAT-file: its on/off properties are .NET values (open item 215)"),
         (r"^set\.SupportPackages\.\d+$", "JGraph has no support packages, so a list of them is refused in JGraph's own words (stage K6; ADR 0315)"),
         (r"^set\.AdditionalFiles\.4$", "AdditionalFiles set to '' is kept as {} where R2025b keeps the '' itself (ADR 0315)"),
@@ -33,25 +33,48 @@ KNOWN = {
          "an object's or a cell column's display is JGraph's own layout, not R2025b's aligned one (open item 194), and JGraph's runtime is one install, listed alone where R2025b lists its add-ons (ADR 0267)"),
         (r"^.*\.file\.(readme\.txt|GettingStarted\.html)$", "readme.txt and GettingStarted.html are in JGraph's words, for the JGraph Runtime (ADR 0315)"),
         (r"^.*\.file\.(buildresult\.json|requiredMCRProducts\.txt)$", "JGraph's runtime is one install (35010), listed alone where R2025b lists its add-ons (ADR 0267)"),
+        # Stage K17c (ADR 0316): the DLL from the template, stamped and registered.
         (r"^.*\.file\..*\.(cpp|hpp|idl|def|rc)$|^.*\.file\.dlldata\.c$|^mcc_noversion\.idl$|^mcc_version2\.rc$",
-         "no C++ source, IDL, module definition or resource script is generated: the add-in's DLL is a prebuilt template stamped by the build, stage K17c (decision KO9; ADR 0315)"),
+         "no C++ source, IDL, module definition or resource script is generated: the add-in's DLL is the prebuilt template jgxl.dll stamped by the build with its type library and archive (decision KO9; ADR 0316)"),
         (r"^.*\.file\..*\.bas$|^mcc_twofiles\.bas$", "the .bas module is stage K17e's (ADR 0315)"),
-        (r"^.*\.registry\.|^guids\.", "the DLL, its registration and its GUIDs are stage K17c's (ADR 0315)"),
+        (r"^.*\.registry\.Software/Classes/TypeLib$",
+         "JGraph registers its 64-bit type library alone (a win64 entry) where R2025b's MWRegsvr writes a win32 entry beside it (ADR 0316)"),
+        (r"^.*\.registry\.Software/Classes/Interface$",
+         "the add-in's own type library declares the three flags interfaces too (JGraph's ids, MathWorks' member names), so four Interface keys are registered where R2025b's library imports MathWorks' mwcomutil.tlb and registers one (decision KO10; ADR 0316; stage K17d's utility library may move them)"),
+        (r"^guids\.", "JGraph writes no IDL to read ids from; its ids are its own derivation from the names and the version (ADR 0316)"),
         (r"^mcc_(compile|badname|badclass)(\..*)?$",
          "R2025b's build fails in mbuild (-T compile:lib; a name that is not an identifier); JGraph refuses such a name before writing anything and takes -T compile:lib as -T codegen (ADR 0315)"),
         (r"^mcc_\w+$|^.*\.(printed|warn)$",
-         "R2025b prints its per-user registration warning, mbuild's transcript and the .xla failure; JGraph's build prints the mcc line and the analysis and warns that the DLL is pending until K17c (ADR 0315)"),
-        (r"^.*\.(files|Files)$", "the DLL and mbuild's files are stage K17c's, the .bas stage K17e's, and the archive is beside the add-in until the DLL embeds it (ADR 0315)"),
+         "R2025b prints mbuild's transcript and the .xla failure, and its per-user registration warning names MATLAB where JGraph's names JGraph; a build with -b warns that the .bas is pending until K17e (ADR 0316)"),
+        (r"^.*\.(files|Files)$",
+         "mbuild's C++ sources, IDL, MIDL outputs, module definition, resource script, import library and exports file are not written (KO9), the .bas is stage K17e's, and the DLL's byte count is the template's (ADR 0316)"),
         (r"^(copts|cset|cbuild|popts|pset|pkg)\.|^(fromresults|fromfiles|cdefaults|nobas|cdebug|cv2|cv05|cvtext|blank|date|nan|numdate|blankdate|allswitches|onefileall|cpfile|mpsxl_\w+|built)(\..*)?$",
          "the Excel client for the Production Server is stage K17f's; JGraph's probe run stops after the add-in sections until then (run-k17.ps1 -UpTo addin)"),
     ],
     "com_preinit": [
         (r"^(create\.)?seconds$", "a timing"),
         (r"^host\.", "the client host's own versions"),
+        (r"^util\.|^preinit\.init\.|^preinit\.terminate$", "the COM utility library (MWUtil, MWInitApplication) is stage K17d's"),
+        (r"^preinit\.call", "JGraph's add-in runs before MWInitApplication: it needs no Excel Application to call its functions, where R2025b's refuses every call until it has one (ADR 0316)"),
     ],
     "com": [
         (r"^(create\.)?seconds$", "a timing"),
         (r"^host\.", "the client host's own versions"),
+        (r"^excel\.version$", "the oracle's own Excel, or none under -NoExcel"),
+        (r"^util\.|^init\.|^terminate|^both\.packed$|^varin\.packed", "the COM utility library (MWUtil's MWPack, MWUnpack, MWInitApplication, MWTerminateApplication, CreateRemoteObject) is stage K17d's"),
+        (r"^in\.(range_.*|struct.*|complex.*|sparse.*|arg_.*|enumvararg|field)$|^pass\.range$|^rangeout\.|^flag\.|^out\.(struct.*|complex|complexmat|sparse.*)$|^out\..*\.members$",
+         "Range objects, the flags' effect on the conversions and MathWorks' value classes (MWStruct, MWComplex, MWSparse, MWArg) are stage K17d's"),
+        (r"^help\.k17_h1$", "the H1 line is answered as written; R2025b's help map widens its UTF-8 as Windows-1252 and eats '% o' as a format (ADR 0314, a MATLAB bug not copied)"),
+        (r"^opt\.(middle|emptymiddle|paramnotfound)$|^err\.(defaultmiddle|emptymiddle|unconvertible|nooutputs\.fail)$|^stale\.(2|3|5|7)\.",
+         "a refusal of the call's own carries JGraph's text (which argument was left out, what cannot be converted) where R2025b's carries none, or the last MATLAB error's text (ADR 0316)"),
+        (r"^(in|pass)\.i8$|^out\.(int64|uint64)$",
+         "int64 and uint64 cross as VT_I8 and VT_UI8 where JGraph holds them exactly (to 2^53, ADR 0266) and are refused with a message where it cannot; R2025b refuses an int64 in with no text and answers a type mismatch out (ADR 0316)"),
+        (r"^in\.arr_r8_empty(2d)?$|^in\.arr_var_empty$", "an empty array crosses as an empty double of its shape; R2025b refuses an empty double array with no text and makes an empty Variant array int16 (ADR 0316)"),
+        (r"^in\.(dispatch_other|flags_object)$", "an object JGraph cannot convert is refused with a message; R2025b refuses it with none (ADR 0316)"),
+        (r"^out\.string", "a string answers its text, a string array an array of them; R2025b answers a type mismatch (ADR 0316)"),
+        (r"^out\.(datetime.*|duration|categorical|fhandle.*|table|map|object)$",
+         "a value no VARIANT holds is refused with a message naming what to return instead; R2025b answers a type mismatch value (ADR 0316; a datetime may become a DATE in stage K17d)"),
+        (r"^out\.complexzero$", "a complex value whose imaginary part is zero is real to JGraph's engine (ADR 0266) and crosses as a double; R2025b answers an MWComplex (ADR 0316)"),
     ],
     "cells": [
         (r"^seconds$", "a timing"),
@@ -60,15 +83,30 @@ KNOWN = {
         (r"^seconds$", "a timing"),
     ],
     "payload": [
-        (r"\.bytes$", "the installer's own size (its template is JGraph's, as K18's)"),
+        (r"^.*\.bytes$", "the installer's own size (its template is JGraph's, as K18's)"),
     ],
     "pe": [
-        (r"\.bytes$|\.section\.", "the DLL's own layout: JGraph's template is its own (KO9)"),
+        (r"^c\.|^p\.|^x\.|^src\.k17mps", "the Excel client's DLLs (compiler.build and mcc -W mpsxl) and its packaged installers are stage K17f's"),
+        (r"^.*\.(file|ERR)$",
+         "pe-resources.py lists every file beside a DLL under the label of its stem, one stem's rows overwriting each other: mbuild's import library, exports file and generated sources are not written by JGraph (KO9; ADR 0316)"),
+        (r"^.*\.(bytes|image\.bytes|sections|subsystem|overlay\.bytes|machine|certificate|import)$",
+         "the DLL is JGraph's template: its own size, sections, subsystem and imports (kernel32, ole32, oleaut32, advapi32; no mclxlmain or mclmcrrt) (KO9; ADR 0316)"),
+        (r"^.*\.resource$|^.*\.  starts$",
+         "JGraph's resources are language-neutral (lang 0) where R2025b's are English (1033), its type library's bytes and its archive's are its own (ADR 0316)"),
+        (r"^.*\.  fixed\.(FileOS|FileType|FileFlags)$|^.*\.  table$|^.*\.  var\.Translation$",
+         "the version block's file OS and type are set (VOS_NT_WINDOWS32, VFT_DLL) and its string table language-neutral, where R2025b's are 0 and English, as stage K11's libraries (ADR 0267, ADR 0316)"),
     ],
     "strings": [
         (r".*", "the string heaps are MathWorks' .NET client's; JGraph's client is native (KO9), so this recording is read, not matched"),
     ],
-    "registry": [],
+    "registry": [
+        (r"^registry\.added\.before\.cleanup$",
+         "R2025b's recording was taken after an earlier pass of its cleanup had unregistered its add-ins; JGraph's lists the keys its builds registered, each removed below (ADR 0316)"),
+        (r"^(regsvr32\.register|mwregsvr\.useronly)$",
+         "regsvr32 registers JGraph's add-in without elevation: its DllRegisterServer registers for the current user when it may not for all (exit 0), where R2025b's needs MWRegsvr /useronly after regsvr32 fails (exit 5) (ADR 0316)"),
+        (r"^excel\.processes$", "the oracle's own Excel"),
+        (r"^registry\.added$", "JGraph's component category stays registered, as the runtime's installer would leave it (decision KO10; ADR 0316)"),
+    ],
 }
 
 # Keys JGraph's run cannot have at all (R2025b-only artifacts of the probe), which count neither way.
@@ -80,11 +118,13 @@ SKIPPED = {
         r"^\w+\.(idl|acf|h) ?$",
         r"^Applications that run with full administrative privileges cannot access the component\.$",
     ],
+    "com_preinit": [],
     "com": [],
     "cells": [],
     "mps": [],
     "payload": [],
-    "pe": [],
+    # Files R2025b's probe folder held that are no add-in's: an extracted runtime and a dll folder.
+    "pe": [r"^toolbox\.", r"^dll\."],
     "strings": [],
     "registry": [],
 }

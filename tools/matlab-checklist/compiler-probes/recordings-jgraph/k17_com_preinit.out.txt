@@ -1,0 +1,28 @@
+host.powershell	5.1.26100.9711
+host.clr	4.0.30319.42000
+host.is64	True
+util.create	ERR 0x80040154 src=[mscorlib] msg=[Retrieving the COM class factory for component with CLSID {<UUID>} failed due to the following error: 80040154 Class not registered (Exception from HRESULT: 0x80040154 (REGDB_E_CLASSNOTREG)).] type=COMException
+util.IsMCRInitialized.before	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
+util.IsMCRJVMEnabled	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
+create	ok
+create.seconds	0.5
+util.IsMCRInitialized.after	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
+members	k17_args,k17_both,k17_count,k17_echo,k17_err,k17_h1,k17_make,k17_many,k17_none,k17_noout,k17_one,k17_opt,k17_pass,k17_plot,k17_quiet,k17_two,k17_varin,k17_varout,MWFlags
+preinit.quiet	ok
+preinit.none	ok
+preinit.help	string 'K17_ONE Doubles its one input (compiler and SDK plan, stage K17).'
+preinit.flags	InputArrayFormat=1 InputArrayIndFlag=0 OutputArrayFormat=0 OutputArrayIndFlag=0 AutoResizeOutput=True TransposeOutput=False CoerceNumericToType=0 InputDateFormat=0 OutputAsDate=False DateBias=693960 ReplaceMissing=0 ReplaceMatlabNaN=0
+preinit.call	double 4
+preinit.call.direct	double 4
+preinit.init.dictionary	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
+preinit.call.after.dictionary	double 4
+preinit.init.excel	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
+preinit.call.after.excel	double 4
+preinit.call.after.excel.direct	double 4
+preinit.fresh.after.excel	double 4
+preinit.noout.after.excel	ok
+preinit.terminate	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
+preinit.excel.quit	ok
+preinit.next	preinit.crash.nargoutneg: k17_two with nargout -1; the process ends here if it crashes
+preinit.crash.nargoutneg	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[The number of outputs asked for, -1, cannot be negative.] type=COMException
+seconds	1.5

@@ -12,8 +12,9 @@ namespace JGraph.Tests.Deploy;
 /// against what R2025b's mcc -W excel and compiler.build.excelAddIn answered and wrote
 /// (<c>recordings/k17_excel.out.txt</c>): the forms and refusals, the DLL's name by R2025b's version
 /// rule, <c>_install.bat</c> line for line, the options' derived names and checks, and the files a
-/// build leaves while its DLL (stage K17c) and its <c>.bas</c> (stage K17e) are pending. The readme
-/// and GettingStarted.html are in JGraph's words (ADR 0315).
+/// build leaves: the DLL from the template (stage K17c, <c>ExcelAddInServerTests</c>), the archive
+/// in it or beside it, the texts, and a warning for the <c>.bas</c> (stage K17e) while it is
+/// pending. The readme and GettingStarted.html are in JGraph's words (ADR 0315).
 /// </summary>
 [Collection("JG facade")]
 public sealed class ExcelAddInTests : IDisposable
@@ -199,22 +200,30 @@ public sealed class ExcelAddInTests : IDisposable
     }
 
     [Fact]
-    public async Task ABuildWritesEverythingButTheDllAndSaysSo()
+    public async Task ABuildWritesTheDllAndSaysWhatIsPending()
     {
-        // mcc -W excel (k17_excel: mcc_default): the archive beside, the readme and the logs; no DLL and no .bas until K17c and K17e, said once.
+        // mcc -W excel (k17_excel: mcc_default): the DLL with the archive in it, the readme and the logs; the .bas pending until K17e, said once.
         string m = Path.Combine(_root, "m");
         string said = await Said($"mcc('-W', 'excel:k17m,K17M,version=1.0', '-T', 'link:lib', '-b', '-d', '{m.Replace("\\", "/", StringComparison.Ordinal)}', 'k17_one.m');");
         Assert.Equal("warn JGraph:mcc:excelAddInPending", said);
-        foreach (string file in new[] { "k17m.ctf", "readme.txt", "buildresult.json", "mccExcludedFiles.log", "requiredMCRProducts.txt", "unresolvedSymbols.txt", "includedSupportPackages.txt" })
+        foreach (string file in new[] { "k17m_1_0.dll", "readme.txt", "buildresult.json", "mccExcludedFiles.log", "requiredMCRProducts.txt", "unresolvedSymbols.txt", "includedSupportPackages.txt" })
         {
             Assert.True(File.Exists(Path.Combine(m, file)), file + " was not written");
         }
 
-        Assert.False(File.Exists(Path.Combine(m, "k17m_1_0.dll")));
+        Assert.False(File.Exists(Path.Combine(m, "k17m.ctf")), "the archive is embedded in the DLL");
         Assert.False(File.Exists(Path.Combine(m, "_install.bat")), "mcc writes no _install.bat; compiler.build does");
         string readme = File.ReadAllText(Path.Combine(m, "readme.txt"));
         Assert.StartsWith("k17m JGraph Excel Add-in \r\n\r\n1. Prerequisites for Deployment \r\n", readme, StringComparison.Ordinal);
-        Assert.Contains("-k17m.ctf (component technology file)\r\n-k17m_1_0.dll (output from mcc)\r\n-k17m.bas (VBA module file created by mcc)\r\n", readme, StringComparison.Ordinal);
+        Assert.Contains("-k17m_1_0.dll (output from mcc)\r\n-k17m.bas (VBA module file created by mcc)\r\n", readme, StringComparison.Ordinal);
+        Assert.DoesNotContain("k17m.ctf", readme, StringComparison.Ordinal);
+
+        // Without -b nothing is pending; -C leaves the archive beside the DLL (mcc_separate).
+        string sep = Path.Combine(_root, "sep");
+        Assert.Equal("", await Said($"mcc('-W', 'excel:k17ms,K17Ms,version=1.0', '-T', 'link:lib', '-C', '-d', '{sep.Replace("\\", "/", StringComparison.Ordinal)}', 'k17_one.m');"));
+        Assert.True(File.Exists(Path.Combine(sep, "k17ms_1_0.dll")));
+        Assert.True(File.Exists(Path.Combine(sep, "k17ms.ctf")));
+        Assert.Contains("-k17ms.ctf (component technology file)\r\n-k17ms_1_0.dll (output from mcc)\r\n", File.ReadAllText(Path.Combine(sep, "readme.txt")), StringComparison.Ordinal);
 
         // -T codegen writes the same without the warning (k17_excel: mcc_codegen has no DLL either).
         string cg = Path.Combine(_root, "cg");
@@ -227,18 +236,22 @@ public sealed class ExcelAddInTests : IDisposable
         Assert.StartsWith("ERR JGraph:mcc:excelClassName | ", await Said($"mcc('-W', 'excel:k17mbc,1Bad,version=1.0', '-T', 'link:lib', '-d', '{bad.Replace("\\", "/", StringComparison.Ordinal)}', 'k17_one.m');"), StringComparison.Ordinal);
         Assert.False(Directory.Exists(bad) && Directory.EnumerateFileSystemEntries(bad).Any());
 
-        // compiler.build.excelAddIn (k17_excel: plain.Files, noembed.Files, plain.BuildType): _install.bat, the archive and the page in R2025b's order, the DLL's place empty.
+        // compiler.build.excelAddIn (k17_excel: plain.Files, noembed.Files, plain.BuildType): the DLL, _install.bat, the separate archive and the page in R2025b's order.
         string b = Path.Combine(_root, "b").Replace("\\", "/", StringComparison.Ordinal);
-        Assert.Equal("excelAddIn | k17b | K17B | 3\n<OUT>/_install.bat | <OUT>/k17b.ctf | <OUT>/GettingStarted.html\nwarn JGraph:mcc:excelAddInPending",
+        Assert.Equal("excelAddIn | k17b | K17B | 3\n<OUT>/k17b_1_0.dll | <OUT>/_install.bat | <OUT>/GettingStarted.html",
             await Said($"r = compiler.build.excelAddIn('k17_one.m', 'AddInName', 'k17b', 'ClassName', 'K17B', 'OutputDir', '{b}'); "
                 + $"disp([r.BuildType ' | ' r.Options.AddInName ' | ' r.Options.ClassName ' | ' num2str(numel(r.Files))]); "
                 + $"disp(strjoin(strrep(strrep(r.Files(:)', '{b.Replace("/", "\\", StringComparison.Ordinal)}', '<OUT>'), '\\', '/'), ' | '))"));
+        string ne = Path.Combine(_root, "ne").Replace("\\", "/", StringComparison.Ordinal);
+        Assert.Equal("4\n<OUT>/k17ne_1_0.dll | <OUT>/_install.bat | <OUT>/k17ne.ctf | <OUT>/GettingStarted.html",
+            await Said($"r = compiler.build.excelAddIn('k17_one.m', 'AddInName', 'k17ne', 'ClassName', 'K17Ne', 'EmbedArchive', 'off', 'OutputDir', '{ne}'); "
+                + $"disp(num2str(numel(r.Files))); disp(strjoin(strrep(strrep(r.Files(:)', '{ne.Replace("/", "\\", StringComparison.Ordinal)}', '<OUT>'), '\\', '/'), ' | '))"));
         Assert.Equal(string.Join('\n', Recorded("plain.file._install.bat")).Replace("k17xl_1_0.dll", "k17b_1_0.dll", StringComparison.Ordinal),
             File.ReadAllText(Path.Combine(_root, "b", "_install.bat")));
         Assert.Contains("<title>Getting Started with the k17b Excel Add-In</title>", File.ReadAllText(Path.Combine(_root, "b", "GettingStarted.html")), StringComparison.Ordinal);
 
         // An options object alone, and the installer takes the add-in's results by its name (compiler.package.InstallerOptions(results)).
-        Assert.Equal("k17b\nwarn JGraph:mcc:excelAddInPending",
+        Assert.Equal("k17b",
             await Said($"o = compiler.build.ExcelAddInOptions('k17_one.m', 'AddInName', 'k17b', 'OutputDir', '{b}'); r = compiler.build.excelAddIn(o); "
                 + "p = compiler.package.InstallerOptions(r); disp(p.ApplicationName)"));
     }

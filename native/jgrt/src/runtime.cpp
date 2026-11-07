@@ -115,9 +115,13 @@ void WriteStandard(DWORD which, const char* bytes, size_t count)
     }
 }
 
-// Says on standard error why the runtime could not start: there is no one else to tell.
+std::wstring LastComplaint;
+
+// Says on standard error why the runtime could not start, and keeps the text for a caller that has
+// no standard error to read (a COM client, stage K17c).
 void Complain(const std::wstring& text)
 {
+    LastComplaint = text;
     std::string bytes = JgrtToAnsi(text.data(), text.size()) + "\n";
     WriteStandard(STD_ERROR_HANDLE, bytes.data(), bytes.size());
 }
@@ -334,6 +338,8 @@ const JgrtManaged* JgrtEngine()
 
     return Engine.load();
 }
+
+const std::wstring& JgrtLastComplaint() { return LastComplaint; }
 
 void JgrtReleaseValue(intptr_t value)
 {

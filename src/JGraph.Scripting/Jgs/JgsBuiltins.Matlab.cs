@@ -557,6 +557,14 @@ internal static partial class JgsBuiltins
             {
                 cells.ReshapeDims(args[0].Dims); // an array of objects with a third dimension (open item 121)
             }
+            else if (args[0].IsCharMatrix || (args[0].Type == JgsType.String && !args[0].IsStringArray))
+            {
+                int[] shape = SizeDims(args[0]);
+                if (shape.Length == 2 && cells.AsCell.Length == shape[0] * shape[1])
+                {
+                    cells.Reshape(shape[0], shape[1]);
+                }
+            }
             else if (args[0].Rows > 1 && args[0].Cols > 1 && cells.AsCell.Length == args[0].Rows * args[0].Cols)
             {
                 cells.Reshape(args[0].Rows, args[0].Cols);
@@ -1149,6 +1157,13 @@ internal static partial class JgsBuiltins
         if (value.Type == JgsType.Object)
         {
             return ObjectElementValues(value); // num2cell over an array of objects (open item 116)
+        }
+
+        if (value.IsCharMatrix || (value.Type == JgsType.String && !value.IsStringArray))
+        {
+            // A char array, one character per element, a char matrix column by column (R2025b, measured 2026-11-07).
+            string text = value.IsCharMatrix ? value.CharMatrixText() : value.AsString;
+            return text.Select(static c => JgsValue.Str(c.ToString())).ToArray();
         }
 
         if (value.Type != JgsType.Array)

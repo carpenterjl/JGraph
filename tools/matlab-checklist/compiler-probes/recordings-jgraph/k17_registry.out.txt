@@ -1,0 +1,1111 @@
+registry.added.before.cleanup	127
+  |HKEY_CURRENT_USER\Software\Classes\k17_one.k17_oneClass
+  |    (Default)    REG_SZ    k17_oneClass
+  |HKEY_CURRENT_USER\Software\Classes\k17_one.k17_oneClass\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17_one.k17_oneClass\CurVer
+  |    (Default)    REG_SZ    k17_one.k17_oneClass.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17_one.k17_oneClass.1_0
+  |    (Default)    REG_SZ    k17_oneClass
+  |HKEY_CURRENT_USER\Software\Classes\k17_one.k17_oneClass.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17add.K17Add
+  |    (Default)    REG_SZ    K17Add
+  |HKEY_CURRENT_USER\Software\Classes\k17add.K17Add\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17add.K17Add\CurVer
+  |    (Default)    REG_SZ    k17add.K17Add.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17add.K17Add.1_0
+  |    (Default)    REG_SZ    K17Add
+  |HKEY_CURRENT_USER\Software\Classes\k17add.K17Add.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17bas.K17Bas
+  |    (Default)    REG_SZ    K17Bas
+  |HKEY_CURRENT_USER\Software\Classes\k17bas.K17Bas\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17bas.K17Bas\CurVer
+  |    (Default)    REG_SZ    k17bas.K17Bas.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17bas.K17Bas.1_0
+  |    (Default)    REG_SZ    K17Bas
+  |HKEY_CURRENT_USER\Software\Classes\k17bas.K17Bas.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17cls.k17cls
+  |    (Default)    REG_SZ    k17cls
+  |HKEY_CURRENT_USER\Software\Classes\k17cls.k17cls\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17cls.k17cls\CurVer
+  |    (Default)    REG_SZ    k17cls.k17cls.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17cls.k17cls.1_0
+  |    (Default)    REG_SZ    k17cls
+  |HKEY_CURRENT_USER\Software\Classes\k17cls.k17cls.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17dbg.K17Dbg
+  |    (Default)    REG_SZ    K17Dbg
+  |HKEY_CURRENT_USER\Software\Classes\k17dbg.K17Dbg\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17dbg.K17Dbg\CurVer
+  |    (Default)    REG_SZ    k17dbg.K17Dbg.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17dbg.K17Dbg.1_0
+  |    (Default)    REG_SZ    K17Dbg
+  |HKEY_CURRENT_USER\Software\Classes\k17dbg.K17Dbg.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17m.K17M
+  |    (Default)    REG_SZ    K17M
+  |HKEY_CURRENT_USER\Software\Classes\k17m.K17M\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17m.K17M\CurVer
+  |    (Default)    REG_SZ    k17m.K17M.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17m.K17M.1_0
+  |    (Default)    REG_SZ    K17M
+  |HKEY_CURRENT_USER\Software\Classes\k17m.K17M.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17m.K17M.2_0
+  |    (Default)    REG_SZ    K17M
+  |HKEY_CURRENT_USER\Software\Classes\k17m.K17M.2_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17mb.K17Mb
+  |    (Default)    REG_SZ    K17Mb
+  |HKEY_CURRENT_USER\Software\Classes\k17mb.K17Mb\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17mb.K17Mb\CurVer
+  |    (Default)    REG_SZ    k17mb.K17Mb.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17mb.K17Mb.1_0
+  |    (Default)    REG_SZ    K17Mb
+  |HKEY_CURRENT_USER\Software\Classes\k17mb.K17Mb.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17md.K17Md
+  |    (Default)    REG_SZ    K17Md
+  |HKEY_CURRENT_USER\Software\Classes\k17md.K17Md\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17md.K17Md\CurVer
+  |    (Default)    REG_SZ    k17md.K17Md.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17md.K17Md.1_0
+  |    (Default)    REG_SZ    K17Md
+  |HKEY_CURRENT_USER\Software\Classes\k17md.K17Md.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17mnc.k17mnc
+  |    (Default)    REG_SZ    k17mnc
+  |HKEY_CURRENT_USER\Software\Classes\k17mnc.k17mnc\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17mnc.k17mnc\CurVer
+  |    (Default)    REG_SZ    k17mnc.k17mnc.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17mnc.k17mnc.1_0
+  |    (Default)    REG_SZ    k17mnc
+  |HKEY_CURRENT_USER\Software\Classes\k17mnc.k17mnc.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17mnt.K17Mnt
+  |    (Default)    REG_SZ    K17Mnt
+  |HKEY_CURRENT_USER\Software\Classes\k17mnt.K17Mnt\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17mnt.K17Mnt\CurVer
+  |    (Default)    REG_SZ    k17mnt.K17Mnt.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17mnt.K17Mnt.1_0
+  |    (Default)    REG_SZ    K17Mnt
+  |HKEY_CURRENT_USER\Software\Classes\k17mnt.K17Mnt.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17mnv.K17Mnv
+  |    (Default)    REG_SZ    K17Mnv
+  |HKEY_CURRENT_USER\Software\Classes\k17mnv.K17Mnv\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17mnv.K17Mnv\CurVer
+  |    (Default)    REG_SZ    k17mnv.K17Mnv.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17mnv.K17Mnv.1_0
+  |    (Default)    REG_SZ    K17Mnv
+  |HKEY_CURRENT_USER\Software\Classes\k17mnv.K17Mnv.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17ms.K17Ms
+  |    (Default)    REG_SZ    K17Ms
+  |HKEY_CURRENT_USER\Software\Classes\k17ms.K17Ms\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17ms.K17Ms\CurVer
+  |    (Default)    REG_SZ    k17ms.K17Ms.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17ms.K17Ms.1_0
+  |    (Default)    REG_SZ    K17Ms
+  |HKEY_CURRENT_USER\Software\Classes\k17ms.K17Ms.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17msc.K17Msc
+  |    (Default)    REG_SZ    K17Msc
+  |HKEY_CURRENT_USER\Software\Classes\k17msc.K17Msc\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17msc.K17Msc\CurVer
+  |    (Default)    REG_SZ    k17msc.K17Msc.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17msc.K17Msc.1_0
+  |    (Default)    REG_SZ    K17Msc
+  |HKEY_CURRENT_USER\Software\Classes\k17msc.K17Msc.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17mtwo.K17Two
+  |    (Default)    REG_SZ    K17Two
+  |HKEY_CURRENT_USER\Software\Classes\k17mtwo.K17Two\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17mtwo.K17Two\CurVer
+  |    (Default)    REG_SZ    k17mtwo.K17Two.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17mtwo.K17Two.1_0
+  |    (Default)    REG_SZ    K17Two
+  |HKEY_CURRENT_USER\Software\Classes\k17mtwo.K17Two.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17mv2.K17Mv2
+  |    (Default)    REG_SZ    K17Mv2
+  |HKEY_CURRENT_USER\Software\Classes\k17mv2.K17Mv2\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17mv2.K17Mv2\CurVer
+  |    (Default)    REG_SZ    k17mv2.K17Mv2.2_0
+  |HKEY_CURRENT_USER\Software\Classes\k17mv2.K17Mv2.2_0
+  |    (Default)    REG_SZ    K17Mv2
+  |HKEY_CURRENT_USER\Software\Classes\k17mv2.K17Mv2.2_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17own.k17_oneClass
+  |    (Default)    REG_SZ    k17_oneClass
+  |HKEY_CURRENT_USER\Software\Classes\k17own.k17_oneClass\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17own.k17_oneClass\CurVer
+  |    (Default)    REG_SZ    k17own.k17_oneClass.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17own.k17_oneClass.1_0
+  |    (Default)    REG_SZ    k17_oneClass
+  |HKEY_CURRENT_USER\Software\Classes\k17own.k17_oneClass.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17p.K17P
+  |    (Default)    REG_SZ    K17P
+  |HKEY_CURRENT_USER\Software\Classes\k17p.K17P\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17p.K17P\CurVer
+  |    (Default)    REG_SZ    k17p.K17P.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17p.K17P.1_0
+  |    (Default)    REG_SZ    K17P
+  |HKEY_CURRENT_USER\Software\Classes\k17p.K17P.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17ra.K17Ra
+  |    (Default)    REG_SZ    K17Ra
+  |HKEY_CURRENT_USER\Software\Classes\k17ra.K17Ra\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17ra.K17Ra\CurVer
+  |    (Default)    REG_SZ    k17ra.K17Ra.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17ra.K17Ra.1_0
+  |    (Default)    REG_SZ    K17Ra
+  |HKEY_CURRENT_USER\Software\Classes\k17ra.K17Ra.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17sep.K17Sep
+  |    (Default)    REG_SZ    K17Sep
+  |HKEY_CURRENT_USER\Software\Classes\k17sep.K17Sep\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17sep.K17Sep\CurVer
+  |    (Default)    REG_SZ    k17sep.K17Sep.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17sep.K17Sep.1_0
+  |    (Default)    REG_SZ    K17Sep
+  |HKEY_CURRENT_USER\Software\Classes\k17sep.K17Sep.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17v05.K17V05
+  |    (Default)    REG_SZ    K17V05
+  |HKEY_CURRENT_USER\Software\Classes\k17v05.K17V05\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17v05.K17V05\CurVer
+  |    (Default)    REG_SZ    k17v05.K17V05.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17v05.K17V05.1_0
+  |    (Default)    REG_SZ    K17V05
+  |HKEY_CURRENT_USER\Software\Classes\k17v05.K17V05.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17v2.K17V2
+  |    (Default)    REG_SZ    K17V2
+  |HKEY_CURRENT_USER\Software\Classes\k17v2.K17V2\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17v2.K17V2\CurVer
+  |    (Default)    REG_SZ    k17v2.K17V2.2_0
+  |HKEY_CURRENT_USER\Software\Classes\k17v2.K17V2.2_0
+  |    (Default)    REG_SZ    K17V2
+  |HKEY_CURRENT_USER\Software\Classes\k17v2.K17V2.2_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17v3456.K17V3456
+  |    (Default)    REG_SZ    K17V3456
+  |HKEY_CURRENT_USER\Software\Classes\k17v3456.K17V3456\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17v3456.K17V3456\CurVer
+  |    (Default)    REG_SZ    k17v3456.K17V3456.3_4
+  |HKEY_CURRENT_USER\Software\Classes\k17v3456.K17V3456.3_4
+  |    (Default)    REG_SZ    K17V3456
+  |HKEY_CURRENT_USER\Software\Classes\k17v3456.K17V3456.3_4\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17vz.K17Vz
+  |    (Default)    REG_SZ    K17Vz
+  |HKEY_CURRENT_USER\Software\Classes\k17vz.K17Vz\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17vz.K17Vz\CurVer
+  |    (Default)    REG_SZ    k17vz.K17Vz.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17vz.K17Vz.1_0
+  |    (Default)    REG_SZ    K17Vz
+  |HKEY_CURRENT_USER\Software\Classes\k17vz.K17Vz.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17xl.K17Xl
+  |    (Default)    REG_SZ    K17Xl
+  |HKEY_CURRENT_USER\Software\Classes\k17xl.K17Xl\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17xl.K17Xl\CurVer
+  |    (Default)    REG_SZ    k17xl.K17Xl.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17xl.K17Xl.1_0
+  |    (Default)    REG_SZ    K17Xl
+  |HKEY_CURRENT_USER\Software\Classes\k17xl.K17Xl.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17Bas
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\bas\k17bas_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17bas.K17Bas.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17bas.K17Bas
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17Mnt
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_notarget\k17mnt_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17mnt.K17Mnt.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17mnt.K17Mnt
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17P
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\pfile\k17p_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17p.K17P.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17p.K17P
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17V05
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\v05\k17v05_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17v05.K17V05.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17v05.K17V05
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17V3456
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\v3456\k17v3456_3_4.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17v3456.K17V3456.3_4
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    3.4
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17v3456.K17V3456
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17Sep
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\noembed\k17sep_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17sep.K17Sep.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17sep.K17Sep
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17Add
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\additional\k17add_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17add.K17Add.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17add.K17Add
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    k17cls
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\classname\k17cls_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17cls.k17cls.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17cls.k17cls
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17V2
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\v2\k17v2_2_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17v2.K17V2.2_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    2.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17v2.K17V2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17Xl
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\plain2\k17xl_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17xl.K17Xl.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17xl.K17Xl
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17Mv2
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_version2\k17mv2_2_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17mv2.K17Mv2.2_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    2.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17mv2.K17Mv2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17Dbg
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\debug\k17dbg_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17dbg.K17Dbg.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17dbg.K17Dbg
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17Msc
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_script\k17msc_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17msc.K17Msc.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17msc.K17Msc
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17Two
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_twofiles\k17mtwo_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17mtwo.K17Two.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17mtwo.K17Two
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    k17mnc
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_noclass\k17mnc_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17mnc.k17mnc.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17mnc.k17mnc
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17Mnv
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_noversion\k17mnv_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17mnv.K17Mnv.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17mnv.K17Mnv
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    k17_oneClass
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\defaults\k17_one_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17_one.k17_oneClass.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17_one.k17_oneClass
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17Ms
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_separate\k17ms_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17ms.K17Ms.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17ms.K17Ms
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    k17_oneClass
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\src\k17ownexcelAddIn\k17own_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17own.k17_oneClass.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17own.k17_oneClass
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17Vz
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\vzero\k17vz_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17vz.K17Vz.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17vz.K17Vz
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17Ra
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\ra\k17ra_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17ra.K17Ra.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17ra.K17Ra
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17Md
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_debug\k17md_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17md.K17Md.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17md.K17Md
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17M
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_sameorder\k17m_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17m.K17M.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17m.K17M
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17Mb
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_bundle\k17mb_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17mb.K17Mb.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17mb.K17Mb
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17M
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_samev2\k17m_2_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17m.K17M.2_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    2.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17m.K17M
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\2.0
+  |    (Default)    REG_SZ    k17v2 2.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\2.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\2.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\b\v2\k17v2_2_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\2.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\2.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\v2
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17bas 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\b\bas\k17bas_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\bas
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17md 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_debug\k17md_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_debug
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17v05 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\b\v05\k17v05_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\v05
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17add 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\b\additional\k17add_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\additional
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17sep 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\b\noembed\k17sep_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\noembed
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17mb 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_bundle\k17mb_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_bundle
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17p 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\b\pfile\k17p_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\pfile
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17msc 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_script\k17msc_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_script
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17_one 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\b\defaults\k17_one_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\defaults
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17cls 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\b\classname\k17cls_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\classname
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17own 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\src\k17ownexcelAddIn\k17own_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\src\k17ownexcelAddIn
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17mtwo 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_twofiles\k17mtwo_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_twofiles
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\2.0
+  |    (Default)    REG_SZ    k17mv2 2.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\2.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\2.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_version2\k17mv2_2_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\2.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\2.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_version2
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17ra 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\b\ra\k17ra_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\ra
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17vz 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\b\vzero\k17vz_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\vzero
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\3.4
+  |    (Default)    REG_SZ    k17v3456 3.4 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\3.4\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\3.4\0\win64
+  |    (Default)    REG_SZ    <W>\p\b\v3456\k17v3456_3_4.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\3.4\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\3.4\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\v3456
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17m 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_sameorder\k17m_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_sameorder
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\2.0
+  |    (Default)    REG_SZ    k17m 2.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\2.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\2.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_samev2\k17m_2_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\2.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\2.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_samev2
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17mnv 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_noversion\k17mnv_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_noversion
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17dbg 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\b\debug\k17dbg_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\debug
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17ms 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_separate\k17ms_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_separate
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17mnt 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_notarget\k17mnt_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_notarget
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17mnc 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_noclass\k17mnc_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_noclass
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
+  |    (Default)    REG_SZ    k17xl 1.0 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0\win64
+  |    (Default)    REG_SZ    <W>\p\b\plain2\k17xl_1_0.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\plain2
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17Bas
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17M
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17V05
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17V3456
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    3.4
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17Ra
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17Msc
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IMWFlags
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    Ik17_oneClass
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17Add
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17Md
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17Xl
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17Ms
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17Mnv
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IMWArrayFormatFlags
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    Ik17_oneClass
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17Two
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IMWDataConversionFlags
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17Mnt
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17V2
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    2.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    Ik17cls
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17Vz
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17Dbg
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17Sep
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17Mb
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    Ik17mnc
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17M
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    2.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17Mv2
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    2.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IK17P
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Component Categories\{<UUID>}
+  |    409    REG_SZ    JGraph Excel Add-in Components
+regsvr32.register	k17xl_1_0.dll exit 0
+mwregsvr.useronly	not needed: JGraph's DllRegisterServer registers for the current user when it may not for all
+regsvr32.registered.k17xl.K17Xl
+  |HKEY_CURRENT_USER\Software\Classes\k17xl.K17Xl
+  |    (Default)    REG_SZ    K17Xl
+  |HKEY_CURRENT_USER\Software\Classes\k17xl.K17Xl\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\k17xl.K17Xl\CurVer
+  |    (Default)    REG_SZ    k17xl.K17Xl.1_0
+regsvr32.registered.k17xl.K17Xl.1_0
+  |HKEY_CURRENT_USER\Software\Classes\k17xl.K17Xl.1_0
+  |    (Default)    REG_SZ    K17Xl
+  |HKEY_CURRENT_USER\Software\Classes\k17xl.K17Xl.1_0\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+regsvr32.registered.CLSID
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    K17Xl
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories\{<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\plain\k17xl_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    k17xl.K17Xl.1_0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    k17xl.K17Xl
+regsvr32.unregister	k17xl_1_0.dll exit 0
+regsvr32.after.k17xl.K17Xl	gone
+regsvr32.after.k17xl.K17Xl.1_0	gone
+regsvr32.after.{<UUID>}	gone
+unregister	b\additional\k17add_1_0.dll	exit 0
+unregister	b\bas\k17bas_1_0.dll	exit 0
+unregister	b\classname\k17cls_1_0.dll	exit 0
+unregister	b\debug\k17dbg_1_0.dll	exit 0
+unregister	b\defaults\k17_one_1_0.dll	exit 0
+unregister	b\noembed\k17sep_1_0.dll	exit 0
+unregister	b\pfile\k17p_1_0.dll	exit 0
+unregister	b\plain\k17xl_1_0.dll	exit 0
+unregister	b\plain2\k17xl_1_0.dll	exit 0
+unregister	b\ra\k17ra_1_0.dll	exit 0
+unregister	b\v05\k17v05_1_0.dll	exit 0
+unregister	b\v2\k17v2_2_0.dll	exit 0
+unregister	b\v3456\k17v3456_3_4.dll	exit 0
+unregister	b\vzero\k17vz_1_0.dll	exit 0
+unregister	m\mcc_bundle\k17mb_1_0.dll	exit 0
+unregister	m\mcc_debug\k17md_1_0.dll	exit 0
+unregister	m\mcc_default\k17m_1_0.dll	exit 0
+unregister	m\mcc_noclass\k17mnc_1_0.dll	exit 0
+unregister	m\mcc_notarget\k17mnt_1_0.dll	exit 0
+unregister	m\mcc_noversion\k17mnv_1_0.dll	exit 0
+unregister	m\mcc_samefiles\k17m_1_0.dll	exit 0
+unregister	m\mcc_sameorder\k17m_1_0.dll	exit 0
+unregister	m\mcc_samev2\k17m_2_0.dll	exit 0
+unregister	m\mcc_script\k17msc_1_0.dll	exit 0
+unregister	m\mcc_separate\k17ms_1_0.dll	exit 0
+unregister	m\mcc_twofiles\k17mtwo_1_0.dll	exit 0
+unregister	m\mcc_version2\k17mv2_2_0.dll	exit 0
+unregister	src\k17ownexcelAddIn\k17own_1_0.dll	exit 0
+leftover.notours	Software\Classes\Component Categories\{<UUID>}
+leftover.removed	0 keys of this stage's that unregistration left
+excel.processes	0, 0 invisible ones of this run's ended
+registry.added	1
+  + Software\Classes\Component Categories\{<UUID>}
+registry.removed	0

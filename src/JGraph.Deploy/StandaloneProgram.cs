@@ -384,8 +384,8 @@ public static class StandaloneProgram
     }
 }
 
-/// <summary>A program's resources replaced in place, through the Windows resource update API.</summary>
-internal static class PeResources
+/// <summary>A program's resources replaced in place, and read, through the Windows resource API.</summary>
+public static class PeResources
 {
     private const int Icon = 3;
     private const int RcData = 10;
@@ -442,6 +442,101 @@ internal static class PeResources
             {
                 throw new Win32Exception(Marshal.GetLastWin32Error(), $"Cannot write the resources of '{file}'.");
             }
+        }
+    }
+
+    /// <summary>
+    /// Replaces or adds <paramref name="resources"/> in <paramref name="file"/>, each named by a type
+    /// and a name that is a number or a string (an Excel add-in's <c>TYPELIB</c> 1, <c>RT_RCDATA</c> 2
+    /// and its version block, stage K17c); null data removes the resource. All language-neutral.
+    /// </summary>
+    public static void Replace(string file, IEnumerable<(object Type, object Name, byte[]? Data)> resources)
+    {
+        ArgumentNullException.ThrowIfNull(resources);
+        IntPtr update = BeginUpdateResourceW(file, false);
+        if (update == IntPtr.Zero)
+        {
+            throw new Win32Exception(Marshal.GetLastWin32Error(), $"Cannot write the resources of '{file}'.");
+        }
+
+        bool written = false;
+        try
+        {
+            foreach ((object type, object name, byte[]? data) in resources)
+            {
+                uint size = (uint)(data?.Length ?? 0);
+                bool ok = (type, name) switch
+                {
+                    (int t, int n) => UpdateResourceW(update, t, n, Neutral, data, size),
+                    (int t, string n) => UpdateResourceW(update, t, n, Neutral, data, size),
+                    (string t, int n) => UpdateResourceW(update, t, n, Neutral, data, size),
+                    (string t, string n) => UpdateResourceW(update, t, n, Neutral, data, size),
+                    _ => throw new ArgumentException("A resource's type and name are each a number or a string.", nameof(resources)),
+                };
+                if (!ok)
+                {
+                    throw new Win32Exception(Marshal.GetLastWin32Error(), $"Cannot write the resource {type}/{name}.");
+                }
+            }
+
+            written = true;
+        }
+        finally
+        {
+            if (!EndUpdateResourceW(update, !written) && written)
+            {
+                throw new Win32Exception(Marshal.GetLastWin32Error(), $"Cannot write the resources of '{file}'.");
+            }
+        }
+    }
+
+    /// <summary>
+    /// The bytes of the resource <paramref name="type"/>/<paramref name="name"/> (each a number or a
+    /// string) of the program or library <paramref name="file"/>, loaded as data; null when the file
+    /// is not a Windows image or has no such resource, language-neutral or English (1033, as
+    /// R2025b's mbuild writes them).
+    /// </summary>
+    public static byte[]? Read(string file, object type, object name)
+    {
+        IntPtr module = LoadLibraryExW(file, IntPtr.Zero, 0x2 | 0x20);
+        if (module == IntPtr.Zero)
+        {
+            return null;
+        }
+
+        try
+        {
+            IntPtr found = IntPtr.Zero;
+            foreach (ushort language in new ushort[] { Neutral, 1033 })
+            {
+                found = (type, name) switch
+                {
+                    (int t, int n) => FindResourceExW(module, t, n, language),
+                    (int t, string n) => FindResourceExW(module, t, n, language),
+                    (string t, int n) => FindResourceExW(module, t, n, language),
+                    (string t, string n) => FindResourceExW(module, t, n, language),
+                    _ => IntPtr.Zero,
+                };
+                if (found != IntPtr.Zero)
+                {
+                    break;
+                }
+            }
+
+            IntPtr loaded = found == IntPtr.Zero ? IntPtr.Zero : LoadResource(module, found);
+            IntPtr bytes = loaded == IntPtr.Zero ? IntPtr.Zero : LockResource(loaded);
+            if (bytes == IntPtr.Zero)
+            {
+                return null;
+            }
+
+            var data = new byte[SizeofResource(module, found)];
+            Marshal.Copy(bytes, data, 0, data.Length);
+            return data;
+        }
+        finally
+        {
+            FreeLibrary(module);
         }
     }
 
@@ -515,7 +610,22 @@ internal static class PeResources
     private static extern bool UpdateResourceW(IntPtr update, nint type, nint name, ushort language, byte[]? data, uint size);
 
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    private static extern bool UpdateResourceW(IntPtr update, nint type, string name, ushort language, byte[] data, uint size);
+    private static extern bool UpdateResourceW(IntPtr update, nint type, string name, ushort language, byte[]? data, uint size);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern bool UpdateResourceW(IntPtr update, string type, nint name, ushort language, byte[]? data, uint size);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern bool UpdateResourceW(IntPtr update, string type, string name, ushort language, byte[]? data, uint size);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern IntPtr FindResourceExW(IntPtr module, nint type, string name, ushort language);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern IntPtr FindResourceExW(IntPtr module, string type, nint name, ushort language);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern IntPtr FindResourceExW(IntPtr module, string type, string name, ushort language);
 
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern bool EndUpdateResourceW(IntPtr update, bool discard);

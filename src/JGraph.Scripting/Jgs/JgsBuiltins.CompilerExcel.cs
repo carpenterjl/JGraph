@@ -10,8 +10,8 @@ namespace JGraph.Scripting.Jgs;
 /// <c>compiler.build.ExcelAddInOptions</c>, transcribed from R2025b's toolbox/compiler/cli/build
 /// (ExcelAddInOptions.m, excelAddIn.m, the ExcelAddIn builder, ExcelAddinWriter.m and
 /// writeInstallBat.m), their refusals as <c>probe_k17_excel</c> recorded them
-/// (<c>recordings/k17_excel.out.txt</c>). The add-in's DLL is stage K17c's and its <c>.bas</c> stage
-/// K17e's: this stage writes everything else and says what is pending.
+/// (<c>recordings/k17_excel.out.txt</c>). The add-in's DLL is the runtime's template stamped and
+/// registered (stage K17c); its <c>.bas</c> is stage K17e's, and the build says so.
 /// </summary>
 internal static partial class JgsBuiltins
 {
@@ -47,8 +47,10 @@ internal static partial class JgsBuiltins
     // --- mcc -W excel ----------------------------------------------------------------------
 
     /// <summary>
-    /// <c>mcc -W excel:&lt;name&gt;,&lt;class&gt;[,version=v]</c> (stage K17b): the archive with every
-    /// file's function public, written by <see cref="ExcelAddIn"/> beside the DLL stage K17c adds, or
+    /// <c>mcc -W excel:&lt;name&gt;,&lt;class&gt;[,version=v]</c> (stages K17b and K17c): the archive with
+    /// every file's function public, the DLL <see cref="ExcelAddIn"/> copies from the runtime's
+    /// template and stamps with the type library and the archive, registered as R2025b's mbuild
+    /// registers it (for the current user when not elevated, with R2025b's warning); or the archive
     /// alone for <c>-T codegen</c> (and <c>-T compile:lib</c>, which R2025b's mbuild fails on). A
     /// name that cannot be a type library's or a ProgID's is refused before anything is written,
     /// where R2025b's build fails in mbuild (k17_excel: mcc_badname, mcc_badclass).
@@ -91,6 +93,13 @@ internal static partial class JgsBuiltins
             host.WriteOut($"Generating file \"{Path.Combine(folder, "readme.txt")}\".\n");
         }
 
+        if (functions.Count > ExcelAddIn.MaxFunctions)
+        {
+            throw new JgsRuntimeException(line, col, "JGraph:mcc:excelAddInFunctions",
+                $"An Excel add-in can export at most {ExcelAddIn.MaxFunctions} functions; this one would export {functions.Count}.");
+        }
+
+        string? template = archiveOnly ? null : ExcelAddIn.DefaultTemplatePath;
         ExcelAddInBuild built;
         try
         {
@@ -106,9 +115,11 @@ internal static partial class JgsBuiltins
                 VisualBasicFile = command.VisualBasicFile,
                 ArchiveOnly = archiveOnly,
                 MccArguments = words,
+                TemplatePath = template,
             });
         }
-        catch (Exception ex) when (ex is FileNotFoundException or IOException or UnauthorizedAccessException)
+        catch (Exception ex) when (ex is FileNotFoundException or IOException or UnauthorizedAccessException or InvalidOperationException
+            or System.ComponentModel.Win32Exception or System.Runtime.InteropServices.COMException)
         {
             throw new JgsRuntimeException(line, col, "JGraph:mcc:buildFailed", $"The Excel add-in could not be written: {ex.Message}");
         }
@@ -119,12 +130,48 @@ internal static partial class JgsBuiltins
                 ? $"the DLL {built.DllName} and the module {name}.bas are"
                 : $"the DLL {built.DllName} is";
             Warn(host, "JGraph:mcc:excelAddInPending",
-                $"This build of JGraph writes the add-in without its COM server: {pending} pending (compiler and SDK plan, stages K17c and K17e), "
-                + $"and the archive is beside it as {name}.ctf.");
+                $"This build of JGraph writes the add-in without its COM server: the template {ExcelAddIn.TemplateName} is not beside JGraph "
+                + $"or in the JGraph Runtime, so {pending} pending, and the archive is beside it as {name}.ctf.");
+        }
+        else if (!archiveOnly && command.VisualBasicFile)
+        {
+            Warn(host, "JGraph:mcc:excelAddInPending",
+                $"This build of JGraph writes the add-in without its Visual Basic module: {name}.bas is pending (compiler and SDK plan, stage K17e).");
+        }
+
+        if (built.DllWritten && ExcelAddIn.RegistrationEnabled)
+        {
+            RegisterExcelAddIn(host, Path.Combine(folder, built.DllName), line, col);
         }
 
         BuildLogs.WriteAll(folder, report, file => CtfLayout.ArchivePath(file, here, name).Replace('/', '\\'));
         return new MccBuild(built.Files, built.Manifest.Uuid);
+    }
+
+    /// <summary>
+    /// Registers the add-in as R2025b's mbuild does after linking it: for every user when the process
+    /// is elevated, else for the current user with R2025b's warning (k17_excel: plain.warn,
+    /// COM_WARN_PER_USER_REGISTRATION), through the DLL's own DllRegisterServer (decision KO13).
+    /// </summary>
+    private static void RegisterExcelAddIn(JGraphScriptGlobals host, string dll, int line, int col)
+    {
+        if (OperatingSystem.IsWindows() && !ExcelAddIn.IsElevated)
+        {
+            Warn(host, "Compiler:compiler:COM_WARN_PER_USER_REGISTRATION",
+                $"Component \"{Path.GetFileNameWithoutExtension(dll)}\" will be registered for the current user only. \n"
+                + "Applications that run with full administrative privileges cannot access the component. \n"
+                + "To register the component for all users, run JGraph or the mcc command as Administrator.");
+        }
+
+        try
+        {
+            ExcelAddIn.Register(dll);
+        }
+        catch (Exception ex) when (ex is System.Runtime.InteropServices.COMException or DllNotFoundException or EntryPointNotFoundException or BadImageFormatException)
+        {
+            throw new JgsRuntimeException(line, col, "Compiler:compiler:COM_SYSTEM_ERROR",
+                $"The add-in {Path.GetFileName(dll)} was built but could not be registered: {ex.Message}\nRun _install.bat beside it to register it.");
+        }
     }
 
     /// <summary>

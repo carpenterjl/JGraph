@@ -320,6 +320,21 @@ internal static unsafe class NativeCalls
     private static void Remember(DeployedException failure)
     {
         IReadOnlyList<(string Name, string File, int Line)> frames = (failure.InnerException as JgsRuntimeException)?.Frames ?? [];
+        lock (Gate)
+        {
+            _lastMessage = ClientMessage(failure);
+            _lastStack = string.Join("\n", frames.Select(static f => $"file {f.File}, name {f.Name}, line {f.Line}."));
+        }
+    }
+
+    /// <summary>
+    /// A failed call's message as R2025b's runtime hands it to a C program (mclGetLastErrorMessage)
+    /// and to a COM client (the error's description; k17_com err.*): the message with its causes',
+    /// then <c>Error in =&gt; file.m at line n</c> for the outermost frame.
+    /// </summary>
+    internal static string ClientMessage(DeployedException failure)
+    {
+        IReadOnlyList<(string Name, string File, int Line)> frames = (failure.InnerException as JgsRuntimeException)?.Frames ?? [];
         var message = new StringBuilder(failure.Message);
         foreach (string cause in failure.Causes)
         {
@@ -331,11 +346,7 @@ internal static unsafe class NativeCalls
             message.Append("\nError in => ").Append(file).Append(" at line ").Append(frames[^1].Line);
         }
 
-        lock (Gate)
-        {
-            _lastMessage = message.ToString();
-            _lastStack = string.Join("\n", frames.Select(static f => $"file {f.File}, name {f.Name}, line {f.Line}."));
-        }
+        return message.ToString();
     }
 
     private static void NoteLogFile()

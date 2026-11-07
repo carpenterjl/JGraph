@@ -88,6 +88,8 @@ Copy-Item (Join-Path $root "python\jgraph_runtime\*") (Join-Path $Output "python
 foreach ($template in "jglaunch-console.exe", "jglaunch-gui.exe") {
     Copy-Item (Join-Path $root "native\win-x64\launchers\$template") (Join-Path $Output "launchers\win64\$template")
 }
+# The Excel add-in template mcc -W excel copies and stamps (stage K17c; native\jgxl, checked in prebuilt).
+Copy-Item (Join-Path $root "native\win-x64\jgxl\jgxl.dll") (Join-Path $Output "launchers\win64\jgxl.dll")
 
 # The MWArray API a .NET client references (stage K8), alone in a folder as R2025b keeps MWArray.dll
 # in toolbox\dotnetbuilder\bin\win64: a client's build then copies it and nothing else, and it loads
@@ -125,7 +127,7 @@ foreach ($anchor in "jgraph.exe", "JGraph.Runtime.dll", "JGraph.Runtime.Desktop.
         throw "The runtime is missing 'bin\win64\$anchor' - the publish layout changed; fix before shipping."
     }
 }
-foreach ($template in "jglaunch-console.exe", "jglaunch-gui.exe") {
+foreach ($template in "jglaunch-console.exe", "jglaunch-gui.exe", "jgxl.dll") {
     if (-not (Test-Path (Join-Path $Output "launchers\win64\$template"))) { throw "The runtime is missing 'launchers\win64\$template'." }
 }
 if (-not (Test-Path (Join-Path $dotnetbuilder "JGraph.MATLAB.NET.Arrays.dll"))) { throw "The runtime is missing the MWArray API for clients." }

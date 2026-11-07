@@ -35,6 +35,8 @@
          and checked in), beside every program that can build one. -->
     <None Include="..\..\native\win-x64\launchers\jglaunch-console.exe;..\..\native\win-x64\launchers\jglaunch-gui.exe"
           Link="launchers\win64\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <!-- Stage K17c: the Excel add-in template mcc -W excel copies and stamps (native/jgxl, built by its build.ps1 and checked in). -->
+    <None Include="..\..\native\win-x64\jgxl\jgxl.dll" Link="launchers\win64\jgxl.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
     <!-- compiler.build's default icon and splash, where R2025b keeps its own under matlabroot. -->
     <None Include="PackagingResources\default_icon_48.png;PackagingResources\default_splash.png;PackagingResources\default_logo.png"
           Link="toolbox\compiler\packagingResources\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

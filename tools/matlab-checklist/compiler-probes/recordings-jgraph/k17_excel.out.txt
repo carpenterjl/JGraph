@@ -8,11 +8,11 @@ opts.default
       AddInVersion: '1.0.0.0'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {18x1 cell}
+      FunctionFiles: {18×1 cell}
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0x0 struct]
+      ExternalEncryptionKey: [0×0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -171,16 +171,18 @@ plain.printed
   |Parsing file "<W>\p\src\k17_make.m"
   |	(referenced from command line).
   |Generating file "<W>\p\b\plain\readme.txt".
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17xl_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17xl.ctf.
+  |Warning: Component "k17xl_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
 plain.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3x1 cell}
+      Files: {3×1 cell}
       IncludedSupportPackages: {}
-      Options: [1x1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+      Options: [1×1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
 plain.BuildType	excelAddIn
-plain.Files	<OUT>\_install.bat | <OUT>\k17xl.ctf | <OUT>\GettingStarted.html
+plain.Files	<OUT>\k17xl_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 plain.Options
   ExcelAddInOptions with properties:
       AddInName: 'k17xl'
@@ -188,11 +190,11 @@ plain.Options
       AddInVersion: '1.0.0.0'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {18x1 cell}
+      FunctionFiles: {18×1 cell}
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0x0 struct]
+      ExternalEncryptionKey: [0×0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -200,11 +202,11 @@ plain.Options
       OutputDir: '<W>\p\b\plain'
 plain.RuntimeDependencies
   Dependencies with properties:
-      Required: [1x2 table]
-      Optional: [0x0 table]
-plain.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17xl.ctf (12472) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-plain.seconds	0.2
-plain.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17xl_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17xl.ctf.
+      Required: [1×2 table]
+      Optional: [0×0 table]
+plain.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17xl_1_0.dll (221184) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+plain.seconds	0.3
+plain.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17xl_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 plain.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
@@ -281,7 +283,7 @@ plain.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 plain.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-plain.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
+plain.file.readme.txt	1188 chars, CRLF 27, ends with newline 1
   |k17xl JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -296,7 +298,6 @@ plain.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
   |
   |2. Files to Deploy and Package
   |
-  |-k17xl.ctf (component technology file)
   |-k17xl_1_0.dll (output from mcc)
   |-The JGraph Runtime installer, when the computer has no JGraph Runtime
   |-This readme file
@@ -314,17 +315,86 @@ plain.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 plain.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
   |Path	Symbol	Reason
+plain.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17xl.K17Xl
+  |    (Default)    REG_SZ    K17Xl
+  |+ Software/Classes/k17xl.K17Xl/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17xl.K17Xl/CurVer
+  |    (Default)    REG_SZ    k17xl.K17Xl.1_0
+  |+ Software/Classes/k17xl.K17Xl.1_0
+  |    (Default)    REG_SZ    K17Xl
+  |+ Software/Classes/k17xl.K17Xl.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+plain.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17Xl
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\plain\k17xl_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17xl.K17Xl.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17xl.K17Xl
+plain.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17xl 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\b\plain\k17xl_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\plain
+plain.registry.Software/Classes/Interface	added 4, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IMWFlags
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17Xl
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IMWArrayFormatFlags
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IMWDataConversionFlags
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 plain2.printed
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17xl_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17xl.ctf.
+  |Warning: Component "k17xl_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
 plain2.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3x1 cell}
+      Files: {3×1 cell}
       IncludedSupportPackages: {}
-      Options: [1x1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+      Options: [1×1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
 plain2.BuildType	excelAddIn
-plain2.Files	<OUT>\_install.bat | <OUT>\k17xl.ctf | <OUT>\GettingStarted.html
+plain2.Files	<OUT>\k17xl_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 plain2.Options
   ExcelAddInOptions with properties:
       AddInName: 'k17xl'
@@ -332,11 +402,11 @@ plain2.Options
       AddInVersion: '1.0.0.0'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {18x1 cell}
+      FunctionFiles: {18×1 cell}
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0x0 struct]
+      ExternalEncryptionKey: [0×0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -344,11 +414,11 @@ plain2.Options
       OutputDir: '<W>\p\b\plain2'
 plain2.RuntimeDependencies
   Dependencies with properties:
-      Required: [1x2 table]
-      Optional: [0x0 table]
-plain2.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17xl.ctf (12473) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-plain2.seconds	0.0
-plain2.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17xl_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17xl.ctf.
+      Required: [1×2 table]
+      Optional: [0×0 table]
+plain2.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17xl_1_0.dll (221184) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+plain2.seconds	0.2
+plain2.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17xl_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 plain2.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
@@ -425,7 +495,7 @@ plain2.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 plain2.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-plain2.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
+plain2.file.readme.txt	1188 chars, CRLF 27, ends with newline 1
   |k17xl JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -440,7 +510,6 @@ plain2.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
   |
   |2. Files to Deploy and Package
   |
-  |-k17xl.ctf (component technology file)
   |-k17xl_1_0.dll (output from mcc)
   |-The JGraph Runtime installer, when the computer has no JGraph Runtime
   |-This readme file
@@ -459,16 +528,19 @@ plain2.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
 plain2.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
   |Path	Symbol	Reason
 bas.printed
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17bas_1_0.dll and the module k17bas.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17bas.ctf.
+  |Warning: This build of JGraph writes the add-in without its Visual Basic module: k17bas.bas is pending (compiler and SDK plan, stage K17e).
+  |Warning: Component "k17bas_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
 bas.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3x1 cell}
+      Files: {3×1 cell}
       IncludedSupportPackages: {}
-      Options: [1x1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+      Options: [1×1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
 bas.BuildType	excelAddIn
-bas.Files	<OUT>\_install.bat | <OUT>\k17bas.ctf | <OUT>\GettingStarted.html
+bas.Files	<OUT>\k17bas_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 bas.Options
   ExcelAddInOptions with properties:
       AddInName: 'k17bas'
@@ -476,11 +548,11 @@ bas.Options
       AddInVersion: '1.0.0.0'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {18x1 cell}
+      FunctionFiles: {18×1 cell}
       GenerateVisualBasicFile: on
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0x0 struct]
+      ExternalEncryptionKey: [0×0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -488,11 +560,11 @@ bas.Options
       OutputDir: '<W>\p\b\bas'
 bas.RuntimeDependencies
   Dependencies with properties:
-      Required: [1x2 table]
-      Optional: [0x0 table]
-bas.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17bas.ctf (12518) | mccExcludedFiles.log (90) | readme.txt (1279) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-bas.seconds	0.0
-bas.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17bas_1_0.dll and the module k17bas.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17bas.ctf.
+      Required: [1×2 table]
+      Optional: [0×0 table]
+bas.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17bas_1_0.dll (221184) | mccExcludedFiles.log (90) | readme.txt (1238) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+bas.seconds	0.3
+bas.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17bas_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 bas.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
@@ -569,7 +641,7 @@ bas.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 bas.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-bas.file.readme.txt	1279 chars, CRLF 29, ends with newline 1
+bas.file.readme.txt	1238 chars, CRLF 28, ends with newline 1
   |k17bas JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -584,7 +656,6 @@ bas.file.readme.txt	1279 chars, CRLF 29, ends with newline 1
   |
   |2. Files to Deploy and Package
   |
-  |-k17bas.ctf (component technology file)
   |-k17bas_1_0.dll (output from mcc)
   |-k17bas.bas (VBA module file created by mcc)
   |-The JGraph Runtime installer, when the computer has no JGraph Runtime
@@ -603,17 +674,66 @@ bas.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 bas.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
   |Path	Symbol	Reason
+bas.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17bas.K17Bas
+  |    (Default)    REG_SZ    K17Bas
+  |+ Software/Classes/k17bas.K17Bas/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17bas.K17Bas/CurVer
+  |    (Default)    REG_SZ    k17bas.K17Bas.1_0
+  |+ Software/Classes/k17bas.K17Bas.1_0
+  |    (Default)    REG_SZ    K17Bas
+  |+ Software/Classes/k17bas.K17Bas.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+bas.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17Bas
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\bas\k17bas_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17bas.K17Bas.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17bas.K17Bas
+bas.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17bas 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\b\bas\k17bas_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\bas
+bas.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17Bas
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 noembed.printed
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17sep_1_0.dll and the module k17sep.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17sep.ctf.
+  |Warning: This build of JGraph writes the add-in without its Visual Basic module: k17sep.bas is pending (compiler and SDK plan, stage K17e).
+  |Warning: Component "k17sep_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
 noembed.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3x1 cell}
+      Files: {4×1 cell}
       IncludedSupportPackages: {}
-      Options: [1x1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+      Options: [1×1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
 noembed.BuildType	excelAddIn
-noembed.Files	<OUT>\_install.bat | <OUT>\k17sep.ctf | <OUT>\GettingStarted.html
+noembed.Files	<OUT>\k17sep_1_0.dll | <OUT>\_install.bat | <OUT>\k17sep.ctf | <OUT>\GettingStarted.html
 noembed.Options
   ExcelAddInOptions with properties:
       AddInName: 'k17sep'
@@ -621,11 +741,11 @@ noembed.Options
       AddInVersion: '1.0.0.0'
       DebugBuild: off
       EmbedArchive: off
-      FunctionFiles: {18x1 cell}
+      FunctionFiles: {18×1 cell}
       GenerateVisualBasicFile: on
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0x0 struct]
+      ExternalEncryptionKey: [0×0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -633,11 +753,11 @@ noembed.Options
       OutputDir: '<W>\p\b\noembed'
 noembed.RuntimeDependencies
   Dependencies with properties:
-      Required: [1x2 table]
-      Optional: [0x0 table]
-noembed.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17sep.ctf (12514) | mccExcludedFiles.log (90) | readme.txt (1279) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-noembed.seconds	0.0
-noembed.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17sep_1_0.dll and the module k17sep.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17sep.ctf.
+      Required: [1×2 table]
+      Optional: [0×0 table]
+noembed.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17sep.ctf (12513) | k17sep_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1279) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+noembed.seconds	0.3
+noembed.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17sep_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 noembed.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
@@ -748,17 +868,65 @@ noembed.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 noembed.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
   |Path	Symbol	Reason
+noembed.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17sep.K17Sep
+  |    (Default)    REG_SZ    K17Sep
+  |+ Software/Classes/k17sep.K17Sep/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17sep.K17Sep/CurVer
+  |    (Default)    REG_SZ    k17sep.K17Sep.1_0
+  |+ Software/Classes/k17sep.K17Sep.1_0
+  |    (Default)    REG_SZ    K17Sep
+  |+ Software/Classes/k17sep.K17Sep.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+noembed.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17Sep
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\noembed\k17sep_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17sep.K17Sep.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17sep.K17Sep
+noembed.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17sep 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\b\noembed\k17sep_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\noembed
+noembed.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17Sep
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 debug.printed
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17dbg_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17dbg.ctf.
+  |Warning: Component "k17dbg_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
 debug.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3x1 cell}
+      Files: {3×1 cell}
       IncludedSupportPackages: {}
-      Options: [1x1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+      Options: [1×1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
 debug.BuildType	excelAddIn
-debug.Files	<OUT>\_install.bat | <OUT>\k17dbg.ctf | <OUT>\GettingStarted.html
+debug.Files	<OUT>\k17dbg_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 debug.Options
   ExcelAddInOptions with properties:
       AddInName: 'k17dbg'
@@ -766,11 +934,11 @@ debug.Options
       AddInVersion: '1.0.0.0'
       DebugBuild: on
       EmbedArchive: on
-      FunctionFiles: {3x1 cell}
+      FunctionFiles: {3×1 cell}
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0x0 struct]
+      ExternalEncryptionKey: [0×0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -778,11 +946,11 @@ debug.Options
       OutputDir: '<W>\p\b\debug'
 debug.RuntimeDependencies
   Dependencies with properties:
-      Required: [1x2 table]
-      Optional: [0x0 table]
-debug.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17dbg.ctf (4190) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-debug.seconds	0.0
-debug.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17dbg_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17dbg.ctf.
+      Required: [1×2 table]
+      Optional: [0×0 table]
+debug.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17dbg_1_0.dll (209920) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+debug.seconds	0.3
+debug.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17dbg_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 debug.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
@@ -859,7 +1027,7 @@ debug.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 debug.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-debug.file.readme.txt	1233 chars, CRLF 28, ends with newline 1
+debug.file.readme.txt	1192 chars, CRLF 27, ends with newline 1
   |k17dbg JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -874,7 +1042,6 @@ debug.file.readme.txt	1233 chars, CRLF 28, ends with newline 1
   |
   |2. Files to Deploy and Package
   |
-  |-k17dbg.ctf (component technology file)
   |-k17dbg_1_0.dll (output from mcc)
   |-The JGraph Runtime installer, when the computer has no JGraph Runtime
   |-This readme file
@@ -892,17 +1059,65 @@ debug.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 debug.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
   |Path	Symbol	Reason
+debug.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17dbg.K17Dbg
+  |    (Default)    REG_SZ    K17Dbg
+  |+ Software/Classes/k17dbg.K17Dbg/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17dbg.K17Dbg/CurVer
+  |    (Default)    REG_SZ    k17dbg.K17Dbg.1_0
+  |+ Software/Classes/k17dbg.K17Dbg.1_0
+  |    (Default)    REG_SZ    K17Dbg
+  |+ Software/Classes/k17dbg.K17Dbg.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+debug.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17Dbg
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\debug\k17dbg_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17dbg.K17Dbg.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17dbg.K17Dbg
+debug.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17dbg 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\b\debug\k17dbg_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\debug
+debug.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17Dbg
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 v2.printed
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17v2_2_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17v2.ctf.
+  |Warning: Component "k17v2_2_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
 v2.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3x1 cell}
+      Files: {3×1 cell}
       IncludedSupportPackages: {}
-      Options: [1x1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+      Options: [1×1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
 v2.BuildType	excelAddIn
-v2.Files	<OUT>\_install.bat | <OUT>\k17v2.ctf | <OUT>\GettingStarted.html
+v2.Files	<OUT>\k17v2_2_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 v2.Options
   ExcelAddInOptions with properties:
       AddInName: 'k17v2'
@@ -910,11 +1125,11 @@ v2.Options
       AddInVersion: '2'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {3x1 cell}
+      FunctionFiles: {3×1 cell}
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0x0 struct]
+      ExternalEncryptionKey: [0×0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -922,11 +1137,11 @@ v2.Options
       OutputDir: '<W>\p\b\v2'
 v2.RuntimeDependencies
   Dependencies with properties:
-      Required: [1x2 table]
-      Optional: [0x0 table]
-v2.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v2.ctf (4178) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-v2.seconds	0.0
-v2.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17v2_2_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17v2.ctf.
+      Required: [1×2 table]
+      Optional: [0×0 table]
+v2.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v2_2_0.dll (209920) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+v2.seconds	0.3
+v2.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17v2_2_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 v2.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
@@ -1003,7 +1218,7 @@ v2.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 v2.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-v2.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
+v2.file.readme.txt	1188 chars, CRLF 27, ends with newline 1
   |k17v2 JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -1018,7 +1233,6 @@ v2.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
   |
   |2. Files to Deploy and Package
   |
-  |-k17v2.ctf (component technology file)
   |-k17v2_2_0.dll (output from mcc)
   |-The JGraph Runtime installer, when the computer has no JGraph Runtime
   |-This readme file
@@ -1036,17 +1250,65 @@ v2.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 v2.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
   |Path	Symbol	Reason
+v2.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17v2.K17V2
+  |    (Default)    REG_SZ    K17V2
+  |+ Software/Classes/k17v2.K17V2/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17v2.K17V2/CurVer
+  |    (Default)    REG_SZ    k17v2.K17V2.2_0
+  |+ Software/Classes/k17v2.K17V2.2_0
+  |    (Default)    REG_SZ    K17V2
+  |+ Software/Classes/k17v2.K17V2.2_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+v2.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17V2
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\v2\k17v2_2_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17v2.K17V2.2_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    2.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17v2.K17V2
+v2.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/2.0
+  |    (Default)    REG_SZ    k17v2 2.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/2.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/2.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\b\v2\k17v2_2_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/2.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/2.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\v2
+v2.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17V2
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    2.0
 v05.printed
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17v05_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17v05.ctf.
+  |Warning: Component "k17v05_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
 v05.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3x1 cell}
+      Files: {3×1 cell}
       IncludedSupportPackages: {}
-      Options: [1x1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+      Options: [1×1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
 v05.BuildType	excelAddIn
-v05.Files	<OUT>\_install.bat | <OUT>\k17v05.ctf | <OUT>\GettingStarted.html
+v05.Files	<OUT>\k17v05_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 v05.Options
   ExcelAddInOptions with properties:
       AddInName: 'k17v05'
@@ -1054,11 +1316,11 @@ v05.Options
       AddInVersion: '0.5'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {3x1 cell}
+      FunctionFiles: {3×1 cell}
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0x0 struct]
+      ExternalEncryptionKey: [0×0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -1066,11 +1328,11 @@ v05.Options
       OutputDir: '<W>\p\b\v05'
 v05.RuntimeDependencies
   Dependencies with properties:
-      Required: [1x2 table]
-      Optional: [0x0 table]
-v05.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v05.ctf (4192) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-v05.seconds	0.0
-v05.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17v05_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17v05.ctf.
+      Required: [1×2 table]
+      Optional: [0×0 table]
+v05.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v05_1_0.dll (209920) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+v05.seconds	0.3
+v05.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17v05_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 v05.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
@@ -1147,7 +1409,7 @@ v05.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 v05.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-v05.file.readme.txt	1233 chars, CRLF 28, ends with newline 1
+v05.file.readme.txt	1192 chars, CRLF 27, ends with newline 1
   |k17v05 JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -1162,7 +1424,6 @@ v05.file.readme.txt	1233 chars, CRLF 28, ends with newline 1
   |
   |2. Files to Deploy and Package
   |
-  |-k17v05.ctf (component technology file)
   |-k17v05_1_0.dll (output from mcc)
   |-The JGraph Runtime installer, when the computer has no JGraph Runtime
   |-This readme file
@@ -1180,17 +1441,66 @@ v05.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 v05.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
   |Path	Symbol	Reason
+v05.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17v05.K17V05
+  |    (Default)    REG_SZ    K17V05
+  |+ Software/Classes/k17v05.K17V05/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17v05.K17V05/CurVer
+  |    (Default)    REG_SZ    k17v05.K17V05.1_0
+  |+ Software/Classes/k17v05.K17V05.1_0
+  |    (Default)    REG_SZ    K17V05
+  |+ Software/Classes/k17v05.K17V05.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+v05.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17V05
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\v05\k17v05_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17v05.K17V05.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17v05.K17V05
+v05.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17v05 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\b\v05\k17v05_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\v05
+v05.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17V05
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 v3456.printed
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17v3456_3_4.dll and the module k17v3456.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17v3456.ctf.
+  |Warning: This build of JGraph writes the add-in without its Visual Basic module: k17v3456.bas is pending (compiler and SDK plan, stage K17e).
+  |Warning: Component "k17v3456_3_4" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
 v3456.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3x1 cell}
+      Files: {3×1 cell}
       IncludedSupportPackages: {}
-      Options: [1x1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+      Options: [1×1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
 v3456.BuildType	excelAddIn
-v3456.Files	<OUT>\_install.bat | <OUT>\k17v3456.ctf | <OUT>\GettingStarted.html
+v3456.Files	<OUT>\k17v3456_3_4.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 v3456.Options
   ExcelAddInOptions with properties:
       AddInName: 'k17v3456'
@@ -1198,11 +1508,11 @@ v3456.Options
       AddInVersion: '3.4.5.6'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {3x1 cell}
+      FunctionFiles: {3×1 cell}
       GenerateVisualBasicFile: on
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0x0 struct]
+      ExternalEncryptionKey: [0×0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -1210,11 +1520,11 @@ v3456.Options
       OutputDir: '<W>\p\b\v3456'
 v3456.RuntimeDependencies
   Dependencies with properties:
-      Required: [1x2 table]
-      Optional: [0x0 table]
-v3456.files	GettingStarted.html (1253) | _install.bat (883) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v3456.ctf (4208) | mccExcludedFiles.log (90) | readme.txt (1291) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-v3456.seconds	0.0
-v3456.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17v3456_3_4.dll and the module k17v3456.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17v3456.ctf.
+      Required: [1×2 table]
+      Optional: [0×0 table]
+v3456.files	GettingStarted.html (1253) | _install.bat (883) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v3456_3_4.dll (209920) | mccExcludedFiles.log (90) | readme.txt (1248) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+v3456.seconds	0.2
+v3456.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17v3456_3_4" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 v3456.file.GettingStarted.html	1253 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
@@ -1291,7 +1601,7 @@ v3456.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 v3456.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-v3456.file.readme.txt	1291 chars, CRLF 29, ends with newline 1
+v3456.file.readme.txt	1248 chars, CRLF 28, ends with newline 1
   |k17v3456 JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -1306,7 +1616,6 @@ v3456.file.readme.txt	1291 chars, CRLF 29, ends with newline 1
   |
   |2. Files to Deploy and Package
   |
-  |-k17v3456.ctf (component technology file)
   |-k17v3456_3_4.dll (output from mcc)
   |-k17v3456.bas (VBA module file created by mcc)
   |-The JGraph Runtime installer, when the computer has no JGraph Runtime
@@ -1325,6 +1634,52 @@ v3456.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 v3456.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
   |Path	Symbol	Reason
+v3456.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17v3456.K17V3456
+  |    (Default)    REG_SZ    K17V3456
+  |+ Software/Classes/k17v3456.K17V3456/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17v3456.K17V3456/CurVer
+  |    (Default)    REG_SZ    k17v3456.K17V3456.3_4
+  |+ Software/Classes/k17v3456.K17V3456.3_4
+  |    (Default)    REG_SZ    K17V3456
+  |+ Software/Classes/k17v3456.K17V3456.3_4/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+v3456.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17V3456
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\v3456\k17v3456_3_4.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17v3456.K17V3456.3_4
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    3.4
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17v3456.K17V3456
+v3456.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/3.4
+  |    (Default)    REG_SZ    k17v3456 3.4 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/3.4/0
+  |+ Software/Classes/TypeLib/{<UUID>}/3.4/0/win64
+  |    (Default)    REG_SZ    <W>\p\b\v3456\k17v3456_3_4.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/3.4/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/3.4/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\v3456
+v3456.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17V3456
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    3.4
 vtext	ERR Compiler:compiler:COM_ERR_INVALID_VERSION | Version string "abc" is invalid. Use at most four integers (0 to 65534), separated by ".", to specify the version.
 vtext.files	
 vtext.seconds	0.0
@@ -1335,16 +1690,18 @@ vbig	ERR Compiler:compiler:COM_ERR_INVALID_VERSION | Version string "70000" is i
 vbig.files	
 vbig.seconds	0.0
 vzero.printed
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17vz_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17vz.ctf.
+  |Warning: Component "k17vz_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
 vzero.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3x1 cell}
+      Files: {3×1 cell}
       IncludedSupportPackages: {}
-      Options: [1x1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+      Options: [1×1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
 vzero.BuildType	excelAddIn
-vzero.Files	<OUT>\_install.bat | <OUT>\k17vz.ctf | <OUT>\GettingStarted.html
+vzero.Files	<OUT>\k17vz_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 vzero.Options
   ExcelAddInOptions with properties:
       AddInName: 'k17vz'
@@ -1352,11 +1709,11 @@ vzero.Options
       AddInVersion: '0'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {3x1 cell}
+      FunctionFiles: {3×1 cell}
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0x0 struct]
+      ExternalEncryptionKey: [0×0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -1364,11 +1721,11 @@ vzero.Options
       OutputDir: '<W>\p\b\vzero'
 vzero.RuntimeDependencies
   Dependencies with properties:
-      Required: [1x2 table]
-      Optional: [0x0 table]
-vzero.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17vz.ctf (4185) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-vzero.seconds	0.0
-vzero.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17vz_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17vz.ctf.
+      Required: [1×2 table]
+      Optional: [0×0 table]
+vzero.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17vz_1_0.dll (209920) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+vzero.seconds	0.3
+vzero.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17vz_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 vzero.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
@@ -1445,7 +1802,7 @@ vzero.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 vzero.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-vzero.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
+vzero.file.readme.txt	1188 chars, CRLF 27, ends with newline 1
   |k17vz JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -1460,7 +1817,6 @@ vzero.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
   |
   |2. Files to Deploy and Package
   |
-  |-k17vz.ctf (component technology file)
   |-k17vz_1_0.dll (output from mcc)
   |-The JGraph Runtime installer, when the computer has no JGraph Runtime
   |-This readme file
@@ -1478,17 +1834,65 @@ vzero.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 vzero.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
   |Path	Symbol	Reason
+vzero.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17vz.K17Vz
+  |    (Default)    REG_SZ    K17Vz
+  |+ Software/Classes/k17vz.K17Vz/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17vz.K17Vz/CurVer
+  |    (Default)    REG_SZ    k17vz.K17Vz.1_0
+  |+ Software/Classes/k17vz.K17Vz.1_0
+  |    (Default)    REG_SZ    K17Vz
+  |+ Software/Classes/k17vz.K17Vz.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+vzero.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17Vz
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\vzero\k17vz_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17vz.K17Vz.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17vz.K17Vz
+vzero.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17vz 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\b\vzero\k17vz_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\vzero
+vzero.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17Vz
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 defaults.printed
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17_one_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17_one.ctf.
+  |Warning: Component "k17_one_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
 defaults.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3x1 cell}
+      Files: {3×1 cell}
       IncludedSupportPackages: {}
-      Options: [1x1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+      Options: [1×1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
 defaults.BuildType	excelAddIn
-defaults.Files	<OUT>\_install.bat | <OUT>\k17_one.ctf | <OUT>\GettingStarted.html
+defaults.Files	<OUT>\k17_one_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 defaults.Options
   ExcelAddInOptions with properties:
       AddInName: 'k17_one'
@@ -1500,7 +1904,7 @@ defaults.Options
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0x0 struct]
+      ExternalEncryptionKey: [0×0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -1508,11 +1912,11 @@ defaults.Options
       OutputDir: '<W>\p\b\defaults'
 defaults.RuntimeDependencies
   Dependencies with properties:
-      Required: [1x2 table]
-      Optional: [0x0 table]
-defaults.files	GettingStarted.html (1250) | _install.bat (882) | buildresult.json (102) | includedSupportPackages.txt (0) | k17_one.ctf (3465) | mccExcludedFiles.log (90) | readme.txt (1238) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-defaults.seconds	0.0
-defaults.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17_one_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17_one.ctf.
+      Required: [1×2 table]
+      Optional: [0×0 table]
+defaults.files	GettingStarted.html (1250) | _install.bat (882) | buildresult.json (102) | includedSupportPackages.txt (0) | k17_one_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1196) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+defaults.seconds	0.2
+defaults.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17_one_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 defaults.file.GettingStarted.html	1250 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
@@ -1589,7 +1993,7 @@ defaults.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 defaults.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-defaults.file.readme.txt	1238 chars, CRLF 28, ends with newline 1
+defaults.file.readme.txt	1196 chars, CRLF 27, ends with newline 1
   |k17_one JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -1604,7 +2008,6 @@ defaults.file.readme.txt	1238 chars, CRLF 28, ends with newline 1
   |
   |2. Files to Deploy and Package
   |
-  |-k17_one.ctf (component technology file)
   |-k17_one_1_0.dll (output from mcc)
   |-The JGraph Runtime installer, when the computer has no JGraph Runtime
   |-This readme file
@@ -1622,17 +2025,65 @@ defaults.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 defaults.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
   |Path	Symbol	Reason
+defaults.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17_one.k17_oneClass
+  |    (Default)    REG_SZ    k17_oneClass
+  |+ Software/Classes/k17_one.k17_oneClass/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17_one.k17_oneClass/CurVer
+  |    (Default)    REG_SZ    k17_one.k17_oneClass.1_0
+  |+ Software/Classes/k17_one.k17_oneClass.1_0
+  |    (Default)    REG_SZ    k17_oneClass
+  |+ Software/Classes/k17_one.k17_oneClass.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+defaults.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    k17_oneClass
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\defaults\k17_one_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17_one.k17_oneClass.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17_one.k17_oneClass
+defaults.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17_one 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\b\defaults\k17_one_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\defaults
+defaults.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    Ik17_oneClass
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 additional.printed
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17add_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17add.ctf.
+  |Warning: Component "k17add_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
 additional.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3x1 cell}
+      Files: {4×1 cell}
       IncludedSupportPackages: {}
-      Options: [1x1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+      Options: [1×1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
 additional.BuildType	excelAddIn
-additional.Files	<OUT>\_install.bat | <OUT>\k17add.ctf | <OUT>\GettingStarted.html
+additional.Files	<OUT>\k17add_1_0.dll | <OUT>\_install.bat | <OUT>\k17add.ctf | <OUT>\GettingStarted.html
 additional.Options
   ExcelAddInOptions with properties:
       AddInName: 'k17add'
@@ -1640,11 +2091,11 @@ additional.Options
       AddInVersion: '1.0.0.0'
       DebugBuild: off
       EmbedArchive: off
-      FunctionFiles: {3x1 cell}
+      FunctionFiles: {3×1 cell}
       GenerateVisualBasicFile: off
       AdditionalFiles: {'<W>\p\src\k17data.txt'}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0x0 struct]
+      ExternalEncryptionKey: [0×0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -1652,11 +2103,11 @@ additional.Options
       OutputDir: '<W>\p\b\additional'
 additional.RuntimeDependencies
   Dependencies with properties:
-      Required: [1x2 table]
-      Optional: [0x0 table]
-additional.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17add.ctf (4401) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-additional.seconds	0.0
-additional.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17add_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17add.ctf.
+      Required: [1×2 table]
+      Optional: [0×0 table]
+additional.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17add.ctf (4399) | k17add_1_0.dll (205824) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+additional.seconds	0.2
+additional.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17add_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 additional.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
@@ -1766,21 +2217,70 @@ additional.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 additional.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
   |Path	Symbol	Reason
+additional.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17add.K17Add
+  |    (Default)    REG_SZ    K17Add
+  |+ Software/Classes/k17add.K17Add/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17add.K17Add/CurVer
+  |    (Default)    REG_SZ    k17add.K17Add.1_0
+  |+ Software/Classes/k17add.K17Add.1_0
+  |    (Default)    REG_SZ    K17Add
+  |+ Software/Classes/k17add.K17Add.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+additional.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17Add
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\additional\k17add_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17add.K17Add.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17add.K17Add
+additional.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17add 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\b\additional\k17add_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\additional
+additional.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17Add
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 pfile.printed
   |Warning: P-files cannot be analyzed for dependent files. Manually add dependent files for:
   |
   |<W>\p\src\k17_pfun.p
   |
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17p_1_0.dll and the module k17p.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17p.ctf.
+  |Warning: This build of JGraph writes the add-in without its Visual Basic module: k17p.bas is pending (compiler and SDK plan, stage K17e).
+  |Warning: Component "k17p_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
 pfile.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3x1 cell}
+      Files: {3×1 cell}
       IncludedSupportPackages: {}
-      Options: [1x1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+      Options: [1×1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
 pfile.BuildType	excelAddIn
-pfile.Files	<OUT>\_install.bat | <OUT>\k17p.ctf | <OUT>\GettingStarted.html
+pfile.Files	<OUT>\k17p_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 pfile.Options
   ExcelAddInOptions with properties:
       AddInName: 'k17p'
@@ -1788,11 +2288,11 @@ pfile.Options
       AddInVersion: '1.0.0.0'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {2x1 cell}
+      FunctionFiles: {2×1 cell}
       GenerateVisualBasicFile: on
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0x0 struct]
+      ExternalEncryptionKey: [0×0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -1800,11 +2300,11 @@ pfile.Options
       OutputDir: '<W>\p\b\pfile'
 pfile.RuntimeDependencies
   Dependencies with properties:
-      Required: [1x2 table]
-      Optional: [0x0 table]
-pfile.files	GettingStarted.html (1241) | _install.bat (879) | buildresult.json (102) | includedSupportPackages.txt (0) | k17p.ctf (3901) | mccExcludedFiles.log (90) | readme.txt (1267) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-pfile.seconds	0.0
-pfile.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17p_1_0.dll and the module k17p.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17p.ctf.
+      Required: [1×2 table]
+      Optional: [0×0 table]
+pfile.files	GettingStarted.html (1241) | _install.bat (879) | buildresult.json (102) | includedSupportPackages.txt (0) | k17p_1_0.dll (209408) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+pfile.seconds	0.2
+pfile.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17p_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 pfile.file.GettingStarted.html	1241 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
@@ -1881,7 +2381,7 @@ pfile.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 pfile.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-pfile.file.readme.txt	1267 chars, CRLF 29, ends with newline 1
+pfile.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
   |k17p JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -1896,7 +2396,6 @@ pfile.file.readme.txt	1267 chars, CRLF 29, ends with newline 1
   |
   |2. Files to Deploy and Package
   |
-  |-k17p.ctf (component technology file)
   |-k17p_1_0.dll (output from mcc)
   |-k17p.bas (VBA module file created by mcc)
   |-The JGraph Runtime installer, when the computer has no JGraph Runtime
@@ -1915,17 +2414,65 @@ pfile.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 pfile.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
   |Path	Symbol	Reason
+pfile.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17p.K17P
+  |    (Default)    REG_SZ    K17P
+  |+ Software/Classes/k17p.K17P/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17p.K17P/CurVer
+  |    (Default)    REG_SZ    k17p.K17P.1_0
+  |+ Software/Classes/k17p.K17P.1_0
+  |    (Default)    REG_SZ    K17P
+  |+ Software/Classes/k17p.K17P.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+pfile.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17P
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\pfile\k17p_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17p.K17P.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17p.K17P
+pfile.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17p 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\b\pfile\k17p_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\pfile
+pfile.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17P
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 classname.printed
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17cls_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17cls.ctf.
+  |Warning: Component "k17cls_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
 classname.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3x1 cell}
+      Files: {3×1 cell}
       IncludedSupportPackages: {}
-      Options: [1x1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+      Options: [1×1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
 classname.BuildType	excelAddIn
-classname.Files	<OUT>\_install.bat | <OUT>\k17cls.ctf | <OUT>\GettingStarted.html
+classname.Files	<OUT>\k17cls_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 classname.Options
   ExcelAddInOptions with properties:
       AddInName: 'k17cls'
@@ -1937,7 +2484,7 @@ classname.Options
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0x0 struct]
+      ExternalEncryptionKey: [0×0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -1945,11 +2492,11 @@ classname.Options
       OutputDir: '<W>\p\b\classname'
 classname.RuntimeDependencies
   Dependencies with properties:
-      Required: [1x2 table]
-      Optional: [0x0 table]
-classname.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17cls.ctf (3471) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-classname.seconds	0.0
-classname.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17cls_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17cls.ctf.
+      Required: [1×2 table]
+      Optional: [0×0 table]
+classname.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17cls_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+classname.seconds	0.3
+classname.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17cls_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 classname.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
@@ -2026,7 +2573,7 @@ classname.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 classname.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-classname.file.readme.txt	1233 chars, CRLF 28, ends with newline 1
+classname.file.readme.txt	1192 chars, CRLF 27, ends with newline 1
   |k17cls JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -2041,7 +2588,6 @@ classname.file.readme.txt	1233 chars, CRLF 28, ends with newline 1
   |
   |2. Files to Deploy and Package
   |
-  |-k17cls.ctf (component technology file)
   |-k17cls_1_0.dll (output from mcc)
   |-The JGraph Runtime installer, when the computer has no JGraph Runtime
   |-This readme file
@@ -2059,26 +2605,263 @@ classname.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 classname.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
   |Path	Symbol	Reason
+classname.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17cls.k17cls
+  |    (Default)    REG_SZ    k17cls
+  |+ Software/Classes/k17cls.k17cls/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17cls.k17cls/CurVer
+  |    (Default)    REG_SZ    k17cls.k17cls.1_0
+  |+ Software/Classes/k17cls.k17cls.1_0
+  |    (Default)    REG_SZ    k17cls
+  |+ Software/Classes/k17cls.k17cls.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+classname.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    k17cls
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\classname\k17cls_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17cls.k17cls.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17cls.k17cls
+classname.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17cls 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\b\classname\k17cls_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\classname
+classname.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    Ik17cls
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 guids.plain.same_as_plain2	ERR MATLAB:fileread:cannotOpenFile | Could not open file <W>\p\b\plain\k17xl_idl.idl. No such file or directory.
 guids.plain.same_as_bas	ERR MATLAB:fileread:cannotOpenFile | Could not open file <W>\p\b\plain\k17xl_idl.idl. No such file or directory.
-nooutdir.Files	<SRC>\k17ownexcelAddIn\_install.bat | <SRC>\k17ownexcelAddIn\k17own.ctf | <SRC>\k17ownexcelAddIn\GettingStarted.html
-nooutdir.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17own.ctf (3471) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-nooutdir.seconds	0.0
+nooutdir.Files	<SRC>\k17ownexcelAddIn\k17own_1_0.dll | <SRC>\k17ownexcelAddIn\_install.bat | <SRC>\k17ownexcelAddIn\GettingStarted.html
+nooutdir.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17own_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+nooutdir.seconds	0.2
+nooutdir.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17own.k17_oneClass
+  |    (Default)    REG_SZ    k17_oneClass
+  |+ Software/Classes/k17own.k17_oneClass/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17own.k17_oneClass/CurVer
+  |    (Default)    REG_SZ    k17own.k17_oneClass.1_0
+  |+ Software/Classes/k17own.k17_oneClass.1_0
+  |    (Default)    REG_SZ    k17_oneClass
+  |+ Software/Classes/k17own.k17_oneClass.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+nooutdir.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    k17_oneClass
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\src\k17ownexcelAddIn\k17own_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17own.k17_oneClass.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17own.k17_oneClass
+nooutdir.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17own 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\src\k17ownexcelAddIn\k17own_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\src\k17ownexcelAddIn
+nooutdir.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    Ik17_oneClass
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 mcc_default	ok
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17m_1_0.dll and the module k17m.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17m.ctf.
-mcc_default.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m.ctf (3462) | mccExcludedFiles.log (90) | readme.txt (1267) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_default.seconds	0.0
-mcc_default.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17m_1_0.dll and the module k17m.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17m.ctf.
+  |Warning: This build of JGraph writes the add-in without its Visual Basic module: k17m.bas is pending (compiler and SDK plan, stage K17e).
+  |Warning: Component "k17m_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_default.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_default.seconds	0.2
+mcc_default.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17m_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_default.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17m.K17M
+  |    (Default)    REG_SZ    K17M
+  |+ Software/Classes/k17m.K17M/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17m.K17M/CurVer
+  |    (Default)    REG_SZ    k17m.K17M.1_0
+  |+ Software/Classes/k17m.K17M.1_0
+  |    (Default)    REG_SZ    K17M
+  |+ Software/Classes/k17m.K17M.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+mcc_default.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17M
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_default\k17m_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17m.K17M.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17m.K17M
+mcc_default.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17m 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_default\k17m_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_default
+mcc_default.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17M
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 mcc_noversion	ok
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17mnv_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mnv.ctf.
-mcc_noversion.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnv.ctf (3471) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_noversion.seconds	0.0
-mcc_noversion.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17mnv_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mnv.ctf.
+  |Warning: Component "k17mnv_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_noversion.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnv_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_noversion.seconds	0.2
+mcc_noversion.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mnv_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_noversion.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17mnv.K17Mnv
+  |    (Default)    REG_SZ    K17Mnv
+  |+ Software/Classes/k17mnv.K17Mnv/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17mnv.K17Mnv/CurVer
+  |    (Default)    REG_SZ    k17mnv.K17Mnv.1_0
+  |+ Software/Classes/k17mnv.K17Mnv.1_0
+  |    (Default)    REG_SZ    K17Mnv
+  |+ Software/Classes/k17mnv.K17Mnv.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+mcc_noversion.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17Mnv
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_noversion\k17mnv_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17mnv.K17Mnv.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17mnv.K17Mnv
+mcc_noversion.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17mnv 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_noversion\k17mnv_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_noversion
+mcc_noversion.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17Mnv
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 mcc_noclass	ok
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17mnc_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mnc.ctf.
-mcc_noclass.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnc.ctf (3470) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_noclass.seconds	0.0
-mcc_noclass.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17mnc_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mnc.ctf.
+  |Warning: Component "k17mnc_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_noclass.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnc_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_noclass.seconds	0.2
+mcc_noclass.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mnc_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_noclass.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17mnc.k17mnc
+  |    (Default)    REG_SZ    k17mnc
+  |+ Software/Classes/k17mnc.k17mnc/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17mnc.k17mnc/CurVer
+  |    (Default)    REG_SZ    k17mnc.k17mnc.1_0
+  |+ Software/Classes/k17mnc.k17mnc.1_0
+  |    (Default)    REG_SZ    k17mnc
+  |+ Software/Classes/k17mnc.k17mnc.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+mcc_noclass.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    k17mnc
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_noclass\k17mnc_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17mnc.k17mnc.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17mnc.k17mnc
+mcc_noclass.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17mnc 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_noclass\k17mnc_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_noclass
+mcc_noclass.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    Ik17mnc
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 mcc_empty	ERR Compiler:compiler:COM_ERR_ILLEGAL_COMPONENT_NAME | Error: Component name invalid or unspecified (specify with -n or -W).
 mcc_empty.files	
 mcc_empty.seconds	0.0
@@ -2089,38 +2872,279 @@ mcc_badversion	ERR Compiler:compiler:COM_ERR_INVALID_VERSION | Version string "x
 mcc_badversion.files	
 mcc_badversion.seconds	0.0
 mcc_version2	ok
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17mv2_2_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mv2.ctf.
-mcc_version2.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mv2.ctf (3473) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_version2.seconds	0.0
-mcc_version2.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17mv2_2_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mv2.ctf.
+  |Warning: Component "k17mv2_2_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_version2.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mv2_2_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_version2.seconds	0.2
+mcc_version2.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mv2_2_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_version2.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17mv2.K17Mv2
+  |    (Default)    REG_SZ    K17Mv2
+  |+ Software/Classes/k17mv2.K17Mv2/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17mv2.K17Mv2/CurVer
+  |    (Default)    REG_SZ    k17mv2.K17Mv2.2_0
+  |+ Software/Classes/k17mv2.K17Mv2.2_0
+  |    (Default)    REG_SZ    K17Mv2
+  |+ Software/Classes/k17mv2.K17Mv2.2_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+mcc_version2.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17Mv2
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_version2\k17mv2_2_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17mv2.K17Mv2.2_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    2.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17mv2.K17Mv2
+mcc_version2.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/2.0
+  |    (Default)    REG_SZ    k17mv2 2.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/2.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/2.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_version2\k17mv2_2_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/2.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/2.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_version2
+mcc_version2.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17Mv2
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    2.0
 mcc_extra	ERR Compiler:compiler:COM_ERR_INVALID_VERSION | Version string "version=1.0" is invalid. Use at most four integers (0 to 65534), separated by ".", to specify the version.
 mcc_extra.files	
 mcc_extra.seconds	0.0
 mcc_bundle	ok
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17mb_1_0.dll and the module k17mb.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mb.ctf.
-mcc_bundle.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mb.ctf (3466) | mccExcludedFiles.log (90) | readme.txt (1273) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_bundle.seconds	0.0
-mcc_bundle.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17mb_1_0.dll and the module k17mb.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mb.ctf.
+  |Warning: This build of JGraph writes the add-in without its Visual Basic module: k17mb.bas is pending (compiler and SDK plan, stage K17e).
+  |Warning: Component "k17mb_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_bundle.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mb_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_bundle.seconds	0.2
+mcc_bundle.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mb_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_bundle.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17mb.K17Mb
+  |    (Default)    REG_SZ    K17Mb
+  |+ Software/Classes/k17mb.K17Mb/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17mb.K17Mb/CurVer
+  |    (Default)    REG_SZ    k17mb.K17Mb.1_0
+  |+ Software/Classes/k17mb.K17Mb.1_0
+  |    (Default)    REG_SZ    K17Mb
+  |+ Software/Classes/k17mb.K17Mb.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+mcc_bundle.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17Mb
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_bundle\k17mb_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17mb.K17Mb.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17mb.K17Mb
+mcc_bundle.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17mb 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_bundle\k17mb_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_bundle
+mcc_bundle.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17Mb
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 mcc_notarget	ok
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17mnt_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mnt.ctf.
-mcc_notarget.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnt.ctf (3471) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_notarget.seconds	0.0
-mcc_notarget.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17mnt_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mnt.ctf.
+  |Warning: Component "k17mnt_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_notarget.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnt_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_notarget.seconds	0.2
+mcc_notarget.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mnt_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_notarget.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17mnt.K17Mnt
+  |    (Default)    REG_SZ    K17Mnt
+  |+ Software/Classes/k17mnt.K17Mnt/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17mnt.K17Mnt/CurVer
+  |    (Default)    REG_SZ    k17mnt.K17Mnt.1_0
+  |+ Software/Classes/k17mnt.K17Mnt.1_0
+  |    (Default)    REG_SZ    K17Mnt
+  |+ Software/Classes/k17mnt.K17Mnt.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+mcc_notarget.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17Mnt
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_notarget\k17mnt_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17mnt.K17Mnt.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17mnt.K17Mnt
+mcc_notarget.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17mnt 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_notarget\k17mnt_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_notarget
+mcc_notarget.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17Mnt
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 mcc_separate	ok
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17ms_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17ms.ctf.
-mcc_separate.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17ms.ctf (3468) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_separate.seconds	0.0
-mcc_separate.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17ms_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17ms.ctf.
+  |Warning: Component "k17ms_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_separate.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17ms.ctf (3464) | k17ms_1_0.dll (205312) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_separate.seconds	0.2
+mcc_separate.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17ms_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_separate.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17ms.K17Ms
+  |    (Default)    REG_SZ    K17Ms
+  |+ Software/Classes/k17ms.K17Ms/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17ms.K17Ms/CurVer
+  |    (Default)    REG_SZ    k17ms.K17Ms.1_0
+  |+ Software/Classes/k17ms.K17Ms.1_0
+  |    (Default)    REG_SZ    K17Ms
+  |+ Software/Classes/k17ms.K17Ms.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+mcc_separate.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17Ms
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_separate\k17ms_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17ms.K17Ms.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17ms.K17Ms
+mcc_separate.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17ms 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_separate\k17ms_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_separate
+mcc_separate.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17Ms
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 mcc_debug	ok
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17md_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17md.ctf.
-mcc_debug.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17md.ctf (3467) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_debug.seconds	0.0
-mcc_debug.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17md_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17md.ctf.
+  |Warning: Component "k17md_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_debug.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17md_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_debug.seconds	0.2
+mcc_debug.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17md_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_debug.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17md.K17Md
+  |    (Default)    REG_SZ    K17Md
+  |+ Software/Classes/k17md.K17Md/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17md.K17Md/CurVer
+  |    (Default)    REG_SZ    k17md.K17Md.1_0
+  |+ Software/Classes/k17md.K17Md.1_0
+  |    (Default)    REG_SZ    K17Md
+  |+ Software/Classes/k17md.K17Md.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+mcc_debug.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17Md
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_debug\k17md_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17md.K17Md.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17md.K17Md
+mcc_debug.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17md 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_debug\k17md_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_debug
+mcc_debug.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17Md
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 mcc_codegen	ok
-mcc_codegen.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mcg.ctf (3472) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_codegen.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mcg.ctf (3471) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_codegen.seconds	0.0
 mcc_compile	ok
-mcc_compile.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mcp.ctf (3471) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_compile.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mcp.ctf (3470) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_compile.seconds	0.0
 mcc_badname	ERR JGraph:mcc:excelAddInName | An Excel add-in's name must begin with a letter or '_' and contain only letters, digits and '_', as its type library and ProgIDs do: '1bad' cannot be one.
 mcc_badname.files	
@@ -2132,33 +3156,165 @@ mcc_dotted	ERR Compiler:compiler:COM_COM_EXCEL_NAMESPACE_ERROR | "Package "a" no
 mcc_dotted.files	
 mcc_dotted.seconds	0.0
 mcc_twofiles	ok
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17mtwo_1_0.dll and the module k17mtwo.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mtwo.ctf.
-mcc_twofiles.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mtwo.ctf (3827) | mccExcludedFiles.log (90) | readme.txt (1285) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_twofiles.seconds	0.0
-mcc_twofiles.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17mtwo_1_0.dll and the module k17mtwo.bas are pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17mtwo.ctf.
+  |Warning: This build of JGraph writes the add-in without its Visual Basic module: k17mtwo.bas is pending (compiler and SDK plan, stage K17e).
+  |Warning: Component "k17mtwo_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_twofiles.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mtwo_1_0.dll (209408) | mccExcludedFiles.log (90) | readme.txt (1243) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_twofiles.seconds	0.2
+mcc_twofiles.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mtwo_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_twofiles.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17mtwo.K17Two
+  |    (Default)    REG_SZ    K17Two
+  |+ Software/Classes/k17mtwo.K17Two/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17mtwo.K17Two/CurVer
+  |    (Default)    REG_SZ    k17mtwo.K17Two.1_0
+  |+ Software/Classes/k17mtwo.K17Two.1_0
+  |    (Default)    REG_SZ    K17Two
+  |+ Software/Classes/k17mtwo.K17Two.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+mcc_twofiles.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17Two
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_twofiles\k17mtwo_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17mtwo.K17Two.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17mtwo.K17Two
+mcc_twofiles.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17mtwo 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_twofiles\k17mtwo_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_twofiles
+mcc_twofiles.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17Two
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 mcc_o	ERR Compiler:compiler:COM_ERR_MULTIPLE_COMPONENT_NAMES | Error: Multiple component names. Processing "-o" switch. Component name "k17mo" already specified via "-W".
 mcc_o.files	
 mcc_o.seconds	0.0
 mcc_script	ok
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17msc_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17msc.ctf.
-mcc_script.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17msc.ctf (3394) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_script.seconds	0.0
-mcc_script.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17msc_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17msc.ctf.
+  |Warning: Component "k17msc_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_script.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17msc_1_0.dll (208384) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_script.seconds	0.1
+mcc_script.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17msc_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_script.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17msc.K17Msc
+  |    (Default)    REG_SZ    K17Msc
+  |+ Software/Classes/k17msc.K17Msc/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17msc.K17Msc/CurVer
+  |    (Default)    REG_SZ    k17msc.K17Msc.1_0
+  |+ Software/Classes/k17msc.K17Msc.1_0
+  |    (Default)    REG_SZ    K17Msc
+  |+ Software/Classes/k17msc.K17Msc.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+mcc_script.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17Msc
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_script\k17msc_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17msc.K17Msc.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17msc.K17Msc
+mcc_script.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17msc 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\m\mcc_script\k17msc_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\m\mcc_script
+mcc_script.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17Msc
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 mcc_samev2	ok
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17m_2_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17m.ctf.
-mcc_samev2.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m.ctf (3463) | mccExcludedFiles.log (90) | readme.txt (1223) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_samev2.seconds	0.0
-mcc_samev2.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17m_2_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17m.ctf.
+  |Warning: Component "k17m_2_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_samev2.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_2_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1184) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_samev2.seconds	0.2
+mcc_samev2.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17m_2_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_samev2.registry.Software/Classes	added 1, removed 0
+  |+ Software/Classes/k17m.K17M.2_0
+  |    (Default)    REG_SZ    K17M
+  |+ Software/Classes/k17m.K17M.2_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+mcc_samev2.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17M
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\m\mcc_samev2\k17m_2_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17m.K17M.2_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    2.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17m.K17M
+mcc_samev2.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17M
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    2.0
 mcc_samefiles	ok
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17m_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17m.ctf.
-mcc_samefiles.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m.ctf (3804) | mccExcludedFiles.log (90) | readme.txt (1223) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_samefiles.seconds	0.0
-mcc_samefiles.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17m_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17m.ctf.
+  |Warning: Component "k17m_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_samefiles.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_1_0.dll (209408) | mccExcludedFiles.log (90) | readme.txt (1184) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_samefiles.seconds	0.2
+mcc_samefiles.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17m_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_sameorder	ok
-  |Warning: This build of JGraph writes the add-in without its COM server: the DLL k17m_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17m.ctf.
-mcc_sameorder.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m.ctf (3808) | mccExcludedFiles.log (90) | readme.txt (1223) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_sameorder.seconds	0.0
-mcc_sameorder.warn	JGraph:mcc:excelAddInPending | This build of JGraph writes the add-in without its COM server: the DLL k17m_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17m.ctf.
+  |Warning: Component "k17m_1_0" will be registered for the current user only. 
+  |Applications that run with full administrative privileges cannot access the component. 
+  |To register the component for all users, run JGraph or the mcc command as Administrator.
+mcc_sameorder.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_1_0.dll (209408) | mccExcludedFiles.log (90) | readme.txt (1184) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_sameorder.seconds	0.2
+mcc_sameorder.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17m_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 guids.mcc_default.same_as_samev2	ERR MATLAB:fileread:cannotOpenFile | Could not open file <W>\p\m\mcc_default\k17m_idl.idl. No such file or directory.
 guids.mcc_default.same_as_samefiles	ERR MATLAB:fileread:cannotOpenFile | Could not open file <W>\p\m\mcc_default\k17m_idl.idl. No such file or directory.
 guids.mcc_default.same_as_sameorder	ERR MATLAB:fileread:cannotOpenFile | Could not open file <W>\p\m\mcc_default\k17m_idl.idl. No such file or directory.
@@ -2173,7 +3329,7 @@ mcc_default.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 
 mcc_default.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-mcc_default.file.readme.txt	1267 chars, CRLF 29, ends with newline 1
+mcc_default.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
   |k17m JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -2188,7 +3344,6 @@ mcc_default.file.readme.txt	1267 chars, CRLF 29, ends with newline 1
   |
   |2. Files to Deploy and Package
   |
-  |-k17m.ctf (component technology file)
   |-k17m_1_0.dll (output from mcc)
   |-k17m.bas (VBA module file created by mcc)
   |-The JGraph Runtime installer, when the computer has no JGraph Runtime
@@ -2215,19 +3370,19 @@ arch.results
       BuildType: 'productionServerArchive'
       Files: {'<W>\p\c\arch\k17arch.ctf'}
       IncludedSupportPackages: {}
-      Options: [1x1 compiler.build.ProductionServerArchiveOptions]
-      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
+      Options: [1×1 compiler.build.ProductionServerArchiveOptions]
+      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
 arch.BuildType	productionServerArchive
 arch.Files	<OUT>\k17arch.ctf
 arch.Options
   ProductionServerArchiveOptions with properties:
       ArchiveName: 'k17arch'
-      FunctionFiles: {18x1 cell}
+      FunctionFiles: {18×1 cell}
       FunctionSignatures: ''
       RoutesFile: ''
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0x0 struct]
+      ExternalEncryptionKey: [0×0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -2235,10 +3390,56 @@ arch.Options
       OutputDir: '<W>\p\c\arch'
 arch.RuntimeDependencies
   Dependencies with properties:
-      Required: [1x2 table]
-      Optional: [0x0 table]
-arch.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17arch.ctf (12554) | mccExcludedFiles.log (90) | readme.txt (1131) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-arch.seconds	0.0
+      Required: [1×2 table]
+      Optional: [0×0 table]
+arch.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17arch.ctf (12555) | mccExcludedFiles.log (90) | readme.txt (1131) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+arch.seconds	0.1
+ra.registry.Software/Classes	added 2, removed 0
+  |+ Software/Classes/k17ra.K17Ra
+  |    (Default)    REG_SZ    K17Ra
+  |+ Software/Classes/k17ra.K17Ra/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/k17ra.K17Ra/CurVer
+  |    (Default)    REG_SZ    k17ra.K17Ra.1_0
+  |+ Software/Classes/k17ra.K17Ra.1_0
+  |    (Default)    REG_SZ    K17Ra
+  |+ Software/Classes/k17ra.K17Ra.1_0/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+ra.registry.Software/Classes/CLSID	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    K17Ra
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories
+  |+ Software/Classes/CLSID/{<UUID>}/Implemented Categories/{<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <W>\p\b\ra\k17ra_1_0.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    k17ra.K17Ra.1_0
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    k17ra.K17Ra
+ra.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0
+  |    (Default)    REG_SZ    k17ra 1.0 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/0/win64
+  |    (Default)    REG_SZ    <W>\p\b\ra\k17ra_1_0.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
+  |    (Default)    REG_SZ    <W>\p\b\ra
+ra.registry.Software/Classes/Interface	added 1, removed 0
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IK17Ra
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    1.0
 
 STDERR	Warning: P-files cannot be analyzed for dependent files. Manually add dependent files for:
 STDERR	
@@ -2252,5 +3453,9 @@ STDERR	Warning: P-files cannot be analyzed for dependent files. Manually add dep
 STDERR	
 STDERR	<W>\p\src\k17_pfun.p
 STDERR	
-STDERR	Warning: This build of JGraph writes the add-in without its COM server: the DLL k17own_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17own.ctf.
-STDERR	Warning: This build of JGraph writes the add-in without its COM server: the DLL k17ra_1_0.dll is pending (compiler and SDK plan, stages K17c and K17e), and the archive is beside it as k17ra.ctf.
+STDERR	Warning: Component "k17own_1_0" will be registered for the current user only. 
+STDERR	Applications that run with full administrative privileges cannot access the component. 
+STDERR	To register the component for all users, run JGraph or the mcc command as Administrator.
+STDERR	Warning: Component "k17ra_1_0" will be registered for the current user only. 
+STDERR	Applications that run with full administrative privileges cannot access the component. 
+STDERR	To register the component for all users, run JGraph or the mcc command as Administrator.

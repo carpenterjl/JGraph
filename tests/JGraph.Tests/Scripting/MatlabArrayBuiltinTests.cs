@@ -40,6 +40,31 @@ public class MatlabArrayBuiltinTests : IDisposable
         c = arrayfun(@(x) [x x], [1 2], 'UniformOutput', false);
         assert(iscell(c));
         assert(isequal(c{2}, [2 2]));
+
+        % A char array is walked character by character (R2025b, measured 2026-11-07): the answer takes
+        % its shape, a trailing option name with no value is one more array, and the name alone is walked.
+        assert(isequal(arrayfun(@(c) double(c), 'ab'), [97 98]));
+        b = arrayfun(@(c) c, 'ab');
+        assert(ischar(b) && isequal(size(b), [1 2]) && strcmp(b, 'ab'));
+        e = arrayfun(@(ch) sprintf('\\u%04x', double(ch)), 'xy', 'UniformOutput', false);
+        assert(isequal(e, {'\u0078', '\u0079'}));
+        d = arrayfun(@(ch) upper(ch), ['ab'; 'cd']);
+        assert(isequal(size(d), [2 2]) && isequal(d, ['AB'; 'CD']));
+        assert(isequal(size(arrayfun(@(c) double(c), '')), [0 0]));
+        assert(isequal(arrayfun(@(c) double(c), 'UniformOutput'), double('UniformOutput')));
+        failed = false;
+        try, arrayfun(@(c) c, 'ab', 'uniformoutput'); catch me, failed = strcmp(me.identifier, 'MATLAB:arrayfun:UnequalSize'); end
+        assert(failed);
+        """);
+
+    [Fact]
+    public Task Num2cell_WalksACharArrayCharacterByCharacter() => RunAsserting("""
+        % R2025b, measured 2026-11-07: one character per cell, the array's shape kept, '' a 0-by-0 cell.
+        a = num2cell('ab');
+        assert(iscell(a) && isequal(size(a), [1 2]) && strcmp(a{1}, 'a') && strcmp(a{2}, 'b') && ischar(a{1}));
+        b = num2cell(['ab'; 'cd']);
+        assert(isequal(size(b), [2 2]) && strcmp(b{2, 1}, 'c') && strcmp(b{1, 2}, 'b'));
+        assert(isequal(size(num2cell('')), [0 0]));
         """);
 
     [Fact]

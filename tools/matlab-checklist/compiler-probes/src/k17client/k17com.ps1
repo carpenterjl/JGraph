@@ -22,6 +22,18 @@
 .PARAMETER OtherProgIds
     A comma-separated list of other ProgIDs the probe's builds registered; each is created and
     called once.
+
+.PARAMETER Dll
+    An add-in DLL to create the object from directly, through its own DllGetClassObject and the
+    class id -Clsid, with no registration (stage K17c's unit test runs JGraph's add-in so). The
+    other ProgIDs are then not created.
+
+.PARAMETER NoExcel
+    Runs without Excel: MWInitApplication is not called and the Range rows fail (JGraph's add-in
+    needs no Excel to run, so stage K17c's test runs it so).
+
+.PARAMETER UtilProgId
+    The utility library's ProgID; '' when there is none (JGraph's is stage K17d's), so its rows fail.
 #>
 [CmdletBinding()]
 param(
@@ -29,8 +41,50 @@ param(
     [string] $OtherProgIds = '',
     [string] $UtilProgId = 'MWComUtil.MWUtil25.2',
     [ValidateSet('main', 'preinit')] [string] $Phase = 'main',
+    [string] $Dll = '',
+    [string] $Clsid = '',
+    [switch] $NoExcel,
     [Parameter(Mandatory = $true)] [string] $Out
 )
+
+if ($Dll) {
+    # The class factory straight from the DLL, as COM would get it after reading the registry.
+    Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+public static class JgDirect
+{
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)] static extern IntPtr LoadLibraryW(string path);
+    [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true)] static extern IntPtr GetProcAddress(IntPtr module, string name);
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)] delegate int GetClassObjectFn(ref Guid clsid, ref Guid iid, out IntPtr ppv);
+    [ComImport, Guid("00000001-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    interface IClassFactory
+    {
+        [PreserveSig] int CreateInstance(IntPtr outer, ref Guid iid, [MarshalAs(UnmanagedType.IUnknown)] out object made);
+        [PreserveSig] int LockServer(bool lockIt);
+    }
+    public static object Create(string dll, Guid clsid)
+    {
+        IntPtr module = LoadLibraryW(dll);
+        if (module == IntPtr.Zero) throw new Exception("LoadLibrary failed: " + Marshal.GetLastWin32Error());
+        IntPtr entry = GetProcAddress(module, "DllGetClassObject");
+        if (entry == IntPtr.Zero) throw new Exception("No DllGetClassObject");
+        GetClassObjectFn get = (GetClassObjectFn)Marshal.GetDelegateForFunctionPointer(entry, typeof(GetClassObjectFn));
+        Guid factoryId = new Guid("00000001-0000-0000-C000-000000000046");
+        IntPtr pointer;
+        int hr = get(ref clsid, ref factoryId, out pointer);
+        if (hr < 0) Marshal.ThrowExceptionForHR(hr);
+        IClassFactory factory = (IClassFactory)Marshal.GetObjectForIUnknown(pointer);
+        Marshal.Release(pointer);
+        Guid dispatchId = new Guid("00020400-0000-0000-C000-000000000046");
+        object made;
+        hr = factory.CreateInstance(IntPtr.Zero, ref dispatchId, out made);
+        if (hr < 0) Marshal.ThrowExceptionForHR(hr);
+        return made;
+    }
+}
+'@
+}
 
 $ErrorActionPreference = 'Continue'
 $utf8 = New-Object System.Text.UTF8Encoding($false)
@@ -164,7 +218,11 @@ function Flags($obj) {
         $af.InputArrayFormat, $af.InputArrayIndFlag, $af.OutputArrayFormat, $af.OutputArrayIndFlag, $af.AutoResizeOutput, $af.TransposeOutput, `
         $dc.CoerceNumericToType, $dc.InputDateFormat, $dc.OutputAsDate, $dc.DateBias, $dc.ReplaceMissing, $dc.ReplaceMatlabNaN
 }
-function Fresh([string] $id) { New-Object -ComObject $id }
+function Fresh([string] $id) {
+    if (-not $Dll) { return (New-Object -ComObject $id) }
+    if ($id -ne $ProgId) { throw "No registry in -Dll mode: $id cannot be created" }
+    [JgDirect]::Create($Dll, [guid]$Clsid)
+}
 # IMWFlags.Clone([out] IMWFlags**): the slot by reference through InvokeMember, as a DispatchWrapper so
 # it goes as VT_BYREF|VT_DISPATCH (PowerShell's [ref] fails on it, a null slot is a type mismatch).
 function CloneFlags($f) {
@@ -229,17 +287,19 @@ try {
         Case 'preinit.call.direct' { $y = $null; $o.k17_one(1, [ref]$y, 2.0); Show $y }
         Case 'preinit.init.dictionary' { $u.MWInitApplication($dict); 'ok' }
         Case 'preinit.call.after.dictionary' { Call $o 'k17_one' 1 1 (A 2.0) }
-        $xl = New-Object -ComObject 'Excel.Application'
-        $xl.Visible = $false
-        $xl.DisplayAlerts = $false
+        if (-not $NoExcel) {
+            $xl = New-Object -ComObject 'Excel.Application'
+            $xl.Visible = $false
+            $xl.DisplayAlerts = $false
+        }
         Case 'preinit.init.excel' { $u.MWInitApplication($xl); 'ok' }
         Case 'preinit.call.after.excel' { Call $o 'k17_one' 1 1 (A 2.0) }
         Case 'preinit.call.after.excel.direct' { $y = $null; $o.k17_one(1, [ref]$y, 2.0); Show $y }
         Case 'preinit.fresh.after.excel' { $z = Fresh $ProgId; Call $z 'k17_one' 1 1 (A 2.0) }
         Case 'preinit.noout.after.excel' { CallNoOut $o 'k17_noout' (A 'x') }
         Case 'preinit.terminate' { $u.MWTerminateApplication(); 'ok' }
-        try { $xl.Quit() } catch { }
-        try { [void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($xl) } catch { }
+        try { if ($xl) { $xl.Quit() } } catch { }
+        try { if ($xl) { [void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($xl) } } catch { }
         $xl = $null
         Say 'preinit.excel.quit' 'ok'
         # Last, since it ends the process: a negative nargout makes CallComFcn _alloca a negative count
@@ -250,16 +310,21 @@ try {
     }
 
     # --- Excel, invisible, for MWInitApplication and the range rows ----------------------------------------
-    $xl = New-Object -ComObject 'Excel.Application'
-    $xl.Visible = $false
-    $xl.DisplayAlerts = $false
-    Say 'excel.version' ('{0} build {1}' -f $xl.Version, $xl.Build)
-    $wb = $xl.Workbooks.Add()
-    $ws = $wb.Worksheets.Item(1)
-    $ws.Range('A1').Value2 = 1.5; $ws.Range('B1').Value2 = 'two'; $ws.Range('A2').Value2 = $true; $ws.Range('B2').Value2 = 4
-    $ws.Range('D1').Value2 = 10; $ws.Range('D2').Value2 = 20; $ws.Range('D3').Value2 = 30
-    $ws.Range('F1').Formula = '=1/0'
-    $ws.Range('G1').Value2 = [datetime]'2024-03-15 10:30:00'
+    $ws = $null
+    if ($NoExcel) {
+        Say 'excel.version' 'none (-NoExcel)'
+    } else {
+        $xl = New-Object -ComObject 'Excel.Application'
+        $xl.Visible = $false
+        $xl.DisplayAlerts = $false
+        Say 'excel.version' ('{0} build {1}' -f $xl.Version, $xl.Build)
+        $wb = $xl.Workbooks.Add()
+        $ws = $wb.Worksheets.Item(1)
+        $ws.Range('A1').Value2 = 1.5; $ws.Range('B1').Value2 = 'two'; $ws.Range('A2').Value2 = $true; $ws.Range('B2').Value2 = 4
+        $ws.Range('D1').Value2 = 10; $ws.Range('D2').Value2 = 20; $ws.Range('D3').Value2 = 30
+        $ws.Range('F1').Formula = '=1/0'
+        $ws.Range('G1').Value2 = [datetime]'2024-03-15 10:30:00'
+    }
     Case 'init.excel' { $u.MWInitApplication($xl); 'ok' }
     Case 'init.excel.twice' { $u.MWInitApplication($xl); 'ok' }
     Case 'quiet' { CallNoOut $o 'k17_quiet' (A) }
@@ -666,11 +731,11 @@ try {
     Case 'plot.invisible.again' { Call $o 'k17_plot' 1 1 (A 'off') }
 
     # --- the other builds' ProgIDs ---------------------------------------------------------------------------------
-    foreach ($id in ($OtherProgIds -split ',' | Where-Object { $_ })) {
+    foreach ($id in ($OtherProgIds -split ',' | Where-Object { $_ -and -not $Dll })) {
         Case "progid.$id" { $x = Fresh $id; $m = @($x | Get-Member -MemberType Method | ForEach-Object { $_.Name }); if ($m -contains 'k17_one') { Call $x 'k17_one' 1 1 (A 2.0) } else { "members [$($m -join ',')]" } }
         Case "progid.$id.count" { $x = Fresh $id; $m = @($x | Get-Member -MemberType Method | ForEach-Object { $_.Name }); if ($m -contains 'k17_count') { Call $x 'k17_count' 1 1 (A) } else { 'no k17_count' } }
     }
-    Case 'progid.versionless.sameclass' { $x = Fresh 'k17xl.K17Xl'; Call $x 'k17_count' 1 1 (A) }
+    if (-not $Dll) { Case 'progid.versionless.sameclass' { $x = Fresh 'k17xl.K17Xl'; Call $x 'k17_count' 1 1 (A) } }
 
     # --- termination ------------------------------------------------------------------------------------------------
     Case 'terminate' { $u.MWTerminateApplication(); 'ok' }
@@ -680,9 +745,9 @@ try {
     Case 'util.IsMCRInitialized.reinit' { $u.IsMCRInitialized() }
     # Last, with Excel gone first: a call after MWTerminateApplication ended the host with an access
     # violation in mclFeval (the third main run); nothing after it would run.
-    try { $wb.Close($false) } catch { }
-    try { $xl.Quit() } catch { }
-    try { [void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($xl) } catch { }
+    try { if ($wb) { $wb.Close($false) } } catch { }
+    try { if ($xl) { $xl.Quit() } } catch { }
+    try { if ($xl) { [void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($xl) } } catch { }
     $wb = $null; $xl = $null
     Say 'excel.quit' 'ok'
     Say 'next' 'call.after.terminate: k17_one on the object after MWTerminateApplication; the process ends here if it crashes'

@@ -376,7 +376,10 @@ public sealed class CtfArchiveReader : IDisposable
     /// <summary>The archive's manifest.</summary>
     public CtfManifest Manifest { get; }
 
-    /// <summary>Opens the archive in <paramref name="path"/>: a <c>.ctf</c>, or a program carrying one.</summary>
+    /// <summary>
+    /// Opens the archive in <paramref name="path"/>: a <c>.ctf</c>, a program carrying one after its
+    /// last byte, or an Excel add-in carrying one as its resource <c>RT_RCDATA</c> 2 (stage K17c).
+    /// </summary>
     /// <exception cref="InvalidDataException">The file holds no JGraph archive.</exception>
     public static CtfArchiveReader Open(string path)
     {
@@ -384,6 +387,11 @@ public sealed class CtfArchiveReader : IDisposable
         try
         {
             return Open(file, leaveOpen: false);
+        }
+        catch (InvalidDataException) when (OperatingSystem.IsWindows() && PeResources.Read(path, 10, 2) is { } embedded)
+        {
+            file.Dispose();
+            return Open(new MemoryStream(embedded, writable: false), leaveOpen: false);
         }
         catch
         {

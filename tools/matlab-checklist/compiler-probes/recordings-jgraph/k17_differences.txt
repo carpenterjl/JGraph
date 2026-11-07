@@ -1,4 +1,4 @@
-== excel: 1004 keys, 202 agree, 802 recorded divergences, 0 unexplained, 3 only in JGraph's
+== excel: 1004 keys, 259 agree, 745 recorded divergences, 0 unexplained, 30 only in JGraph's
   divergence (2): the engine's own version; JGraph's build needs no C++ compiler (KO9)
     matlab.version, compiler.version
   divergence (78): an object's or a cell column's display is JGraph's own layout, not R2025b's aligned one (open item 194), and JGraph's runtime is one install, listed alone where R2025b lists its add-ons (ADR 0267)
@@ -11,23 +11,77 @@
     set.SupportPackages.3
   divergence (1): an options object is not saved to a MAT-file: its on/off properties are .NET values (open item 215)
     derived.saveload
-  divergence (93): R2025b prints its per-user registration warning, mbuild's transcript and the .xla failure; JGraph's build prints the mcc line and the analysis and warns that the DLL is pending until K17c (ADR 0315)
+  divergence (93): R2025b prints mbuild's transcript and the .xla failure, and its per-user registration warning names MATLAB where JGraph's names JGraph; a build with -b warns that the .bas is pending until K17e (ADR 0316)
     plain.printed, plain.warn, plain2.printed, plain2.warn, bas.printed, bas.warn, noembed.printed, noembed.warn, debug.printed, debug.warn, v2.printed, v2.warn ...
-  divergence (93): the DLL and mbuild's files are stage K17c's, the .bas stage K17e's, and the archive is beside the add-in until the DLL embeds it (ADR 0315)
-    plain.Files, plain.files, plain2.Files, plain2.files, bas.Files, bas.files, noembed.Files, noembed.files, debug.Files, debug.files, v2.Files, v2.files ...
+  divergence (83): mbuild's C++ sources, IDL, MIDL outputs, module definition, resource script, import library and exports file are not written (KO9), the .bas is stage K17e's, and the DLL's byte count is the template's (ADR 0316)
+    plain.files, plain2.files, bas.Files, bas.files, noembed.Files, noembed.files, debug.files, v2.files, v05.files, v3456.Files, v3456.files, vzero.files ...
   divergence (71): a timing
     plain.seconds, plain2.seconds, bas.seconds, noembed.seconds, debug.seconds, v2.seconds, v05.seconds, v3456.seconds, vtext.seconds, vzero.seconds, defaults.seconds, additional.seconds ...
   divergence (39): readme.txt and GettingStarted.html are in JGraph's words, for the JGraph Runtime (ADR 0315)
     plain.file.GettingStarted.html, plain.file.readme.txt, plain2.file.GettingStarted.html, plain2.file.readme.txt, bas.file.GettingStarted.html, bas.file.readme.txt, noembed.file.GettingStarted.html, noembed.file.readme.txt, debug.file.GettingStarted.html, debug.file.readme.txt, v2.file.GettingStarted.html, v2.file.readme.txt ...
-  divergence (85): no C++ source, IDL, module definition or resource script is generated: the add-in's DLL is a prebuilt template stamped by the build, stage K17c (decision KO9; ADR 0315)
+  divergence (85): no C++ source, IDL, module definition or resource script is generated: the add-in's DLL is the prebuilt template jgxl.dll stamped by the build with its type library and archive (decision KO9; ADR 0316)
     plain.file.K17Xl_com.cpp, plain.file.K17Xl_com.hpp, plain.file.k17xl.def, plain.file.k17xl.rc, plain.file.k17xl_dll.cpp, plain.file.k17xl_idl.idl, plain2.file.K17Xl_com.cpp, plain2.file.K17Xl_com.hpp, plain2.file.k17xl.def, plain2.file.k17xl.rc, plain2.file.k17xl_dll.cpp, plain2.file.k17xl_idl.idl ...
   divergence (38): JGraph's runtime is one install (35010), listed alone where R2025b lists its add-ons (ADR 0267)
     plain.file.buildresult.json, plain.file.requiredMCRProducts.txt, plain2.file.buildresult.json, plain2.file.requiredMCRProducts.txt, bas.file.buildresult.json, bas.file.requiredMCRProducts.txt, noembed.file.buildresult.json, noembed.file.requiredMCRProducts.txt, debug.file.buildresult.json, debug.file.requiredMCRProducts.txt, v2.file.buildresult.json, v2.file.requiredMCRProducts.txt ...
-  divergence (97): the DLL, its registration and its GUIDs are stage K17c's (ADR 0315)
-    plain.registry.Software/Classes/CLSID, plain.registry.Software/Classes/TypeLib, plain.registry.Software/Classes/Interface, bas.registry.Software/Classes/CLSID, bas.registry.Software/Classes/TypeLib, bas.registry.Software/Classes/Interface, noembed.registry.Software/Classes/CLSID, noembed.registry.Software/Classes/TypeLib, noembed.registry.Software/Classes/Interface, debug.registry.Software/Classes/CLSID, debug.registry.Software/Classes/TypeLib, debug.registry.Software/Classes/Interface ...
+  divergence (24): JGraph registers its 64-bit type library alone (a win64 entry) where R2025b's MWRegsvr writes a win32 entry beside it (ADR 0316)
+    plain.registry.Software/Classes/TypeLib, bas.registry.Software/Classes/TypeLib, noembed.registry.Software/Classes/TypeLib, debug.registry.Software/Classes/TypeLib, v2.registry.Software/Classes/TypeLib, v05.registry.Software/Classes/TypeLib, v3456.registry.Software/Classes/TypeLib, vzero.registry.Software/Classes/TypeLib, defaults.registry.Software/Classes/TypeLib, additional.registry.Software/Classes/TypeLib, pfile.registry.Software/Classes/TypeLib, classname.registry.Software/Classes/TypeLib ...
+  divergence (1): the add-in's own type library declares the three flags interfaces too (JGraph's ids, MathWorks' member names), so four Interface keys are registered where R2025b's library imports MathWorks' mwcomutil.tlb and registers one (decision KO10; ADR 0316; stage K17d's utility library may move them)
+    plain.registry.Software/Classes/Interface
   divergence (18): the .bas module is stage K17e's (ADR 0315)
     bas.file.k17bas.bas, noembed.file.k17sep.bas, v3456.file.k17v3456.bas, pfile.file.k17p.bas, mcc_default.file.k17m.bas, mcc_twofiles.bas, fromresults.file.k17mps.bas, fromfiles.file.k17mpsf.bas, cdefaults.file.k17_quiet.bas, nobas.file.k17cnb.bas, cdebug.file.k17cdbg.bas, cv2.file.k17cv2.bas ...
+  divergence (6): JGraph writes no IDL to read ids from; its ids are its own derivation from the names and the version (ADR 0316)
+    guids.plain.same_as_plain2, guids.plain.same_as_bas, guids.mcc_default.same_as_samev2, guids.mcc_default.same_as_samefiles, guids.mcc_default.same_as_sameorder, guids.mcc_default.samev2.which
   divergence (9): R2025b's build fails in mbuild (-T compile:lib; a name that is not an identifier); JGraph refuses such a name before writing anything and takes -T compile:lib as -T codegen (ADR 0315)
     mcc_compile, mcc_compile.files, mcc_compile.warn, mcc_badname, mcc_badname.files, mcc_badname.warn, mcc_badclass, mcc_badclass.files, mcc_badclass.warn
-  divergence (175): the Excel client for the Production Server is stage K17f's; JGraph's probe run stops after the add-in sections until then (run-k17.ps1 -UpTo addin)
+  divergence (194): the Excel client for the Production Server is stage K17f's; JGraph's probe run stops after the add-in sections until then (run-k17.ps1 -UpTo addin)
     copts.properties, copts.class, copts.superclasses, copts.derived, copts.noargs, copts.onefile, copts.addinresults, copts.missingarchive, copts.txtarchive, copts.noext, copts.results.nv, copts.results.odd ...
+== com_preinit: 26 keys, 15 agree, 11 recorded divergences, 0 unexplained, 2 only in JGraph's
+  divergence (7): the COM utility library (MWUtil, MWInitApplication) is stage K17d's
+    util.create, util.IsMCRInitialized.before, util.IsMCRJVMEnabled, util.IsMCRInitialized.after, preinit.init.dictionary, preinit.init.excel, preinit.terminate
+  divergence (1): a timing
+    create.seconds
+  divergence (3): JGraph's add-in runs before MWInitApplication: it needs no Excel Application to call its functions, where R2025b's refuses every call until it has one (ADR 0316)
+    preinit.call, preinit.call.direct, preinit.call.after.dictionary
+== com: 559 keys, 342 agree, 217 recorded divergences, 0 unexplained, 3 only in JGraph's
+  divergence (37): the COM utility library (MWUtil's MWPack, MWUnpack, MWInitApplication, MWTerminateApplication, CreateRemoteObject) is stage K17d's
+    util.create, util.IsMCRInitialized.before, util.IsMCRJVMEnabled, util.IsMCRInitialized.after, init.excel, init.excel.twice, util.IsMCRInitialized.running, both.packed, varin.packed, varin.packedarray, util.MWPack.three, util.MWPack.none ...
+  divergence (1): a timing
+    create.seconds
+  divergence (1): the H1 line is answered as written; R2025b's help map widens its UTF-8 as Windows-1252 and eats '% o' as a format (ADR 0314, a MATLAB bug not copied)
+    help.k17_h1
+  divergence (11): a refusal of the call's own carries JGraph's text (which argument was left out, what cannot be converted) where R2025b's carries none, or the last MATLAB error's text (ADR 0316)
+    opt.middle, opt.emptymiddle, opt.paramnotfound, err.nooutputs.fail, err.defaultmiddle, err.emptymiddle, err.unconvertible, stale.2.defaultmiddle, stale.3.i8, stale.5.defaultmiddle.afterok, stale.7.defaultmiddle.afternotenough
+  divergence (4): int64 and uint64 cross as VT_I8 and VT_UI8 where JGraph holds them exactly (to 2^53, ADR 0266) and are refused with a message where it cannot; R2025b refuses an int64 in with no text and answers a type mismatch out (ADR 0316)
+    in.i8, out.int64, out.uint64, pass.i8
+  divergence (3): an empty array crosses as an empty double of its shape; R2025b refuses an empty double array with no text and makes an empty Variant array int16 (ADR 0316)
+    in.arr_r8_empty, in.arr_r8_empty2d, in.arr_var_empty
+  divergence (2): an object JGraph cannot convert is refused with a message; R2025b refuses it with none (ADR 0316)
+    in.dispatch_other, in.flags_object
+  divergence (143): Range objects, the flags' effect on the conversions and MathWorks' value classes (MWStruct, MWComplex, MWSparse, MWArg) are stage K17d's
+    in.range_one, in.range_2x2, in.range_col, in.range_blank, in.range_blanks, in.range_error, in.range_date, in.struct, in.struct_nested, in.struct_empty, in.complex, in.complex_array ...
+  divergence (4): a string answers its text, a string array an array of them; R2025b answers a type mismatch (ADR 0316)
+    out.string, out.stringarr, out.stringmissing, out.stringempty
+  divergence (1): a complex value whose imaginary part is zero is real to JGraph's engine (ADR 0266) and crosses as a double; R2025b answers an MWComplex (ADR 0316)
+    out.complexzero
+  divergence (10): a value no VARIANT holds is refused with a message naming what to return instead; R2025b answers a type mismatch value (ADR 0316; a datetime may become a DATE in stage K17d)
+    out.datetime, out.datetimearr, out.datetimenat, out.duration, out.categorical, out.fhandle, out.fhandleanon, out.table, out.map, out.object
+== pe: 2452 keys, 720 agree, 1732 recorded divergences, 0 unexplained, 14 only in JGraph's
+  divergence (731): pe-resources.py lists every file beside a DLL under the label of its stem, one stem's rows overwriting each other: mbuild's import library, exports file and generated sources are not written by JGraph (KO9; ADR 0316)
+    b.additional.dlldata.file, b.additional.dlldata.ERR, b.additional.k17add.file, b.additional.k17add_1_0.file, b.additional.k17add_1_0.ERR, b.additional.K17Add_com.file, b.additional.K17Add_com.ERR, b.additional.k17add_dll.file, b.additional.k17add_dll.ERR, b.additional.k17add_idl.file, b.additional.k17add_idl.ERR, b.additional.k17add_idl_i.file ...
+  divergence (86): the DLL is JGraph's template: its own size, sections, subsystem and imports (kernel32, ole32, oleaut32, advapi32; no mclxlmain or mclmcrrt) (KO9; ADR 0316)
+    b.additional.k17add_1_0.bytes, b.additional.k17add_1_0.image.bytes, b.additional.k17add_1_0.import, b.bas.k17bas_1_0.bytes, b.bas.k17bas_1_0.image.bytes, b.bas.k17bas_1_0.import, b.classname.k17cls_1_0.bytes, b.classname.k17cls_1_0.image.bytes, b.classname.k17cls_1_0.import, b.debug.k17dbg_1_0.bytes, b.debug.k17dbg_1_0.sections, b.debug.k17dbg_1_0.image.bytes ...
+  divergence (56): JGraph's resources are language-neutral (lang 0) where R2025b's are English (1033), its type library's bytes and its archive's are its own (ADR 0316)
+    b.additional.k17add_1_0.resource, b.additional.k17add_1_0.  starts, b.bas.k17bas_1_0.resource, b.bas.k17bas_1_0.  starts, b.classname.k17cls_1_0.resource, b.classname.k17cls_1_0.  starts, b.debug.k17dbg_1_0.resource, b.debug.k17dbg_1_0.  starts, b.defaults.k17_one_1_0.resource, b.defaults.k17_one_1_0.  starts, b.noembed.k17sep_1_0.resource, b.noembed.k17sep_1_0.  starts ...
+  divergence (112): the version block's file OS and type are set (VOS_NT_WINDOWS32, VFT_DLL) and its string table language-neutral, where R2025b's are 0 and English, as stage K11's libraries (ADR 0267, ADR 0316)
+    b.additional.k17add_1_0.  fixed.FileOS, b.additional.k17add_1_0.  fixed.FileType, b.additional.k17add_1_0.  table, b.additional.k17add_1_0.  var.Translation, b.bas.k17bas_1_0.  fixed.FileOS, b.bas.k17bas_1_0.  fixed.FileType, b.bas.k17bas_1_0.  table, b.bas.k17bas_1_0.  var.Translation, b.classname.k17cls_1_0.  fixed.FileOS, b.classname.k17cls_1_0.  fixed.FileType, b.classname.k17cls_1_0.  table, b.classname.k17cls_1_0.  var.Translation ...
+  divergence (747): the Excel client's DLLs (compiler.build and mcc -W mpsxl) and its packaged installers are stage K17f's
+    c.arch.requiredMCRProducts.ERR, c.blank.buildresult.file, c.blank.buildresult.ERR, c.blank.includedSupportPackages.file, c.blank.includedSupportPackages.ERR, c.blank.k17blank.file, c.blank.k17blank.ERR, c.blank.K17Blank.file, c.blank.K17Blank.ERR, c.blank.k17blank.bytes, c.blank.k17blank.machine, c.blank.k17blank.subsystem ...
+== registry: 15 keys, 10 agree, 5 recorded divergences, 0 unexplained, 1 only in JGraph's
+  divergence (1): R2025b's recording was taken after an earlier pass of its cleanup had unregistered its add-ins; JGraph's lists the keys its builds registered, each removed below (ADR 0316)
+    registry.added.before.cleanup
+  divergence (2): regsvr32 registers JGraph's add-in without elevation: its DllRegisterServer registers for the current user when it may not for all (exit 0), where R2025b's needs MWRegsvr /useronly after regsvr32 fails (exit 5) (ADR 0316)
+    regsvr32.register, mwregsvr.useronly
+  divergence (1): the oracle's own Excel
+    excel.processes
+  divergence (1): JGraph's component category stays registered, as the runtime's installer would leave it (decision KO10; ADR 0316)
+    registry.added

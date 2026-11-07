@@ -41,8 +41,8 @@ public sealed record ExcelAddInOptions
 
     /// <summary>
     /// The prebuilt add-in template the DLL is copied and stamped from (decision KO9, stage K17c:
-    /// <c>jgxl.dll</c>). Null writes no DLL: the archive goes beside as <c>&lt;name&gt;.ctf</c>, and
-    /// the build says so.
+    /// <c>jgxl.dll</c>, <see cref="ExcelAddIn.DefaultTemplatePath"/>). Null writes no DLL: the archive
+    /// goes beside as <c>&lt;name&gt;.ctf</c>, and the build says so.
     /// </summary>
     public string? TemplatePath { get; init; }
 }
@@ -56,17 +56,96 @@ public sealed record ExcelAddInBuild(IReadOnlyList<string> Files, CtfManifest Ma
 /// type 5), embedded in the add-in's DLL or beside it, the DLL named <c>&lt;name&gt;_&lt;major&gt;_&lt;minor&gt;.dll</c>
 /// by R2025b's rule, <c>readme.txt</c> in JGraph's words, and for <c>compiler.build.excelAddIn</c>
 /// <c>_install.bat</c> line for line as R2025b's <c>writeInstallBat</c> writes it and
-/// <c>GettingStarted.html</c> in JGraph's words. Stage K17b writes everything but the DLL, which
-/// stage K17c copies from a prebuilt template and stamps (decision KO9); the <c>.bas</c> comes with
-/// stage K17e. No C++ source, IDL, module definition or resource script is generated: JGraph needs
-/// no compiler on the building machine.
+/// <c>GettingStarted.html</c> in JGraph's words. The DLL (stage K17c) is a copy of the prebuilt
+/// template <c>jgxl.dll</c> (decision KO9) stamped with the type library <see cref="ExcelTypeLib"/>
+/// writes (resource <c>TYPELIB</c> 1), the archive (<c>RT_RCDATA</c> 2) when embedded, the version
+/// block and the JGraph Runtime version it needs, R2025b's own resource layout; the <c>.bas</c>
+/// comes with stage K17e. No C++ source, IDL, module definition or resource script is generated
+/// and nothing is compiled: JGraph needs no compiler on the building machine.
 /// </summary>
 public static class ExcelAddIn
 {
     /// <summary>The registration batch file <c>compiler.build.excelAddIn</c> writes beside the DLL.</summary>
     public const string InstallBatName = "_install.bat";
 
+    /// <summary>The template's file name, beside the launcher templates.</summary>
+    public const string TemplateName = "jgxl.dll";
+
+    /// <summary>The most functions one add-in may export: the template serves 520 vtable slots, 7 of them IUnknown's and IDispatch's, 3 the flags' and help's.</summary>
+    public const int MaxFunctions = 510;
+
     private static readonly UTF8Encoding Utf8 = new(false);
+
+    /// <summary>
+    /// Whether a build registers the add-in it wrote (<see cref="Register"/>), as R2025b's mbuild
+    /// registers each add-in it builds for the current user (decision KO13). The unit tests turn it
+    /// off: they register nothing.
+    /// </summary>
+    public static bool RegistrationEnabled { get; set; } = true;
+
+    /// <summary>
+    /// The template beside this library (<c>launchers\win64\jgxl.dll</c>, where JGraph's build puts
+    /// it), else in the JGraph Runtime's <c>launchers\win64</c>; null when neither has it.
+    /// </summary>
+    public static string? DefaultTemplatePath
+    {
+        get
+        {
+            string beside = Path.Combine(AppContext.BaseDirectory, "launchers", RuntimeLayout.Platform, TemplateName);
+            if (File.Exists(beside))
+            {
+                return beside;
+            }
+
+            string? runtime = RuntimeLayout.Find()?.LaunchersFolder;
+            return runtime is not null && File.Exists(Path.Combine(runtime, TemplateName)) ? Path.Combine(runtime, TemplateName) : null;
+        }
+    }
+
+    /// <summary>Whether this process may register machine-wide: R2025b warns of a per-user registration when it may not.</summary>
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+    public static bool IsElevated
+    {
+        get
+        {
+            using var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
+            return new System.Security.Principal.WindowsPrincipal(identity).IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+        }
+    }
+
+    /// <summary>
+    /// Registers the add-in <paramref name="dll"/> by calling its own <c>DllRegisterServer</c>, as
+    /// regsvr32 would: machine-wide when this process may, else for the current user (what R2025b
+    /// gives through <c>MWRegsvr /useronly</c>).
+    /// </summary>
+    /// <exception cref="System.Runtime.InteropServices.COMException">The registration failed.</exception>
+    public static void Register(string dll) => CallExport(dll, "DllRegisterServer");
+
+    /// <summary>Removes the add-in <paramref name="dll"/>'s registration from both hives, wherever it is.</summary>
+    public static void Unregister(string dll) => CallExport(dll, "DllUnregisterServer");
+
+    [System.Runtime.InteropServices.UnmanagedFunctionPointer(System.Runtime.InteropServices.CallingConvention.StdCall)]
+    private delegate int SelfRegistration();
+
+    private static void CallExport(string dll, string name)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(dll);
+        nint module = System.Runtime.InteropServices.NativeLibrary.Load(Path.GetFullPath(dll));
+        try
+        {
+            var export = System.Runtime.InteropServices.Marshal.GetDelegateForFunctionPointer<SelfRegistration>(
+                System.Runtime.InteropServices.NativeLibrary.GetExport(module, name));
+            int hr = export();
+            if (hr < 0)
+            {
+                throw new System.Runtime.InteropServices.COMException($"{name} of '{dll}' failed.", hr);
+            }
+        }
+        finally
+        {
+            System.Runtime.InteropServices.NativeLibrary.Free(module);
+        }
+    }
 
     /// <summary>
     /// The DLL's version suffix by R2025b's postmcc rule: <c>&lt;major&gt;_&lt;minor&gt;</c>, with a
@@ -90,10 +169,13 @@ public static class ExcelAddIn
     public static bool IsComName(string name) => Regex.IsMatch(name, "^[A-Za-z_][A-Za-z0-9_]*$");
 
     /// <summary>
-    /// Writes what mcc writes: the archive (in the DLL when <see cref="ExcelAddInOptions.EmbedArchive"/>
-    /// and a template is given, else as <c>&lt;name&gt;.ctf</c>) and <c>readme.txt</c>. The files
-    /// answered are the DLL and the separate archive, each where written.
+    /// Writes what mcc writes: the DLL (the template copied and stamped, when one is given and the
+    /// build is not <see cref="ExcelAddInOptions.ArchiveOnly"/>), the archive (in the DLL when
+    /// <see cref="ExcelAddInOptions.EmbedArchive"/> and the DLL was written, else as <c>&lt;name&gt;.ctf</c>)
+    /// and <c>readme.txt</c>. The files answered are the DLL and the separate archive, each where written.
     /// </summary>
+    /// <exception cref="InvalidOperationException">The add-in exports more functions than the template serves.</exception>
+    /// <exception cref="FileNotFoundException">The template is missing.</exception>
     public static ExcelAddInBuild Write(CtfBuild build, ExcelAddInOptions options)
     {
         ArgumentNullException.ThrowIfNull(build);
@@ -117,9 +199,36 @@ public static class ExcelAddIn
         bool dllWritten = false;
         if (!options.ArchiveOnly && options.TemplatePath is { } template)
         {
-            // Stage K17c: the template copied, stamped with its type library, the version block and,
-            // when embedded, the archive as resource 2.
+            if (!File.Exists(template))
+            {
+                throw new FileNotFoundException($"The Excel add-in template '{template}' is missing.", template);
+            }
+
+            if (!OperatingSystem.IsWindows())
+            {
+                throw new PlatformNotSupportedException("An Excel add-in can be built only on Windows.");
+            }
+
+            // The template copied, then stamped as R2025b's resource script lays an add-in out
+            // (plain.file.k17xl.rc): the type library as TYPELIB 1, the archive as RT_RCDATA 2 when
+            // embedded, the version block; and, as the launchers carry it, the runtime version it needs.
+            byte[] typeLib = ExcelTypeLib.Write(options);
             File.Copy(template, dll, overwrite: true);
+            // The version block follows the DLL's name: a major of 0 is 1.0.0.0, any other version is kept
+            // whole (k17_pe: v05 and vzero 1.0.0.0, v3456 3.4.5.6).
+            ProgramVersion stamped = options.Version.Major == 0 ? ProgramVersion.Default : options.Version;
+            var resources = new List<(object Type, object Name, byte[]? Data)>
+            {
+                ("TYPELIB", 1, typeLib),
+                (ResourceVersion, 1, StandaloneProgram.VersionBlock(stamped, VersionFileTypeDll)),
+                (ResourceRcData, StandaloneProgram.RuntimeVersionResource, Utf8.GetBytes(RuntimeLayout.CurrentVersion)),
+            };
+            if (options.EmbedArchive)
+            {
+                resources.Add((ResourceRcData, 2, archive));
+            }
+
+            PeResources.Replace(dll, resources);
             files.Add(dll);
             dllWritten = true;
         }
@@ -141,6 +250,12 @@ public static class ExcelAddIn
         File.WriteAllText(Path.Combine(folder, "readme.txt"), Readme(options, dllWritten), Utf8);
         return new ExcelAddInBuild(files, manifest, dllName, dllWritten);
     }
+
+    private const int ResourceRcData = 10;
+    private const int ResourceVersion = 16;
+
+    /// <summary>The version block's file type for a library (VFT_DLL), as stage K11's C libraries carry it; R2025b writes 0.</summary>
+    private const uint VersionFileTypeDll = 2;
 
     /// <summary>Writes <c>_install.bat</c> into <paramref name="folder"/> for <paramref name="dllName"/>, and answers its path.</summary>
     public static string WriteInstallBat(string folder, string dllName)
