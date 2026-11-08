@@ -16,7 +16,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 REC = HERE / "recordings"
 
-FILES = ["excel", "com_preinit", "com", "com_extra", "cells", "mps", "payload", "pe", "strings", "registry"]
+FILES = ["excel", "com_preinit", "com", "com_extra", "cells", "hosting", "mps", "payload", "pe", "strings", "registry"]
 
 # The keys whose JGraph answer differs by design, per recording, by pattern (the first matching
 # pattern's reason). Timings and the build's own byte counts never agree.
@@ -36,7 +36,8 @@ KNOWN = {
         # Stage K17c (ADR 0316): the DLL from the template, stamped and registered.
         (r"^.*\.file\..*\.(cpp|hpp|idl|def|rc)$|^.*\.file\.dlldata\.c$|^mcc_noversion\.idl$|^mcc_version2\.rc$",
          "no C++ source, IDL, module definition or resource script is generated: the add-in's DLL is the prebuilt template jgxl.dll stamped by the build with its type library and archive (decision KO9; ADR 0316)"),
-        (r"^.*\.file\..*\.bas$|^mcc_twofiles\.bas$", "the .bas module is stage K17e's (ADR 0315)"),
+        (r"^.*\.file\..*\.bas$|^mcc_twofiles\.bas$",
+         "the module is R2025b's to the character but for two things: the utility library's ProgID is JGraph's (JGraphComUtil.MWUtil25.2, decision KO10), and the objects are created with no server name, since R2025b's CreateObject(progid, \"localhost\") is a DCOM activation that cannot reach an add-in registered for the current user (k17_cells, k17_hosting; ADR 0318)"),
         (r"^.*\.registry\.Software/Classes/TypeLib$",
          "JGraph registers its 64-bit type library alone (a win64 entry) where R2025b's MWRegsvr writes a win32 entry beside it (ADR 0316)"),
         (r"^.*\.registry\.Software/Classes/Interface$",
@@ -46,9 +47,9 @@ KNOWN = {
         (r"^mcc_(compile|badname|badclass)(\..*)?$",
          "R2025b's build fails in mbuild (-T compile:lib; a name that is not an identifier); JGraph refuses such a name before writing anything and takes -T compile:lib as -T codegen (ADR 0315)"),
         (r"^mcc_\w+$|^.*\.(printed|warn)$",
-         "R2025b prints mbuild's transcript and the .xla failure, and its per-user registration warning names MATLAB where JGraph's names JGraph; a build with -b warns that the .bas is pending until K17e (ADR 0316)"),
+         "R2025b prints mbuild's transcript and, for a -b build, warns COM_WARN_FAILED_CREATE_EXCEL_ADDIN where Excel does not trust its VBA project; JGraph writes the add-in workbook as a file (.xlam) with no Excel and no warning (decision KO12; ADR 0318); its per-user registration warning names MATLAB where JGraph's names JGraph (ADR 0316)"),
         (r"^.*\.(files|Files)$",
-         "mbuild's C++ sources, IDL, MIDL outputs, module definition, resource script, import library and exports file are not written (KO9), the .bas is stage K17e's, and the DLL's byte count is the template's (ADR 0316)"),
+         "mbuild's C++ sources, IDL, MIDL outputs, module definition, resource script, import library and exports file are not written (KO9), JGraph's .xlam is listed where R2025b's .xla would stand (KO12; ADR 0318), and the DLL's byte count is the template's (ADR 0316)"),
         (r"^(copts|cset|cbuild|popts|pset|pkg)\.|^(fromresults|fromfiles|cdefaults|nobas|cdebug|cv2|cv05|cvtext|blank|date|nan|numdate|blankdate|allswitches|onefileall|cpfile|mpsxl_\w+|built)(\..*)?$",
          "the Excel client for the Production Server is stage K17f's; JGraph's probe run stops after the add-in sections until then (run-k17.ps1 -UpTo addin)"),
     ],
@@ -111,6 +112,18 @@ KNOWN = {
     ],
     "cells": [
         (r"^seconds$", "a timing"),
+        (r"^(cell|array|again)\.",
+         "both engines' add-ins are registered for the current user, which Excel 16 installed by Click-to-Run does not see (k17_hosting): R2025b's module creates them through a server name, \"localhost\" (VBA error 463, Class not registered on local machine, a DCOM activation that reads the machine's registrations alone), JGraph's with none (429, ActiveX component can't create object); the cells wait for a machine-wide registration (open item 248; ADR 0318)"),
+    ],
+    "hosting": [
+        (r"^seconds$", "a timing"),
+        (r"^excel\.\d+$", "the Excel processes' ids"),
+        (r"^vba\.(util\.(local|localhost)|regread\.(hkcr|hklm)\.util)$|^ps\.util\.localhost$",
+         "JGraph's utility library is registered for the current user by the probe's build (the runtime's MSI registers it machine-wide) where MATLAB's installer registered MWComUtil machine-wide, so Excel and a DCOM activation see MathWorks' and not JGraph's (ADR 0318)"),
+        (r"^load\.(mclmcrrt25_2|mwcomutil|mclxlmain25_2|jgrt|jgcomutil)\.(open|dll)$",
+         "each runtime's own DLLs loaded into Excel: MATLAB Runtime's mclmcrrt25_2, mwcomutil and mclxlmain25_2, JGraph's jgrt and jgcomutil; every one loads (ADR 0318)"),
+        (r"^load\.addin\.(dll|again)$",
+         "R2025b's add-in DLL ends Excel's process when loaded into it (0x800706BE; its machine-wide design hosts it in dllhost.exe through \"localhost\"); JGraph's loads, and loads again (ADR 0318)"),
     ],
     "mps": [
         (r"^seconds$", "a timing"),
@@ -156,6 +169,7 @@ SKIPPED = {
     "com": [],
     "com_extra": [],
     "cells": [],
+    "hosting": [],
     "mps": [],
     "payload": [],
     # Files R2025b's probe folder held that are no add-in's: an extracted runtime and a dll folder.

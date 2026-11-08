@@ -1,4 +1,4 @@
-registry.added.before.cleanup	161
+registry.added.before.cleanup	160
   |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWArg
   |    (Default)    REG_SZ    MWArg
   |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWArg\CLSID
@@ -1297,8 +1297,6 @@ registry.added.before.cleanup	161
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
   |    (Default)    REG_SZ    {<UUID>}
   |    Version    REG_SZ    1.0
-  |HKEY_CURRENT_USER\Software\Classes\Component Categories\{<UUID>}
-  |    409    REG_SZ    JGraph Excel Add-in Components
 regsvr32.register	k17xl_1_0.dll exit 0
 mwregsvr.useronly	not needed: JGraph's DllRegisterServer registers for the current user when it may not for all
 regsvr32.registered.k17xl.K17Xl
@@ -1362,9 +1360,9 @@ unregister	m\mcc_twofiles\k17mtwo_1_0.dll	exit 0
 unregister	m\mcc_version2\k17mv2_2_0.dll	exit 0
 unregister	src\k17ownexcelAddIn\k17own_1_0.dll	exit 0
 unregister	jgcomutil.dll	exit 0
-leftover.notours	Software\Classes\Component Categories\{<UUID>}
 leftover.removed	0 keys of this stage's that unregistration left
+runtime.key	HKCU\SOFTWARE\JGraph\JGraph Runtime removed
+runtime.standin	junction removed
 excel.processes	0, 0 invisible ones of this run's ended
-registry.added	1
-  + Software\Classes\Component Categories\{<UUID>}
+registry.added	0
 registry.removed	0

@@ -17,10 +17,19 @@
                jgraph.exe, registered for the current user first; stage K17d): the rows before
                MWInitApplication in a process of their own, then the whole oracle with an invisible
                Excel for its Range rows, then stage K17d's extra rows (k17com_extra.ps1).
+      cells    src\k17client\k17cells.ps1 -Xlam over the add-in workbook the probe's 'bas' build wrote
+               (k17bas.xlam; stage K17e): an invisible Excel opens it as an add-in, writes the
+               formulas into a second workbook, calculates and reads the cells back (k17_cells.out.txt);
+               then k17hosting.ps1: the activations from VBA with and without a server name, the
+               registry as Excel sees it, the runtime's DLLs and the add-in's loaded into Excel
+               (k17_hosting.out.txt).
+               Excel is started by COM and inherits none of this script's PATH, so the add-in's DLL
+               finds the runtime through the registry key the launchers read, pointed for the run at
+               a stand-in layout whose bin\win64 is a junction to jgraph.exe's folder.
       pe       pe-resources.py over every DLL the probe built (k17_pe.out.txt).
       cleanup  regsvr32 /s /u over every add-in the probe built and over the utility library, the
-               registry compared with its state before the probe (k17_registry.out.txt), as
-               record-k17.ps1's cleanup did.
+               stand-in runtime's key and junction removed, the registry compared with its state
+               before the probe (k17_registry.out.txt), as record-k17.ps1's cleanup did.
       compare  compare-k17.py over both engines' recordings (--only the recordings this stage makes).
 
     The work root should be as long as record-k17.ps1's (k17_r2025b and k17_jgraph are both ten
@@ -163,6 +172,36 @@ if ($skipped -notcontains 'com') {
     Run-Child (Join-Path $client 'k17com.ps1') (@('-Phase', 'extra', '-ProgId', 'k17xl.K17Xl.1_0') + $util) 'k17_com_extra.out.txt' 1800
 }
 
+# --- Excel's cells over the add-in workbook JGraph wrote (stage K17e) ---------------------------------------
+$runtimeKey = 'SOFTWARE\JGraph\JGraph Runtime'
+$runtimeVersion = [System.Reflection.AssemblyName]::GetAssemblyName((Join-Path $jgraphFolder 'JGraph.Deploy.dll')).Version.ToString(3)
+$standIn = Join-Path $WorkRoot 'rt'
+$standInLink = Join-Path $standIn 'bin\win64'
+$runtimeKeyMarker = Join-Path $WorkRoot 'runtime_key_made.txt'
+if ($skipped -notcontains 'cells') {
+    New-Item -ItemType Directory -Force (Join-Path $standIn 'bin') | Out-Null
+    if (-not (Test-Path $standInLink)) { & cmd.exe /c mklink /J "`"$standInLink`"" "`"$jgraphFolder`"" | Out-Null }
+    [System.IO.File]::WriteAllText((Join-Path $standIn 'jgraph-runtime.json'), "{`n  `"version`": `"$runtimeVersion`"`n}`n", $utf8)
+    $existing = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey("$runtimeKey\$runtimeVersion")
+    if ($null -eq $existing) {
+        $k = [Microsoft.Win32.Registry]::CurrentUser.CreateSubKey("$runtimeKey\$runtimeVersion")
+        $k.SetValue('Location', $standIn)
+        $k.Close()
+        [System.IO.File]::WriteAllText($runtimeKeyMarker, "$runtimeKey\$runtimeVersion", $utf8)
+        Write-Host ("{0,-28} HKCU\{1}\{2} -> {3}" -f 'runtime key', $runtimeKey, $runtimeVersion, $standIn)
+    } else {
+        $existing.Close()
+        Write-Host ("{0,-28} HKCU\{1}\{2} was there already and is left" -f 'runtime key', $runtimeKey, $runtimeVersion)
+    }
+    $xlam = Join-Path $probe 'b\bas\k17bas.xlam'
+    Run-Child (Join-Path $client 'k17cells.ps1') @('-Xlam', "`"$xlam`"") 'k17_cells.out.txt' 900
+    # How the add-in reaches Excel (record-k17e.ps1's hosting rows): the activations from VBA with and
+    # without the server name, the registry as Excel sees it, jgrt.dll, jgcomutil.dll and the add-in
+    # loaded into Excel.
+    $runtimeDlls = @('jgrt.dll', 'jgcomutil.dll') | ForEach-Object { Join-Path $jgraphFolder $_ }
+    Run-Child (Join-Path $client 'k17hosting.ps1') @('-ProgId', 'k17bas.K17Bas.1_0', '-UtilProgId', 'JGraphComUtil.MWUtil25.2', '-Dll', "`"$(Join-Path $probe 'b\bas\k17bas_1_0.dll')`"", '-RuntimeDlls', "`"$($runtimeDlls -join ',')`"", '-Python', "`"$Python`"") 'k17_hosting.out.txt' 900
+}
+
 # --- what the DLLs carry ------------------------------------------------------------------------------------
 if ($skipped -notcontains 'pe') {
     $lines = @()
@@ -238,6 +277,13 @@ if ($skipped -notcontains 'cleanup') {
         }
     }
     $lines += "leftover.removed`t$removedKeys keys of this stage's that unregistration left"
+    # The stand-in runtime's key (when this script made it) and junction.
+    if (Test-Path $runtimeKeyMarker) {
+        [Microsoft.Win32.Registry]::CurrentUser.DeleteSubKeyTree($runtimeKey, $false)
+        Remove-Item -LiteralPath $runtimeKeyMarker
+        $lines += "runtime.key`tHKCU\$runtimeKey removed"
+    }
+    if (Test-Path $standInLink) { [System.IO.Directory]::Delete($standInLink); $lines += "runtime.standin`tjunction removed" }
     $excels = @(Get-Process excel -ErrorAction SilentlyContinue)
     $orphans = @($excels | Where-Object { $_.MainWindowHandle -eq 0 -and $_.StartTime -gt $scriptStart })
     foreach ($e in $orphans) { try { Stop-Process -Id $e.Id -Force; $lines += "excel.orphan.ended`t$($e.Id) started $($e.StartTime.ToString('HH:mm:ss'))" } catch { $lines += "excel.orphan.left`t$($e.Id)" } }
@@ -255,7 +301,7 @@ if ($skipped -notcontains 'cleanup') {
 }
 
 if ($skipped -notcontains 'compare') {
-    $only = if ($UpTo -eq 'all') { @() } else { @('--only', 'excel,com_preinit,com,com_extra,pe,registry') }
+    $only = if ($UpTo -eq 'all') { @() } else { @('--only', 'excel,com_preinit,com,com_extra,cells,hosting,pe,registry') }
     $text = (& $Python -I (Join-Path $here 'compare-k17.py') $recordings @only 2>&1 | Out-String) -replace "`r`n", "`n"
     [System.IO.File]::WriteAllText((Join-Path $recordings 'k17_differences.txt'), $text, $utf8)
     Write-Host $text

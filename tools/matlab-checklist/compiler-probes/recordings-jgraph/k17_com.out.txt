@@ -5,7 +5,7 @@ util.create	ok
 util.IsMCRInitialized.before	False
 util.IsMCRJVMEnabled	False
 create	ok
-create.seconds	0.3
+create.seconds	0.2
 util.IsMCRInitialized.after	True
 members	k17_args,k17_both,k17_count,k17_echo,k17_err,k17_h1,k17_make,k17_many,k17_none,k17_noout,k17_one,k17_opt,k17_pass,k17_plot,k17_quiet,k17_two,k17_varin,k17_varout,MWFlags
 excel.version	16.0 build 20527
@@ -559,4 +559,4 @@ excel.quit	ok
 next	call.after.terminate: k17_one on the object after MWTerminateApplication; the process ends here if it crashes
 call.after.terminate	double 4
 create.after.terminate	double 4
-seconds	22.2
+seconds	14.1

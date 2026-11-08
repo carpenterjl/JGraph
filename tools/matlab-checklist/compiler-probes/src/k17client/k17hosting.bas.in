@@ -1,0 +1,63 @@
+Private Declare PtrSafe Function LoadLibraryW Lib "kernel32" (ByVal lpFileName As LongPtr) As LongPtr
+Private Declare PtrSafe Function FreeLibrary Lib "kernel32" (ByVal hModule As LongPtr) As Long
+
+' How an add-in reaches Excel's cells (compiler and SDK plan, stage K17e): the utility library and
+' the component created the way the generated module creates them (a server name, "localhost": a
+' DCOM activation) and with none (in Excel's own process), the DLLs loaded by name, the registry as
+' Excel sees it. k17hosting.ps1 fills the names in and writes the formulas.
+
+Function jg_create(progid As Variant, server As Variant) As Variant
+    On Error GoTo H
+    Dim o As Object
+    If IsEmpty(server) Or server = "" Then
+        Set o = CreateObject(CStr(progid))
+    Else
+        Set o = CreateObject(CStr(progid), CStr(server))
+    End If
+    jg_create = "ok " & TypeName(o)
+    Exit Function
+H:
+    jg_create = "Error " & Err.Number & " in " & Err.Source & ": " & Err.Description
+End Function
+
+Function jg_call_one(utilprogid As Variant, progid As Variant, server As Variant) As Variant
+    On Error GoTo H
+    Dim u As Object, o As Object, y As Variant
+    If IsEmpty(server) Or server = "" Then
+        Set u = CreateObject(CStr(utilprogid))
+        Call u.MWInitApplication(Application)
+        Set o = CreateObject(CStr(progid))
+    Else
+        Set u = CreateObject(CStr(utilprogid), CStr(server))
+        Call u.MWInitApplication(Application)
+        Set o = CreateObject(CStr(progid), CStr(server))
+    End If
+    Call o.k17_one(1, y, 21)
+    jg_call_one = "ok " & TypeName(y) & " " & CStr(y)
+    Exit Function
+H:
+    jg_call_one = "Error " & Err.Number & " in " & Err.Source & ": " & Err.Description
+End Function
+
+Function jg_load(path As Variant) As Variant
+    Dim h As LongPtr
+    h = LoadLibraryW(StrPtr(CStr(path)))
+    If h = 0 Then
+        jg_load = "failed, LastDllError " & Err.LastDllError
+    Else
+        jg_load = "loaded"
+        FreeLibrary h
+    End If
+End Function
+
+Function jg_regread(key As Variant) As Variant
+    On Error GoTo H
+    jg_regread = "ok " & CreateObject("WScript.Shell").RegRead(CStr(key))
+    Exit Function
+H:
+    jg_regread = "Error " & Err.Number & ": " & Err.Description
+End Function
+
+Function jg_path_has(part As Variant) As Variant
+    jg_path_has = InStr(1, Environ("PATH"), CStr(part), vbTextCompare) > 0
+End Function

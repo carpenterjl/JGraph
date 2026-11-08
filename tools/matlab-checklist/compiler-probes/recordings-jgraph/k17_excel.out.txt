@@ -8,11 +8,11 @@ opts.default
       AddInVersion: '1.0.0.0'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {18×1 cell}
+      FunctionFiles: {18x1 cell}
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0×0 struct]
+      ExternalEncryptionKey: [0x0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -177,10 +177,10 @@ plain.printed
 plain.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3×1 cell}
+      Files: {3x1 cell}
       IncludedSupportPackages: {}
-      Options: [1×1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
 plain.BuildType	excelAddIn
 plain.Files	<OUT>\k17xl_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 plain.Options
@@ -190,11 +190,11 @@ plain.Options
       AddInVersion: '1.0.0.0'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {18×1 cell}
+      FunctionFiles: {18x1 cell}
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0×0 struct]
+      ExternalEncryptionKey: [0x0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -202,12 +202,12 @@ plain.Options
       OutputDir: '<W>\p\b\plain'
 plain.RuntimeDependencies
   Dependencies with properties:
-      Required: [1×2 table]
-      Optional: [0×0 table]
-plain.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17xl_1_0.dll (225280) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-plain.seconds	0.3
+      Required: [1x2 table]
+      Optional: [0x0 table]
+plain.files	GettingStarted.html (1678) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17xl_1_0.dll (225280) | mccExcludedFiles.log (90) | readme.txt (1434) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+plain.seconds	0.5
 plain.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17xl_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
-plain.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
+plain.file.GettingStarted.html	1678 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
   |    <head>
@@ -223,7 +223,9 @@ plain.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
   |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
   |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
   |        <h2>Register the Add-In</h2>
-  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone. Excel installed by Click-to-Run sees the machine's registrations alone, so for Excel run it as an administrator.</p>
+  |        <h2>Use the Add-In in Excel</h2>
+  |        <p>Open k17xl.xlam in Excel, or add it under File &gt; Options &gt; Add-ins; its worksheet functions, one per exported function, can then be used in any workbook's cells. The module itself is k17xl.bas, which can be imported into a workbook's own VBA project instead.</p>
   |        <h2>Additional Resources</h2>
   |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
   |    </body>
@@ -283,7 +285,7 @@ plain.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 plain.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-plain.file.readme.txt	1188 chars, CRLF 27, ends with newline 1
+plain.file.readme.txt	1434 chars, CRLF 30, ends with newline 1
   |k17xl JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -294,7 +296,9 @@ plain.file.readme.txt	1188 chars, CRLF 27, ends with newline 1
   |
   |The add-in is a COM server: register k17xl_1_0.dll once on that computer by running
   |_install.bat beside it (for every user when run as an administrator, else for the current
-  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |user alone), then open the add-in workbook in Excel or call the component from VBA. Excel
+  |installed by Click-to-Run sees the machine's registrations alone, so for Excel run
+  |_install.bat as an administrator.
   |
   |2. Files to Deploy and Package
   |
@@ -310,7 +314,8 @@ plain.file.readme.txt	1188 chars, CRLF 27, ends with newline 1
   |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
   |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
   |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
-  |workbook carries that module into Excel.
+  |workbook (.xlam) carries that module into Excel: open it there, or add it under File > Options >
+  |Add-ins, and the functions can be used in any workbook's cells.
 plain.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 plain.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
@@ -648,10 +653,10 @@ plain2.printed
 plain2.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3×1 cell}
+      Files: {3x1 cell}
       IncludedSupportPackages: {}
-      Options: [1×1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
 plain2.BuildType	excelAddIn
 plain2.Files	<OUT>\k17xl_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 plain2.Options
@@ -661,11 +666,11 @@ plain2.Options
       AddInVersion: '1.0.0.0'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {18×1 cell}
+      FunctionFiles: {18x1 cell}
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0×0 struct]
+      ExternalEncryptionKey: [0x0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -673,12 +678,12 @@ plain2.Options
       OutputDir: '<W>\p\b\plain2'
 plain2.RuntimeDependencies
   Dependencies with properties:
-      Required: [1×2 table]
-      Optional: [0×0 table]
-plain2.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17xl_1_0.dll (225280) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+      Required: [1x2 table]
+      Optional: [0x0 table]
+plain2.files	GettingStarted.html (1678) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17xl_1_0.dll (225280) | mccExcludedFiles.log (90) | readme.txt (1434) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 plain2.seconds	0.2
 plain2.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17xl_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
-plain2.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
+plain2.file.GettingStarted.html	1678 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
   |    <head>
@@ -694,7 +699,9 @@ plain2.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
   |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
   |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
   |        <h2>Register the Add-In</h2>
-  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone. Excel installed by Click-to-Run sees the machine's registrations alone, so for Excel run it as an administrator.</p>
+  |        <h2>Use the Add-In in Excel</h2>
+  |        <p>Open k17xl.xlam in Excel, or add it under File &gt; Options &gt; Add-ins; its worksheet functions, one per exported function, can then be used in any workbook's cells. The module itself is k17xl.bas, which can be imported into a workbook's own VBA project instead.</p>
   |        <h2>Additional Resources</h2>
   |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
   |    </body>
@@ -754,7 +761,7 @@ plain2.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 plain2.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-plain2.file.readme.txt	1188 chars, CRLF 27, ends with newline 1
+plain2.file.readme.txt	1434 chars, CRLF 30, ends with newline 1
   |k17xl JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -765,7 +772,9 @@ plain2.file.readme.txt	1188 chars, CRLF 27, ends with newline 1
   |
   |The add-in is a COM server: register k17xl_1_0.dll once on that computer by running
   |_install.bat beside it (for every user when run as an administrator, else for the current
-  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |user alone), then open the add-in workbook in Excel or call the component from VBA. Excel
+  |installed by Click-to-Run sees the machine's registrations alone, so for Excel run
+  |_install.bat as an administrator.
   |
   |2. Files to Deploy and Package
   |
@@ -781,25 +790,25 @@ plain2.file.readme.txt	1188 chars, CRLF 27, ends with newline 1
   |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
   |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
   |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
-  |workbook carries that module into Excel.
+  |workbook (.xlam) carries that module into Excel: open it there, or add it under File > Options >
+  |Add-ins, and the functions can be used in any workbook's cells.
 plain2.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 plain2.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
   |Path	Symbol	Reason
 bas.printed
-  |Warning: This build of JGraph writes the add-in without its Visual Basic module: k17bas.bas is pending (compiler and SDK plan, stage K17e).
   |Warning: Component "k17bas_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
 bas.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3×1 cell}
+      Files: {5x1 cell}
       IncludedSupportPackages: {}
-      Options: [1×1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
 bas.BuildType	excelAddIn
-bas.Files	<OUT>\k17bas_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
+bas.Files	<OUT>\k17bas_1_0.dll | <OUT>\_install.bat | <OUT>\k17bas.xlam | <OUT>\k17bas.bas | <OUT>\GettingStarted.html
 bas.Options
   ExcelAddInOptions with properties:
       AddInName: 'k17bas'
@@ -807,11 +816,11 @@ bas.Options
       AddInVersion: '1.0.0.0'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {18×1 cell}
+      FunctionFiles: {18x1 cell}
       GenerateVisualBasicFile: on
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0×0 struct]
+      ExternalEncryptionKey: [0x0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -819,12 +828,12 @@ bas.Options
       OutputDir: '<W>\p\b\bas'
 bas.RuntimeDependencies
   Dependencies with properties:
-      Required: [1×2 table]
-      Optional: [0×0 table]
-bas.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17bas_1_0.dll (225280) | mccExcludedFiles.log (90) | readme.txt (1238) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+      Required: [1x2 table]
+      Optional: [0x0 table]
+bas.files	GettingStarted.html (1683) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17bas.bas (11852) | k17bas.xlam (6320) | k17bas_1_0.dll (225280) | mccExcludedFiles.log (90) | readme.txt (1537) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 bas.seconds	0.2
 bas.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17bas_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
-bas.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
+bas.file.GettingStarted.html	1683 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
   |    <head>
@@ -840,7 +849,9 @@ bas.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
   |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
   |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
   |        <h2>Register the Add-In</h2>
-  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone. Excel installed by Click-to-Run sees the machine's registrations alone, so for Excel run it as an administrator.</p>
+  |        <h2>Use the Add-In in Excel</h2>
+  |        <p>Open k17bas.xlam in Excel, or add it under File &gt; Options &gt; Add-ins; its worksheet functions, one per exported function, can then be used in any workbook's cells. The module itself is k17bas.bas, which can be imported into a workbook's own VBA project instead.</p>
   |        <h2>Additional Resources</h2>
   |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
   |    </body>
@@ -897,10 +908,461 @@ bas.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
   |	]
   |}
 bas.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+bas.file.k17bas.bas	11852 chars, CRLF 450, ends with newline 1
+  |Dim MCLUtil As Object
+  |Dim bModuleInitialized As Boolean
+  |Dim K17Bas As Object 
+  |
+  |Private Sub InitModule()
+  |    If Not bModuleInitialized Then
+  |        On Error GoTo Handle_Error
+  |        If MCLUtil Is Nothing Then
+  |            Set MCLUtil = CreateObject("JGraphComUtil.MWUtil25.2")
+  |        End If
+  |        Call MCLUtil.MWInitApplication(Application)
+  |        
+  |        bModuleInitialized = True
+  |        Exit Sub
+  |Handle_Error:
+  |        bModuleInitialized = False
+  |    End If
+  |End Sub
+  |
+  |Function k17_quiet() As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |
+  |    Call K17Bas.k17_quiet()
+  |    k17_quiet = Empty
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_quiet = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_none() As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |
+  |    Call K17Bas.k17_none()
+  |    k17_none = Empty
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_none = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_one(Optional x As Variant) As Variant
+  |
+  |    Dim y As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |
+  |    Call K17Bas.k17_one(1, y, x)
+  |    k17_one = y
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_one = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_many(Optional a As Variant, Optional b As Variant, Optional c As Variant) As  _
+  |    Variant
+  |
+  |    Dim s, d, p As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |
+  |    ' By default, MATLAB Excel Add-in returns just one output for MATLAB functions 
+  |    ' that have more than one output.    
+  |
+  |    Call K17Bas.k17_many(3, s, d, p, a, b, c)
+  |    k17_many = s
+  |
+  |    ' If you want to use all the return values, you can use the following 
+  |    ' code as a guideline. To use this form, call the function from Excel cell,
+  |    ' highlight the cells which will receive the outputs and hit Ctrl+Shift+Enter.
+  |    '
+  |    ' Call K17Bas.k17_many(3, s, d, p, a, b, c)
+  |    ' k17_many = Array(s, d, p)
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_many = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_two(Optional x As Variant) As Variant
+  |
+  |    Dim a, b As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |
+  |    ' By default, MATLAB Excel Add-in returns just one output for MATLAB functions 
+  |    ' that have more than one output.    
+  |
+  |    Call K17Bas.k17_two(2, a, b, x)
+  |    k17_two = a
+  |
+  |    ' If you want to use all the return values, you can use the following 
+  |    ' code as a guideline. To use this form, call the function from Excel cell,
+  |    ' highlight the cells which will receive the outputs and hit Ctrl+Shift+Enter.
+  |    '
+  |    ' Call K17Bas.k17_two(2, a, b, x)
+  |    ' k17_two = Array(a, b)
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_two = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_opt(Optional a As Variant, Optional b As Variant, Optional c As Variant) As  _
+  |    Variant
+  |
+  |    Dim r As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |
+  |    Call K17Bas.k17_opt(1, r, a, b, c)
+  |    k17_opt = r
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_opt = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_varin(Optional V0 As Variant, Optional V1 As Variant, Optional V2 As  _
+  |    Variant, Optional V3 As Variant, Optional V4 As Variant, Optional V5 As Variant,  _
+  |    Optional V6 As Variant, Optional V7 As Variant, Optional V8 As Variant, Optional V9  _
+  |    As Variant, Optional V10 As Variant, Optional V11 As Variant, Optional V12 As  _
+  |    Variant, Optional V13 As Variant, Optional V14 As Variant, Optional V15 As Variant,  _
+  |    Optional V16 As Variant, Optional V17 As Variant, Optional V18 As Variant, Optional  _
+  |    V19 As Variant, Optional V20 As Variant, Optional V21 As Variant, Optional V22 As  _
+  |    Variant, Optional V23 As Variant, Optional V24 As Variant, Optional V25 As Variant,  _
+  |    Optional V26 As Variant, Optional V27 As Variant, Optional V28 As Variant) As Variant
+  |
+  |    Dim r As Variant
+  |    Dim varargin As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |    varargin = pack(V0, V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15,  _
+  |        V16, V17, V18, V19, V20, V21, V22, V23, V24, V25, V26, V27, V28)    
+  |
+  |    Call K17Bas.k17_varin(1, r, varargin)
+  |    k17_varin = r
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_varin = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_varout(Optional n As Variant) As Variant
+  |
+  |    Dim varargout As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |
+  |    Call K17Bas.k17_varout(1, varargout, n)
+  |    k17_varout = varargout
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_varout = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_both(Optional x As Variant, Optional V0 As Variant, Optional V1 As Variant,  _
+  |    Optional V2 As Variant, Optional V3 As Variant, Optional V4 As Variant, Optional V5  _
+  |    As Variant, Optional V6 As Variant, Optional V7 As Variant, Optional V8 As Variant,  _
+  |    Optional V9 As Variant, Optional V10 As Variant, Optional V11 As Variant, Optional  _
+  |    V12 As Variant, Optional V13 As Variant, Optional V14 As Variant, Optional V15 As  _
+  |    Variant, Optional V16 As Variant, Optional V17 As Variant, Optional V18 As Variant,  _
+  |    Optional V19 As Variant, Optional V20 As Variant, Optional V21 As Variant, Optional  _
+  |    V22 As Variant, Optional V23 As Variant, Optional V24 As Variant, Optional V25 As  _
+  |    Variant, Optional V26 As Variant, Optional V27 As Variant) As Variant
+  |
+  |    Dim first, varargout As Variant
+  |    Dim varargin As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |    varargin = pack(V0, V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15,  _
+  |        V16, V17, V18, V19, V20, V21, V22, V23, V24, V25, V26, V27)    
+  |
+  |    ' By default, MATLAB Excel Add-in returns just one output for MATLAB functions 
+  |    ' that have more than one output.    
+  |
+  |    Call K17Bas.k17_both(2, first, varargout, x, varargin)
+  |    k17_both = first
+  |
+  |    ' If you want to use all the return values, you can use the following 
+  |    ' code as a guideline. To use this form, call the function from Excel cell,
+  |    ' highlight the cells which will receive the outputs and hit Ctrl+Shift+Enter.
+  |    '
+  |    ' Call K17Bas.k17_both(2, first, varargout, x, varargin)
+  |    ' k17_both = Array(first, varargout)
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_both = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_args(Optional x As Variant, Optional k As Variant) As Variant
+  |
+  |    Dim y As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |
+  |    Call K17Bas.k17_args(1, y, x, k)
+  |    k17_args = y
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_args = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_noout(Optional x As Variant) As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |
+  |    Call K17Bas.k17_noout(x)
+  |    k17_noout = Empty
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_noout = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_err(Optional kind As Variant) As Variant
+  |
+  |    Dim y As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |
+  |    Call K17Bas.k17_err(1, y, kind)
+  |    k17_err = y
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_err = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_plot(Optional visible As Variant) As Variant
+  |
+  |    Dim n As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |
+  |    Call K17Bas.k17_plot(1, n, visible)
+  |    k17_plot = n
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_plot = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_h1() As Variant
+  |
+  |    Dim t As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |
+  |    Call K17Bas.k17_h1(1, t)
+  |    k17_h1 = t
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_h1 = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_echo(Optional x As Variant) As Variant
+  |
+  |    Dim d As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |
+  |    Call K17Bas.k17_echo(1, d, x)
+  |    k17_echo = d
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_echo = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_pass(Optional x As Variant) As Variant
+  |
+  |    Dim y As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |
+  |    Call K17Bas.k17_pass(1, y, x)
+  |    k17_pass = y
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_pass = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_count() As Variant
+  |
+  |    Dim n As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |
+  |    Call K17Bas.k17_count(1, n)
+  |    k17_count = n
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_count = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_make(Optional kind As Variant) As Variant
+  |
+  |    Dim v As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Bas Is Nothing Then
+  |        Set K17Bas = CreateObject("k17bas.K17Bas.1_0")
+  |    End If
+  |
+  |    Call K17Bas.k17_make(1, v, kind)
+  |    k17_make = v
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_make = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function pack(ParamArray inputs() As Variant) As Variant
+  |    Dim i As Integer
+  |    Dim c As New Collection
+  |    Dim result() As Variant
+  |    
+  |    For i = LBound(inputs) To UBound(inputs)
+  |        If Not IsMissing(inputs(i)) And Not IsEmpty(inputs(i)) Then
+  |            c.Add inputs(i)
+  |        End If
+  |    Next
+  |    
+  |    'Convert collection to array
+  |    If c.Count > 0 Then
+  |        ReDim result(0 To (c.Count - 1))
+  |        For i = 1 To c.Count
+  |            result(i - 1) = c.Item(i)
+  |        Next
+  |        pack = result
+  |    Else
+  |        pack = Empty
+  |    End If
+  |
+  |End Function
 bas.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-bas.file.readme.txt	1238 chars, CRLF 28, ends with newline 1
+bas.file.readme.txt	1537 chars, CRLF 32, ends with newline 1
   |k17bas JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -911,12 +1373,15 @@ bas.file.readme.txt	1238 chars, CRLF 28, ends with newline 1
   |
   |The add-in is a COM server: register k17bas_1_0.dll once on that computer by running
   |_install.bat beside it (for every user when run as an administrator, else for the current
-  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |user alone), then open the add-in workbook in Excel or call the component from VBA. Excel
+  |installed by Click-to-Run sees the machine's registrations alone, so for Excel run
+  |_install.bat as an administrator.
   |
   |2. Files to Deploy and Package
   |
   |-k17bas_1_0.dll (output from mcc)
   |-k17bas.bas (VBA module file created by mcc)
+  |-k17bas.xlam (Excel add-in workbook created by mcc)
   |-The JGraph Runtime installer, when the computer has no JGraph Runtime
   |-This readme file
   |
@@ -928,7 +1393,8 @@ bas.file.readme.txt	1238 chars, CRLF 28, ends with newline 1
   |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
   |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
   |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
-  |workbook carries that module into Excel.
+  |workbook (.xlam) carries that module into Excel: open it there, or add it under File > Options >
+  |Add-ins, and the functions can be used in any workbook's cells.
 bas.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 bas.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
@@ -980,19 +1446,18 @@ bas.registry.Software/Classes/Interface	added 1, removed 0
   |    (Default)    REG_SZ    {<UUID>}
   |    Version    REG_SZ    1.0
 noembed.printed
-  |Warning: This build of JGraph writes the add-in without its Visual Basic module: k17sep.bas is pending (compiler and SDK plan, stage K17e).
   |Warning: Component "k17sep_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
 noembed.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {4×1 cell}
+      Files: {6x1 cell}
       IncludedSupportPackages: {}
-      Options: [1×1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
 noembed.BuildType	excelAddIn
-noembed.Files	<OUT>\k17sep_1_0.dll | <OUT>\_install.bat | <OUT>\k17sep.ctf | <OUT>\GettingStarted.html
+noembed.Files	<OUT>\k17sep_1_0.dll | <OUT>\_install.bat | <OUT>\k17sep.xlam | <OUT>\k17sep.bas | <OUT>\k17sep.ctf | <OUT>\GettingStarted.html
 noembed.Options
   ExcelAddInOptions with properties:
       AddInName: 'k17sep'
@@ -1000,11 +1465,11 @@ noembed.Options
       AddInVersion: '1.0.0.0'
       DebugBuild: off
       EmbedArchive: off
-      FunctionFiles: {18×1 cell}
+      FunctionFiles: {18x1 cell}
       GenerateVisualBasicFile: on
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0×0 struct]
+      ExternalEncryptionKey: [0x0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -1012,12 +1477,12 @@ noembed.Options
       OutputDir: '<W>\p\b\noembed'
 noembed.RuntimeDependencies
   Dependencies with properties:
-      Required: [1×2 table]
-      Optional: [0×0 table]
-noembed.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17sep.ctf (12512) | k17sep_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1279) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+      Required: [1x2 table]
+      Optional: [0x0 table]
+noembed.files	GettingStarted.html (1683) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17sep.bas (11852) | k17sep.ctf (12511) | k17sep.xlam (6322) | k17sep_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1578) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 noembed.seconds	0.2
 noembed.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17sep_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
-noembed.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
+noembed.file.GettingStarted.html	1683 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
   |    <head>
@@ -1033,7 +1498,9 @@ noembed.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
   |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
   |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
   |        <h2>Register the Add-In</h2>
-  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone. Excel installed by Click-to-Run sees the machine's registrations alone, so for Excel run it as an administrator.</p>
+  |        <h2>Use the Add-In in Excel</h2>
+  |        <p>Open k17sep.xlam in Excel, or add it under File &gt; Options &gt; Add-ins; its worksheet functions, one per exported function, can then be used in any workbook's cells. The module itself is k17sep.bas, which can be imported into a workbook's own VBA project instead.</p>
   |        <h2>Additional Resources</h2>
   |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
   |    </body>
@@ -1090,10 +1557,461 @@ noembed.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
   |	]
   |}
 noembed.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+noembed.file.k17sep.bas	11852 chars, CRLF 450, ends with newline 1
+  |Dim MCLUtil As Object
+  |Dim bModuleInitialized As Boolean
+  |Dim K17Sep As Object 
+  |
+  |Private Sub InitModule()
+  |    If Not bModuleInitialized Then
+  |        On Error GoTo Handle_Error
+  |        If MCLUtil Is Nothing Then
+  |            Set MCLUtil = CreateObject("JGraphComUtil.MWUtil25.2")
+  |        End If
+  |        Call MCLUtil.MWInitApplication(Application)
+  |        
+  |        bModuleInitialized = True
+  |        Exit Sub
+  |Handle_Error:
+  |        bModuleInitialized = False
+  |    End If
+  |End Sub
+  |
+  |Function k17_quiet() As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |
+  |    Call K17Sep.k17_quiet()
+  |    k17_quiet = Empty
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_quiet = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_none() As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |
+  |    Call K17Sep.k17_none()
+  |    k17_none = Empty
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_none = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_one(Optional x As Variant) As Variant
+  |
+  |    Dim y As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |
+  |    Call K17Sep.k17_one(1, y, x)
+  |    k17_one = y
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_one = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_many(Optional a As Variant, Optional b As Variant, Optional c As Variant) As  _
+  |    Variant
+  |
+  |    Dim s, d, p As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |
+  |    ' By default, MATLAB Excel Add-in returns just one output for MATLAB functions 
+  |    ' that have more than one output.    
+  |
+  |    Call K17Sep.k17_many(3, s, d, p, a, b, c)
+  |    k17_many = s
+  |
+  |    ' If you want to use all the return values, you can use the following 
+  |    ' code as a guideline. To use this form, call the function from Excel cell,
+  |    ' highlight the cells which will receive the outputs and hit Ctrl+Shift+Enter.
+  |    '
+  |    ' Call K17Sep.k17_many(3, s, d, p, a, b, c)
+  |    ' k17_many = Array(s, d, p)
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_many = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_two(Optional x As Variant) As Variant
+  |
+  |    Dim a, b As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |
+  |    ' By default, MATLAB Excel Add-in returns just one output for MATLAB functions 
+  |    ' that have more than one output.    
+  |
+  |    Call K17Sep.k17_two(2, a, b, x)
+  |    k17_two = a
+  |
+  |    ' If you want to use all the return values, you can use the following 
+  |    ' code as a guideline. To use this form, call the function from Excel cell,
+  |    ' highlight the cells which will receive the outputs and hit Ctrl+Shift+Enter.
+  |    '
+  |    ' Call K17Sep.k17_two(2, a, b, x)
+  |    ' k17_two = Array(a, b)
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_two = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_opt(Optional a As Variant, Optional b As Variant, Optional c As Variant) As  _
+  |    Variant
+  |
+  |    Dim r As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |
+  |    Call K17Sep.k17_opt(1, r, a, b, c)
+  |    k17_opt = r
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_opt = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_varin(Optional V0 As Variant, Optional V1 As Variant, Optional V2 As  _
+  |    Variant, Optional V3 As Variant, Optional V4 As Variant, Optional V5 As Variant,  _
+  |    Optional V6 As Variant, Optional V7 As Variant, Optional V8 As Variant, Optional V9  _
+  |    As Variant, Optional V10 As Variant, Optional V11 As Variant, Optional V12 As  _
+  |    Variant, Optional V13 As Variant, Optional V14 As Variant, Optional V15 As Variant,  _
+  |    Optional V16 As Variant, Optional V17 As Variant, Optional V18 As Variant, Optional  _
+  |    V19 As Variant, Optional V20 As Variant, Optional V21 As Variant, Optional V22 As  _
+  |    Variant, Optional V23 As Variant, Optional V24 As Variant, Optional V25 As Variant,  _
+  |    Optional V26 As Variant, Optional V27 As Variant, Optional V28 As Variant) As Variant
+  |
+  |    Dim r As Variant
+  |    Dim varargin As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |    varargin = pack(V0, V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15,  _
+  |        V16, V17, V18, V19, V20, V21, V22, V23, V24, V25, V26, V27, V28)    
+  |
+  |    Call K17Sep.k17_varin(1, r, varargin)
+  |    k17_varin = r
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_varin = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_varout(Optional n As Variant) As Variant
+  |
+  |    Dim varargout As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |
+  |    Call K17Sep.k17_varout(1, varargout, n)
+  |    k17_varout = varargout
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_varout = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_both(Optional x As Variant, Optional V0 As Variant, Optional V1 As Variant,  _
+  |    Optional V2 As Variant, Optional V3 As Variant, Optional V4 As Variant, Optional V5  _
+  |    As Variant, Optional V6 As Variant, Optional V7 As Variant, Optional V8 As Variant,  _
+  |    Optional V9 As Variant, Optional V10 As Variant, Optional V11 As Variant, Optional  _
+  |    V12 As Variant, Optional V13 As Variant, Optional V14 As Variant, Optional V15 As  _
+  |    Variant, Optional V16 As Variant, Optional V17 As Variant, Optional V18 As Variant,  _
+  |    Optional V19 As Variant, Optional V20 As Variant, Optional V21 As Variant, Optional  _
+  |    V22 As Variant, Optional V23 As Variant, Optional V24 As Variant, Optional V25 As  _
+  |    Variant, Optional V26 As Variant, Optional V27 As Variant) As Variant
+  |
+  |    Dim first, varargout As Variant
+  |    Dim varargin As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |    varargin = pack(V0, V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15,  _
+  |        V16, V17, V18, V19, V20, V21, V22, V23, V24, V25, V26, V27)    
+  |
+  |    ' By default, MATLAB Excel Add-in returns just one output for MATLAB functions 
+  |    ' that have more than one output.    
+  |
+  |    Call K17Sep.k17_both(2, first, varargout, x, varargin)
+  |    k17_both = first
+  |
+  |    ' If you want to use all the return values, you can use the following 
+  |    ' code as a guideline. To use this form, call the function from Excel cell,
+  |    ' highlight the cells which will receive the outputs and hit Ctrl+Shift+Enter.
+  |    '
+  |    ' Call K17Sep.k17_both(2, first, varargout, x, varargin)
+  |    ' k17_both = Array(first, varargout)
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_both = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_args(Optional x As Variant, Optional k As Variant) As Variant
+  |
+  |    Dim y As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |
+  |    Call K17Sep.k17_args(1, y, x, k)
+  |    k17_args = y
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_args = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_noout(Optional x As Variant) As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |
+  |    Call K17Sep.k17_noout(x)
+  |    k17_noout = Empty
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_noout = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_err(Optional kind As Variant) As Variant
+  |
+  |    Dim y As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |
+  |    Call K17Sep.k17_err(1, y, kind)
+  |    k17_err = y
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_err = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_plot(Optional visible As Variant) As Variant
+  |
+  |    Dim n As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |
+  |    Call K17Sep.k17_plot(1, n, visible)
+  |    k17_plot = n
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_plot = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_h1() As Variant
+  |
+  |    Dim t As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |
+  |    Call K17Sep.k17_h1(1, t)
+  |    k17_h1 = t
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_h1 = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_echo(Optional x As Variant) As Variant
+  |
+  |    Dim d As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |
+  |    Call K17Sep.k17_echo(1, d, x)
+  |    k17_echo = d
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_echo = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_pass(Optional x As Variant) As Variant
+  |
+  |    Dim y As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |
+  |    Call K17Sep.k17_pass(1, y, x)
+  |    k17_pass = y
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_pass = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_count() As Variant
+  |
+  |    Dim n As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |
+  |    Call K17Sep.k17_count(1, n)
+  |    k17_count = n
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_count = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_make(Optional kind As Variant) As Variant
+  |
+  |    Dim v As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Sep Is Nothing Then
+  |        Set K17Sep = CreateObject("k17sep.K17Sep.1_0")
+  |    End If
+  |
+  |    Call K17Sep.k17_make(1, v, kind)
+  |    k17_make = v
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_make = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function pack(ParamArray inputs() As Variant) As Variant
+  |    Dim i As Integer
+  |    Dim c As New Collection
+  |    Dim result() As Variant
+  |    
+  |    For i = LBound(inputs) To UBound(inputs)
+  |        If Not IsMissing(inputs(i)) And Not IsEmpty(inputs(i)) Then
+  |            c.Add inputs(i)
+  |        End If
+  |    Next
+  |    
+  |    'Convert collection to array
+  |    If c.Count > 0 Then
+  |        ReDim result(0 To (c.Count - 1))
+  |        For i = 1 To c.Count
+  |            result(i - 1) = c.Item(i)
+  |        Next
+  |        pack = result
+  |    Else
+  |        pack = Empty
+  |    End If
+  |
+  |End Function
 noembed.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-noembed.file.readme.txt	1279 chars, CRLF 29, ends with newline 1
+noembed.file.readme.txt	1578 chars, CRLF 33, ends with newline 1
   |k17sep JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -1104,13 +2022,16 @@ noembed.file.readme.txt	1279 chars, CRLF 29, ends with newline 1
   |
   |The add-in is a COM server: register k17sep_1_0.dll once on that computer by running
   |_install.bat beside it (for every user when run as an administrator, else for the current
-  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |user alone), then open the add-in workbook in Excel or call the component from VBA. Excel
+  |installed by Click-to-Run sees the machine's registrations alone, so for Excel run
+  |_install.bat as an administrator.
   |
   |2. Files to Deploy and Package
   |
   |-k17sep.ctf (component technology file)
   |-k17sep_1_0.dll (output from mcc)
   |-k17sep.bas (VBA module file created by mcc)
+  |-k17sep.xlam (Excel add-in workbook created by mcc)
   |-The JGraph Runtime installer, when the computer has no JGraph Runtime
   |-This readme file
   |
@@ -1122,7 +2043,8 @@ noembed.file.readme.txt	1279 chars, CRLF 29, ends with newline 1
   |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
   |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
   |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
-  |workbook carries that module into Excel.
+  |workbook (.xlam) carries that module into Excel: open it there, or add it under File > Options >
+  |Add-ins, and the functions can be used in any workbook's cells.
 noembed.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 noembed.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
@@ -1180,10 +2102,10 @@ debug.printed
 debug.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3×1 cell}
+      Files: {3x1 cell}
       IncludedSupportPackages: {}
-      Options: [1×1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
 debug.BuildType	excelAddIn
 debug.Files	<OUT>\k17dbg_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 debug.Options
@@ -1193,11 +2115,11 @@ debug.Options
       AddInVersion: '1.0.0.0'
       DebugBuild: on
       EmbedArchive: on
-      FunctionFiles: {3×1 cell}
+      FunctionFiles: {3x1 cell}
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0×0 struct]
+      ExternalEncryptionKey: [0x0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -1205,12 +2127,12 @@ debug.Options
       OutputDir: '<W>\p\b\debug'
 debug.RuntimeDependencies
   Dependencies with properties:
-      Required: [1×2 table]
-      Optional: [0×0 table]
-debug.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17dbg_1_0.dll (214016) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-debug.seconds	0.1
+      Required: [1x2 table]
+      Optional: [0x0 table]
+debug.files	GettingStarted.html (1683) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17dbg_1_0.dll (214016) | mccExcludedFiles.log (90) | readme.txt (1438) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+debug.seconds	0.2
 debug.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17dbg_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
-debug.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
+debug.file.GettingStarted.html	1683 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
   |    <head>
@@ -1226,7 +2148,9 @@ debug.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
   |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
   |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
   |        <h2>Register the Add-In</h2>
-  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone. Excel installed by Click-to-Run sees the machine's registrations alone, so for Excel run it as an administrator.</p>
+  |        <h2>Use the Add-In in Excel</h2>
+  |        <p>Open k17dbg.xlam in Excel, or add it under File &gt; Options &gt; Add-ins; its worksheet functions, one per exported function, can then be used in any workbook's cells. The module itself is k17dbg.bas, which can be imported into a workbook's own VBA project instead.</p>
   |        <h2>Additional Resources</h2>
   |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
   |    </body>
@@ -1286,7 +2210,7 @@ debug.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 debug.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-debug.file.readme.txt	1192 chars, CRLF 27, ends with newline 1
+debug.file.readme.txt	1438 chars, CRLF 30, ends with newline 1
   |k17dbg JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -1297,7 +2221,9 @@ debug.file.readme.txt	1192 chars, CRLF 27, ends with newline 1
   |
   |The add-in is a COM server: register k17dbg_1_0.dll once on that computer by running
   |_install.bat beside it (for every user when run as an administrator, else for the current
-  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |user alone), then open the add-in workbook in Excel or call the component from VBA. Excel
+  |installed by Click-to-Run sees the machine's registrations alone, so for Excel run
+  |_install.bat as an administrator.
   |
   |2. Files to Deploy and Package
   |
@@ -1313,7 +2239,8 @@ debug.file.readme.txt	1192 chars, CRLF 27, ends with newline 1
   |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
   |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
   |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
-  |workbook carries that module into Excel.
+  |workbook (.xlam) carries that module into Excel: open it there, or add it under File > Options >
+  |Add-ins, and the functions can be used in any workbook's cells.
 debug.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 debug.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
@@ -1371,10 +2298,10 @@ v2.printed
 v2.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3×1 cell}
+      Files: {3x1 cell}
       IncludedSupportPackages: {}
-      Options: [1×1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
 v2.BuildType	excelAddIn
 v2.Files	<OUT>\k17v2_2_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 v2.Options
@@ -1384,11 +2311,11 @@ v2.Options
       AddInVersion: '2'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {3×1 cell}
+      FunctionFiles: {3x1 cell}
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0×0 struct]
+      ExternalEncryptionKey: [0x0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -1396,12 +2323,12 @@ v2.Options
       OutputDir: '<W>\p\b\v2'
 v2.RuntimeDependencies
   Dependencies with properties:
-      Required: [1×2 table]
-      Optional: [0×0 table]
-v2.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v2_2_0.dll (214016) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-v2.seconds	0.1
+      Required: [1x2 table]
+      Optional: [0x0 table]
+v2.files	GettingStarted.html (1678) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v2_2_0.dll (214016) | mccExcludedFiles.log (90) | readme.txt (1434) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+v2.seconds	0.2
 v2.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17v2_2_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
-v2.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
+v2.file.GettingStarted.html	1678 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
   |    <head>
@@ -1417,7 +2344,9 @@ v2.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
   |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
   |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
   |        <h2>Register the Add-In</h2>
-  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone. Excel installed by Click-to-Run sees the machine's registrations alone, so for Excel run it as an administrator.</p>
+  |        <h2>Use the Add-In in Excel</h2>
+  |        <p>Open k17v2.xlam in Excel, or add it under File &gt; Options &gt; Add-ins; its worksheet functions, one per exported function, can then be used in any workbook's cells. The module itself is k17v2.bas, which can be imported into a workbook's own VBA project instead.</p>
   |        <h2>Additional Resources</h2>
   |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
   |    </body>
@@ -1477,7 +2406,7 @@ v2.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 v2.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-v2.file.readme.txt	1188 chars, CRLF 27, ends with newline 1
+v2.file.readme.txt	1434 chars, CRLF 30, ends with newline 1
   |k17v2 JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -1488,7 +2417,9 @@ v2.file.readme.txt	1188 chars, CRLF 27, ends with newline 1
   |
   |The add-in is a COM server: register k17v2_2_0.dll once on that computer by running
   |_install.bat beside it (for every user when run as an administrator, else for the current
-  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |user alone), then open the add-in workbook in Excel or call the component from VBA. Excel
+  |installed by Click-to-Run sees the machine's registrations alone, so for Excel run
+  |_install.bat as an administrator.
   |
   |2. Files to Deploy and Package
   |
@@ -1504,7 +2435,8 @@ v2.file.readme.txt	1188 chars, CRLF 27, ends with newline 1
   |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
   |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
   |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
-  |workbook carries that module into Excel.
+  |workbook (.xlam) carries that module into Excel: open it there, or add it under File > Options >
+  |Add-ins, and the functions can be used in any workbook's cells.
 v2.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 v2.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
@@ -1562,10 +2494,10 @@ v05.printed
 v05.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3×1 cell}
+      Files: {3x1 cell}
       IncludedSupportPackages: {}
-      Options: [1×1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
 v05.BuildType	excelAddIn
 v05.Files	<OUT>\k17v05_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 v05.Options
@@ -1575,11 +2507,11 @@ v05.Options
       AddInVersion: '0.5'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {3×1 cell}
+      FunctionFiles: {3x1 cell}
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0×0 struct]
+      ExternalEncryptionKey: [0x0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -1587,12 +2519,12 @@ v05.Options
       OutputDir: '<W>\p\b\v05'
 v05.RuntimeDependencies
   Dependencies with properties:
-      Required: [1×2 table]
-      Optional: [0×0 table]
-v05.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v05_1_0.dll (214016) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+      Required: [1x2 table]
+      Optional: [0x0 table]
+v05.files	GettingStarted.html (1683) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v05_1_0.dll (214016) | mccExcludedFiles.log (90) | readme.txt (1438) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 v05.seconds	0.2
 v05.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17v05_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
-v05.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
+v05.file.GettingStarted.html	1683 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
   |    <head>
@@ -1608,7 +2540,9 @@ v05.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
   |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
   |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
   |        <h2>Register the Add-In</h2>
-  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone. Excel installed by Click-to-Run sees the machine's registrations alone, so for Excel run it as an administrator.</p>
+  |        <h2>Use the Add-In in Excel</h2>
+  |        <p>Open k17v05.xlam in Excel, or add it under File &gt; Options &gt; Add-ins; its worksheet functions, one per exported function, can then be used in any workbook's cells. The module itself is k17v05.bas, which can be imported into a workbook's own VBA project instead.</p>
   |        <h2>Additional Resources</h2>
   |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
   |    </body>
@@ -1668,7 +2602,7 @@ v05.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 v05.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-v05.file.readme.txt	1192 chars, CRLF 27, ends with newline 1
+v05.file.readme.txt	1438 chars, CRLF 30, ends with newline 1
   |k17v05 JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -1679,7 +2613,9 @@ v05.file.readme.txt	1192 chars, CRLF 27, ends with newline 1
   |
   |The add-in is a COM server: register k17v05_1_0.dll once on that computer by running
   |_install.bat beside it (for every user when run as an administrator, else for the current
-  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |user alone), then open the add-in workbook in Excel or call the component from VBA. Excel
+  |installed by Click-to-Run sees the machine's registrations alone, so for Excel run
+  |_install.bat as an administrator.
   |
   |2. Files to Deploy and Package
   |
@@ -1695,7 +2631,8 @@ v05.file.readme.txt	1192 chars, CRLF 27, ends with newline 1
   |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
   |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
   |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
-  |workbook carries that module into Excel.
+  |workbook (.xlam) carries that module into Excel: open it there, or add it under File > Options >
+  |Add-ins, and the functions can be used in any workbook's cells.
 v05.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 v05.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
@@ -1747,19 +2684,18 @@ v05.registry.Software/Classes/Interface	added 1, removed 0
   |    (Default)    REG_SZ    {<UUID>}
   |    Version    REG_SZ    1.0
 v3456.printed
-  |Warning: This build of JGraph writes the add-in without its Visual Basic module: k17v3456.bas is pending (compiler and SDK plan, stage K17e).
   |Warning: Component "k17v3456_3_4" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
 v3456.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3×1 cell}
+      Files: {5x1 cell}
       IncludedSupportPackages: {}
-      Options: [1×1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
 v3456.BuildType	excelAddIn
-v3456.Files	<OUT>\k17v3456_3_4.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
+v3456.Files	<OUT>\k17v3456_3_4.dll | <OUT>\_install.bat | <OUT>\k17v3456.xlam | <OUT>\k17v3456.bas | <OUT>\GettingStarted.html
 v3456.Options
   ExcelAddInOptions with properties:
       AddInName: 'k17v3456'
@@ -1767,11 +2703,11 @@ v3456.Options
       AddInVersion: '3.4.5.6'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {3×1 cell}
+      FunctionFiles: {3x1 cell}
       GenerateVisualBasicFile: on
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0×0 struct]
+      ExternalEncryptionKey: [0x0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -1779,12 +2715,12 @@ v3456.Options
       OutputDir: '<W>\p\b\v3456'
 v3456.RuntimeDependencies
   Dependencies with properties:
-      Required: [1×2 table]
-      Optional: [0×0 table]
-v3456.files	GettingStarted.html (1253) | _install.bat (883) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v3456_3_4.dll (214016) | mccExcludedFiles.log (90) | readme.txt (1248) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+      Required: [1x2 table]
+      Optional: [0x0 table]
+v3456.files	GettingStarted.html (1693) | _install.bat (883) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v3456.bas (2237) | k17v3456.xlam (4468) | k17v3456_3_4.dll (214016) | mccExcludedFiles.log (90) | readme.txt (1549) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 v3456.seconds	0.2
 v3456.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17v3456_3_4" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
-v3456.file.GettingStarted.html	1253 chars, CRLF 0, ends with newline 1
+v3456.file.GettingStarted.html	1693 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
   |    <head>
@@ -1800,7 +2736,9 @@ v3456.file.GettingStarted.html	1253 chars, CRLF 0, ends with newline 1
   |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
   |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
   |        <h2>Register the Add-In</h2>
-  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone. Excel installed by Click-to-Run sees the machine's registrations alone, so for Excel run it as an administrator.</p>
+  |        <h2>Use the Add-In in Excel</h2>
+  |        <p>Open k17v3456.xlam in Excel, or add it under File &gt; Options &gt; Add-ins; its worksheet functions, one per exported function, can then be used in any workbook's cells. The module itself is k17v3456.bas, which can be imported into a workbook's own VBA project instead.</p>
   |        <h2>Additional Resources</h2>
   |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
   |    </body>
@@ -1857,10 +2795,99 @@ v3456.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
   |	]
   |}
 v3456.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+v3456.file.k17v3456.bas	2237 chars, CRLF 88, ends with newline 1
+  |Dim MCLUtil As Object
+  |Dim bModuleInitialized As Boolean
+  |Dim K17V3456 As Object 
+  |
+  |Private Sub InitModule()
+  |    If Not bModuleInitialized Then
+  |        On Error GoTo Handle_Error
+  |        If MCLUtil Is Nothing Then
+  |            Set MCLUtil = CreateObject("JGraphComUtil.MWUtil25.2")
+  |        End If
+  |        Call MCLUtil.MWInitApplication(Application)
+  |        
+  |        bModuleInitialized = True
+  |        Exit Sub
+  |Handle_Error:
+  |        bModuleInitialized = False
+  |    End If
+  |End Sub
+  |
+  |Function k17_none() As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17V3456 Is Nothing Then
+  |        Set K17V3456 = CreateObject("k17v3456.K17V3456.3_4")
+  |    End If
+  |
+  |    Call K17V3456.k17_none()
+  |    k17_none = Empty
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_none = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_one(Optional x As Variant) As Variant
+  |
+  |    Dim y As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17V3456 Is Nothing Then
+  |        Set K17V3456 = CreateObject("k17v3456.K17V3456.3_4")
+  |    End If
+  |
+  |    Call K17V3456.k17_one(1, y, x)
+  |    k17_one = y
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_one = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_many(Optional a As Variant, Optional b As Variant, Optional c As Variant) As  _
+  |    Variant
+  |
+  |    Dim s, d, p As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17V3456 Is Nothing Then
+  |        Set K17V3456 = CreateObject("k17v3456.K17V3456.3_4")
+  |    End If
+  |
+  |    ' By default, MATLAB Excel Add-in returns just one output for MATLAB functions 
+  |    ' that have more than one output.    
+  |
+  |    Call K17V3456.k17_many(3, s, d, p, a, b, c)
+  |    k17_many = s
+  |
+  |    ' If you want to use all the return values, you can use the following 
+  |    ' code as a guideline. To use this form, call the function from Excel cell,
+  |    ' highlight the cells which will receive the outputs and hit Ctrl+Shift+Enter.
+  |    '
+  |    ' Call K17V3456.k17_many(3, s, d, p, a, b, c)
+  |    ' k17_many = Array(s, d, p)
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_many = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
 v3456.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-v3456.file.readme.txt	1248 chars, CRLF 28, ends with newline 1
+v3456.file.readme.txt	1549 chars, CRLF 32, ends with newline 1
   |k17v3456 JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -1871,12 +2898,15 @@ v3456.file.readme.txt	1248 chars, CRLF 28, ends with newline 1
   |
   |The add-in is a COM server: register k17v3456_3_4.dll once on that computer by running
   |_install.bat beside it (for every user when run as an administrator, else for the current
-  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |user alone), then open the add-in workbook in Excel or call the component from VBA. Excel
+  |installed by Click-to-Run sees the machine's registrations alone, so for Excel run
+  |_install.bat as an administrator.
   |
   |2. Files to Deploy and Package
   |
   |-k17v3456_3_4.dll (output from mcc)
   |-k17v3456.bas (VBA module file created by mcc)
+  |-k17v3456.xlam (Excel add-in workbook created by mcc)
   |-The JGraph Runtime installer, when the computer has no JGraph Runtime
   |-This readme file
   |
@@ -1888,7 +2918,8 @@ v3456.file.readme.txt	1248 chars, CRLF 28, ends with newline 1
   |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
   |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
   |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
-  |workbook carries that module into Excel.
+  |workbook (.xlam) carries that module into Excel: open it there, or add it under File > Options >
+  |Add-ins, and the functions can be used in any workbook's cells.
 v3456.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 v3456.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
@@ -1955,10 +2986,10 @@ vzero.printed
 vzero.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3×1 cell}
+      Files: {3x1 cell}
       IncludedSupportPackages: {}
-      Options: [1×1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
 vzero.BuildType	excelAddIn
 vzero.Files	<OUT>\k17vz_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 vzero.Options
@@ -1968,11 +2999,11 @@ vzero.Options
       AddInVersion: '0'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {3×1 cell}
+      FunctionFiles: {3x1 cell}
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0×0 struct]
+      ExternalEncryptionKey: [0x0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -1980,12 +3011,12 @@ vzero.Options
       OutputDir: '<W>\p\b\vzero'
 vzero.RuntimeDependencies
   Dependencies with properties:
-      Required: [1×2 table]
-      Optional: [0×0 table]
-vzero.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17vz_1_0.dll (214016) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+      Required: [1x2 table]
+      Optional: [0x0 table]
+vzero.files	GettingStarted.html (1678) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17vz_1_0.dll (214016) | mccExcludedFiles.log (90) | readme.txt (1434) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 vzero.seconds	0.2
 vzero.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17vz_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
-vzero.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
+vzero.file.GettingStarted.html	1678 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
   |    <head>
@@ -2001,7 +3032,9 @@ vzero.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
   |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
   |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
   |        <h2>Register the Add-In</h2>
-  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone. Excel installed by Click-to-Run sees the machine's registrations alone, so for Excel run it as an administrator.</p>
+  |        <h2>Use the Add-In in Excel</h2>
+  |        <p>Open k17vz.xlam in Excel, or add it under File &gt; Options &gt; Add-ins; its worksheet functions, one per exported function, can then be used in any workbook's cells. The module itself is k17vz.bas, which can be imported into a workbook's own VBA project instead.</p>
   |        <h2>Additional Resources</h2>
   |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
   |    </body>
@@ -2061,7 +3094,7 @@ vzero.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 vzero.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-vzero.file.readme.txt	1188 chars, CRLF 27, ends with newline 1
+vzero.file.readme.txt	1434 chars, CRLF 30, ends with newline 1
   |k17vz JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -2072,7 +3105,9 @@ vzero.file.readme.txt	1188 chars, CRLF 27, ends with newline 1
   |
   |The add-in is a COM server: register k17vz_1_0.dll once on that computer by running
   |_install.bat beside it (for every user when run as an administrator, else for the current
-  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |user alone), then open the add-in workbook in Excel or call the component from VBA. Excel
+  |installed by Click-to-Run sees the machine's registrations alone, so for Excel run
+  |_install.bat as an administrator.
   |
   |2. Files to Deploy and Package
   |
@@ -2088,7 +3123,8 @@ vzero.file.readme.txt	1188 chars, CRLF 27, ends with newline 1
   |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
   |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
   |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
-  |workbook carries that module into Excel.
+  |workbook (.xlam) carries that module into Excel: open it there, or add it under File > Options >
+  |Add-ins, and the functions can be used in any workbook's cells.
 vzero.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 vzero.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
@@ -2146,10 +3182,10 @@ defaults.printed
 defaults.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3×1 cell}
+      Files: {3x1 cell}
       IncludedSupportPackages: {}
-      Options: [1×1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
 defaults.BuildType	excelAddIn
 defaults.Files	<OUT>\k17_one_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 defaults.Options
@@ -2163,7 +3199,7 @@ defaults.Options
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0×0 struct]
+      ExternalEncryptionKey: [0x0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -2171,12 +3207,12 @@ defaults.Options
       OutputDir: '<W>\p\b\defaults'
 defaults.RuntimeDependencies
   Dependencies with properties:
-      Required: [1×2 table]
-      Optional: [0×0 table]
-defaults.files	GettingStarted.html (1250) | _install.bat (882) | buildresult.json (102) | includedSupportPackages.txt (0) | k17_one_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1196) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+      Required: [1x2 table]
+      Optional: [0x0 table]
+defaults.files	GettingStarted.html (1688) | _install.bat (882) | buildresult.json (102) | includedSupportPackages.txt (0) | k17_one_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1442) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 defaults.seconds	0.2
 defaults.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17_one_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
-defaults.file.GettingStarted.html	1250 chars, CRLF 0, ends with newline 1
+defaults.file.GettingStarted.html	1688 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
   |    <head>
@@ -2192,7 +3228,9 @@ defaults.file.GettingStarted.html	1250 chars, CRLF 0, ends with newline 1
   |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
   |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
   |        <h2>Register the Add-In</h2>
-  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone. Excel installed by Click-to-Run sees the machine's registrations alone, so for Excel run it as an administrator.</p>
+  |        <h2>Use the Add-In in Excel</h2>
+  |        <p>Open k17_one.xlam in Excel, or add it under File &gt; Options &gt; Add-ins; its worksheet functions, one per exported function, can then be used in any workbook's cells. The module itself is k17_one.bas, which can be imported into a workbook's own VBA project instead.</p>
   |        <h2>Additional Resources</h2>
   |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
   |    </body>
@@ -2252,7 +3290,7 @@ defaults.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 defaults.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-defaults.file.readme.txt	1196 chars, CRLF 27, ends with newline 1
+defaults.file.readme.txt	1442 chars, CRLF 30, ends with newline 1
   |k17_one JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -2263,7 +3301,9 @@ defaults.file.readme.txt	1196 chars, CRLF 27, ends with newline 1
   |
   |The add-in is a COM server: register k17_one_1_0.dll once on that computer by running
   |_install.bat beside it (for every user when run as an administrator, else for the current
-  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |user alone), then open the add-in workbook in Excel or call the component from VBA. Excel
+  |installed by Click-to-Run sees the machine's registrations alone, so for Excel run
+  |_install.bat as an administrator.
   |
   |2. Files to Deploy and Package
   |
@@ -2279,7 +3319,8 @@ defaults.file.readme.txt	1196 chars, CRLF 27, ends with newline 1
   |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
   |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
   |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
-  |workbook carries that module into Excel.
+  |workbook (.xlam) carries that module into Excel: open it there, or add it under File > Options >
+  |Add-ins, and the functions can be used in any workbook's cells.
 defaults.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 defaults.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
@@ -2337,10 +3378,10 @@ additional.printed
 additional.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {4×1 cell}
+      Files: {4x1 cell}
       IncludedSupportPackages: {}
-      Options: [1×1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
 additional.BuildType	excelAddIn
 additional.Files	<OUT>\k17add_1_0.dll | <OUT>\_install.bat | <OUT>\k17add.ctf | <OUT>\GettingStarted.html
 additional.Options
@@ -2350,11 +3391,11 @@ additional.Options
       AddInVersion: '1.0.0.0'
       DebugBuild: off
       EmbedArchive: off
-      FunctionFiles: {3×1 cell}
+      FunctionFiles: {3x1 cell}
       GenerateVisualBasicFile: off
       AdditionalFiles: {'<W>\p\src\k17data.txt'}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0×0 struct]
+      ExternalEncryptionKey: [0x0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -2362,12 +3403,12 @@ additional.Options
       OutputDir: '<W>\p\b\additional'
 additional.RuntimeDependencies
   Dependencies with properties:
-      Required: [1×2 table]
-      Optional: [0×0 table]
-additional.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17add.ctf (4398) | k17add_1_0.dll (209920) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+      Required: [1x2 table]
+      Optional: [0x0 table]
+additional.files	GettingStarted.html (1683) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17add.ctf (4400) | k17add_1_0.dll (209920) | mccExcludedFiles.log (90) | readme.txt (1479) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 additional.seconds	0.2
 additional.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17add_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
-additional.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
+additional.file.GettingStarted.html	1683 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
   |    <head>
@@ -2383,7 +3424,9 @@ additional.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
   |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
   |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
   |        <h2>Register the Add-In</h2>
-  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone. Excel installed by Click-to-Run sees the machine's registrations alone, so for Excel run it as an administrator.</p>
+  |        <h2>Use the Add-In in Excel</h2>
+  |        <p>Open k17add.xlam in Excel, or add it under File &gt; Options &gt; Add-ins; its worksheet functions, one per exported function, can then be used in any workbook's cells. The module itself is k17add.bas, which can be imported into a workbook's own VBA project instead.</p>
   |        <h2>Additional Resources</h2>
   |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
   |    </body>
@@ -2443,7 +3486,7 @@ additional.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 additional.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-additional.file.readme.txt	1233 chars, CRLF 28, ends with newline 1
+additional.file.readme.txt	1479 chars, CRLF 31, ends with newline 1
   |k17add JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -2454,7 +3497,9 @@ additional.file.readme.txt	1233 chars, CRLF 28, ends with newline 1
   |
   |The add-in is a COM server: register k17add_1_0.dll once on that computer by running
   |_install.bat beside it (for every user when run as an administrator, else for the current
-  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |user alone), then open the add-in workbook in Excel or call the component from VBA. Excel
+  |installed by Click-to-Run sees the machine's registrations alone, so for Excel run
+  |_install.bat as an administrator.
   |
   |2. Files to Deploy and Package
   |
@@ -2471,7 +3516,8 @@ additional.file.readme.txt	1233 chars, CRLF 28, ends with newline 1
   |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
   |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
   |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
-  |workbook carries that module into Excel.
+  |workbook (.xlam) carries that module into Excel: open it there, or add it under File > Options >
+  |Add-ins, and the functions can be used in any workbook's cells.
 additional.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 additional.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
@@ -2527,19 +3573,18 @@ pfile.printed
   |
   |<W>\p\src\k17_pfun.p
   |
-  |Warning: This build of JGraph writes the add-in without its Visual Basic module: k17p.bas is pending (compiler and SDK plan, stage K17e).
   |Warning: Component "k17p_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
 pfile.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3×1 cell}
+      Files: {5x1 cell}
       IncludedSupportPackages: {}
-      Options: [1×1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
 pfile.BuildType	excelAddIn
-pfile.Files	<OUT>\k17p_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
+pfile.Files	<OUT>\k17p_1_0.dll | <OUT>\_install.bat | <OUT>\k17p.xlam | <OUT>\k17p.bas | <OUT>\GettingStarted.html
 pfile.Options
   ExcelAddInOptions with properties:
       AddInName: 'k17p'
@@ -2547,11 +3592,11 @@ pfile.Options
       AddInVersion: '1.0.0.0'
       DebugBuild: off
       EmbedArchive: on
-      FunctionFiles: {2×1 cell}
+      FunctionFiles: {2x1 cell}
       GenerateVisualBasicFile: on
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0×0 struct]
+      ExternalEncryptionKey: [0x0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -2559,12 +3604,12 @@ pfile.Options
       OutputDir: '<W>\p\b\pfile'
 pfile.RuntimeDependencies
   Dependencies with properties:
-      Required: [1×2 table]
-      Optional: [0×0 table]
-pfile.files	GettingStarted.html (1241) | _install.bat (879) | buildresult.json (102) | includedSupportPackages.txt (0) | k17p_1_0.dll (213504) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+      Required: [1x2 table]
+      Optional: [0x0 table]
+pfile.files	GettingStarted.html (1673) | _install.bat (879) | buildresult.json (102) | includedSupportPackages.txt (0) | k17p.bas (1290) | k17p.xlam (4115) | k17p_1_0.dll (213504) | mccExcludedFiles.log (90) | readme.txt (1525) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 pfile.seconds	0.2
 pfile.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17p_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
-pfile.file.GettingStarted.html	1241 chars, CRLF 0, ends with newline 1
+pfile.file.GettingStarted.html	1673 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
   |    <head>
@@ -2580,7 +3625,9 @@ pfile.file.GettingStarted.html	1241 chars, CRLF 0, ends with newline 1
   |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
   |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
   |        <h2>Register the Add-In</h2>
-  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone. Excel installed by Click-to-Run sees the machine's registrations alone, so for Excel run it as an administrator.</p>
+  |        <h2>Use the Add-In in Excel</h2>
+  |        <p>Open k17p.xlam in Excel, or add it under File &gt; Options &gt; Add-ins; its worksheet functions, one per exported function, can then be used in any workbook's cells. The module itself is k17p.bas, which can be imported into a workbook's own VBA project instead.</p>
   |        <h2>Additional Resources</h2>
   |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
   |    </body>
@@ -2637,10 +3684,70 @@ pfile.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
   |	]
   |}
 pfile.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+pfile.file.k17p.bas	1290 chars, CRLF 59, ends with newline 1
+  |Dim MCLUtil As Object
+  |Dim bModuleInitialized As Boolean
+  |Dim K17P As Object 
+  |
+  |Private Sub InitModule()
+  |    If Not bModuleInitialized Then
+  |        On Error GoTo Handle_Error
+  |        If MCLUtil Is Nothing Then
+  |            Set MCLUtil = CreateObject("JGraphComUtil.MWUtil25.2")
+  |        End If
+  |        Call MCLUtil.MWInitApplication(Application)
+  |        
+  |        bModuleInitialized = True
+  |        Exit Sub
+  |Handle_Error:
+  |        bModuleInitialized = False
+  |    End If
+  |End Sub
+  |
+  |Function k17_pfun(Optional i0 As Variant) As Variant
+  |
+  |    Dim o0 As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17P Is Nothing Then
+  |        Set K17P = CreateObject("k17p.K17P.1_0")
+  |    End If
+  |
+  |    Call K17P.k17_pfun(1, o0, i0)
+  |    k17_pfun = o0
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_pfun = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_one(Optional x As Variant) As Variant
+  |
+  |    Dim y As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17P Is Nothing Then
+  |        Set K17P = CreateObject("k17p.K17P.1_0")
+  |    End If
+  |
+  |    Call K17P.k17_one(1, y, x)
+  |    k17_one = y
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_one = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
 pfile.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-pfile.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
+pfile.file.readme.txt	1525 chars, CRLF 32, ends with newline 1
   |k17p JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -2651,12 +3758,15 @@ pfile.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
   |
   |The add-in is a COM server: register k17p_1_0.dll once on that computer by running
   |_install.bat beside it (for every user when run as an administrator, else for the current
-  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |user alone), then open the add-in workbook in Excel or call the component from VBA. Excel
+  |installed by Click-to-Run sees the machine's registrations alone, so for Excel run
+  |_install.bat as an administrator.
   |
   |2. Files to Deploy and Package
   |
   |-k17p_1_0.dll (output from mcc)
   |-k17p.bas (VBA module file created by mcc)
+  |-k17p.xlam (Excel add-in workbook created by mcc)
   |-The JGraph Runtime installer, when the computer has no JGraph Runtime
   |-This readme file
   |
@@ -2668,7 +3778,8 @@ pfile.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
   |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
   |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
   |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
-  |workbook carries that module into Excel.
+  |workbook (.xlam) carries that module into Excel: open it there, or add it under File > Options >
+  |Add-ins, and the functions can be used in any workbook's cells.
 pfile.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 pfile.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
@@ -2726,10 +3837,10 @@ classname.printed
 classname.results
   Results with properties:
       BuildType: 'excelAddIn'
-      Files: {3×1 cell}
+      Files: {3x1 cell}
       IncludedSupportPackages: {}
-      Options: [1×1 compiler.build.ExcelAddInOptions]
-      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+      Options: [1x1 compiler.build.ExcelAddInOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
 classname.BuildType	excelAddIn
 classname.Files	<OUT>\k17cls_1_0.dll | <OUT>\_install.bat | <OUT>\GettingStarted.html
 classname.Options
@@ -2743,7 +3854,7 @@ classname.Options
       GenerateVisualBasicFile: off
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0×0 struct]
+      ExternalEncryptionKey: [0x0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -2751,12 +3862,12 @@ classname.Options
       OutputDir: '<W>\p\b\classname'
 classname.RuntimeDependencies
   Dependencies with properties:
-      Required: [1×2 table]
-      Optional: [0×0 table]
-classname.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17cls_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+      Required: [1x2 table]
+      Optional: [0x0 table]
+classname.files	GettingStarted.html (1683) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17cls_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1438) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 classname.seconds	0.2
 classname.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17cls_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
-classname.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
+classname.file.GettingStarted.html	1683 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
   |<html>
   |    <head>
@@ -2772,7 +3883,9 @@ classname.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
   |        <p>Install the JGraph Runtime 0.2.3 on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
   |        <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
   |        <h2>Register the Add-In</h2>
-  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+  |        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone. Excel installed by Click-to-Run sees the machine's registrations alone, so for Excel run it as an administrator.</p>
+  |        <h2>Use the Add-In in Excel</h2>
+  |        <p>Open k17cls.xlam in Excel, or add it under File &gt; Options &gt; Add-ins; its worksheet functions, one per exported function, can then be used in any workbook's cells. The module itself is k17cls.bas, which can be imported into a workbook's own VBA project instead.</p>
   |        <h2>Additional Resources</h2>
   |        <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
   |    </body>
@@ -2832,7 +3945,7 @@ classname.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
 classname.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-classname.file.readme.txt	1192 chars, CRLF 27, ends with newline 1
+classname.file.readme.txt	1438 chars, CRLF 30, ends with newline 1
   |k17cls JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -2843,7 +3956,9 @@ classname.file.readme.txt	1192 chars, CRLF 27, ends with newline 1
   |
   |The add-in is a COM server: register k17cls_1_0.dll once on that computer by running
   |_install.bat beside it (for every user when run as an administrator, else for the current
-  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |user alone), then open the add-in workbook in Excel or call the component from VBA. Excel
+  |installed by Click-to-Run sees the machine's registrations alone, so for Excel run
+  |_install.bat as an administrator.
   |
   |2. Files to Deploy and Package
   |
@@ -2859,7 +3974,8 @@ classname.file.readme.txt	1192 chars, CRLF 27, ends with newline 1
   |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
   |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
   |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
-  |workbook carries that module into Excel.
+  |workbook (.xlam) carries that module into Excel: open it there, or add it under File > Options >
+  |Add-ins, and the functions can be used in any workbook's cells.
 classname.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 classname.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
@@ -2913,8 +4029,8 @@ classname.registry.Software/Classes/Interface	added 1, removed 0
 guids.plain.same_as_plain2	ERR MATLAB:fileread:cannotOpenFile | Could not open file <W>\p\b\plain\k17xl_idl.idl. No such file or directory.
 guids.plain.same_as_bas	ERR MATLAB:fileread:cannotOpenFile | Could not open file <W>\p\b\plain\k17xl_idl.idl. No such file or directory.
 nooutdir.Files	<SRC>\k17ownexcelAddIn\k17own_1_0.dll | <SRC>\k17ownexcelAddIn\_install.bat | <SRC>\k17ownexcelAddIn\GettingStarted.html
-nooutdir.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17own_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-nooutdir.seconds	0.1
+nooutdir.files	GettingStarted.html (1683) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17own_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1438) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+nooutdir.seconds	0.2
 nooutdir.registry.Software/Classes	added 2, removed 0
   |+ Software/Classes/k17own.k17_oneClass
   |    (Default)    REG_SZ    k17_oneClass
@@ -2962,11 +4078,10 @@ nooutdir.registry.Software/Classes/Interface	added 1, removed 0
   |    (Default)    REG_SZ    {<UUID>}
   |    Version    REG_SZ    1.0
 mcc_default	ok
-  |Warning: This build of JGraph writes the add-in without its Visual Basic module: k17m.bas is pending (compiler and SDK plan, stage K17e).
   |Warning: Component "k17m_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_default.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_default.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m.bas (885) | k17m.xlam (4064) | k17m_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1525) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_default.seconds	0.2
 mcc_default.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17m_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_default.registry.Software/Classes	added 2, removed 0
@@ -3019,7 +4134,7 @@ mcc_noversion	ok
   |Warning: Component "k17mnv_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_noversion.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnv_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_noversion.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnv_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1438) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_noversion.seconds	0.2
 mcc_noversion.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mnv_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_noversion.registry.Software/Classes	added 2, removed 0
@@ -3072,7 +4187,7 @@ mcc_noclass	ok
   |Warning: Component "k17mnc_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_noclass.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnc_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_noclass.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnc_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1438) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_noclass.seconds	0.2
 mcc_noclass.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mnc_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_noclass.registry.Software/Classes	added 2, removed 0
@@ -3134,7 +4249,7 @@ mcc_version2	ok
   |Warning: Component "k17mv2_2_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_version2.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mv2_2_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_version2.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mv2_2_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1438) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_version2.seconds	0.2
 mcc_version2.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mv2_2_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_version2.registry.Software/Classes	added 2, removed 0
@@ -3187,12 +4302,11 @@ mcc_extra	ERR Compiler:compiler:COM_ERR_INVALID_VERSION | Version string "versio
 mcc_extra.files	
 mcc_extra.seconds	0.0
 mcc_bundle	ok
-  |Warning: This build of JGraph writes the add-in without its Visual Basic module: k17mb.bas is pending (compiler and SDK plan, stage K17e).
   |Warning: Component "k17mb_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_bundle.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mb_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_bundle.seconds	0.1
+mcc_bundle.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mb.bas (891) | k17mb.xlam (4074) | k17mb_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1531) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_bundle.seconds	0.2
 mcc_bundle.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mb_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_bundle.registry.Software/Classes	added 2, removed 0
   |+ Software/Classes/k17mb.K17Mb
@@ -3244,8 +4358,8 @@ mcc_notarget	ok
   |Warning: Component "k17mnt_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_notarget.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnt_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_notarget.seconds	0.1
+mcc_notarget.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnt_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1438) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_notarget.seconds	0.2
 mcc_notarget.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mnt_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_notarget.registry.Software/Classes	added 2, removed 0
   |+ Software/Classes/k17mnt.K17Mnt
@@ -3297,8 +4411,8 @@ mcc_separate	ok
   |Warning: Component "k17ms_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_separate.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17ms.ctf (3465) | k17ms_1_0.dll (209408) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_separate.seconds	0.1
+mcc_separate.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17ms.ctf (3465) | k17ms_1_0.dll (209408) | mccExcludedFiles.log (90) | readme.txt (1474) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_separate.seconds	0.2
 mcc_separate.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17ms_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_separate.registry.Software/Classes	added 2, removed 0
   |+ Software/Classes/k17ms.K17Ms
@@ -3350,7 +4464,7 @@ mcc_debug	ok
   |Warning: Component "k17md_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_debug.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17md_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_debug.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17md_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1434) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_debug.seconds	0.1
 mcc_debug.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17md_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_debug.registry.Software/Classes	added 2, removed 0
@@ -3400,10 +4514,10 @@ mcc_debug.registry.Software/Classes/Interface	added 1, removed 0
   |    (Default)    REG_SZ    {<UUID>}
   |    Version    REG_SZ    1.0
 mcc_codegen	ok
-mcc_codegen.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mcg.ctf (3468) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_codegen.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mcg.ctf (3470) | mccExcludedFiles.log (90) | readme.txt (1479) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_codegen.seconds	0.0
 mcc_compile	ok
-mcc_compile.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mcp.ctf (3467) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_compile.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mcp.ctf (3468) | mccExcludedFiles.log (90) | readme.txt (1479) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_compile.seconds	0.0
 mcc_badname	ERR JGraph:mcc:excelAddInName | An Excel add-in's name must begin with a letter or '_' and contain only letters, digits and '_', as its type library and ProgIDs do: '1bad' cannot be one.
 mcc_badname.files	
@@ -3415,11 +4529,10 @@ mcc_dotted	ERR Compiler:compiler:COM_COM_EXCEL_NAMESPACE_ERROR | "Package "a" no
 mcc_dotted.files	
 mcc_dotted.seconds	0.0
 mcc_twofiles	ok
-  |Warning: This build of JGraph writes the add-in without its Visual Basic module: k17mtwo.bas is pending (compiler and SDK plan, stage K17e).
   |Warning: Component "k17mtwo_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_twofiles.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mtwo_1_0.dll (213504) | mccExcludedFiles.log (90) | readme.txt (1243) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_twofiles.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mtwo.bas (1261) | k17mtwo.xlam (4106) | k17mtwo_1_0.dll (213504) | mccExcludedFiles.log (90) | readme.txt (1543) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_twofiles.seconds	0.2
 mcc_twofiles.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mtwo_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_twofiles.registry.Software/Classes	added 2, removed 0
@@ -3475,8 +4588,8 @@ mcc_script	ok
   |Warning: Component "k17msc_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_script.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17msc_1_0.dll (212480) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_script.seconds	0.1
+mcc_script.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17msc_1_0.dll (212480) | mccExcludedFiles.log (90) | readme.txt (1438) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_script.seconds	0.2
 mcc_script.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17msc_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_script.registry.Software/Classes	added 2, removed 0
   |+ Software/Classes/k17msc.K17Msc
@@ -3528,8 +4641,8 @@ mcc_samev2	ok
   |Warning: Component "k17m_2_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_samev2.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_2_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1184) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_samev2.seconds	0.1
+mcc_samev2.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_2_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1430) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_samev2.seconds	0.2
 mcc_samev2.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17m_2_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_samev2.registry.Software/Classes	added 1, removed 0
   |+ Software/Classes/k17m.K17M.2_0
@@ -3564,14 +4677,14 @@ mcc_samefiles	ok
   |Warning: Component "k17m_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_samefiles.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_1_0.dll (213504) | mccExcludedFiles.log (90) | readme.txt (1184) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_samefiles.seconds	0.1
+mcc_samefiles.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_1_0.dll (213504) | mccExcludedFiles.log (90) | readme.txt (1430) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_samefiles.seconds	0.2
 mcc_samefiles.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17m_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_sameorder	ok
   |Warning: Component "k17m_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_sameorder.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_1_0.dll (213504) | mccExcludedFiles.log (90) | readme.txt (1184) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_sameorder.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_1_0.dll (213504) | mccExcludedFiles.log (90) | readme.txt (1430) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_sameorder.seconds	0.2
 mcc_sameorder.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17m_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 guids.mcc_default.same_as_samev2	ERR MATLAB:fileread:cannotOpenFile | Could not open file <W>\p\m\mcc_default\k17m_idl.idl. No such file or directory.
@@ -3585,10 +4698,50 @@ mcc_default.file.buildresult.json	102 chars, CRLF 5, ends with newline 1
   |	]
   |}
 mcc_default.file.includedSupportPackages.txt	0 chars, CRLF 0, ends with newline 0
+mcc_default.file.k17m.bas	885 chars, CRLF 39, ends with newline 1
+  |Dim MCLUtil As Object
+  |Dim bModuleInitialized As Boolean
+  |Dim K17M As Object 
+  |
+  |Private Sub InitModule()
+  |    If Not bModuleInitialized Then
+  |        On Error GoTo Handle_Error
+  |        If MCLUtil Is Nothing Then
+  |            Set MCLUtil = CreateObject("JGraphComUtil.MWUtil25.2")
+  |        End If
+  |        Call MCLUtil.MWInitApplication(Application)
+  |        
+  |        bModuleInitialized = True
+  |        Exit Sub
+  |Handle_Error:
+  |        bModuleInitialized = False
+  |    End If
+  |End Sub
+  |
+  |Function k17_one(Optional x As Variant) As Variant
+  |
+  |    Dim y As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17M Is Nothing Then
+  |        Set K17M = CreateObject("k17m.K17M.1_0")
+  |    End If
+  |
+  |    Call K17M.k17_one(1, y, x)
+  |    k17_one = y
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_one = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
 mcc_default.file.mccExcludedFiles.log	90 chars, CRLF 0, ends with newline 1
   |Excluded Files
   |Excluded Files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
-mcc_default.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
+mcc_default.file.readme.txt	1525 chars, CRLF 32, ends with newline 1
   |k17m JGraph Excel Add-in 
   |
   |1. Prerequisites for Deployment 
@@ -3599,12 +4752,15 @@ mcc_default.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
   |
   |The add-in is a COM server: register k17m_1_0.dll once on that computer by running
   |_install.bat beside it (for every user when run as an administrator, else for the current
-  |user alone), then open the add-in workbook in Excel or call the component from VBA.
+  |user alone), then open the add-in workbook in Excel or call the component from VBA. Excel
+  |installed by Click-to-Run sees the machine's registrations alone, so for Excel run
+  |_install.bat as an administrator.
   |
   |2. Files to Deploy and Package
   |
   |-k17m_1_0.dll (output from mcc)
   |-k17m.bas (VBA module file created by mcc)
+  |-k17m.xlam (Excel add-in workbook created by mcc)
   |-The JGraph Runtime installer, when the computer has no JGraph Runtime
   |-This readme file
   |
@@ -3616,12 +4772,70 @@ mcc_default.file.readme.txt	1228 chars, CRLF 28, ends with newline 1
   |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
   |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
   |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
-  |workbook carries that module into Excel.
+  |workbook (.xlam) carries that module into Excel: open it there, or add it under File > Options >
+  |Add-ins, and the functions can be used in any workbook's cells.
 mcc_default.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 mcc_default.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
   |Path	Symbol	Reason
-mcc_twofiles.bas	missing
+mcc_twofiles.bas	1261 chars, CRLF 57, ends with newline 1
+  |Dim MCLUtil As Object
+  |Dim bModuleInitialized As Boolean
+  |Dim K17Two As Object 
+  |
+  |Private Sub InitModule()
+  |    If Not bModuleInitialized Then
+  |        On Error GoTo Handle_Error
+  |        If MCLUtil Is Nothing Then
+  |            Set MCLUtil = CreateObject("JGraphComUtil.MWUtil25.2")
+  |        End If
+  |        Call MCLUtil.MWInitApplication(Application)
+  |        
+  |        bModuleInitialized = True
+  |        Exit Sub
+  |Handle_Error:
+  |        bModuleInitialized = False
+  |    End If
+  |End Sub
+  |
+  |Function k17_none() As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Two Is Nothing Then
+  |        Set K17Two = CreateObject("k17mtwo.K17Two.1_0")
+  |    End If
+  |
+  |    Call K17Two.k17_none()
+  |    k17_none = Empty
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_none = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
+  |Function k17_one(Optional x As Variant) As Variant
+  |
+  |    Dim y As Variant
+  |
+  |    On Error GoTo Handle_Error
+  |
+  |    Call InitModule()
+  |
+  |    If K17Two Is Nothing Then
+  |        Set K17Two = CreateObject("k17mtwo.K17Two.1_0")
+  |    End If
+  |
+  |    Call K17Two.k17_one(1, y, x)
+  |    k17_one = y
+  |
+  |    Exit Function
+  |Handle_Error:
+  |    k17_one = "Error in " & Err.Source & ": " & Err.Description
+  |End Function
+  |
 mcc_noversion.idl	missing
 mcc_version2.rc	missing
 arch.results
@@ -3629,19 +4843,19 @@ arch.results
       BuildType: 'productionServerArchive'
       Files: {'<W>\p\c\arch\k17arch.ctf'}
       IncludedSupportPackages: {}
-      Options: [1×1 compiler.build.ProductionServerArchiveOptions]
-      RuntimeDependencies: [1×1 compiler.runtime.Dependencies]
+      Options: [1x1 compiler.build.ProductionServerArchiveOptions]
+      RuntimeDependencies: [1x1 compiler.runtime.Dependencies]
 arch.BuildType	productionServerArchive
 arch.Files	<OUT>\k17arch.ctf
 arch.Options
   ProductionServerArchiveOptions with properties:
       ArchiveName: 'k17arch'
-      FunctionFiles: {18×1 cell}
+      FunctionFiles: {18x1 cell}
       FunctionSignatures: ''
       RoutesFile: ''
       AdditionalFiles: {}
       AutoDetectDataFiles: on
-      ExternalEncryptionKey: [0×0 struct]
+      ExternalEncryptionKey: [0x0 struct]
       ObfuscateArchive: off
       SecretsManifest: ''
       SupportPackages: {'autodetect'}
@@ -3649,10 +4863,10 @@ arch.Options
       OutputDir: '<W>\p\c\arch'
 arch.RuntimeDependencies
   Dependencies with properties:
-      Required: [1×2 table]
-      Optional: [0×0 table]
-arch.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17arch.ctf (12553) | mccExcludedFiles.log (90) | readme.txt (1131) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-arch.seconds	0.1
+      Required: [1x2 table]
+      Optional: [0x0 table]
+arch.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17arch.ctf (12557) | mccExcludedFiles.log (90) | readme.txt (1131) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+arch.seconds	0.0
 ra.registry.Software/Classes	added 2, removed 0
   |+ Software/Classes/k17ra.K17Ra
   |    (Default)    REG_SZ    K17Ra

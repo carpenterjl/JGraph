@@ -30,7 +30,7 @@ public sealed record ExcelAddInOptions
     /// <summary><c>mcc -g</c>: a debug build.</summary>
     public bool Debug { get; init; }
 
-    /// <summary><c>mcc -b</c>: the Visual Basic module (<c>&lt;name&gt;.bas</c>) is asked for (stage K17e writes it).</summary>
+    /// <summary><c>mcc -b</c>: the Visual Basic module (<c>&lt;name&gt;.bas</c>, <see cref="ExcelVisualBasic"/>) and the add-in workbook (<c>&lt;name&gt;.xlam</c>, <see cref="ExcelAddInWorkbook"/>) are written too.</summary>
     public bool VisualBasicFile { get; init; }
 
     /// <summary><c>mcc -T codegen</c> (and, in JGraph, <c>-T compile:lib</c>): the archive and the texts, no DLL.</summary>
@@ -59,8 +59,10 @@ public sealed record ExcelAddInBuild(IReadOnlyList<string> Files, CtfManifest Ma
 /// <c>GettingStarted.html</c> in JGraph's words. The DLL (stage K17c) is a copy of the prebuilt
 /// template <c>jgxl.dll</c> (decision KO9) stamped with the type library <see cref="ExcelTypeLib"/>
 /// writes (resource <c>TYPELIB</c> 1), the archive (<c>RT_RCDATA</c> 2) when embedded, the version
-/// block and the JGraph Runtime version it needs, R2025b's own resource layout; the <c>.bas</c>
-/// comes with stage K17e. No C++ source, IDL, module definition or resource script is generated
+/// block and the JGraph Runtime version it needs, R2025b's own resource layout; with <c>-b</c> the
+/// Visual Basic module (stage K17e, <see cref="ExcelVisualBasic"/>) and the add-in workbook JGraph
+/// writes as an <c>.xlam</c> with no Excel (<see cref="ExcelAddInWorkbook"/>, decision KO12) where
+/// R2025b drives Excel for an <c>.xla</c>. No C++ source, IDL, module definition or resource script is generated
 /// and nothing is compiled: JGraph needs no compiler on the building machine.
 /// </summary>
 public static class ExcelAddIn
@@ -227,7 +229,9 @@ public static class ExcelAddIn
     /// Writes what mcc writes: the DLL (the template copied and stamped, when one is given and the
     /// build is not <see cref="ExcelAddInOptions.ArchiveOnly"/>), the archive (in the DLL when
     /// <see cref="ExcelAddInOptions.EmbedArchive"/> and the DLL was written, else as <c>&lt;name&gt;.ctf</c>)
-    /// and <c>readme.txt</c>. The files answered are the DLL and the separate archive, each where written.
+    /// and <c>readme.txt</c>; with <see cref="ExcelAddInOptions.VisualBasicFile"/> the module and the
+    /// add-in workbook. The files answered are the DLL, the separate archive, the module and the
+    /// workbook, each where written.
     /// </summary>
     /// <exception cref="InvalidOperationException">The add-in exports more functions than the template serves.</exception>
     /// <exception cref="FileNotFoundException">The template is missing.</exception>
@@ -300,6 +304,14 @@ public static class ExcelAddIn
         {
             File.WriteAllBytes(ctf, archive);
             files.Add(ctf);
+        }
+
+        if (options.VisualBasicFile)
+        {
+            // The module R2025b's mcc -b writes, and the add-in workbook it would make through Excel
+            // (k17_excel: bas.files, bas.warn), written here as a file (decision KO12).
+            files.Add(ExcelVisualBasic.Write(folder, options));
+            files.Add(ExcelAddInWorkbook.Write(folder, name, ExcelVisualBasic.Module(options)));
         }
 
         File.WriteAllText(Path.Combine(folder, "readme.txt"), Readme(options, dllWritten), Utf8);
@@ -388,7 +400,9 @@ public static class ExcelAddIn
             .Append("of a JGraph Runtime carried along.\n\n")
             .Append("The add-in is a COM server: register ").Append(dll).Append(" once on that computer by running\n")
             .Append("_install.bat beside it (for every user when run as an administrator, else for the current\n")
-            .Append("user alone), then open the add-in workbook in Excel or call the component from VBA.\n\n");
+            .Append("user alone), then open the add-in workbook in Excel or call the component from VBA. Excel\n")
+            .Append("installed by Click-to-Run sees the machine's registrations alone, so for Excel run\n")
+            .Append("_install.bat as an administrator.\n\n");
         s.Append("2. Files to Deploy and Package\n\n");
         if (!options.EmbedArchive || !dllWritten)
         {
@@ -399,6 +413,7 @@ public static class ExcelAddIn
         if (options.VisualBasicFile)
         {
             s.Append('-').Append(name).Append(".bas (VBA module file created by mcc)\n");
+            s.Append('-').Append(name).Append(".xlam (Excel add-in workbook created by mcc)\n");
         }
 
         s.Append("-The JGraph Runtime installer, when the computer has no JGraph Runtime\n");
@@ -409,7 +424,8 @@ public static class ExcelAddIn
         s.Append("An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable\n")
             .Append("archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the\n")
             .Append("JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in\n")
-            .Append("workbook carries that module into Excel.\n");
+            .Append("workbook (.xlam) carries that module into Excel: open it there, or add it under File > Options >\n")
+            .Append("Add-ins, and the functions can be used in any workbook's cells.\n");
         return s.ToString().Replace("\n", "\r\n", StringComparison.Ordinal);
     }
 
@@ -439,7 +455,9 @@ public static class ExcelAddIn
         <p>Install the JGraph Runtime {RuntimeLayout.CurrentVersion} on the computer that runs Excel, or set JGRAPH_RUNTIME_ROOT to the folder of a runtime carried along.</p>
         <p>Complete this step only if you have not installed the JGraph Runtime while installing the add-in.</p>
         <h2>Register the Add-In</h2>
-        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone.</p>
+        <p>Run _install.bat beside the add-in's DLL once: as an administrator it registers the component for every user, otherwise for the current user alone. Excel installed by Click-to-Run sees the machine's registrations alone, so for Excel run it as an administrator.</p>
+        <h2>Use the Add-In in Excel</h2>
+        <p>Open {name}.xlam in Excel, or add it under File &gt; Options &gt; Add-ins; its worksheet functions, one per exported function, can then be used in any workbook's cells. The module itself is {name}.bas, which can be imported into a workbook's own VBA project instead.</p>
         <h2>Additional Resources</h2>
         <p>The deployment chapter of the JGraph scripting guide (docs/jgs-scripting-guide.html) says how the add-in's functions are called from worksheet cells and from VBA, and how the add-in is distributed.</p>
     </body>

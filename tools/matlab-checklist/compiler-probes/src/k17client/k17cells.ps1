@@ -1,18 +1,24 @@
 <#
 .SYNOPSIS
-    Excel's own cells over an R2025b Excel add-in (compiler and SDK plan, stage K17a): an invisible
-    Excel, a scratch workbook, the add-in's .bas imported through the VBA project object model where
-    Excel trusts it, formulas written and calculated, each cell's Value2 and Text recorded, the
-    workbook closed unsaved and Excel quit (decision KO13). Where Excel refuses the import, the
-    refusal is the recording.
+    Excel's own cells over an Excel add-in (compiler and SDK plan, stages K17a and K17e): an
+    invisible Excel, the add-in workbook opened (-Xlam) or the add-in's .bas imported into a scratch
+    workbook through the VBA project object model where Excel trusts it (-Bas), formulas written
+    into a second workbook and calculated, each cell's Value2 and Text recorded, the workbooks closed
+    unsaved and Excel quit (decision KO13). Where Excel refuses the import, the refusal is the
+    recording (K17a: it did, so the cells are recorded through the workbook).
 
 .PARAMETER Bas
     The .bas R2025b wrote with -b (k17bas.bas, whose InitModule creates MWComUtil.MWUtil25.2 and
-    the class k17bas.K17Bas.1_0).
+    the class k17bas.K17Bas.1_0), imported through Excel's VBA project object model.
+
+.PARAMETER Xlam
+    An add-in workbook holding that module (stage K17e: the .xlam JGraph writes, or the one
+    k17xlam.py writes around R2025b's .bas for the recording), opened as an add-in.
 #>
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory = $true)] [string] $Bas,
+    [string] $Bas = '',
+    [string] $Xlam = '',
     [Parameter(Mandatory = $true)] [string] $Out
 )
 
@@ -44,7 +50,7 @@ function Show($v) {
     return ('{0} {1}' -f $v.GetType().Name, [string]$v)
 }
 
-$xl = $null; $wb = $null
+$xl = $null; $wb = $null; $addin = $null
 $watch = [System.Diagnostics.Stopwatch]::StartNew()
 try {
     $xl = New-Object -ComObject 'Excel.Application'
@@ -53,23 +59,33 @@ try {
     Say 'excel.version' ('{0} build {1} {2}' -f $xl.Version, $xl.Build, $xl.OperatingSystem)
     Say 'excel.visible' $xl.Visible
     Say 'excel.automationsecurity' $xl.AutomationSecurity
-    $wb = $xl.Workbooks.Add()
-    $ws = $wb.Worksheets.Item(1)
-    Say 'bas.exists' (Test-Path -LiteralPath $Bas)
     $imported = $false
-    Case 'security.AccessVBOM' { $v = (Get-ItemProperty 'HKCU:\Software\Microsoft\Office\16.0\Excel\Security' -ErrorAction SilentlyContinue).AccessVBOM; if ($null -eq $v) { 'absent (programmatic access to the VBA project is not trusted)' } else { $v } }
-    Case 'vbe.access' { $vbe = $xl.VBE; 'VBE ok, projects ' + $vbe.VBProjects.Count }
-    Case 'vbproject.access' { $proj = $wb.VBProject; if ($null -eq $proj) { 'VBProject is Nothing: Excel does not trust programmatic access to the VBA project object model' } else { 'project ' + $proj.Name + ', components ' + $proj.VBComponents.Count } }
-    Case 'bas.import' {
-        $proj = $wb.VBProject
-        if ($null -eq $proj) { 'refused: VBProject is Nothing (AccessVBOM unset), so the .bas cannot be imported; the cells wait for the add-in workbook JGraph writes (K17e)' }
-        else {
-            $comp = $proj.VBComponents.Import($Bas)
-            $script:imported = $true
-            'imported ' + $comp.Name + ' type ' + $comp.Type + ', lines ' + $comp.CodeModule.CountOfLines
+    if ($Xlam) {
+        # The add-in workbook opened as an add-in; its module's functions then serve any workbook's cells.
+        Say 'xlam.exists' (Test-Path -LiteralPath $Xlam)
+        Case 'xlam.open' { $script:addin = $xl.Workbooks.Open($Xlam); 'opened {0}: IsAddin {1}, HasVBProject {2}, sheets {3}' -f $script:addin.Name, $script:addin.IsAddin, $script:addin.HasVBProject, $script:addin.Worksheets.Count }
+        $imported = $null -ne $addin
+        $wb = $xl.Workbooks.Add()
+        $ws = $wb.Worksheets.Item(1)
+        Say 'xlam.opened' $imported
+    } else {
+        $wb = $xl.Workbooks.Add()
+        $ws = $wb.Worksheets.Item(1)
+        Say 'bas.exists' (Test-Path -LiteralPath $Bas)
+        Case 'security.AccessVBOM' { $v = (Get-ItemProperty 'HKCU:\Software\Microsoft\Office\16.0\Excel\Security' -ErrorAction SilentlyContinue).AccessVBOM; if ($null -eq $v) { 'absent (programmatic access to the VBA project is not trusted)' } else { $v } }
+        Case 'vbe.access' { $vbe = $xl.VBE; 'VBE ok, projects ' + $vbe.VBProjects.Count }
+        Case 'vbproject.access' { $proj = $wb.VBProject; if ($null -eq $proj) { 'VBProject is Nothing: Excel does not trust programmatic access to the VBA project object model' } else { 'project ' + $proj.Name + ', components ' + $proj.VBComponents.Count } }
+        Case 'bas.import' {
+            $proj = $wb.VBProject
+            if ($null -eq $proj) { 'refused: VBProject is Nothing (AccessVBOM unset), so the .bas cannot be imported; the cells wait for the add-in workbook JGraph writes (K17e)' }
+            else {
+                $comp = $proj.VBComponents.Import($Bas)
+                $script:imported = $true
+                'imported ' + $comp.Name + ' type ' + $comp.Type + ', lines ' + $comp.CodeModule.CountOfLines
+            }
         }
+        Say 'bas.imported' $imported
     }
-    Say 'bas.imported' $imported
     if ($imported) {
         # Inputs for the formulas.
         $ws.Range('A1').Value2 = 4
@@ -161,10 +177,15 @@ try {
         Case 'array.two' { $ws.Range('L15:M15').FormulaArray = '=k17_two(5)'; $xl.Calculate(); Show $ws.Range('L15:M15').Value2 }
         Case 'array.varout' { $ws.Range('L17:N17').FormulaArray = '=k17_varout(2)'; $xl.Calculate(); Show $ws.Range('L17:N17').Value2 }
         Case 'array.nanmat' { $ws.Range('L19:M20').FormulaArray = '=k17_make("nanmat")'; $xl.Calculate(); Show $ws.Range('L19:M20').Value2 }
-        # The module's own text, as Excel holds it.
-        Case 'module.lines' { $comp = $wb.VBProject.VBComponents.Item($wb.VBProject.VBComponents.Count); $comp.CodeModule.CountOfLines }
+        # A second call to a function whose add-in object already exists, and the module's own text as Excel
+        # holds it (refused like the import where the VBA project is not trusted).
+        Case 'again.one' { $ws.Range('P1').Formula = '=k17_one(21)'; $xl.Calculate(); Show $ws.Range('P1').Value2 }
+        Case 'again.count' { $ws.Range('P2').Formula = '=k17_count()'; $xl.Calculate(); Show $ws.Range('P2').Value2 }
+        Case 'workbooks' { '{0} open, add-ins among them: {1}' -f $xl.Workbooks.Count, (@($xl.Workbooks | Where-Object { $_.IsAddin }).Count) }
+        $holder = if ($addin) { $addin } else { $wb }
+        Case 'module.lines' { $comp = $holder.VBProject.VBComponents.Item($holder.VBProject.VBComponents.Count); $comp.CodeModule.CountOfLines }
         Case 'module.procedures' {
-            $comp = $wb.VBProject.VBComponents.Item($wb.VBProject.VBComponents.Count)
+            $comp = $holder.VBProject.VBComponents.Item($holder.VBProject.VBComponents.Count)
             $cm = $comp.CodeModule
             $names = @(); $line = $cm.CountOfDeclarationLines + 1
             while ($line -le $cm.CountOfLines) { $kind = 0; $name = $cm.ProcOfLine($line, [ref]$kind); if ($names -notcontains $name) { $names += $name }; $line = $cm.ProcStartLine($name, $kind) + $cm.ProcCountLines($name, $kind) }
@@ -178,6 +199,7 @@ catch {
 }
 finally {
     try { if ($wb) { $wb.Close($false) } } catch { }
+    try { if ($addin) { $addin.Close($false) } } catch { }
     try { if ($xl) { $xl.Quit() } } catch { }
     try { if ($xl) { [void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($xl) } } catch { }
     Say 'seconds' ('{0:N1}' -f $watch.Elapsed.TotalSeconds)

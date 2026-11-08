@@ -50,6 +50,10 @@ b.bas.GettingStarted.file	<W>\p\b\bas\GettingStarted.html
 b.bas.GettingStarted.ERR	not a PE file
 b.bas.includedSupportPackages.file	<W>\p\b\bas\includedSupportPackages.txt
 b.bas.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.bas.k17bas.file	<W>\p\b\bas\k17bas.bas
+b.bas.k17bas.ERR	not a PE file
+b.bas.k17bas.file	<W>\p\b\bas\k17bas.xlam
+b.bas.k17bas.ERR	not a PE file
 b.bas.k17bas_1_0.file	k17bas_1_0.dll
 b.bas.k17bas_1_0.bytes	225280
 b.bas.k17bas_1_0.machine	0x8664
@@ -66,7 +70,7 @@ b.bas.k17bas_1_0.resource	"TYPELIB" 1 lang 0: 8664 bytes
 b.bas.k17bas_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.bas.k17bas_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.bas.k17bas_1_0.  starts	30 2e 32 2e 33
-b.bas.k17bas_1_0.resource	RCDATA 2 lang 0: 12517 bytes
+b.bas.k17bas_1_0.resource	RCDATA 2 lang 0: 12515 bytes
 b.bas.k17bas_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.bas.k17bas_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.bas.k17bas_1_0.  fixed.FileVersion	1.0.0.0
@@ -110,7 +114,7 @@ b.classname.k17cls_1_0.resource	"TYPELIB" 1 lang 0: 5136 bytes
 b.classname.k17cls_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.classname.k17cls_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.classname.k17cls_1_0.  starts	30 2e 32 2e 33
-b.classname.k17cls_1_0.resource	RCDATA 2 lang 0: 3471 bytes
+b.classname.k17cls_1_0.resource	RCDATA 2 lang 0: 3473 bytes
 b.classname.k17cls_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.classname.k17cls_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.classname.k17cls_1_0.  fixed.FileVersion	1.0.0.0
@@ -154,7 +158,7 @@ b.debug.k17dbg_1_0.resource	"TYPELIB" 1 lang 0: 5612 bytes
 b.debug.k17dbg_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.debug.k17dbg_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.debug.k17dbg_1_0.  starts	30 2e 32 2e 33
-b.debug.k17dbg_1_0.resource	RCDATA 2 lang 0: 4190 bytes
+b.debug.k17dbg_1_0.resource	RCDATA 2 lang 0: 4189 bytes
 b.debug.k17dbg_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.debug.k17dbg_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.debug.k17dbg_1_0.  fixed.FileVersion	1.0.0.0
@@ -198,7 +202,7 @@ b.defaults.k17_one_1_0.resource	"TYPELIB" 1 lang 0: 5160 bytes
 b.defaults.k17_one_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.defaults.k17_one_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.defaults.k17_one_1_0.  starts	30 2e 32 2e 33
-b.defaults.k17_one_1_0.resource	RCDATA 2 lang 0: 3464 bytes
+b.defaults.k17_one_1_0.resource	RCDATA 2 lang 0: 3467 bytes
 b.defaults.k17_one_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.defaults.k17_one_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.defaults.k17_one_1_0.  fixed.FileVersion	1.0.0.0
@@ -226,7 +230,11 @@ b.noembed.GettingStarted.file	<W>\p\b\noembed\GettingStarted.html
 b.noembed.GettingStarted.ERR	not a PE file
 b.noembed.includedSupportPackages.file	<W>\p\b\noembed\includedSupportPackages.txt
 b.noembed.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.noembed.k17sep.file	<W>\p\b\noembed\k17sep.bas
+b.noembed.k17sep.ERR	not a PE file
 b.noembed.k17sep.file	<W>\p\b\noembed\k17sep.ctf
+b.noembed.k17sep.ERR	not a PE file
+b.noembed.k17sep.file	<W>\p\b\noembed\k17sep.xlam
 b.noembed.k17sep.ERR	not a PE file
 b.noembed.k17sep_1_0.file	k17sep_1_0.dll
 b.noembed.k17sep_1_0.bytes	212992
@@ -270,6 +278,10 @@ b.pfile.GettingStarted.file	<W>\p\b\pfile\GettingStarted.html
 b.pfile.GettingStarted.ERR	not a PE file
 b.pfile.includedSupportPackages.file	<W>\p\b\pfile\includedSupportPackages.txt
 b.pfile.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.pfile.k17p.file	<W>\p\b\pfile\k17p.bas
+b.pfile.k17p.ERR	not a PE file
+b.pfile.k17p.file	<W>\p\b\pfile\k17p.xlam
+b.pfile.k17p.ERR	not a PE file
 b.pfile.k17p_1_0.file	k17p_1_0.dll
 b.pfile.k17p_1_0.bytes	213504
 b.pfile.k17p_1_0.machine	0x8664
@@ -330,7 +342,7 @@ b.plain.k17xl_1_0.resource	"TYPELIB" 1 lang 0: 8660 bytes
 b.plain.k17xl_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.plain.k17xl_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.plain.k17xl_1_0.  starts	30 2e 32 2e 33
-b.plain.k17xl_1_0.resource	RCDATA 2 lang 0: 12470 bytes
+b.plain.k17xl_1_0.resource	RCDATA 2 lang 0: 12471 bytes
 b.plain.k17xl_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.plain.k17xl_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.plain.k17xl_1_0.  fixed.FileVersion	1.0.0.0
@@ -374,7 +386,7 @@ b.plain2.k17xl_1_0.resource	"TYPELIB" 1 lang 0: 8660 bytes
 b.plain2.k17xl_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.plain2.k17xl_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.plain2.k17xl_1_0.  starts	30 2e 32 2e 33
-b.plain2.k17xl_1_0.resource	RCDATA 2 lang 0: 12471 bytes
+b.plain2.k17xl_1_0.resource	RCDATA 2 lang 0: 12475 bytes
 b.plain2.k17xl_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.plain2.k17xl_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.plain2.k17xl_1_0.  fixed.FileVersion	1.0.0.0
@@ -506,7 +518,7 @@ b.v2.k17v2_2_0.resource	"TYPELIB" 1 lang 0: 5608 bytes
 b.v2.k17v2_2_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.v2.k17v2_2_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.v2.k17v2_2_0.  starts	30 2e 32 2e 33
-b.v2.k17v2_2_0.resource	RCDATA 2 lang 0: 4178 bytes
+b.v2.k17v2_2_0.resource	RCDATA 2 lang 0: 4179 bytes
 b.v2.k17v2_2_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.v2.k17v2_2_0.resource	VERSION 1 lang 0: 320 bytes
 b.v2.k17v2_2_0.  fixed.FileVersion	2.0.0.0
@@ -534,6 +546,10 @@ b.v3456.GettingStarted.file	<W>\p\b\v3456\GettingStarted.html
 b.v3456.GettingStarted.ERR	not a PE file
 b.v3456.includedSupportPackages.file	<W>\p\b\v3456\includedSupportPackages.txt
 b.v3456.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+b.v3456.k17v3456.file	<W>\p\b\v3456\k17v3456.bas
+b.v3456.k17v3456.ERR	not a PE file
+b.v3456.k17v3456.file	<W>\p\b\v3456\k17v3456.xlam
+b.v3456.k17v3456.ERR	not a PE file
 b.v3456.k17v3456_3_4.file	k17v3456_3_4.dll
 b.v3456.k17v3456_3_4.bytes	214016
 b.v3456.k17v3456_3_4.machine	0x8664
@@ -550,7 +566,7 @@ b.v3456.k17v3456_3_4.resource	"TYPELIB" 1 lang 0: 5620 bytes
 b.v3456.k17v3456_3_4.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.v3456.k17v3456_3_4.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.v3456.k17v3456_3_4.  starts	30 2e 32 2e 33
-b.v3456.k17v3456_3_4.resource	RCDATA 2 lang 0: 4204 bytes
+b.v3456.k17v3456_3_4.resource	RCDATA 2 lang 0: 4208 bytes
 b.v3456.k17v3456_3_4.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.v3456.k17v3456_3_4.resource	VERSION 1 lang 0: 320 bytes
 b.v3456.k17v3456_3_4.  fixed.FileVersion	3.4.5.6
@@ -632,6 +648,10 @@ m.mcc_bundle.buildresult.file	<W>\p\m\mcc_bundle\buildresult.json
 m.mcc_bundle.buildresult.ERR	not a PE file
 m.mcc_bundle.includedSupportPackages.file	<W>\p\m\mcc_bundle\includedSupportPackages.txt
 m.mcc_bundle.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+m.mcc_bundle.k17mb.file	<W>\p\m\mcc_bundle\k17mb.bas
+m.mcc_bundle.k17mb.ERR	not a PE file
+m.mcc_bundle.k17mb.file	<W>\p\m\mcc_bundle\k17mb.xlam
+m.mcc_bundle.k17mb.ERR	not a PE file
 m.mcc_bundle.k17mb_1_0.file	k17mb_1_0.dll
 m.mcc_bundle.k17mb_1_0.bytes	212992
 m.mcc_bundle.k17mb_1_0.machine	0x8664
@@ -716,7 +736,7 @@ m.mcc_debug.k17md_1_0.resource	"TYPELIB" 1 lang 0: 5132 bytes
 m.mcc_debug.k17md_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_debug.k17md_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_debug.k17md_1_0.  starts	30 2e 32 2e 33
-m.mcc_debug.k17md_1_0.resource	RCDATA 2 lang 0: 3464 bytes
+m.mcc_debug.k17md_1_0.resource	RCDATA 2 lang 0: 3465 bytes
 m.mcc_debug.k17md_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_debug.k17md_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_debug.k17md_1_0.  fixed.FileVersion	1.0.0.0
@@ -740,6 +760,10 @@ m.mcc_default.buildresult.file	<W>\p\m\mcc_default\buildresult.json
 m.mcc_default.buildresult.ERR	not a PE file
 m.mcc_default.includedSupportPackages.file	<W>\p\m\mcc_default\includedSupportPackages.txt
 m.mcc_default.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+m.mcc_default.k17m.file	<W>\p\m\mcc_default\k17m.bas
+m.mcc_default.k17m.ERR	not a PE file
+m.mcc_default.k17m.file	<W>\p\m\mcc_default\k17m.xlam
+m.mcc_default.k17m.ERR	not a PE file
 m.mcc_default.k17m_1_0.file	k17m_1_0.dll
 m.mcc_default.k17m_1_0.bytes	212992
 m.mcc_default.k17m_1_0.machine	0x8664
@@ -756,7 +780,7 @@ m.mcc_default.k17m_1_0.resource	"TYPELIB" 1 lang 0: 5124 bytes
 m.mcc_default.k17m_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_default.k17m_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_default.k17m_1_0.  starts	30 2e 32 2e 33
-m.mcc_default.k17m_1_0.resource	RCDATA 2 lang 0: 3459 bytes
+m.mcc_default.k17m_1_0.resource	RCDATA 2 lang 0: 3460 bytes
 m.mcc_default.k17m_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_default.k17m_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_default.k17m_1_0.  fixed.FileVersion	1.0.0.0
@@ -796,7 +820,7 @@ m.mcc_noclass.k17mnc_1_0.resource	"TYPELIB" 1 lang 0: 5136 bytes
 m.mcc_noclass.k17mnc_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_noclass.k17mnc_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_noclass.k17mnc_1_0.  starts	30 2e 32 2e 33
-m.mcc_noclass.k17mnc_1_0.resource	RCDATA 2 lang 0: 3468 bytes
+m.mcc_noclass.k17mnc_1_0.resource	RCDATA 2 lang 0: 3469 bytes
 m.mcc_noclass.k17mnc_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_noclass.k17mnc_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_noclass.k17mnc_1_0.  fixed.FileVersion	1.0.0.0
@@ -836,7 +860,7 @@ m.mcc_notarget.k17mnt_1_0.resource	"TYPELIB" 1 lang 0: 5136 bytes
 m.mcc_notarget.k17mnt_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_notarget.k17mnt_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_notarget.k17mnt_1_0.  starts	30 2e 32 2e 33
-m.mcc_notarget.k17mnt_1_0.resource	RCDATA 2 lang 0: 3466 bytes
+m.mcc_notarget.k17mnt_1_0.resource	RCDATA 2 lang 0: 3469 bytes
 m.mcc_notarget.k17mnt_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_notarget.k17mnt_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_notarget.k17mnt_1_0.  fixed.FileVersion	1.0.0.0
@@ -876,7 +900,7 @@ m.mcc_noversion.k17mnv_1_0.resource	"TYPELIB" 1 lang 0: 5136 bytes
 m.mcc_noversion.k17mnv_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_noversion.k17mnv_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_noversion.k17mnv_1_0.  starts	30 2e 32 2e 33
-m.mcc_noversion.k17mnv_1_0.resource	RCDATA 2 lang 0: 3469 bytes
+m.mcc_noversion.k17mnv_1_0.resource	RCDATA 2 lang 0: 3470 bytes
 m.mcc_noversion.k17mnv_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_noversion.k17mnv_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_noversion.k17mnv_1_0.  fixed.FileVersion	1.0.0.0
@@ -916,7 +940,7 @@ m.mcc_samefiles.k17m_1_0.resource	"TYPELIB" 1 lang 0: 5360 bytes
 m.mcc_samefiles.k17m_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_samefiles.k17m_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_samefiles.k17m_1_0.  starts	30 2e 32 2e 33
-m.mcc_samefiles.k17m_1_0.resource	RCDATA 2 lang 0: 3803 bytes
+m.mcc_samefiles.k17m_1_0.resource	RCDATA 2 lang 0: 3806 bytes
 m.mcc_samefiles.k17m_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_samefiles.k17m_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_samefiles.k17m_1_0.  fixed.FileVersion	1.0.0.0
@@ -996,7 +1020,7 @@ m.mcc_samev2.k17m_2_0.resource	"TYPELIB" 1 lang 0: 5124 bytes
 m.mcc_samev2.k17m_2_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_samev2.k17m_2_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_samev2.k17m_2_0.  starts	30 2e 32 2e 33
-m.mcc_samev2.k17m_2_0.resource	RCDATA 2 lang 0: 3459 bytes
+m.mcc_samev2.k17m_2_0.resource	RCDATA 2 lang 0: 3460 bytes
 m.mcc_samev2.k17m_2_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_samev2.k17m_2_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_samev2.k17m_2_0.  fixed.FileVersion	2.0.0.0
@@ -1036,7 +1060,7 @@ m.mcc_script.k17msc_1_0.resource	"TYPELIB" 1 lang 0: 5004 bytes
 m.mcc_script.k17msc_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_script.k17msc_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_script.k17msc_1_0.  starts	30 2e 32 2e 33
-m.mcc_script.k17msc_1_0.resource	RCDATA 2 lang 0: 3392 bytes
+m.mcc_script.k17msc_1_0.resource	RCDATA 2 lang 0: 3395 bytes
 m.mcc_script.k17msc_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_script.k17msc_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_script.k17msc_1_0.  fixed.FileVersion	1.0.0.0
@@ -1100,6 +1124,10 @@ m.mcc_twofiles.buildresult.file	<W>\p\m\mcc_twofiles\buildresult.json
 m.mcc_twofiles.buildresult.ERR	not a PE file
 m.mcc_twofiles.includedSupportPackages.file	<W>\p\m\mcc_twofiles\includedSupportPackages.txt
 m.mcc_twofiles.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+m.mcc_twofiles.k17mtwo.file	<W>\p\m\mcc_twofiles\k17mtwo.bas
+m.mcc_twofiles.k17mtwo.ERR	not a PE file
+m.mcc_twofiles.k17mtwo.file	<W>\p\m\mcc_twofiles\k17mtwo.xlam
+m.mcc_twofiles.k17mtwo.ERR	not a PE file
 m.mcc_twofiles.k17mtwo_1_0.file	k17mtwo_1_0.dll
 m.mcc_twofiles.k17mtwo_1_0.bytes	213504
 m.mcc_twofiles.k17mtwo_1_0.machine	0x8664
@@ -1116,7 +1144,7 @@ m.mcc_twofiles.k17mtwo_1_0.resource	"TYPELIB" 1 lang 0: 5300 bytes
 m.mcc_twofiles.k17mtwo_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_twofiles.k17mtwo_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_twofiles.k17mtwo_1_0.  starts	30 2e 32 2e 33
-m.mcc_twofiles.k17mtwo_1_0.resource	RCDATA 2 lang 0: 3822 bytes
+m.mcc_twofiles.k17mtwo_1_0.resource	RCDATA 2 lang 0: 3825 bytes
 m.mcc_twofiles.k17mtwo_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_twofiles.k17mtwo_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_twofiles.k17mtwo_1_0.  fixed.FileVersion	1.0.0.0
@@ -1246,7 +1274,7 @@ src.k17ownexcelAddIn.k17own_1_0.resource	"TYPELIB" 1 lang 0: 5180 bytes
 src.k17ownexcelAddIn.k17own_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 src.k17ownexcelAddIn.k17own_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 src.k17ownexcelAddIn.k17own_1_0.  starts	30 2e 32 2e 33
-src.k17ownexcelAddIn.k17own_1_0.resource	RCDATA 2 lang 0: 3469 bytes
+src.k17ownexcelAddIn.k17own_1_0.resource	RCDATA 2 lang 0: 3468 bytes
 src.k17ownexcelAddIn.k17own_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 src.k17ownexcelAddIn.k17own_1_0.resource	VERSION 1 lang 0: 320 bytes
 src.k17ownexcelAddIn.k17own_1_0.  fixed.FileVersion	1.0.0.0

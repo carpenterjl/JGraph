@@ -25,4 +25,4 @@ preinit.terminate	ok
 preinit.excel.quit	ok
 preinit.next	preinit.crash.nargoutneg: k17_two with nargout -1; the process ends here if it crashes
 preinit.crash.nargoutneg	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[The number of outputs asked for, -1, cannot be negative.] type=COMException
-seconds	1.9
+seconds	1.8

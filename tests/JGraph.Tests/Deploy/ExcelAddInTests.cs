@@ -152,6 +152,40 @@ public sealed class ExcelAddInTests : IDisposable
         Assert.Equal(string.Join('\n', Recorded("defaults.file._install.bat")), ExcelAddIn.InstallBat("k17_one_1_0.dll"));
     }
 
+    [Fact]
+    public async Task TheVisualBasicModuleIsR2025bsUnderJGraphsUtilityLibrary()
+    {
+        // k17_excel: bas.file.k17bas.bas (the eighteen functions: no outputs, one, several, two, optional inputs, varargin as V0..V28,
+        // varargout, both, the pack function last), v3456.file.k17v3456.bas (three functions, version 3.4.5.6 in the ProgID, no pack),
+        // mcc_twofiles.bas: R2025b's text to the character, the utility library's ProgID JGraph's (decision KO10).
+        string src = Path.Combine(FindRepo(), "tools", "matlab-checklist", "compiler-probes", "src", "k17");
+        string[] all = ["k17_quiet", "k17_none", "k17_one", "k17_many", "k17_two", "k17_opt", "k17_varin", "k17_varout", "k17_both", "k17_args", "k17_noout", "k17_err", "k17_plot", "k17_h1", "k17_echo", "k17_pass", "k17_count", "k17_make"];
+        string Files(IEnumerable<string> names) => string.Join(", ", names.Select(n => "'" + Path.Combine(src, n + ".m").Replace("\\", "/", StringComparison.Ordinal) + "'"));
+        string bas = Path.Combine(_root, "bas");
+        Assert.Equal("", await Said($"mcc('-W', 'excel:k17bas,K17Bas,version=1.0', '-T', 'link:lib', '-b', '-d', '{bas.Replace("\\", "/", StringComparison.Ordinal)}', {Files(all)});"));
+        Assert.Equal(RecordedModule("bas.file.k17bas.bas"), File.ReadAllText(Path.Combine(bas, "k17bas.bas")));
+        string v = Path.Combine(_root, "v3456");
+        Assert.Equal("", await Said($"compiler.build.excelAddIn({{{Files(["k17_none", "k17_one", "k17_many"])}}}, 'AddInName', 'k17v3456', 'ClassName', 'K17V3456', "
+            + $"'AddInVersion', '3.4.5.6', 'GenerateVisualBasicFile', 'on', 'OutputDir', '{v.Replace("\\", "/", StringComparison.Ordinal)}');"));
+        Assert.Equal(RecordedModule("v3456.file.k17v3456.bas"), File.ReadAllText(Path.Combine(v, "k17v3456.bas")));
+        string two = Path.Combine(_root, "two");
+        Assert.Equal("", await Said($"mcc('-W', 'excel:k17mtwo,K17Two,version=1.0', '-T', 'link:lib', '-b', '-d', '{two.Replace("\\", "/", StringComparison.Ordinal)}', {Files(["k17_none", "k17_one"])});"));
+        Assert.Equal(RecordedModule("mcc_twofiles.bas"), File.ReadAllText(Path.Combine(two, "k17mtwo.bas")));
+
+        // The wrap: 89 characters stay one line, the 90th word moves, the break is two spaces and an underscore, the continuation indented.
+        string eightyNine = "Function f(" + new string('a', 89 - "Function f(".Length - ") As Variant".Length) + ") As Variant";
+        Assert.Equal(89, eightyNine.Length);
+        Assert.Equal([eightyNine], ExcelVisualBasic.Wrap(eightyNine, 4));
+        Assert.Equal(["Function g(Optional a As Variant, Optional b As Variant, Optional c As Variant) As  _", "    Variant"],
+            ExcelVisualBasic.Wrap("Function g(Optional a As Variant, Optional b As Variant, Optional c As Variant) As Variant", 4));
+    }
+
+    /// <summary>A recorded module's text with the utility library's ProgID made JGraph's and the objects created with no server name, as a build writes it.</summary>
+    private static string RecordedModule(string key) =>
+        ExcelAddInWorkbookTests.RecordedModule(key)
+            .Replace("MWComUtil.MWUtil25.2", ExcelVisualBasic.UtilityProgId, StringComparison.Ordinal)
+            .Replace(", \"localhost\")", ")", StringComparison.Ordinal);
+
     private async Task<ScriptRunResult> Run(string code)
     {
         await using IScriptSession session = Assert.IsAssignableFrom<IScriptRepl>(new MatlabScriptEngine())
@@ -200,13 +234,13 @@ public sealed class ExcelAddInTests : IDisposable
     }
 
     [Fact]
-    public async Task ABuildWritesTheDllAndSaysWhatIsPending()
+    public async Task ABuildWritesTheDllTheModuleAndTheWorkbook()
     {
-        // mcc -W excel (k17_excel: mcc_default): the DLL with the archive in it, the readme and the logs; the .bas pending until K17e, said once.
+        // mcc -W excel -b (k17_excel: mcc_default): the DLL with the archive in it, the module, the add-in workbook, the readme and the logs, nothing pending.
         string m = Path.Combine(_root, "m");
         string said = await Said($"mcc('-W', 'excel:k17m,K17M,version=1.0', '-T', 'link:lib', '-b', '-d', '{m.Replace("\\", "/", StringComparison.Ordinal)}', 'k17_one.m');");
-        Assert.Equal("warn JGraph:mcc:excelAddInPending", said);
-        foreach (string file in new[] { "k17m_1_0.dll", "readme.txt", "buildresult.json", "mccExcludedFiles.log", "requiredMCRProducts.txt", "unresolvedSymbols.txt", "includedSupportPackages.txt" })
+        Assert.Equal("", said);
+        foreach (string file in new[] { "k17m_1_0.dll", "k17m.bas", "k17m.xlam", "readme.txt", "buildresult.json", "mccExcludedFiles.log", "requiredMCRProducts.txt", "unresolvedSymbols.txt", "includedSupportPackages.txt" })
         {
             Assert.True(File.Exists(Path.Combine(m, file)), file + " was not written");
         }
@@ -215,8 +249,17 @@ public sealed class ExcelAddInTests : IDisposable
         Assert.False(File.Exists(Path.Combine(m, "_install.bat")), "mcc writes no _install.bat; compiler.build does");
         string readme = File.ReadAllText(Path.Combine(m, "readme.txt"));
         Assert.StartsWith("k17m JGraph Excel Add-in \r\n\r\n1. Prerequisites for Deployment \r\n", readme, StringComparison.Ordinal);
-        Assert.Contains("-k17m_1_0.dll (output from mcc)\r\n-k17m.bas (VBA module file created by mcc)\r\n", readme, StringComparison.Ordinal);
+        Assert.Contains("-k17m_1_0.dll (output from mcc)\r\n-k17m.bas (VBA module file created by mcc)\r\n-k17m.xlam (Excel add-in workbook created by mcc)\r\n", readme, StringComparison.Ordinal);
         Assert.DoesNotContain("k17m.ctf", readme, StringComparison.Ordinal);
+
+        // The module is R2025b's to the character but for the utility library's ProgID (mcc_default.file.k17m.bas), and the workbook carries it as Module1.
+        string module = File.ReadAllText(Path.Combine(m, "k17m.bas"));
+        Assert.Equal(RecordedModule("mcc_default.file.k17m.bas"), module);
+        Assert.Contains("CreateObject(\"JGraphComUtil.MWUtil25.2\")", module, StringComparison.Ordinal);
+        Assert.Contains("CreateObject(\"k17m.K17M.1_0\")", module, StringComparison.Ordinal);
+        Assert.DoesNotContain("localhost", module, StringComparison.Ordinal);
+        ExcelAddInWorkbookContents workbook = ExcelAddInWorkbook.Read(Path.Combine(m, "k17m.xlam"));
+        Assert.Equal("Attribute VB_Name = \"Module1\"\r\n" + module, workbook.Project.Modules.Single(static x => !x.IsDocument).Source);
 
         // Without -b nothing is pending; -C leaves the archive beside the DLL (mcc_separate).
         string sep = Path.Combine(_root, "sep");
@@ -236,7 +279,12 @@ public sealed class ExcelAddInTests : IDisposable
         Assert.StartsWith("ERR JGraph:mcc:excelClassName | ", await Said($"mcc('-W', 'excel:k17mbc,1Bad,version=1.0', '-T', 'link:lib', '-d', '{bad.Replace("\\", "/", StringComparison.Ordinal)}', 'k17_one.m');"), StringComparison.Ordinal);
         Assert.False(Directory.Exists(bad) && Directory.EnumerateFileSystemEntries(bad).Any());
 
-        // compiler.build.excelAddIn (k17_excel: plain.Files, noembed.Files, plain.BuildType): the DLL, _install.bat, the separate archive and the page in R2025b's order.
+        // compiler.build.excelAddIn (k17_excel: plain.Files, noembed.Files, bas.Files, plain.BuildType): the DLL, _install.bat, the add-in
+        // workbook (JGraph's .xlam where R2025b's .xla would stand), the module, the separate archive and the page in R2025b's order.
+        string vb = Path.Combine(_root, "vb").Replace("\\", "/", StringComparison.Ordinal);
+        Assert.Equal("5\n<OUT>/k17vb_1_0.dll | <OUT>/_install.bat | <OUT>/k17vb.xlam | <OUT>/k17vb.bas | <OUT>/GettingStarted.html",
+            await Said($"r = compiler.build.excelAddIn('k17_one.m', 'AddInName', 'k17vb', 'ClassName', 'K17Vb', 'GenerateVisualBasicFile', 'on', 'OutputDir', '{vb}'); "
+                + $"disp(num2str(numel(r.Files))); disp(strjoin(strrep(strrep(r.Files(:)', '{vb.Replace("/", "\\", StringComparison.Ordinal)}', '<OUT>'), '\\', '/'), ' | '))"));
         string b = Path.Combine(_root, "b").Replace("\\", "/", StringComparison.Ordinal);
         Assert.Equal("excelAddIn | k17b | K17B | 3\n<OUT>/k17b_1_0.dll | <OUT>/_install.bat | <OUT>/GettingStarted.html",
             await Said($"r = compiler.build.excelAddIn('k17_one.m', 'AddInName', 'k17b', 'ClassName', 'K17B', 'OutputDir', '{b}'); "

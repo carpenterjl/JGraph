@@ -11,7 +11,7 @@ namespace JGraph.Scripting.Jgs;
 /// (ExcelAddInOptions.m, excelAddIn.m, the ExcelAddIn builder, ExcelAddinWriter.m and
 /// writeInstallBat.m), their refusals as <c>probe_k17_excel</c> recorded them
 /// (<c>recordings/k17_excel.out.txt</c>). The add-in's DLL is the runtime's template stamped and
-/// registered (stage K17c); its <c>.bas</c> is stage K17e's, and the build says so.
+/// registered (stage K17c); <c>-b</c> writes its Visual Basic module and its add-in workbook (stage K17e).
 /// </summary>
 internal static partial class JgsBuiltins
 {
@@ -126,17 +126,9 @@ internal static partial class JgsBuiltins
 
         if (!archiveOnly && !built.DllWritten)
         {
-            string pending = command.VisualBasicFile
-                ? $"the DLL {built.DllName} and the module {name}.bas are"
-                : $"the DLL {built.DllName} is";
             Warn(host, "JGraph:mcc:excelAddInPending",
                 $"This build of JGraph writes the add-in without its COM server: the template {ExcelAddIn.TemplateName} is not beside JGraph "
-                + $"or in the JGraph Runtime, so {pending} pending, and the archive is beside it as {name}.ctf.");
-        }
-        else if (!archiveOnly && command.VisualBasicFile)
-        {
-            Warn(host, "JGraph:mcc:excelAddInPending",
-                $"This build of JGraph writes the add-in without its Visual Basic module: {name}.bas is pending (compiler and SDK plan, stage K17e).");
+                + $"or in the JGraph Runtime, so the DLL {built.DllName} is pending, and the archive is beside it as {name}.ctf.");
         }
 
         if (built.DllWritten && ExcelAddIn.RegistrationEnabled)
@@ -484,12 +476,14 @@ internal static partial class JgsBuiltins
         MccBuild built = Mcc(env, interpreter, host, words, line, col)
             ?? throw new JgsRuntimeException(line, col, "The build printed mcc's help and built nothing.");
 
-        // R2025b's postmcc: the DLL, _install.bat, the .xla and the .bas when there, the archive when
-        // separate, then the getting-started page (k17_excel: plain.Files, noembed.Files).
+        // R2025b's postmcc: the DLL, _install.bat, the add-in workbook (its .xla, JGraph's .xlam) and
+        // the .bas when there, the archive when separate, then the getting-started page (k17_excel:
+        // plain.Files, noembed.Files, bas.Files; compiler/internal/build/builder/ExcelAddIn.m).
         ProgramVersion version = ProgramVersion.Parse(Text("AddInVersion")) ?? ProgramVersion.Default;
         var files = new List<string>();
         files.AddRange(built.Files.Where(static f => f.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)));
         files.Add(ExcelAddIn.WriteInstallBat(folder, ExcelAddIn.DllName(addIn, version)));
+        files.AddRange(built.Files.Where(static f => f.EndsWith(".xlam", StringComparison.OrdinalIgnoreCase)));
         files.AddRange(built.Files.Where(static f => f.EndsWith(".bas", StringComparison.OrdinalIgnoreCase)));
         files.AddRange(built.Files.Where(static f => f.EndsWith(".ctf", StringComparison.OrdinalIgnoreCase)));
         files.Add(ExcelAddIn.WriteGettingStarted(folder, addIn));

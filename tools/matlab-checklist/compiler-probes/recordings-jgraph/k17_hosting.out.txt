@@ -1,0 +1,55 @@
+xlam.written	wrote <W>\k17hosting.xlam: vbaProject.bin 5120 bytes, module Module1 2372 chars
+vba.open	opened k17hosting.xlam: IsAddin True
+vba.path.has.dllfolder	False
+vba.regread.hkcu.probe.classes	Error -2147024894: Invalid root in registry key "HKCU\Software\Classes\JGraphK17Probe\".
+vba.regread.hkcu.probe.clsid	Error -2147024894: Invalid root in registry key "HKCU\Software\Classes\CLSID\{<UUID>}\".
+vba.regread.hkcu.probe.software	Error -2147024894: Invalid root in registry key "HKCU\Software\JGraphK17Probe\".
+vba.regread.hkcr.probe.classes	Error -2147024894: Invalid root in registry key "HKCR\JGraphK17Probe\".
+vba.regread.hkcu.probe.reg	Error -2147024894: Invalid root in registry key "HKCU\Software\Classes\JGraphK17ProbeReg\".
+vba.regread.hkcu.old.class	ok VLC.3g2
+vba.regread.hkcu.old.desktop	ok <HOME>\OneDrive\Desktop
+vba.regread.hkcu.old.username	ok Carpe
+vba.regread.hkcu.missing	Error -2147024894: Invalid root in registry key "HKCU\Software\Classes\NoSuchKeyK17\".
+vba.regread.hkcu.progid	Error -2147024894: Invalid root in registry key "HKCU\Software\Classes\k17bas.K17Bas.1_0\CLSID\".
+vba.regread.hkcr.progid	Error -2147024894: Invalid root in registry key "HKCR\k17bas.K17Bas.1_0\CLSID\".
+vba.regread.hklm.progid	Error -2147024894: Invalid root in registry key "HKLM\Software\Classes\k17bas.K17Bas.1_0\CLSID\".
+vba.regread.hkcr.util	Error -2147024894: Invalid root in registry key "HKCR\JGraphComUtil.MWUtil25.2\CLSID\".
+vba.regread.hklm.util	Error -2147024894: Invalid root in registry key "HKLM\Software\Classes\JGraphComUtil.MWUtil25.2\CLSID\".
+vba.util.local	Error 429 in VBAProject: ActiveX component can't create object
+vba.util.localhost	Error 463 in VBAProject: Class not registered on local machine
+vba.addin.localhost	Error 463 in VBAProject: Class not registered on local machine
+vba.addin.dot	Error 463 in VBAProject: Class not registered on local machine
+vba.addin.computername	Error 429 in VBAProject: ActiveX component can't create object
+vba.addin.empty	Error 429 in VBAProject: ActiveX component can't create object
+vba.call.localhost	Error 463 in VBAProject: Class not registered on local machine
+vba.call.local	Error 429 in VBAProject: ActiveX component can't create object
+vba.call.local.again	Error 429 in VBAProject: ActiveX component can't create object
+vba.regread.hkcu.probe.late	Error -2147024894: Invalid root in registry key "HKCU\Software\Classes\JGraphK17ProbeLate\".
+vba.create.probe	Error 429 in VBAProject: ActiveX component can't create object
+ps.old.class	HKCU\Software\Classes\.3g2
+ps.regread.JGraphK17Probe	ok probe
+reg.query.JGraphK17Probe	ok probe
+ps.regread.{<UUID>}	ok probe
+reg.query.{<UUID>}	ok probe
+ps.regread.JGraphK17Probe	ok probe
+reg.query.JGraphK17Probe	ok probe
+ps.regread.JGraphK17ProbeLate	ok probe
+reg.query.JGraphK17ProbeLate	ok probe
+ps.regread.JGraphK17ProbeReg	ok probe
+reg.query.JGraphK17ProbeReg	ok probe
+ps.util.local	ok __ComObject
+ps.util.localhost	ERR 0x80040154 src=[mscorlib] msg=[Retrieving the COM class factory for remote component with CLSID {<UUID>} from machine localhost failed due to the following error: 80040154 localhost.] type=COMException
+ps.addin.local	ok __ComObject
+ps.addin.localhost	ERR 0x80040154 src=[mscorlib] msg=[Retrieving the COM class factory for remote component with CLSID {<UUID>} from machine localhost failed due to the following error: 80040154 localhost.] type=COMException
+load.jgrt.open	opened k17hosting.xlam: IsAddin True
+load.jgrt.dll	loaded
+load.jgcomutil.open	opened k17hosting.xlam: IsAddin True
+load.jgcomutil.dll	loaded
+load.addin.open	opened k17hosting.xlam: IsAddin True
+load.addin.dll	loaded
+load.addin.again	loaded
+excel.2272	still alive, ended
+excel.15660	still alive, ended
+excel.6784	still alive, ended
+excel.10520	still alive, ended
+seconds	5.6

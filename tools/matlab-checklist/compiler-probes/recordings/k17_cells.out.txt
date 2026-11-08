@@ -1,10 +1,82 @@
 excel.version	16.0 build 20527 Windows (64-bit) NT 10.00
 excel.visible	False
 excel.automationsecurity	msoAutomationSecurityLow
-bas.exists	True
-security.AccessVBOM	absent (programmatic access to the VBA project is not trusted)
-vbe.access	VBE ok, projects 0
-vbproject.access	VBProject is Nothing: Excel does not trust programmatic access to the VBA project object model
-bas.import	refused: VBProject is Nothing (AccessVBOM unset), so the .bas cannot be imported; the cells wait for the add-in workbook JGraph writes (K17e)
-bas.imported	False
-seconds	0.8
+xlam.exists	True
+xlam.open	opened k17bas.xlam: IsAddin True, HasVBProject True, sheets 1
+xlam.opened	True
+calculate	ok
+cell.one.literal	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_one(3)
+cell.one.cell	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_one(A1)
+cell.one.text	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_one("abc")
+cell.one.blank	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_one(E1)
+cell.one.error	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_one(F1)
+cell.one.none	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_one()
+cell.many.three	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_many(1,2,3)
+cell.many.two	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_many(1,2)
+cell.two	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_two(5)
+cell.echo.number	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_echo(3.5)
+cell.echo.text	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_echo("text")
+cell.echo.bool	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_echo(TRUE)
+cell.echo.range	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_echo(B1:C2)
+cell.echo.rangecol	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_echo(A1:A3)
+cell.echo.date	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_echo(D1)
+cell.echo.blank	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_echo(E1)
+cell.echo.blankrange	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_echo(E1:E3)
+cell.echo.error	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_echo(F1)
+cell.echo.arrayconst	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_echo({1,2;3,4})
+cell.echo.textarray	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_echo({"a","b"})
+cell.echo.none	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_echo()
+cell.opt.1	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_opt(1)
+cell.opt.3	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_opt(1,"b",TRUE)
+cell.varin.0	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_varin()
+cell.varin.2	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_varin(1,"a")
+cell.varin.range	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_varin(B1:C2)
+cell.varout	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_varout(2)
+cell.both	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_both(7,"a")
+cell.args	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_args(A1)
+cell.args.bad	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_args(-1)
+cell.h1	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_h1()
+cell.count.1	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_count()
+cell.count.2	int -2146826273 | text #VALUE! | formula =k17_count()+0
+cell.pass.number	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_pass(2.5)
+cell.pass.date	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_pass(D1)
+cell.make.double	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("double")
+cell.make.doublemat	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("doublemat")
+cell.make.doublerow	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("doublerow")
+cell.make.char	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("char")
+cell.make.charmat	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("charmat")
+cell.make.logical	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("logical")
+cell.make.cell	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("cell")
+cell.make.struct	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("struct")
+cell.make.nan	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("nan")
+cell.make.inf	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("inf")
+cell.make.empty	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("empty")
+cell.make.datetime	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("datetime")
+cell.make.datenum	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("datenum")
+cell.make.string	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("string")
+cell.make.int8	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("int8")
+cell.make.complex	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("complex")
+cell.make.sparse	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("sparse")
+cell.make.charnonascii	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_make("charnonascii")
+cell.err.id	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_err("id")
+cell.err.plain	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_err("plain")
+cell.err.multi	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_err("multi")
+cell.err.nonascii	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_err("nonascii")
+cell.err.none	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_err("none")
+cell.noout	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_noout(1)
+cell.none	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_none()
+cell.quiet	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_quiet()
+cell.plot	string 'Error in VBAProject: Class not registered on local machine' | text Error in VBAProject: Class not registered on local machine | formula =k17_plot()
+array.doublemat	array[Object] rank 2 {string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine'}
+array.doublemat.larger	array[Object] rank 2 {string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine'}
+array.cell	array[Object] rank 2 {string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine'}
+array.charmat	array[Object] rank 2 {string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine'}
+array.two	array[Object] rank 2 {string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine'}
+array.varout	array[Object] rank 2 {string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine'}
+array.nanmat	array[Object] rank 2 {string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine', string 'Error in VBAProject: Class not registered on local machine'}
+again.one	string 'Error in VBAProject: Class not registered on local machine'
+again.count	string 'Error in VBAProject: Class not registered on local machine'
+workbooks	1 open, add-ins among them: 0
+module.lines	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
+module.procedures	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
+seconds	7.4
