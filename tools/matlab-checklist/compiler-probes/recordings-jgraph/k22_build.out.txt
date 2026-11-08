@@ -17,6 +17,17 @@ build.python	ok pythonPackage
 files.python	accpkg/__init__.py | accpkg/accpkg.ctf | includedSupportPackages.txt | pyproject.toml | readme.txt | requiredMCRProducts.txt | setup.py | unresolvedSymbols.txt
 build.server	ok productionServerArchive
 files.server	accarch.ctf | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
-build.excel	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.build.excelAddIn'.
-files.excel	
+build.excel	ok excelAddIn
+files.excel	accxl.bas | accxl.xlam | accxl_1_0.dll | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+build.xlclient	ok excelClientForProductionServer
+files.xlclient	accxlc.bas | accxlc.dll | accxlc.xlam | includedSupportPackages.txt | readme.txt
+build.xlinstaller	ok excelClientForProductionServerInstaller
+files.xlinstaller	accxlcExcelClientInstaller.exe
+
+STDERR	Warning: Component "accxl_1_0" will be registered for the current user only. 
+STDERR	Applications that run with full administrative privileges cannot access the component. 
+STDERR	To register the component for all users, run JGraph or the mcc command as Administrator.
+STDERR	Warning: Component "accxlc_1_0" will be registered for the current user only. 
+STDERR	Applications that run with full administrative privileges cannot access the component. 
+STDERR	To register the component for all users, run JGraph or the mcc command as Administrator.
 EXIT	

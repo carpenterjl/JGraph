@@ -40,13 +40,14 @@
   STDERR	acc:fail
   EXIT	249
 == windowed
+  t=<T> + <HWND> acc_app.exe HwndWrapper[<APP>] 'acc app' hidden 1440x843
   t=<T> + <HWND> acc_app.exe HwndWrapper[<APP>] 'acc app' hidden 1200x720
-  t=<T> + <HWND> acc_app.exe HwndWrapper[<APP>] 'acc app' shown 1200x720
+  t=<T> + <HWND> acc_app.exe HwndWrapper[<APP>] 'acc app' shown 336x720
   t=<T> + <HWND> acc_app.exe HwndWrapper[<APP>] 'acc app' shown 336x179
   t=<T> ACTION InvokePattern 'Compute' in 'acc app'
   t=<T> runner exited
   EXIT	0
-  SECONDS	2.7
+  SECONDS	2.9
   LOG t=<T> started
   LOG t=<T> isdeployed 1
   LOG t=<T> computed add=5 n=5 mean=2.8 max=5
@@ -232,7 +233,26 @@
   end	ok
   EXIT	0
 == excel
-  not built
+  excel.version	16.0 build 20527
+  util.create	ok
+  init.excel	ok
+  create	ok
+  quiet	ok
+  add	double 5
+  add.char	double 123
+  add.missing	ERR 0x8002000E src=[] msg=[Cannot find an overload for "acc_add" and the argument count: "3"] type=TargetParameterCountException
+  stats	MWStruct dims [1,1] fields 3 {n=double 4; mean=double 2.5; max=double 4}
+  greet	string 'Hello, Ada!'
+  scale	array[Double] rank 2 [1..2,1..2] {double 2, double 4, double 6, double 8}
+  scale.range	array[Double] rank 2 [1..2,1..2] {double 10, double 20, double 30, double 40}
+  scale.scalar	double 5
+  count.1	double 1
+  count.2	double 2
+  fail	ERR 0x80004005 src=[accxl.AccXl.1_0] msg=[acc_fail: from COM\nError in => acc_fail.m at line 6] type=COMException
+  fail.nargs	ERR 0x8002000E src=[] msg=[Cannot find an overload for "acc_fail" and the argument count: "0"] type=TargetParameterCountException
+  count.3	double 3
+  flags	InputArrayFormat=1 OutputArrayFormat=0 DateBias=693960
+  EXIT	
 == pkg.factor
   beep.default	on
   nargin	1
@@ -259,3 +279,28 @@
   which	fold.m
   end
   EXIT	0
+== cleanup
+  unregister	accxl_1_0.dll exit 0
+  unregister	accxlc.dll exit 0
+  unregister	jgcomutil.dll exit 0
+  sweep.removed	0
+  registry.added	0
+  registry.removed	0
+== xlclient
+  dll	accxlc.dll
+  dll.exists	True
+  config.write	written: accxlc [ServerURL=http://localhost:<PORT>/accarch, timeoutSeconds=120, responseSizeLimit=64]
+  create	ok
+  call.quiet	null
+  call.add	double 5
+  call.add.char	double 123
+  call.add.missing	string 'MATLABException:MATLAB:minrhs'
+  call.stats	string 'Exception:A MATLAB structure with fields [n,mean,max] cannot be shown in a cell'
+  call.greet	string 'Hello, Ada!'
+  call.scale	array[Double] rank 2 [0..1,0..1] {double 2, double 4, double 6, double 8}
+  call.scale.scalar	double 5
+  call.count.1	double 4
+  call.count.2	double 5
+  messagebox.count	0
+  config.removed	True
+  EXIT	

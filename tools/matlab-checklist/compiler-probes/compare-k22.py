@@ -14,13 +14,15 @@ OURS = HERE / "recordings-jgraph"
 
 # Each entry: a name, a regular expression over "section/label", and the reason, in the ADR's words.
 KNOWN = [
-    ("EXCEL", r"^(build|files)\.excel$|^excel/", "The Excel add-in is stage K17's: R2025b builds it and JGraph has no compiler.build.excelAddIn yet."),
+    ("XLCLIENT_STRUCT", r"^xlclient/call\.stats$", "A struct answer in the Excel client's cell: R2025b's says 'No .NET type available for a MATLAB structure with fields [...]', JGraph's 'A MATLAB structure with fields [...] cannot be shown in a cell' (ADR 0319)."),
+    ("XLCLIENT_NET", r"^xlclient/(deps\.|asm\.)", "R2025b's Excel client is a .NET Framework assembly, reflected after MathWorks' client assembly is loaded; JGraph's is native and created by its ProgID (ADR 0319), so the rows have no counterpart."),
+    ("CLEANUP", r"^cleanup/", "What the builds registered and how it comes off: R2025b's .NET client was registered by a .reg file (regsvr32 /u exits 4 over it, its Record and Wow6432Node keys are swept); JGraph's add-in and client unregister themselves, and its utility library is unregistered when the run registered it (ADR 0320)."),
     ("WINDOW_LEAVE", r"^windowed/", "R2025b's windowed program is a MATLAB window and ran only if the user gave leave; JGraph's ran as a JGraph window."),
     ("ASYNC", r"^server/async\.", "muserve, R2025b's one-archive server, has no asynchronous requests (400 'mode=async is not supported.'); jgraph-mps answers the RESTful API's protocol (ADR 0271)."),
-    ("FILES", r"^files\.", "The files a build leaves: R2025b's logs, readme and GettingStarted beside the deliverables, JGraph's own set (ADRs 0262-0270)."),
+    ("FILES", r"^files\.", "The files a build leaves: R2025b's logs, readme and GettingStarted beside the deliverables, JGraph's own set (ADRs 0262-0270); the Excel add-in's .hpp, .lib and .h against JGraph's .xlam, the client's .xlam (ADRs 0316, 0318, 0319)."),
     ("BUILD_TYPE", r"^build\.", "What a build prints: R2025b's Results display line against JGraph's."),
     ("EXIT_TEXT", r"/EXIT$", "The exit code of a program that ended on an error: R2025b's runtime exits 249 after its report (ADR 0256)."),
-    ("STDERR", r"/STDERR$", "What goes to standard error."),
+    ("STDERR", r"(^|/)STDERR(#\d+)?$", "What goes to standard error: R2025b's add-in prints a MATLAB error's report to the process's standard error where JGraph's raises it to the COM client alone; JGraph's build prints the per-user registration warning there where R2025b's mcc prints it on standard output as unkeyed chatter."),
 ]
 
 

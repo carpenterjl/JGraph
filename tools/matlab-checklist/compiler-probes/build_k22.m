@@ -32,14 +32,32 @@ built('data', @() compiler.build.dotNETAssembly(lib, 'Interface', 'matlab-data',
 built('c', @() compiler.build.cSharedLibrary(lib, 'LibraryName', 'acclib', 'OutputDir', fullfile(work, 'c')), fullfile(work, 'c'));
 built('cpp', @() compiler.build.cppSharedLibrary(lib, 'LibraryName', 'acccpp', 'OutputDir', fullfile(work, 'cpp')), fullfile(work, 'cpp'));
 built('python', @() compiler.build.pythonPackage(lib, 'PackageName', 'accpkg', 'OutputDir', fullfile(work, 'python')), fullfile(work, 'python'));
-built('server', @() compiler.build.productionServerArchive(lib, 'ArchiveName', 'accarch', ...
+rServer = built('server', @() compiler.build.productionServerArchive(lib, 'ArchiveName', 'accarch', ...
     'FunctionSignatures', fullfile(src, 'acc_sig.json'), 'OutputDir', fullfile(work, 'server')), fullfile(work, 'server'));
-% The Excel add-in is stage K17's, not built yet: R2025b builds it, JGraph has no such function.
+% The Excel add-in (stage K17: both engines build it and register it for the current user; the module
+% is written too, and JGraph writes the add-in workbook beside it where R2025b's .xla needs an Excel
+% that trusts its VBA project), the Excel client for the Production Server from the archive's results,
+% and the client's installer pointed at the server accept-k22.ps1 runs (K17g).
 built('excel', @() compiler.build.excelAddIn(lib, 'AddInName', 'accxl', 'ClassName', 'AccXl', ...
-    'OutputDir', fullfile(work, 'excel')), fullfile(work, 'excel'));
+    'GenerateVisualBasicFile', 'on', 'OutputDir', fullfile(work, 'excel')), fullfile(work, 'excel'));
+if ~isempty(rServer)
+    rClient = built('xlclient', @() compiler.build.excelClientForProductionServer(rServer, 'AddInName', 'accxlc', ...
+        'ClassName', 'AccXlc', 'OutputDir', fullfile(work, 'xlclient')), fullfile(work, 'xlclient'));
+    if ~isempty(rClient)
+        built('xlinstaller', @() packaged(@() compiler.package.excelClientForProductionServer(rClient, ...
+            'ServerURL', 'http://localhost:9981', 'OutputDir', fullfile(work, 'xlinstaller'))), fullfile(work, 'xlinstaller'));
+    end
+end
 end
 
-function built(key, f, folder)
+function r = packaged(f)
+% compiler.package.excelClientForProductionServer answers nothing; the build line shows the kind.
+f();
+r = struct('BuildType', 'excelClientForProductionServerInstaller');
+end
+
+function r = built(key, f, folder)
+r = [];
 try
     r = f();
     fprintf('build.%s\tok %s\n', key, r.BuildType);
@@ -50,7 +68,7 @@ files = {};
 if exist(folder, 'dir')
     files = walk(folder, '');
 end
-keep = {'.exe', '.dll', '.ctf', '.h', '.lib', '.hpp', '.py', '.bas', '.xla', '.txt', '.toml', '.json'};
+keep = {'.exe', '.dll', '.ctf', '.h', '.lib', '.hpp', '.py', '.bas', '.xla', '.xlam', '.txt', '.toml', '.json'};
 shown = {};
 for k = 1:numel(files)
     [~, name, ext] = fileparts(files{k});

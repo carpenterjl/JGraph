@@ -14,8 +14,9 @@
                 class folder, the windowed app, the .NET assembly for the
                 MWArray API, the .NET archive for the MATLAB Data API with its strongly typed
                 interface, the C and C++ shared libraries, the Python package, the Production
-                Server archive with its discovery file, and the Excel add-in (R2025b builds it;
-                JGraph has no such function until stage K17)
+                Server archive with its discovery file, the Excel add-in with its module (both
+                engines register it for the current user as they build), the Excel client for the
+                Production Server from the archive's results and the client's installer (stage K17g)
       console   acc_tool.exe with arguments and on its error, through run-quiet.ps1
       pkg       acc_pkgtool.exe, the program over the +acc package and the @AccSeries class
                 folder (packages and class folders plan, stage P6), with and without its factor
@@ -27,7 +28,16 @@
       c         src\k22client\acc_c.c compiled with MSVC against the generated acclib.h
       cpp       src\k22client\acc_cpp.cpp compiled with MSVC against the generated acccppv2.hpp
       python    src\k22client\acc_py.py under CPython with the package on PYTHONPATH
-      server    src\k22client\acc_server.py against R2025b's muserve or jgraph-mps serving accarch.ctf
+      server    src\k22client\acc_server.py against R2025b's muserve or jgraph-mps serving accarch.ctf,
+                then src\k22client\acc_xlclient.ps1: the Excel client (R2025b's .NET add-in reflected,
+                JGraph's native one by its ProgID) configured for that server, each function called,
+                the configuration removed (stage K17g)
+      excel     src\k22client\acc_xl.ps1: the add-in accxl.AccXl.1_0 created by its ProgID outside
+                Excel after the engine's utility library has an invisible Excel's Application, each
+                function called in PowerShell's direct COM syntax (stage K17g)
+      cleanup   the add-in and the client unregistered, the keys their builds left swept, the utility
+                library unregistered when this run's build registered it, the registry compared with
+                its state before the builds (stage K17g)
       compare   compare-k22.py (JGraph only)
 
     A client's using lines name MathWorks' namespaces; for JGraph they are turned to JGraph's
@@ -105,6 +115,8 @@ function Tokens([string] $text) {
     $tokens = $tokens | Sort-Object { - $_[0].Length }
     foreach ($t in $tokens) { $text = $text.Replace($t[0], $t[1]) }
     $text = [regex]::Replace($text, '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}', '<UUID>')
+    # The server's port: muserve's is whatever was free, jgraph-mps's the one given.
+    $text = [regex]::Replace($text, 'localhost:\d+', 'localhost:<PORT>')
     $text
 }
 
@@ -212,6 +224,53 @@ function Build-DotNet([string] $name, [string] $outFolder, [string[]] $propertie
     & dotnet build-server shutdown *> $null
     if ($code -ne 0) { Write-Host "  $name did not build; see $log" }
     $code -eq 0
+}
+
+# A child PowerShell for the COM work (stage K17g's Excel rows), as run-k17.ps1 runs it: the lines its
+# -Out file holds, indented under the caller's section, then its exit code.
+function Run-Child([string] $label, [string] $script, [string[]] $arguments, [int] $timeout = 600) {
+    $outFile = Join-Path $WorkRoot ($label + '.lines')
+    $console = Join-Path $WorkRoot ($label + '.console')
+    $errFile = Join-Path $WorkRoot ($label + '.err')
+    if (Test-Path $outFile) { Remove-Item -LiteralPath $outFile }
+    $powershell = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+    $p = Start-Process -FilePath $powershell `
+        -ArgumentList (@('-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', "`"$script`"", '-Out', "`"$outFile`"") + $arguments) `
+        -RedirectStandardOutput $console -RedirectStandardError $errFile -NoNewWindow -PassThru
+    $null = $p.Handle   # read before the exit, or ExitCode is null afterwards
+    $timedOut = -not $p.WaitForExit($timeout * 1000)
+    if ($timedOut) { try { & taskkill.exe /PID $p.Id /T /F 2>&1 | Out-Null } catch { }; Start-Sleep -Seconds 2 }
+    $lines = @()
+    if (Test-Path $outFile) { foreach ($l in ([System.IO.File]::ReadAllText($outFile, $utf8) -split "`r?`n")) { if ($l.Length -gt 0) { $lines += "  $l" } } }
+    $errText = if (Test-Path $errFile) { [System.IO.File]::ReadAllText($errFile) } else { '' }
+    if ($errText.Trim()) { $lines += (($errText.Trim() -split "`r?`n") | ForEach-Object { "  STDERR`t$_" }) }
+    if ($timedOut) { $lines += "  TIMEOUT`tafter $timeout s" }
+    $lines += "  EXIT`t$($p.ExitCode)"
+    Write-Host ("  {0,-20} {1} lines" -f $label, $lines.Count)
+    $lines
+}
+
+# The user's registry before the builds (stage K17g: the Excel add-in and the Excel client register
+# themselves for the current user as they build, in both engines), for the cleanup step's sweep.
+$regRoots = @('Software\Classes', 'Software\Classes\CLSID', 'Software\Classes\TypeLib', 'Software\Classes\Interface',
+    'Software\Classes\Record', 'Software\Classes\Wow6432Node\CLSID')
+function Reg-Names() {
+    $names = @()
+    foreach ($root in $regRoots) {
+        $key = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey($root)
+        if ($key) { foreach ($n in ($key.GetSubKeyNames() | Sort-Object)) { $names += "$root\$n" }; $key.Close() }
+    }
+    $names
+}
+$regBefore = Join-Path $WorkRoot 'registry_before.txt'
+$utilityMarker = Join-Path $WorkRoot 'utility_registered_by_build.txt'
+if ((Wanted 'build') -or -not (Test-Path $regBefore)) {
+    [System.IO.File]::WriteAllLines($regBefore, (Reg-Names), $utf8)
+    # JGraph's build registers its COM utility library (the runtime's jgcomutil.dll) for the current user
+    # when nothing has; what this run registers, its cleanup unregisters.
+    if ($jg -and -not (Test-Path 'HKCU:\Software\Classes\JGraphComUtil.MWUtil25.2') -and -not (Test-Path 'HKLM:\Software\Classes\JGraphComUtil.MWUtil25.2')) {
+        [System.IO.File]::WriteAllText($utilityMarker, (Join-Path $Runtime 'runtime\win64\jgcomutil.dll'), $utf8)
+    }
 }
 
 $all = @()
@@ -381,6 +440,18 @@ if (Wanted 'server') {
             $lines += "  EXIT`t$($c.ExitCode)"
             $all += $lines
             Write-Host ("  {0,-20} {1} lines" -f 'server', ($lines.Count - 1))
+            # The Excel client for the Production Server (stage K17g) against the same server: R2025b's .NET
+            # Framework add-in reflected, JGraph's native one by its ProgID, each configured where it reads
+            # its server and the configuration removed after.
+            $clientDll = Join-Path $build 'xlclient\accxlc.dll'
+            $xlLines = @('== xlclient')
+            if (-not (Test-Path $clientDll)) { $xlLines += '  not built' }
+            else {
+                $clientArgs = @('-Dll', "`"$clientDll`"", '-Url', "http://localhost:$readyPort/accarch", '-MatlabRoot', "`"$MatlabRoot`"")
+                if ($jg) { $clientArgs += '-Native' }
+                $xlLines += Run-Child 'acc_xlclient' (Join-Path $here 'src\k22client\acc_xlclient.ps1') $clientArgs 600
+            }
+            $all += $xlLines
         }
         try { if ($server -and -not $server.HasExited) { Stop-Process -Id $server.Id -Force -ErrorAction SilentlyContinue } } catch { }
         Start-Sleep -Seconds 2
@@ -389,7 +460,56 @@ if (Wanted 'server') {
 }
 
 if (Wanted 'excel') {
-    $all += @('== excel', $(if (Test-Path (Join-Path $build 'excel')) { '  built; not run (stage K17: no Excel client here)' } else { '  not built' }))
+    # The add-in from a COM client (stage K17g): accxl.AccXl.1_0, registered for the current user by its
+    # build, created by its ProgID after the engine's utility library has an invisible Excel's Application.
+    $lines = @('== excel')
+    $dll = Join-Path $build 'excel\accxl_1_0.dll'
+    if (-not (Test-Path $dll)) { $lines += '  not built' }
+    else {
+        $util = if ($jg) { 'JGraphComUtil.MWUtil25.2' } else { 'MWComUtil.MWUtil25.2' }
+        $lines += Run-Child 'acc_xl' (Join-Path $here 'src\k22client\acc_xl.ps1') @('-ProgId', 'accxl.AccXl.1_0', '-UtilProgId', $util) 600
+    }
+    $all += $lines
+}
+
+if (Wanted 'cleanup') {
+    # What the Excel builds registered for the current user goes: the add-in through regsvr32 /u (R2025b's
+    # takes its ProgIDs away and leaves its CLSID, TypeLib and Interface keys; JGraph's removes its own),
+    # the client (JGraph's through regsvr32 /u; R2025b's .NET one was registered by a .reg file and has no
+    # unregister), then every key added since the snapshot whose contents name the acceptance set's
+    # components (accxl, accxlc), deepest first; the utility library when this run's build registered it.
+    $lines = @('== cleanup')
+    $old = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    $regsvr = Join-Path $env:SystemRoot 'System32\regsvr32.exe'
+    foreach ($d in @((Join-Path $build 'excel\accxl_1_0.dll'), (Join-Path $build 'xlclient\accxlc.dll'))) {
+        if (-not (Test-Path $d)) { continue }
+        $r = Start-Process -FilePath $regsvr -ArgumentList @('/s', '/u', "`"$d`"") -NoNewWindow -PassThru -Wait
+        $lines += "  unregister`t$(Split-Path $d -Leaf) exit $($r.ExitCode)"
+    }
+    if (Test-Path $utilityMarker) {
+        $u = [System.IO.File]::ReadAllText($utilityMarker).Trim()
+        if (Test-Path $u) { $r = Start-Process -FilePath $regsvr -ArgumentList @('/s', '/u', "`"$u`"") -NoNewWindow -PassThru -Wait; $lines += "  unregister`tjgcomutil.dll exit $($r.ExitCode)" }
+        Remove-Item -LiteralPath $utilityMarker
+    }
+    $was = if (Test-Path $regBefore) { @(Get-Content $regBefore) } else { @() }
+    $removed = 0
+    foreach ($a in @((Reg-Names) | Where-Object { $was -notcontains $_ } | Sort-Object { - $_.Length })) {
+        $text = & reg.exe query "HKCU\$a" /s 2>$null | Out-String
+        # A key naming the components, or one left empty once its subkeys went (regasm's Record key).
+        $empty = (($text -split "`r?`n") | Where-Object { $_.Trim().Length -gt 0 }).Count -le 1
+        if ($text -match '(?i)accxl' -or $empty) {
+            $r = Start-Process -FilePath (Join-Path $env:SystemRoot 'System32\reg.exe') -ArgumentList @('delete', "`"HKCU\$a`"", '/f') -NoNewWindow -PassThru -Wait
+            if ($r.ExitCode -eq 0) { $removed++ } else { $lines += "  leftover.kept`t$a" }
+        } else { $lines += "  leftover.notours`t$a" }
+    }
+    $lines += "  sweep.removed`t$removed"
+    $after = @(Reg-Names)
+    $lines += "  registry.added`t$(@($after | Where-Object { $was -notcontains $_ }).Count)"
+    $lines += "  registry.removed`t$(@($was | Where-Object { $after -notcontains $_ }).Count)"
+    $ErrorActionPreference = $old
+    $all += $lines
+    Write-Host ("  {0,-20} {1} lines" -f 'cleanup', ($lines.Count - 1))
 }
 
 if ($all.Count) { Merge $all 'k22_accept.out.txt' }

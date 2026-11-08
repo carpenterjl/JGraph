@@ -11,7 +11,7 @@ Build succeeded.
     1 Warning(s) 
     0 Error(s) 
  
-Time Elapsed 00:00:01.16 
+Time Elapsed 00:00:02.44 
 build.data	ok dotNETAssembly
 files.data	AccData.ctf | AccData.dll | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
 Building with 'Microsoft Visual C++ 2022 (C)'. 
@@ -28,9 +28,17 @@ Applications that run with full administrative privileges cannot access the comp
 To register the component for all users, run MATLAB or the mcc command as Administrator.] 
 [> In compiler.internal.build.builder/Generic/build (line 83)
 In compiler.build.excelAddIn (line 133)
-In build_k22>@()compiler.build.excelAddIn(lib,'AddInName','accxl','ClassName','AccXl','OutputDir',fullfile(work,'excel')) (line 38)
-In build_k22>built (line 44)
-In build_k22 (line 38)] 
+In build_k22>@()compiler.build.excelAddIn(lib,'AddInName','accxl','ClassName','AccXl','GenerateVisualBasicFile','on','OutputDir',fullfile(work,'excel')) (line 41)
+In build_k22>built (line 62)
+In build_k22 (line 41)] 
+[Warning: mcc failed to create Excel Add-in
+"<B>\excel\accxl.xla". (Details: VBProject.) You can
+manually create the Add-in by importing the .bas file into Excel.] 
+[> In compiler.internal.build.builder/Generic/build (line 83)
+In compiler.build.excelAddIn (line 133)
+In build_k22>@()compiler.build.excelAddIn(lib,'AddInName','accxl','ClassName','AccXl','GenerateVisualBasicFile','on','OutputDir',fullfile(work,'excel')) (line 41)
+In build_k22>built (line 62)
+In build_k22 (line 41)] 
 Building with 'Microsoft Visual C++ 2022'. 
 mwcomtypes.idl 
 oaidl.idl 
@@ -66,5 +74,28 @@ oaidl.acf
 ocidl.acf 
  
 build.excel	ok excelAddIn
-files.excel	AccXl_com.hpp | accxl_1_0.dll | accxl_1_0.lib | accxl_idl.h | includedSupportPackages.txt | mwcomtypes.h | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+files.excel	AccXl_com.hpp | accxl.bas | accxl_1_0.dll | accxl_1_0.lib | accxl_idl.h | includedSupportPackages.txt | mwcomtypes.h | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+[Warning: Component "accxlc_1_0" will be registered for the current user only.
+Applications that run with full administrative privileges cannot access the component.
+To register the component for all users, run MATLAB or the mcc command as Administrator.] 
+[> In compiler.internal.build.builder/Generic/build (line 83)
+In compiler.build.excelClientForProductionServer (line 144)
+In build_k22>@()compiler.build.excelClientForProductionServer(rServer,'AddInName','accxlc','ClassName','AccXlc','OutputDir',fullfile(work,'xlclient')) (line 44)
+In build_k22>built (line 62)
+In build_k22 (line 44)] 
+[Warning: mcc failed to create Excel Add-in
+"<B>\xlclient\accxlc.xla". (Details: VBProject.) You can
+manually create the Add-in by importing the .bas file into Excel.] 
+[> In compiler.internal.build.builder/Generic/build (line 83)
+In compiler.build.excelClientForProductionServer (line 144)
+In build_k22>@()compiler.build.excelClientForProductionServer(rServer,'AddInName','accxlc','ClassName','AccXlc','OutputDir',fullfile(work,'xlclient')) (line 44)
+In build_k22>built (line 62)
+In build_k22 (line 44)] 
+Excel primary interop assembly Microsoft.Office.Interop.Excel.dll is found in C:\WINDOWS\assembly\GAC_MSIL\Microsoft.Office.Interop.Excel\15.0.0.0__71e9bce111e9429c\Microsoft.Office.Interop.Excel.dll.
+Registry script '<B>\xlclient\accxlc.reg' generated successfully 
+The operation completed successfully.  
+build.xlclient	ok excelClientForProductionServer
+files.xlclient	accxlc.bas | accxlc.dll | includedSupportPackages.txt | readme.txt
+build.xlinstaller	ok excelClientForProductionServerInstaller
+files.xlinstaller	accxlcExcelClientInstaller.exe
 EXIT	

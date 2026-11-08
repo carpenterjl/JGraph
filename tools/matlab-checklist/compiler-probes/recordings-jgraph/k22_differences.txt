@@ -1,27 +1,55 @@
-acceptance set (stage K22): 271 keys, 244 agree, 27 differ (27 recorded divergences, 0 unexplained)
+acceptance set (stage K22): 330 keys, 284 agree, 46 differ (46 recorded divergences, 0 unexplained)
 
-EXCEL (4): The Excel add-in is stage K17's: R2025b builds it and JGraph has no compiler.build.excelAddIn yet.
-  build.excel
-    R2025b	ok excelAddIn
-    JGraph	ERR MATLAB:undefinedVarOrClass | Unable to resolve the name 'compiler.build.excelAddIn'.
-  files.excel
-    R2025b	AccXl_com.hpp | accxl_1_0.dll | accxl_1_0.lib | accxl_idl.h | includedSupportPackages.txt | mwcomtypes.h | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
-    JGraph	
-  excel/built; not run (stage K17: no Excel client here)
-    R2025b	
+XLCLIENT_STRUCT (1): A struct answer in the Excel client's cell: R2025b's says 'No .NET type available for a MATLAB structure with fields [...]', JGraph's 'A MATLAB structure with fields [...] cannot be shown in a cell' (ADR 0319).
+  xlclient/call.stats
+    R2025b	string 'Exception:No .NET type available for a MATLAB structure with fields [n,mean,max]'
+    JGraph	string 'Exception:A MATLAB structure with fields [n,mean,max] cannot be shown in a cell'
+
+XLCLIENT_NET (4): R2025b's Excel client is a .NET Framework assembly, reflected after MathWorks' client assembly is loaded; JGraph's is native and created by its ProgID (ADR 0319), so the rows have no counterpart.
+  xlclient/deps.mpsclient
+    R2025b	MathWorks.MATLAB.ProductionServer.Client
     JGraph	<absent>
-  excel/not built
-    R2025b	<absent>
-    JGraph	
+  xlclient/deps.excelinterop
+    R2025b	Microsoft.Office.Interop.Excel
+    JGraph	<absent>
+  xlclient/deps.visualbasic
+    R2025b	Microsoft.VisualBasic
+    JGraph	<absent>
+  xlclient/asm.load
+    R2025b	accxlc
+    JGraph	<absent>
 
-WINDOW_LEAVE (13): R2025b's windowed program is a MATLAB window and ran only if the user gave leave; JGraph's ran as a JGraph window.
+CLEANUP (6): What the builds registered and how it comes off: R2025b's .NET client was registered by a .reg file (regsvr32 /u exits 4 over it, its Record and Wow6432Node keys are swept); JGraph's add-in and client unregister themselves, and its utility library is unregistered when the run registered it (ADR 0320).
+  cleanup/unregister#2
+    R2025b	accxlc.dll exit 4
+    JGraph	accxlc.dll exit 0
+  cleanup/leftover.notours
+    R2025b	Software\Classes\Record
+    JGraph	<absent>
+  cleanup/sweep.removed
+    R2025b	3
+    JGraph	0
+  cleanup/registry.added
+    R2025b	1
+    JGraph	0
+  cleanup/registry.removed
+    R2025b	3
+    JGraph	0
+  cleanup/unregister#3
+    R2025b	<absent>
+    JGraph	jgcomutil.dll exit 0
+
+WINDOW_LEAVE (14): R2025b's windowed program is a MATLAB window and ran only if the user gave leave; JGraph's ran as a JGraph window.
   windowed/not run: an R2025b windowed program needs the user's leave (-AllowMatlabWindows)
     R2025b	
     JGraph	<absent>
+  windowed/t=<T> + <HWND> acc_app.exe HwndWrapper[<APP>] 'acc app' hidden 1440x843
+    R2025b	<absent>
+    JGraph	
   windowed/t=<T> + <HWND> acc_app.exe HwndWrapper[<APP>] 'acc app' hidden 1200x720
     R2025b	<absent>
     JGraph	
-  windowed/t=<T> + <HWND> acc_app.exe HwndWrapper[<APP>] 'acc app' shown 1200x720
+  windowed/t=<T> + <HWND> acc_app.exe HwndWrapper[<APP>] 'acc app' shown 336x720
     R2025b	<absent>
     JGraph	
   windowed/t=<T> + <HWND> acc_app.exe HwndWrapper[<APP>] 'acc app' shown 336x179
@@ -38,7 +66,7 @@ WINDOW_LEAVE (13): R2025b's windowed program is a MATLAB window and ran only if 
     JGraph	0
   windowed/SECONDS
     R2025b	<absent>
-    JGraph	2.7
+    JGraph	2.9
   windowed/LOG t=<T> started
     R2025b	<absent>
     JGraph	
@@ -86,3 +114,42 @@ ASYNC (10): muserve, R2025b's one-archive server, has no asynchronous requests (
   server/async.fail.delete
     R2025b	<absent>
     JGraph	204 No Content		
+
+FILES (2): The files a build leaves: R2025b's logs, readme and GettingStarted beside the deliverables, JGraph's own set (ADRs 0262-0270); the Excel add-in's .hpp, .lib and .h against JGraph's .xlam, the client's .xlam (ADRs 0316, 0318, 0319).
+  files.excel
+    R2025b	AccXl_com.hpp | accxl.bas | accxl_1_0.dll | accxl_1_0.lib | accxl_idl.h | includedSupportPackages.txt | mwcomtypes.h | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+    JGraph	accxl.bas | accxl.xlam | accxl_1_0.dll | includedSupportPackages.txt | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
+  files.xlclient
+    R2025b	accxlc.bas | accxlc.dll | includedSupportPackages.txt | readme.txt
+    JGraph	accxlc.bas | accxlc.dll | accxlc.xlam | includedSupportPackages.txt | readme.txt
+
+EXIT_TEXT (1): The exit code of a program that ended on an error: R2025b's runtime exits 249 after its report (ADR 0256).
+  xlclient/EXIT
+    R2025b	0
+    JGraph	
+
+STDERR (8): What goes to standard error: R2025b's add-in prints a MATLAB error's report to the process's standard error where JGraph's raises it to the COM client alone; JGraph's build prints the per-user registration warning there where R2025b's mcc prints it on standard output as unkeyed chatter.
+  STDERR
+    R2025b	<absent>
+    JGraph	Warning: Component "accxl_1_0" will be registered for the current user only. 
+  STDERR#2
+    R2025b	<absent>
+    JGraph	Applications that run with full administrative privileges cannot access the component. 
+  STDERR#3
+    R2025b	<absent>
+    JGraph	To register the component for all users, run JGraph or the mcc command as Administrator.
+  STDERR#4
+    R2025b	<absent>
+    JGraph	Warning: Component "accxlc_1_0" will be registered for the current user only. 
+  STDERR#5
+    R2025b	<absent>
+    JGraph	Applications that run with full administrative privileges cannot access the component. 
+  STDERR#6
+    R2025b	<absent>
+    JGraph	To register the component for all users, run JGraph or the mcc command as Administrator.
+  excel/STDERR
+    R2025b	Error using acc_fail (line 6)
+    JGraph	<absent>
+  excel/STDERR#2
+    R2025b	acc_fail: from COM
+    JGraph	<absent>
