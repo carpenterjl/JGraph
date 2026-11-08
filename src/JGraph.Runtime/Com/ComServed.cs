@@ -28,11 +28,23 @@ internal sealed class ComCallException(int hresult, string source, string descri
     /// <summary>DISP_E_TYPEMISMATCH.</summary>
     public const int TypeMismatch = unchecked((int)0x80020005);
 
+    /// <summary>DISP_E_BADINDEX, what an MWStruct answers for an index or a field it does not have (k17_com_extra: x.struct.item_*).</summary>
+    public const int BadIndex = unchecked((int)0x8002000B);
+
+    /// <summary>E_INVALIDARG.</summary>
+    public const int InvalidArgument = unchecked((int)0x80070057);
+
     /// <summary>The HRESULT the call returns.</summary>
     public int Code { get; } = hresult;
 
     /// <summary>The error's source, the versioned ProgID.</summary>
     public string ErrorSource { get; } = source;
+
+    /// <summary>Whether the client gets the HRESULT alone, with no error info (the system's own text for the code), as R2025b's value classes answer a bad index.</summary>
+    public bool IsSilent { get; private init; }
+
+    /// <summary>An error with no error info: the bare HRESULT.</summary>
+    public static ComCallException Silent(int hresult) => new(hresult, "", "") { IsSilent = true };
 }
 
 /// <summary>
@@ -64,6 +76,9 @@ internal abstract class ComServed(nint module, string progId)
 
     /// <summary>The interface of the add-in's type library this object is served under.</summary>
     public abstract Guid InterfaceId { get; }
+
+    /// <summary>The flags a <see cref="RuntimeValue"/> this object answers from <see cref="Invoke"/> is converted under; null for MathWorks' defaults.</summary>
+    public virtual ExcelFlags? FlagsForResults => null;
 
     /// <summary>The object this one belongs to, which keeps its wrapper alive; null for one a client owns alone.</summary>
     public ComServed? Owner { get; private set; }
@@ -190,12 +205,13 @@ internal static class ComObjects
             }
 
             nint handle = Attach(served);
-            nint wrapper = NativeComCalls.Wrap(handle, served.Module, served.InterfaceId);
+            nint wrapper = served.Module == 0 ? 0 : NativeComCalls.Wrap(handle, served.Module, served.InterfaceId);
             if (wrapper == 0)
             {
                 served.Handle.Free();
-                throw new ComCallException(ComCallException.Fail, served.ProgId,
-                    $"The add-in's type library has no interface {served.InterfaceId:B} for a {served.GetType().Name}.");
+                throw new ComCallException(ComCallException.Fail, served.ProgId, served.Module == 0
+                    ? $"The JGraph Runtime's COM utility library ({JGraph.Deploy.ExcelAddIn.UtilityName}) was not found beside jgrt.dll, so a {served.GetType().Name.Replace("Excel", "MW", StringComparison.Ordinal)} object cannot be handed to a COM client."
+                    : $"The type library has no interface {served.InterfaceId:B} for a {served.GetType().Name}.");
             }
 
             if (served.Owner is not null)
@@ -205,6 +221,19 @@ internal static class ComObjects
             }
 
             return wrapper;
+        }
+    }
+
+    /// <summary>Caches <paramref name="wrapper"/>, a COM object of jgrt's a client holds for <paramref name="served"/>, as its wrapper (one reference taken), when none is cached yet.</summary>
+    public static void Remember(ComServed served, nint wrapper)
+    {
+        lock (Gate)
+        {
+            if (served.Wrapper == 0 && wrapper != 0 && NativeComCalls.Unwrap(wrapper) != 0)
+            {
+                Marshal.AddRef(wrapper);
+                served.Wrapper = wrapper;
+            }
         }
     }
 

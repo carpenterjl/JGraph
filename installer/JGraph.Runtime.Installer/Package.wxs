@@ -48,10 +48,24 @@
       </Directory>
     </StandardDirectory>
 
-    <!-- Everything the publish produced, subfolders preserved. -->
+    <!-- Everything the publish produced, subfolders preserved, but for the one file registered below. -->
     <ComponentGroup Id="RuntimeFiles" Directory="INSTALLFOLDER">
-      <Files Include="$(var.StagingDir)\**" />
+      <Files Include="$(var.StagingDir)\**" Exclude="$(var.StagingDir)\runtime\win64\jgcomutil.dll" />
     </ComponentGroup>
+
+    <!-- JGraph's COM utility library for Excel add-ins (compiler and SDK plan, stage K17d): registered
+         machine-wide through its own DllRegisterServer, as MATLAB's installer registers mwcomutil.dll, so
+         an add-in's VBA module can create JGraphComUtil.MWUtil25.2 and the value classes; unregistered
+         on uninstall. A runtime carried in a folder registers it with regsvr32 (per user when not elevated). -->
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Directory Id="RuntimeNativeFolder" Name="runtime">
+        <Directory Id="RuntimeNativeWin64Folder" Name="win64">
+          <Component Id="ComUtilityLibrary" Guid="*" Bitness="always64">
+            <File Id="JgComUtilDll" Source="$(var.StagingDir)\runtime\win64\jgcomutil.dll" KeyPath="yes" SelfRegCost="1" />
+          </Component>
+        </Directory>
+      </Directory>
+    </DirectoryRef>
 
     <ComponentGroup Id="RuntimeRegistration" Directory="INSTALLFOLDER">
       <!-- The key RuntimeLayout.Find and the launcher read: Location, with the release the dialect
@@ -75,6 +89,7 @@
     <Feature Id="Main" Title="JGraph Runtime" Level="1">
       <ComponentGroupRef Id="RuntimeFiles" />
       <ComponentGroupRef Id="RuntimeRegistration" />
+      <ComponentRef Id="ComUtilityLibrary" />
     </Feature>
 
     <!-- License -> install dir -> verify. -->

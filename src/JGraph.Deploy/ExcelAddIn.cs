@@ -71,6 +71,61 @@ public static class ExcelAddIn
     /// <summary>The template's file name, beside the launcher templates.</summary>
     public const string TemplateName = "jgxl.dll";
 
+    /// <summary>
+    /// JGraph's COM utility library for Excel add-ins (stage K17d, <c>native\jgcomutil</c>): the
+    /// counterpart of MATLAB Runtime's <c>mwcomutil.dll</c>, serving <c>JGraphComUtil.MWUtil25.2</c>,
+    /// <c>MWFlags</c>, <c>MWStruct</c> and the other value classes. It lives beside <c>jgrt.dll</c>.
+    /// </summary>
+    public const string UtilityName = "jgcomutil.dll";
+
+    /// <summary>
+    /// The utility library beside this library (where JGraph's build puts it, with <c>jgrt.dll</c>),
+    /// else in the JGraph Runtime's <c>runtime\win64</c>; null when neither has it.
+    /// </summary>
+    public static string? DefaultUtilityPath
+    {
+        get
+        {
+            string beside = Path.Combine(AppContext.BaseDirectory, UtilityName);
+            if (File.Exists(beside))
+            {
+                return beside;
+            }
+
+            string? runtime = RuntimeLayout.Find()?.NativeFolder;
+            return runtime is not null && File.Exists(Path.Combine(runtime, UtilityName)) ? Path.Combine(runtime, UtilityName) : null;
+        }
+    }
+
+    /// <summary>
+    /// Registers the utility library (<see cref="DefaultUtilityPath"/>) as <see cref="Register"/>
+    /// registers an add-in, when it is not registered yet for the user or the machine: an add-in's
+    /// VBA module creates <c>JGraphComUtil.MWUtil25.2</c> first (stage K17e), as MathWorks' creates
+    /// <c>MWComUtil.MWUtil25.2</c>, which MATLAB's installer registered. Answers whether it is
+    /// registered now; false when the library is not there.
+    /// </summary>
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+    public static bool RegisterUtility()
+    {
+        string? dll = DefaultUtilityPath;
+        if (dll is null)
+        {
+            return false;
+        }
+
+        string progId = ExcelComGuids.UtilityVersionedProgId("MWUtil");
+        using (Microsoft.Win32.RegistryKey? registered = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(progId + @"\CLSID"))
+        {
+            if (registered is not null)
+            {
+                return true;
+            }
+        }
+
+        Register(dll);
+        return true;
+    }
+
     /// <summary>The most functions one add-in may export: the template serves 520 vtable slots, 7 of them IUnknown's and IDispatch's, 3 the flags' and help's.</summary>
     public const int MaxFunctions = 510;
 

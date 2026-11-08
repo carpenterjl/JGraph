@@ -204,7 +204,7 @@ plain.RuntimeDependencies
   Dependencies with properties:
       Required: [1×2 table]
       Optional: [0×0 table]
-plain.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17xl_1_0.dll (221184) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+plain.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17xl_1_0.dll (225280) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 plain.seconds	0.3
 plain.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17xl_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 plain.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
@@ -315,7 +315,97 @@ plain.file.requiredMCRProducts.txt	6 chars, CRLF 0, ends with newline 0
   |35010	
 plain.file.unresolvedSymbols.txt	20 chars, CRLF 1, ends with newline 1
   |Path	Symbol	Reason
-plain.registry.Software/Classes	added 2, removed 0
+plain.registry.Software/Classes	added 20, removed 0
+  |+ Software/Classes/JGraphComUtil.MWArg
+  |    (Default)    REG_SZ    MWArg
+  |+ Software/Classes/JGraphComUtil.MWArg/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/JGraphComUtil.MWArg/CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWArg25.2
+  |+ Software/Classes/JGraphComUtil.MWArg25.2
+  |    (Default)    REG_SZ    MWArg
+  |+ Software/Classes/JGraphComUtil.MWArg25.2/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/JGraphComUtil.MWArrayFormatFlags
+  |    (Default)    REG_SZ    MWArrayFormatFlags
+  |+ Software/Classes/JGraphComUtil.MWArrayFormatFlags/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/JGraphComUtil.MWArrayFormatFlags/CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWArrayFormatFlags25.2
+  |+ Software/Classes/JGraphComUtil.MWArrayFormatFlags25.2
+  |    (Default)    REG_SZ    MWArrayFormatFlags
+  |+ Software/Classes/JGraphComUtil.MWArrayFormatFlags25.2/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/JGraphComUtil.MWComplex
+  |    (Default)    REG_SZ    MWComplex
+  |+ Software/Classes/JGraphComUtil.MWComplex/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/JGraphComUtil.MWComplex/CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWComplex25.2
+  |+ Software/Classes/JGraphComUtil.MWComplex25.2
+  |    (Default)    REG_SZ    MWComplex
+  |+ Software/Classes/JGraphComUtil.MWComplex25.2/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/JGraphComUtil.MWDataConversionFlags
+  |    (Default)    REG_SZ    MWDataConversionFlags
+  |+ Software/Classes/JGraphComUtil.MWDataConversionFlags/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/JGraphComUtil.MWDataConversionFlags/CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWDataConversionFlags25.2
+  |+ Software/Classes/JGraphComUtil.MWDataConversionFlags25.2
+  |    (Default)    REG_SZ    MWDataConversionFlags
+  |+ Software/Classes/JGraphComUtil.MWDataConversionFlags25.2/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/JGraphComUtil.MWField
+  |    (Default)    REG_SZ    MWField
+  |+ Software/Classes/JGraphComUtil.MWField/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/JGraphComUtil.MWField/CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWField25.2
+  |+ Software/Classes/JGraphComUtil.MWField25.2
+  |    (Default)    REG_SZ    MWField
+  |+ Software/Classes/JGraphComUtil.MWField25.2/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/JGraphComUtil.MWFlags
+  |    (Default)    REG_SZ    MWFlags
+  |+ Software/Classes/JGraphComUtil.MWFlags/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/JGraphComUtil.MWFlags/CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWFlags25.2
+  |+ Software/Classes/JGraphComUtil.MWFlags25.2
+  |    (Default)    REG_SZ    MWFlags
+  |+ Software/Classes/JGraphComUtil.MWFlags25.2/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/JGraphComUtil.MWSparse
+  |    (Default)    REG_SZ    MWSparse
+  |+ Software/Classes/JGraphComUtil.MWSparse/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/JGraphComUtil.MWSparse/CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWSparse25.2
+  |+ Software/Classes/JGraphComUtil.MWSparse25.2
+  |    (Default)    REG_SZ    MWSparse
+  |+ Software/Classes/JGraphComUtil.MWSparse25.2/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/JGraphComUtil.MWStruct
+  |    (Default)    REG_SZ    MWStruct
+  |+ Software/Classes/JGraphComUtil.MWStruct/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/JGraphComUtil.MWStruct/CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWStruct25.2
+  |+ Software/Classes/JGraphComUtil.MWStruct25.2
+  |    (Default)    REG_SZ    MWStruct
+  |+ Software/Classes/JGraphComUtil.MWStruct25.2/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/JGraphComUtil.MWUtil
+  |    (Default)    REG_SZ    MWUtil
+  |+ Software/Classes/JGraphComUtil.MWUtil/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/JGraphComUtil.MWUtil/CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWUtil25.2
+  |+ Software/Classes/JGraphComUtil.MWUtil25.2
+  |    (Default)    REG_SZ    MWUtil
+  |+ Software/Classes/JGraphComUtil.MWUtil25.2/CLSID
+  |    (Default)    REG_SZ    {<UUID>}
   |+ Software/Classes/k17xl.K17Xl
   |    (Default)    REG_SZ    K17Xl
   |+ Software/Classes/k17xl.K17Xl/CLSID
@@ -326,7 +416,20 @@ plain.registry.Software/Classes	added 2, removed 0
   |    (Default)    REG_SZ    K17Xl
   |+ Software/Classes/k17xl.K17Xl.1_0/CLSID
   |    (Default)    REG_SZ    {<UUID>}
-plain.registry.Software/Classes/CLSID	added 1, removed 0
+plain.registry.Software/Classes/CLSID	added 10, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    MWArg
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWArg25.2
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWArg
   |+ Software/Classes/CLSID/{<UUID>}
   |    (Default)    REG_SZ    K17Xl
   |    AppID    REG_SZ    {<UUID>}
@@ -342,7 +445,121 @@ plain.registry.Software/Classes/CLSID	added 1, removed 0
   |    Version    REG_SZ    1.0
   |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
   |    (Default)    REG_SZ    k17xl.K17Xl
-plain.registry.Software/Classes/TypeLib	added 1, removed 0
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    MWComplex
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWComplex25.2
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWComplex
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    MWField
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWField25.2
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWField
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    MWStruct
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWStruct25.2
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWStruct
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    MWArrayFormatFlags
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWArrayFormatFlags25.2
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWArrayFormatFlags
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    MWDataConversionFlags
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWDataConversionFlags25.2
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWDataConversionFlags
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    MWFlags
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWFlags25.2
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWFlags
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    MWSparse
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWSparse25.2
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWSparse
+  |+ Software/Classes/CLSID/{<UUID>}
+  |    (Default)    REG_SZ    MWUtil
+  |    AppID    REG_SZ    {<UUID>}
+  |+ Software/Classes/CLSID/{<UUID>}/InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |+ Software/Classes/CLSID/{<UUID>}/ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWUtil25.2
+  |+ Software/Classes/CLSID/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |+ Software/Classes/CLSID/{<UUID>}/VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWUtil
+plain.registry.Software/Classes/TypeLib	added 2, removed 0
+  |+ Software/Classes/TypeLib/{<UUID>}
+  |+ Software/Classes/TypeLib/{<UUID>}/19.2
+  |    (Default)    REG_SZ    JGraphComUtil 25.2 Type Library
+  |+ Software/Classes/TypeLib/{<UUID>}/19.2/0
+  |+ Software/Classes/TypeLib/{<UUID>}/19.2/0/win64
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |+ Software/Classes/TypeLib/{<UUID>}/19.2/FLAGS
+  |    (Default)    REG_SZ    0
+  |+ Software/Classes/TypeLib/{<UUID>}/19.2/HELPDIR
+  |    (Default)    REG_SZ    <JGRAPH>
   |+ Software/Classes/TypeLib/{<UUID>}
   |+ Software/Classes/TypeLib/{<UUID>}/1.0
   |    (Default)    REG_SZ    k17xl 1.0 Type Library
@@ -353,14 +570,14 @@ plain.registry.Software/Classes/TypeLib	added 1, removed 0
   |    (Default)    REG_SZ    0
   |+ Software/Classes/TypeLib/{<UUID>}/1.0/HELPDIR
   |    (Default)    REG_SZ    <W>\p\b\plain
-plain.registry.Software/Classes/Interface	added 4, removed 0
+plain.registry.Software/Classes/Interface	added 10, removed 0
   |+ Software/Classes/Interface/{<UUID>}
   |    (Default)    REG_SZ    IMWFlags
   |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
   |    (Default)    REG_SZ    {<UUID>}
   |+ Software/Classes/Interface/{<UUID>}/TypeLib
   |    (Default)    REG_SZ    {<UUID>}
-  |    Version    REG_SZ    1.0
+  |    Version    REG_SZ    19.2
   |+ Software/Classes/Interface/{<UUID>}
   |    (Default)    REG_SZ    IK17Xl
   |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
@@ -374,14 +591,56 @@ plain.registry.Software/Classes/Interface	added 4, removed 0
   |    (Default)    REG_SZ    {<UUID>}
   |+ Software/Classes/Interface/{<UUID>}/TypeLib
   |    (Default)    REG_SZ    {<UUID>}
-  |    Version    REG_SZ    1.0
+  |    Version    REG_SZ    19.2
   |+ Software/Classes/Interface/{<UUID>}
   |    (Default)    REG_SZ    IMWDataConversionFlags
   |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
   |    (Default)    REG_SZ    {<UUID>}
   |+ Software/Classes/Interface/{<UUID>}/TypeLib
   |    (Default)    REG_SZ    {<UUID>}
-  |    Version    REG_SZ    1.0
+  |    Version    REG_SZ    19.2
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IMWComplex
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    19.2
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IMWArg
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    19.2
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IMWStruct
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    19.2
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IMWUtil
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    19.2
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IMWField
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    19.2
+  |+ Software/Classes/Interface/{<UUID>}
+  |    (Default)    REG_SZ    IMWSparse
+  |+ Software/Classes/Interface/{<UUID>}/ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |+ Software/Classes/Interface/{<UUID>}/TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    19.2
 plain2.printed
   |Warning: Component "k17xl_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
@@ -416,7 +675,7 @@ plain2.RuntimeDependencies
   Dependencies with properties:
       Required: [1×2 table]
       Optional: [0×0 table]
-plain2.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17xl_1_0.dll (221184) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+plain2.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17xl_1_0.dll (225280) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 plain2.seconds	0.2
 plain2.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17xl_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 plain2.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
@@ -562,8 +821,8 @@ bas.RuntimeDependencies
   Dependencies with properties:
       Required: [1×2 table]
       Optional: [0×0 table]
-bas.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17bas_1_0.dll (221184) | mccExcludedFiles.log (90) | readme.txt (1238) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-bas.seconds	0.3
+bas.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17bas_1_0.dll (225280) | mccExcludedFiles.log (90) | readme.txt (1238) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+bas.seconds	0.2
 bas.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17bas_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 bas.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
@@ -755,8 +1014,8 @@ noembed.RuntimeDependencies
   Dependencies with properties:
       Required: [1×2 table]
       Optional: [0×0 table]
-noembed.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17sep.ctf (12513) | k17sep_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1279) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-noembed.seconds	0.3
+noembed.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17sep.ctf (12512) | k17sep_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1279) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+noembed.seconds	0.2
 noembed.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17sep_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 noembed.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
@@ -948,8 +1207,8 @@ debug.RuntimeDependencies
   Dependencies with properties:
       Required: [1×2 table]
       Optional: [0×0 table]
-debug.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17dbg_1_0.dll (209920) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-debug.seconds	0.3
+debug.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17dbg_1_0.dll (214016) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+debug.seconds	0.1
 debug.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17dbg_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 debug.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
@@ -1139,8 +1398,8 @@ v2.RuntimeDependencies
   Dependencies with properties:
       Required: [1×2 table]
       Optional: [0×0 table]
-v2.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v2_2_0.dll (209920) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-v2.seconds	0.3
+v2.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v2_2_0.dll (214016) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+v2.seconds	0.1
 v2.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17v2_2_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 v2.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
@@ -1330,8 +1589,8 @@ v05.RuntimeDependencies
   Dependencies with properties:
       Required: [1×2 table]
       Optional: [0×0 table]
-v05.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v05_1_0.dll (209920) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-v05.seconds	0.3
+v05.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v05_1_0.dll (214016) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+v05.seconds	0.2
 v05.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17v05_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 v05.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
@@ -1522,7 +1781,7 @@ v3456.RuntimeDependencies
   Dependencies with properties:
       Required: [1×2 table]
       Optional: [0×0 table]
-v3456.files	GettingStarted.html (1253) | _install.bat (883) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v3456_3_4.dll (209920) | mccExcludedFiles.log (90) | readme.txt (1248) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+v3456.files	GettingStarted.html (1253) | _install.bat (883) | buildresult.json (102) | includedSupportPackages.txt (0) | k17v3456_3_4.dll (214016) | mccExcludedFiles.log (90) | readme.txt (1248) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 v3456.seconds	0.2
 v3456.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17v3456_3_4" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 v3456.file.GettingStarted.html	1253 chars, CRLF 0, ends with newline 1
@@ -1723,8 +1982,8 @@ vzero.RuntimeDependencies
   Dependencies with properties:
       Required: [1×2 table]
       Optional: [0×0 table]
-vzero.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17vz_1_0.dll (209920) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-vzero.seconds	0.3
+vzero.files	GettingStarted.html (1244) | _install.bat (880) | buildresult.json (102) | includedSupportPackages.txt (0) | k17vz_1_0.dll (214016) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+vzero.seconds	0.2
 vzero.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17vz_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 vzero.file.GettingStarted.html	1244 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
@@ -1914,7 +2173,7 @@ defaults.RuntimeDependencies
   Dependencies with properties:
       Required: [1×2 table]
       Optional: [0×0 table]
-defaults.files	GettingStarted.html (1250) | _install.bat (882) | buildresult.json (102) | includedSupportPackages.txt (0) | k17_one_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1196) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+defaults.files	GettingStarted.html (1250) | _install.bat (882) | buildresult.json (102) | includedSupportPackages.txt (0) | k17_one_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1196) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 defaults.seconds	0.2
 defaults.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17_one_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 defaults.file.GettingStarted.html	1250 chars, CRLF 0, ends with newline 1
@@ -2105,7 +2364,7 @@ additional.RuntimeDependencies
   Dependencies with properties:
       Required: [1×2 table]
       Optional: [0×0 table]
-additional.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17add.ctf (4399) | k17add_1_0.dll (205824) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+additional.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17add.ctf (4398) | k17add_1_0.dll (209920) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 additional.seconds	0.2
 additional.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17add_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 additional.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
@@ -2302,7 +2561,7 @@ pfile.RuntimeDependencies
   Dependencies with properties:
       Required: [1×2 table]
       Optional: [0×0 table]
-pfile.files	GettingStarted.html (1241) | _install.bat (879) | buildresult.json (102) | includedSupportPackages.txt (0) | k17p_1_0.dll (209408) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+pfile.files	GettingStarted.html (1241) | _install.bat (879) | buildresult.json (102) | includedSupportPackages.txt (0) | k17p_1_0.dll (213504) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 pfile.seconds	0.2
 pfile.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17p_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 pfile.file.GettingStarted.html	1241 chars, CRLF 0, ends with newline 1
@@ -2494,8 +2753,8 @@ classname.RuntimeDependencies
   Dependencies with properties:
       Required: [1×2 table]
       Optional: [0×0 table]
-classname.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17cls_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-classname.seconds	0.3
+classname.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17cls_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+classname.seconds	0.2
 classname.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17cls_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 classname.file.GettingStarted.html	1247 chars, CRLF 0, ends with newline 1
   |<!DOCTYPE html>
@@ -2654,8 +2913,8 @@ classname.registry.Software/Classes/Interface	added 1, removed 0
 guids.plain.same_as_plain2	ERR MATLAB:fileread:cannotOpenFile | Could not open file <W>\p\b\plain\k17xl_idl.idl. No such file or directory.
 guids.plain.same_as_bas	ERR MATLAB:fileread:cannotOpenFile | Could not open file <W>\p\b\plain\k17xl_idl.idl. No such file or directory.
 nooutdir.Files	<SRC>\k17ownexcelAddIn\k17own_1_0.dll | <SRC>\k17ownexcelAddIn\_install.bat | <SRC>\k17ownexcelAddIn\GettingStarted.html
-nooutdir.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17own_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-nooutdir.seconds	0.2
+nooutdir.files	GettingStarted.html (1247) | _install.bat (881) | buildresult.json (102) | includedSupportPackages.txt (0) | k17own_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+nooutdir.seconds	0.1
 nooutdir.registry.Software/Classes	added 2, removed 0
   |+ Software/Classes/k17own.k17_oneClass
   |    (Default)    REG_SZ    k17_oneClass
@@ -2707,7 +2966,7 @@ mcc_default	ok
   |Warning: Component "k17m_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_default.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_default.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_default.seconds	0.2
 mcc_default.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17m_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_default.registry.Software/Classes	added 2, removed 0
@@ -2760,7 +3019,7 @@ mcc_noversion	ok
   |Warning: Component "k17mnv_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_noversion.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnv_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_noversion.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnv_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_noversion.seconds	0.2
 mcc_noversion.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mnv_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_noversion.registry.Software/Classes	added 2, removed 0
@@ -2813,7 +3072,7 @@ mcc_noclass	ok
   |Warning: Component "k17mnc_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_noclass.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnc_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_noclass.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnc_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_noclass.seconds	0.2
 mcc_noclass.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mnc_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_noclass.registry.Software/Classes	added 2, removed 0
@@ -2875,7 +3134,7 @@ mcc_version2	ok
   |Warning: Component "k17mv2_2_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_version2.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mv2_2_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_version2.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mv2_2_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_version2.seconds	0.2
 mcc_version2.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mv2_2_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_version2.registry.Software/Classes	added 2, removed 0
@@ -2932,8 +3191,8 @@ mcc_bundle	ok
   |Warning: Component "k17mb_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_bundle.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mb_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_bundle.seconds	0.2
+mcc_bundle.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mb_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_bundle.seconds	0.1
 mcc_bundle.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mb_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_bundle.registry.Software/Classes	added 2, removed 0
   |+ Software/Classes/k17mb.K17Mb
@@ -2985,8 +3244,8 @@ mcc_notarget	ok
   |Warning: Component "k17mnt_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_notarget.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnt_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_notarget.seconds	0.2
+mcc_notarget.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mnt_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_notarget.seconds	0.1
 mcc_notarget.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mnt_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_notarget.registry.Software/Classes	added 2, removed 0
   |+ Software/Classes/k17mnt.K17Mnt
@@ -3038,8 +3297,8 @@ mcc_separate	ok
   |Warning: Component "k17ms_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_separate.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17ms.ctf (3464) | k17ms_1_0.dll (205312) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_separate.seconds	0.2
+mcc_separate.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17ms.ctf (3465) | k17ms_1_0.dll (209408) | mccExcludedFiles.log (90) | readme.txt (1228) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_separate.seconds	0.1
 mcc_separate.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17ms_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_separate.registry.Software/Classes	added 2, removed 0
   |+ Software/Classes/k17ms.K17Ms
@@ -3091,8 +3350,8 @@ mcc_debug	ok
   |Warning: Component "k17md_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_debug.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17md_1_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_debug.seconds	0.2
+mcc_debug.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17md_1_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1188) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_debug.seconds	0.1
 mcc_debug.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17md_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_debug.registry.Software/Classes	added 2, removed 0
   |+ Software/Classes/k17md.K17Md
@@ -3141,10 +3400,10 @@ mcc_debug.registry.Software/Classes/Interface	added 1, removed 0
   |    (Default)    REG_SZ    {<UUID>}
   |    Version    REG_SZ    1.0
 mcc_codegen	ok
-mcc_codegen.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mcg.ctf (3471) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_codegen.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mcg.ctf (3468) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_codegen.seconds	0.0
 mcc_compile	ok
-mcc_compile.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mcp.ctf (3470) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_compile.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mcp.ctf (3467) | mccExcludedFiles.log (90) | readme.txt (1233) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_compile.seconds	0.0
 mcc_badname	ERR JGraph:mcc:excelAddInName | An Excel add-in's name must begin with a letter or '_' and contain only letters, digits and '_', as its type library and ProgIDs do: '1bad' cannot be one.
 mcc_badname.files	
@@ -3160,7 +3419,7 @@ mcc_twofiles	ok
   |Warning: Component "k17mtwo_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_twofiles.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mtwo_1_0.dll (209408) | mccExcludedFiles.log (90) | readme.txt (1243) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_twofiles.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17mtwo_1_0.dll (213504) | mccExcludedFiles.log (90) | readme.txt (1243) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_twofiles.seconds	0.2
 mcc_twofiles.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17mtwo_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_twofiles.registry.Software/Classes	added 2, removed 0
@@ -3216,7 +3475,7 @@ mcc_script	ok
   |Warning: Component "k17msc_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_script.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17msc_1_0.dll (208384) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_script.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17msc_1_0.dll (212480) | mccExcludedFiles.log (90) | readme.txt (1192) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_script.seconds	0.1
 mcc_script.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17msc_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_script.registry.Software/Classes	added 2, removed 0
@@ -3269,8 +3528,8 @@ mcc_samev2	ok
   |Warning: Component "k17m_2_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_samev2.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_2_0.dll (208896) | mccExcludedFiles.log (90) | readme.txt (1184) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_samev2.seconds	0.2
+mcc_samev2.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_2_0.dll (212992) | mccExcludedFiles.log (90) | readme.txt (1184) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_samev2.seconds	0.1
 mcc_samev2.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17m_2_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_samev2.registry.Software/Classes	added 1, removed 0
   |+ Software/Classes/k17m.K17M.2_0
@@ -3305,14 +3564,14 @@ mcc_samefiles	ok
   |Warning: Component "k17m_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_samefiles.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_1_0.dll (209408) | mccExcludedFiles.log (90) | readme.txt (1184) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
-mcc_samefiles.seconds	0.2
+mcc_samefiles.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_1_0.dll (213504) | mccExcludedFiles.log (90) | readme.txt (1184) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_samefiles.seconds	0.1
 mcc_samefiles.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17m_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 mcc_sameorder	ok
   |Warning: Component "k17m_1_0" will be registered for the current user only. 
   |Applications that run with full administrative privileges cannot access the component. 
   |To register the component for all users, run JGraph or the mcc command as Administrator.
-mcc_sameorder.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_1_0.dll (209408) | mccExcludedFiles.log (90) | readme.txt (1184) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+mcc_sameorder.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17m_1_0.dll (213504) | mccExcludedFiles.log (90) | readme.txt (1184) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 mcc_sameorder.seconds	0.2
 mcc_sameorder.warn	Compiler:compiler:COM_WARN_PER_USER_REGISTRATION | Component "k17m_1_0" will be registered for the current user only.  / Applications that run with full administrative privileges cannot access the component.  / To register the component for all users, run JGraph or the mcc command as Administrator.
 guids.mcc_default.same_as_samev2	ERR MATLAB:fileread:cannotOpenFile | Could not open file <W>\p\m\mcc_default\k17m_idl.idl. No such file or directory.
@@ -3392,7 +3651,7 @@ arch.RuntimeDependencies
   Dependencies with properties:
       Required: [1×2 table]
       Optional: [0×0 table]
-arch.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17arch.ctf (12555) | mccExcludedFiles.log (90) | readme.txt (1131) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
+arch.files	buildresult.json (102) | includedSupportPackages.txt (0) | k17arch.ctf (12553) | mccExcludedFiles.log (90) | readme.txt (1131) | requiredMCRProducts.txt (6) | unresolvedSymbols.txt (20)
 arch.seconds	0.1
 ra.registry.Software/Classes	added 2, removed 0
   |+ Software/Classes/k17ra.K17Ra

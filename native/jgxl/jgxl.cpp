@@ -18,6 +18,12 @@
 //                        may (an elevated regsvr32), else for the current user, which is what R2025b
 //                        gives through MWRegsvr /useronly (the keys as its k17_registry recording
 //                        shows them, under JGraph's own component category, decision KO10).
+//
+// Built a second time with JGRAPH_COMUTIL defined, this same source is jgcomutil.dll, JGraph's COM
+// utility library for Excel add-ins (stage K17d; native\jgcomutil): its type library is built in
+// (jgcomutil.idl), it finds jgrt.dll beside itself (the runtime's runtime\win64, or JGraph's own
+// folder) and registers every coclass of its library under MathWorks' ProgID form for a utility
+// library (JGraphComUtil.MWUtil and JGraphComUtil.MWUtil25.2), with no component category.
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -44,6 +50,12 @@ const wchar_t* const CategoryName = L"JGraph Excel Add-in Components";
 // The AppID every add-in names, as R2025b's name MathWorks' one ({64571771-615C-406E-82F2-1B02209353EE}).
 // {9A3D5F71-2C8E-4B06-A1D4-6E0F7B2C3D58}
 const wchar_t* const AppId = L"{9A3D5F71-2C8E-4B06-A1D4-6E0F7B2C3D58}";
+
+#ifdef JGRAPH_COMUTIL
+const wchar_t* const ErrorSource = L"JGraph COM utility library";
+#else
+const wchar_t* const ErrorSource = L"JGraph Excel add-in";
+#endif
 
 HINSTANCE Self = nullptr;
 HMODULE Bridge = nullptr;
@@ -87,6 +99,7 @@ bool FileExists(const std::wstring& path)
     return attributes != INVALID_FILE_ATTRIBUTES && (attributes & FILE_ATTRIBUTE_DIRECTORY) == 0;
 }
 
+#ifndef JGRAPH_COMUTIL
 std::wstring Widen(const std::string& utf8)
 {
     if (utf8.empty())
@@ -99,7 +112,10 @@ std::wstring Widen(const std::string& utf8)
     MultiByteToWideChar(CP_UTF8, 0, utf8.data(), static_cast<int>(utf8.size()), wide.data(), n);
     return wide;
 }
+#endif
 
+#ifndef JGRAPH_COMUTIL
+// The runtime search an add-in makes (the utility library lives beside jgrt.dll and needs none of it).
 // An RCDATA resource's bytes as text.
 std::string ResourceText(const wchar_t* name)
 {
@@ -169,6 +185,8 @@ std::wstring RegisteredRoot(HKEY hive, const std::wstring& version)
     return value;
 }
 
+std::wstring FindBridgeOnPath();
+
 // jgrt.dll of the JGraph Runtime of `version`, found as the launcher finds the runtime, then in a
 // PATH folder (as a Python package's __init__.py looks, stage K13); empty when nowhere.
 std::wstring FindBridge(const std::string& version, const std::wstring& ownFolder)
@@ -202,8 +220,15 @@ std::wstring FindBridge(const std::string& version, const std::wstring& ownFolde
         return ownFolder + L"\\" + BridgeInRuntime;
     }
 
+    return FindBridgeOnPath();
+}
+#endif
+
+// jgrt.dll in a folder on the PATH (as a Python package's __init__.py looks, stage K13); empty when nowhere.
+std::wstring FindBridgeOnPath()
+{
     std::vector<wchar_t> path(32768);
-    n = GetEnvironmentVariableW(L"PATH", path.data(), static_cast<DWORD>(path.size()));
+    DWORD n = GetEnvironmentVariableW(L"PATH", path.data(), static_cast<DWORD>(path.size()));
     if (n > 0 && n < path.size())
     {
         std::wstring all(path.data(), n);
@@ -237,10 +262,18 @@ bool LoadBridge()
         return true;
     }
 
-    std::string version = ResourceText(RuntimeVersionResource);
     std::wstring own = FolderOf(ModulePath());
-    std::wstring bridge = version.empty() ? std::wstring() : FindBridge(version, own);
     std::wstring why;
+#ifdef JGRAPH_COMUTIL
+    // The utility library lives beside jgrt.dll (the runtime's runtime\win64, or JGraph's own folder).
+    std::wstring bridge = FileExists(own + L"\\jgrt.dll") ? own + L"\\jgrt.dll" : FindBridgeOnPath();
+    if (bridge.empty())
+    {
+        why = L"The JGraph Runtime's native bridge jgrt.dll was not found beside the COM utility library or in a folder on the PATH.";
+    }
+#else
+    std::string version = ResourceText(RuntimeVersionResource);
+    std::wstring bridge = version.empty() ? std::wstring() : FindBridge(version, own);
     if (version.empty())
     {
         why = L"This add-in names no JGraph Runtime version: its JGRAPH_RUNTIME resource is missing.";
@@ -250,7 +283,8 @@ bool LoadBridge()
         why = L"The JGraph Runtime " + Widen(version) + L" this add-in needs was not found: set JGRAPH_RUNTIME_ROOT to its folder, "
             L"install it, or carry it beside the add-in.";
     }
-    else
+#endif
+    if (!bridge.empty())
     {
         Bridge = LoadLibraryExW(bridge.c_str(), nullptr, LOAD_WITH_ALTERED_SEARCH_PATH);
         if (Bridge == nullptr)
@@ -275,7 +309,7 @@ bool LoadBridge()
         ICreateErrorInfo* make = nullptr;
         if (SUCCEEDED(CreateErrorInfo(&make)) && make != nullptr)
         {
-            BSTR source = SysAllocString(L"JGraph Excel add-in");
+            BSTR source = SysAllocString(ErrorSource);
             BSTR description = SysAllocStringLen(why.data(), static_cast<UINT>(why.size()));
             make->SetSource(source);
             make->SetDescription(description);
@@ -299,21 +333,27 @@ bool LoadBridge()
 
 // ---- Registration, from the type library alone -----------------------------------------------
 
+// One coclass of the type library: an add-in has one, the utility library nine.
+struct Coclass
+{
+    std::wstring className;    // as given, from the documentation string
+    std::wstring interfaceName;
+    std::wstring clsid;
+    std::wstring progId;       // <library>.<class>
+    std::wstring versionedProgId;
+};
+
 struct Registration
 {
     std::wstring path;
     std::wstring library;      // the type library's name, the add-in's
-    std::wstring className;    // the coclass's
-    std::wstring interfaceName;
     std::wstring version;      // major.minor
-    std::wstring progId;       // <library>.<class>
-    std::wstring versionedProgId;
-    std::wstring clsid;
     std::wstring libid;
     GUID libidGuid = {};
     WORD major = 1;
     WORD minor = 0;
     ITypeLib* lib = nullptr;
+    std::vector<Coclass> classes;
 };
 
 std::wstring GuidText(const GUID& guid)
@@ -354,7 +394,7 @@ bool EndsWith(const std::wstring& text, const std::wstring& tail)
     return text.size() > tail.size() && text.compare(text.size() - tail.size(), tail.size(), tail) == 0;
 }
 
-// What the add-in's type library says about it; false when the DLL carries none or no coclass.
+// What the DLL's type library says about it; false when the DLL carries none or no coclass.
 bool Describe(Registration& r)
 {
     r.path = ModulePath();
@@ -398,9 +438,15 @@ bool Describe(Registration& r)
 
     SysFreeString(name);
     SysFreeString(doc);
-    bool found = false;
+    // The versioned ProgID: an add-in's <library>.<class>.<major>_<minor> (R2025b's postmcc rule); the
+    // utility library's <library>.<class><major>.<minor>, MathWorks' MWComUtil.MWUtil25.2 form.
+#ifdef JGRAPH_COMUTIL
+    swprintf(version, 32, L"%u.%u", static_cast<unsigned>(r.major), static_cast<unsigned>(r.minor));
+#else
+    swprintf(version, 32, L".%u_%u", static_cast<unsigned>(r.major), static_cast<unsigned>(r.minor));
+#endif
     UINT count = r.lib->GetTypeInfoCount();
-    for (UINT k = 0; k < count && !found; k++)
+    for (UINT k = 0; k < count; k++)
     {
         ITypeInfo* info = nullptr;
         if (FAILED(r.lib->GetTypeInfo(k, &info)) || info == nullptr)
@@ -413,23 +459,26 @@ bool Describe(Registration& r)
         {
             if (tattr->typekind == TKIND_COCLASS)
             {
-                r.clsid = GuidText(tattr->guid);
-                r.className = NameOf(info, MEMBERID_NIL);
+                Coclass c;
+                c.clsid = GuidText(tattr->guid);
+                c.className = NameOf(info, MEMBERID_NIL);
                 std::wstring classDoc = DocOf(info);
                 if (EndsWith(classDoc, L" Class"))
                 {
-                    r.className = classDoc.substr(0, classDoc.size() - 6);
+                    c.className = classDoc.substr(0, classDoc.size() - 6);
                 }
 
                 HREFTYPE href = 0;
                 ITypeInfo* iface = nullptr;
                 if (SUCCEEDED(info->GetRefTypeOfImplType(0, &href)) && SUCCEEDED(info->GetRefTypeInfo(href, &iface)) && iface != nullptr)
                 {
-                    r.interfaceName = NameOf(iface, MEMBERID_NIL);
+                    c.interfaceName = NameOf(iface, MEMBERID_NIL);
                     iface->Release();
                 }
 
-                found = true;
+                c.progId = r.library + L"." + c.className;
+                c.versionedProgId = c.progId + version;
+                r.classes.push_back(c);
             }
 
             info->ReleaseTypeAttr(tattr);
@@ -438,15 +487,7 @@ bool Describe(Registration& r)
         info->Release();
     }
 
-    if (!found)
-    {
-        return false;
-    }
-
-    r.progId = r.library + L"." + r.className;
-    swprintf(version, 32, L".%u_%u", static_cast<unsigned>(r.major), static_cast<unsigned>(r.minor));
-    r.versionedProgId = r.progId + version;
-    return true;
+    return !r.classes.empty();
 }
 
 LSTATUS WriteValue(HKEY classes, const std::wstring& key, const wchar_t* name, const std::wstring& value)
@@ -475,31 +516,40 @@ LSTATUS WriteKey(HKEY classes, const std::wstring& key)
     return status;
 }
 
-// The keys R2025b's registration writes (k17_registry: regsvr32.registered.*), under JGraph's category.
+// The keys R2025b's registration writes (k17_registry: regsvr32.registered.*) for every coclass,
+// under JGraph's category for an add-in (the utility library's classes have none, as MathWorks').
 LSTATUS WriteRegistration(HKEY classes, const Registration& r, bool perUser)
 {
-    LSTATUS status = WriteValue(classes, r.progId, nullptr, r.className);
-    if (status != ERROR_SUCCESS)
+    for (const Coclass& c : r.classes)
     {
-        return status;
+        LSTATUS status = WriteValue(classes, c.progId, nullptr, c.className);
+        if (status != ERROR_SUCCESS)
+        {
+            return status;
+        }
+
+        WriteValue(classes, c.progId + L"\\CLSID", nullptr, c.clsid);
+        WriteValue(classes, c.progId + L"\\CurVer", nullptr, c.versionedProgId);
+        WriteValue(classes, c.versionedProgId, nullptr, c.className);
+        WriteValue(classes, c.versionedProgId + L"\\CLSID", nullptr, c.clsid);
+        std::wstring clsid = L"CLSID\\" + c.clsid;
+        WriteValue(classes, clsid, nullptr, c.className);
+        WriteValue(classes, clsid, L"AppID", AppId);
+#ifndef JGRAPH_COMUTIL
+        WriteKey(classes, clsid + L"\\Implemented Categories");
+        WriteKey(classes, clsid + L"\\Implemented Categories\\" + GuidText(CategoryId));
+#endif
+        WriteValue(classes, clsid + L"\\InprocServer32", nullptr, r.path);
+        WriteValue(classes, clsid + L"\\InprocServer32", L"ThreadingModel", L"Both");
+        WriteValue(classes, clsid + L"\\ProgID", nullptr, c.versionedProgId);
+        WriteValue(classes, clsid + L"\\TypeLib", nullptr, r.libid);
+        WriteValue(classes, clsid + L"\\TypeLib", L"Version", r.version);
+        WriteValue(classes, clsid + L"\\VersionIndependentProgID", nullptr, c.progId);
     }
 
-    WriteValue(classes, r.progId + L"\\CLSID", nullptr, r.clsid);
-    WriteValue(classes, r.progId + L"\\CurVer", nullptr, r.versionedProgId);
-    WriteValue(classes, r.versionedProgId, nullptr, r.className);
-    WriteValue(classes, r.versionedProgId + L"\\CLSID", nullptr, r.clsid);
-    std::wstring clsid = L"CLSID\\" + r.clsid;
-    WriteValue(classes, clsid, nullptr, r.className);
-    WriteValue(classes, clsid, L"AppID", AppId);
-    WriteKey(classes, clsid + L"\\Implemented Categories");
-    WriteKey(classes, clsid + L"\\Implemented Categories\\" + GuidText(CategoryId));
-    WriteValue(classes, clsid + L"\\InprocServer32", nullptr, r.path);
-    WriteValue(classes, clsid + L"\\InprocServer32", L"ThreadingModel", L"Both");
-    WriteValue(classes, clsid + L"\\ProgID", nullptr, r.versionedProgId);
-    WriteValue(classes, clsid + L"\\TypeLib", nullptr, r.libid);
-    WriteValue(classes, clsid + L"\\TypeLib", L"Version", r.version);
-    WriteValue(classes, clsid + L"\\VersionIndependentProgID", nullptr, r.progId);
+#ifndef JGRAPH_COMUTIL
     WriteValue(classes, std::wstring(L"Component Categories\\") + GuidText(CategoryId), L"409", CategoryName);
+#endif
 
     // The type library and the Interface keys of every interface in it, by the registrar for the hive.
     std::wstring folder = FolderOf(r.path);
@@ -513,9 +563,13 @@ LSTATUS WriteRegistration(HKEY classes, const Registration& r, bool perUser)
 
 void RemoveRegistration(HKEY classes, const Registration& r, bool perUser)
 {
-    RegDeleteTreeW(classes, r.progId.c_str());
-    RegDeleteTreeW(classes, r.versionedProgId.c_str());
-    RegDeleteTreeW(classes, (L"CLSID\\" + r.clsid).c_str());
+    for (const Coclass& c : r.classes)
+    {
+        RegDeleteTreeW(classes, c.progId.c_str());
+        RegDeleteTreeW(classes, c.versionedProgId.c_str());
+        RegDeleteTreeW(classes, (L"CLSID\\" + c.clsid).c_str());
+    }
+
     if (perUser)
     {
         UnRegisterTypeLibForUser(r.libidGuid, r.major, r.minor, 0, SYS_WIN64);
@@ -537,6 +591,20 @@ bool Registered(HKEY classes, const std::wstring& key)
 
     RegCloseKey(open);
     return true;
+}
+
+// Whether any of the library's classes is registered in this hive.
+bool AnyRegistered(HKEY classes, const Registration& r)
+{
+    for (const Coclass& c : r.classes)
+    {
+        if (Registered(classes, L"CLSID\\" + c.clsid) || Registered(classes, c.progId))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 }
 
@@ -638,7 +706,7 @@ extern "C" HRESULT __stdcall DllUnregisterServer()
     HKEY user = nullptr;
     if (RegOpenKeyExW(HKEY_CURRENT_USER, L"Software\\Classes", 0, KEY_WRITE | KEY_READ, &user) == ERROR_SUCCESS)
     {
-        if (Registered(user, L"CLSID\\" + r.clsid) || Registered(user, r.progId))
+        if (AnyRegistered(user, r))
         {
             RemoveRegistration(user, r, true);
             removedAny = true;
@@ -650,7 +718,7 @@ extern "C" HRESULT __stdcall DllUnregisterServer()
     HKEY machine = nullptr;
     if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"Software\\Classes", 0, KEY_WRITE | KEY_READ, &machine) == ERROR_SUCCESS)
     {
-        if (Registered(machine, L"CLSID\\" + r.clsid) || Registered(machine, r.progId))
+        if (AnyRegistered(machine, r))
         {
             RemoveRegistration(machine, r, false);
             removedAny = true;

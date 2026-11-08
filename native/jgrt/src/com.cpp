@@ -15,6 +15,10 @@
 // (jgrtComUnwrap). An error the engine reports becomes an IErrorInfo with R2025b's shape: the
 // versioned ProgID as its source and the message as its description.
 //
+// Stage K17d: a module may declare several coclasses - JGraph's COM utility library jgcomutil.dll
+// (MWUtil, MWFlags, MWStruct, ...; native\jgcomutil) is one, served through the same objects - and
+// the engine asks for a module by path (jgrtComLoadModule) to wrap the utility objects it makes.
+//
 // The thunks read their arguments as pointer-sized slots, which on x64 every argument of these
 // interfaces is: a long, a VARIANT_BOOL, a BSTR, an interface pointer, a VARIANT* and a VARIANT by
 // value (passed as a pointer to the caller's copy). A floating-point argument by value would come
@@ -73,16 +77,27 @@ struct Interface
     std::vector<Member> slots;       // indexed by vtable slot; an empty name means no member there
 };
 
-// One add-in DLL: its type library, its coclass, and the interfaces served so far.
+// One coclass of a type library, with the ProgID a client creates it by.
+struct Coclass
+{
+    CLSID clsid = {};
+    IID iid = {};                    // the default interface's
+    std::wstring className;          // as given, from the documentation string
+    std::wstring progId;             // the versioned ProgID, an error's source when the engine names none
+};
+
+// JGraph's COM utility library (stage K17d), whose ProgIDs take MathWorks' form for one
+// (JGraphComUtil.MWUtil25.2) where an add-in's take R2025b's postmcc form (k17xl.K17Xl.1_0).
+const wchar_t* const UtilityLibraryName = L"JGraphComUtil";
+
+// One DLL: its type library, its coclasses, and the interfaces served so far.
 struct Module
 {
     std::wstring path;
     ITypeLib* lib = nullptr;
-    CLSID clsid = {};
-    IID iid = {};
     std::wstring libraryName;
-    std::wstring className;
-    std::wstring progId;             // <library>.<class>.<major>_<minor>, the error source
+    std::vector<Coclass> classes;
+    std::wstring progId;             // the first coclass's, the error source when nothing names one
     std::map<IID, Interface*, GuidLess> interfaces;
     LONG objects = 0;
     LONG locks = 0;
@@ -293,8 +308,8 @@ Interface* LoadInterface(Module* module, const IID& iid)
     return made;
 }
 
-// The module of an add-in DLL, made once per path: its type library read from the DLL's own
-// resource, the one coclass in it, and that coclass's default interface.
+// The module of a DLL, made once per path: its type library read from the DLL's own resource,
+// every coclass in it, and each coclass's default interface.
 Module* LoadModule(const std::wstring& path, std::wstring* why)
 {
     std::wstring key = Lower(path);
@@ -355,9 +370,18 @@ Module* LoadModule(const std::wstring& path, std::wstring* why)
     SysFreeString(libName);
     SysFreeString(libDoc);
 
+    wchar_t version[32];
+    if (module->libraryName == UtilityLibraryName)
+    {
+        swprintf(version, 32, L"%u.%u", static_cast<unsigned>(major), static_cast<unsigned>(minor));
+    }
+    else
+    {
+        swprintf(version, 32, L".%u_%u", static_cast<unsigned>(major), static_cast<unsigned>(minor));
+    }
+
     UINT count = lib->GetTypeInfoCount();
-    bool coclassFound = false;
-    for (UINT k = 0; k < count && !coclassFound; k++)
+    for (UINT k = 0; k < count; k++)
     {
         ITypeInfo* info = nullptr;
         if (FAILED(lib->GetTypeInfo(k, &info)) || info == nullptr)
@@ -370,27 +394,35 @@ Module* LoadModule(const std::wstring& path, std::wstring* why)
         {
             if (attr->typekind == TKIND_COCLASS)
             {
-                module->clsid = attr->guid;
-                module->className = Name(info, MEMBERID_NIL);
+                Coclass c;
+                c.clsid = attr->guid;
+                c.className = Name(info, MEMBERID_NIL);
                 std::wstring doc = Doc(info);
                 if (EndsWith(doc, L" Class"))
                 {
-                    module->className = doc.substr(0, doc.size() - 6);
+                    c.className = doc.substr(0, doc.size() - 6);
                 }
 
                 HREFTYPE href = 0;
                 ITypeInfo* defaultInterface = nullptr;
+                bool hasInterface = false;
                 if (SUCCEEDED(info->GetRefTypeOfImplType(0, &href)) && SUCCEEDED(info->GetRefTypeInfo(href, &defaultInterface)) && defaultInterface != nullptr)
                 {
                     TYPEATTR* iattr = nullptr;
                     if (SUCCEEDED(defaultInterface->GetTypeAttr(&iattr)) && iattr != nullptr)
                     {
-                        module->iid = iattr->guid;
-                        coclassFound = true;
+                        c.iid = iattr->guid;
+                        hasInterface = true;
                         defaultInterface->ReleaseTypeAttr(iattr);
                     }
 
                     defaultInterface->Release();
+                }
+
+                if (hasInterface)
+                {
+                    c.progId = module->libraryName + L"." + c.className + version;
+                    module->classes.push_back(c);
                 }
             }
 
@@ -400,11 +432,11 @@ Module* LoadModule(const std::wstring& path, std::wstring* why)
         info->Release();
     }
 
-    if (!coclassFound)
+    if (module->classes.empty())
     {
         if (why != nullptr)
         {
-            *why = L"The add-in " + path + L"'s type library declares no coclass.";
+            *why = L"The library " + path + L"'s type library declares no coclass.";
         }
 
         lib->Release();
@@ -412,9 +444,7 @@ Module* LoadModule(const std::wstring& path, std::wstring* why)
         return nullptr;
     }
 
-    wchar_t version[32];
-    swprintf(version, 32, L".%u_%u", static_cast<unsigned>(major), static_cast<unsigned>(minor));
-    module->progId = module->libraryName + L"." + module->className + version;
+    module->progId = module->classes.front().progId;
     Modules[key] = module;
     return module;
 }
@@ -575,7 +605,13 @@ struct ComObject
             argv.empty() ? nullptr : argv.data(), &result, &source, &description);
         if (FAILED(hr))
         {
-            Report(source != nullptr ? ToText(source) : module->progId, ToText(description), iface->iid);
+            // Neither a source nor a description: the HRESULT alone, with no error info (what a client
+            // reads as the system's own text for the code, as R2025b's MWStruct answers a bad index).
+            if (source != nullptr || description != nullptr)
+            {
+                Report(source != nullptr ? ToText(source) : module->progId, ToText(description), iface->iid);
+            }
+
             CoTaskMemFree(source);
             CoTaskMemFree(description);
             VariantClear(&result);
@@ -757,6 +793,7 @@ struct ClassFactory
     const void* const* vtbl;
     LONG refs;
     Module* module;
+    const Coclass* coclass;
 };
 
 HRESULT __stdcall FactoryQueryInterface(void* self, REFIID riid, void** ppv)
@@ -805,30 +842,31 @@ HRESULT __stdcall FactoryCreateInstance(void* self, IUnknown* outer, REFIID riid
     }
 
     Module* module = static_cast<ClassFactory*>(self)->module;
+    const Coclass* coclass = static_cast<ClassFactory*>(self)->coclass;
     const JgrtManaged* engine = JgrtEngine();
     if (engine == nullptr || engine->ComCreate == nullptr)
     {
-        Report(module->progId, L"The JGraph Runtime's engine did not start:\n" + JgrtLastComplaint(), module->iid);
+        Report(coclass->progId, L"The JGraph Runtime's engine did not start:\n" + JgrtLastComplaint(), coclass->iid);
         return E_FAIL;
     }
 
     Interface* iface;
     {
         std::lock_guard<std::mutex> hold(ComGate);
-        iface = LoadInterface(module, module->iid);
+        iface = LoadInterface(module, coclass->iid);
     }
 
     if (iface == nullptr)
     {
-        Report(module->progId, L"The add-in's type library has no interface for its class.", module->iid);
+        Report(coclass->progId, L"The library's type library has no interface for its class " + coclass->className + L".", coclass->iid);
         return E_FAIL;
     }
 
     wchar_t* why = nullptr;
-    intptr_t handle = engine->ComCreate(module->path.c_str(), reinterpret_cast<intptr_t>(module), &why);
+    intptr_t handle = engine->ComCreate(module->path.c_str(), reinterpret_cast<intptr_t>(module), module->libraryName.c_str(), coclass->className.c_str(), &why);
     if (handle == 0)
     {
-        Report(module->progId, why != nullptr ? ToText(why) : L"The add-in could not be opened.", module->iid);
+        Report(coclass->progId, why != nullptr ? ToText(why) : L"The object could not be made.", coclass->iid);
         CoTaskMemFree(why);
         return E_FAIL;
     }
@@ -867,7 +905,7 @@ const void* const FactoryVtbl[] =
 
 // ---- What the template calls ------------------------------------------------------------------
 
-// The template's DllGetClassObject: the class factory of the coclass the DLL at `path` declares.
+// The template's DllGetClassObject: the class factory of the coclass `clsid` the DLL at `path` declares.
 extern "C" __declspec(dllexport) HRESULT jgrtXlGetClassObject(const wchar_t* path, const CLSID* clsid, const IID* iid, void** ppv)
 {
     if (ppv == nullptr)
@@ -894,12 +932,21 @@ extern "C" __declspec(dllexport) HRESULT jgrtXlGetClassObject(const wchar_t* pat
         return E_FAIL;
     }
 
-    if (!IsEqualCLSID(*clsid, module->clsid))
+    const Coclass* coclass = nullptr;
+    for (const Coclass& c : module->classes)
+    {
+        if (IsEqualCLSID(*clsid, c.clsid))
+        {
+            coclass = &c;
+        }
+    }
+
+    if (coclass == nullptr)
     {
         return CLASS_E_CLASSNOTAVAILABLE;
     }
 
-    auto* factory = new ClassFactory{ FactoryVtbl, 1, module };
+    auto* factory = new ClassFactory{ FactoryVtbl, 1, module, coclass };
     HRESULT hr = FactoryQueryInterface(factory, *iid, ppv);
     FactoryRelease(factory);
     return hr;
@@ -949,6 +996,21 @@ extern "C" __declspec(dllexport) IDispatch* jgrtComWrap(intptr_t handle, intptr_
 
     ComObject* object = NewObject(reinterpret_cast<Module*>(module), iface, handle);
     return static_cast<IDispatch*>(static_cast<void*>(object));
+}
+
+// The module of the DLL at `path` (its type library read, every coclass found), for the engine to
+// wrap the objects it makes of another library's classes (the utility library's, stage K17d); 0 when
+// the DLL carries no type library.
+extern "C" __declspec(dllexport) intptr_t jgrtComLoadModule(const wchar_t* path)
+{
+    if (path == nullptr)
+    {
+        return 0;
+    }
+
+    std::lock_guard<std::mutex> hold(ComGate);
+    std::wstring why;
+    return reinterpret_cast<intptr_t>(LoadModule(path, &why));
 }
 
 // The engine's handle behind a COM object made here, or 0 for any other object.

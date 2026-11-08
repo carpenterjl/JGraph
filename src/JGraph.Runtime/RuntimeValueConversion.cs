@@ -107,13 +107,13 @@ internal static class RuntimeValueConversion
                 return new RuntimeChar(value.AsString, dims);
             case "logical" when value.Type is JgsType.Bool or JgsType.Array:
                 return new RuntimeLogical([.. Elements(value, dims).Select(static e => e.AsNumber != 0)], dims);
-            case "double" when value.Type == JgsType.Sparse:
+            case "double" or "logical" when value.Type == JgsType.Sparse:
             {
                 JGraph.Numerics.Sparse.CscMatrix matrix = value.AsSparse;
                 int stored = matrix.NonZeroCount;
                 return new RuntimeSparse(
                     matrix.Rows, matrix.Cols,
-                    matrix.RowIndices.AsSpan(0, stored).ToArray(), matrix.ColumnStarts, matrix.Values.AsSpan(0, stored).ToArray());
+                    matrix.RowIndices.AsSpan(0, stored).ToArray(), matrix.ColumnStarts, matrix.Values.AsSpan(0, stored).ToArray(), cls == "logical");
             }
 
             case "cell" when value.Type == JgsType.Cell:

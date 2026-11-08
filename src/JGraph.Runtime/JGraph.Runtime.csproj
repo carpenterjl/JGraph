@@ -24,6 +24,8 @@
   <ItemGroup>
     <None Include="..\..\native\win-x64\jgrt\jgrt.dll" Link="jgrt.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <None Include="..\..\native\jgrt\jgrt.runtimeconfig.json" Link="jgrt.runtimeconfig.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <!-- Stage K17d: JGraph's COM utility library for Excel add-ins (native/jgcomutil, built by its build.ps1 and checked in), beside jgrt.dll, which it hands its objects to. -->
+    <None Include="..\..\native\win-x64\jgcomutil\jgcomutil.dll" Link="jgcomutil.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

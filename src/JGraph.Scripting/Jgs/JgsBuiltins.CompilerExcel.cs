@@ -166,6 +166,14 @@ internal static partial class JgsBuiltins
         try
         {
             ExcelAddIn.Register(dll);
+            // The COM utility library the add-in's VBA module creates first (JGraphComUtil.MWUtil25.2, stage
+            // K17d), registered the same way when nothing has registered it yet: MATLAB's installer does this
+            // for mwcomutil.dll; JGraph's runtime installer does it too, and a build on a machine without it
+            // (JGraph run from its own folder) does it here.
+            if (OperatingSystem.IsWindows())
+            {
+                ExcelAddIn.RegisterUtility();
+            }
         }
         catch (Exception ex) when (ex is System.Runtime.InteropServices.COMException or DllNotFoundException or EntryPointNotFoundException or BadImageFormatException)
         {

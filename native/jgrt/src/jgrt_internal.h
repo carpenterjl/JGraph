@@ -94,12 +94,14 @@ struct JgrtManaged
     // give datetimes, durations and dictionaries as values.
     intptr_t (*PyOpen)(const wchar_t* archive, wchar_t** error);
 
-    // The Excel add-in's COM objects (stage K17c, com.cpp): the component object of the add-in DLL at
-    // dllPath (0 and why when it cannot be opened), a member of an object called by name with its
-    // arguments as VARIANTs (an [in, out] one VT_BYREF | VT_VARIANT onto the caller's) and the result
-    // in `result` (an HRESULT; a failure's source and description as CoTaskMem strings), and the
-    // object let go when its last COM reference is released.
-    intptr_t (*ComCreate)(const wchar_t* dllPath, intptr_t module, wchar_t** error);
+    // The Excel add-in's COM objects (stage K17c, com.cpp): the object of the coclass `className` of
+    // the library `libraryName` in the DLL at dllPath - an add-in's component, or one of the COM
+    // utility library's classes (stage K17d) - (0 and why when it cannot be made), a member of an
+    // object called by name with its arguments as VARIANTs (an [in, out] one VT_BYREF | VT_VARIANT
+    // onto the caller's) and the result in `result` (an HRESULT; a failure's source and description
+    // as CoTaskMem strings, both null for a bare HRESULT with no error info), and the object let go
+    // when its last COM reference is released.
+    intptr_t (*ComCreate)(const wchar_t* dllPath, intptr_t module, const wchar_t* libraryName, const wchar_t* className, wchar_t** error);
     int (*ComInvoke)(intptr_t handle, const wchar_t* member, int kind, int argc, tagVARIANT** argv, tagVARIANT* result,
         wchar_t** source, wchar_t** description);
     void (*ComRelease)(intptr_t handle);

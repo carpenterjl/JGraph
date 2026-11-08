@@ -72,6 +72,10 @@ foreach ($folder in "runtime\win64", "include", "lib\win64", "python", "launcher
 # import library. The copy beside the engine in bin\win64 (JGraph.Runtime's own output) stays: an
 # application carrying the engine loads it from there.
 Copy-Item (Join-Path $bin "jgrt.dll") (Join-Path $Output "runtime\win64\jgrt.dll")
+# JGraph's COM utility library for Excel add-ins (stage K17d; native\jgcomutil, checked in prebuilt), beside
+# jgrt.dll, which it hands its objects to; the runtime's installer registers it (JGraphComUtil.MWUtil25.2 and
+# the other classes an add-in's VBA module creates), as MATLAB's registers mwcomutil.dll.
+Copy-Item (Join-Path $root "native\win-x64\jgcomutil\jgcomutil.dll") (Join-Path $Output "runtime\win64\jgcomutil.dll")
 Copy-Item (Join-Path $root "native\jgrt\include\*.h") (Join-Path $Output "include")
 # The C++ shared library API (stage K12): the MathWorks-named headers and the jgraph ones they include.
 Copy-Item (Join-Path $root "native\jgrt\include\*.hpp") (Join-Path $Output "include")
@@ -132,7 +136,7 @@ foreach ($template in "jglaunch-console.exe", "jglaunch-gui.exe", "jgxl.dll") {
 }
 if (-not (Test-Path (Join-Path $dotnetbuilder "JGraph.MATLAB.NET.Arrays.dll"))) { throw "The runtime is missing the MWArray API for clients." }
 if (-not (Test-Path (Join-Path $dataApi "JGraph.MATLAB.Runtime.dll"))) { throw "The runtime is missing the MATLAB Data API for clients." }
-foreach ($native in "runtime\win64\jgrt.dll", "include\mclmcrrt.h", "include\matrix.h", "include\MatlabCppSharedLib.hpp",
+foreach ($native in "runtime\win64\jgrt.dll", "runtime\win64\jgcomutil.dll", "include\mclmcrrt.h", "include\matrix.h", "include\MatlabCppSharedLib.hpp",
     "include\jgraph\cpplib.hpp", "include\MatlabDataArray\TypedArray.hpp", "lib\win64\jgrt.lib") {
     if (-not (Test-Path (Join-Path $Output $native))) { throw "The runtime is missing '$native', the native bridge's." }
 }

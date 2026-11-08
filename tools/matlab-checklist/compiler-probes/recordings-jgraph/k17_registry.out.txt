@@ -1,4 +1,94 @@
-registry.added.before.cleanup	127
+registry.added.before.cleanup	161
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWArg
+  |    (Default)    REG_SZ    MWArg
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWArg\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWArg\CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWArg25.2
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWArg25.2
+  |    (Default)    REG_SZ    MWArg
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWArg25.2\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWArrayFormatFlags
+  |    (Default)    REG_SZ    MWArrayFormatFlags
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWArrayFormatFlags\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWArrayFormatFlags\CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWArrayFormatFlags25.2
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWArrayFormatFlags25.2
+  |    (Default)    REG_SZ    MWArrayFormatFlags
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWArrayFormatFlags25.2\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWComplex
+  |    (Default)    REG_SZ    MWComplex
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWComplex\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWComplex\CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWComplex25.2
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWComplex25.2
+  |    (Default)    REG_SZ    MWComplex
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWComplex25.2\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWDataConversionFlags
+  |    (Default)    REG_SZ    MWDataConversionFlags
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWDataConversionFlags\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWDataConversionFlags\CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWDataConversionFlags25.2
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWDataConversionFlags25.2
+  |    (Default)    REG_SZ    MWDataConversionFlags
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWDataConversionFlags25.2\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWField
+  |    (Default)    REG_SZ    MWField
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWField\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWField\CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWField25.2
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWField25.2
+  |    (Default)    REG_SZ    MWField
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWField25.2\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWFlags
+  |    (Default)    REG_SZ    MWFlags
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWFlags\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWFlags\CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWFlags25.2
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWFlags25.2
+  |    (Default)    REG_SZ    MWFlags
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWFlags25.2\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWSparse
+  |    (Default)    REG_SZ    MWSparse
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWSparse\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWSparse\CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWSparse25.2
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWSparse25.2
+  |    (Default)    REG_SZ    MWSparse
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWSparse25.2\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWStruct
+  |    (Default)    REG_SZ    MWStruct
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWStruct\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWStruct\CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWStruct25.2
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWStruct25.2
+  |    (Default)    REG_SZ    MWStruct
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWStruct25.2\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWUtil
+  |    (Default)    REG_SZ    MWUtil
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWUtil\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWUtil\CurVer
+  |    (Default)    REG_SZ    JGraphComUtil.MWUtil25.2
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWUtil25.2
+  |    (Default)    REG_SZ    MWUtil
+  |HKEY_CURRENT_USER\Software\Classes\JGraphComUtil.MWUtil25.2\CLSID
+  |    (Default)    REG_SZ    {<UUID>}
   |HKEY_CURRENT_USER\Software\Classes\k17_one.k17_oneClass
   |    (Default)    REG_SZ    k17_oneClass
   |HKEY_CURRENT_USER\Software\Classes\k17_one.k17_oneClass\CLSID
@@ -364,6 +454,19 @@ registry.added.before.cleanup	127
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
   |    (Default)    REG_SZ    k17cls.k17cls
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    MWArg
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWArg25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWArg
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
   |    (Default)    REG_SZ    K17V2
   |    AppID    REG_SZ    {<UUID>}
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
@@ -423,6 +526,19 @@ registry.added.before.cleanup	127
   |    Version    REG_SZ    1.0
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
   |    (Default)    REG_SZ    k17dbg.K17Dbg
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    MWComplex
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWComplex25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWComplex
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
   |    (Default)    REG_SZ    K17Msc
   |    AppID    REG_SZ    {<UUID>}
@@ -484,6 +600,19 @@ registry.added.before.cleanup	127
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
   |    (Default)    REG_SZ    k17mnv.K17Mnv
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    MWField
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWField25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWField
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
   |    (Default)    REG_SZ    k17_oneClass
   |    AppID    REG_SZ    {<UUID>}
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
@@ -514,6 +643,19 @@ registry.added.before.cleanup	127
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
   |    (Default)    REG_SZ    k17ms.K17Ms
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    MWStruct
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWStruct25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWStruct
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
   |    (Default)    REG_SZ    k17_oneClass
   |    AppID    REG_SZ    {<UUID>}
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
@@ -528,6 +670,19 @@ registry.added.before.cleanup	127
   |    Version    REG_SZ    1.0
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
   |    (Default)    REG_SZ    k17own.k17_oneClass
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    MWArrayFormatFlags
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWArrayFormatFlags25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWArrayFormatFlags
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
   |    (Default)    REG_SZ    K17Vz
   |    AppID    REG_SZ    {<UUID>}
@@ -544,6 +699,45 @@ registry.added.before.cleanup	127
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
   |    (Default)    REG_SZ    k17vz.K17Vz
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    MWDataConversionFlags
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWDataConversionFlags25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWDataConversionFlags
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    MWFlags
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWFlags25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWFlags
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    MWSparse
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWSparse25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWSparse
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
   |    (Default)    REG_SZ    K17Ra
   |    AppID    REG_SZ    {<UUID>}
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\Implemented Categories
@@ -558,6 +752,19 @@ registry.added.before.cleanup	127
   |    Version    REG_SZ    1.0
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
   |    (Default)    REG_SZ    k17ra.K17Ra
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
+  |    (Default)    REG_SZ    MWUtil
+  |    AppID    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\InprocServer32
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |    ThreadingModel    REG_SZ    Both
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\ProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWUtil25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    25.2
+  |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}\VersionIndependentProgID
+  |    (Default)    REG_SZ    JGraphComUtil.MWUtil
   |HKEY_CURRENT_USER\Software\Classes\CLSID\{<UUID>}
   |    (Default)    REG_SZ    K17Md
   |    AppID    REG_SZ    {<UUID>}
@@ -789,6 +996,15 @@ registry.added.before.cleanup	127
   |    (Default)    REG_SZ    0
   |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\2.0\HELPDIR
   |    (Default)    REG_SZ    <W>\p\m\mcc_samev2
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\19.2
+  |    (Default)    REG_SZ    JGraphComUtil 25.2 Type Library
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\19.2\0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\19.2\0\win64
+  |    (Default)    REG_SZ    <JGRAPH>\jgcomutil.dll
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\19.2\FLAGS
+  |    (Default)    REG_SZ    0
+  |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\19.2\HELPDIR
+  |    (Default)    REG_SZ    <JGRAPH>
   |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0
   |    (Default)    REG_SZ    k17mnv 1.0 Type Library
   |HKEY_CURRENT_USER\Software\Classes\TypeLib\{<UUID>}\1.0\0
@@ -891,7 +1107,7 @@ registry.added.before.cleanup	127
   |    (Default)    REG_SZ    {<UUID>}
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
   |    (Default)    REG_SZ    {<UUID>}
-  |    Version    REG_SZ    1.0
+  |    Version    REG_SZ    19.2
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
   |    (Default)    REG_SZ    Ik17_oneClass
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
@@ -940,7 +1156,7 @@ registry.added.before.cleanup	127
   |    (Default)    REG_SZ    {<UUID>}
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
   |    (Default)    REG_SZ    {<UUID>}
-  |    Version    REG_SZ    1.0
+  |    Version    REG_SZ    19.2
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
   |    (Default)    REG_SZ    Ik17_oneClass
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
@@ -961,7 +1177,7 @@ registry.added.before.cleanup	127
   |    (Default)    REG_SZ    {<UUID>}
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
   |    (Default)    REG_SZ    {<UUID>}
-  |    Version    REG_SZ    1.0
+  |    Version    REG_SZ    19.2
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
   |    (Default)    REG_SZ    IK17Mnt
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
@@ -983,6 +1199,20 @@ registry.added.before.cleanup	127
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
   |    (Default)    REG_SZ    {<UUID>}
   |    Version    REG_SZ    1.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IMWComplex
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    19.2
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IMWArg
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    19.2
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
   |    (Default)    REG_SZ    IK17Vz
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
@@ -1012,6 +1242,13 @@ registry.added.before.cleanup	127
   |    (Default)    REG_SZ    {<UUID>}
   |    Version    REG_SZ    1.0
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IMWStruct
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    19.2
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
   |    (Default)    REG_SZ    Ik17mnc
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
   |    (Default)    REG_SZ    {<UUID>}
@@ -1032,6 +1269,27 @@ registry.added.before.cleanup	127
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
   |    (Default)    REG_SZ    {<UUID>}
   |    Version    REG_SZ    2.0
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IMWUtil
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    19.2
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IMWField
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    19.2
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
+  |    (Default)    REG_SZ    IMWSparse
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
+  |    (Default)    REG_SZ    {<UUID>}
+  |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\TypeLib
+  |    (Default)    REG_SZ    {<UUID>}
+  |    Version    REG_SZ    19.2
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}
   |    (Default)    REG_SZ    IK17P
   |HKEY_CURRENT_USER\Software\Classes\Interface\{<UUID>}\ProxyStubClsid32
@@ -1103,6 +1361,7 @@ unregister	m\mcc_separate\k17ms_1_0.dll	exit 0
 unregister	m\mcc_twofiles\k17mtwo_1_0.dll	exit 0
 unregister	m\mcc_version2\k17mv2_2_0.dll	exit 0
 unregister	src\k17ownexcelAddIn\k17own_1_0.dll	exit 0
+unregister	jgcomutil.dll	exit 0
 leftover.notours	Software\Classes\Component Categories\{<UUID>}
 leftover.removed	0 keys of this stage's that unregistration left
 excel.processes	0, 0 invisible ones of this run's ended

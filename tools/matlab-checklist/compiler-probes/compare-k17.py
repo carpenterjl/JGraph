@@ -1,6 +1,6 @@
 """Compares JGraph's K17 recordings with R2025b's (compiler and SDK plan, stage K17).
 
-    python compare-k17.py <folder holding JGraph's k17_*.out.txt> [--only excel,com_preinit,com,cells,mps,payload,pe,strings,registry]
+    python compare-k17.py <folder holding JGraph's k17_*.out.txt> [--only excel,com_preinit,com,com_extra,cells,mps,payload,pe,strings,registry]
 
 Each recording is key<TAB>value lines with a display, a file's text or what a call printed indented
 under its key (record-k17.ps1 writes R2025b's into recordings/; the later stages write JGraph's with
@@ -16,7 +16,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 REC = HERE / "recordings"
 
-FILES = ["excel", "com_preinit", "com", "cells", "mps", "payload", "pe", "strings", "registry"]
+FILES = ["excel", "com_preinit", "com", "com_extra", "cells", "mps", "payload", "pe", "strings", "registry"]
 
 # The keys whose JGraph answer differs by design, per recording, by pattern (the first matching
 # pattern's reason). Timings and the build's own byte counts never agree.
@@ -42,6 +42,7 @@ KNOWN = {
         (r"^.*\.registry\.Software/Classes/Interface$",
          "the add-in's own type library declares the three flags interfaces too (JGraph's ids, MathWorks' member names), so four Interface keys are registered where R2025b's library imports MathWorks' mwcomutil.tlb and registers one (decision KO10; ADR 0316; stage K17d's utility library may move them)"),
         (r"^guids\.", "JGraph writes no IDL to read ids from; its ids are its own derivation from the names and the version (ADR 0316)"),
+        (r"^plain\.registry\.Software/Classes/CLSID$", "the first build registers JGraph's COM utility library (its nine classes) beside the add-in when it finds it unregistered, as MATLAB's installer registers mwcomutil.dll (ADR 0317)"),
         (r"^mcc_(compile|badname|badclass)(\..*)?$",
          "R2025b's build fails in mbuild (-T compile:lib; a name that is not an identifier); JGraph refuses such a name before writing anything and takes -T compile:lib as -T codegen (ADR 0315)"),
         (r"^mcc_\w+$|^.*\.(printed|warn)$",
@@ -54,16 +55,22 @@ KNOWN = {
     "com_preinit": [
         (r"^(create\.)?seconds$", "a timing"),
         (r"^host\.", "the client host's own versions"),
-        (r"^util\.|^preinit\.init\.|^preinit\.terminate$", "the COM utility library (MWUtil, MWInitApplication) is stage K17d's"),
+        (r"^preinit\.init\.dictionary$", "an object that is no Excel object is refused with JGraph's text (its Application property is read); R2025b refuses it with none (ADR 0317)"),
         (r"^preinit\.call", "JGraph's add-in runs before MWInitApplication: it needs no Excel Application to call its functions, where R2025b's refuses every call until it has one (ADR 0316)"),
     ],
     "com": [
         (r"^(create\.)?seconds$", "a timing"),
         (r"^host\.", "the client host's own versions"),
         (r"^excel\.version$", "the oracle's own Excel, or none under -NoExcel"),
-        (r"^util\.|^init\.|^terminate|^both\.packed$|^varin\.packed", "the COM utility library (MWUtil's MWPack, MWUnpack, MWInitApplication, MWTerminateApplication, CreateRemoteObject) is stage K17d's"),
-        (r"^in\.(range_.*|struct.*|complex.*|sparse.*|arg_.*|enumvararg|field)$|^pass\.range$|^rangeout\.|^flag\.|^out\.(struct.*|complex|complexmat|sparse.*)$|^out\..*\.members$",
-         "Range objects, the flags' effect on the conversions and MathWorks' value classes (MWStruct, MWComplex, MWSparse, MWArg) are stage K17d's"),
+        # Stage K17d (ADR 0317): the utility library, the flags' effect, Range objects and the value classes.
+        (r"^util\.MWInitApplicationWithMCROptions$", "the refusal names the JGraph Runtime and JGraph's utility ProgID as its source (JGraphComUtil.MWUtil25.2, decision KO10; ADR 0317)"),
+        (r"^util\.CreateRemoteObject$", "JGraph's CreateRemoteObject makes the object of the ProgID in this process; R2025b's asks DCOM for a remote one and fails with 'Class not registered' (ADR 0317)"),
+        (r"^in\.complex_noimag$", "a complex value whose imaginary part is zero is real to JGraph's engine (ADR 0266); R2025b keeps 1+0i (ADR 0317)"),
+        (r"^in\.flags_object$", "a flags object passed as an argument is refused with JGraph's text; R2025b refuses it with none (ADR 0317)"),
+        (r"^out\.sparselogical$", "JGraph's engine holds a sparse matrix as double (sparsity is an attribute; no logical sparse), so MWSparse's Array is Double() where R2025b's is Boolean() (ADR 0317)"),
+        (r"^rangeout\.datetime$", "a datetime output is refused with a message naming what to return instead; R2025b writes nothing into the Range and raises no error (ADR 0316, ADR 0317)"),
+        (r"^flag\.(OutputAsDate\.(False|True)\.datetime|DateBias\.\d+\.datetimeout)$", "a datetime output is refused with a message naming what to return instead; R2025b answers a type mismatch value (ADR 0316)"),
+        (r"^flag\.InputArrayIndFlag\.\d$", "the engine's message for + over two cells is JGraph's own ('Operator + needs numbers...'); R2025b's is 'Invalid data type. Argument must be numeric, char, or logical.' (open item 247)"),
         (r"^help\.k17_h1$", "the H1 line is answered as written; R2025b's help map widens its UTF-8 as Windows-1252 and eats '% o' as a format (ADR 0314, a MATLAB bug not copied)"),
         (r"^opt\.(middle|emptymiddle|paramnotfound)$|^err\.(defaultmiddle|emptymiddle|unconvertible|nooutputs\.fail)$|^stale\.(2|3|5|7)\.",
          "a refusal of the call's own carries JGraph's text (which argument was left out, what cannot be converted) where R2025b's carries none, or the last MATLAB error's text (ADR 0316)"),
@@ -75,6 +82,32 @@ KNOWN = {
         (r"^out\.(datetime.*|duration|categorical|fhandle.*|table|map|object)$",
          "a value no VARIANT holds is refused with a message naming what to return instead; R2025b answers a type mismatch value (ADR 0316; a datetime may become a DATE in stage K17d)"),
         (r"^out\.complexzero$", "a complex value whose imaginary part is zero is real to JGraph's engine (ADR 0266) and crosses as a double; R2025b answers an MWComplex (ADR 0316)"),
+    ],
+    "com_extra": [
+        (r"^seconds$", "a timing"),
+        (r"^host\.", "the client host's own versions"),
+        (r"^(create\.)?seconds$", "a timing"),
+        (r"^excel\.version$", "the oracle's own Excel"),
+        (r"^x\.Coerce\.(8|9|10|12|13)\.naninf$", "a NaN coerced to an integer class is 0, MATLAB's own int8(NaN); R2025b's conversion answers the type's minimum (ADR 0317, a MATLAB-wrong row)"),
+        (r"^x\.Coerce\.7\.naninf$", "a NaN or an infinity coerced to single stays NaN or Inf; R2025b's conversion answers -FLT_MAX and FLT_MAX (ADR 0317, a MATLAB-wrong row)"),
+        (r"^x\.Coerce\.4\.naninf$", "a NaN coerced to char is 'NaN'; R2025b's is the C runtime's '-nan(ind)' (ADR 0317)"),
+        (r"^x\.Coerce\.8\.ui1$", "a uint8 200 coerced to int8 saturates to 127, MATLAB's own int8(uint8(200)); R2025b's conversion answers 0 (ADR 0317, a MATLAB-wrong row)"),
+        (r"^x\.ReplaceMissing\.\d\.empty_middle$|^x\.(complex\.unset_middle|sparse\.rows_only_middle)$", "a refusal of the call's own carries JGraph's text (which argument was left out); R2025b's carries none, or the last MATLAB error's text (ADR 0316)"),
+        (r"^x\.util\.isjvm_type$", "IsMCRJVMEnabled is false: JGraph has no JVM; R2025b's is true once its runtime has started (ADR 0317)"),
+        (r"^x\.OutputAsDate\.True\.(doublerow|doublemat|mixedrange)$", "a numeric array under OutputAsDate answers dates (or the biased doubles) element by element; R2025b builds an array its own client cannot read (SafeArrayTypeMismatchException; ADR 0317, a MATLAB-wrong row)"),
+        (r"^x\.OutputArrayFormat\.2\.(string|int64)$", "a string answers its text and an int64 its value, as under the default format (ADR 0316)"),
+        (r"^x\.complex\.ints$", "an MWComplex with integer parts is a double complex value: JGraph keeps no complex integer (ADR 0266)"),
+        (r"^x\.complex\.(bool|text|mismatch|mismatch_lengths)$|^x\.sparse\.(variant_indices|int_values|length_mismatch|text_values|2d_array)$|^x\.range\.(worksheet|workbook)$",
+         "a value class filled with what it cannot hold, or an object with no value, is refused with JGraph's text; R2025b refuses it with none (ADR 0317)"),
+        (r"^x\.struct\.(dims_zero|dims_zero_echo|init_dims_negative|init_names_number)$", "MWStruct's refusals name JGraph's utility ProgID as their source (JGraphComUtil.MWStruct25.2, decision KO10), a non-text field name refused in JGraph's words (ADR 0317)"),
+        (r"^x\.sparse\.logical$|^x\.OutputArrayFormat\.2\.sparselogical$", "JGraph's engine holds a sparse matrix as double: a logical MWSparse becomes a sparse double, a sparse logical answers Double() (ADR 0317)"),
+        (r"^x\.util\.create_remote_(util|dictionary|empty|versionless)$", "JGraph's CreateRemoteObject makes the object of any registered ProgID in this process; R2025b's asks DCOM and fails for all but its own classes (ADR 0317)"),
+        (r"^x\.util\.second_util$", "every CreateObject of JGraphComUtil.MWUtil25.2 is a new object; R2025b's MWUtil is one object per process (ADR 0317)"),
+        (r"^x\.util\.unpack_range_larger_target$", "MWUnpack into a Range of several cells writes the array over the range resized from its first cell, as an add-in's output does; R2025b writes the first cell alone (ADR 0317)"),
+        (r"^x\.utilflags\.(arrayformat_put|arrayformat_put_shares|dataconv_put|dataconv_defaults|arrayformat_defaults|members\.af|members\.dc|put_wrong_type)$",
+         "JGraphComUtil.MWArrayFormatFlags and MWDataConversionFlags can be created on their own and put into a flags object; R2025b registers the classes but its class factory refuses them (E_NOTIMPL; ADR 0317)"),
+        (r"^x\.rangeout\.(string|stringarr|int64|bigint)$", "a string, a string array and an int64 are written into the Range as text and a number; R2025b writes nothing (ADR 0316, ADR 0317)"),
+        (r"^x\.rangeout\.(datetimearr|duration|fhandle|object)$", "a value no VARIANT holds is refused with a message naming what to return instead; R2025b writes nothing into the Range and raises no error (ADR 0316, ADR 0317)"),
     ],
     "cells": [
         (r"^seconds$", "a timing"),
@@ -106,6 +139,7 @@ KNOWN = {
          "regsvr32 registers JGraph's add-in without elevation: its DllRegisterServer registers for the current user when it may not for all (exit 0), where R2025b's needs MWRegsvr /useronly after regsvr32 fails (exit 5) (ADR 0316)"),
         (r"^excel\.processes$", "the oracle's own Excel"),
         (r"^registry\.added$", "JGraph's component category stays registered, as the runtime's installer would leave it (decision KO10; ADR 0316)"),
+        (r"^unregister$", "the last DLL unregistered is JGraph's COM utility library, which R2025b's run had no counterpart of (ADR 0317)"),
     ],
 }
 
@@ -120,6 +154,7 @@ SKIPPED = {
     ],
     "com_preinit": [],
     "com": [],
+    "com_extra": [],
     "cells": [],
     "mps": [],
     "payload": [],

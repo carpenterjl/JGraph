@@ -24,6 +24,9 @@ internal sealed class ExcelFlags : ComServed
 
     public override Guid InterfaceId => ExcelComGuids.FlagsInterface;
 
+    /// <summary>MathWorks' defaults, for a conversion with no flags object of its own (the utility library's methods).</summary>
+    public static ExcelFlags Defaults { get; } = new(0, ExcelComGuids.UtilityVersionedProgId("MWUtil"));
+
     public ExcelArrayFormatFlags ArrayFormat { get; private set; }
 
     public ExcelDataConversionFlags DataConversion { get; private set; }
@@ -78,6 +81,9 @@ internal sealed class ExcelFlags : ComServed
             : 0;
         if (pointer != 0 && ComObjects.Of(Native.NativeComCalls.Unwrap(pointer)) is T ours)
         {
+            // The object handed over is served by the COM object the client holds: that one is cached as its
+            // wrapper, so a get answers the same COM identity the client put (x.utilflags.put_then_get_same).
+            ComObjects.Remember(ours, pointer);
             return ours;
         }
 

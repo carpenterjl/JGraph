@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace JGraph.Runtime.Com;
@@ -23,19 +24,19 @@ internal sealed unsafe class ComArguments(Variant** argv, int count)
 
     /// <summary>The <paramref name="index"/>th argument, or null past the end.</summary>
     public Variant* At(int index) => index >= 0 && index < Count && argv != null ? argv[index] : null;
+
+    /// <summary>The <paramref name="index"/>th argument as the COM marshaller reads it; null when missing or VT_EMPTY.</summary>
+    public object? Value(int index)
+    {
+        Variant* v = ExcelVariants.Deref(At(index));
+        return v == null || ExcelVariants.IsMissing(v) ? null : Marshal.GetObjectForNativeVariant((IntPtr)v);
+    }
 }
 
 /// <summary>
-/// VARIANTs read into <see cref="RuntimeValue"/>s and written from them at an Excel add-in's call
-/// boundary (compiler and SDK plan, stage K17c), by the rules stage K17a measured R2025b's add-in
-/// following (<c>recordings/k17_com.out.txt</c>: in.*, out.*, pass.*): every scalar type to its
-/// MATLAB class, a BSTR a char row, a DATE a datenum, a SAFEARRAY a matrix of its element class or,
-/// for Variants, a matrix when the elements are numbers of one class, a logical array when they
-/// are booleans, a char matrix when each is one character and a cell otherwise; and back, a value's
-/// class to the VARIANT type it came from, a matrix to a SAFEARRAY, a cell to one of Variants, an
-/// empty value and NaN (under the default flags) to nothing. The flags' effect, Range objects and
-/// MathWorks' value classes (MWStruct, MWComplex, MWSparse, MWArg) are stage K17d's; what they
-/// would carry is refused here with a message.
+/// The VARIANTs at an Excel add-in's call boundary (compiler and SDK plan, stages K17c and K17d):
+/// reading one as the COM marshaller does, writing one, telling a missing argument, and the slots
+/// a client passes by reference. The conversion rules themselves are <see cref="ExcelConversion"/>'s.
 /// </summary>
 [System.Runtime.Versioning.SupportedOSPlatform("windows")]
 internal static unsafe class ExcelVariants
@@ -111,205 +112,26 @@ internal static unsafe class ExcelVariants
         return false;
     }
 
-    /// <summary>Reads an argument as the engine's value, by the measured rules.</summary>
-    /// <exception cref="ComCallException">The value cannot cross yet (an object, a Range) or at all.</exception>
-    public static RuntimeValue Read(Variant* v, ComServed owner)
+    /// <summary>What a VARIANT holds, as the COM marshaller reads it; null for VT_EMPTY and for a missing argument.</summary>
+    public static object? Read(Variant* v)
     {
         v = Deref(v);
         if (v == null)
         {
-            return RuntimeValue.Empty();
+            return null;
         }
 
         ushort vt = (ushort)(v->Vt & ~VtByRef);
-        bool byRef = (v->Vt & VtByRef) != 0;
-        switch (vt)
+        if (vt == VtEmpty)
         {
-            case VtEmpty:
-                return RuntimeValue.Empty();
-            case VtNull:
-                // in.dbnull: a DBNull is [].
-                return RuntimeValue.Empty();
-            case VtError:
-                // in.err_na: an Excel error cell is its int32 code.
-                return RuntimeNumeric.Int32([byRef ? *(int*)v->Pointer : v->I4], 1, 1);
-            case VtDispatch:
-            case VtUnknown:
-            {
-                nint pointer = byRef ? *(nint*)v->Pointer : v->Pointer;
-                if (pointer == 0)
-                {
-                    return RuntimeValue.Empty();
-                }
-
-                if (ComObjects.Of(Native.NativeComCalls.Unwrap(pointer)) is { } ours)
-                {
-                    string kind = ours is ExcelComponent ? "n add-in" : " " + ours.GetType().Name.Replace("Excel", "MW", StringComparison.Ordinal);
-                    throw new ComCallException(ComCallException.Fail, owner.ProgId, $"A{kind} object cannot be passed to a function.");
-                }
-
-                throw new ComCallException(ComCallException.Fail, owner.ProgId,
-                    "An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).");
-            }
+            return null;
         }
 
-        object? value = Marshal.GetObjectForNativeVariant((IntPtr)v);
-        return value is Array array ? FromArray(array, topLevel: true, owner) : FromScalar(value, owner);
+        return Marshal.GetObjectForNativeVariant((IntPtr)v);
     }
 
-    private static RuntimeValue FromScalar(object? value, ComServed owner) => value switch
-    {
-        null => RuntimeValue.Empty(),
-        DBNull => RuntimeValue.Empty(),
-        System.Reflection.Missing => RuntimeNumeric.Int32([ParamNotFound], 1, 1),
-        double d => RuntimeValue.Scalar(d),
-        float f => RuntimeNumeric.Single([f], 1, 1),
-        int i => RuntimeNumeric.Int32([i], 1, 1),
-        short s => RuntimeNumeric.Int16([s], 1, 1),
-        sbyte b => RuntimeNumeric.Int8([b], 1, 1),
-        byte b => RuntimeNumeric.UInt8([b], 1, 1),
-        ushort u => RuntimeNumeric.UInt16([u], 1, 1),
-        uint u => RuntimeNumeric.UInt32([u], 1, 1),
-        long l => RuntimeNumeric.Int64([l], 1, 1),
-        ulong l => RuntimeNumeric.UInt64([l], 1, 1),
-        bool t => RuntimeValue.Scalar(t),
-        char c => RuntimeNumeric.UInt16([c], 1, 1),
-        string text => text.Length == 0 ? new RuntimeChar("", [0, 0]) : RuntimeChar.Row(text),
-        DateTime date => RuntimeValue.Scalar(date.ToOADate() + DateBias),
-        decimal m => RuntimeValue.Scalar((double)m),
-        _ => throw new ComCallException(ComCallException.Fail, owner.ProgId, $"A {value.GetType().Name} cannot be passed to a function."),
-    };
-
-    /// <summary>
-    /// A SAFEARRAY: a one-dimensional one is a row (in.arr_r8), others keep their shape; an array
-    /// of Variants is classified by its elements at the top level and is a cell when nested
-    /// (in.arr_var_numbers, in.arr_jagged).
-    /// </summary>
-    private static RuntimeValue FromArray(Array array, bool topLevel, ComServed owner)
-    {
-        int rank = array.Rank;
-        int[] dims = rank == 1 ? [1, array.GetLength(0)] : [.. Enumerable.Range(0, rank).Select(array.GetLength)];
-        int count = 1;
-        foreach (int d in dims)
-        {
-            count *= d;
-        }
-
-        var lower = new int[rank];
-        for (int d = 0; d < rank; d++)
-        {
-            lower[d] = array.GetLowerBound(d);
-        }
-
-        // The elements in MATLAB's column-major order: the first subscript fastest.
-        var elements = new object?[count];
-        var subs = new int[rank];
-        for (int k = 0; k < count; k++)
-        {
-            int rest = k;
-            for (int d = 0; d < rank; d++)
-            {
-                int extent = rank == 1 ? dims[1] : dims[d];
-                subs[d] = rest % extent + lower[d];
-                rest /= extent;
-            }
-
-            elements[k] = array.GetValue(subs);
-        }
-
-        Type element = array.GetType().GetElementType()!;
-        if (element == typeof(double) || element == typeof(float) || element == typeof(int) || element == typeof(short) || element == typeof(sbyte)
-            || element == typeof(byte) || element == typeof(ushort) || element == typeof(uint) || element == typeof(long) || element == typeof(ulong)
-            || element == typeof(decimal) || element == typeof(DateTime) || element == typeof(char))
-        {
-            return NumericOf(elements, ClassOf(element), dims);
-        }
-
-        if (element == typeof(bool))
-        {
-            return new RuntimeLogical([.. elements.Select(static e => (bool)e!)], dims);
-        }
-
-        // Variants (and BSTRs): each element on its own, then the shape they make together.
-        var values = new RuntimeValue?[count];
-        var classes = new HashSet<string>(StringComparer.Ordinal);
-        bool allSingleChars = true;
-        bool allLogical = true;
-        for (int k = 0; k < count; k++)
-        {
-            object? e = elements[k];
-            if (e is null || e is DBNull)
-            {
-                values[k] = null;
-                continue;
-            }
-
-            RuntimeValue converted = e is Array inner ? FromArray(inner, topLevel: false, owner) : FromScalar(e, owner);
-            values[k] = converted;
-            if (converted is RuntimeNumeric { Count: 1 } n && n.Dimensions.Count == 2)
-            {
-                classes.Add(n.ClassName);
-            }
-            else
-            {
-                classes.Add("*");
-            }
-
-            allLogical &= converted is RuntimeLogical { Count: 1 };
-            allSingleChars &= converted is RuntimeChar { Count: 1 };
-        }
-
-        int given = values.Count(static v => v is not null);
-        if (topLevel && (given == 0 || (classes.Count == 1 && !classes.Contains("*"))))
-        {
-            // in.arr_var_numbers, in.arr_var_with_empty: numbers of one class, an empty element 0.
-            string cls = given == 0 ? "double" : classes.First();
-            return Numeric([.. values.Select(static v => v is RuntimeNumeric n ? n.Real[0] : 0.0)], cls, dims);
-        }
-
-        if (topLevel && given == count && allLogical)
-        {
-            return new RuntimeLogical([.. values.Select(static v => ((RuntimeLogical)v!).Elements[0])], dims);
-        }
-
-        if (topLevel && given == count && allSingleChars)
-        {
-            // in.arr_str_2d: one character each makes a char matrix.
-            return new RuntimeChar(string.Concat(values.Select(static v => ((RuntimeChar)v!).Characters)), dims);
-        }
-
-        return new RuntimeCell([.. values.Select(static v => v ?? RuntimeValue.Empty())], dims);
-    }
-
-    private static string ClassOf(Type element) =>
-        element == typeof(float) ? "single"
-        : element == typeof(int) ? "int32"
-        : element == typeof(short) ? "int16"
-        : element == typeof(sbyte) ? "int8"
-        : element == typeof(byte) ? "uint8"
-        : element == typeof(ushort) || element == typeof(char) ? "uint16"
-        : element == typeof(uint) ? "uint32"
-        : element == typeof(long) ? "int64"
-        : element == typeof(ulong) ? "uint64"
-        : "double";
-
-    private static RuntimeNumeric NumericOf(IEnumerable<object?> elements, string cls, int[] dims) =>
-        Numeric([.. elements.Select(static e => e switch
-        {
-            null or DBNull => 0.0,
-            DateTime date => date.ToOADate() + DateBias,
-            decimal m => (double)m,
-            char c => c,
-            IConvertible c => c.ToDouble(System.Globalization.CultureInfo.InvariantCulture),
-            _ => 0.0,
-        })], cls, dims);
-
-    private static RuntimeNumeric Numeric(double[] values, string cls, int[] dims) => new(cls, values, null, dims);
-
-    // ---- Out ---------------------------------------------------------------------------------
-
-    /// <summary>Writes a member's answer into <paramref name="target"/>: a value, a served object, text, a number or nothing.</summary>
-    public static void WriteResult(object? answer, Variant* target, ComServed owner)
+    /// <summary>Writes <paramref name="value"/> into <paramref name="target"/>, cleared first: a served object wrapped (inside an array too), anything else as the marshaller writes it.</summary>
+    public static void Write(object? value, Variant* target)
     {
         if (target == null)
         {
@@ -317,7 +139,7 @@ internal static unsafe class ExcelVariants
         }
 
         VariantClear(target);
-        switch (answer)
+        switch (value)
         {
             case null:
                 return;
@@ -325,32 +147,80 @@ internal static unsafe class ExcelVariants
                 target->Pointer = ComObjects.Wrap(served);
                 target->Vt = VtDispatch;
                 return;
-            case RuntimeValue value:
-                Write(value, target, owner);
-                return;
             default:
-                Marshal.GetNativeVariantForObject(answer, (IntPtr)target);
+                Marshal.GetNativeVariantForObject(Wrapped(value), (IntPtr)target);
                 return;
-        }
-    }
-
-    /// <summary>Writes <paramref name="value"/> into <paramref name="target"/>, cleared first.</summary>
-    public static void Write(RuntimeValue value, Variant* target, ComServed owner)
-    {
-        object? made = ToDotNet(value, owner);
-        VariantClear(target);
-        if (made is not null)
-        {
-            Marshal.GetNativeVariantForObject(made, (IntPtr)target);
         }
     }
 
     /// <summary>
-    /// Writes an output into the slot a client gave for it: through a byref VARIANT (what VBA and
-    /// a .NET [ref] pass), into a byref scalar by conversion, and nowhere for a slot passed by
-    /// value (k17_com: err.slotnotbyref answers nothing and no error).
+    /// A value with every served object in it replaced by a runtime-callable wrapper of its COM
+    /// object, so an array of Variants holding one marshals the object jgrt serves and not a .NET
+    /// class object (x.OutputArrayFormat.2.complex: an array of MWComplex objects).
     /// </summary>
-    public static void WriteSlot(Variant* slot, RuntimeValue value, ComServed owner)
+    public static object Wrapped(object value)
+    {
+        if (value is ComServed served)
+        {
+            nint wrapper = ComObjects.Wrap(served);
+            try
+            {
+                return Marshal.GetObjectForIUnknown(wrapper);
+            }
+            finally
+            {
+                Marshal.Release(wrapper);
+            }
+        }
+
+        if (value is Array array && array.GetType().GetElementType() == typeof(object))
+        {
+            int[] lengths = [.. Enumerable.Range(0, array.Rank).Select(array.GetLength)];
+            int[] lower = [.. Enumerable.Range(0, array.Rank).Select(array.GetLowerBound)];
+            bool any = false;
+            foreach (object? element in array)
+            {
+                if (element is ComServed || (element is Array inner && inner.GetType().GetElementType() == typeof(object)))
+                {
+                    any = true;
+                    break;
+                }
+            }
+
+            if (!any)
+            {
+                return value;
+            }
+
+            Array made = Array.CreateInstance(typeof(object), lengths, lower);
+            var subs = new int[array.Rank];
+            object?[] elements = ExcelConversion.ColumnMajor(array);
+            for (int k = 0; k < elements.Length; k++)
+            {
+                int rest = k;
+                for (int d = 0; d < array.Rank; d++)
+                {
+                    subs[d] = rest % lengths[d] + lower[d];
+                    rest /= lengths[d];
+                }
+
+                made.SetValue(elements[k] is null ? null : Wrapped(elements[k]!), subs);
+            }
+
+            return made;
+        }
+
+        return value;
+    }
+
+    /// <summary>
+    /// Writes an output into the slot a client gave for it: through a byref VARIANT (what VBA and a
+    /// .NET [ref] pass), into a byref scalar by conversion, and nowhere for a slot passed by value
+    /// (k17_com: err.slotnotbyref answers nothing and no error). A slot holding a Range (or another
+    /// object with Value2) is written through the Range (stage K17d; <see cref="ExcelConversion.WriteRange"/>),
+    /// which replaces the slot's object by the range written.
+    /// </summary>
+    public static void WriteSlot(Variant* slot, RuntimeValue value, ExcelFlags flags, ComServed owner, int depth = 0)
     {
         if (slot == null || (slot->Vt & VtByRef) == 0)
         {
@@ -359,14 +229,57 @@ internal static unsafe class ExcelVariants
 
         if ((slot->Vt & ~VtByRef) == VtVariant)
         {
-            Write(value, (Variant*)slot->Pointer, owner);
+            Variant* target = Deref(slot);
+            if (target == null)
+            {
+                return;
+            }
+
+            if ((target->Vt & VtByRef) != 0 && (target->Vt & ~VtByRef) != VtVariant)
+            {
+                // The client's own variable is a typed one ([ref]$d of a double): written through by conversion.
+                WriteSlot(target, value, flags, owner, depth);
+                return;
+            }
+
+            if ((target->Vt & ~VtByRef) is VtDispatch or VtUnknown && Pointer(target) != 0
+                && ComObjects.Of(Native.NativeComCalls.Unwrap(Pointer(target))) is null)
+            {
+                object range = Marshal.GetObjectForIUnknown(Pointer(target));
+                object? written = ExcelConversion.WriteRange(range, value, flags, owner, depth);
+                if (written is not null && !ReferenceEquals(written, range))
+                {
+                    Write(written, target);
+                }
+
+                return;
+            }
+
+            Write(ExcelConversion.ToClient(value, flags, owner, depth), target);
+            return;
+        }
+
+        if ((slot->Vt & ~VtByRef) is VtDispatch or VtUnknown)
+        {
+            nint pointer = *(nint*)slot->Pointer;
+            if (pointer != 0 && ComObjects.Of(Native.NativeComCalls.Unwrap(pointer)) is null)
+            {
+                object range = Marshal.GetObjectForIUnknown(pointer);
+                object? written = ExcelConversion.WriteRange(range, value, flags, owner, depth);
+                if (written is not null && !ReferenceEquals(written, range))
+                {
+                    Marshal.Release(pointer);
+                    *(nint*)slot->Pointer = Marshal.GetIDispatchForObject(written);
+                }
+            }
+
             return;
         }
 
         Variant made;
         made.Vt = VtEmpty;
         made.I8 = 0;
-        Write(value, &made, owner);
+        Write(ExcelConversion.ToClient(value, flags, owner, depth), &made);
         ushort wanted = (ushort)(slot->Vt & ~VtByRef);
         try
         {
@@ -400,157 +313,128 @@ internal static unsafe class ExcelVariants
         }
     }
 
-    /// <summary>The .NET object the COM marshaller turns into the VARIANT R2025b's add-in answers; null for VT_EMPTY.</summary>
-    /// <exception cref="ComCallException">The value's class is stage K17d's (struct, complex, sparse) or cannot cross.</exception>
-    private static object? ToDotNet(RuntimeValue value, ComServed owner)
+    /// <summary>
+    /// Writes <paramref name="value"/>, already converted, into a byref slot (a utility method's
+    /// <c>[in, out] VARIANT*</c>): through a Range when the slot holds one (nothing clears the cell:
+    /// x.util.unpack_range_null_element), into a byref VARIANT, or into a byref scalar by conversion
+    /// (a client's <c>[ref]$d</c> of a double is VT_BYREF | VT_R8, util.MWDate2VariantDate.datenum)
+    /// when the value is of that very type, and not at all otherwise: R2025b's utility writes a
+    /// number into a client's string variable no more than into one it cannot (x.util.pack_prefilled,
+    /// x.util.unpack_start_last leave 'old' as it was).
+    /// </summary>
+    public static void WriteObjectSlot(Variant* slot, object? value, bool autoResize, ComServed owner)
     {
-        int[] dims = [.. value.Dimensions];
-        switch (value)
+        if (slot == null || (slot->Vt & VtByRef) == 0)
         {
-            case RuntimeNumeric numeric:
-            {
-                if (numeric.Imaginary is not null)
-                {
-                    throw Pending(owner, "A complex value", "an MWComplex object");
-                }
-
-                if (numeric.Count == 0)
-                {
-                    // out.empty, out.emptyrow: an empty value is nothing.
-                    return null;
-                }
-
-                bool anyNaN = numeric.ClassName is "double" or "single" && numeric.Real.Any(double.IsNaN);
-                if (numeric.Count == 1 && IsScalar(dims))
-                {
-                    // out.nan: NaN is nothing under the default ReplaceMatlabNaN; out.doubleneg0: -0 is 0.
-                    return anyNaN ? null : Scalar(numeric.ClassName, numeric.Real[0]);
-                }
-
-                if (anyNaN)
-                {
-                    // out.nanmat: a matrix with NaN becomes Variants, nothing where the NaN was.
-                    return Fill(typeof(object), dims, k => double.IsNaN(numeric.Real[k]) ? null : Scalar(numeric.ClassName, numeric.Real[k]));
-                }
-
-                Type element = ElementType(numeric.ClassName);
-                return Fill(element, dims, k => Scalar(numeric.ClassName, numeric.Real[k]));
-            }
-
-            case RuntimeLogical logical:
-                if (logical.Count == 0)
-                {
-                    return null;
-                }
-
-                return logical.Count == 1 && IsScalar(dims) ? logical.Elements[0] : Fill(typeof(bool), dims, k => logical.Elements[k]);
-
-            case RuntimeChar text:
-            {
-                if (text.Count == 0)
-                {
-                    // out.charempty: '' is nothing.
-                    return null;
-                }
-
-                if (dims.Length == 2 && dims[0] == 1)
-                {
-                    return text.ToString();
-                }
-
-                // out.charmat: a char matrix is one string per character, in its shape.
-                string all = text.Characters;
-                return Fill(typeof(string), dims, k => all[k].ToString());
-            }
-
-            case RuntimeString strings:
-                // R2025b answers a type mismatch for every string; JGraph answers the text (ADR 0316).
-                if (strings.Count == 1 && IsScalar(dims))
-                {
-                    return strings.Elements[0] ?? "";
-                }
-
-                return strings.Count == 0 ? null : Fill(typeof(string), dims, k => strings.Elements[k] ?? "");
-
-            case RuntimeCell cell:
-                // out.cell, out.cellempty: a cell is Variants in its shape, an empty one an empty array, not nothing.
-                return Fill(typeof(object), dims, k => ToDotNet(cell.Elements[k], owner));
-
-            case RuntimeStruct:
-                throw Pending(owner, "A struct", "an MWStruct object");
-            case RuntimeSparse:
-                throw Pending(owner, "A sparse matrix", "an MWSparse object");
-            default:
-                throw new ComCallException(ComCallException.Fail, owner.ProgId,
-                    $"A {value.ClassName} value cannot be returned to a COM client; return a number, text, a logical or a cell of them.");
+            return;
         }
+
+        // The chain of byref VARIANTs ends at the client's own: a Range (by value, or by reference as a
+        // [ref]$r of a COM object arrives), a VARIANT to write into, or a byref scalar (ITypeInfo::Invoke
+        // hands a [ref]$d of a double over as a pointer to its VT_BYREF | VT_R8 VARIANT).
+        slot = Deref(slot);
+        if ((slot->Vt & ~VtByRef) is VtDispatch or VtUnknown && Pointer(slot) != 0 && ComObjects.Of(Native.NativeComCalls.Unwrap(Pointer(slot))) is null)
+        {
+            object range = Marshal.GetObjectForIUnknown(Pointer(slot));
+            object? written;
+            if (value is null)
+            {
+                try
+                {
+                    ExcelConversion.Set(range, null);
+                }
+                catch (Exception ex) when (ex is System.Reflection.TargetInvocationException or COMException or MissingMemberException)
+                {
+                    // Not a Range after all; the slot keeps its object.
+                }
+
+                return;
+            }
+
+            written = ExcelConversion.WriteRangeObject(range, value, autoResize, transpose: false, owner);
+            if (written is not null && !ReferenceEquals(written, range))
+            {
+                if ((slot->Vt & VtByRef) != 0)
+                {
+                    Marshal.Release(*(nint*)slot->Pointer);
+                    *(nint*)slot->Pointer = Marshal.GetIDispatchForObject(written);
+                }
+                else
+                {
+                    Write(written, slot);
+                }
+            }
+
+            return;
+        }
+
+        if ((slot->Vt & VtByRef) != 0 && (slot->Vt & ~VtByRef) != VtVariant)
+        {
+            Variant made;
+            made.Vt = VtEmpty;
+            made.I8 = 0;
+            Write(value, &made);
+            ushort wanted = (ushort)(slot->Vt & ~VtByRef);
+            try
+            {
+                if (made.Vt != wanted)
+                {
+                    return;
+                }
+
+                switch (wanted)
+                {
+                    case VtR8: *(double*)slot->Pointer = made.R8; break;
+                    case VtR4: *(float*)slot->Pointer = *(float*)&made.R8; break;
+                    case VtI4: case VtInt: case VtUI4: case VtUInt: case VtError: *(int*)slot->Pointer = made.I4; break;
+                    case VtI2: case VtUI2: case VtBool: *(short*)slot->Pointer = made.I2; break;
+                    case VtI8: case VtUI8: case VtDate: case VtCy: *(long*)slot->Pointer = made.I8; break;
+                    case VtBstr: case VtDispatch: case VtUnknown:
+                        *(nint*)slot->Pointer = made.Pointer;
+                        made.Vt = VtEmpty;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            finally
+            {
+                VariantClear(&made);
+            }
+
+            return;
+        }
+
+        Write(value, slot);
     }
 
-    private static ComCallException Pending(ComServed owner, string what, string becomes) =>
-        new(ComCallException.Fail, owner.ProgId, $"{what} cannot be returned to a COM client yet: it becomes {becomes} in stage K17d of the compiler and SDK plan.");
+    private static nint Pointer(Variant* v) => (v->Vt & VtByRef) != 0 ? *(nint*)v->Pointer : v->Pointer;
 
-    private static bool IsScalar(int[] dims) => dims.All(static d => d == 1);
-
-    private static Type ElementType(string cls) => cls switch
+    /// <summary>The text oleaut32 makes of a VARIANT (a date in the user's format, True and False, a number's digits): what <c>VariantChangeType</c> to BSTR answers.</summary>
+    public static string? TextOf(object value)
     {
-        "single" => typeof(float),
-        "int8" => typeof(sbyte),
-        "uint8" => typeof(byte),
-        "int16" => typeof(short),
-        "uint16" => typeof(ushort),
-        "int32" => typeof(int),
-        "uint32" => typeof(uint),
-        "int64" => typeof(long),
-        "uint64" => typeof(ulong),
-        _ => typeof(double),
-    };
-
-    /// <summary>A scalar in the .NET type its class marshals to (out.single, out.int8, out.uint32: the VARIANT type of the class).</summary>
-    private static object Scalar(string cls, double x) => cls switch
-    {
-        "single" => (object)(float)x,
-        "int8" => (object)(sbyte)x,
-        "uint8" => (object)(byte)x,
-        "int16" => (object)(short)x,
-        "uint16" => (object)(ushort)x,
-        "int32" => (object)(int)x,
-        "uint32" => (object)(uint)x,
-        "int64" => (object)(long)x,
-        "uint64" => (object)(ulong)x,
-        _ => (object)(x == 0 ? 0.0 : x),
-    };
-
-    /// <summary>
-    /// An array of <paramref name="element"/> in MATLAB's shape, element k (column-major) from
-    /// <paramref name="at"/>, with every lower bound 1: the SAFEARRAYs R2025b's add-in answers are
-    /// one-based, as VBA's are (k17_com: out.doublerow [1..1,1..3], out.cellempty [1..0,1..0]).
-    /// </summary>
-    private static Array Fill(Type element, int[] dims, Func<int, object?> at)
-    {
-        int[] shape = dims.Length >= 2 ? dims : [1, dims.Length == 1 ? dims[0] : 0];
-        var lower = new int[shape.Length];
-        Array.Fill(lower, 1);
-        Array made = Array.CreateInstance(element, shape, lower);
-        int count = 1;
-        foreach (int d in shape)
+        Variant source;
+        source.Vt = VtEmpty;
+        source.I8 = 0;
+        Variant made;
+        made.Vt = VtEmpty;
+        made.I8 = 0;
+        Marshal.GetNativeVariantForObject(value, (IntPtr)(&source));
+        try
         {
-            count *= d;
-        }
-
-        var subs = new int[shape.Length];
-        for (int k = 0; k < count; k++)
-        {
-            int rest = k;
-            for (int d = 0; d < shape.Length; d++)
+            int hr = VariantChangeType(&made, &source, 0, VtBstr);
+            if (hr < 0)
             {
-                subs[d] = rest % shape[d] + 1;
-                rest /= shape[d];
+                return null;
             }
 
-            made.SetValue(at(k), subs);
+            return Marshal.GetObjectForNativeVariant((IntPtr)(&made)) as string;
         }
-
-        return made;
+        finally
+        {
+            VariantClear(&made);
+            VariantClear(&source);
+        }
     }
 
     [DllImport("oleaut32.dll")]

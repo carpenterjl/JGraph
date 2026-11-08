@@ -1,4 +1,4 @@
-== excel: 1004 keys, 259 agree, 745 recorded divergences, 0 unexplained, 30 only in JGraph's
+== excel: 1004 keys, 258 agree, 746 recorded divergences, 0 unexplained, 30 only in JGraph's
   divergence (2): the engine's own version; JGraph's build needs no C++ compiler (KO9)
     matlab.version, compiler.version
   divergence (78): an object's or a cell column's display is JGraph's own layout, not R2025b's aligned one (open item 194), and JGraph's runtime is one install, listed alone where R2025b lists its add-ons (ADR 0267)
@@ -23,6 +23,8 @@
     plain.file.K17Xl_com.cpp, plain.file.K17Xl_com.hpp, plain.file.k17xl.def, plain.file.k17xl.rc, plain.file.k17xl_dll.cpp, plain.file.k17xl_idl.idl, plain2.file.K17Xl_com.cpp, plain2.file.K17Xl_com.hpp, plain2.file.k17xl.def, plain2.file.k17xl.rc, plain2.file.k17xl_dll.cpp, plain2.file.k17xl_idl.idl ...
   divergence (38): JGraph's runtime is one install (35010), listed alone where R2025b lists its add-ons (ADR 0267)
     plain.file.buildresult.json, plain.file.requiredMCRProducts.txt, plain2.file.buildresult.json, plain2.file.requiredMCRProducts.txt, bas.file.buildresult.json, bas.file.requiredMCRProducts.txt, noembed.file.buildresult.json, noembed.file.requiredMCRProducts.txt, debug.file.buildresult.json, debug.file.requiredMCRProducts.txt, v2.file.buildresult.json, v2.file.requiredMCRProducts.txt ...
+  divergence (1): the first build registers JGraph's COM utility library (its nine classes) beside the add-in when it finds it unregistered, as MATLAB's installer registers mwcomutil.dll (ADR 0317)
+    plain.registry.Software/Classes/CLSID
   divergence (24): JGraph registers its 64-bit type library alone (a win64 entry) where R2025b's MWRegsvr writes a win32 entry beside it (ADR 0316)
     plain.registry.Software/Classes/TypeLib, bas.registry.Software/Classes/TypeLib, noembed.registry.Software/Classes/TypeLib, debug.registry.Software/Classes/TypeLib, v2.registry.Software/Classes/TypeLib, v05.registry.Software/Classes/TypeLib, v3456.registry.Software/Classes/TypeLib, vzero.registry.Software/Classes/TypeLib, defaults.registry.Software/Classes/TypeLib, additional.registry.Software/Classes/TypeLib, pfile.registry.Software/Classes/TypeLib, classname.registry.Software/Classes/TypeLib ...
   divergence (1): the add-in's own type library declares the three flags interfaces too (JGraph's ids, MathWorks' member names), so four Interface keys are registered where R2025b's library imports MathWorks' mwcomutil.tlb and registers one (decision KO10; ADR 0316; stage K17d's utility library may move them)
@@ -35,16 +37,14 @@
     mcc_compile, mcc_compile.files, mcc_compile.warn, mcc_badname, mcc_badname.files, mcc_badname.warn, mcc_badclass, mcc_badclass.files, mcc_badclass.warn
   divergence (194): the Excel client for the Production Server is stage K17f's; JGraph's probe run stops after the add-in sections until then (run-k17.ps1 -UpTo addin)
     copts.properties, copts.class, copts.superclasses, copts.derived, copts.noargs, copts.onefile, copts.addinresults, copts.missingarchive, copts.txtarchive, copts.noext, copts.results.nv, copts.results.odd ...
-== com_preinit: 26 keys, 15 agree, 11 recorded divergences, 0 unexplained, 2 only in JGraph's
-  divergence (7): the COM utility library (MWUtil, MWInitApplication) is stage K17d's
-    util.create, util.IsMCRInitialized.before, util.IsMCRJVMEnabled, util.IsMCRInitialized.after, preinit.init.dictionary, preinit.init.excel, preinit.terminate
+== com_preinit: 26 keys, 21 agree, 5 recorded divergences, 0 unexplained, 2 only in JGraph's
   divergence (1): a timing
     create.seconds
   divergence (3): JGraph's add-in runs before MWInitApplication: it needs no Excel Application to call its functions, where R2025b's refuses every call until it has one (ADR 0316)
     preinit.call, preinit.call.direct, preinit.call.after.dictionary
-== com: 559 keys, 342 agree, 217 recorded divergences, 0 unexplained, 3 only in JGraph's
-  divergence (37): the COM utility library (MWUtil's MWPack, MWUnpack, MWInitApplication, MWTerminateApplication, CreateRemoteObject) is stage K17d's
-    util.create, util.IsMCRInitialized.before, util.IsMCRJVMEnabled, util.IsMCRInitialized.after, init.excel, init.excel.twice, util.IsMCRInitialized.running, both.packed, varin.packed, varin.packedarray, util.MWPack.three, util.MWPack.none ...
+  divergence (1): an object that is no Excel object is refused with JGraph's text (its Application property is read); R2025b refuses it with none (ADR 0317)
+    preinit.init.dictionary
+== com: 559 keys, 508 agree, 51 recorded divergences, 0 unexplained, 3 only in JGraph's
   divergence (1): a timing
     create.seconds
   divergence (1): the H1 line is answered as written; R2025b's help map widens its UTF-8 as Windows-1252 and eats '% o' as a format (ADR 0314, a MATLAB bug not copied)
@@ -55,16 +55,67 @@
     in.i8, out.int64, out.uint64, pass.i8
   divergence (3): an empty array crosses as an empty double of its shape; R2025b refuses an empty double array with no text and makes an empty Variant array int16 (ADR 0316)
     in.arr_r8_empty, in.arr_r8_empty2d, in.arr_var_empty
-  divergence (2): an object JGraph cannot convert is refused with a message; R2025b refuses it with none (ADR 0316)
-    in.dispatch_other, in.flags_object
-  divergence (143): Range objects, the flags' effect on the conversions and MathWorks' value classes (MWStruct, MWComplex, MWSparse, MWArg) are stage K17d's
-    in.range_one, in.range_2x2, in.range_col, in.range_blank, in.range_blanks, in.range_error, in.range_date, in.struct, in.struct_nested, in.struct_empty, in.complex, in.complex_array ...
+  divergence (1): an object JGraph cannot convert is refused with a message; R2025b refuses it with none (ADR 0316)
+    in.dispatch_other
+  divergence (1): a complex value whose imaginary part is zero is real to JGraph's engine (ADR 0266); R2025b keeps 1+0i (ADR 0317)
+    in.complex_noimag
+  divergence (1): a flags object passed as an argument is refused with JGraph's text; R2025b refuses it with none (ADR 0317)
+    in.flags_object
   divergence (4): a string answers its text, a string array an array of them; R2025b answers a type mismatch (ADR 0316)
     out.string, out.stringarr, out.stringmissing, out.stringempty
   divergence (1): a complex value whose imaginary part is zero is real to JGraph's engine (ADR 0266) and crosses as a double; R2025b answers an MWComplex (ADR 0316)
     out.complexzero
+  divergence (1): JGraph's engine holds a sparse matrix as double (sparsity is an attribute; no logical sparse), so MWSparse's Array is Double() where R2025b's is Boolean() (ADR 0317)
+    out.sparselogical
   divergence (10): a value no VARIANT holds is refused with a message naming what to return instead; R2025b answers a type mismatch value (ADR 0316; a datetime may become a DATE in stage K17d)
     out.datetime, out.datetimearr, out.datetimenat, out.duration, out.categorical, out.fhandle, out.fhandleanon, out.table, out.map, out.object
+  divergence (1): a datetime output is refused with a message naming what to return instead; R2025b writes nothing into the Range and raises no error (ADR 0316, ADR 0317)
+    rangeout.datetime
+  divergence (4): the engine's message for + over two cells is JGraph's own ('Operator + needs numbers...'); R2025b's is 'Invalid data type. Argument must be numeric, char, or logical.' (open item 247)
+    flag.InputArrayIndFlag.0, flag.InputArrayIndFlag.1, flag.InputArrayIndFlag.2, flag.InputArrayIndFlag.3
+  divergence (5): a datetime output is refused with a message naming what to return instead; R2025b answers a type mismatch value (ADR 0316)
+    flag.OutputAsDate.False.datetime, flag.OutputAsDate.True.datetime, flag.DateBias.0.datetimeout, flag.DateBias.693960.datetimeout, flag.DateBias.1.datetimeout
+  divergence (1): JGraph's CreateRemoteObject makes the object of the ProgID in this process; R2025b's asks DCOM for a remote one and fails with 'Class not registered' (ADR 0317)
+    util.CreateRemoteObject
+  divergence (1): the refusal names the JGraph Runtime and JGraph's utility ProgID as its source (JGraphComUtil.MWUtil25.2, decision KO10; ADR 0317)
+    util.MWInitApplicationWithMCROptions
+== com_extra: 1076 keys, 1021 agree, 55 recorded divergences, 0 unexplained, 0 only in JGraph's
+  divergence (2): a timing
+    create.seconds, seconds
+  divergence (2): a string answers its text and an int64 its value, as under the default format (ADR 0316)
+    x.OutputArrayFormat.2.int64, x.OutputArrayFormat.2.string
+  divergence (2): JGraph's engine holds a sparse matrix as double: a logical MWSparse becomes a sparse double, a sparse logical answers Double() (ADR 0317)
+    x.OutputArrayFormat.2.sparselogical, x.sparse.logical
+  divergence (1): a NaN coerced to char is 'NaN'; R2025b's is the C runtime's '-nan(ind)' (ADR 0317)
+    x.Coerce.4.naninf
+  divergence (1): a NaN or an infinity coerced to single stays NaN or Inf; R2025b's conversion answers -FLT_MAX and FLT_MAX (ADR 0317, a MATLAB-wrong row)
+    x.Coerce.7.naninf
+  divergence (3): a NaN coerced to an integer class is 0, MATLAB's own int8(NaN); R2025b's conversion answers the type's minimum (ADR 0317, a MATLAB-wrong row)
+    x.Coerce.8.naninf, x.Coerce.10.naninf, x.Coerce.12.naninf
+  divergence (1): a uint8 200 coerced to int8 saturates to 127, MATLAB's own int8(uint8(200)); R2025b's conversion answers 0 (ADR 0317, a MATLAB-wrong row)
+    x.Coerce.8.ui1
+  divergence (3): a numeric array under OutputAsDate answers dates (or the biased doubles) element by element; R2025b builds an array its own client cannot read (SafeArrayTypeMismatchException; ADR 0317, a MATLAB-wrong row)
+    x.OutputAsDate.True.doublerow, x.OutputAsDate.True.doublemat, x.OutputAsDate.True.mixedrange
+  divergence (4): a refusal of the call's own carries JGraph's text (which argument was left out); R2025b's carries none, or the last MATLAB error's text (ADR 0316)
+    x.ReplaceMissing.0.empty_middle, x.ReplaceMissing.1.empty_middle, x.complex.unset_middle, x.sparse.rows_only_middle
+  divergence (11): a value class filled with what it cannot hold, or an object with no value, is refused with JGraph's text; R2025b refuses it with none (ADR 0317)
+    x.range.worksheet, x.range.workbook, x.complex.bool, x.complex.text, x.sparse.variant_indices, x.sparse.int_values, x.complex.mismatch, x.complex.mismatch_lengths, x.sparse.length_mismatch, x.sparse.text_values, x.sparse.2d_array
+  divergence (3): a string, a string array and an int64 are written into the Range as text and a number; R2025b writes nothing (ADR 0316, ADR 0317)
+    x.rangeout.string, x.rangeout.stringarr, x.rangeout.int64
+  divergence (4): a value no VARIANT holds is refused with a message naming what to return instead; R2025b writes nothing into the Range and raises no error (ADR 0316, ADR 0317)
+    x.rangeout.datetimearr, x.rangeout.duration, x.rangeout.fhandle, x.rangeout.object
+  divergence (4): MWStruct's refusals name JGraph's utility ProgID as their source (JGraphComUtil.MWStruct25.2, decision KO10), a non-text field name refused in JGraph's words (ADR 0317)
+    x.struct.dims_zero, x.struct.dims_zero_echo, x.struct.init_names_number, x.struct.init_dims_negative
+  divergence (1): an MWComplex with integer parts is a double complex value: JGraph keeps no complex integer (ADR 0266)
+    x.complex.ints
+  divergence (8): JGraphComUtil.MWArrayFormatFlags and MWDataConversionFlags can be created on their own and put into a flags object; R2025b registers the classes but its class factory refuses them (E_NOTIMPL; ADR 0317)
+    x.utilflags.arrayformat_put, x.utilflags.arrayformat_put_shares, x.utilflags.dataconv_put, x.utilflags.dataconv_defaults, x.utilflags.arrayformat_defaults, x.utilflags.put_wrong_type, x.utilflags.members.af, x.utilflags.members.dc
+  divergence (1): IsMCRJVMEnabled is false: JGraph has no JVM; R2025b's is true once its runtime has started (ADR 0317)
+    x.util.isjvm_type
+  divergence (3): JGraph's CreateRemoteObject makes the object of any registered ProgID in this process; R2025b's asks DCOM and fails for all but its own classes (ADR 0317)
+    x.util.create_remote_dictionary, x.util.create_remote_empty, x.util.create_remote_versionless
+  divergence (1): every CreateObject of JGraphComUtil.MWUtil25.2 is a new object; R2025b's MWUtil is one object per process (ADR 0317)
+    x.util.second_util
 == pe: 2452 keys, 720 agree, 1732 recorded divergences, 0 unexplained, 14 only in JGraph's
   divergence (731): pe-resources.py lists every file beside a DLL under the label of its stem, one stem's rows overwriting each other: mbuild's import library, exports file and generated sources are not written by JGraph (KO9; ADR 0316)
     b.additional.dlldata.file, b.additional.dlldata.ERR, b.additional.k17add.file, b.additional.k17add_1_0.file, b.additional.k17add_1_0.ERR, b.additional.K17Add_com.file, b.additional.K17Add_com.ERR, b.additional.k17add_dll.file, b.additional.k17add_dll.ERR, b.additional.k17add_idl.file, b.additional.k17add_idl.ERR, b.additional.k17add_idl_i.file ...
@@ -76,11 +127,13 @@
     b.additional.k17add_1_0.  fixed.FileOS, b.additional.k17add_1_0.  fixed.FileType, b.additional.k17add_1_0.  table, b.additional.k17add_1_0.  var.Translation, b.bas.k17bas_1_0.  fixed.FileOS, b.bas.k17bas_1_0.  fixed.FileType, b.bas.k17bas_1_0.  table, b.bas.k17bas_1_0.  var.Translation, b.classname.k17cls_1_0.  fixed.FileOS, b.classname.k17cls_1_0.  fixed.FileType, b.classname.k17cls_1_0.  table, b.classname.k17cls_1_0.  var.Translation ...
   divergence (747): the Excel client's DLLs (compiler.build and mcc -W mpsxl) and its packaged installers are stage K17f's
     c.arch.requiredMCRProducts.ERR, c.blank.buildresult.file, c.blank.buildresult.ERR, c.blank.includedSupportPackages.file, c.blank.includedSupportPackages.ERR, c.blank.k17blank.file, c.blank.k17blank.ERR, c.blank.K17Blank.file, c.blank.K17Blank.ERR, c.blank.k17blank.bytes, c.blank.k17blank.machine, c.blank.k17blank.subsystem ...
-== registry: 15 keys, 10 agree, 5 recorded divergences, 0 unexplained, 1 only in JGraph's
+== registry: 15 keys, 9 agree, 6 recorded divergences, 0 unexplained, 1 only in JGraph's
   divergence (1): R2025b's recording was taken after an earlier pass of its cleanup had unregistered its add-ins; JGraph's lists the keys its builds registered, each removed below (ADR 0316)
     registry.added.before.cleanup
   divergence (2): regsvr32 registers JGraph's add-in without elevation: its DllRegisterServer registers for the current user when it may not for all (exit 0), where R2025b's needs MWRegsvr /useronly after regsvr32 fails (exit 5) (ADR 0316)
     regsvr32.register, mwregsvr.useronly
+  divergence (1): the last DLL unregistered is JGraph's COM utility library, which R2025b's run had no counterpart of (ADR 0317)
+    unregister
   divergence (1): the oracle's own Excel
     excel.processes
   divergence (1): JGraph's component category stays registered, as the runtime's installer would leave it (decision KO10; ADR 0316)

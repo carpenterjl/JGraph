@@ -9,11 +9,11 @@ b.additional.includedSupportPackages.ERR	unpack_from requires a buffer of at lea
 b.additional.k17add.file	<W>\p\b\additional\k17add.ctf
 b.additional.k17add.ERR	not a PE file
 b.additional.k17add_1_0.file	k17add_1_0.dll
-b.additional.k17add_1_0.bytes	205824
+b.additional.k17add_1_0.bytes	209920
 b.additional.k17add_1_0.machine	0x8664
 b.additional.k17add_1_0.subsystem	windows-gui
 b.additional.k17add_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-b.additional.k17add_1_0.image.bytes	205824
+b.additional.k17add_1_0.image.bytes	209920
 b.additional.k17add_1_0.overlay.bytes	0
 b.additional.k17add_1_0.certificate	no
 b.additional.k17add_1_0.import	ADVAPI32.dll
@@ -51,11 +51,11 @@ b.bas.GettingStarted.ERR	not a PE file
 b.bas.includedSupportPackages.file	<W>\p\b\bas\includedSupportPackages.txt
 b.bas.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 b.bas.k17bas_1_0.file	k17bas_1_0.dll
-b.bas.k17bas_1_0.bytes	221184
+b.bas.k17bas_1_0.bytes	225280
 b.bas.k17bas_1_0.machine	0x8664
 b.bas.k17bas_1_0.subsystem	windows-gui
 b.bas.k17bas_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-b.bas.k17bas_1_0.image.bytes	221184
+b.bas.k17bas_1_0.image.bytes	225280
 b.bas.k17bas_1_0.overlay.bytes	0
 b.bas.k17bas_1_0.certificate	no
 b.bas.k17bas_1_0.import	ADVAPI32.dll
@@ -66,7 +66,7 @@ b.bas.k17bas_1_0.resource	"TYPELIB" 1 lang 0: 8664 bytes
 b.bas.k17bas_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.bas.k17bas_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.bas.k17bas_1_0.  starts	30 2e 32 2e 33
-b.bas.k17bas_1_0.resource	RCDATA 2 lang 0: 12518 bytes
+b.bas.k17bas_1_0.resource	RCDATA 2 lang 0: 12517 bytes
 b.bas.k17bas_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.bas.k17bas_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.bas.k17bas_1_0.  fixed.FileVersion	1.0.0.0
@@ -95,11 +95,11 @@ b.classname.GettingStarted.ERR	not a PE file
 b.classname.includedSupportPackages.file	<W>\p\b\classname\includedSupportPackages.txt
 b.classname.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 b.classname.k17cls_1_0.file	k17cls_1_0.dll
-b.classname.k17cls_1_0.bytes	208896
+b.classname.k17cls_1_0.bytes	212992
 b.classname.k17cls_1_0.machine	0x8664
 b.classname.k17cls_1_0.subsystem	windows-gui
 b.classname.k17cls_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-b.classname.k17cls_1_0.image.bytes	208896
+b.classname.k17cls_1_0.image.bytes	212992
 b.classname.k17cls_1_0.overlay.bytes	0
 b.classname.k17cls_1_0.certificate	no
 b.classname.k17cls_1_0.import	ADVAPI32.dll
@@ -110,7 +110,7 @@ b.classname.k17cls_1_0.resource	"TYPELIB" 1 lang 0: 5136 bytes
 b.classname.k17cls_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.classname.k17cls_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.classname.k17cls_1_0.  starts	30 2e 32 2e 33
-b.classname.k17cls_1_0.resource	RCDATA 2 lang 0: 3473 bytes
+b.classname.k17cls_1_0.resource	RCDATA 2 lang 0: 3471 bytes
 b.classname.k17cls_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.classname.k17cls_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.classname.k17cls_1_0.  fixed.FileVersion	1.0.0.0
@@ -139,11 +139,11 @@ b.debug.GettingStarted.ERR	not a PE file
 b.debug.includedSupportPackages.file	<W>\p\b\debug\includedSupportPackages.txt
 b.debug.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 b.debug.k17dbg_1_0.file	k17dbg_1_0.dll
-b.debug.k17dbg_1_0.bytes	209920
+b.debug.k17dbg_1_0.bytes	214016
 b.debug.k17dbg_1_0.machine	0x8664
 b.debug.k17dbg_1_0.subsystem	windows-gui
 b.debug.k17dbg_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-b.debug.k17dbg_1_0.image.bytes	209920
+b.debug.k17dbg_1_0.image.bytes	214016
 b.debug.k17dbg_1_0.overlay.bytes	0
 b.debug.k17dbg_1_0.certificate	no
 b.debug.k17dbg_1_0.import	ADVAPI32.dll
@@ -183,11 +183,11 @@ b.defaults.GettingStarted.ERR	not a PE file
 b.defaults.includedSupportPackages.file	<W>\p\b\defaults\includedSupportPackages.txt
 b.defaults.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 b.defaults.k17_one_1_0.file	k17_one_1_0.dll
-b.defaults.k17_one_1_0.bytes	208896
+b.defaults.k17_one_1_0.bytes	212992
 b.defaults.k17_one_1_0.machine	0x8664
 b.defaults.k17_one_1_0.subsystem	windows-gui
 b.defaults.k17_one_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-b.defaults.k17_one_1_0.image.bytes	208896
+b.defaults.k17_one_1_0.image.bytes	212992
 b.defaults.k17_one_1_0.overlay.bytes	0
 b.defaults.k17_one_1_0.certificate	no
 b.defaults.k17_one_1_0.import	ADVAPI32.dll
@@ -198,7 +198,7 @@ b.defaults.k17_one_1_0.resource	"TYPELIB" 1 lang 0: 5160 bytes
 b.defaults.k17_one_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.defaults.k17_one_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.defaults.k17_one_1_0.  starts	30 2e 32 2e 33
-b.defaults.k17_one_1_0.resource	RCDATA 2 lang 0: 3466 bytes
+b.defaults.k17_one_1_0.resource	RCDATA 2 lang 0: 3464 bytes
 b.defaults.k17_one_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.defaults.k17_one_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.defaults.k17_one_1_0.  fixed.FileVersion	1.0.0.0
@@ -229,11 +229,11 @@ b.noembed.includedSupportPackages.ERR	unpack_from requires a buffer of at least 
 b.noembed.k17sep.file	<W>\p\b\noembed\k17sep.ctf
 b.noembed.k17sep.ERR	not a PE file
 b.noembed.k17sep_1_0.file	k17sep_1_0.dll
-b.noembed.k17sep_1_0.bytes	208896
+b.noembed.k17sep_1_0.bytes	212992
 b.noembed.k17sep_1_0.machine	0x8664
 b.noembed.k17sep_1_0.subsystem	windows-gui
 b.noembed.k17sep_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-b.noembed.k17sep_1_0.image.bytes	208896
+b.noembed.k17sep_1_0.image.bytes	212992
 b.noembed.k17sep_1_0.overlay.bytes	0
 b.noembed.k17sep_1_0.certificate	no
 b.noembed.k17sep_1_0.import	ADVAPI32.dll
@@ -271,11 +271,11 @@ b.pfile.GettingStarted.ERR	not a PE file
 b.pfile.includedSupportPackages.file	<W>\p\b\pfile\includedSupportPackages.txt
 b.pfile.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 b.pfile.k17p_1_0.file	k17p_1_0.dll
-b.pfile.k17p_1_0.bytes	209408
+b.pfile.k17p_1_0.bytes	213504
 b.pfile.k17p_1_0.machine	0x8664
 b.pfile.k17p_1_0.subsystem	windows-gui
 b.pfile.k17p_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-b.pfile.k17p_1_0.image.bytes	209408
+b.pfile.k17p_1_0.image.bytes	213504
 b.pfile.k17p_1_0.overlay.bytes	0
 b.pfile.k17p_1_0.certificate	no
 b.pfile.k17p_1_0.import	ADVAPI32.dll
@@ -286,7 +286,7 @@ b.pfile.k17p_1_0.resource	"TYPELIB" 1 lang 0: 5248 bytes
 b.pfile.k17p_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.pfile.k17p_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.pfile.k17p_1_0.  starts	30 2e 32 2e 33
-b.pfile.k17p_1_0.resource	RCDATA 2 lang 0: 3902 bytes
+b.pfile.k17p_1_0.resource	RCDATA 2 lang 0: 3899 bytes
 b.pfile.k17p_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 b3 9b
 b.pfile.k17p_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.pfile.k17p_1_0.  fixed.FileVersion	1.0.0.0
@@ -315,11 +315,11 @@ b.plain.GettingStarted.ERR	not a PE file
 b.plain.includedSupportPackages.file	<W>\p\b\plain\includedSupportPackages.txt
 b.plain.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 b.plain.k17xl_1_0.file	k17xl_1_0.dll
-b.plain.k17xl_1_0.bytes	221184
+b.plain.k17xl_1_0.bytes	225280
 b.plain.k17xl_1_0.machine	0x8664
 b.plain.k17xl_1_0.subsystem	windows-gui
 b.plain.k17xl_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-b.plain.k17xl_1_0.image.bytes	221184
+b.plain.k17xl_1_0.image.bytes	225280
 b.plain.k17xl_1_0.overlay.bytes	0
 b.plain.k17xl_1_0.certificate	no
 b.plain.k17xl_1_0.import	ADVAPI32.dll
@@ -330,7 +330,7 @@ b.plain.k17xl_1_0.resource	"TYPELIB" 1 lang 0: 8660 bytes
 b.plain.k17xl_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.plain.k17xl_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.plain.k17xl_1_0.  starts	30 2e 32 2e 33
-b.plain.k17xl_1_0.resource	RCDATA 2 lang 0: 12474 bytes
+b.plain.k17xl_1_0.resource	RCDATA 2 lang 0: 12470 bytes
 b.plain.k17xl_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.plain.k17xl_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.plain.k17xl_1_0.  fixed.FileVersion	1.0.0.0
@@ -359,11 +359,11 @@ b.plain2.GettingStarted.ERR	not a PE file
 b.plain2.includedSupportPackages.file	<W>\p\b\plain2\includedSupportPackages.txt
 b.plain2.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 b.plain2.k17xl_1_0.file	k17xl_1_0.dll
-b.plain2.k17xl_1_0.bytes	221184
+b.plain2.k17xl_1_0.bytes	225280
 b.plain2.k17xl_1_0.machine	0x8664
 b.plain2.k17xl_1_0.subsystem	windows-gui
 b.plain2.k17xl_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-b.plain2.k17xl_1_0.image.bytes	221184
+b.plain2.k17xl_1_0.image.bytes	225280
 b.plain2.k17xl_1_0.overlay.bytes	0
 b.plain2.k17xl_1_0.certificate	no
 b.plain2.k17xl_1_0.import	ADVAPI32.dll
@@ -374,7 +374,7 @@ b.plain2.k17xl_1_0.resource	"TYPELIB" 1 lang 0: 8660 bytes
 b.plain2.k17xl_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.plain2.k17xl_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.plain2.k17xl_1_0.  starts	30 2e 32 2e 33
-b.plain2.k17xl_1_0.resource	RCDATA 2 lang 0: 12474 bytes
+b.plain2.k17xl_1_0.resource	RCDATA 2 lang 0: 12471 bytes
 b.plain2.k17xl_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.plain2.k17xl_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.plain2.k17xl_1_0.  fixed.FileVersion	1.0.0.0
@@ -403,11 +403,11 @@ b.ra.GettingStarted.ERR	not a PE file
 b.ra.includedSupportPackages.file	<W>\p\b\ra\includedSupportPackages.txt
 b.ra.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 b.ra.k17ra_1_0.file	k17ra_1_0.dll
-b.ra.k17ra_1_0.bytes	208896
+b.ra.k17ra_1_0.bytes	212992
 b.ra.k17ra_1_0.machine	0x8664
 b.ra.k17ra_1_0.subsystem	windows-gui
 b.ra.k17ra_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-b.ra.k17ra_1_0.image.bytes	208896
+b.ra.k17ra_1_0.image.bytes	212992
 b.ra.k17ra_1_0.overlay.bytes	0
 b.ra.k17ra_1_0.certificate	no
 b.ra.k17ra_1_0.import	ADVAPI32.dll
@@ -418,7 +418,7 @@ b.ra.k17ra_1_0.resource	"TYPELIB" 1 lang 0: 5132 bytes
 b.ra.k17ra_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.ra.k17ra_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.ra.k17ra_1_0.  starts	30 2e 32 2e 33
-b.ra.k17ra_1_0.resource	RCDATA 2 lang 0: 3463 bytes
+b.ra.k17ra_1_0.resource	RCDATA 2 lang 0: 3464 bytes
 b.ra.k17ra_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.ra.k17ra_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.ra.k17ra_1_0.  fixed.FileVersion	1.0.0.0
@@ -447,11 +447,11 @@ b.v05.GettingStarted.ERR	not a PE file
 b.v05.includedSupportPackages.file	<W>\p\b\v05\includedSupportPackages.txt
 b.v05.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 b.v05.k17v05_1_0.file	k17v05_1_0.dll
-b.v05.k17v05_1_0.bytes	209920
+b.v05.k17v05_1_0.bytes	214016
 b.v05.k17v05_1_0.machine	0x8664
 b.v05.k17v05_1_0.subsystem	windows-gui
 b.v05.k17v05_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-b.v05.k17v05_1_0.image.bytes	209920
+b.v05.k17v05_1_0.image.bytes	214016
 b.v05.k17v05_1_0.overlay.bytes	0
 b.v05.k17v05_1_0.certificate	no
 b.v05.k17v05_1_0.import	ADVAPI32.dll
@@ -491,11 +491,11 @@ b.v2.GettingStarted.ERR	not a PE file
 b.v2.includedSupportPackages.file	<W>\p\b\v2\includedSupportPackages.txt
 b.v2.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 b.v2.k17v2_2_0.file	k17v2_2_0.dll
-b.v2.k17v2_2_0.bytes	209920
+b.v2.k17v2_2_0.bytes	214016
 b.v2.k17v2_2_0.machine	0x8664
 b.v2.k17v2_2_0.subsystem	windows-gui
 b.v2.k17v2_2_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-b.v2.k17v2_2_0.image.bytes	209920
+b.v2.k17v2_2_0.image.bytes	214016
 b.v2.k17v2_2_0.overlay.bytes	0
 b.v2.k17v2_2_0.certificate	no
 b.v2.k17v2_2_0.import	ADVAPI32.dll
@@ -506,7 +506,7 @@ b.v2.k17v2_2_0.resource	"TYPELIB" 1 lang 0: 5608 bytes
 b.v2.k17v2_2_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.v2.k17v2_2_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.v2.k17v2_2_0.  starts	30 2e 32 2e 33
-b.v2.k17v2_2_0.resource	RCDATA 2 lang 0: 4182 bytes
+b.v2.k17v2_2_0.resource	RCDATA 2 lang 0: 4178 bytes
 b.v2.k17v2_2_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.v2.k17v2_2_0.resource	VERSION 1 lang 0: 320 bytes
 b.v2.k17v2_2_0.  fixed.FileVersion	2.0.0.0
@@ -535,11 +535,11 @@ b.v3456.GettingStarted.ERR	not a PE file
 b.v3456.includedSupportPackages.file	<W>\p\b\v3456\includedSupportPackages.txt
 b.v3456.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 b.v3456.k17v3456_3_4.file	k17v3456_3_4.dll
-b.v3456.k17v3456_3_4.bytes	209920
+b.v3456.k17v3456_3_4.bytes	214016
 b.v3456.k17v3456_3_4.machine	0x8664
 b.v3456.k17v3456_3_4.subsystem	windows-gui
 b.v3456.k17v3456_3_4.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-b.v3456.k17v3456_3_4.image.bytes	209920
+b.v3456.k17v3456_3_4.image.bytes	214016
 b.v3456.k17v3456_3_4.overlay.bytes	0
 b.v3456.k17v3456_3_4.certificate	no
 b.v3456.k17v3456_3_4.import	ADVAPI32.dll
@@ -550,7 +550,7 @@ b.v3456.k17v3456_3_4.resource	"TYPELIB" 1 lang 0: 5620 bytes
 b.v3456.k17v3456_3_4.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.v3456.k17v3456_3_4.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.v3456.k17v3456_3_4.  starts	30 2e 32 2e 33
-b.v3456.k17v3456_3_4.resource	RCDATA 2 lang 0: 4208 bytes
+b.v3456.k17v3456_3_4.resource	RCDATA 2 lang 0: 4204 bytes
 b.v3456.k17v3456_3_4.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.v3456.k17v3456_3_4.resource	VERSION 1 lang 0: 320 bytes
 b.v3456.k17v3456_3_4.  fixed.FileVersion	3.4.5.6
@@ -579,11 +579,11 @@ b.vzero.GettingStarted.ERR	not a PE file
 b.vzero.includedSupportPackages.file	<W>\p\b\vzero\includedSupportPackages.txt
 b.vzero.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 b.vzero.k17vz_1_0.file	k17vz_1_0.dll
-b.vzero.k17vz_1_0.bytes	209920
+b.vzero.k17vz_1_0.bytes	214016
 b.vzero.k17vz_1_0.machine	0x8664
 b.vzero.k17vz_1_0.subsystem	windows-gui
 b.vzero.k17vz_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-b.vzero.k17vz_1_0.image.bytes	209920
+b.vzero.k17vz_1_0.image.bytes	214016
 b.vzero.k17vz_1_0.overlay.bytes	0
 b.vzero.k17vz_1_0.certificate	no
 b.vzero.k17vz_1_0.import	ADVAPI32.dll
@@ -594,7 +594,7 @@ b.vzero.k17vz_1_0.resource	"TYPELIB" 1 lang 0: 5608 bytes
 b.vzero.k17vz_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.vzero.k17vz_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.vzero.k17vz_1_0.  starts	30 2e 32 2e 33
-b.vzero.k17vz_1_0.resource	RCDATA 2 lang 0: 4186 bytes
+b.vzero.k17vz_1_0.resource	RCDATA 2 lang 0: 4182 bytes
 b.vzero.k17vz_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.vzero.k17vz_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.vzero.k17vz_1_0.  fixed.FileVersion	1.0.0.0
@@ -633,11 +633,11 @@ m.mcc_bundle.buildresult.ERR	not a PE file
 m.mcc_bundle.includedSupportPackages.file	<W>\p\m\mcc_bundle\includedSupportPackages.txt
 m.mcc_bundle.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 m.mcc_bundle.k17mb_1_0.file	k17mb_1_0.dll
-m.mcc_bundle.k17mb_1_0.bytes	208896
+m.mcc_bundle.k17mb_1_0.bytes	212992
 m.mcc_bundle.k17mb_1_0.machine	0x8664
 m.mcc_bundle.k17mb_1_0.subsystem	windows-gui
 m.mcc_bundle.k17mb_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-m.mcc_bundle.k17mb_1_0.image.bytes	208896
+m.mcc_bundle.k17mb_1_0.image.bytes	212992
 m.mcc_bundle.k17mb_1_0.overlay.bytes	0
 m.mcc_bundle.k17mb_1_0.certificate	no
 m.mcc_bundle.k17mb_1_0.import	ADVAPI32.dll
@@ -648,7 +648,7 @@ m.mcc_bundle.k17mb_1_0.resource	"TYPELIB" 1 lang 0: 5132 bytes
 m.mcc_bundle.k17mb_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_bundle.k17mb_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_bundle.k17mb_1_0.  starts	30 2e 32 2e 33
-m.mcc_bundle.k17mb_1_0.resource	RCDATA 2 lang 0: 3469 bytes
+m.mcc_bundle.k17mb_1_0.resource	RCDATA 2 lang 0: 3466 bytes
 m.mcc_bundle.k17mb_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_bundle.k17mb_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_bundle.k17mb_1_0.  fixed.FileVersion	1.0.0.0
@@ -701,11 +701,11 @@ m.mcc_debug.buildresult.ERR	not a PE file
 m.mcc_debug.includedSupportPackages.file	<W>\p\m\mcc_debug\includedSupportPackages.txt
 m.mcc_debug.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 m.mcc_debug.k17md_1_0.file	k17md_1_0.dll
-m.mcc_debug.k17md_1_0.bytes	208896
+m.mcc_debug.k17md_1_0.bytes	212992
 m.mcc_debug.k17md_1_0.machine	0x8664
 m.mcc_debug.k17md_1_0.subsystem	windows-gui
 m.mcc_debug.k17md_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-m.mcc_debug.k17md_1_0.image.bytes	208896
+m.mcc_debug.k17md_1_0.image.bytes	212992
 m.mcc_debug.k17md_1_0.overlay.bytes	0
 m.mcc_debug.k17md_1_0.certificate	no
 m.mcc_debug.k17md_1_0.import	ADVAPI32.dll
@@ -716,7 +716,7 @@ m.mcc_debug.k17md_1_0.resource	"TYPELIB" 1 lang 0: 5132 bytes
 m.mcc_debug.k17md_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_debug.k17md_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_debug.k17md_1_0.  starts	30 2e 32 2e 33
-m.mcc_debug.k17md_1_0.resource	RCDATA 2 lang 0: 3462 bytes
+m.mcc_debug.k17md_1_0.resource	RCDATA 2 lang 0: 3464 bytes
 m.mcc_debug.k17md_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_debug.k17md_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_debug.k17md_1_0.  fixed.FileVersion	1.0.0.0
@@ -741,11 +741,11 @@ m.mcc_default.buildresult.ERR	not a PE file
 m.mcc_default.includedSupportPackages.file	<W>\p\m\mcc_default\includedSupportPackages.txt
 m.mcc_default.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 m.mcc_default.k17m_1_0.file	k17m_1_0.dll
-m.mcc_default.k17m_1_0.bytes	208896
+m.mcc_default.k17m_1_0.bytes	212992
 m.mcc_default.k17m_1_0.machine	0x8664
 m.mcc_default.k17m_1_0.subsystem	windows-gui
 m.mcc_default.k17m_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-m.mcc_default.k17m_1_0.image.bytes	208896
+m.mcc_default.k17m_1_0.image.bytes	212992
 m.mcc_default.k17m_1_0.overlay.bytes	0
 m.mcc_default.k17m_1_0.certificate	no
 m.mcc_default.k17m_1_0.import	ADVAPI32.dll
@@ -756,7 +756,7 @@ m.mcc_default.k17m_1_0.resource	"TYPELIB" 1 lang 0: 5124 bytes
 m.mcc_default.k17m_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_default.k17m_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_default.k17m_1_0.  starts	30 2e 32 2e 33
-m.mcc_default.k17m_1_0.resource	RCDATA 2 lang 0: 3460 bytes
+m.mcc_default.k17m_1_0.resource	RCDATA 2 lang 0: 3459 bytes
 m.mcc_default.k17m_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_default.k17m_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_default.k17m_1_0.  fixed.FileVersion	1.0.0.0
@@ -781,11 +781,11 @@ m.mcc_noclass.buildresult.ERR	not a PE file
 m.mcc_noclass.includedSupportPackages.file	<W>\p\m\mcc_noclass\includedSupportPackages.txt
 m.mcc_noclass.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 m.mcc_noclass.k17mnc_1_0.file	k17mnc_1_0.dll
-m.mcc_noclass.k17mnc_1_0.bytes	208896
+m.mcc_noclass.k17mnc_1_0.bytes	212992
 m.mcc_noclass.k17mnc_1_0.machine	0x8664
 m.mcc_noclass.k17mnc_1_0.subsystem	windows-gui
 m.mcc_noclass.k17mnc_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-m.mcc_noclass.k17mnc_1_0.image.bytes	208896
+m.mcc_noclass.k17mnc_1_0.image.bytes	212992
 m.mcc_noclass.k17mnc_1_0.overlay.bytes	0
 m.mcc_noclass.k17mnc_1_0.certificate	no
 m.mcc_noclass.k17mnc_1_0.import	ADVAPI32.dll
@@ -796,7 +796,7 @@ m.mcc_noclass.k17mnc_1_0.resource	"TYPELIB" 1 lang 0: 5136 bytes
 m.mcc_noclass.k17mnc_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_noclass.k17mnc_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_noclass.k17mnc_1_0.  starts	30 2e 32 2e 33
-m.mcc_noclass.k17mnc_1_0.resource	RCDATA 2 lang 0: 3470 bytes
+m.mcc_noclass.k17mnc_1_0.resource	RCDATA 2 lang 0: 3468 bytes
 m.mcc_noclass.k17mnc_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_noclass.k17mnc_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_noclass.k17mnc_1_0.  fixed.FileVersion	1.0.0.0
@@ -821,11 +821,11 @@ m.mcc_notarget.buildresult.ERR	not a PE file
 m.mcc_notarget.includedSupportPackages.file	<W>\p\m\mcc_notarget\includedSupportPackages.txt
 m.mcc_notarget.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 m.mcc_notarget.k17mnt_1_0.file	k17mnt_1_0.dll
-m.mcc_notarget.k17mnt_1_0.bytes	208896
+m.mcc_notarget.k17mnt_1_0.bytes	212992
 m.mcc_notarget.k17mnt_1_0.machine	0x8664
 m.mcc_notarget.k17mnt_1_0.subsystem	windows-gui
 m.mcc_notarget.k17mnt_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-m.mcc_notarget.k17mnt_1_0.image.bytes	208896
+m.mcc_notarget.k17mnt_1_0.image.bytes	212992
 m.mcc_notarget.k17mnt_1_0.overlay.bytes	0
 m.mcc_notarget.k17mnt_1_0.certificate	no
 m.mcc_notarget.k17mnt_1_0.import	ADVAPI32.dll
@@ -836,7 +836,7 @@ m.mcc_notarget.k17mnt_1_0.resource	"TYPELIB" 1 lang 0: 5136 bytes
 m.mcc_notarget.k17mnt_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_notarget.k17mnt_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_notarget.k17mnt_1_0.  starts	30 2e 32 2e 33
-m.mcc_notarget.k17mnt_1_0.resource	RCDATA 2 lang 0: 3469 bytes
+m.mcc_notarget.k17mnt_1_0.resource	RCDATA 2 lang 0: 3466 bytes
 m.mcc_notarget.k17mnt_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_notarget.k17mnt_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_notarget.k17mnt_1_0.  fixed.FileVersion	1.0.0.0
@@ -861,11 +861,11 @@ m.mcc_noversion.buildresult.ERR	not a PE file
 m.mcc_noversion.includedSupportPackages.file	<W>\p\m\mcc_noversion\includedSupportPackages.txt
 m.mcc_noversion.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 m.mcc_noversion.k17mnv_1_0.file	k17mnv_1_0.dll
-m.mcc_noversion.k17mnv_1_0.bytes	208896
+m.mcc_noversion.k17mnv_1_0.bytes	212992
 m.mcc_noversion.k17mnv_1_0.machine	0x8664
 m.mcc_noversion.k17mnv_1_0.subsystem	windows-gui
 m.mcc_noversion.k17mnv_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-m.mcc_noversion.k17mnv_1_0.image.bytes	208896
+m.mcc_noversion.k17mnv_1_0.image.bytes	212992
 m.mcc_noversion.k17mnv_1_0.overlay.bytes	0
 m.mcc_noversion.k17mnv_1_0.certificate	no
 m.mcc_noversion.k17mnv_1_0.import	ADVAPI32.dll
@@ -901,11 +901,11 @@ m.mcc_samefiles.buildresult.ERR	not a PE file
 m.mcc_samefiles.includedSupportPackages.file	<W>\p\m\mcc_samefiles\includedSupportPackages.txt
 m.mcc_samefiles.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 m.mcc_samefiles.k17m_1_0.file	k17m_1_0.dll
-m.mcc_samefiles.k17m_1_0.bytes	209408
+m.mcc_samefiles.k17m_1_0.bytes	213504
 m.mcc_samefiles.k17m_1_0.machine	0x8664
 m.mcc_samefiles.k17m_1_0.subsystem	windows-gui
 m.mcc_samefiles.k17m_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-m.mcc_samefiles.k17m_1_0.image.bytes	209408
+m.mcc_samefiles.k17m_1_0.image.bytes	213504
 m.mcc_samefiles.k17m_1_0.overlay.bytes	0
 m.mcc_samefiles.k17m_1_0.certificate	no
 m.mcc_samefiles.k17m_1_0.import	ADVAPI32.dll
@@ -916,7 +916,7 @@ m.mcc_samefiles.k17m_1_0.resource	"TYPELIB" 1 lang 0: 5360 bytes
 m.mcc_samefiles.k17m_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_samefiles.k17m_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_samefiles.k17m_1_0.  starts	30 2e 32 2e 33
-m.mcc_samefiles.k17m_1_0.resource	RCDATA 2 lang 0: 3804 bytes
+m.mcc_samefiles.k17m_1_0.resource	RCDATA 2 lang 0: 3803 bytes
 m.mcc_samefiles.k17m_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_samefiles.k17m_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_samefiles.k17m_1_0.  fixed.FileVersion	1.0.0.0
@@ -941,11 +941,11 @@ m.mcc_sameorder.buildresult.ERR	not a PE file
 m.mcc_sameorder.includedSupportPackages.file	<W>\p\m\mcc_sameorder\includedSupportPackages.txt
 m.mcc_sameorder.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 m.mcc_sameorder.k17m_1_0.file	k17m_1_0.dll
-m.mcc_sameorder.k17m_1_0.bytes	209408
+m.mcc_sameorder.k17m_1_0.bytes	213504
 m.mcc_sameorder.k17m_1_0.machine	0x8664
 m.mcc_sameorder.k17m_1_0.subsystem	windows-gui
 m.mcc_sameorder.k17m_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-m.mcc_sameorder.k17m_1_0.image.bytes	209408
+m.mcc_sameorder.k17m_1_0.image.bytes	213504
 m.mcc_sameorder.k17m_1_0.overlay.bytes	0
 m.mcc_sameorder.k17m_1_0.certificate	no
 m.mcc_sameorder.k17m_1_0.import	ADVAPI32.dll
@@ -981,11 +981,11 @@ m.mcc_samev2.buildresult.ERR	not a PE file
 m.mcc_samev2.includedSupportPackages.file	<W>\p\m\mcc_samev2\includedSupportPackages.txt
 m.mcc_samev2.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 m.mcc_samev2.k17m_2_0.file	k17m_2_0.dll
-m.mcc_samev2.k17m_2_0.bytes	208896
+m.mcc_samev2.k17m_2_0.bytes	212992
 m.mcc_samev2.k17m_2_0.machine	0x8664
 m.mcc_samev2.k17m_2_0.subsystem	windows-gui
 m.mcc_samev2.k17m_2_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-m.mcc_samev2.k17m_2_0.image.bytes	208896
+m.mcc_samev2.k17m_2_0.image.bytes	212992
 m.mcc_samev2.k17m_2_0.overlay.bytes	0
 m.mcc_samev2.k17m_2_0.certificate	no
 m.mcc_samev2.k17m_2_0.import	ADVAPI32.dll
@@ -996,7 +996,7 @@ m.mcc_samev2.k17m_2_0.resource	"TYPELIB" 1 lang 0: 5124 bytes
 m.mcc_samev2.k17m_2_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_samev2.k17m_2_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_samev2.k17m_2_0.  starts	30 2e 32 2e 33
-m.mcc_samev2.k17m_2_0.resource	RCDATA 2 lang 0: 3460 bytes
+m.mcc_samev2.k17m_2_0.resource	RCDATA 2 lang 0: 3459 bytes
 m.mcc_samev2.k17m_2_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_samev2.k17m_2_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_samev2.k17m_2_0.  fixed.FileVersion	2.0.0.0
@@ -1021,11 +1021,11 @@ m.mcc_script.buildresult.ERR	not a PE file
 m.mcc_script.includedSupportPackages.file	<W>\p\m\mcc_script\includedSupportPackages.txt
 m.mcc_script.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 m.mcc_script.k17msc_1_0.file	k17msc_1_0.dll
-m.mcc_script.k17msc_1_0.bytes	208384
+m.mcc_script.k17msc_1_0.bytes	212480
 m.mcc_script.k17msc_1_0.machine	0x8664
 m.mcc_script.k17msc_1_0.subsystem	windows-gui
 m.mcc_script.k17msc_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-m.mcc_script.k17msc_1_0.image.bytes	208384
+m.mcc_script.k17msc_1_0.image.bytes	212480
 m.mcc_script.k17msc_1_0.overlay.bytes	0
 m.mcc_script.k17msc_1_0.certificate	no
 m.mcc_script.k17msc_1_0.import	ADVAPI32.dll
@@ -1063,11 +1063,11 @@ m.mcc_separate.includedSupportPackages.ERR	unpack_from requires a buffer of at l
 m.mcc_separate.k17ms.file	<W>\p\m\mcc_separate\k17ms.ctf
 m.mcc_separate.k17ms.ERR	not a PE file
 m.mcc_separate.k17ms_1_0.file	k17ms_1_0.dll
-m.mcc_separate.k17ms_1_0.bytes	205312
+m.mcc_separate.k17ms_1_0.bytes	209408
 m.mcc_separate.k17ms_1_0.machine	0x8664
 m.mcc_separate.k17ms_1_0.subsystem	windows-gui
 m.mcc_separate.k17ms_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-m.mcc_separate.k17ms_1_0.image.bytes	205312
+m.mcc_separate.k17ms_1_0.image.bytes	209408
 m.mcc_separate.k17ms_1_0.overlay.bytes	0
 m.mcc_separate.k17ms_1_0.certificate	no
 m.mcc_separate.k17ms_1_0.import	ADVAPI32.dll
@@ -1101,11 +1101,11 @@ m.mcc_twofiles.buildresult.ERR	not a PE file
 m.mcc_twofiles.includedSupportPackages.file	<W>\p\m\mcc_twofiles\includedSupportPackages.txt
 m.mcc_twofiles.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 m.mcc_twofiles.k17mtwo_1_0.file	k17mtwo_1_0.dll
-m.mcc_twofiles.k17mtwo_1_0.bytes	209408
+m.mcc_twofiles.k17mtwo_1_0.bytes	213504
 m.mcc_twofiles.k17mtwo_1_0.machine	0x8664
 m.mcc_twofiles.k17mtwo_1_0.subsystem	windows-gui
 m.mcc_twofiles.k17mtwo_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-m.mcc_twofiles.k17mtwo_1_0.image.bytes	209408
+m.mcc_twofiles.k17mtwo_1_0.image.bytes	213504
 m.mcc_twofiles.k17mtwo_1_0.overlay.bytes	0
 m.mcc_twofiles.k17mtwo_1_0.certificate	no
 m.mcc_twofiles.k17mtwo_1_0.import	ADVAPI32.dll
@@ -1116,7 +1116,7 @@ m.mcc_twofiles.k17mtwo_1_0.resource	"TYPELIB" 1 lang 0: 5300 bytes
 m.mcc_twofiles.k17mtwo_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_twofiles.k17mtwo_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_twofiles.k17mtwo_1_0.  starts	30 2e 32 2e 33
-m.mcc_twofiles.k17mtwo_1_0.resource	RCDATA 2 lang 0: 3826 bytes
+m.mcc_twofiles.k17mtwo_1_0.resource	RCDATA 2 lang 0: 3822 bytes
 m.mcc_twofiles.k17mtwo_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_twofiles.k17mtwo_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_twofiles.k17mtwo_1_0.  fixed.FileVersion	1.0.0.0
@@ -1141,11 +1141,11 @@ m.mcc_version2.buildresult.ERR	not a PE file
 m.mcc_version2.includedSupportPackages.file	<W>\p\m\mcc_version2\includedSupportPackages.txt
 m.mcc_version2.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 m.mcc_version2.k17mv2_2_0.file	k17mv2_2_0.dll
-m.mcc_version2.k17mv2_2_0.bytes	208896
+m.mcc_version2.k17mv2_2_0.bytes	212992
 m.mcc_version2.k17mv2_2_0.machine	0x8664
 m.mcc_version2.k17mv2_2_0.subsystem	windows-gui
 m.mcc_version2.k17mv2_2_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-m.mcc_version2.k17mv2_2_0.image.bytes	208896
+m.mcc_version2.k17mv2_2_0.image.bytes	212992
 m.mcc_version2.k17mv2_2_0.overlay.bytes	0
 m.mcc_version2.k17mv2_2_0.certificate	no
 m.mcc_version2.k17mv2_2_0.import	ADVAPI32.dll
@@ -1231,11 +1231,11 @@ src.k17ownexcelAddIn.GettingStarted.ERR	not a PE file
 src.k17ownexcelAddIn.includedSupportPackages.file	<W>\p\src\k17ownexcelAddIn\includedSupportPackages.txt
 src.k17ownexcelAddIn.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
 src.k17ownexcelAddIn.k17own_1_0.file	k17own_1_0.dll
-src.k17ownexcelAddIn.k17own_1_0.bytes	208896
+src.k17ownexcelAddIn.k17own_1_0.bytes	212992
 src.k17ownexcelAddIn.k17own_1_0.machine	0x8664
 src.k17ownexcelAddIn.k17own_1_0.subsystem	windows-gui
 src.k17ownexcelAddIn.k17own_1_0.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
-src.k17ownexcelAddIn.k17own_1_0.image.bytes	208896
+src.k17ownexcelAddIn.k17own_1_0.image.bytes	212992
 src.k17ownexcelAddIn.k17own_1_0.overlay.bytes	0
 src.k17ownexcelAddIn.k17own_1_0.certificate	no
 src.k17ownexcelAddIn.k17own_1_0.import	ADVAPI32.dll
@@ -1246,7 +1246,7 @@ src.k17ownexcelAddIn.k17own_1_0.resource	"TYPELIB" 1 lang 0: 5180 bytes
 src.k17ownexcelAddIn.k17own_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 src.k17ownexcelAddIn.k17own_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 src.k17ownexcelAddIn.k17own_1_0.  starts	30 2e 32 2e 33
-src.k17ownexcelAddIn.k17own_1_0.resource	RCDATA 2 lang 0: 3468 bytes
+src.k17ownexcelAddIn.k17own_1_0.resource	RCDATA 2 lang 0: 3469 bytes
 src.k17ownexcelAddIn.k17own_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 src.k17ownexcelAddIn.k17own_1_0.resource	VERSION 1 lang 0: 320 bytes
 src.k17ownexcelAddIn.k17own_1_0.  fixed.FileVersion	1.0.0.0

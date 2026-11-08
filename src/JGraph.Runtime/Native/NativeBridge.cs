@@ -42,7 +42,7 @@ internal static unsafe class NativeBridge
         public delegate* unmanaged<ulong, int, int> CppCancel;
         public delegate* unmanaged<ulong, void> CppForget;
         public delegate* unmanaged<char*, char**, nint> PyOpen;
-        public delegate* unmanaged<char*, nint, char**, nint> ComCreate;
+        public delegate* unmanaged<char*, nint, char*, char*, char**, nint> ComCreate;
         public delegate* unmanaged<nint, char*, int, int, Com.Variant**, Com.Variant*, char**, char**, int> ComInvoke;
         public delegate* unmanaged<nint, void> ComRelease;
     }

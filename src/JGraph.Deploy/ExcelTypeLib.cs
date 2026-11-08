@@ -32,6 +32,58 @@ public static class ExcelComGuids
     /// <summary>The data conversion flags' interface.</summary>
     public static readonly Guid DataConversionFlagsInterface = new("8D1F4A73-2B6C-4E95-9C0A-7E3D5F1B6A42");
 
+    // JGraph's COM utility library (stage K17d, native\jgcomutil\jgcomutil.idl; decision KO10): the
+    // counterpart of MathWorks' mwcomutil.tlb under JGraph's ids. The three flags interfaces above
+    // are declared in it under the same ids, so an add-in's and the library's flags objects are
+    // interchangeable.
+
+    /// <summary>The utility library's name, the first part of its ProgIDs (<c>JGraphComUtil.MWUtil</c>).</summary>
+    public const string UtilityLibraryName = "JGraphComUtil";
+
+    /// <summary>The release the utility library's versioned ProgIDs name (<c>JGraphComUtil.MWUtil25.2</c>), the MATLAB release JGraph's dialect follows.</summary>
+    public const string UtilityRelease = "25.2";
+
+    /// <summary>The utility library's type library id.</summary>
+    public static readonly Guid UtilityTypeLib = new("CB87A109-8F24-4100-ABD9-1037F96F83B0");
+
+    /// <summary><c>IMWUtil</c>.</summary>
+    public static readonly Guid UtilInterface = new("EDF0B30D-C6F0-45D9-A106-BB2005D0FECD");
+
+    /// <summary><c>IMWField</c>.</summary>
+    public static readonly Guid FieldInterface = new("F12220BC-AA8D-4DD9-A689-D867EAE79AB8");
+
+    /// <summary><c>IMWStruct</c>.</summary>
+    public static readonly Guid StructInterface = new("DCBE375E-1D6A-4AB8-BA8C-5FFB2238ADDB");
+
+    /// <summary><c>IMWComplex</c>.</summary>
+    public static readonly Guid ComplexInterface = new("B72952A3-F382-4785-A772-3E576778AF0A");
+
+    /// <summary><c>IMWSparse</c>.</summary>
+    public static readonly Guid SparseInterface = new("F160CE96-36BC-4207-9674-2E47CE5E209E");
+
+    /// <summary><c>IMWArg</c>.</summary>
+    public static readonly Guid ArgInterface = new("B788A28C-652F-4F5B-9893-262E66C4AAB7");
+
+    /// <summary>The utility library's coclasses by name, with their class ids.</summary>
+    public static IReadOnlyDictionary<string, Guid> UtilityClasses { get; } = new Dictionary<string, Guid>(StringComparer.Ordinal)
+    {
+        ["MWUtil"] = new("F1E87C29-C504-46DB-8E34-3B1D5A437AB5"),
+        ["MWFlags"] = new("D740C302-ED41-4911-994E-68860A41BF9E"),
+        ["MWArrayFormatFlags"] = new("C3932F78-CF1D-4AD9-9A75-8EF0B1D7DED6"),
+        ["MWDataConversionFlags"] = new("D58A4C07-6CA6-421E-B8AC-70DC1908E149"),
+        ["MWField"] = new("9451D364-95FD-449F-A584-E63102A55D29"),
+        ["MWStruct"] = new("B1E06970-6188-413B-993B-536C7F39FCBE"),
+        ["MWComplex"] = new("763A8D0C-7F67-49FC-B5E3-11082CA2ECDA"),
+        ["MWSparse"] = new("DFAA722D-9852-4E9F-A734-92EC61CA8DCF"),
+        ["MWArg"] = new("643D7D3A-E00E-4875-8C43-22A496068313"),
+    };
+
+    /// <summary>The version-independent ProgID of a utility class: <c>JGraphComUtil.&lt;class&gt;</c>.</summary>
+    public static string UtilityProgId(string className) => UtilityLibraryName + "." + className;
+
+    /// <summary>The versioned ProgID of a utility class, MathWorks' form for a utility library: <c>JGraphComUtil.&lt;class&gt;25.2</c>.</summary>
+    public static string UtilityVersionedProgId(string className) => UtilityProgId(className) + UtilityRelease;
+
     /// <summary>The type library's id: the add-in's name alone, as R2025b's depends on it alone.</summary>
     public static Guid TypeLib(string addIn) => Derive("typelib:" + addIn);
 
@@ -83,6 +135,12 @@ public sealed record ExcelTypeLibFunction(string Name, IReadOnlyList<string> Inp
     /// <summary>Whether the last output is <c>varargout</c>.</summary>
     public bool HasVarargout => Outputs.Count > 0 && Outputs[^1] == "varargout";
 }
+
+/// <summary>One coclass of a type library, with its default interface and that interface's members in vtable order (a property get and put counted once).</summary>
+public sealed record ExcelTypeLibCoclass(string Name, Guid ClassId, string InterfaceName, Guid InterfaceId, IReadOnlyList<string> Members);
+
+/// <summary>A type library's name, id, version and coclasses, as <see cref="ExcelTypeLib.ReadLibrary"/> reads them from any DLL that carries one (the COM utility library's, stage K17d).</summary>
+public sealed record ExcelTypeLibSummary(string Name, Guid Id, ProgramVersion Version, IReadOnlyList<ExcelTypeLibCoclass> Coclasses);
 
 /// <summary>An add-in's type library as read back from its DLL.</summary>
 public sealed record ExcelTypeLibInfo(
@@ -254,6 +312,80 @@ public static class ExcelTypeLib
             }
 
             throw new InvalidDataException($"The type library of '{path}' declares no coclass.");
+        }
+        finally
+        {
+            Marshal.ReleaseComObject(lib);
+        }
+    }
+
+    /// <summary>Reads the coclasses a DLL's type library declares, each with its default interface's members (the COM utility library's, or an add-in's).</summary>
+    /// <exception cref="InvalidDataException">The file carries no type library.</exception>
+    public static ExcelTypeLibSummary ReadLibrary(string path)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(path);
+        int hr = LoadTypeLibEx(path, 0, out ITypeLib lib);
+        if (hr < 0 || lib is null)
+        {
+            throw new InvalidDataException($"'{path}' carries no type library (0x{hr:X8}).");
+        }
+
+        try
+        {
+            lib.GetDocumentation(-1, out string libraryName, out string libraryDoc, out _, out _);
+            lib.GetLibAttr(out IntPtr libAttrPointer);
+            TYPELIBATTR libAttr = Marshal.PtrToStructure<TYPELIBATTR>(libAttrPointer);
+            lib.ReleaseTLibAttr(libAttrPointer);
+            var version = new ProgramVersion(libAttr.wMajorVerNum, libAttr.wMinorVerNum, 0, 0);
+            var coclasses = new List<ExcelTypeLibCoclass>();
+            int count = lib.GetTypeInfoCount();
+            for (int k = 0; k < count; k++)
+            {
+                lib.GetTypeInfo(k, out ITypeInfo info);
+                info.GetTypeAttr(out IntPtr attrPointer);
+                TYPEATTR attr = Marshal.PtrToStructure<TYPEATTR>(attrPointer);
+                info.ReleaseTypeAttr(attrPointer);
+                if (attr.typekind != TYPEKIND.TKIND_COCLASS)
+                {
+                    continue;
+                }
+
+                info.GetDocumentation(-1, out string className, out string classDoc, out _, out _);
+                className = ClassNameOf(classDoc, className);
+                info.GetRefTypeOfImplType(0, out int href);
+                info.GetRefTypeInfo(href, out ITypeInfo iface);
+                iface.GetTypeAttr(out IntPtr ifaceAttrPointer);
+                TYPEATTR ifaceAttr = Marshal.PtrToStructure<TYPEATTR>(ifaceAttrPointer);
+                if (ifaceAttr.typekind == TYPEKIND.TKIND_DISPATCH)
+                {
+                    iface.ReleaseTypeAttr(ifaceAttrPointer);
+                    iface.GetRefTypeOfImplType(-1, out int vtableHref);
+                    iface.GetRefTypeInfo(vtableHref, out iface);
+                    iface.GetTypeAttr(out ifaceAttrPointer);
+                    ifaceAttr = Marshal.PtrToStructure<TYPEATTR>(ifaceAttrPointer);
+                }
+
+                iface.GetDocumentation(-1, out string interfaceName, out _, out _, out _);
+                var members = new List<string>();
+                for (int f = 0; f < ifaceAttr.cFuncs; f++)
+                {
+                    iface.GetFuncDesc(f, out IntPtr descPointer);
+                    FUNCDESC desc = Marshal.PtrToStructure<FUNCDESC>(descPointer);
+                    var names = new string[1];
+                    iface.GetNames(desc.memid, names, 1, out _);
+                    if (!members.Contains(names[0]))
+                    {
+                        members.Add(names[0]);
+                    }
+
+                    iface.ReleaseFuncDesc(descPointer);
+                }
+
+                iface.ReleaseTypeAttr(ifaceAttrPointer);
+                coclasses.Add(new ExcelTypeLibCoclass(className, attr.guid, interfaceName, ifaceAttr.guid, members));
+            }
+
+            return new ExcelTypeLibSummary(AddInNameOf(libraryDoc, libraryName, version), libAttr.guid, version, coclasses);
         }
         finally
         {

@@ -1,20 +1,20 @@
 host.powershell	5.1.26100.9711
 host.clr	4.0.30319.42000
 host.is64	True
-util.create	ERR 0x80040154 src=[mscorlib] msg=[Retrieving the COM class factory for component with CLSID {<UUID>} failed due to the following error: 80040154 Class not registered (Exception from HRESULT: 0x80040154 (REGDB_E_CLASSNOTREG)).] type=COMException
-util.IsMCRInitialized.before	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.IsMCRJVMEnabled	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
+util.create	ok
+util.IsMCRInitialized.before	False
+util.IsMCRJVMEnabled	False
 create	ok
 create.seconds	0.3
-util.IsMCRInitialized.after	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
+util.IsMCRInitialized.after	True
 members	k17_args,k17_both,k17_count,k17_echo,k17_err,k17_h1,k17_make,k17_many,k17_none,k17_noout,k17_one,k17_opt,k17_pass,k17_plot,k17_quiet,k17_two,k17_varin,k17_varout,MWFlags
 excel.version	16.0 build 20527
-init.excel	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-init.excel.twice	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
+init.excel	ok
+init.excel.twice	ok
 quiet	ok
 none	ok
 one	double 4
-util.IsMCRInitialized.running	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
+util.IsMCRInitialized.running	True
 help.k17_quiet	string 'K17_QUIET Turns the beep off: a deployed component beeps on every error it raises (stage K0).'
 help.k17_none	string 'K17_NONE Takes nothing and answers nothing (compiler and SDK plan, stage K17).'
 help.k17_one	string 'K17_ONE Doubles its one input (compiler and SDK plan, stage K17).'
@@ -58,7 +58,7 @@ both.nargout1	string 'x=double [1 1] [7] nargin=3 nargout=1' | null
 both.nargout2	string 'x=double [1 1] [7] nargin=3 nargout=2' | array[Object] rank 2 [1..1,1..1] {string 'a'}
 both.nargout3	string 'x=double [1 1] [7] nargin=3 nargout=3' | array[Object] rank 2 [1..1,1..2] {string 'a', double 2}
 both.nargout4	string 'x=double [1 1] [7] nargin=3 nargout=4' | array[Object] rank 2 [1..1,1..3] {string 'a', double 2, double 3}
-both.packed	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
+both.packed	string 'x=double [1 1] [7] nargin=3 nargout=3' | array[Object] rank 2 [1..1,1..2] {string 'a', double 2}
 both.scalarvarargin	string 'x=double [1 1] [7] nargin=2 nargout=3' | array[Object] rank 2 [1..1,1..2] {string 'a', double 2}
 both.missingvarargin	string 'x=double [1 1] [7] nargin=1 nargout=2' | array[Object] rank 2 [1..1,1..1] {double 1}
 both.emptyvarargin	string 'x=double [1 1] [7] nargin=1 nargout=2' | array[Object] rank 2 [1..1,1..1] {double 1}
@@ -80,8 +80,8 @@ varin.empty	string 'nargin=0 {}'
 varin.array	string 'nargin=1 {double [1 3] [1 2 3]}'
 varin.vararray	string 'nargin=3 {double [1 1] [1]; char [1 1] 'a'; logical [1 1] true}'
 varin.vararray2d	string 'nargin=1 {double [2 2] [1 3 2 4]}'
-varin.packed	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-varin.packedarray	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
+varin.packed	string 'nargin=3 {double [1 1] [1]; char [1 3] 'two'; double [1 2] [3 4]}'
+varin.packedarray	string 'nargin=1 {double [1 2] [3 4]}'
 varin.emptyvararray	string 'nargin=0 {}'
 opt.0	string 'nargin=0 '
 opt.1	string 'nargin=1 a=double [1 1] [1]'
@@ -112,7 +112,7 @@ in.r8_inf	string 'double [1 1] [Inf]'
 in.r4	string 'single [1 1] [1.5]'
 in.i4	string 'int32 [1 1] [7]'
 in.i2	string 'int16 [1 1] [-3]'
-in.i8	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[9007199254740993 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.] type=COMException
+in.i8	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[The int64 value 9007199254740993 is beyond 2^53 and cannot be held exactly; pass it as text or as a double.] type=COMException
 in.ui1	string 'uint8 [1 1] [200]'
 in.ui2	string 'uint16 [1 1] [60000]'
 in.ui4	string 'uint32 [1 1] [4000000000]'
@@ -168,32 +168,32 @@ in.arr_jagged_deep	string 'cell [1 2] {cell [1 2] {cell [1 1] {double [1 1] [1]}
 in.arr_jagged_r8	string 'cell [1 2] {double [1 2] [1 2]; double [1 2] [3 4]}'
 in.arr_1based	string 'double [2 2] [1 3 2 4]'
 in.arr_1based_mixed	string 'cell [2 2] {double [1 1] [1]; double [0 0] []; char [1 1] 'b'; double [1 1] [4]}'
-in.dispatch_other	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-in.range_one	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-in.range_2x2	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-in.range_col	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-in.range_blank	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-in.range_blanks	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-in.range_error	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-in.range_date	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
+in.dispatch_other	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object with no Value2 and no default value (a Worksheet, a Workbook, another COM object) cannot be passed to a function; pass a Range or its Value2.] type=COMException
+in.range_one	string 'double [1 1] [1.5]'
+in.range_2x2	string 'cell [2 2] {double [1 1] [1.5]; logical [1 1] true; char [1 3] 'two'; double [1 1] [4]}'
+in.range_col	string 'double [3 1] [10 20 30]'
+in.range_blank	string 'double [1 1] [0]'
+in.range_blanks	string 'double [2 2] [0 0 0 0]'
+in.range_error	string 'int32 [1 1] [-2146826281]'
+in.range_date	string 'double [1 1] [45366.4375]'
 in.range_value2	string 'cell [2 2] {double [1 1] [1.5]; logical [1 1] true; char [1 3] 'two'; double [1 1] [4]}'
 in.range_value	string 'cell [2 2] {double [1 1] [1.5]; logical [1 1] true; char [1 3] 'two'; double [1 1] [4]}'
-in.struct	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
+in.struct	string 'struct [1 1] {a=double [1 1] [1]; b=char [1 4] 'text'}'
 in.struct_array	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
-in.struct_nested	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-in.struct_empty	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-in.complex	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-in.complex_array	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-in.complex_noimag	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-in.sparse	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-in.sparse_empty	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-in.arg_plain	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-in.arg_int8	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-in.arg_cell	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
+in.struct_nested	string 'struct [1 1] {in=struct [1 1] {x=double [1 1] [9]}; arr=double [1 2] [1 2]}'
+in.struct_empty	string 'struct [1 1] {}'
+in.complex	string 'double [1 1] [1+2i]'
+in.complex_array	string 'double [1 2] [1+3i 2+4i]'
+in.complex_noimag	string 'double [1 1] [1]'
+in.sparse	string 'sparse double [2 3] nnz=2 [(1,1)=5 (2,3)=6]'
+in.sparse_empty	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Not enough input arguments.\nError in => k17_echo.m at line 3] type=COMException
+in.arg_plain	string 'double [1 1] [3.7]'
+in.arg_int8	string 'int8 [1 1] [4]'
+in.arg_cell	string 'double [2 2] [1 3 2 4]'
 in.arg_flagsobject	COM object [Clone,ArrayFormatFlags,DataConversionFlags]
 in.enumvararg	ERR 0x80040154 src=[mscorlib] msg=[Retrieving the COM class factory for component with CLSID {<UUID>} failed due to the following error: 80040154 Class not registered (Exception from HRESULT: 0x80040154 (REGDB_E_CLASSNOTREG)).] type=COMException
 in.field	MWArg value=null
-in.flags_object	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
+in.flags_object	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A MWFlags object cannot be passed to a function.] type=COMException
 out.double	double 3.5
 out.doublerow	array[Double] rank 2 [1..1,1..3] {double 1, double 2, double 3}
 out.doublecol	array[Double] rank 2 [1..3,1..1] {double 1, double 2, double 3}
@@ -233,18 +233,18 @@ out.cellcol	array[Object] rank 2 [1..2,1..1] {double 1, double 2}
 out.cellmat	array[Object] rank 2 [1..2,1..2] {double 1, string 'a', double 2, string 'b'}
 out.cellempty	array[Object] rank 2 [1..0,1..0] {}
 out.cellofempty	array[Object] rank 2 [1..1,1..3] {null, null, array[Object] rank 2 [1..0,1..0] {}}
-out.struct	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A struct cannot be returned to a COM client yet: it becomes an MWStruct object in stage K17d of the compiler and SDK plan.] type=COMException
-out.structarr	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A struct cannot be returned to a COM client yet: it becomes an MWStruct object in stage K17d of the compiler and SDK plan.] type=COMException
-out.structcol	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A struct cannot be returned to a COM client yet: it becomes an MWStruct object in stage K17d of the compiler and SDK plan.] type=COMException
-out.structnested	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A struct cannot be returned to a COM client yet: it becomes an MWStruct object in stage K17d of the compiler and SDK plan.] type=COMException
-out.structempty	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A struct cannot be returned to a COM client yet: it becomes an MWStruct object in stage K17d of the compiler and SDK plan.] type=COMException
-out.structnofields	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A struct cannot be returned to a COM client yet: it becomes an MWStruct object in stage K17d of the compiler and SDK plan.] type=COMException
-out.complex	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A complex value cannot be returned to a COM client yet: it becomes an MWComplex object in stage K17d of the compiler and SDK plan.] type=COMException
-out.complexmat	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A complex value cannot be returned to a COM client yet: it becomes an MWComplex object in stage K17d of the compiler and SDK plan.] type=COMException
+out.struct	MWStruct dims [1,1] fields 2 {a=double 1; b=string 'text'}
+out.structarr	MWStruct dims [1,2] fields 2 {a=?; b=?}
+out.structcol	MWStruct dims [2,1] fields 1 {a=?}
+out.structnested	MWStruct dims [1,1] fields 1 {in=MWStruct dims [1,1] fields 2 {x=double 1; y=array[Double] rank 2 [1..1,1..2] {double 1, double 2}}}
+out.structempty	MWStruct dims [0,0] fields 0 {=?}
+out.structnofields	MWStruct dims [1,1] fields 0 {=?}
+out.complex	MWComplex re=double 1 im=double 2
+out.complexmat	MWComplex re=array[Double] rank 2 [1..1,1..2] {double 1, double 3} im=array[Double] rank 2 [1..1,1..2] {double 2, double -4}
 out.complexzero	double 1
-out.sparse	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A sparse matrix cannot be returned to a COM client yet: it becomes an MWSparse object in stage K17d of the compiler and SDK plan.] type=COMException
-out.sparselogical	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A sparse matrix cannot be returned to a COM client yet: it becomes an MWSparse object in stage K17d of the compiler and SDK plan.] type=COMException
-out.sparseempty	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A sparse matrix cannot be returned to a COM client yet: it becomes an MWSparse object in stage K17d of the compiler and SDK plan.] type=COMException
+out.sparse	MWSparse rows=2 cols=2 ri=array[Int32] rank 1 [1..2] {Int32 1, Int32 2} ci=array[Int32] rank 1 [1..2] {Int32 1, Int32 2} array=array[Double] rank 1 [1..2] {double 1, double 2}
+out.sparselogical	MWSparse rows=1 cols=2 ri=array[Int32] rank 1 [1..1] {Int32 1} ci=array[Int32] rank 1 [1..1] {Int32 1} array=array[Double] rank 1 [1..1] {double 1}
+out.sparseempty	MWSparse rows=2 cols=2 ri=array[Int32] rank 1 [1..0] {} ci=array[Int32] rank 1 [1..0] {} array=array[Double] rank 1 [1..0] {}
 out.empty	null
 out.emptyrow	null
 out.emptycol	null
@@ -252,28 +252,28 @@ out.nan	null
 out.nanmat	array[Object] rank 2 [1..2,1..2] {double 1, null, null, double 4}
 out.inf	double Infinity
 out.neginf	double -Infinity
-out.datetime	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical or a cell of them.] type=COMException
-out.datetimearr	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical or a cell of them.] type=COMException
-out.datetimenat	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical or a cell of them.] type=COMException
+out.datetime	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
+out.datetimearr	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
+out.datetimenat	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
 out.datenum	double 739326.4375
-out.duration	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A duration value cannot be returned to a COM client; return a number, text, a logical or a cell of them.] type=COMException
-out.categorical	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A categorical value cannot be returned to a COM client; return a number, text, a logical or a cell of them.] type=COMException
-out.fhandle	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A function_handle value cannot be returned to a COM client; return a number, text, a logical or a cell of them.] type=COMException
-out.fhandleanon	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A function_handle value cannot be returned to a COM client; return a number, text, a logical or a cell of them.] type=COMException
-out.table	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A table value cannot be returned to a COM client; return a number, text, a logical or a cell of them.] type=COMException
-out.map	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A containers.Map value cannot be returned to a COM client; return a number, text, a logical or a cell of them.] type=COMException
-out.object	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A k17_thing value cannot be returned to a COM client; return a number, text, a logical or a cell of them.] type=COMException
+out.duration	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A duration value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
+out.categorical	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A categorical value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
+out.fhandle	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A function_handle value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
+out.fhandleanon	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A function_handle value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
+out.table	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A table value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
+out.map	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A containers.Map value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
+out.object	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A k17_thing value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
 out.nosuchkind	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[No kind nosuchkind\nError in => k17_make.m at line 73] type=COMException
-out.struct.members	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A struct cannot be returned to a COM client yet: it becomes an MWStruct object in stage K17d of the compiler and SDK plan.] type=COMException
-out.complex.members	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A complex value cannot be returned to a COM client yet: it becomes an MWComplex object in stage K17d of the compiler and SDK plan.] type=COMException
-out.sparse.members	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A sparse matrix cannot be returned to a COM client yet: it becomes an MWSparse object in stage K17d of the compiler and SDK plan.] type=COMException
+out.struct.members	__ComObject fields=2 dims=array[Int32] rank 1 [1..2] {Int32 1, Int32 1} names=array[String] rank 1 [1..2] {string 'a', string 'b'} item.a=double 1 item.b.name=b
+out.complex.members	__ComObject re=array[Double] rank 2 [1..1,1..2] {double 1, double 3} im=array[Double] rank 2 [1..1,1..2] {double 2, double -4}
+out.sparse.members	__ComObject rows=2 cols=2 ri=array[Int32] rank 1 [1..2] {Int32 1, Int32 2} ci=array[Int32] rank 1 [1..2] {Int32 1, Int32 2} array=array[Double] rank 1 [1..2] {double 1, double 2}
 pass.empty	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Not enough input arguments.\nError in => k17_pass.m at line 3] type=COMException
 pass.missing	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Not enough input arguments.\nError in => k17_pass.m at line 3] type=COMException
 pass.r8	double 3.5
 pass.r4	single 1.5
 pass.i4	Int32 7
 pass.i2	Int16 -3
-pass.i8	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[9007199254740993 cannot be held exactly: JGraph keeps an int64 as a double, exact to 2^53.] type=COMException
+pass.i8	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[The int64 value 9007199254740993 is beyond 2^53 and cannot be held exactly; pass it as text or as a double.] type=COMException
 pass.ui1	Byte 200
 pass.bool_true	bool True
 pass.bstr	string 'hello'
@@ -297,209 +297,209 @@ pass.arr_1based	array[Double] rank 2 [1..2,1..2] {double 1, double 2, double 3, 
 pass.arr_date	array[Double] rank 2 [1..1,1..2] {double 739326, double 739327}
 pass.err_na	Int32 -2146826246
 pass.dbnull	null
-pass.range	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-rangeout.scalar	slot=Range K1 value=null cells {}
-rangeout.matrix.onecell	slot=Range K1 value=null cells {}
-rangeout.matrix.fit	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {null, null, null, null} cells {}
-rangeout.matrix.larger	slot=Range K1:M3 value=array[Object] rank 2 [1..3,1..3] {null, null, null, null, null, null, null, null, null} cells {}
-rangeout.row	slot=Range K1 value=null cells {}
-rangeout.col	slot=Range K1 value=null cells {}
-rangeout.cell	slot=Range K1 value=null cells {}
-rangeout.char	slot=Range K1 value=null cells {}
-rangeout.charmat	slot=Range K1 value=null cells {}
+pass.range	array[Object] rank 2 [1..2,1..2] {double 1.5, string 'two', bool True, double 4}
+rangeout.scalar	slot=Range K1 value=double 3.5 cells {K1=double 3.5}
+rangeout.matrix.onecell	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4} cells {K1=double 1, L1=double 2, K2=double 3, L2=double 4}
+rangeout.matrix.fit	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4} cells {K1=double 1, L1=double 2, K2=double 3, L2=double 4}
+rangeout.matrix.larger	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4} cells {K1=double 1, L1=double 2, K2=double 3, L2=double 4}
+rangeout.row	slot=Range K1:M1 value=array[Object] rank 2 [1..1,1..3] {double 1, double 2, double 3} cells {K1=double 1, L1=double 2, M1=double 3}
+rangeout.col	slot=Range K1:K3 value=array[Object] rank 2 [1..3,1..1] {double 1, double 2, double 3} cells {K1=double 1, K2=double 2, K3=double 3}
+rangeout.cell	slot=Range K1:M1 value=array[Object] rank 2 [1..1,1..3] {double 1, string 'two', null} cells {K1=double 1, L1=string 'two'}
+rangeout.char	slot=Range K1 value=string 'hello' cells {K1=string 'hello'}
+rangeout.charmat	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {string 'a', string 'b', string 'c', string 'd'} cells {K1=string 'a', L1=string 'b', K2=string 'c', L2=string 'd'}
 rangeout.nan	slot=Range K1 value=null cells {}
-rangeout.nanmat	slot=Range K1 value=null cells {}
+rangeout.nanmat	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, null, null, double 4} cells {K1=double 1, L2=double 4}
 rangeout.empty	slot=Range K1 value=null cells {}
-rangeout.struct	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A struct cannot be returned to a COM client yet: it becomes an MWStruct object in stage K17d of the compiler and SDK plan.] type=COMException
-rangeout.logicalmat	slot=Range K1 value=null cells {}
-rangeout.datetime	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical or a cell of them.] type=COMException
-rangeout.complex	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A complex value cannot be returned to a COM client yet: it becomes an MWComplex object in stage K17d of the compiler and SDK plan.] type=COMException
-rangeout.noresize	slot=Range K1 value=null cells {}
-rangeout.transpose	slot=Range K1 value=null cells {}
-rangeout.transpose.matrix	slot=Range K1 value=null cells {}
+rangeout.struct	slot=Range K1 value=null cells {}
+rangeout.logicalmat	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {bool True, bool False, bool False, bool True} cells {K1=bool True, L1=bool False, K2=bool False, L2=bool True}
+rangeout.datetime	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
+rangeout.complex	slot=Range K1 value=double 1 cells {K1=double 1}
+rangeout.noresize	slot=Range K1 value=double 1 cells {K1=double 1}
+rangeout.transpose	slot=Range K1:K3 value=array[Object] rank 2 [1..3,1..1] {double 1, double 2, double 3} cells {K1=double 1, K2=double 2, K3=double 3}
+rangeout.transpose.matrix	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, double 3, double 2, double 4} cells {K1=double 1, L1=double 3, K2=double 2, L2=double 4}
 flags.afterrange	InputArrayFormat=1 InputArrayIndFlag=0 OutputArrayFormat=0 OutputArrayIndFlag=0 AutoResizeOutput=True TransposeOutput=False CoerceNumericToType=0 InputDateFormat=0 OutputAsDate=False DateBias=693960 ReplaceMissing=0 ReplaceMatlabNaN=0
 flag.InputArrayFormat.0.r8_2d	string 'double [2 2] [1 3 2 4]'
 flag.InputArrayFormat.0.var_2d	string 'cell [2 2] {double [1 1] [1]; logical [1 1] true; char [1 1] 'a'; double [1 1] [4]}'
-flag.InputArrayFormat.0.var_1d	string 'double [1 2] [1 2]'
+flag.InputArrayFormat.0.var_1d	string 'cell [1 2] {double [1 1] [1]; double [1 1] [2]}'
 flag.InputArrayFormat.0.scalar	string 'double [1 1] [5]'
-flag.InputArrayFormat.0.range	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
+flag.InputArrayFormat.0.range	string 'cell [2 2] {double [1 1] [1.5]; logical [1 1] true; char [1 3] 'two'; double [1 1] [4]}'
 flag.InputArrayFormat.1.r8_2d	string 'double [2 2] [1 3 2 4]'
 flag.InputArrayFormat.1.var_2d	string 'cell [2 2] {double [1 1] [1]; logical [1 1] true; char [1 1] 'a'; double [1 1] [4]}'
 flag.InputArrayFormat.1.var_1d	string 'double [1 2] [1 2]'
 flag.InputArrayFormat.1.scalar	string 'double [1 1] [5]'
-flag.InputArrayFormat.1.range	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-flag.InputArrayFormat.2.r8_2d	string 'double [2 2] [1 3 2 4]'
+flag.InputArrayFormat.1.range	string 'cell [2 2] {double [1 1] [1.5]; logical [1 1] true; char [1 3] 'two'; double [1 1] [4]}'
+flag.InputArrayFormat.2.r8_2d	string 'cell [2 2] {double [1 1] [1]; double [1 1] [3]; double [1 1] [2]; double [1 1] [4]}'
 flag.InputArrayFormat.2.var_2d	string 'cell [2 2] {double [1 1] [1]; logical [1 1] true; char [1 1] 'a'; double [1 1] [4]}'
-flag.InputArrayFormat.2.var_1d	string 'double [1 2] [1 2]'
-flag.InputArrayFormat.2.scalar	string 'double [1 1] [5]'
-flag.InputArrayFormat.2.range	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
+flag.InputArrayFormat.2.var_1d	string 'cell [1 2] {double [1 1] [1]; double [1 1] [2]}'
+flag.InputArrayFormat.2.scalar	string 'cell [1 1] {double [1 1] [5]}'
+flag.InputArrayFormat.2.range	string 'cell [2 2] {double [1 1] [1.5]; logical [1 1] true; char [1 3] 'two'; double [1 1] [4]}'
 flag.InputArrayFormat.3.r8_2d	string 'double [2 2] [1 3 2 4]'
 flag.InputArrayFormat.3.var_2d	string 'cell [2 2] {double [1 1] [1]; logical [1 1] true; char [1 1] 'a'; double [1 1] [4]}'
-flag.InputArrayFormat.3.var_1d	string 'double [1 2] [1 2]'
+flag.InputArrayFormat.3.var_1d	string 'cell [1 2] {double [1 1] [1]; double [1 1] [2]}'
 flag.InputArrayFormat.3.scalar	string 'double [1 1] [5]'
-flag.InputArrayFormat.3.range	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-flag.InputArrayIndFlag.0	array[Double] rank 2 [1..1,1..2] {double 9, double 12} | array[Double] rank 2 [1..1,1..2] {double -7, double -8} | array[Double] rank 2 [1..1,1..2] {double 15, double 48}
-flag.InputArrayIndFlag.0.echo	string 'double [1 2] [1 2]'
-flag.InputArrayIndFlag.1	array[Double] rank 2 [1..1,1..2] {double 9, double 12} | array[Double] rank 2 [1..1,1..2] {double -7, double -8} | array[Double] rank 2 [1..1,1..2] {double 15, double 48}
-flag.InputArrayIndFlag.1.echo	string 'double [1 2] [1 2]'
-flag.InputArrayIndFlag.2	array[Double] rank 2 [1..1,1..2] {double 9, double 12} | array[Double] rank 2 [1..1,1..2] {double -7, double -8} | array[Double] rank 2 [1..1,1..2] {double 15, double 48}
-flag.InputArrayIndFlag.2.echo	string 'double [1 2] [1 2]'
-flag.InputArrayIndFlag.3	array[Double] rank 2 [1..1,1..2] {double 9, double 12} | array[Double] rank 2 [1..1,1..2] {double -7, double -8} | array[Double] rank 2 [1..1,1..2] {double 15, double 48}
-flag.InputArrayIndFlag.3.echo	string 'double [1 2] [1 2]'
+flag.InputArrayFormat.3.range	string 'cell [2 2] {double [1 1] [1.5]; logical [1 1] true; char [1 3] 'two'; double [1 1] [4]}'
+flag.InputArrayIndFlag.0	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Operator '+' needs numbers or numeric arrays, but got cell and cell.\nError in => k17_many.m at line 3] type=COMException
+flag.InputArrayIndFlag.0.echo	string 'cell [1 2] {double [1 1] [1]; double [1 1] [2]}'
+flag.InputArrayIndFlag.1	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Operator '+' needs numbers or numeric arrays, but got cell and cell.\nError in => k17_many.m at line 3] type=COMException
+flag.InputArrayIndFlag.1.echo	string 'cell [1 2] {cell [1 1] {double [1 1] [1]}; cell [1 1] {double [1 1] [2]}}'
+flag.InputArrayIndFlag.2	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Operator '+' needs numbers or numeric arrays, but got cell and cell.\nError in => k17_many.m at line 3] type=COMException
+flag.InputArrayIndFlag.2.echo	string 'cell [1 2] {cell [1 1] {double [1 1] [1]}; cell [1 1] {double [1 1] [2]}}'
+flag.InputArrayIndFlag.3	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Operator '+' needs numbers or numeric arrays, but got cell and cell.\nError in => k17_many.m at line 3] type=COMException
+flag.InputArrayIndFlag.3.echo	string 'cell [1 2] {cell [1 1] {double [1 1] [1]}; cell [1 1] {double [1 1] [2]}}'
 flag.OutputArrayFormat.0.doublemat	array[Double] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4}
 flag.OutputArrayFormat.0.cell	array[Object] rank 2 [1..1,1..3] {double 1, string 'two', array[Double] rank 2 [1..1,1..2] {double 3, double 4}}
 flag.OutputArrayFormat.0.double	double 3.5
-flag.OutputArrayFormat.0.struct	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A struct cannot be returned to a COM client yet: it becomes an MWStruct object in stage K17d of the compiler and SDK plan.] type=COMException
+flag.OutputArrayFormat.0.struct	MWStruct dims [1,1] fields 2 {a=double 1; b=string 'text'}
 flag.OutputArrayFormat.0.char	string 'hello'
 flag.OutputArrayFormat.1.doublemat	array[Double] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4}
 flag.OutputArrayFormat.1.cell	array[Object] rank 2 [1..1,1..3] {double 1, string 'two', array[Double] rank 2 [1..1,1..2] {double 3, double 4}}
 flag.OutputArrayFormat.1.double	double 3.5
-flag.OutputArrayFormat.1.struct	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A struct cannot be returned to a COM client yet: it becomes an MWStruct object in stage K17d of the compiler and SDK plan.] type=COMException
+flag.OutputArrayFormat.1.struct	MWStruct dims [1,1] fields 2 {a=double 1; b=string 'text'}
 flag.OutputArrayFormat.1.char	string 'hello'
-flag.OutputArrayFormat.2.doublemat	array[Double] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4}
+flag.OutputArrayFormat.2.doublemat	array[Object] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4}
 flag.OutputArrayFormat.2.cell	array[Object] rank 2 [1..1,1..3] {double 1, string 'two', array[Double] rank 2 [1..1,1..2] {double 3, double 4}}
-flag.OutputArrayFormat.2.double	double 3.5
-flag.OutputArrayFormat.2.struct	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A struct cannot be returned to a COM client yet: it becomes an MWStruct object in stage K17d of the compiler and SDK plan.] type=COMException
-flag.OutputArrayFormat.2.char	string 'hello'
-flag.OutputArrayIndFlag.0	array[Double] rank 2 [1..1,1..2] {double 1, double 2} | array[Double] rank 2 [1..1,1..2] {double -1, double -2}
-flag.OutputArrayIndFlag.1	array[Double] rank 2 [1..1,1..2] {double 1, double 2} | array[Double] rank 2 [1..1,1..2] {double -1, double -2}
-flag.OutputArrayIndFlag.2	array[Double] rank 2 [1..1,1..2] {double 1, double 2} | array[Double] rank 2 [1..1,1..2] {double -1, double -2}
+flag.OutputArrayFormat.2.double	array[Object] rank 2 [1..1,1..1] {double 3.5}
+flag.OutputArrayFormat.2.struct	MWStruct dims [1,1] fields 2 {a=array[Object] rank 2 [1..1,1..1] {double 1}; b=array[Object] rank 2 [1..1,1..1] {string 'text'}}
+flag.OutputArrayFormat.2.char	array[Object] rank 2 [1..1,1..1] {string 'hello'}
+flag.OutputArrayIndFlag.0	array[Object] rank 2 [1..1,1..2] {double 1, double 2} | array[Object] rank 2 [1..1,1..2] {double -1, double -2}
+flag.OutputArrayIndFlag.1	array[Object] rank 2 [1..1,1..2] {double 1, double 2} | array[Object] rank 2 [1..1,1..2] {double -1, double -2}
+flag.OutputArrayIndFlag.2	array[Object] rank 2 [1..1,1..2] {double 1, double 2} | array[Object] rank 2 [1..1,1..2] {double -1, double -2}
 flag.CoerceNumericToType.0.r8	string 'double [1 1] [3.7]'
 flag.CoerceNumericToType.0.arr	string 'double [1 3] [1.5 -2.5 300]'
 flag.CoerceNumericToType.0.bstr	string 'char [1 4] 'text''
 flag.CoerceNumericToType.0.bool	string 'logical [1 1] true'
 flag.CoerceNumericToType.0.i4	string 'int32 [1 1] [7]'
-flag.CoerceNumericToType.3.r8	string 'double [1 1] [3.7]'
-flag.CoerceNumericToType.3.arr	string 'double [1 3] [1.5 -2.5 300]'
+flag.CoerceNumericToType.3.r8	string 'logical [1 1] true'
+flag.CoerceNumericToType.3.arr	string 'logical [1 3] [true true true]'
 flag.CoerceNumericToType.3.bstr	string 'char [1 4] 'text''
 flag.CoerceNumericToType.3.bool	string 'logical [1 1] true'
-flag.CoerceNumericToType.3.i4	string 'int32 [1 1] [7]'
-flag.CoerceNumericToType.4.r8	string 'double [1 1] [3.7]'
-flag.CoerceNumericToType.4.arr	string 'double [1 3] [1.5 -2.5 300]'
+flag.CoerceNumericToType.3.i4	string 'logical [1 1] true'
+flag.CoerceNumericToType.4.r8	string 'char [1 3] '3.7''
+flag.CoerceNumericToType.4.arr	string 'cell [1 3] {char [1 3] '1.5'; char [1 4] '-2.5'; char [1 3] '300'}'
 flag.CoerceNumericToType.4.bstr	string 'char [1 4] 'text''
-flag.CoerceNumericToType.4.bool	string 'logical [1 1] true'
-flag.CoerceNumericToType.4.i4	string 'int32 [1 1] [7]'
+flag.CoerceNumericToType.4.bool	string 'char [1 4] 'True''
+flag.CoerceNumericToType.4.i4	string 'char [1 1] '7''
 flag.CoerceNumericToType.6.r8	string 'double [1 1] [3.7]'
 flag.CoerceNumericToType.6.arr	string 'double [1 3] [1.5 -2.5 300]'
 flag.CoerceNumericToType.6.bstr	string 'char [1 4] 'text''
-flag.CoerceNumericToType.6.bool	string 'logical [1 1] true'
-flag.CoerceNumericToType.6.i4	string 'int32 [1 1] [7]'
-flag.CoerceNumericToType.7.r8	string 'double [1 1] [3.7]'
-flag.CoerceNumericToType.7.arr	string 'double [1 3] [1.5 -2.5 300]'
+flag.CoerceNumericToType.6.bool	string 'double [1 1] [-1]'
+flag.CoerceNumericToType.6.i4	string 'double [1 1] [7]'
+flag.CoerceNumericToType.7.r8	string 'single [1 1] [3.700000048]'
+flag.CoerceNumericToType.7.arr	string 'single [1 3] [1.5 -2.5 300]'
 flag.CoerceNumericToType.7.bstr	string 'char [1 4] 'text''
-flag.CoerceNumericToType.7.bool	string 'logical [1 1] true'
-flag.CoerceNumericToType.7.i4	string 'int32 [1 1] [7]'
-flag.CoerceNumericToType.8.r8	string 'double [1 1] [3.7]'
-flag.CoerceNumericToType.8.arr	string 'double [1 3] [1.5 -2.5 300]'
+flag.CoerceNumericToType.7.bool	string 'single [1 1] [-1]'
+flag.CoerceNumericToType.7.i4	string 'single [1 1] [7]'
+flag.CoerceNumericToType.8.r8	string 'int8 [1 1] [4]'
+flag.CoerceNumericToType.8.arr	string 'int8 [1 3] [2 -2 127]'
 flag.CoerceNumericToType.8.bstr	string 'char [1 4] 'text''
-flag.CoerceNumericToType.8.bool	string 'logical [1 1] true'
-flag.CoerceNumericToType.8.i4	string 'int32 [1 1] [7]'
-flag.CoerceNumericToType.9.r8	string 'double [1 1] [3.7]'
-flag.CoerceNumericToType.9.arr	string 'double [1 3] [1.5 -2.5 300]'
+flag.CoerceNumericToType.8.bool	string 'int8 [1 1] [-1]'
+flag.CoerceNumericToType.8.i4	string 'int8 [1 1] [7]'
+flag.CoerceNumericToType.9.r8	string 'uint8 [1 1] [4]'
+flag.CoerceNumericToType.9.arr	string 'uint8 [1 3] [2 0 255]'
 flag.CoerceNumericToType.9.bstr	string 'char [1 4] 'text''
-flag.CoerceNumericToType.9.bool	string 'logical [1 1] true'
-flag.CoerceNumericToType.9.i4	string 'int32 [1 1] [7]'
-flag.CoerceNumericToType.10.r8	string 'double [1 1] [3.7]'
-flag.CoerceNumericToType.10.arr	string 'double [1 3] [1.5 -2.5 300]'
+flag.CoerceNumericToType.9.bool	string 'uint8 [1 1] [255]'
+flag.CoerceNumericToType.9.i4	string 'uint8 [1 1] [7]'
+flag.CoerceNumericToType.10.r8	string 'int16 [1 1] [4]'
+flag.CoerceNumericToType.10.arr	string 'int16 [1 3] [2 -2 300]'
 flag.CoerceNumericToType.10.bstr	string 'char [1 4] 'text''
-flag.CoerceNumericToType.10.bool	string 'logical [1 1] true'
-flag.CoerceNumericToType.10.i4	string 'int32 [1 1] [7]'
-flag.CoerceNumericToType.11.r8	string 'double [1 1] [3.7]'
-flag.CoerceNumericToType.11.arr	string 'double [1 3] [1.5 -2.5 300]'
+flag.CoerceNumericToType.10.bool	string 'int16 [1 1] [-1]'
+flag.CoerceNumericToType.10.i4	string 'int16 [1 1] [7]'
+flag.CoerceNumericToType.11.r8	string 'uint16 [1 1] [4]'
+flag.CoerceNumericToType.11.arr	string 'uint16 [1 3] [2 0 300]'
 flag.CoerceNumericToType.11.bstr	string 'char [1 4] 'text''
-flag.CoerceNumericToType.11.bool	string 'logical [1 1] true'
-flag.CoerceNumericToType.11.i4	string 'int32 [1 1] [7]'
-flag.CoerceNumericToType.12.r8	string 'double [1 1] [3.7]'
-flag.CoerceNumericToType.12.arr	string 'double [1 3] [1.5 -2.5 300]'
+flag.CoerceNumericToType.11.bool	string 'uint16 [1 1] [65535]'
+flag.CoerceNumericToType.11.i4	string 'uint16 [1 1] [7]'
+flag.CoerceNumericToType.12.r8	string 'int32 [1 1] [4]'
+flag.CoerceNumericToType.12.arr	string 'int32 [1 3] [2 -2 300]'
 flag.CoerceNumericToType.12.bstr	string 'char [1 4] 'text''
-flag.CoerceNumericToType.12.bool	string 'logical [1 1] true'
+flag.CoerceNumericToType.12.bool	string 'int32 [1 1] [-1]'
 flag.CoerceNumericToType.12.i4	string 'int32 [1 1] [7]'
-flag.CoerceNumericToType.13.r8	string 'double [1 1] [3.7]'
-flag.CoerceNumericToType.13.arr	string 'double [1 3] [1.5 -2.5 300]'
+flag.CoerceNumericToType.13.r8	string 'uint32 [1 1] [4]'
+flag.CoerceNumericToType.13.arr	string 'uint32 [1 3] [2 0 300]'
 flag.CoerceNumericToType.13.bstr	string 'char [1 4] 'text''
-flag.CoerceNumericToType.13.bool	string 'logical [1 1] true'
-flag.CoerceNumericToType.13.i4	string 'int32 [1 1] [7]'
+flag.CoerceNumericToType.13.bool	string 'uint32 [1 1] [4294967295]'
+flag.CoerceNumericToType.13.i4	string 'uint32 [1 1] [7]'
 flag.InputDateFormat.0.date	string 'double [1 1] [739326.4375]'
 flag.InputDateFormat.0.r8	string 'double [1 1] [45366.4375]'
-flag.InputDateFormat.0.range	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-flag.InputDateFormat.1.date	string 'double [1 1] [739326.4375]'
+flag.InputDateFormat.0.range	string 'double [1 1] [45366.4375]'
+flag.InputDateFormat.1.date	string 'char [1 21] '3/15/2024 10:30:00 AM''
 flag.InputDateFormat.1.r8	string 'double [1 1] [45366.4375]'
-flag.InputDateFormat.1.range	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
+flag.InputDateFormat.1.range	string 'double [1 1] [45366.4375]'
 flag.InputDateFormat.2.date	string 'double [1 1] [739326.4375]'
 flag.InputDateFormat.2.r8	string 'double [1 1] [45366.4375]'
-flag.InputDateFormat.2.range	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
+flag.InputDateFormat.2.range	string 'double [1 1] [45366.4375]'
 flag.OutputAsDate.False.r8	double 45366.4375
 flag.OutputAsDate.False.datenum	double 739326.4375
-flag.OutputAsDate.False.datetime	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical or a cell of them.] type=COMException
+flag.OutputAsDate.False.datetime	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
 flag.OutputAsDate.False.char	string 'hello'
 flag.OutputAsDate.False.small	double 0.5
-flag.OutputAsDate.True.r8	double 45366.4375
-flag.OutputAsDate.True.datenum	double 739326.4375
-flag.OutputAsDate.True.datetime	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical or a cell of them.] type=COMException
+flag.OutputAsDate.True.r8	DateTime 0124-03-17 13:30:00.000
+flag.OutputAsDate.True.datenum	DateTime 2024-03-15 10:30:00.000
+flag.OutputAsDate.True.datetime	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
 flag.OutputAsDate.True.char	string 'hello'
-flag.OutputAsDate.True.small	double 0.5
-flag.DateBias.0.datein	string 'double [1 1] [739326.4375]'
-flag.DateBias.0.dateout	double 45366.4375
-flag.DateBias.0.datetimeout	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical or a cell of them.] type=COMException
+flag.OutputAsDate.True.small	double -693959.5
+flag.DateBias.0.datein	string 'double [1 1] [45366.4375]'
+flag.DateBias.0.dateout	DateTime 2024-03-15 10:30:00.000
+flag.DateBias.0.datetimeout	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
 flag.DateBias.693960.datein	string 'double [1 1] [739326.4375]'
-flag.DateBias.693960.dateout	double 45366.4375
-flag.DateBias.693960.datetimeout	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical or a cell of them.] type=COMException
-flag.DateBias.1.datein	string 'double [1 1] [739326.4375]'
-flag.DateBias.1.dateout	double 45366.4375
-flag.DateBias.1.datetimeout	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical or a cell of them.] type=COMException
+flag.DateBias.693960.dateout	DateTime 0124-03-17 13:30:00.000
+flag.DateBias.693960.datetimeout	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
+flag.DateBias.1.datein	string 'double [1 1] [45367.4375]'
+flag.DateBias.1.dateout	DateTime 2024-03-14 10:30:00.000
+flag.DateBias.1.datetimeout	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
 flag.ReplaceMissing.0.arr	string 'double [1 3] [1 0 3]'
 flag.ReplaceMissing.0.scalar	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Not enough input arguments.\nError in => k17_echo.m at line 3] type=COMException
-flag.ReplaceMissing.0.range	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-flag.ReplaceMissing.0.rangeerror	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
+flag.ReplaceMissing.0.range	string 'double [2 2] [0 0 0 0]'
+flag.ReplaceMissing.0.rangeerror	string 'cell [1 2] {int32 [1 1] [-2146826281]; double [1 1] [45366.4375]}'
 flag.ReplaceMissing.1.arr	string 'double [1 3] [1 0 3]'
 flag.ReplaceMissing.1.scalar	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Not enough input arguments.\nError in => k17_echo.m at line 3] type=COMException
-flag.ReplaceMissing.1.range	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-flag.ReplaceMissing.1.rangeerror	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
+flag.ReplaceMissing.1.range	string 'double [2 2] [NaN NaN NaN NaN]'
+flag.ReplaceMissing.1.rangeerror	string 'cell [1 2] {int32 [1 1] [-2146826281]; double [1 1] [45366.4375]}'
 flag.ReplaceMissing.2.arr	string 'double [1 3] [1 0 3]'
 flag.ReplaceMissing.2.scalar	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Not enough input arguments.\nError in => k17_echo.m at line 3] type=COMException
-flag.ReplaceMissing.2.range	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
-flag.ReplaceMissing.2.rangeerror	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
+flag.ReplaceMissing.2.range	string 'double [2 2] [0 0 0 0]'
+flag.ReplaceMissing.2.rangeerror	string 'cell [1 2] {int32 [1 1] [-2146826281]; double [1 1] [45366.4375]}'
 flag.ReplaceMatlabNaN.0.nan	null
 flag.ReplaceMatlabNaN.0.nanmat	array[Object] rank 2 [1..2,1..2] {double 1, null, null, double 4}
 flag.ReplaceMatlabNaN.0.inf	double Infinity
-flag.ReplaceMatlabNaN.0.range	slot=Range K1 value=null cells {}
-flag.ReplaceMatlabNaN.1.nan	null
-flag.ReplaceMatlabNaN.1.nanmat	array[Object] rank 2 [1..2,1..2] {double 1, null, null, double 4}
+flag.ReplaceMatlabNaN.0.range	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, null, null, double 4} cells {K1=double 1, L2=double 4}
+flag.ReplaceMatlabNaN.1.nan	double 0
+flag.ReplaceMatlabNaN.1.nanmat	array[Object] rank 2 [1..2,1..2] {double 1, double 0, double 0, double 4}
 flag.ReplaceMatlabNaN.1.inf	double Infinity
-flag.ReplaceMatlabNaN.1.range	slot=Range K1 value=null cells {}
-flag.ReplaceMatlabNaN.2.nan	null
-flag.ReplaceMatlabNaN.2.nanmat	array[Object] rank 2 [1..2,1..2] {double 1, null, null, double 4}
+flag.ReplaceMatlabNaN.1.range	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, double 0, double 0, double 4} cells {K1=double 1, L1=double 0, K2=double 0, L2=double 4}
+flag.ReplaceMatlabNaN.2.nan	string '#N/A'
+flag.ReplaceMatlabNaN.2.nanmat	array[Object] rank 2 [1..2,1..2] {double 1, string '#N/A', string '#N/A', double 4}
 flag.ReplaceMatlabNaN.2.inf	double Infinity
-flag.ReplaceMatlabNaN.2.range	slot=Range K1 value=null cells {}
+flag.ReplaceMatlabNaN.2.range	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, Int32 -2146826246, Int32 -2146826246, double 4} cells {K1=double 1, L1=Int32 -2146826246, K2=Int32 -2146826246, L2=double 4}
 flag.ReplaceMatlabNaN.3.nan	null
 flag.ReplaceMatlabNaN.3.nanmat	array[Object] rank 2 [1..2,1..2] {double 1, null, null, double 4}
 flag.ReplaceMatlabNaN.3.inf	double Infinity
-flag.ReplaceMatlabNaN.3.range	slot=Range K1 value=null cells {}
+flag.ReplaceMatlabNaN.3.range	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, null, null, double 4} cells {K1=double 1, L2=double 4}
 flag.bad.InputArrayFormat	9
 flag.bad.CoerceNumericToType.set	99
 flag.bad.DateBias	-5
-util.MWPack.three	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWPack.none	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWPack.one	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWPack.withempty	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWPack.range	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWUnpack.plain	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWUnpack.start1	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWUnpack.fewer	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWUnpack.more	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWUnpack.notpacked	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWUnpack.array	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWUnpack.range	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWUnpack.range.noresize	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWDate2VariantDate.datenum	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWDate2VariantDate.small	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWDate2VariantDate.array	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWDate2VariantDate.text	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWDate2VariantDate.date	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.CreateRemoteObject	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.CreateRemoteObject.unknown	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.MWInitApplicationWithMCROptions	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.members	
+util.MWPack.three	array[Object] rank 1 [1..3] {double 1, string 'two', array[Double] rank 1 [0..1] {double 3, double 4}}
+util.MWPack.none	null
+util.MWPack.one	array[Object] rank 1 [1..1] {double 5}
+util.MWPack.withempty	array[Object] rank 1 [1..2] {double 1, double 3}
+util.MWPack.range	array[Object] rank 1 [1..1] {Range A1:B2 value=array[Object] rank 2 [1..2,1..2] {double 1.5, string 'two', bool True, double 4}}
+util.MWUnpack.plain	double 1 | string 'two' | double 3
+util.MWUnpack.start1	string 'two' | double 3
+util.MWUnpack.fewer	double 1
+util.MWUnpack.more	double 1 | null
+util.MWUnpack.notpacked	double 5
+util.MWUnpack.array	double 7 | string 'x'
+util.MWUnpack.range	K1=double 1, L1=double 2, K2=double 3, L2=double 4
+util.MWUnpack.range.noresize	K1=double 1, L1=null, K2=null, L2=null
+util.MWDate2VariantDate.datenum	double 45366.4375
+util.MWDate2VariantDate.small	double -693959.5
+util.MWDate2VariantDate.array	array[Double] rank 1 [0..1] {double 739326.4375, double 739327}
+util.MWDate2VariantDate.text	string 'x'
+util.MWDate2VariantDate.date	DateTime 2024-03-15 00:00:00.000
+util.CreateRemoteObject	double 42
+util.CreateRemoteObject.unknown	null
+util.MWInitApplicationWithMCROptions	ERR 0x80070057 src=[JGraphComUtil.MWUtil25.2] msg=[The JGraph Runtime option list must be a string array.] type=ArgumentException
+util.members	CreateRemoteObject,IsMCRInitialized,IsMCRJVMEnabled,MWDate2VariantDate,MWInitApplication,MWInitApplicationWithMCROptions,MWPack,MWTerminateApplication,MWUnpack
 err.id	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Custom text with an identifier\nError in => k17_err.m at line 6] type=COMException
 err.plain	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A plain message with no identifier\nError in => k17_err.m at line 8] type=COMException
 err.multi	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Line one\nLine two\nError in => k17_err.m at line 10] type=COMException
@@ -510,7 +510,7 @@ err.nargs	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Too many input arguments.\nE
 err.undefined	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Undefined function 'no_such_function_k17' for input arguments of type 'double'.\nError in => k17_err.m at line 21] type=COMException
 err.index	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Index exceeds the number of array elements. Index must not exceed 3.\nError in => k17_err.m at line 24] type=COMException
 err.none	double 0
-err.nooutputs.fail	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
+err.nooutputs.fail	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A MWFlags object cannot be passed to a function.] type=COMException
 err.badcount.more	ERR 0x8002000E src=[] msg=[Cannot find an overload for "k17_one" and the argument count: "4"] type=TargetParameterCountException
 err.badcount.fewer	ERR 0x8002000E src=[] msg=[Cannot find an overload for "k17_one" and the argument count: "1"] type=TargetParameterCountException
 err.badcount.fewer.dispatch	ERR 0x8002000E src=[] msg=[Number of parameters specified does not match the expected number.] type=TargetParameterCountException
@@ -521,7 +521,7 @@ err.argsblock.toomany	array[Double] rank 2 [1..1,1..2] {double 3, double 6}
 err.defaultmiddle	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Input argument 2 (b) was not given; only trailing arguments may be left out.] type=COMException
 err.emptymiddle	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Input argument 2 (b) was not given; only trailing arguments may be left out.] type=COMException
 err.alldefault	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Not enough input arguments.\nError in => k17_many.m at line 3] type=COMException
-err.unconvertible	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object (an Excel Range, or another COM object) cannot be passed to a function yet: pass its Value2 (compiler and SDK plan, stage K17d).] type=COMException
+err.unconvertible	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object with no Value2 and no default value (a Worksheet, a Workbook, another COM object) cannot be passed to a function; pass a Range or its Value2.] type=COMException
 err.nargouttext	array[Double] rank 2 [1..1,1..3] {double 194, double 196, double 198}
 err.slotnotbyref	null
 err.make.unknown	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[No kind nosuchkind\nError in => k17_make.m at line 73] type=COMException
@@ -550,20 +550,13 @@ progid.k17_one.k17_oneClass.1_0.count	no k17_count
 progid.k17sep.K17Sep.1_0	double 4
 progid.k17sep.K17Sep.1_0.count	double 1
 progid.versionless.sameclass	double 6
-terminate	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.IsMCRInitialized.terminated	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-terminate.twice	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-init.after.terminate	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
-util.IsMCRInitialized.reinit	ERR 0x80131501 src=[System.Management.Automation] msg=[You cannot call a method on a null-valued expression.] type=RuntimeException
+terminate	ok
+util.IsMCRInitialized.terminated	True
+terminate.twice	ok
+init.after.terminate	ok
+util.IsMCRInitialized.reinit	True
 excel.quit	ok
 next	call.after.terminate: k17_one on the object after MWTerminateApplication; the process ends here if it crashes
 call.after.terminate	double 4
 create.after.terminate	double 4
-seconds	16.8
-
-STDERR	Get-Member : You must specify an object for the Get-Member cmdlet.
-STDERR	At <REPO>\tools\matlab-checklist\compiler-probes\src\k17client\k17com.ps1:697 char:35
-STDERR	+ ... il.members' { (@($u | Get-Member -MemberType Property, Method | ForEa ...
-STDERR	+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-STDERR	    + CategoryInfo          : CloseError: (:) [Get-Member], InvalidOperationException
-STDERR	    + FullyQualifiedErrorId : NoObjectInGetMember,Microsoft.PowerShell.Commands.GetMemberCommand
+seconds	22.2

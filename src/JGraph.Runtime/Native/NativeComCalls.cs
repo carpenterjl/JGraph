@@ -1,18 +1,21 @@
 using System.Runtime.InteropServices;
+using JGraph.Deploy;
 using JGraph.Runtime.Com;
 
 namespace JGraph.Runtime.Native;
 
 /// <summary>
-/// What jgrt.dll's COM objects do in the engine (compiler and SDK plan, stage K17c;
-/// <c>native/jgrt/src/com.cpp</c>): an add-in's component object opened for a class factory, a
-/// member of a served object invoked by name with its VARIANT arguments, and an object let go when
-/// its last COM reference is released. The other way, jgrt wraps an engine object as a COM object
-/// (<see cref="Wrap"/>) and reads one back (<see cref="Unwrap"/>).
+/// What jgrt.dll's COM objects do in the engine (compiler and SDK plan, stages K17c and K17d;
+/// <c>native/jgrt/src/com.cpp</c>): an object of a coclass made for a class factory (an add-in's
+/// component, or one of the COM utility library's classes), a member of a served object invoked by
+/// name with its VARIANT arguments, and an object let go when its last COM reference is released.
+/// The other way, jgrt wraps an engine object as a COM object (<see cref="Wrap"/>), reads one back
+/// (<see cref="Unwrap"/>) and loads a DLL's type library as a module (<see cref="LoadModule"/>).
 /// </summary>
 /// <remarks>
 /// Nothing thrown may leave an entry point: a failure is 0 or a failed HRESULT with its source and
-/// description handed back as CoTaskMem strings, which jgrt turns into the client's IErrorInfo.
+/// description handed back as CoTaskMem strings, which jgrt turns into the client's IErrorInfo; a
+/// silent one hands back neither, and the client gets the bare HRESULT.
 /// </remarks>
 [System.Runtime.Versioning.SupportedOSPlatform("windows")]
 internal static unsafe class NativeComCalls
@@ -21,13 +24,18 @@ internal static unsafe class NativeComCalls
 
     private static delegate* unmanaged<nint, nint, Guid*, nint> _wrap;
     private static delegate* unmanaged<nint, nint> _unwrap;
+    private static delegate* unmanaged<char*, nint> _loadModule;
 
     /// <summary>Finds jgrt's functions in <paramref name="module"/>.</summary>
     internal static void Bind(nint module)
     {
         _wrap = (delegate* unmanaged<nint, nint, Guid*, nint>)NativeLibrary.GetExport(module, "jgrtComWrap");
         _unwrap = (delegate* unmanaged<nint, nint>)NativeLibrary.GetExport(module, "jgrtComUnwrap");
+        _loadModule = NativeLibrary.TryGetExport(module, "jgrtComLoadModule", out nint load) ? (delegate* unmanaged<char*, nint>)load : null;
     }
+
+    /// <summary>Whether jgrt is bound, so served objects can be wrapped for a COM client.</summary>
+    internal static bool IsBound => _wrap != null;
 
     /// <summary>jgrt's COM object for the served object <paramref name="handle"/> under <paramref name="interfaceId"/> of <paramref name="module"/>'s type library; 0 when the library lacks it.</summary>
     internal static nint Wrap(nint handle, nint module, Guid interfaceId) => _wrap == null ? 0 : _wrap(handle, module, &interfaceId);
@@ -35,14 +43,36 @@ internal static unsafe class NativeComCalls
     /// <summary>The served object's handle behind a COM object of jgrt's, or 0 for any other object.</summary>
     internal static nint Unwrap(nint comObject) => _unwrap == null || comObject == 0 ? 0 : _unwrap(comObject);
 
-    /// <summary>The class factory's CreateInstance: the component object of the add-in DLL, or 0 and why.</summary>
+    /// <summary>jgrt's module for the DLL at <paramref name="path"/> (its type library read), or 0 when jgrt is not bound or the DLL carries none.</summary>
+    internal static nint LoadModule(string path)
+    {
+        if (_loadModule == null)
+        {
+            return 0;
+        }
+
+        fixed (char* p = path)
+        {
+            return _loadModule(p);
+        }
+    }
+
+    /// <summary>
+    /// The class factory's CreateInstance: the object of <paramref name="className"/> of the library
+    /// <paramref name="library"/> in the DLL at <paramref name="dllPath"/> - the COM utility library's
+    /// class (stage K17d), else the add-in's component - or 0 and why.
+    /// </summary>
     [UnmanagedCallersOnly]
-    internal static nint Create(char* dllPath, nint module, char** error)
+    internal static nint Create(char* dllPath, nint module, char* library, char* className, char** error)
     {
         try
         {
-            ExcelComponent component = ExcelComponent.Open(new string(dllPath), module);
-            return ComObjects.Attach(component);
+            string libraryName = library == null ? "" : new string(library);
+            string name = className == null ? "" : new string(className);
+            ComServed made = libraryName == ExcelComGuids.UtilityLibraryName
+                ? ExcelComUtilityLibrary.Create(name, module)
+                : ExcelComponent.Open(new string(dllPath), module);
+            return ComObjects.Attach(made);
         }
         catch (Exception failure)
         {
@@ -69,12 +99,21 @@ internal static unsafe class NativeComCalls
         try
         {
             object? answer = target.Invoke(new string(member), (ComInvokeKind)kind, new ComArguments(argv, argc));
-            ExcelVariants.WriteResult(answer, result, target);
+            if (answer is RuntimeValue value)
+            {
+                answer = ExcelConversion.ToClient(value, target.FlagsForResults, target);
+            }
+
+            ExcelVariants.Write(answer, result);
             return 0;
         }
         catch (ComCallException refused)
         {
-            Say(source, description, refused.ErrorSource, refused.Message);
+            if (!refused.IsSilent)
+            {
+                Say(source, description, refused.ErrorSource, refused.Message);
+            }
+
             return refused.Code;
         }
         catch (Exception failure)

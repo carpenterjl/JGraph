@@ -13,12 +13,14 @@
                KO13); the probe records each build's registry delta through .NET where JGraph gives
                it no reg.exe.
       com      src\k17client\k17com.ps1, the K17a oracle, against the add-in JGraph built and
-               registered (k17xl.K17Xl.1_0): the rows before MWInitApplication in a process of their
-               own, then the whole oracle with an invisible Excel for its Range rows. JGraph has no
-               utility library until stage K17d, so -UtilProgId '' makes those rows fail.
+               registered (k17xl.K17Xl.1_0) and JGraph's COM utility library (jgcomutil.dll beside
+               jgraph.exe, registered for the current user first; stage K17d): the rows before
+               MWInitApplication in a process of their own, then the whole oracle with an invisible
+               Excel for its Range rows, then stage K17d's extra rows (k17com_extra.ps1).
       pe       pe-resources.py over every DLL the probe built (k17_pe.out.txt).
-      cleanup  regsvr32 /s /u over every add-in the probe built, the registry compared with its state
-               before the probe (k17_registry.out.txt), as record-k17.ps1's cleanup did.
+      cleanup  regsvr32 /s /u over every add-in the probe built and over the utility library, the
+               registry compared with its state before the probe (k17_registry.out.txt), as
+               record-k17.ps1's cleanup did.
       compare  compare-k17.py over both engines' recordings (--only the recordings this stage makes).
 
     The work root should be as long as record-k17.ps1's (k17_r2025b and k17_jgraph are both ten
@@ -147,10 +149,18 @@ if ($skipped -notcontains 'excel') {
 }
 
 # --- the add-in from a COM client: the K17a oracle against JGraph's registered add-in --------------------
+$utility = Join-Path $jgraphFolder 'jgcomutil.dll'
 if ($skipped -notcontains 'com') {
+    # The utility library registered for the current user (its DllRegisterServer falls back to the user's
+    # hive when it may not write the machine's), as the runtime's installer would have done; a build of
+    # the probe's registered it already when it found it unregistered (stage K17d).
+    $r = Start-Process -FilePath (Join-Path $env:SystemRoot 'System32\regsvr32.exe') -ArgumentList @('/s', "`"$utility`"") -NoNewWindow -PassThru -Wait
+    Write-Host ("{0,-28} exit {1}" -f 'jgcomutil.dll registered', $r.ExitCode)
     $others = 'k17xl.K17Xl,k17bas.K17Bas.1_0,k17v2.K17V2.2_0,k17v05.K17V05.1_0,k17v3456.K17V3456.3_4,k17_one.k17_oneClass.1_0,k17sep.K17Sep.1_0'
-    Run-Child (Join-Path $client 'k17com.ps1') @('-Phase', 'preinit', '-ProgId', 'k17xl.K17Xl.1_0', '-UtilProgId', "''") 'k17_com_preinit.out.txt' 600
-    Run-Child (Join-Path $client 'k17com.ps1') @('-ProgId', 'k17xl.K17Xl.1_0', '-OtherProgIds', $others, '-UtilProgId', "''") 'k17_com.out.txt' 1800
+    $util = @('-UtilPrefix', 'JGraphComUtil')
+    Run-Child (Join-Path $client 'k17com.ps1') (@('-Phase', 'preinit', '-ProgId', 'k17xl.K17Xl.1_0') + $util) 'k17_com_preinit.out.txt' 600
+    Run-Child (Join-Path $client 'k17com.ps1') (@('-ProgId', 'k17xl.K17Xl.1_0', '-OtherProgIds', $others) + $util) 'k17_com.out.txt' 1800
+    Run-Child (Join-Path $client 'k17com.ps1') (@('-Phase', 'extra', '-ProgId', 'k17xl.K17Xl.1_0') + $util) 'k17_com_extra.out.txt' 1800
 }
 
 # --- what the DLLs carry ------------------------------------------------------------------------------------
@@ -209,6 +219,10 @@ if ($skipped -notcontains 'cleanup') {
         $p = Start-Process -FilePath (Join-Path $env:SystemRoot 'System32\regsvr32.exe') -ArgumentList @('/s', '/u', "`"$($f.FullName)`"") -NoNewWindow -PassThru -Wait
         $lines += "unregister`t$($f.FullName.Substring($probe.Length + 1))`texit $($p.ExitCode)"
     }
+    if (Test-Path $utility) {
+        $p = Start-Process -FilePath (Join-Path $env:SystemRoot 'System32\regsvr32.exe') -ArgumentList @('/s', '/u', "`"$utility`"") -NoNewWindow -PassThru -Wait
+        $lines += "unregister`tjgcomutil.dll`texit $($p.ExitCode)"
+    }
     # Whatever this stage's add-ins left (every one is named k17...) is removed, deepest first; JGraph's
     # own component category, which the first build made, is left as the runtime's installer would leave it.
     $after1 = @(Reg-Names)
@@ -241,7 +255,7 @@ if ($skipped -notcontains 'cleanup') {
 }
 
 if ($skipped -notcontains 'compare') {
-    $only = if ($UpTo -eq 'all') { @() } else { @('--only', 'excel,com_preinit,com,pe,registry') }
+    $only = if ($UpTo -eq 'all') { @() } else { @('--only', 'excel,com_preinit,com,com_extra,pe,registry') }
     $text = (& $Python -I (Join-Path $here 'compare-k17.py') $recordings @only 2>&1 | Out-String) -replace "`r`n", "`n"
     [System.IO.File]::WriteAllText((Join-Path $recordings 'k17_differences.txt'), $text, $utf8)
     Write-Host $text

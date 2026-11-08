@@ -516,7 +516,13 @@ public sealed class RuntimeSparse : RuntimeValue
     /// <param name="columnStarts">Where each column's values start in <paramref name="values"/>, with one more entry at the end.</param>
     /// <param name="values">The stored values, column by column.</param>
     public RuntimeSparse(int rows, int columns, IReadOnlyList<int> rowIndices, IReadOnlyList<int> columnStarts, IReadOnlyList<double> values)
-        : base(RuntimeNumeric.DoubleClass, [rows, columns])
+        : this(rows, columns, rowIndices, columnStarts, values, logical: false)
+    {
+    }
+
+    /// <summary>Creates a sparse matrix, a logical one (every stored value 1) when <paramref name="logical"/> says so.</summary>
+    internal RuntimeSparse(int rows, int columns, IReadOnlyList<int> rowIndices, IReadOnlyList<int> columnStarts, IReadOnlyList<double> values, bool logical)
+        : base(logical ? "logical" : RuntimeNumeric.DoubleClass, [rows, columns])
     {
         ArgumentNullException.ThrowIfNull(rowIndices);
         ArgumentNullException.ThrowIfNull(columnStarts);

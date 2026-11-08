@@ -1,0 +1,1076 @@
+host.powershell	5.1.26100.9711
+host.clr	4.0.30319.42000
+host.is64	True
+util.create	ok
+util.IsMCRInitialized.before	False
+util.IsMCRJVMEnabled	False
+create	ok
+create.seconds	0.2
+util.IsMCRInitialized.after	True
+members	k17_args,k17_both,k17_count,k17_echo,k17_err,k17_h1,k17_make,k17_many,k17_none,k17_noout,k17_one,k17_opt,k17_pass,k17_plot,k17_quiet,k17_two,k17_varin,k17_varout,MWFlags
+excel.version	16.0 build 20527
+init.excel	ok
+init.excel.twice	ok
+quiet	ok
+none	ok
+one	double 4
+util.IsMCRInitialized.running	True
+x.InputArrayFormat.0.bstr	string 'char [1 4] 'text''
+x.InputArrayFormat.0.bool	string 'logical [1 1] true'
+x.InputArrayFormat.0.date	string 'double [1 1] [739326.4375]'
+x.InputArrayFormat.0.r8_1d	string 'double [1 3] [1 2 3]'
+x.InputArrayFormat.0.r8_3d	string 'double [2 2 2] [0 0 0 0 0 0 0 0]'
+x.InputArrayFormat.0.i4_1d	string 'int32 [1 2] [1 2]'
+x.InputArrayFormat.0.bool_1d	string 'logical [1 2] [true false]'
+x.InputArrayFormat.0.str_1d	string 'cell [1 2] {char [1 1] 'a'; char [1 2] 'bb'}'
+x.InputArrayFormat.0.var_2d_numbers	string 'cell [2 2] {double [1 1] [1]; double [1 1] [3]; double [1 1] [2]; double [1 1] [4]}'
+x.InputArrayFormat.0.var_1d_bools	string 'cell [1 2] {logical [1 1] true; logical [1 1] false}'
+x.InputArrayFormat.0.var_1d_strings	string 'cell [1 2] {char [1 1] 'a'; char [1 2] 'bb'}'
+x.InputArrayFormat.0.var_1d_chars	string 'cell [1 2] {char [1 1] 'a'; char [1 1] 'b'}'
+x.InputArrayFormat.0.var_2d_strings	string 'cell [2 2] {char [1 1] 'a'; char [1 1] 'c'; char [1 1] 'b'; char [1 1] 'd'}'
+x.InputArrayFormat.0.var_with_empty	string 'cell [1 3] {double [1 1] [1]; double [0 0] []; double [1 1] [3]}'
+x.InputArrayFormat.0.var_ints	string 'cell [1 2] {int32 [1 1] [1]; int16 [1 1] [2]}'
+x.InputArrayFormat.0.var_i4s	string 'cell [1 2] {int32 [1 1] [1]; int32 [1 1] [2]}'
+x.InputArrayFormat.0.jagged	string 'cell [1 2] {cell [1 2] {double [1 1] [1]; double [1 1] [2]}; cell [1 2] {double [1 1] [3]; double [1 1] [4]}}'
+x.InputArrayFormat.0.jagged_r8	string 'cell [1 2] {double [1 2] [1 2]; double [1 2] [3 4]}'
+x.InputArrayFormat.0.onebased	string 'cell [2 2] {double [1 1] [1]; double [1 1] [3]; double [1 1] [2]; double [1 1] [4]}'
+x.InputArrayFormat.0.range_col	string 'cell [3 1] {double [1 1] [10]; double [1 1] [20]; double [1 1] [30]}'
+x.InputArrayFormat.0.range_one	string 'double [1 1] [1.5]'
+x.InputArrayFormat.0.range_text	string 'char [1 3] 'two''
+x.InputArrayFormat.0.range_charcol	string 'cell [2 1] {char [1 1] 'a'; char [1 1] 'b'}'
+x.InputArrayFormat.0.varin_vararray	string 'nargin=2 {double [1 1] [1]; char [1 1] 'a'}'
+x.InputArrayFormat.0.varin_r8	string 'nargin=1 {double [1 2] [1 2]}'
+x.InputArrayFormat.0.varin_packed_inner	string 'nargin=3 {double [1 1] [1]; double [1 2] [3 4]; cell [1 2] {double [1 1] [5]; double [1 1] [6]}}'
+x.InputArrayFormat.0.both_packed	string 'x=double [1 1] [7] nargin=3 nargout=3' | array[Object] rank 2 [1..1,1..2] {string 'a', double 2}
+x.InputArrayFormat.0.opt_array_last	string 'nargin=3 a=double [1 1] [1] b=char [1 1] 'b' c=cell [1 2] {double [1 1] [1]; double [1 1] [2]}'
+x.InputArrayFormat.1.bstr	string 'char [1 4] 'text''
+x.InputArrayFormat.1.bool	string 'logical [1 1] true'
+x.InputArrayFormat.1.date	string 'double [1 1] [739326.4375]'
+x.InputArrayFormat.1.r8_1d	string 'double [1 3] [1 2 3]'
+x.InputArrayFormat.1.r8_3d	string 'double [2 2 2] [0 0 0 0 0 0 0 0]'
+x.InputArrayFormat.1.i4_1d	string 'int32 [1 2] [1 2]'
+x.InputArrayFormat.1.bool_1d	string 'logical [1 2] [true false]'
+x.InputArrayFormat.1.str_1d	string 'cell [1 2] {char [1 1] 'a'; char [1 2] 'bb'}'
+x.InputArrayFormat.1.var_2d_numbers	string 'double [2 2] [1 3 2 4]'
+x.InputArrayFormat.1.var_1d_bools	string 'logical [1 2] [true false]'
+x.InputArrayFormat.1.var_1d_strings	string 'cell [1 2] {char [1 1] 'a'; char [1 2] 'bb'}'
+x.InputArrayFormat.1.var_1d_chars	string 'char [1 2] 'ab''
+x.InputArrayFormat.1.var_2d_strings	string 'char [2 2] ['ab'; 'cd']'
+x.InputArrayFormat.1.var_with_empty	string 'double [1 3] [1 0 3]'
+x.InputArrayFormat.1.var_ints	string 'cell [1 2] {int32 [1 1] [1]; int16 [1 1] [2]}'
+x.InputArrayFormat.1.var_i4s	string 'int32 [1 2] [1 2]'
+x.InputArrayFormat.1.jagged	string 'cell [1 2] {cell [1 2] {double [1 1] [1]; double [1 1] [2]}; cell [1 2] {double [1 1] [3]; double [1 1] [4]}}'
+x.InputArrayFormat.1.jagged_r8	string 'cell [1 2] {double [1 2] [1 2]; double [1 2] [3 4]}'
+x.InputArrayFormat.1.onebased	string 'double [2 2] [1 3 2 4]'
+x.InputArrayFormat.1.range_col	string 'double [3 1] [10 20 30]'
+x.InputArrayFormat.1.range_one	string 'double [1 1] [1.5]'
+x.InputArrayFormat.1.range_text	string 'char [1 3] 'two''
+x.InputArrayFormat.1.range_charcol	string 'char [2 1] ['a'; 'b']'
+x.InputArrayFormat.1.varin_vararray	string 'nargin=2 {double [1 1] [1]; char [1 1] 'a'}'
+x.InputArrayFormat.1.varin_r8	string 'nargin=1 {double [1 2] [1 2]}'
+x.InputArrayFormat.1.varin_packed_inner	string 'nargin=3 {double [1 1] [1]; double [1 2] [3 4]; cell [1 2] {double [1 1] [5]; double [1 1] [6]}}'
+x.InputArrayFormat.1.both_packed	string 'x=double [1 1] [7] nargin=3 nargout=3' | array[Object] rank 2 [1..1,1..2] {string 'a', double 2}
+x.InputArrayFormat.1.opt_array_last	string 'nargin=3 a=double [1 1] [1] b=char [1 1] 'b' c=double [1 2] [1 2]'
+x.InputArrayFormat.2.bstr	string 'cell [1 1] {char [1 4] 'text'}'
+x.InputArrayFormat.2.bool	string 'cell [1 1] {logical [1 1] true}'
+x.InputArrayFormat.2.date	string 'cell [1 1] {double [1 1] [739326.4375]}'
+x.InputArrayFormat.2.r8_1d	string 'cell [1 3] {double [1 1] [1]; double [1 1] [2]; double [1 1] [3]}'
+x.InputArrayFormat.2.r8_3d	string 'cell [2 2 2] {double [1 1] [0]; double [1 1] [0]; double [1 1] [0]; double [1 1] [0]; double [1 1] [0]; double [1 1] [0]; double [1 1] [0]; double [1 1] [0]}'
+x.InputArrayFormat.2.i4_1d	string 'cell [1 2] {int32 [1 1] [1]; int32 [1 1] [2]}'
+x.InputArrayFormat.2.bool_1d	string 'cell [1 2] {logical [1 1] true; logical [1 1] false}'
+x.InputArrayFormat.2.str_1d	string 'cell [1 2] {char [1 1] 'a'; char [1 2] 'bb'}'
+x.InputArrayFormat.2.var_2d_numbers	string 'cell [2 2] {double [1 1] [1]; double [1 1] [3]; double [1 1] [2]; double [1 1] [4]}'
+x.InputArrayFormat.2.var_1d_bools	string 'cell [1 2] {logical [1 1] true; logical [1 1] false}'
+x.InputArrayFormat.2.var_1d_strings	string 'cell [1 2] {char [1 1] 'a'; char [1 2] 'bb'}'
+x.InputArrayFormat.2.var_1d_chars	string 'cell [1 2] {char [1 1] 'a'; char [1 1] 'b'}'
+x.InputArrayFormat.2.var_2d_strings	string 'cell [2 2] {char [1 1] 'a'; char [1 1] 'c'; char [1 1] 'b'; char [1 1] 'd'}'
+x.InputArrayFormat.2.var_with_empty	string 'cell [1 3] {double [1 1] [1]; double [0 0] []; double [1 1] [3]}'
+x.InputArrayFormat.2.var_ints	string 'cell [1 2] {int32 [1 1] [1]; int16 [1 1] [2]}'
+x.InputArrayFormat.2.var_i4s	string 'cell [1 2] {int32 [1 1] [1]; int32 [1 1] [2]}'
+x.InputArrayFormat.2.jagged	string 'cell [1 2] {cell [1 2] {double [1 1] [1]; double [1 1] [2]}; cell [1 2] {double [1 1] [3]; double [1 1] [4]}}'
+x.InputArrayFormat.2.jagged_r8	string 'cell [1 2] {double [1 2] [1 2]; double [1 2] [3 4]}'
+x.InputArrayFormat.2.onebased	string 'cell [2 2] {double [1 1] [1]; double [1 1] [3]; double [1 1] [2]; double [1 1] [4]}'
+x.InputArrayFormat.2.range_col	string 'cell [3 1] {double [1 1] [10]; double [1 1] [20]; double [1 1] [30]}'
+x.InputArrayFormat.2.range_one	string 'cell [1 1] {double [1 1] [1.5]}'
+x.InputArrayFormat.2.range_text	string 'cell [1 1] {char [1 3] 'two'}'
+x.InputArrayFormat.2.range_charcol	string 'cell [2 1] {char [1 1] 'a'; char [1 1] 'b'}'
+x.InputArrayFormat.2.varin_vararray	string 'nargin=2 {double [1 1] [1]; char [1 1] 'a'}'
+x.InputArrayFormat.2.varin_r8	string 'nargin=2 {double [1 1] [1]; double [1 1] [2]}'
+x.InputArrayFormat.2.varin_packed_inner	string 'nargin=3 {double [1 1] [1]; double [1 2] [3 4]; cell [1 2] {double [1 1] [5]; double [1 1] [6]}}'
+x.InputArrayFormat.2.both_packed	string 'x=cell [1 1] {double [1 1] [7]} nargin=3 nargout=3' | array[Object] rank 2 [1..1,1..2] {string 'a', double 2}
+x.InputArrayFormat.2.opt_array_last	string 'nargin=3 a=cell [1 1] {double [1 1] [1]} b=cell [1 1] {char [1 1] 'b'} c=cell [1 2] {double [1 1] [1]; double [1 1] [2]}'
+x.InputArrayIndFlag.0.fmt0.scalar	string 'double [1 1] [5]'
+x.InputArrayIndFlag.0.fmt0.bstr	string 'char [1 4] 'text''
+x.InputArrayIndFlag.0.fmt0.r8_1d	string 'double [1 2] [1 2]'
+x.InputArrayIndFlag.0.fmt0.r8_2d	string 'double [2 2] [1 3 2 4]'
+x.InputArrayIndFlag.0.fmt0.var_1d	string 'cell [1 2] {double [1 1] [1]; double [1 1] [2]}'
+x.InputArrayIndFlag.0.fmt0.var_mixed	string 'cell [1 2] {double [1 1] [1]; char [1 1] 'a'}'
+x.InputArrayIndFlag.0.fmt0.jagged	string 'cell [1 2] {cell [1 2] {double [1 1] [1]; double [1 1] [2]}; cell [1 2] {double [1 1] [3]; double [1 1] [4]}}'
+x.InputArrayIndFlag.0.fmt0.range	string 'cell [3 1] {double [1 1] [10]; double [1 1] [20]; double [1 1] [30]}'
+x.InputArrayIndFlag.0.fmt0.varin	string 'nargin=2 {double [1 1] [1]; char [1 1] 'a'}'
+x.InputArrayIndFlag.0.fmt0.varin_r8	string 'nargin=1 {double [1 2] [1 2]}'
+x.InputArrayIndFlag.0.fmt0.varin_packed	string 'nargin=3 {double [1 1] [1]; double [1 2] [3 4]; cell [1 2] {double [1 1] [5]; double [1 1] [6]}}'
+x.InputArrayIndFlag.0.fmt1.scalar	string 'double [1 1] [5]'
+x.InputArrayIndFlag.0.fmt1.bstr	string 'char [1 4] 'text''
+x.InputArrayIndFlag.0.fmt1.r8_1d	string 'double [1 2] [1 2]'
+x.InputArrayIndFlag.0.fmt1.r8_2d	string 'double [2 2] [1 3 2 4]'
+x.InputArrayIndFlag.0.fmt1.var_1d	string 'double [1 2] [1 2]'
+x.InputArrayIndFlag.0.fmt1.var_mixed	string 'cell [1 2] {double [1 1] [1]; char [1 1] 'a'}'
+x.InputArrayIndFlag.0.fmt1.jagged	string 'cell [1 2] {cell [1 2] {double [1 1] [1]; double [1 1] [2]}; cell [1 2] {double [1 1] [3]; double [1 1] [4]}}'
+x.InputArrayIndFlag.0.fmt1.range	string 'double [3 1] [10 20 30]'
+x.InputArrayIndFlag.0.fmt1.varin	string 'nargin=2 {double [1 1] [1]; char [1 1] 'a'}'
+x.InputArrayIndFlag.0.fmt1.varin_r8	string 'nargin=1 {double [1 2] [1 2]}'
+x.InputArrayIndFlag.0.fmt1.varin_packed	string 'nargin=3 {double [1 1] [1]; double [1 2] [3 4]; cell [1 2] {double [1 1] [5]; double [1 1] [6]}}'
+x.InputArrayIndFlag.0.fmt2.scalar	string 'cell [1 1] {double [1 1] [5]}'
+x.InputArrayIndFlag.0.fmt2.bstr	string 'cell [1 1] {char [1 4] 'text'}'
+x.InputArrayIndFlag.0.fmt2.r8_1d	string 'cell [1 2] {double [1 1] [1]; double [1 1] [2]}'
+x.InputArrayIndFlag.0.fmt2.r8_2d	string 'cell [2 2] {double [1 1] [1]; double [1 1] [3]; double [1 1] [2]; double [1 1] [4]}'
+x.InputArrayIndFlag.0.fmt2.var_1d	string 'cell [1 2] {double [1 1] [1]; double [1 1] [2]}'
+x.InputArrayIndFlag.0.fmt2.var_mixed	string 'cell [1 2] {double [1 1] [1]; char [1 1] 'a'}'
+x.InputArrayIndFlag.0.fmt2.jagged	string 'cell [1 2] {cell [1 2] {double [1 1] [1]; double [1 1] [2]}; cell [1 2] {double [1 1] [3]; double [1 1] [4]}}'
+x.InputArrayIndFlag.0.fmt2.range	string 'cell [3 1] {double [1 1] [10]; double [1 1] [20]; double [1 1] [30]}'
+x.InputArrayIndFlag.0.fmt2.varin	string 'nargin=2 {double [1 1] [1]; char [1 1] 'a'}'
+x.InputArrayIndFlag.0.fmt2.varin_r8	string 'nargin=2 {double [1 1] [1]; double [1 1] [2]}'
+x.InputArrayIndFlag.0.fmt2.varin_packed	string 'nargin=3 {double [1 1] [1]; double [1 2] [3 4]; cell [1 2] {double [1 1] [5]; double [1 1] [6]}}'
+x.InputArrayIndFlag.1.fmt0.scalar	string 'double [1 1] [5]'
+x.InputArrayIndFlag.1.fmt0.bstr	string 'char [1 4] 'text''
+x.InputArrayIndFlag.1.fmt0.r8_1d	string 'double [1 2] [1 2]'
+x.InputArrayIndFlag.1.fmt0.r8_2d	string 'double [2 2] [1 3 2 4]'
+x.InputArrayIndFlag.1.fmt0.var_1d	string 'cell [1 2] {double [1 1] [1]; double [1 1] [2]}'
+x.InputArrayIndFlag.1.fmt0.var_mixed	string 'cell [1 2] {double [1 1] [1]; char [1 1] 'a'}'
+x.InputArrayIndFlag.1.fmt0.jagged	string 'cell [1 2] {cell [1 2] {double [1 1] [1]; double [1 1] [2]}; cell [1 2] {double [1 1] [3]; double [1 1] [4]}}'
+x.InputArrayIndFlag.1.fmt0.range	string 'cell [3 1] {double [1 1] [10]; double [1 1] [20]; double [1 1] [30]}'
+x.InputArrayIndFlag.1.fmt0.varin	string 'nargin=2 {double [1 1] [1]; char [1 1] 'a'}'
+x.InputArrayIndFlag.1.fmt0.varin_r8	string 'nargin=1 {double [1 2] [1 2]}'
+x.InputArrayIndFlag.1.fmt0.varin_packed	string 'nargin=3 {double [1 1] [1]; double [1 2] [3 4]; cell [1 2] {double [1 1] [5]; double [1 1] [6]}}'
+x.InputArrayIndFlag.1.fmt1.scalar	string 'double [1 1] [5]'
+x.InputArrayIndFlag.1.fmt1.bstr	string 'char [1 4] 'text''
+x.InputArrayIndFlag.1.fmt1.r8_1d	string 'double [1 2] [1 2]'
+x.InputArrayIndFlag.1.fmt1.r8_2d	string 'double [2 2] [1 3 2 4]'
+x.InputArrayIndFlag.1.fmt1.var_1d	string 'double [1 2] [1 2]'
+x.InputArrayIndFlag.1.fmt1.var_mixed	string 'cell [1 2] {double [1 1] [1]; char [1 1] 'a'}'
+x.InputArrayIndFlag.1.fmt1.jagged	string 'cell [1 2] {double [1 2] [1 2]; double [1 2] [3 4]}'
+x.InputArrayIndFlag.1.fmt1.range	string 'cell [3 1] {double [1 1] [10]; double [1 1] [20]; double [1 1] [30]}'
+x.InputArrayIndFlag.1.fmt1.varin	string 'nargin=2 {double [1 1] [1]; char [1 1] 'a'}'
+x.InputArrayIndFlag.1.fmt1.varin_r8	string 'nargin=1 {double [1 2] [1 2]}'
+x.InputArrayIndFlag.1.fmt1.varin_packed	string 'nargin=3 {double [1 1] [1]; double [1 2] [3 4]; double [1 2] [5 6]}'
+x.InputArrayIndFlag.1.fmt2.scalar	string 'cell [1 1] {double [1 1] [5]}'
+x.InputArrayIndFlag.1.fmt2.bstr	string 'cell [1 1] {char [1 4] 'text'}'
+x.InputArrayIndFlag.1.fmt2.r8_1d	string 'cell [1 2] {cell [1 1] {double [1 1] [1]}; cell [1 1] {double [1 1] [2]}}'
+x.InputArrayIndFlag.1.fmt2.r8_2d	string 'cell [2 2] {cell [1 1] {double [1 1] [1]}; cell [1 1] {double [1 1] [3]}; cell [1 1] {double [1 1] [2]}; cell [1 1] {double [1 1] [4]}}'
+x.InputArrayIndFlag.1.fmt2.var_1d	string 'cell [1 2] {cell [1 1] {double [1 1] [1]}; cell [1 1] {double [1 1] [2]}}'
+x.InputArrayIndFlag.1.fmt2.var_mixed	string 'cell [1 2] {cell [1 1] {double [1 1] [1]}; cell [1 1] {char [1 1] 'a'}}'
+x.InputArrayIndFlag.1.fmt2.jagged	string 'cell [1 2] {cell [1 2] {double [1 1] [1]; double [1 1] [2]}; cell [1 2] {double [1 1] [3]; double [1 1] [4]}}'
+x.InputArrayIndFlag.1.fmt2.range	string 'cell [3 1] {cell [1 1] {double [1 1] [10]}; cell [1 1] {double [1 1] [20]}; cell [1 1] {double [1 1] [30]}}'
+x.InputArrayIndFlag.1.fmt2.varin	string 'nargin=2 {cell [1 1] {double [1 1] [1]}; cell [1 1] {char [1 1] 'a'}}'
+x.InputArrayIndFlag.1.fmt2.varin_r8	string 'nargin=2 {cell [1 1] {double [1 1] [1]}; cell [1 1] {double [1 1] [2]}}'
+x.InputArrayIndFlag.1.fmt2.varin_packed	string 'nargin=3 {cell [1 1] {double [1 1] [1]}; cell [1 2] {double [1 1] [3]; double [1 1] [4]}; cell [1 2] {double [1 1] [5]; double [1 1] [6]}}'
+x.InputArrayIndFlag.2.fmt0.scalar	string 'double [1 1] [5]'
+x.InputArrayIndFlag.2.fmt0.bstr	string 'char [1 4] 'text''
+x.InputArrayIndFlag.2.fmt0.r8_1d	string 'double [1 2] [1 2]'
+x.InputArrayIndFlag.2.fmt0.r8_2d	string 'double [2 2] [1 3 2 4]'
+x.InputArrayIndFlag.2.fmt0.var_1d	string 'cell [1 2] {double [1 1] [1]; double [1 1] [2]}'
+x.InputArrayIndFlag.2.fmt0.var_mixed	string 'cell [1 2] {double [1 1] [1]; char [1 1] 'a'}'
+x.InputArrayIndFlag.2.fmt0.jagged	string 'cell [1 2] {cell [1 2] {double [1 1] [1]; double [1 1] [2]}; cell [1 2] {double [1 1] [3]; double [1 1] [4]}}'
+x.InputArrayIndFlag.2.fmt0.range	string 'cell [3 1] {double [1 1] [10]; double [1 1] [20]; double [1 1] [30]}'
+x.InputArrayIndFlag.2.fmt0.varin	string 'nargin=2 {double [1 1] [1]; char [1 1] 'a'}'
+x.InputArrayIndFlag.2.fmt0.varin_r8	string 'nargin=1 {double [1 2] [1 2]}'
+x.InputArrayIndFlag.2.fmt0.varin_packed	string 'nargin=3 {double [1 1] [1]; double [1 2] [3 4]; cell [1 2] {double [1 1] [5]; double [1 1] [6]}}'
+x.InputArrayIndFlag.2.fmt1.scalar	string 'double [1 1] [5]'
+x.InputArrayIndFlag.2.fmt1.bstr	string 'char [1 4] 'text''
+x.InputArrayIndFlag.2.fmt1.r8_1d	string 'double [1 2] [1 2]'
+x.InputArrayIndFlag.2.fmt1.r8_2d	string 'double [2 2] [1 3 2 4]'
+x.InputArrayIndFlag.2.fmt1.var_1d	string 'double [1 2] [1 2]'
+x.InputArrayIndFlag.2.fmt1.var_mixed	string 'cell [1 2] {double [1 1] [1]; char [1 1] 'a'}'
+x.InputArrayIndFlag.2.fmt1.jagged	string 'cell [1 2] {cell [1 2] {double [1 1] [1]; double [1 1] [2]}; cell [1 2] {double [1 1] [3]; double [1 1] [4]}}'
+x.InputArrayIndFlag.2.fmt1.range	string 'cell [3 1] {double [1 1] [10]; double [1 1] [20]; double [1 1] [30]}'
+x.InputArrayIndFlag.2.fmt1.varin	string 'nargin=2 {double [1 1] [1]; char [1 1] 'a'}'
+x.InputArrayIndFlag.2.fmt1.varin_r8	string 'nargin=1 {double [1 2] [1 2]}'
+x.InputArrayIndFlag.2.fmt1.varin_packed	string 'nargin=3 {double [1 1] [1]; double [1 2] [3 4]; cell [1 2] {double [1 1] [5]; double [1 1] [6]}}'
+x.InputArrayIndFlag.2.fmt2.scalar	string 'cell [1 1] {double [1 1] [5]}'
+x.InputArrayIndFlag.2.fmt2.bstr	string 'cell [1 1] {char [1 4] 'text'}'
+x.InputArrayIndFlag.2.fmt2.r8_1d	string 'cell [1 2] {cell [1 1] {double [1 1] [1]}; cell [1 1] {double [1 1] [2]}}'
+x.InputArrayIndFlag.2.fmt2.r8_2d	string 'cell [2 2] {cell [1 1] {double [1 1] [1]}; cell [1 1] {double [1 1] [3]}; cell [1 1] {double [1 1] [2]}; cell [1 1] {double [1 1] [4]}}'
+x.InputArrayIndFlag.2.fmt2.var_1d	string 'cell [1 2] {cell [1 1] {cell [1 1] {double [1 1] [1]}}; cell [1 1] {cell [1 1] {double [1 1] [2]}}}'
+x.InputArrayIndFlag.2.fmt2.var_mixed	string 'cell [1 2] {cell [1 1] {cell [1 1] {double [1 1] [1]}}; cell [1 1] {cell [1 1] {char [1 1] 'a'}}}'
+x.InputArrayIndFlag.2.fmt2.jagged	string 'cell [1 2] {cell [1 2] {cell [1 1] {double [1 1] [1]}; cell [1 1] {double [1 1] [2]}}; cell [1 2] {cell [1 1] {double [1 1] [3]}; cell [1 1] {double [1 1] [4]}}}'
+x.InputArrayIndFlag.2.fmt2.range	string 'cell [3 1] {cell [1 1] {double [1 1] [10]}; cell [1 1] {double [1 1] [20]}; cell [1 1] {double [1 1] [30]}}'
+x.InputArrayIndFlag.2.fmt2.varin	string 'nargin=2 {cell [1 1] {cell [1 1] {double [1 1] [1]}}; cell [1 1] {cell [1 1] {char [1 1] 'a'}}}'
+x.InputArrayIndFlag.2.fmt2.varin_r8	string 'nargin=2 {cell [1 1] {double [1 1] [1]}; cell [1 1] {double [1 1] [2]}}'
+x.InputArrayIndFlag.2.fmt2.varin_packed	string 'nargin=3 {cell [1 1] {cell [1 1] {double [1 1] [1]}}; cell [1 2] {cell [1 1] {double [1 1] [3]}; cell [1 1] {double [1 1] [4]}}; cell [1 2] {cell [1 1] {double [1 1] [5]}; cell [1 1] {double [1 1] [6]}}}'
+x.OutputArrayFormat.2.doublerow	array[Object] rank 2 [1..1,1..3] {double 1, double 2, double 3}
+x.OutputArrayFormat.2.doublecol	array[Object] rank 2 [1..3,1..1] {double 1, double 2, double 3}
+x.OutputArrayFormat.2.double3d	array[Object] rank 3 [1..2,1..2,1..2] {double 1, double 5, double 3, double 7, double 2, double 6, double 4, double 8}
+x.OutputArrayFormat.2.logical	array[Object] rank 2 [1..1,1..1] {bool True}
+x.OutputArrayFormat.2.logicalmat	array[Object] rank 2 [1..2,1..2] {bool True, bool False, bool False, bool True}
+x.OutputArrayFormat.2.logicalempty	null
+x.OutputArrayFormat.2.charone	array[Object] rank 2 [1..1,1..1] {string 'h'}
+x.OutputArrayFormat.2.charmat	array[Object] rank 2 [1..2,1..2] {string 'a', string 'b', string 'c', string 'd'}
+x.OutputArrayFormat.2.charcol	array[Object] rank 2 [1..2,1..1] {string 'a', string 'b'}
+x.OutputArrayFormat.2.charempty	null
+x.OutputArrayFormat.2.cellnested	array[Object] rank 2 [1..1,1..2] {double 1, array[Object] rank 2 [1..1,1..2] {double 2, string 'x'}}
+x.OutputArrayFormat.2.cellcol	array[Object] rank 2 [1..2,1..1] {double 1, double 2}
+x.OutputArrayFormat.2.cellempty	array[Object] rank 2 [1..0,1..0] {}
+x.OutputArrayFormat.2.cellofempty	array[Object] rank 2 [1..1,1..3] {null, null, array[Object] rank 2 [1..0,1..0] {}}
+x.OutputArrayFormat.2.nan	array[Object] rank 2 [1..1,1..1] {null}
+x.OutputArrayFormat.2.nanmat	array[Object] rank 2 [1..2,1..2] {double 1, null, null, double 4}
+x.OutputArrayFormat.2.inf	array[Object] rank 2 [1..1,1..1] {double Infinity}
+x.OutputArrayFormat.2.empty	null
+x.OutputArrayFormat.2.emptyrow	null
+x.OutputArrayFormat.2.int8	array[Object] rank 2 [1..1,1..1] {SByte -5}
+x.OutputArrayFormat.2.uint8mat	array[Object] rank 2 [1..2,1..2] {Byte 1, Byte 2, Byte 3, Byte 4}
+x.OutputArrayFormat.2.single	array[Object] rank 2 [1..1,1..1] {single 1.5}
+x.OutputArrayFormat.2.bigint	array[Object] rank 2 [1..1,1..1] {double 9007199254740992}
+x.OutputArrayFormat.2.int64	array[Object] rank 2 [1..1,1..1] {Int64 9007199254740992}
+x.OutputArrayFormat.2.string	array[Object] rank 2 [1..1,1..1] {string 'str'}
+x.OutputArrayFormat.2.structarr	MWStruct dims [1,2] fields 2 {a=?; b=?}
+x.OutputArrayFormat.2.structnested	MWStruct dims [1,1] fields 1 {in=MWStruct dims [1,1] fields 2 {x=array[Object] rank 2 [1..1,1..1] {double 1}; y=array[Object] rank 2 [1..1,1..2] {double 1, double 2}}}
+x.OutputArrayFormat.2.structempty	MWStruct dims [0,0] fields 0 {=?}
+x.OutputArrayFormat.2.structnofields	MWStruct dims [1,1] fields 0 {=?}
+x.OutputArrayFormat.2.complex	array[Object] rank 2 [1..1,1..1] {MWComplex re=double 1 im=double 2}
+x.OutputArrayFormat.2.complexmat	array[Object] rank 2 [1..1,1..2] {MWComplex re=double 1 im=double 2, MWComplex re=double 3 im=double -4}
+x.OutputArrayFormat.2.sparse	MWSparse rows=2 cols=2 ri=array[Int32] rank 1 [1..2] {Int32 1, Int32 2} ci=array[Int32] rank 1 [1..2] {Int32 1, Int32 2} array=array[Double] rank 1 [1..2] {double 1, double 2}
+x.OutputArrayFormat.2.sparselogical	MWSparse rows=1 cols=2 ri=array[Int32] rank 1 [1..1] {Int32 1} ci=array[Int32] rank 1 [1..1] {Int32 1} array=array[Double] rank 1 [1..1] {double 1}
+x.OutputArrayFormat.2.datenum	array[Object] rank 2 [1..1,1..1] {double 739326.4375}
+x.OutputArrayFormat.3.doublemat	array[Double] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4}
+x.OutputArrayFormat.3.cell	array[Object] rank 2 [1..1,1..3] {double 1, string 'two', array[Double] rank 2 [1..1,1..2] {double 3, double 4}}
+x.OutputArrayFormat.3.double	double 3.5
+x.OutputArrayFormat.3.struct	MWStruct dims [1,1] fields 2 {a=double 1; b=string 'text'}
+x.OutputArrayFormat.3.char	string 'hello'
+x.OutputArrayFormat.3.cellnested	array[Object] rank 2 [1..1,1..2] {double 1, array[Object] rank 2 [1..1,1..2] {double 2, string 'x'}}
+x.OutputArrayIndFlag.0.fmt0.doublemat	array[Double] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4}
+x.OutputArrayIndFlag.0.fmt0.double	double 3.5
+x.OutputArrayIndFlag.0.fmt0.cell	array[Object] rank 2 [1..1,1..3] {double 1, string 'two', array[Double] rank 2 [1..1,1..2] {double 3, double 4}}
+x.OutputArrayIndFlag.0.fmt0.cellnested	array[Object] rank 2 [1..1,1..2] {double 1, array[Object] rank 2 [1..1,1..2] {double 2, string 'x'}}
+x.OutputArrayIndFlag.0.fmt0.char	string 'hello'
+x.OutputArrayIndFlag.0.fmt0.varout	array[Object] rank 2 [1..1,1..3] {double 5, double 10, double 15}
+x.OutputArrayIndFlag.0.fmt0.varout_arr	array[Object] rank 2 [1..1,1..2] {array[Double] rank 2 [1..1,1..2] {double 1, double 2}, array[Double] rank 2 [1..1,1..2] {double 2, double 4}}
+x.OutputArrayIndFlag.0.fmt0.both	string 'x=double [1 1] [7] nargin=3 nargout=3' | array[Object] rank 2 [1..1,1..2] {string 'a', array[Double] rank 2 [1..1,1..2] {double 1, double 2}}
+x.OutputArrayIndFlag.0.fmt1.doublemat	array[Double] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4}
+x.OutputArrayIndFlag.0.fmt1.double	double 3.5
+x.OutputArrayIndFlag.0.fmt1.cell	array[Object] rank 2 [1..1,1..3] {double 1, string 'two', array[Double] rank 2 [1..1,1..2] {double 3, double 4}}
+x.OutputArrayIndFlag.0.fmt1.cellnested	array[Object] rank 2 [1..1,1..2] {double 1, array[Object] rank 2 [1..1,1..2] {double 2, string 'x'}}
+x.OutputArrayIndFlag.0.fmt1.char	string 'hello'
+x.OutputArrayIndFlag.0.fmt1.varout	array[Object] rank 2 [1..1,1..3] {double 5, double 10, double 15}
+x.OutputArrayIndFlag.0.fmt1.varout_arr	array[Object] rank 2 [1..1,1..2] {array[Double] rank 2 [1..1,1..2] {double 1, double 2}, array[Double] rank 2 [1..1,1..2] {double 2, double 4}}
+x.OutputArrayIndFlag.0.fmt1.both	string 'x=double [1 1] [7] nargin=3 nargout=3' | array[Object] rank 2 [1..1,1..2] {string 'a', array[Double] rank 2 [1..1,1..2] {double 1, double 2}}
+x.OutputArrayIndFlag.0.fmt2.doublemat	array[Object] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4}
+x.OutputArrayIndFlag.0.fmt2.double	array[Object] rank 2 [1..1,1..1] {double 3.5}
+x.OutputArrayIndFlag.0.fmt2.cell	array[Object] rank 2 [1..1,1..3] {double 1, string 'two', array[Double] rank 2 [1..1,1..2] {double 3, double 4}}
+x.OutputArrayIndFlag.0.fmt2.cellnested	array[Object] rank 2 [1..1,1..2] {double 1, array[Object] rank 2 [1..1,1..2] {double 2, string 'x'}}
+x.OutputArrayIndFlag.0.fmt2.char	array[Object] rank 2 [1..1,1..1] {string 'hello'}
+x.OutputArrayIndFlag.0.fmt2.varout	array[Object] rank 2 [1..1,1..3] {array[Object] rank 2 [1..1,1..1] {double 5}, array[Object] rank 2 [1..1,1..1] {double 10}, array[Object] rank 2 [1..1,1..1] {double 15}}
+x.OutputArrayIndFlag.0.fmt2.varout_arr	array[Object] rank 2 [1..1,1..2] {array[Object] rank 2 [1..1,1..2] {double 1, double 2}, array[Object] rank 2 [1..1,1..2] {double 2, double 4}}
+x.OutputArrayIndFlag.0.fmt2.both	array[Object] rank 2 [1..1,1..1] {string 'x=double [1 1] [7] nargin=3 nargout=3'} | array[Object] rank 2 [1..1,1..2] {array[Object] rank 2 [1..1,1..1] {string 'a'}, array[Object] rank 2 [1..1,1..2] {double 1, double 2}}
+x.OutputArrayIndFlag.1.fmt0.doublemat	array[Double] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4}
+x.OutputArrayIndFlag.1.fmt0.double	double 3.5
+x.OutputArrayIndFlag.1.fmt0.cell	array[Object] rank 2 [1..1,1..3] {double 1, string 'two', array[Double] rank 2 [1..1,1..2] {double 3, double 4}}
+x.OutputArrayIndFlag.1.fmt0.cellnested	array[Object] rank 2 [1..1,1..2] {double 1, array[Object] rank 2 [1..1,1..2] {double 2, string 'x'}}
+x.OutputArrayIndFlag.1.fmt0.char	string 'hello'
+x.OutputArrayIndFlag.1.fmt0.varout	array[Object] rank 2 [1..1,1..3] {double 5, double 10, double 15}
+x.OutputArrayIndFlag.1.fmt0.varout_arr	array[Object] rank 2 [1..1,1..2] {array[Double] rank 2 [1..1,1..2] {double 1, double 2}, array[Double] rank 2 [1..1,1..2] {double 2, double 4}}
+x.OutputArrayIndFlag.1.fmt0.both	string 'x=double [1 1] [7] nargin=3 nargout=3' | array[Object] rank 2 [1..1,1..2] {string 'a', array[Double] rank 2 [1..1,1..2] {double 1, double 2}}
+x.OutputArrayIndFlag.1.fmt1.doublemat	array[Double] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4}
+x.OutputArrayIndFlag.1.fmt1.double	double 3.5
+x.OutputArrayIndFlag.1.fmt1.cell	array[Object] rank 2 [1..1,1..3] {double 1, string 'two', array[Double] rank 2 [1..1,1..2] {double 3, double 4}}
+x.OutputArrayIndFlag.1.fmt1.cellnested	array[Object] rank 2 [1..1,1..2] {double 1, array[Object] rank 2 [1..1,1..2] {double 2, string 'x'}}
+x.OutputArrayIndFlag.1.fmt1.char	string 'hello'
+x.OutputArrayIndFlag.1.fmt1.varout	array[Object] rank 2 [1..1,1..3] {double 5, double 10, double 15}
+x.OutputArrayIndFlag.1.fmt1.varout_arr	array[Object] rank 2 [1..1,1..2] {array[Double] rank 2 [1..1,1..2] {double 1, double 2}, array[Double] rank 2 [1..1,1..2] {double 2, double 4}}
+x.OutputArrayIndFlag.1.fmt1.both	string 'x=double [1 1] [7] nargin=3 nargout=3' | array[Object] rank 2 [1..1,1..2] {string 'a', array[Double] rank 2 [1..1,1..2] {double 1, double 2}}
+x.OutputArrayIndFlag.1.fmt2.doublemat	array[Object] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4}
+x.OutputArrayIndFlag.1.fmt2.double	array[Object] rank 2 [1..1,1..1] {double 3.5}
+x.OutputArrayIndFlag.1.fmt2.cell	array[Object] rank 2 [1..1,1..3] {array[Object] rank 2 [1..1,1..1] {double 1}, array[Object] rank 2 [1..1,1..1] {string 'two'}, array[Object] rank 2 [1..1,1..2] {double 3, double 4}}
+x.OutputArrayIndFlag.1.fmt2.cellnested	array[Object] rank 2 [1..1,1..2] {array[Object] rank 2 [1..1,1..1] {double 1}, array[Object] rank 2 [1..1,1..2] {double 2, string 'x'}}
+x.OutputArrayIndFlag.1.fmt2.char	array[Object] rank 2 [1..1,1..1] {string 'hello'}
+x.OutputArrayIndFlag.1.fmt2.varout	array[Object] rank 2 [1..1,1..3] {array[Object] rank 2 [1..1,1..1] {double 5}, array[Object] rank 2 [1..1,1..1] {double 10}, array[Object] rank 2 [1..1,1..1] {double 15}}
+x.OutputArrayIndFlag.1.fmt2.varout_arr	array[Object] rank 2 [1..1,1..2] {array[Object] rank 2 [1..1,1..2] {double 1, double 2}, array[Object] rank 2 [1..1,1..2] {double 2, double 4}}
+x.OutputArrayIndFlag.1.fmt2.both	array[Object] rank 2 [1..1,1..1] {string 'x=double [1 1] [7] nargin=3 nargout=3'} | array[Object] rank 2 [1..1,1..2] {array[Object] rank 2 [1..1,1..1] {string 'a'}, array[Object] rank 2 [1..1,1..2] {double 1, double 2}}
+x.OutputArrayIndFlag.2.fmt0.doublemat	array[Double] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4}
+x.OutputArrayIndFlag.2.fmt0.double	double 3.5
+x.OutputArrayIndFlag.2.fmt0.cell	array[Object] rank 2 [1..1,1..3] {double 1, string 'two', array[Double] rank 2 [1..1,1..2] {double 3, double 4}}
+x.OutputArrayIndFlag.2.fmt0.cellnested	array[Object] rank 2 [1..1,1..2] {double 1, array[Object] rank 2 [1..1,1..2] {double 2, string 'x'}}
+x.OutputArrayIndFlag.2.fmt0.char	string 'hello'
+x.OutputArrayIndFlag.2.fmt0.varout	array[Object] rank 2 [1..1,1..3] {double 5, double 10, double 15}
+x.OutputArrayIndFlag.2.fmt0.varout_arr	array[Object] rank 2 [1..1,1..2] {array[Double] rank 2 [1..1,1..2] {double 1, double 2}, array[Double] rank 2 [1..1,1..2] {double 2, double 4}}
+x.OutputArrayIndFlag.2.fmt0.both	string 'x=double [1 1] [7] nargin=3 nargout=3' | array[Object] rank 2 [1..1,1..2] {string 'a', array[Double] rank 2 [1..1,1..2] {double 1, double 2}}
+x.OutputArrayIndFlag.2.fmt1.doublemat	array[Double] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4}
+x.OutputArrayIndFlag.2.fmt1.double	double 3.5
+x.OutputArrayIndFlag.2.fmt1.cell	array[Object] rank 2 [1..1,1..3] {double 1, string 'two', array[Double] rank 2 [1..1,1..2] {double 3, double 4}}
+x.OutputArrayIndFlag.2.fmt1.cellnested	array[Object] rank 2 [1..1,1..2] {double 1, array[Object] rank 2 [1..1,1..2] {double 2, string 'x'}}
+x.OutputArrayIndFlag.2.fmt1.char	string 'hello'
+x.OutputArrayIndFlag.2.fmt1.varout	array[Object] rank 2 [1..1,1..3] {double 5, double 10, double 15}
+x.OutputArrayIndFlag.2.fmt1.varout_arr	array[Object] rank 2 [1..1,1..2] {array[Double] rank 2 [1..1,1..2] {double 1, double 2}, array[Double] rank 2 [1..1,1..2] {double 2, double 4}}
+x.OutputArrayIndFlag.2.fmt1.both	string 'x=double [1 1] [7] nargin=3 nargout=3' | array[Object] rank 2 [1..1,1..2] {string 'a', array[Double] rank 2 [1..1,1..2] {double 1, double 2}}
+x.OutputArrayIndFlag.2.fmt2.doublemat	array[Object] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4}
+x.OutputArrayIndFlag.2.fmt2.double	array[Object] rank 2 [1..1,1..1] {double 3.5}
+x.OutputArrayIndFlag.2.fmt2.cell	array[Object] rank 2 [1..1,1..3] {array[Object] rank 2 [1..1,1..1] {double 1}, array[Object] rank 2 [1..1,1..1] {string 'two'}, array[Object] rank 2 [1..1,1..2] {double 3, double 4}}
+x.OutputArrayIndFlag.2.fmt2.cellnested	array[Object] rank 2 [1..1,1..2] {array[Object] rank 2 [1..1,1..1] {double 1}, array[Object] rank 2 [1..1,1..2] {array[Object] rank 2 [1..1,1..1] {double 2}, array[Object] rank 2 [1..1,1..1] {string 'x'}}}
+x.OutputArrayIndFlag.2.fmt2.char	array[Object] rank 2 [1..1,1..1] {string 'hello'}
+x.OutputArrayIndFlag.2.fmt2.varout	array[Object] rank 2 [1..1,1..3] {array[Object] rank 2 [1..1,1..1] {double 5}, array[Object] rank 2 [1..1,1..1] {double 10}, array[Object] rank 2 [1..1,1..1] {double 15}}
+x.OutputArrayIndFlag.2.fmt2.varout_arr	array[Object] rank 2 [1..1,1..2] {array[Object] rank 2 [1..1,1..2] {double 1, double 2}, array[Object] rank 2 [1..1,1..2] {double 2, double 4}}
+x.OutputArrayIndFlag.2.fmt2.both	array[Object] rank 2 [1..1,1..1] {string 'x=double [1 1] [7] nargin=3 nargout=3'} | array[Object] rank 2 [1..1,1..2] {array[Object] rank 2 [1..1,1..1] {string 'a'}, array[Object] rank 2 [1..1,1..2] {double 1, double 2}}
+x.Coerce.0.half	string 'double [1 8] [0.5 1.5 2.5 -0.5 -1.5 -2.5 3.5 0.49999]'
+x.Coerce.0.huge	string 'double [1 4] [10000000000 -10000000000 0 65535.5]'
+x.Coerce.0.naninf	string 'double [1 3] [NaN Inf -Inf]'
+x.Coerce.0.r8_2d	string 'double [2 2] [1.5 3.5 2.5 4.5]'
+x.Coerce.0.var_mixed	string 'cell [1 3] {double [1 1] [1]; char [1 1] 'a'; logical [1 1] true}'
+x.Coerce.0.var_numbers	string 'double [1 2] [1.5 2.5]'
+x.Coerce.0.var_bools	string 'logical [1 2] [true false]'
+x.Coerce.0.jagged	string 'cell [1 2] {cell [1 2] {double [1 1] [1]; double [1 1] [2]}; cell [1 2] {double [1 1] [3]; double [1 1] [4]}}'
+x.Coerce.0.date	string 'double [1 1] [739326.4375]'
+x.Coerce.0.range	string 'double [3 1] [10 20 30]'
+x.Coerce.0.range_mixed	string 'cell [2 2] {double [1 1] [1.5]; logical [1 1] true; char [1 3] 'two'; double [1 1] [4]}'
+x.Coerce.0.range_text	string 'char [1 3] 'two''
+x.Coerce.0.err	string 'int32 [1 1] [-2146826246]'
+x.Coerce.0.i2	string 'int16 [1 1] [-3]'
+x.Coerce.0.ui1	string 'uint8 [1 1] [200]'
+x.Coerce.0.r4	string 'single [1 1] [1.5]'
+x.Coerce.0.decimal	string 'double [1 1] [2.25]'
+x.Coerce.0.cy	string 'double [1 1] [1.5]'
+x.Coerce.0.char	string 'uint16 [1 1] [99]'
+x.Coerce.0.bool_false	string 'logical [1 1] false'
+x.Coerce.0.zero	string 'double [1 1] [0]'
+x.Coerce.0.empty	string 'nargin=1 a=double [1 1] [1]'
+x.Coerce.0.dbnull	string 'double [0 0] []'
+x.Coerce.0.bstr_number	string 'char [1 2] '42''
+x.Coerce.0.pass	double 3.7
+x.Coerce.0.make	double 3.5
+x.Coerce.0.make_logical	bool True
+x.Coerce.0.varin	string 'nargin=2 {double [1 1] [1.5]; char [1 1] 'a'}'
+x.Coerce.3.half	string 'logical [1 8] [true true true true true true true true]'
+x.Coerce.3.huge	string 'logical [1 4] [true true false true]'
+x.Coerce.3.naninf	string 'logical [1 3] [false true true]'
+x.Coerce.3.r8_2d	string 'logical [2 2] [true true;true true]'
+x.Coerce.3.var_mixed	string 'cell [1 3] {logical [1 1] true; char [1 1] 'a'; logical [1 1] true}'
+x.Coerce.3.var_numbers	string 'double [1 2] [1.5 2.5]'
+x.Coerce.3.var_bools	string 'logical [1 2] [true false]'
+x.Coerce.3.jagged	string 'cell [1 2] {cell [1 2] {logical [1 1] true; logical [1 1] true}; cell [1 2] {logical [1 1] true; logical [1 1] true}}'
+x.Coerce.3.date	string 'logical [1 1] true'
+x.Coerce.3.range	string 'logical [3 1] [true;true;true]'
+x.Coerce.3.range_mixed	string 'cell [2 2] {logical [1 1] true; logical [1 1] true; char [1 3] 'two'; logical [1 1] true}'
+x.Coerce.3.range_text	string 'char [1 3] 'two''
+x.Coerce.3.err	string 'logical [1 1] true'
+x.Coerce.3.i2	string 'logical [1 1] true'
+x.Coerce.3.ui1	string 'logical [1 1] true'
+x.Coerce.3.r4	string 'logical [1 1] true'
+x.Coerce.3.decimal	string 'logical [1 1] true'
+x.Coerce.3.cy	string 'logical [1 1] true'
+x.Coerce.3.char	string 'logical [1 1] true'
+x.Coerce.3.bool_false	string 'logical [1 1] false'
+x.Coerce.3.zero	string 'logical [1 1] false'
+x.Coerce.3.empty	string 'nargin=1 a=logical [1 1] true'
+x.Coerce.3.dbnull	string 'double [0 0] []'
+x.Coerce.3.bstr_number	string 'char [1 2] '42''
+x.Coerce.3.pass	bool True
+x.Coerce.3.make	double 3.5
+x.Coerce.3.make_logical	bool True
+x.Coerce.3.varin	string 'nargin=2 {logical [1 1] true; char [1 1] 'a'}'
+x.Coerce.4.half	string 'cell [1 8] {char [1 3] '0.5'; char [1 3] '1.5'; char [1 3] '2.5'; char [1 4] '-0.5'; char [1 4] '-1.5'; char [1 4] '-2.5'; char [1 3] '3.5'; char [1 7] '0.49999'}'
+x.Coerce.4.huge	string 'cell [1 4] {char [1 11] '10000000000'; char [1 12] '-10000000000'; char [1 1] '0'; char [1 7] '65535.5'}'
+x.Coerce.4.naninf	string 'cell [1 3] {char [1 3] 'NaN'; char [1 3] 'inf'; char [1 4] '-inf'}'
+x.Coerce.4.r8_2d	string 'cell [2 2] {char [1 3] '1.5'; char [1 3] '3.5'; char [1 3] '2.5'; char [1 3] '4.5'}'
+x.Coerce.4.var_mixed	string 'cell [1 3] {char [1 1] '1'; char [1 1] 'a'; char [1 4] 'True'}'
+x.Coerce.4.var_numbers	string 'cell [1 2] {char [1 3] '1.5'; char [1 3] '2.5'}'
+x.Coerce.4.var_bools	string 'cell [1 2] {char [1 4] 'True'; char [1 5] 'False'}'
+x.Coerce.4.jagged	string 'cell [1 2] {cell [1 2] {char [1 1] '1'; char [1 1] '2'}; cell [1 2] {char [1 1] '3'; char [1 1] '4'}}'
+x.Coerce.4.date	string 'char [1 21] '3/15/2024 10:30:00 AM''
+x.Coerce.4.range	string 'cell [3 1] {char [1 2] '10'; char [1 2] '20'; char [1 2] '30'}'
+x.Coerce.4.range_mixed	string 'cell [2 2] {char [1 3] '1.5'; char [1 4] 'True'; char [1 3] 'two'; char [1 1] '4'}'
+x.Coerce.4.range_text	string 'char [1 3] 'two''
+x.Coerce.4.err	string 'char [1 11] '-2146826246''
+x.Coerce.4.i2	string 'char [1 2] '-3''
+x.Coerce.4.ui1	string 'char [1 3] '200''
+x.Coerce.4.r4	string 'char [1 3] '1.5''
+x.Coerce.4.decimal	string 'char [1 4] '2.25''
+x.Coerce.4.cy	string 'char [1 3] '1.5''
+x.Coerce.4.char	string 'char [1 2] '99''
+x.Coerce.4.bool_false	string 'char [1 5] 'False''
+x.Coerce.4.zero	string 'char [1 1] '0''
+x.Coerce.4.empty	string 'nargin=1 a=char [1 1] '1''
+x.Coerce.4.dbnull	string 'double [0 0] []'
+x.Coerce.4.bstr_number	string 'char [1 2] '42''
+x.Coerce.4.pass	string '3.7'
+x.Coerce.4.make	double 3.5
+x.Coerce.4.make_logical	bool True
+x.Coerce.4.varin	string 'nargin=2 {char [1 3] '1.5'; char [1 1] 'a'}'
+x.Coerce.6.half	string 'double [1 8] [0.5 1.5 2.5 -0.5 -1.5 -2.5 3.5 0.49999]'
+x.Coerce.6.huge	string 'double [1 4] [10000000000 -10000000000 0 65535.5]'
+x.Coerce.6.naninf	string 'double [1 3] [NaN Inf -Inf]'
+x.Coerce.6.r8_2d	string 'double [2 2] [1.5 3.5 2.5 4.5]'
+x.Coerce.6.var_mixed	string 'cell [1 3] {double [1 1] [1]; char [1 1] 'a'; double [1 1] [-1]}'
+x.Coerce.6.var_numbers	string 'double [1 2] [1.5 2.5]'
+x.Coerce.6.var_bools	string 'logical [1 2] [true false]'
+x.Coerce.6.jagged	string 'cell [1 2] {cell [1 2] {double [1 1] [1]; double [1 1] [2]}; cell [1 2] {double [1 1] [3]; double [1 1] [4]}}'
+x.Coerce.6.date	string 'double [1 1] [739326.4375]'
+x.Coerce.6.range	string 'double [3 1] [10 20 30]'
+x.Coerce.6.range_mixed	string 'cell [2 2] {double [1 1] [1.5]; double [1 1] [-1]; char [1 3] 'two'; double [1 1] [4]}'
+x.Coerce.6.range_text	string 'char [1 3] 'two''
+x.Coerce.6.err	string 'double [1 1] [-2146826246]'
+x.Coerce.6.i2	string 'double [1 1] [-3]'
+x.Coerce.6.ui1	string 'double [1 1] [200]'
+x.Coerce.6.r4	string 'double [1 1] [1.5]'
+x.Coerce.6.decimal	string 'double [1 1] [2.25]'
+x.Coerce.6.cy	string 'double [1 1] [1.5]'
+x.Coerce.6.char	string 'double [1 1] [99]'
+x.Coerce.6.bool_false	string 'double [1 1] [0]'
+x.Coerce.6.zero	string 'double [1 1] [0]'
+x.Coerce.6.empty	string 'nargin=1 a=double [1 1] [1]'
+x.Coerce.6.dbnull	string 'double [0 0] []'
+x.Coerce.6.bstr_number	string 'char [1 2] '42''
+x.Coerce.6.pass	double 3.7
+x.Coerce.6.make	double 3.5
+x.Coerce.6.make_logical	bool True
+x.Coerce.6.varin	string 'nargin=2 {double [1 1] [1.5]; char [1 1] 'a'}'
+x.Coerce.7.half	string 'single [1 8] [0.5 1.5 2.5 -0.5 -1.5 -2.5 3.5 0.4999899864]'
+x.Coerce.7.huge	string 'single [1 4] [10000000000 -10000000000 0 65535.5]'
+x.Coerce.7.naninf	string 'single [1 3] [NaN Inf -Inf]'
+x.Coerce.7.r8_2d	string 'single [2 2] [1.5 3.5 2.5 4.5]'
+x.Coerce.7.var_mixed	string 'cell [1 3] {single [1 1] [1]; char [1 1] 'a'; single [1 1] [-1]}'
+x.Coerce.7.var_numbers	string 'double [1 2] [1.5 2.5]'
+x.Coerce.7.var_bools	string 'logical [1 2] [true false]'
+x.Coerce.7.jagged	string 'cell [1 2] {cell [1 2] {single [1 1] [1]; single [1 1] [2]}; cell [1 2] {single [1 1] [3]; single [1 1] [4]}}'
+x.Coerce.7.date	string 'single [1 1] [739326.4375]'
+x.Coerce.7.range	string 'single [3 1] [10 20 30]'
+x.Coerce.7.range_mixed	string 'cell [2 2] {single [1 1] [1.5]; single [1 1] [-1]; char [1 3] 'two'; single [1 1] [4]}'
+x.Coerce.7.range_text	string 'char [1 3] 'two''
+x.Coerce.7.err	string 'single [1 1] [-2146826240]'
+x.Coerce.7.i2	string 'single [1 1] [-3]'
+x.Coerce.7.ui1	string 'single [1 1] [200]'
+x.Coerce.7.r4	string 'single [1 1] [1.5]'
+x.Coerce.7.decimal	string 'single [1 1] [2.25]'
+x.Coerce.7.cy	string 'single [1 1] [1.5]'
+x.Coerce.7.char	string 'single [1 1] [99]'
+x.Coerce.7.bool_false	string 'single [1 1] [0]'
+x.Coerce.7.zero	string 'single [1 1] [0]'
+x.Coerce.7.empty	string 'nargin=1 a=single [1 1] [1]'
+x.Coerce.7.dbnull	string 'double [0 0] []'
+x.Coerce.7.bstr_number	string 'char [1 2] '42''
+x.Coerce.7.pass	single 3.7
+x.Coerce.7.make	double 3.5
+x.Coerce.7.make_logical	bool True
+x.Coerce.7.varin	string 'nargin=2 {single [1 1] [1.5]; char [1 1] 'a'}'
+x.Coerce.8.half	string 'int8 [1 8] [0 2 2 0 -2 -2 4 0]'
+x.Coerce.8.huge	string 'int8 [1 4] [127 -128 0 127]'
+x.Coerce.8.naninf	string 'int8 [1 3] [0 127 -128]'
+x.Coerce.8.r8_2d	string 'int8 [2 2] [2 4 2 4]'
+x.Coerce.8.var_mixed	string 'cell [1 3] {int8 [1 1] [1]; char [1 1] 'a'; int8 [1 1] [-1]}'
+x.Coerce.8.var_numbers	string 'double [1 2] [1.5 2.5]'
+x.Coerce.8.var_bools	string 'logical [1 2] [true false]'
+x.Coerce.8.jagged	string 'cell [1 2] {cell [1 2] {int8 [1 1] [1]; int8 [1 1] [2]}; cell [1 2] {int8 [1 1] [3]; int8 [1 1] [4]}}'
+x.Coerce.8.date	string 'int8 [1 1] [127]'
+x.Coerce.8.range	string 'int8 [3 1] [10 20 30]'
+x.Coerce.8.range_mixed	string 'cell [2 2] {int8 [1 1] [2]; int8 [1 1] [-1]; char [1 3] 'two'; int8 [1 1] [4]}'
+x.Coerce.8.range_text	string 'char [1 3] 'two''
+x.Coerce.8.err	string 'int8 [1 1] [-128]'
+x.Coerce.8.i2	string 'int8 [1 1] [-3]'
+x.Coerce.8.ui1	string 'int8 [1 1] [127]'
+x.Coerce.8.r4	string 'int8 [1 1] [2]'
+x.Coerce.8.decimal	string 'int8 [1 1] [2]'
+x.Coerce.8.cy	string 'int8 [1 1] [2]'
+x.Coerce.8.char	string 'int8 [1 1] [99]'
+x.Coerce.8.bool_false	string 'int8 [1 1] [0]'
+x.Coerce.8.zero	string 'int8 [1 1] [0]'
+x.Coerce.8.empty	string 'nargin=1 a=int8 [1 1] [1]'
+x.Coerce.8.dbnull	string 'double [0 0] []'
+x.Coerce.8.bstr_number	string 'char [1 2] '42''
+x.Coerce.8.pass	SByte 4
+x.Coerce.8.make	double 3.5
+x.Coerce.8.make_logical	bool True
+x.Coerce.8.varin	string 'nargin=2 {int8 [1 1] [2]; char [1 1] 'a'}'
+x.Coerce.9.half	string 'uint8 [1 8] [0 2 2 0 0 0 4 0]'
+x.Coerce.9.huge	string 'uint8 [1 4] [255 0 0 255]'
+x.Coerce.9.naninf	string 'uint8 [1 3] [0 255 0]'
+x.Coerce.9.r8_2d	string 'uint8 [2 2] [2 4 2 4]'
+x.Coerce.9.var_mixed	string 'cell [1 3] {uint8 [1 1] [1]; char [1 1] 'a'; uint8 [1 1] [255]}'
+x.Coerce.9.var_numbers	string 'double [1 2] [1.5 2.5]'
+x.Coerce.9.var_bools	string 'logical [1 2] [true false]'
+x.Coerce.9.jagged	string 'cell [1 2] {cell [1 2] {uint8 [1 1] [1]; uint8 [1 1] [2]}; cell [1 2] {uint8 [1 1] [3]; uint8 [1 1] [4]}}'
+x.Coerce.9.date	string 'uint8 [1 1] [255]'
+x.Coerce.9.range	string 'uint8 [3 1] [10 20 30]'
+x.Coerce.9.range_mixed	string 'cell [2 2] {uint8 [1 1] [2]; uint8 [1 1] [255]; char [1 3] 'two'; uint8 [1 1] [4]}'
+x.Coerce.9.range_text	string 'char [1 3] 'two''
+x.Coerce.9.err	string 'uint8 [1 1] [0]'
+x.Coerce.9.i2	string 'uint8 [1 1] [0]'
+x.Coerce.9.ui1	string 'uint8 [1 1] [200]'
+x.Coerce.9.r4	string 'uint8 [1 1] [2]'
+x.Coerce.9.decimal	string 'uint8 [1 1] [2]'
+x.Coerce.9.cy	string 'uint8 [1 1] [2]'
+x.Coerce.9.char	string 'uint8 [1 1] [99]'
+x.Coerce.9.bool_false	string 'uint8 [1 1] [0]'
+x.Coerce.9.zero	string 'uint8 [1 1] [0]'
+x.Coerce.9.empty	string 'nargin=1 a=uint8 [1 1] [1]'
+x.Coerce.9.dbnull	string 'double [0 0] []'
+x.Coerce.9.bstr_number	string 'char [1 2] '42''
+x.Coerce.9.pass	Byte 4
+x.Coerce.9.make	double 3.5
+x.Coerce.9.make_logical	bool True
+x.Coerce.9.varin	string 'nargin=2 {uint8 [1 1] [2]; char [1 1] 'a'}'
+x.Coerce.10.half	string 'int16 [1 8] [0 2 2 0 -2 -2 4 0]'
+x.Coerce.10.huge	string 'int16 [1 4] [32767 -32768 0 32767]'
+x.Coerce.10.naninf	string 'int16 [1 3] [0 32767 -32768]'
+x.Coerce.10.r8_2d	string 'int16 [2 2] [2 4 2 4]'
+x.Coerce.10.var_mixed	string 'cell [1 3] {int16 [1 1] [1]; char [1 1] 'a'; int16 [1 1] [-1]}'
+x.Coerce.10.var_numbers	string 'double [1 2] [1.5 2.5]'
+x.Coerce.10.var_bools	string 'logical [1 2] [true false]'
+x.Coerce.10.jagged	string 'cell [1 2] {cell [1 2] {int16 [1 1] [1]; int16 [1 1] [2]}; cell [1 2] {int16 [1 1] [3]; int16 [1 1] [4]}}'
+x.Coerce.10.date	string 'int16 [1 1] [32767]'
+x.Coerce.10.range	string 'int16 [3 1] [10 20 30]'
+x.Coerce.10.range_mixed	string 'cell [2 2] {int16 [1 1] [2]; int16 [1 1] [-1]; char [1 3] 'two'; int16 [1 1] [4]}'
+x.Coerce.10.range_text	string 'char [1 3] 'two''
+x.Coerce.10.err	string 'int16 [1 1] [-32768]'
+x.Coerce.10.i2	string 'int16 [1 1] [-3]'
+x.Coerce.10.ui1	string 'int16 [1 1] [200]'
+x.Coerce.10.r4	string 'int16 [1 1] [2]'
+x.Coerce.10.decimal	string 'int16 [1 1] [2]'
+x.Coerce.10.cy	string 'int16 [1 1] [2]'
+x.Coerce.10.char	string 'int16 [1 1] [99]'
+x.Coerce.10.bool_false	string 'int16 [1 1] [0]'
+x.Coerce.10.zero	string 'int16 [1 1] [0]'
+x.Coerce.10.empty	string 'nargin=1 a=int16 [1 1] [1]'
+x.Coerce.10.dbnull	string 'double [0 0] []'
+x.Coerce.10.bstr_number	string 'char [1 2] '42''
+x.Coerce.10.pass	Int16 4
+x.Coerce.10.make	double 3.5
+x.Coerce.10.make_logical	bool True
+x.Coerce.10.varin	string 'nargin=2 {int16 [1 1] [2]; char [1 1] 'a'}'
+x.Coerce.12.half	string 'int32 [1 8] [0 2 2 0 -2 -2 4 0]'
+x.Coerce.12.huge	string 'int32 [1 4] [2147483647 -2147483648 0 65536]'
+x.Coerce.12.naninf	string 'int32 [1 3] [0 2147483647 -2147483648]'
+x.Coerce.12.r8_2d	string 'int32 [2 2] [2 4 2 4]'
+x.Coerce.12.var_mixed	string 'cell [1 3] {int32 [1 1] [1]; char [1 1] 'a'; int32 [1 1] [-1]}'
+x.Coerce.12.var_numbers	string 'double [1 2] [1.5 2.5]'
+x.Coerce.12.var_bools	string 'logical [1 2] [true false]'
+x.Coerce.12.jagged	string 'cell [1 2] {cell [1 2] {int32 [1 1] [1]; int32 [1 1] [2]}; cell [1 2] {int32 [1 1] [3]; int32 [1 1] [4]}}'
+x.Coerce.12.date	string 'int32 [1 1] [739326]'
+x.Coerce.12.range	string 'int32 [3 1] [10 20 30]'
+x.Coerce.12.range_mixed	string 'cell [2 2] {int32 [1 1] [2]; int32 [1 1] [-1]; char [1 3] 'two'; int32 [1 1] [4]}'
+x.Coerce.12.range_text	string 'char [1 3] 'two''
+x.Coerce.12.err	string 'int32 [1 1] [-2146826246]'
+x.Coerce.12.i2	string 'int32 [1 1] [-3]'
+x.Coerce.12.ui1	string 'int32 [1 1] [200]'
+x.Coerce.12.r4	string 'int32 [1 1] [2]'
+x.Coerce.12.decimal	string 'int32 [1 1] [2]'
+x.Coerce.12.cy	string 'int32 [1 1] [2]'
+x.Coerce.12.char	string 'int32 [1 1] [99]'
+x.Coerce.12.bool_false	string 'int32 [1 1] [0]'
+x.Coerce.12.zero	string 'int32 [1 1] [0]'
+x.Coerce.12.empty	string 'nargin=1 a=int32 [1 1] [1]'
+x.Coerce.12.dbnull	string 'double [0 0] []'
+x.Coerce.12.bstr_number	string 'char [1 2] '42''
+x.Coerce.12.pass	Int32 4
+x.Coerce.12.make	double 3.5
+x.Coerce.12.make_logical	bool True
+x.Coerce.12.varin	string 'nargin=2 {int32 [1 1] [2]; char [1 1] 'a'}'
+x.Coerce.13.half	string 'uint32 [1 8] [0 2 2 0 0 0 4 0]'
+x.Coerce.13.huge	string 'uint32 [1 4] [4294967295 0 0 65536]'
+x.Coerce.13.naninf	string 'uint32 [1 3] [0 4294967295 0]'
+x.Coerce.13.r8_2d	string 'uint32 [2 2] [2 4 2 4]'
+x.Coerce.13.var_mixed	string 'cell [1 3] {uint32 [1 1] [1]; char [1 1] 'a'; uint32 [1 1] [4294967295]}'
+x.Coerce.13.var_numbers	string 'double [1 2] [1.5 2.5]'
+x.Coerce.13.var_bools	string 'logical [1 2] [true false]'
+x.Coerce.13.jagged	string 'cell [1 2] {cell [1 2] {uint32 [1 1] [1]; uint32 [1 1] [2]}; cell [1 2] {uint32 [1 1] [3]; uint32 [1 1] [4]}}'
+x.Coerce.13.date	string 'uint32 [1 1] [739326]'
+x.Coerce.13.range	string 'uint32 [3 1] [10 20 30]'
+x.Coerce.13.range_mixed	string 'cell [2 2] {uint32 [1 1] [2]; uint32 [1 1] [4294967295]; char [1 3] 'two'; uint32 [1 1] [4]}'
+x.Coerce.13.range_text	string 'char [1 3] 'two''
+x.Coerce.13.err	string 'uint32 [1 1] [0]'
+x.Coerce.13.i2	string 'uint32 [1 1] [0]'
+x.Coerce.13.ui1	string 'uint32 [1 1] [200]'
+x.Coerce.13.r4	string 'uint32 [1 1] [2]'
+x.Coerce.13.decimal	string 'uint32 [1 1] [2]'
+x.Coerce.13.cy	string 'uint32 [1 1] [2]'
+x.Coerce.13.char	string 'uint32 [1 1] [99]'
+x.Coerce.13.bool_false	string 'uint32 [1 1] [0]'
+x.Coerce.13.zero	string 'uint32 [1 1] [0]'
+x.Coerce.13.empty	string 'nargin=1 a=uint32 [1 1] [1]'
+x.Coerce.13.dbnull	string 'double [0 0] []'
+x.Coerce.13.bstr_number	string 'char [1 2] '42''
+x.Coerce.13.pass	UInt32 4
+x.Coerce.13.make	double 3.5
+x.Coerce.13.make_logical	bool True
+x.Coerce.13.varin	string 'nargin=2 {uint32 [1 1] [2]; char [1 1] 'a'}'
+x.InputDateFormat.0.date_arr	string 'double [1 2] [739326.4375 739327]'
+x.InputDateFormat.0.var_with_date	string 'double [1 3] [1 739326.4375 3]'
+x.InputDateFormat.0.var_dates	string 'double [1 2] [739326.4375 739327]'
+x.InputDateFormat.0.range_two	string 'double [2 1] [45366.4375 45367]'
+x.InputDateFormat.0.date_early	string 'double [1 1] [675851]'
+x.InputDateFormat.0.date_midnight	string 'double [1 1] [739326]'
+x.InputDateFormat.0.date_timeonly	string 'double [1 1] [693960.25]'
+x.InputDateFormat.0.date_seconds	string 'double [1 1] [739327]'
+x.InputDateFormat.0.bias0	string 'double [1 1] [45366.4375]'
+x.InputDateFormat.0.coerce12	string 'int32 [1 1] [739326]'
+x.InputDateFormat.0.pass	double 739326.4375
+x.InputDateFormat.0.varin	string 'nargin=1 {double [1 2] [739326.4375 2]}'
+x.InputDateFormat.1.date_arr	string 'cell [1 2] {char [1 21] '3/15/2024 10:30:00 AM'; char [1 9] '3/16/2024'}'
+x.InputDateFormat.1.var_with_date	string 'cell [1 3] {double [1 1] [1]; char [1 21] '3/15/2024 10:30:00 AM'; double [1 1] [3]}'
+x.InputDateFormat.1.var_dates	string 'cell [1 2] {char [1 21] '3/15/2024 10:30:00 AM'; char [1 9] '3/16/2024'}'
+x.InputDateFormat.1.range_two	string 'double [2 1] [45366.4375 45367]'
+x.InputDateFormat.1.date_early	string 'char [1 8] '6/1/1850''
+x.InputDateFormat.1.date_midnight	string 'char [1 9] '3/15/2024''
+x.InputDateFormat.1.date_timeonly	string 'char [1 10] '6:00:00 AM''
+x.InputDateFormat.1.date_seconds	string 'char [1 21] '3/15/2024 11:59:59 PM''
+x.InputDateFormat.1.bias0	string 'char [1 21] '3/15/2024 10:30:00 AM''
+x.InputDateFormat.1.coerce12	string 'char [1 21] '3/15/2024 10:30:00 AM''
+x.InputDateFormat.1.pass	string '3/15/2024 10:30:00 AM'
+x.InputDateFormat.1.varin	string 'nargin=2 {char [1 21] '3/15/2024 10:30:00 AM'; double [1 1] [2]}'
+x.OutputAsDate.False.doublerow	array[Double] rank 2 [1..1,1..2] {double 739326.4375, double 739327}
+x.OutputAsDate.False.doublemat	array[Double] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4}
+x.OutputAsDate.False.int32	Int32 -70000
+x.OutputAsDate.False.single	single 1.5
+x.OutputAsDate.False.logical	bool True
+x.OutputAsDate.False.cell	array[Object] rank 2 [1..1,1..2] {double 739326.4375, string 'x'}
+x.OutputAsDate.False.nan	null
+x.OutputAsDate.False.inf	double Infinity
+x.OutputAsDate.False.mixedrange	array[Double] rank 2 [1..1,1..2] {double 739326.4375, double 0.5}
+x.OutputAsDate.False.neg	string '-5.0'
+x.OutputAsDate.False.zero	double 0
+x.OutputAsDate.False.huge	double 10000000
+x.OutputAsDate.False.maxole	double 3652425
+x.OutputAsDate.False.pastmax	double 3652426
+x.OutputAsDate.False.minole	double 36526
+x.OutputAsDate.False.belowmin	double 36525
+x.OutputAsDate.False.yearone	double 693961
+x.OutputAsDate.False.fraction	double 739326.999999
+x.OutputAsDate.False.varout	array[Object] rank 2 [1..1,1..2] {double 739326.4375, double 1478652.875}
+x.OutputAsDate.False.range	slot=Range K1 value=double 739326.4375 cells {K1=double 739326.4375}
+x.OutputAsDate.False.cellformat	array[Object] rank 2 [1..1,1..1] {double 739326.4375}
+x.OutputAsDate.True.doublerow	array[DateTime] rank 2 [1..1,1..2] {DateTime 2024-03-15 10:30:00.000, DateTime 2024-03-16 00:00:00.000}
+x.OutputAsDate.True.doublemat	array[Object] rank 2 [1..2,1..2] {double -693959, double -693958, double -693957, double -693956}
+x.OutputAsDate.True.int32	Int32 -70000
+x.OutputAsDate.True.single	single 1.5
+x.OutputAsDate.True.logical	bool True
+x.OutputAsDate.True.cell	array[Object] rank 2 [1..1,1..2] {DateTime 2024-03-15 10:30:00.000, string 'x'}
+x.OutputAsDate.True.nan	null
+x.OutputAsDate.True.inf	double Infinity
+x.OutputAsDate.True.mixedrange	array[Object] rank 2 [1..1,1..2] {DateTime 2024-03-15 10:30:00.000, double -693959.5}
+x.OutputAsDate.True.neg	string '-5.0'
+x.OutputAsDate.True.zero	double -693960
+x.OutputAsDate.True.huge	double 9306040
+x.OutputAsDate.True.maxole	DateTime 9999-12-31 00:00:00.000
+x.OutputAsDate.True.pastmax	double 2958466
+x.OutputAsDate.True.minole	DateTime 0100-01-01 00:00:00.000
+x.OutputAsDate.True.belowmin	double -657435
+x.OutputAsDate.True.yearone	DateTime 1899-12-31 00:00:00.000
+x.OutputAsDate.True.fraction	DateTime 2024-03-15 23:59:59.914
+x.OutputAsDate.True.varout	array[Object] rank 2 [1..1,1..2] {DateTime 2024-03-15 10:30:00.000, DateTime 4048-05-29 21:00:00.000}
+x.OutputAsDate.True.range	slot=Range K1 value=double 45366.4375 cells {K1=double 45366.4375}
+x.OutputAsDate.True.cellformat	array[Object] rank 2 [1..1,1..1] {double 739326.4375}
+x.DateBias.0.datenum_out	DateTime 3924-03-15 10:30:00.000
+x.DateBias.0.range_in	string 'double [1 1] [45366.4375]'
+x.DateBias.0.date_arr	string 'double [1 2] [45366.4375 45367]'
+x.DateBias.neg.datein	string 'double [1 1] [45361.4375]'
+x.DateBias.neg.dateout	DateTime 2024-03-20 10:30:00.000
+x.DateBias.big.dateout	DateTime 2024-03-15 12:00:00.000
+x.ReplaceMissing.0.var_2d_empty	string 'double [2 2] [1 0 0 4]'
+x.ReplaceMissing.0.var_1d_dbnull	string 'double [1 3] [1 0 3]'
+x.ReplaceMissing.0.var_1d_missing	string 'cell [1 3] {double [1 1] [1]; int32 [1 1] [-2147352572]; double [1 1] [3]}'
+x.ReplaceMissing.0.var_all_empty	string 'double [1 2] [0 0]'
+x.ReplaceMissing.0.var_mixed_empty	string 'cell [1 3] {double [1 1] [1]; double [0 0] []; char [1 1] 'a'}'
+x.ReplaceMissing.0.var_bools_empty	string 'logical [1 2] [true false]'
+x.ReplaceMissing.0.range_num_blank_num	string 'double [3 1] [1 0 3]'
+x.ReplaceMissing.0.range_blank_one	string 'double [1 1] [0]'
+x.ReplaceMissing.0.range_blank_row	string 'double [1 2] [0 0]'
+x.ReplaceMissing.0.range_text_blank	string 'cell [1 2] {char [1 3] 'two'; double [0 0] []}'
+x.ReplaceMissing.0.range_bool_blank	string 'logical [1 2] [false false]'
+x.ReplaceMissing.0.range_cellformat	string 'cell [3 1] {double [1 1] [1]; double [0 0] []; double [1 1] [3]}'
+x.ReplaceMissing.0.range_asis	string 'cell [3 1] {double [1 1] [1]; double [0 0] []; double [1 1] [3]}'
+x.ReplaceMissing.0.range_value2	string 'double [3 1] [1 0 3]'
+x.ReplaceMissing.0.empty_middle	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Input argument 2 (b) was not given; only trailing arguments may be left out.] type=COMException
+x.ReplaceMissing.0.dbnull_scalar	string 'double [0 0] []'
+x.ReplaceMissing.0.coerce8	string 'int8 [3 1] [1 0 3]'
+x.ReplaceMissing.1.var_2d_empty	string 'double [2 2] [1 0 0 4]'
+x.ReplaceMissing.1.var_1d_dbnull	string 'double [1 3] [1 0 3]'
+x.ReplaceMissing.1.var_1d_missing	string 'cell [1 3] {double [1 1] [1]; int32 [1 1] [-2147352572]; double [1 1] [3]}'
+x.ReplaceMissing.1.var_all_empty	string 'double [1 2] [0 0]'
+x.ReplaceMissing.1.var_mixed_empty	string 'cell [1 3] {double [1 1] [1]; double [0 0] []; char [1 1] 'a'}'
+x.ReplaceMissing.1.var_bools_empty	string 'logical [1 2] [true false]'
+x.ReplaceMissing.1.range_num_blank_num	string 'double [3 1] [1 NaN 3]'
+x.ReplaceMissing.1.range_blank_one	string 'double [1 1] [NaN]'
+x.ReplaceMissing.1.range_blank_row	string 'double [1 2] [NaN NaN]'
+x.ReplaceMissing.1.range_text_blank	string 'cell [1 2] {char [1 3] 'two'; double [0 0] []}'
+x.ReplaceMissing.1.range_bool_blank	string 'logical [1 2] [false false]'
+x.ReplaceMissing.1.range_cellformat	string 'cell [3 1] {double [1 1] [1]; double [0 0] []; double [1 1] [3]}'
+x.ReplaceMissing.1.range_asis	string 'cell [3 1] {double [1 1] [1]; double [0 0] []; double [1 1] [3]}'
+x.ReplaceMissing.1.range_value2	string 'double [3 1] [1 0 3]'
+x.ReplaceMissing.1.empty_middle	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Input argument 2 (b) was not given; only trailing arguments may be left out.] type=COMException
+x.ReplaceMissing.1.dbnull_scalar	string 'double [0 0] []'
+x.ReplaceMissing.1.coerce8	string 'int8 [3 1] [1 0 3]'
+x.ReplaceMatlabNaN.0.nanrow	array[Object] rank 2 [1..1,1..3] {double 1, null, double 3}
+x.ReplaceMatlabNaN.0.nan_in_cell	array[Object] rank 2 [1..1,1..3] {double 1, null, string 'x'}
+x.ReplaceMatlabNaN.0.nan_scalar_in	string 'double [1 1] [NaN]'
+x.ReplaceMatlabNaN.0.neginf	double -Infinity
+x.ReplaceMatlabNaN.0.varout	array[Object] rank 2 [1..1,1..2] {null, null}
+x.ReplaceMatlabNaN.0.cellformat	array[Object] rank 2 [1..2,1..2] {double 1, null, null, double 4}
+x.ReplaceMatlabNaN.0.asdate	null
+x.ReplaceMatlabNaN.0.range_scalar	slot=Range K1 value=null cells {}
+x.ReplaceMatlabNaN.0.range_row	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, null, null, double 4} cells {K1=double 1, L2=double 4}
+x.ReplaceMatlabNaN.1.nanrow	array[Object] rank 2 [1..1,1..3] {double 1, double 0, double 3}
+x.ReplaceMatlabNaN.1.nan_in_cell	array[Object] rank 2 [1..1,1..3] {double 1, double 0, string 'x'}
+x.ReplaceMatlabNaN.1.nan_scalar_in	string 'double [1 1] [NaN]'
+x.ReplaceMatlabNaN.1.neginf	double -Infinity
+x.ReplaceMatlabNaN.1.varout	array[Object] rank 2 [1..1,1..2] {double 0, double 0}
+x.ReplaceMatlabNaN.1.cellformat	array[Object] rank 2 [1..2,1..2] {double 1, null, null, double 4}
+x.ReplaceMatlabNaN.1.asdate	double -693960
+x.ReplaceMatlabNaN.1.range_scalar	slot=Range K1 value=double 0 cells {K1=double 0}
+x.ReplaceMatlabNaN.1.range_row	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, double 0, double 0, double 4} cells {K1=double 1, L1=double 0, K2=double 0, L2=double 4}
+x.ReplaceMatlabNaN.2.nanrow	array[Object] rank 2 [1..1,1..3] {double 1, string '#N/A', double 3}
+x.ReplaceMatlabNaN.2.nan_in_cell	array[Object] rank 2 [1..1,1..3] {double 1, string '#N/A', string 'x'}
+x.ReplaceMatlabNaN.2.nan_scalar_in	string 'double [1 1] [NaN]'
+x.ReplaceMatlabNaN.2.neginf	double -Infinity
+x.ReplaceMatlabNaN.2.varout	array[Object] rank 2 [1..1,1..2] {string '#N/A', string '#N/A'}
+x.ReplaceMatlabNaN.2.cellformat	array[Object] rank 2 [1..2,1..2] {double 1, null, null, double 4}
+x.ReplaceMatlabNaN.2.asdate	string '#N/A'
+x.ReplaceMatlabNaN.2.range_scalar	slot=Range K1 value=Int32 -2146826246 cells {K1=Int32 -2146826246}
+x.ReplaceMatlabNaN.2.range_row	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, Int32 -2146826246, Int32 -2146826246, double 4} cells {K1=double 1, L1=Int32 -2146826246, K2=Int32 -2146826246, L2=double 4}
+x.range.charcol	string 'char [2 1] ['a'; 'b']'
+x.range.boolcol	string 'logical [2 1] [true;false]'
+x.range.num_blank_num	string 'double [3 1] [1 0 3]'
+x.range.strings_col	string 'cell [2 1] {char [1 2] 'ab'; char [1 2] 'cd'}'
+x.range.col_mixed	string 'cell [2 1] {double [1 1] [1.5]; char [1 3] 'two'}'
+x.range.row_mixed	string 'cell [1 2] {double [1 1] [1.5]; char [1 3] 'two'}'
+x.range.error_and_number	string 'cell [2 1] {int32 [1 1] [-2146826281]; double [1 1] [5]}'
+x.range.text_one	string 'char [1 3] 'two''
+x.range.bool_one	string 'logical [1 1] true'
+x.range.blank_2x1	string 'double [2 1] [0 0]'
+x.range.dates	string 'double [2 1] [45366.4375 45367]'
+x.range.date_and_number	string 'double [1 2] [45366.4375 0]'
+x.range.pass_col	array[Double] rank 2 [1..3,1..1] {double 10, double 20, double 30}
+x.range.pass_one	double 1.5
+x.range.pass_text	string 'two'
+x.range.pass_blank	double 0
+x.range.pass_error	Int32 -2146826281
+x.range.pass_date	double 45366.4375
+x.range.opt_trailing_blank	string 'nargin=2 a=double [1 1] [1] b=double [1 1] [0]'
+x.range.opt_middle_blank	string 'nargin=3 a=double [1 1] [1] b=double [1 1] [0] c=logical [1 1] true'
+x.range.cells_property	string 'cell [2 2] {double [1 1] [1.5]; logical [1 1] true; char [1 3] 'two'; double [1 1] [4]}'
+x.range.rows_property	string 'cell [2 2] {double [1 1] [1.5]; logical [1 1] true; char [1 3] 'two'; double [1 1] [4]}'
+x.range.noout	ok
+x.range.worksheet	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object with no Value2 and no default value (a Worksheet, a Workbook, another COM object) cannot be passed to a function; pass a Range or its Value2.] type=COMException
+x.range.application	string 'char [1 15] 'Microsoft Excel''
+x.range.workbook	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An object with no Value2 and no default value (a Worksheet, a Workbook, another COM object) cannot be passed to a function; pass a Range or its Value2.] type=COMException
+x.rangeout.logical	slot=Range K1 value=bool True cells {K1=bool True}
+x.rangeout.logicalempty	slot=Range K1 value=null cells {}
+x.rangeout.cellnested	slot=Range K1:L1 value=array[Object] rank 2 [1..1,1..2] {double 1, null} cells {K1=double 1}
+x.rangeout.cellmat	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, string 'a', double 2, string 'b'} cells {K1=double 1, L1=string 'a', K2=double 2, L2=string 'b'}
+x.rangeout.cellcol	slot=Range K1:K2 value=array[Object] rank 2 [1..2,1..1] {double 1, double 2} cells {K1=double 1, K2=double 2}
+x.rangeout.cellempty	slot=Range K1 value=null cells {}
+x.rangeout.cellofempty	slot=Range K1:M1 value=array[Object] rank 2 [1..1,1..3] {null, null, null} cells {}
+x.rangeout.int8	slot=Range K1 value=double -5 cells {K1=double -5}
+x.rangeout.uint8mat	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {null, null, null, null} cells {}
+x.rangeout.double3d	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {null, null, null, null} cells {}
+x.rangeout.charcol	slot=Range K1:K2 value=array[Object] rank 2 [1..2,1..1] {string 'a', string 'b'} cells {K1=string 'a', K2=string 'b'}
+x.rangeout.charone	slot=Range K1 value=string 'h' cells {K1=string 'h'}
+x.rangeout.charnewline	slot=Range K1 value=string 'one\ntwo' cells {K1=string 'one\ntwo'}
+x.rangeout.charnonascii	slot=Range K1 value=string 'caf\u00e9 \u2014 \u00b0' cells {K1=string 'caf\u00e9 \u2014 \u00b0'}
+x.rangeout.emptyrow	slot=Range K1 value=null cells {}
+x.rangeout.emptycol	slot=Range K1 value=null cells {}
+x.rangeout.string	slot=Range K1 value=string 'str' cells {K1=string 'str'}
+x.rangeout.stringarr	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {string 'a', string 'bb', string 'ccc', null} cells {K1=string 'a', L1=string 'bb', K2=string 'ccc'}
+x.rangeout.int64	slot=Range K1 value=double 9007199254740992 cells {K1=double 9007199254740992}
+x.rangeout.bigint	slot=Range K1 value=double 9007199254740992 cells {K1=double 9007199254740992}
+x.rangeout.complexmat	slot=Range K1 value=null cells {}
+x.rangeout.complexzero	slot=Range K1 value=double 1 cells {K1=double 1}
+x.rangeout.sparse	slot=Range K1 value=null cells {}
+x.rangeout.sparselogical	slot=Range K1 value=null cells {}
+x.rangeout.sparseempty	slot=Range K1 value=null cells {}
+x.rangeout.inf	slot=Range K1 value=Int32 -2146826252 cells {K1=Int32 -2146826252}
+x.rangeout.neginf	slot=Range K1 value=Int32 -2146826252 cells {K1=Int32 -2146826252}
+x.rangeout.single	slot=Range K1 value=double 1.5 cells {K1=double 1.5}
+x.rangeout.singlemat	slot=Range K1:L1 value=array[Object] rank 2 [1..1,1..2] {double 1.25, double 2.5} cells {K1=double 1.25, L1=double 2.5}
+x.rangeout.structarr	slot=Range K1 value=null cells {}
+x.rangeout.structempty	slot=Range K1 value=null cells {}
+x.rangeout.datetimearr	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A datetime value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
+x.rangeout.duration	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A duration value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
+x.rangeout.fhandle	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A function_handle value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
+x.rangeout.object	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[A k17_thing value cannot be returned to a COM client; return a number, text, a logical, a struct or a cell of them.] type=COMException
+x.rangeout.string_into_2x2	slot=Range K1 value=string 'hello' cells {K1=string 'hello'}
+x.rangeout.scalar_into_2x2	slot=Range K1 value=double 3.5 cells {K1=double 3.5}
+x.rangeout.scalar_into_row	slot=Range K1 value=double 3.5 cells {K1=double 3.5}
+x.rangeout.row_into_col	slot=Range K1:K3 value=array[Object] rank 2 [1..3,1..1] {double 1, double 2, double 3} cells {K1=double 1, K2=double 2, K3=double 3}
+x.rangeout.col_into_row	slot=Range K1:M1 value=array[Object] rank 2 [1..1,1..3] {double 1, double 2, double 3} cells {K1=double 1, L1=double 2, M1=double 3}
+x.rangeout.matrix_into_wide	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4} cells {K1=double 1, L1=double 2, K2=double 3, L2=double 4}
+x.rangeout.empty_into_2x2	slot=Range K1 value=null cells {}
+x.rangeout.nan_into_2x2	slot=Range K1 value=null cells {}
+x.rangeout.cell_into_2x2	slot=Range K1:M1 value=array[Object] rank 2 [1..1,1..3] {double 1, string 'two', null} cells {K1=double 1, L1=string 'two'}
+x.rangeout.datenum_asdate	slot=Range K1 value=double 45366.4375 cells {K1=double 45366.4375}
+x.rangeout.datenum_plain	slot=Range K1 value=double 739326.4375 cells {K1=double 739326.4375}
+x.rangeout.noresize.row_into_2cells	slot=Range K1:L1 value=array[Object] rank 2 [1..1,1..2] {double 1, double 2} cells {K1=double 1, L1=double 2}
+x.rangeout.noresize.col	slot=Range K1 value=double 1 cells {K1=double 1}
+x.rangeout.noresize.fit	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4} cells {K1=double 1, L1=double 2, K2=double 3, L2=double 4}
+x.rangeout.noresize.larger	slot=Range K1:M3 value=array[Object] rank 2 [1..3,1..3] {double 1, double 2, Int32 -2146826246, double 3, double 4, Int32 -2146826246, Int32 -2146826246, Int32 -2146826246, Int32 -2146826246} cells {K1=double 1, L1=double 2, M1=Int32 -2146826246, K2=double 3, L2=double 4, M2=Int32 -2146826246, K3=Int32 -2146826246, L3=Int32 -2146826246, M3=Int32 -2146826246}
+x.rangeout.noresize.scalar_into_2x2	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 3.5, double 3.5, double 3.5, double 3.5} cells {K1=double 3.5, L1=double 3.5, K2=double 3.5, L2=double 3.5}
+x.rangeout.noresize.cell	slot=Range K1 value=double 1 cells {K1=double 1}
+x.rangeout.noresize.char	slot=Range K1 value=string 'hello' cells {K1=string 'hello'}
+x.rangeout.transpose.col	slot=Range K1:M1 value=array[Object] rank 2 [1..1,1..3] {double 1, double 2, double 3} cells {K1=double 1, L1=double 2, M1=double 3}
+x.rangeout.transpose.scalar	slot=Range K1 value=double 3.5 cells {K1=double 3.5}
+x.rangeout.transpose.cell	slot=Range K1:K3 value=array[Object] rank 2 [1..3,1..1] {double 1, string 'two', null} cells {K1=double 1, K2=string 'two'}
+x.rangeout.transpose.charmat	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {string 'a', string 'c', string 'b', string 'd'} cells {K1=string 'a', L1=string 'c', K2=string 'b', L2=string 'd'}
+x.rangeout.transpose.char	slot=Range K1 value=string 'hello' cells {K1=string 'hello'}
+x.rangeout.transpose.3d	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {null, null, null, null} cells {}
+x.rangeout.transpose.noresize	slot=Range K1 value=double 1 cells {K1=double 1}
+x.rangeout.transpose.noresize_fit	slot=Range K1:K3 value=array[Object] rank 2 [1..3,1..1] {double 1, double 2, double 3} cells {K1=double 1, K2=double 2, K3=double 3}
+x.rangeout.cellformat.doublemat	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4} cells {K1=double 1, L1=double 2, K2=double 3, L2=double 4}
+x.rangeout.cellformat.double	slot=Range K1 value=double 3.5 cells {K1=double 3.5}
+x.rangeout.cellformat.struct	slot=Range K1 value=null cells {}
+x.rangeout.nan_replace2_scalar	slot=Range K1 value=Int32 -2146826246 cells {K1=Int32 -2146826246}
+x.rangeout.two	slot1=Range K1:L1 value=array[Object] rank 2 [1..1,1..2] {double 1, double 2} slot2=Range K5:L5 value=array[Object] rank 2 [1..1,1..2] {double -1, double -2} cells {K1=double 1, L1=double 2, K5=double -1, L5=double -2}
+x.rangeout.varout	slot=Range K1:M1 value=array[Object] rank 2 [1..1,1..3] {double 5, double 10, double 15} cells {K1=double 5, L1=double 10, M1=double 15}
+x.rangeout.both	slot1=Range K1 value=string 'x=double [1 1] [7] nargin=3 nargout=3' slot2=Range K5:L5 value=array[Object] rank 2 [1..1,1..2] {string 'a', null} cells {K1=string 'x=double [1 1] [7] nargin=3 nargout=3', K5=string 'a'}
+x.rangeout.one_slot_scalar_then_matrix	slot=Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4} cells {K1=double 1, L1=double 2, K2=double 3, L2=double 4}
+x.rangeout.prefilled_range_kept_elsewhere	slot=Range K1:K3 value=array[Object] rank 2 [1..3,1..1] {double 1, double 2, double 3} cells {K1=double 1, K2=double 2, K3=double 3}
+x.rangeout.flags_after	InputArrayFormat=1 InputArrayIndFlag=0 OutputArrayFormat=0 OutputArrayIndFlag=0 AutoResizeOutput=True TransposeOutput=False CoerceNumericToType=0 InputDateFormat=0 OutputAsDate=False DateBias=693960 ReplaceMissing=0 ReplaceMatlabNaN=0
+x.arg.cell_var	string 'double [1 2] [1 2]'
+x.arg.cell_var_fmt2	string 'double [1 2] [1 2]'
+x.arg.cell_var2d_fmt2	string 'double [2 2] [1 3 2 4]'
+x.arg.scalar_fmt2	string 'double [1 1] [5]'
+x.arg.coerce_char	string 'char [1 3] '3.7''
+x.arg.coerce_arr	string 'int8 [1 3] [2 -2 127]'
+x.arg.date_string	string 'char [1 21] '3/15/2024 10:30:00 AM''
+x.arg.date_bias0	string 'double [1 1] [45366.4375]'
+x.arg.replacemissing	string 'double [3 1] [1 NaN 3]'
+x.arg.range	string 'double [3 1] [10 20 30]'
+x.arg.range_fmt2	string 'double [3 1] [10 20 30]'
+x.arg.struct	string 'struct [1 1] {a=double [1 1] [1]}'
+x.arg.unset	string 'double [0 0] []'
+x.arg.unset_middle	string 'nargin=3 a=double [1 1] [1] b=double [0 0] [] c=logical [1 1] true'
+x.arg.value_null	string 'double [0 0] []'
+x.arg.value_readback	array[Double] rank 1 [0..1] {double 1, double 2}
+x.arg.value_readback_2d	array[Double] rank 2 [0..1,0..1] {double 1, double 2, double 3, double 4}
+x.arg.value_readback_unset	null
+x.arg.nested	string 'int8 [1 1] [4]'
+x.arg.flags_put	string 'int8 [1 1] [4]'
+x.arg.flags_defaults	InputArrayFormat=1 InputArrayIndFlag=0 OutputArrayFormat=0 OutputArrayIndFlag=0 AutoResizeOutput=True TransposeOutput=False CoerceNumericToType=0 InputDateFormat=0 OutputAsDate=False DateBias=693960 ReplaceMissing=0 ReplaceMatlabNaN=0
+x.arg.flags_sameobject	True
+x.arg.clone	double 3.7 | 8
+x.arg.clone_independent	double 3.7
+x.arg.component_coerce	string 'double [1 1] [3.7]'
+x.arg.component_fmt2	string 'cell [1 2] {double [1 1] [1]; double [1 1] [2]}'
+x.arg.pass	double 3.7
+x.arg.members	Clone,MWFlags,Value
+x.struct.item_name_index	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.struct.item_name_sub2	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.struct.item_name_sub2_col	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.struct.item_index_first	string 'struct [1 2] fields [a] {struct [1 1] {a=double [1 1] [1]} | struct [1 1] {a=double [0 0] []}}'
+x.struct.item_index_only	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.struct.item_unknown	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.struct.item_case	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.struct.item_noargs	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.struct.item_out_of_range	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.struct.item_zero	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.struct.item_text_index	ERR 0x80020005 src=[] msg=[Type mismatch. (Exception from HRESULT: 0x80020005 (DISP_E_TYPEMISMATCH))] type=COMException
+x.struct.item_name_only_on_array	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.struct.item_before_init	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.struct.item_twice_same	double 5 same=True
+x.struct.dims_2d	nf=2 nd=2 dims=array[Int32] rank 1 [1..2] {Int32 2, Int32 2} names=array[String] rank 1 [1..2] {string 'a', string 'b'}
+x.struct.dims_3	nd=3 dims=array[Int32] rank 1 [1..3] {Int32 1, Int32 1, Int32 2} string 'struct [1 1 2] fields [a] {struct [1 1] {a=double [0 0] []} | struct [1 1] {a=double [0 0] []}}'
+x.struct.dims_scalar	nd=2 dims=array[Int32] rank 1 [1..2] {Int32 1, Int32 2}
+x.struct.dims_zero	ERR 0x80004005 src=[JGraphComUtil.MWStruct25.2] msg=[Error initializing array, cannot initialize a 0 length struct array with field names] type=COMException
+x.struct.dims_zero_echo	ERR 0x80004005 src=[JGraphComUtil.MWStruct25.2] msg=[Error initializing array, cannot initialize a 0 length struct array with field names] type=COMException
+x.struct.init_noargs	nf=0 nd=2 dims=array[Int32] rank 1 [1..2] {Int32 1, Int32 1} names=null
+x.struct.init_noargs_echo	string 'struct [1 1] {}'
+x.struct.init_dims_only	nf=0 nd=2 dims=array[Int32] rank 1 [1..2] {Int32 1, Int32 1} names=null
+x.struct.init_names_variant	array[String] rank 1 [1..2] {string 'a', string 'b'}
+x.struct.init_names_one_string	nf=1 names=array[String] rank 1 [1..1] {string 'a'}
+x.struct.init_names_2d	nf=4 names=array[String] rank 1 [1..4] {string 'a', string 'c', string 'b', string 'd'}
+x.struct.init_names_dup	nf=1 names=array[String] rank 1 [1..1] {string 'a'}
+x.struct.init_names_bad	nf=2 names=array[String] rank 1 [1..2] {string '1bad', string 'a b'} string 'struct [1 1] {1bad=double [0 0] []; a b=double [0 0] []}'
+x.struct.init_names_number	ERR 0x80070057 src=[JGraphComUtil.MWStruct25.2] msg=[Error initializing array, a field name must be text] type=ArgumentException
+x.struct.init_dims_variant	nd=2 dims=array[Int32] rank 1 [1..2] {Int32 1, Int32 2}
+x.struct.init_dims_ints	nd=2 dims=array[Int32] rank 1 [1..2] {Int32 1, Int32 2}
+x.struct.init_dims_text	ERR 0x80020005 src=[System.Management.Automation] msg=[Type mismatch. (Exception from HRESULT: 0x80020005 (DISP_E_TYPEMISMATCH))] type=COMException
+x.struct.init_dims_negative	ERR 0x80004005 src=[JGraphComUtil.MWStruct25.2] msg=[Error initializing array, invalid dimensions] type=COMException
+x.struct.init_dims_fraction	nd=2 dims=array[Int32] rank 1 [1..2] {Int32 1, Int32 1}
+x.struct.init_twice	nf=3 names=array[String] rank 1 [1..3] {string 'a', string 'b', string 'c'} string 'struct [1 1] {a=double [1 1] [1]; b=double [0 0] []; c=double [0 0] []}'
+x.struct.field_unset	string 'struct [1 1] {a=double [1 1] [1]; b=double [0 0] []}'
+x.struct.field_unset_readback	null
+x.struct.field_name	a
+x.struct.field_flags	InputArrayFormat=1 InputArrayIndFlag=0 OutputArrayFormat=0 OutputArrayIndFlag=0 AutoResizeOutput=True TransposeOutput=False CoerceNumericToType=0 InputDateFormat=0 OutputAsDate=False DateBias=693960 ReplaceMissing=0 ReplaceMatlabNaN=0
+x.struct.field_value_coerce	string 'struct [1 1] {a=int8 [1 1] [4]}'
+x.struct.field_value_fmt2	string 'struct [1 1] {a=double [1 2] [1 2]}'
+x.struct.field_value_range	string 'struct [1 1] {a=double [3 1] [10 20 30]}'
+x.struct.field_value_complex	string 'struct [1 1] {a=double [1 1] [1+2i]}'
+x.struct.field_value_sparse	string 'struct [1 1] {a=sparse double [2 2] nnz=1 [(1,2)=5]}'
+x.struct.field_value_arg	string 'struct [1 1] {a=int8 [1 1] [4]}'
+x.struct.field_value_array2d	string 'struct [1 1] {a=double [2 2] [1 3 2 4]}'
+x.struct.field_value_var	string 'struct [1 1] {a=cell [1 2] {double [1 1] [1]; char [1 1] 'x'}}'
+x.struct.field_value_date	string 'struct [1 1] {a=double [1 1] [739326.4375]}'
+x.struct.field_value_bool	string 'struct [1 1] {a=logical [1 1] true}'
+x.struct.field_value_readback	array[Double] rank 1 [0..1] {double 1, double 2}
+x.struct.field_value_struct_array	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.struct.clone	double 1 | double 2
+x.struct.pass	MWStruct dims [1,1] fields 2 {a=double 1; b=string 'text'}
+x.struct.pass_array	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.struct.in_cellformat	string 'struct [1 1] {a=cell [1 2] {double [1 1] [1]; double [1 1] [2]}}'
+x.struct.in_coerce	string 'struct [1 1] {a=double [1 1] [3.7]}'
+x.struct.in_datestring	string 'struct [1 1] {a=double [1 1] [739326.4375]}'
+x.struct.members	Clone,Initialize,Dims,FieldNames,NumberOfDims,NumberOfFields
+x.struct.field_members	Clone,MWFlags,Name,Value
+x.struct.out_item_index	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.struct.out_item_linear_col	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.struct.out_item_name_only_on_array	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.struct.out_numdims	nd=2 dims=array[Int32] rank 1 [1..2] {Int32 1, Int32 1} nf=1 names=array[String] rank 1 [1..1] {string 'in'}
+x.struct.out_empty_members	nd=2 dims=array[Int32] rank 1 [1..2] {Int32 0, Int32 0} nf=0 names=null
+x.struct.out_nofields_members	nd=2 dims=array[Int32] rank 1 [1..2] {Int32 1, Int32 1} nf=0 names=null
+x.struct.out_field_flags	InputArrayFormat=1 InputArrayIndFlag=0 OutputArrayFormat=0 OutputArrayIndFlag=0 AutoResizeOutput=True TransposeOutput=False CoerceNumericToType=0 InputDateFormat=0 OutputAsDate=False DateBias=693960 ReplaceMissing=0 ReplaceMatlabNaN=0
+x.struct.out_field_name	b
+x.struct.out_set_then_pass	MWStruct dims [1,1] fields 2 {a=double 5; b=string 'text'}
+x.struct.out_init_again	nf=3 names=array[String] rank 1 [1..3] {string 'a', string 'b', string 'z'}
+x.struct.out_cellformat_arr	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.struct.out_clone	string 'text'
+x.struct.out_same_twice	False
+x.struct.out_members	Clone,Initialize,Dims,FieldNames,NumberOfDims,NumberOfFields
+x.struct.out_item_members	Clone,MWFlags,Name,Value
+x.struct.out_nested_value_type	__ComObject nf=2
+x.struct.out_asdate	double 1
+x.struct.out_in_cell	array[Object] rank 2 [1..1,1..2] {double 1, array[Object] rank 2 [1..1,1..2] {double 2, string 'x'}}
+x.complex.imag_only	string 'double [1 1] [0+2i]'
+x.complex.unset	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Not enough input arguments.\nError in => k17_echo.m at line 3] type=COMException
+x.complex.unset_middle	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Input argument 2 (b) was not given; only trailing arguments may be left out.] type=COMException
+x.complex.2d	string 'double [2 2] [1+5i 3+7i 2+6i 4+8i]'
+x.complex.ints	string 'double [1 1] [1+2i]'
+x.complex.singles	string 'single [1 1] [1.5+2.5i]'
+x.complex.bool	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An MWComplex's real part must be numeric; a logical was given.] type=COMException
+x.complex.text	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An MWComplex's real part must be numeric; a char was given.] type=COMException
+x.complex.var_arrays	string 'double [1 2] [1+3i 2+4i]'
+x.complex.range	string 'double [3 1] [10+10i 20+20i 30+30i]'
+x.complex.flags_coerce	string 'double [1 1] [1.5+2.5i]'
+x.complex.flags_defaults	InputArrayFormat=1 InputArrayIndFlag=0 OutputArrayFormat=0 OutputArrayIndFlag=0 AutoResizeOutput=True TransposeOutput=False CoerceNumericToType=0 InputDateFormat=0 OutputAsDate=False DateBias=693960 ReplaceMissing=0 ReplaceMatlabNaN=0
+x.complex.readback	array[Double] rank 1 [0..1] {double 1, double 2} | null
+x.complex.clone	double 2 | double 9
+x.complex.pass	MWComplex re=double 1 im=double 2
+x.complex.pass_array	MWComplex re=array[Double] rank 2 [1..1,1..2] {double 1, double 2} im=array[Double] rank 2 [1..1,1..2] {double 3, double 4}
+x.complex.in_cellformat	string 'cell [1 2] {double [1 1] [1+3i]; double [1 1] [2+4i]}'
+x.complex.in_component_coerce	string 'single [1 1] [1.5+2.5i]'
+x.complex.members	Clone,Imag,MWFlags,Real
+x.complex.out_types	__ComObject | double 1 | double 2
+x.complex.out_flags	InputArrayFormat=1 InputArrayIndFlag=0 OutputArrayFormat=0 OutputArrayIndFlag=0 AutoResizeOutput=True TransposeOutput=False CoerceNumericToType=0 InputDateFormat=0 OutputAsDate=False DateBias=693960 ReplaceMissing=0 ReplaceMatlabNaN=0
+x.complex.out_cellformat	array[Object] rank 1 [0..1] {double 1, double 3} | array[Object] rank 1 [0..1] {double 2, double -4}
+x.complex.out_asdate	double 1 | double 2
+x.complex.out_set_then_pass	MWComplex re=double 1 im=double 9
+x.complex.out_members	Clone,Imag,MWFlags,Real
+x.complex.out_in_cell	array[Object] rank 2 [1..1,1..2] {double 1, array[Object] rank 2 [1..1,1..2] {double 2, string 'x'}}
+x.complex.out_in_struct	MWStruct dims [1,1] fields 1 {in=MWStruct dims [1,1] fields 2 {x=double 1; y=array[Double] rank 2 [1..1,1..2] {double 1, double 2}}}
+x.sparse.logical	string 'sparse double [1 2] nnz=1 [(1,1)=1]'
+x.sparse.int_indices	string 'sparse double [2 3] nnz=2 [(1,1)=5 (2,3)=6]'
+x.sparse.variant_indices	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An MWSparse's Array, RowIndex and ColumnIndex must be typed arrays of numbers (a Double() or Long() array), not Variants.] type=COMException
+x.sparse.scalar_triplet	string 'sparse double [2 2] nnz=1 [(2,1)=7]'
+x.sparse.unsorted	string 'sparse double [2 2] nnz=2 [(1,1)=6 (2,1)=5]'
+x.sparse.col_major_order	string 'sparse double [2 2] nnz=2 [(1,1)=6 (1,2)=5]'
+x.sparse.int_values	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An MWSparse's Array must be a Double() or Boolean() array.] type=COMException
+x.sparse.flags_defaults	InputArrayFormat=1 InputArrayIndFlag=0 OutputArrayFormat=0 OutputArrayIndFlag=0 AutoResizeOutput=True TransposeOutput=False CoerceNumericToType=0 InputDateFormat=0 OutputAsDate=False DateBias=693960 ReplaceMissing=0 ReplaceMatlabNaN=0
+x.sparse.readback	2 | 0 | array[Double] rank 1 [0..1] {double 1, double 2} | null
+x.sparse.clone	2 | 9
+x.sparse.pass	MWSparse rows=2 cols=3 ri=array[Int32] rank 1 [1..2] {Int32 1, Int32 2} ci=array[Int32] rank 1 [1..2] {Int32 1, Int32 3} array=array[Double] rank 1 [1..2] {double 5, double 6}
+x.sparse.in_component_coerce	string 'sparse double [2 2] nnz=1 [(1,1)=5.5]'
+x.sparse.members	Clone,Array,ColumnIndex,MWFlags,NumColumns,NumRows,RowIndex
+x.sparse.out_types	__ComObject | Int32 | array[Int32] rank 1 [1..2] {Int32 1, Int32 2}
+x.sparse.out_flags	InputArrayFormat=1 InputArrayIndFlag=0 OutputArrayFormat=0 OutputArrayIndFlag=0 AutoResizeOutput=True TransposeOutput=False CoerceNumericToType=0 InputDateFormat=0 OutputAsDate=False DateBias=693960 ReplaceMissing=0 ReplaceMatlabNaN=0
+x.sparse.out_cellformat	array[Int32] rank 1 [1..2] {Int32 1, Int32 2} | array[Int32] rank 1 [1..2] {Int32 1, Int32 2} | array[Double] rank 1 [1..2] {double 1, double 2}
+x.sparse.out_set_then_pass	MWSparse rows=5 cols=2 ri=array[Int32] rank 1 [1..2] {Int32 1, Int32 2} ci=array[Int32] rank 1 [1..2] {Int32 1, Int32 2} array=array[Double] rank 1 [1..2] {double 1, double 2}
+x.sparse.out_members	Clone,Array,ColumnIndex,MWFlags,NumColumns,NumRows,RowIndex
+x.field.name_default	string ''
+x.field.value_roundtrip	double 3.5
+x.field.value_array_roundtrip	array[Double] rank 1 [0..1] {double 1, double 2}
+x.field.value_unset	null
+x.field.in	string 'double [1 1] [3.5]'
+x.field.flags	InputArrayFormat=1 InputArrayIndFlag=0 OutputArrayFormat=0 OutputArrayIndFlag=0 AutoResizeOutput=True TransposeOutput=False CoerceNumericToType=0 InputDateFormat=0 OutputAsDate=False DateBias=693960 ReplaceMissing=0 ReplaceMatlabNaN=0
+x.field.clone	double 3.5
+x.utilflags.defaults	InputArrayFormat=1 InputArrayIndFlag=0 OutputArrayFormat=0 OutputArrayIndFlag=0 AutoResizeOutput=True TransposeOutput=False CoerceNumericToType=0 InputDateFormat=0 OutputAsDate=False DateBias=693960 ReplaceMissing=0 ReplaceMatlabNaN=0
+x.utilflags.put_into_component	string 'int8 [1 1] [4]'
+x.utilflags.put_shares_object	7
+x.utilflags.put_then_get_same	True
+x.utilflags.arrayformat_put	string 'cell [1 1] {double [1 1] [5]}'
+x.utilflags.arrayformat_put_shares	2
+x.utilflags.dataconv_put	string 'int8 [1 1] [4]'
+x.utilflags.dataconv_defaults	0 0 False 693960 0 0
+x.utilflags.arrayformat_defaults	1 0 0 0 True False
+x.utilflags.clone	7 | 8
+x.utilflags.put_wrong_type	ERR 0x80131508 src=[System.Management.Automation] msg=[Index was outside the bounds of the array.] type=IndexOutOfRangeException
+x.utilflags.put_null	ERR 0x80004003 src=[System.Management.Automation] msg=[Object reference not set to an instance of an object.] type=NullReferenceException
+x.utilflags.put_dictionary	ERR 0x80131508 src=[System.Management.Automation] msg=[Index was outside the bounds of the array.] type=IndexOutOfRangeException
+x.utilflags.put_number	ERR 0x80131508 src=[System.Management.Automation] msg=[Index was outside the bounds of the array.] type=IndexOutOfRangeException
+x.utilflags.arrayformat_put_null	ERR 0x80004003 src=[System.Management.Automation] msg=[Object reference not set to an instance of an object.] type=NullReferenceException
+x.utilflags.set_bool_as_number	True
+x.utilflags.set_number_as_text	12
+x.utilflags.set_number_as_badtext	ERR 0x80070057 src=[] msg=[Exception setting "DateBias": Cannot convert the "x" value of type "string" to type "int".] type=ArgumentException
+x.utilflags.set_fraction	3
+x.utilflags.members.flags	Clone,ArrayFormatFlags,DataConversionFlags
+x.utilflags.members.af	AutoResizeOutput,InputArrayFormat,InputArrayIndFlag,OutputArrayFormat,OutputArrayIndFlag,TransposeOutput
+x.utilflags.members.dc	CoerceNumericToType,DateBias,InputDateFormat,OutputAsDate,ReplaceMatlabNaN,ReplaceMissing
+x.utilflags.members.util	CreateRemoteObject,IsMCRInitialized,IsMCRJVMEnabled,MWDate2VariantDate,MWInitApplication,MWInitApplicationWithMCROptions,MWPack,MWTerminateApplication,MWUnpack
+x.utilflags.flags_from_component_into_arg	string 'int8 [1 1] [4]'
+x.util.pack_2d	array[Object] rank 1 [1..4] {double 1, double 2, double 3, double 4}
+x.util.pack_nested	array[Object] rank 1 [1..2] {array[Object] rank 1 [1..2] {double 1, string 'a'}, double 2}
+x.util.pack_missing_middle	array[Object] rank 1 [1..2] {double 1, double 3}
+x.util.pack_dbnull	array[Object] rank 1 [1..3] {double 1, DBNull, double 3}
+x.util.pack_empty_first	array[Object] rank 1 [1..1] {double 2}
+x.util.pack_empty_last	array[Object] rank 1 [1..1] {double 1}
+x.util.pack_bool_date	array[Object] rank 1 [1..2] {bool True, DateTime 2024-03-15 10:30:00.000}
+x.util.pack_struct	array[Object] rank 1 [1..1] {MWStruct dims [1,1] fields 1 {a=null}}
+x.util.pack_prefilled	string 'old'
+x.util.pack_32	array[Object] rank 1 [1..32] {double 1, double 2, double 3, double 4, double 5, double 6, double 7, double 8, double 9, double 10, double 11, double 12, double 13, double 14, double 15, double 16, double 17, double 18, double 19, double 20, double 21, double 22, double 23, double 24, ...}
+x.util.pack_onebased_2d	array[Object] rank 1 [1..4] {double 1, double 2, double 3, double 4}
+x.util.unpack_start_beyond	string 'old'
+x.util.unpack_start_last	string 'old' | string 'old2'
+x.util.unpack_negative_start	string 'old'
+x.util.unpack_2d	array[Double] rank 2 [0..1,0..1] {double 1, double 2, double 3, double 4} | null
+x.util.unpack_var2d	double 1 | double 3
+x.util.unpack_1based	double 1 | double 3
+x.util.unpack_null	string 'old'
+x.util.unpack_string	string 'abc' | string 'old'
+x.util.unpack_r8array	array[Double] rank 1 [0..1] {double 7, double 8} | null
+x.util.unpack_prefilled_untouched	string 'old' | string 'old2'
+x.util.unpack_nested	array[Object] rank 1 [1..2] {double 1, string 'a'} | double 2
+x.util.unpack_struct	MWStruct dims [1,1] fields 1 {a=null}
+x.util.unpack_range_scalar	Range K1 value=double 5 | K1=double 5
+x.util.unpack_range_two_slots	Range K1:L2 value=array[Object] rank 2 [1..2,1..2] {double 1, double 2, double 3, double 4} | Range K5 value=string 'x' | K1=double 1, L1=double 2, K2=double 3, L2=double 4, K5=string 'x'
+x.util.unpack_range_noresize_row	Range K1 value=double 1 | K1=double 1, L1=null, M1=null
+x.util.unpack_range_row_resize	Range K1 value=double 1 | K1=double 1
+x.util.unpack_range_larger_target	Range K1 value=double 1 | K1=double 1
+x.util.unpack_range_null_element	Range K1 value=null | K1=null
+x.util.unpack_range_nan	Range K1 value=Int32 -2146826252 | K1=Int32 -2146826252
+x.util.unpack_range_date	Range K1 value=double 45366.4375 | K1=double 45366.4375
+x.util.date2variant.int	Int32 739326
+x.util.date2variant.single	single 739326.5
+x.util.date2variant.negative	double -693965
+x.util.date2variant.huge	double 999306040
+x.util.date2variant.zero	double -693960
+x.util.date2variant.2d	array[Double] rank 2 [0..0,0..1] {double 739326.5, double 739327.5}
+x.util.date2variant.var	array[Object] rank 1 [0..1] {double 739326.5, string 'x'}
+x.util.date2variant.null	null
+x.util.date2variant.bool	bool True
+x.util.date2variant.decimal	decimal 739326.5
+x.util.date2variant.twice	double -648593.5625
+x.util.init_null	ERR 0x80004003 src=[System.Management.Automation] msg=[Object reference not set to an instance of an object.] type=NullReferenceException
+x.util.init_worksheet	ok
+x.util.init_workbook	ok
+x.util.init_string	ERR 0x80070057 src=[] msg=[Exception setting "MWInitApplication": Cannot convert the "x" value of type "string" to type "Object".] type=ArgumentException
+x.util.init_number	ERR 0x80070057 src=[] msg=[Exception setting "MWInitApplication": Cannot convert the "5" value of type "double" to type "Object".] type=ArgumentException
+x.util.init_excel_again	ok
+x.util.call_after_inits	double 4
+x.util.isjvm_type	Boolean False
+x.util.isinit_type	Boolean True
+x.util.create_remote_util	MWStruct dims [1,1] fields 0 {=?}
+x.util.create_remote_dictionary	COM object []
+x.util.create_remote_empty	null
+x.util.create_remote_versionless	COM object [k17_args,k17_both,k17_count,k17_echo,k17_err,k17_h1,k17_make,k17_many,k17_none,k17_noout,k17_one,k17_opt,k17_pass,k17_plot,k17_quiet,k17_two,k17_varin,k17_varout,help,MWFlags]
+x.util.second_util	True False
+x.next	x.complex.mismatch and after: the rows that may end the host; the recording stops where it does
+x.complex.mismatch	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An MWComplex's Real and Imag parts must be the same size; they have 2 and 1 elements.] type=COMException
+x.complex.mismatch_lengths	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An MWComplex's Real and Imag parts must be the same size; they have 2 and 3 elements.] type=COMException
+x.complex.mismatch_shape	string 'double [2 2] [1+5i 3+6i 2+7i 4+8i]'
+x.struct.dims_mismatch_sub	ERR 0x8002000B src=[] msg=[Invalid index. (Exception from HRESULT: 0x8002000B (DISP_E_BADINDEX))] type=COMException
+x.sparse.rows_only	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Not enough input arguments.\nError in => k17_echo.m at line 3] type=COMException
+x.sparse.rows_only_middle	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[Input argument 2 (b) was not given; only trailing arguments may be left out.] type=COMException
+x.sparse.dup	string 'sparse double [2 2] nnz=1 [(1,1)=11]'
+x.sparse.length_mismatch	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An MWSparse's ColumnIndex has 1 elements where its Array has 2.] type=COMException
+x.sparse.text_values	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An MWSparse's Array, RowIndex and ColumnIndex must be typed arrays of numbers (a Double() or Long() array), not Variants.] type=COMException
+x.sparse.fraction_index	string 'sparse double [2 2] nnz=1 [(2,1)=5]'
+x.sparse.2d_array	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[An MWSparse's Array must be a Double() or Boolean() array.] type=COMException
+x.ReplaceMissing.1.var_empty	string 'double [1 0] []'
+x.arg.in_packed	string 'nargin=2 {int8 [1 1] [4]; double [1 1] [2]}'
+x.struct.in_packed	string 'nargin=2 {struct [1 1] {a=double [1 1] [1]}; double [1 1] [2]}'
+x.range.in_packed	string 'nargin=2 {double [1 1] [1]; cell [3 1] {double [1 1] [10]; double [1 1] [20]; double [1 1] [30]}}'
+x.after	double 4
+seconds	41.0

@@ -32,17 +32,32 @@
     Runs without Excel: MWInitApplication is not called and the Range rows fail (JGraph's add-in
     needs no Excel to run, so stage K17c's test runs it so).
 
+.PARAMETER UtilPrefix
+    The utility library's ProgID prefix: MathWorks' MWComUtil, or JGraph's JGraphComUtil (stage K17d,
+    decision KO10); the value classes are created as <prefix>.MWStruct and so on.
+
 .PARAMETER UtilProgId
-    The utility library's ProgID; '' when there is none (JGraph's is stage K17d's), so its rows fail.
+    The utility library's ProgID, <prefix>.MWUtil25.2 unless given; '' when there is none, so its rows fail.
+
+.PARAMETER UtilDll
+    Under -Dll: the utility library's DLL, whose classes are created through its own DllGetClassObject
+    by the coclass names its type library declares (stage K17d's unit test registers nothing).
+
+.PARAMETER Phase
+    main (the oracle), preinit (the rows before MWInitApplication, in a process of their own), or
+    extra (stage K17d's rows: the flags' effect on more shapes, Range objects, the utility library
+    and MathWorks' value classes in detail, recorded in k17_com_extra.out.txt).
 #>
 [CmdletBinding()]
 param(
     [string] $ProgId = 'k17xl.K17Xl.1_0',
     [string] $OtherProgIds = '',
-    [string] $UtilProgId = 'MWComUtil.MWUtil25.2',
-    [ValidateSet('main', 'preinit')] [string] $Phase = 'main',
+    [string] $UtilPrefix = 'MWComUtil',
+    [string] $UtilProgId = "$UtilPrefix.MWUtil25.2",
+    [ValidateSet('main', 'preinit', 'extra')] [string] $Phase = 'main',
     [string] $Dll = '',
     [string] $Clsid = '',
+    [string] $UtilDll = '',
     [switch] $NoExcel,
     [Parameter(Mandatory = $true)] [string] $Out
 )
@@ -63,6 +78,32 @@ public static class JgDirect
         [PreserveSig] int CreateInstance(IntPtr outer, ref Guid iid, [MarshalAs(UnmanagedType.IUnknown)] out object made);
         [PreserveSig] int LockServer(bool lockIt);
     }
+    [DllImport("oleaut32.dll", CharSet = CharSet.Unicode, PreserveSig = true)]
+    static extern int LoadTypeLibEx(string file, int regKind, out System.Runtime.InteropServices.ComTypes.ITypeLib lib);
+    // The class id of the coclass named `name` in the DLL's own type library (its names are case-insensitive).
+    public static Guid ClassId(string dll, string name)
+    {
+        System.Runtime.InteropServices.ComTypes.ITypeLib lib;
+        int hr = LoadTypeLibEx(dll, 0, out lib);
+        if (hr < 0) Marshal.ThrowExceptionForHR(hr);
+        int count = lib.GetTypeInfoCount();
+        for (int k = 0; k < count; k++)
+        {
+            System.Runtime.InteropServices.ComTypes.ITypeInfo info;
+            lib.GetTypeInfo(k, out info);
+            IntPtr attrPointer;
+            info.GetTypeAttr(out attrPointer);
+            System.Runtime.InteropServices.ComTypes.TYPEATTR attr = (System.Runtime.InteropServices.ComTypes.TYPEATTR)Marshal.PtrToStructure(attrPointer, typeof(System.Runtime.InteropServices.ComTypes.TYPEATTR));
+            info.ReleaseTypeAttr(attrPointer);
+            if (attr.typekind != System.Runtime.InteropServices.ComTypes.TYPEKIND.TKIND_COCLASS) continue;
+            string typeName, doc, helpFile;
+            int context;
+            info.GetDocumentation(-1, out typeName, out doc, out context, out helpFile);
+            if (string.Equals(typeName, name, StringComparison.OrdinalIgnoreCase)) return attr.guid;
+        }
+        throw new Exception("The type library of " + dll + " declares no coclass " + name);
+    }
+    public static object CreateNamed(string dll, string name) { return Create(dll, ClassId(dll, name)); }
     public static object Create(string dll, Guid clsid)
     {
         IntPtr module = LoadLibraryW(dll);
@@ -220,9 +261,33 @@ function Flags($obj) {
 }
 function Fresh([string] $id) {
     if (-not $Dll) { return (New-Object -ComObject $id) }
-    if ($id -ne $ProgId) { throw "No registry in -Dll mode: $id cannot be created" }
-    [JgDirect]::Create($Dll, [guid]$Clsid)
+    if ($id -eq $ProgId) { return [JgDirect]::Create($Dll, [guid]$Clsid) }
+    if ($UtilDll -and $id.StartsWith("$UtilPrefix.")) {
+        # <prefix>.MWStruct or <prefix>.MWUtil25.2: the coclass is the middle name.
+        $cls = ($id.Substring($UtilPrefix.Length + 1) -replace '[0-9.]+$', '')
+        return [JgDirect]::CreateNamed($UtilDll, $cls)
+    }
+    throw "No registry in -Dll mode: $id cannot be created"
 }
+# A utility library object by its class: MWStruct, MWComplex, MWSparse, MWArg, MWField, MWFlags, ...
+function U([string] $cls) { Fresh "$UtilPrefix.$cls" }
+# A flags object's twelve settings (Flags reads an object's MWFlags; this takes the flags object itself).
+function FlagsOf($f) {
+    $af = $f.ArrayFormatFlags; $dc = $f.DataConversionFlags
+    'InputArrayFormat={0} InputArrayIndFlag={1} OutputArrayFormat={2} OutputArrayIndFlag={3} AutoResizeOutput={4} TransposeOutput={5} CoerceNumericToType={6} InputDateFormat={7} OutputAsDate={8} DateBias={9} ReplaceMissing={10} ReplaceMatlabNaN={11}' -f `
+        $af.InputArrayFormat, $af.InputArrayIndFlag, $af.OutputArrayFormat, $af.OutputArrayIndFlag, $af.AutoResizeOutput, $af.TransposeOutput, `
+        $dc.CoerceNumericToType, $dc.InputDateFormat, $dc.OutputAsDate, $dc.DateBias, $dc.ReplaceMissing, $dc.ReplaceMatlabNaN
+}
+# Clone([out] IX** pp) of a value class, as CloneFlags does it for IMWFlags.
+function CloneObj($x) {
+    $a = New-Object object[] 1
+    $a[0] = [System.Runtime.InteropServices.DispatchWrapper]::new([object]$null)
+    $pm = New-Object System.Reflection.ParameterModifier 1
+    $pm[0] = $true
+    [void]$x.GetType().InvokeMember('Clone', [System.Reflection.BindingFlags]::InvokeMethod, $null, $x, $a, [System.Reflection.ParameterModifier[]]@($pm), $null, $null)
+    $a[0]
+}
+function Members($x) { (@($x | Get-Member -MemberType Property, Method | ForEach-Object { $_.Name }) -join ',') }
 # IMWFlags.Clone([out] IMWFlags**): the slot by reference through InvokeMember, as a DispatchWrapper so
 # it goes as VT_BYREF|VT_DISPATCH (PowerShell's [ref] fails on it, a null slot is a type mismatch).
 function CloneFlags($f) {
@@ -331,6 +396,11 @@ try {
     Case 'none' { CallNoOut $o 'k17_none' (A) }
     Case 'one' { Call $o 'k17_one' 1 1 (A 2.0) }
     Case 'util.IsMCRInitialized.running' { $u.IsMCRInitialized() }
+
+    if ($Phase -eq 'extra') {
+        . (Join-Path $PSScriptRoot 'k17com_extra.ps1')
+        return
+    }
 
     # --- help ---------------------------------------------------------------------------------------------
     foreach ($name in @('k17_quiet', 'k17_none', 'k17_one', 'k17_many', 'k17_two', 'k17_opt', 'k17_varin', 'k17_varout', 'k17_both', 'k17_args', 'k17_noout', 'k17_err', 'k17_plot', 'k17_h1', 'k17_echo', 'k17_pass', 'k17_count', 'k17_make')) {
@@ -511,47 +581,47 @@ try {
     Case 'in.range_value2' { Echo1 $o ($ws.Range('A1:B2').Value2) }
     Case 'in.range_value' { Echo1 $o ($ws.Range('A1:B2').Value(10)) }
     Case 'in.struct' {
-        $s = Fresh 'MWComUtil.MWStruct'
+        $s = (U 'MWStruct')
         $s.Initialize([double[]]@(1, 1), [string[]]@('a', 'b'))
         (Prop $s 'Item' @('a')).Value = 1.0
         (Prop $s 'Item' @('b')).Value = 'text'
         Echo1 $o $s
     }
     Case 'in.struct_array' {
-        $s = Fresh 'MWComUtil.MWStruct'
+        $s = (U 'MWStruct')
         $s.Initialize([double[]]@(1, 2), [string[]]@('a'))
         (Prop $s 'Item' @(1.0, 1.0)).Value = 1.0
         (Prop $s 'Item' @(1.0, 2.0)).Value = 2.0
         Echo1 $o $s
     }
     Case 'in.struct_nested' {
-        $inner = Fresh 'MWComUtil.MWStruct'
+        $inner = (U 'MWStruct')
         $inner.Initialize([double[]]@(1, 1), [string[]]@('x'))
         (Prop $inner 'Item' @('x')).Value = 9.0
-        $s = Fresh 'MWComUtil.MWStruct'
+        $s = (U 'MWStruct')
         $s.Initialize([double[]]@(1, 1), [string[]]@('in', 'arr'))
         (Prop $s 'Item' @('in')).Value = $inner
         (Prop $s 'Item' @('arr')).Value = [double[]]@(1, 2)
         Echo1 $o $s
     }
-    Case 'in.struct_empty' { $s = Fresh 'MWComUtil.MWStruct'; Echo1 $o $s }
-    Case 'in.complex' { $c = Fresh 'MWComUtil.MWComplex'; $c.Real = 1.0; $c.Imag = 2.0; Echo1 $o $c }
-    Case 'in.complex_array' { $c = Fresh 'MWComUtil.MWComplex'; $c.Real = [double[]]@(1, 2); $c.Imag = [double[]]@(3, 4); Echo1 $o $c }
-    Case 'in.complex_noimag' { $c = Fresh 'MWComUtil.MWComplex'; $c.Real = 1.0; Echo1 $o $c }
+    Case 'in.struct_empty' { $s = (U 'MWStruct'); Echo1 $o $s }
+    Case 'in.complex' { $c = (U 'MWComplex'); $c.Real = 1.0; $c.Imag = 2.0; Echo1 $o $c }
+    Case 'in.complex_array' { $c = (U 'MWComplex'); $c.Real = [double[]]@(1, 2); $c.Imag = [double[]]@(3, 4); Echo1 $o $c }
+    Case 'in.complex_noimag' { $c = (U 'MWComplex'); $c.Real = 1.0; Echo1 $o $c }
     Case 'in.sparse' {
-        $s = Fresh 'MWComUtil.MWSparse'
+        $s = (U 'MWSparse')
         $s.NumRows = 2; $s.NumColumns = 3
         $s.RowIndex = [double[]]@(1, 2); $s.ColumnIndex = [double[]]@(1, 3); $s.Array = [double[]]@(5, 6)
         Echo1 $o $s
     }
-    Case 'in.sparse_empty' { $s = Fresh 'MWComUtil.MWSparse'; Echo1 $o $s }
-    Case 'in.arg_plain' { $g = Fresh 'MWComUtil.MWArg'; $g.Value = 3.7; Echo1 $o $g }
-    Case 'in.arg_int8' { $g = Fresh 'MWComUtil.MWArg'; $g.Value = 3.7; $g.MWFlags.DataConversionFlags.CoerceNumericToType = 8; Echo1 $o $g }
-    Case 'in.arg_cell' { $g = Fresh 'MWComUtil.MWArg'; $g.Value = (Matrix2 @(1, 2, 3, 4) 2 2); $g.MWFlags.ArrayFormatFlags.InputArrayFormat = 2; Echo1 $o $g }
-    Case 'in.arg_flagsobject' { $g = Fresh 'MWComUtil.MWArg'; Show $g.MWFlags }
-    Case 'in.enumvararg' { $e = Fresh 'MWComUtil.MWEnumVararg'; Show $e }
-    Case 'in.field' { $f = Fresh 'MWComUtil.MWField'; Show $f }
-    Case 'in.flags_object' { $f = Fresh 'MWComUtil.MWFlags'; Echo1 $o $f }
+    Case 'in.sparse_empty' { $s = (U 'MWSparse'); Echo1 $o $s }
+    Case 'in.arg_plain' { $g = (U 'MWArg'); $g.Value = 3.7; Echo1 $o $g }
+    Case 'in.arg_int8' { $g = (U 'MWArg'); $g.Value = 3.7; $g.MWFlags.DataConversionFlags.CoerceNumericToType = 8; Echo1 $o $g }
+    Case 'in.arg_cell' { $g = (U 'MWArg'); $g.Value = (Matrix2 @(1, 2, 3, 4) 2 2); $g.MWFlags.ArrayFormatFlags.InputArrayFormat = 2; Echo1 $o $g }
+    Case 'in.arg_flagsobject' { $g = (U 'MWArg'); Show $g.MWFlags }
+    Case 'in.enumvararg' { $e = (U 'MWEnumVararg'); Show $e }
+    Case 'in.field' { $f = (U 'MWField'); Show $f }
+    Case 'in.flags_object' { $f = (U 'MWFlags'); Echo1 $o $f }
 
     # --- values out: what each MATLAB class becomes ---------------------------------------------------------
     foreach ($kind in @('double', 'doublerow', 'doublecol', 'doublemat', 'double3d', 'doubleneg0', 'bigint', 'single', 'singlemat', 'int8', 'uint8', 'uint8mat', 'int16', 'uint16', 'int32', 'uint32', 'int64', 'uint64',
@@ -700,7 +770,7 @@ try {
     foreach ($kind in @('id', 'plain', 'multi', 'nonascii', 'nested', 'warn', 'nargs', 'undefined', 'index', 'none')) {
         Case "err.$kind" { Call $o 'k17_err' 1 1 (A $kind) }
     }
-    Case 'err.nooutputs.fail' { CallNoOut $o 'k17_noout' (A (Fresh 'MWComUtil.MWFlags')) }
+    Case 'err.nooutputs.fail' { CallNoOut $o 'k17_noout' (A ((U 'MWFlags'))) }
     Case 'err.badcount.more' { Call $o 'k17_one' 1 1 (A 1.0 2.0) }
     Case 'err.badcount.fewer' { $o.k17_one(1); 'ok' }
     Case 'err.badcount.fewer.dispatch' { $a = New-Object object[] 1; $a[0] = 1; [void]$o.GetType().InvokeMember('k17_one', [System.Reflection.BindingFlags]::InvokeMethod, $null, $o, $a); 'ok' }
