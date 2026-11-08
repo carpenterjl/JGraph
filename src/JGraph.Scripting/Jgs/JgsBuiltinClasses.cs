@@ -41,6 +41,8 @@ internal static partial class JgsBuiltinClasses
         PythonPackageOptions => PythonPackageOptionsDeclaration(interpreter),
         ProductionServerArchiveOptions => ProductionServerArchiveOptionsDeclaration(interpreter),
         ExcelOptions => ExcelOptionsDeclaration(interpreter),
+        ExcelClientOptions => ExcelClientOptionsDeclaration(interpreter),
+        ExcelClientPackageOptions => ExcelClientPackageOptionsDeclaration(interpreter),
         InstallerOptions => InstallerOptionsDeclaration(interpreter),
         ToolboxOptions => ToolboxOptionsDeclaration(interpreter),
         TextComparison or MlappComparison => ComparisonDeclaration(name, interpreter),

@@ -37,6 +37,10 @@
           Link="launchers\win64\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
     <!-- Stage K17c: the Excel add-in template mcc -W excel copies and stamps (native/jgxl, built by its build.ps1 and checked in). -->
     <None Include="..\..\native\win-x64\jgxl\jgxl.dll" Link="launchers\win64\jgxl.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <!-- Stage K17f: the Excel client template mcc -W mpsxl copies and stamps, JGraph's server configuration add-in for Excel and the client installer template (native/jgxlmps, jgxlconfig, jgxlsetup). -->
+    <None Include="..\..\native\win-x64\jgxlmps\jgxlmps.dll" Link="launchers\win64\jgxlmps.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <None Include="..\..\native\win-x64\jgxlconfig\jgxlconfig.dll" Link="launchers\win64\jgxlconfig.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" Condition="Exists('..\..\native\win-x64\jgxlconfig\jgxlconfig.dll')" />
+    <None Include="..\..\native\win-x64\jgxlsetup\jgxlsetup.exe" Link="launchers\win64\jgxlsetup.exe" CopyToOutputDirectory="PreserveNewest" Visible="false" Condition="Exists('..\..\native\win-x64\jgxlsetup\jgxlsetup.exe')" />
     <!-- compiler.build's default icon and splash, where R2025b keeps its own under matlabroot. -->
     <None Include="PackagingResources\default_icon_48.png;PackagingResources\default_splash.png;PackagingResources\default_logo.png"
           Link="toolbox\compiler\packagingResources\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

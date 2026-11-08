@@ -60,6 +60,7 @@ internal static partial class JgsBuiltins
         RegisterPythonPackageBuild(env, interpreter, host);
         RegisterProductionServerBuild(env, interpreter, host);
         RegisterExcelBuild(env, interpreter, host);
+        RegisterExcelClientBuild(env, interpreter, host);
         RegisterPackageBuiltins(env, interpreter, host);
         RegisterMpsJsonBuiltins(interpreter, (name, body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { KeepsStringArguments = true })));

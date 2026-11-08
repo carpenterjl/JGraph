@@ -94,6 +94,11 @@ foreach ($template in "jglaunch-console.exe", "jglaunch-gui.exe") {
 }
 # The Excel add-in template mcc -W excel copies and stamps (stage K17c; native\jgxl, checked in prebuilt).
 Copy-Item (Join-Path $root "native\win-x64\jgxl\jgxl.dll") (Join-Path $Output "launchers\win64\jgxl.dll")
+# The Excel client template mcc -W mpsxl copies and stamps, JGraph's server configuration add-in for Excel and
+# the client installer template (stage K17f; native\jgxlmps, jgxlconfig, jgxlsetup, checked in prebuilt).
+Copy-Item (Join-Path $root "native\win-x64\jgxlmps\jgxlmps.dll") (Join-Path $Output "launchers\win64\jgxlmps.dll")
+Copy-Item (Join-Path $root "native\win-x64\jgxlconfig\jgxlconfig.dll") (Join-Path $Output "launchers\win64\jgxlconfig.dll")
+Copy-Item (Join-Path $root "native\win-x64\jgxlsetup\jgxlsetup.exe") (Join-Path $Output "launchers\win64\jgxlsetup.exe")
 
 # The MWArray API a .NET client references (stage K8), alone in a folder as R2025b keeps MWArray.dll
 # in toolbox\dotnetbuilder\bin\win64: a client's build then copies it and nothing else, and it loads
@@ -131,7 +136,7 @@ foreach ($anchor in "jgraph.exe", "JGraph.Runtime.dll", "JGraph.Runtime.Desktop.
         throw "The runtime is missing 'bin\win64\$anchor' - the publish layout changed; fix before shipping."
     }
 }
-foreach ($template in "jglaunch-console.exe", "jglaunch-gui.exe", "jgxl.dll") {
+foreach ($template in "jglaunch-console.exe", "jglaunch-gui.exe", "jgxl.dll", "jgxlmps.dll", "jgxlconfig.dll", "jgxlsetup.exe") {
     if (-not (Test-Path (Join-Path $Output "launchers\win64\$template"))) { throw "The runtime is missing 'launchers\win64\$template'." }
 }
 if (-not (Test-Path (Join-Path $dotnetbuilder "JGraph.MATLAB.NET.Arrays.dll"))) { throw "The runtime is missing the MWArray API for clients." }

@@ -2415,3 +2415,7 @@ dbtype	0	5
 appdesigner.customcomponent.configureMetadata	0	0
 appdesigner.customcomponent.removeMetadata	0	0
 edit	1	2
+compiler.build.excelClientForProductionServer	-1	0
+compiler.build.ExcelClientForProductionServerOptions	1	8
+compiler.package.excelClientForProductionServer	0	0
+compiler.package.ExcelClientForProductionServerOptions	1	8

@@ -1,0 +1,279 @@
+p.cert.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.cert.k17mpsExcelClientInstaller.bytes	812032
+p.cert.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.cert.k17mpsExcelClientInstaller.overlay.bytes	0
+p.cert.k17mpsExcelClientInstaller.resource.ICON	1 lang 0: 41893 bytes
+p.cert.k17mpsExcelClientInstaller.resource.ICON	2 lang 0: 13649 bytes
+p.cert.k17mpsExcelClientInstaller.resource.ICON	3 lang 0: 2261 bytes
+p.cert.k17mpsExcelClientInstaller.resource.ICON	4 lang 0: 1634 bytes
+p.cert.k17mpsExcelClientInstaller.resource.ICON	5 lang 0: 1219 bytes
+p.cert.k17mpsExcelClientInstaller.resource.ICON	6 lang 0: 743 bytes
+p.cert.k17mpsExcelClientInstaller.resource.DIALOG	101 lang 0: 900 bytes
+p.cert.k17mpsExcelClientInstaller.resource.JGRAPH_EXCEL_CLIENT_CONFIG	250 bytes
+p.cert.k17mpsExcelClientInstaller.text.JGRAPH_EXCEL_CLIENT_CONFIG
+  |CTFFile=k17arch.ctf
+  |CTFArchive=k17arch.ctf
+  |AutomationAddinDll=k17mps.dll
+  |responseSizeLimit=750
+  |timeoutSeconds=60
+  |AutomationAddin=k17arch
+  |ServerInfo=https://localhost:9911
+  |certificateFile=<W>\p\src\k17cert.pem
+p.cert.k17mpsExcelClientInstaller.resource.JGRAPH_INSTALL_BUNDLE	518500 bytes
+p.cert.k17mpsExcelClientInstaller.zip.JGRAPH_INSTALL_BUNDLE.entries	jgxlconfig.dll (161792) | k17mps.bas (10826) | k17mps.dll (339456) | k17mps.xlam (6010)
+p.cert.k17mpsExcelClientInstaller.icongroup.1	0x0 32bpp png 256x256 | 128x128 32bpp png 128x128 | 48x48 32bpp png 48x48 | 32x32 32bpp png 32x32 | 24x24 32bpp png 24x24 | 16x16 32bpp png 16x16
+p.cert.k17mpsExcelClientInstaller.version.fixed.FileVersion	1.0.0.0
+p.cert.k17mpsExcelClientInstaller.version.fixed.ProductVersion	1.0.0.0
+p.cert.k17mpsExcelClientInstaller.version.string.FileVersion	1.0.0.0
+p.cert.k17mpsExcelClientInstaller.version.string.ProductVersion	1.0.0.0
+p.cert.k17mpsExcelClientInstaller.resource.MANIFEST	1 lang 0: 1274 bytes
+p.default.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.default.k17mpsExcelClientInstaller.bytes	812032
+p.default.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.default.k17mpsExcelClientInstaller.overlay.bytes	0
+p.default.k17mpsExcelClientInstaller.resource.ICON	1 lang 0: 41893 bytes
+p.default.k17mpsExcelClientInstaller.resource.ICON	2 lang 0: 13649 bytes
+p.default.k17mpsExcelClientInstaller.resource.ICON	3 lang 0: 2261 bytes
+p.default.k17mpsExcelClientInstaller.resource.ICON	4 lang 0: 1634 bytes
+p.default.k17mpsExcelClientInstaller.resource.ICON	5 lang 0: 1219 bytes
+p.default.k17mpsExcelClientInstaller.resource.ICON	6 lang 0: 743 bytes
+p.default.k17mpsExcelClientInstaller.resource.DIALOG	101 lang 0: 900 bytes
+p.default.k17mpsExcelClientInstaller.resource.JGRAPH_EXCEL_CLIENT_CONFIG	137 bytes
+p.default.k17mpsExcelClientInstaller.text.JGRAPH_EXCEL_CLIENT_CONFIG
+  |CTFFile=k17arch.ctf
+  |CTFArchive=k17arch.ctf
+  |AutomationAddinDll=k17mps.dll
+  |responseSizeLimit=750
+  |timeoutSeconds=60
+  |AutomationAddin=k17arch
+p.default.k17mpsExcelClientInstaller.resource.JGRAPH_INSTALL_BUNDLE	518500 bytes
+p.default.k17mpsExcelClientInstaller.zip.JGRAPH_INSTALL_BUNDLE.entries	jgxlconfig.dll (161792) | k17mps.bas (10826) | k17mps.dll (339456) | k17mps.xlam (6010)
+p.default.k17mpsExcelClientInstaller.icongroup.1	0x0 32bpp png 256x256 | 128x128 32bpp png 128x128 | 48x48 32bpp png 48x48 | 32x32 32bpp png 32x32 | 24x24 32bpp png 24x24 | 16x16 32bpp png 16x16
+p.default.k17mpsExcelClientInstaller.version.fixed.FileVersion	1.0.0.0
+p.default.k17mpsExcelClientInstaller.version.fixed.ProductVersion	1.0.0.0
+p.default.k17mpsExcelClientInstaller.version.string.FileVersion	1.0.0.0
+p.default.k17mpsExcelClientInstaller.version.string.ProductVersion	1.0.0.0
+p.default.k17mpsExcelClientInstaller.resource.MANIFEST	1 lang 0: 1274 bytes
+p.files.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.files.k17mpsExcelClientInstaller.bytes	805888
+p.files.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.files.k17mpsExcelClientInstaller.overlay.bytes	0
+p.files.k17mpsExcelClientInstaller.resource.ICON	1 lang 0: 41893 bytes
+p.files.k17mpsExcelClientInstaller.resource.ICON	2 lang 0: 13649 bytes
+p.files.k17mpsExcelClientInstaller.resource.ICON	3 lang 0: 2261 bytes
+p.files.k17mpsExcelClientInstaller.resource.ICON	4 lang 0: 1634 bytes
+p.files.k17mpsExcelClientInstaller.resource.ICON	5 lang 0: 1219 bytes
+p.files.k17mpsExcelClientInstaller.resource.ICON	6 lang 0: 743 bytes
+p.files.k17mpsExcelClientInstaller.resource.DIALOG	101 lang 0: 900 bytes
+p.files.k17mpsExcelClientInstaller.resource.JGRAPH_EXCEL_CLIENT_CONFIG	137 bytes
+p.files.k17mpsExcelClientInstaller.text.JGRAPH_EXCEL_CLIENT_CONFIG
+  |CTFFile=k17arch.ctf
+  |CTFArchive=k17arch.ctf
+  |AutomationAddinDll=k17mps.dll
+  |responseSizeLimit=750
+  |timeoutSeconds=60
+  |AutomationAddin=k17arch
+p.files.k17mpsExcelClientInstaller.resource.JGRAPH_INSTALL_BUNDLE	512392 bytes
+p.files.k17mpsExcelClientInstaller.zip.JGRAPH_INSTALL_BUNDLE.entries	jgxlconfig.dll (161792) | k17mps.bas (10826) | k17mps.dll (339456)
+p.files.k17mpsExcelClientInstaller.icongroup.1	0x0 32bpp png 256x256 | 128x128 32bpp png 128x128 | 48x48 32bpp png 48x48 | 32x32 32bpp png 32x32 | 24x24 32bpp png 24x24 | 16x16 32bpp png 16x16
+p.files.k17mpsExcelClientInstaller.version.fixed.FileVersion	1.0.0.0
+p.files.k17mpsExcelClientInstaller.version.fixed.ProductVersion	1.0.0.0
+p.files.k17mpsExcelClientInstaller.version.string.FileVersion	1.0.0.0
+p.files.k17mpsExcelClientInstaller.version.string.ProductVersion	1.0.0.0
+p.files.k17mpsExcelClientInstaller.resource.MANIFEST	1 lang 0: 1274 bytes
+p.filesplus.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.filesplus.k17mpsExcelClientInstaller.bytes	1048064
+p.filesplus.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.filesplus.k17mpsExcelClientInstaller.overlay.bytes	0
+p.filesplus.k17mpsExcelClientInstaller.resource.ICON	1 lang 0: 41893 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource.ICON	2 lang 0: 13649 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource.ICON	3 lang 0: 2261 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource.ICON	4 lang 0: 1634 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource.ICON	5 lang 0: 1219 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource.ICON	6 lang 0: 743 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource.DIALOG	101 lang 0: 900 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource.JGRAPH_EXCEL_CLIENT_CONFIG	137 bytes
+p.filesplus.k17mpsExcelClientInstaller.text.JGRAPH_EXCEL_CLIENT_CONFIG
+  |CTFFile=k17arch.ctf
+  |CTFArchive=k17arch.ctf
+  |AutomationAddinDll=k17mps.dll
+  |responseSizeLimit=750
+  |timeoutSeconds=60
+  |AutomationAddin=k17arch
+p.filesplus.k17mpsExcelClientInstaller.resource.JGRAPH_INSTALL_BUNDLE	754324 bytes
+p.filesplus.k17mpsExcelClientInstaller.zip.JGRAPH_INSTALL_BUNDLE.entries	jgxlconfig.dll (161792) | k17data.txt (5) | k17mps.bas (10826) | k17mps.dll (339456) | src/k17_anim.gif (111) | src/k17_args.m (204) | src/k17_both.m (375) | src/k17_count.m (200) | src/k17_echo.m (138) | src/k17_err.m (838) | src/k17_h1.m (142) | src/k17_icon.png (9347) | src/k17_make.m (3039) | src/k17_many.m (178) | src/k17_none.m (174) | src/k17_noout.m (139) | src/k17_one.m (106) | src/k17_opt.m (412) | src/k17_pass.m (123) | src/k17_pfun.p (229) | src/k17_plot.m (342) | src/k17_quiet.m (133) | src/k17_script.m (34) | src/k17_show.m (3335) | src/k17_thing.m (257) | src/k17_two.m (140) | src/k17_varin.m (230) | src/k17_varout.m (200) | src/k17cert.pem (78) | src/k17data.txt (5) | src/k17ownexcelAddIn/GettingStarted.html (1683) | src/k17ownexcelAddIn/_install.bat (881) | src/k17ownexcelAddIn/buildresult.json (102) | src/k17ownexcelAddIn/includedSupportPackages.txt (0) | src/k17ownexcelAddIn/k17own_1_0.dll (212992) | src/k17ownexcelAddIn/mccExcludedFiles.log (90) | src/k17ownexcelAddIn/readme.txt (1438) | src/k17ownexcelAddIn/requiredMCRProducts.txt (6) | src/k17ownexcelAddIn/unresolvedSymbols.txt (20)
+p.filesplus.k17mpsExcelClientInstaller.zip.JGRAPH_INSTALL_BUNDLE.text.k17data.txt
+  |data
+p.filesplus.k17mpsExcelClientInstaller.zip.JGRAPH_INSTALL_BUNDLE.text.src/k17data.txt
+  |data
+p.filesplus.k17mpsExcelClientInstaller.zip.JGRAPH_INSTALL_BUNDLE.text.src/k17ownexcelAddIn/includedSupportPackages.txt
+p.filesplus.k17mpsExcelClientInstaller.zip.JGRAPH_INSTALL_BUNDLE.text.src/k17ownexcelAddIn/readme.txt
+  |k17own JGraph Excel Add-in
+  |1. Prerequisites for Deployment
+  |Verify that the JGraph Runtime (0.2.3) is installed on the computer that
+  |runs Excel. If not, install it from its installer, or set JGRAPH_RUNTIME_ROOT to the folder
+  |of a JGraph Runtime carried along.
+  |The add-in is a COM server: register k17own_1_0.dll once on that computer by running
+  |_install.bat beside it (for every user when run as an administrator, else for the current
+  |user alone), then open the add-in workbook in Excel or call the component from VBA. Excel
+  |installed by Click-to-Run sees the machine's registrations alone, so for Excel run
+  |_install.bat as an administrator.
+  |2. Files to Deploy and Package
+  |-k17own_1_0.dll (output from mcc)
+  |-The JGraph Runtime installer, when the computer has no JGraph Runtime
+  |-This readme file
+  |NOTE: Verify that k17own_1_0.dll is registered on the target machine. If registration fails,
+  |      run _install.bat from a command prompt and read what it prints.
+  |3. Definitions
+  |An Excel add-in is a COM DLL whose class exposes the MATLAB functions in its deployable
+  |archive (embedded in the DLL, or the .ctf beside it) as methods Excel's VBA calls on the
+  |JGraph Runtime; the .bas module declares a worksheet function for each, and the add-in
+  |workbook (.xlam) carries that module into Excel: open it there, or add it under File > Options >
+  |Add-ins, and the functions can be used in any workbook's cells.
+p.filesplus.k17mpsExcelClientInstaller.zip.JGRAPH_INSTALL_BUNDLE.text.src/k17ownexcelAddIn/requiredMCRProducts.txt
+  |35010
+p.filesplus.k17mpsExcelClientInstaller.zip.JGRAPH_INSTALL_BUNDLE.text.src/k17ownexcelAddIn/unresolvedSymbols.txt
+  |Path	Symbol	Reason
+p.filesplus.k17mpsExcelClientInstaller.icongroup.1	0x0 32bpp png 256x256 | 128x128 32bpp png 128x128 | 48x48 32bpp png 48x48 | 32x32 32bpp png 32x32 | 24x24 32bpp png 24x24 | 16x16 32bpp png 16x16
+p.filesplus.k17mpsExcelClientInstaller.version.fixed.FileVersion	1.0.0.0
+p.filesplus.k17mpsExcelClientInstaller.version.fixed.ProductVersion	1.0.0.0
+p.filesplus.k17mpsExcelClientInstaller.version.string.FileVersion	1.0.0.0
+p.filesplus.k17mpsExcelClientInstaller.version.string.ProductVersion	1.0.0.0
+p.filesplus.k17mpsExcelClientInstaller.resource.MANIFEST	1 lang 0: 1274 bytes
+p.named.K17Setup.file	K17Setup.exe
+p.named.K17Setup.bytes	935936
+p.named.K17Setup.subsystem	windows-gui
+p.named.K17Setup.overlay.bytes	0
+p.named.K17Setup.resource.ICON	1 lang 0: 134067 bytes
+p.named.K17Setup.resource.ICON	2 lang 0: 42611 bytes
+p.named.K17Setup.resource.ICON	3 lang 0: 5017 bytes
+p.named.K17Setup.resource.ICON	4 lang 0: 2046 bytes
+p.named.K17Setup.resource.ICON	5 lang 0: 1117 bytes
+p.named.K17Setup.resource.ICON	6 lang 0: 494 bytes
+p.named.K17Setup.resource.DIALOG	101 lang 0: 900 bytes
+p.named.K17Setup.resource.JGRAPH_EXCEL_CLIENT_CONFIG	168 bytes
+p.named.K17Setup.text.JGRAPH_EXCEL_CLIENT_CONFIG
+  |CTFFile=k17arch.ctf
+  |CTFArchive=k17arch.ctf
+  |AutomationAddinDll=k17mps.dll
+  |responseSizeLimit=10
+  |timeoutSeconds=5
+  |AutomationAddin=k17arch
+  |ServerInfo=http://localhost:9910
+p.named.K17Setup.resource.JGRAPH_INSTALL_BUNDLE	518500 bytes
+p.named.K17Setup.zip.JGRAPH_INSTALL_BUNDLE.entries	jgxlconfig.dll (161792) | k17mps.bas (10826) | k17mps.dll (339456) | k17mps.xlam (6010)
+p.named.K17Setup.icongroup.1	0x0 32bpp png 256x256 | 128x128 32bpp png 128x128 | 48x48 32bpp png 48x48 | 32x32 32bpp png 32x32 | 24x24 32bpp png 24x24 | 16x16 32bpp png 16x16
+p.named.K17Setup.version.fixed.FileVersion	2.1.0.0
+p.named.K17Setup.version.fixed.ProductVersion	2.1.0.0
+p.named.K17Setup.version.string.FileVersion	2.1.0.0
+p.named.K17Setup.version.string.ProductVersion	2.1.0.0
+p.named.K17Setup.resource.MANIFEST	1 lang 0: 1274 bytes
+p.nolibrary.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.nolibrary.k17mpsExcelClientInstaller.bytes	466432
+p.nolibrary.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.nolibrary.k17mpsExcelClientInstaller.overlay.bytes	0
+p.nolibrary.k17mpsExcelClientInstaller.resource.ICON	1 lang 0: 41893 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource.ICON	2 lang 0: 13649 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource.ICON	3 lang 0: 2261 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource.ICON	4 lang 0: 1634 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource.ICON	5 lang 0: 1219 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource.ICON	6 lang 0: 743 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource.DIALOG	101 lang 0: 900 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource.JGRAPH_EXCEL_CLIENT_CONFIG	137 bytes
+p.nolibrary.k17mpsExcelClientInstaller.text.JGRAPH_EXCEL_CLIENT_CONFIG
+  |CTFFile=k17arch.ctf
+  |CTFArchive=k17arch.ctf
+  |AutomationAddinDll=k17mps.dll
+  |responseSizeLimit=750
+  |timeoutSeconds=60
+  |AutomationAddin=k17arch
+p.nolibrary.k17mpsExcelClientInstaller.resource.JGRAPH_INSTALL_BUNDLE	172840 bytes
+p.nolibrary.k17mpsExcelClientInstaller.zip.JGRAPH_INSTALL_BUNDLE.entries	jgxlconfig.dll (161792) | k17mps.bas (10826)
+p.nolibrary.k17mpsExcelClientInstaller.icongroup.1	0x0 32bpp png 256x256 | 128x128 32bpp png 128x128 | 48x48 32bpp png 48x48 | 32x32 32bpp png 32x32 | 24x24 32bpp png 24x24 | 16x16 32bpp png 16x16
+p.nolibrary.k17mpsExcelClientInstaller.version.fixed.FileVersion	1.0.0.0
+p.nolibrary.k17mpsExcelClientInstaller.version.fixed.ProductVersion	1.0.0.0
+p.nolibrary.k17mpsExcelClientInstaller.version.string.FileVersion	1.0.0.0
+p.nolibrary.k17mpsExcelClientInstaller.version.string.ProductVersion	1.0.0.0
+p.nolibrary.k17mpsExcelClientInstaller.resource.MANIFEST	1 lang 0: 1274 bytes
+p.options.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.options.k17mpsExcelClientInstaller.bytes	812032
+p.options.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.options.k17mpsExcelClientInstaller.overlay.bytes	0
+p.options.k17mpsExcelClientInstaller.resource.ICON	1 lang 0: 41893 bytes
+p.options.k17mpsExcelClientInstaller.resource.ICON	2 lang 0: 13649 bytes
+p.options.k17mpsExcelClientInstaller.resource.ICON	3 lang 0: 2261 bytes
+p.options.k17mpsExcelClientInstaller.resource.ICON	4 lang 0: 1634 bytes
+p.options.k17mpsExcelClientInstaller.resource.ICON	5 lang 0: 1219 bytes
+p.options.k17mpsExcelClientInstaller.resource.ICON	6 lang 0: 743 bytes
+p.options.k17mpsExcelClientInstaller.resource.DIALOG	101 lang 0: 900 bytes
+p.options.k17mpsExcelClientInstaller.resource.JGRAPH_EXCEL_CLIENT_CONFIG	159 bytes
+p.options.k17mpsExcelClientInstaller.text.JGRAPH_EXCEL_CLIENT_CONFIG
+  |CTFFile=k17arch.ctf
+  |CTFArchive=k17arch.ctf
+  |AutomationAddinDll=k17mps.dll
+  |responseSizeLimit=750
+  |timeoutSeconds=60
+  |AutomationAddin=k17arch
+  |ServerInfo=http://o:1
+p.options.k17mpsExcelClientInstaller.resource.JGRAPH_INSTALL_BUNDLE	518500 bytes
+p.options.k17mpsExcelClientInstaller.zip.JGRAPH_INSTALL_BUNDLE.entries	jgxlconfig.dll (161792) | k17mps.bas (10826) | k17mps.dll (339456) | k17mps.xlam (6010)
+p.options.k17mpsExcelClientInstaller.icongroup.1	0x0 32bpp png 256x256 | 128x128 32bpp png 128x128 | 48x48 32bpp png 48x48 | 32x32 32bpp png 32x32 | 24x24 32bpp png 24x24 | 16x16 32bpp png 16x16
+p.options.k17mpsExcelClientInstaller.version.fixed.FileVersion	1.0.0.0
+p.options.k17mpsExcelClientInstaller.version.fixed.ProductVersion	1.0.0.0
+p.options.k17mpsExcelClientInstaller.version.string.FileVersion	1.0.0.0
+p.options.k17mpsExcelClientInstaller.version.string.ProductVersion	1.0.0.0
+p.options.k17mpsExcelClientInstaller.resource.MANIFEST	1 lang 0: 1274 bytes
+p.repeat.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.repeat.k17mpsExcelClientInstaller.bytes	817152
+p.repeat.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.repeat.k17mpsExcelClientInstaller.overlay.bytes	0
+p.repeat.k17mpsExcelClientInstaller.resource.ICON	1 lang 0: 41893 bytes
+p.repeat.k17mpsExcelClientInstaller.resource.ICON	2 lang 0: 13649 bytes
+p.repeat.k17mpsExcelClientInstaller.resource.ICON	3 lang 0: 2261 bytes
+p.repeat.k17mpsExcelClientInstaller.resource.ICON	4 lang 0: 1634 bytes
+p.repeat.k17mpsExcelClientInstaller.resource.ICON	5 lang 0: 1219 bytes
+p.repeat.k17mpsExcelClientInstaller.resource.ICON	6 lang 0: 743 bytes
+p.repeat.k17mpsExcelClientInstaller.resource.DIALOG	101 lang 0: 900 bytes
+p.repeat.k17mpsExcelClientInstaller.resource.JGRAPH_EXCEL_CLIENT_CONFIG	137 bytes
+p.repeat.k17mpsExcelClientInstaller.text.JGRAPH_EXCEL_CLIENT_CONFIG
+  |CTFFile=k17arch.ctf
+  |CTFArchive=k17arch.ctf
+  |AutomationAddinDll=k17mps.dll
+  |responseSizeLimit=750
+  |timeoutSeconds=60
+  |AutomationAddin=k17arch
+p.repeat.k17mpsExcelClientInstaller.resource.JGRAPH_INSTALL_BUNDLE	523416 bytes
+p.repeat.k17mpsExcelClientInstaller.zip.JGRAPH_INSTALL_BUNDLE.entries	jgxlconfig.dll (161792) | k17mps.bas (10826) | k17mps.dll (339456) | k17mpsf.bas (10926)
+p.repeat.k17mpsExcelClientInstaller.icongroup.1	0x0 32bpp png 256x256 | 128x128 32bpp png 128x128 | 48x48 32bpp png 48x48 | 32x32 32bpp png 32x32 | 24x24 32bpp png 24x24 | 16x16 32bpp png 16x16
+p.repeat.k17mpsExcelClientInstaller.version.fixed.FileVersion	1.0.0.0
+p.repeat.k17mpsExcelClientInstaller.version.fixed.ProductVersion	1.0.0.0
+p.repeat.k17mpsExcelClientInstaller.version.string.FileVersion	1.0.0.0
+p.repeat.k17mpsExcelClientInstaller.version.string.ProductVersion	1.0.0.0
+p.repeat.k17mpsExcelClientInstaller.resource.MANIFEST	1 lang 0: 1274 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.bytes	812032
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.subsystem	windows-gui
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.overlay.bytes	0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource.ICON	1 lang 0: 41893 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource.ICON	2 lang 0: 13649 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource.ICON	3 lang 0: 2261 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource.ICON	4 lang 0: 1634 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource.ICON	5 lang 0: 1219 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource.ICON	6 lang 0: 743 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource.DIALOG	101 lang 0: 900 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource.JGRAPH_EXCEL_CLIENT_CONFIG	137 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.text.JGRAPH_EXCEL_CLIENT_CONFIG
+  |CTFFile=k17arch.ctf
+  |CTFArchive=k17arch.ctf
+  |AutomationAddinDll=k17mps.dll
+  |responseSizeLimit=750
+  |timeoutSeconds=60
+  |AutomationAddin=k17arch
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource.JGRAPH_INSTALL_BUNDLE	518500 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.zip.JGRAPH_INSTALL_BUNDLE.entries	jgxlconfig.dll (161792) | k17mps.bas (10826) | k17mps.dll (339456) | k17mps.xlam (6010)
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.icongroup.1	0x0 32bpp png 256x256 | 128x128 32bpp png 128x128 | 48x48 32bpp png 48x48 | 32x32 32bpp png 32x32 | 24x24 32bpp png 24x24 | 16x16 32bpp png 16x16
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.version.fixed.FileVersion	1.0.0.0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.version.fixed.ProductVersion	1.0.0.0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.version.string.FileVersion	1.0.0.0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.version.string.ProductVersion	1.0.0.0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource.MANIFEST	1 lang 0: 1274 bytes

@@ -95,6 +95,17 @@ public static class ExcelComGuids
     public static Guid Interface(string addIn, string className, ProgramVersion version) =>
         Derive(FormattableString.Invariant($"interface:{addIn}.I{className}:{version.Major}.{version.Minor}"));
 
+    /// <summary>An Excel client for the Production Server's type library id (stage K17f): the add-in's name alone, apart from an add-in's of the same name.</summary>
+    public static Guid ClientTypeLib(string addIn) => Derive("client-typelib:" + addIn);
+
+    /// <summary>An Excel client's coclass id: the names and the version, apart from an add-in's.</summary>
+    public static Guid ClientClass(string addIn, string className, ProgramVersion version) =>
+        Derive(FormattableString.Invariant($"client-coclass:{addIn}.{className}:{version.Major}.{version.Minor}"));
+
+    /// <summary>An Excel client's interface id: the names and the version, apart from an add-in's.</summary>
+    public static Guid ClientInterface(string addIn, string className, ProgramVersion version) =>
+        Derive(FormattableString.Invariant($"client-interface:{addIn}.I{className}:{version.Major}.{version.Minor}"));
+
     /// <summary>A name-based UUID (RFC 4122 version 5) under the JGraph namespace.</summary>
     internal static Guid Derive(string name)
     {
@@ -202,10 +213,35 @@ public static class ExcelTypeLib
             throw new InvalidOperationException($"An Excel add-in can export at most {MaxFunctions} functions; this one exports {options.Functions.Count}.");
         }
 
+        return Write(new Writer(options.AddInName, options.ClassName, options.Version, options.Functions, client: false));
+    }
+
+    /// <summary>
+    /// Writes the type library of an Excel client for the Production Server (stage K17f) and answers
+    /// its bytes: the same library and coclass shape as an add-in's, but with no <c>MWFlags</c>, no
+    /// <c>help</c> and no flags interfaces, as the COM view of R2025b's generated .NET class has
+    /// (k17_mps: type.k17mps.IK17Mps): <c>HRESULT f([in] long nargout, [in, out] VARIANT* out...,
+    /// [in] VARIANT in...)</c>, and no <c>nargout</c> for a function without outputs. Its ids are
+    /// derived apart from an add-in's of the same names (<see cref="ExcelComGuids.ClientClass"/>).
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The client exports more functions than the template serves.</exception>
+    public static byte[] WriteClient(ExcelClientOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        if (options.Functions.Count > MaxFunctions)
+        {
+            throw new InvalidOperationException($"An Excel client can export at most {MaxFunctions} functions; this one exports {options.Functions.Count}.");
+        }
+
+        return Write(new Writer(options.AddInName, options.ClassName, options.Version, options.Functions, client: true));
+    }
+
+    private static byte[] Write(Writer writer)
+    {
         string file = Path.Combine(Path.GetTempPath(), "jgraph-" + Guid.NewGuid().ToString("N") + ".tlb");
         try
         {
-            new Writer(options, file).Run();
+            writer.Run(file);
             return File.ReadAllBytes(file);
         }
         finally
@@ -413,25 +449,23 @@ public static class ExcelTypeLib
     [DllImport("oleaut32.dll", CharSet = CharSet.Unicode, PreserveSig = true)]
     private static extern int CreateTypeLib2(SYSKIND sysKind, string file, out ICreateTypeLib2 typeLib);
 
-    /// <summary>One run of the writer, holding the unmanaged memory the descriptors need until the library is saved.</summary>
-    private sealed class Writer(ExcelAddInOptions options, string file)
+    /// <summary>One run of the writer, holding the unmanaged memory the descriptors need until the library is saved; <paramref name="client"/> for an Excel client's library (no flags, no help).</summary>
+    private sealed class Writer(string addIn, string className, ProgramVersion givenVersion, IReadOnlyList<ExcelFunction> functions, bool client)
     {
         private readonly List<IntPtr> _memory = [];
 
-        public void Run()
+        public void Run(string file)
         {
             int hr = CreateTypeLib2(SYSKIND.SYS_WIN64, file, out ICreateTypeLib2 lib);
             Marshal.ThrowExceptionForHR(hr);
             try
             {
-                string addIn = options.AddInName;
-                string className = options.ClassName;
                 // The library's version is the DLL's: major.minor, a major of 0 made 1.0 (k17_excel: v05 and vzero
                 // declare "k17v05 1.0 Type Library" and "k17vz 1.0 Type Library"; v3456 "3.4").
-                ProgramVersion version = options.Version.Major == 0 ? new ProgramVersion(1, 0, 0, 0) : options.Version;
+                ProgramVersion version = givenVersion.Major == 0 ? new ProgramVersion(1, 0, 0, 0) : givenVersion;
                 lib.SetName(addIn);
                 lib.SetVersion((ushort)version.Major, (ushort)version.Minor);
-                Guid libId = ExcelComGuids.TypeLib(addIn);
+                Guid libId = client ? ExcelComGuids.ClientTypeLib(addIn) : ExcelComGuids.TypeLib(addIn);
                 lib.SetGuid(ref libId);
                 lib.SetDocString(FormattableString.Invariant($"{addIn} {version.Major}.{version.Minor} Type Library"));
                 lib.SetLcid(0);
@@ -441,6 +475,33 @@ public static class ExcelTypeLib
                 Marshal.ThrowExceptionForHR(LoadRegTypeLib(ref stdole, 2, 0, 0, out ITypeLib standard));
                 Guid dispatchId = IDispatchId;
                 standard.GetTypeInfoOfGuid(ref dispatchId, out ITypeInfo dispatch);
+
+                if (client)
+                {
+                    // An Excel client's library (stage K17f): the interface and the coclass alone.
+                    ICreateTypeInfo clientInterface = Create(lib, "I" + className, TYPEKIND.TKIND_INTERFACE);
+                    ICreateTypeInfo clientClass = Create(lib, className, TYPEKIND.TKIND_COCLASS);
+                    Interface(clientInterface, ExcelComGuids.ClientInterface(addIn, className, version), "I" + className + " Interface", dispatch, hidden: false);
+                    int at = 0;
+                    int memberId = 1;
+                    foreach (ExcelFunction f in functions)
+                    {
+                        Function(clientInterface, at++, memberId++, INVOKEKIND.INVOKE_FUNC, f.Name, f.H1, FunctionParameters(f));
+                    }
+
+                    clientInterface.LayOut();
+                    Guid clientClassId = ExcelComGuids.ClientClass(addIn, className, version);
+                    clientClass.SetGuid(ref clientClassId);
+                    clientClass.SetTypeFlags(TypeFlagCanCreate);
+                    clientClass.SetDocString(className + " Class");
+                    clientClass.AddRefTypeInfo((ITypeInfo)clientInterface, out int clientHref);
+                    clientClass.AddImplType(0, clientHref);
+                    clientClass.SetImplTypeFlags(0, ImplTypeFlagDefault);
+                    clientClass.LayOut();
+                    lib.SaveAllChanges();
+                    Marshal.ReleaseComObject(standard);
+                    return;
+                }
 
                 // Every type is created first, so each can refer to the others.
                 ICreateTypeInfo arrayFlags = Create(lib, "IMWArrayFormatFlags", TYPEKIND.TKIND_INTERFACE);
@@ -489,24 +550,9 @@ public static class ExcelTypeLib
                 index = 0;
                 ObjectProperty(component, ref index, 1, "MWFlags", flagsHref);
                 int id = 2;
-                foreach (ExcelFunction f in options.Functions)
+                foreach (ExcelFunction f in functions)
                 {
-                    var parameters = new List<Parameter>();
-                    if (f.Outputs.Count > 0)
-                    {
-                        parameters.Add(Param("nargout", Plain(VarEnum.VT_I4), PARAMFLAG.PARAMFLAG_FIN));
-                        foreach (string output in f.Outputs)
-                        {
-                            parameters.Add(Param(output, Pointer(Plain(VarEnum.VT_VARIANT)), PARAMFLAG.PARAMFLAG_FIN | PARAMFLAG.PARAMFLAG_FOUT));
-                        }
-                    }
-
-                    foreach (string input in f.Inputs)
-                    {
-                        parameters.Add(Param(input, Plain(VarEnum.VT_VARIANT), PARAMFLAG.PARAMFLAG_FIN));
-                    }
-
-                    Function(component, index++, id++, INVOKEKIND.INVOKE_FUNC, f.Name, f.H1, parameters);
+                    Function(component, index++, id++, INVOKEKIND.INVOKE_FUNC, f.Name, f.H1, FunctionParameters(f));
                 }
 
                 Function(component, index++, id, INVOKEKIND.INVOKE_PROPERTYGET, "help", "property help",
@@ -534,6 +580,43 @@ public static class ExcelTypeLib
                     Marshal.FreeHGlobal(block);
                 }
             }
+        }
+
+        /// <summary>
+        /// A function's parameters: <c>nargout</c> and the <c>[in, out]</c> outputs when it has any, then
+        /// the <c>[in]</c> inputs. An add-in's take <c>varargin</c> as one argument (the module packs it);
+        /// a client's take it as <c>V0</c>, <c>V1</c>, ... up to 29 arguments in all, each optional, as the
+        /// client's module passes them straight and R2025b's .NET class takes <c>params object[]</c>.
+        /// </summary>
+        private List<Parameter> FunctionParameters(ExcelFunction f)
+        {
+            var parameters = new List<Parameter>();
+            if (f.Outputs.Count > 0)
+            {
+                parameters.Add(Param("nargout", Plain(VarEnum.VT_I4), PARAMFLAG.PARAMFLAG_FIN));
+                foreach (string output in f.Outputs)
+                {
+                    parameters.Add(Param(output, Pointer(Plain(VarEnum.VT_VARIANT)), PARAMFLAG.PARAMFLAG_FIN | PARAMFLAG.PARAMFLAG_FOUT));
+                }
+            }
+
+            PARAMFLAG inputFlags = client ? PARAMFLAG.PARAMFLAG_FIN | PARAMFLAG.PARAMFLAG_FOPT : PARAMFLAG.PARAMFLAG_FIN;
+            bool hasVarargin = client && f.Inputs.Count > 0 && f.Inputs[^1] == "varargin";
+            IEnumerable<string> inputs = hasVarargin ? f.Inputs.Take(f.Inputs.Count - 1) : f.Inputs;
+            foreach (string input in inputs)
+            {
+                parameters.Add(Param(input, Plain(VarEnum.VT_VARIANT), inputFlags));
+            }
+
+            if (hasVarargin)
+            {
+                for (int k = 0; k < ExcelVisualBasic.MaxArguments - (f.Inputs.Count - 1); k++)
+                {
+                    parameters.Add(Param("V" + k.ToString(System.Globalization.CultureInfo.InvariantCulture), Plain(VarEnum.VT_VARIANT), inputFlags));
+                }
+            }
+
+            return parameters;
         }
 
         private static ICreateTypeInfo Create(ICreateTypeLib2 lib, string name, TYPEKIND kind)

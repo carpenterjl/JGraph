@@ -559,4 +559,4 @@ excel.quit	ok
 next	call.after.terminate: k17_one on the object after MWTerminateApplication; the process ends here if it crashes
 call.after.terminate	double 4
 create.after.terminate	double 4
-seconds	14.1
+seconds	20.7

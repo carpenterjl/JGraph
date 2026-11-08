@@ -99,6 +99,126 @@ public static class ExcelVisualBasic
     }
 
     /// <summary>
+    /// The module of an Excel client for the Production Server (stage K17f), transcribed from R2025b's
+    /// (k17_excel: fromresults.file.k17mps.bas, mpsxl_default.file.k17x.bas): the class variable alone
+    /// (no utility library, no <c>InitModule</c>), the component created by its version-independent
+    /// ProgID <c>&lt;name&gt;.&lt;Class&gt;</c>, <c>varargin</c> declared but the <c>V0</c>, <c>V1</c>, ...
+    /// arguments passed straight to the call (no <c>pack</c>), and the long lines wrapped by that
+    /// writer's own rule: a signature's continuation aligned under its first parameter, a call's one
+    /// column before its first argument, and the commented call's continuation marked <c>  '</c>.
+    /// </summary>
+    public static string ClientModule(string className, string progId, IReadOnlyList<ExcelFunction> functions)
+    {
+        ArgumentNullException.ThrowIfNull(className);
+        ArgumentNullException.ThrowIfNull(progId);
+        ArgumentNullException.ThrowIfNull(functions);
+        var lines = new List<string> { "Dim " + className + " As Object ", "", "" };
+        foreach (ExcelFunction f in functions)
+        {
+            bool hasVarargin = f.Inputs.Count > 0 && f.Inputs[^1] == "varargin";
+            List<string> inputs = hasVarargin ? [.. f.Inputs.Take(f.Inputs.Count - 1)] : [.. f.Inputs];
+            int variadic = hasVarargin ? MaxArguments - inputs.Count : 0;
+            List<string> parameters = [.. inputs.Select(static p => "Optional " + p + " As Variant")];
+            List<string> arguments = [];
+            for (int k = 0; k < variadic; k++)
+            {
+                parameters.Add("Optional V" + k + " As Variant");
+            }
+
+            string head = "Function " + f.Name + "(";
+            lines.AddRange(Wrap(head + string.Join(", ", parameters) + ") As Variant", head.Length));
+            lines.Add("");
+            if (f.Outputs.Count > 0)
+            {
+                lines.Add("    Dim " + string.Join(", ", f.Outputs) + " As Variant");
+            }
+
+            if (hasVarargin)
+            {
+                lines.Add("    Dim varargin As Variant");
+            }
+
+            if (f.Outputs.Count > 0 || hasVarargin)
+            {
+                lines.Add("");
+            }
+
+            lines.Add("    On Error GoTo Handle_Error");
+            lines.Add("");
+            lines.Add("    If " + className + " Is Nothing Then");
+            lines.Add("        Set " + className + " = CreateObject(\"" + progId + "\")");
+            lines.Add("    End If");
+            lines.Add("");
+            if (f.Outputs.Count > 0)
+            {
+                arguments.Add(f.Outputs.Count.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                arguments.AddRange(f.Outputs);
+            }
+
+            arguments.AddRange(inputs);
+            for (int k = 0; k < variadic; k++)
+            {
+                arguments.Add("V" + k);
+            }
+
+            string callHead = "    Call " + className + "." + f.Name + "(";
+            string call = callHead + string.Join(", ", arguments) + ")";
+            if (f.Outputs.Count > 1)
+            {
+                lines.Add("    ' By default, MATLAB Excel Add-in returns just one output for MATLAB functions ");
+                lines.Add("    ' that have more than one output.    ");
+                lines.Add("");
+            }
+
+            lines.AddRange(Wrap(call, callHead.Length - 1));
+            lines.Add("    " + f.Name + " = " + (f.Outputs.Count > 0 ? f.Outputs[0] : "Empty"));
+            lines.Add("");
+            if (f.Outputs.Count > 1)
+            {
+                lines.Add("    ' If you want to use all the return values, you can use the following ");
+                lines.Add("    ' code as a guideline. To use this form, call the function from Excel cell,");
+                lines.Add("    ' highlight the cells which will receive the outputs and hit Ctrl+Shift+Enter.");
+                lines.Add("    '");
+                // The commented call wraps as the call does, its continuation lines marked "  '" two columns in
+                // (k17mps.bas: k17_both's "  '                      V9, V10, ...").
+                IReadOnlyList<string> commented = Wrap("    ' " + call.TrimStart(' '), callHead.Length);
+                lines.Add(commented[0]);
+                foreach (string continuation in commented.Skip(1))
+                {
+                    lines.Add("  '" + continuation[3..]);
+                }
+
+                lines.Add("    ' " + f.Name + " = Array(" + string.Join(", ", f.Outputs) + ")");
+                lines.Add("");
+            }
+
+            lines.Add("    Exit Function");
+            lines.Add("Handle_Error:");
+            lines.Add("    " + f.Name + " = \"Error in \" & Err.Source & \": \" & Err.Description");
+            lines.Add("End Function");
+            lines.Add("");
+        }
+
+        return string.Join("\r\n", lines) + "\r\n";
+    }
+
+    /// <summary>The module of the Excel client <paramref name="options"/> describes: the class variable named for its class, the component by <c>&lt;name&gt;.&lt;Class&gt;</c>.</summary>
+    public static string ClientModule(ExcelClientOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        return ClientModule(options.ClassName, options.AddInName + "." + options.ClassName, options.Functions);
+    }
+
+    /// <summary>Writes an Excel client's <c>&lt;name&gt;.bas</c> into <paramref name="folder"/> and answers its path.</summary>
+    public static string WriteClient(string folder, ExcelClientOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        string path = Path.Combine(folder, options.AddInName + ".bas");
+        File.WriteAllText(path, ClientModule(options), new UTF8Encoding(false));
+        return path;
+    }
+
+    /// <summary>
     /// Wraps <paramref name="text"/> as R2025b's writer does: words are taken while the line stays
     /// within <see cref="LineWidth"/> characters (its leading spaces counted), a broken line ends
     /// with <c>  _</c>, and each continuation line starts with <paramref name="indent"/> spaces.

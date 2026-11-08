@@ -38,6 +38,9 @@ public enum MccTarget
 
     /// <summary>An Excel add-in: <c>-W excel:&lt;name&gt;,&lt;class&gt;[,version=v]</c> (stage K17).</summary>
     ExcelAddIn,
+
+    /// <summary>An Excel client for the Production Server: <c>-W mpsxl:&lt;name&gt;,&lt;class&gt;[,version=v]</c> (stage K17f).</summary>
+    ExcelClient,
 }
 
 /// <summary>Which interfaces <c>-W cpplib:name[,generic|legacy|all]</c> asks for (k12_build: mcc_*).</summary>
@@ -150,7 +153,7 @@ public sealed class MccCommandLine
         ["dotnet"] = ("a .NET assembly", "K8"),
         ["python"] = ("a Python package", "K13"),
         ["excel"] = ("an Excel add-in", "K17"), // built since stage K17b; the entry keeps the kind a valid -W option
-        ["mpsxl"] = ("a Production Server archive for Excel", "K17"),
+        ["mpsxl"] = ("an Excel client for the Production Server", "K17"), // built since stage K17f
         ["java"] = ("Java packages", null),
         ["com"] = ("COM components", null),
         ["hadoop"] = ("Hadoop archives", null),
@@ -298,6 +301,13 @@ public sealed class MccCommandLine
 
     /// <summary>An Excel add-in's class, <c>-W excel:name,class</c>; the add-in's name when not given (stage K17).</summary>
     public string? ExcelClassName { get; private set; }
+
+    /// <summary>
+    /// An Excel client's marshalling switches by file (stage K17f), from its <c>class{Class:file -switch ...,file -switch ...}</c>
+    /// argument: each file named goes among the files too, a switch not among the four passed over, as R2025b's mcc
+    /// passes it (k17_excel: mpsxl_group, mpsxl_badswitch).
+    /// </summary>
+    public Dictionary<string, ExcelClientSwitches> ExcelClientSwitches { get; } = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary><c>-b</c>: an Excel add-in's Visual Basic module is asked for (stage K17).</summary>
     public bool VisualBasicFile { get; private set; }
@@ -497,7 +507,7 @@ public sealed class MccCommandLine
                     // A library's name is a component name, as -o's is: one after the other is refused,
                     // though a second -W lib: names the library again (k11_build: lib_o; k11_names: o_W, W_W;
                     // k12_build: mcc_o, mcc_twice; k13_build: mcc_o, mcc_ofirst).
-                    if (wrapperKind is "lib" or "cpplib" or "python" or "excel")
+                    if (wrapperKind is "lib" or "cpplib" or "python" or "excel" or "mpsxl")
                     {
                         if (line.OutputName is { } named)
                         {
@@ -740,6 +750,33 @@ public sealed class MccCommandLine
             if (line.IgnoredSwitches.RemoveAll(static s => s == "c") > 0)
             {
                 link = "codegen";
+            }
+        }
+        else if (wrapperKind == "mpsxl")
+        {
+            // An Excel client for the Production Server (stage K17f; k17_excel: mpsxl_*): no archive, so -T, -C
+            // and -c change nothing; -g is its debug build; -b asks for the module; each class{Class:file
+            // -switch ...} entry names a file to export with its marshalling switches, the file among the files
+            // (one given twice is warned about, as R2025b's mcc warns: mpsxl_group).
+            line.Target = MccTarget.ExcelClient;
+            line.ComponentName = libraryName;
+            line.DebugBuild = line.IgnoredSwitches.Remove("g");
+            line.IgnoredSwitches.RemoveAll(static s => s is "g" or "c");
+            link = null;
+            separateSwitch = false;
+            foreach ((string _, List<string> entries) in line.Classes)
+            {
+                foreach (string entry in entries)
+                {
+                    string[] tokens = entry.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    if (tokens.Length == 0)
+                    {
+                        continue;
+                    }
+
+                    line.ExcelClientSwitches[tokens[0]] = Deploy.ExcelClientSwitches.FromMccSwitches(tokens.Skip(1));
+                    line.Files.Add(tokens[0]);
+                }
             }
         }
         else if (wrapperKind == "CTF")
@@ -1006,12 +1043,13 @@ public sealed class MccCommandLine
                 break;
             }
 
-            case "excel":
+            case "excel" or "mpsxl":
             {
                 // excel:name[,class[,version]] (stage K17; k17_excel: mcc_*): the class the name when not
                 // given; the third part the version, its "version=" dropped when it is the last part
                 // (mcc_default, mcc_bundle's bare 1.0) and read whole when more follow (mcc_extra: "version=1.0"
-                // is refused as a version); a dotted name R2025b's package refusal (mcc_dotted).
+                // is refused as a version); a dotted name R2025b's package refusal (mcc_dotted). mpsxl, the
+                // Excel client for the Production Server (stage K17f; mpsxl_*), reads the same three parts.
                 RequireName(name);
                 int dot = name.IndexOf('.', StringComparison.Ordinal);
                 if (dot >= 0)
@@ -1026,12 +1064,12 @@ public sealed class MccCommandLine
                     Version = ProgramVersion.Parse(text) ?? throw Refuse("COM_ERR_INVALID_VERSION", ProgramVersion.Refusal(text));
                 }
 
-                Target = MccTarget.ExcelAddIn;
+                Target = kind == "mpsxl" ? MccTarget.ExcelClient : MccTarget.ExcelAddIn;
                 ComponentName = name;
                 break;
             }
 
-            case "com" or "CTF" or "mpsxl":
+            case "com" or "CTF":
                 RequireName(name);
                 break;
         }
@@ -1279,6 +1317,9 @@ public sealed class MccCommandLine
         + "  mcc -W 'excel:<addin>,<class>[,version=<v>]' -b <file.m> [moreFiles...]\n"
         + "  -b writes the Visual Basic module, -C the archive beside the DLL, -g a debug build, and -T codegen\n"
         + "  the archive and the texts alone.\n\n"
+        + "  An Excel client for the Production Server, whose worksheet functions call a deployed archive over HTTP\n"
+        + "  mcc -W 'mpsxl:<addin>,<class>[,version=<v>]' -b <file.m> [moreFiles...] ['class{<class>:<file.m> -replaceBlankWithNaN -convertDateToString -replaceNaNWithZero -convertNumericToDate,...}']\n"
+        + "  The client needs no runtime; compiler.package.excelClientForProductionServer makes its installer.\n\n"
         + "From a Windows command prompt, run jgmcc (or jgraph mcc) and use double quotes where these use single.\n";
 
     /// <summary><c>mcc -/?</c>: the trace switches, in JGraph's words.</summary>

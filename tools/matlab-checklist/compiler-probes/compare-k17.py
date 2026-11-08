@@ -50,8 +50,30 @@ KNOWN = {
          "R2025b prints mbuild's transcript and, for a -b build, warns COM_WARN_FAILED_CREATE_EXCEL_ADDIN where Excel does not trust its VBA project; JGraph writes the add-in workbook as a file (.xlam) with no Excel and no warning (decision KO12; ADR 0318); its per-user registration warning names MATLAB where JGraph's names JGraph (ADR 0316)"),
         (r"^.*\.(files|Files)$",
          "mbuild's C++ sources, IDL, MIDL outputs, module definition, resource script, import library and exports file are not written (KO9), JGraph's .xlam is listed where R2025b's .xla would stand (KO12; ADR 0318), and the DLL's byte count is the template's (ADR 0316)"),
-        (r"^(copts|cset|cbuild|popts|pset|pkg)\.|^(fromresults|fromfiles|cdefaults|nobas|cdebug|cv2|cv05|cvtext|blank|date|nan|numdate|blankdate|allswitches|onefileall|cpfile|mpsxl_\w+|built)(\..*)?$",
-         "the Excel client for the Production Server is stage K17f's; JGraph's probe run stops after the add-in sections until then (run-k17.ps1 -UpTo addin)"),
+        # Stage K17f (ADR 0319): the Excel client for the Production Server, its options, mcc -W mpsxl and its installer.
+        (r"^copts\.superclasses$", "JGraph's options classes declare no superclasses; AllOptions is R2025b's own (ADR 0315)"),
+        (r"^(copts|popts)\.saveload$", "an options object is not saved to a MAT-file: its on/off properties are .NET values (open item 215)"),
+        (r"^copts\.(results|files|properties)$|^cset\.FunctionFiles\.\d+$|^popts\.(results|files|nv)$",
+         "an object's or a cell column's display is JGraph's own layout, not R2025b's aligned one (open item 194)"),
+        (r"^pset\.MaxResponseSize\.3$", "disp of a non-integer double is JGraph's own layout (1.5 where R2025b's format short prints 1.5000; open item 194)"),
+        (r"^(date|nan|numdate|blankdate|allswitches)(\.files)?$",
+         "R2025b's ExcelClientForProductionServerWriter fails: ConvertExcelDateToString alone trips over an undefined variable, and two or more files with any switch put a comma in front of the class{} group, which its csc refuses; JGraph writes the group as the switches mean and builds (docs/MATLAB_Behavioral_Fixes.md; ADR 0319)"),
+        (r"^(fromresults|fromfiles|cdefaults|nobas|cdebug|cv2|cv05|blank|onefileall|cpfile)\.file\.\w+\.cs$|^mpsxl_\w+\.file\.\w+\.cs$",
+         "no C# source is generated: the client's DLL is the prebuilt native template jgxlmps.dll stamped by the build with its type library and the functions' switches (decision KO9; ADR 0319)"),
+        (r"^(fromresults|fromfiles|cdefaults|nobas|cdebug|cv2|cv05|blank|onefileall|cpfile|mpsxl_\w+)\.registry\..*$",
+         "R2025b registers the .NET client through regasm's script under Wow6432Node (mscoree.dll, the assembly's codebase); JGraph's native client registers its ProgID, class and type library through its own DllRegisterServer (ADR 0319)"),
+        (r"^(fromresults|fromfiles|cdefaults|nobas|cdebug|cv2|cv05|blank|onefileall|cpfile)\.warn$|^mpsxl_\w+\.warn$",
+         "R2025b's last warning is COM_WARN_FAILED_CREATE_EXCEL_ADDIN, its .xla failing where Excel does not trust its VBA project; JGraph writes the add-in workbook as a file (.xlam, decision KO12) and its last warning is the per-user registration's (ADR 0319)"),
+        (r"^(fromresults|fromfiles|cdefaults|nobas|cdebug|cv2|cv05|blank|onefileall|cpfile)\.(files|Files)$|^mpsxl_\w+\.files$",
+         "JGraph's client folder holds the DLL, the module, the .xlam workbook, the readme, buildresult.json and includedSupportPackages.txt; no C# source and no regasm script (KO9), the DLL's byte count the template's, and the .xlam listed under -b where R2025b's .xla would stand (ADR 0319)"),
+        (r"^(fromresults|fromfiles|cdefaults|nobas|cdebug|cv2|cv05|blank|onefileall|cpfile)\.file\.readme\.txt$", "readme.txt is in JGraph's words (ADR 0319)"),
+        (r"^(fromresults|fromfiles|cdefaults|nobas|cdebug|cv2|cv05|blank|onefileall|cpfile)\.file\.buildresult\.json$", "buildresult.json is laid out as JGraph's other builds lay it out (tabs, CR LF); R2025b's writestruct lays it out its own way (ADR 0319)"),
+        (r"^mpsxl_\w+$|^(fromresults|fromfiles|cdefaults|nobas|cdebug|cv2|cv05|blank|onefileall|cpfile)\.printed$|^pkg\.nolibrary\.printed$",
+         "R2025b prints csc's, regasm's and reg's transcript and its warnings on standard output under the key; JGraph prints its own transcript and its warnings on standard error (ADR 0319)"),
+        (r"^pkg\.\w+\.warn$", "R2025b's packaging warns MATLAB:FILEATTRIB:SyntaxWarning from its own fileattrib call; JGraph has no such step (ADR 0319)"),
+        (r"^pkg\.\w+\.files$", "the installer is JGraph's own template stamped with the payload, so its byte count is its own (ADR 0319)"),
+        (r"^pkg\.nooutdir\.files$", "the installer is JGraph's own template stamped with the payload, so its byte count is its own (ADR 0319)"),
+        (r"^built\.dll$", "the DLLs built, listed by path: the same set, in whatever order the file system enumerates (ADR 0319)"),
     ],
     "com_preinit": [
         (r"^(create\.)?seconds$", "a timing"),
@@ -127,12 +149,28 @@ KNOWN = {
     ],
     "mps": [
         (r"^seconds$", "a timing"),
+        (r"^dll\.folder$", "JGraph's client folder holds the .xlam workbook, no C# source and no regasm script (KO9, KO12; ADR 0319)"),
+        (r"^client\.(us|names|streams)$|^(deps|asm|type)\.", "R2025b's client is a .NET assembly with a string heap, types and references to reflect; JGraph's is native (KO9; ADR 0319)"),
+        (r"^config\.(write|keys)$", "JGraph's client keeps its settings under Software\\JGraph\\Excel Client\\<add-in> (ServerURL a text value, timeoutSeconds, responseSizeLimit, certificateFile), R2025b's under Software\\MathWorks\\MATLAB Builder EX\\2.5 with the URL as a value name (ADR 0319)"),
+        (r"^echo\.K17Mps\.err$", "an Excel error value is refused in JGraph's words where R2025b's names the .NET ErrorWrapper it cannot marshal (ADR 0319)"),
+        (r"^make\.K17Mps\.struct$", "a struct output is refused in JGraph's words where R2025b's says no .NET type is available (ADR 0319)"),
+        (r"^make\.K17Mps\.empty$", "an empty output lands in the cell as Empty; R2025b's client fails on a null reference (docs/MATLAB_Behavioral_Fixes.md; ADR 0319)"),
+        (r"^make\.K17Mps\.charmat$", "a char matrix lands as one string per row; R2025b's client flattens the rows column-major into one text ('acbd' for ['ab'; 'cd']; docs/MATLAB_Behavioral_Fixes.md; ADR 0319)"),
+        (r"^make\.K17Mps\.string(arr)?$", "a string output lands as its text, a string array as texts; R2025b's client refuses the type (ADR 0319)"),
+        (r"^two\.K17Mps\.array$|^wire\.46\.(request|reply)$", "the oracle's own artifact: reflection unrolls a double[] into two arguments (TooManyInputs) where the direct COM call passes one SAFEARRAY, so one request carries a 1-by-2 row (ADR 0314, ADR 0319)"),
+        (r"^clientlog\.", "JGraph's client log is its own file (<add-in>-<date>.log) in its own words; R2025b's is the FileLogTraceListener's (ADR 0319)"),
+        (r"^wire\.21\.reply$", "an error reply carries the deployed file's path in its stack, which names each engine's own work root (ADR 0319)"),
     ],
     "payload": [
         (r"^.*\.bytes$", "the installer's own size (its template is JGraph's, as K18's)"),
+        (r"^.*\.resource\.ICON$|^.*\.icongroup\.1$", "the installer's icon is the one given at R2025b's six sizes, written as JGraph's icon writer writes them (ADR 0273, ADR 0319)"),
+        (r"^.*\.(resource|zip|starts|text)\.MW_\w+(\.entries|\.text\..*)?$",
+         "JGraph's installer carries the payload as JGRAPH_INSTALL_BUNDLE (a stored zip it unpacks itself) and the configuration as JGRAPH_EXCEL_CLIENT_CONFIG (R2025b's _config.txt text, key for key); R2025b's carries MW_COMPILER_EZDEPLOY_* with the unzip tools it runs (ADR 0319)"),
+        (r"^.*\.version\.(fixed|string)\.", "JGraph's installer is stamped with the Version given (R2025b's keeps 1.0.0.0) and its own description strings (ADR 0319)"),
+        (r"^.*\.resource\.MANIFEST$", "the installer's own manifest (ADR 0319)"),
     ],
     "pe": [
-        (r"^c\.|^p\.|^x\.|^src\.k17mps", "the Excel client's DLLs (compiler.build and mcc -W mpsxl) and its packaged installers are stage K17f's"),
+        (r"^c\.|^p\.|^x\.|^src\.k17mps", "the Excel client's DLLs are JGraph's native template jgxlmps.dll stamped with the type library and the configuration (KO9), where R2025b's are .NET assemblies; its installers are JGraph's template (ADR 0319)"),
         (r"^.*\.(file|ERR)$",
          "pe-resources.py lists every file beside a DLL under the label of its stem, one stem's rows overwriting each other: mbuild's import library, exports file and generated sources are not written by JGraph (KO9; ADR 0316)"),
         (r"^.*\.(bytes|image\.bytes|sections|subsystem|overlay\.bytes|machine|certificate|import)$",
@@ -181,10 +219,66 @@ SKIPPED = {
 KEY = re.compile(r"^[\w.:\-/ ]+$")
 
 
+WIRE_REQUEST = re.compile(r"^\s*== request (\d+) at ")
+WIRE_LINE = re.compile(r"^\s*(POST|GET|PUT|DELETE) (\S+) HTTP")
+WIRE_BODY = re.compile(r"^\s*([<>]) body (.*)$")
+WIRE_STATUS = re.compile(r"^\s*< (\d{3} .*)$")
+
+
+def wire_body(text):
+    # A body's bytes decoded, with each engine's work root named alike: the two roots (k17_r2025b and
+    # k17_jgraph, ten characters each under the same folder) appear in an error reply's stack as the
+    # deployed file's path, and nowhere else.
+    m = re.match(r"^bytes \d+: ([0-9a-f ]+?)( \.\.\.)?$", text)
+    if not m:
+        return text
+    raw = bytes.fromhex(m.group(1).replace(" ", "")).decode("latin-1")
+    raw = raw.replace("k17_r2025b", "<WORK>").replace("k17_jgraph", "<WORK>")
+    return "bytes: " + raw.encode("latin-1").hex(" ")
+
+
+def read_wire(lines, keys):
+    # The wire log of the mps recording (k17proxy.py): one key per request for its line and body, and
+    # one for the reply's status and body; the headers (each client's own User-Agent, .NET's Expect
+    # and Connection) and the reply's Date are not compared.
+    number = None
+    request = []
+    reply = []
+    for line in lines:
+        if line.startswith("== server log"):
+            break
+        m = WIRE_REQUEST.match(line)
+        if m:
+            if number is not None:
+                keys["wire.%s.request" % number] = " | ".join(request)
+                keys["wire.%s.reply" % number] = " | ".join(reply)
+            number = m.group(1)
+            request, reply = [], []
+            continue
+        m = WIRE_LINE.match(line)
+        if m:
+            request.append("%s %s" % (m.group(1), m.group(2)))
+            continue
+        m = WIRE_BODY.match(line)
+        if m:
+            (request if m.group(1) == ">" else reply).append(wire_body(m.group(2)))
+            continue
+        m = WIRE_STATUS.match(line)
+        if m:
+            reply.append(m.group(1))
+    if number is not None:
+        keys["wire.%s.request" % number] = " | ".join(request)
+        keys["wire.%s.reply" % number] = " | ".join(reply)
+
+
 def read(path):
     keys = {}
     current = None
-    for line in Path(path).read_text(encoding="utf-8").split("\n"):
+    all_lines = Path(path).read_text(encoding="utf-8").split("\n")
+    for at, line in enumerate(all_lines):
+        if line.startswith("== wire"):
+            read_wire(all_lines[at + 1:], keys)
+            break
         if not line.strip():
             continue
         # A key line is key<TAB>value, or a display's key alone; everything else (a display's indented

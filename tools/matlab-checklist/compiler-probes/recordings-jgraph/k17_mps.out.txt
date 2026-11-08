@@ -1,0 +1,1119 @@
+dll	k17mps.dll
+dll.exists	True
+dll.folder	buildresult.json (34) | includedSupportPackages.txt (0) | k17mps.bas (10826) | k17mps.dll (339456) | k17mps.xlam (6010) | readme.txt (2165)
+config.write	written under HKCU:\Software\JGraph\Excel Client: k17mps [ServerURL=http://localhost:9972/k17arch, timeoutSeconds=120, responseSizeLimit=64], Logging [Enabled=1, LoggingLevel=2, LogFileFolder]
+create.K17Mps	ok
+call.K17Mps.k17_quiet	null
+call.K17Mps.k17_none	null
+call.K17Mps.k17_one	double 4
+call.K17Mps.k17_many	double 6 | double -4 | double 6
+call.K17Mps.k17_two	double 5 | double -5
+call.K17Mps.k17_opt	string 'nargin=1 a=double [1 1] [1]'
+call.K17Mps.k17_varin	string 'nargin=2 {double [1 1] [1]; char [1 1] 'a'}'
+call.K17Mps.k17_varout	double 2
+call.K17Mps.k17_both	string 'x=double [1 1] [7] nargin=2 nargout=2' | string 'a'
+call.K17Mps.k17_args	double 4
+call.K17Mps.k17_noout	null
+call.K17Mps.k17_plot	double 1
+call.K17Mps.k17_h1	string 'k17_h1'
+call.K17Mps.k17_echo	string 'char [1 4] 'text''
+call.K17Mps.k17_pass	double 2.5
+call.K17Mps.k17_count	double 1
+call.K17Mps.k17_make	array[Double] rank 2 [0..1,0..1] {double 1, double 2, double 3, double 4}
+echo.K17Mps.var2d	string 'cell [2 2] {double [1 1] [1]; logical [1 1] true; char [1 1] 'a'; double [1 1] [4]}'
+echo.K17Mps.r8_2d	string 'double [2 2] [1 3 2 4]'
+echo.K17Mps.empty	string 'double [1 1] [0]'
+echo.K17Mps.missing	string 'MATLABException:MATLAB:minrhs'
+echo.K17Mps.err	string 'Exception:An Excel error value cannot be sent to the server.'
+echo.K17Mps.date	string 'double [1 1] [739326.4375]'
+echo.K17Mps.bool	string 'logical [1 1] true'
+echo.K17Mps.i4	string 'int32 [1 1] [7]'
+echo.K17Mps.arr_var_with_empty	string 'double [1 3] [1 0 3]'
+echo.K17Mps.arr_r8	string 'double [1 3] [1 2 3]'
+echo.K17Mps.str	string 'char [1 4] 'text''
+make.K17Mps.double	double 3.5
+make.K17Mps.doublemat	array[Double] rank 2 [0..1,0..1] {double 1, double 2, double 3, double 4}
+make.K17Mps.doublerow	array[Double] rank 2 [0..0,0..2] {double 1, double 2, double 3}
+make.K17Mps.char	string 'hello'
+make.K17Mps.charmat	array[String] rank 2 [0..1,0..0] {string 'ab', string 'cd'}
+make.K17Mps.cell	array[Object] rank 2 [0..0,0..2] {double 1, string 'two', array[Double] rank 2 [0..0,0..1] {double 3, double 4}}
+make.K17Mps.struct	string 'Exception:A MATLAB structure with fields [a,b] cannot be shown in a cell'
+make.K17Mps.nan	double NaN
+make.K17Mps.nanmat	array[Double] rank 2 [0..1,0..1] {double 1, double NaN, double NaN, double 4}
+make.K17Mps.logical	bool True
+make.K17Mps.logicalmat	array[Boolean] rank 2 [0..1,0..1] {bool True, bool False, bool False, bool True}
+make.K17Mps.datetime	string 'Exception:MATLAB response contained unsupported type : object'
+make.K17Mps.datenum	double 739326.4375
+make.K17Mps.empty	null
+make.K17Mps.int8	SByte -5
+make.K17Mps.complex	string 'Exception:Complex data received from MATLAB is not supported'
+make.K17Mps.string	string 'str'
+make.K17Mps.stringarr	array[String] rank 2 [0..1,0..1] {string 'a', string 'bb', string 'ccc', string ''}
+two.K17Mps.array	array[Double] rank 2 [0..0,0..1] {double 1, double 2} | array[Double] rank 2 [0..0,0..1] {double -1, double -2}
+two.K17Mps.nargout1	double 5 | double -5
+two.K17Mps.nargout0	double 5 | double -5
+varout.K17Mps.nargout3	double 2
+opt.K17Mps.none	string 'nargin=0 '
+opt.K17Mps.three	string 'nargin=3 a=double [1 1] [1] b=char [1 1] 'b' c=logical [1 1] true'
+opt.K17Mps.nullmiddle	string 'nargin=3 a=double [1 1] [1] b=double [1 1] [0] c=logical [1 1] true'
+clientlog.files	k17mps-2026-11-08.log (20453) | k17t923e092d-2026-11-08.log (13240) | k17ta85f52d2-2026-11-08.log (1572)
+clientlog.text.k17mps-2026-11-08.log
+  |k17mps Add-in  Verbose  16  Entered k17_quiet() function.  2026-11-08 05:17:09Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:09Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_quiet function returned.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_none() function.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_none function returned.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_one() function.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_one function returned.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_many() function.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  Input 2 is given.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  Input 3 is given.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_many function returned.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_two() function.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_two function returned.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_opt() function.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_opt function returned.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_varin() function.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  Input 2 is given.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_varin function returned.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_varout() function.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_varout function returned.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_both() function.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  Input 2 is given.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_both function returned.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_args() function.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_args function returned.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_noout() function.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_noout function returned.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_plot() function.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:12Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_plot function returned.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_h1() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_h1 function returned.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_pass() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_pass function returned.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_count() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_count function returned.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Critical  1  Catch MATLAB Exception: Not enough input arguments.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Critical  1  Call to k17_echo function failed.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Critical  1  MATLABException:MATLAB:minrhs  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Critical  1  Call to k17_echo function failed.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Critical  1  Exception:An Excel error value cannot be sent to the server.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:13Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Critical  1  Call to k17_make function failed.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Critical  1  Exception:A MATLAB structure with fields [a,b] cannot be shown in a cell  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Critical  1  Call to k17_make function failed.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Critical  1  Exception:MATLAB response contained unsupported type : object  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Critical  1  Call to k17_make function failed.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Critical  1  Exception:Complex data received from MATLAB is not supported  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_two() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_two function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_two() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_two function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_two() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_two function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_varout() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_varout function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_opt() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_opt function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_opt() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 2 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 3 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_opt function returned.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Entered k17_opt() function.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 1 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 2 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  Input 3 is given.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Information  8  MPS server URL is http://localhost:9972/k17arch.  2026-11-08 05:17:14Z  18104
+  |k17mps Add-in  Verbose  16  Call to k17_opt function returned.  2026-11-08 05:17:15Z  18104
+clientlog.text.k17t923e092d-2026-11-08.log
+  |k17t923e092d Add-in  Verbose  16  Entered k17_one() function.  2026-11-08 05:14:49Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:49Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:49Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_one function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_varin() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 2 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_varin function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_noout() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_noout function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_opt() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 2 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 3 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_opt function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_echo() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_echo function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_make function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Critical  1  Call to k17_make function failed.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Critical  1  Exception:A MATLAB structure with fields [a,b] cannot be shown in a cell  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_make() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Critical  1  Catch MATLAB Exception: Too many input arguments.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Critical  1  Call to k17_make function failed.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Critical  1  MATLABException:MATLAB:TooManyInputs  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_two() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Call to k17_two function returned.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_one() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:51143/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Critical  1  Call to k17_one function failed.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Critical  1  WebException:Not Found  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_one() function.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is http://127.0.0.1:1/k17arch.  2026-11-08 05:14:50Z  20832
+  |k17t923e092d Add-in  Critical  1  Call to k17_one function failed.  2026-11-08 05:14:52Z  20832
+  |k17t923e092d Add-in  Critical  1  WebException:ConnectFailure  2026-11-08 05:14:52Z  20832
+  |k17t923e092d Add-in  Verbose  16  Entered k17_one() function.  2026-11-08 05:14:52Z  20832
+  |k17t923e092d Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:52Z  20832
+  |k17t923e092d Add-in  Information  8  MPS server URL is .  2026-11-08 05:14:52Z  20832
+  |k17t923e092d Add-in  Critical  1  MPS server url is not provided for k17t923e092d  2026-11-08 05:14:52Z  20832
+  |k17t923e092d Add-in  Critical  1  Call to k17_one function failed.  2026-11-08 05:14:52Z  20832
+  |k17t923e092d Add-in  Critical  1  MATLAB error thrown : MPS server url is not provided for k17t923e092d  2026-11-08 05:14:52Z  20832
+clientlog.text.k17ta85f52d2-2026-11-08.log
+  |k17ta85f52d2 Add-in  Verbose  16  Entered k17_one() function.  2026-11-08 05:14:49Z  20832
+  |k17ta85f52d2 Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:49Z  20832
+  |k17ta85f52d2 Add-in  Information  8  MPS server URL is http://127.0.0.1:51138/k17arch.  2026-11-08 05:14:49Z  20832
+  |k17ta85f52d2 Add-in  Verbose  16  Call to k17_one function returned.  2026-11-08 05:14:49Z  20832
+  |k17ta85f52d2 Add-in  Verbose  16  Entered k17_one() function.  2026-11-08 05:14:49Z  20832
+  |k17ta85f52d2 Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:49Z  20832
+  |k17ta85f52d2 Add-in  Information  8  MPS server URL is http://127.0.0.1:51138/k17arch.  2026-11-08 05:14:49Z  20832
+  |k17ta85f52d2 Add-in  Verbose  16  Call to k17_one function returned.  2026-11-08 05:14:49Z  20832
+  |k17ta85f52d2 Add-in  Verbose  16  Entered k17_two() function.  2026-11-08 05:14:49Z  20832
+  |k17ta85f52d2 Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:49Z  20832
+  |k17ta85f52d2 Add-in  Information  8  MPS server URL is http://127.0.0.1:51138/k17arch.  2026-11-08 05:14:49Z  20832
+  |k17ta85f52d2 Add-in  Verbose  16  Call to k17_two function returned.  2026-11-08 05:14:49Z  20832
+  |k17ta85f52d2 Add-in  Verbose  16  Entered k17_two() function.  2026-11-08 05:14:49Z  20832
+  |k17ta85f52d2 Add-in  Information  8  Input 1 is given.  2026-11-08 05:14:49Z  20832
+  |k17ta85f52d2 Add-in  Information  8  MPS server URL is http://127.0.0.1:51138/k17arch.  2026-11-08 05:14:49Z  20832
+  |k17ta85f52d2 Add-in  Verbose  16  Call to k17_two function returned.  2026-11-08 05:14:49Z  20832
+config.keys	HKEY_CURRENT_USER\Software\JGraph\Excel Client\k17mps | HKEY_CURRENT_USER\Software\JGraph\Excel Client\Logging
+messagebox.count	0
+seconds	6.8
+build.jgraph	exit 0 archive True
+server.ready	True
+== wire
+  == proxy listening on 9972 for 9971
+  == request 1 at 4.359 s
+    POST /k17arch/k17_quiet HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 2
+    > Host: localhost:9972
+    > body bytes 2: 08 00
+    < 200 OK
+    < Content-Length: 0
+    < Date: Sun, 08 Nov 2026 05:17:12 GMT
+    < body (empty)
+  == request 2 at 4.583 s
+    POST /k17arch/k17_none HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 2
+    > Host: localhost:9972
+    > body bytes 2: 08 00
+    < 200 OK
+    < Content-Length: 0
+    < Date: Sun, 08 Nov 2026 05:17:12 GMT
+    < body (empty)
+  == request 3 at 4.683 s
+    POST /k17arch/k17_one HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 23
+    > Host: localhost:9972
+    > body bytes 23: 08 01 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 00 40
+    < 200 OK
+    < Content-Length: 25
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:12 GMT
+    < body bytes 25: 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 10 40
+  == request 4 at 4.742 s
+    POST /k17arch/k17_many HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 65
+    > Host: localhost:9972
+    > body bytes 65: 08 03 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 f0 3f 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 00 40 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 08 40
+    < 200 OK
+    < Content-Length: 75
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:12 GMT
+    < body bytes 75: 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 18 40 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 10 c0 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 18 40
+  == request 5 at 4.761 s
+    POST /k17arch/k17_two HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 23
+    > Host: localhost:9972
+    > body bytes 23: 08 02 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 14 40
+    < 200 OK
+    < Content-Length: 50
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:12 GMT
+    < body bytes 50: 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 14 40 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 14 c0
+  == request 6 at 4.792 s
+    POST /k17arch/k17_opt HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 23
+    > Host: localhost:9972
+    > body bytes 23: 08 01 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 f0 3f
+    < 200 OK
+    < Content-Length: 44
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:12 GMT
+    < body bytes 44: 0a 2a 08 0b 12 02 01 1b 30 00 38 00 da 01 1d 0a 1b 6e 61 72 67 69 6e 3d 31 20 61 3d 64 6f 75 62 6c 65 20 5b 31 20 31 5d 20 5b 31 5d
+  == request 7 at 4.966 s
+    POST /k17arch/k17_varin HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 37
+    > Host: localhost:9972
+    > body bytes 37: 08 01 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 f0 3f 12 0c 08 0b 12 02 01 01 da 01 03 0a 01 61
+    < 200 OK
+    < Content-Length: 60
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:12 GMT
+    < body bytes 60: 0a 3a 08 0b 12 02 01 2b 30 00 38 00 da 01 2d 0a 2b 6e 61 72 67 69 6e 3d 32 20 7b 64 6f 75 62 6c 65 20 5b 31 20 31 5d 20 5b 31 5d 3b 20 63 68 61 72 20 5b 31 20 31 5d 20 27 61 27 7d
+  == request 8 at 5.081 s
+    POST /k17arch/k17_varout HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 23
+    > Host: localhost:9972
+    > body bytes 23: 08 01 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 00 40
+    < 200 OK
+    < Content-Length: 25
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:12 GMT
+    < body bytes 25: 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 00 40
+  == request 9 at 5.134 s
+    POST /k17arch/k17_both HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 37
+    > Host: localhost:9972
+    > body bytes 37: 08 02 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 1c 40 12 0c 08 0b 12 02 01 01 da 01 03 0a 01 61
+    < 200 OK
+    < Content-Length: 72
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:12 GMT
+    < body bytes 72: 0a 34 08 0b 12 02 01 25 30 00 38 00 da 01 27 0a 25 78 3d 64 6f 75 62 6c 65 20 5b 31 20 31 5d 20 5b 37 5d 20 6e 61 72 67 69 6e 3d 32 20 6e 61 72 67 6f 75 74 3d 32 0a 10 08 0b 12 02 01 01 30 00 38 00 da 01 03 0a 01 61
+  == request 10 at 5.187 s
+    POST /k17arch/k17_args HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 23
+    > Host: localhost:9972
+    > body bytes 23: 08 01 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 00 40
+    < 200 OK
+    < Content-Length: 25
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:12 GMT
+    < body bytes 25: 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 10 40
+  == request 11 at 5.267 s
+    POST /k17arch/k17_noout HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 16
+    > Host: localhost:9972
+    > body bytes 16: 08 00 12 0c 08 0b 12 02 01 01 da 01 03 0a 01 78
+    < 200 OK
+    < Content-Length: 0
+    < Date: Sun, 08 Nov 2026 05:17:12 GMT
+    < body (empty)
+  == request 12 at 5.316 s
+    POST /k17arch/k17_plot HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 2
+    > Host: localhost:9972
+    > body bytes 2: 08 01
+    < 200 OK
+    < Content-Length: 25
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 25: 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 f0 3f
+  == request 13 at 5.602 s
+    POST /k17arch/k17_h1 HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 2
+    > Host: localhost:9972
+    > body bytes 2: 08 01
+    < 200 OK
+    < Content-Length: 23
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 23: 0a 15 08 0b 12 02 01 06 30 00 38 00 da 01 08 0a 06 6b 31 37 5f 68 31
+  == request 14 at 5.670 s
+    POST /k17arch/k17_echo HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 19
+    > Host: localhost:9972
+    > body bytes 19: 08 01 12 0f 08 0b 12 02 01 04 da 01 06 0a 04 74 65 78 74
+    < 200 OK
+    < Content-Length: 34
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 34: 0a 20 08 0b 12 02 01 11 30 00 38 00 da 01 13 0a 11 63 68 61 72 20 5b 31 20 34 5d 20 27 74 65 78 74 27
+  == request 15 at 5.750 s
+    POST /k17arch/k17_pass HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 23
+    > Host: localhost:9972
+    > body bytes 23: 08 01 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 04 40
+    < 200 OK
+    < Content-Length: 25
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 25: 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 04 40
+  == request 16 at 5.793 s
+    POST /k17arch/k17_count HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 2
+    > Host: localhost:9972
+    > body bytes 2: 08 01
+    < 200 OK
+    < Content-Length: 25
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 25: 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 f0 3f
+  == request 17 at 5.833 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 24
+    > Host: localhost:9972
+    > body bytes 24: 08 01 12 14 08 0b 12 02 01 09 da 01 0b 0a 09 64 6f 75 62 6c 65 6d 61 74
+    < 200 OK
+    < Content-Length: 49
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 49: 0a 2f 08 09 12 02 02 02 30 00 38 00 ca 01 22 0a 20 00 00 00 00 00 00 f0 3f 00 00 00 00 00 00 08 40 00 00 00 00 00 00 00 40 00 00 00 00 00 00 10 40
+  == request 18 at 5.954 s
+    POST /k17arch/k17_echo HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 83
+    > Host: localhost:9972
+    > body bytes 83: 08 01 12 4f 08 0d 12 02 02 02 e2 01 46 0a 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 f0 3f 0a 0c 08 0a 12 02 01 01 d2 01 03 0a 01 01 0a 0c 08 0b 12 02 01 01 da 01 03 0a 01 61 0a 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 10 40
+    < 200 OK
+    < Content-Length: 100
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 100: 0a 62 08 0b 12 02 01 53 30 00 38 00 da 01 55 0a 53 63 65 6c 6c 20 5b 32 20 32 5d 20 7b 64 6f 75 62 6c 65 20 5b 31 20 31 5d 20 5b 31 5d 3b 20 6c 6f 67 69 63 61 6c 20 5b 31 20 31 5d 20 74 72 75 65 3b 20 63 68 61 72 20 5b 31 20 31 5d 20 27 61 27 3b 20 64 6f 75 62 6c 65 20 5b 31 20 31 5d 20 5b 34 5d 7d
+  == request 19 at 6.016 s
+    POST /k17arch/k17_echo HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 47
+    > Host: localhost:9972
+    > body bytes 47: 08 01 12 2b 08 09 12 02 02 02 ca 01 22 0a 20 00 00 00 00 00 00 f0 3f 00 00 00 00 00 00 08 40 00 00 00 00 00 00 00 40 00 00 00 00 00 00 10 40
+    < 200 OK
+    < Content-Length: 39
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 39: 0a 25 08 0b 12 02 01 16 30 00 38 00 da 01 18 0a 16 64 6f 75 62 6c 65 20 5b 32 20 32 5d 20 5b 31 20 33 20 32 20 34 5d
+  == request 20 at 6.083 s
+    POST /k17arch/k17_echo HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 23
+    > Host: localhost:9972
+    > body bytes 23: 08 01 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 00 00
+    < 200 OK
+    < Content-Length: 33
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 33: 0a 1f 08 0b 12 02 01 10 30 00 38 00 da 01 12 0a 10 64 6f 75 62 6c 65 20 5b 31 20 31 5d 20 5b 30 5d
+  == request 21 at 6.126 s
+    POST /k17arch/k17_echo HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 2
+    > Host: localhost:9972
+    > body bytes 2: 08 01
+    < 200 OK
+    < Content-Length: 162
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 162: 12 9f 01 0a 1b 4e 6f 74 20 65 6e 6f 75 67 68 20 69 6e 70 75 74 20 61 72 67 75 6d 65 6e 74 73 2e 12 0d 4d 41 54 4c 41 42 3a 6d 69 6e 72 68 73 1a 71 0a 63 43 3a 5c 55 73 65 72 73 5c 43 61 72 70 65 5c 41 70 70 44 61 74 61 5c 4c 6f 63 61 6c 5c 54 65 6d 70 5c 6b 31 37 5f 6a 67 72 61 70 68 5c 6d 70 73 5c 69 6e 73 74 5c 2e 6a 67 72 61 70 68 5f 64 65 70 6c 6f 79 65 64 5c 6b 31 37 61 72 63 68 5f 31 5c 6b 31 37 61 72 63 68 5c 6b 31 37 5f 65 63 68 6f 2e 6d 12 08 6b 31 37 5f 65 63 68 6f 18 03
+  == request 22 at 6.209 s
+    POST /k17arch/k17_echo HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 23
+    > Host: localhost:9972
+    > body bytes 23: 08 01 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 e0 fc 8f 26 41
+    < 200 OK
+    < Content-Length: 43
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 43: 0a 29 08 0b 12 02 01 1a 30 00 38 00 da 01 1c 0a 1a 64 6f 75 62 6c 65 20 5b 31 20 31 5d 20 5b 37 33 39 33 32 36 2e 34 33 37 35 5d
+  == request 23 at 6.266 s
+    POST /k17arch/k17_echo HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 16
+    > Host: localhost:9972
+    > body bytes 16: 08 01 12 0c 08 0a 12 02 01 01 d2 01 03 0a 01 01
+    < 200 OK
+    < Content-Length: 35
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 35: 0a 21 08 0b 12 02 01 12 30 00 38 00 da 01 14 0a 12 6c 6f 67 69 63 61 6c 20 5b 31 20 31 5d 20 74 72 75 65
+  == request 24 at 6.326 s
+    POST /k17arch/k17_echo HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 19
+    > Host: localhost:9972
+    > body bytes 19: 08 01 12 0f 08 05 12 02 01 01 aa 01 06 0a 04 07 00 00 00
+    < 200 OK
+    < Content-Length: 32
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 32: 0a 1e 08 0b 12 02 01 0f 30 00 38 00 da 01 11 0a 0f 69 6e 74 33 32 20 5b 31 20 31 5d 20 5b 37 5d
+  == request 25 at 6.366 s
+    POST /k17arch/k17_echo HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 39
+    > Host: localhost:9972
+    > body bytes 39: 08 01 12 23 08 09 12 02 01 03 ca 01 1a 0a 18 00 00 00 00 00 00 f0 3f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 08 40
+    < 200 OK
+    < Content-Length: 37
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 37: 0a 23 08 0b 12 02 01 14 30 00 38 00 da 01 16 0a 14 64 6f 75 62 6c 65 20 5b 31 20 33 5d 20 5b 31 20 30 20 33 5d
+  == request 26 at 6.416 s
+    POST /k17arch/k17_echo HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 39
+    > Host: localhost:9972
+    > body bytes 39: 08 01 12 23 08 09 12 02 01 03 ca 01 1a 0a 18 00 00 00 00 00 00 f0 3f 00 00 00 00 00 00 00 40 00 00 00 00 00 00 08 40
+    < 200 OK
+    < Content-Length: 37
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 37: 0a 23 08 0b 12 02 01 14 30 00 38 00 da 01 16 0a 14 64 6f 75 62 6c 65 20 5b 31 20 33 5d 20 5b 31 20 32 20 33 5d
+  == request 27 at 6.449 s
+    POST /k17arch/k17_echo HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 19
+    > Host: localhost:9972
+    > body bytes 19: 08 01 12 0f 08 0b 12 02 01 04 da 01 06 0a 04 74 65 78 74
+    < 200 OK
+    < Content-Length: 34
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 34: 0a 20 08 0b 12 02 01 11 30 00 38 00 da 01 13 0a 11 63 68 61 72 20 5b 31 20 34 5d 20 27 74 65 78 74 27
+  == request 28 at 6.476 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 21
+    > Host: localhost:9972
+    > body bytes 21: 08 01 12 11 08 0b 12 02 01 06 da 01 08 0a 06 64 6f 75 62 6c 65
+    < 200 OK
+    < Content-Length: 25
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 25: 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 0c 40
+  == request 29 at 6.500 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 24
+    > Host: localhost:9972
+    > body bytes 24: 08 01 12 14 08 0b 12 02 01 09 da 01 0b 0a 09 64 6f 75 62 6c 65 6d 61 74
+    < 200 OK
+    < Content-Length: 49
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:13 GMT
+    < body bytes 49: 0a 2f 08 09 12 02 02 02 30 00 38 00 ca 01 22 0a 20 00 00 00 00 00 00 f0 3f 00 00 00 00 00 00 08 40 00 00 00 00 00 00 00 40 00 00 00 00 00 00 10 40
+  == request 30 at 6.533 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 24
+    > Host: localhost:9972
+    > body bytes 24: 08 01 12 14 08 0b 12 02 01 09 da 01 0b 0a 09 64 6f 75 62 6c 65 72 6f 77
+    < 200 OK
+    < Content-Length: 41
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 41: 0a 27 08 09 12 02 01 03 30 00 38 00 ca 01 1a 0a 18 00 00 00 00 00 00 f0 3f 00 00 00 00 00 00 00 40 00 00 00 00 00 00 08 40
+  == request 31 at 6.560 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 19
+    > Host: localhost:9972
+    > body bytes 19: 08 01 12 0f 08 0b 12 02 01 04 da 01 06 0a 04 63 68 61 72
+    < 200 OK
+    < Content-Length: 22
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 22: 0a 14 08 0b 12 02 01 05 30 00 38 00 da 01 07 0a 05 68 65 6c 6c 6f
+  == request 32 at 6.593 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 22
+    > Host: localhost:9972
+    > body bytes 22: 08 01 12 12 08 0b 12 02 01 07 da 01 09 0a 07 63 68 61 72 6d 61 74
+    < 200 OK
+    < Content-Length: 21
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 21: 0a 13 08 0b 12 02 02 02 30 00 38 00 da 01 06 0a 04 61 63 62 64
+  == request 33 at 6.660 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 19
+    > Host: localhost:9972
+    > body bytes 19: 08 01 12 0f 08 0b 12 02 01 04 da 01 06 0a 04 63 65 6c 6c
+    < 200 OK
+    < Content-Length: 93
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 93: 0a 5b 08 0d 12 02 01 03 30 00 38 00 e2 01 4e 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 f0 3f 0a 12 08 0b 12 02 01 03 30 00 38 00 da 01 05 0a 03 74 77 6f 0a 1f 08 09 12 02 01 02 30 00 38 00 ca 01 12 0a 10 00 00 00 00 00 00 08 40 00 00 00 00 00 00 10 40
+  == request 34 at 6.716 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 21
+    > Host: localhost:9972
+    > body bytes 21: 08 01 12 11 08 0b 12 02 01 06 da 01 08 0a 06 73 74 72 75 63 74
+    < 200 OK
+    < Content-Length: 67
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 67: 0a 41 08 0c 12 02 01 01 30 00 38 00 ea 01 34 0a 01 61 0a 01 62 12 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 f0 3f 12 13 08 0b 12 02 01 04 30 00 38 00 da 01 06 0a 04 74 65 78 74
+  == request 35 at 6.750 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 18
+    > Host: localhost:9972
+    > body bytes 18: 08 01 12 0e 08 0b 12 02 01 03 da 01 05 0a 03 6e 61 6e
+    < 200 OK
+    < Content-Length: 25
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 25: 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 f8 ff
+  == request 36 at 6.767 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 21
+    > Host: localhost:9972
+    > body bytes 21: 08 01 12 11 08 0b 12 02 01 06 da 01 08 0a 06 6e 61 6e 6d 61 74
+    < 200 OK
+    < Content-Length: 49
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 49: 0a 2f 08 09 12 02 02 02 30 00 38 00 ca 01 22 0a 20 00 00 00 00 00 00 f0 3f 00 00 00 00 00 00 f8 ff 00 00 00 00 00 00 f8 ff 00 00 00 00 00 00 10 40
+  == request 37 at 6.807 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 22
+    > Host: localhost:9972
+    > body bytes 22: 08 01 12 12 08 0b 12 02 01 07 da 01 09 0a 07 6c 6f 67 69 63 61 6c
+    < 200 OK
+    < Content-Length: 18
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 18: 0a 10 08 0a 12 02 01 01 30 00 38 00 d2 01 03 0a 01 01
+  == request 38 at 6.867 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 25
+    > Host: localhost:9972
+    > body bytes 25: 08 01 12 15 08 0b 12 02 01 0a da 01 0c 0a 0a 6c 6f 67 69 63 61 6c 6d 61 74
+    < 200 OK
+    < Content-Length: 21
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 21: 0a 13 08 0a 12 02 02 02 30 00 38 00 d2 01 06 0a 04 01 00 00 01
+  == request 39 at 6.926 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 23
+    > Host: localhost:9972
+    > body bytes 23: 08 01 12 13 08 0b 12 02 01 08 da 01 0a 0a 08 64 61 74 65 74 69 6d 65
+    < 200 OK
+    < Content-Length: 455
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 455: 0a c4 03 08 0f 12 02 01 01 2a 77 0a 75 0a 00 0a 08 64 61 74 65 74 69 6d 65 0a 09 54 69 6d 65 53 74 61 6d 70 0a 04 59 65 61 72 0a 05 4d 6f 6e 74 68 0a 03 44 61 79 0a 04 48 6f 75 72 0a 06 4d 69 6e 75 74 65 0a 06 53 65 63 6f 6e 64 0a 0a 5f 5f 6d 65 74 61 44 61 74 61 0a 08 54 69 6d 65 5a 6f 6e 65 0a 06 46 6f 72 6d 61 74 0a 14 5f 5f 65 78 74 65 72 6e 61 6c 44 69 6d 65 6e 73 69 6f 6e 73 10 0e 30 00 38 00 f8 01 01 82 02 ba 02 0a b7 02 12 09 02 03 04 05 06 07 08 09 0c 1a 09 00 00 00 00 00 00 00 01 01 22 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 44 95 1a e4 78 42 22 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 a0 9f 40 22 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 08 40 22 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a ...
+  == request 40 at 6.959 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 22
+    > Host: localhost:9972
+    > body bytes 22: 08 01 12 12 08 0b 12 02 01 07 da 01 09 0a 07 64 61 74 65 6e 75 6d
+    < 200 OK
+    < Content-Length: 25
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 25: 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 e0 fc 8f 26 41
+  == request 41 at 6.985 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 20
+    > Host: localhost:9972
+    > body bytes 20: 08 01 12 10 08 0b 12 02 01 05 da 01 07 0a 05 65 6d 70 74 79
+    < 200 OK
+    < Content-Length: 15
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 15: 0a 0d 08 09 12 02 00 00 30 00 38 00 ca 01 00
+  == request 42 at 7.033 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 19
+    > Host: localhost:9972
+    > body bytes 19: 08 01 12 0f 08 0b 12 02 01 04 da 01 06 0a 04 69 6e 74 38
+    < 200 OK
+    < Content-Length: 18
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 18: 0a 10 08 01 12 02 01 01 30 00 38 00 8a 01 03 0a 01 fb
+  == request 43 at 7.085 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 22
+    > Host: localhost:9972
+    > body bytes 22: 08 01 12 12 08 0b 12 02 01 07 da 01 09 0a 07 63 6f 6d 70 6c 65 78
+    < 200 OK
+    < Content-Length: 35
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 35: 0a 21 08 09 12 02 01 01 30 00 38 01 ca 01 14 0a 08 00 00 00 00 00 00 f0 3f 12 08 00 00 00 00 00 00 00 40
+  == request 44 at 7.109 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 21
+    > Host: localhost:9972
+    > body bytes 21: 08 01 12 11 08 0b 12 02 01 06 da 01 08 0a 06 73 74 72 69 6e 67
+    < 200 OK
+    < Content-Length: 23
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 23: 0a 15 08 13 12 02 01 01 30 00 38 00 b2 02 08 0a 03 73 74 72 12 01 03
+  == request 45 at 7.143 s
+    POST /k17arch/k17_make HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 24
+    > Host: localhost:9972
+    > body bytes 24: 08 01 12 14 08 0b 12 02 01 09 da 01 0b 0a 09 73 74 72 69 6e 67 61 72 72
+    < 200 OK
+    < Content-Length: 29
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 29: 0a 1b 08 13 12 02 02 02 30 00 38 00 b2 02 0e 0a 06 61 63 63 63 62 62 12 04 01 03 02 00
+  == request 46 at 7.200 s
+    POST /k17arch/k17_two HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 31
+    > Host: localhost:9972
+    > body bytes 31: 08 02 12 1b 08 09 12 02 01 02 ca 01 12 0a 10 00 00 00 00 00 00 f0 3f 00 00 00 00 00 00 00 40
+    < 200 OK
+    < Content-Length: 66
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 66: 0a 1f 08 09 12 02 01 02 30 00 38 00 ca 01 12 0a 10 00 00 00 00 00 00 f0 3f 00 00 00 00 00 00 00 40 0a 1f 08 09 12 02 01 02 30 00 38 00 ca 01 12 0a 10 00 00 00 00 00 00 f0 bf 00 00 00 00 00 00 00 c0
+  == request 47 at 7.267 s
+    POST /k17arch/k17_two HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 23
+    > Host: localhost:9972
+    > body bytes 23: 08 02 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 14 40
+    < 200 OK
+    < Content-Length: 50
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 50: 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 14 40 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 14 c0
+  == request 48 at 7.300 s
+    POST /k17arch/k17_two HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 23
+    > Host: localhost:9972
+    > body bytes 23: 08 02 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 14 40
+    < 200 OK
+    < Content-Length: 50
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 50: 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 14 40 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 14 c0
+  == request 49 at 7.349 s
+    POST /k17arch/k17_varout HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 23
+    > Host: localhost:9972
+    > body bytes 23: 08 01 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 00 40
+    < 200 OK
+    < Content-Length: 25
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 25: 0a 17 08 09 12 02 01 01 30 00 38 00 ca 01 0a 0a 08 00 00 00 00 00 00 00 40
+  == request 50 at 7.383 s
+    POST /k17arch/k17_opt HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 2
+    > Host: localhost:9972
+    > body bytes 2: 08 01
+    < 200 OK
+    < Content-Length: 26
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 26: 0a 18 08 0b 12 02 01 09 30 00 38 00 da 01 0b 0a 09 6e 61 72 67 69 6e 3d 30 20
+  == request 51 at 7.460 s
+    POST /k17arch/k17_opt HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 51
+    > Host: localhost:9972
+    > body bytes 51: 08 01 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 f0 3f 12 0c 08 0b 12 02 01 01 da 01 03 0a 01 62 12 0c 08 0a 12 02 01 01 d2 01 03 0a 01 01
+    < 200 OK
+    < Content-Length: 82
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 82: 0a 50 08 0b 12 02 01 41 30 00 38 00 da 01 43 0a 41 6e 61 72 67 69 6e 3d 33 20 61 3d 64 6f 75 62 6c 65 20 5b 31 20 31 5d 20 5b 31 5d 20 62 3d 63 68 61 72 20 5b 31 20 31 5d 20 27 62 27 20 63 3d 6c 6f 67 69 63 61 6c 20 5b 31 20 31 5d 20 74 72 75 65
+  == request 52 at 7.510 s
+    POST /k17arch/k17_opt HTTP/1.1
+    > Connection: Keep-Alive
+    > Content-Type: application/x-google-protobuf
+    > User-Agent: JGraph Excel client 1.0.0.0
+    > Content-Length: 58
+    > Host: localhost:9972
+    > body bytes 58: 08 01 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 f0 3f 12 13 08 09 12 02 01 01 ca 01 0a 0a 08 00 00 00 00 00 00 00 00 12 0c 08 0a 12 02 01 01 d2 01 03 0a 01 01
+    < 200 OK
+    < Content-Length: 84
+    < Content-Type: application/x-google-protobuf
+    < Date: Sun, 08 Nov 2026 05:17:14 GMT
+    < body bytes 84: 0a 52 08 0b 12 02 01 43 30 00 38 00 da 01 45 0a 43 6e 61 72 67 69 6e 3d 33 20 61 3d 64 6f 75 62 6c 65 20 5b 31 20 31 5d 20 5b 31 5d 20 62 3d 64 6f 75 62 6c 65 20 5b 31 20 31 5d 20 5b 30 5d 20 63 3d 6c 6f 67 69 63 61 6c 20 5b 31 20 31 5d 20 74 72 75 65
+== server log
+  2026-11-07 22:17:07 k17arch: deployed (18 function(s))
+  2026-11-07 22:17:07 listening on http://localhost:9971 with 1 worker(s); Ctrl+C or jgraph-mps stop ends it
+  2026-11-07 22:17:12 worker 0: k17_noout saw char [1 1] 'x'
+  2026-11-07 22:17:17 stopping
+  2026-11-07 22:17:17 worker 0: [reply stream] OperationCanceledException: The operation was canceled.
+  2026-11-07 22:17:17 worker 0: [ended] the worker's reply stream ended

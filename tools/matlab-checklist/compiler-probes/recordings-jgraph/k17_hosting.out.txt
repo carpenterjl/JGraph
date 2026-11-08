@@ -48,8 +48,8 @@ load.jgcomutil.dll	loaded
 load.addin.open	opened k17hosting.xlam: IsAddin True
 load.addin.dll	loaded
 load.addin.again	loaded
-excel.2272	still alive, ended
-excel.15660	still alive, ended
-excel.6784	still alive, ended
-excel.10520	still alive, ended
-seconds	5.6
+excel.23372	still alive, ended
+excel.7492	still alive, ended
+excel.516	still alive, ended
+excel.10316	still alive, ended
+seconds	5.4

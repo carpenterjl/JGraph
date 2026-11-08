@@ -1,0 +1,58 @@
+// The installer template's resources, all language-neutral: compiler.package.excelClientForProductionServer
+// replaces the icon group, the version block and adds the payload (RCDATA JGRAPH_INSTALL_BUNDLE) and the
+// configuration (RCDATA JGRAPH_EXCEL_CLIENT_CONFIG).
+#include <windows.h>
+#include "resource.h"
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+1 ICON "..\\..\\src\\JGraph.Application\\Assets\\jgraph.ico"
+
+1 RT_MANIFEST "jgxlsetup.manifest"
+
+IDD_INSTALL DIALOGEX 0, 0, 340, 212
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Install Excel client"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "", IDC_INTRO, 12, 12, 316, 20
+    LTEXT           "Install into:", -1, 12, 40, 70, 10
+    EDITTEXT        IDC_FOLDER, 90, 38, 190, 14, ES_AUTOHSCROLL
+    PUSHBUTTON      "Browse...", IDC_FOLDERBROWSE, 284, 37, 44, 15
+    LTEXT           "Server URL:", -1, 12, 60, 70, 10
+    EDITTEXT        IDC_URL, 90, 58, 238, 14, ES_AUTOHSCROLL
+    LTEXT           "Timeout (seconds):", -1, 12, 80, 70, 10
+    EDITTEXT        IDC_TIMEOUT, 90, 78, 60, 14, ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Response limit (MB):", -1, 170, 80, 80, 10
+    EDITTEXT        IDC_LIMIT, 254, 78, 74, 14, ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "Install for every user of this computer (needs administrator rights)", IDC_ALLUSERS, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 12, 100, 316, 10
+    LTEXT           "Files:", -1, 12, 118, 70, 10
+    LISTBOX         IDC_FILES, 90, 116, 238, 64, LBS_NOSEL | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_BORDER
+    DEFPUSHBUTTON   "Install", IDOK, 228, 188, 50, 14
+    PUSHBUTTON      "Cancel", IDCANCEL, 282, 188, 50, 14
+END
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,0
+ PRODUCTVERSION 1,0,0,0
+ FILEFLAGSMASK 0x3fL
+ FILEFLAGS 0x0L
+ FILEOS VOS_NT_WINDOWS32
+ FILETYPE VFT_APP
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+            VALUE "FileDescription", "JGraph Excel client installer"
+            VALUE "FileVersion", "1.0.0.0"
+            VALUE "ProductName", "JGraph"
+            VALUE "ProductVersion", "1.0.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END

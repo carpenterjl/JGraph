@@ -1,4 +1,4 @@
-== excel: 1004 keys, 258 agree, 746 recorded divergences, 0 unexplained, 30 only in JGraph's
+== excel: 1004 keys, 426 agree, 578 recorded divergences, 0 unexplained, 181 only in JGraph's
   divergence (2): the engine's own version; JGraph's build needs no C++ compiler (KO9)
     matlab.version, compiler.version
   divergence (78): an object's or a cell column's display is JGraph's own layout, not R2025b's aligned one (open item 194), and JGraph's runtime is one install, listed alone where R2025b lists its add-ons (ADR 0267)
@@ -9,13 +9,13 @@
     set.AdditionalFiles.4
   divergence (1): JGraph has no support packages, so a list of them is refused in JGraph's own words (stage K6; ADR 0315)
     set.SupportPackages.3
-  divergence (1): an options object is not saved to a MAT-file: its on/off properties are .NET values (open item 215)
-    derived.saveload
-  divergence (93): R2025b prints mbuild's transcript and, for a -b build, warns COM_WARN_FAILED_CREATE_EXCEL_ADDIN where Excel does not trust its VBA project; JGraph writes the add-in workbook as a file (.xlam) with no Excel and no warning (decision KO12; ADR 0318); its per-user registration warning names MATLAB where JGraph's names JGraph (ADR 0316)
+  divergence (2): an options object is not saved to a MAT-file: its on/off properties are .NET values (open item 215)
+    derived.saveload, copts.saveload
+  divergence (92): R2025b prints mbuild's transcript and, for a -b build, warns COM_WARN_FAILED_CREATE_EXCEL_ADDIN where Excel does not trust its VBA project; JGraph writes the add-in workbook as a file (.xlam) with no Excel and no warning (decision KO12; ADR 0318); its per-user registration warning names MATLAB where JGraph's names JGraph (ADR 0316)
     plain.printed, plain.warn, plain2.printed, plain2.warn, bas.printed, bas.warn, noembed.printed, noembed.warn, debug.printed, debug.warn, v2.printed, v2.warn ...
-  divergence (83): mbuild's C++ sources, IDL, MIDL outputs, module definition, resource script, import library and exports file are not written (KO9), JGraph's .xlam is listed where R2025b's .xla would stand (KO12; ADR 0318), and the DLL's byte count is the template's (ADR 0316)
+  divergence (77): mbuild's C++ sources, IDL, MIDL outputs, module definition, resource script, import library and exports file are not written (KO9), JGraph's .xlam is listed where R2025b's .xla would stand (KO12; ADR 0318), and the DLL's byte count is the template's (ADR 0316)
     plain.files, plain2.files, bas.Files, bas.files, noembed.Files, noembed.files, debug.files, v2.files, v05.files, v3456.Files, v3456.files, vzero.files ...
-  divergence (71): a timing
+  divergence (66): a timing
     plain.seconds, plain2.seconds, bas.seconds, noembed.seconds, debug.seconds, v2.seconds, v05.seconds, v3456.seconds, vtext.seconds, vzero.seconds, defaults.seconds, additional.seconds ...
   divergence (39): readme.txt and GettingStarted.html are in JGraph's words, for the JGraph Runtime (ADR 0315)
     plain.file.GettingStarted.html, plain.file.readme.txt, plain2.file.GettingStarted.html, plain2.file.readme.txt, bas.file.GettingStarted.html, bas.file.readme.txt, noembed.file.GettingStarted.html, noembed.file.readme.txt, debug.file.GettingStarted.html, debug.file.readme.txt, v2.file.GettingStarted.html, v2.file.readme.txt ...
@@ -29,14 +29,26 @@
     plain.registry.Software/Classes/TypeLib, bas.registry.Software/Classes/TypeLib, noembed.registry.Software/Classes/TypeLib, debug.registry.Software/Classes/TypeLib, v2.registry.Software/Classes/TypeLib, v05.registry.Software/Classes/TypeLib, v3456.registry.Software/Classes/TypeLib, vzero.registry.Software/Classes/TypeLib, defaults.registry.Software/Classes/TypeLib, additional.registry.Software/Classes/TypeLib, pfile.registry.Software/Classes/TypeLib, classname.registry.Software/Classes/TypeLib ...
   divergence (1): the add-in's own type library declares the three flags interfaces too (JGraph's ids, MathWorks' member names), so four Interface keys are registered where R2025b's library imports MathWorks' mwcomutil.tlb and registers one (decision KO10; ADR 0316; stage K17d's utility library may move them)
     plain.registry.Software/Classes/Interface
-  divergence (18): the module is R2025b's to the character but for two things: the utility library's ProgID is JGraph's (JGraphComUtil.MWUtil25.2, decision KO10), and the objects are created with no server name, since R2025b's CreateObject(progid, "localhost") is a DCOM activation that cannot reach an add-in registered for the current user (k17_cells, k17_hosting; ADR 0318)
-    bas.file.k17bas.bas, noembed.file.k17sep.bas, v3456.file.k17v3456.bas, pfile.file.k17p.bas, mcc_default.file.k17m.bas, mcc_twofiles.bas, fromresults.file.k17mps.bas, fromfiles.file.k17mpsf.bas, cdefaults.file.k17_quiet.bas, nobas.file.k17cnb.bas, cdebug.file.k17cdbg.bas, cv2.file.k17cv2.bas ...
+  divergence (6): the module is R2025b's to the character but for two things: the utility library's ProgID is JGraph's (JGraphComUtil.MWUtil25.2, decision KO10), and the objects are created with no server name, since R2025b's CreateObject(progid, "localhost") is a DCOM activation that cannot reach an add-in registered for the current user (k17_cells, k17_hosting; ADR 0318)
+    bas.file.k17bas.bas, noembed.file.k17sep.bas, v3456.file.k17v3456.bas, pfile.file.k17p.bas, mcc_default.file.k17m.bas, mcc_twofiles.bas
   divergence (6): JGraph writes no IDL to read ids from; its ids are its own derivation from the names and the version (ADR 0316)
     guids.plain.same_as_plain2, guids.plain.same_as_bas, guids.mcc_default.same_as_samev2, guids.mcc_default.same_as_samefiles, guids.mcc_default.same_as_sameorder, guids.mcc_default.samev2.which
   divergence (9): R2025b's build fails in mbuild (-T compile:lib; a name that is not an identifier); JGraph refuses such a name before writing anything and takes -T compile:lib as -T codegen (ADR 0315)
     mcc_compile, mcc_compile.files, mcc_compile.warn, mcc_badname, mcc_badname.files, mcc_badname.warn, mcc_badclass, mcc_badclass.files, mcc_badclass.warn
-  divergence (194): the Excel client for the Production Server is stage K17f's; JGraph's probe run stops after the add-in sections until then (run-k17.ps1 -UpTo addin)
-    copts.properties, copts.class, copts.superclasses, copts.derived, copts.noargs, copts.onefile, copts.addinresults, copts.missingarchive, copts.txtarchive, copts.noext, copts.results.nv, copts.results.odd ...
+  divergence (2): an object's or a cell column's display is JGraph's own layout, not R2025b's aligned one (open item 194)
+    copts.properties, cset.FunctionFiles.1
+  divergence (1): JGraph's options classes declare no superclasses; AllOptions is R2025b's own (ADR 0315)
+    copts.superclasses
+  divergence (12): no C# source is generated: the client's DLL is the prebuilt native template jgxlmps.dll stamped by the build with its type library and the functions' switches (decision KO9; ADR 0319)
+    fromresults.file.K17Mps.cs, fromfiles.file.K17MpsF.cs, cdefaults.file.k17_quietClass.cs, nobas.file.K17Cnb.cs, cdebug.file.K17Cdbg.cs, cv2.file.K17Cv2.cs, cv05.file.K17Cv05.cs, blank.file.K17Blank.cs, onefileall.file.K17One.cs, cpfile.file.K17Cp.cs, mpsxl_default.file.K17X.cs, mpsxl_group.file.K17Xg.cs
+  divergence (19): R2025b registers the .NET client through regasm's script under Wow6432Node (mscoree.dll, the assembly's codebase); JGraph's native client registers its ProgID, class and type library through its own DllRegisterServer (ADR 0319)
+    fromresults.registry.Software/Classes/Wow6432Node/CLSID, fromfiles.registry.Software/Classes/Wow6432Node/CLSID, cdefaults.registry.Software/Classes/Wow6432Node/CLSID, nobas.registry.Software/Classes/Wow6432Node/CLSID, cdebug.registry.Software/Classes/Wow6432Node/CLSID, cv2.registry.Software/Classes/Wow6432Node/CLSID, cv05.registry.Software/Classes/Wow6432Node/CLSID, blank.registry.Software/Classes/Wow6432Node/CLSID, onefileall.registry.Software/Classes/Wow6432Node/CLSID, cpfile.registry.Software/Classes/Wow6432Node/CLSID, mpsxl_default.registry.Software/Classes/Wow6432Node/CLSID, mpsxl_noversion.registry.Software/Classes/Wow6432Node/CLSID ...
+  divergence (5): R2025b's ExcelClientForProductionServerWriter fails: ConvertExcelDateToString alone trips over an undefined variable, and two or more files with any switch put a comma in front of the class{} group, which its csc refuses; JGraph writes the group as the switches mean and builds (docs/MATLAB_Behavioral_Fixes.md; ADR 0319)
+    date, nan, numdate, blankdate, allswitches
+  divergence (9): R2025b prints csc's, regasm's and reg's transcript and its warnings on standard output under the key; JGraph prints its own transcript and its warnings on standard error (ADR 0319)
+    mpsxl_default, mpsxl_noversion, mpsxl_noclass, mpsxl_group, mpsxl_groupbug, mpsxl_badswitch, mpsxl_bundle, mpsxl_debug, mpsxl_notarget
+  divergence (1): disp of a non-integer double is JGraph's own layout (1.5 where R2025b's format short prints 1.5000; open item 194)
+    pset.MaxResponseSize.3
 == com_preinit: 26 keys, 21 agree, 5 recorded divergences, 0 unexplained, 2 only in JGraph's
   divergence (1): a timing
     create.seconds
@@ -132,8 +144,44 @@
     excel.2136, excel.25964, excel.16948, excel.5444
   divergence (1): a timing
     seconds
-== pe: 2452 keys, 726 agree, 1726 recorded divergences, 0 unexplained, 14 only in JGraph's
-  divergence (725): pe-resources.py lists every file beside a DLL under the label of its stem, one stem's rows overwriting each other: mbuild's import library, exports file and generated sources are not written by JGraph (KO9; ADR 0316)
+== mps: 355 keys, 153 agree, 202 recorded divergences, 0 unexplained, 3 only in JGraph's
+  divergence (1): JGraph's client folder holds the .xlam workbook, no C# source and no regasm script (KO9, KO12; ADR 0319)
+    dll.folder
+  divergence (186): R2025b's client is a .NET assembly with a string heap, types and references to reflect; JGraph's is native (KO9; ADR 0319)
+    client.streams, client.us, client.names, deps.mpsclient, deps.excelinterop, deps.visualbasic, asm.load, asm.runtime, asm.attributes, asm.references, asm.resources, asm.resource.k17mps.MathWorks.MATLAB.ProductionServer.Client.dll ...
+  divergence (2): JGraph's client keeps its settings under Software\JGraph\Excel Client\<add-in> (ServerURL a text value, timeoutSeconds, responseSizeLimit, certificateFile), R2025b's under Software\MathWorks\MATLAB Builder EX\2.5 with the URL as a value name (ADR 0319)
+    config.write, config.keys
+  divergence (1): an Excel error value is refused in JGraph's words where R2025b's names the .NET ErrorWrapper it cannot marshal (ADR 0319)
+    echo.K17Mps.err
+  divergence (1): a char matrix lands as one string per row; R2025b's client flattens the rows column-major into one text ('acbd' for ['ab'; 'cd']; docs/MATLAB_Behavioral_Fixes.md; ADR 0319)
+    make.K17Mps.charmat
+  divergence (1): a struct output is refused in JGraph's words where R2025b's says no .NET type is available (ADR 0319)
+    make.K17Mps.struct
+  divergence (1): an empty output lands in the cell as Empty; R2025b's client fails on a null reference (docs/MATLAB_Behavioral_Fixes.md; ADR 0319)
+    make.K17Mps.empty
+  divergence (2): a string output lands as its text, a string array as texts; R2025b's client refuses the type (ADR 0319)
+    make.K17Mps.string, make.K17Mps.stringarr
+  divergence (3): the oracle's own artifact: reflection unrolls a double[] into two arguments (TooManyInputs) where the direct COM call passes one SAFEARRAY, so one request carries a 1-by-2 row (ADR 0314, ADR 0319)
+    two.K17Mps.array, wire.46.request, wire.46.reply
+  divergence (2): JGraph's client log is its own file (<add-in>-<date>.log) in its own words; R2025b's is the FileLogTraceListener's (ADR 0319)
+    clientlog.files, clientlog.text.k17mps-2026-11-06.log
+  divergence (1): a timing
+    seconds
+  divergence (1): an error reply carries the deployed file's path in its stack, which names each engine's own work root (ADR 0319)
+    wire.21.reply
+== payload: 230 keys, 59 agree, 171 recorded divergences, 0 unexplained, 51 only in JGraph's
+  divergence (9): the installer's own size (its template is JGraph's, as K18's)
+    p.cert.k17mpsExcelClientInstaller.bytes, p.default.k17mpsExcelClientInstaller.bytes, p.files.k17mpsExcelClientInstaller.bytes, p.filesplus.k17mpsExcelClientInstaller.bytes, p.named.K17Setup.bytes, p.nolibrary.k17mpsExcelClientInstaller.bytes, p.options.k17mpsExcelClientInstaller.bytes, p.repeat.k17mpsExcelClientInstaller.bytes, src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.bytes
+  divergence (18): the installer's icon is the one given at R2025b's six sizes, written as JGraph's icon writer writes them (ADR 0273, ADR 0319)
+    p.cert.k17mpsExcelClientInstaller.resource.ICON, p.cert.k17mpsExcelClientInstaller.icongroup.1, p.default.k17mpsExcelClientInstaller.resource.ICON, p.default.k17mpsExcelClientInstaller.icongroup.1, p.files.k17mpsExcelClientInstaller.resource.ICON, p.files.k17mpsExcelClientInstaller.icongroup.1, p.filesplus.k17mpsExcelClientInstaller.resource.ICON, p.filesplus.k17mpsExcelClientInstaller.icongroup.1, p.named.K17Setup.resource.ICON, p.named.K17Setup.icongroup.1, p.nolibrary.k17mpsExcelClientInstaller.resource.ICON, p.nolibrary.k17mpsExcelClientInstaller.icongroup.1 ...
+  divergence (77): JGraph's installer carries the payload as JGRAPH_INSTALL_BUNDLE (a stored zip it unpacks itself) and the configuration as JGRAPH_EXCEL_CLIENT_CONFIG (R2025b's _config.txt text, key for key); R2025b's carries MW_COMPILER_EZDEPLOY_* with the unzip tools it runs (ADR 0319)
+    p.cert.k17mpsExcelClientInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE, p.cert.k17mpsExcelClientInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries, p.cert.k17mpsExcelClientInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP, p.cert.k17mpsExcelClientInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP, p.cert.k17mpsExcelClientInstaller.resource.MW_COMPILER_EZDEPLOY_ZLIB, p.cert.k17mpsExcelClientInstaller.starts.MW_COMPILER_EZDEPLOY_ZLIB, p.cert.k17mpsExcelClientInstaller.resource.MW_MPS_EX_ADDIN_CONFIG, p.cert.k17mpsExcelClientInstaller.text.MW_MPS_EX_ADDIN_CONFIG, p.default.k17mpsExcelClientInstaller.resource.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE, p.default.k17mpsExcelClientInstaller.zip.MW_COMPILER_EZDEPLOY_INSTALL_BUNDLE.entries, p.default.k17mpsExcelClientInstaller.resource.MW_COMPILER_EZDEPLOY_UNZIP, p.default.k17mpsExcelClientInstaller.starts.MW_COMPILER_EZDEPLOY_UNZIP ...
+  divergence (58): JGraph's installer is stamped with the Version given (R2025b's keeps 1.0.0.0) and its own description strings (ADR 0319)
+    p.cert.k17mpsExcelClientInstaller.version.string.FileDescription, p.cert.k17mpsExcelClientInstaller.version.string.InternalName, p.cert.k17mpsExcelClientInstaller.version.string.LegalCopyright, p.cert.k17mpsExcelClientInstaller.version.string.OriginalFilename, p.cert.k17mpsExcelClientInstaller.version.string.ProductName, p.cert.k17mpsExcelClientInstaller.version.string.Assembly Version, p.default.k17mpsExcelClientInstaller.version.string.FileDescription, p.default.k17mpsExcelClientInstaller.version.string.InternalName, p.default.k17mpsExcelClientInstaller.version.string.LegalCopyright, p.default.k17mpsExcelClientInstaller.version.string.OriginalFilename, p.default.k17mpsExcelClientInstaller.version.string.ProductName, p.default.k17mpsExcelClientInstaller.version.string.Assembly Version ...
+  divergence (9): the installer's own manifest (ADR 0319)
+    p.cert.k17mpsExcelClientInstaller.resource.MANIFEST, p.default.k17mpsExcelClientInstaller.resource.MANIFEST, p.files.k17mpsExcelClientInstaller.resource.MANIFEST, p.filesplus.k17mpsExcelClientInstaller.resource.MANIFEST, p.named.K17Setup.resource.MANIFEST, p.nolibrary.k17mpsExcelClientInstaller.resource.MANIFEST, p.options.k17mpsExcelClientInstaller.resource.MANIFEST, p.repeat.k17mpsExcelClientInstaller.resource.MANIFEST, src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource.MANIFEST
+== pe: 2452 keys, 1123 agree, 1329 recorded divergences, 0 unexplained, 204 only in JGraph's
+  divergence (719): pe-resources.py lists every file beside a DLL under the label of its stem, one stem's rows overwriting each other: mbuild's import library, exports file and generated sources are not written by JGraph (KO9; ADR 0316)
     b.additional.dlldata.file, b.additional.dlldata.ERR, b.additional.k17add.file, b.additional.k17add_1_0.file, b.additional.k17add_1_0.ERR, b.additional.K17Add_com.file, b.additional.K17Add_com.ERR, b.additional.k17add_dll.file, b.additional.k17add_dll.ERR, b.additional.k17add_idl.file, b.additional.k17add_idl.ERR, b.additional.k17add_idl_i.file ...
   divergence (86): the DLL is JGraph's template: its own size, sections, subsystem and imports (kernel32, ole32, oleaut32, advapi32; no mclxlmain or mclmcrrt) (KO9; ADR 0316)
     b.additional.k17add_1_0.bytes, b.additional.k17add_1_0.image.bytes, b.additional.k17add_1_0.import, b.bas.k17bas_1_0.bytes, b.bas.k17bas_1_0.image.bytes, b.bas.k17bas_1_0.import, b.classname.k17cls_1_0.bytes, b.classname.k17cls_1_0.image.bytes, b.classname.k17cls_1_0.import, b.debug.k17dbg_1_0.bytes, b.debug.k17dbg_1_0.sections, b.debug.k17dbg_1_0.image.bytes ...
@@ -141,8 +189,8 @@
     b.additional.k17add_1_0.resource, b.additional.k17add_1_0.  starts, b.bas.k17bas_1_0.resource, b.bas.k17bas_1_0.  starts, b.classname.k17cls_1_0.resource, b.classname.k17cls_1_0.  starts, b.debug.k17dbg_1_0.resource, b.debug.k17dbg_1_0.  starts, b.defaults.k17_one_1_0.resource, b.defaults.k17_one_1_0.  starts, b.noembed.k17sep_1_0.resource, b.noembed.k17sep_1_0.  starts ...
   divergence (112): the version block's file OS and type are set (VOS_NT_WINDOWS32, VFT_DLL) and its string table language-neutral, where R2025b's are 0 and English, as stage K11's libraries (ADR 0267, ADR 0316)
     b.additional.k17add_1_0.  fixed.FileOS, b.additional.k17add_1_0.  fixed.FileType, b.additional.k17add_1_0.  table, b.additional.k17add_1_0.  var.Translation, b.bas.k17bas_1_0.  fixed.FileOS, b.bas.k17bas_1_0.  fixed.FileType, b.bas.k17bas_1_0.  table, b.bas.k17bas_1_0.  var.Translation, b.classname.k17cls_1_0.  fixed.FileOS, b.classname.k17cls_1_0.  fixed.FileType, b.classname.k17cls_1_0.  table, b.classname.k17cls_1_0.  var.Translation ...
-  divergence (747): the Excel client's DLLs (compiler.build and mcc -W mpsxl) and its packaged installers are stage K17f's
-    c.arch.requiredMCRProducts.ERR, c.blank.buildresult.file, c.blank.buildresult.ERR, c.blank.includedSupportPackages.file, c.blank.includedSupportPackages.ERR, c.blank.k17blank.file, c.blank.k17blank.ERR, c.blank.K17Blank.file, c.blank.K17Blank.ERR, c.blank.k17blank.bytes, c.blank.k17blank.machine, c.blank.k17blank.subsystem ...
+  divergence (356): the Excel client's DLLs are JGraph's native template jgxlmps.dll stamped with the type library and the configuration (KO9), where R2025b's are .NET assemblies; its installers are JGraph's template (ADR 0319)
+    c.arch.requiredMCRProducts.ERR, c.blank.buildresult.ERR, c.blank.k17blank.file, c.blank.K17Blank.file, c.blank.K17Blank.ERR, c.blank.k17blank.bytes, c.blank.k17blank.machine, c.blank.k17blank.subsystem, c.blank.k17blank.sections, c.blank.k17blank.image.bytes, c.blank.k17blank.import, c.blank.k17blank.  fixed.FileType ...
 == registry: 15 keys, 10 agree, 5 recorded divergences, 0 unexplained, 2 only in JGraph's
   divergence (1): R2025b's recording was taken after an earlier pass of its cleanup had unregistered its add-ins; JGraph's lists the keys its builds registered, each removed below (ADR 0316)
     registry.added.before.cleanup

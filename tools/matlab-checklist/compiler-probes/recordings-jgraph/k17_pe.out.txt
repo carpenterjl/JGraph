@@ -70,7 +70,7 @@ b.bas.k17bas_1_0.resource	"TYPELIB" 1 lang 0: 8664 bytes
 b.bas.k17bas_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.bas.k17bas_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.bas.k17bas_1_0.  starts	30 2e 32 2e 33
-b.bas.k17bas_1_0.resource	RCDATA 2 lang 0: 12515 bytes
+b.bas.k17bas_1_0.resource	RCDATA 2 lang 0: 12516 bytes
 b.bas.k17bas_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.bas.k17bas_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.bas.k17bas_1_0.  fixed.FileVersion	1.0.0.0
@@ -114,7 +114,7 @@ b.classname.k17cls_1_0.resource	"TYPELIB" 1 lang 0: 5136 bytes
 b.classname.k17cls_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.classname.k17cls_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.classname.k17cls_1_0.  starts	30 2e 32 2e 33
-b.classname.k17cls_1_0.resource	RCDATA 2 lang 0: 3473 bytes
+b.classname.k17cls_1_0.resource	RCDATA 2 lang 0: 3472 bytes
 b.classname.k17cls_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.classname.k17cls_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.classname.k17cls_1_0.  fixed.FileVersion	1.0.0.0
@@ -158,7 +158,7 @@ b.debug.k17dbg_1_0.resource	"TYPELIB" 1 lang 0: 5612 bytes
 b.debug.k17dbg_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.debug.k17dbg_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.debug.k17dbg_1_0.  starts	30 2e 32 2e 33
-b.debug.k17dbg_1_0.resource	RCDATA 2 lang 0: 4189 bytes
+b.debug.k17dbg_1_0.resource	RCDATA 2 lang 0: 4191 bytes
 b.debug.k17dbg_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.debug.k17dbg_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.debug.k17dbg_1_0.  fixed.FileVersion	1.0.0.0
@@ -202,7 +202,7 @@ b.defaults.k17_one_1_0.resource	"TYPELIB" 1 lang 0: 5160 bytes
 b.defaults.k17_one_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.defaults.k17_one_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.defaults.k17_one_1_0.  starts	30 2e 32 2e 33
-b.defaults.k17_one_1_0.resource	RCDATA 2 lang 0: 3467 bytes
+b.defaults.k17_one_1_0.resource	RCDATA 2 lang 0: 3465 bytes
 b.defaults.k17_one_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.defaults.k17_one_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.defaults.k17_one_1_0.  fixed.FileVersion	1.0.0.0
@@ -342,7 +342,7 @@ b.plain.k17xl_1_0.resource	"TYPELIB" 1 lang 0: 8660 bytes
 b.plain.k17xl_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.plain.k17xl_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.plain.k17xl_1_0.  starts	30 2e 32 2e 33
-b.plain.k17xl_1_0.resource	RCDATA 2 lang 0: 12471 bytes
+b.plain.k17xl_1_0.resource	RCDATA 2 lang 0: 12473 bytes
 b.plain.k17xl_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.plain.k17xl_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.plain.k17xl_1_0.  fixed.FileVersion	1.0.0.0
@@ -386,7 +386,7 @@ b.plain2.k17xl_1_0.resource	"TYPELIB" 1 lang 0: 8660 bytes
 b.plain2.k17xl_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.plain2.k17xl_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.plain2.k17xl_1_0.  starts	30 2e 32 2e 33
-b.plain2.k17xl_1_0.resource	RCDATA 2 lang 0: 12475 bytes
+b.plain2.k17xl_1_0.resource	RCDATA 2 lang 0: 12473 bytes
 b.plain2.k17xl_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.plain2.k17xl_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.plain2.k17xl_1_0.  fixed.FileVersion	1.0.0.0
@@ -430,7 +430,7 @@ b.ra.k17ra_1_0.resource	"TYPELIB" 1 lang 0: 5132 bytes
 b.ra.k17ra_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.ra.k17ra_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.ra.k17ra_1_0.  starts	30 2e 32 2e 33
-b.ra.k17ra_1_0.resource	RCDATA 2 lang 0: 3464 bytes
+b.ra.k17ra_1_0.resource	RCDATA 2 lang 0: 3458 bytes
 b.ra.k17ra_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.ra.k17ra_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.ra.k17ra_1_0.  fixed.FileVersion	1.0.0.0
@@ -474,7 +474,7 @@ b.v05.k17v05_1_0.resource	"TYPELIB" 1 lang 0: 5612 bytes
 b.v05.k17v05_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.v05.k17v05_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.v05.k17v05_1_0.  starts	30 2e 32 2e 33
-b.v05.k17v05_1_0.resource	RCDATA 2 lang 0: 4190 bytes
+b.v05.k17v05_1_0.resource	RCDATA 2 lang 0: 4189 bytes
 b.v05.k17v05_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.v05.k17v05_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.v05.k17v05_1_0.  fixed.FileVersion	1.0.0.0
@@ -518,7 +518,7 @@ b.v2.k17v2_2_0.resource	"TYPELIB" 1 lang 0: 5608 bytes
 b.v2.k17v2_2_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.v2.k17v2_2_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.v2.k17v2_2_0.  starts	30 2e 32 2e 33
-b.v2.k17v2_2_0.resource	RCDATA 2 lang 0: 4179 bytes
+b.v2.k17v2_2_0.resource	RCDATA 2 lang 0: 4181 bytes
 b.v2.k17v2_2_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.v2.k17v2_2_0.resource	VERSION 1 lang 0: 320 bytes
 b.v2.k17v2_2_0.  fixed.FileVersion	2.0.0.0
@@ -566,7 +566,7 @@ b.v3456.k17v3456_3_4.resource	"TYPELIB" 1 lang 0: 5620 bytes
 b.v3456.k17v3456_3_4.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.v3456.k17v3456_3_4.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.v3456.k17v3456_3_4.  starts	30 2e 32 2e 33
-b.v3456.k17v3456_3_4.resource	RCDATA 2 lang 0: 4208 bytes
+b.v3456.k17v3456_3_4.resource	RCDATA 2 lang 0: 4206 bytes
 b.v3456.k17v3456_3_4.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.v3456.k17v3456_3_4.resource	VERSION 1 lang 0: 320 bytes
 b.v3456.k17v3456_3_4.  fixed.FileVersion	3.4.5.6
@@ -610,7 +610,7 @@ b.vzero.k17vz_1_0.resource	"TYPELIB" 1 lang 0: 5608 bytes
 b.vzero.k17vz_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 b.vzero.k17vz_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 b.vzero.k17vz_1_0.  starts	30 2e 32 2e 33
-b.vzero.k17vz_1_0.resource	RCDATA 2 lang 0: 4182 bytes
+b.vzero.k17vz_1_0.resource	RCDATA 2 lang 0: 4185 bytes
 b.vzero.k17vz_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 b.vzero.k17vz_1_0.resource	VERSION 1 lang 0: 320 bytes
 b.vzero.k17vz_1_0.  fixed.FileVersion	1.0.0.0
@@ -630,6 +630,45 @@ b.vzero.requiredMCRProducts.file	<W>\p\b\vzero\requiredMCRProducts.txt
 b.vzero.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 6)
 b.vzero.unresolvedSymbols.file	<W>\p\b\vzero\unresolvedSymbols.txt
 b.vzero.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+c.allswitches.buildresult.file	<W>\p\c\allswitches\buildresult.json
+c.allswitches.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+c.allswitches.includedSupportPackages.file	<W>\p\c\allswitches\includedSupportPackages.txt
+c.allswitches.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.allswitches.k17all.file	<W>\p\c\allswitches\k17all.bas
+c.allswitches.k17all.ERR	not a PE file
+c.allswitches.k17all.file	k17all.dll
+c.allswitches.k17all.bytes	334848
+c.allswitches.k17all.machine	0x8664
+c.allswitches.k17all.subsystem	windows-gui
+c.allswitches.k17all.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+c.allswitches.k17all.image.bytes	334848
+c.allswitches.k17all.overlay.bytes	0
+c.allswitches.k17all.certificate	no
+c.allswitches.k17all.import	ADVAPI32.dll
+c.allswitches.k17all.import	ole32.dll
+c.allswitches.k17all.import	OLEAUT32.dll
+c.allswitches.k17all.import	WINHTTP.dll
+c.allswitches.k17all.import	CRYPT32.dll
+c.allswitches.k17all.import	SHELL32.dll
+c.allswitches.k17all.import	KERNEL32.dll
+c.allswitches.k17all.resource	"TYPELIB" 1 lang 0: 2160 bytes
+c.allswitches.k17all.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+c.allswitches.k17all.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 164 bytes
+c.allswitches.k17all.  starts	41 64 64 49 6e 3d 6b 31 37 61 6c 6c 0a 43 6c 61
+c.allswitches.k17all.resource	VERSION 1 lang 0: 320 bytes
+c.allswitches.k17all.  fixed.FileVersion	1.0.0.0
+c.allswitches.k17all.  fixed.ProductVersion	1.0.0.0
+c.allswitches.k17all.  fixed.FileFlags	0x0
+c.allswitches.k17all.  fixed.FileOS	0x40004
+c.allswitches.k17all.  fixed.FileType	0x2
+c.allswitches.k17all.  table	000004B0
+c.allswitches.k17all.  string.FileVersion	1.0.0.0
+c.allswitches.k17all.  string.ProductVersion	1.0.0.0
+c.allswitches.k17all.  var.Translation	000004b0
+c.allswitches.k17all.file	<W>\p\c\allswitches\k17all.xlam
+c.allswitches.k17all.ERR	not a PE file
+c.allswitches.readme.file	<W>\p\c\allswitches\readme.txt
+c.allswitches.readme.ERR	not a PE file
 c.arch.buildresult.file	<W>\p\c\arch\buildresult.json
 c.arch.buildresult.ERR	not a PE file
 c.arch.includedSupportPackages.file	<W>\p\c\arch\includedSupportPackages.txt
@@ -644,6 +683,552 @@ c.arch.requiredMCRProducts.file	<W>\p\c\arch\requiredMCRProducts.txt
 c.arch.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 6)
 c.arch.unresolvedSymbols.file	<W>\p\c\arch\unresolvedSymbols.txt
 c.arch.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+c.blank.buildresult.file	<W>\p\c\blank\buildresult.json
+c.blank.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+c.blank.includedSupportPackages.file	<W>\p\c\blank\includedSupportPackages.txt
+c.blank.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.blank.k17blank.file	<W>\p\c\blank\k17blank.bas
+c.blank.k17blank.ERR	not a PE file
+c.blank.k17blank.file	k17blank.dll
+c.blank.k17blank.bytes	334848
+c.blank.k17blank.machine	0x8664
+c.blank.k17blank.subsystem	windows-gui
+c.blank.k17blank.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+c.blank.k17blank.image.bytes	334848
+c.blank.k17blank.overlay.bytes	0
+c.blank.k17blank.certificate	no
+c.blank.k17blank.import	ADVAPI32.dll
+c.blank.k17blank.import	ole32.dll
+c.blank.k17blank.import	OLEAUT32.dll
+c.blank.k17blank.import	WINHTTP.dll
+c.blank.k17blank.import	CRYPT32.dll
+c.blank.k17blank.import	SHELL32.dll
+c.blank.k17blank.import	KERNEL32.dll
+c.blank.k17blank.resource	"TYPELIB" 1 lang 0: 2168 bytes
+c.blank.k17blank.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+c.blank.k17blank.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 117 bytes
+c.blank.k17blank.  starts	41 64 64 49 6e 3d 6b 31 37 62 6c 61 6e 6b 0a 43
+c.blank.k17blank.resource	VERSION 1 lang 0: 320 bytes
+c.blank.k17blank.  fixed.FileVersion	1.0.0.0
+c.blank.k17blank.  fixed.ProductVersion	1.0.0.0
+c.blank.k17blank.  fixed.FileFlags	0x0
+c.blank.k17blank.  fixed.FileOS	0x40004
+c.blank.k17blank.  fixed.FileType	0x2
+c.blank.k17blank.  table	000004B0
+c.blank.k17blank.  string.FileVersion	1.0.0.0
+c.blank.k17blank.  string.ProductVersion	1.0.0.0
+c.blank.k17blank.  var.Translation	000004b0
+c.blank.k17blank.file	<W>\p\c\blank\k17blank.xlam
+c.blank.k17blank.ERR	not a PE file
+c.blank.readme.file	<W>\p\c\blank\readme.txt
+c.blank.readme.ERR	not a PE file
+c.blankdate.buildresult.file	<W>\p\c\blankdate\buildresult.json
+c.blankdate.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+c.blankdate.includedSupportPackages.file	<W>\p\c\blankdate\includedSupportPackages.txt
+c.blankdate.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.blankdate.k17bd.file	<W>\p\c\blankdate\k17bd.bas
+c.blankdate.k17bd.ERR	not a PE file
+c.blankdate.k17bd.file	k17bd.dll
+c.blankdate.k17bd.bytes	334848
+c.blankdate.k17bd.machine	0x8664
+c.blankdate.k17bd.subsystem	windows-gui
+c.blankdate.k17bd.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+c.blankdate.k17bd.image.bytes	334848
+c.blankdate.k17bd.overlay.bytes	0
+c.blankdate.k17bd.certificate	no
+c.blankdate.k17bd.import	ADVAPI32.dll
+c.blankdate.k17bd.import	ole32.dll
+c.blankdate.k17bd.import	OLEAUT32.dll
+c.blankdate.k17bd.import	WINHTTP.dll
+c.blankdate.k17bd.import	CRYPT32.dll
+c.blankdate.k17bd.import	SHELL32.dll
+c.blankdate.k17bd.import	KERNEL32.dll
+c.blankdate.k17bd.resource	"TYPELIB" 1 lang 0: 2156 bytes
+c.blankdate.k17bd.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+c.blankdate.k17bd.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 126 bytes
+c.blankdate.k17bd.  starts	41 64 64 49 6e 3d 6b 31 37 62 64 0a 43 6c 61 73
+c.blankdate.k17bd.resource	VERSION 1 lang 0: 320 bytes
+c.blankdate.k17bd.  fixed.FileVersion	1.0.0.0
+c.blankdate.k17bd.  fixed.ProductVersion	1.0.0.0
+c.blankdate.k17bd.  fixed.FileFlags	0x0
+c.blankdate.k17bd.  fixed.FileOS	0x40004
+c.blankdate.k17bd.  fixed.FileType	0x2
+c.blankdate.k17bd.  table	000004B0
+c.blankdate.k17bd.  string.FileVersion	1.0.0.0
+c.blankdate.k17bd.  string.ProductVersion	1.0.0.0
+c.blankdate.k17bd.  var.Translation	000004b0
+c.blankdate.k17bd.file	<W>\p\c\blankdate\k17bd.xlam
+c.blankdate.k17bd.ERR	not a PE file
+c.blankdate.readme.file	<W>\p\c\blankdate\readme.txt
+c.blankdate.readme.ERR	not a PE file
+c.cdebug.buildresult.file	<W>\p\c\cdebug\buildresult.json
+c.cdebug.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+c.cdebug.includedSupportPackages.file	<W>\p\c\cdebug\includedSupportPackages.txt
+c.cdebug.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.cdebug.k17cdbg.file	<W>\p\c\cdebug\k17cdbg.bas
+c.cdebug.k17cdbg.ERR	not a PE file
+c.cdebug.k17cdbg.file	k17cdbg.dll
+c.cdebug.k17cdbg.bytes	334848
+c.cdebug.k17cdbg.machine	0x8664
+c.cdebug.k17cdbg.subsystem	windows-gui
+c.cdebug.k17cdbg.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+c.cdebug.k17cdbg.image.bytes	334848
+c.cdebug.k17cdbg.overlay.bytes	0
+c.cdebug.k17cdbg.certificate	no
+c.cdebug.k17cdbg.import	ADVAPI32.dll
+c.cdebug.k17cdbg.import	ole32.dll
+c.cdebug.k17cdbg.import	OLEAUT32.dll
+c.cdebug.k17cdbg.import	WINHTTP.dll
+c.cdebug.k17cdbg.import	CRYPT32.dll
+c.cdebug.k17cdbg.import	SHELL32.dll
+c.cdebug.k17cdbg.import	KERNEL32.dll
+c.cdebug.k17cdbg.resource	"TYPELIB" 1 lang 0: 2160 bytes
+c.cdebug.k17cdbg.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+c.cdebug.k17cdbg.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 100 bytes
+c.cdebug.k17cdbg.  starts	41 64 64 49 6e 3d 6b 31 37 63 64 62 67 0a 43 6c
+c.cdebug.k17cdbg.resource	VERSION 1 lang 0: 320 bytes
+c.cdebug.k17cdbg.  fixed.FileVersion	1.0.0.0
+c.cdebug.k17cdbg.  fixed.ProductVersion	1.0.0.0
+c.cdebug.k17cdbg.  fixed.FileFlags	0x0
+c.cdebug.k17cdbg.  fixed.FileOS	0x40004
+c.cdebug.k17cdbg.  fixed.FileType	0x2
+c.cdebug.k17cdbg.  table	000004B0
+c.cdebug.k17cdbg.  string.FileVersion	1.0.0.0
+c.cdebug.k17cdbg.  string.ProductVersion	1.0.0.0
+c.cdebug.k17cdbg.  var.Translation	000004b0
+c.cdebug.k17cdbg.file	<W>\p\c\cdebug\k17cdbg.xlam
+c.cdebug.k17cdbg.ERR	not a PE file
+c.cdebug.readme.file	<W>\p\c\cdebug\readme.txt
+c.cdebug.readme.ERR	not a PE file
+c.cdefaults.buildresult.file	<W>\p\c\cdefaults\buildresult.json
+c.cdefaults.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+c.cdefaults.includedSupportPackages.file	<W>\p\c\cdefaults\includedSupportPackages.txt
+c.cdefaults.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.cdefaults.k17_quiet.file	<W>\p\c\cdefaults\k17_quiet.bas
+c.cdefaults.k17_quiet.ERR	not a PE file
+c.cdefaults.k17_quiet.file	k17_quiet.dll
+c.cdefaults.k17_quiet.bytes	339456
+c.cdefaults.k17_quiet.machine	0x8664
+c.cdefaults.k17_quiet.subsystem	windows-gui
+c.cdefaults.k17_quiet.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+c.cdefaults.k17_quiet.image.bytes	339456
+c.cdefaults.k17_quiet.overlay.bytes	0
+c.cdefaults.k17_quiet.certificate	no
+c.cdefaults.k17_quiet.import	ADVAPI32.dll
+c.cdefaults.k17_quiet.import	ole32.dll
+c.cdefaults.k17_quiet.import	OLEAUT32.dll
+c.cdefaults.k17_quiet.import	WINHTTP.dll
+c.cdefaults.k17_quiet.import	CRYPT32.dll
+c.cdefaults.k17_quiet.import	SHELL32.dll
+c.cdefaults.k17_quiet.import	KERNEL32.dll
+c.cdefaults.k17_quiet.resource	"TYPELIB" 1 lang 0: 6348 bytes
+c.cdefaults.k17_quiet.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+c.cdefaults.k17_quiet.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 395 bytes
+c.cdefaults.k17_quiet.  starts	41 64 64 49 6e 3d 6b 31 37 5f 71 75 69 65 74 0a
+c.cdefaults.k17_quiet.resource	VERSION 1 lang 0: 320 bytes
+c.cdefaults.k17_quiet.  fixed.FileVersion	1.0.0.0
+c.cdefaults.k17_quiet.  fixed.ProductVersion	1.0.0.0
+c.cdefaults.k17_quiet.  fixed.FileFlags	0x0
+c.cdefaults.k17_quiet.  fixed.FileOS	0x40004
+c.cdefaults.k17_quiet.  fixed.FileType	0x2
+c.cdefaults.k17_quiet.  table	000004B0
+c.cdefaults.k17_quiet.  string.FileVersion	1.0.0.0
+c.cdefaults.k17_quiet.  string.ProductVersion	1.0.0.0
+c.cdefaults.k17_quiet.  var.Translation	000004b0
+c.cdefaults.k17_quiet.file	<W>\p\c\cdefaults\k17_quiet.xlam
+c.cdefaults.k17_quiet.ERR	not a PE file
+c.cdefaults.readme.file	<W>\p\c\cdefaults\readme.txt
+c.cdefaults.readme.ERR	not a PE file
+c.cpfile.buildresult.file	<W>\p\c\cpfile\buildresult.json
+c.cpfile.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+c.cpfile.includedSupportPackages.file	<W>\p\c\cpfile\includedSupportPackages.txt
+c.cpfile.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.cpfile.k17cp.file	<W>\p\c\cpfile\k17cp.bas
+c.cpfile.k17cp.ERR	not a PE file
+c.cpfile.k17cp.file	k17cp.dll
+c.cpfile.k17cp.bytes	334336
+c.cpfile.k17cp.machine	0x8664
+c.cpfile.k17cp.subsystem	windows-gui
+c.cpfile.k17cp.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+c.cpfile.k17cp.image.bytes	334336
+c.cpfile.k17cp.overlay.bytes	0
+c.cpfile.k17cp.certificate	no
+c.cpfile.k17cp.import	ADVAPI32.dll
+c.cpfile.k17cp.import	ole32.dll
+c.cpfile.k17cp.import	OLEAUT32.dll
+c.cpfile.k17cp.import	WINHTTP.dll
+c.cpfile.k17cp.import	CRYPT32.dll
+c.cpfile.k17cp.import	SHELL32.dll
+c.cpfile.k17cp.import	KERNEL32.dll
+c.cpfile.k17cp.resource	"TYPELIB" 1 lang 0: 1804 bytes
+c.cpfile.k17cp.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+c.cpfile.k17cp.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 77 bytes
+c.cpfile.k17cp.  starts	41 64 64 49 6e 3d 6b 31 37 63 70 0a 43 6c 61 73
+c.cpfile.k17cp.resource	VERSION 1 lang 0: 320 bytes
+c.cpfile.k17cp.  fixed.FileVersion	1.0.0.0
+c.cpfile.k17cp.  fixed.ProductVersion	1.0.0.0
+c.cpfile.k17cp.  fixed.FileFlags	0x0
+c.cpfile.k17cp.  fixed.FileOS	0x40004
+c.cpfile.k17cp.  fixed.FileType	0x2
+c.cpfile.k17cp.  table	000004B0
+c.cpfile.k17cp.  string.FileVersion	1.0.0.0
+c.cpfile.k17cp.  string.ProductVersion	1.0.0.0
+c.cpfile.k17cp.  var.Translation	000004b0
+c.cpfile.k17cp.file	<W>\p\c\cpfile\k17cp.xlam
+c.cpfile.k17cp.ERR	not a PE file
+c.cpfile.readme.file	<W>\p\c\cpfile\readme.txt
+c.cpfile.readme.ERR	not a PE file
+c.cv05.buildresult.file	<W>\p\c\cv05\buildresult.json
+c.cv05.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+c.cv05.includedSupportPackages.file	<W>\p\c\cv05\includedSupportPackages.txt
+c.cv05.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.cv05.k17cv05.file	<W>\p\c\cv05\k17cv05.bas
+c.cv05.k17cv05.ERR	not a PE file
+c.cv05.k17cv05.file	k17cv05.dll
+c.cv05.k17cv05.bytes	334848
+c.cv05.k17cv05.machine	0x8664
+c.cv05.k17cv05.subsystem	windows-gui
+c.cv05.k17cv05.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+c.cv05.k17cv05.image.bytes	334848
+c.cv05.k17cv05.overlay.bytes	0
+c.cv05.k17cv05.certificate	no
+c.cv05.k17cv05.import	ADVAPI32.dll
+c.cv05.k17cv05.import	ole32.dll
+c.cv05.k17cv05.import	OLEAUT32.dll
+c.cv05.k17cv05.import	WINHTTP.dll
+c.cv05.k17cv05.import	CRYPT32.dll
+c.cv05.k17cv05.import	SHELL32.dll
+c.cv05.k17cv05.import	KERNEL32.dll
+c.cv05.k17cv05.resource	"TYPELIB" 1 lang 0: 2160 bytes
+c.cv05.k17cv05.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+c.cv05.k17cv05.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 100 bytes
+c.cv05.k17cv05.  starts	41 64 64 49 6e 3d 6b 31 37 63 76 30 35 0a 43 6c
+c.cv05.k17cv05.resource	VERSION 1 lang 0: 320 bytes
+c.cv05.k17cv05.  fixed.FileVersion	1.0.0.0
+c.cv05.k17cv05.  fixed.ProductVersion	1.0.0.0
+c.cv05.k17cv05.  fixed.FileFlags	0x0
+c.cv05.k17cv05.  fixed.FileOS	0x40004
+c.cv05.k17cv05.  fixed.FileType	0x2
+c.cv05.k17cv05.  table	000004B0
+c.cv05.k17cv05.  string.FileVersion	1.0.0.0
+c.cv05.k17cv05.  string.ProductVersion	1.0.0.0
+c.cv05.k17cv05.  var.Translation	000004b0
+c.cv05.k17cv05.file	<W>\p\c\cv05\k17cv05.xlam
+c.cv05.k17cv05.ERR	not a PE file
+c.cv05.readme.file	<W>\p\c\cv05\readme.txt
+c.cv05.readme.ERR	not a PE file
+c.cv2.buildresult.file	<W>\p\c\cv2\buildresult.json
+c.cv2.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+c.cv2.includedSupportPackages.file	<W>\p\c\cv2\includedSupportPackages.txt
+c.cv2.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.cv2.k17cv2.file	<W>\p\c\cv2\k17cv2.bas
+c.cv2.k17cv2.ERR	not a PE file
+c.cv2.k17cv2.file	k17cv2.dll
+c.cv2.k17cv2.bytes	334848
+c.cv2.k17cv2.machine	0x8664
+c.cv2.k17cv2.subsystem	windows-gui
+c.cv2.k17cv2.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+c.cv2.k17cv2.image.bytes	334848
+c.cv2.k17cv2.overlay.bytes	0
+c.cv2.k17cv2.certificate	no
+c.cv2.k17cv2.import	ADVAPI32.dll
+c.cv2.k17cv2.import	ole32.dll
+c.cv2.k17cv2.import	OLEAUT32.dll
+c.cv2.k17cv2.import	WINHTTP.dll
+c.cv2.k17cv2.import	CRYPT32.dll
+c.cv2.k17cv2.import	SHELL32.dll
+c.cv2.k17cv2.import	KERNEL32.dll
+c.cv2.k17cv2.resource	"TYPELIB" 1 lang 0: 2160 bytes
+c.cv2.k17cv2.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+c.cv2.k17cv2.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 98 bytes
+c.cv2.k17cv2.  starts	41 64 64 49 6e 3d 6b 31 37 63 76 32 0a 43 6c 61
+c.cv2.k17cv2.resource	VERSION 1 lang 0: 320 bytes
+c.cv2.k17cv2.  fixed.FileVersion	2.0.0.0
+c.cv2.k17cv2.  fixed.ProductVersion	2.0.0.0
+c.cv2.k17cv2.  fixed.FileFlags	0x0
+c.cv2.k17cv2.  fixed.FileOS	0x40004
+c.cv2.k17cv2.  fixed.FileType	0x2
+c.cv2.k17cv2.  table	000004B0
+c.cv2.k17cv2.  string.FileVersion	2.0.0.0
+c.cv2.k17cv2.  string.ProductVersion	2.0.0.0
+c.cv2.k17cv2.  var.Translation	000004b0
+c.cv2.k17cv2.file	<W>\p\c\cv2\k17cv2.xlam
+c.cv2.k17cv2.ERR	not a PE file
+c.cv2.readme.file	<W>\p\c\cv2\readme.txt
+c.cv2.readme.ERR	not a PE file
+c.date.buildresult.file	<W>\p\c\date\buildresult.json
+c.date.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+c.date.includedSupportPackages.file	<W>\p\c\date\includedSupportPackages.txt
+c.date.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.date.k17date.file	<W>\p\c\date\k17date.bas
+c.date.k17date.ERR	not a PE file
+c.date.k17date.file	k17date.dll
+c.date.k17date.bytes	334848
+c.date.k17date.machine	0x8664
+c.date.k17date.subsystem	windows-gui
+c.date.k17date.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+c.date.k17date.image.bytes	334848
+c.date.k17date.overlay.bytes	0
+c.date.k17date.certificate	no
+c.date.k17date.import	ADVAPI32.dll
+c.date.k17date.import	ole32.dll
+c.date.k17date.import	OLEAUT32.dll
+c.date.k17date.import	WINHTTP.dll
+c.date.k17date.import	CRYPT32.dll
+c.date.k17date.import	SHELL32.dll
+c.date.k17date.import	KERNEL32.dll
+c.date.k17date.resource	"TYPELIB" 1 lang 0: 2160 bytes
+c.date.k17date.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+c.date.k17date.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 112 bytes
+c.date.k17date.  starts	41 64 64 49 6e 3d 6b 31 37 64 61 74 65 0a 43 6c
+c.date.k17date.resource	VERSION 1 lang 0: 320 bytes
+c.date.k17date.  fixed.FileVersion	1.0.0.0
+c.date.k17date.  fixed.ProductVersion	1.0.0.0
+c.date.k17date.  fixed.FileFlags	0x0
+c.date.k17date.  fixed.FileOS	0x40004
+c.date.k17date.  fixed.FileType	0x2
+c.date.k17date.  table	000004B0
+c.date.k17date.  string.FileVersion	1.0.0.0
+c.date.k17date.  string.ProductVersion	1.0.0.0
+c.date.k17date.  var.Translation	000004b0
+c.date.k17date.file	<W>\p\c\date\k17date.xlam
+c.date.k17date.ERR	not a PE file
+c.date.readme.file	<W>\p\c\date\readme.txt
+c.date.readme.ERR	not a PE file
+c.fromfiles.buildresult.file	<W>\p\c\fromfiles\buildresult.json
+c.fromfiles.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+c.fromfiles.includedSupportPackages.file	<W>\p\c\fromfiles\includedSupportPackages.txt
+c.fromfiles.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.fromfiles.k17mpsf.file	<W>\p\c\fromfiles\k17mpsf.bas
+c.fromfiles.k17mpsf.ERR	not a PE file
+c.fromfiles.k17mpsf.file	k17mpsf.dll
+c.fromfiles.k17mpsf.bytes	339456
+c.fromfiles.k17mpsf.machine	0x8664
+c.fromfiles.k17mpsf.subsystem	windows-gui
+c.fromfiles.k17mpsf.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+c.fromfiles.k17mpsf.image.bytes	339456
+c.fromfiles.k17mpsf.overlay.bytes	0
+c.fromfiles.k17mpsf.certificate	no
+c.fromfiles.k17mpsf.import	ADVAPI32.dll
+c.fromfiles.k17mpsf.import	ole32.dll
+c.fromfiles.k17mpsf.import	OLEAUT32.dll
+c.fromfiles.k17mpsf.import	WINHTTP.dll
+c.fromfiles.k17mpsf.import	CRYPT32.dll
+c.fromfiles.k17mpsf.import	SHELL32.dll
+c.fromfiles.k17mpsf.import	KERNEL32.dll
+c.fromfiles.k17mpsf.resource	"TYPELIB" 1 lang 0: 6316 bytes
+c.fromfiles.k17mpsf.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+c.fromfiles.k17mpsf.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 386 bytes
+c.fromfiles.k17mpsf.  starts	41 64 64 49 6e 3d 6b 31 37 6d 70 73 66 0a 43 6c
+c.fromfiles.k17mpsf.resource	VERSION 1 lang 0: 320 bytes
+c.fromfiles.k17mpsf.  fixed.FileVersion	1.0.0.0
+c.fromfiles.k17mpsf.  fixed.ProductVersion	1.0.0.0
+c.fromfiles.k17mpsf.  fixed.FileFlags	0x0
+c.fromfiles.k17mpsf.  fixed.FileOS	0x40004
+c.fromfiles.k17mpsf.  fixed.FileType	0x2
+c.fromfiles.k17mpsf.  table	000004B0
+c.fromfiles.k17mpsf.  string.FileVersion	1.0.0.0
+c.fromfiles.k17mpsf.  string.ProductVersion	1.0.0.0
+c.fromfiles.k17mpsf.  var.Translation	000004b0
+c.fromfiles.k17mpsf.file	<W>\p\c\fromfiles\k17mpsf.xlam
+c.fromfiles.k17mpsf.ERR	not a PE file
+c.fromfiles.readme.file	<W>\p\c\fromfiles\readme.txt
+c.fromfiles.readme.ERR	not a PE file
+c.fromresults.buildresult.file	<W>\p\c\fromresults\buildresult.json
+c.fromresults.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+c.fromresults.includedSupportPackages.file	<W>\p\c\fromresults\includedSupportPackages.txt
+c.fromresults.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.fromresults.k17mps.file	<W>\p\c\fromresults\k17mps.bas
+c.fromresults.k17mps.ERR	not a PE file
+c.fromresults.k17mps.file	k17mps.dll
+c.fromresults.k17mps.bytes	339456
+c.fromresults.k17mps.machine	0x8664
+c.fromresults.k17mps.subsystem	windows-gui
+c.fromresults.k17mps.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+c.fromresults.k17mps.image.bytes	339456
+c.fromresults.k17mps.overlay.bytes	0
+c.fromresults.k17mps.certificate	no
+c.fromresults.k17mps.import	ADVAPI32.dll
+c.fromresults.k17mps.import	ole32.dll
+c.fromresults.k17mps.import	OLEAUT32.dll
+c.fromresults.k17mps.import	WINHTTP.dll
+c.fromresults.k17mps.import	CRYPT32.dll
+c.fromresults.k17mps.import	SHELL32.dll
+c.fromresults.k17mps.import	KERNEL32.dll
+c.fromresults.k17mps.resource	"TYPELIB" 1 lang 0: 6316 bytes
+c.fromresults.k17mps.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+c.fromresults.k17mps.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 384 bytes
+c.fromresults.k17mps.  starts	41 64 64 49 6e 3d 6b 31 37 6d 70 73 0a 43 6c 61
+c.fromresults.k17mps.resource	VERSION 1 lang 0: 320 bytes
+c.fromresults.k17mps.  fixed.FileVersion	1.0.0.0
+c.fromresults.k17mps.  fixed.ProductVersion	1.0.0.0
+c.fromresults.k17mps.  fixed.FileFlags	0x0
+c.fromresults.k17mps.  fixed.FileOS	0x40004
+c.fromresults.k17mps.  fixed.FileType	0x2
+c.fromresults.k17mps.  table	000004B0
+c.fromresults.k17mps.  string.FileVersion	1.0.0.0
+c.fromresults.k17mps.  string.ProductVersion	1.0.0.0
+c.fromresults.k17mps.  var.Translation	000004b0
+c.fromresults.k17mps.file	<W>\p\c\fromresults\k17mps.xlam
+c.fromresults.k17mps.ERR	not a PE file
+c.fromresults.readme.file	<W>\p\c\fromresults\readme.txt
+c.fromresults.readme.ERR	not a PE file
+c.nan.buildresult.file	<W>\p\c\nan\buildresult.json
+c.nan.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+c.nan.includedSupportPackages.file	<W>\p\c\nan\includedSupportPackages.txt
+c.nan.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.nan.k17nan.file	<W>\p\c\nan\k17nan.bas
+c.nan.k17nan.ERR	not a PE file
+c.nan.k17nan.file	k17nan.dll
+c.nan.k17nan.bytes	334848
+c.nan.k17nan.machine	0x8664
+c.nan.k17nan.subsystem	windows-gui
+c.nan.k17nan.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+c.nan.k17nan.image.bytes	334848
+c.nan.k17nan.overlay.bytes	0
+c.nan.k17nan.certificate	no
+c.nan.k17nan.import	ADVAPI32.dll
+c.nan.k17nan.import	ole32.dll
+c.nan.k17nan.import	OLEAUT32.dll
+c.nan.k17nan.import	WINHTTP.dll
+c.nan.k17nan.import	CRYPT32.dll
+c.nan.k17nan.import	SHELL32.dll
+c.nan.k17nan.import	KERNEL32.dll
+c.nan.k17nan.resource	"TYPELIB" 1 lang 0: 2160 bytes
+c.nan.k17nan.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+c.nan.k17nan.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 107 bytes
+c.nan.k17nan.  starts	41 64 64 49 6e 3d 6b 31 37 6e 61 6e 0a 43 6c 61
+c.nan.k17nan.resource	VERSION 1 lang 0: 320 bytes
+c.nan.k17nan.  fixed.FileVersion	1.0.0.0
+c.nan.k17nan.  fixed.ProductVersion	1.0.0.0
+c.nan.k17nan.  fixed.FileFlags	0x0
+c.nan.k17nan.  fixed.FileOS	0x40004
+c.nan.k17nan.  fixed.FileType	0x2
+c.nan.k17nan.  table	000004B0
+c.nan.k17nan.  string.FileVersion	1.0.0.0
+c.nan.k17nan.  string.ProductVersion	1.0.0.0
+c.nan.k17nan.  var.Translation	000004b0
+c.nan.k17nan.file	<W>\p\c\nan\k17nan.xlam
+c.nan.k17nan.ERR	not a PE file
+c.nan.readme.file	<W>\p\c\nan\readme.txt
+c.nan.readme.ERR	not a PE file
+c.nobas.buildresult.file	<W>\p\c\nobas\buildresult.json
+c.nobas.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+c.nobas.includedSupportPackages.file	<W>\p\c\nobas\includedSupportPackages.txt
+c.nobas.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.nobas.k17cnb.file	<W>\p\c\nobas\k17cnb.bas
+c.nobas.k17cnb.ERR	not a PE file
+c.nobas.k17cnb.file	k17cnb.dll
+c.nobas.k17cnb.bytes	334848
+c.nobas.k17cnb.machine	0x8664
+c.nobas.k17cnb.subsystem	windows-gui
+c.nobas.k17cnb.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+c.nobas.k17cnb.image.bytes	334848
+c.nobas.k17cnb.overlay.bytes	0
+c.nobas.k17cnb.certificate	no
+c.nobas.k17cnb.import	ADVAPI32.dll
+c.nobas.k17cnb.import	ole32.dll
+c.nobas.k17cnb.import	OLEAUT32.dll
+c.nobas.k17cnb.import	WINHTTP.dll
+c.nobas.k17cnb.import	CRYPT32.dll
+c.nobas.k17cnb.import	SHELL32.dll
+c.nobas.k17cnb.import	KERNEL32.dll
+c.nobas.k17cnb.resource	"TYPELIB" 1 lang 0: 2160 bytes
+c.nobas.k17cnb.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+c.nobas.k17cnb.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 98 bytes
+c.nobas.k17cnb.  starts	41 64 64 49 6e 3d 6b 31 37 63 6e 62 0a 43 6c 61
+c.nobas.k17cnb.resource	VERSION 1 lang 0: 320 bytes
+c.nobas.k17cnb.  fixed.FileVersion	1.0.0.0
+c.nobas.k17cnb.  fixed.ProductVersion	1.0.0.0
+c.nobas.k17cnb.  fixed.FileFlags	0x0
+c.nobas.k17cnb.  fixed.FileOS	0x40004
+c.nobas.k17cnb.  fixed.FileType	0x2
+c.nobas.k17cnb.  table	000004B0
+c.nobas.k17cnb.  string.FileVersion	1.0.0.0
+c.nobas.k17cnb.  string.ProductVersion	1.0.0.0
+c.nobas.k17cnb.  var.Translation	000004b0
+c.nobas.k17cnb.file	<W>\p\c\nobas\k17cnb.xlam
+c.nobas.k17cnb.ERR	not a PE file
+c.nobas.readme.file	<W>\p\c\nobas\readme.txt
+c.nobas.readme.ERR	not a PE file
+c.numdate.buildresult.file	<W>\p\c\numdate\buildresult.json
+c.numdate.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+c.numdate.includedSupportPackages.file	<W>\p\c\numdate\includedSupportPackages.txt
+c.numdate.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.numdate.k17nd.file	<W>\p\c\numdate\k17nd.bas
+c.numdate.k17nd.ERR	not a PE file
+c.numdate.k17nd.file	k17nd.dll
+c.numdate.k17nd.bytes	334848
+c.numdate.k17nd.machine	0x8664
+c.numdate.k17nd.subsystem	windows-gui
+c.numdate.k17nd.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+c.numdate.k17nd.image.bytes	334848
+c.numdate.k17nd.overlay.bytes	0
+c.numdate.k17nd.certificate	no
+c.numdate.k17nd.import	ADVAPI32.dll
+c.numdate.k17nd.import	ole32.dll
+c.numdate.k17nd.import	OLEAUT32.dll
+c.numdate.k17nd.import	WINHTTP.dll
+c.numdate.k17nd.import	CRYPT32.dll
+c.numdate.k17nd.import	SHELL32.dll
+c.numdate.k17nd.import	KERNEL32.dll
+c.numdate.k17nd.resource	"TYPELIB" 1 lang 0: 2156 bytes
+c.numdate.k17nd.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+c.numdate.k17nd.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 117 bytes
+c.numdate.k17nd.  starts	41 64 64 49 6e 3d 6b 31 37 6e 64 0a 43 6c 61 73
+c.numdate.k17nd.resource	VERSION 1 lang 0: 320 bytes
+c.numdate.k17nd.  fixed.FileVersion	1.0.0.0
+c.numdate.k17nd.  fixed.ProductVersion	1.0.0.0
+c.numdate.k17nd.  fixed.FileFlags	0x0
+c.numdate.k17nd.  fixed.FileOS	0x40004
+c.numdate.k17nd.  fixed.FileType	0x2
+c.numdate.k17nd.  table	000004B0
+c.numdate.k17nd.  string.FileVersion	1.0.0.0
+c.numdate.k17nd.  string.ProductVersion	1.0.0.0
+c.numdate.k17nd.  var.Translation	000004b0
+c.numdate.k17nd.file	<W>\p\c\numdate\k17nd.xlam
+c.numdate.k17nd.ERR	not a PE file
+c.numdate.readme.file	<W>\p\c\numdate\readme.txt
+c.numdate.readme.ERR	not a PE file
+c.onefileall.buildresult.file	<W>\p\c\onefileall\buildresult.json
+c.onefileall.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+c.onefileall.includedSupportPackages.file	<W>\p\c\onefileall\includedSupportPackages.txt
+c.onefileall.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+c.onefileall.k17one.file	<W>\p\c\onefileall\k17one.bas
+c.onefileall.k17one.ERR	not a PE file
+c.onefileall.k17one.file	k17one.dll
+c.onefileall.k17one.bytes	334336
+c.onefileall.k17one.machine	0x8664
+c.onefileall.k17one.subsystem	windows-gui
+c.onefileall.k17one.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+c.onefileall.k17one.image.bytes	334336
+c.onefileall.k17one.overlay.bytes	0
+c.onefileall.k17one.certificate	no
+c.onefileall.k17one.import	ADVAPI32.dll
+c.onefileall.k17one.import	ole32.dll
+c.onefileall.k17one.import	OLEAUT32.dll
+c.onefileall.k17one.import	WINHTTP.dll
+c.onefileall.k17one.import	CRYPT32.dll
+c.onefileall.k17one.import	SHELL32.dll
+c.onefileall.k17one.import	KERNEL32.dll
+c.onefileall.k17one.resource	"TYPELIB" 1 lang 0: 1684 bytes
+c.onefileall.k17one.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+c.onefileall.k17one.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 71 bytes
+c.onefileall.k17one.  starts	41 64 64 49 6e 3d 6b 31 37 6f 6e 65 0a 43 6c 61
+c.onefileall.k17one.resource	VERSION 1 lang 0: 320 bytes
+c.onefileall.k17one.  fixed.FileVersion	1.0.0.0
+c.onefileall.k17one.  fixed.ProductVersion	1.0.0.0
+c.onefileall.k17one.  fixed.FileFlags	0x0
+c.onefileall.k17one.  fixed.FileOS	0x40004
+c.onefileall.k17one.  fixed.FileType	0x2
+c.onefileall.k17one.  table	000004B0
+c.onefileall.k17one.  string.FileVersion	1.0.0.0
+c.onefileall.k17one.  string.ProductVersion	1.0.0.0
+c.onefileall.k17one.  var.Translation	000004b0
+c.onefileall.k17one.file	<W>\p\c\onefileall\k17one.xlam
+c.onefileall.k17one.ERR	not a PE file
+c.onefileall.readme.file	<W>\p\c\onefileall\readme.txt
+c.onefileall.readme.ERR	not a PE file
 m.mcc_bundle.buildresult.file	<W>\p\m\mcc_bundle\buildresult.json
 m.mcc_bundle.buildresult.ERR	not a PE file
 m.mcc_bundle.includedSupportPackages.file	<W>\p\m\mcc_bundle\includedSupportPackages.txt
@@ -668,7 +1253,7 @@ m.mcc_bundle.k17mb_1_0.resource	"TYPELIB" 1 lang 0: 5132 bytes
 m.mcc_bundle.k17mb_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_bundle.k17mb_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_bundle.k17mb_1_0.  starts	30 2e 32 2e 33
-m.mcc_bundle.k17mb_1_0.resource	RCDATA 2 lang 0: 3466 bytes
+m.mcc_bundle.k17mb_1_0.resource	RCDATA 2 lang 0: 3464 bytes
 m.mcc_bundle.k17mb_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_bundle.k17mb_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_bundle.k17mb_1_0.  fixed.FileVersion	1.0.0.0
@@ -736,7 +1321,7 @@ m.mcc_debug.k17md_1_0.resource	"TYPELIB" 1 lang 0: 5132 bytes
 m.mcc_debug.k17md_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_debug.k17md_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_debug.k17md_1_0.  starts	30 2e 32 2e 33
-m.mcc_debug.k17md_1_0.resource	RCDATA 2 lang 0: 3465 bytes
+m.mcc_debug.k17md_1_0.resource	RCDATA 2 lang 0: 3466 bytes
 m.mcc_debug.k17md_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_debug.k17md_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_debug.k17md_1_0.  fixed.FileVersion	1.0.0.0
@@ -780,7 +1365,7 @@ m.mcc_default.k17m_1_0.resource	"TYPELIB" 1 lang 0: 5124 bytes
 m.mcc_default.k17m_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_default.k17m_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_default.k17m_1_0.  starts	30 2e 32 2e 33
-m.mcc_default.k17m_1_0.resource	RCDATA 2 lang 0: 3460 bytes
+m.mcc_default.k17m_1_0.resource	RCDATA 2 lang 0: 3463 bytes
 m.mcc_default.k17m_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_default.k17m_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_default.k17m_1_0.  fixed.FileVersion	1.0.0.0
@@ -820,7 +1405,7 @@ m.mcc_noclass.k17mnc_1_0.resource	"TYPELIB" 1 lang 0: 5136 bytes
 m.mcc_noclass.k17mnc_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_noclass.k17mnc_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_noclass.k17mnc_1_0.  starts	30 2e 32 2e 33
-m.mcc_noclass.k17mnc_1_0.resource	RCDATA 2 lang 0: 3469 bytes
+m.mcc_noclass.k17mnc_1_0.resource	RCDATA 2 lang 0: 3471 bytes
 m.mcc_noclass.k17mnc_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_noclass.k17mnc_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_noclass.k17mnc_1_0.  fixed.FileVersion	1.0.0.0
@@ -860,7 +1445,7 @@ m.mcc_notarget.k17mnt_1_0.resource	"TYPELIB" 1 lang 0: 5136 bytes
 m.mcc_notarget.k17mnt_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_notarget.k17mnt_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_notarget.k17mnt_1_0.  starts	30 2e 32 2e 33
-m.mcc_notarget.k17mnt_1_0.resource	RCDATA 2 lang 0: 3469 bytes
+m.mcc_notarget.k17mnt_1_0.resource	RCDATA 2 lang 0: 3468 bytes
 m.mcc_notarget.k17mnt_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_notarget.k17mnt_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_notarget.k17mnt_1_0.  fixed.FileVersion	1.0.0.0
@@ -900,7 +1485,7 @@ m.mcc_noversion.k17mnv_1_0.resource	"TYPELIB" 1 lang 0: 5136 bytes
 m.mcc_noversion.k17mnv_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_noversion.k17mnv_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_noversion.k17mnv_1_0.  starts	30 2e 32 2e 33
-m.mcc_noversion.k17mnv_1_0.resource	RCDATA 2 lang 0: 3470 bytes
+m.mcc_noversion.k17mnv_1_0.resource	RCDATA 2 lang 0: 3472 bytes
 m.mcc_noversion.k17mnv_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_noversion.k17mnv_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_noversion.k17mnv_1_0.  fixed.FileVersion	1.0.0.0
@@ -940,7 +1525,7 @@ m.mcc_samefiles.k17m_1_0.resource	"TYPELIB" 1 lang 0: 5360 bytes
 m.mcc_samefiles.k17m_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_samefiles.k17m_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_samefiles.k17m_1_0.  starts	30 2e 32 2e 33
-m.mcc_samefiles.k17m_1_0.resource	RCDATA 2 lang 0: 3806 bytes
+m.mcc_samefiles.k17m_1_0.resource	RCDATA 2 lang 0: 3804 bytes
 m.mcc_samefiles.k17m_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_samefiles.k17m_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_samefiles.k17m_1_0.  fixed.FileVersion	1.0.0.0
@@ -980,7 +1565,7 @@ m.mcc_sameorder.k17m_1_0.resource	"TYPELIB" 1 lang 0: 5360 bytes
 m.mcc_sameorder.k17m_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_sameorder.k17m_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_sameorder.k17m_1_0.  starts	30 2e 32 2e 33
-m.mcc_sameorder.k17m_1_0.resource	RCDATA 2 lang 0: 3803 bytes
+m.mcc_sameorder.k17m_1_0.resource	RCDATA 2 lang 0: 3804 bytes
 m.mcc_sameorder.k17m_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_sameorder.k17m_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_sameorder.k17m_1_0.  fixed.FileVersion	1.0.0.0
@@ -1060,7 +1645,7 @@ m.mcc_script.k17msc_1_0.resource	"TYPELIB" 1 lang 0: 5004 bytes
 m.mcc_script.k17msc_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_script.k17msc_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_script.k17msc_1_0.  starts	30 2e 32 2e 33
-m.mcc_script.k17msc_1_0.resource	RCDATA 2 lang 0: 3395 bytes
+m.mcc_script.k17msc_1_0.resource	RCDATA 2 lang 0: 3390 bytes
 m.mcc_script.k17msc_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_script.k17msc_1_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_script.k17msc_1_0.  fixed.FileVersion	1.0.0.0
@@ -1184,7 +1769,7 @@ m.mcc_version2.k17mv2_2_0.resource	"TYPELIB" 1 lang 0: 5136 bytes
 m.mcc_version2.k17mv2_2_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 m.mcc_version2.k17mv2_2_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 m.mcc_version2.k17mv2_2_0.  starts	30 2e 32 2e 33
-m.mcc_version2.k17mv2_2_0.resource	RCDATA 2 lang 0: 3470 bytes
+m.mcc_version2.k17mv2_2_0.resource	RCDATA 2 lang 0: 3473 bytes
 m.mcc_version2.k17mv2_2_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 m.mcc_version2.k17mv2_2_0.resource	VERSION 1 lang 0: 320 bytes
 m.mcc_version2.k17mv2_2_0.  fixed.FileVersion	2.0.0.0
@@ -1204,6 +1789,568 @@ m.mcc_version2.requiredMCRProducts.file	<W>\p\m\mcc_version2\requiredMCRProducts
 m.mcc_version2.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 6)
 m.mcc_version2.unresolvedSymbols.file	<W>\p\m\mcc_version2\unresolvedSymbols.txt
 m.mcc_version2.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+p.cert.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.cert.k17mpsExcelClientInstaller.bytes	812032
+p.cert.k17mpsExcelClientInstaller.machine	0x8664
+p.cert.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.cert.k17mpsExcelClientInstaller.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+p.cert.k17mpsExcelClientInstaller.image.bytes	812032
+p.cert.k17mpsExcelClientInstaller.overlay.bytes	0
+p.cert.k17mpsExcelClientInstaller.certificate	no
+p.cert.k17mpsExcelClientInstaller.import	ADVAPI32.dll
+p.cert.k17mpsExcelClientInstaller.import	ole32.dll
+p.cert.k17mpsExcelClientInstaller.import	USER32.dll
+p.cert.k17mpsExcelClientInstaller.import	SHELL32.dll
+p.cert.k17mpsExcelClientInstaller.import	VERSION.dll
+p.cert.k17mpsExcelClientInstaller.import	KERNEL32.dll
+p.cert.k17mpsExcelClientInstaller.resource	ICON 1 lang 0: 41893 bytes
+p.cert.k17mpsExcelClientInstaller.resource	ICON 2 lang 0: 13649 bytes
+p.cert.k17mpsExcelClientInstaller.resource	ICON 3 lang 0: 2261 bytes
+p.cert.k17mpsExcelClientInstaller.resource	ICON 4 lang 0: 1634 bytes
+p.cert.k17mpsExcelClientInstaller.resource	ICON 5 lang 0: 1219 bytes
+p.cert.k17mpsExcelClientInstaller.resource	ICON 6 lang 0: 743 bytes
+p.cert.k17mpsExcelClientInstaller.resource	DIALOG 101 lang 0: 900 bytes
+p.cert.k17mpsExcelClientInstaller.resource	RCDATA JGRAPH_EXCEL_CLIENT_CONFIG lang 0: 250 bytes
+p.cert.k17mpsExcelClientInstaller.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+p.cert.k17mpsExcelClientInstaller.resource	RCDATA JGRAPH_INSTALL_BUNDLE lang 0: 518500 bytes
+p.cert.k17mpsExcelClientInstaller.  starts	50 4b 03 04 14 00 00 00 00 00 00 00 21 00 14 f0
+p.cert.k17mpsExcelClientInstaller.resource	GROUP_ICON 1 lang 0: 90 bytes
+p.cert.k17mpsExcelClientInstaller.  icon	0x0 colors 0 planes 1 bits 32 bytes 41893 id 1: png 256x256
+p.cert.k17mpsExcelClientInstaller.  icon	128x128 colors 0 planes 1 bits 32 bytes 13649 id 2: png 128x128
+p.cert.k17mpsExcelClientInstaller.  icon	48x48 colors 0 planes 1 bits 32 bytes 2261 id 3: png 48x48
+p.cert.k17mpsExcelClientInstaller.  icon	32x32 colors 0 planes 1 bits 32 bytes 1634 id 4: png 32x32
+p.cert.k17mpsExcelClientInstaller.  icon	24x24 colors 0 planes 1 bits 32 bytes 1219 id 5: png 24x24
+p.cert.k17mpsExcelClientInstaller.  icon	16x16 colors 0 planes 1 bits 32 bytes 743 id 6: png 16x16
+p.cert.k17mpsExcelClientInstaller.resource	VERSION 1 lang 0: 320 bytes
+p.cert.k17mpsExcelClientInstaller.  fixed.FileVersion	1.0.0.0
+p.cert.k17mpsExcelClientInstaller.  fixed.ProductVersion	1.0.0.0
+p.cert.k17mpsExcelClientInstaller.  fixed.FileFlags	0x0
+p.cert.k17mpsExcelClientInstaller.  fixed.FileOS	0x40004
+p.cert.k17mpsExcelClientInstaller.  fixed.FileType	0x1
+p.cert.k17mpsExcelClientInstaller.  table	000004B0
+p.cert.k17mpsExcelClientInstaller.  string.FileVersion	1.0.0.0
+p.cert.k17mpsExcelClientInstaller.  string.ProductVersion	1.0.0.0
+p.cert.k17mpsExcelClientInstaller.  var.Translation	000004b0
+p.cert.k17mpsExcelClientInstaller.resource	MANIFEST 1 lang 0: 1274 bytes
+p.cert.k17mpsExcelClientInstaller.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+p.cert.k17mpsExcelClientInstaller.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+p.cert.k17mpsExcelClientInstaller.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+p.cert.k17mpsExcelClientInstaller.  manifest	<security>
+p.cert.k17mpsExcelClientInstaller.  manifest	<requestedPrivileges>
+p.cert.k17mpsExcelClientInstaller.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+p.cert.k17mpsExcelClientInstaller.  manifest	</requestedPrivileges>
+p.cert.k17mpsExcelClientInstaller.  manifest	</security>
+p.cert.k17mpsExcelClientInstaller.  manifest	</trustInfo>
+p.cert.k17mpsExcelClientInstaller.  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+p.cert.k17mpsExcelClientInstaller.  manifest	<application>
+p.cert.k17mpsExcelClientInstaller.  manifest	<supportedOS Id="{<UUID>}" />
+p.cert.k17mpsExcelClientInstaller.  manifest	</application>
+p.cert.k17mpsExcelClientInstaller.  manifest	</compatibility>
+p.cert.k17mpsExcelClientInstaller.  manifest	<asmv3:application>
+p.cert.k17mpsExcelClientInstaller.  manifest	<asmv3:windowsSettings>
+p.cert.k17mpsExcelClientInstaller.  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+p.cert.k17mpsExcelClientInstaller.  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+p.cert.k17mpsExcelClientInstaller.  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+p.cert.k17mpsExcelClientInstaller.  manifest	</asmv3:windowsSettings>
+p.cert.k17mpsExcelClientInstaller.  manifest	</asmv3:application>
+p.cert.k17mpsExcelClientInstaller.  manifest	<dependency>
+p.cert.k17mpsExcelClientInstaller.  manifest	<dependentAssembly>
+p.cert.k17mpsExcelClientInstaller.  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+p.cert.k17mpsExcelClientInstaller.  manifest	</dependentAssembly>
+p.cert.k17mpsExcelClientInstaller.  manifest	</dependency>
+p.cert.k17mpsExcelClientInstaller.  manifest	</assembly>
+p.default.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.default.k17mpsExcelClientInstaller.bytes	812032
+p.default.k17mpsExcelClientInstaller.machine	0x8664
+p.default.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.default.k17mpsExcelClientInstaller.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+p.default.k17mpsExcelClientInstaller.image.bytes	812032
+p.default.k17mpsExcelClientInstaller.overlay.bytes	0
+p.default.k17mpsExcelClientInstaller.certificate	no
+p.default.k17mpsExcelClientInstaller.import	ADVAPI32.dll
+p.default.k17mpsExcelClientInstaller.import	ole32.dll
+p.default.k17mpsExcelClientInstaller.import	USER32.dll
+p.default.k17mpsExcelClientInstaller.import	SHELL32.dll
+p.default.k17mpsExcelClientInstaller.import	VERSION.dll
+p.default.k17mpsExcelClientInstaller.import	KERNEL32.dll
+p.default.k17mpsExcelClientInstaller.resource	ICON 1 lang 0: 41893 bytes
+p.default.k17mpsExcelClientInstaller.resource	ICON 2 lang 0: 13649 bytes
+p.default.k17mpsExcelClientInstaller.resource	ICON 3 lang 0: 2261 bytes
+p.default.k17mpsExcelClientInstaller.resource	ICON 4 lang 0: 1634 bytes
+p.default.k17mpsExcelClientInstaller.resource	ICON 5 lang 0: 1219 bytes
+p.default.k17mpsExcelClientInstaller.resource	ICON 6 lang 0: 743 bytes
+p.default.k17mpsExcelClientInstaller.resource	DIALOG 101 lang 0: 900 bytes
+p.default.k17mpsExcelClientInstaller.resource	RCDATA JGRAPH_EXCEL_CLIENT_CONFIG lang 0: 137 bytes
+p.default.k17mpsExcelClientInstaller.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+p.default.k17mpsExcelClientInstaller.resource	RCDATA JGRAPH_INSTALL_BUNDLE lang 0: 518500 bytes
+p.default.k17mpsExcelClientInstaller.  starts	50 4b 03 04 14 00 00 00 00 00 00 00 21 00 14 f0
+p.default.k17mpsExcelClientInstaller.resource	GROUP_ICON 1 lang 0: 90 bytes
+p.default.k17mpsExcelClientInstaller.  icon	0x0 colors 0 planes 1 bits 32 bytes 41893 id 1: png 256x256
+p.default.k17mpsExcelClientInstaller.  icon	128x128 colors 0 planes 1 bits 32 bytes 13649 id 2: png 128x128
+p.default.k17mpsExcelClientInstaller.  icon	48x48 colors 0 planes 1 bits 32 bytes 2261 id 3: png 48x48
+p.default.k17mpsExcelClientInstaller.  icon	32x32 colors 0 planes 1 bits 32 bytes 1634 id 4: png 32x32
+p.default.k17mpsExcelClientInstaller.  icon	24x24 colors 0 planes 1 bits 32 bytes 1219 id 5: png 24x24
+p.default.k17mpsExcelClientInstaller.  icon	16x16 colors 0 planes 1 bits 32 bytes 743 id 6: png 16x16
+p.default.k17mpsExcelClientInstaller.resource	VERSION 1 lang 0: 320 bytes
+p.default.k17mpsExcelClientInstaller.  fixed.FileVersion	1.0.0.0
+p.default.k17mpsExcelClientInstaller.  fixed.ProductVersion	1.0.0.0
+p.default.k17mpsExcelClientInstaller.  fixed.FileFlags	0x0
+p.default.k17mpsExcelClientInstaller.  fixed.FileOS	0x40004
+p.default.k17mpsExcelClientInstaller.  fixed.FileType	0x1
+p.default.k17mpsExcelClientInstaller.  table	000004B0
+p.default.k17mpsExcelClientInstaller.  string.FileVersion	1.0.0.0
+p.default.k17mpsExcelClientInstaller.  string.ProductVersion	1.0.0.0
+p.default.k17mpsExcelClientInstaller.  var.Translation	000004b0
+p.default.k17mpsExcelClientInstaller.resource	MANIFEST 1 lang 0: 1274 bytes
+p.default.k17mpsExcelClientInstaller.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+p.default.k17mpsExcelClientInstaller.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+p.default.k17mpsExcelClientInstaller.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+p.default.k17mpsExcelClientInstaller.  manifest	<security>
+p.default.k17mpsExcelClientInstaller.  manifest	<requestedPrivileges>
+p.default.k17mpsExcelClientInstaller.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+p.default.k17mpsExcelClientInstaller.  manifest	</requestedPrivileges>
+p.default.k17mpsExcelClientInstaller.  manifest	</security>
+p.default.k17mpsExcelClientInstaller.  manifest	</trustInfo>
+p.default.k17mpsExcelClientInstaller.  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+p.default.k17mpsExcelClientInstaller.  manifest	<application>
+p.default.k17mpsExcelClientInstaller.  manifest	<supportedOS Id="{<UUID>}" />
+p.default.k17mpsExcelClientInstaller.  manifest	</application>
+p.default.k17mpsExcelClientInstaller.  manifest	</compatibility>
+p.default.k17mpsExcelClientInstaller.  manifest	<asmv3:application>
+p.default.k17mpsExcelClientInstaller.  manifest	<asmv3:windowsSettings>
+p.default.k17mpsExcelClientInstaller.  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+p.default.k17mpsExcelClientInstaller.  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+p.default.k17mpsExcelClientInstaller.  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+p.default.k17mpsExcelClientInstaller.  manifest	</asmv3:windowsSettings>
+p.default.k17mpsExcelClientInstaller.  manifest	</asmv3:application>
+p.default.k17mpsExcelClientInstaller.  manifest	<dependency>
+p.default.k17mpsExcelClientInstaller.  manifest	<dependentAssembly>
+p.default.k17mpsExcelClientInstaller.  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+p.default.k17mpsExcelClientInstaller.  manifest	</dependentAssembly>
+p.default.k17mpsExcelClientInstaller.  manifest	</dependency>
+p.default.k17mpsExcelClientInstaller.  manifest	</assembly>
+p.files.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.files.k17mpsExcelClientInstaller.bytes	805888
+p.files.k17mpsExcelClientInstaller.machine	0x8664
+p.files.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.files.k17mpsExcelClientInstaller.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+p.files.k17mpsExcelClientInstaller.image.bytes	805888
+p.files.k17mpsExcelClientInstaller.overlay.bytes	0
+p.files.k17mpsExcelClientInstaller.certificate	no
+p.files.k17mpsExcelClientInstaller.import	ADVAPI32.dll
+p.files.k17mpsExcelClientInstaller.import	ole32.dll
+p.files.k17mpsExcelClientInstaller.import	USER32.dll
+p.files.k17mpsExcelClientInstaller.import	SHELL32.dll
+p.files.k17mpsExcelClientInstaller.import	VERSION.dll
+p.files.k17mpsExcelClientInstaller.import	KERNEL32.dll
+p.files.k17mpsExcelClientInstaller.resource	ICON 1 lang 0: 41893 bytes
+p.files.k17mpsExcelClientInstaller.resource	ICON 2 lang 0: 13649 bytes
+p.files.k17mpsExcelClientInstaller.resource	ICON 3 lang 0: 2261 bytes
+p.files.k17mpsExcelClientInstaller.resource	ICON 4 lang 0: 1634 bytes
+p.files.k17mpsExcelClientInstaller.resource	ICON 5 lang 0: 1219 bytes
+p.files.k17mpsExcelClientInstaller.resource	ICON 6 lang 0: 743 bytes
+p.files.k17mpsExcelClientInstaller.resource	DIALOG 101 lang 0: 900 bytes
+p.files.k17mpsExcelClientInstaller.resource	RCDATA JGRAPH_EXCEL_CLIENT_CONFIG lang 0: 137 bytes
+p.files.k17mpsExcelClientInstaller.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+p.files.k17mpsExcelClientInstaller.resource	RCDATA JGRAPH_INSTALL_BUNDLE lang 0: 512392 bytes
+p.files.k17mpsExcelClientInstaller.  starts	50 4b 03 04 14 00 00 00 00 00 00 00 21 00 14 f0
+p.files.k17mpsExcelClientInstaller.resource	GROUP_ICON 1 lang 0: 90 bytes
+p.files.k17mpsExcelClientInstaller.  icon	0x0 colors 0 planes 1 bits 32 bytes 41893 id 1: png 256x256
+p.files.k17mpsExcelClientInstaller.  icon	128x128 colors 0 planes 1 bits 32 bytes 13649 id 2: png 128x128
+p.files.k17mpsExcelClientInstaller.  icon	48x48 colors 0 planes 1 bits 32 bytes 2261 id 3: png 48x48
+p.files.k17mpsExcelClientInstaller.  icon	32x32 colors 0 planes 1 bits 32 bytes 1634 id 4: png 32x32
+p.files.k17mpsExcelClientInstaller.  icon	24x24 colors 0 planes 1 bits 32 bytes 1219 id 5: png 24x24
+p.files.k17mpsExcelClientInstaller.  icon	16x16 colors 0 planes 1 bits 32 bytes 743 id 6: png 16x16
+p.files.k17mpsExcelClientInstaller.resource	VERSION 1 lang 0: 320 bytes
+p.files.k17mpsExcelClientInstaller.  fixed.FileVersion	1.0.0.0
+p.files.k17mpsExcelClientInstaller.  fixed.ProductVersion	1.0.0.0
+p.files.k17mpsExcelClientInstaller.  fixed.FileFlags	0x0
+p.files.k17mpsExcelClientInstaller.  fixed.FileOS	0x40004
+p.files.k17mpsExcelClientInstaller.  fixed.FileType	0x1
+p.files.k17mpsExcelClientInstaller.  table	000004B0
+p.files.k17mpsExcelClientInstaller.  string.FileVersion	1.0.0.0
+p.files.k17mpsExcelClientInstaller.  string.ProductVersion	1.0.0.0
+p.files.k17mpsExcelClientInstaller.  var.Translation	000004b0
+p.files.k17mpsExcelClientInstaller.resource	MANIFEST 1 lang 0: 1274 bytes
+p.files.k17mpsExcelClientInstaller.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+p.files.k17mpsExcelClientInstaller.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+p.files.k17mpsExcelClientInstaller.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+p.files.k17mpsExcelClientInstaller.  manifest	<security>
+p.files.k17mpsExcelClientInstaller.  manifest	<requestedPrivileges>
+p.files.k17mpsExcelClientInstaller.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+p.files.k17mpsExcelClientInstaller.  manifest	</requestedPrivileges>
+p.files.k17mpsExcelClientInstaller.  manifest	</security>
+p.files.k17mpsExcelClientInstaller.  manifest	</trustInfo>
+p.files.k17mpsExcelClientInstaller.  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+p.files.k17mpsExcelClientInstaller.  manifest	<application>
+p.files.k17mpsExcelClientInstaller.  manifest	<supportedOS Id="{<UUID>}" />
+p.files.k17mpsExcelClientInstaller.  manifest	</application>
+p.files.k17mpsExcelClientInstaller.  manifest	</compatibility>
+p.files.k17mpsExcelClientInstaller.  manifest	<asmv3:application>
+p.files.k17mpsExcelClientInstaller.  manifest	<asmv3:windowsSettings>
+p.files.k17mpsExcelClientInstaller.  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+p.files.k17mpsExcelClientInstaller.  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+p.files.k17mpsExcelClientInstaller.  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+p.files.k17mpsExcelClientInstaller.  manifest	</asmv3:windowsSettings>
+p.files.k17mpsExcelClientInstaller.  manifest	</asmv3:application>
+p.files.k17mpsExcelClientInstaller.  manifest	<dependency>
+p.files.k17mpsExcelClientInstaller.  manifest	<dependentAssembly>
+p.files.k17mpsExcelClientInstaller.  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+p.files.k17mpsExcelClientInstaller.  manifest	</dependentAssembly>
+p.files.k17mpsExcelClientInstaller.  manifest	</dependency>
+p.files.k17mpsExcelClientInstaller.  manifest	</assembly>
+p.filesplus.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.filesplus.k17mpsExcelClientInstaller.bytes	1048064
+p.filesplus.k17mpsExcelClientInstaller.machine	0x8664
+p.filesplus.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.filesplus.k17mpsExcelClientInstaller.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+p.filesplus.k17mpsExcelClientInstaller.image.bytes	1048064
+p.filesplus.k17mpsExcelClientInstaller.overlay.bytes	0
+p.filesplus.k17mpsExcelClientInstaller.certificate	no
+p.filesplus.k17mpsExcelClientInstaller.import	ADVAPI32.dll
+p.filesplus.k17mpsExcelClientInstaller.import	ole32.dll
+p.filesplus.k17mpsExcelClientInstaller.import	USER32.dll
+p.filesplus.k17mpsExcelClientInstaller.import	SHELL32.dll
+p.filesplus.k17mpsExcelClientInstaller.import	VERSION.dll
+p.filesplus.k17mpsExcelClientInstaller.import	KERNEL32.dll
+p.filesplus.k17mpsExcelClientInstaller.resource	ICON 1 lang 0: 41893 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource	ICON 2 lang 0: 13649 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource	ICON 3 lang 0: 2261 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource	ICON 4 lang 0: 1634 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource	ICON 5 lang 0: 1219 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource	ICON 6 lang 0: 743 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource	DIALOG 101 lang 0: 900 bytes
+p.filesplus.k17mpsExcelClientInstaller.resource	RCDATA JGRAPH_EXCEL_CLIENT_CONFIG lang 0: 137 bytes
+p.filesplus.k17mpsExcelClientInstaller.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+p.filesplus.k17mpsExcelClientInstaller.resource	RCDATA JGRAPH_INSTALL_BUNDLE lang 0: 754324 bytes
+p.filesplus.k17mpsExcelClientInstaller.  starts	50 4b 03 04 14 00 00 00 00 00 00 00 21 00 14 f0
+p.filesplus.k17mpsExcelClientInstaller.resource	GROUP_ICON 1 lang 0: 90 bytes
+p.filesplus.k17mpsExcelClientInstaller.  icon	0x0 colors 0 planes 1 bits 32 bytes 41893 id 1: png 256x256
+p.filesplus.k17mpsExcelClientInstaller.  icon	128x128 colors 0 planes 1 bits 32 bytes 13649 id 2: png 128x128
+p.filesplus.k17mpsExcelClientInstaller.  icon	48x48 colors 0 planes 1 bits 32 bytes 2261 id 3: png 48x48
+p.filesplus.k17mpsExcelClientInstaller.  icon	32x32 colors 0 planes 1 bits 32 bytes 1634 id 4: png 32x32
+p.filesplus.k17mpsExcelClientInstaller.  icon	24x24 colors 0 planes 1 bits 32 bytes 1219 id 5: png 24x24
+p.filesplus.k17mpsExcelClientInstaller.  icon	16x16 colors 0 planes 1 bits 32 bytes 743 id 6: png 16x16
+p.filesplus.k17mpsExcelClientInstaller.resource	VERSION 1 lang 0: 320 bytes
+p.filesplus.k17mpsExcelClientInstaller.  fixed.FileVersion	1.0.0.0
+p.filesplus.k17mpsExcelClientInstaller.  fixed.ProductVersion	1.0.0.0
+p.filesplus.k17mpsExcelClientInstaller.  fixed.FileFlags	0x0
+p.filesplus.k17mpsExcelClientInstaller.  fixed.FileOS	0x40004
+p.filesplus.k17mpsExcelClientInstaller.  fixed.FileType	0x1
+p.filesplus.k17mpsExcelClientInstaller.  table	000004B0
+p.filesplus.k17mpsExcelClientInstaller.  string.FileVersion	1.0.0.0
+p.filesplus.k17mpsExcelClientInstaller.  string.ProductVersion	1.0.0.0
+p.filesplus.k17mpsExcelClientInstaller.  var.Translation	000004b0
+p.filesplus.k17mpsExcelClientInstaller.resource	MANIFEST 1 lang 0: 1274 bytes
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<security>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<requestedPrivileges>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+p.filesplus.k17mpsExcelClientInstaller.  manifest	</requestedPrivileges>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	</security>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	</trustInfo>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<application>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<supportedOS Id="{<UUID>}" />
+p.filesplus.k17mpsExcelClientInstaller.  manifest	</application>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	</compatibility>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<asmv3:application>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<asmv3:windowsSettings>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	</asmv3:windowsSettings>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	</asmv3:application>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<dependency>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<dependentAssembly>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+p.filesplus.k17mpsExcelClientInstaller.  manifest	</dependentAssembly>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	</dependency>
+p.filesplus.k17mpsExcelClientInstaller.  manifest	</assembly>
+p.named.K17Setup.file	K17Setup.exe
+p.named.K17Setup.bytes	935936
+p.named.K17Setup.machine	0x8664
+p.named.K17Setup.subsystem	windows-gui
+p.named.K17Setup.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+p.named.K17Setup.image.bytes	935936
+p.named.K17Setup.overlay.bytes	0
+p.named.K17Setup.certificate	no
+p.named.K17Setup.import	ADVAPI32.dll
+p.named.K17Setup.import	ole32.dll
+p.named.K17Setup.import	USER32.dll
+p.named.K17Setup.import	SHELL32.dll
+p.named.K17Setup.import	VERSION.dll
+p.named.K17Setup.import	KERNEL32.dll
+p.named.K17Setup.resource	ICON 1 lang 0: 134067 bytes
+p.named.K17Setup.resource	ICON 2 lang 0: 42611 bytes
+p.named.K17Setup.resource	ICON 3 lang 0: 5017 bytes
+p.named.K17Setup.resource	ICON 4 lang 0: 2046 bytes
+p.named.K17Setup.resource	ICON 5 lang 0: 1117 bytes
+p.named.K17Setup.resource	ICON 6 lang 0: 494 bytes
+p.named.K17Setup.resource	DIALOG 101 lang 0: 900 bytes
+p.named.K17Setup.resource	RCDATA JGRAPH_EXCEL_CLIENT_CONFIG lang 0: 168 bytes
+p.named.K17Setup.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+p.named.K17Setup.resource	RCDATA JGRAPH_INSTALL_BUNDLE lang 0: 518500 bytes
+p.named.K17Setup.  starts	50 4b 03 04 14 00 00 00 00 00 00 00 21 00 14 f0
+p.named.K17Setup.resource	GROUP_ICON 1 lang 0: 90 bytes
+p.named.K17Setup.  icon	0x0 colors 0 planes 1 bits 32 bytes 134067 id 1: png 256x256
+p.named.K17Setup.  icon	128x128 colors 0 planes 1 bits 32 bytes 42611 id 2: png 128x128
+p.named.K17Setup.  icon	48x48 colors 0 planes 1 bits 32 bytes 5017 id 3: png 48x48
+p.named.K17Setup.  icon	32x32 colors 0 planes 1 bits 32 bytes 2046 id 4: png 32x32
+p.named.K17Setup.  icon	24x24 colors 0 planes 1 bits 32 bytes 1117 id 5: png 24x24
+p.named.K17Setup.  icon	16x16 colors 0 planes 1 bits 32 bytes 494 id 6: png 16x16
+p.named.K17Setup.resource	VERSION 1 lang 0: 320 bytes
+p.named.K17Setup.  fixed.FileVersion	2.1.0.0
+p.named.K17Setup.  fixed.ProductVersion	2.1.0.0
+p.named.K17Setup.  fixed.FileFlags	0x0
+p.named.K17Setup.  fixed.FileOS	0x40004
+p.named.K17Setup.  fixed.FileType	0x1
+p.named.K17Setup.  table	000004B0
+p.named.K17Setup.  string.FileVersion	2.1.0.0
+p.named.K17Setup.  string.ProductVersion	2.1.0.0
+p.named.K17Setup.  var.Translation	000004b0
+p.named.K17Setup.resource	MANIFEST 1 lang 0: 1274 bytes
+p.named.K17Setup.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+p.named.K17Setup.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+p.named.K17Setup.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+p.named.K17Setup.  manifest	<security>
+p.named.K17Setup.  manifest	<requestedPrivileges>
+p.named.K17Setup.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+p.named.K17Setup.  manifest	</requestedPrivileges>
+p.named.K17Setup.  manifest	</security>
+p.named.K17Setup.  manifest	</trustInfo>
+p.named.K17Setup.  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+p.named.K17Setup.  manifest	<application>
+p.named.K17Setup.  manifest	<supportedOS Id="{<UUID>}" />
+p.named.K17Setup.  manifest	</application>
+p.named.K17Setup.  manifest	</compatibility>
+p.named.K17Setup.  manifest	<asmv3:application>
+p.named.K17Setup.  manifest	<asmv3:windowsSettings>
+p.named.K17Setup.  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+p.named.K17Setup.  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+p.named.K17Setup.  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+p.named.K17Setup.  manifest	</asmv3:windowsSettings>
+p.named.K17Setup.  manifest	</asmv3:application>
+p.named.K17Setup.  manifest	<dependency>
+p.named.K17Setup.  manifest	<dependentAssembly>
+p.named.K17Setup.  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+p.named.K17Setup.  manifest	</dependentAssembly>
+p.named.K17Setup.  manifest	</dependency>
+p.named.K17Setup.  manifest	</assembly>
+p.nolibrary.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.nolibrary.k17mpsExcelClientInstaller.bytes	466432
+p.nolibrary.k17mpsExcelClientInstaller.machine	0x8664
+p.nolibrary.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.nolibrary.k17mpsExcelClientInstaller.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+p.nolibrary.k17mpsExcelClientInstaller.image.bytes	466432
+p.nolibrary.k17mpsExcelClientInstaller.overlay.bytes	0
+p.nolibrary.k17mpsExcelClientInstaller.certificate	no
+p.nolibrary.k17mpsExcelClientInstaller.import	ADVAPI32.dll
+p.nolibrary.k17mpsExcelClientInstaller.import	ole32.dll
+p.nolibrary.k17mpsExcelClientInstaller.import	USER32.dll
+p.nolibrary.k17mpsExcelClientInstaller.import	SHELL32.dll
+p.nolibrary.k17mpsExcelClientInstaller.import	VERSION.dll
+p.nolibrary.k17mpsExcelClientInstaller.import	KERNEL32.dll
+p.nolibrary.k17mpsExcelClientInstaller.resource	ICON 1 lang 0: 41893 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource	ICON 2 lang 0: 13649 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource	ICON 3 lang 0: 2261 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource	ICON 4 lang 0: 1634 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource	ICON 5 lang 0: 1219 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource	ICON 6 lang 0: 743 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource	DIALOG 101 lang 0: 900 bytes
+p.nolibrary.k17mpsExcelClientInstaller.resource	RCDATA JGRAPH_EXCEL_CLIENT_CONFIG lang 0: 137 bytes
+p.nolibrary.k17mpsExcelClientInstaller.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+p.nolibrary.k17mpsExcelClientInstaller.resource	RCDATA JGRAPH_INSTALL_BUNDLE lang 0: 172840 bytes
+p.nolibrary.k17mpsExcelClientInstaller.  starts	50 4b 03 04 14 00 00 00 00 00 00 00 21 00 5e bd
+p.nolibrary.k17mpsExcelClientInstaller.resource	GROUP_ICON 1 lang 0: 90 bytes
+p.nolibrary.k17mpsExcelClientInstaller.  icon	0x0 colors 0 planes 1 bits 32 bytes 41893 id 1: png 256x256
+p.nolibrary.k17mpsExcelClientInstaller.  icon	128x128 colors 0 planes 1 bits 32 bytes 13649 id 2: png 128x128
+p.nolibrary.k17mpsExcelClientInstaller.  icon	48x48 colors 0 planes 1 bits 32 bytes 2261 id 3: png 48x48
+p.nolibrary.k17mpsExcelClientInstaller.  icon	32x32 colors 0 planes 1 bits 32 bytes 1634 id 4: png 32x32
+p.nolibrary.k17mpsExcelClientInstaller.  icon	24x24 colors 0 planes 1 bits 32 bytes 1219 id 5: png 24x24
+p.nolibrary.k17mpsExcelClientInstaller.  icon	16x16 colors 0 planes 1 bits 32 bytes 743 id 6: png 16x16
+p.nolibrary.k17mpsExcelClientInstaller.resource	VERSION 1 lang 0: 320 bytes
+p.nolibrary.k17mpsExcelClientInstaller.  fixed.FileVersion	1.0.0.0
+p.nolibrary.k17mpsExcelClientInstaller.  fixed.ProductVersion	1.0.0.0
+p.nolibrary.k17mpsExcelClientInstaller.  fixed.FileFlags	0x0
+p.nolibrary.k17mpsExcelClientInstaller.  fixed.FileOS	0x40004
+p.nolibrary.k17mpsExcelClientInstaller.  fixed.FileType	0x1
+p.nolibrary.k17mpsExcelClientInstaller.  table	000004B0
+p.nolibrary.k17mpsExcelClientInstaller.  string.FileVersion	1.0.0.0
+p.nolibrary.k17mpsExcelClientInstaller.  string.ProductVersion	1.0.0.0
+p.nolibrary.k17mpsExcelClientInstaller.  var.Translation	000004b0
+p.nolibrary.k17mpsExcelClientInstaller.resource	MANIFEST 1 lang 0: 1274 bytes
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<security>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<requestedPrivileges>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	</requestedPrivileges>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	</security>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	</trustInfo>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<application>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<supportedOS Id="{<UUID>}" />
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	</application>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	</compatibility>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<asmv3:application>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<asmv3:windowsSettings>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	</asmv3:windowsSettings>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	</asmv3:application>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<dependency>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<dependentAssembly>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	</dependentAssembly>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	</dependency>
+p.nolibrary.k17mpsExcelClientInstaller.  manifest	</assembly>
+p.options.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.options.k17mpsExcelClientInstaller.bytes	812032
+p.options.k17mpsExcelClientInstaller.machine	0x8664
+p.options.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.options.k17mpsExcelClientInstaller.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+p.options.k17mpsExcelClientInstaller.image.bytes	812032
+p.options.k17mpsExcelClientInstaller.overlay.bytes	0
+p.options.k17mpsExcelClientInstaller.certificate	no
+p.options.k17mpsExcelClientInstaller.import	ADVAPI32.dll
+p.options.k17mpsExcelClientInstaller.import	ole32.dll
+p.options.k17mpsExcelClientInstaller.import	USER32.dll
+p.options.k17mpsExcelClientInstaller.import	SHELL32.dll
+p.options.k17mpsExcelClientInstaller.import	VERSION.dll
+p.options.k17mpsExcelClientInstaller.import	KERNEL32.dll
+p.options.k17mpsExcelClientInstaller.resource	ICON 1 lang 0: 41893 bytes
+p.options.k17mpsExcelClientInstaller.resource	ICON 2 lang 0: 13649 bytes
+p.options.k17mpsExcelClientInstaller.resource	ICON 3 lang 0: 2261 bytes
+p.options.k17mpsExcelClientInstaller.resource	ICON 4 lang 0: 1634 bytes
+p.options.k17mpsExcelClientInstaller.resource	ICON 5 lang 0: 1219 bytes
+p.options.k17mpsExcelClientInstaller.resource	ICON 6 lang 0: 743 bytes
+p.options.k17mpsExcelClientInstaller.resource	DIALOG 101 lang 0: 900 bytes
+p.options.k17mpsExcelClientInstaller.resource	RCDATA JGRAPH_EXCEL_CLIENT_CONFIG lang 0: 159 bytes
+p.options.k17mpsExcelClientInstaller.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+p.options.k17mpsExcelClientInstaller.resource	RCDATA JGRAPH_INSTALL_BUNDLE lang 0: 518500 bytes
+p.options.k17mpsExcelClientInstaller.  starts	50 4b 03 04 14 00 00 00 00 00 00 00 21 00 14 f0
+p.options.k17mpsExcelClientInstaller.resource	GROUP_ICON 1 lang 0: 90 bytes
+p.options.k17mpsExcelClientInstaller.  icon	0x0 colors 0 planes 1 bits 32 bytes 41893 id 1: png 256x256
+p.options.k17mpsExcelClientInstaller.  icon	128x128 colors 0 planes 1 bits 32 bytes 13649 id 2: png 128x128
+p.options.k17mpsExcelClientInstaller.  icon	48x48 colors 0 planes 1 bits 32 bytes 2261 id 3: png 48x48
+p.options.k17mpsExcelClientInstaller.  icon	32x32 colors 0 planes 1 bits 32 bytes 1634 id 4: png 32x32
+p.options.k17mpsExcelClientInstaller.  icon	24x24 colors 0 planes 1 bits 32 bytes 1219 id 5: png 24x24
+p.options.k17mpsExcelClientInstaller.  icon	16x16 colors 0 planes 1 bits 32 bytes 743 id 6: png 16x16
+p.options.k17mpsExcelClientInstaller.resource	VERSION 1 lang 0: 320 bytes
+p.options.k17mpsExcelClientInstaller.  fixed.FileVersion	1.0.0.0
+p.options.k17mpsExcelClientInstaller.  fixed.ProductVersion	1.0.0.0
+p.options.k17mpsExcelClientInstaller.  fixed.FileFlags	0x0
+p.options.k17mpsExcelClientInstaller.  fixed.FileOS	0x40004
+p.options.k17mpsExcelClientInstaller.  fixed.FileType	0x1
+p.options.k17mpsExcelClientInstaller.  table	000004B0
+p.options.k17mpsExcelClientInstaller.  string.FileVersion	1.0.0.0
+p.options.k17mpsExcelClientInstaller.  string.ProductVersion	1.0.0.0
+p.options.k17mpsExcelClientInstaller.  var.Translation	000004b0
+p.options.k17mpsExcelClientInstaller.resource	MANIFEST 1 lang 0: 1274 bytes
+p.options.k17mpsExcelClientInstaller.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+p.options.k17mpsExcelClientInstaller.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+p.options.k17mpsExcelClientInstaller.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+p.options.k17mpsExcelClientInstaller.  manifest	<security>
+p.options.k17mpsExcelClientInstaller.  manifest	<requestedPrivileges>
+p.options.k17mpsExcelClientInstaller.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+p.options.k17mpsExcelClientInstaller.  manifest	</requestedPrivileges>
+p.options.k17mpsExcelClientInstaller.  manifest	</security>
+p.options.k17mpsExcelClientInstaller.  manifest	</trustInfo>
+p.options.k17mpsExcelClientInstaller.  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+p.options.k17mpsExcelClientInstaller.  manifest	<application>
+p.options.k17mpsExcelClientInstaller.  manifest	<supportedOS Id="{<UUID>}" />
+p.options.k17mpsExcelClientInstaller.  manifest	</application>
+p.options.k17mpsExcelClientInstaller.  manifest	</compatibility>
+p.options.k17mpsExcelClientInstaller.  manifest	<asmv3:application>
+p.options.k17mpsExcelClientInstaller.  manifest	<asmv3:windowsSettings>
+p.options.k17mpsExcelClientInstaller.  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+p.options.k17mpsExcelClientInstaller.  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+p.options.k17mpsExcelClientInstaller.  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+p.options.k17mpsExcelClientInstaller.  manifest	</asmv3:windowsSettings>
+p.options.k17mpsExcelClientInstaller.  manifest	</asmv3:application>
+p.options.k17mpsExcelClientInstaller.  manifest	<dependency>
+p.options.k17mpsExcelClientInstaller.  manifest	<dependentAssembly>
+p.options.k17mpsExcelClientInstaller.  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+p.options.k17mpsExcelClientInstaller.  manifest	</dependentAssembly>
+p.options.k17mpsExcelClientInstaller.  manifest	</dependency>
+p.options.k17mpsExcelClientInstaller.  manifest	</assembly>
+p.repeat.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+p.repeat.k17mpsExcelClientInstaller.bytes	817152
+p.repeat.k17mpsExcelClientInstaller.machine	0x8664
+p.repeat.k17mpsExcelClientInstaller.subsystem	windows-gui
+p.repeat.k17mpsExcelClientInstaller.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+p.repeat.k17mpsExcelClientInstaller.image.bytes	817152
+p.repeat.k17mpsExcelClientInstaller.overlay.bytes	0
+p.repeat.k17mpsExcelClientInstaller.certificate	no
+p.repeat.k17mpsExcelClientInstaller.import	ADVAPI32.dll
+p.repeat.k17mpsExcelClientInstaller.import	ole32.dll
+p.repeat.k17mpsExcelClientInstaller.import	USER32.dll
+p.repeat.k17mpsExcelClientInstaller.import	SHELL32.dll
+p.repeat.k17mpsExcelClientInstaller.import	VERSION.dll
+p.repeat.k17mpsExcelClientInstaller.import	KERNEL32.dll
+p.repeat.k17mpsExcelClientInstaller.resource	ICON 1 lang 0: 41893 bytes
+p.repeat.k17mpsExcelClientInstaller.resource	ICON 2 lang 0: 13649 bytes
+p.repeat.k17mpsExcelClientInstaller.resource	ICON 3 lang 0: 2261 bytes
+p.repeat.k17mpsExcelClientInstaller.resource	ICON 4 lang 0: 1634 bytes
+p.repeat.k17mpsExcelClientInstaller.resource	ICON 5 lang 0: 1219 bytes
+p.repeat.k17mpsExcelClientInstaller.resource	ICON 6 lang 0: 743 bytes
+p.repeat.k17mpsExcelClientInstaller.resource	DIALOG 101 lang 0: 900 bytes
+p.repeat.k17mpsExcelClientInstaller.resource	RCDATA JGRAPH_EXCEL_CLIENT_CONFIG lang 0: 137 bytes
+p.repeat.k17mpsExcelClientInstaller.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+p.repeat.k17mpsExcelClientInstaller.resource	RCDATA JGRAPH_INSTALL_BUNDLE lang 0: 523416 bytes
+p.repeat.k17mpsExcelClientInstaller.  starts	50 4b 03 04 14 00 00 00 00 00 00 00 21 00 14 f0
+p.repeat.k17mpsExcelClientInstaller.resource	GROUP_ICON 1 lang 0: 90 bytes
+p.repeat.k17mpsExcelClientInstaller.  icon	0x0 colors 0 planes 1 bits 32 bytes 41893 id 1: png 256x256
+p.repeat.k17mpsExcelClientInstaller.  icon	128x128 colors 0 planes 1 bits 32 bytes 13649 id 2: png 128x128
+p.repeat.k17mpsExcelClientInstaller.  icon	48x48 colors 0 planes 1 bits 32 bytes 2261 id 3: png 48x48
+p.repeat.k17mpsExcelClientInstaller.  icon	32x32 colors 0 planes 1 bits 32 bytes 1634 id 4: png 32x32
+p.repeat.k17mpsExcelClientInstaller.  icon	24x24 colors 0 planes 1 bits 32 bytes 1219 id 5: png 24x24
+p.repeat.k17mpsExcelClientInstaller.  icon	16x16 colors 0 planes 1 bits 32 bytes 743 id 6: png 16x16
+p.repeat.k17mpsExcelClientInstaller.resource	VERSION 1 lang 0: 320 bytes
+p.repeat.k17mpsExcelClientInstaller.  fixed.FileVersion	1.0.0.0
+p.repeat.k17mpsExcelClientInstaller.  fixed.ProductVersion	1.0.0.0
+p.repeat.k17mpsExcelClientInstaller.  fixed.FileFlags	0x0
+p.repeat.k17mpsExcelClientInstaller.  fixed.FileOS	0x40004
+p.repeat.k17mpsExcelClientInstaller.  fixed.FileType	0x1
+p.repeat.k17mpsExcelClientInstaller.  table	000004B0
+p.repeat.k17mpsExcelClientInstaller.  string.FileVersion	1.0.0.0
+p.repeat.k17mpsExcelClientInstaller.  string.ProductVersion	1.0.0.0
+p.repeat.k17mpsExcelClientInstaller.  var.Translation	000004b0
+p.repeat.k17mpsExcelClientInstaller.resource	MANIFEST 1 lang 0: 1274 bytes
+p.repeat.k17mpsExcelClientInstaller.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+p.repeat.k17mpsExcelClientInstaller.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+p.repeat.k17mpsExcelClientInstaller.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+p.repeat.k17mpsExcelClientInstaller.  manifest	<security>
+p.repeat.k17mpsExcelClientInstaller.  manifest	<requestedPrivileges>
+p.repeat.k17mpsExcelClientInstaller.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+p.repeat.k17mpsExcelClientInstaller.  manifest	</requestedPrivileges>
+p.repeat.k17mpsExcelClientInstaller.  manifest	</security>
+p.repeat.k17mpsExcelClientInstaller.  manifest	</trustInfo>
+p.repeat.k17mpsExcelClientInstaller.  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+p.repeat.k17mpsExcelClientInstaller.  manifest	<application>
+p.repeat.k17mpsExcelClientInstaller.  manifest	<supportedOS Id="{<UUID>}" />
+p.repeat.k17mpsExcelClientInstaller.  manifest	</application>
+p.repeat.k17mpsExcelClientInstaller.  manifest	</compatibility>
+p.repeat.k17mpsExcelClientInstaller.  manifest	<asmv3:application>
+p.repeat.k17mpsExcelClientInstaller.  manifest	<asmv3:windowsSettings>
+p.repeat.k17mpsExcelClientInstaller.  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+p.repeat.k17mpsExcelClientInstaller.  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+p.repeat.k17mpsExcelClientInstaller.  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+p.repeat.k17mpsExcelClientInstaller.  manifest	</asmv3:windowsSettings>
+p.repeat.k17mpsExcelClientInstaller.  manifest	</asmv3:application>
+p.repeat.k17mpsExcelClientInstaller.  manifest	<dependency>
+p.repeat.k17mpsExcelClientInstaller.  manifest	<dependentAssembly>
+p.repeat.k17mpsExcelClientInstaller.  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+p.repeat.k17mpsExcelClientInstaller.  manifest	</dependentAssembly>
+p.repeat.k17mpsExcelClientInstaller.  manifest	</dependency>
+p.repeat.k17mpsExcelClientInstaller.  manifest	</assembly>
+src.k17_anim.file	<W>\p\src\k17_anim.gif
+src.k17_anim.ERR	not a PE file
 src.k17_args.file	<W>\p\src\k17_args.m
 src.k17_args.ERR	not a PE file
 src.k17_both.file	<W>\p\src\k17_both.m
@@ -1216,6 +2363,8 @@ src.k17_err.file	<W>\p\src\k17_err.m
 src.k17_err.ERR	not a PE file
 src.k17_h1.file	<W>\p\src\k17_h1.m
 src.k17_h1.ERR	not a PE file
+src.k17_icon.file	<W>\p\src\k17_icon.png
+src.k17_icon.ERR	not a PE file
 src.k17_make.file	<W>\p\src\k17_make.m
 src.k17_make.ERR	not a PE file
 src.k17_many.file	<W>\p\src\k17_many.m
@@ -1248,8 +2397,80 @@ src.k17_varin.file	<W>\p\src\k17_varin.m
 src.k17_varin.ERR	not a PE file
 src.k17_varout.file	<W>\p\src\k17_varout.m
 src.k17_varout.ERR	not a PE file
+src.k17cert.file	<W>\p\src\k17cert.pem
+src.k17cert.ERR	not a PE file
 src.k17data.file	<W>\p\src\k17data.txt
 src.k17data.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 5)
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.file	k17mpsExcelClientInstaller.exe
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.bytes	812032
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.machine	0x8664
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.subsystem	windows-gui
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.image.bytes	812032
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.overlay.bytes	0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.certificate	no
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.import	ADVAPI32.dll
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.import	ole32.dll
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.import	USER32.dll
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.import	SHELL32.dll
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.import	VERSION.dll
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.import	KERNEL32.dll
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	ICON 1 lang 0: 41893 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	ICON 2 lang 0: 13649 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	ICON 3 lang 0: 2261 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	ICON 4 lang 0: 1634 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	ICON 5 lang 0: 1219 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	ICON 6 lang 0: 743 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	DIALOG 101 lang 0: 900 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	RCDATA JGRAPH_EXCEL_CLIENT_CONFIG lang 0: 137 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  starts	43 54 46 46 69 6c 65 3d 6b 31 37 61 72 63 68 2e
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	RCDATA JGRAPH_INSTALL_BUNDLE lang 0: 518500 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  starts	50 4b 03 04 14 00 00 00 00 00 00 00 21 00 14 f0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	GROUP_ICON 1 lang 0: 90 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  icon	0x0 colors 0 planes 1 bits 32 bytes 41893 id 1: png 256x256
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  icon	128x128 colors 0 planes 1 bits 32 bytes 13649 id 2: png 128x128
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  icon	48x48 colors 0 planes 1 bits 32 bytes 2261 id 3: png 48x48
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  icon	32x32 colors 0 planes 1 bits 32 bytes 1634 id 4: png 32x32
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  icon	24x24 colors 0 planes 1 bits 32 bytes 1219 id 5: png 24x24
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  icon	16x16 colors 0 planes 1 bits 32 bytes 743 id 6: png 16x16
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	VERSION 1 lang 0: 320 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  fixed.FileVersion	1.0.0.0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  fixed.ProductVersion	1.0.0.0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  fixed.FileFlags	0x0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  fixed.FileOS	0x40004
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  fixed.FileType	0x1
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  table	000004B0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  string.FileVersion	1.0.0.0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  string.ProductVersion	1.0.0.0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  var.Translation	000004b0
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.resource	MANIFEST 1 lang 0: 1274 bytes
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<security>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<requestedPrivileges>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<requestedExecutionLevel level="asInvoker" uiAccess="false" />
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	</requestedPrivileges>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	</security>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	</trustInfo>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<application>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<supportedOS Id="{<UUID>}" />
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	</application>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	</compatibility>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<asmv3:application>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<asmv3:windowsSettings>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	</asmv3:windowsSettings>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	</asmv3:application>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<dependency>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<dependentAssembly>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*" />
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	</dependentAssembly>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	</dependency>
+src.k17mpsExcelClientInstaller.k17mpsExcelClientInstaller.  manifest	</assembly>
 src.k17ownexcelAddIn._install.file	<W>\p\src\k17ownexcelAddIn\_install.bat
 src.k17ownexcelAddIn._install.ERR	not a PE file
 src.k17ownexcelAddIn.buildresult.file	<W>\p\src\k17ownexcelAddIn\buildresult.json
@@ -1274,7 +2495,7 @@ src.k17ownexcelAddIn.k17own_1_0.resource	"TYPELIB" 1 lang 0: 5180 bytes
 src.k17ownexcelAddIn.k17own_1_0.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
 src.k17ownexcelAddIn.k17own_1_0.resource	RCDATA JGRAPH_RUNTIME lang 0: 5 bytes
 src.k17ownexcelAddIn.k17own_1_0.  starts	30 2e 32 2e 33
-src.k17ownexcelAddIn.k17own_1_0.resource	RCDATA 2 lang 0: 3468 bytes
+src.k17ownexcelAddIn.k17own_1_0.resource	RCDATA 2 lang 0: 3471 bytes
 src.k17ownexcelAddIn.k17own_1_0.  starts	50 4b 03 04 14 00 00 08 08 00 00 00 21 00 22 23
 src.k17ownexcelAddIn.k17own_1_0.resource	VERSION 1 lang 0: 320 bytes
 src.k17ownexcelAddIn.k17own_1_0.  fixed.FileVersion	1.0.0.0
@@ -1294,3 +2515,354 @@ src.k17ownexcelAddIn.requiredMCRProducts.file	<W>\p\src\k17ownexcelAddIn\require
 src.k17ownexcelAddIn.requiredMCRProducts.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 6)
 src.k17ownexcelAddIn.unresolvedSymbols.file	<W>\p\src\k17ownexcelAddIn\unresolvedSymbols.txt
 src.k17ownexcelAddIn.unresolvedSymbols.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 20)
+x.mpsxl_badswitch.buildresult.file	<W>\p\x\mpsxl_badswitch\buildresult.json
+x.mpsxl_badswitch.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+x.mpsxl_badswitch.includedSupportPackages.file	<W>\p\x\mpsxl_badswitch\includedSupportPackages.txt
+x.mpsxl_badswitch.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+x.mpsxl_badswitch.k17xbs.file	<W>\p\x\mpsxl_badswitch\k17xbs.bas
+x.mpsxl_badswitch.k17xbs.ERR	not a PE file
+x.mpsxl_badswitch.k17xbs.file	k17xbs.dll
+x.mpsxl_badswitch.k17xbs.bytes	334336
+x.mpsxl_badswitch.k17xbs.machine	0x8664
+x.mpsxl_badswitch.k17xbs.subsystem	windows-gui
+x.mpsxl_badswitch.k17xbs.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+x.mpsxl_badswitch.k17xbs.image.bytes	334336
+x.mpsxl_badswitch.k17xbs.overlay.bytes	0
+x.mpsxl_badswitch.k17xbs.certificate	no
+x.mpsxl_badswitch.k17xbs.import	ADVAPI32.dll
+x.mpsxl_badswitch.k17xbs.import	ole32.dll
+x.mpsxl_badswitch.k17xbs.import	OLEAUT32.dll
+x.mpsxl_badswitch.k17xbs.import	WINHTTP.dll
+x.mpsxl_badswitch.k17xbs.import	CRYPT32.dll
+x.mpsxl_badswitch.k17xbs.import	SHELL32.dll
+x.mpsxl_badswitch.k17xbs.import	KERNEL32.dll
+x.mpsxl_badswitch.k17xbs.resource	"TYPELIB" 1 lang 0: 1684 bytes
+x.mpsxl_badswitch.k17xbs.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+x.mpsxl_badswitch.k17xbs.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 60 bytes
+x.mpsxl_badswitch.k17xbs.  starts	41 64 64 49 6e 3d 6b 31 37 78 62 73 0a 43 6c 61
+x.mpsxl_badswitch.k17xbs.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_badswitch.k17xbs.  fixed.FileVersion	1.0.0.0
+x.mpsxl_badswitch.k17xbs.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_badswitch.k17xbs.  fixed.FileFlags	0x0
+x.mpsxl_badswitch.k17xbs.  fixed.FileOS	0x40004
+x.mpsxl_badswitch.k17xbs.  fixed.FileType	0x2
+x.mpsxl_badswitch.k17xbs.  table	000004B0
+x.mpsxl_badswitch.k17xbs.  string.FileVersion	1.0.0.0
+x.mpsxl_badswitch.k17xbs.  string.ProductVersion	1.0.0.0
+x.mpsxl_badswitch.k17xbs.  var.Translation	000004b0
+x.mpsxl_badswitch.k17xbs.file	<W>\p\x\mpsxl_badswitch\k17xbs.xlam
+x.mpsxl_badswitch.k17xbs.ERR	not a PE file
+x.mpsxl_badswitch.readme.file	<W>\p\x\mpsxl_badswitch\readme.txt
+x.mpsxl_badswitch.readme.ERR	not a PE file
+x.mpsxl_bundle.buildresult.file	<W>\p\x\mpsxl_bundle\buildresult.json
+x.mpsxl_bundle.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+x.mpsxl_bundle.includedSupportPackages.file	<W>\p\x\mpsxl_bundle\includedSupportPackages.txt
+x.mpsxl_bundle.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+x.mpsxl_bundle.k17xb.file	<W>\p\x\mpsxl_bundle\k17xb.bas
+x.mpsxl_bundle.k17xb.ERR	not a PE file
+x.mpsxl_bundle.k17xb.file	k17xb.dll
+x.mpsxl_bundle.k17xb.bytes	334336
+x.mpsxl_bundle.k17xb.machine	0x8664
+x.mpsxl_bundle.k17xb.subsystem	windows-gui
+x.mpsxl_bundle.k17xb.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+x.mpsxl_bundle.k17xb.image.bytes	334336
+x.mpsxl_bundle.k17xb.overlay.bytes	0
+x.mpsxl_bundle.k17xb.certificate	no
+x.mpsxl_bundle.k17xb.import	ADVAPI32.dll
+x.mpsxl_bundle.k17xb.import	ole32.dll
+x.mpsxl_bundle.k17xb.import	OLEAUT32.dll
+x.mpsxl_bundle.k17xb.import	WINHTTP.dll
+x.mpsxl_bundle.k17xb.import	CRYPT32.dll
+x.mpsxl_bundle.k17xb.import	SHELL32.dll
+x.mpsxl_bundle.k17xb.import	KERNEL32.dll
+x.mpsxl_bundle.k17xb.resource	"TYPELIB" 1 lang 0: 1680 bytes
+x.mpsxl_bundle.k17xb.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+x.mpsxl_bundle.k17xb.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 58 bytes
+x.mpsxl_bundle.k17xb.  starts	41 64 64 49 6e 3d 6b 31 37 78 62 0a 43 6c 61 73
+x.mpsxl_bundle.k17xb.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_bundle.k17xb.  fixed.FileVersion	1.0.0.0
+x.mpsxl_bundle.k17xb.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_bundle.k17xb.  fixed.FileFlags	0x0
+x.mpsxl_bundle.k17xb.  fixed.FileOS	0x40004
+x.mpsxl_bundle.k17xb.  fixed.FileType	0x2
+x.mpsxl_bundle.k17xb.  table	000004B0
+x.mpsxl_bundle.k17xb.  string.FileVersion	1.0.0.0
+x.mpsxl_bundle.k17xb.  string.ProductVersion	1.0.0.0
+x.mpsxl_bundle.k17xb.  var.Translation	000004b0
+x.mpsxl_bundle.k17xb.file	<W>\p\x\mpsxl_bundle\k17xb.xlam
+x.mpsxl_bundle.k17xb.ERR	not a PE file
+x.mpsxl_bundle.readme.file	<W>\p\x\mpsxl_bundle\readme.txt
+x.mpsxl_bundle.readme.ERR	not a PE file
+x.mpsxl_debug.buildresult.file	<W>\p\x\mpsxl_debug\buildresult.json
+x.mpsxl_debug.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+x.mpsxl_debug.includedSupportPackages.file	<W>\p\x\mpsxl_debug\includedSupportPackages.txt
+x.mpsxl_debug.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+x.mpsxl_debug.k17xd.file	<W>\p\x\mpsxl_debug\k17xd.bas
+x.mpsxl_debug.k17xd.ERR	not a PE file
+x.mpsxl_debug.k17xd.file	k17xd.dll
+x.mpsxl_debug.k17xd.bytes	334336
+x.mpsxl_debug.k17xd.machine	0x8664
+x.mpsxl_debug.k17xd.subsystem	windows-gui
+x.mpsxl_debug.k17xd.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+x.mpsxl_debug.k17xd.image.bytes	334336
+x.mpsxl_debug.k17xd.overlay.bytes	0
+x.mpsxl_debug.k17xd.certificate	no
+x.mpsxl_debug.k17xd.import	ADVAPI32.dll
+x.mpsxl_debug.k17xd.import	ole32.dll
+x.mpsxl_debug.k17xd.import	OLEAUT32.dll
+x.mpsxl_debug.k17xd.import	WINHTTP.dll
+x.mpsxl_debug.k17xd.import	CRYPT32.dll
+x.mpsxl_debug.k17xd.import	SHELL32.dll
+x.mpsxl_debug.k17xd.import	KERNEL32.dll
+x.mpsxl_debug.k17xd.resource	"TYPELIB" 1 lang 0: 1680 bytes
+x.mpsxl_debug.k17xd.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+x.mpsxl_debug.k17xd.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 58 bytes
+x.mpsxl_debug.k17xd.  starts	41 64 64 49 6e 3d 6b 31 37 78 64 0a 43 6c 61 73
+x.mpsxl_debug.k17xd.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_debug.k17xd.  fixed.FileVersion	1.0.0.0
+x.mpsxl_debug.k17xd.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_debug.k17xd.  fixed.FileFlags	0x0
+x.mpsxl_debug.k17xd.  fixed.FileOS	0x40004
+x.mpsxl_debug.k17xd.  fixed.FileType	0x2
+x.mpsxl_debug.k17xd.  table	000004B0
+x.mpsxl_debug.k17xd.  string.FileVersion	1.0.0.0
+x.mpsxl_debug.k17xd.  string.ProductVersion	1.0.0.0
+x.mpsxl_debug.k17xd.  var.Translation	000004b0
+x.mpsxl_debug.k17xd.file	<W>\p\x\mpsxl_debug\k17xd.xlam
+x.mpsxl_debug.k17xd.ERR	not a PE file
+x.mpsxl_debug.readme.file	<W>\p\x\mpsxl_debug\readme.txt
+x.mpsxl_debug.readme.ERR	not a PE file
+x.mpsxl_default.buildresult.file	<W>\p\x\mpsxl_default\buildresult.json
+x.mpsxl_default.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+x.mpsxl_default.includedSupportPackages.file	<W>\p\x\mpsxl_default\includedSupportPackages.txt
+x.mpsxl_default.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+x.mpsxl_default.k17x.file	<W>\p\x\mpsxl_default\k17x.bas
+x.mpsxl_default.k17x.ERR	not a PE file
+x.mpsxl_default.k17x.file	k17x.dll
+x.mpsxl_default.k17x.bytes	334336
+x.mpsxl_default.k17x.machine	0x8664
+x.mpsxl_default.k17x.subsystem	windows-gui
+x.mpsxl_default.k17x.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+x.mpsxl_default.k17x.image.bytes	334336
+x.mpsxl_default.k17x.overlay.bytes	0
+x.mpsxl_default.k17x.certificate	no
+x.mpsxl_default.k17x.import	ADVAPI32.dll
+x.mpsxl_default.k17x.import	ole32.dll
+x.mpsxl_default.k17x.import	OLEAUT32.dll
+x.mpsxl_default.k17x.import	WINHTTP.dll
+x.mpsxl_default.k17x.import	CRYPT32.dll
+x.mpsxl_default.k17x.import	SHELL32.dll
+x.mpsxl_default.k17x.import	KERNEL32.dll
+x.mpsxl_default.k17x.resource	"TYPELIB" 1 lang 0: 1672 bytes
+x.mpsxl_default.k17x.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+x.mpsxl_default.k17x.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 56 bytes
+x.mpsxl_default.k17x.  starts	41 64 64 49 6e 3d 6b 31 37 78 0a 43 6c 61 73 73
+x.mpsxl_default.k17x.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_default.k17x.  fixed.FileVersion	1.0.0.0
+x.mpsxl_default.k17x.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_default.k17x.  fixed.FileFlags	0x0
+x.mpsxl_default.k17x.  fixed.FileOS	0x40004
+x.mpsxl_default.k17x.  fixed.FileType	0x2
+x.mpsxl_default.k17x.  table	000004B0
+x.mpsxl_default.k17x.  string.FileVersion	1.0.0.0
+x.mpsxl_default.k17x.  string.ProductVersion	1.0.0.0
+x.mpsxl_default.k17x.  var.Translation	000004b0
+x.mpsxl_default.k17x.file	<W>\p\x\mpsxl_default\k17x.xlam
+x.mpsxl_default.k17x.ERR	not a PE file
+x.mpsxl_default.readme.file	<W>\p\x\mpsxl_default\readme.txt
+x.mpsxl_default.readme.ERR	not a PE file
+x.mpsxl_group.buildresult.file	<W>\p\x\mpsxl_group\buildresult.json
+x.mpsxl_group.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+x.mpsxl_group.includedSupportPackages.file	<W>\p\x\mpsxl_group\includedSupportPackages.txt
+x.mpsxl_group.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+x.mpsxl_group.k17xg.file	<W>\p\x\mpsxl_group\k17xg.bas
+x.mpsxl_group.k17xg.ERR	not a PE file
+x.mpsxl_group.k17xg.file	k17xg.dll
+x.mpsxl_group.k17xg.bytes	334336
+x.mpsxl_group.k17xg.machine	0x8664
+x.mpsxl_group.k17xg.subsystem	windows-gui
+x.mpsxl_group.k17xg.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+x.mpsxl_group.k17xg.image.bytes	334336
+x.mpsxl_group.k17xg.overlay.bytes	0
+x.mpsxl_group.k17xg.certificate	no
+x.mpsxl_group.k17xg.import	ADVAPI32.dll
+x.mpsxl_group.k17xg.import	ole32.dll
+x.mpsxl_group.k17xg.import	OLEAUT32.dll
+x.mpsxl_group.k17xg.import	WINHTTP.dll
+x.mpsxl_group.k17xg.import	CRYPT32.dll
+x.mpsxl_group.k17xg.import	SHELL32.dll
+x.mpsxl_group.k17xg.import	KERNEL32.dll
+x.mpsxl_group.k17xg.resource	"TYPELIB" 1 lang 0: 1824 bytes
+x.mpsxl_group.k17xg.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+x.mpsxl_group.k17xg.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 98 bytes
+x.mpsxl_group.k17xg.  starts	41 64 64 49 6e 3d 6b 31 37 78 67 0a 43 6c 61 73
+x.mpsxl_group.k17xg.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_group.k17xg.  fixed.FileVersion	1.0.0.0
+x.mpsxl_group.k17xg.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_group.k17xg.  fixed.FileFlags	0x0
+x.mpsxl_group.k17xg.  fixed.FileOS	0x40004
+x.mpsxl_group.k17xg.  fixed.FileType	0x2
+x.mpsxl_group.k17xg.  table	000004B0
+x.mpsxl_group.k17xg.  string.FileVersion	1.0.0.0
+x.mpsxl_group.k17xg.  string.ProductVersion	1.0.0.0
+x.mpsxl_group.k17xg.  var.Translation	000004b0
+x.mpsxl_group.k17xg.file	<W>\p\x\mpsxl_group\k17xg.xlam
+x.mpsxl_group.k17xg.ERR	not a PE file
+x.mpsxl_group.readme.file	<W>\p\x\mpsxl_group\readme.txt
+x.mpsxl_group.readme.ERR	not a PE file
+x.mpsxl_groupbug.buildresult.file	<W>\p\x\mpsxl_groupbug\buildresult.json
+x.mpsxl_groupbug.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+x.mpsxl_groupbug.includedSupportPackages.file	<W>\p\x\mpsxl_groupbug\includedSupportPackages.txt
+x.mpsxl_groupbug.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+x.mpsxl_groupbug.k17xgb.file	<W>\p\x\mpsxl_groupbug\k17xgb.bas
+x.mpsxl_groupbug.k17xgb.ERR	not a PE file
+x.mpsxl_groupbug.k17xgb.file	k17xgb.dll
+x.mpsxl_groupbug.k17xgb.bytes	334336
+x.mpsxl_groupbug.k17xgb.machine	0x8664
+x.mpsxl_groupbug.k17xgb.subsystem	windows-gui
+x.mpsxl_groupbug.k17xgb.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+x.mpsxl_groupbug.k17xgb.image.bytes	334336
+x.mpsxl_groupbug.k17xgb.overlay.bytes	0
+x.mpsxl_groupbug.k17xgb.certificate	no
+x.mpsxl_groupbug.k17xgb.import	ADVAPI32.dll
+x.mpsxl_groupbug.k17xgb.import	ole32.dll
+x.mpsxl_groupbug.k17xgb.import	OLEAUT32.dll
+x.mpsxl_groupbug.k17xgb.import	WINHTTP.dll
+x.mpsxl_groupbug.k17xgb.import	CRYPT32.dll
+x.mpsxl_groupbug.k17xgb.import	SHELL32.dll
+x.mpsxl_groupbug.k17xgb.import	KERNEL32.dll
+x.mpsxl_groupbug.k17xgb.resource	"TYPELIB" 1 lang 0: 1828 bytes
+x.mpsxl_groupbug.k17xgb.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+x.mpsxl_groupbug.k17xgb.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 89 bytes
+x.mpsxl_groupbug.k17xgb.  starts	41 64 64 49 6e 3d 6b 31 37 78 67 62 0a 43 6c 61
+x.mpsxl_groupbug.k17xgb.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_groupbug.k17xgb.  fixed.FileVersion	1.0.0.0
+x.mpsxl_groupbug.k17xgb.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_groupbug.k17xgb.  fixed.FileFlags	0x0
+x.mpsxl_groupbug.k17xgb.  fixed.FileOS	0x40004
+x.mpsxl_groupbug.k17xgb.  fixed.FileType	0x2
+x.mpsxl_groupbug.k17xgb.  table	000004B0
+x.mpsxl_groupbug.k17xgb.  string.FileVersion	1.0.0.0
+x.mpsxl_groupbug.k17xgb.  string.ProductVersion	1.0.0.0
+x.mpsxl_groupbug.k17xgb.  var.Translation	000004b0
+x.mpsxl_groupbug.k17xgb.file	<W>\p\x\mpsxl_groupbug\k17xgb.xlam
+x.mpsxl_groupbug.k17xgb.ERR	not a PE file
+x.mpsxl_groupbug.readme.file	<W>\p\x\mpsxl_groupbug\readme.txt
+x.mpsxl_groupbug.readme.ERR	not a PE file
+x.mpsxl_noclass.buildresult.file	<W>\p\x\mpsxl_noclass\buildresult.json
+x.mpsxl_noclass.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+x.mpsxl_noclass.includedSupportPackages.file	<W>\p\x\mpsxl_noclass\includedSupportPackages.txt
+x.mpsxl_noclass.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+x.mpsxl_noclass.k17xnc.file	<W>\p\x\mpsxl_noclass\k17xnc.bas
+x.mpsxl_noclass.k17xnc.ERR	not a PE file
+x.mpsxl_noclass.k17xnc.file	k17xnc.dll
+x.mpsxl_noclass.k17xnc.bytes	334336
+x.mpsxl_noclass.k17xnc.machine	0x8664
+x.mpsxl_noclass.k17xnc.subsystem	windows-gui
+x.mpsxl_noclass.k17xnc.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+x.mpsxl_noclass.k17xnc.image.bytes	334336
+x.mpsxl_noclass.k17xnc.overlay.bytes	0
+x.mpsxl_noclass.k17xnc.certificate	no
+x.mpsxl_noclass.k17xnc.import	ADVAPI32.dll
+x.mpsxl_noclass.k17xnc.import	ole32.dll
+x.mpsxl_noclass.k17xnc.import	OLEAUT32.dll
+x.mpsxl_noclass.k17xnc.import	WINHTTP.dll
+x.mpsxl_noclass.k17xnc.import	CRYPT32.dll
+x.mpsxl_noclass.k17xnc.import	SHELL32.dll
+x.mpsxl_noclass.k17xnc.import	KERNEL32.dll
+x.mpsxl_noclass.k17xnc.resource	"TYPELIB" 1 lang 0: 1684 bytes
+x.mpsxl_noclass.k17xnc.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+x.mpsxl_noclass.k17xnc.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 60 bytes
+x.mpsxl_noclass.k17xnc.  starts	41 64 64 49 6e 3d 6b 31 37 78 6e 63 0a 43 6c 61
+x.mpsxl_noclass.k17xnc.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_noclass.k17xnc.  fixed.FileVersion	1.0.0.0
+x.mpsxl_noclass.k17xnc.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_noclass.k17xnc.  fixed.FileFlags	0x0
+x.mpsxl_noclass.k17xnc.  fixed.FileOS	0x40004
+x.mpsxl_noclass.k17xnc.  fixed.FileType	0x2
+x.mpsxl_noclass.k17xnc.  table	000004B0
+x.mpsxl_noclass.k17xnc.  string.FileVersion	1.0.0.0
+x.mpsxl_noclass.k17xnc.  string.ProductVersion	1.0.0.0
+x.mpsxl_noclass.k17xnc.  var.Translation	000004b0
+x.mpsxl_noclass.k17xnc.file	<W>\p\x\mpsxl_noclass\k17xnc.xlam
+x.mpsxl_noclass.k17xnc.ERR	not a PE file
+x.mpsxl_noclass.readme.file	<W>\p\x\mpsxl_noclass\readme.txt
+x.mpsxl_noclass.readme.ERR	not a PE file
+x.mpsxl_notarget.buildresult.file	<W>\p\x\mpsxl_notarget\buildresult.json
+x.mpsxl_notarget.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+x.mpsxl_notarget.includedSupportPackages.file	<W>\p\x\mpsxl_notarget\includedSupportPackages.txt
+x.mpsxl_notarget.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+x.mpsxl_notarget.k17xnt.file	<W>\p\x\mpsxl_notarget\k17xnt.bas
+x.mpsxl_notarget.k17xnt.ERR	not a PE file
+x.mpsxl_notarget.k17xnt.file	k17xnt.dll
+x.mpsxl_notarget.k17xnt.bytes	334336
+x.mpsxl_notarget.k17xnt.machine	0x8664
+x.mpsxl_notarget.k17xnt.subsystem	windows-gui
+x.mpsxl_notarget.k17xnt.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+x.mpsxl_notarget.k17xnt.image.bytes	334336
+x.mpsxl_notarget.k17xnt.overlay.bytes	0
+x.mpsxl_notarget.k17xnt.certificate	no
+x.mpsxl_notarget.k17xnt.import	ADVAPI32.dll
+x.mpsxl_notarget.k17xnt.import	ole32.dll
+x.mpsxl_notarget.k17xnt.import	OLEAUT32.dll
+x.mpsxl_notarget.k17xnt.import	WINHTTP.dll
+x.mpsxl_notarget.k17xnt.import	CRYPT32.dll
+x.mpsxl_notarget.k17xnt.import	SHELL32.dll
+x.mpsxl_notarget.k17xnt.import	KERNEL32.dll
+x.mpsxl_notarget.k17xnt.resource	"TYPELIB" 1 lang 0: 1684 bytes
+x.mpsxl_notarget.k17xnt.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+x.mpsxl_notarget.k17xnt.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 60 bytes
+x.mpsxl_notarget.k17xnt.  starts	41 64 64 49 6e 3d 6b 31 37 78 6e 74 0a 43 6c 61
+x.mpsxl_notarget.k17xnt.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_notarget.k17xnt.  fixed.FileVersion	1.0.0.0
+x.mpsxl_notarget.k17xnt.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_notarget.k17xnt.  fixed.FileFlags	0x0
+x.mpsxl_notarget.k17xnt.  fixed.FileOS	0x40004
+x.mpsxl_notarget.k17xnt.  fixed.FileType	0x2
+x.mpsxl_notarget.k17xnt.  table	000004B0
+x.mpsxl_notarget.k17xnt.  string.FileVersion	1.0.0.0
+x.mpsxl_notarget.k17xnt.  string.ProductVersion	1.0.0.0
+x.mpsxl_notarget.k17xnt.  var.Translation	000004b0
+x.mpsxl_notarget.k17xnt.file	<W>\p\x\mpsxl_notarget\k17xnt.xlam
+x.mpsxl_notarget.k17xnt.ERR	not a PE file
+x.mpsxl_notarget.readme.file	<W>\p\x\mpsxl_notarget\readme.txt
+x.mpsxl_notarget.readme.ERR	not a PE file
+x.mpsxl_noversion.buildresult.file	<W>\p\x\mpsxl_noversion\buildresult.json
+x.mpsxl_noversion.buildresult.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 34)
+x.mpsxl_noversion.includedSupportPackages.file	<W>\p\x\mpsxl_noversion\includedSupportPackages.txt
+x.mpsxl_noversion.includedSupportPackages.ERR	unpack_from requires a buffer of at least 64 bytes for unpacking 4 bytes at offset 60 (actual buffer size is 0)
+x.mpsxl_noversion.k17xnv.file	<W>\p\x\mpsxl_noversion\k17xnv.bas
+x.mpsxl_noversion.k17xnv.ERR	not a PE file
+x.mpsxl_noversion.k17xnv.file	k17xnv.dll
+x.mpsxl_noversion.k17xnv.bytes	334336
+x.mpsxl_noversion.k17xnv.machine	0x8664
+x.mpsxl_noversion.k17xnv.subsystem	windows-gui
+x.mpsxl_noversion.k17xnv.sections	.text .rdata .data .pdata .fptable .rsrc .reloc
+x.mpsxl_noversion.k17xnv.image.bytes	334336
+x.mpsxl_noversion.k17xnv.overlay.bytes	0
+x.mpsxl_noversion.k17xnv.certificate	no
+x.mpsxl_noversion.k17xnv.import	ADVAPI32.dll
+x.mpsxl_noversion.k17xnv.import	ole32.dll
+x.mpsxl_noversion.k17xnv.import	OLEAUT32.dll
+x.mpsxl_noversion.k17xnv.import	WINHTTP.dll
+x.mpsxl_noversion.k17xnv.import	CRYPT32.dll
+x.mpsxl_noversion.k17xnv.import	SHELL32.dll
+x.mpsxl_noversion.k17xnv.import	KERNEL32.dll
+x.mpsxl_noversion.k17xnv.resource	"TYPELIB" 1 lang 0: 1684 bytes
+x.mpsxl_noversion.k17xnv.  starts	4d 53 46 54 02 00 01 00 00 00 00 00 09 04 00 00
+x.mpsxl_noversion.k17xnv.resource	RCDATA JGRAPH_EXCEL_CLIENT lang 0: 60 bytes
+x.mpsxl_noversion.k17xnv.  starts	41 64 64 49 6e 3d 6b 31 37 78 6e 76 0a 43 6c 61
+x.mpsxl_noversion.k17xnv.resource	VERSION 1 lang 0: 320 bytes
+x.mpsxl_noversion.k17xnv.  fixed.FileVersion	1.0.0.0
+x.mpsxl_noversion.k17xnv.  fixed.ProductVersion	1.0.0.0
+x.mpsxl_noversion.k17xnv.  fixed.FileFlags	0x0
+x.mpsxl_noversion.k17xnv.  fixed.FileOS	0x40004
+x.mpsxl_noversion.k17xnv.  fixed.FileType	0x2
+x.mpsxl_noversion.k17xnv.  table	000004B0
+x.mpsxl_noversion.k17xnv.  string.FileVersion	1.0.0.0
+x.mpsxl_noversion.k17xnv.  string.ProductVersion	1.0.0.0
+x.mpsxl_noversion.k17xnv.  var.Translation	000004b0
+x.mpsxl_noversion.k17xnv.file	<W>\p\x\mpsxl_noversion\k17xnv.xlam
+x.mpsxl_noversion.k17xnv.ERR	not a PE file
+x.mpsxl_noversion.readme.file	<W>\p\x\mpsxl_noversion\readme.txt
+x.mpsxl_noversion.readme.ERR	not a PE file

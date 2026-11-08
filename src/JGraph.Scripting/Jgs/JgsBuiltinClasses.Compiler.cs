@@ -98,6 +98,25 @@ internal static partial class JgsBuiltinClasses
     /// <summary>Where a name given for <c>ClassName</c> is kept (R2025b's UserProvidedClassName).</summary>
     public const string GivenClass = "UserProvidedClassName";
 
+    /// <summary>The Excel client for the Production Server's build options class (stage K17f).</summary>
+    public const string ExcelClientOptions = "compiler.build.ExcelClientForProductionServerOptions";
+
+    /// <summary>The client options' public properties, in the order R2025b lists them (k17_excel: copts.properties).</summary>
+    public static readonly string[] ExcelClientOptionNames =
+    [
+        "AddInName", "ClassName", "AddInVersion", "DebugBuild", "FunctionFiles", "GenerateVisualBasicFile", "ServerArchive",
+        "ReplaceExcelBlankWithNaN", "ConvertExcelDateToString", "ReplaceNaNToZeroInExcel", "ConvertNumericOutToDateInExcel", "Verbose", "OutputDir",
+    ];
+
+    /// <summary>The Excel client's installer options class (stage K17f).</summary>
+    public const string ExcelClientPackageOptions = "compiler.package.ExcelClientForProductionServerOptions";
+
+    /// <summary>The client's installer options' public properties, in R2025b's order (k17_excel: popts.properties).</summary>
+    public static readonly string[] ExcelClientPackageOptionNames =
+    [
+        "ServerArchive", "ClientLibrary", "InstallerName", "InstallerIcon", "MaxResponseSize", "ServerTimeOut", "ServerURL", "SSLCertificate", "Version", "OutputDir",
+    ];
+
     /// <summary>The installer options class (stage K18).</summary>
     public const string InstallerOptions = "compiler.package.InstallerOptions";
 
@@ -508,6 +527,98 @@ internal static partial class JgsBuiltinClasses
         }
 
         return new ClassdefStmt(ExcelOptions, isHandle: false, properties, methods)
+        {
+            Dialect = JgsDialect.Matlab,
+            Superclasses = [],
+        };
+    }
+
+    /// <summary>
+    /// <c>compiler.build.ExcelClientForProductionServerOptions</c> (stage K17f): R2025b's properties in
+    /// its order, the add-in's name, its class and the output folder dependent on what was given, each
+    /// set checked by <see cref="JgsBuiltins.SetExcelClientOption"/>, and its hidden <c>getName</c>.
+    /// </summary>
+    private static ClassdefStmt ExcelClientOptionsDeclaration(Interpreter interpreter)
+    {
+        var properties = new List<ClassProperty>();
+        var methods = new List<ClassMethod>();
+        foreach (string name in ExcelClientOptionNames)
+        {
+            bool derived = name is "AddInName" or "ClassName" or "OutputDir";
+            properties.Add(new ClassProperty(new ArgumentSpec(name, null, null, [], new PreEvaluated(JgsBuiltins.ExcelClientOptionDefault(name))),
+                Constant: false, Dependent: derived));
+            string captured = name;
+            methods.Add(Setter(name, (copy, value, line, col) => JgsBuiltins.SetExcelClientOption(interpreter, copy, captured, value, line, col)));
+            if (derived)
+            {
+                methods.Add(new ClassMethod(new FnStmt("get." + name, ["obj"], [], ["value"]) { Dialect = JgsDialect.Matlab }, Static: false)
+                {
+                    Native = new BuiltinFunction("get." + name, (args, line, col) => JgsBuiltins.ExcelClientOptionDerived(captured, args[0].AsObject)),
+                });
+            }
+        }
+
+        methods.Add(new ClassMethod(new FnStmt("getName", ["obj"], [], ["name"]) { Dialect = JgsDialect.Matlab }, Static: false)
+        {
+            Hidden = true,
+            Native = new BuiltinFunction("getName", (args, line, col) => JgsBuiltins.ExcelClientOptionDerived("AddInName", args[0].AsObject)),
+        });
+
+        var hidden = new MemberAccess(MemberAccessKind.Protected);
+        foreach (string field in new[] { GivenAddInName, GivenClass, GivenOutputDir })
+        {
+            properties.Add(new ClassProperty(new ArgumentSpec(field, null, null, [], new PreEvaluated(JgsValue.Str(""))), Constant: false)
+            {
+                GetAccess = hidden,
+                SetAccess = hidden,
+                Hidden = true,
+            });
+        }
+
+        return new ClassdefStmt(ExcelClientOptions, isHandle: false, properties, methods)
+        {
+            Dialect = JgsDialect.Matlab,
+            Superclasses = [],
+        };
+    }
+
+    /// <summary>
+    /// <c>compiler.package.ExcelClientForProductionServerOptions</c> (stage K17f): R2025b's properties in
+    /// its order, the installer's name and output folder dependent on the client library's name, each set
+    /// checked by <see cref="JgsBuiltins.SetExcelClientPackageOption"/>.
+    /// </summary>
+    private static ClassdefStmt ExcelClientPackageOptionsDeclaration(Interpreter interpreter)
+    {
+        var properties = new List<ClassProperty>();
+        var methods = new List<ClassMethod>();
+        foreach (string name in ExcelClientPackageOptionNames)
+        {
+            bool derived = name is "InstallerName" or "OutputDir";
+            properties.Add(new ClassProperty(new ArgumentSpec(name, null, null, [], new PreEvaluated(JgsBuiltins.ExcelClientPackageOptionDefault(name))),
+                Constant: false, Dependent: derived));
+            string captured = name;
+            methods.Add(Setter(name, (copy, value, line, col) => JgsBuiltins.SetExcelClientPackageOption(interpreter, copy, captured, value, line, col)));
+            if (derived)
+            {
+                methods.Add(new ClassMethod(new FnStmt("get." + name, ["obj"], [], ["value"]) { Dialect = JgsDialect.Matlab }, Static: false)
+                {
+                    Native = new BuiltinFunction("get." + name, (args, line, col) => JgsBuiltins.ExcelClientPackageOptionDerived(captured, args[0].AsObject)),
+                });
+            }
+        }
+
+        var hidden = new MemberAccess(MemberAccessKind.Protected);
+        foreach (string field in new[] { GivenInstallerName, GivenOutputDir })
+        {
+            properties.Add(new ClassProperty(new ArgumentSpec(field, null, null, [], new PreEvaluated(JgsValue.Str(""))), Constant: false)
+            {
+                GetAccess = hidden,
+                SetAccess = hidden,
+                Hidden = true,
+            });
+        }
+
+        return new ClassdefStmt(ExcelClientPackageOptions, isHandle: false, properties, methods)
         {
             Dialect = JgsDialect.Matlab,
             Superclasses = [],

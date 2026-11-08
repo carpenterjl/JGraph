@@ -6,12 +6,19 @@
 .DESCRIPTION
     Steps (each can be left out with -Skip):
 
-      excel    probe_k17_excel.m, unchanged, under jgraph -batch, as far as -UpTo says ('addin' until
-               stage K17f gives JGraph the Excel client for the Production Server; 'all' after): the
-               options, every add-in build, mcc -W excel, the server archive and the add-in beside it.
-               Each build registers its add-in for the current user, as R2025b's mbuild did (decision
-               KO13); the probe records each build's registry delta through .NET where JGraph gives
-               it no reg.exe.
+      excel    probe_k17_excel.m, unchanged, under jgraph -batch, as far as -UpTo says ('all' since
+               stage K17f gave JGraph the Excel client for the Production Server; 'addin' stops after
+               the add-in sections): the options, every add-in build, mcc -W excel, the server archive,
+               the Excel client builds, mcc -W mpsxl and the client's packaging. Each build registers
+               its add-in or client for the current user, as R2025b's did (decision KO13); the probe
+               records each build's registry delta through .NET where JGraph gives it no reg.exe.
+      mps      src\k17client\k17mps.ps1 -Native (stage K17f): the client the probe built (k17mps.dll,
+               registered for the current user) called by its ProgID with K17a's samples against
+               jgraph-mps serving the probe's k17arch.ctf behind k17proxy.py, which logs every request
+               and reply on the wire (k17_mps.out.txt); the client's settings written under
+               HKCU\Software\JGraph\Excel Client and removed in the cleanup.
+      payload  k18-payload.py over every installer compiler.package.excelClientForProductionServer
+               wrote (k17_payload.out.txt).
       com      src\k17client\k17com.ps1, the K17a oracle, against the add-in JGraph built and
                registered (k17xl.K17Xl.1_0) and JGraph's COM utility library (jgcomutil.dll beside
                jgraph.exe, registered for the current user first; stage K17d): the rows before
@@ -44,14 +51,22 @@
     The jgraph.exe that builds; the CLI's Debug build when not given.
 
 .PARAMETER UpTo
-    How far the probe runs: 'addin' (the default) or 'all'.
+    How far the probe runs: 'all' (the default) or 'addin'.
+
+.PARAMETER JgraphMps
+    The jgraph-mps.exe the mps step serves the archive with; the Production Server's Debug build when not given.
+
+.PARAMETER Port
+    The server's port (9971) and, one above it, the logging proxy's.
 #>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)] [string] $WorkRoot,
     [string] $Jgraph,
+    [string] $JgraphMps,
     [string] $Skip = '',
-    [string] $UpTo = 'addin',
+    [string] $UpTo = 'all',
+    [int] $Port = 9971,
     [string] $Python = (Join-Path $env:LOCALAPPDATA 'Programs\Python\Python312\python.exe')
 )
 
@@ -63,6 +78,8 @@ New-Item -ItemType Directory -Force $WorkRoot | Out-Null
 $WorkRoot = (Resolve-Path -LiteralPath $WorkRoot).Path
 if (-not $Jgraph) { $Jgraph = Join-Path $repoRoot 'src\JGraph.Cli\bin\Debug\net8.0\jgraph.exe' }
 $Jgraph = (Resolve-Path -LiteralPath $Jgraph).Path
+if (-not $JgraphMps) { $JgraphMps = Join-Path $repoRoot 'src\JGraph.ProductionServer\bin\Debug\net8.0\jgraph-mps.exe' }
+$ProxyPort = $Port + 1
 $jgraphFolder = Split-Path $Jgraph
 $recordings = Join-Path $here 'recordings-jgraph'
 New-Item -ItemType Directory -Force $recordings | Out-Null
@@ -202,6 +219,71 @@ if ($skipped -notcontains 'cells') {
     Run-Child (Join-Path $client 'k17hosting.ps1') @('-ProgId', 'k17bas.K17Bas.1_0', '-UtilProgId', 'JGraphComUtil.MWUtil25.2', '-Dll', "`"$(Join-Path $probe 'b\bas\k17bas_1_0.dll')`"", '-RuntimeDlls', "`"$($runtimeDlls -join ',')`"", '-Python', "`"$Python`"") 'k17_hosting.out.txt' 900
 }
 
+# --- the Excel client against jgraph-mps behind a logging proxy (stage K17f) ---------------------------------------
+$clientSettingsKey = 'HKCU:\Software\JGraph\Excel Client'
+$clientSettingsMarker = Join-Path $WorkRoot 'client_settings_made.txt'
+if ($skipped -notcontains 'mps' -and $UpTo -eq 'all') {
+    $lines = @()
+    $mpsWork = Join-Path $WorkRoot 'mps'
+    if (Test-Path $mpsWork) { Remove-Item -LiteralPath $mpsWork -Recurse -Force }
+    New-Item -ItemType Directory $mpsWork | Out-Null
+    # The probe's own archive of the functions (compiler.build.productionServerArchive, section 4), for the server to serve.
+    $archive = Join-Path $probe 'c\arch\k17arch.ctf'
+    $lines += "build.jgraph`texit 0 archive $(Test-Path $archive)"
+    if (-not (Test-Path $clientSettingsKey)) { [System.IO.File]::WriteAllText($clientSettingsMarker, $clientSettingsKey, $utf8) }
+    $server = $null; $proxy = $null
+    if (Test-Path $archive) {
+        $inst = Join-Path $mpsWork 'inst'
+        & $JgraphMps new $inst --port $Port | Out-Null
+        Copy-Item $archive (Join-Path $inst 'auto_deploy\k17arch.ctf')
+        $log = Join-Path $mpsWork 'server.log'
+        $server = Start-Process -FilePath $JgraphMps -ArgumentList @('run', "`"$inst`"") -RedirectStandardOutput $log -RedirectStandardError (Join-Path $mpsWork 'server.err') -NoNewWindow -PassThru
+        $watch = [System.Diagnostics.Stopwatch]::StartNew()
+        $ready = $false
+        while (-not $ready -and $watch.Elapsed.TotalSeconds -lt 120 -and -not $server.HasExited) {
+            Start-Sleep -Milliseconds 500
+            $text = if (Test-Path $log) { Get-Content $log -Raw -ErrorAction SilentlyContinue } else { '' }
+            $ready = $text -and $text.Contains('k17arch: deployed')
+        }
+        $lines += "server.ready`t$ready"
+        Write-Host ("jgraph-mps on {0} ready {1} after {2:n1} s" -f $Port, $ready, $watch.Elapsed.TotalSeconds)
+        $wire = Join-Path $mpsWork 'wire.txt'
+        $proxy = Start-Process -FilePath $Python -ArgumentList @('-I', "`"$(Join-Path $client 'k17proxy.py')`"", $ProxyPort, $Port, "`"$wire`"") -RedirectStandardOutput (Join-Path $mpsWork 'proxy.stdout') -RedirectStandardError (Join-Path $mpsWork 'proxy.stderr') -NoNewWindow -PassThru
+        Start-Sleep -Seconds 2
+        $dll = Join-Path $probe 'c\fromresults\k17mps.dll'
+        # The configured URL names the archive, as the installer and the configuration add-in write it.
+        Run-Child (Join-Path $client 'k17mps.ps1') @('-Native', '-Dll', "`"$dll`"", '-Url', "http://localhost:$ProxyPort/k17arch", '-Archive', 'k17arch', '-ProgId', 'k17mps.K17Mps', '-Python', "`"$Python`"") 'k17_mps.out.txt' 300
+        Start-Sleep -Seconds 1
+        try { if ($proxy -and -not $proxy.HasExited) { Stop-Process -Id $proxy.Id -Force } } catch { }
+        & $JgraphMps stop $inst | Out-Null
+        try { if ($server -and -not $server.HasExited) { $server.WaitForExit(10000) | Out-Null } } catch { }
+        if (Test-Path $wire) {
+            $lines += '== wire'
+            $lines += (([System.IO.File]::ReadAllText($wire, $utf8)) -split "`r?`n") | Where-Object { $_.Length -gt 0 } | ForEach-Object { "  $_" }
+        }
+        if (Test-Path $log) {
+            $lines += '== server log'
+            $lines += (Get-Content $log) | Where-Object { $_ -notmatch '^\s*$' } | ForEach-Object { "  $_" }
+        }
+    }
+    $existing = Join-Path $recordings 'k17_mps.out.txt'
+    $head = if (Test-Path $existing) { [System.IO.File]::ReadAllText($existing, $utf8) } else { '' }
+    Save 'k17_mps.out.txt' ($head.TrimEnd("`n") + "`n" + ($lines -join "`n"))
+}
+
+# --- the installers' payloads (stage K17f) ------------------------------------------------------------------------
+if ($skipped -notcontains 'payload' -and $UpTo -eq 'all') {
+    $lines = @()
+    $installers = @(Get-ChildItem -LiteralPath $probe -Recurse -File -Include '*.exe' -ErrorAction SilentlyContinue | Where-Object { $_.FullName -match '\\p\\p\\|ExcelClientInstaller' } | Sort-Object FullName)
+    foreach ($f in $installers) {
+        $label = $f.DirectoryName.Substring($probe.Length + 1).Replace('\', '.') + '.' + $f.BaseName
+        $text = Run-Python @((Join-Path $here 'k18-payload.py'), $label, $f.FullName)
+        $lines += ($text -replace "`r`n", "`n").TrimEnd("`n")
+    }
+    Save 'k17_payload.out.txt' ($lines -join "`n")
+    Write-Host ("{0,-28} {1} installers" -f 'k17_payload.out.txt', $installers.Count)
+}
+
 # --- what the DLLs carry ------------------------------------------------------------------------------------
 if ($skipped -notcontains 'pe') {
     $lines = @()
@@ -227,7 +309,8 @@ if ($skipped -notcontains 'cleanup') {
         $text = & reg.exe query "HKCU\$a" /s 2>$null | Out-String
         foreach ($l in ($text -split "`r?`n")) { if ($l.Trim().Length -gt 0) { $lines += "  |$($l.TrimEnd())" } }
     }
-    $dlls = @(Get-ChildItem -LiteralPath $probe -Recurse -File -Include '*.dll' -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '_\d+_\d+\.dll$' } | Sort-Object FullName)
+    # Every add-in (<name>_<major>_<minor>.dll) and every Excel client (<name>.dll under p\c and p\x, stage K17f) the probe registered.
+    $dlls = @(Get-ChildItem -LiteralPath $probe -Recurse -File -Include '*.dll' -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '_\d+_\d+\.dll$' -or $_.FullName -match '\\p\\[cx]\\' } | Sort-Object FullName)
     # One add-in registered again by regsvr32 itself and unregistered, its keys dumped at each step, as
     # record-k17.ps1 did with R2025b's (there regsvr32 wanted machine-wide rights and MWRegsvr /useronly
     # registered per user; JGraph's DllRegisterServer registers per user itself when it may not for all).
@@ -284,6 +367,12 @@ if ($skipped -notcontains 'cleanup') {
         $lines += "runtime.key`tHKCU\$runtimeKey removed"
     }
     if (Test-Path $standInLink) { [System.IO.Directory]::Delete($standInLink); $lines += "runtime.standin`tjunction removed" }
+    # The Excel client's settings the mps step wrote (when this script made the key).
+    if ((Test-Path $clientSettingsMarker) -and (Test-Path $clientSettingsKey)) {
+        Remove-Item -Path $clientSettingsKey -Recurse -Force
+        Remove-Item -LiteralPath $clientSettingsMarker
+        $lines += "config.key`tremoved $clientSettingsKey"
+    }
     $excels = @(Get-Process excel -ErrorAction SilentlyContinue)
     $orphans = @($excels | Where-Object { $_.MainWindowHandle -eq 0 -and $_.StartTime -gt $scriptStart })
     foreach ($e in $orphans) { try { Stop-Process -Id $e.Id -Force; $lines += "excel.orphan.ended`t$($e.Id) started $($e.StartTime.ToString('HH:mm:ss'))" } catch { $lines += "excel.orphan.left`t$($e.Id)" } }
@@ -301,7 +390,8 @@ if ($skipped -notcontains 'cleanup') {
 }
 
 if ($skipped -notcontains 'compare') {
-    $only = if ($UpTo -eq 'all') { @() } else { @('--only', 'excel,com_preinit,com,com_extra,cells,hosting,pe,registry') }
+    # Every recording but k17_strings, which reads R2025b's .NET string heaps and has no JGraph counterpart (the client is native).
+    $only = if ($UpTo -eq 'all') { @('--only', 'excel,com_preinit,com,com_extra,cells,hosting,mps,payload,pe,registry') } else { @('--only', 'excel,com_preinit,com,com_extra,cells,hosting,pe,registry') }
     $text = (& $Python -I (Join-Path $here 'compare-k17.py') $recordings @only 2>&1 | Out-String) -replace "`r`n", "`n"
     [System.IO.File]::WriteAllText((Join-Path $recordings 'k17_differences.txt'), $text, $utf8)
     Write-Host $text

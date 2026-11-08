@@ -5,7 +5,7 @@ util.create	ok
 util.IsMCRInitialized.before	False
 util.IsMCRJVMEnabled	False
 create	ok
-create.seconds	0.3
+create.seconds	0.2
 util.IsMCRInitialized.after	True
 members	k17_args,k17_both,k17_count,k17_echo,k17_err,k17_h1,k17_make,k17_many,k17_none,k17_noout,k17_one,k17_opt,k17_pass,k17_plot,k17_quiet,k17_two,k17_varin,k17_varout,MWFlags
 preinit.quiet	ok
@@ -25,4 +25,4 @@ preinit.terminate	ok
 preinit.excel.quit	ok
 preinit.next	preinit.crash.nargoutneg: k17_two with nargout -1; the process ends here if it crashes
 preinit.crash.nargoutneg	ERR 0x80004005 src=[k17xl.K17Xl.1_0] msg=[The number of outputs asked for, -1, cannot be negative.] type=COMException
-seconds	1.8
+seconds	1.5
