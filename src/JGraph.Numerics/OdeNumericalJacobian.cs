@@ -363,22 +363,30 @@ internal static class OdeNumericalJacobian
         }
 
         // overlap[i, j] for i >= j: how many rows columns i and j share. Only the lower triangle
-        // is formed, which is what makes the packing below read each pair once.
+        // is formed, which is what makes the packing below read each pair once. Counted row by
+        // row over the row's own columns (the every-row plan's I1, ADR 0324): the same counts as
+        // asking every pair of columns about every row, at the cost of the pairs that exist -
+        // a banded pattern of four hundred columns was 32 million reads a solve.
         var overlap = new int[n, n];
-        for (int j = 0; j < n; j++)
+        var present = new int[n];
+        for (int r = 0; r < rows; r++)
         {
-            for (int i = j; i < n; i++)
+            int count = 0;
+            for (int j = 0; j < n; j++)
             {
-                int shared = 0;
-                for (int r = 0; r < rows; r++)
+                if (pattern[r, j])
                 {
-                    if (pattern[r, i] && pattern[r, j])
-                    {
-                        shared++;
-                    }
+                    present[count++] = j;
                 }
+            }
 
-                overlap[i, j] = shared;
+            for (int a = 0; a < count; a++)
+            {
+                int j = present[a];
+                for (int b = a; b < count; b++)
+                {
+                    overlap[present[b], j]++;
+                }
             }
         }
 

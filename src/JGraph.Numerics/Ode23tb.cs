@@ -180,7 +180,7 @@ public static class Ode23tb
             : null;
 
         bool needNewFactors = true;
-        LuDecomposition? factored = null;
+        ILinearSolve? factored = null;
         double? rate = null;
 
         output.Begin(y);
@@ -258,7 +258,7 @@ public static class Ode23tb
                         OdeStiffSupport.AddInPlace(matrix, massSlope);
                     }
 
-                    factored = LuDecomposition.Factor(matrix);
+                    factored = BandedLu.FactorIteration(matrix);
                     result.Decompositions++;
                     rate = null;
                     needNewFactors = false;
@@ -564,7 +564,7 @@ public static class Ode23tb
     /// run against the same factorization. Answers whether it gave up.
     /// </summary>
     private static bool IterativeSolve(OdeFunction f, OdeOptions options, OdeMassType massType, double[,] mass,
-        double t, double[] y, double[] z, double d, double h, LuDecomposition factored, double rtol,
+        double t, double[] y, double[] z, double d, double h, ILinearSolve factored, double rtol,
         double[] wt, ref double? rate, out int iterations)
     {
         const int MaxIterations = 5;

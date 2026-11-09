@@ -273,7 +273,7 @@ public static class Ode15s
         int constantSteps = 0;
         double[] rowScale = [];
         double[,]? massSlope = null;
-        LuDecomposition factored;
+        ILinearSolve factored;
         bool haveRate = false;
         double convergenceRate = 0;
 
@@ -303,7 +303,7 @@ public static class Ode15s
                 rowScale = OdeStiffSupport.ScaleRows(iteration);
             }
 
-            factored = LuDecomposition.FactorReusing(iteration, factors);
+            factored = BandedLu.FactorIteration(iteration, factors);
             result.Decompositions++;
             haveRate = false;
         }

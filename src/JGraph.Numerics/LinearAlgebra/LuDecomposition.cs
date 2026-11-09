@@ -10,7 +10,7 @@ namespace JGraph.Numerics.LinearAlgebra;
 /// <see cref="LinalgProvider.Current"/> with nothing to transpose in between. The row-major
 /// <c>double[,]</c> shapes the older callers hand in and read back are converted at the edges.
 /// </remarks>
-public sealed class LuDecomposition
+public sealed class LuDecomposition : ILinearSolve
 {
     private readonly double[] _lu;       // column-major: L below the diagonal (unit diagonal implied), U on and above
     private readonly int[] _ipiv;        // LAPACK's interchange record: at step i, row i was swapped with row _ipiv[i] (1-based)

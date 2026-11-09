@@ -148,7 +148,7 @@ internal static partial class JgsBuiltins
         bool asSolution, bool statement, int line, int col)
     {
         int states = initial.Length;
-        double[] Derivative(double t, double[] y)
+        double[] Walked(double t, double[] y)
         {
             JgsValue column = JgsMatrix.FromColumnMajorDims((double[])y.Clone(), [states, 1]);
             JgsValue slope = f.Call([JgsValue.Number(t), column], line, col);
@@ -162,6 +162,32 @@ internal static partial class JgsBuiltins
             }
 
             return dy;
+        }
+
+        // The every-row plan's I1 (ADR 0324): a scalar body compiles once per solve and every stage
+        // runs it over the solver's own state; a call whose answer would leave the reals walks.
+        OdeFunction derivative = Walked;
+        if (f is AnonymousFunction anonymous && anonymous.Interpreter.TryCompileOdeBody(anonymous, states) is { } body)
+        {
+            JgsOdeCompile.CompiledSolves++;
+            CancellationToken cancellation = anonymous.Interpreter.Cancellation;
+            int calls = 0;
+            derivative = (t, y) =>
+            {
+                if ((++calls & 1023) == 0)
+                {
+                    cancellation.ThrowIfCancellationRequested();
+                }
+
+                var dy = new double[states];
+                if (body.TryEvaluate(t, y, dy))
+                {
+                    return dy;
+                }
+
+                JgsOdeCompile.Walked++;
+                return Walked(t, y);
+            };
         }
 
         // Vectorized: the same handle over several states at once, which is what turns a numerical
@@ -202,13 +228,13 @@ internal static partial class JgsBuiltins
             RungeKuttaScheme? scheme = RungeKuttaScheme.Named(solver);
             return solver switch
             {
-                Ode15s.Name => Ode15s.Run(Derivative, tspan, initial, settings),
-                Ode23s.Name => Ode23s.Run(Derivative, tspan, initial, settings),
-                Ode23t.Name => Ode23t.Run(Derivative, tspan, initial, settings),
-                Ode23tb.Name => Ode23tb.Run(Derivative, tspan, initial, settings),
+                Ode15s.Name => Ode15s.Run(derivative, tspan, initial, settings),
+                Ode23s.Name => Ode23s.Run(derivative, tspan, initial, settings),
+                Ode23t.Name => Ode23t.Run(derivative, tspan, initial, settings),
+                Ode23tb.Name => Ode23tb.Run(derivative, tspan, initial, settings),
                 _ => scheme is not null
-                    ? ExplicitRungeKutta.Run(scheme, Derivative, tspan, initial, settings)
-                    : AdamsPece.Run(Derivative, tspan, initial, settings),
+                    ? ExplicitRungeKutta.Run(scheme, derivative, tspan, initial, settings)
+                    : AdamsPece.Run(derivative, tspan, initial, settings),
             };
         }
         catch (OdeArgumentException ex)

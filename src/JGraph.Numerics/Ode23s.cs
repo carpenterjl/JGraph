@@ -208,7 +208,7 @@ public static class Ode23s
                     k1aux[i] = f0[i] + (h * d * dfdt[i]);
                 }
 
-                LuDecomposition factored = LuDecomposition.Factor(iteration);
+                ILinearSolve factored = BandedLu.FactorIteration(iteration);
                 k1 = factored.Solve(k1aux);
 
                 var midpoint = new double[n];

@@ -224,7 +224,7 @@ public static class Ode23t
 
         bool needNewFactors = true;
         double[] rowScale = [];
-        LuDecomposition? factored = null;
+        ILinearSolve? factored = null;
         double? rate = null;
 
         double t1 = 0;
@@ -310,7 +310,7 @@ public static class Ode23t
                         rowScale = OdeStiffSupport.ScaleRows(matrix);
                     }
 
-                    factored = LuDecomposition.Factor(matrix);
+                    factored = BandedLu.FactorIteration(matrix);
                     result.Decompositions++;
                     rate = null;
                     needNewFactors = false;
@@ -683,7 +683,7 @@ public static class Ode23t
     /// constant, so what changes per pass is only the residual. Answers whether it gave up.
     /// </summary>
     private static bool IterativeSolve(OdeFunction f, OdeOptions options, OdeMassType massType, double[,] mass,
-        double t, double[] y, double[] z, double gamma, double h, LuDecomposition factored, double rtol,
+        double t, double[] y, double[] z, double gamma, double h, ILinearSolve factored, double rtol,
         double[] wt, ref double? rate, bool dae, double[] rowScale, out int iterations)
     {
         const int MaxIterations = 5;
