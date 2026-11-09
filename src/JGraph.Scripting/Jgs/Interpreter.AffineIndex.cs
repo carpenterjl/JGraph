@@ -275,6 +275,68 @@ internal sealed partial class Interpreter
         return result;
     }
 
+    /// <summary>
+    /// <c>M(r, c)</c> on a packed matrix, real or complex, with checked zero-based picks in each slot
+    /// — an index vector, a colon, a run: each column of the answer gathered from the column its pick
+    /// names, across the cores for a large answer. The general road built a boxed value per element
+    /// through <c>JgsMatrix.At</c>; the quadrant swap of a 2048-square spectrum was 0.11 s headless and
+    /// 0.37 s in the app against R2025b's 0.010 (the every-row plan's I11, ADR 0323).
+    /// </summary>
+    private static bool TryPickGather(JgsValue target, int rows, int[] rowPicks, int[] colPicks, out JgsValue result)
+    {
+        result = JgsValue.Null;
+        long total = (long)rowPicks.Length * colPicks.Length;
+        if (!JgsPacking.Enabled || total == 0 || total > int.MaxValue
+            || !(target.IsPacked || target.IsPackedComplex)
+            || (long)rows * JgsMatrix.ColCount(target) != target.ArrayLength)
+        {
+            return false;
+        }
+
+        bool complex = target.IsPackedComplex;
+        NumericBuffer sourceRe = complex ? target.AsPackedComplex.Re : target.AsBuffer;
+        NumericBuffer? sourceIm = complex ? target.AsPackedComplex.Im : null;
+        NumericBuffer destRe = JgsPacking.AllocateForOverwrite(total);
+        NumericBuffer? destIm = complex ? JgsPacking.AllocateForOverwrite(total) : null;
+        int height = rowPicks.Length;
+        int columns = colPicks.Length;
+        int blocks = System.Math.Min(columns, ParallelKernels.MaxDegree * 4);
+        bool threaded = total >= ParallelKernels.MemoryBoundThreshold && blocks > 1;
+        ParallelKernels.ForBlocks(blocks, threaded, block =>
+        {
+            int first = (int)((long)columns * block / blocks);
+            int last = (int)((long)columns * (block + 1) / blocks);
+            GatherColumns(sourceRe, destRe, rows, rowPicks, colPicks, height, first, last);
+            if (sourceIm is not null)
+            {
+                GatherColumns(sourceIm, destIm!, rows, rowPicks, colPicks, height, first, last);
+            }
+        });
+
+        GC.KeepAlive(target);
+        result = complex
+            ? JgsValue.PackedComplexArray(new JgsPackedComplex(destRe, destIm!))
+            : JgsValue.Packed(destRe, target.PackedKind);
+        result.Reshape(height, columns);
+        return true;
+    }
+
+    private static void GatherColumns(NumericBuffer source, NumericBuffer dest, int rows, int[] rowPicks,
+        int[] colPicks, int height, int first, int last)
+    {
+        ReadOnlySpan<double> from = source.AsSpan();
+        Span<double> into = dest.AsSpan();
+        for (int j = first; j < last; j++)
+        {
+            ReadOnlySpan<double> column = from.Slice(colPicks[j] * rows, rows);
+            Span<double> answer = into.Slice(j * height, height);
+            for (int i = 0; i < answer.Length; i++)
+            {
+                answer[i] = column[rowPicks[i]];
+            }
+        }
+    }
+
     /// <summary>One run: a block copy when the step is one, a strided loop otherwise (a negative step walks backwards).</summary>
     private static void CopyAffine(NumericBuffer source, int start, int step, Span<double> into)
     {

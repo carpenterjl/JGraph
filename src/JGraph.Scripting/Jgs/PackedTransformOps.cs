@@ -32,7 +32,7 @@ internal static class PackedTransformOps
     /// </summary>
     public static bool TryTransform(
         JgsValue value, int? length, int dim, bool inverse, bool symmetric,
-        out JgsValue result, out int[] shape)
+        out JgsValue result, out int[] shape, bool symmetricKnown = false)
     {
         result = value;
         shape = [];
@@ -63,12 +63,24 @@ internal static class PackedTransformOps
         bool complex = value.IsPackedComplex;
         NumericBuffer sourceRe = complex ? value.AsPackedComplex.Re : value.AsBuffer;
         NumericBuffer? sourceIm = complex ? value.AsPackedComplex.Im : null;
-        NumericBuffer re = JgsPacking.Allocate(total);
-        NumericBuffer im = JgsPacking.Allocate(total);
-        FftKernels.TransformAlong(sourceRe, sourceIm, re, im, split, n, inverse, symmetric);
+        // Both kernels' roads write every element of the answer, so zeroing it first was two passes
+        // over memory nothing read (ADR 0323, as Z2e did for the arithmetic).
+        NumericBuffer re = JgsPacking.AllocateForOverwrite(total);
+        NumericBuffer im = JgsPacking.AllocateForOverwrite(total);
+        FftKernels.TransformAlong(sourceRe, sourceIm, re, im, split, n, inverse, symmetric, symmetricKnown);
         GC.KeepAlive(value);
 
-        result = Mint(re, im);
+        // 'symmetric' clears every imaginary part, so the answer is real without a scan (ADR 0323).
+        if (symmetric)
+        {
+            im.Dispose();
+            result = JgsValue.Packed(re);
+        }
+        else
+        {
+            result = Mint(re, im);
+        }
+
         shape = JgsMatrix.ShapeAlong(dims, dim, n);
         return true;
     }

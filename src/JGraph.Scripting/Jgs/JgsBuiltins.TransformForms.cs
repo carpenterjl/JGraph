@@ -20,14 +20,14 @@ internal static partial class JgsBuiltins
     /// each to <paramref name="length"/> first.
     /// </summary>
     private static JgsValue TransformAlong(string name, JgsValue value, int? length, int dim,
-        bool inverse, bool symmetric, int line, int col)
+        bool inverse, bool symmetric, int line, int col, bool symmetricKnown = false)
     {
         // M96a: a packed array of doubles is transformed where it lies, by the same butterflies in
         // the same order (ADR 0096). Everything else — a boxed array, a logical one, a class that is
         // not double, a length the wrapper and the storage disagree about — falls through here and
         // takes the road below, which is the only place the family's errors are worded.
         if (PackedTransformOps.TryTransform(
-                value, length, dim, inverse, symmetric, out JgsValue packed, out int[] packedShape))
+                value, length, dim, inverse, symmetric, out JgsValue packed, out int[] packedShape, symmetricKnown))
         {
             Shape(packed, packedShape);
             return packed;
@@ -38,10 +38,12 @@ internal static partial class JgsBuiltins
 
         var real = new double[flat.Length];
         var imaginary = new double[flat.Length];
+        bool realInput = true;
         for (int i = 0; i < flat.Length; i++)
         {
             real[i] = flat[i].Real;
             imaginary[i] = flat[i].Imaginary;
+            realInput &= flat[i].Imaginary == 0;
         }
 
         (double[][] realSlices, _) = JgsMatrix.SlicesAlong(real, dims, dim);
@@ -71,12 +73,18 @@ internal static partial class JgsBuiltins
                 buffer[i] = new Complex(realSlices[s][i], imaginarySlices[s][i]);
             }
 
-            if (symmetric)
+            if (symmetric && !symmetricKnown)
             {
                 MakeHermitian(buffer);
             }
 
             JGraph.Signal.Fft.Transform(buffer, inverse);
+
+            // A real input's spectrum is exactly conjugate-symmetric, as the packed road's is (ADR 0323).
+            if (!inverse && realInput)
+            {
+                Symmetrized(buffer);
+            }
 
             var outReal = new double[n];
             var outImaginary = new double[n];
@@ -126,6 +134,11 @@ internal static partial class JgsBuiltins
     private static void MakeHermitian(Complex[] spectrum)
     {
         int n = spectrum.Length;
+        if (n == 0)
+        {
+            return; // nothing to mirror: ifft(zeros(0, 1)) reached spectrum[0]
+        }
+
         spectrum[0] = new Complex(spectrum[0].Real, 0);
         if (n % 2 == 0)
         {
@@ -135,6 +148,33 @@ internal static partial class JgsBuiltins
         for (int i = 1; i < (n + 1) / 2; i++)
         {
             spectrum[n - i] = Complex.Conjugate(spectrum[i]);
+        }
+    }
+
+    /// <summary>
+    /// A real input's spectrum made exactly conjugate-symmetric, each pair replaced by its symmetric
+    /// part — the arithmetic of <see cref="JGraph.Numerics.FftKernels.Symmetrize(Span{double}, Span{double}, int, int, int)"/>, so the boxed and
+    /// packed roads agree to the bit (ADR 0323).
+    /// </summary>
+    private static void Symmetrized(Complex[] spectrum)
+    {
+        int n = spectrum.Length;
+        var re = new double[n];
+        var im = new double[n];
+        for (int i = 0; i < n; i++)
+        {
+            re[i] = spectrum[i].Real;
+            im[i] = spectrum[i].Imaginary;
+        }
+
+        if (n > 0)
+        {
+            JGraph.Numerics.FftKernels.Symmetrize(re, im, n, 1, 0);
+        }
+
+        for (int i = 0; i < n; i++)
+        {
+            spectrum[i] = new Complex(re[i], im[i]);
         }
     }
 
@@ -182,7 +222,95 @@ internal static partial class JgsBuiltins
             running = TransformAlong(name, running, length, d, inverse, symmetric && d == count, line, col);
         }
 
+        // R2025b's fft2 and fftn of a real input are exactly conjugate-symmetric through the origin,
+        // which the passes one dimension at a time are only to rounding (ADR 0323).
+        if (!inverse && HoldsNoImaginary(value))
+        {
+            running = ForcedHermitian(running, count);
+        }
+
         return running;
+    }
+
+    /// <summary>Whether a value holds no imaginary part anywhere — the input R2025b transforms real-to-complex.</summary>
+    private static bool HoldsNoImaginary(JgsValue value)
+    {
+        switch (value.Type)
+        {
+            case JgsType.Number or JgsType.Bool:
+                return true;
+            case JgsType.Array when value.IsPackedComplex:
+                return false;
+            case JgsType.Array when value.IsPacked:
+                return true;
+            case JgsType.Array:
+                for (int i = 0; i < value.ArrayLength; i++)
+                {
+                    if (value.ElementAt(i).Type == JgsType.Complex)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /// <summary>
+    /// The spectrum made exactly conjugate-symmetric across its first <paramref name="count"/>
+    /// dimensions; a spectrum that came back real, or is not numeric, is handed back as it is.
+    /// </summary>
+    private static JgsValue ForcedHermitian(JgsValue spectrum, int count)
+    {
+        if (spectrum.Type != JgsType.Array || spectrum.ArrayLength == 0)
+        {
+            return spectrum;
+        }
+
+        int[] dims = JgsMatrix.DimsOf(spectrum);
+        int rank = System.Math.Max(dims.Length, count);
+        var shape = new int[rank];
+        var mirrored = new bool[rank];
+        for (int d = 0; d < rank; d++)
+        {
+            shape[d] = d < dims.Length ? dims[d] : 1;
+            mirrored[d] = d < count;
+        }
+
+        if (spectrum.IsPackedComplex)
+        {
+            JgsPackedComplex planes = spectrum.AsPackedComplex;
+            JGraph.Numerics.ConjugateSymmetry.Force(planes.Re, planes.Im, shape, mirrored);
+            return spectrum;
+        }
+
+        if (spectrum.IsPacked || HoldsNoImaginary(spectrum))
+        {
+            return spectrum;
+        }
+
+        Complex[] flat = ComplexArrayOf("fft", spectrum, 0, 0);
+        var re = new double[flat.Length];
+        var im = new double[flat.Length];
+        for (int i = 0; i < flat.Length; i++)
+        {
+            re[i] = flat[i].Real;
+            im[i] = flat[i].Imaginary;
+        }
+
+        JGraph.Numerics.ConjugateSymmetry.Force(
+            JGraph.Numerics.ManagedBuffer.Adopt(re), JGraph.Numerics.ManagedBuffer.Adopt(im), shape, mirrored);
+        var combined = new Complex[flat.Length];
+        for (int i = 0; i < flat.Length; i++)
+        {
+            combined[i] = new Complex(re[i], im[i]);
+        }
+
+        JgsValue result = FromComplexArray(combined);
+        Shape(result, dims);
+        return result;
     }
 
     /// <summary>The trailing <c>'symmetric'</c>/<c>'nonsymmetric'</c> word, if there is one.</summary>
@@ -233,7 +361,115 @@ internal static partial class JgsBuiltins
                 $"{name}: a dimension is a positive whole number, but got {dim}.");
         }
 
-        return TransformAlong(name, args[0], length, dim, inverse, symmetric, line, col);
+        // R2025b looks before it transforms: an input whose every slice is conjugate-symmetric
+        // answers real with no word given, and with 'nonsymmetric' given too (ADR 0323).
+        bool proven = false;
+        if (inverse && !symmetric)
+        {
+            symmetric = proven = InverseAnswersReal(args[0], length, dim);
+        }
+
+        return TransformAlong(name, args[0], length, dim, inverse, symmetric, line, col, proven);
+    }
+
+    /// <summary>A test of a value's real and imaginary planes; an empty imaginary plane is a real value.</summary>
+    private delegate bool PlaneTest(ReadOnlySpan<double> re, ReadOnlySpan<double> im);
+
+    /// <summary>
+    /// Whether every slice along <paramref name="dim"/>, padded or cut to the transform length, is
+    /// exactly conjugate-symmetric — R2025b's test for answering <c>ifft</c> real.
+    /// </summary>
+    private static bool InverseAnswersReal(JgsValue value, int? length, int dim)
+    {
+        JGraph.Numerics.ReduceKernels.Split split = PackedReduceOps.SplitAlong(TransformDims(value), dim);
+        int n = length ?? split.Count;
+        return n >= 0 && TestPlanes(value, (re, im) =>
+            re.Length == split.Total && JGraph.Numerics.ConjugateSymmetry.Along(re, im, split, n));
+    }
+
+    /// <summary>
+    /// Whether the whole array, resized as <c>ifft2</c>/<c>ifftn</c> resize it, is conjugate-symmetric
+    /// through the origin of the dimensions they transform — not slice by slice (ADR 0323).
+    /// </summary>
+    private static bool InverseAnswersRealAcross(JgsValue value, IReadOnlyList<int>? sizes)
+    {
+        int[] dims = TransformDims(value);
+        int count = sizes?.Count ?? System.Math.Max(dims.Length, 2);
+        int rank = System.Math.Max(dims.Length, count);
+        var stored = new int[rank];
+        var target = new int[rank];
+        var mirrored = new bool[rank];
+        long elements = 1;
+        for (int d = 0; d < rank; d++)
+        {
+            stored[d] = d < dims.Length ? dims[d] : 1;
+            target[d] = d < count && sizes is not null ? sizes[d] : stored[d];
+            mirrored[d] = d < count;
+            elements *= stored[d];
+            if (target[d] < 0)
+            {
+                return false;
+            }
+        }
+
+        return TestPlanes(value, (re, im) =>
+            re.Length == elements && JGraph.Numerics.ConjugateSymmetry.Across(re, im, stored, target, mirrored));
+    }
+
+    /// <summary>
+    /// Runs <paramref name="test"/> over a numeric value's planes where they lie when it is packed,
+    /// and over a copy otherwise. A value the transform will refuse answers false, so the refusal is
+    /// still worded where the transform words it.
+    /// </summary>
+    private static bool TestPlanes(JgsValue value, PlaneTest test)
+    {
+        switch (value.Type)
+        {
+            case JgsType.Number or JgsType.Bool:
+                return test([value.AsNumber], default);
+            case JgsType.Complex:
+                return test([value.AsComplex.Real], [value.AsComplex.Imaginary]);
+            case JgsType.Array when value.IsPackedComplex:
+            {
+                JgsPackedComplex planes = value.AsPackedComplex;
+                bool answer = test(planes.Re.AsSpan(), planes.Im.AsSpan());
+                GC.KeepAlive(value);
+                return answer;
+            }
+
+            case JgsType.Array when value.IsPacked:
+            {
+                bool answer = test(value.AsBuffer.AsSpan(), default);
+                GC.KeepAlive(value);
+                return answer;
+            }
+
+            case JgsType.Array:
+            {
+                Complex[] flat;
+                try
+                {
+                    flat = ComplexArrayOf("ifft", value, 0, 0);
+                }
+                catch (JgsRuntimeException)
+                {
+                    return false;
+                }
+
+                var re = new double[flat.Length];
+                var im = new double[flat.Length];
+                for (int i = 0; i < flat.Length; i++)
+                {
+                    re[i] = flat[i].Real;
+                    im[i] = flat[i].Imaginary;
+                }
+
+                return test(re, im);
+            }
+
+            default:
+                return false;
+        }
     }
 
     /// <summary><c>fft2</c>/<c>ifft2</c> and <c>fftn</c>/<c>ifftn</c>, with their sizes.</summary>
@@ -277,6 +513,11 @@ internal static partial class JgsBuiltins
             sizes = [dims.Length > 0 ? dims[0] : 1, dims.Length > 1 ? dims[1] : 1];
         }
 
+        if (inverse && !symmetric)
+        {
+            symmetric = InverseAnswersRealAcross(args[0], sizes);
+        }
+
         return TransformAcross(name, args[0], sizes, inverse, symmetric, line, col);
     }
 
@@ -286,7 +527,9 @@ internal static partial class JgsBuiltins
     /// why <c>ifft2(fft2(A))</c> could not be written before M76.
     /// </summary>
     private static Complex[] ComplexArrayOf(string name, JgsValue value, int line, int col) =>
-        ComplexArray(name, new[] { value }, 0, line, col);
+        value.Type == JgsType.Complex
+            ? [value.AsComplex] // a complex scalar is one sample; the array reader refuses it (ADR 0323)
+            : ComplexArray(name, new[] { value }, 0, line, col);
 
     /// <summary>
     /// <c>fftshift</c> and <c>ifftshift</c>, over one named dimension or over every dimension at

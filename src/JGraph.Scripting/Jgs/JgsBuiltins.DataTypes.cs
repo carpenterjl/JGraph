@@ -53,7 +53,7 @@ internal static partial class JgsBuiltins
                 return answer;
             }
 
-            return MapToBool("ismissing", args[0], double.IsNaN, line, col);
+            return MapToBool("ismissing", args[0], double.IsNaN, line, col, kernel: JGraph.Numerics.PackedMath.MaskTest.IsNaN);
         });
 
         // string(x) is the string-array constructor (M63), and the only way to get one out of a value

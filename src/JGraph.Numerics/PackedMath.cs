@@ -1460,6 +1460,84 @@ public static class PackedMath
         }
     }
 
+    /// <summary>The per-element questions that answer a logical mask (the every-row plan's I11).</summary>
+    public enum MaskTest
+    {
+        /// <summary><c>isnan</c>, <c>ismissing</c> over doubles.</summary>
+        IsNaN,
+
+        /// <summary><c>~x</c>: the element equals zero; NaN does not.</summary>
+        IsZero,
+
+        /// <summary><c>logical</c>: the element is not zero; NaN is not.</summary>
+        NonZero,
+
+        /// <summary><c>isinf</c>.</summary>
+        IsInf,
+
+        /// <summary><c>isfinite</c>.</summary>
+        IsFinite,
+    }
+
+    /// <summary>
+    /// A logical mask, 1.0 where <paramref name="test"/> holds and 0.0 elsewhere, written into
+    /// <paramref name="dest"/>. It replaces a boxed value per element on the way in and a boxed
+    /// Bool per element on the way out: <c>sum(isnan(g))</c> over five million was 0.2 s headless
+    /// and 0.6 s in the app, R2025b's 0.004 (ADR 0322).
+    /// </summary>
+    public static void Mask(MaskTest test, NumericBuffer a, NumericBuffer dest, Action? betweenChunks = null)
+    {
+        RequireSameLength(a.Length, dest.Length);
+        ParallelKernels.For(dest.Length, ParallelKernels.MemoryBoundThreshold, betweenChunks, (start, len) =>
+            MaskChunk(test, a.AsSpan(start, len), dest.AsSpan(start, len)));
+
+        GC.KeepAlive(a);
+        GC.KeepAlive(dest);
+    }
+
+    /// <summary>The scalar reading of <see cref="MaskTest"/>, the tail of every chunk.</summary>
+    public static bool Holds(MaskTest test, double x) => test switch
+    {
+        MaskTest.IsNaN => double.IsNaN(x),
+        MaskTest.IsZero => x == 0,
+        MaskTest.NonZero => x != 0,
+        MaskTest.IsInf => double.IsInfinity(x),
+        MaskTest.IsFinite => double.IsFinite(x),
+        _ => throw UnknownOp(test),
+    };
+
+    private static void MaskChunk(MaskTest test, Span<double> x, Span<double> d)
+    {
+        int i = 0;
+        int width = Vector<double>.Count;
+        if (Vector.IsHardwareAccelerated && d.Length >= width)
+        {
+            ref double xr = ref MemoryMarshal.GetReference(x);
+            ref double dr = ref MemoryMarshal.GetReference(d);
+            var one = new Vector<double>(1.0);
+            var zero = Vector<double>.Zero;
+            var infinity = new Vector<double>(double.PositiveInfinity);
+            for (; i <= d.Length - width; i += width)
+            {
+                Vector<double> v = Vector.LoadUnsafe(ref xr, (nuint)i);
+                Vector<long> holds = test switch
+                {
+                    MaskTest.IsNaN => ~Vector.Equals(v, v),
+                    MaskTest.IsZero => Vector.Equals(v, zero),
+                    MaskTest.NonZero => ~Vector.Equals(v, zero),
+                    MaskTest.IsInf => Vector.Equals(Vector.Abs(v), infinity),
+                    _ => Vector.LessThan(Vector.Abs(v), infinity),
+                };
+                Vector.ConditionalSelect(holds, one, zero).StoreUnsafe(ref dr, (nuint)i);
+            }
+        }
+
+        for (; i < d.Length; i++)
+        {
+            d[i] = Holds(test, x[i]) ? 1.0 : 0.0;
+        }
+    }
+
     private static ArgumentOutOfRangeException UnknownOp(object op) =>
         new(nameof(op), op, "unknown operation");
 }

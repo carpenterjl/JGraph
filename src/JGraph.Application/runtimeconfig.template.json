@@ -1,0 +1,7 @@
+{
+  "//": "Server GC for the windowed app, as jgraph.exe has had since M93 (src/JGraph.Cli/runtimeconfig.template.json). A script run from the editor is the same work as one run headless, a few very large arrays and a great many short-lived values around them, and under the default workstation collector the app paid for them on the thread running the script: the every-row plan's P0 measured d02_fft_signal at 3.34 s in the app against 1.54 s headless, and 1.57 s in the app under Server GC (ADR 0322). The collector stays concurrent, so the window keeps painting during a background collection (ADR 0323).",
+  "configProperties": {
+    "System.GC.Server": true,
+    "System.GC.Concurrent": true
+  }
+}

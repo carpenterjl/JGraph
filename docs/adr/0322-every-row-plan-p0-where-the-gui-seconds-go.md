@@ -157,11 +157,12 @@ keep the present default and look to the passes over memory (I5), not to the thr
 
 ## Divergences
 
-- **`ifft` of a conjugate-symmetric input answers complex.** R2025b tests whether the input is
+- ~~**`ifft` of a conjugate-symmetric input answers complex.** R2025b tests whether the input is
   conjugate-symmetric along the transform dimension and, when it is, answers a real array; JGraph
   answers real only when `'symmetric'` is given, so `isreal(ifft(fft(x)))` is 0 in JGraph and 1 in
   R2025b and every later operation takes the complex road (`d02`'s round-trip line, 0.62 s against
-  0.007). The every-row plan's I11 takes it.
+  0.007).~~ **Retired by ADR 0323** (the every-row plan's I11): `ifft`, `ifft2` and `ifftn` make
+  R2025b's test, and a real input's spectrum is exactly conjugate-symmetric.
 - **`histogram(y, nbins)` and `'NumBins'` give the automatic binning.** `histogram(y, 120)` draws 40 bins
   with `BinMethod` 'auto' where R2025b draws 120, 'manual'; `histcounts(y, 120)` agrees. Open item 252.
 

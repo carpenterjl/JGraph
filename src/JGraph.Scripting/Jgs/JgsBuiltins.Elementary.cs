@@ -202,17 +202,18 @@ internal static partial class JgsBuiltins
 
         // The finiteness questions accept complex input — a complex value is infinite or NaN when
         // either part is (MATLAB's reading), which is what (Inf+1i*Inf)*(0+1i) needs to answer.
-        void ElementwiseC(string name, Func<double, bool> test, Func<System.Numerics.Complex, bool> complexTest) =>
+        void ElementwiseC(string name, Func<double, bool> test, Func<System.Numerics.Complex, bool> complexTest,
+            JGraph.Numerics.PackedMath.MaskTest kernel) =>
             Define(name, (args, line, col) =>
             {
                 Arity(name, args, 1, line, col);
-                return MapToBool(name, args[0], test, line, col, complexTest);
+                return MapToBool(name, args[0], test, line, col, complexTest, kernel);
             });
 
         ElementwiseC("isfinite", double.IsFinite,
-            static c => double.IsFinite(c.Real) && double.IsFinite(c.Imaginary));
+            static c => double.IsFinite(c.Real) && double.IsFinite(c.Imaginary), JGraph.Numerics.PackedMath.MaskTest.IsFinite);
         ElementwiseC("isinf", double.IsInfinity,
-            static c => double.IsInfinity(c.Real) || double.IsInfinity(c.Imaginary));
+            static c => double.IsInfinity(c.Real) || double.IsInfinity(c.Imaginary), JGraph.Numerics.PackedMath.MaskTest.IsInf);
         CharacterClass("isletter", char.IsLetter);
         CharacterClass("isspace", char.IsWhiteSpace);
 
@@ -392,7 +393,7 @@ internal static partial class JgsBuiltins
                 return EmptyLogical(args[0].Rows, args[0].Cols); // an empty's kind is all that can say logical (V6)
             }
 
-            return MapToBool("logical", args[0], static x => x != 0, line, col);
+            return MapToBool("logical", args[0], static x => x != 0, line, col, kernel: JGraph.Numerics.PackedMath.MaskTest.NonZero);
         });
 
         // double(x) is how a script says "treat this as a number": it turns a logical mask or a
@@ -444,7 +445,7 @@ internal static partial class JgsBuiltins
 
             return target switch
             {
-                "logical" => MapToBool("cast", args[0], static x => x != 0, line, col),
+                "logical" => MapToBool("cast", args[0], static x => x != 0, line, col, kernel: JGraph.Numerics.PackedMath.MaskTest.NonZero),
                 "char" => JgsValue.Str(args[0].Type == JgsType.String ? args[0].AsString : args[0].Display()),
                 _ => throw new JgsRuntimeException(line, col, $"cast: JGraph has no '{target}' class."),
             };

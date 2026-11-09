@@ -4854,7 +4854,8 @@ internal sealed partial class Interpreter
             // its scalar truthiness reading of !arr.
             if (Dialect.IsMatlab && operand.Type == JgsType.Array)
             {
-                return JgsBuiltins.MapToBool("~", operand, static x => x == 0, unary.Line, unary.Column);
+                return JgsBuiltins.MapToBool("~", operand, static x => x == 0, unary.Line, unary.Column,
+                    kernel: PackedMath.MaskTest.IsZero);
             }
 
             return JgsValue.Bool(!operand.IsTruthy);
@@ -5739,6 +5740,14 @@ internal sealed partial class Interpreter
             {
                 return fast;
             }
+        }
+
+        // A complex side keeps its planes under + and - (the every-row plan's I11, ADR 0323).
+        if (op is TokenType.Plus or TokenType.Minus
+            && into == JgsNumericClass.Double
+            && PackedOps.TryComplexAddSubtract(op == TokenType.Minus, left, right, _cancelCheck, out JgsValue planar))
+        {
+            return planar;
         }
 
         switch (op)
@@ -8348,6 +8357,11 @@ internal sealed partial class Interpreter
         if (rowScalar && colScalar)
         {
             return JgsMatrix.At(target, rowPicks[0], colPicks[0]);
+        }
+
+        if (TryPickGather(target, rows, rowPicks, colPicks, out JgsValue gathered))
+        {
+            return gathered;
         }
 
         return JgsMatrix.BuildValues(rowPicks.Length, colPicks.Length,

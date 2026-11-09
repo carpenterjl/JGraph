@@ -1017,10 +1017,14 @@ public static class FftKernels
     /// a time. Both roads gather a slice into a contiguous tile first, because a slice of a matrix
     /// steps by the row count and an FFT that reads through that stride pays for it log2(n) times.
     /// </remarks>
+    // symmetricKnown: the caller has proved every slice exactly conjugate-symmetric
+    // (ConjugateSymmetry.Along), so the 'symmetric' mirroring pass would write back what is already
+    // there and is skipped; the caller keeps the real plane alone, so the imaginary plane of a long
+    // single slice is left as the transform wrote it rather than cleared (ADR 0323).
     public static void TransformAlong(
         NumericBuffer srcRe, NumericBuffer? srcIm,
         NumericBuffer dstRe, NumericBuffer dstIm,
-        ReduceKernels.Split split, int n, bool inverse, bool symmetric)
+        ReduceKernels.Split split, int n, bool inverse, bool symmetric, bool symmetricKnown = false)
     {
         int slices = split.Slices;
         if (slices <= 0 || n <= 0)
@@ -1030,11 +1034,11 @@ public static class FftKernels
 
         if (IsPowerOfTwo(n) && !IsFactored(n) && slices > 1)
         {
-            Batched(srcRe, srcIm, dstRe, dstIm, split, n, inverse, symmetric);
+            Batched(srcRe, srcIm, dstRe, dstIm, split, n, inverse, symmetric, symmetricKnown);
         }
         else
         {
-            Singly(srcRe, srcIm, dstRe, dstIm, split, n, inverse, symmetric);
+            Singly(srcRe, srcIm, dstRe, dstIm, split, n, inverse, symmetric, symmetricKnown);
         }
 
         GC.KeepAlive(srcRe);
@@ -1051,7 +1055,7 @@ public static class FftKernels
     private static void Batched(
         NumericBuffer srcRe, NumericBuffer? srcIm,
         NumericBuffer dstRe, NumericBuffer dstIm,
-        ReduceKernels.Split split, int n, bool inverse, bool symmetric)
+        ReduceKernels.Split split, int n, bool inverse, bool symmetric, bool symmetricKnown)
     {
         int slices = split.Slices;
         int inner = split.Inner;
@@ -1132,7 +1136,7 @@ public static class FftKernels
                     }
                 }
 
-                if (symmetric)
+                if (symmetric && !symmetricKnown)
                 {
                     for (int l = 0; l < lanes; l++)
                     {
@@ -1154,6 +1158,16 @@ public static class FftKernels
                 if (symmetric)
                 {
                     ti.Clear();
+                }
+
+                // A real input's spectrum is conjugate-symmetric, and R2025b's is exactly so: each
+                // pair is replaced by its symmetric part, which drops only rounding (ADR 0323).
+                if (!inverse && srcIm is null)
+                {
+                    for (int l = 0; l < lanes; l++)
+                    {
+                        Symmetrize(tr, ti, n, lanes, l);
+                    }
                 }
 
                 ref double dre = ref MemoryMarshal.GetReference(dstRe.AsSpan());
@@ -1197,7 +1211,7 @@ public static class FftKernels
     private static void Singly(
         NumericBuffer srcRe, NumericBuffer? srcIm,
         NumericBuffer dstRe, NumericBuffer dstIm,
-        ReduceKernels.Split split, int n, bool inverse, bool symmetric)
+        ReduceKernels.Split split, int n, bool inverse, bool symmetric, bool symmetricKnown)
     {
         int slices = split.Slices;
         int inner = split.Inner;
@@ -1248,7 +1262,7 @@ public static class FftKernels
                     }
                 }
 
-                if (symmetric)
+                if (symmetric && !symmetricKnown)
                 {
                     Hermitian(tr, ti, n, 1, 0);
                 }
@@ -1261,15 +1275,28 @@ public static class FftKernels
                     // The answer's slice is a contiguous run of the answer, so a factored transform
                     // writes straight into it and nothing is copied twice.
                     Transform(hostRe, hostIm, 0, dstRe, dstIm, to, n, inverse, !overSlices);
-                    if (symmetric)
+
+                    // A proven-symmetric inverse's caller keeps the real plane alone, so clearing
+                    // the imaginary one would be a pass over memory nobody reads (ADR 0323).
+                    if (symmetric && !symmetricKnown)
                     {
                         dstIm.AsSpan(to, n).Clear();
+                    }
+
+                    if (!inverse && srcIm is null)
+                    {
+                        Symmetrize(dstRe, dstIm, to, n, threaded: !overSlices);
                     }
 
                     return;
                 }
 
                 Transform(hostRe, hostIm, 0, hostRe, hostIm, 0, n, inverse, !overSlices);
+                if (!inverse && srcIm is null)
+                {
+                    Symmetrize(tr, ti, n, 1, 0);
+                }
+
                 Span<double> dr = dstRe.AsSpan();
                 Span<double> di = dstIm.AsSpan();
                 for (int j = 0; j < n; j++)
@@ -1288,7 +1315,8 @@ public static class FftKernels
 
     /// <summary>
     /// Forces one lane of a tile to be conjugate-symmetric, which is what <c>'symmetric'</c>
-    /// asserts about a spectrum whose inverse is meant to come back real.
+    /// asserts about a spectrum whose inverse is meant to come back real: the lower half kept, the
+    /// upper half written as its conjugate.
     /// </summary>
     private static void Hermitian(Span<double> re, Span<double> im, int n, int lanes, int lane)
     {
@@ -1303,6 +1331,75 @@ public static class FftKernels
             re[((n - i) * lanes) + lane] = re[(i * lanes) + lane];
             im[((n - i) * lanes) + lane] = -im[(i * lanes) + lane];
         }
+    }
+
+    /// <summary>
+    /// Makes one lane of a real input's spectrum exactly conjugate-symmetric, as R2025b's is: each
+    /// pair <c>X(k)</c>, <c>X(n - k)</c> becomes its symmetric part, and the terms that are their own
+    /// mirrors lose their imaginary parts. The part dropped is rounding alone (ADR 0323).
+    /// </summary>
+    public static void Symmetrize(Span<double> re, Span<double> im, int n, int lanes, int lane)
+    {
+        im[lane] = 0;
+        if (n % 2 == 0)
+        {
+            im[((n / 2) * lanes) + lane] = 0;
+        }
+
+        for (int i = 1; i < (n + 1) / 2; i++)
+        {
+            int a = (i * lanes) + lane;
+            int b = ((n - i) * lanes) + lane;
+            double r = (re[a] + re[b]) * 0.5;
+            double m = (im[a] - im[b]) * 0.5;
+            re[a] = r;
+            re[b] = r;
+            im[a] = m;
+            im[b] = -m;
+        }
+    }
+
+    /// <summary>
+    /// <see cref="Symmetrize(Span{double}, Span{double}, int, int, int)"/> over one contiguous slice
+    /// of a buffer, its pairs cut across the cores when <paramref name="threaded"/> and the slice is
+    /// long: each pair is its own two elements, so the answer does not depend on the cut.
+    /// </summary>
+    public static void Symmetrize(NumericBuffer re, NumericBuffer im, int at, int n, bool threaded)
+    {
+        int half = (n + 1) / 2;
+        if (!threaded || half - 1 < Math.Max(ParallelKernels.MemoryBoundThreshold, 2 * ParallelKernels.GrainElements))
+        {
+            // Too short to cut: the plain loop, with no delegate between it and the JIT.
+            Symmetrize(re.AsSpan(at, n), im.AsSpan(at, n), n, 1, 0);
+            return;
+        }
+
+        im.AsSpan()[at] = 0;
+        if (n % 2 == 0)
+        {
+            im.AsSpan()[at + (n / 2)] = 0;
+        }
+
+        if (half <= 1)
+        {
+            return;
+        }
+
+        ParallelKernels.For(half - 1, threaded ? ParallelKernels.MemoryBoundThreshold : int.MaxValue, null, (start, len) =>
+        {
+            Span<double> r = re.AsSpan(at, n);
+            Span<double> m = im.AsSpan(at, n);
+            for (int i = start + 1; i <= start + len; i++)
+            {
+                int b = n - i;
+                double sr = (r[i] + r[b]) * 0.5;
+                double sm = (m[i] - m[b]) * 0.5;
+                r[i] = sr;
+                r[b] = sr;
+                m[i] = sm;
+                m[b] = -sm;
+            }
+        });
     }
 
     private static void Scale(NumericBuffer re, NumericBuffer im, int at, int n, bool inverse)

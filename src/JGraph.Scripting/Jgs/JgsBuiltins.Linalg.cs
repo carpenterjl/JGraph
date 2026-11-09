@@ -71,6 +71,14 @@ internal static partial class JgsBuiltins
                 return args[0]; // the trace of a 1x1 is itself
             }
 
+            // A packed square matrix's diagonal is read where it lies, n elements, in the order the
+            // boxed sum below adds them: copying the whole of a 3000-square into a Complex[,] to read
+            // its diagonal was 0.23 s against R2025b's 0.0001 (the every-row plan's I11, ADR 0323).
+            if (TryPackedTrace(args[0], out JgsValue packedTrace))
+            {
+                return packedTrace;
+            }
+
             // Complex-aware on purpose: eig of a general matrix hands back complex eigenvalues, and
             // trace(D) over that diagonal is the everyday check that they sum to the trace.
             Complex[,] a = ComplexSquareOf("trace", args[0], line, col);
@@ -101,6 +109,55 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>s = svd(A) — the singular values, as MATLAB's column.</summary>
+    /// <summary>
+    /// <c>trace</c> of a packed square double matrix, real or complex: the diagonal summed from zero
+    /// in index order, which is the boxed sum's order and so its bits. Anything else — another
+    /// class, a matrix that is not square, a boxed array — answers false and takes the boxed road,
+    /// where the refusals are worded.
+    /// </summary>
+    private static bool TryPackedTrace(JgsValue value, out JgsValue trace)
+    {
+        trace = JgsValue.Null;
+        if (!JgsPacking.Enabled || value.Type != JgsType.Array || value.NumericClass != JgsNumericClass.Double
+            || !(value.IsPacked || value.IsPackedComplex))
+        {
+            return false;
+        }
+
+        int[] dims = JgsMatrix.DimsOf(value);
+        if (dims.Length != 2 || dims[0] != dims[1] || dims[0] == 0 || (long)dims[0] * dims[1] != value.ArrayLength)
+        {
+            return false;
+        }
+
+        int n = dims[0];
+        ReadOnlySpan<double> re = value.IsPacked ? value.AsBuffer.AsSpan() : value.AsPackedComplex.Re.AsSpan();
+        double real = 0;
+        for (int i = 0; i < n; i++)
+        {
+            real += re[(i * n) + i];
+        }
+
+        if (value.IsPacked)
+        {
+            trace = JgsValue.Number(real);
+        }
+        else
+        {
+            ReadOnlySpan<double> im = value.AsPackedComplex.Im.AsSpan();
+            double imaginary = 0;
+            for (int i = 0; i < n; i++)
+            {
+                imaginary += im[(i * n) + i];
+            }
+
+            trace = JgsValue.ComplexNum(new Complex(real, imaginary));
+        }
+
+        GC.KeepAlive(value);
+        return true;
+    }
+
     private static JgsValue SingularValueList(IReadOnlyList<JgsValue> args, int line, int col)
     {
         ArityRange("svd", args, 1, 2, line, col);

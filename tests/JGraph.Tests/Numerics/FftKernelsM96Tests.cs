@@ -271,6 +271,25 @@ public class FftKernelsM96Tests
                     }
 
                     Complex[] want = Reference(slice, inverse);
+                    if (real && !inverse)
+                    {
+                        // A real input's spectrum comes back exactly conjugate-symmetric, each pair
+                        // its symmetric part, as R2025b's does (ADR 0323).
+                        var wr = new double[n];
+                        var wi = new double[n];
+                        for (int j = 0; j < n; j++)
+                        {
+                            wr[j] = want[j].Real;
+                            wi[j] = want[j].Imaginary;
+                        }
+
+                        FftKernels.Symmetrize(wr, wi, n, 1, 0);
+                        for (int j = 0; j < n; j++)
+                        {
+                            want[j] = new Complex(wr[j], wi[j]);
+                        }
+                    }
+
                     int to = ((s / inner) * inner * n) + (s % inner);
                     for (int j = 0; j < n; j++)
                     {

@@ -1241,7 +1241,7 @@ internal static partial class JgsBuiltins
         {
             Arity("isnan", args, 1, line, col);
             return MapToBool("isnan", args[0], static x => double.IsNaN(x), line, col,
-                static c => double.IsNaN(c.Real) || double.IsNaN(c.Imaginary));
+                static c => double.IsNaN(c.Real) || double.IsNaN(c.Imaginary), PackedMath.MaskTest.IsNaN);
         });
 
         Define("isequal", (args, line, col) =>
@@ -5595,11 +5595,16 @@ internal static partial class JgsBuiltins
     }
 
     internal static JgsValue MapToBool(string name, JgsValue value, Func<double, bool> test, int line, int col,
-        Func<Complex, bool>? complexTest = null)
+        Func<Complex, bool>? complexTest = null, PackedMath.MaskTest? kernel = null)
     {
         if (value.Type is JgsType.Number or JgsType.Bool)
         {
             return JgsValue.Bool(test(value.AsNumber));
+        }
+
+        if (TryPackedMask(value, test, complexTest, kernel, out JgsValue packedMask))
+        {
+            return packedMask;
         }
 
         if (value.Type == JgsType.Complex && complexTest is not null)
@@ -5639,6 +5644,67 @@ internal static partial class JgsBuiltins
         }
 
         throw new JgsRuntimeException(line, col, $"{name} expects a number or numeric array, but got a {value.TypeName}.");
+    }
+
+    /// <summary>
+    /// The mask of a packed array as a packed logical array, read where the storage lies: a known
+    /// test runs as <see cref="PackedMath.Mask"/>'s vector kernel across the cores, any other on this
+    /// thread one element at a time (a test may read the session, as the handle checks do). The boxed
+    /// road made a value per element going in and a Bool per element coming out, and its boxed answer
+    /// made every reduction after it boxed too (the every-row plan's I11, ADR 0323).
+    /// </summary>
+    private static bool TryPackedMask(JgsValue value, Func<double, bool> test, Func<Complex, bool>? complexTest,
+        PackedMath.MaskTest? kernel, out JgsValue mask)
+    {
+        mask = JgsValue.Null;
+        if (!JgsPacking.Enabled || value.Type != JgsType.Array || value.ArrayLength == 0)
+        {
+            return false;
+        }
+
+        NumericBuffer dest;
+        if (value.IsPacked)
+        {
+            dest = JgsPacking.AllocateForOverwrite(value.ArrayLength);
+            if (kernel is { } known)
+            {
+                PackedMath.Mask(known, value.AsBuffer, dest);
+            }
+            else
+            {
+                ReadOnlySpan<double> source = value.AsBuffer.AsSpan();
+                Span<double> into = dest.AsSpan();
+                for (int i = 0; i < source.Length; i++)
+                {
+                    into[i] = test(source[i]) ? 1.0 : 0.0;
+                }
+            }
+        }
+        else if (value.IsPackedComplex && complexTest is not null)
+        {
+            JgsPackedComplex planes = value.AsPackedComplex;
+            ReadOnlySpan<double> re = planes.Re.AsSpan();
+            ReadOnlySpan<double> im = planes.Im.AsSpan();
+            dest = JgsPacking.AllocateForOverwrite(value.ArrayLength);
+            Span<double> into = dest.AsSpan();
+            for (int i = 0; i < re.Length; i++)
+            {
+                into[i] = complexTest(new Complex(re[i], im[i])) ? 1.0 : 0.0;
+            }
+        }
+        else
+        {
+            return false;
+        }
+
+        GC.KeepAlive(value);
+        mask = JgsValue.Packed(dest, JgsPackedKind.Bool);
+        if (value.IsShaped || value.IsNd)
+        {
+            mask.TakeShapeOf(value);
+        }
+
+        return true;
     }
 
     /// <summary>Element-wise logic over truthiness, broadcasting a scalar across an array.</summary>
@@ -5874,13 +5940,23 @@ internal static partial class JgsBuiltins
             // out. The spectrum of four million samples used to build four million JgsValues here
             // on its way to abs(F), and reading the planes through AsSpan() once per element was
             // the other half of the price.
-            Span<double> into = reOut.AsSpan();
-            for (int i = 0; i < count; i++)
+            // The maps that take this road (abs, real, imag, angle) are pure per element, so the
+            // planes are cut across the cores; each element is the same call on the same operands,
+            // so the answer is the same to the bit (the every-row plan's I11, ADR 0323).
+            NumericBuffer sourceRe = source.Re;
+            NumericBuffer sourceIm = source.Im;
+            ParallelKernels.For(count, ParallelKernels.MemoryBoundThreshold, null, (start, len) =>
             {
-                double im = fromIm[i];
-                into[i] = im == 0 ? real(fromRe[i]) : plain(new Complex(fromRe[i], im));
-            }
+                ReadOnlySpan<double> re = sourceRe.AsSpan(start, len);
+                ReadOnlySpan<double> im = sourceIm.AsSpan(start, len);
+                Span<double> into = reOut.AsSpan(start, len);
+                for (int i = 0; i < len; i++)
+                {
+                    into[i] = im[i] == 0 ? real(re[i]) : plain(new Complex(re[i], im[i]));
+                }
+            });
 
+            GC.KeepAlive(source);
             return JgsValue.Packed(reOut);
         }
 

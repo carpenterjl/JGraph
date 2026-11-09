@@ -95,6 +95,142 @@ internal static class PackedOps
     }
 
     /// <summary>
+    /// <c>+</c> and <c>-</c> with a complex side, over packed planes: a packed complex array with a
+    /// packed complex or real array of the same shape, or either with a real or complex scalar. The
+    /// boxed road minted a value per element (complex minus real over four million was 0.91 s
+    /// against R2025b's 0.003, ADR 0322); each element here is the boxed road's own arithmetic, the
+    /// real side promoted with a zero imaginary part, and an answer with no imaginary part anywhere
+    /// comes back real as the boxed one does (the every-row plan's I11, ADR 0323). False leaves the
+    /// call to the boxed road: another class, another shape, implicit expansion.
+    /// </summary>
+    public static bool TryComplexAddSubtract(bool subtract, JgsValue left, JgsValue right,
+                                             Action? cancelCheck, out JgsValue result)
+    {
+        result = JgsValue.Null;
+        if (!JgsPacking.Enabled
+            || !(ComplexArray(left) || ComplexArray(right)
+                 || (left.Type == JgsType.Complex && IsPackedArray(right))
+                 || (right.Type == JgsType.Complex && IsPackedArray(left)))
+            || !ComplexSide.TryOf(left, out ComplexSide a)
+            || !ComplexSide.TryOf(right, out ComplexSide b))
+        {
+            return false;
+        }
+
+        int length;
+        if (a.Re is not null && b.Re is not null)
+        {
+            if (!JgsMatrix.DimsOf(left).AsSpan().SequenceEqual(JgsMatrix.DimsOf(right)))
+            {
+                return false;
+            }
+
+            length = a.Re.Length;
+        }
+        else
+        {
+            length = (a.Re ?? b.Re)!.Length;
+        }
+
+        NumericBuffer re = JgsPacking.AllocateForOverwrite(length);
+        NumericBuffer im = JgsPacking.AllocateForOverwrite(length);
+        bool[] imaginary = new bool[(length / ParallelKernels.GrainElements) + 1];
+        ParallelKernels.For(length, ParallelKernels.MemoryBoundThreshold, cancelCheck, (start, len) =>
+        {
+            Span<double> r = re.AsSpan(start, len);
+            Span<double> m = im.AsSpan(start, len);
+            ReadOnlySpan<double> aRe = a.Re is null ? default : a.Re.AsSpan(start, len);
+            ReadOnlySpan<double> aIm = a.Im is null ? default : a.Im.AsSpan(start, len);
+            ReadOnlySpan<double> bRe = b.Re is null ? default : b.Re.AsSpan(start, len);
+            ReadOnlySpan<double> bIm = b.Im is null ? default : b.Im.AsSpan(start, len);
+            bool aArray = a.Re is not null;
+            bool bArray = b.Re is not null;
+            bool any = false;
+            for (int i = 0; i < len; i++)
+            {
+                double ar = aArray ? aRe[i] : a.ScalarRe;
+                double ai = aArray ? (aIm.IsEmpty ? 0 : aIm[i]) : a.ScalarIm;
+                double br = bArray ? bRe[i] : b.ScalarRe;
+                double bi = bArray ? (bIm.IsEmpty ? 0 : bIm[i]) : b.ScalarIm;
+                r[i] = subtract ? ar - br : ar + br;
+                double part = subtract ? ai - bi : ai + bi;
+                m[i] = part;
+                any |= part != 0;
+            }
+
+            if (any)
+            {
+                imaginary[start / ParallelKernels.GrainElements] = true;
+            }
+        });
+
+        GC.KeepAlive(left);
+        GC.KeepAlive(right);
+        if (Array.IndexOf(imaginary, true) >= 0)
+        {
+            result = KeepShape(JgsValue.PackedComplexArray(new JgsPackedComplex(re, im)), left, right);
+        }
+        else
+        {
+            im.Dispose();
+            result = KeepShape(JgsValue.Packed(re), left, right);
+        }
+
+        return true;
+    }
+
+    private static bool ComplexArray(JgsValue value) => value.Type == JgsType.Array && value.IsPackedComplex;
+
+    /// <summary>One operand of <see cref="TryComplexAddSubtract"/>: planes, or a scalar's parts.</summary>
+    private readonly struct ComplexSide
+    {
+        private ComplexSide(NumericBuffer? re, NumericBuffer? im, double scalarRe, double scalarIm)
+        {
+            Re = re;
+            Im = im;
+            ScalarRe = scalarRe;
+            ScalarIm = scalarIm;
+        }
+
+        /// <summary>The real plane of an array side; null for a scalar.</summary>
+        public NumericBuffer? Re { get; }
+
+        /// <summary>The imaginary plane of a complex array side; null for a real one or a scalar.</summary>
+        public NumericBuffer? Im { get; }
+
+        public double ScalarRe { get; }
+
+        public double ScalarIm { get; }
+
+        public static bool TryOf(JgsValue value, out ComplexSide side)
+        {
+            side = default;
+            if (value.NumericClass != JgsNumericClass.Double)
+            {
+                return false;
+            }
+
+            switch (value.Type)
+            {
+                case JgsType.Number or JgsType.Bool:
+                    side = new ComplexSide(null, null, value.AsNumber, 0);
+                    return true;
+                case JgsType.Complex:
+                    side = new ComplexSide(null, null, value.AsComplex.Real, value.AsComplex.Imaginary);
+                    return true;
+                case JgsType.Array when value.IsPackedComplex && value.ArrayLength > 0:
+                    side = new ComplexSide(value.AsPackedComplex.Re, value.AsPackedComplex.Im, 0, 0);
+                    return true;
+                case JgsType.Array when value.IsPacked && value.ArrayLength > 0:
+                    side = new ComplexSide(value.AsBuffer, null, 0, 0);
+                    return true;
+                default:
+                    return false;
+            }
+        }
+    }
+
+    /// <summary>
     /// The buffer an arithmetic answer is written into: a fresh temporary operand the caller named
     /// in <paramref name="reuse"/> when Z2a's conditions hold, a new buffer otherwise. The length is
     /// the operands' (the packed arrangements above require it), so a reused buffer fits exactly.
