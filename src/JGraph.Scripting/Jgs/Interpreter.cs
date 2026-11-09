@@ -4160,6 +4160,69 @@ internal sealed partial class Interpreter
     /// </remarks>
     private JgsValue EvaluateArrayLiteral(ArrayLiteral array, JgsEnvironment env)
     {
+        // A row of number literals, [0 50], is the same row every time: once the walk below has
+        // built it and it came out a plain packed double row of exactly those numbers, a fresh copy
+        // of it is the answer (the every-row plan's I2, ADR 0325). Nothing in it can run script.
+        if (array.NumericRow is NumericRowTemplate known && ReferenceEquals(known.Dialect, Dialect) && JgsPacking.Enabled)
+        {
+            return known.Fresh();
+        }
+
+        JgsValue answer = EvaluateArrayLiteralWalked(array, env);
+        if (array.NumericRow is null && array.Elements.Count >= 2)
+        {
+            array.NumericRow = NumericRowTemplate.TryLearn(array, answer, Dialect) ?? (object)NumericRowTemplate.NotOne;
+        }
+
+        return answer;
+    }
+
+    /// <summary>What <see cref="EvaluateArrayLiteral"/> learned of a row of number literals.</summary>
+    private sealed class NumericRowTemplate(double[] values, JgsDialect dialect)
+    {
+        /// <summary>The marker for a literal that is not a plain row of numbers, so it is not asked again.</summary>
+        public static readonly object NotOne = new();
+
+        public JgsDialect Dialect { get; } = dialect;
+
+        public JgsValue Fresh()
+        {
+            JGraph.Numerics.NumericBuffer buffer = JgsPacking.Allocate(values.Length);
+            values.CopyTo(buffer.AsSpan());
+            GC.KeepAlive(buffer);
+            JgsValue row = JgsValue.Packed(buffer, JgsPackedKind.Number);
+            row.Reshape(1, values.Length);
+            return row;
+        }
+
+        public static NumericRowTemplate? TryLearn(ArrayLiteral array, JgsValue built, JgsDialect dialect)
+        {
+            int n = array.Elements.Count;
+            if (!JgsPacking.Enabled || !IsPlainDoubleArray(built) || built.Rows != 1 || built.Cols != n
+                || built.ArrayLength != n)
+            {
+                return null;
+            }
+
+            var values = new double[n];
+            ReadOnlySpan<double> got = built.AsBuffer.AsSpan();
+            for (int i = 0; i < n; i++)
+            {
+                if (array.Elements[i] is not NumberLiteral { IntegerClass: null } literal
+                    || BitConverter.DoubleToInt64Bits(literal.Value) != BitConverter.DoubleToInt64Bits(got[i]))
+                {
+                    return null;
+                }
+
+                values[i] = literal.Value;
+            }
+
+            return new NumericRowTemplate(values, dialect);
+        }
+    }
+
+    private JgsValue EvaluateArrayLiteralWalked(ArrayLiteral array, JgsEnvironment env)
+    {
         // M5's literal scope (`[gv, bump()]`, #6). The literal's answer is adopted by a binding, so
         // a piece the join hands back unchanged keeps its count rather than being released.
         var holds = new ScopeHolds();

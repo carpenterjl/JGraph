@@ -102,6 +102,12 @@ internal sealed class BoolLiteral(bool value) : Expr
 internal sealed class ArrayLiteral(IReadOnlyList<Expr> elements) : Expr
 {
     public IReadOnlyList<Expr> Elements { get; } = elements;
+
+    /// <summary>
+    /// For a row of plain number literals, the doubles and the dialect the walk built them under
+    /// once (the every-row plan's I2, ADR 0325); later evaluations copy them. Read by the interpreter only.
+    /// </summary>
+    internal object? NumericRow { get; set; }
 }
 
 /// <summary>
@@ -283,6 +289,18 @@ internal sealed class AnonymousFnExpr(IReadOnlyList<string> parameters, Expr bod
     /// comma, every literal spelt as written. Stamped by the parser; null for a tree built otherwise.
     /// </summary>
     public string? MatlabText { get; set; }
+
+    /// <summary>
+    /// The body's free names, in the order a handle's creation captures them; worked out once per
+    /// declaration (the every-row plan's I2, ADR 0325) since a handle made in a loop asked per pass.
+    /// </summary>
+    internal string[]? FreeNames { get; set; }
+
+    /// <summary>
+    /// The callback compiler's answers for this declaration, by shape and state count (I2): the
+    /// program with its captured names still to be read, or a refusal. Read by the interpreter only.
+    /// </summary>
+    internal object? CompiledTemplates { get; set; }
 }
 
 /// <summary>A MATLAB function handle <c>@name</c>, naming a user function or a builtin.</summary>

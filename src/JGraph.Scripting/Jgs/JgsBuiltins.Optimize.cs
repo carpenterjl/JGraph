@@ -428,6 +428,25 @@ internal static partial class JgsBuiltins
     private static OptimSettings ReadOptimSettings(
         string solver, JgsEnvironment env, JgsValue? options, int variables, int line, int col)
     {
+        // No options is the solver's defaults, the same every call: built once (I2, ADR 0325), since
+        // the defaults structure is some thirty fields and fzero in a loop built it per call.
+        if (options is null)
+        {
+            return DefaultOptimSettings.GetOrAdd((solver, variables),
+                static key => ReadOptimSettingsFrom(key.Solver, null!, null, key.Variables, 0, 0));
+        }
+
+        return ReadOptimSettingsFrom(solver, env, options, variables, line, col);
+    }
+
+    /// <summary>The settings each solver reads when it is given no options, by solver and problem size.</summary>
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<(string Solver, int Variables), OptimSettings>
+        DefaultOptimSettings = new();
+
+    /// <summary>What <see cref="ReadOptimSettings"/> reads, uncached.</summary>
+    private static OptimSettings ReadOptimSettingsFrom(
+        string solver, JgsEnvironment env, JgsValue? options, int variables, int line, int col)
+    {
         JgsValue defaults = SolverDefaults(solver, line, col);
 
         JgsValue Setting(string field)
@@ -608,12 +627,48 @@ internal static partial class JgsBuiltins
         int line,
         int col)
     {
-        return point =>
+        Func<double[], double> walked = point =>
         {
             var arguments = new List<JgsValue>(1 + extra.Count) { ShapedNumbers(point, dims) };
             arguments.AddRange(extra);
             JgsValue answered = objective.Call(arguments, line, col);
             return ScalarObjective(solver, objective, answered, point, checkValues, line, col);
+        };
+
+        // The every-row plan's I2 (ADR 0325): an anonymous objective of scalar arithmetic over its
+        // point is compiled once per solve and run over the solver's own doubles. A NaN under
+        // FunValCheck, or an answer that leaves the reals, walks that one point, which raises
+        // whatever the walk raises.
+        int length = 1;
+        foreach (int extent in dims)
+        {
+            length *= extent;
+        }
+
+        if (extra.Count != 0 || objective is not AnonymousFunction anonymous
+            || anonymous.Interpreter.TryCompilePointBody(anonymous, length) is not { } body)
+        {
+            return walked;
+        }
+
+        JgsCallbackCompile.Compiled++;
+        CancellationToken cancellation = anonymous.Interpreter.Cancellation;
+        int calls = 0;
+        return point =>
+        {
+            if ((++calls & 1023) == 0)
+            {
+                cancellation.ThrowIfCancellationRequested();
+            }
+
+            if (point.Length == length && body.TryEvaluatePoint(point, out double value)
+                && !(checkValues && double.IsNaN(value)))
+            {
+                return value;
+            }
+
+            JgsCallbackCompile.Walked++;
+            return walked(point);
         };
     }
 

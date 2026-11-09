@@ -100,6 +100,12 @@ internal static partial class JgsBuiltins
             }
         }
 
+        if (uniform && handler is null && inputs.Count == 1 && wanted <= 1
+            && TryCompiledOverArray(args[0], args[1], line, col) is { } compiled)
+        {
+            return [compiled];
+        }
+
         // Asked for none, each element is asked for none and the first output it hands back anyway
         // is collected (V9.1, as cellfun).
         int produced = Math.Max(wanted, 1);
@@ -185,6 +191,95 @@ internal static partial class JgsBuiltins
         }
 
         return outputs;
+    }
+
+    /// <summary>
+    /// The every-row plan's I2 (ADR 0325): <c>arrayfun(@(a) body, x)</c> with one real double array
+    /// and a uniform answer, the body compiled once and run over the array's own doubles - no value
+    /// minted per element, no workspace per call. Null when the handle does not compile or the array
+    /// is not plain real doubles; and when an element's answer leaves the reals the whole call is
+    /// left to the walk, which the body (no side effects can reach it) lets run again from the start.
+    /// The answer is built as the walk builds it: packed and shaped like the input.
+    /// </summary>
+    private static JgsValue? TryCompiledOverArray(JgsValue function, JgsValue array, int line, int col)
+    {
+        if (function.AsCallable is not AnonymousFunction anonymous
+            || array.Type != JgsType.Array || array.IsCategorical || array.IsStringArray || array.IsCharMatrix
+            || array.TimeTag is not null || array.NumericClass != JgsNumericClass.Double
+            || array.ArrayLength == 0)
+        {
+            return null;
+        }
+
+        int length = array.ArrayLength;
+        double[] values;
+        if (array.IsPacked)
+        {
+            if (array.PackedKind != JgsPackedKind.Number)
+            {
+                return null;
+            }
+
+            values = array.AsBuffer.AsSpan().ToArray();
+        }
+        else
+        {
+            values = new double[length];
+            for (int i = 0; i < length; i++)
+            {
+                JgsValue element = array.ElementAt(i);
+                if (element.Type != JgsType.Number || element.NumericClass != JgsNumericClass.Double)
+                {
+                    return null;
+                }
+
+                values[i] = element.AsNumber;
+            }
+        }
+
+        if (anonymous.Interpreter.TryCompilePointBody(anonymous, 1) is not { } body)
+        {
+            return null;
+        }
+
+        JgsCallbackCompile.Compiled++;
+        CancellationToken cancellation = anonymous.Interpreter.Cancellation;
+        var answers = new double[length];
+        for (int i = 0; i < length; i++)
+        {
+            if ((i & 1023) == 1023)
+            {
+                cancellation.ThrowIfCancellationRequested();
+            }
+
+            if (!body.TryEvaluatePoint(values.AsSpan(i, 1), out answers[i]))
+            {
+                JgsCallbackCompile.Walked++;
+                return null;
+            }
+        }
+
+        JgsValue row;
+        if (JgsPacking.Enabled)
+        {
+            JGraph.Numerics.NumericBuffer buffer = JgsPacking.Allocate(length);
+            answers.CopyTo(buffer.AsSpan());
+            GC.KeepAlive(buffer);
+            row = JgsValue.Packed(buffer, JgsPackedKind.Number);
+            row.Reshape(1, length);
+        }
+        else
+        {
+            var numbers = new JgsValue[length];
+            for (int i = 0; i < length; i++)
+            {
+                numbers[i] = JgsValue.Number(answers[i]);
+            }
+
+            row = JgsMatrix.FromElements(numbers, 1, length);
+        }
+
+        return JgsMatrix.Like(array, row);
     }
 
     /// <summary>

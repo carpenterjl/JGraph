@@ -405,6 +405,21 @@ internal static partial class JgsBuiltins
             found = RootFinder.Solve(At, start[0], settings.ToleranceX, Watch);
         }
 
+        // The message and the output structure are made only when they are asked for or printed
+        // (I2, ADR 0325): two %g formats and a structure per call were most of fzero in a loop.
+        OptimDisplay endingLevel = found.ExitFlag is SearchExit.StoppedByWatcher or RootFinder.RootExit.NotFinite
+            or RootFinder.RootExit.NoSignChange
+            ? OptimDisplay.Notify
+            : OptimDisplay.Final;
+        if (wanted < 4 && settings.Display < endingLevel)
+        {
+            return Outputs(
+                wanted,
+                JgsValue.Number(found.Solution),
+                JgsValue.Number(found.Value),
+                JgsValue.Number(found.ExitFlag));
+        }
+
         string message = found.ExitFlag switch
         {
             SearchExit.StoppedByWatcher => "Optimization terminated prematurely by user.",
@@ -428,10 +443,7 @@ internal static partial class JgsBuiltins
 
         display.Ending(
             message,
-            found.ExitFlag is SearchExit.StoppedByWatcher or RootFinder.RootExit.NotFinite
-                or RootFinder.RootExit.NoSignChange
-                ? OptimDisplay.Notify
-                : OptimDisplay.Final,
+            endingLevel,
             blankLineFirst: found.ExitFlag is SearchExit.Converged
                 or RootFinder.RootExit.NearSingularity);
 

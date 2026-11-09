@@ -149,12 +149,45 @@ internal static partial class JgsBuiltins
         bool contour = start.Imaginary != 0 || stop.Imaginary != 0 || complexWaypoints?.Any(z => z.Imaginary != 0) == true;
         if (arrayValued || contour)
             return IntegrateComponents(name, f, start, stop, complexWaypoints, arrayValued, oneAtATime, relative, absolute, maximum, wanted, line, col);
+        // The every-row plan's I2 (ADR 0325): an integrand of elementwise scalar arithmetic over its
+        // panel is compiled once per call and run over the panel's own doubles. A panel whose answer
+        // would leave the reals is walked whole, as it would have been.
+        CompiledBody? compiled = !oneAtATime && f is AnonymousFunction anonymous
+            ? anonymous.Interpreter.TryCompileBatchBody(anonymous)
+            : null;
+        CancellationToken cancellation = compiled is not null ? ((AnonymousFunction)f).Interpreter.Cancellation : default;
+        if (compiled is not null)
+        {
+            JgsCallbackCompile.Compiled++;
+        }
+
         double probe = double.IsFinite(a) && double.IsFinite(b) ? a / 2 + b / 2 : double.IsFinite(a) ? a + 1 : double.IsFinite(b) ? b - 1 : 0;
-        if (HasComplexElements(f.Call([JgsValue.Number(probe)], line, col)))
+        Span<double> probed = stackalloc double[1];
+        bool probedReal = compiled is not null && compiled.TryEvaluateBatch([probe], probed);
+        if (!probedReal && HasComplexElements(f.Call([JgsValue.Number(probe)], line, col)))
             return IntegrateComponents(name, f, start, stop, complexWaypoints, false, oneAtATime, relative, absolute, maximum, wanted, line, col);
 
+        int panels = 0;
         double[] Sample(double[] at)
         {
+            // Under the length the walk's vector kernels stay on Math's own functions, so the two
+            // roads give the same doubles; a panel no call ever reaches is walked.
+            if (compiled is not null && at.Length < PackedMath.ApproximateThreshold)
+            {
+                if ((++panels & 255) == 0)
+                {
+                    cancellation.ThrowIfCancellationRequested();
+                }
+
+                var computed = new double[at.Length];
+                if (compiled.TryEvaluateBatch(at, computed))
+                {
+                    return computed;
+                }
+
+                JgsCallbackCompile.Walked++;
+            }
+
             // 'ArrayValued' is MATLAB's way of saying the integrand cannot take a vector, so it is
             // asked one point at a time. Everything else is asked once for the whole panel.
             if (oneAtATime)

@@ -482,4 +482,11 @@ internal sealed class RegisterProgram
 
     /// <summary>The AST nodes the vector ops evaluate through, by <see cref="RegOp.C"/>.</summary>
     public Node[] Nodes { get; init; } = [];
+
+    /// <summary>
+    /// The every-row plan's I2 (ADR 0325): the program emitted as a <see cref="NativeLoop"/> once a
+    /// run of it went long, or <see cref="JgsLoopNative.NotEmitted"/> when it holds an op the
+    /// emitter leaves to the register machine; null until asked.
+    /// </summary>
+    internal object? Native { get; set; }
 }

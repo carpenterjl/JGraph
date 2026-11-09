@@ -874,12 +874,19 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
     }
 
     /// <summary>Every identifier the body mentions apart from the parameters.</summary>
-    private static IEnumerable<string> FreeNames(AnonymousFnExpr declaration)
+    private static string[] FreeNames(AnonymousFnExpr declaration)
     {
+        if (declaration.FreeNames is { } known)
+        {
+            return known;
+        }
+
         var names = new HashSet<string>(StringComparer.Ordinal);
         Walk(declaration.Body, names);
         names.ExceptWith(declaration.Parameters);
-        return names;
+        string[] found = [.. names];
+        declaration.FreeNames = found;
+        return found;
     }
 
     private static void Walk(Expr? expression, HashSet<string> names)

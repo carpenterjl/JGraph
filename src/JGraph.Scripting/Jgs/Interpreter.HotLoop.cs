@@ -345,10 +345,26 @@ internal sealed partial class Interpreter
     }
 
     private Completion RunHotLoop(RegisterProgram program, JgsEnvironment env,
-                                  double[] regs, bool[] written, bool[] logical, HotLoopVectors vectors) =>
-        JgsLoopJit.Unchecked
-            ? RunHotLoop<UncheckedAccess>(program, env, regs, written, logical, vectors)
-            : RunHotLoop<CheckedAccess>(program, env, regs, written, logical, vectors);
+                                  double[] regs, bool[] written, bool[] logical, HotLoopVectors vectors)
+    {
+        // I2 (ADR 0325): a loop that runs long moves to its emitted method at a back edge, with the
+        // register file as the register machine left it; a program the emitter declines never asks.
+        int moveAfter = JgsLoopNative.Enabled && program.Native != JgsLoopNative.NotEmitted ? JgsLoopNative.Threshold : int.MaxValue;
+        int moveAt = -1;
+        Completion completion = JgsLoopJit.Unchecked
+            ? RunHotLoop<UncheckedAccess>(program, env, regs, written, logical, vectors, moveAfter, ref moveAt)
+            : RunHotLoop<CheckedAccess>(program, env, regs, written, logical, vectors, moveAfter, ref moveAt);
+        if (moveAt < 0)
+        {
+            return completion;
+        }
+
+        return NativeLoopFor(program) is { } native
+            ? RunHotLoopNative(program, native, env, regs, written, logical, vectors, moveAt)
+            : JgsLoopJit.Unchecked
+                ? RunHotLoop<UncheckedAccess>(program, env, regs, written, logical, vectors, int.MaxValue, ref moveAt, moveAt)
+                : RunHotLoop<CheckedAccess>(program, env, regs, written, logical, vectors, int.MaxValue, ref moveAt, moveAt);
+    }
 
     /// <summary>
     /// The switch itself, over <typeparamref name="TAccess"/>'s reads: the validator proved every
@@ -356,7 +372,8 @@ internal sealed partial class Interpreter
     /// sound here and only here.
     /// </summary>
     private Completion RunHotLoop<TAccess>(RegisterProgram program, JgsEnvironment env,
-                                           double[] regs, bool[] written, bool[] logical, HotLoopVectors vectors)
+                                           double[] regs, bool[] written, bool[] logical, HotLoopVectors vectors,
+                                           int moveAfter, ref int moveAt, int startIp = 0)
         where TAccess : struct, IHotLoopAccess
     {
         RegOp[] ops = program.Ops;
@@ -364,7 +381,8 @@ internal sealed partial class Interpreter
         Func<double, double>[] unary = program.Unary;
         Func<double, bool>?[] guards = program.UnaryGuard;
         long steps = _steps;
-        int ip = 0;
+        int ip = startIp;
+        int backEdges = 0;
 
         // While true, the registers are the freshest state and an escaping exception spills them;
         // while a bail has the walk executing against the environment, the environment is.
@@ -403,6 +421,13 @@ internal sealed partial class Interpreter
                         break;
 
                     case LoopOp.Jump:
+                        if (op.Arg <= ip && ++backEdges >= moveAfter)
+                        {
+                            _steps = steps;
+                            moveAt = op.Arg; // I2: a long loop moves to its emitted method here
+                            return Completion.Normal;
+                        }
+
                         ip = op.Arg;
                         break;
 
@@ -647,6 +672,13 @@ internal sealed partial class Interpreter
 
                     case LoopOp.ForNext:
                         TAccess.At(regs, op.A + 4) += 1;
+                        if (++backEdges >= moveAfter)
+                        {
+                            _steps = steps;
+                            moveAt = op.Arg; // I2: a long loop moves to its emitted method here
+                            return Completion.Normal;
+                        }
+
                         ip = op.Arg;
                         break;
 
@@ -678,6 +710,13 @@ internal sealed partial class Interpreter
                         TAccess.At(written, op.Dest) = true;
                         TAccess.At(logical, op.Dest) = false;
                         TAccess.At(vectors.Emptied, op.Dest) = false;
+                        if (++backEdges >= moveAfter)
+                        {
+                            _steps = steps;
+                            moveAt = op.Arg; // I2: a long loop moves to its emitted method here
+                            return Completion.Normal;
+                        }
+
                         ip = op.Arg;
                         break;
                     }
