@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace JGraph.Scripting.Jgs;
@@ -66,23 +67,69 @@ internal static partial class JgsBuiltins
 
         // --- searching -----------------------------------------------------------------------------
         BuiltinFunction? legacyContains = Inner("contains");
+        // Each verb scores one element as a double — 1 or 0 for the predicates, the count for count —
+        // with no closure per element (I7, ADR 0326: the Array.Exists lambdas captured the text).
         Define("contains", (args, line, col) => TextSearched("contains", args, dialect, legacyContains,
-            static (text, patterns, cmp) => JgsValue.Bool(Array.Exists(patterns, p => text.Contains(p, cmp))),
-            JgsValue.Bool(false), line, col));
+            [MethodImpl(MethodImplOptions.AggressiveOptimization)] static (text, patterns, cmp) =>
+            {
+                foreach (string p in patterns)
+                {
+                    if (text.Contains(p, cmp))
+                    {
+                        return 1;
+                    }
+                }
+
+                return 0;
+            },
+            logical: true, line, col));
         Define("startsWith", (args, line, col) => TextSearched("startsWith", args, dialect, null,
-            static (text, patterns, cmp) => JgsValue.Bool(Array.Exists(patterns, p => text.StartsWith(p, cmp))),
-            JgsValue.Bool(false), line, col));
+            [MethodImpl(MethodImplOptions.AggressiveOptimization)] static (text, patterns, cmp) =>
+            {
+                foreach (string p in patterns)
+                {
+                    if (text.StartsWith(p, cmp))
+                    {
+                        return 1;
+                    }
+                }
+
+                return 0;
+            },
+            logical: true, line, col));
         Define("endsWith", (args, line, col) => TextSearched("endsWith", args, dialect, null,
-            static (text, patterns, cmp) => JgsValue.Bool(Array.Exists(patterns, p => text.EndsWith(p, cmp))),
-            JgsValue.Bool(false), line, col));
+            [MethodImpl(MethodImplOptions.AggressiveOptimization)] static (text, patterns, cmp) =>
+            {
+                foreach (string p in patterns)
+                {
+                    if (text.EndsWith(p, cmp))
+                    {
+                        return 1;
+                    }
+                }
+
+                return 0;
+            },
+            logical: true, line, col));
         Define("matches", (args, line, col) => TextSearched("matches", args, dialect, null,
-            static (text, patterns, cmp) => JgsValue.Bool(Array.Exists(patterns, p => string.Equals(text, p, cmp))),
-            JgsValue.Bool(false), line, col));
+            [MethodImpl(MethodImplOptions.AggressiveOptimization)] static (text, patterns, cmp) =>
+            {
+                foreach (string p in patterns)
+                {
+                    if (string.Equals(text, p, cmp))
+                    {
+                        return 1;
+                    }
+                }
+
+                return 0;
+            },
+            logical: true, line, col));
         Define("count", (args, line, col) => TextSearched("count", args, dialect, null,
-            static (text, patterns, cmp) => JgsValue.Number(cmp == StringComparison.Ordinal
+            [MethodImpl(MethodImplOptions.AggressiveOptimization)] static (text, patterns, cmp) => cmp == StringComparison.Ordinal
                 ? CountAtOnce(text, patterns)
-                : CountAtOnce(text.ToUpperInvariant(), Array.ConvertAll(patterns, static p => p.ToUpperInvariant()))),
-            JgsValue.Number(0), line, col));
+                : CountAtOnce(text.ToUpperInvariant(), Array.ConvertAll(patterns, static p => p.ToUpperInvariant())),
+            logical: false, line, col));
 
         Define("strfind", StrFind);
         Define("strlength", StrLength);
@@ -343,11 +390,12 @@ internal static partial class JgsBuiltins
     /// <summary>
     /// The shape every search verb shares: <c>verb(str, pattern)</c> or
     /// <c>verb(str, pattern, 'IgnoreCase', tf)</c>, answered once per element of <c>str</c>, with a
-    /// list of patterns asked as one question. A missing string answers <paramref name="forMissing"/>.
+    /// list of patterns asked as one question. <paramref name="score"/> answers one element as a
+    /// double, read as a logical when <paramref name="logical"/>; a missing string scores 0.
     /// </summary>
     private static JgsValue TextSearched(
         string name, IReadOnlyList<JgsValue> args, JgsDialect dialect, BuiltinFunction? legacy,
-        Func<string, string[], StringComparison, JgsValue> answer, JgsValue forMissing, int line, int col)
+        Func<string, string[], StringComparison, double> score, bool logical, int line, int col)
     {
         if (args.Count is not (2 or 4))
         {
@@ -368,6 +416,30 @@ internal static partial class JgsBuiltins
             ignoreCase = OptionFlag(name, "IgnoreCase", args[3], line, col);
         }
 
+        // I7 (ADR 0326): a string array is scored where its elements lie, one sweep a block per
+        // thread straight into a packed logical or double buffer — no text array read out first,
+        // no true, false or number boxed per element. A string array always reads as text, so the
+        // refusal below cannot be skipped by this.
+        JgsValue whole = args[0];
+        if (JgsTextKernels.Enabled && JgsPacking.Enabled && whole.IsStringArray && whole.ArrayLength > 1)
+        {
+            string[] wanted = PatternsOf(name, args, 1, line, col);
+            StringComparison how = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+            JgsValue[] elements = whole.BoxedElements();
+            JGraph.Numerics.NumericBuffer scores = JgsPacking.AllocateForOverwrite(elements.Length);
+            JgsTextKernels.For(elements.Length, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (start, length) =>
+            {
+                Span<double> slots = scores.AsSpan();
+                for (int i = start; i < start + length; i++)
+                {
+                    string text = elements[i].AsString;
+                    slots[i] = IsMissingText(text) ? 0 : score(text, wanted, how);
+                }
+            });
+
+            return JgsValue.Shaped(scores, whole.Rows, whole.Cols, logical ? JgsPackedKind.Bool : JgsPackedKind.Number);
+        }
+
         if (args[0].IsCharMatrix || !TryReadText(args[0], out TextBundle subject))
         {
             // JGS's contains is also a membership test over an array, and that reading is kept for it.
@@ -383,19 +455,39 @@ internal static partial class JgsBuiltins
         string[] patterns = PatternsOf(name, args, 1, line, col);
         StringComparison comparison = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 
-        var answers = new JgsValue[subject.Texts.Length];
-        for (int i = 0; i < answers.Length; i++)
+        // A missing string scores 0 under every verb: false for the predicates, no occurrences for count.
+        string[] texts = subject.Texts;
+        bool strings = subject.Kind == TextKind.String;
+        if (texts.Length == 0)
         {
-            answers[i] = subject.Kind == TextKind.String && IsMissingText(subject.Texts[i])
-                ? forMissing
-                : answer(subject.Texts[i], patterns, comparison);
-        }
-
-        if (answers.Length == 0)
-        {
-            return forMissing.Type == JgsType.Bool
+            return logical
                 ? EmptyLogical(subject.Rows, subject.Cols)
                 : JgsEmpty.Shaped(subject.Rows, subject.Cols);
+        }
+
+        // I7 (ADR 0326): the scores go straight into a packed logical or double buffer, a block of
+        // elements per thread, where the loop below boxes a true, a false or a number per element.
+        if (JgsTextKernels.Enabled && JgsPacking.Enabled && texts.Length > 1)
+        {
+            JGraph.Numerics.NumericBuffer buffer = JgsPacking.AllocateForOverwrite(texts.Length);
+            JgsTextKernels.For(texts.Length, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (start, length) =>
+            {
+                Span<double> slots = buffer.AsSpan();
+                for (int i = start; i < start + length; i++)
+                {
+                    slots[i] = strings && IsMissingText(texts[i]) ? 0 : score(texts[i], patterns, comparison);
+                }
+            });
+
+            return JgsValue.Shaped(buffer, subject.Rows, subject.Cols,
+                logical ? JgsPackedKind.Bool : JgsPackedKind.Number);
+        }
+
+        var answers = new JgsValue[texts.Length];
+        for (int i = 0; i < answers.Length; i++)
+        {
+            double scored = strings && IsMissingText(texts[i]) ? 0 : score(texts[i], patterns, comparison);
+            answers[i] = logical ? JgsValue.Bool(scored != 0) : JgsValue.Number(scored);
         }
 
         return ShapedValues(answers, subject.Rows, subject.Cols);
@@ -569,12 +661,15 @@ internal static partial class JgsBuiltins
         }
 
         var lengths = new double[subject.Texts.Length];
-        for (int i = 0; i < lengths.Length; i++)
+        string[] texts = subject.Texts;
+        bool strings = subject.Kind == TextKind.String;
+        JgsTextKernels.For(lengths.Length, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (start, length) =>
         {
-            lengths[i] = subject.Kind == TextKind.String && IsMissingText(subject.Texts[i])
-                ? double.NaN
-                : subject.Texts[i].Length;
-        }
+            for (int i = start; i < start + length; i++)
+            {
+                lengths[i] = strings && IsMissingText(texts[i]) ? double.NaN : texts[i].Length;
+            }
+        });
 
         if (lengths.Length == 1 && subject.Rows == 1 && subject.Cols == 1)
         {
@@ -1138,23 +1233,27 @@ internal static partial class JgsBuiltins
         }
 
         var padded = new string[subject.Texts.Length];
-        for (int i = 0; i < padded.Length; i++)
+        string[] texts = subject.Texts;
+        JgsTextKernels.For(padded.Length, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (start, length) =>
         {
-            string text = subject.Texts[i];
-            if (strings && IsMissingText(text))
+            for (int i = start; i < start + length; i++)
             {
-                padded[i] = text;
-                continue;
-            }
+                string text = texts[i];
+                if (strings && IsMissingText(text))
+                {
+                    padded[i] = text;
+                    continue;
+                }
 
-            int extra = target - text.Length;
-            padded[i] = extra <= 0 ? text : side switch
-            {
-                "left" => new string(padChar, extra) + text,
-                "both" => new string(padChar, extra / 2) + text + new string(padChar, extra - (extra / 2)),
-                _ => text + new string(padChar, extra),
-            };
-        }
+                int extra = target - text.Length;
+                padded[i] = extra <= 0 ? text : side switch
+                {
+                    "left" => new string(padChar, extra) + text,
+                    "both" => new string(padChar, extra / 2) + text + new string(padChar, extra - (extra / 2)),
+                    _ => text + new string(padChar, extra),
+                };
+            }
+        });
 
         return RebuildLike(subject, padded);
     }
@@ -1224,8 +1323,17 @@ internal static partial class JgsBuiltins
 
         if (value.IsStringArray)
         {
-            JgsValue[] texts = Array.ConvertAll(value.BoxedElements(),
-                e => JgsValue.Str(IsMissingText(e.AsString) ? e.AsString : Trim(e.AsString)));
+            JgsValue[] elements = value.BoxedElements();
+            var texts = new JgsValue[elements.Length];
+            JgsTextKernels.For(texts.Length, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (start, length) =>
+            {
+                for (int i = start; i < start + length; i++)
+                {
+                    string text = elements[i].AsString;
+                    texts[i] = JgsValue.Str(IsMissingText(text) ? text : Trim(text));
+                }
+            });
+
             return JgsValue.StringArray(texts, value.Rows, value.Cols);
         }
 

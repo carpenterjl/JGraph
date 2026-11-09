@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -66,6 +67,37 @@ internal static partial class JgsBuiltins
             string[] plain = Array.ConvertAll(formats, static f => f.Replace("%%", "%", StringComparison.Ordinal));
             return Answer(plain, args[0].Type == JgsType.Array ? args[0].Rows : 1,
                 args[0].Type == JgsType.Array ? args[0].Cols : 1);
+        }
+
+        // I7 (ADR 0326): one format with one numeric conversion over one packed real column — the
+        // shape of compose("%08.5f", x') — is one string per row, the format parsed once and the rows
+        // written a block per thread from the buffer, where the road below boxes every number, builds
+        // a list per row and parses the format again for each.
+        if (JgsTextKernels.Enabled && formats.Length == 1 && args.Count == 2 && IsComposableColumn(args[1])
+            && JgsSprintf.SingleNumeric.TryParse(formats[0]) is { } single)
+        {
+            JgsValue column = args[1];
+            int count = column.Rows;
+            JGraph.Numerics.NumericBuffer buffer = column.AsBuffer;
+            var boxed = new JgsValue[count];
+            JgsTextKernels.For(count, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (start, length) =>
+            {
+                Span<double> values = buffer.AsSpan(0, count);
+                for (int i = start; i < start + length; i++)
+                {
+                    boxed[i] = JgsValue.Str(single.Format(values[i]));
+                }
+            });
+
+            GC.KeepAlive(buffer);
+            if (asStrings)
+            {
+                return JgsValue.StringArray(boxed, count, 1);
+            }
+
+            JgsValue cell = JgsValue.Cell(boxed);
+            cell.Reshape(count, 1);
+            return cell;
         }
 
         // The data, one grid of values per argument.
@@ -141,6 +173,15 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, ex.Message);
         }
     }
+
+    /// <summary>
+    /// Whether a data argument is a packed real column of one or more rows with no tag that changes
+    /// how it composes (a time, a categorical, a string or char array): each row is one number, and
+    /// <see cref="ComposeData"/> would have boxed exactly those numbers in exactly that order.
+    /// </summary>
+    private static bool IsComposableColumn(JgsValue data) =>
+        data.Type == JgsType.Array && data.IsPacked && !data.IsNd && data.Cols == 1 && data.Rows >= 1
+        && !data.IsStringArray && !data.IsCharMatrix && !data.IsTime && !data.IsCategorical;
 
     /// <summary>One data argument as a grid of values, column-major. A cell is refused, as MATLAB refuses it.</summary>
     private static (JgsValue[] Values, int Rows, int Cols) ComposeData(JgsValue data, int line, int col)

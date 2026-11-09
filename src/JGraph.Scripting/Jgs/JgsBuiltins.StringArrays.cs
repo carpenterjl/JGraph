@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -379,21 +380,25 @@ internal static partial class JgsBuiltins
             int rows = _rows;
             int cols = _cols;
             var joined = new JgsValue[rows * cols];
+            // Every element is built from its own operands' texts, so the elements take a block per
+            // thread (I7, ADR 0326); element i is row i % rows, column i / rows, as the loops had it.
             if (_sides.Count == 2)
             {
                 (string?[] a, int aRows, int aCols) = _sides[0];
                 (string?[] b, int bRows, int bCols) = _sides[1];
-                for (int c = 0; c < cols; c++)
+                JgsTextKernels.For(joined.Length, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (start, length) =>
                 {
-                    for (int r = 0; r < rows; r++)
+                    for (int i = start; i < start + length; i++)
                     {
+                        int r = i % rows;
+                        int c = i / rows;
                         string? x = a[(aRows == 1 ? 0 : r) + ((aCols == 1 ? 0 : c) * aRows)];
                         string? y = b[(bRows == 1 ? 0 : r) + ((bCols == 1 ? 0 : c) * bRows)];
 
                         // A missing string joined to anything is missing (measured).
-                        joined[r + (c * rows)] = JgsValue.Str(x is null || y is null ? MissingSentinel : x + y);
+                        joined[i] = JgsValue.Str(x is null || y is null ? MissingSentinel : x + y);
                     }
-                }
+                });
 
                 return JgsValue.StringArray(joined, rows, cols);
             }
@@ -407,11 +412,13 @@ internal static partial class JgsBuiltins
                 (texts[s], sideRows[s], sideCols[s]) = _sides[s];
             }
 
-            char[] scratch = new char[64];
-            for (int c = 0; c < cols; c++)
+            JgsTextKernels.For(joined.Length, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (start, span) =>
             {
-                for (int r = 0; r < rows; r++)
+                char[] scratch = new char[64];
+                for (int i = start; i < start + span; i++)
                 {
+                    int r = i % rows;
+                    int c = i / rows;
                     int length = 0;
                     bool missing = false;
                     for (int s = 0; s < count; s++)
@@ -442,9 +449,9 @@ internal static partial class JgsBuiltins
                         }
                     }
 
-                    joined[r + (c * rows)] = JgsValue.Str(missing ? MissingSentinel : new string(scratch, 0, length));
+                    joined[i] = JgsValue.Str(missing ? MissingSentinel : new string(scratch, 0, length));
                 }
-            }
+            });
 
             Interlocked.Increment(ref _fusedBuilds);
             return JgsValue.StringArray(joined, rows, cols);
@@ -460,8 +467,18 @@ internal static partial class JgsBuiltins
     {
         if (value.IsStringArray)
         {
-            return (Array.ConvertAll(value.BoxedElements(), static e => IsMissingText(e.AsString) ? null : e.AsString),
-                value.Rows, value.Cols);
+            JgsValue[] elements = value.BoxedElements();
+            var texts = new string?[elements.Length];
+            JgsTextKernels.For(texts.Length, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (start, length) =>
+            {
+                for (int i = start; i < start + length; i++)
+                {
+                    string text = elements[i].AsString;
+                    texts[i] = IsMissingText(text) ? null : text;
+                }
+            });
+
+            return (texts, value.Rows, value.Cols);
         }
 
         if (value.Type == JgsType.String)

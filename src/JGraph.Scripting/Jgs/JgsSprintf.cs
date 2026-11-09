@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace JGraph.Scripting.Jgs;
@@ -373,8 +374,13 @@ internal static class JgsSprintf
             throw new FormatException($"sprintf \"%{verb}\" needs a number, but got a {arg.TypeName}.");
         }
 
-        double value = arg.AsNumber;
+        return RenderNumber(verb, spec, arg.AsNumber, matlabRules);
+    }
 
+    /// <summary>One number written the way a numeric specifier asks, width and all.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    private static string RenderNumber(char verb, in Spec spec, double value, bool matlabRules)
+    {
         // Infinity and NaN are written the way MATLAB writes them, whichever numeric specifier asked
         // for them: .NET spells the first one "Infinity", and the integer specifiers would try to cast
         // it to a whole number and answer a large negative one. A sign flag reaches the infinities but
@@ -430,6 +436,7 @@ internal static class JgsSprintf
         : string.Empty;
 
     /// <summary><c>%d %i %u %o %x %X</c>: the digits, a precision that is a minimum digit count, and <c>#</c>'s prefix.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private static string RenderInteger(char verb, in Spec spec, double value, bool unsigned)
     {
         bool negative = false;
@@ -495,6 +502,7 @@ internal static class JgsSprintf
     }
 
     /// <summary><c>%f %e %E %g %G</c>: the magnitude written to the asked-for places, then its sign.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private static string RenderFloat(char verb, in Spec spec, double value)
     {
         // The sign is taken off first so that the zero padding can slot in behind it, and so that a
@@ -505,7 +513,7 @@ internal static class JgsSprintf
 
         string digits = verb switch
         {
-            'f' => magnitude.ToString("F" + places, CultureInfo.InvariantCulture),
+            'f' => magnitude.ToString(places < FixedPictures.Length ? FixedPictures[places] : "F" + places, CultureInfo.InvariantCulture),
             'e' => Scientific(magnitude, places),
             'E' => Scientific(magnitude, places).ToUpperInvariant(),
             'g' => spec.Alternate ? GeneralAlternate(magnitude, spec.Precision) : FormatGeneral(magnitude, spec.Precision),
@@ -540,6 +548,7 @@ internal static class JgsSprintf
     /// digits. Zero padding goes between the prefix and the digits so that '%#08x' of 255 is
     /// '0x0000ff' and '%05d' of -42 is '-0042'; left-aligning turns it back into spaces.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private static string PadNumber(string sign, string prefix, string digits, in Spec spec, bool zeroFill)
     {
         int have = sign.Length + prefix.Length + digits.Length;
@@ -676,6 +685,7 @@ internal static class JgsSprintf
     }
 
     /// <summary>One element of a real array at the array's precision: <see cref="FormatScalarGeneral"/>'s spelling, at a precision it is given.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     internal static string FormatAtPrecision(double value, int precision)
     {
         if (double.IsNaN(value))
@@ -720,6 +730,181 @@ internal static class JgsSprintf
         return count;
     }
 
+    /// <summary>The "F0" to "F31" pictures <see cref="RenderFloat"/> asks .NET for, made once (I7, ADR 0326).</summary>
+    private static readonly string[] FixedPictures = MakeFixedPictures();
+
+    private static string[] MakeFixedPictures()
+    {
+        var pictures = new string[32];
+        for (int places = 0; places < pictures.Length; places++)
+        {
+            pictures[places] = "F" + places.ToString(CultureInfo.InvariantCulture);
+        }
+
+        return pictures;
+    }
+
+    /// <summary>
+    /// A format with exactly one numeric conversion and nothing that reads the argument list but
+    /// that conversion — no <c>*</c>, no <c>n$</c> — parsed once (I7, ADR 0326): the literal text
+    /// either side of it with <c>%%</c> already folded, the conversion and its flags. Applied to one
+    /// number, it writes what <see cref="FormatMatlab"/> writes for that format and that number.
+    /// </summary>
+    internal sealed class SingleNumeric
+    {
+        private readonly string _prefix;
+        private readonly string _suffix;
+        private readonly char _verb;
+        private readonly Spec _spec;
+
+        private SingleNumeric(string prefix, string suffix, char verb, Spec spec)
+        {
+            _prefix = prefix;
+            _suffix = suffix;
+            _verb = verb;
+            _spec = spec;
+        }
+
+        /// <summary>The format applied to <paramref name="value"/> under MATLAB's rules.</summary>
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public string Format(double value) =>
+            string.Concat(_prefix, RenderNumber(_verb, _spec, value, matlabRules: true), _suffix);
+
+        /// <summary>
+        /// The parsed format, or null for anything else: no conversion or more than one, a text
+        /// conversion, a star, a position, a repeated flag, a format ending inside a specifier.
+        /// Those keep <see cref="FormatMatlab"/>'s own reading and its own errors.
+        /// </summary>
+        public static SingleNumeric? TryParse(string format)
+        {
+            var prefix = new StringBuilder();
+            var suffix = new StringBuilder();
+            StringBuilder literal = prefix;
+            bool found = false;
+            char verb = '\0';
+            Spec spec = default;
+            for (int i = 0; i < format.Length; i++)
+            {
+                char c = format[i];
+                if (c != '%')
+                {
+                    literal.Append(c);
+                    continue;
+                }
+
+                if (i + 1 < format.Length && format[i + 1] == '%')
+                {
+                    literal.Append('%');
+                    i++;
+                    continue;
+                }
+
+                if (found)
+                {
+                    return null;
+                }
+
+                i++;
+                int digitsAt = i;
+                while (digitsAt < format.Length && char.IsAsciiDigit(format[digitsAt]))
+                {
+                    digitsAt++;
+                }
+
+                if (digitsAt > i && digitsAt < format.Length && format[digitsAt] == '$')
+                {
+                    return null;
+                }
+
+                bool leftAlign = false, zeroPad = false, forceSign = false, spaceSign = false, alternate = false;
+                while (i < format.Length)
+                {
+                    char flag = format[i];
+                    ref bool slot = ref leftAlign;
+                    if (flag == '-')
+                    {
+                        slot = ref leftAlign;
+                    }
+                    else if (flag == '0')
+                    {
+                        slot = ref zeroPad;
+                    }
+                    else if (flag == '+')
+                    {
+                        slot = ref forceSign;
+                    }
+                    else if (flag == ' ')
+                    {
+                        slot = ref spaceSign;
+                    }
+                    else if (flag == '#')
+                    {
+                        slot = ref alternate;
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                    if (slot)
+                    {
+                        return null;
+                    }
+
+                    slot = true;
+                    i++;
+                }
+
+                if (i < format.Length && format[i] == '*')
+                {
+                    return null;
+                }
+
+                int width = 0;
+                while (i < format.Length && char.IsAsciiDigit(format[i]))
+                {
+                    width = (width * 10) + (format[i] - '0');
+                    i++;
+                }
+
+                int precision = -1;
+                if (i < format.Length && format[i] == '.')
+                {
+                    i++;
+                    if (i < format.Length && format[i] == '*')
+                    {
+                        return null;
+                    }
+
+                    precision = 0;
+                    while (i < format.Length && char.IsAsciiDigit(format[i]))
+                    {
+                        precision = (precision * 10) + (format[i] - '0');
+                        i++;
+                    }
+                }
+
+                while (i < format.Length && format[i] is 'l' or 'h' or 'L')
+                {
+                    i++;
+                }
+
+                if (i >= format.Length
+                    || format[i] is not ('d' or 'i' or 'f' or 'e' or 'g' or 'x' or 'o' or 'u' or 'X' or 'E' or 'G'))
+                {
+                    return null;
+                }
+
+                verb = format[i];
+                spec = new Spec(leftAlign, zeroPad, forceSign, spaceSign, alternate, width, precision);
+                found = true;
+                literal = suffix;
+            }
+
+            return found ? new SingleNumeric(prefix.ToString(), suffix.ToString(), verb, spec) : null;
+        }
+    }
+
     /// <summary>The "G1" to "G17" pictures <see cref="FormatGeneral"/> asks .NET for, made once.</summary>
     private static readonly string[] GeneralPictures = MakeGeneralPictures();
 
@@ -734,6 +919,7 @@ internal static class JgsSprintf
         return pictures;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private static string FormatGeneral(double value, int precision)
     {
         // %g: shortest of fixed/scientific at the given significant digits (default 6, like C, and

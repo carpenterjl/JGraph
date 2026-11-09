@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -332,6 +333,25 @@ internal static partial class JgsBuiltins
                     one[i] = inner.Demote(args[i]);
                 }
 
+                // I7 (ADR 0326): the four verbs whose element answer is one .NET string operation,
+                // with arguments that cannot fail, are applied directly a block per thread — the
+                // inner body's own expression, without a demotion, a call and a wrapper per element.
+                if (slot == 0 && JgsTextKernels.Enabled && DirectTextMap(name, one) is { } direct)
+                {
+                    var mapped = new JgsValue[pieces.Length];
+                    bool keeps = asStrings && MissingKeepingBuiltins.Contains(name);
+                    JgsTextKernels.For(mapped.Length, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (start, length) =>
+                    {
+                        for (int i = start; i < start + length; i++)
+                        {
+                            string text = pieces[i].AsString;
+                            mapped[i] = keeps && IsMissingText(text) ? pieces[i] : JgsValue.Str(direct(text));
+                        }
+                    });
+
+                    return Reassemble(mapped, container, asStrings);
+                }
+
                 return inner.Protect(
                     () =>
                     {
@@ -365,6 +385,35 @@ internal static partial class JgsBuiltins
                 // one silently is a worse failure than not mapping over a second answer.
                 MultiOutput = inner.MultiOutput,
             }));
+        }
+    }
+
+    /// <summary>
+    /// The element map a mapped verb applies when its body is one string operation over arguments
+    /// that are read once and cannot fail (I7, ADR 0326), or null to call the body per element. Each
+    /// is the body's own expression for a char row: <c>upper</c>/<c>lower</c> are
+    /// <c>CaseMapped</c>'s, <c>erase</c> and <c>replace</c> their one-pattern roads. Any other
+    /// arity, or a pattern list, goes through the body, which raises what it raises.
+    /// </summary>
+    private static Func<string, string>? DirectTextMap(string name, JgsValue[] args)
+    {
+        switch (name)
+        {
+            case "upper" when args.Length == 1:
+                return static t => t.ToUpperInvariant();
+            case "lower" when args.Length == 1:
+                return static t => t.ToLowerInvariant();
+            case "erase" when args.Length == 2 && IsOnePattern(args[1], out string gone):
+                return gone.Length == 0 ? static t => t : t => t.Replace(gone, string.Empty, StringComparison.Ordinal);
+            case "replace" when args.Length == 3 && IsOnePattern(args[1], out string old) && IsOnePattern(args[2], out string with):
+            {
+                string[] patterns = [old];
+                string?[] replacements = [with];
+                return t => ReplacedAtOnce(t, patterns, replacements);
+            }
+
+            default:
+                return null;
         }
     }
 

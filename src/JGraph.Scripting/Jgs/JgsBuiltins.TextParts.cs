@@ -116,11 +116,7 @@ internal static partial class JgsBuiltins
 
         if (value.IsStringArray)
         {
-            bundle = new(
-                TextKind.String,
-                Array.ConvertAll(value.BoxedElements(), static e => e.AsString),
-                value.Rows,
-                value.Cols);
+            bundle = new(TextKind.String, JgsTextKernels.Texts(value.BoxedElements()), value.Rows, value.Cols);
             return true;
         }
 
@@ -167,7 +163,7 @@ internal static partial class JgsBuiltins
             return texts.Length == 1 ? JgsValue.Str(texts[0]) : PadIntoCharMatrix(texts);
         }
 
-        var boxed = Array.ConvertAll(texts, JgsValue.Str);
+        JgsValue[] boxed = JgsTextKernels.Boxed(texts);
         if (kind == TextKind.String)
         {
             return JgsValue.StringArray(boxed, rows, cols);

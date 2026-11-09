@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace JGraph.Scripting.Jgs;
@@ -151,6 +152,23 @@ internal static partial class JgsBuiltins
 
         string[] what = SpreadTo(name, inserts.Texts, count, line, col);
         var texts = new string[count];
+        if (Array.TrueForAll(places, static p => p.Marker is not null))
+        {
+            // As extractBefore's: markers cannot fail, so a block per thread (I7, ADR 0326).
+            string[] subjects = subject.Texts;
+            bool strings = subject.Kind == TextKind.String;
+            JgsTextKernels.For(count, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (start, length) =>
+            {
+                for (int i = start; i < start + length; i++)
+                {
+                    string text = subjects[i];
+                    texts[i] = strings && IsMissingText(text) ? text : InsertedAtMarkers(text, places[i].Marker!, what[i], after);
+                }
+            });
+
+            return RebuildLike(subject, texts);
+        }
+
         for (int i = 0; i < count; i++)
         {
             string text = subject.Texts[i];
@@ -222,6 +240,29 @@ internal static partial class JgsBuiltins
         Place[] places = PlacesOf(name, args[1], count, line, col);
 
         var texts = new string[count];
+
+        // Markers alone cannot fail, so they take a block per thread (I7, ADR 0326); a position can
+        // be out of range, and that error must stay the first element's, so positions stay serial.
+        if (Array.TrueForAll(places, static p => p.Marker is not null))
+        {
+            string[] subjects = subject.Texts;
+            bool strings = subject.Kind == TextKind.String;
+            JgsTextKernels.For(count, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (start, length) =>
+            {
+                for (int i = start; i < start + length; i++)
+                {
+                    string text = subjects[i];
+                    string marker = places[i].Marker!;
+                    int found;
+                    texts[i] = strings && IsMissingText(text) ? text
+                        : (found = text.IndexOf(marker, StringComparison.Ordinal)) < 0 ? (strings ? MissingSentinel : string.Empty)
+                        : after ? text[(found + marker.Length)..] : text[..found];
+                }
+            });
+
+            return RebuildLike(subject, texts);
+        }
+
         for (int i = 0; i < count; i++)
         {
             string text = subject.Texts[i];

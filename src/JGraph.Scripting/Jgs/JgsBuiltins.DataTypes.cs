@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using JGraph.Data;
 
 namespace JGraph.Scripting.Jgs;
@@ -808,26 +809,56 @@ internal static partial class JgsBuiltins
         }
 
         var numbers = new double[value.ArrayLength];
-        for (int i = 0; i < numbers.Length; i++)
+        if (value.IsPacked && JgsTextKernels.Enabled)
         {
-            JgsValue element = value.ElementAt(i);
-            if (element.Type != JgsType.Number)
+            // A packed real array's slots are its numbers (I7, ADR 0326): read where they lie, not
+            // through a boxed number per element.
+            JGraph.Numerics.NumericBuffer buffer = value.AsBuffer;
+            buffer.AsSpan(0, numbers.Length).CopyTo(numbers);
+            GC.KeepAlive(buffer);
+        }
+        else
+        {
+            for (int i = 0; i < numbers.Length; i++)
             {
-                return null;
-            }
+                JgsValue element = value.ElementAt(i);
+                if (element.Type != JgsType.Number)
+                {
+                    return null;
+                }
 
-            numbers[i] = element.AsNumber;
+                numbers[i] = element.AsNumber;
+            }
         }
 
         int precision = JgsSprintf.ArrayPrecision(numbers);
-        return Array.ConvertAll(numbers, v => double.IsNaN(v) ? null : JgsSprintf.FormatAtPrecision(v, precision));
+        var texts = new string?[numbers.Length];
+        JgsTextKernels.For(texts.Length, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (start, length) =>
+        {
+            for (int i = start; i < start + length; i++)
+            {
+                double v = numbers[i];
+                texts[i] = double.IsNaN(v) ? null : JgsSprintf.FormatAtPrecision(v, precision);
+            }
+        });
+
+        return texts;
     }
 
     private static JgsValue[] PackedStringElements(JgsValue input)
     {
         if (RealArrayTexts(input) is { } aligned)
         {
-            return Array.ConvertAll(aligned, static t => JgsValue.Str(t ?? MissingSentinel));
+            var boxed = new JgsValue[aligned.Length];
+            JgsTextKernels.For(boxed.Length, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (start, length) =>
+            {
+                for (int i = start; i < start + length; i++)
+                {
+                    boxed[i] = JgsValue.Str(aligned[i] ?? MissingSentinel);
+                }
+            });
+
+            return boxed;
         }
 
         JGraph.Numerics.NumericBuffer buffer = input.AsBuffer;

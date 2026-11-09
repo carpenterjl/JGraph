@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -733,6 +734,24 @@ internal static partial class JgsBuiltins
     private static string[] FormattedRows(string format, double[][] rows, int line, int col)
     {
         var text = new string[rows.Length];
+
+        // I7 (ADR 0326): one number per row under a format with one numeric conversion is that
+        // format parsed once and applied to each row, a block of rows per thread — the text
+        // FormatMatlab writes for the format and that one value.
+        if (JgsTextKernels.Enabled && Array.TrueForAll(rows, static r => r.Length == 1)
+            && JgsSprintf.SingleNumeric.TryParse(format) is { } single)
+        {
+            JgsTextKernels.For(rows.Length, [MethodImpl(MethodImplOptions.AggressiveOptimization)] (start, length) =>
+            {
+                for (int r = start; r < start + length; r++)
+                {
+                    text[r] = single.Format(rows[r][0]);
+                }
+            });
+
+            return text;
+        }
+
         for (int r = 0; r < rows.Length; r++)
         {
             var values = new JgsValue[rows[r].Length];
