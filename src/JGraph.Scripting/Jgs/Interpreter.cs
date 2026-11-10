@@ -8370,7 +8370,14 @@ internal sealed partial class Interpreter
                     : target;
             }
 
-            JgsValue all = target.IsPacked ? PackedOps.Clone(target, _cancelCheck)
+            // A packed array in the MATLAB dialect is shared rather than copied (I6, ADR 0327): the
+            // column is a second holder of the buffer, and whichever of the two is written first
+            // takes its own copy then. Growth slack is storage the wrapper lays out itself, so an
+            // array holding any is still cloned.
+            bool shares = target.IsPacked && JgsOwnership.Enabled && JgsOwnership.ShareWholeColon
+                && Dialect.CopyOnAssign && !target.HasGrowthCapacity;
+            JgsValue all = shares ? JgsValue.SharedFlat(target)
+                : target.IsPacked ? PackedOps.Clone(target, _cancelCheck)
                 : target.IsPackedComplex ? PackedOps.CloneComplex(target, _cancelCheck)
                 : JgsValue.Array((JgsValue[])target.AsArray.Clone());
 

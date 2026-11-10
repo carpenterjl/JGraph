@@ -819,6 +819,20 @@ internal static partial class JgsBuiltins
     private static JgsValue MatlabAccumArray(IReadOnlyList<JgsValue> args, int line, int col)
     {
         JgsValue subs = args[0];
+
+        // A packed column of subscripts beside one packed value a row, with nothing else asked: one
+        // pass over both where they lie (I6, ADR 0327), the bins summed in arrival order as below.
+        if (args.Count == 2 && JgsSetKernels.Enabled
+            && JgsSetKernels.IsPlainDoubles(subs) && JgsSetKernels.IsPlainDoubles(args[1])
+            && JgsMatrix.ColCount(subs) == 1 && args[1].ArrayLength == subs.ArrayLength
+            && JgsSetKernels.TrySumIntoBins(subs.AsBuffer, args[1].AsBuffer) is { } summed)
+        {
+            GC.KeepAlive(subs);
+            GC.KeepAlive(args[1]);
+            JgsSetKernels.Took();
+            return JgsMatrix.FromColumnMajorDims(summed, [summed.Length, 1]);
+        }
+
         double[] flat = ToDoubles("accumarray", subs, line, col);
         int rows = subs.Type == JgsType.Array ? JgsMatrix.RowCount(subs) : 1;
         int dimsCount = subs.Type == JgsType.Array && rows > 0 ? flat.Length / rows : 1;

@@ -130,16 +130,25 @@ internal static partial class JgsBuiltins
         }
 
         int[] ordered = present.ToArray();
-        Array.Sort(ordered, (x, y) =>
+        if (JgsSetKernels.Enabled && ordered.Length >= JgsTextKernels.OrderFrom)
         {
-            int order = string.CompareOrdinal(texts[x], texts[y]);
-            if (descending)
+            // The same order — character codes, ties in arrival order — from packed prefixes
+            // rather than a comparison per pair (I6, ADR 0327). The positions arrive ascending.
+            JgsTextKernels.OrderTexts(texts, ordered, descending);
+        }
+        else
+        {
+            Array.Sort(ordered, (x, y) =>
             {
-                order = -order;
-            }
+                int order = string.CompareOrdinal(texts[x], texts[y]);
+                if (descending)
+                {
+                    order = -order;
+                }
 
-            return order != 0 ? order : x.CompareTo(y);
-        });
+                return order != 0 ? order : x.CompareTo(y);
+            });
+        }
 
         bool upFront = string.Equals(placement, "first", StringComparison.OrdinalIgnoreCase)
             || (string.Equals(placement, "auto", StringComparison.OrdinalIgnoreCase) && descending);
@@ -236,11 +245,19 @@ internal static partial class JgsBuiltins
                 }
 
                 int[] order = SortedOrder(subject.Texts, positions, descending, placement);
-                for (int k = 0; k < length; k++)
+                string[] texts = subject.Texts;
+                int slice = s;
+
+                // The gather reads the texts in sorted order, which is nowhere near the order they
+                // lie in; every element is its own write, so the blocks may go across threads.
+                JgsTextKernels.For(length, (start, count) =>
                 {
-                    sorted[positions[k]] = subject.Texts[order[k]];
-                    index[positions[k]] = along == 1 ? order[k] - (s * rows) : (order[k] - s) / rows;
-                }
+                    for (int k = start; k < start + count; k++)
+                    {
+                        sorted[positions[k]] = texts[order[k]];
+                        index[positions[k]] = along == 1 ? order[k] - (slice * rows) : (order[k] - slice) / rows;
+                    }
+                });
             }
         }
 
@@ -507,24 +524,71 @@ internal static partial class JgsBuiltins
 
         bool AnyMissing(string[] key) => subject.Kind == TextKind.String && Array.Exists(key, IsMissingText);
 
-        var keys = new string[count][];
-        for (int i = 0; i < count; i++)
-        {
-            keys[i] = Key(i);
-        }
-
         // Sorted positions, ties in arrival order; then the groups, each missing its own.
+        string[][] keys = [];
         var sorted = new int[count];
-        for (int i = 0; i < count; i++)
+        var startsAt = new bool[count];
+        if (!byRows && JgsSetKernels.Enabled && count >= JgsTextKernels.OrderFrom)
         {
-            sorted[i] = i;
-        }
+            // One text a key (I6, ADR 0327): the texts themselves are ordered, with no array of one
+            // made per element, and the missing ones follow in the order they arrived — which is
+            // where the comparison below puts them, since it calls every one of them equal.
+            string[] texts = subject.Texts;
+            int kept = 0;
+            for (int i = 0; i < count; i++)
+            {
+                if (!IsMissingText(texts[i]))
+                {
+                    sorted[kept++] = i;
+                }
+            }
 
-        Array.Sort(sorted, (x, y) =>
+            int[] present = sorted[..kept];
+            JgsTextKernels.OrderTexts(texts, present, descending: false);
+            Array.Copy(present, sorted, kept);
+            for (int i = 0; i < count; i++)
+            {
+                if (IsMissingText(texts[i]))
+                {
+                    sorted[kept++] = i;
+                }
+            }
+
+            bool missingApart = subject.Kind == TextKind.String;
+            JgsTextKernels.For(count, (start, length) =>
+            {
+                for (int i = start; i < start + length; i++)
+                {
+                    string text = texts[sorted[i]];
+                    startsAt[i] = i == 0 || (missingApart && IsMissingText(text)) || !string.Equals(texts[sorted[i - 1]], text);
+                }
+            });
+        }
+        else
         {
-            int order = CompareKeys(keys[x], keys[y]);
-            return order != 0 ? order : x.CompareTo(y);
-        });
+            keys = new string[count][];
+            for (int i = 0; i < count; i++)
+            {
+                keys[i] = Key(i);
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                sorted[i] = i;
+            }
+
+            Array.Sort(sorted, (x, y) =>
+            {
+                int order = CompareKeys(keys[x], keys[y]);
+                return order != 0 ? order : x.CompareTo(y);
+            });
+
+            for (int i = 0; i < count; i++)
+            {
+                int at = sorted[i];
+                startsAt[i] = i == 0 || AnyMissing(keys[at]) || CompareKeys(keys[sorted[i - 1]], keys[at]) != 0;
+            }
+        }
 
         var groupOf = new int[count];
         var firstOf = new List<int>();
@@ -532,7 +596,7 @@ internal static partial class JgsBuiltins
         for (int i = 0; i < count; i++)
         {
             int at = sorted[i];
-            bool starts = i == 0 || AnyMissing(keys[at]) || CompareKeys(keys[sorted[i - 1]], keys[at]) != 0;
+            bool starts = startsAt[i];
             if (starts)
             {
                 firstOf.Add(at);

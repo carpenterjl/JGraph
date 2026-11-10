@@ -1351,11 +1351,17 @@ internal static partial class JgsBuiltins
         return Outputs(wanted, sortedValue, placesValue);
     }
 
+    /// <summary>Elements from which a permuted gather goes across threads under I6.</summary>
+    private const int GatherParallelFrom = 1 << 18;
+
     internal static void GatherRows(NumericBuffer source, NumericBuffer dest, int[] order, int rows, int columns)
     {
         int blockRows = ParallelKernels.GrainElements;
         int blocks = rows == 0 ? 0 : ((rows - 1) / blockRows) + 1;
-        bool parallel = (long)rows * columns >= ParallelKernels.MemoryBoundThreshold;
+        // The reads follow a permutation, so they are bound by cache misses long before they are
+        // bound by memory bandwidth: under I6 (ADR 0327) the blocks go across threads from a
+        // quarter-million elements, not from the two million a streaming copy waits for.
+        bool parallel = (long)rows * columns >= (JgsSetKernels.Enabled ? GatherParallelFrom : ParallelKernels.MemoryBoundThreshold);
         ParallelKernels.ForBlocks(blocks, parallel, b =>
             GatherBlock(source.AsSpan(), dest.AsSpan(), order, rows, columns, b * blockRows, Math.Min((b + 1) * blockRows, rows)));
 
@@ -1397,7 +1403,7 @@ internal static partial class JgsBuiltins
     /// comparison is a call; the library sort is not stable, so the run of rows tying on a key is
     /// put back into the order it held before the pass, which is what makes the pass stable and the
     /// whole thing lexicographic. Since item 11e (ADR 0158) the pass is
-    /// <see cref="SortKernels.SortRanks"/>, which is that sort and that repair, across threads
+    /// <see cref="SortKernels.SortRanks(ulong[], int[], int)"/>, which is that sort and that repair, across threads
     /// above its threshold; the ranks themselves stay this method's, with the sign of a zero
     /// folded away before ranking, which is the tie rule MATLAB's <c>sortrows</c> keeps.
     /// </para>
@@ -1408,6 +1414,20 @@ internal static partial class JgsBuiltins
         for (int r = 0; r < rows; r++)
         {
             order[r] = r;
+        }
+
+        if (keys.Count == 1 && JgsSetKernels.Enabled && rows > 0)
+        {
+            // One key is one pass, and its payload is the order itself (I6, ADR 0327): the ranks
+            // are filled in blocks across threads, each a function of its own row alone.
+            (int column, bool descending) = keys[0];
+            var only = new ulong[rows];
+            int blockRows = ParallelKernels.GrainElements;
+            ParallelKernels.ForBlocks(((rows - 1) / blockRows) + 1, rows >= GatherParallelFrom, b =>
+                RankBlock(flat.AsSpan().Slice(column * rows, rows), only, b * blockRows, Math.Min((b + 1) * blockRows, rows), descending));
+            SortKernels.SortRanks(only, order, rows);
+            GC.KeepAlive(flat);
+            return order;
         }
 
         var next = new int[rows];
@@ -1445,6 +1465,18 @@ internal static partial class JgsBuiltins
 
         GC.KeepAlive(flat);
         return order;
+    }
+
+    /// <summary>The ranks of one key column's rows <c>[from, to)</c>, as <see cref="RowOrder"/> ranks them.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    private static void RankBlock(ReadOnlySpan<double> column, ulong[] ranks, int from, int to, bool descending)
+    {
+        for (int r = from; r < to; r++)
+        {
+            double v = column[r];
+            ulong rank = RankOf(v == 0 ? 0 : v);
+            ranks[r] = descending ? ~rank : rank;
+        }
     }
 
     /// <summary>One direction word for every sort key: a single word applies to all of them.</summary>

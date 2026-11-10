@@ -20,6 +20,13 @@ internal static class JgsOwnership
     /// <summary>Whether a MATLAB-dialect binding shares its payload instead of copying it.</summary>
     public static bool Enabled { get; set; } = ReadEnvironmentOverride() ?? DefaultEnabled;
 
+    /// <summary>
+    /// Whether <c>x(:)</c> of a packed array in the MATLAB dialect is a counted share of its
+    /// buffer rather than a copy of it (I6, ADR 0327; <c>JGRAPH_COLON_SHARE=0</c> puts the copy
+    /// back). It needs <see cref="Enabled"/>: with the ownership model off nothing shares.
+    /// </summary>
+    public static bool ShareWholeColon { get; set; } = Environment.GetEnvironmentVariable("JGRAPH_COLON_SHARE") != "0";
+
     private static bool? ReadEnvironmentOverride() =>
         Environment.GetEnvironmentVariable("JGRAPH_COW") switch
         {

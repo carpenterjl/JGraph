@@ -101,7 +101,16 @@ internal static partial class JgsBuiltins
             }
         }
 
-        Array.Sort(ranks, sorted, 0, kept);
+        if (JgsSetKernels.Enabled)
+        {
+            // The same order across threads above its threshold (I6); which member of a run of
+            // equal ranks comes first is its smallest position, and nothing below reads that.
+            SortKernels.SortRanks(ranks, sorted, kept);
+        }
+        else
+        {
+            Array.Sort(ranks, sorted, 0, kept);
+        }
 
         // A missing reading is its own group every time and sorts behind everything, so the NaNs go
         // on the end in the order they arrived — which is where the comparison left them too.
@@ -393,6 +402,13 @@ internal static partial class JgsBuiltins
             return UniqueRows(subject, stable, last, dialect, outputs, line, col);
         }
 
+        // A packed array of plain doubles is read where it lies (I6, ADR 0327): nothing boxed on
+        // the way in or out, and whole numbers in a narrow range answered from a table.
+        if (JgsSetKernels.Enabled && JgsSetKernels.IsPlainDoubles(subject) && subject.ArrayLength > 1)
+        {
+            return UniquePacked(subject, stable, last, dialect, outputs);
+        }
+
         // A cell of char is how a table hands over a text variable, and it is the shape MATLAB code
         // reaches for when it asks which serial numbers appear in a log.
         bool cells = subject.Type == JgsType.Cell;
@@ -421,6 +437,53 @@ internal static partial class JgsBuiltins
         }
 
         return Outputs(outputs, values, IndexColumn(order, dialect), IndexColumn(positions, dialect));
+    }
+
+    /// <summary>
+    /// <c>unique</c> over a packed array of plain doubles, two or more of them: the table when the
+    /// values are whole numbers in a narrow range, the ranked sort otherwise, and in either case
+    /// the answer <see cref="UniqueParts"/> gives through boxed elements — the same values, the
+    /// same positions, a column unless the input was a row.
+    /// </summary>
+    private static JgsValue[] UniquePacked(JgsValue subject, bool stable, bool last, JgsDialect dialect, int outputs)
+    {
+        NumericBuffer buffer = subject.AsBuffer;
+        double[] distinct;
+        JgsValue from;
+        JgsValue into = JgsValue.Null;
+        if (JgsSetKernels.TryUniqueWhole(
+            buffer, stable, last, dialect.IndexBase, outputs >= 3, out distinct, out int[] taken, out double[] places))
+        {
+            from = outputs >= 2 ? IndexColumn(taken, dialect) : JgsValue.Null;
+            if (outputs >= 3)
+            {
+                into = Numbers(places);
+                into.Reshape(places.Length, 1);
+            }
+        }
+        else
+        {
+            (int[] order, int[] positions) = GroupNumbers(buffer.AsSpan(), stable, last);
+            ReadOnlySpan<double> values = buffer.AsSpan();
+            distinct = new double[order.Length];
+            for (int i = 0; i < order.Length; i++)
+            {
+                distinct[i] = values[order[i]];
+            }
+
+            from = outputs >= 2 ? IndexColumn(order, dialect) : JgsValue.Null;
+            into = outputs >= 3 ? IndexColumn(positions, dialect) : JgsValue.Null;
+        }
+
+        GC.KeepAlive(subject);
+        JgsSetKernels.Took();
+        JgsValue answer = Numbers(distinct);
+        if (distinct.Length > 1 && JgsMatrix.RowCount(subject) > 1)
+        {
+            answer.Reshape(distinct.Length, 1);
+        }
+
+        return Outputs(outputs, answer, from, into);
     }
 
     /// <summary>The <c>'rows'</c> form: whole rows are the values, compared left to right.</summary>

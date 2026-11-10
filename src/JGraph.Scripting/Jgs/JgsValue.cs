@@ -403,6 +403,19 @@ internal sealed class JgsValue
         }
     }
 
+    /// <summary>
+    /// I6 (ADR 0327): what <c>x(:)</c> reads of a packed array without copying it — a wrapper of
+    /// its own over the same buffer, the buffer's holder count raised, so the first write through
+    /// either copies (M3). The wrapper is the one a clone would have had: the buffer's kind and
+    /// nothing else, ready to be shaped as a column.
+    /// </summary>
+    internal static JgsValue SharedFlat(JgsValue packed)
+    {
+        var buffer = (NumericBuffer)packed._reference!;
+        JgsHolders.Share(buffer);
+        return new JgsValue(JgsType.Array, 0, buffer, packed._packedKind) { _exposed = packed._exposed };
+    }
+
     /// <summary>Whether another entry holds this value's payload, so a write here must copy first.</summary>
     internal bool IsShared => JgsHolders.IsShared(_reference);
 

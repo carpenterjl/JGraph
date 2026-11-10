@@ -53,7 +53,7 @@ public static class SortKernels
     private const int SampleFactor = 32;
 
     /// <summary>
-    /// Keys at or above which <see cref="SortRanks"/> goes across threads (256K). Measured on
+    /// Keys at or above which <see cref="SortRanks(ulong[], int[], int)"/> goes across threads (256K). Measured on
     /// item 11's sweep (ADR 0158) at 250k, 500k, 524,288 and 1M rows: the partition's two extra
     /// passes cost about what the sort of a quarter-million keys saves, and win from there up.
     /// </summary>
@@ -79,7 +79,15 @@ public static class SortKernels
     /// doubles. Equal keys always share a bucket, so a run's repair sees the whole run. The answer
     /// cannot depend on the schedule: it is settled by the keys and the tie rule alone.
     /// </remarks>
-    public static void SortRanks(ulong[] keys, int[] payload, int n)
+    public static void SortRanks(ulong[] keys, int[] payload, int n) => SortRanks(keys, payload, n, RankThreshold);
+
+    /// <summary>
+    /// <see cref="SortRanks(ulong[], int[], int)"/> with the caller naming the count from which the
+    /// keys go across threads: a caller whose keys are cheap to partition and whose alternative is
+    /// a serial sort of all of them (text prefixes, I6) asks for fewer than <see cref="RankThreshold"/>.
+    /// The answer is the same at any threshold.
+    /// </summary>
+    public static void SortRanks(ulong[] keys, int[] payload, int n, int parallelFrom)
     {
         ArgumentNullException.ThrowIfNull(keys);
         ArgumentNullException.ThrowIfNull(payload);
@@ -93,7 +101,7 @@ public static class SortKernels
             return;
         }
 
-        if (n < RankThreshold || ParallelKernels.MaxDegree == 1)
+        if (n < parallelFrom || ParallelKernels.MaxDegree == 1)
         {
             Array.Sort(keys, payload, 0, n);
             RepairRankTies(keys, payload, 0, n);

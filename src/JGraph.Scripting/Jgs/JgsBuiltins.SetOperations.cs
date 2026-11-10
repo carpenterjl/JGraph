@@ -1,3 +1,5 @@
+using JGraph.Numerics;
+
 namespace JGraph.Scripting.Jgs;
 
 /// <summary>
@@ -156,6 +158,16 @@ internal static partial class JgsBuiltins
 
         bool stable = parsed.OneOf("sorted", "sorted", "stable") == "stable";
         bool rows = parsed.Has("rows");
+
+        // Two packed arrays of whole numbers in a narrow range are answered from a table (I6,
+        // ADR 0327): the same values, positions and shape as the general road below.
+        if (!stable && !rows && JgsSetKernels.Enabled
+            && JgsSetKernels.IsPlainDoubles(parsed.Positional[0]) && JgsSetKernels.IsPlainDoubles(parsed.Positional[1])
+            && SetOperationWhole(name, parsed.Positional[0], parsed.Positional[1], dialect, outputs) is { } quick)
+        {
+            return quick;
+        }
+
         SetSide left = SideOf(name, CharBesideCell(parsed.Positional[0], parsed.Positional[1]), rows, line, col);
         SetSide right = SideOf(name, CharBesideCell(parsed.Positional[1], parsed.Positional[0]), rows, line, col);
 
@@ -239,6 +251,32 @@ internal static partial class JgsBuiltins
             IndexColumn([.. fromRight], dialect));
     }
 
+    /// <summary>
+    /// The sorted form of a set operation over two packed arrays of whole numbers, or null when
+    /// the table does not apply. The answer is shaped by <see cref="ElementsOfPicks"/>'s rule.
+    /// </summary>
+    private static JgsValue[]? SetOperationWhole(string name, JgsValue left, JgsValue right, JgsDialect dialect, int outputs)
+    {
+        if (!JgsSetKernels.TrySetWhole(
+            name, left.AsBuffer, right.AsBuffer, out double[] picked, out int[] fromLeft, out int[] fromRight))
+        {
+            return null;
+        }
+
+        JgsSetKernels.Took();
+        JgsValue values = Numbers(picked);
+        if (IsRowVector(left) && (name == "setdiff" || IsRowVector(right)))
+        {
+            values.Reshape(1, picked.Length);
+        }
+        else
+        {
+            values.Reshape(picked.Length, 1);
+        }
+
+        return Outputs(outputs, values, IndexColumn(fromLeft, dialect), IndexColumn(fromRight, dialect));
+    }
+
     private static JgsValue RowsOfPicks(string name, List<SetPick> picks, int columns, int line, int col)
     {
         var flat = new double[picks.Count * columns];
@@ -306,6 +344,16 @@ internal static partial class JgsBuiltins
 
         bool rows = parsed.Has("rows");
 
+        // A packed subject asked about a packed set of whole numbers in a narrow range reads one
+        // table (I6, ADR 0327), for one output or two.
+        if (!rows && JgsSetKernels.Enabled
+            && JgsSetKernels.IsPlainDoubles(parsed.Positional[0]) && JgsSetKernels.IsPlainDoubles(parsed.Positional[1])
+            && parsed.Positional[0].ArrayLength > 1
+            && MembershipWhole(parsed.Positional[0], parsed.Positional[1], dialect, outputs) is { } quick)
+        {
+            return quick;
+        }
+
         // Without 'rows' this is elementwise over any shape, which the older implementation already
         // did for one output — including for an image and for a scalar — so it still answers that.
         if (!rows && outputs <= 1)
@@ -345,6 +393,31 @@ internal static partial class JgsBuiltins
             outputs,
             MaskOf(found, shape),
             JgsMatrix.FromColumnMajorDims(where, shape));
+    }
+
+    /// <summary>
+    /// <c>ismember</c> of a packed subject in a packed set of whole numbers: a logical array in the
+    /// subject's shape and, when asked, the first position holding each value. Null when the table
+    /// does not apply.
+    /// </summary>
+    private static JgsValue[]? MembershipWhole(JgsValue subject, JgsValue set, JgsDialect dialect, int outputs)
+    {
+        NumericBuffer asked = subject.AsBuffer;
+        NumericBuffer found = JgsPacking.AllocateForOverwrite(asked.Length);
+        double[]? where = outputs >= 2 ? new double[asked.Length] : null;
+        if (!JgsSetKernels.TryMemberWhole(asked, set.AsBuffer, dialect.IndexBase, found, where))
+        {
+            found.Dispose();
+            return null;
+        }
+
+        JgsSetKernels.Took();
+        int rows = JgsMatrix.RowCount(subject);
+        int cols = JgsMatrix.ColCount(subject);
+        JgsValue mask = JgsValue.Shaped(found, rows, cols, JgsPackedKind.Bool);
+        GC.KeepAlive(subject);
+        GC.KeepAlive(set);
+        return where is null ? [mask] : [mask, JgsMatrix.FromColumnMajorDims(where, [rows, cols])];
     }
 
     /// <summary>The membership answers as logicals in the shape they were asked in.</summary>
