@@ -279,7 +279,7 @@ internal static class PackedReduceOps
             case Family.CumMax:
             case Family.CumMin:
             {
-                NumericBuffer dest = JgsPacking.Allocate(split.Total);
+                NumericBuffer dest = JgsPacking.AllocateForOverwrite(split.Total); // every slice is written whole
                 switch (family)
                 {
                     case Family.CumSum:

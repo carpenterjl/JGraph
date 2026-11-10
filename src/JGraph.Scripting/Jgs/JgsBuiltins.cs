@@ -940,7 +940,7 @@ internal static partial class JgsBuiltins
             ? imageSum
             : TryPackedSpan(args, out NumericBuffer packedSum)
                 ? JgsValue.Number(PackedMath.Sum(packedSum))
-                : Reduce("sum", args, line, col, (acc, v) => acc + v, 0.0));
+                : JgsValue.Number(ReduceKernels.GrainSum(ArrayOfNumbers("sum", args, line, col))));
         Define("mean", (args, line, col) =>
         {
             if (TryReduceImage("mean", args, line, col, out JgsValue imageMean))
@@ -969,13 +969,7 @@ internal static partial class JgsBuiltins
                 return JgsValue.Number(double.NaN);
             }
 
-            double total = 0;
-            foreach (double v in values)
-            {
-                total += v;
-            }
-
-            return JgsValue.Number(total / values.Length);
+            return JgsValue.Number(ReduceKernels.GrainSum(values) / values.Length);
         });
 
         Define("min", (args, line, col) => MinMax("min", args, line, col, takeMin: true));
@@ -5532,8 +5526,8 @@ internal static partial class JgsBuiltins
                     $"{name}: the weight must be 0 (divide by n-1), 1 (divide by n), or a vector of weights, but was {flag.ToString(CultureInfo.InvariantCulture)}.");
             }
 
-            double mean = values.Sum() / values.Length;
-            return values.Sum(v => (v - mean) * (v - mean)) / values.Length;
+            double mean = ReduceKernels.GrainSum(values) / values.Length;
+            return ReduceKernels.GrainSquaredDeviations(values, mean) / values.Length;
         }
 
         double[] weights = ToDoubles(name, args[1], line, col);

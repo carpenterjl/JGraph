@@ -1,4 +1,5 @@
 using System.Numerics.Tensors;
+using System.Runtime.CompilerServices;
 
 namespace JGraph.Numerics;
 
@@ -51,7 +52,12 @@ public static class ReduceKernels
     /// an all-NaN slice answers the untouched seed — 0, the sum's own identity.</summary>
     public static void Sum(NumericBuffer src, NumericBuffer dest, Split split, bool omitNan)
     {
-        if (split.Inner == 1)
+        if (split.Inner == 1 && split.Outer == 1 && !omitNan)
+        {
+            // One long run: its grains go to the threads and are added in index order.
+            dest.AsSpan()[0] = GrainSum(src, 0, split.Count);
+        }
+        else if (split.Inner == 1)
         {
             OverColumns(split, ParallelKernels.ReductionThreshold, (first, count) =>
             {
@@ -59,28 +65,16 @@ public static class ReduceKernels
                 for (int s = 0; s < count; s++)
                 {
                     Span<double> x = src.AsSpan((first + s) * split.Count, split.Count);
-                    double total = 0;
-                    if (omitNan)
-                    {
-                        foreach (double v in x)
-                        {
-                            if (!double.IsNaN(v))
-                            {
-                                total += v;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (double v in x)
-                        {
-                            total += v;
-                        }
-                    }
-
-                    outputs[s] = total;
+                    outputs[s] = omitNan ? StridedSum(x, 1, split.Count, omitNan: true, out _) : GrainSum(x);
                 }
             });
+        }
+        else if (split.Count > ParallelKernels.GrainElements)
+        {
+            // A fold dimension longer than a grain: the panel form below is a straight left fold,
+            // which is the sum's definition only up to one grain.
+            ForEachSlice(src, dest, split, ParallelKernels.ReductionThreshold,
+                (x, stride, n) => StridedSum(x, stride, n, omitNan, out _));
         }
         else
         {
@@ -196,20 +190,7 @@ public static class ReduceKernels
 
         ForEachSlice(src, dest, split, ParallelKernels.ReductionThreshold, (x, stride, n) =>
         {
-            double total = 0;
-            int kept = 0;
-            for (int j = 0; j < n; j++)
-            {
-                double v = x[j * stride];
-                if (omitNan && double.IsNaN(v))
-                {
-                    continue;
-                }
-
-                total += v;
-                kept++;
-            }
-
+            double total = StridedSum(x, stride, n, omitNan, out int kept);
             return kept == 0 ? double.NaN : total / kept;
         });
     }
@@ -247,22 +228,20 @@ public static class ReduceKernels
     public static void Variance(
         NumericBuffer src, NumericBuffer dest, Split split, bool omitNan, bool population, bool takeRoot)
     {
+        if (split.Inner == 1 && split.Outer == 1 && !omitNan && split.Count > ParallelKernels.GrainElements)
+        {
+            // One long run: both passes go to the threads grain by grain, each added in index order.
+            int n = split.Count;
+            double mean = GrainSum(src, 0, n) / n;
+            double spread = GrainSquaredDeviations(src, 0, n, mean) / (population ? n : n - 1);
+            dest.AsSpan()[0] = takeRoot ? Math.Sqrt(spread) : spread;
+            GC.KeepAlive(dest);
+            return;
+        }
+
         ForEachSlice(src, dest, split, ParallelKernels.ReductionThreshold, (x, stride, n) =>
         {
-            double mean = 0;
-            int kept = 0;
-            for (int j = 0; j < n; j++)
-            {
-                double v = x[j * stride];
-                if (omitNan && double.IsNaN(v))
-                {
-                    continue;
-                }
-
-                mean += v;
-                kept++;
-            }
-
+            double mean = StridedSum(x, stride, n, omitNan, out int kept);
             if (kept == 0)
             {
                 return double.NaN;
@@ -274,22 +253,191 @@ public static class ReduceKernels
             }
 
             mean /= kept;
-            double sumSquares = 0;
-            for (int j = 0; j < n; j++)
-            {
-                double v = x[j * stride];
-                if (omitNan && double.IsNaN(v))
-                {
-                    continue;
-                }
-
-                double d = v - mean;
-                sumSquares += d * d;
-            }
-
+            double sumSquares = StridedSquaredDeviations(x, stride, n, omitNan, mean);
             double spread = sumSquares / (population ? kept : kept - 1);
             return takeRoot ? Math.Sqrt(spread) : spread;
         });
+    }
+
+    // --- Sums in grains ---------------------------------------------------------------------------
+
+    /// <summary>
+    /// The sum every reduction here means (the every-row plan's I5, ADR 0328): the values are cut
+    /// into grains of <see cref="ParallelKernels.GrainElements"/>, each grain is a left fold from
+    /// zero, and the grains' totals are a left fold from zero in index order. Up to one grain that
+    /// is the plain left fold; past it the definition is still a function of the values alone, so
+    /// it is the same number at one thread and at sixteen, and the grains can go to the threads.
+    /// </summary>
+    public static double GrainSum(ReadOnlySpan<double> x)
+    {
+        double total = 0;
+        for (int start = 0; start < x.Length; start += ParallelKernels.GrainElements)
+        {
+            total += FoldSum(x.Slice(start, Math.Min(ParallelKernels.GrainElements, x.Length - start)));
+        }
+
+        return total;
+    }
+
+    /// <summary><see cref="GrainSum(ReadOnlySpan{double})"/> over a stretch of a buffer, its grains
+    /// on several threads from <see cref="ParallelKernels.ReductionThreshold"/> elements.</summary>
+    public static double GrainSum(NumericBuffer src, int start, int count)
+    {
+        if (count < ParallelKernels.ReductionThreshold || ParallelKernels.MaxDegree == 1)
+        {
+            double serial = GrainSum(src.AsSpan(start, count));
+            GC.KeepAlive(src);
+            return serial;
+        }
+
+        int grains = ((count - 1) / ParallelKernels.GrainElements) + 1;
+        var partial = new double[grains];
+        ParallelKernels.ForBlocks(grains, parallel: true, g =>
+        {
+            int at = g * ParallelKernels.GrainElements;
+            partial[g] = FoldSum(src.AsSpan(start + at, Math.Min(ParallelKernels.GrainElements, count - at)));
+        });
+
+        GC.KeepAlive(src);
+        double total = 0;
+        foreach (double p in partial)
+        {
+            total += p;
+        }
+
+        return total;
+    }
+
+    /// <summary>The sum of squared distances from <paramref name="mean"/>, folded in the same
+    /// grains as <see cref="GrainSum(ReadOnlySpan{double})"/>.</summary>
+    public static double GrainSquaredDeviations(ReadOnlySpan<double> x, double mean)
+    {
+        double total = 0;
+        for (int start = 0; start < x.Length; start += ParallelKernels.GrainElements)
+        {
+            total += FoldSquaredDeviations(
+                x.Slice(start, Math.Min(ParallelKernels.GrainElements, x.Length - start)), mean);
+        }
+
+        return total;
+    }
+
+    /// <summary><see cref="GrainSquaredDeviations(ReadOnlySpan{double}, double)"/> over a stretch
+    /// of a buffer, its grains on several threads from
+    /// <see cref="ParallelKernels.ReductionThreshold"/> elements.</summary>
+    public static double GrainSquaredDeviations(NumericBuffer src, int start, int count, double mean)
+    {
+        if (count < ParallelKernels.ReductionThreshold || ParallelKernels.MaxDegree == 1)
+        {
+            double serial = GrainSquaredDeviations(src.AsSpan(start, count), mean);
+            GC.KeepAlive(src);
+            return serial;
+        }
+
+        int grains = ((count - 1) / ParallelKernels.GrainElements) + 1;
+        var partial = new double[grains];
+        ParallelKernels.ForBlocks(grains, parallel: true, g =>
+        {
+            int at = g * ParallelKernels.GrainElements;
+            partial[g] = FoldSquaredDeviations(
+                src.AsSpan(start + at, Math.Min(ParallelKernels.GrainElements, count - at)), mean);
+        });
+
+        GC.KeepAlive(src);
+        double total = 0;
+        foreach (double p in partial)
+        {
+            total += p;
+        }
+
+        return total;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    private static double FoldSum(ReadOnlySpan<double> x)
+    {
+        double total = 0;
+        for (int i = 0; i < x.Length; i++)
+        {
+            total += x[i];
+        }
+
+        return total;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    private static double FoldSquaredDeviations(ReadOnlySpan<double> x, double mean)
+    {
+        double total = 0;
+        for (int i = 0; i < x.Length; i++)
+        {
+            double d = x[i] - mean;
+            total += d * d;
+        }
+
+        return total;
+    }
+
+    /// <summary>
+    /// The grain sum of a slice read at a stride, with NaN passed over under
+    /// <paramref name="omitNan"/>: the grains are counted in the values that are kept, so the
+    /// answer is the grain sum of the slice with its NaN removed, which is how the boxed wrapper
+    /// computes it. <paramref name="kept"/> is how many values were added.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    private static double StridedSum(Span<double> x, int stride, int n, bool omitNan, out int kept)
+    {
+        double total = 0;
+        double partial = 0;
+        int inGrain = 0;
+        kept = 0;
+        for (int j = 0; j < n; j++)
+        {
+            double v = x[j * stride];
+            if (omitNan && double.IsNaN(v))
+            {
+                continue;
+            }
+
+            partial += v;
+            kept++;
+            if (++inGrain == ParallelKernels.GrainElements)
+            {
+                total += partial;
+                partial = 0;
+                inGrain = 0;
+            }
+        }
+
+        return inGrain > 0 ? total + partial : total;
+    }
+
+    /// <summary><see cref="StridedSum"/>'s walk over squared distances from <paramref name="mean"/>.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    private static double StridedSquaredDeviations(Span<double> x, int stride, int n, bool omitNan, double mean)
+    {
+        double total = 0;
+        double partial = 0;
+        int inGrain = 0;
+        for (int j = 0; j < n; j++)
+        {
+            double v = x[j * stride];
+            if (omitNan && double.IsNaN(v))
+            {
+                continue;
+            }
+
+            double d = v - mean;
+            partial += d * d;
+            if (++inGrain == ParallelKernels.GrainElements)
+            {
+                total += partial;
+                partial = 0;
+                inGrain = 0;
+            }
+        }
+
+        return inGrain > 0 ? total + partial : total;
     }
 
     /// <summary>Whether any element of the slice is nonzero (1) or none is (0) — and NaN is nonzero,
@@ -453,6 +601,12 @@ public static class ReduceKernels
     {
         ForEachRunning(src, dest, split, (x, y, stride, n) =>
         {
+            if (stride == 1 && !omitNan && !reverse)
+            {
+                RunningSum(x, y, n);
+                return;
+            }
+
             double acc = 0;
             if (reverse)
             {
@@ -473,6 +627,21 @@ public static class ReduceKernels
                 }
             }
         });
+    }
+
+    /// <summary>The forward running total of a contiguous slice: the same additions in the same
+    /// order as the general walk, compiled optimised from its first call (ADR 0158).</summary>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    private static void RunningSum(Span<double> x, Span<double> y, int n)
+    {
+        ref double source = ref System.Runtime.InteropServices.MemoryMarshal.GetReference(x);
+        ref double running = ref System.Runtime.InteropServices.MemoryMarshal.GetReference(y);
+        double acc = 0;
+        for (nint j = 0; j < n; j++)
+        {
+            acc += Unsafe.Add(ref source, j);
+            Unsafe.Add(ref running, j) = acc;
+        }
     }
 
     /// <summary>Running products down each slice; a NaN reads as 1 under

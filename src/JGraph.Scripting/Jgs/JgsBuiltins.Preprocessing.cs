@@ -224,16 +224,24 @@ internal static partial class JgsBuiltins
         return MedianOf(spread);
     }
 
+    // The mean and the deviation are folded in grains, as sum, mean and std fold them (ADR 0328),
+    // so normalize(x) is (x - mean(x)) / std(x) to the bit and JgsVectorRoads can thread it.
     private static double PrepMean(double[] values)
     {
         double[] finite = PrepPresent(values);
-        return finite.Length == 0 ? double.NaN : finite.Average();
+        return finite.Length == 0 ? double.NaN : ReduceKernels.GrainSum(finite) / finite.Length;
     }
 
     private static double PrepStd(double[] values)
     {
         double[] finite = PrepPresent(values);
-        return finite.Length < 2 ? 0 : Math.Sqrt(SampleVarianceOf(finite));
+        if (finite.Length < 2)
+        {
+            return 0;
+        }
+
+        double mean = ReduceKernels.GrainSum(finite) / finite.Length;
+        return Math.Sqrt(ReduceKernels.GrainSquaredDeviations(finite, mean) / (finite.Length - 1));
     }
 
     private static double[] PrepPresent(double[] values)
@@ -264,6 +272,11 @@ internal static partial class JgsBuiltins
         if (args.Count == 0)
         {
             throw new JgsRuntimeException(line, col, "normalize needs some data.");
+        }
+
+        if (args.Count == 1 && JgsVectorRoads.TryNormalize(args[0], out JgsValue normalized))
+        {
+            return normalized;
         }
 
         BareValues bare = PrepStrip("normalize", args[0], line, col);
@@ -468,6 +481,11 @@ internal static partial class JgsBuiltins
         if (args.Count == 0)
         {
             throw new JgsRuntimeException(line, col, "rescale needs some data.");
+        }
+
+        if (args.Count == 1 && JgsVectorRoads.TryRescale(args[0], out JgsValue rescaled))
+        {
+            return rescaled;
         }
 
         ParsedArgs parsed = RescaleOptions.Parse(args, 3, line, col);
@@ -1233,6 +1251,11 @@ internal static partial class JgsBuiltins
         if (args.Count < 1)
         {
             throw new JgsRuntimeException(line, col, "rmmissing needs some data.");
+        }
+
+        if (args.Count == 1 && JgsVectorRoads.TryRemoveMissing(args[0], wanted, out JgsValue[] present))
+        {
+            return present;
         }
 
         if (TextElementsOf(args[0]) is { } texts)

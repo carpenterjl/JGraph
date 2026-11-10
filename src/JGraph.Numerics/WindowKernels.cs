@@ -125,30 +125,76 @@ public static class WindowKernels
         bool omitNan,
         double identity)
     {
-        int room = behind + ahead + 1;
-        return stat switch
+        var result = new double[OutputLength(values.Length, behind, ahead, ends)];
+        if (result.Length > 0)
         {
-            WindowStat.Sum =>
-                Walk(() => new Folded<SumFold>(room, mean: false), values, behind, ahead, ends, pad, omitNan, identity),
-            WindowStat.Mean =>
-                Walk(() => new Folded<SumFold>(room, mean: true), values, behind, ahead, ends, pad, omitNan, identity),
-            WindowStat.Max =>
-                Walk(() => new Folded<MaxFold>(room, mean: false), values, behind, ahead, ends, pad, omitNan, identity),
-            WindowStat.Min =>
-                Walk(() => new Folded<MinFold>(room, mean: false), values, behind, ahead, ends, pad, omitNan, identity),
-            WindowStat.Product =>
-                Walk(() => new Folded<ProductFold>(room, mean: false), values, behind, ahead, ends, pad, omitNan, identity),
-            WindowStat.Variance =>
-                Walk(() => new Spread(room, root: false), values, behind, ahead, ends, pad, omitNan, identity),
-            WindowStat.StandardDeviation =>
-                Walk(() => new Spread(room, root: true), values, behind, ahead, ends, pad, omitNan, identity),
-            WindowStat.Median =>
-                Walk(() => new Middle(room), values, behind, ahead, ends, pad, omitNan, identity),
-            WindowStat.MedianDeviation =>
-                Walk(() => new Middle(room, spread: true), values, behind, ahead, ends, pad, omitNan, identity),
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(stat), stat, "there is no incremental form for this summary"),
-        };
+            SlideInto(stat, values, ManagedBuffer.Adopt(result), behind, ahead, ends, pad, omitNan, identity);
+        }
+
+        return result;
+    }
+
+    /// <summary>How many answers a walk over <paramref name="length"/> values gives: all of them,
+    /// or under <see cref="WindowEnds.Discard"/> only those whose window fits.</summary>
+    public static int OutputLength(int length, int behind, int ahead, WindowEnds ends) =>
+        ends == WindowEnds.Discard ? Math.Max(0, length - ahead - behind) : length;
+
+    /// <summary>
+    /// The walk of <see cref="Slide(WindowStat, NumericBuffer, int, int, WindowEnds, double, bool, double)"/>
+    /// written into <paramref name="result"/>, which must be <see cref="OutputLength"/> long and
+    /// not empty. Every element of it is written, so it may arrive uninitialised (the every-row
+    /// plan's I5, ADR 0328: the answer goes straight into packed storage).
+    /// </summary>
+    public static void SlideInto(
+        WindowStat stat,
+        NumericBuffer values,
+        NumericBuffer result,
+        int behind,
+        int ahead,
+        WindowEnds ends,
+        double pad,
+        bool omitNan,
+        double identity)
+    {
+        if (result.Length != OutputLength(values.Length, behind, ahead, ends) || result.Length == 0)
+        {
+            throw new ArgumentException("the destination must be OutputLength long and not empty", nameof(result));
+        }
+
+        int room = behind + ahead + 1;
+        switch (stat)
+        {
+            case WindowStat.Sum:
+                Walk(() => new Folded<SumFold>(room, mean: false), values, result, behind, ahead, ends, pad, omitNan, identity);
+                break;
+            case WindowStat.Mean:
+                Walk(() => new Folded<SumFold>(room, mean: true), values, result, behind, ahead, ends, pad, omitNan, identity);
+                break;
+            case WindowStat.Max:
+                Walk(() => new Folded<MaxFold>(room, mean: false), values, result, behind, ahead, ends, pad, omitNan, identity);
+                break;
+            case WindowStat.Min:
+                Walk(() => new Folded<MinFold>(room, mean: false), values, result, behind, ahead, ends, pad, omitNan, identity);
+                break;
+            case WindowStat.Product:
+                Walk(() => new Folded<ProductFold>(room, mean: false), values, result, behind, ahead, ends, pad, omitNan, identity);
+                break;
+            case WindowStat.Variance:
+                Walk(() => new Spread(room, root: false), values, result, behind, ahead, ends, pad, omitNan, identity);
+                break;
+            case WindowStat.StandardDeviation:
+                Walk(() => new Spread(room, root: true), values, result, behind, ahead, ends, pad, omitNan, identity);
+                break;
+            case WindowStat.Median:
+                Walk(() => new Middle(room), values, result, behind, ahead, ends, pad, omitNan, identity);
+                break;
+            case WindowStat.MedianDeviation:
+                Walk(() => new Middle(room, spread: true), values, result, behind, ahead, ends, pad, omitNan, identity);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    nameof(stat), stat, "there is no incremental form for this summary");
+        }
     }
 
     /// <summary>
@@ -210,9 +256,10 @@ public static class WindowKernels
     /// The walk itself: the window's two ends only ever move forward, so each element is added once
     /// and taken out once whatever the width.
     /// </summary>
-    private static double[] Walk<TWindow>(
+    private static void Walk<TWindow>(
         Func<TWindow> newWindow,
         NumericBuffer values,
+        NumericBuffer result,
         int behind,
         int ahead,
         WindowEnds ends,
@@ -224,12 +271,6 @@ public static class WindowKernels
         int length = values.Length;
         int from = ends == WindowEnds.Discard ? behind : 0;
         int last = ends == WindowEnds.Discard ? length - 1 - ahead : length - 1;
-        var result = new double[Math.Max(0, last - from + 1)];
-        if (result.Length == 0)
-        {
-            return result;
-        }
-
         int[] resume = ResumePoints(length, from, last, behind, ahead, ends);
         int blocks = resume.Length + 1;
         try
@@ -240,16 +281,15 @@ public static class WindowKernels
                 int reportFrom = block == 0 ? from : resume[block - 1] + 1;
                 int walkTo = block == blocks - 1 ? last : resume[block];
                 Sweep(
-                    newWindow(), values.AsSpan(), result, from, walkFrom, reportFrom, walkTo,
+                    newWindow(), values.AsSpan(), result.AsSpan(), from, walkFrom, reportFrom, walkTo,
                     behind, ahead, ends, pad, omitNan, identity);
             });
         }
         finally
         {
             GC.KeepAlive(values);
+            GC.KeepAlive(result);
         }
-
-        return result;
     }
 
     /// <summary>
@@ -323,7 +363,7 @@ public static class WindowKernels
     private static void Sweep<TWindow>(
         TWindow window,
         ReadOnlySpan<double> values,
-        double[] result,
+        Span<double> result,
         int from,
         int walkFrom,
         int reportFrom,

@@ -248,8 +248,19 @@ internal sealed partial class Interpreter
     private JgsValue AffineGather(JgsValue target, AffineSelector selector)
     {
         NumericBuffer source = target.AsBuffer;
-        NumericBuffer dest = JgsPacking.Allocate(selector.Count);
-        CopyAffine(source, selector.Start, selector.Step, dest.AsSpan(0, selector.Count));
+        NumericBuffer dest = JgsPacking.AllocateForOverwrite(selector.Count); // the run is copied whole
+        if (selector.Step == 1 && selector.Count >= ParallelKernels.MemoryBoundThreshold)
+        {
+            // x(a:b) over tens of megabytes: the copy in grains across threads (ADR 0328).
+            int first = selector.Start;
+            ParallelKernels.For(selector.Count, ParallelKernels.MemoryBoundThreshold, null, (start, len) =>
+                source.AsSpan(first + start, len).CopyTo(dest.AsSpan(start, len)));
+        }
+        else
+        {
+            CopyAffine(source, selector.Start, selector.Step, dest.AsSpan(0, selector.Count));
+        }
+
         GC.KeepAlive(source);
         JgsAffineIndex.Reads++;
         return OrientGather(JgsValue.Packed(dest, target.PackedKind), target, indexRows: 1, indexCols: selector.Count, logicalIndex: false);
@@ -259,7 +270,7 @@ internal sealed partial class Interpreter
     private JgsValue AffineGather(JgsValue target, int rows, AffineSelector rowRun, AffineSelector colRun)
     {
         NumericBuffer source = target.AsBuffer;
-        NumericBuffer dest = JgsPacking.Allocate((long)rowRun.Count * colRun.Count);
+        NumericBuffer dest = JgsPacking.AllocateForOverwrite((long)rowRun.Count * colRun.Count); // every column is copied
         Span<double> into = dest.AsSpan();
         int column = colRun.Start;
         for (int j = 0; j < colRun.Count; j++)

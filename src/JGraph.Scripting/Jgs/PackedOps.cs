@@ -282,7 +282,7 @@ internal static class PackedOps
         if (IsPackedArray(left) && IsPackedArray(right))
         {
             RequireSameLengths(symbol, left.ArrayLength, right.ArrayLength, line, column);
-            NumericBuffer dest = JgsPacking.Allocate(left.ArrayLength);
+            NumericBuffer dest = JgsPacking.AllocateForOverwrite(left.ArrayLength); // the mask is written whole
             PackedMath.Compare(op, left.AsBuffer, right.AsBuffer, dest, cancelCheck);
             result = KeepShape(JgsValue.Packed(dest, JgsPackedKind.Bool), left, right);
             return true;
@@ -290,7 +290,7 @@ internal static class PackedOps
 
         if (IsPackedArray(left) && IsNumericScalar(right))
         {
-            NumericBuffer dest = JgsPacking.Allocate(left.ArrayLength);
+            NumericBuffer dest = JgsPacking.AllocateForOverwrite(left.ArrayLength);
             PackedMath.CompareScalar(op, left.AsBuffer, right.AsNumber, dest, scalarOnLeft: false, cancelCheck);
             result = KeepShape(JgsValue.Packed(dest, JgsPackedKind.Bool), left, right);
             return true;
@@ -298,7 +298,7 @@ internal static class PackedOps
 
         if (IsPackedArray(right) && IsNumericScalar(left))
         {
-            NumericBuffer dest = JgsPacking.Allocate(right.ArrayLength);
+            NumericBuffer dest = JgsPacking.AllocateForOverwrite(right.ArrayLength);
             PackedMath.CompareScalar(op, right.AsBuffer, left.AsNumber, dest, scalarOnLeft: true, cancelCheck);
             result = KeepShape(JgsValue.Packed(dest, JgsPackedKind.Bool), left, right);
             return true;
@@ -473,7 +473,7 @@ internal static class PackedOps
         }
 
         NumericBuffer mask = selector.AsBuffer;
-        NumericBuffer dest = JgsPacking.Allocate(PackedMath.CountNonZero(mask));
+        NumericBuffer dest = JgsPacking.AllocateForOverwrite(PackedMath.CountNonZero(mask)); // one element per set place
         PackedMath.Compact(target.AsBuffer, mask, dest);
         result = JgsValue.Packed(dest, target.PackedKind);
         return true;
@@ -482,7 +482,7 @@ internal static class PackedOps
     /// <summary>Gathers picked elements of a packed array into a new packed array of the same kind.</summary>
     public static JgsValue Gather(JgsValue packed, int[] picks)
     {
-        NumericBuffer dest = JgsPacking.Allocate(picks.Length);
+        NumericBuffer dest = JgsPacking.AllocateForOverwrite(picks.Length); // one element per pick
         PackedMath.Gather(packed.AsBuffer, picks, dest);
         return JgsValue.Packed(dest, packed.PackedKind);
     }
@@ -490,7 +490,7 @@ internal static class PackedOps
     /// <summary>A full copy of a packed array (the <c>x(:)</c> read).</summary>
     public static JgsValue Clone(JgsValue packed, Action? cancelCheck)
     {
-        NumericBuffer dest = JgsPacking.Allocate(packed.ArrayLength);
+        NumericBuffer dest = JgsPacking.AllocateForOverwrite(packed.ArrayLength);
         PackedMath.Copy(packed.AsBuffer, dest, cancelCheck);
         return JgsValue.Packed(dest, packed.PackedKind);
     }

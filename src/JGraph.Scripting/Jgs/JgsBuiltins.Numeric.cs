@@ -543,6 +543,13 @@ internal static partial class JgsBuiltins
                 return Numbers([]);
             }
 
+            if (JgsVectorRoads.Enabled)
+            {
+                // A sieve of the odd numbers in cache-sized pieces, read off in order (ADR 0328).
+                JgsVectorRoads.Took();
+                return Numbers(JGraph.Numerics.PrimeKernels.PrimesUpTo(limit));
+            }
+
             var composite = new bool[limit + 1];
             var found = new List<double>();
             for (int candidate = 2; candidate <= limit; candidate++)
@@ -565,7 +572,9 @@ internal static partial class JgsBuiltins
         Define("isprime", (args, line, col) =>
         {
             Arity("isprime", args, 1, line, col);
-            return MapToBool("isprime", args[0], IsPrime, line, col);
+            return JgsVectorRoads.TryIsPrime(args[0], out JgsValue primeMask)
+                ? primeMask
+                : MapToBool("isprime", args[0], IsPrime, line, col);
         });
     }
 

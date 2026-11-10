@@ -1286,6 +1286,21 @@ internal static partial class JgsBuiltins
                             $"{name}: 'SamplePoints' has {points.Length} places for {source.Length} values.");
                     }
 
+                    // The answer written straight into packed storage (ADR 0328): no managed array
+                    // of the whole series to allocate, clear and adopt.
+                    WindowEnds packedEnds = EndsOf(endpoints);
+                    int outputs = WindowKernels.OutputLength(source.Length, behind, ahead, packedEnds);
+                    if (points is null && outputs >= 2 && JgsVectorRoads.Enabled)
+                    {
+                        NumericBuffer answer = JgsPacking.AllocateForOverwrite(outputs);
+                        WindowKernels.SlideInto(kind, source, answer, behind, ahead, packedEnds, pad, omitNan, identity);
+                        GC.KeepAlive(subject);
+                        packedDims[packedDim - 1] = outputs;
+                        JgsValue slid = JgsValue.Packed(answer);
+                        slid.ReshapeDims(packedDims);
+                        return slid;
+                    }
+
                     double[] output;
                     try
                     {

@@ -301,6 +301,8 @@ public sealed class BufferAllocator
 
     private void CollectOnce()
     {
+        // The blocks kept for reuse (ADR 0328) are memory nothing holds: they go first.
+        NativeBlockCache.Clear();
         Interlocked.Increment(ref _collections);
         GC.Collect();
         GC.WaitForPendingFinalizers();

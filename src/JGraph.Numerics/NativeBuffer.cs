@@ -12,6 +12,7 @@ namespace JGraph.Numerics;
 public sealed unsafe class NativeBuffer : NumericBuffer
 {
     private void* _ptr;
+    private readonly long _capacityBytes;
     private readonly Action? _onFreed;
 
     /// <summary>
@@ -23,9 +24,32 @@ public sealed unsafe class NativeBuffer : NumericBuffer
     public NativeBuffer(int length, Action? onFreed = null, bool zeroed = true)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(length);
-        _ptr = zeroed
-            ? NativeMemory.AllocZeroed((nuint)length, sizeof(double))
-            : NativeMemory.Alloc((nuint)length, sizeof(double));
+        // Only a destination that will be written in full takes a block this process has already
+        // touched (ADR 0328): it holds what its last owner left. A zeroed request is better served
+        // by the operating system, whose fresh pages are zero for nothing, where clearing a reused
+        // block is a pass over all of it (measured: the first form of this cleared them, and every
+        // row that copies into a zeroed buffer lost what the reuse had won).
+        long bytes = (long)length * sizeof(double);
+        long capacity = 0;
+        void* held = zeroed ? null : NativeBlockCache.Take(bytes, out capacity);
+        if (held is not null)
+        {
+            _ptr = held;
+            _capacityBytes = capacity;
+        }
+        else
+        {
+            _ptr = zeroed
+                ? NativeMemory.AllocZeroed((nuint)length, sizeof(double))
+                : NativeMemory.Alloc((nuint)length, sizeof(double));
+            _capacityBytes = bytes;
+        }
+
+        if (!zeroed && NativeBlockCache.Poison)
+        {
+            new Span<double>(_ptr, length).Fill(double.NaN);
+        }
+
         GC.AddMemoryPressure((long)length * sizeof(double));
         Length = length;
         _onFreed = onFreed;
@@ -62,7 +86,11 @@ public sealed unsafe class NativeBuffer : NumericBuffer
         }
 
         _ptr = null;
-        NativeMemory.Free(ptr);
+        if (!NativeBlockCache.Offer(ptr, _capacityBytes))
+        {
+            NativeMemory.Free(ptr);
+        }
+
         GC.RemoveMemoryPressure((long)Length * sizeof(double));
         _onFreed?.Invoke();
     }

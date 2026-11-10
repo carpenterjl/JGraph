@@ -13,22 +13,9 @@ internal static class JgsStdlib
     /// <summary>Sample variance (n − 1 denominator) of at least two values.</summary>
     public static double Variance(double[] values)
     {
-        double mean = 0;
-        foreach (double v in values)
-        {
-            mean += v;
-        }
-
-        mean /= values.Length;
-
-        double sumSquares = 0;
-        foreach (double v in values)
-        {
-            double d = v - mean;
-            sumSquares += d * d;
-        }
-
-        return sumSquares / (values.Length - 1);
+        // Both passes are folded in grains, as the packed kernel folds them (ADR 0328).
+        double mean = JGraph.Numerics.ReduceKernels.GrainSum(values) / values.Length;
+        return JGraph.Numerics.ReduceKernels.GrainSquaredDeviations(values, mean) / (values.Length - 1);
     }
 
     /// <summary>Median of a non-empty array (mean of the middle two for even counts).</summary>

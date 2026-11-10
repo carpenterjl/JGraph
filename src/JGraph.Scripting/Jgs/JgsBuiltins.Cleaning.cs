@@ -478,6 +478,12 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "isoutlier needs some data.");
         }
 
+        if (args.Count == 1 && wanted <= 1
+            && JgsVectorRoads.TryOutliers(args[0], new OutlierPlan().Threshold, ScaledMadFactor, out JgsValue outliers))
+        {
+            return [outliers];
+        }
+
         OutlierPlan plan = OutlierPlanOf(
             "isoutlier", args, 1, "MATLAB:unrecognizedStringChoice", line, col);
         (double[][] slices, int[] dims, int dim) = Cut("isoutlier", args[0], plan.Dim, line, col);

@@ -165,7 +165,7 @@ internal static class Program
         using var self = System.Diagnostics.Process.GetCurrentProcess();
         Console.Error.WriteLine(string.Create(
             System.Globalization.CultureInfo.InvariantCulture,
-            $"stats|allocated_bytes={GC.GetTotalAllocatedBytes(precise: true)}|gen0={GC.CollectionCount(0)}|gen1={GC.CollectionCount(1)}|gen2={GC.CollectionCount(2)}|peak_working_set={self.PeakWorkingSet64}|peak_paged={self.PeakPagedMemorySize64}|compiled_loops={JGraph.Scripting.LoopCompilerCounters.CompiledLoops}|loop_bails={JGraph.Scripting.LoopCompilerCounters.Bails}"));
+            $"stats|allocated_bytes={GC.GetTotalAllocatedBytes(precise: true)}|gen0={GC.CollectionCount(0)}|gen1={GC.CollectionCount(1)}|gen2={GC.CollectionCount(2)}|peak_working_set={self.PeakWorkingSet64}|peak_paged={self.PeakPagedMemorySize64}|compiled_loops={JGraph.Scripting.LoopCompilerCounters.CompiledLoops}|loop_bails={JGraph.Scripting.LoopCompilerCounters.Bails}|blocks_offered={JGraph.Numerics.NativeBlockCache.Offered}|blocks_reused={JGraph.Numerics.NativeBlockCache.Reused}"));
     }
 
     /// <summary>

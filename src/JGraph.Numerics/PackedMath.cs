@@ -2,6 +2,8 @@ using System.Runtime.CompilerServices;
 using System.Numerics;
 using System.Numerics.Tensors;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
 
 namespace JGraph.Numerics;
 
@@ -896,8 +898,21 @@ public static class PackedMath
         // (both readings are false there), so one kernel serves both sides and neither has a branch
         // inside the loop.
         CompareOp effective = scalarOnLeft ? Mirror(op) : op;
+
+        // A mask too long to stay in cache is written past it (ADR 0328): an ordinary store reads
+        // each line of the destination before overwriting it, a third of the traffic of a compare.
+        bool stream = StreamLongMasks && Avx.IsSupported && dest.Length >= ParallelKernels.MemoryBoundThreshold;
         ParallelKernels.For(dest.Length, ParallelKernels.MemoryBoundThreshold, betweenChunks, (start, len) =>
-            CompareScalarChunk(effective, a.AsSpan(start, len), scalar, dest.AsSpan(start, len)));
+        {
+            if (stream)
+            {
+                CompareScalarStream(effective, a.AsSpan(start, len), scalar, dest.AsSpan(start, len));
+            }
+            else
+            {
+                CompareScalarChunk(effective, a.AsSpan(start, len), scalar, dest.AsSpan(start, len));
+            }
+        });
 
         GC.KeepAlive(a);
         GC.KeepAlive(dest);
@@ -925,23 +940,13 @@ public static class PackedMath
         return count;
     }
 
-    /// <summary>Left-fold sum in index order — bit-identical to the boxed interpreter's accumulation.</summary>
+    /// <summary>The sum in grains (<see cref="ReduceKernels.GrainSum(NumericBuffer, int, int)"/>):
+    /// a left fold up to one grain, grains added in index order past it, and the same number as the
+    /// boxed builtin's and at any thread count.</summary>
     public static double Sum(NumericBuffer a, Action? betweenChunks = null)
     {
-        double total = 0;
-        for (int start = 0; start < a.Length; start += ChunkElements)
-        {
-            int len = Math.Min(ChunkElements, a.Length - start);
-            Span<double> x = a.AsSpan(start, len);
-            for (int i = 0; i < len; i++)
-            {
-                total += x[i];
-            }
-
-            betweenChunks?.Invoke();
-        }
-
-        GC.KeepAlive(a);
+        double total = ReduceKernels.GrainSum(a, 0, a.Length);
+        betweenChunks?.Invoke();
         return total;
     }
 
@@ -1412,6 +1417,57 @@ public static class PackedMath
         {
             d[i] = Holds(op, x[i], scalar) ? 1.0 : 0.0;
         }
+    }
+
+    /// <summary>Whether a comparison's mask of <see cref="ParallelKernels.MemoryBoundThreshold"/>
+    /// elements or more is written with non-temporal stores (<c>JGRAPH_STREAM_MASKS</c>, on unless
+    /// 0). The mask is the same either way.</summary>
+    public static bool StreamLongMasks { get; set; } =
+        Environment.GetEnvironmentVariable("JGRAPH_STREAM_MASKS") != "0";
+
+    /// <summary>
+    /// <see cref="CompareScalarChunk"/> with the destination written past the cache: the leading
+    /// elements one at a time until the destination sits on a 32-byte boundary, then a register
+    /// at a time. The comparison leaves all-ones where it holds, and all-ones AND 1.0 is 1.0.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    private static unsafe void CompareScalarStream(CompareOp op, Span<double> x, double scalar, Span<double> d)
+    {
+        int n = d.Length;
+        fixed (double* px = x)
+        fixed (double* pd = d)
+        {
+            int i = 0;
+            while (i < n && ((nuint)(pd + i) & 31) != 0)
+            {
+                pd[i] = Holds(op, px[i], scalar) ? 1.0 : 0.0;
+                i++;
+            }
+
+            Vector256<double> right = Vector256.Create(scalar);
+            Vector256<double> one = Vector256.Create(1.0);
+            for (; i <= n - 4; i += 4)
+            {
+                Vector256<double> v = Avx.LoadVector256(px + i);
+                Vector256<double> holds = op switch
+                {
+                    CompareOp.Less => Vector256.LessThan(v, right),
+                    CompareOp.LessEqual => Vector256.LessThanOrEqual(v, right),
+                    CompareOp.Greater => Vector256.GreaterThan(v, right),
+                    CompareOp.GreaterEqual => Vector256.GreaterThanOrEqual(v, right),
+                    CompareOp.Equal => Vector256.Equals(v, right),
+                    _ => ~Vector256.Equals(v, right), // NaN is unequal to everything, itself included
+                };
+                Avx.StoreAlignedNonTemporal(pd + i, Avx.And(holds, one));
+            }
+
+            for (; i < n; i++)
+            {
+                pd[i] = Holds(op, px[i], scalar) ? 1.0 : 0.0;
+            }
+        }
+
+        Sse.StoreFence();
     }
 
     /// <summary>The all-ones-where-it-holds mask of a comparison.</summary>

@@ -206,6 +206,11 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static JgsValue[] SlopeFields(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
+        if (args.Count == 1 && wanted <= 1 && JgsVectorRoads.TryGradient(args[0], out JgsValue unitSlope))
+        {
+            return [unitSlope];
+        }
+
         int[] dims = SizeDims(args[0]);
         ArityRange("gradient", args, 1, System.Math.Max(3, dims.Length + 1), line, col);
         if (dims.Length > 2)
@@ -424,6 +429,10 @@ internal static partial class JgsBuiltins
         string name, IReadOnlyList<JgsValue> args, bool cumulative, int line, int col)
     {
         ArityRange(name, args, 1, 3, line, col);
+        if (cumulative && args.Count == 1 && JgsVectorRoads.TryCumtrapz(args[0], out JgsValue area))
+        {
+            return area;
+        }
 
         JgsValue subject;
         JgsValue? sample = null;
