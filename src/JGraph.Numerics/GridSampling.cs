@@ -46,6 +46,16 @@ public sealed class GridSampler
     private readonly GridMethod _method;
     private readonly int _rank;
 
+    /// <summary>The cell search along each direction (read only, shared across threads).</summary>
+    private readonly KnotSearch[] _search;
+
+    /// <summary>Lines solved together when a spline's slopes are taken across the grid's storage
+    /// order: 64 neighbours, a run of eight cache lines at every knot.</summary>
+    private const int LineBlock = 64;
+
+    /// <summary>Grid elements from which the slope tables are taken across threads.</summary>
+    private const int ParallelSlopes = 1 << 16;
+
     /// <summary>Slopes along every combination of directions; null for the local methods.</summary>
     private readonly double[][]? _derivatives;
 
@@ -91,6 +101,12 @@ public sealed class GridSampler
         _weights = new double[_rank * 4];
         _basis = new double[_rank * 4];
 
+        _search = new KnotSearch[_rank];
+        for (int d = 0; d < _rank; d++)
+        {
+            _search[d] = KnotSearch.For(grids[d]);
+        }
+
         _derivatives = method == GridMethod.Spline ? BuildDerivatives() : null;
     }
 
@@ -104,6 +120,7 @@ public sealed class GridSampler
         _method = shared._method;
         _rank = shared._rank;
         _derivatives = shared._derivatives;
+        _search = shared._search;
 
         _cells = new int[_rank];
         _starts = new int[_rank];
@@ -144,10 +161,100 @@ public sealed class GridSampler
                 return outside;
             }
 
-            _cells[d] = Bracket(axis, at);
+            _cells[d] = _search[d].Cell(at);
+        }
+
+        if (_rank == 2)
+        {
+            if (_method == GridMethod.Linear)
+            {
+                return Bilinear(point[0], point[1]);
+            }
+
+            if (_method == GridMethod.Spline)
+            {
+                return BicubicHermite(point[0], point[1]);
+            }
         }
 
         return _method == GridMethod.Spline ? TensorHermite(point) : TensorWeights(point);
+    }
+
+    /// <summary>
+    /// <see cref="TensorWeights"/> for a straight line along each of two directions, written out:
+    /// the same four products, formed and added in the same order, without the general loop's
+    /// division and remainder per corner.
+    /// </summary>
+    private double Bilinear(double p0, double p1)
+    {
+        double[] axis0 = _grids[0];
+        double[] axis1 = _grids[1];
+        int c0 = _cells[0];
+        int c1 = _cells[1];
+        double t0 = (p0 - axis0[c0]) / (axis0[c0 + 1] - axis0[c0]);
+        double t1 = (p1 - axis1[c1]) / (axis1[c1 + 1] - axis1[c1]);
+        double a0 = 1 - t0;
+        double a1 = 1 - t1;
+        int s1 = _strides[1];
+        int at = c0 + (c1 * s1);
+        double[] v = _values;
+
+        // The general loop's weight starts at one and is multiplied by each direction's weight in
+        // turn; one times a weight is that weight, so these are its products to the bit.
+        double total = 0;
+        total += (a0 * a1) * v[at];
+        total += (t0 * a1) * v[at + 1];
+        total += (a0 * t1) * v[at + s1];
+        total += (t0 * t1) * v[at + s1 + 1];
+        return total;
+    }
+
+    /// <summary>
+    /// <see cref="TensorHermite"/> over two directions, written out: the same sixteen terms in the
+    /// same order, a zero weight skipped as there.
+    /// </summary>
+    private double BicubicHermite(double p0, double p1)
+    {
+        Span<double> b0 = stackalloc double[4];
+        Span<double> b1 = stackalloc double[4];
+        HermiteBasis(_grids[0], _cells[0], p0, b0);
+        HermiteBasis(_grids[1], _cells[1], p1, b1);
+
+        double[][] table = _derivatives!;
+        int s1 = _strides[1];
+        int c0 = _cells[0];
+        int c1 = _cells[1];
+        double total = 0;
+        for (int digit1 = 0; digit1 < 4; digit1++)
+        {
+            int row = (c1 + (digit1 >> 1)) * s1;
+            int maskHigh = (digit1 & 1) << 1;
+            double w1 = b1[digit1];
+            for (int digit0 = 0; digit0 < 4; digit0++)
+            {
+                double weight = b0[digit0] * w1;
+                if (weight != 0)
+                {
+                    total += weight * table[(digit0 & 1) | maskHigh][(c0 + (digit0 >> 1)) + row];
+                }
+            }
+        }
+
+        return total;
+    }
+
+    /// <summary>One direction's four Hermite basis values, as <see cref="TensorHermite"/> forms them.</summary>
+    private static void HermiteBasis(double[] axis, int cell, double at, Span<double> basis)
+    {
+        double width = axis[cell + 1] - axis[cell];
+        double t = (at - axis[cell]) / width;
+        double t2 = t * t;
+        double t3 = t2 * t;
+
+        basis[0] = (2 * t3) - (3 * t2) + 1;
+        basis[1] = width * (t3 - (2 * t2) + t);
+        basis[2] = (-2 * t3) + (3 * t2);
+        basis[3] = width * (t3 - t2);
     }
 
     // --- The local methods --------------------------------------------------------------------
@@ -290,8 +397,27 @@ public sealed class GridSampler
         int outer = _values.Length / (length * stride);
         var answer = new double[source.Length];
         double[] axis = _grids[d];
-        var fibre = new double[length];
 
+        // Four knots or more: one elimination for the axis, every line solved in place by blocks,
+        // the blocks across threads (the every-row plan's I8). Each block owns its lines outright
+        // and a line's slopes are the one-line solve's to the bit, so the cut changes nothing.
+        Interpolation.SplineLinePlan? plan = Interpolation.SplineLinePlan.For(axis);
+        if (plan is not null)
+        {
+            int lineBlock = inner == 1 ? 1 : Math.Min(inner, LineBlock);
+            int blocksPerOuter = (inner + lineBlock - 1) / lineBlock;
+            ParallelKernels.ForBlocks(outer * blocksPerOuter, source.Length >= ParallelSlopes, b =>
+            {
+                int o = b / blocksPerOuter;
+                int first = (b % blocksPerOuter) * lineBlock;
+                int count = Math.Min(lineBlock, inner - first);
+                plan.Solve(source, answer, (o * length * stride) + first, stride, count);
+            });
+
+            return answer;
+        }
+
+        var fibre = new double[length];
         for (int o = 0; o < outer; o++)
         {
             for (int i = 0; i < inner; i++)
@@ -359,24 +485,4 @@ public sealed class GridSampler
         return total;
     }
 
-    /// <summary>Which cell of an increasing axis a point falls in, clamped so an outside point continues the end cell.</summary>
-    private static int Bracket(double[] axis, double at)
-    {
-        int low = 0;
-        int high = axis.Length - 1;
-        while (high - low > 1)
-        {
-            int mid = (low + high) / 2;
-            if (at < axis[mid])
-            {
-                high = mid;
-            }
-            else
-            {
-                low = mid;
-            }
-        }
-
-        return low;
-    }
 }

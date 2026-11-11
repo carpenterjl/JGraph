@@ -245,12 +245,53 @@ internal static partial class JgsBuiltins
             return asRow ? ComplexRow(answer) : ComplexColumn(answer);
         }
 
+        if (TryPackedConvolve(args[0], args[1], lengthA, lengthB, shape, asRow, line, col, out JgsValue packed))
+        {
+            return packed;
+        }
+
         double[] values = Convolution.Convolve(
             FlattenColumnMajor("conv", args[0], line, col),
             FlattenColumnMajor("conv", args[1], line, col),
             shape);
 
         return Oriented(values, asRow);
+    }
+
+    /// <summary>
+    /// The real convolution into packed storage (the every-row plan's I8): a packed operand of plain
+    /// doubles is read where it lies rather than copied out, and only the part of the full
+    /// convolution the shape keeps is computed, straight into the answer's buffer. The sums are
+    /// <see cref="Convolution.ConvolveInto"/>'s, the ones the copying road makes, to the bit.
+    /// </summary>
+    private static bool TryPackedConvolve(
+        JgsValue a, JgsValue b, int lengthA, int lengthB, ConvolutionShape shape, bool asRow,
+        int line, int col, out JgsValue result)
+    {
+        result = JgsValue.Null;
+        if (!JgsPacking.Enabled || lengthA == 0 || lengthB == 0)
+        {
+            return false;
+        }
+
+        (int offset, int length) = shape == ConvolutionShape.Full
+            ? (0, lengthA + lengthB - 1)
+            : Convolution.Window(lengthA, lengthB, shape);
+        if (length <= 0)
+        {
+            return false;
+        }
+
+        double[]? copiedA = JgsSetKernels.IsPlainDoubles(a) ? null : FlattenColumnMajor("conv", a, line, col);
+        double[]? copiedB = JgsSetKernels.IsPlainDoubles(b) ? null : FlattenColumnMajor("conv", b, line, col);
+        NumericBuffer dest = JgsPacking.AllocateForOverwrite(length);
+        ReadOnlySpan<double> u = copiedA is null ? a.AsBuffer.AsSpan() : copiedA.AsSpan();
+        ReadOnlySpan<double> v = copiedB is null ? b.AsBuffer.AsSpan() : copiedB.AsSpan();
+        Convolution.ConvolveInto(u, v, offset, dest.AsSpan());
+        GC.KeepAlive(a);
+        GC.KeepAlive(b);
+        result = asRow ? JgsMatrix.FromColumnMajor(dest, 1, length) : JgsMatrix.FromColumnMajor(dest, length, 1);
+        return true;
     }
 
     /// <summary>

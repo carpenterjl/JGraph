@@ -713,7 +713,6 @@ internal static partial class JgsBuiltins
                 $"interp1: the values must be a vector of {n} or a matrix with {n} rows.");
         }
 
-        double[] at = FlattenColumnMajor("interp1", queries, line, col);
         int[] order = SortedOrder(samples, line, col);
         var x = new double[n];
         for (int i = 0; i < n; i++)
@@ -723,6 +722,32 @@ internal static partial class JgsBuiltins
 
         method = SettleInterp1Method(method, x, host);
         UniformKnots uniform = UniformKnots.Of(x);
+
+        if (sets == 1 && JgsSetKernels.IsPlainDoubles(queries) && queries.ArrayLength >= 2)
+        {
+            // One data set and packed query points (the every-row plan's I8): the points are read
+            // where they lie and the answers written straight into the packed result, where this
+            // road copied the points out and built the answer in a managed array. Each point is
+            // ValueAt's, as below, so the answers are the same to the bit.
+            var ySorted = new double[n];
+            for (int i = 0; i < n; i++)
+            {
+                ySorted[i] = flat[order[i]];
+            }
+
+            double[] pieces = CubicCoefficients(x, ySorted, method);
+            Interp1Rule settled = RuleOf(method);
+            NumericBuffer points = queries.AsBuffer;
+            NumericBuffer read = JgsPacking.AllocateForOverwrite(points.Length);
+            ParallelKernels.For(points.Length, ParallelKernels.ComputeBoundThreshold, null, (start, length) =>
+                ValuesAt(x, ySorted, pieces, settled, points.AsSpan(start, length), read.AsSpan(start, length),
+                    extrapolate, outside, uniform));
+
+            GC.KeepAlive(queries);
+            return JgsMatrix.FromColumnMajorDims(read, SizeDims(queries));
+        }
+
+        double[] at = FlattenColumnMajor("interp1", queries, line, col);
         var answer = new double[at.Length * sets];
         for (int set = 0; set < sets; set++)
         {
@@ -798,7 +823,24 @@ internal static partial class JgsBuiltins
         }
     }
 
+    /// <summary>
+    /// A run of query points, each <see cref="ValueAt"/>'s. Optimised at its first call: a row that
+    /// is one interp1 call otherwise spends its first two passes in tier-0 code (the I8 measurement,
+    /// 10-12 ms cold against 3 ms warm over two million points).
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    private static void ValuesAt(
+        double[] x, double[] y, double[] coefficients, Interp1Rule rule, ReadOnlySpan<double> from,
+        Span<double> into, bool extrapolate, double outside, UniformKnots uniform)
+    {
+        for (int q = 0; q < from.Length; q++)
+        {
+            into[q] = ValueAt(x, y, coefficients, rule, from[q], extrapolate, outside, uniform);
+        }
+    }
+
     /// <summary>One query point, by whichever rule the method named.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private static double ValueAt(
         double[] x, double[] y, double[] coefficients, Interp1Rule rule, double at, bool extrapolate,
         double outside, UniformKnots uniform)
@@ -887,6 +929,20 @@ internal static partial class JgsBuiltins
         for (int i = 0; i < order.Length; i++)
         {
             order[i] = i;
+        }
+
+        // Positions already strictly increasing (linspace's, most sampled data) are their own
+        // order: the sort below would answer the identity for them, through a comparison delegate
+        // per step (I8). A repeat or a NaN fails the test and takes the sort and its checks.
+        bool increasing = true;
+        for (int i = 1; i < samples.Length && increasing; i++)
+        {
+            increasing = samples[i - 1] < samples[i];
+        }
+
+        if (increasing)
+        {
+            return order;
         }
 
         Array.Sort(order, (a, b) => samples[a].CompareTo(samples[b]));

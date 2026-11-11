@@ -77,11 +77,17 @@ internal static partial class JgsBuiltins
             SplitGridForm(name, positional, ref rank, line, col);
 
         int[] dims = GridDimensions(samples, rank, line, col);
-        double[] values = FlattenColumnMajor(name, samples, line, col);
+        double[] values = GridValuesOf(name, samples, line, col);
         double[][] axes = ReadAxes(name, axisArguments, dims, rank, line, col);
 
         method = SettleMethod(method, axes, host);
         bool extrapolate = !hasFill && method == "spline";
+
+        if (times < 0 && rank == 2 && TrySamplePackedPairs(
+            queryArguments, axes, values, dims, MethodOf(method), extrapolate, fill, out JgsValue sampled))
+        {
+            return sampled;
+        }
 
         (double[][] points, int[] answerDims) = times >= 0
             ? RefinedPoints(axes, times)
@@ -118,6 +124,80 @@ internal static partial class JgsBuiltins
         });
 
         return ShapedNumbers(answer, answerDims);
+    }
+
+    /// <summary>
+    /// The samples as the sampler holds them: a packed array of plain doubles is copied in grains
+    /// across threads, where flattening copied it on one (I8); anything else is flattened.
+    /// </summary>
+    private static double[] GridValuesOf(string name, JgsValue samples, int line, int col)
+    {
+        if (!JgsSetKernels.IsPlainDoubles(samples))
+        {
+            return FlattenColumnMajor(name, samples, line, col);
+        }
+
+        ReadOnlySpan<double> stored = samples.AsBuffer.AsSpan();
+        var values = GC.AllocateUninitializedArray<double>(stored.Length);
+        JGraph.Numerics.LinearAlgebra.FactorFills.Copy(stored, values);
+        GC.KeepAlive(samples);
+        return values;
+    }
+
+    /// <summary>
+    /// <c>interp2(..., Xq, Yq)</c> with two packed query arrays of plain doubles the same shape (the
+    /// every-row plan's I8): each grain reads its stretch of both where they lie and writes its
+    /// answers straight into the packed result, where the general road copied both out first and
+    /// built the answer in a managed array. The sampler and every point's arithmetic are the
+    /// general road's, so the answers are its to the bit.
+    /// </summary>
+    private static bool TrySamplePackedPairs(
+        JgsValue[] queries, double[][] axes, double[] values, int[] dims, GridMethod method,
+        bool extrapolate, double fill, out JgsValue result)
+    {
+        result = JgsValue.Null;
+        if (queries.Length != 2
+            || !JgsSetKernels.IsPlainDoubles(queries[0])
+            || !JgsSetKernels.IsPlainDoubles(queries[1]))
+        {
+            return false;
+        }
+
+        int[] shape = SizeDims(queries[0]);
+        if (!SameShape(shape, SizeDims(queries[1])))
+        {
+            return false;
+        }
+
+        NumericBuffer first = queries[0].AsBuffer;
+        NumericBuffer second = queries[1].AsBuffer;
+        int count = first.Length;
+        if (count < 2)
+        {
+            return false; // one point answers as a number, which the general road makes
+        }
+
+        var sampler = new GridSampler(axes, values, dims, method);
+        NumericBuffer answer = JgsPacking.AllocateForOverwrite(count);
+        ParallelKernels.For(count, ParallelKernels.ComputeBoundThreshold, null, (start, length) =>
+        {
+            GridSampler mine = sampler.ForAnotherThread();
+            ReadOnlySpan<double> along0 = first.AsSpan(start, length);
+            ReadOnlySpan<double> along1 = second.AsSpan(start, length);
+            Span<double> into = answer.AsSpan(start, length);
+            Span<double> point = stackalloc double[2];
+            for (int q = 0; q < length; q++)
+            {
+                point[0] = along0[q];
+                point[1] = along1[q];
+                into[q] = mine.Sample(point, extrapolate, fill);
+            }
+        });
+
+        GC.KeepAlive(queries[0]);
+        GC.KeepAlive(queries[1]);
+        result = JgsMatrix.FromColumnMajorDims(answer, shape);
+        return true;
     }
 
     /// <summary>
@@ -308,13 +388,19 @@ internal static partial class JgsBuiltins
             }
 
             JgsValue argument = given[d];
-            double[] flat = FlattenColumnMajor(name, argument, line, col);
-            if (RankOf(argument) == 1)
+            if (RankOf(argument) != 1 && JgsSetKernels.IsPlainDoubles(argument))
             {
-                axes[d] = flat;
+                // A packed meshgrid or ndgrid output: the line along this direction is read where
+                // it lies, where flattening copied the whole grid to keep one line of it (I8).
+                axes[d] = LineThroughPacked(argument, d);
+            }
+            else if (RankOf(argument) == 1)
+            {
+                axes[d] = FlattenColumnMajor(name, argument, line, col);
             }
             else
             {
+                double[] flat = FlattenColumnMajor(name, argument, line, col);
                 int[] shape = SizeDims(argument);
                 int stride = 1;
                 for (int i = 0; i < d && i < shape.Length; i++)
@@ -342,6 +428,28 @@ internal static partial class JgsBuiltins
         }
 
         return axes;
+    }
+
+    /// <summary>The first line along direction <paramref name="d"/> of a packed grid of plain doubles.</summary>
+    private static double[] LineThroughPacked(JgsValue grid, int d)
+    {
+        int[] shape = SizeDims(grid);
+        int stride = 1;
+        for (int i = 0; i < d && i < shape.Length; i++)
+        {
+            stride *= shape[i];
+        }
+
+        int length = d < shape.Length ? shape[d] : 1;
+        var picked = new double[length];
+        ReadOnlySpan<double> stored = grid.AsBuffer.AsSpan();
+        for (int i = 0; i < length; i++)
+        {
+            picked[i] = stored[i * stride];
+        }
+
+        GC.KeepAlive(grid);
+        return picked;
     }
 
     /// <summary>

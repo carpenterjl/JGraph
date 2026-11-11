@@ -484,6 +484,7 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>One piece of a cubic, at a point measured from the piece's own left end.</summary>
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveOptimization)]
     private static double CubicAt(double[] coefficients, int piece, double t)
     {
         int at = piece * 4;
@@ -777,12 +778,15 @@ internal static partial class JgsBuiltins
             total *= size;
         }
 
-        var answer = new Complex[total];
+        var answer = new Complex[real ? 0 : total];
         if (total == 0 || length == 0)
         {
-            return ComplexShaped(answer, answerShape);
+            return ComplexShaped(new Complex[total], answerShape);
         }
 
+        // A real record's answer is written as the real array it is shaped into, where it was
+        // built as complex numbers with zero imaginary parts and copied out of them (I8).
+        double[] answerReal = real ? new double[total] : [];
         int outer = source.Length / (length * stride);
         var re = new double[length];
         var im = new double[length];
@@ -802,14 +806,24 @@ internal static partial class JgsBuiltins
                 FourierResampling.Resample(re, im, outRe, outIm);
 
                 int to = (o * wanted * stride) + i;
+                if (real)
+                {
+                    for (int k = 0; k < wanted; k++)
+                    {
+                        answerReal[to + (k * stride)] = outRe[k];
+                    }
+
+                    continue;
+                }
+
                 for (int k = 0; k < wanted; k++)
                 {
-                    answer[to + (k * stride)] = new Complex(outRe[k], real ? 0 : outIm[k]);
+                    answer[to + (k * stride)] = new Complex(outRe[k], outIm[k]);
                 }
             }
         }
 
-        return ComplexShaped(answer, answerShape);
+        return real ? JgsMatrix.FromColumnMajorDims(answerReal, answerShape) : ComplexShaped(answer, answerShape);
     }
 
     /// <summary>The first dimension a value is longer than one along, which is where a reduction acts.</summary>

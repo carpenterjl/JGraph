@@ -33,9 +33,23 @@ public enum ConvolutionShape
 /// and hands whole spans to the vector unit, where the dot-product form re-reads one operand
 /// backwards for every output. The tap loop is over the shorter operand for the same reason.
 /// </para>
+/// <para>
+/// The answer is made in blocks of <see cref="BlockElements"/> outputs, each taking every tap in
+/// turn before the next block starts, and large convolutions spread the blocks across threads (the
+/// every-row plan's I8). Every output still receives its taps in the same order, as the same scaled
+/// additions, so the blocks change no bit; what they change is that a block and the stretch of
+/// signal it reads stay in the first-level cache through all the taps, where the tap-at-a-time loop
+/// streamed the whole answer through memory once per tap.
+/// </para>
 /// </remarks>
-public static class Convolution
+public static unsafe class Convolution
 {
+    /// <summary>Outputs per block (2048, 16 KB): the block and the signal it reads fit the L1 cache.</summary>
+    private const int BlockElements = 2048;
+
+    /// <summary>Multiply-adds (taps times outputs, 1M) from which blocks run across threads.</summary>
+    private const long ParallelWork = 1L << 20;
+
     /// <summary>The full convolution of two sequences.</summary>
     /// <param name="u">One sequence.</param>
     /// <param name="v">The other.</param>
@@ -50,11 +64,72 @@ public static class Convolution
         }
 
         var result = new double[u.Length + v.Length - 1];
+        ConvolveInto(u, v, 0, result);
+        return result;
+    }
+
+    /// <summary>
+    /// Writes elements <c>[start, start + destination.Length)</c> of the full convolution of two
+    /// sequences into <paramref name="destination"/>, which need not be cleared first.
+    /// </summary>
+    /// <param name="u">One sequence, not empty.</param>
+    /// <param name="v">The other, not empty.</param>
+    /// <param name="start">The first element of the full convolution wanted.</param>
+    /// <param name="destination">Where the elements go; its length is how many.</param>
+    /// <exception cref="ArgumentOutOfRangeException">The range is not inside the full convolution.</exception>
+    public static void ConvolveInto(
+        ReadOnlySpan<double> u, ReadOnlySpan<double> v, int start, Span<double> destination)
+    {
+        long full = (long)u.Length + v.Length - 1;
+        if (u.Length == 0 || v.Length == 0 || start < 0 || start + (long)destination.Length > full)
+        {
+            throw new ArgumentOutOfRangeException(nameof(start), "The range is not inside the full convolution.");
+        }
+
+        if (destination.IsEmpty)
+        {
+            return;
+        }
 
         // Scale the longer operand by each tap of the shorter and add it in at the tap's offset.
-        ReadOnlySpan<double> taps = u.Length <= v.Length ? u : v;
-        ReadOnlySpan<double> signal = u.Length <= v.Length ? v : u;
+        bool uTaps = u.Length <= v.Length;
+        int tapCount = uTaps ? u.Length : v.Length;
+        int signalLength = uTaps ? v.Length : u.Length;
+        int length = destination.Length;
+        int blocks = (length + BlockElements - 1) / BlockElements;
+        bool parallel = blocks > 1 && (long)tapCount * length >= ParallelWork;
 
+        fixed (double* pu = u)
+        fixed (double* pv = v)
+        fixed (double* pd = destination)
+        {
+            nint taps = (nint)(uTaps ? pu : pv);
+            nint signal = (nint)(uTaps ? pv : pu);
+            nint into = (nint)pd;
+            ParallelKernels.ForBlocks(blocks, parallel, b =>
+            {
+                int from = b * BlockElements;
+                int count = Math.Min(BlockElements, length - from);
+                Block(
+                    new ReadOnlySpan<double>((double*)taps, tapCount),
+                    new ReadOnlySpan<double>((double*)signal, signalLength),
+                    start + from,
+                    new Span<double>((double*)into + from, count));
+            });
+        }
+    }
+
+    /// <summary>
+    /// One block of outputs, <c>[first, first + block.Length)</c> of the full convolution: cleared,
+    /// then every tap's scaled stretch of the signal added in, tap by tap, as the whole-answer loop
+    /// added them. Optimised at its first call: a conv row is one call, and tier-0 code made its
+    /// first passes ten times its steady one (the I8 measurement, 30 ms against 1 ms).
+    /// </summary>
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveOptimization)]
+    private static void Block(ReadOnlySpan<double> taps, ReadOnlySpan<double> signal, int first, Span<double> block)
+    {
+        block.Clear();
+        int last = first + block.Length; // one past the block
         for (int t = 0; t < taps.Length; t++)
         {
             double tap = taps[t];
@@ -65,17 +140,24 @@ public static class Convolution
                 continue;
             }
 
-            Span<double> into = result.AsSpan(t, signal.Length);
-            if (tap == 1)
+            // This tap reaches outputs t .. t + signal.Length - 1; the block holds first .. last - 1.
+            int lo = Math.Max(first, t);
+            int hi = Math.Min(last, t + signal.Length);
+            if (lo >= hi)
             {
-                TensorPrimitives.Add<double>(into, signal, into);
                 continue;
             }
 
-            TensorPrimitives.MultiplyAdd<double>(signal, tap, into, into);
-        }
+            Span<double> into = block.Slice(lo - first, hi - lo);
+            ReadOnlySpan<double> scaled = signal.Slice(lo - t, hi - lo);
+            if (tap == 1)
+            {
+                TensorPrimitives.Add<double>(into, scaled, into);
+                continue;
+            }
 
-        return result;
+            TensorPrimitives.MultiplyAdd<double>(scaled, tap, into, into);
+        }
     }
 
     /// <summary>
@@ -246,7 +328,11 @@ public static class Convolution
     /// <summary>
     /// Where a cut shape starts in the full convolution, and how long it is, along one dimension.
     /// </summary>
-    private static (int Offset, int Length) Window(int na, int nb, ConvolutionShape shape) =>
+    /// <param name="na">The first operand's length along the dimension.</param>
+    /// <param name="nb">The second operand's.</param>
+    /// <param name="shape"><see cref="ConvolutionShape.Same"/> or <see cref="ConvolutionShape.Valid"/>.</param>
+    /// <returns>The offset into the full convolution and the length kept (negative or zero: nothing).</returns>
+    public static (int Offset, int Length) Window(int na, int nb, ConvolutionShape shape) =>
         shape == ConvolutionShape.Same
             ? (nb / 2, na)
             : (Math.Max(nb - 1, 0), Math.Max(na - Math.Max(nb - 1, 0), 0));

@@ -354,6 +354,176 @@ public static class Interpolation
         return s;
     }
 
+    /// <summary>
+    /// <see cref="SplineSlopes(double[], double[])"/> for many lines of samples over one axis — the
+    /// rows and columns of a grid a spline surface is read from (the every-row plan's I8).
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The not-a-knot system's matrix depends on the knots alone, so its forward elimination — the
+    /// factor at each row and the eliminated diagonal — is the same for every line over the axis.
+    /// The plan takes it once; each line then pays only its right-hand side, the sweep down and the
+    /// substitution back, in the same operations in the same order as the one-line solve, so the
+    /// slopes are that solve's to the bit. Where the per-line solve allocated seven arrays a line, a
+    /// plan solves into the answer in place.
+    /// </para>
+    /// <para>
+    /// Lines are laid out as a grid stores them: element <c>k</c> of line <c>j</c> at
+    /// <c>start + j + k·stride</c>. Neighbouring lines are neighbours in memory when the axis is not
+    /// the grid's first, so a block of them moves through the solve together, a run of contiguous
+    /// elements at each step.
+    /// </para>
+    /// </remarks>
+    public sealed class SplineLinePlan
+    {
+        private readonly double[] _h;
+        private readonly double[] _factor;
+        private readonly double[] _middle;
+        private readonly double[] _upper;
+        private readonly double _firstA;
+        private readonly double _firstB;
+        private readonly double _firstD;
+        private readonly double _lastA;
+        private readonly double _lastB;
+        private readonly double _lastD;
+
+        private SplineLinePlan(double[] x)
+        {
+            int n = x.Length;
+            double[] h = Widths(x);
+            var lower = new double[n];
+            var middle = new double[n];
+            var upper = new double[n];
+
+            middle[0] = h[1];
+            upper[0] = h[0] + h[1];
+            _firstA = (h[0] + (2 * (h[0] + h[1]))) * h[1];
+            _firstB = h[0] * h[0];
+            _firstD = h[0] + h[1];
+
+            for (int i = 1; i < n - 1; i++)
+            {
+                lower[i] = h[i];
+                middle[i] = 2 * (h[i - 1] + h[i]);
+                upper[i] = h[i - 1];
+            }
+
+            lower[n - 1] = h[n - 2] + h[n - 3];
+            middle[n - 1] = h[n - 3];
+            _lastA = h[n - 2] * h[n - 2];
+            _lastB = ((2 * (h[n - 3] + h[n - 2])) + h[n - 2]) * h[n - 3];
+            _lastD = h[n - 3] + h[n - 2];
+
+            var factor = new double[n];
+            for (int i = 1; i < n; i++)
+            {
+                factor[i] = lower[i] / middle[i - 1];
+                middle[i] -= factor[i] * upper[i - 1];
+            }
+
+            _h = h;
+            _factor = factor;
+            _middle = middle;
+            _upper = upper;
+            Length = n;
+        }
+
+        /// <summary>How many knots the axis has.</summary>
+        public int Length { get; }
+
+        /// <summary>The plan for an axis of four knots or more; null for a shorter one, whose
+        /// end conditions are special cases <see cref="SplineSlopes(double[], double[])"/> keeps.</summary>
+        /// <param name="x">The knots, increasing.</param>
+        public static SplineLinePlan? For(double[] x)
+        {
+            ArgumentNullException.ThrowIfNull(x);
+            return x.Length < 4 ? null : new SplineLinePlan(x);
+        }
+
+        /// <summary>
+        /// The slopes of <paramref name="count"/> lines: line <c>j</c>'s sample <c>k</c> is
+        /// <c>source[start + j + k·stride]</c> and its slope there goes to the same place in
+        /// <paramref name="answer"/>, which must not overlap <paramref name="source"/>.
+        /// </summary>
+        public void Solve(ReadOnlySpan<double> source, Span<double> answer, int start, int stride, int count)
+        {
+            int n = Length;
+            double[] h = _h;
+            double[] f = _factor;
+
+            // The right-hand side and the sweep down, one knot at a time across the block.
+            {
+                ReadOnlySpan<double> y0 = source.Slice(start, count);
+                ReadOnlySpan<double> y1 = source.Slice(start + stride, count);
+                ReadOnlySpan<double> y2 = source.Slice(start + (2 * stride), count);
+                Span<double> r = answer.Slice(start, count);
+                for (int j = 0; j < count; j++)
+                {
+                    double s0 = (y1[j] - y0[j]) / h[0];
+                    double s1 = (y2[j] - y1[j]) / h[1];
+                    r[j] = ((_firstA * s0) + (_firstB * s1)) / _firstD;
+                }
+            }
+
+            for (int k = 1; k < n - 1; k++)
+            {
+                int at = start + (k * stride);
+                ReadOnlySpan<double> before = source.Slice(at - stride, count);
+                ReadOnlySpan<double> here = source.Slice(at, count);
+                ReadOnlySpan<double> after = source.Slice(at + stride, count);
+                ReadOnlySpan<double> previous = answer.Slice(at - stride, count);
+                Span<double> r = answer.Slice(at, count);
+                double hk = h[k];
+                double hb = h[k - 1];
+                double fk = f[k];
+                for (int j = 0; j < count; j++)
+                {
+                    double sBefore = (here[j] - before[j]) / hb;
+                    double sAfter = (after[j] - here[j]) / hk;
+                    double rhs = 3 * ((hk * sBefore) + (hb * sAfter));
+                    r[j] = rhs - (fk * previous[j]);
+                }
+            }
+
+            {
+                int at = start + ((n - 1) * stride);
+                ReadOnlySpan<double> y3 = source.Slice(at - (2 * stride), count);
+                ReadOnlySpan<double> y2 = source.Slice(at - stride, count);
+                ReadOnlySpan<double> y1 = source.Slice(at, count);
+                ReadOnlySpan<double> previous = answer.Slice(at - stride, count);
+                Span<double> r = answer.Slice(at, count);
+                double fl = f[n - 1];
+                for (int j = 0; j < count; j++)
+                {
+                    double sFar = (y2[j] - y3[j]) / h[n - 3];
+                    double sNear = (y1[j] - y2[j]) / h[n - 2];
+                    double rhs = ((_lastA * sFar) + (_lastB * sNear)) / _lastD;
+                    r[j] = rhs - (fl * previous[j]);
+                }
+
+                // The substitution back, in place: each slope is final before the one below reads it.
+                double ml = _middle[n - 1];
+                for (int j = 0; j < count; j++)
+                {
+                    r[j] /= ml;
+                }
+            }
+
+            for (int k = n - 2; k >= 0; k--)
+            {
+                int at = start + (k * stride);
+                Span<double> r = answer.Slice(at, count);
+                ReadOnlySpan<double> next = answer.Slice(at + stride, count);
+                double uk = _upper[k];
+                double mk = _middle[k];
+                for (int j = 0; j < count; j++)
+                {
+                    r[j] = (r[j] - (uk * next[j])) / mk;
+                }
+            }
+        }
+    }
+
     /// <summary>The Thomas algorithm: forward elimination then back substitution, in place.</summary>
     private static double[] SolveTridiagonal(double[] lower, double[] middle, double[] upper, double[] rhs)
     {
