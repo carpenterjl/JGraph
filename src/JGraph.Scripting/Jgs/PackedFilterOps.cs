@@ -6,8 +6,9 @@ namespace JGraph.Scripting.Jgs;
 /// The packed fast path under <c>filter(b, a, x)</c> for the half of the family that has no
 /// feedback: when the denominator names nothing past <c>a(1)</c>, every output is its own sum of
 /// taps and the answer comes from <see cref="FilterKernels"/> reading the storage where it lies.
-/// A real denominator is a recurrence, one long dependency chain, and goes back to the boxed road
-/// untouched — along with every other shape, class and error message.
+/// A real denominator is a recurrence, one long dependency chain per slice; since ADR 0334 it is
+/// walked here too, by <see cref="FilterKernels.RecurrenceAlong"/>, in the boxed loop's operation
+/// order. Every other shape, class and error message keeps the boxed road.
 /// </summary>
 /// <remarks>
 /// The boxed road copied the signal out flat, cut it into one array per slice, filtered each
@@ -17,6 +18,13 @@ namespace JGraph.Scripting.Jgs;
 /// </remarks>
 internal static class PackedFilterOps
 {
+    /// <summary>
+    /// Whether a denominator with feedback takes the packed recurrence too (<c>JGRAPH_IIR_FAST</c>,
+    /// on unless it is <c>0</c>; ADR 0334). Off, it keeps the boxed road, which is the
+    /// measurement's off condition.
+    /// </summary>
+    internal static bool RecurrenceEnabled { get; set; } = Environment.GetEnvironmentVariable("JGRAPH_IIR_FAST") != "0";
+
     /// <summary>
     /// The filtered signal, and — when <paramref name="wanted"/> asks — the delay line each slice
     /// finishes on, together with the shapes the boxed assembly would have given them. False leaves
@@ -57,11 +65,28 @@ internal static class PackedFilterOps
         initial?.CopyTo(carried, 0);
 
         NumericBuffer source = signal.AsBuffer;
-        NumericBuffer answer = JgsPacking.Allocate(signal.ArrayLength);
+        NumericBuffer answer = JgsPacking.AllocateForOverwrite(signal.ArrayLength);
         NumericBuffer? finals = wanted >= 2
             ? JgsPacking.Allocate((long)split.Inner * delays * split.Outer)
             : null;
-        FilterKernels.FeedForwardAlong(source, answer, finals, split, taps, carried);
+        if (FilterKernels.IsFeedForward(denominator))
+        {
+            FilterKernels.FeedForwardAlong(source, answer, finals, split, taps, carried);
+        }
+        else
+        {
+            // A real denominator: the recurrence, a chain per slice, reading and writing the
+            // packed storage where it lies (ADR 0334). The feedback coefficients are normalised
+            // and padded exactly as DigitalFilter.Filter does it.
+            var feedback = new double[order];
+            for (int i = 0; i < denominator.Length; i++)
+            {
+                feedback[i] = denominator[i] / a0;
+            }
+
+            FilterKernels.RecurrenceAlong(source, answer, finals, split, taps, feedback, carried);
+        }
+
         GC.KeepAlive(signal);
 
         results = finals is null
@@ -85,7 +110,7 @@ internal static class PackedFilterOps
         && numerator.Length > 0
         && denominator.Length > 0
         && denominator[0] != 0
-        && FilterKernels.IsFeedForward(denominator)
+        && (RecurrenceEnabled || FilterKernels.IsFeedForward(denominator))
         && signal.Type == JgsType.Array
         && signal.IsPacked
         && signal.PackedKind == JgsPackedKind.Number

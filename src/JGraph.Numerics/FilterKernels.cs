@@ -227,6 +227,224 @@ public static class FilterKernels
         GC.KeepAlive(finals);
     }
 
+    /// <summary>
+    /// The feedback half: the transposed direct-form II recurrence over one line, with the delay
+    /// line carried in <paramref name="delays"/> and left there. <paramref name="b"/> and
+    /// <paramref name="a"/> are already divided by <c>a(1)</c> and padded with zeros to the filter's
+    /// order (<c>delays.Length + 1</c>); zero coefficients are multiplied like any other, so a
+    /// non-finite sample travels exactly as it did through <c>DigitalFilter.Filter</c>'s loop.
+    /// </summary>
+    /// <remarks>
+    /// A recurrence is one dependency chain and cannot be threaded or vectorised along the line;
+    /// what it can lose is everything around the chain. Delay lines up to four long live in locals
+    /// (registers), and every line keeps the general loop's expression to the operation:
+    /// <c>output = b0·x + d0</c>, then <c>d_j = ((b_{j+1}·x) + d_{j+1}) − (a_{j+1}·output)</c> in
+    /// ascending <c>j</c>, the last delay adding a literal zero where the loop added its missing
+    /// neighbour (which turns a −0 into +0, as the loop did). Same operations, same order, same bits
+    /// (ADR 0334).
+    /// </remarks>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    public static void Recurrence(
+        ReadOnlySpan<double> b, ReadOnlySpan<double> a, ReadOnlySpan<double> x, Span<double> y,
+        Span<double> delays)
+    {
+        int stateLength = delays.Length;
+        int n = x.Length;
+        if (b.Length != stateLength + 1 || a.Length != stateLength + 1 || y.Length < n)
+        {
+            throw new ArgumentException("the coefficients must be padded to the delay line's length plus one.");
+        }
+
+        if (n == 0)
+        {
+            return;
+        }
+
+        ref double xs = ref MemoryMarshal.GetReference(x);
+        ref double ys = ref MemoryMarshal.GetReference(y);
+        double b0 = b[0];
+        switch (stateLength)
+        {
+            case 1:
+            {
+                double b1 = b[1], a1 = a[1];
+                double d0 = delays[0];
+                for (int i = 0; i < n; i++)
+                {
+                    double input = Unsafe.Add(ref xs, i);
+                    double output = (b0 * input) + d0;
+                    d0 = (b1 * input) + 0.0 - (a1 * output);
+                    Unsafe.Add(ref ys, i) = output;
+                }
+
+                delays[0] = d0;
+                return;
+            }
+
+            case 2:
+            {
+                double b1 = b[1], b2 = b[2], a1 = a[1], a2 = a[2];
+                double d0 = delays[0], d1 = delays[1];
+                for (int i = 0; i < n; i++)
+                {
+                    double input = Unsafe.Add(ref xs, i);
+                    double output = (b0 * input) + d0;
+                    d0 = (b1 * input) + d1 - (a1 * output);
+                    d1 = (b2 * input) + 0.0 - (a2 * output);
+                    Unsafe.Add(ref ys, i) = output;
+                }
+
+                delays[0] = d0;
+                delays[1] = d1;
+                return;
+            }
+
+            case 3:
+            {
+                double b1 = b[1], b2 = b[2], b3 = b[3], a1 = a[1], a2 = a[2], a3 = a[3];
+                double d0 = delays[0], d1 = delays[1], d2 = delays[2];
+                for (int i = 0; i < n; i++)
+                {
+                    double input = Unsafe.Add(ref xs, i);
+                    double output = (b0 * input) + d0;
+                    d0 = (b1 * input) + d1 - (a1 * output);
+                    d1 = (b2 * input) + d2 - (a2 * output);
+                    d2 = (b3 * input) + 0.0 - (a3 * output);
+                    Unsafe.Add(ref ys, i) = output;
+                }
+
+                delays[0] = d0;
+                delays[1] = d1;
+                delays[2] = d2;
+                return;
+            }
+
+            case 4:
+            {
+                double b1 = b[1], b2 = b[2], b3 = b[3], b4 = b[4];
+                double a1 = a[1], a2 = a[2], a3 = a[3], a4 = a[4];
+                double d0 = delays[0], d1 = delays[1], d2 = delays[2], d3 = delays[3];
+                for (int i = 0; i < n; i++)
+                {
+                    double input = Unsafe.Add(ref xs, i);
+                    double output = (b0 * input) + d0;
+                    d0 = (b1 * input) + d1 - (a1 * output);
+                    d1 = (b2 * input) + d2 - (a2 * output);
+                    d2 = (b3 * input) + d3 - (a3 * output);
+                    d3 = (b4 * input) + 0.0 - (a4 * output);
+                    Unsafe.Add(ref ys, i) = output;
+                }
+
+                delays[0] = d0;
+                delays[1] = d1;
+                delays[2] = d2;
+                delays[3] = d3;
+                return;
+            }
+
+            default:
+            {
+                for (int i = 0; i < n; i++)
+                {
+                    double input = Unsafe.Add(ref xs, i);
+                    double output = (b0 * input) + delays[0];
+                    for (int j = 0; j < stateLength; j++)
+                    {
+                        double next = j + 1 < stateLength ? delays[j + 1] : 0;
+                        delays[j] = (b[j + 1] * input) + next - (a[j + 1] * output);
+                    }
+
+                    Unsafe.Add(ref ys, i) = output;
+                }
+
+                return;
+            }
+        }
+    }
+
+    /// <summary>
+    /// <see cref="Recurrence"/> once per slice along a dimension of packed column-major storage:
+    /// a contiguous slice where it lies, a strided one gathered and scattered, and the slices spread
+    /// over threads (each slice's chain belongs to one thread, so the answer does not depend on how
+    /// many there are). <paramref name="finals"/>, when asked for, takes the delay line each slice
+    /// finishes on, laid out like <see cref="FeedForwardAlong"/>'s.
+    /// </summary>
+    public static void RecurrenceAlong(
+        NumericBuffer src, NumericBuffer dst, NumericBuffer? finals,
+        ReduceKernels.Split split, double[] b, double[] a, double[] initial)
+    {
+        int slices = split.Slices;
+        int inner = split.Inner;
+        int n = split.Count;
+        int delays = b.Length - 1;
+        if (slices <= 0 || n <= 0 || delays < 1)
+        {
+            return;
+        }
+
+        ParallelKernels.ForBlocks(slices, slices > 1, s =>
+        {
+            int at = ((s / inner) * inner * n) + (s % inner);
+            double[] line = System.Buffers.ArrayPool<double>.Shared.Rent(delays);
+            double[]? gathered = inner == 1 ? null : System.Buffers.ArrayPool<double>.Shared.Rent(n);
+            double[]? filtered = inner == 1 ? null : System.Buffers.ArrayPool<double>.Shared.Rent(n);
+            try
+            {
+                Span<double> state = line.AsSpan(0, delays);
+                state.Clear();
+                initial.AsSpan(0, Math.Min(initial.Length, delays)).CopyTo(state);
+                if (inner == 1)
+                {
+                    Recurrence(b, a, src.AsSpan(at, n), dst.AsSpan(at, n), state);
+                }
+                else
+                {
+                    Span<double> from = src.AsSpan();
+                    Span<double> into = gathered.AsSpan(0, n);
+                    for (int j = 0; j < n; j++)
+                    {
+                        into[j] = from[at + (j * inner)];
+                    }
+
+                    Span<double> answer = filtered.AsSpan(0, n);
+                    Recurrence(b, a, into, answer, state);
+                    Span<double> to = dst.AsSpan();
+                    for (int j = 0; j < n; j++)
+                    {
+                        to[at + (j * inner)] = answer[j];
+                    }
+                }
+
+                if (finals is not null)
+                {
+                    int place = ((s / inner) * inner * delays) + (s % inner);
+                    Span<double> tail = finals.AsSpan();
+                    for (int j = 0; j < delays; j++)
+                    {
+                        tail[place + (j * inner)] = state[j];
+                    }
+                }
+            }
+            finally
+            {
+                System.Buffers.ArrayPool<double>.Shared.Return(line);
+                if (gathered is not null)
+                {
+                    System.Buffers.ArrayPool<double>.Shared.Return(gathered);
+                }
+
+                if (filtered is not null)
+                {
+                    System.Buffers.ArrayPool<double>.Shared.Return(filtered);
+                }
+            }
+        });
+
+        GC.KeepAlive(src);
+        GC.KeepAlive(dst);
+        GC.KeepAlive(finals);
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static double One(ReadOnlySpan<double> taps, ReadOnlySpan<double> x, int i, int order)
     {

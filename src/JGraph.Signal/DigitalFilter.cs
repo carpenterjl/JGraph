@@ -88,18 +88,12 @@ public static class DigitalFilter
                 return y;
             }
 
-            for (int i = 0; i < x.Length; i++)
-            {
-                double input = x[i];
-                double output = (bn[0] * input) + (stateLength > 0 ? delays[0] : 0);
-                for (int j = 0; j < stateLength; j++)
-                {
-                    double next = j + 1 < stateLength ? delays[j + 1] : 0;
-                    delays[j] = (bn[j + 1] * input) + next - (an[j + 1] * output);
-                }
-
-                y[i] = output;
-            }
+            // The recurrence itself: output = b0·x + d0, then each delay from its neighbour, in
+            // the order this loop always used; FilterKernels.Recurrence keeps short delay lines in
+            // registers with the same operations (ADR 0334). A denominator with feedback has at
+            // least one delay, so the line is never empty here.
+            JGraph.Numerics.FilterKernels.Recurrence(
+                bn.AsSpan(0, order), an.AsSpan(0, order), x, y, delays.AsSpan(0, stateLength));
 
             // What the filter would resume from, handed back for a caller that means to.
             for (int i = 0; i < stateLength && i < state.Length; i++)

@@ -211,6 +211,30 @@ internal static partial class JgsBuiltins
         int[] dims = TransformDims(value);
         int count = sizes?.Count ?? System.Math.Max(dims.Length, 2);
 
+        // A real packed matrix at a size the tile kernel walks: two columns per complex transform,
+        // the lower half of the rows along the second dimension, the rest mirrored. The answer is
+        // exactly conjugate-symmetric by construction, so the forcing pass below is not needed
+        // (ADR 0334).
+        if (!inverse && !symmetric && dims.Length == 2
+            && (sizes is null || (sizes.Count == 2 && sizes[0] == dims[0] && sizes[1] == dims[1]))
+            && JgsPacking.Enabled
+            && value.Type == JgsType.Array
+            && value.IsPacked
+            && value.PackedKind == JgsPackedKind.Number
+            && value.NumericClass == JgsNumericClass.Double
+            && value.ArrayLength == (long)dims[0] * dims[1]
+            && JGraph.Numerics.FftKernels.FitsReal2(dims[0], dims[1]))
+        {
+            long total = value.ArrayLength;
+            JGraph.Numerics.NumericBuffer re = JgsPacking.AllocateForOverwrite(total);
+            JGraph.Numerics.NumericBuffer im = JgsPacking.AllocateForOverwrite(total);
+            JGraph.Numerics.FftKernels.RealForward2(value.AsBuffer, re, im, dims[0], dims[1]);
+            GC.KeepAlive(value);
+            JgsValue spectrum = JgsValue.PackedComplexArray(new JgsPackedComplex(re, im));
+            Shape(spectrum, dims);
+            return spectrum;
+        }
+
         JgsValue running = value;
         for (int d = 1; d <= count; d++)
         {

@@ -35,7 +35,7 @@ namespace JGraph.Numerics;
 /// the mixed-radix passes of <see cref="MixedRadixFft"/> (ADR 0154); Bluestein keeps the rest.
 /// </para>
 /// </remarks>
-public static class FftKernels
+public static partial class FftKernels
 {
     /// <summary>
     /// How many signals one tile carries side by side. Eight doubles is two AVX2 registers or one
@@ -851,7 +851,7 @@ public static class FftKernels
         if (IsFactored(n) && separate)
         {
             Factored(srcRe, srcIm, srcAt, dstRe, dstIm, dstAt, n, inverse, inside);
-            Scale(dstRe, dstIm, dstAt, n, inverse);
+            Scale(dstRe, dstIm, dstAt, n, inverse, inside);
             return;
         }
 
@@ -901,7 +901,7 @@ public static class FftKernels
             }
         }
 
-        Scale(dstRe, dstIm, dstAt, n, inverse);
+        Scale(dstRe, dstIm, dstAt, n, inverse, inside);
         GC.KeepAlive(srcRe);
         GC.KeepAlive(srcIm);
         GC.KeepAlive(dstRe);
@@ -972,11 +972,7 @@ public static class FftKernels
 
         if (inverse)
         {
-            for (int i = 0; i < n; i++)
-            {
-                re[i] /= n;
-                im[i] /= n;
-            }
+            ScaleDown(re, im, n, inside);
         }
     }
 
@@ -1402,19 +1398,42 @@ public static class FftKernels
         });
     }
 
-    private static void Scale(NumericBuffer re, NumericBuffer im, int at, int n, bool inverse)
+    private static void Scale(NumericBuffer re, NumericBuffer im, int at, int n, bool inverse, bool inside)
     {
         if (!inverse || n <= 1)
         {
             return;
         }
 
-        Span<double> r = re.AsSpan(at, n);
-        Span<double> i = im.AsSpan(at, n);
-        for (int k = 0; k < n; k++)
+        ScaleDown(re.AsSpan(at, n), im.AsSpan(at, n), n, inside);
+    }
+
+    /// <summary>
+    /// The inverse's 1/n: every element of both planes divided by <paramref name="n"/>. Division is
+    /// correctly rounded lane by lane, so the vector form and any split over threads give the bits
+    /// the scalar loop gave (ADR 0334); a long inverse with the machine to itself threads it.
+    /// </summary>
+    private static unsafe void ScaleDown(Span<double> re, Span<double> im, int n, bool inside)
+    {
+        double by = n;
+        if (!inside || n < ParallelKernels.ComputeBoundThreshold)
         {
-            r[k] /= n;
-            i[k] /= n;
+            System.Numerics.Tensors.TensorPrimitives.Divide(re[..n], by, re[..n]);
+            System.Numerics.Tensors.TensorPrimitives.Divide(im[..n], by, im[..n]);
+            return;
+        }
+
+        fixed (double* r = re, m = im)
+        {
+            double* rp = r;
+            double* mp = m;
+            ParallelKernels.For(n, ParallelKernels.ComputeBoundThreshold, null, (start, length) =>
+            {
+                var rs = new Span<double>(rp + start, length);
+                var ms = new Span<double>(mp + start, length);
+                System.Numerics.Tensors.TensorPrimitives.Divide(rs, by, rs);
+                System.Numerics.Tensors.TensorPrimitives.Divide(ms, by, ms);
+            });
         }
     }
 }
