@@ -211,6 +211,11 @@ internal static partial class JgsBuiltins
             return [unitSlope];
         }
 
+        if (args.Count == 1 && wanted <= 2 && JgsVectorRoads.TryGradientField(args[0], wanted, out JgsValue[] unitFields))
+        {
+            return unitFields;
+        }
+
         int[] dims = SizeDims(args[0]);
         ArityRange("gradient", args, 1, System.Math.Max(3, dims.Length + 1), line, col);
         if (dims.Length > 2)

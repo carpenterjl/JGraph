@@ -55,6 +55,7 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
     private double _colorMax = 1;
 
     private Point2D[] _pixelBuffer = new Point2D[16];
+    private uint[] _colorBuffer = new uint[16];
 
     public ScatterPlot(IDataSeries data)
         : base(data)
@@ -464,6 +465,16 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
         bool logColor = this.LogColorScale();
         AlphaLookup alpha = this.ResolveAlpha(AlphaBounds());
         Span<Point2D> one = stackalloc Point2D[1];
+
+        // Points in one colour each (a fill with an edge of the same colour or with no edge at all,
+        // or an edge alone) are gathered into runs of one size and handed over together, in order
+        // (ADR 0331): a context that paints pixels can then draw the run without a call per marker.
+        // Anything else is drawn on its own, after the run before it, so the order on the page is
+        // the order of the data.
+        int held = 0;
+        bool heldFilled = false;
+        double heldDiameter = 0;
+        Color? heldNoEdge = null;
         for (int i = 0; i < drawn.Count; i++)
         {
             double x = drawn.GetX(i);
@@ -488,9 +499,61 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
                 edge = edge.WithOpacity(opacity);
             }
 
-            one[0] = mapper.DataToPixel(x, y);
-            context.DrawMarkers(one, new MarkerStyle(_marker, DiameterAt(i), fill, edge, _edgeWidth), edge);
+            double diameter = DiameterAt(i);
+            Color? noEdge = fill is not null && edge.A == 0 ? edge : null;
+            if (fill is { } inside && noEdge is null && !inside.Equals(edge))
+            {
+                FlushCloud(context, ref held, heldFilled, heldDiameter, heldNoEdge);
+                one[0] = mapper.DataToPixel(x, y);
+                context.DrawMarkers(one, new MarkerStyle(_marker, diameter, fill, edge, _edgeWidth), edge);
+                continue;
+            }
+
+            bool filled = fill is not null;
+            if (held > 0 && (filled != heldFilled || diameter != heldDiameter || !Nullable.Equals(noEdge, heldNoEdge)))
+            {
+                FlushCloud(context, ref held, heldFilled, heldDiameter, heldNoEdge);
+            }
+
+            if (held == _pixelBuffer.Length)
+            {
+                Array.Resize(ref _pixelBuffer, held * 2);
+            }
+
+            if (held == _colorBuffer.Length)
+            {
+                Array.Resize(ref _colorBuffer, held * 2);
+            }
+
+            heldFilled = filled;
+            heldDiameter = diameter;
+            heldNoEdge = noEdge;
+            _pixelBuffer[held] = mapper.DataToPixel(x, y);
+            _colorBuffer[held] = (noEdge is null ? edge : fill!.Value).ToArgb();
+            held++;
         }
+
+        FlushCloud(context, ref held, heldFilled, heldDiameter, heldNoEdge);
+    }
+
+    /// <summary>
+    /// Draws the run of same-sized, own-coloured markers gathered so far, and empties it.
+    /// <paramref name="noEdge"/> is the transparent edge colour of a run whose markers have no
+    /// outline, and null for a run whose outline is the marker's own colour.
+    /// </summary>
+    private void FlushCloud(IRenderContext context, ref int held, bool filled, double diameter, Color? noEdge)
+    {
+        if (held == 0)
+        {
+            return;
+        }
+
+        JGraph.Core.Drawing.Color? fill = filled ? JGraph.Core.Drawing.Color.FromRgb(0, 0, 0) : null;
+        context.DrawMarkerCloud(
+            _pixelBuffer.AsSpan(0, held),
+            _colorBuffer.AsSpan(0, held),
+            new MarkerStyle(_marker, diameter, fill, noEdge ?? JGraph.Core.Drawing.Color.FromRgb(0, 0, 0), _edgeWidth));
+        held = 0;
     }
 
     /// <summary>

@@ -155,7 +155,7 @@ internal sealed partial class Interpreter
         private static readonly MethodInfo IsCancellationRequested =
             typeof(CancellationToken).GetProperty(nameof(CancellationToken.IsCancellationRequested))!.GetGetMethod()!;
 
-        private static readonly MethodInfo Pow = typeof(Math).GetMethod(nameof(Math.Pow), [typeof(double), typeof(double)])!;
+        private static readonly MethodInfo Pow = typeof(JGraph.Numerics.PackedMath).GetMethod(nameof(JGraph.Numerics.PackedMath.Power), [typeof(double), typeof(double)])!;
         private static readonly MethodInfo Min = typeof(Math).GetMethod(nameof(Math.Min), [typeof(double), typeof(double)])!;
         private static readonly MethodInfo Max = typeof(Math).GetMethod(nameof(Math.Max), [typeof(double), typeof(double)])!;
         private static readonly MethodInfo Atan2 = typeof(Math).GetMethod(nameof(Math.Atan2), [typeof(double), typeof(double)])!;

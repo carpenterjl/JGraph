@@ -491,7 +491,7 @@ internal sealed partial class Interpreter
                         double b = TAccess.At(regs, op.B);
                         if (JgsBuiltins.PowerStaysReal(a, b))
                         {
-                            TAccess.At(regs, op.Dest) = Math.Pow(a, b);
+                            TAccess.At(regs, op.Dest) = PackedMath.Power(a, b);
                             ip++;
                             break;
                         }

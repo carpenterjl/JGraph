@@ -715,11 +715,49 @@ internal static partial class JgsGraphicsProperties
     {
         if (value.Type != JgsType.Array) return value;
         var stored = value.IsPacked
-            ? JgsValue.Packed(JGraph.Numerics.ManagedBuffer.Adopt(value.AsBuffer.AsSpan().ToArray()), value.PackedKind)
+            ? JgsValue.Packed(JGraph.Numerics.ManagedBuffer.Adopt(PackedCopy(value)), value.PackedKind)
             : JgsMatrix.FromElements(Enumerable.Range(0, value.ArrayLength).Select(value.ElementAt).ToArray(), 1, value.ArrayLength);
         stored.ReshapeDims(JgsMatrix.DimsOf(value));
         stored.SetNumericClass(value.NumericClass);
         return stored;
+    }
+
+    /// <summary>
+    /// A packed array's numbers as a managed array of its own, copied grain by grain across
+    /// threads into storage nobody zeroed first (the every-row plan's I10, ADR 0331).
+    /// </summary>
+    private static double[] PackedCopy(JgsValue value)
+    {
+        JGraph.Numerics.NumericBuffer source = value.AsBuffer;
+        double[] copy = GC.AllocateUninitializedArray<double>(source.Length);
+        JGraph.Numerics.PackedMath.Copy(source, JGraph.Numerics.ManagedBuffer.Adopt(copy));
+        GC.KeepAlive(value);
+        return copy;
+    }
+
+    /// <summary>
+    /// A packed real matrix as the row-major grid a picture holds, laid out in one tiled, threaded
+    /// pass from where the numbers lie (the every-row plan's I10, ADR 0331); null for anything else.
+    /// </summary>
+    private static double[,]? PackedGrid(JgsValue value, int rows, int cols)
+    {
+        if (value.Type != JgsType.Array || !value.IsPacked || value.IsPackedComplex || rows < 1 || cols < 1)
+        {
+            return null;
+        }
+
+        JGraph.Numerics.NumericBuffer source = value.AsBuffer;
+        if ((long)rows * cols != source.Length)
+        {
+            return null;
+        }
+
+        var grid = new double[rows, cols];
+        JGraph.Numerics.MatrixLayout.Transpose(
+            source.AsSpan(), rows, cols,
+            System.Runtime.InteropServices.MemoryMarshal.CreateSpan(ref grid[0, 0], source.Length));
+        GC.KeepAlive(value);
+        return grid;
     }
 
     internal static void SetImageCData(JgsHandleEntry entry, JgsValue value, int line, int col)
@@ -733,11 +771,12 @@ internal static partial class JgsGraphicsProperties
         if (dims.Length > 3 || dims.Length == 3 && dims[2] != 3)
             throw new JgsRuntimeException(line, col, "CData must be an M-by-N or M-by-N-by-3 numeric array.");
         int rows = dims[0], cols = dims[1];
-        double[] flat = JgsBuiltins.ToDoubles("CData", value, line, col);
-        var grid = new double[rows, cols];
+        double[,]? laidOut = dims.Length == 2 ? PackedGrid(value, rows, cols) : null;
+        double[] flat = laidOut is null ? JgsBuiltins.ToDoubles("CData", value, line, col) : [];
+        double[,] grid = laidOut ?? new double[rows, cols];
         Color[,]? colors = dims.Length == 3 ? new Color[rows, cols] : null;
         double scale = value.NumericClass == JgsNumericClass.UInt8 ? 255 : value.NumericClass == JgsNumericClass.UInt16 ? 65535 : 1;
-        for (int c = 0; c < cols; c++)
+        for (int c = 0; laidOut is null && c < cols; c++)
             for (int r = 0; r < rows; r++)
             {
                 int k = r + c * rows;

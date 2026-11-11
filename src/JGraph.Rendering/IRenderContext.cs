@@ -42,6 +42,31 @@ public interface IRenderContext
     void DrawMarkers(ReadOnlySpan<Point2D> points, MarkerStyle style, Color seriesColor);
 
     /// <summary>
+    /// Draws a marker glyph centered at each point, each in a colour of its own (ARGB, one per
+    /// point), in the order given. A marker is drawn as <see cref="DrawMarkers"/> draws one whose
+    /// edge, and whose fill when <paramref name="style"/> has one, is that point's colour; the
+    /// colours <paramref name="style"/> itself carries only say whether there is a fill and
+    /// whether there is an outline: an edge colour that is fully transparent means the markers
+    /// have none, and every marker is then drawn with that transparent edge. That is what this
+    /// default does, one call a point. A context that paints pixels may draw the whole cloud
+    /// another way as long as the picture is that one (the every-row plan's I10, ADR 0331).
+    /// </summary>
+    void DrawMarkerCloud(ReadOnlySpan<Point2D> points, ReadOnlySpan<uint> colorsArgb, MarkerStyle style)
+    {
+        int count = System.Math.Min(points.Length, colorsArgb.Length);
+        for (int i = 0; i < count; i++)
+        {
+            uint argb = colorsArgb[i];
+            Color own = Color.FromArgb((byte)(argb >> 24), (byte)(argb >> 16), (byte)(argb >> 8), (byte)argb);
+            Color edge = style.Edge is { A: 0 } none ? none : own;
+            DrawMarkers(
+                points.Slice(i, 1),
+                new MarkerStyle(style.Type, style.Size, style.Fill is null ? null : own, edge, style.EdgeWidth),
+                edge);
+        }
+    }
+
+    /// <summary>
     /// Draws a triangle soup with per-vertex colors interpolated across each triangle.
     /// <paramref name="vertices"/> is consecutive triples and <paramref name="colorsArgb"/> carries
     /// one 0xAARRGGBB entry per vertex (straight alpha, as in <see cref="DrawImage"/>). Triangles

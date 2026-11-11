@@ -182,7 +182,7 @@ public static class FigureExporter
         {
             using var canvas = new SKCanvas(bitmap);
             canvas.Scale((float)scale);
-            RenderTo(canvas, figure, size, theme, scale);
+            RenderTo(canvas, figure, size, theme, scale, raster: bitmap);
             canvas.Flush();
             return bitmap;
         }
@@ -262,10 +262,11 @@ public static class FigureExporter
         Size2D size,
         ITheme theme,
         double pixelRatio = 1.0,
-        bool supportsMeshes = true)
+        bool supportsMeshes = true,
+        SKBitmap? raster = null)
     {
         using var context = new SkiaRenderContext(
-            canvas, size, pixelRatio, supportsMeshes: supportsMeshes, smoothing: figure.GraphicsSmoothing);
+            canvas, size, pixelRatio, supportsMeshes: supportsMeshes, smoothing: figure.GraphicsSmoothing, raster: raster);
         new FigureRenderer().Render(figure, context, theme);
     }
 }

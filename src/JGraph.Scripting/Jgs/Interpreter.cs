@@ -5834,7 +5834,7 @@ internal sealed partial class Interpreter
             case TokenType.Caret:
                 // The one operator with a domain (M81): a negative base and a fractional exponent
                 // leave the reals, and Math.Pow answers NaN where MATLAB answers a complex number.
-                return NumericBinary(left, right, Math.Pow, "^", at.Line, at.Column, Complex.Pow,
+                return NumericBinary(left, right, PackedMath.Power, "^", at.Line, at.Column, Complex.Pow,
                     JgsBuiltins.PowerStaysReal);
             case TokenType.Less:
                 return Compare(left, right, op, at, (a, b) => a < b);

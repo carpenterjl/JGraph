@@ -463,6 +463,64 @@ public sealed class ImagePlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
         _builtAlphaScale = Axes?.AlphaScale ?? ColorScaleType.Linear;
     }
 
+    /// <summary>
+    /// The least and greatest finite value of a grid, bands of rows scanned across threads from
+    /// a million values up (the every-row plan's I10, ADR 0331). A least and a greatest do not
+    /// depend on the order they are found in, so the threads cannot change the answer.
+    /// </summary>
+    private static DataRange FiniteBounds(double[,] values)
+    {
+        int rows = values.GetLength(0);
+        int cols = values.GetLength(1);
+        if (rows == 0 || cols == 0)
+        {
+            return DataRange.Empty;
+        }
+
+        const int Bands = 32;
+        int bands = (long)rows * cols >= 1 << 20 ? System.Math.Min(rows, Bands) : 1;
+        var found = new DataRange[bands];
+        void Scan(int band)
+        {
+            int r0 = (int)((long)rows * band / bands);
+            int r1 = (int)((long)rows * (band + 1) / bands);
+            ReadOnlySpan<double> run = System.Runtime.InteropServices.MemoryMarshal.CreateReadOnlySpan(
+                ref values[r0, 0], (r1 - r0) * cols);
+            double low = double.PositiveInfinity;
+            double high = double.NegativeInfinity;
+            foreach (double v in run)
+            {
+                if (double.IsFinite(v))
+                {
+                    low = System.Math.Min(low, v);
+                    high = System.Math.Max(high, v);
+                }
+            }
+
+            found[band] = low <= high ? new DataRange(low, high) : DataRange.Empty;
+        }
+
+        if (bands == 1)
+        {
+            Scan(0);
+        }
+        else
+        {
+            System.Threading.Tasks.Parallel.For(0, bands, Scan);
+        }
+
+        DataRange bounds = DataRange.Empty;
+        foreach (DataRange part in found)
+        {
+            if (!part.IsEmpty)
+            {
+                bounds = bounds.Include(part.Min).Include(part.Max);
+            }
+        }
+
+        return bounds;
+    }
+
     private (double Min, double Max) ResolveColorRange()
     {
         if (!_autoScaleColor)
@@ -470,15 +528,7 @@ public sealed class ImagePlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
             return _colorMin < _colorMax ? (_colorMin, _colorMax) : (_colorMin, _colorMin + 1);
         }
 
-        DataRange bounds = DataRange.Empty;
-        foreach (double v in _values)
-        {
-            if (double.IsFinite(v))
-            {
-                bounds = bounds.Include(v);
-            }
-        }
-
+        DataRange bounds = FiniteBounds(_values);
         if (!bounds.IsValid)
         {
             bounds = bounds.EnsureValid();

@@ -13,6 +13,12 @@ namespace JGraph.Rendering.Skia;
 public sealed class SkiaRenderContext : IRenderContext, IDisposable
 {
     private readonly SKCanvas _canvas;
+
+    /// <summary>The bitmap the canvas paints into, when its maker handed it over; see <see cref="DrawMarkerCloud"/>.</summary>
+    private readonly SKBitmap? _raster;
+
+    /// <summary>Every clip pushed and not yet popped, in whole device pixels, innermost last.</summary>
+    private readonly Stack<SKRectI> _deviceClips = new();
     private readonly SKPaint _stroke;
     private readonly SKPaint _fill;
     private readonly SKPaint _text;
@@ -63,15 +69,22 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
     /// PDF backends drop <c>DrawVertices</c> silently — the geometry simply never appears in the
     /// file — so those exporters pass false and get one filled path per triangle instead.
     /// </param>
+    /// <param name="raster">
+    /// The bitmap <paramref name="canvas"/> paints into, when there is one and its maker can hand it
+    /// over: with it a cloud of own-coloured markers is stamped into the pixels instead of drawn a
+    /// call at a time (<see cref="DrawMarkerCloud"/>). Null for a vector canvas or a screen.
+    /// </param>
     public SkiaRenderContext(
         SKCanvas canvas,
         Size2D size,
         double devicePixelRatio = 1.0,
         bool flattenDashes = false,
         bool supportsMeshes = true,
-        bool smoothing = true)
+        bool smoothing = true,
+        SKBitmap? raster = null)
     {
         _canvas = canvas;
+        _raster = raster;
         Size = size;
         DevicePixelRatio = devicePixelRatio;
         _flattenDashes = flattenDashes;
@@ -101,10 +114,32 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
     {
         _canvas.Save();
         _canvas.ClipRect(ToSk(rect));
+
+        // The same clip in whole device pixels, as Skia's unsmoothed clip keeps it (each edge to
+        // the nearest pixel), for the one painter here that writes pixels itself.
+        SKRect device = _canvas.TotalMatrix.MapRect(ToSk(rect));
+        var whole = new SKRectI(
+            (int)System.Math.Floor(device.Left + 0.5),
+            (int)System.Math.Floor(device.Top + 0.5),
+            (int)System.Math.Floor(device.Right + 0.5),
+            (int)System.Math.Floor(device.Bottom + 0.5));
+        if (_deviceClips.Count > 0)
+        {
+            whole.Intersect(_deviceClips.Peek());
+        }
+
+        _deviceClips.Push(whole);
     }
 
     /// <inheritdoc />
-    public void PopClip() => _canvas.Restore();
+    public void PopClip()
+    {
+        _canvas.Restore();
+        if (_deviceClips.Count > 0)
+        {
+            _deviceClips.Pop();
+        }
+    }
 
     /// <inheritdoc />
     public void DrawLine(Point2D a, Point2D b, LineStyle style)
@@ -250,6 +285,279 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
         {
             DrawMarker(style.Type, (float)p.X, (float)p.Y, radius, fillColor.HasValue);
         }
+    }
+
+    /// <summary>
+    /// Whether a cloud of own-coloured markers is stamped from masks (<c>JGRAPH_MARKER_SPRITES</c>,
+    /// on unless it is <c>0</c>); off, every marker is its own pair of Skia calls, as before ADR 0331.
+    /// </summary>
+    public static bool MarkerSprites { get; set; } =
+        Environment.GetEnvironmentVariable("JGRAPH_MARKER_SPRITES") != "0";
+
+    /// <summary>Fewest markers worth making the masks for.</summary>
+    private const int SpriteWorthwhile = 256;
+
+    /// <summary>Positions within a pixel, each way, a mask is made for.</summary>
+    private const int SpritePhases = 32;
+
+    /// <summary>Widest mask, in device pixels; a larger marker is drawn by Skia one at a time.</summary>
+    private const int SpriteCellLimit = 64;
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// <para>
+    /// A scatter coloured point by point is two Skia calls a marker (a fill and an outline), and at
+    /// two hundred thousand markers those calls are the whole export. When the canvas paints into a
+    /// bitmap this context was handed, through a plain scale and shift and a rectangular clip, and
+    /// every colour is opaque, the markers are stamped instead: Skia draws the glyph once for each
+    /// of <see cref="SpritePhases"/> by <see cref="SpritePhases"/> positions within a pixel, in
+    /// white onto a coverage-only bitmap (fill, then outline when there is one, as the
+    /// one-at-a-time road composes them), and each marker is then its colour blended through the
+    /// mask nearest its own position.
+    /// </para>
+    /// <para>
+    /// The picture differs from the one-at-a-time road's only in that a marker's centre is read to
+    /// an eighth of a pixel and the blend is rounded once instead of twice. Anything else (a PDF
+    /// or SVG canvas, a rotated one, a see-through colour, a large marker, a short run) takes the
+    /// one-at-a-time road unchanged.
+    /// </para>
+    /// </remarks>
+    public void DrawMarkerCloud(ReadOnlySpan<Point2D> points, ReadOnlySpan<uint> colorsArgb, MarkerStyle style)
+    {
+        int count = System.Math.Min(points.Length, colorsArgb.Length);
+        if (!style.IsVisible || count == 0)
+        {
+            return;
+        }
+
+        if (count >= SpriteWorthwhile && MarkerSprites
+            && TryStampMarkers(points[..count], colorsArgb[..count], style))
+        {
+            return;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            uint argb = colorsArgb[i];
+            Color own = Color.FromArgb((byte)(argb >> 24), (byte)(argb >> 16), (byte)(argb >> 8), (byte)argb);
+            Color edge = style.Edge is { A: 0 } none ? none : own;
+            DrawMarkers(
+                points.Slice(i, 1),
+                new MarkerStyle(style.Type, style.Size, style.Fill is null ? null : own, edge, style.EdgeWidth),
+                edge);
+        }
+    }
+
+    private bool TryStampMarkers(ReadOnlySpan<Point2D> points, ReadOnlySpan<uint> colors, MarkerStyle style)
+    {
+        SKBitmap? raster = _raster;
+        if (raster is null
+            || raster.ColorType is not (SKColorType.Bgra8888 or SKColorType.Rgba8888)
+            || raster.AlphaType == SKAlphaType.Unpremul)
+        {
+            return false;
+        }
+
+        SKMatrix matrix = _canvas.TotalMatrix;
+        if (matrix.SkewX != 0 || matrix.SkewY != 0 || matrix.Persp0 != 0 || matrix.Persp1 != 0
+            || matrix.Persp2 != 1 || !(matrix.ScaleX > 0) || !(matrix.ScaleY > 0) || !_canvas.IsClipRect)
+        {
+            return false;
+        }
+
+        foreach (uint argb in colors)
+        {
+            if (argb >> 24 != 0xFF)
+            {
+                return false;
+            }
+        }
+
+        double sx = matrix.ScaleX;
+        double sy = matrix.ScaleY;
+        double edgeWidth = System.Math.Max(style.EdgeWidth, 0);
+
+        // Room for the widest glyph: a square's corner is the radius times root two out, and a
+        // mitred outline reaches up to twice its width past that.
+        int pad = (int)System.Math.Ceiling(((style.Size * 0.75) + (edgeWidth * 2.5)) * System.Math.Max(sx, sy)) + 2;
+        int cell = (2 * pad) + 1;
+        if (cell > SpriteCellLimit)
+        {
+            return false;
+        }
+
+        const int Phases = SpritePhases;
+        using var atlas = new SKBitmap(new SKImageInfo(Phases * cell, Phases * cell, SKColorType.Alpha8, SKAlphaType.Premul));
+        atlas.Erase(SKColors.Transparent);
+        using (var maskCanvas = new SKCanvas(atlas))
+        using (var fill = new SKPaint { IsAntialias = _smoothing, Style = SKPaintStyle.Fill, Color = SKColors.White })
+        using (var stroke = new SKPaint
+        {
+            IsAntialias = _smoothing,
+            Style = SKPaintStyle.Stroke,
+
+            // No outline is an outline in a colour that marks nothing, as it is one at a time.
+            Color = style.Edge is { A: 0 } ? SKColors.Transparent : SKColors.White,
+            StrokeWidth = (float)style.EdgeWidth,
+            StrokeCap = _stroke.StrokeCap,
+            StrokeJoin = _stroke.StrokeJoin,
+            StrokeMiter = _stroke.StrokeMiter,
+        })
+        {
+            float radius = (float)(style.Size / 2.0);
+            for (int j = 0; j < Phases; j++)
+            {
+                for (int i = 0; i < Phases; i++)
+                {
+                    maskCanvas.Save();
+                    maskCanvas.ClipRect(SKRect.Create(i * cell, j * cell, cell, cell));
+                    maskCanvas.Translate((i * cell) + pad + (i / (float)Phases), (j * cell) + pad + (j / (float)Phases));
+                    maskCanvas.Scale((float)sx, (float)sy);
+                    DrawMarkerOn(maskCanvas, fill, stroke, style.Type, 0, 0, radius, style.Fill.HasValue);
+                    maskCanvas.Restore();
+                }
+            }
+
+            maskCanvas.Flush();
+        }
+
+        int maskStride = atlas.RowBytes;
+        byte[] mask = atlas.GetPixelSpan().ToArray();
+
+        // The part of a cell any phase's glyph touches, so a stamp reads no more than that.
+        int x0 = cell;
+        int x1 = -1;
+        int y0 = cell;
+        int y1 = -1;
+        for (int row = 0; row < Phases * cell; row++)
+        {
+            int y = row % cell;
+            int at = row * maskStride;
+            for (int column = 0; column < Phases * cell; column++)
+            {
+                if (mask[at + column] != 0)
+                {
+                    int x = column % cell;
+                    x0 = System.Math.Min(x0, x);
+                    x1 = System.Math.Max(x1, x);
+                    y0 = System.Math.Min(y0, y);
+                    y1 = System.Math.Max(y1, y);
+                }
+            }
+        }
+
+        if (x1 < 0)
+        {
+            return true; // a glyph that marks no pixel marks none anywhere
+        }
+
+        // The canvas reports its clip rounded outwards; the clips pushed here are kept as Skia
+        // applies them, so the stamp marks no pixel the one-at-a-time road is kept out of.
+        SKRectI clip = _canvas.DeviceClipBounds;
+        if (_deviceClips.Count > 0)
+        {
+            clip.Intersect(_deviceClips.Peek());
+        }
+        int left = System.Math.Max(clip.Left, 0);
+        int top = System.Math.Max(clip.Top, 0);
+        int right = System.Math.Min(clip.Right, raster.Width);
+        int bottom = System.Math.Min(clip.Bottom, raster.Height);
+        if (left >= right || top >= bottom)
+        {
+            return true;
+        }
+
+        ReadOnlySpan<byte> stored = raster.GetPixelSpan();
+        Span<byte> pixels = System.Runtime.InteropServices.MemoryMarshal.CreateSpan(
+            ref System.Runtime.InteropServices.MemoryMarshal.GetReference(stored), stored.Length);
+        int stride = raster.RowBytes;
+        bool blueFirst = raster.ColorType == SKColorType.Bgra8888;
+        double tx = matrix.TransX;
+        double ty = matrix.TransY;
+        for (int k = 0; k < points.Length; k++)
+        {
+            double dx = (sx * points[k].X) + tx;
+            double dy = (sy * points[k].Y) + ty;
+            if (!(dx > -1e6 && dx < 1e6 && dy > -1e6 && dy < 1e6))
+            {
+                continue; // far outside, or not a number: Skia draws nothing for it either
+            }
+
+            double wholeX = System.Math.Floor(dx);
+            double wholeY = System.Math.Floor(dy);
+            int ix = (int)wholeX;
+            int iy = (int)wholeY;
+            int qx = (int)System.Math.Round((dx - wholeX) * Phases);
+            int qy = (int)System.Math.Round((dy - wholeY) * Phases);
+            if (qx == Phases)
+            {
+                qx = 0;
+                ix++;
+            }
+
+            if (qy == Phases)
+            {
+                qy = 0;
+                iy++;
+            }
+
+            int originX = ix - pad;
+            int originY = iy - pad;
+            int xa = System.Math.Max(x0, left - originX);
+            int xb = System.Math.Min(x1, right - 1 - originX);
+            int ya = System.Math.Max(y0, top - originY);
+            int yb = System.Math.Min(y1, bottom - 1 - originY);
+            if (xa > xb || ya > yb)
+            {
+                continue;
+            }
+
+            uint argb = colors[k];
+            int red = (int)((argb >> 16) & 0xFF);
+            int green = (int)((argb >> 8) & 0xFF);
+            int blue = (int)(argb & 0xFF);
+            int c0 = blueFirst ? blue : red;
+            int c2 = blueFirst ? red : blue;
+            int cellBase = (qy * cell * maskStride) + (qx * cell);
+            for (int y = ya; y <= yb; y++)
+            {
+                int maskAt = cellBase + (y * maskStride) + xa;
+                int at = ((originY + y) * stride) + ((originX + xa) * 4);
+                for (int x = xa; x <= xb; x++, maskAt++, at += 4)
+                {
+                    int a = mask[maskAt];
+                    if (a == 0)
+                    {
+                        continue;
+                    }
+
+                    if (a == 255)
+                    {
+                        pixels[at] = (byte)c0;
+                        pixels[at + 1] = (byte)green;
+                        pixels[at + 2] = (byte)c2;
+                        pixels[at + 3] = 255;
+                        continue;
+                    }
+
+                    int rest = 255 - a;
+                    pixels[at] = Over255((c0 * a) + (pixels[at] * rest));
+                    pixels[at + 1] = Over255((green * a) + (pixels[at + 1] * rest));
+                    pixels[at + 2] = Over255((c2 * a) + (pixels[at + 2] * rest));
+                    pixels[at + 3] = Over255((255 * a) + (pixels[at + 3] * rest));
+                }
+            }
+        }
+
+        raster.NotifyPixelsChanged();
+        return true;
+    }
+
+    /// <summary>A product of two bytes brought back to a byte, rounded to nearest.</summary>
+    private static byte Over255(int product)
+    {
+        int t = product + 128;
+        return (byte)((t + (t >> 8)) >> 8);
     }
 
     /// <inheritdoc />
@@ -695,71 +1003,77 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
         }
     }
 
-    private void DrawMarker(MarkerType type, float cx, float cy, float r, bool hasFill)
+    private void DrawMarker(MarkerType type, float cx, float cy, float r, bool hasFill) =>
+        DrawMarkerOn(_canvas, _fill, _stroke, type, cx, cy, r, hasFill);
+
+    /// <summary>One marker glyph on a canvas, with the paints that fill and outline it.</summary>
+    private static void DrawMarkerOn(
+        SKCanvas canvas, SKPaint fill, SKPaint stroke, MarkerType type, float cx, float cy, float r, bool hasFill)
     {
         switch (type)
         {
             case MarkerType.Circle:
                 if (hasFill)
                 {
-                    _canvas.DrawCircle(cx, cy, r, _fill);
+                    canvas.DrawCircle(cx, cy, r, fill);
                 }
 
-                _canvas.DrawCircle(cx, cy, r, _stroke);
+                canvas.DrawCircle(cx, cy, r, stroke);
                 break;
 
             case MarkerType.Square:
-                DrawShapeRect(new SKRect(cx - r, cy - r, cx + r, cy + r), hasFill);
+                DrawShapeRect(canvas, fill, stroke, new SKRect(cx - r, cy - r, cx + r, cy + r), hasFill);
                 break;
 
             case MarkerType.Diamond:
-                DrawShapePath(hasFill, (cx, cy - r), (cx + r, cy), (cx, cy + r), (cx - r, cy));
+                DrawShapePath(canvas, fill, stroke, hasFill, (cx, cy - r), (cx + r, cy), (cx, cy + r), (cx - r, cy));
                 break;
 
             case MarkerType.TriangleUp:
-                DrawShapePath(hasFill, (cx, cy - r), (cx + r, cy + r), (cx - r, cy + r));
+                DrawShapePath(canvas, fill, stroke, hasFill, (cx, cy - r), (cx + r, cy + r), (cx - r, cy + r));
                 break;
 
             case MarkerType.TriangleDown:
-                DrawShapePath(hasFill, (cx, cy + r), (cx + r, cy - r), (cx - r, cy - r));
+                DrawShapePath(canvas, fill, stroke, hasFill, (cx, cy + r), (cx + r, cy - r), (cx - r, cy - r));
                 break;
 
             case MarkerType.Plus:
-                _canvas.DrawLine(cx - r, cy, cx + r, cy, _stroke);
-                _canvas.DrawLine(cx, cy - r, cx, cy + r, _stroke);
+                canvas.DrawLine(cx - r, cy, cx + r, cy, stroke);
+                canvas.DrawLine(cx, cy - r, cx, cy + r, stroke);
                 break;
 
             case MarkerType.Cross:
-                _canvas.DrawLine(cx - r, cy - r, cx + r, cy + r, _stroke);
-                _canvas.DrawLine(cx - r, cy + r, cx + r, cy - r, _stroke);
+                canvas.DrawLine(cx - r, cy - r, cx + r, cy + r, stroke);
+                canvas.DrawLine(cx - r, cy + r, cx + r, cy - r, stroke);
                 break;
 
             case MarkerType.Star:
-                _canvas.DrawLine(cx - r, cy, cx + r, cy, _stroke);
-                _canvas.DrawLine(cx, cy - r, cx, cy + r, _stroke);
-                _canvas.DrawLine(cx - r, cy - r, cx + r, cy + r, _stroke);
-                _canvas.DrawLine(cx - r, cy + r, cx + r, cy - r, _stroke);
+                canvas.DrawLine(cx - r, cy, cx + r, cy, stroke);
+                canvas.DrawLine(cx, cy - r, cx, cy + r, stroke);
+                canvas.DrawLine(cx - r, cy - r, cx + r, cy + r, stroke);
+                canvas.DrawLine(cx - r, cy + r, cx + r, cy - r, stroke);
                 break;
 
             case MarkerType.Point:
                 // A third of the radius, because MATLAB's '.' is the one marker drawn smaller than
                 // the size it is given. The fill is always a real colour here — see DrawMarkers.
-                _canvas.DrawCircle(cx, cy, System.Math.Max(1f, r / 3f), _fill);
+                canvas.DrawCircle(cx, cy, System.Math.Max(1f, r / 3f), fill);
                 break;
         }
     }
 
-    private void DrawShapeRect(SKRect rect, bool hasFill)
+    private static void DrawShapeRect(SKCanvas canvas, SKPaint fill, SKPaint stroke, SKRect rect, bool hasFill)
     {
         if (hasFill)
         {
-            _canvas.DrawRect(rect, _fill);
+            canvas.DrawRect(rect, fill);
         }
 
-        _canvas.DrawRect(rect, _stroke);
+        canvas.DrawRect(rect, stroke);
     }
 
-    private void DrawShapePath(bool hasFill, params (float X, float Y)[] vertices)
+    private static void DrawShapePath(
+        SKCanvas canvas, SKPaint fill, SKPaint stroke, bool hasFill, params (float X, float Y)[] vertices)
     {
         using var path = new SKPath();
         path.MoveTo(vertices[0].X, vertices[0].Y);
@@ -772,10 +1086,10 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
 
         if (hasFill)
         {
-            _canvas.DrawPath(path, _fill);
+            canvas.DrawPath(path, fill);
         }
 
-        _canvas.DrawPath(path, _stroke);
+        canvas.DrawPath(path, stroke);
     }
 
     private void ConfigureStroke(LineStyle style, out SKPathEffect? dash)

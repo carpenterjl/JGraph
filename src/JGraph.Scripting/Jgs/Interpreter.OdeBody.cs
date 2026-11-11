@@ -208,7 +208,7 @@ internal sealed class CompiledBody
                         return false;
                     }
 
-                    stack[sp - 1] = Math.Pow(a, b);
+                    stack[sp - 1] = JGraph.Numerics.PackedMath.Power(a, b);
                     break;
                 }
 

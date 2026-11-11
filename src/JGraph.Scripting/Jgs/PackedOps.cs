@@ -717,6 +717,15 @@ internal static class PackedOps
         if (IsPackedArray(left) && IsNumericScalar(right))
         {
             double power = right.AsNumber;
+
+            // A whole power (or a NaN one) keeps every base real, by the very test the scan below
+            // makes element by element: there is nothing for it to find, and over four million
+            // elements the looking cost more than the squares did (ADR 0330).
+            if (double.IsNaN(power) || power == System.Math.Floor(power))
+            {
+                return false;
+            }
+
             foreach (double value in left.AsBuffer.AsSpan())
             {
                 if (!JgsBuiltins.PowerStaysReal(value, power))

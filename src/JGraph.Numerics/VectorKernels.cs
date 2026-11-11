@@ -132,6 +132,78 @@ public static class VectorKernels
         GC.KeepAlive(dest);
     }
 
+    /// <summary>Most strips a matrix gradient is cut into; a strip is a run of whole columns.</summary>
+    private const int FieldStrips = 64;
+
+    /// <summary>
+    /// <c>gradient</c> of a column-major <paramref name="rows"/> by <paramref name="cols"/> matrix
+    /// along its rows (the first output, the change from column to column) at unit spacing: the
+    /// difference of the two neighbouring columns over 2 inside, the one-sided difference at the
+    /// first and last column. At least two columns. Whole columns are subtracted at a time, strips
+    /// of columns in parallel from <see cref="ParallelKernels.MemoryBoundThreshold"/> elements;
+    /// every element is one subtraction and one division, so the threads cannot move a bit.
+    /// </summary>
+    public static void CentralDifferencesAcross(NumericBuffer f, int rows, int cols, NumericBuffer dest)
+    {
+        int strips = Math.Min(cols, FieldStrips);
+        bool wide = (long)rows * cols >= ParallelKernels.MemoryBoundThreshold;
+        ParallelKernels.ForBlocks(strips, wide, strip =>
+        {
+            int c0 = (int)((long)cols * strip / strips);
+            int c1 = (int)((long)cols * (strip + 1) / strips);
+            for (int c = c0; c < c1; c++)
+            {
+                Span<double> d = dest.AsSpan(c * rows, rows);
+                if (c == 0)
+                {
+                    TensorPrimitives.Subtract<double>(f.AsSpan(rows, rows), f.AsSpan(0, rows), d);
+                }
+                else if (c == cols - 1)
+                {
+                    TensorPrimitives.Subtract<double>(f.AsSpan(c * rows, rows), f.AsSpan((c - 1) * rows, rows), d);
+                }
+                else
+                {
+                    TensorPrimitives.Subtract<double>(f.AsSpan((c + 1) * rows, rows), f.AsSpan((c - 1) * rows, rows), d);
+                    TensorPrimitives.Divide<double>(d, 2.0, d);
+                }
+            }
+        });
+        GC.KeepAlive(f);
+        GC.KeepAlive(dest);
+    }
+
+    /// <summary>
+    /// <c>gradient</c> of a column-major matrix down its columns (the second output) at unit
+    /// spacing: each column is <see cref="CentralDifferences"/> of itself. At least two rows.
+    /// </summary>
+    public static void CentralDifferencesDown(NumericBuffer f, int rows, int cols, NumericBuffer dest)
+    {
+        int strips = Math.Min(cols, FieldStrips);
+        bool wide = (long)rows * cols >= ParallelKernels.MemoryBoundThreshold;
+        ParallelKernels.ForBlocks(strips, wide, strip =>
+        {
+            int c0 = (int)((long)cols * strip / strips);
+            int c1 = (int)((long)cols * (strip + 1) / strips);
+            for (int c = c0; c < c1; c++)
+            {
+                Span<double> v = f.AsSpan(c * rows, rows);
+                Span<double> d = dest.AsSpan(c * rows, rows);
+                if (rows > 2)
+                {
+                    Span<double> inner = d.Slice(1, rows - 2);
+                    TensorPrimitives.Subtract<double>(v.Slice(2, rows - 2), v.Slice(0, rows - 2), inner);
+                    TensorPrimitives.Divide<double>(inner, 2.0, inner);
+                }
+
+                d[0] = v[1] - v[0];
+                d[rows - 1] = v[rows - 1] - v[rows - 2];
+            }
+        });
+        GC.KeepAlive(f);
+        GC.KeepAlive(dest);
+    }
+
     /// <summary>
     /// <c>cumtrapz</c> of a vector at unit spacing: <c>dest[0] = 0</c>,
     /// <c>dest[i] = dest[i-1] + (x[i-1] + x[i]) / 2</c>. One chain from end to end, so one thread.

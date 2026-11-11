@@ -131,6 +131,46 @@ internal static class JgsVectorRoads
         return true;
     }
 
+    /// <summary>
+    /// <c>[FX, FY] = gradient(F)</c> of a matrix at unit spacing (the every-row plan's I9, ADR
+    /// 0330): each field is whole columns subtracted at a time, strips of columns across threads,
+    /// where the general road copied every row out, differenced it and copied it back on one
+    /// thread. The second field is made only when it is asked for.
+    /// </summary>
+    internal static bool TryGradientField(JgsValue subject, int wanted, out JgsValue[] results)
+    {
+        results = [];
+        if (!Enabled || !JgsSetKernels.IsPlainDoubles(subject))
+        {
+            return false;
+        }
+
+        int rows = JgsMatrix.RowCount(subject);
+        int cols = JgsMatrix.ColCount(subject);
+        NumericBuffer f = subject.AsBuffer;
+        if (rows < 2 || cols < 2 || (long)rows * cols != f.Length)
+        {
+            return false;
+        }
+
+        NumericBuffer across = JgsPacking.AllocateForOverwrite(f.Length);
+        VectorKernels.CentralDifferencesAcross(f, rows, cols, across);
+        if (wanted <= 1)
+        {
+            results = [Like(subject, across)];
+        }
+        else
+        {
+            NumericBuffer down = JgsPacking.AllocateForOverwrite(f.Length);
+            VectorKernels.CentralDifferencesDown(f, rows, cols, down);
+            results = [Like(subject, across), Like(subject, down)];
+        }
+
+        GC.KeepAlive(subject);
+        Took();
+        return true;
+    }
+
     /// <summary><c>cumtrapz(v)</c> of a vector at unit spacing.</summary>
     internal static bool TryCumtrapz(JgsValue subject, out JgsValue result)
     {

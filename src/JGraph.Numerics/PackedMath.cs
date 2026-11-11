@@ -1220,6 +1220,14 @@ public static class PackedMath
     }
 
     /// <summary>One span of <see cref="Unary"/>: the vector kernel of every operation that has one.</summary>
+    /// <summary>
+    /// A real power as the <c>^</c> and <c>.^</c> operators answer it everywhere: the product for
+    /// an exponent of exactly 2, which is what R2025b answers to the bit and what a correctly
+    /// rounded square is, and <see cref="Math.Pow"/> for every other exponent (ADR 0330).
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static double Power(double x, double y) => y == 2.0 ? x * x : Math.Pow(x, y);
+
     private static void UnaryChunk(UnaryOp op, Span<double> x, Span<double> d)
     {
         switch (op)
@@ -1281,7 +1289,7 @@ public static class PackedMath
             case BinaryOp.Power:
                 // Math.Pow semantics: a vectorized exp/log form would return NaN for negative
                 // bases with integral exponents, so this stays scalar deliberately.
-                for (int i = 0; i < d.Length; i++) { d[i] = Math.Pow(x[i], y[i]); }
+                for (int i = 0; i < d.Length; i++) { d[i] = Power(x[i], y[i]); }
                 break;
             default: throw UnknownOp(op);
         }
@@ -1301,11 +1309,18 @@ public static class PackedMath
                 for (int i = 0; i < len; i++) { d[i] = x[i] % scalar; }
                 break;
 
-            // Not special-cased to x*x for an exponent of 2, tempting as it is: Math.Pow is not
-            // correctly rounded, and over 212 million random doubles it disagreed with the product
-            // on 52,298 of them by one ulp. The product is the better answer and the boxed
-            // interpreter does not give it, so taking it here would buy speed with parity.
+            // A square is the product (ADR 0330): R2025b's x.^2 is x.*x to the bit, Math.Pow is
+            // not correctly rounded (over 212 million random doubles it disagreed with the product
+            // on 52,298 of them by one ulp), and every other road to a power - the boxed
+            // interpreter, the compiled loops, the compiled bodies - answers through Power below,
+            // so the storages agree.
             case BinaryOp.Power:
+                if (scalar == 2.0)
+                {
+                    TensorPrimitives.Multiply<double>(x, x, d);
+                    break;
+                }
+
                 for (int i = 0; i < len; i++) { d[i] = Math.Pow(x[i], scalar); }
                 break;
             default: throw UnknownOp(op);
@@ -1333,7 +1348,7 @@ public static class PackedMath
                 for (int i = 0; i < len; i++) { d[i] = scalar % y[i]; }
                 break;
             case BinaryOp.Power:
-                for (int i = 0; i < len; i++) { d[i] = Math.Pow(scalar, y[i]); }
+                for (int i = 0; i < len; i++) { d[i] = Power(scalar, y[i]); }
                 break;
             default: throw UnknownOp(op);
         }

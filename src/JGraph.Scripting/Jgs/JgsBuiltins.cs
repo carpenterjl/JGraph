@@ -4221,7 +4221,7 @@ internal static partial class JgsBuiltins
                     "histogram expects the values to count: histogram(x).");
             }
 
-            data = FlattenColumnMajor("histogram", parsed.Positional[0], line, col);
+            data = HistogramReadings(parsed.Positional[0], line, col);
             if (parsed.Positional.Count == 2)
             {
                 JgsValue second = parsed.Positional[1];
@@ -4252,17 +4252,87 @@ internal static partial class JgsBuiltins
                 + "cannot be given too.");
         }
 
-        double[] edges = givenEdges ?? Binning.EdgesFor(data!, requested, width, limits, rule);
-        HistogramPlot plot = data is null
-            ? HistogramPlot.FromCounts(edges, givenCounts!)
-            : new HistogramPlot(data, edges);
-        plot.BinMethod = rule;
-        if (limits is not null)
+        // The readings are ranged and counted by histcounts' own kernels (the every-row plan's I10,
+        // ADR 0331): a named count needs only the finite range, which is one threaded scan, and
+        // the tally is cut into blocks across threads and added in bin order. The rule that picks
+        // the edges and the rule that picks a bin are the ones they were.
+        double[] edges;
+        if (givenEdges is not null)
         {
-            plot.BinLimits = limits;
+            edges = givenEdges;
+        }
+        else if (data is not null && requested is { } named && width is null && limits is null)
+        {
+            (double low, double high, bool any) = PackedMath.FiniteRange(ManagedBuffer.Adopt(data));
+            edges = any ? Binning.CountedEdges(low, high, named) : Binning.CountedEdges(0, 1, named);
+        }
+        else
+        {
+            edges = Binning.EdgesFor(data!, requested, width, limits, rule);
         }
 
+        HistogramPlot plot;
+        if (data is null)
+        {
+            plot = HistogramPlot.FromCounts(edges, givenCounts!);
+        }
+        else if (HistogramEdgesRise(edges))
+        {
+            long[] tally = CountBins(ManagedBuffer.Adopt(data), edges, null, 1);
+            var counted = new double[tally.Length];
+            for (int k = 0; k < tally.Length; k++)
+            {
+                counted[k] = tally[k];
+            }
+
+            plot = HistogramPlot.Counted(data, edges, counted);
+        }
+        else
+        {
+            plot = new HistogramPlot(data, edges);
+        }
+
+        // The bins are settled: the rule and the limits are written down beside them, not applied
+        // again. Setting them through the properties cut the bins a second time by the automatic
+        // rule, which threw away a named count, a named width and named edges alike
+        // (histogram(x, 200) drew the automatic rule's bins) and ranged and counted the readings
+        // twice. R2025b reads the method of such a histogram back as 'manual'.
+        bool named1 = givenEdges is not null || requested is not null || width is not null;
+        plot.NameBinning(named1 ? "manual" : rule, limits);
+
         return Handle(HistogramTail(JG.Histogram(plot), parsed, line, col));
+    }
+
+    /// <summary>
+    /// The readings a histogram keeps, as one managed array: a packed array is copied grain by
+    /// grain across threads into an array nobody has to zero first.
+    /// </summary>
+    private static double[] HistogramReadings(JgsValue given, int line, int col)
+    {
+        if (!given.IsPacked || given.IsPackedComplex || given.ArrayLength < ParallelKernels.MemoryBoundThreshold)
+        {
+            return FlattenColumnMajor("histogram", given, line, col);
+        }
+
+        NumericBuffer source = given.AsBuffer;
+        double[] kept = GC.AllocateUninitializedArray<double>(source.Length);
+        PackedMath.Copy(source, ManagedBuffer.Adopt(kept));
+        GC.KeepAlive(given);
+        return kept;
+    }
+
+    /// <summary>Whether every edge is above the one before it, which is what a tally needs.</summary>
+    private static bool HistogramEdgesRise(double[] edges)
+    {
+        for (int i = 1; i < edges.Length; i++)
+        {
+            if (!(edges[i] > edges[i - 1]))
+            {
+                return false;
+            }
+        }
+
+        return edges.Length >= 2;
     }
 
     /// <summary>How many times each name appears, in the order the names were first seen.</summary>

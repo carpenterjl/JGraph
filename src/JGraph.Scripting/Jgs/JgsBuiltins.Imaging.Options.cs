@@ -1,4 +1,5 @@
 using JGraph.Imaging;
+using JGraph.Numerics;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -124,19 +125,52 @@ internal static partial class JgsBuiltins
             return new ImgArg(planes, ImgShape.Planes);
         }
 
-        ImageBuffer wrapped =
-            PointOps.WrapValues(Rectangle($"{name} argument {index + 1}", value, line, col));
+        ImageBuffer wrapped = PackedField(value)
+            ?? PointOps.WrapValues(Rectangle($"{name} argument {index + 1}", value, line, col));
         wrapped.Class = carried;
         if (carried.IsInteger())
         {
-            Span<double> samples = wrapped.Pixels;
-            for (int i = 0; i < samples.Length; i++)
+            // One division a sample, grain by grain across threads: a map, so the threads cannot
+            // move a bit.
+            ParallelKernels.For(checked((int)wrapped.SampleCount), ParallelKernels.MemoryBoundThreshold, null, (start, length) =>
             {
-                samples[i] = carried.FromNative(samples[i]);
-            }
+                Span<double> samples = wrapped.Pixels.Slice(start, length);
+                for (int i = 0; i < samples.Length; i++)
+                {
+                    samples[i] = carried.FromNative(samples[i]);
+                }
+            });
         }
 
         return new ImgArg(wrapped, ImgShape.Matrix);
+    }
+
+    /// <summary>
+    /// A packed real matrix as a one-channel picture, read where it lies (the every-row plan's I9,
+    /// ADR 0330): the column-major numbers are laid out row-major in one tiled, threaded pass,
+    /// where the general road made a row list, a rectangle and then the picture. Null for anything
+    /// else, which the general road reads as it always has.
+    /// </summary>
+    private static ImageBuffer? PackedField(JgsValue value)
+    {
+        if (value.Type != JgsType.Array || !value.IsPacked || value.IsPackedComplex || value.IsNd
+            || value.IsCharMatrix || value.IsStringArray || value.IsTime || value.IsCategorical)
+        {
+            return null;
+        }
+
+        int rows = value.Rows;
+        int cols = value.Cols;
+        NumericBuffer numbers = value.AsBuffer;
+        if (rows < 1 || cols < 1 || (long)rows * cols != numbers.Length)
+        {
+            return null;
+        }
+
+        var image = new ImageBuffer(rows, cols, 1);
+        MatrixLayout.Transpose(numbers.AsSpan(), rows, cols, image.Pixels);
+        GC.KeepAlive(value);
+        return image;
     }
 
     /// <summary>

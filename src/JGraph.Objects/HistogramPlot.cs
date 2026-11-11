@@ -171,6 +171,26 @@ public sealed class HistogramPlot : PlotObject, IDrawable, ILegendItem
     }
 
     /// <summary>
+    /// A histogram over readings somebody has counted into these edges already (the every-row
+    /// plan's I10, ADR 0331): the readings are kept, so a later change of bins counts them again,
+    /// but they are not counted a second time here.
+    /// </summary>
+    public static HistogramPlot Counted(double[] values, double[] binEdges, double[] binCounts)
+    {
+        ArgumentNullException.ThrowIfNull(values);
+        ArgumentNullException.ThrowIfNull(binCounts);
+        return new HistogramPlot(values, Checked(binEdges), binCounts);
+    }
+
+    private HistogramPlot(double[] values, double[] checkedEdges, double[] counts)
+    {
+        _data = values;
+        _binEdges = checkedEdges;
+        _binCounts = Fitted(counts, checkedEdges);
+        Name = "Histogram";
+    }
+
+    /// <summary>
     /// A histogram of counts somebody else has already taken — MATLAB's
     /// <c>histogram('BinEdges', e, 'BinCounts', n)</c>. There is nothing behind it to re-count.
     /// </summary>
@@ -220,6 +240,7 @@ public sealed class HistogramPlot : PlotObject, IDrawable, ILegendItem
         set
         {
             _binEdges = Checked(value);
+            _binMethod = Manual;
             _binCounts = _data.Length > 0
                 ? Binning.Counts(_data, _binEdges)
                 : Fitted(_binCounts, _binEdges);
@@ -257,8 +278,9 @@ public sealed class HistogramPlot : PlotObject, IDrawable, ILegendItem
         {
             int bins = System.Math.Max(1, value);
             _binEdges = Checked(_data.Length > 0
-                ? Binning.EdgesFor(_data, bins, null, _binLimits, _binMethod)
+                ? Binning.EdgesFor(_data, bins, null, _binLimits, Rule)
                 : Binning.Spanning(_binEdges[0], _binEdges[^1], bins));
+            _binMethod = Manual;
             _binCounts = _data.Length > 0 ? Binning.Counts(_data, _binEdges) : Fitted(_binCounts, _binEdges);
             Invalidate(InvalidationKind.Data);
         }
@@ -281,7 +303,7 @@ public sealed class HistogramPlot : PlotObject, IDrawable, ILegendItem
 
             if (_data.Length > 0)
             {
-                BinEdges = Binning.EdgesFor(_data, null, value, _binLimits, _binMethod);
+                BinEdges = Binning.EdgesFor(_data, null, value, _binLimits, Rule);
                 return;
             }
 
@@ -316,7 +338,9 @@ public sealed class HistogramPlot : PlotObject, IDrawable, ILegendItem
 
     /// <summary>
     /// The rule the bins are chosen by when nobody names them: MATLAB's 'auto', 'scott', 'fd',
-    /// 'integers', 'sturges' or 'sqrt'.
+    /// 'integers', 'sturges' or 'sqrt'; or 'manual' once a count, a width or the edges themselves
+    /// were named, which is what R2025b reads back. Setting a rule cuts the bins by it; setting
+    /// 'manual' leaves them where they are.
     /// </summary>
     [Browsable(false)]
     public string BinMethod
@@ -325,8 +349,29 @@ public sealed class HistogramPlot : PlotObject, IDrawable, ILegendItem
         set
         {
             _binMethod = value ?? "auto";
-            Rebin();
+            if (!string.Equals(_binMethod, Manual, StringComparison.OrdinalIgnoreCase))
+            {
+                Rebin();
+            }
         }
+    }
+
+    private const string Manual = "manual";
+
+    /// <summary>The rule a new cut of the bins follows: the one named, and 'auto' after a manual choice.</summary>
+    private string Rule => string.Equals(_binMethod, Manual, StringComparison.OrdinalIgnoreCase) ? "auto" : _binMethod;
+
+    /// <summary>
+    /// Records the rule and the limits the bins were cut under without cutting them again (ADR
+    /// 0331). The setters of <see cref="BinMethod"/> and <see cref="BinLimits"/> each choose new
+    /// bins by the automatic rule, which is right for a change made afterwards and wrong for a
+    /// histogram being built from a count, a width or edges somebody named: those bins are
+    /// already the answer.
+    /// </summary>
+    public void NameBinning(string method, double[]? limits)
+    {
+        _binMethod = method ?? "auto";
+        _binLimits = limits is { Length: 2 } ? [limits[0], limits[1]] : null;
     }
 
     /// <summary>
@@ -634,7 +679,7 @@ public sealed class HistogramPlot : PlotObject, IDrawable, ILegendItem
             return;
         }
 
-        _binEdges = Checked(Binning.EdgesFor(_data, null, null, _binLimits, _binMethod));
+        _binEdges = Checked(Binning.EdgesFor(_data, null, null, _binLimits, Rule));
         _binCounts = Binning.Counts(_data, _binEdges);
         Invalidate(InvalidationKind.Data);
     }

@@ -282,7 +282,7 @@ public class MatlabM77PlotPropertyTests : IDisposable
             """);
 
         Succeeded(result);
-        Assert.Equal(3, Number(result, "bins"));
+        Assert.Equal(2, Number(result, "bins")); // R2025b: edges [1 2 3]; the 3 this held was the automatic rule taking the width's place (ADR 0331)
         Assert.Equal(0.4, Number(result, "alpha"), 6);
         Assert.Equal("stairs", Text(result, "style"));
         Assert.Equal("horizontal", Text(result, "orientation"));
