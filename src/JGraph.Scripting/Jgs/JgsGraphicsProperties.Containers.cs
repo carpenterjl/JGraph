@@ -331,8 +331,38 @@ internal static partial class JgsGraphicsProperties
     private static JgsValue UnitsValue(UiUnits units) => JgsValue.Str(UnitWords[(int)units]);
 
     /// <summary>A figure's rectangle on the screen, as MATLAB's pixel rectangle.</summary>
-    internal static Rect2D FigurePixels(FigureModel figure) =>
-        new(figure.Position.X, figure.Position.Y, figure.Size.Width, figure.Size.Height);
+    internal static Rect2D FigurePixels(FigureModel figure)
+    {
+        Point2D corner = FigureCorner(figure);
+        return new(corner.X, corner.Y, figure.Size.Width, figure.Size.Height);
+    }
+
+    /// <summary>
+    /// Where a figure's corner stands on the screen. A figure something has placed is where it was
+    /// placed. One nothing has placed is where its window put it, once a window is up (the window's
+    /// corner, the convention a placed one keeps). Before that, and with no window at all, it is
+    /// where R2025b puts a new figure: across the middle of the primary screen with its top 202
+    /// pixels below the screen's — measured [680 578 560 420] on 1920 by 1200, the figure at
+    /// [363 278 1194 719] on the same screen, and [680 458 560 420] on 1920 by 1080. It was the
+    /// origin until now, which no figure on a screen ever answers.
+    /// </summary>
+    internal static Point2D FigureCorner(FigureModel figure)
+    {
+        if (figure.PositionSpecified)
+        {
+            return figure.Position;
+        }
+
+        if (ScriptGraphicsCallbacks.WindowBoundsProvider?.Invoke(figure) is { } window)
+        {
+            return new Point2D(window.X, window.Y);
+        }
+
+        Rect2D screen = UiScreen.Primary;
+        return new Point2D(
+            screen.X - 1 + System.Math.Floor((screen.Width - figure.Size.Width) / 2),
+            screen.Y - 1 + screen.Height - figure.Size.Height - 202);
+    }
 
     /// <summary>Places a figure by MATLAB's pixel rectangle. A window is never less than a pixel.</summary>
     internal static void SetFigurePixels(FigureModel figure, Rect2D pixels)

@@ -6805,6 +6805,45 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
+    /// The rows and columns a two-subscript write selects. On the shapeless 0-by-0 a ':' has nothing
+    /// to mean "every one of", and MATLAB takes its extent from the right side (M96b): both colons
+    /// take the right side's own rows and columns, and a lone one takes as many as the right side
+    /// has over the other subscript's count — A(:, 1) = 1:5 and A(:, [1 2]) = ones(1, 3, 2) are
+    /// 5-by-1 and 3-by-2 in R2025b. Where that does not divide, the colon takes the right side's
+    /// extent in its own place, which is the refusal it then meets.
+    /// </summary>
+    private (int[] Rows, int[] Cols) ShapelessPicks(
+        bool shapeless, JgsValue? rowIndex, JgsValue? colIndex, int rows, int cols,
+        int rhsRows, int rhsCols, int rhsCount, Node at)
+    {
+        if (!shapeless || (rowIndex is not null && colIndex is not null))
+        {
+            return (WritePicks(rowIndex, rows, at, 1), WritePicks(colIndex, cols, at, 2));
+        }
+
+        if (rowIndex is null && colIndex is null)
+        {
+            return (AllPicks(rhsRows), AllPicks(rhsCols));
+        }
+
+        if (rowIndex is null)
+        {
+            int[] colPicks = WritePicks(colIndex, cols, at, 2);
+            return (AllPicks(LoneColonLength(rhsCount, colPicks.Length) ?? rhsRows), colPicks);
+        }
+
+        int[] rowPicks = WritePicks(rowIndex, rows, at, 1);
+        return (rowPicks, AllPicks(LoneColonLength(rhsCount, rowPicks.Length) ?? rhsCols));
+    }
+
+    /// <summary>
+    /// How many a lone ':' on an empty target selects: the right side's count over what the other
+    /// subscripts select, when that divides; null when it does not.
+    /// </summary>
+    private static int? LoneColonLength(long rhsCount, long others) =>
+        others > 0 && rhsCount % others == 0 ? (int)(rhsCount / others) : null;
+
+    /// <summary>
     /// <c>A(i, j) = v</c>: a scalar right-hand side fills the selection, an array must match its
     /// shape. Writing past an edge grows the matrix and zero-fills, and <c>A(i, :) = []</c> deletes —
     /// both of which reallocate, so they need a plain variable to rebind.
@@ -6881,13 +6920,15 @@ internal sealed partial class Interpreter
         // and there are none — but MATLAB grows here rather than writing nothing, taking the extent
         // from the right-hand side: out = []; out(:, 1) = [1; 2] is a 2-by-1. Only 0-by-0 does this.
         // zeros(0, 3) has a shape already, and A(:, 1) = 5 on it writes into no rows and stays 0-by-3.
+        // A lone ':' takes as many as the right side has over the other subscript's count, not the
+        // right side's extent in the same place: out = []; out(:, 1) = 1:5 is a 5-by-1, as R2025b
+        // makes it, where reading the row count of 1:5 refused it.
         bool shapeless = rows == 0 && cols == 0;
-        int[] rowPicks = shapeless && rowIndex is null
-            ? AllPicks(rhs.Type == JgsType.Array ? JgsMatrix.RowCount(rhs) : 1)
-            : WritePicks(rowIndex, rows, at, 1);
-        int[] colPicks = shapeless && colIndex is null
-            ? AllPicks(rhs.Type == JgsType.Array ? JgsMatrix.ColCount(rhs) : 1)
-            : WritePicks(colIndex, cols, at, 2);
+        bool rhsArray = rhs.Type == JgsType.Array;
+        (int[] rowPicks, int[] colPicks) = ShapelessPicks(
+            shapeless, rowIndex, colIndex, rows, cols,
+            rhsArray ? JgsMatrix.RowCount(rhs) : 1, rhsArray ? JgsMatrix.ColCount(rhs) : 1,
+            rhsArray ? rhs.ArrayLength : 1, at);
 
         // M14: the count is held against the selection before the target grows, so a refused
         // write leaves the target as it was.
@@ -8601,15 +8642,36 @@ internal sealed partial class Interpreter
         int[] grownExtents = (int[])extents.Clone();
         int[] rhsExtents = SubscriptExtents(JgsMatrix.DimsOf(rhs), count);
 
+        // A ':' on an empty target takes its extent from the right side. A lone one takes as many
+        // as the right side has over what the other subscripts select (A = []; A(:, 1, 2) = 1:5 is
+        // 5-by-1-by-2); several take the right side's extents in turn. So the other subscripts are
+        // counted first.
         var picks = new int[count][];
-        int rhsDimension = 0;
+        var colons = new bool[count];
+        bool emptyTarget = callee.ArrayLength == 0;
+        long others = 1;
         for (int i = 0; i < count; i++)
         {
             JgsValue? index = EvaluateIndexArgument(subscripts[i], extents, i, env);
             HoldOverlap(callee, ref rhs, index, null, ref holds); // M10
-            picks[i] = index is null && callee.ArrayLength == 0
-                ? AllPicks(rhsExtents[Math.Min(rhsDimension, rhsExtents.Length - 1)]) : WritePicks(index, extents[i], at, i + 1);
-            if (index is null || picks[i].Length != 1) rhsDimension++;
+            colons[i] = index is null;
+            if (index is null && emptyTarget)
+            {
+                continue;
+            }
+
+            picks[i] = WritePicks(index, extents[i], at, i + 1);
+            others *= picks[i].Length;
+        }
+
+        int? lone = emptyTarget && colons.Count(c => c) == 1
+            ? LoneColonLength(rhs.Type == JgsType.Array ? rhs.ArrayLength : 1, others)
+            : null;
+        int rhsDimension = 0;
+        for (int i = 0; i < count; i++)
+        {
+            picks[i] ??= AllPicks(lone ?? rhsExtents[Math.Min(rhsDimension, rhsExtents.Length - 1)]);
+            if (colons[i] || picks[i].Length != 1) rhsDimension++;
             grownExtents[i] = Math.Max(extents[i], Highest(picks[i]) + 1);
         }
 

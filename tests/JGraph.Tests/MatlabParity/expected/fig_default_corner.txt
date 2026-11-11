@@ -1,0 +1,12 @@
+CHK|figure_not_origin|1|exact
+CHK|figure_on_screen|1|exact
+CHK|figure_centred|0|abs=1
+CHK|figure_top_gap|203|abs=1
+CHK|figure_position_is_inner|1|exact
+CHK|figure_corner_kept|1|exact
+CHK|figure_width_set|300|exact
+CHK|figure_normalized_corner|1|exact
+CHK|figure_normalized_inside|1|exact
+CHK|uifigure_size|[560 420]|exact
+CHK|uifigure_corner_x|0|exact
+CHK|uifigure_top_gap|202|exact

@@ -624,8 +624,8 @@ internal sealed partial class Interpreter
         }
 
         bool shapeless = rows == 0 && cols == 0;
-        int[] rowPicks = shapeless && rowIndex is null ? AllPicks(rhs.Rows) : WritePicks(rowIndex, rows, at, 1);
-        int[] colPicks = shapeless && colIndex is null ? AllPicks(rhs.Cols) : WritePicks(colIndex, cols, at, 2);
+        (int[] rowPicks, int[] colPicks) = ShapelessPicks(
+            shapeless, rowIndex, colIndex, rows, cols, rhs.Rows, rhs.Cols, rhs.Rows * rhs.Cols, at);
         CheckCellCount(rowPicks.Length * colPicks.Length, rhs.AsCell, at); // M14: before the cell grows
         int neededRows = Math.Max(rows, Highest(rowPicks) + 1);
         int neededCols = Math.Max(cols, Highest(colPicks) + 1);

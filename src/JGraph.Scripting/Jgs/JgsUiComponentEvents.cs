@@ -1,6 +1,7 @@
 using System.Globalization;
 using JGraph.Api;
 using JGraph.Core.Model;
+using JGraph.Core.Primitives;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -154,8 +155,9 @@ internal static partial class JgsUiComponentEvents
             return JgsMatrix.FromColumnMajor([], 0, 0);
         }
 
+        Point2D corner = JgsGraphicsProperties.FigureCorner(figure);
         return JgsGraphicsProperties.Row(
-            System.Math.Round(figure.Position.X + at.X), System.Math.Round(figure.Position.Y + at.Y));
+            System.Math.Round(corner.X + at.X), System.Math.Round(corner.Y + at.Y));
     }
 
     /// <summary>A value on its way, as the callback sees it: a number, two for a range, or the text typed so far.</summary>

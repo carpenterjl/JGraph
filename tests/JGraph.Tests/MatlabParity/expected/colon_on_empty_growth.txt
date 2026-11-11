@@ -1,0 +1,27 @@
+CHK|grow_01|double [5 1] [0 0 0 0 0]|exact
+CHK|grow_02|double [5 1] [1 2 3 4 5]|exact
+CHK|grow_03|double [5 1] [1 2 3 4 5]|exact
+CHK|grow_04|double [1 5] [1 2 3 4 5]|exact
+CHK|grow_05|double [2 3] [0 1 0 2 0 3]|exact
+CHK|grow_06|double [3 2] [0 0 0 1 2 3]|exact
+CHK|grow_07|double [1 1] 7|exact
+CHK|grow_08|double [3 2] [1 1 1 1 1 1]|exact
+CHK|grow_09|double [3 2] [1 1 1 1 1 1]|exact
+CHK|grow_10|double [1 6] [1 2 3 4 5 6]|exact
+CHK|grow_11|double [6 1] [1 2 3 4 5 6]|exact
+CHK|grow_12|double [2 3] [1 1 1 1 1 1]|exact
+CHK|grow_13|double [1 4] [1 2 3 4]|exact
+CHK|grow_14|double [3 1 2] [1 1 1 1 1 1]|exact
+CHK|grow_15|double [5 1 2] [0 0 0 0 0 1 2 3 4 5]|exact
+CHK|grow_16|double [2 3] [0 1 0 2 0 3]|exact
+CHK|grow_17|double [3 1] [1 2 3]|exact
+CHK|grow_18|double [5 2] [1 2 3 4 5 0 0 0 0 0]|exact
+CHK|grow_19|double [2 5] [1 0 2 0 3 0 4 0 5 0]|exact
+CHK|grow_20|double [5 2] [1 1 1 1 1 0 0 0 0 0]|exact
+CHK|grow_21|double [5 3] [1 2 3 4 5 6 7 8 9 10 0 0 0 0 0]|exact
+CHK|grow_22|int8 [4 1] [1 2 3 4]|exact
+CHK|grow_23|double [3 1] [1 0 1]|exact
+CHK|cell_lone_colon|cell [3 1]|exact
+CHK|cell_lone_colon_row|cell [1 2]|exact
+CHK|string_lone_colon|string [2 1] a,b|exact
+CHK|shaped_empty|ERR Unable to perform assignment because the size of the left side is 0-by-1 and the size of the right side is 1-by-5.|exact
