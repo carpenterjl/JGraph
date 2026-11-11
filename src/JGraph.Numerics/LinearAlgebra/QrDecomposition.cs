@@ -28,6 +28,7 @@ public sealed class QrDecomposition
     private readonly int _m;
     private readonly int _n;
     private readonly int _p;             // min(m, n) — the number of reflectors
+    private bool _consumed;              // Q was expanded over _qr (TakeQColumnMajor)
 
     private QrDecomposition(double[] qr, double[] tau, int[] pivot, int m, int n)
     {
@@ -196,15 +197,39 @@ public sealed class QrDecomposition
     /// </summary>
     public double[] QColumnMajor(bool full)
     {
+        ThrowIfConsumed();
         int columns = full ? _m : _p;
         var q = new double[(long)_m * columns];
-        for (int c = 0; c < Math.Min(_p, columns); c++)
-        {
-            Array.Copy(_qr, (long)c * _m, q, (long)c * _m, _m);
-        }
+
+        // The reflectors' columns lie end to end at the same leading dimension in both arrays, so
+        // they are one block, copied across threads once it is large (ADR 0332).
+        int reflectorColumns = Math.Min(_p, columns);
+        FactorFills.Copy(_qr.AsSpan(0, _m * reflectorColumns), q);
 
         LinalgProvider.Current.Orgqr(_m, columns, _p, q, Math.Max(_m, 1), _tau);
         return q;
+    }
+
+    /// <summary>
+    /// <see cref="QColumnMajor"/>, expanding the reflectors where they are stored when the factored
+    /// array is exactly Q's size — a square matrix's full Q, or a tall one's economy Q — and saving
+    /// the copy (11.5 MB at 1200 square). After that the decomposition is spent: R, solves and the
+    /// reflectors are gone, so a caller takes R first and asks for nothing afterwards but
+    /// <see cref="PivotVector"/> and <see cref="PermutationColumnMajor"/>. The answer is the same
+    /// to the bit, because the expansion reads only the reflectors and overwrites the rest (the
+    /// every-row plan's I3, ADR 0332).
+    /// </summary>
+    public double[] TakeQColumnMajor(bool full)
+    {
+        int columns = full ? _m : _p;
+        if (columns != _n || _consumed || _qr.LongLength != (long)_m * _n)
+        {
+            return QColumnMajor(full);
+        }
+
+        _consumed = true;
+        LinalgProvider.Current.Orgqr(_m, columns, _p, _qr, Math.Max(_m, 1), _tau);
+        return _qr;
     }
 
     /// <summary>
@@ -215,15 +240,19 @@ public sealed class QrDecomposition
     {
         int rows = full ? _m : _p;
         var r = new double[(long)rows * _n];
-        for (int c = 0; c < _n; c++)
-        {
-            for (int i = 0; i <= Math.Min(c, rows - 1); i++)
-            {
-                r[(c * rows) + i] = _qr[(c * _m) + i];
-            }
-        }
-
+        WriteR(full, r);
         return r;
+    }
+
+    /// <summary>
+    /// <see cref="RColumnMajor"/> written into a destination that arrives zeroed — the script's own
+    /// result storage — cut by columns across threads once it is large (ADR 0332).
+    /// </summary>
+    public void WriteR(bool full, Span<double> destination)
+    {
+        ThrowIfConsumed();
+        int rows = full ? _m : _p;
+        FactorFills.Upper(_qr, Math.Max(_m, 1), rows, _n, destination, clearRest: false);
     }
 
     /// <summary>
@@ -234,6 +263,7 @@ public sealed class QrDecomposition
     public void ApplyTransposeInPlace(double[] b, int nrhs)
     {
         ArgumentNullException.ThrowIfNull(b);
+        ThrowIfConsumed();
         LinalgProvider.Current.Ormqr(leftSide: true, transpose: true, _m, nrhs, _p,
             _qr, Math.Max(_m, 1), _tau, b, Math.Max(_m, 1));
     }
@@ -280,6 +310,7 @@ public sealed class QrDecomposition
     public double[] SolveColumnMajor(double[] b, int nrhs)
     {
         ArgumentNullException.ThrowIfNull(b);
+        ThrowIfConsumed();
         if (_n > _m)
         {
             // An underdetermined system has no least-squares solution of its own; the minimum-norm
@@ -311,6 +342,14 @@ public sealed class QrDecomposition
         }
 
         return solution;
+    }
+
+    private void ThrowIfConsumed()
+    {
+        if (_consumed)
+        {
+            throw new InvalidOperationException("Q was expanded in place; take R before Q.");
+        }
     }
 
     private static double[,] Rect(double[] columnMajor, int rows, int cols)

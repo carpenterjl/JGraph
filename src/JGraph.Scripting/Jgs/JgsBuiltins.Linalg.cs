@@ -179,7 +179,7 @@ internal static partial class JgsBuiltins
 
         double[] a = ColumnMajorOf("svd", args[0], out int rows, out int cols, line, col);
         _ = EconomySizedSvd(args, rows, cols, line, col);
-        double[] values = Svd.SingularValues(a, rows, cols);
+        double[] values = SingularValuesOfCopy(a, "svd", args[0], rows, cols, line, col);
         JgsValue result = Numbers(values);
         if (values.Length > 1)
         {
@@ -187,6 +187,23 @@ internal static partial class JgsBuiltins
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// The singular values of a private column-major copy, computed in the copy itself — one 5 MB
+    /// copy fewer at 800 square (ADR 0332). The driver destroys the copy when it fails to converge,
+    /// and then the values come from a fresh one through the road that keeps a pristine matrix for
+    /// the slower driver.
+    /// </summary>
+    private static double[] SingularValuesOfCopy(double[] copy, string name, JgsValue source,
+        int rows, int cols, int line, int col)
+    {
+        if (Svd.TrySingularValuesAdopting(copy, rows, cols, out double[] values))
+        {
+            return values;
+        }
+
+        return Svd.SingularValues(ColumnMajorOf(name, source, out _, out _, line, col), rows, cols);
     }
 
     /// <summary>
@@ -313,6 +330,18 @@ internal static partial class JgsBuiltins
         // number, and its 2-norm is correctly rounded. A column used to count as a matrix and go
         // to the singular values, which refused p = 3 and lost a length whose square underflows —
         // norm([1; 1] * 1e-200) is 1.41e-200, not 0 — and the row's own sum of squares lost it too.
+        // A packed matrix's 1-, Inf- and Frobenius norms are read where the matrix lies; only the
+        // 2-norm needs a copy, for the driver to destroy (the every-row plan's I3, ADR 0332).
+        if (isMatrix && (word == "fro" || p == 1 || double.IsPositiveInfinity(p))
+            && TryPackedMatrix(subject, out JGraph.Numerics.NumericBuffer stored, out int packedRows, out int packedCols)
+            && packedRows > 1 && packedCols > 1)
+        {
+            double answer = ReadOnlyMatrixNorm(stored.AsSpan(0, packedRows * packedCols), packedRows, packedCols,
+                word == "fro" ? 0 : p);
+            GC.KeepAlive(stored);
+            return JgsValue.Number(answer);
+        }
+
         double[] v;
         int rows;
         int cols;
@@ -390,12 +419,55 @@ internal static partial class JgsBuiltins
         if (p == 2)
         {
             // The largest singular value, and nothing else asked for: the vectors would cost as much
-            // again as the values and this answer never looks at one.
-            double[] sigma = Svd.SingularValues(a, rows, cols);
+            // again as the values and this answer never looks at one. `a` is this call's own copy.
+            double[] sigma = SingularValuesOfCopy(a, "norm", subject, rows, cols, line, col);
             return JgsValue.Number(sigma.Length == 0 ? 0 : sigma[0]);
         }
 
         throw new JgsRuntimeException(line, col, "Matrix norms support p = 1, 2, inf, or 'fro'.");
+    }
+
+    /// <summary>
+    /// The Frobenius (<paramref name="p"/> = 0), 1- or Inf-norm of a column-major matrix read in
+    /// place, each summed in the order the copying road sums it, so to the same bits: the
+    /// elements in storage order, each column top to bottom, each row left to right — the row sums
+    /// kept side by side so that the matrix is read down its columns once instead of across them.
+    /// </summary>
+    private static double ReadOnlyMatrixNorm(ReadOnlySpan<double> a, int rows, int cols, double p)
+    {
+        if (p == 0)
+        {
+            double sumSquares = 0;
+            foreach (double x in a)
+            {
+                sumSquares += x * x;
+            }
+
+            return System.Math.Sqrt(sumSquares);
+        }
+
+        if (p == 1)
+        {
+            return DenseLinalg.OneNorm(rows, cols, a, rows);
+        }
+
+        var sums = new double[rows];
+        for (int c = 0; c < cols; c++)
+        {
+            ReadOnlySpan<double> column = a.Slice(c * rows, rows);
+            for (int r = 0; r < rows; r++)
+            {
+                sums[r] += System.Math.Abs(column[r]);
+            }
+        }
+
+        double best = 0;
+        foreach (double sum in sums)
+        {
+            best = System.Math.Max(best, sum);
+        }
+
+        return best;
     }
 
     /// <summary>A scalar, vector, or matrix value as a rectangular double matrix (vectors are rows).</summary>

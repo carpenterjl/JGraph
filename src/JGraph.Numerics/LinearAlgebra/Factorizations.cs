@@ -113,32 +113,37 @@ public sealed class Cholesky
             throw new ArgumentException("The array must hold n² elements.", nameof(columnMajor));
         }
 
-        return FactorInPlace(columnMajor, n, lower);
+        return FactorInPlace(columnMajor, n, lower, otherTriangleClear: false);
     }
 
-    private static Cholesky FactorInPlace(double[] work, int n, bool lower)
+    /// <summary>
+    /// <see cref="FactorAdopting(double[], int, bool)"/> for an array whose other triangle the
+    /// caller has already cleared — the triangle the factorization never reads, so a caller copying
+    /// its input can write zeros there in the same pass instead of copying it and clearing it after
+    /// (the every-row plan's I3, ADR 0332). The factor is the same to the bit: LAPACK reads only the
+    /// triangle it is asked for.
+    /// </summary>
+    /// <exception cref="ArgumentException">The array is shorter than n².</exception>
+    public static Cholesky FactorAdoptingTriangle(double[] columnMajor, int n, bool lower)
+    {
+        ArgumentNullException.ThrowIfNull(columnMajor);
+        if (columnMajor.LongLength < (long)n * n)
+        {
+            throw new ArgumentException("The array must hold n² elements.", nameof(columnMajor));
+        }
+
+        return FactorInPlace(columnMajor, n, lower, otherTriangleClear: true);
+    }
+
+    private static Cholesky FactorInPlace(double[] work, int n, bool lower, bool otherTriangleClear = false)
     {
         int info = LinalgProvider.Current.Potrf(lower, n, work, n);
 
         // The factorization only ever writes its own triangle, so the other one still holds the
         // input. Clearing it is what turns the working array into the triangular factor itself.
-        for (int c = 0; c < n; c++)
+        if (!otherTriangleClear)
         {
-            long origin = (long)c * n;
-            if (lower)
-            {
-                for (int r = 0; r < c; r++)
-                {
-                    work[origin + r] = 0;
-                }
-            }
-            else
-            {
-                for (int r = c + 1; r < n; r++)
-                {
-                    work[origin + r] = 0;
-                }
-            }
+            FactorFills.ClearOtherTriangle(work, n, keepLower: lower);
         }
 
         // A failure at order q leaves everything past the leading (q−1) block untouched — which is
@@ -457,6 +462,52 @@ public sealed class Hessenberg
         return true;
     }
 
+    /// <summary>
+    /// The blocked reduction over an n-by-n column-major array the caller hands over: on success
+    /// <paramref name="matrix"/> holds H, exactly zero below the subdiagonal, and
+    /// <paramref name="q"/> the orthogonal factor when <paramref name="wantQ"/> asked for it. No
+    /// rectangle either side, and no Q formed for a caller that only wants H — which was as much
+    /// work again as the reduction (the every-row plan's I3, ADR 0332). H is the same to the bit as
+    /// <see cref="Reduce"/>'s: the same reduction of the same numbers. False when the backend has
+    /// no blocked kernel or the kernel declines — the array may be spent by then, so the caller
+    /// goes again from its own source through <see cref="Reduce"/>, as that method falls back.
+    /// </summary>
+    public static bool TryReduceColumnMajor(double[] matrix, int n, bool wantQ, out double[]? q)
+    {
+        ArgumentNullException.ThrowIfNull(matrix);
+        q = null;
+        if (n < 1 || matrix.LongLength < (long)n * n || !LinalgProvider.Current.IsNative)
+        {
+            return false;
+        }
+
+        var tau = new double[Math.Max(n - 1, 1)];
+        if (!LinalgProvider.Current.TryGehrd(n, matrix, n, tau))
+        {
+            return false;
+        }
+
+        if (wantQ)
+        {
+            double[] forQ = GC.AllocateUninitializedArray<double>(n * n);
+            FactorFills.Copy(matrix.AsSpan(0, n * n), forQ);
+            if (!LinalgProvider.Current.TryOrghr(n, forQ, n, tau))
+            {
+                return false;
+            }
+
+            q = forQ;
+        }
+
+        // Below the subdiagonal the array holds the reflectors; H is zero there.
+        for (int c = 0; c + 2 < n; c++)
+        {
+            matrix.AsSpan((c * n) + c + 2, n - c - 2).Clear();
+        }
+
+        return true;
+    }
+
     /// <summary>M ← (I - 2vvᵀ/vᵀv)·M, over rows <paramref name="first"/> and after.</summary>
     /// <remarks>
     /// <para>
@@ -550,60 +601,142 @@ public static class MatrixFunctions
     {
         ArgumentNullException.ThrowIfNull(matrix);
         int n = matrix.GetLength(0);
+        var flat = new double[(long)n * n];
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                flat[((long)c * n) + r] = matrix[r, c];
+            }
+        }
+
+        double[] result = Exponential(flat, n);
+        var rect = new double[n, n];
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                rect[r, c] = result[((long)c * n) + r];
+            }
+        }
+
+        return rect;
+    }
+
+    /// <summary>
+    /// <see cref="Exponential(double[,])"/> over an n-by-n column-major matrix, which is only read;
+    /// the answer is a new column-major array.
+    /// </summary>
+    /// <remarks>
+    /// The same arithmetic as the rectangle always did — the same row sums, the same scaling, the
+    /// same products through the same provider call at the same sizes, the same solve — in the
+    /// layout the provider works in, so each of the eight products at n = 400 no longer pays three
+    /// transposing copies around it (the every-row plan's I3, ADR 0332). Every element is the one
+    /// the rectangle held, bit for bit.
+    /// </remarks>
+    public static double[] Exponential(ReadOnlySpan<double> matrix, int n)
+    {
+        long size = (long)n * n;
+        if (matrix.Length < size)
+        {
+            throw new ArgumentException("The span must hold n² elements.", nameof(matrix));
+        }
+
+        // The infinity norm: each row summed left to right, as the rectangle's loop summed it.
+        var rowSums = new double[n];
+        for (int c = 0; c < n; c++)
+        {
+            ReadOnlySpan<double> column = matrix.Slice(c * n, n);
+            for (int r = 0; r < n; r++)
+            {
+                rowSums[r] += Math.Abs(column[r]);
+            }
+        }
 
         double norm = 0;
-        for (int r = 0; r < n; r++)
+        foreach (double rowSum in rowSums)
         {
-            double rowSum = 0;
-            for (int c = 0; c < n; c++)
-            {
-                rowSum += Math.Abs(matrix[r, c]);
-            }
-
             norm = Math.Max(norm, rowSum);
         }
 
         int squarings = norm > 0.5 ? (int)Math.Max(0, Math.Floor(Math.Log2(norm)) + 2) : 0;
         double scale = Math.Pow(2, -squarings);
-        var a = new double[n, n];
-        for (int r = 0; r < n; r++)
+        var a = new double[size];
+        for (long i = 0; i < size; i++)
         {
-            for (int c = 0; c < n; c++)
-            {
-                a[r, c] = matrix[r, c] * scale;
-            }
+            a[i] = matrix[(int)i] * scale;
         }
 
         const int Order = 6;
-        double[,] numerator = Linear.Identity(n);
-        double[,] denominator = Linear.Identity(n);
-        double[,] power = Linear.Identity(n);
+        double[] numerator = IdentityColumnMajor(n);
+        double[] denominator = IdentityColumnMajor(n);
+        double[] power = IdentityColumnMajor(n);
         double coefficient = 1;
         bool negative = true;
         for (int k = 1; k <= Order; k++)
         {
             coefficient = coefficient * (Order - k + 1) / (((2 * Order) - k + 1) * (double)k);
-            power = Linear.Multiply(a, power);
-            for (int r = 0; r < n; r++)
+            power = MultiplySquare(a, power, n);
+            for (long i = 0; i < size; i++)
             {
-                for (int c = 0; c < n; c++)
-                {
-                    double term = coefficient * power[r, c];
-                    numerator[r, c] += term;
-                    denominator[r, c] += negative ? -term : term;
-                }
+                double term = coefficient * power[i];
+                numerator[i] += term;
+                denominator[i] += negative ? -term : term;
             }
 
             negative = !negative;
         }
 
-        double[,] result = Linear.Solve(denominator, numerator);
+        // Both are this method's own, and the solve may overwrite both.
+        double[] result = Linear.Solve(denominator, n, n, numerator, n);
         for (int i = 0; i < squarings; i++)
         {
-            result = Linear.Multiply(result, result);
+            result = MultiplySquare(result, result, n);
         }
 
         return result;
+    }
+
+    private static double[] IdentityColumnMajor(int n)
+    {
+        var identity = new double[(long)n * n];
+        for (int i = 0; i < n; i++)
+        {
+            identity[((long)i * n) + i] = 1;
+        }
+
+        return identity;
+    }
+
+    /// <summary>
+    /// A·B for two n-by-n column-major matrices, choosing exactly as <see cref="Linear.Multiply"/>
+    /// chooses — the provider's product from a million flops, the plain loop with its inner sum
+    /// in ascending k below — so each element is the one that method computes.
+    /// </summary>
+    private static double[] MultiplySquare(double[] a, double[] b, int n)
+    {
+        var product = new double[(long)n * n];
+        if (LinalgProvider.Current.IsNative && 2L * n * n * n >= 1_000_000)
+        {
+            LinalgProvider.Current.Gemm(transA: false, transB: false, n, n, n, a, n, b, n, product, n);
+            return product;
+        }
+
+        for (int r = 0; r < n; r++)
+        {
+            for (int c = 0; c < n; c++)
+            {
+                double sum = 0;
+                for (int k = 0; k < n; k++)
+                {
+                    sum += a[(k * n) + r] * b[(c * n) + k];
+                }
+
+                product[(c * n) + r] = sum;
+            }
+        }
+
+        return product;
     }
 }
 

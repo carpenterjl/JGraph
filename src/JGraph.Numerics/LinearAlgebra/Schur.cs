@@ -72,6 +72,37 @@ public sealed class Schur
     }
 
     /// <summary>
+    /// <see cref="Factor"/> over an n-by-n column-major array the caller hands over, answering T and
+    /// U column-major: the same driver on the same numbers, with no rectangle on either side — at
+    /// 400 square those were six transposing copies around one call (the every-row plan's I3,
+    /// ADR 0332). <paramref name="matrix"/> comes back as T.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The iteration did not converge.</exception>
+    public static (double[] T, double[] U) FactorColumnMajor(double[] matrix, int n)
+    {
+        ArgumentNullException.ThrowIfNull(matrix);
+        if (matrix.LongLength < (long)n * n)
+        {
+            throw new ArgumentException("The array must hold n² elements.", nameof(matrix));
+        }
+
+        var u = new double[(long)n * n];
+        if (n == 0)
+        {
+            return (matrix, u);
+        }
+
+        var real = new double[n];
+        var imaginary = new double[n];
+        if (LinalgProvider.Current.Gees(vectors: true, n, matrix, n, real, imaginary, u, n) != 0)
+        {
+            throw new InvalidOperationException("The Schur iteration did not converge.");
+        }
+
+        return (matrix, u);
+    }
+
+    /// <summary>
     /// The managed kernel behind <see cref="Factor"/>: Hessenberg reduction and the Francis
     /// double-shift iteration. <see cref="ManagedLinalg"/> reaches it directly — the public door
     /// routes through the provider, and this one is what the provider's managed lane answers with.

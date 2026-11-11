@@ -948,19 +948,19 @@ internal static partial class JgsBuiltins
             x = Rescaled(x, centre, scale);
         }
 
-        double[,] design = Vandermonde(x, terms);
-        QrDecomposition qr = QrDecomposition.Factor(design);
+        // The design matrix is built column-major — LAPACK's layout — in one threaded pass and
+        // factored where it lies, and the right-hand side is y's own copy. The row-major design and
+        // its transposing copy were two 144 MB passes at two million points and degree 8 (the
+        // every-row plan's I3, ADR 0332); the factorization and the solve are the calls they were,
+        // on the same numbers, so the coefficients are the same to the bit.
+        double[] design = VandermondeColumnMajor(x, terms);
+        QrDecomposition qr = QrDecomposition.FactorAdopting(design, x.Length, terms, pivot: false);
 
-        var target = new double[y.Length, 1];
-        for (int r = 0; r < y.Length; r++)
-        {
-            target[r, 0] = y[r];
-        }
-
-        double[,] solved;
+        double[] coefficients;
         try
         {
-            solved = qr.SolveColumns(target);
+            double[] rhs = wanted <= 1 ? y : (double[])y.Clone();
+            coefficients = qr.SolveColumnMajor(rhs, 1);
         }
         catch (InvalidOperationException)
         {
@@ -968,24 +968,28 @@ internal static partial class JgsBuiltins
                 "polyfit: the fit is rank deficient — the points do not pin down a polynomial of that degree.");
         }
 
-        var coefficients = new double[terms];
-        for (int i = 0; i < terms; i++)
-        {
-            coefficients[i] = solved[i, 0];
-        }
-
         if (wanted <= 1)
         {
             return [Numbers(coefficients)];
         }
 
+        // The factorization overwrote the design, so each row's powers are made again as the
+        // design made them — the same products in the same order, so the same residual.
         double residual = 0;
+        Span<double> powers = terms <= 256 ? stackalloc double[terms] : new double[terms];
         for (int r = 0; r < y.Length; r++)
         {
+            double power = 1;
+            for (int c = terms - 1; c >= 0; c--)
+            {
+                powers[c] = power;
+                power *= x[r];
+            }
+
             double fitted = 0;
             for (int c = 0; c < terms; c++)
             {
-                fitted += design[r, c] * coefficients[c];
+                fitted += powers[c] * coefficients[c];
             }
 
             residual += (y[r] - fitted) * (y[r] - fitted);
@@ -1144,6 +1148,32 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>The design matrix of a polynomial fit: highest power first, matching p's order.</summary>
+    /// <summary>
+    /// <see cref="Vandermonde"/> laid out column-major, x.Length by <paramref name="terms"/>, rows
+    /// cut across threads from two million elements: each row's powers are the same products in the
+    /// same order, so every element is the one the rectangle held.
+    /// </summary>
+    private static double[] VandermondeColumnMajor(double[] x, int terms)
+    {
+        int m = x.Length;
+        double[] design = GC.AllocateUninitializedArray<double>(checked(m * terms));
+        ParallelKernels.For(m, ParallelKernels.MemoryBoundThreshold / Math.Max(terms, 1), null, (start, count) =>
+        {
+            for (int r = start; r < start + count; r++)
+            {
+                double power = 1;
+                double point = x[r];
+                for (int c = terms - 1; c >= 0; c--)
+                {
+                    design[((long)c * m) + r] = power;
+                    power *= point;
+                }
+            }
+        });
+
+        return design;
+    }
+
     private static double[,] Vandermonde(double[] x, int terms)
     {
         var design = new double[x.Length, terms];

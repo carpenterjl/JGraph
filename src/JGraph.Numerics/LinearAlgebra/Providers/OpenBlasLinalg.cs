@@ -216,7 +216,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return 0;
         }
 
-        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, Math.Min(m, n));
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, NativeThreads.FactorSize(m, n));
         fixed (double* pa = a)
         fixed (double* pt = tau)
         {
@@ -275,7 +275,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return 0;
         }
 
-        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, Math.Min(m, n));
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, NativeThreads.FactorSize(m, n));
         fixed (double* pa = a)
         fixed (double* pt = tau)
         {
@@ -292,7 +292,17 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return 0;
         }
 
-        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, Math.Min(m, n));
+        // Sized as before, by C's short side, unless the reflectors are a long thin block of the size
+        // FactorSize promotes — a long thin solve walks 2M-row reflectors whatever shape C is.
+        int reflectorRows = leftSide ? m : n;
+        long size = Math.Min(m, n);
+        long tall = NativeThreads.FactorSize(reflectorRows, k);
+        if (tall > Math.Min(reflectorRows, k))
+        {
+            size = Math.Max(size, tall);
+        }
+
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, size);
         fixed (double* pa = a)
         fixed (double* pt = tau)
         fixed (double* pc = c)

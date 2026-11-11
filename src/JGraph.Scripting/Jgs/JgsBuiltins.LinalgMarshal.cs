@@ -31,9 +31,11 @@ internal static partial class JgsBuiltins
             int length = value.ArrayLength;
             if ((long)rows * cols == length)
             {
+                // Threaded from a million elements (ADR 0332): a 2000-square is 32 MB onto fresh
+                // pages, and one thread faulting them in was most of what the copy cost.
                 double[] packed = GC.AllocateUninitializedArray<double>(length);
                 NumericBuffer buffer = value.AsBuffer;
-                buffer.AsSpan(0, length).CopyTo(packed);
+                JGraph.Numerics.LinearAlgebra.FactorFills.Copy(buffer.AsSpan(0, length), packed);
                 GC.KeepAlive(buffer);
                 return packed;
             }
@@ -57,6 +59,33 @@ internal static partial class JgsBuiltins
         }
 
         return flat;
+    }
+
+    /// <summary>
+    /// The storage of a plain packed real matrix, to be read where it lies — for a verb that only
+    /// reads (a norm), or one that copies just the part a factorization will look at (chol's
+    /// triangle). False for anything else, which takes the copying road.
+    /// The caller keeps <paramref name="buffer"/> alive while it reads the span.
+    /// </summary>
+    internal static bool TryPackedMatrix(JgsValue value, out NumericBuffer buffer, out int rows, out int cols)
+    {
+        buffer = null!;
+        rows = 0;
+        cols = 0;
+        if (!JgsLinalg.IsPlainPackedReal(value))
+        {
+            return false;
+        }
+
+        rows = value.Rows;
+        cols = value.Cols;
+        if ((long)rows * cols != value.ArrayLength)
+        {
+            return false;
+        }
+
+        buffer = value.AsBuffer;
+        return true;
     }
 
     /// <summary>The same, refusing anything that is not square — the shape a factorization needs.</summary>

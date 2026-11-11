@@ -33,6 +33,36 @@ internal static partial class JgsBuiltins
         JgsValue[] Balanced(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
         {
             ArityRange("balance", args, 1, 2, line, col);
+
+            // A packed square matrix is balanced column-major where its copy lies and handed back as
+            // it stands — the same scaling of the same numbers, without the four transposing copies
+            // around it (the every-row plan's I3, ADR 0332).
+            if (TryPackedMatrix(args[0], out JGraph.Numerics.NumericBuffer stored, out int rows, out int cols)
+                && rows == cols)
+            {
+                _ = args.Count < 2 || OneWord("balance", args, 1, line, col, "noperm", "perm") != "noperm";
+                int n = rows;
+                double[] flat = GC.AllocateUninitializedArray<double>(n * n);
+                FactorFills.Copy(stored.AsSpan(0, n * n), flat);
+                GC.KeepAlive(stored);
+                double[] scaling = Balancing.InPlace(flat, n);
+                JgsValue balancedValue = FromColumnMajorRect(flat, n, n);
+                if (wanted <= 1)
+                {
+                    return [balancedValue];
+                }
+
+                JgsValue similarity = BuildColumnMajor(n, n, destination =>
+                {
+                    for (int i = 0; i < n; i++)
+                    {
+                        destination[(i * n) + i] = scaling[i];
+                    }
+                });
+
+                return [similarity, balancedValue];
+            }
+
             double[,] a = SquareOf("balance", args[0], line, col);
             bool permute = args.Count < 2
                 || OneWord("balance", args, 1, line, col, "noperm", "perm") != "noperm";

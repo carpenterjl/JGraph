@@ -106,6 +106,28 @@ public sealed class Svd
     public static double[] SingularValues(ReadOnlySpan<double> columnMajor, int m, int n) =>
         Decompose(columnMajor, m, n, SvdVectors.None).Values;
 
+    /// <summary>
+    /// <see cref="SingularValues"/> computed in <paramref name="work"/> itself, which the caller
+    /// hands over and must not read again — the private copy a script verb has already made, so the
+    /// driver does not make another (the every-row plan's I3, ADR 0332). False when the
+    /// divide-and-conquer driver did not converge: it has destroyed the array by then, so the
+    /// caller goes again from its own source through <see cref="SingularValues"/>, which keeps a
+    /// pristine copy for the slower driver.
+    /// </summary>
+    public static bool TrySingularValuesAdopting(double[] work, int m, int n, out double[] values)
+    {
+        ArgumentNullException.ThrowIfNull(work);
+        if (work.LongLength < (long)m * n)
+        {
+            throw new ArgumentException("The array must hold m·n elements.", nameof(work));
+        }
+
+        values = new double[Math.Min(m, n)];
+        int info = LinalgProvider.Current.Gesdd(SvdVectors.None, m, n, work, Math.Max(m, 1),
+            values, [], Math.Max(m, 1), [], 1);
+        return info == 0;
+    }
+
     private static Svd Decompose(ReadOnlySpan<double> a, int m, int n, SvdVectors job)
     {
         int k = Math.Min(m, n);

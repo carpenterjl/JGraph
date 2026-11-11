@@ -18,15 +18,28 @@ internal static partial class JgsBuiltins
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
 
         Define("schur",
-            (args, line, col) => WantsComplex("schur", args, line, col)
-                ? MatValue(ComplexSchur("schur", args, line, col).T)
-                : FromRect(Factorized("schur", args, line, col).T),
+            (args, line, col) =>
+            {
+                if (WantsComplex("schur", args, line, col))
+                {
+                    return MatValue(ComplexSchur("schur", args, line, col).T);
+                }
+
+                return TryPackedSchur(args, line, col, out JgsValue[] packed)
+                    ? packed[1]
+                    : FromRect(Factorized("schur", args, line, col).T);
+            },
             (args, _, line, col) =>
             {
                 if (WantsComplex("schur", args, line, col))
                 {
                     (Complex[,] u, Complex[,] t) = ComplexSchur("schur", args, line, col);
                     return [MatValue(u), MatValue(t)];
+                }
+
+                if (TryPackedSchur(args, line, col, out JgsValue[] packed))
+                {
+                    return packed;
                 }
 
                 Schur factored = Factorized("schur", args, line, col);
@@ -71,6 +84,38 @@ internal static partial class JgsBuiltins
         }
 
         return Schur.Factor(SquareRect(name, args[0], line, col));
+    }
+
+    /// <summary>
+    /// The real Schur form of a packed square matrix, column-major in and out — [U, T] — with the
+    /// output-kind word checked as <see cref="Factorized"/> checks it (the every-row plan's I3,
+    /// ADR 0332). False for anything else, and the rectangle road answers.
+    /// </summary>
+    private static bool TryPackedSchur(IReadOnlyList<JgsValue> args, int line, int col, out JgsValue[] factors)
+    {
+        factors = [];
+        if (!TryPackedMatrix(args[0], out JGraph.Numerics.NumericBuffer stored, out int rows, out int cols)
+            || rows != cols)
+        {
+            return false;
+        }
+
+        if (args.Count == 2)
+        {
+            string kind = Str("schur", args, 1, line, col);
+            if (kind != "real" && kind != "complex")
+            {
+                throw new JgsRuntimeException(line, col, $"schur: '{kind}' is not 'real' or 'complex'.");
+            }
+        }
+
+        int n = rows;
+        double[] work = GC.AllocateUninitializedArray<double>(n * n);
+        FactorFills.Copy(stored.AsSpan(0, n * n), work);
+        GC.KeepAlive(stored);
+        (double[] t, double[] u) = Schur.FactorColumnMajor(work, n);
+        factors = [FromColumnMajorRect(u, n, n), FromColumnMajorRect(t, n, n)];
+        return true;
     }
 
     /// <summary>Whether the caller asked for the complex form, or handed a matrix that has no other.</summary>

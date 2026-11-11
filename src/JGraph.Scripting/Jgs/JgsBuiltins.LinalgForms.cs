@@ -431,18 +431,18 @@ internal static partial class JgsBuiltins
             return wanted >= 3 ? [c, r, Permutation(qr, cols, permutation)] : [c, r];
         }
 
+        // R is written straight into its result, threaded, and then Q is expanded where the
+        // reflectors lie whenever the factored array is Q's own size — a square matrix, or a tall
+        // one's economy Q — which is one 11.5 MB copy fewer at 1200 square (ADR 0332). R must come
+        // first: the expansion overwrites it.
+        JgsValue upper = BuildColumnMajor(qColumns, cols, destination => qr.WriteR(!economy, destination));
         if (wanted <= 1)
         {
-            return [FromColumnMajorRect(qr.RColumnMajor(!economy), qColumns, cols)];
+            return [upper];
         }
 
-        JgsValue[] factors =
-        [
-            FromColumnMajorRect(qr.QColumnMajor(!economy), rows, qColumns),
-            FromColumnMajorRect(qr.RColumnMajor(!economy), qColumns, cols),
-        ];
-
-        return wanted <= 2 ? factors : [factors[0], factors[1], Permutation(qr, cols, permutation)];
+        JgsValue orthogonal = FromColumnMajorRect(qr.TakeQColumnMajor(!economy), rows, qColumns);
+        return wanted <= 2 ? [orthogonal, upper] : [orthogonal, upper, Permutation(qr, cols, permutation)];
     }
 
     /// <summary>The first <paramref name="keep"/> rows of a column-major block, compacted.</summary>
@@ -574,37 +574,17 @@ internal static partial class JgsBuiltins
     /// writes only its one and the factored entries below it; with an order, factored row s lands
     /// on A's row <c>order[s]</c>.
     /// </summary>
-    private static void FillLower(LuDecomposition lu, int[]? order, int n, Span<double> lower)
-    {
-        ReadOnlySpan<double> factors = lu.Factors;
-        for (int c = 0; c < n; c++)
-        {
-            int origin = c * n;
-            if (order is null)
-            {
-                lower[origin + c] = 1;
-                factors.Slice(origin + c + 1, n - c - 1).CopyTo(lower[(origin + c + 1)..]);
-                continue;
-            }
-
-            lower[origin + order[c]] = 1;
-            for (int s = c + 1; s < n; s++)
-            {
-                lower[origin + order[s]] = factors[origin + s];
-            }
-        }
-    }
+    /// <remarks>
+    /// Cut by columns across threads from a million elements (the every-row plan's I3, ADR 0332):
+    /// the three outputs of a 2000-square were 19 ms of the call on one thread (ADR 0321), most of
+    /// it the fresh pages faulting in one at a time.
+    /// </remarks>
+    private static void FillLower(LuDecomposition lu, int[]? order, int n, Span<double> lower) =>
+        FactorFills.Lower(lu.Factors, n, lower, unitDiagonal: true, clearRest: false, order);
 
     /// <summary>The upper-triangular U; the destination arrives zeroed.</summary>
-    private static void FillUpper(LuDecomposition lu, int n, Span<double> upper)
-    {
-        ReadOnlySpan<double> factors = lu.Factors;
-        for (int c = 0; c < n; c++)
-        {
-            int origin = c * n;
-            factors.Slice(origin, c + 1).CopyTo(upper[origin..]);
-        }
-    }
+    private static void FillUpper(LuDecomposition lu, int n, Span<double> upper) =>
+        FactorFills.Upper(lu.Factors, n, n, n, upper, clearRest: false);
 
     /// <summary>A row permutation as the matrix or the index vector the <c>form</c> word asks for.</summary>
     private static JgsValue PermutationValue(int[] order, string form, int n)
@@ -747,13 +727,11 @@ internal static partial class JgsBuiltins
             }
         }
 
-        double[] a = SquareColumnMajorOf("chol", DenseValue(args[0]), out int n, line, col);
-
         // The triangle asked for is the triangle read and the triangle written, which is MATLAB's
         // own reading of 'upper' and 'lower' — and what lets the factor come back without a
         // transposing pass over it. For a symmetric matrix the two directions answer the same
         // question, so which one runs is a matter of which factor was asked for.
-        Cholesky cholesky = Cholesky.FactorAdopting(a, n, lower);
+        Cholesky cholesky = CholeskyOf(DenseValue(args[0]), lower, out int n, line, col);
 
         if (!cholesky.IsPositiveDefinite && wanted <= 1)
         {
@@ -786,6 +764,36 @@ internal static partial class JgsBuiltins
         }
 
         return [.. outputs];
+    }
+
+    /// <summary>
+    /// Factors the triangle <c>chol</c> was asked for. A packed matrix is copied a triangle at a
+    /// time with zeros written over the other one in the same threaded pass — the copy and the
+    /// clearing after the factorization were two passes over 32 MB at n = 2000, and the
+    /// factorization never reads the half it clears (the every-row plan's I3, ADR 0332).
+    /// </summary>
+    private static Cholesky CholeskyOf(JgsValue value, bool lower, out int n, int line, int col)
+    {
+        if (TryPackedMatrix(value, out JGraph.Numerics.NumericBuffer buffer, out int rows, out int cols) && rows == cols)
+        {
+            n = rows;
+            double[] work = GC.AllocateUninitializedArray<double>(n * n);
+            ReadOnlySpan<double> source = buffer.AsSpan(0, n * n);
+            if (lower)
+            {
+                FactorFills.Lower(source, n, work, unitDiagonal: false, clearRest: true, rowOrder: null);
+            }
+            else
+            {
+                FactorFills.Upper(source, n, n, n, work, clearRest: true);
+            }
+
+            GC.KeepAlive(buffer);
+            return Cholesky.FactorAdoptingTriangle(work, n, lower);
+        }
+
+        double[] a = SquareColumnMajorOf("chol", value, out n, line, col);
+        return Cholesky.FactorAdopting(a, n, lower);
     }
 
     /// <summary>

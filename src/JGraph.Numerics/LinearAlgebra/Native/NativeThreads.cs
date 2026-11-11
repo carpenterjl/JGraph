@@ -84,6 +84,39 @@ internal static class NativeThreads
         }
     }
 
+    /// <summary>
+    /// Whether a large, long, thin factorization is sized by its footprint rather than its short
+    /// side: <c>JGRAPH_TALL_FACTOR_THREADS=0</c> turns it off. Settable for the tests.
+    /// </summary>
+    internal static bool TallFactorThreads { get; set; } =
+        Environment.GetEnvironmentVariable("JGRAPH_TALL_FACTOR_THREADS") != "0";
+
+    /// <summary>Elements (4M, 32 MB) from which a long, thin matrix is sized by its footprint.</summary>
+    internal const long TallFactorElements = 1L << 22;
+
+    /// <summary>
+    /// The size a QR-family call on an m-by-n matrix is given to the <see cref="Work.Factor"/>
+    /// policy: its short side, as for any factorization — except a matrix of at least
+    /// <see cref="TallFactorElements"/> whose short side is far shorter than its footprint, which is
+    /// sized by the side of the square of the same footprint, √(m·n).
+    /// </summary>
+    /// <remarks>
+    /// <c>polyfit</c> of two million points at degree 8 factors a 2,000,000-by-9 matrix: 144 MB of
+    /// level-2 sweeps, each of them memory-bound, that the short side's 9 sent to one thread (the
+    /// every-row plan's I3, ADR 0332). A square matrix is sized exactly as before.
+    /// </remarks>
+    internal static long FactorSize(int m, int n)
+    {
+        long shortSide = Math.Min(m, n);
+        long elements = (long)m * n;
+        if (!TallFactorThreads || elements < TallFactorElements)
+        {
+            return shortSide;
+        }
+
+        return Math.Max(shortSide, (long)Math.Sqrt(elements));
+    }
+
     /// <summary>The count the policy gives a call: pinned by environment, or by routine and size.</summary>
     internal static int CountFor(Work work, long size)
     {

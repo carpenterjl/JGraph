@@ -228,18 +228,39 @@ internal static partial class JgsBuiltins
             (args, line, col) =>
             {
                 Arity("hess", args, 1, line, col);
+                if (TryPackedHessenberg(args[0], wantQ: false, out JgsValue h, out _))
+                {
+                    return h;
+                }
+
                 return FromRect(Hessenberg.Reduce(SquareRect("hess", args[0], line, col)).H);
             },
-            (args, _, line, col) =>
+            (args, wanted, line, col) =>
             {
                 Arity("hess", args, 1, line, col);
+                if (TryPackedHessenberg(args[0], wantQ: wanted >= 2, out JgsValue h, out JgsValue? q))
+                {
+                    return q is null ? [h] : [q, h];
+                }
+
                 Hessenberg reduced = Hessenberg.Reduce(SquareRect("hess", args[0], line, col));
-                return [FromRect(reduced.Q), FromRect(reduced.H)];
+                return wanted >= 2 ? [FromRect(reduced.Q), FromRect(reduced.H)] : [FromRect(reduced.H)];
             });
 
         Define("expm", (args, line, col) =>
         {
             Arity("expm", args, 1, line, col);
+
+            // A packed square matrix goes in and comes out column-major, with no rectangle either
+            // side of the same arithmetic (the every-row plan's I3, ADR 0332).
+            if (TryPackedMatrix(args[0], out JGraph.Numerics.NumericBuffer stored, out int rows, out int cols)
+                && rows == cols)
+            {
+                double[] exponential = MatrixFunctions.Exponential(stored.AsSpan(0, rows * cols), rows);
+                GC.KeepAlive(stored);
+                return FromColumnMajorRect(exponential, rows, cols);
+            }
+
             return FromRect(MatrixFunctions.Exponential(SquareRect("expm", args[0], line, col)));
         }, null);
 
@@ -256,6 +277,36 @@ internal static partial class JgsBuiltins
             double anorm = DenseLinalg.OneNorm(n, n, a, n);
             return JgsValue.Number(LuDecomposition.FactorAdopting(a, n).ReciprocalCondition(anorm));
         }, null);
+    }
+
+    /// <summary>
+    /// <c>hess</c> of a packed square matrix on the blocked kernel, column-major in and out, with Q
+    /// formed only when it is one of the outputs (the every-row plan's I3, ADR 0332). False for
+    /// anything else, or a backend without the kernel, and the rectangle road answers.
+    /// </summary>
+    private static bool TryPackedHessenberg(JgsValue value, bool wantQ, out JgsValue h, out JgsValue? q)
+    {
+        h = JgsValue.Null;
+        q = null;
+        if (!LinalgProvider.Current.IsNative
+            || !TryPackedMatrix(value, out JGraph.Numerics.NumericBuffer stored, out int rows, out int cols)
+            || rows != cols || rows == 0)
+        {
+            return false;
+        }
+
+        int n = rows;
+        double[] work = GC.AllocateUninitializedArray<double>(n * n);
+        FactorFills.Copy(stored.AsSpan(0, n * n), work);
+        GC.KeepAlive(stored);
+        if (!Hessenberg.TryReduceColumnMajor(work, n, wantQ, out double[]? factor))
+        {
+            return false;
+        }
+
+        h = FromColumnMajorRect(work, n, n);
+        q = factor is null ? null : FromColumnMajorRect(factor, n, n);
+        return true;
     }
 
     /// <summary>Runs the LDLᵀ factorization, reporting the pivot case it cannot handle.</summary>
@@ -335,7 +386,8 @@ internal static partial class JgsBuiltins
             // asking for the full decomposition would build an m-by-m U to go unread, which for a
             // long thin matrix is the whole of the memory.
             Svd svd = rows < cols ? Svd.FactorFull(a, rows, cols) : Svd.Factor(a, rows, cols);
-            return FromRect(SelectColumns(svd.V, svd.Values, Tolerance(rows, cols, svd.Values), keepAbove: false));
+            return SelectColumnsColumnMajor(svd.VColumnMajor, cols, svd.VColumnCount, svd.Values,
+                Tolerance(rows, cols, svd.Values), keepAbove: false);
         }, null);
 
         Define("orth", (args, line, col) =>
@@ -346,7 +398,8 @@ internal static partial class JgsBuiltins
             // The range needs no completing: it can be no wider than the rank, and the economy U
             // already carries every column a nonzero singular value could claim.
             Svd svd = Svd.Factor(a, rows, cols);
-            return FromRect(SelectColumns(svd.U, svd.Values, Tolerance(rows, cols, svd.Values), keepAbove: true));
+            return SelectColumnsColumnMajor(svd.UColumnMajor, rows, svd.UColumnCount, svd.Values,
+                Tolerance(rows, cols, svd.Values), keepAbove: true);
         }, null);
 
         Define("pinv", (args, line, col) =>
@@ -440,6 +493,40 @@ internal static partial class JgsBuiltins
     /// <summary>The singular value below which a value counts as zero — MATLAB's rank tolerance.</summary>
     private static double Tolerance(int rows, int cols, double[] singular) =>
         Math.Max(rows, cols) * (singular.Length == 0 ? 0 : singular[0]) * 2.220446049250313e-16;
+
+    /// <summary>
+    /// <see cref="SelectColumns"/> over a column-major factor, answering the script value: the kept
+    /// columns are whole runs of storage, copied as they lie, where the rectangle road built the
+    /// factor's rectangle, a rectangle of the kept columns and the value from that — three
+    /// transposing copies for the same numbers (the every-row plan's I3, ADR 0332).
+    /// </summary>
+    private static JgsValue SelectColumnsColumnMajor(double[] factor, int rows, int columns, double[] singular,
+        double tolerance, bool keepAbove)
+    {
+        var kept = new List<int>();
+        for (int k = 0; k < columns; k++)
+        {
+            double value = k < singular.Length ? singular[k] : 0;
+            if (keepAbove ? value > tolerance : value <= tolerance)
+            {
+                kept.Add(k);
+            }
+        }
+
+        // A factor with no rows still answers its columns' count: FromRect of a rows-by-k rectangle.
+        if (rows == 0 || kept.Count == 0)
+        {
+            return FromRect(new double[rows, kept.Count]);
+        }
+
+        var selected = new double[(long)rows * kept.Count];
+        for (int c = 0; c < kept.Count; c++)
+        {
+            Array.Copy(factor, (long)kept[c] * rows, selected, (long)c * rows, rows);
+        }
+
+        return FromColumnMajorRect(selected, rows, kept.Count);
+    }
 
     /// <summary>The columns of <paramref name="matrix"/> whose singular value is above or below a threshold.</summary>
     private static double[,] SelectColumns(double[,] matrix, double[] singular, double tolerance, bool keepAbove)
