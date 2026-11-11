@@ -41,6 +41,80 @@ internal static partial class JgsBuiltins
         DefineBoth("polyeig", PolynomialEigen);
         DefineBoth("funm", (args, wanted, line, col) => MatrixFunctionOf(args, wanted, host, line, col));
         DefineBoth("gsvd", GeneralizedSingularValues);
+
+        env.Builtins.Register("sqrtm", JgsValue.Function(new BuiltinFunction("sqrtm",
+            (args, line, col) => MatrixRootOf("sqrtm", args, host, line, col))));
+        env.Builtins.Register("logm", JgsValue.Function(new BuiltinFunction("logm",
+            (args, line, col) => MatrixRootOf("logm", args, host, line, col))));
+    }
+
+    // --- sqrtm and logm --------------------------------------------------------------------------
+
+    /// <summary>
+    /// <c>sqrtm(A)</c> and <c>logm(A)</c> for a real square matrix: the principal root or logarithm
+    /// over the Schur form (<see cref="MatrixRoots"/>), complex when an eigenvalue is a negative
+    /// real number, with MATLAB's two warnings.
+    /// </summary>
+    private static JgsValue MatrixRootOf(
+        string name, IReadOnlyList<JgsValue> args, JGraphScriptGlobals host, int line, int col)
+    {
+        Arity(name, args, 1, line, col);
+        bool logarithm = name == "logm";
+        double[] a = SquareColumnMajorOf(name, args[0], out int n, line, col);
+        if (n == 0)
+        {
+            return FromRect(new double[0, 0]);
+        }
+
+        foreach (double value in a)
+        {
+            if (double.IsFinite(value))
+            {
+                continue;
+            }
+
+            // The two names part ways here in R2025b: the root refuses, and the logarithm answers
+            // a matrix of NaN.
+            if (!logarithm)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:sqrtm:inputMustBeFinite",
+                    "Matrix elements must be finite.");
+            }
+
+            var nans = new double[a.Length];
+            Array.Fill(nans, double.NaN);
+            return FromColumnMajorRect(nans, n, n);
+        }
+
+        MatrixRoots.Answer answer;
+        try
+        {
+            answer = logarithm ? MatrixRoots.Logarithm(a, n) : MatrixRoots.SquareRoot(a, n);
+        }
+        catch (InvalidOperationException ex)
+        {
+            throw new JgsRuntimeException(line, col, $"{name}: {ex.Message}");
+        }
+
+        if (logarithm && answer.NonPositive)
+        {
+            host.WriteErr("Warning: Principal matrix logarithm is not defined for A with nonpositive "
+                + "real eigenvalues. A non-principal matrix logarithm is returned.");
+        }
+        else if (!logarithm && answer.Singular)
+        {
+            host.WriteErr("Warning: Matrix is singular and may not have a square root.");
+        }
+
+        if (answer.Real is { } real)
+        {
+            return FromColumnMajorRect(real, n, n);
+        }
+
+        Complex[] flat = answer.Complex!;
+        return flat.Length == 1
+            ? flat[0].Imaginary == 0 ? JgsValue.Number(flat[0].Real) : JgsValue.ComplexNum(flat[0])
+            : ShapedFlatComplex(flat, [n, n]);
     }
 
     // --- polyeig ---------------------------------------------------------------------------------

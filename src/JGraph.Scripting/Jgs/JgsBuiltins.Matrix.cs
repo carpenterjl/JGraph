@@ -358,26 +358,35 @@ internal static partial class JgsBuiltins
             double[] values = svd.Values;
             double[] u = svd.UColumnMajor;
             double[] v = svd.VColumnMajor;
-            return BuildColumnMajor(cols, rows, destination =>
-            {
-                for (int k = 0; k < values.Length; k++)
-                {
-                    if (values[k] <= tolerance)
-                    {
-                        continue;
-                    }
 
-                    double reciprocal = 1.0 / values[k];
-                    for (int r = 0; r < cols; r++)
-                    {
-                        for (int c = 0; c < rows; c++)
-                        {
-                            destination[(c * cols) + r] +=
-                                reciprocal * v[(k * cols) + r] * u[(k * rows) + c];
-                        }
-                    }
+            // The singular values descend, so the ones that count are a leading run and the
+            // pseudoinverse is one product over that run: V·diag(1/s)·Uᵀ. It used to be a triple
+            // loop over rank, rows and columns, which at 600 by 300 was four times the SVD it
+            // followed (the every-row plan's I4, ADR 0329).
+            int rank = 0;
+            while (rank < values.Length && values[rank] > tolerance)
+            {
+                rank++;
+            }
+
+            if (rank == 0 || rows == 0 || cols == 0)
+            {
+                return BuildColumnMajor(cols, rows, static _ => { });
+            }
+
+            var scaled = new double[(long)cols * rank];
+            for (int k = 0; k < rank; k++)
+            {
+                double reciprocal = 1.0 / values[k];
+                int at = k * cols;
+                for (int r = 0; r < cols; r++)
+                {
+                    scaled[at + r] = reciprocal * v[at + r];
                 }
-            });
+            }
+
+            return BuildColumnMajor(cols, rows, destination =>
+                LinalgProvider.Current.Gemm(false, true, cols, rows, rank, scaled, cols, u, rows, destination, cols));
         }, null);
 
         Define("cross", (args, line, col) =>

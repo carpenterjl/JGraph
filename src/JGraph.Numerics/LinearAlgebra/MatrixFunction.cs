@@ -539,7 +539,7 @@ public static class MatrixFunction
     }
 
     /// <summary>The Gauss-Legendre nodes and weights of a given degree, by Golub and Welsch.</summary>
-    private static (double[] Nodes, double[] Weights) GaussLegendre(int n)
+    internal static (double[] Nodes, double[] Weights) GaussLegendre(int n)
     {
         var jacobi = new double[n, n];
         for (int i = 1; i < n; i++)
@@ -789,8 +789,22 @@ public static class MatrixFunction
     /// <summary>U·F·Uᴴ, which takes the answer back out of the Schur basis.</summary>
     private static Complex[,] Conjugated(Complex[,] u, Complex[,] f)
     {
-        Complex[,] left = NormEstimators.Product(u, f, conjugateTranspose: false);
         int n = u.GetLength(0);
+        if (n >= BlockedProductOrder && u.GetLength(1) == n)
+        {
+            var turned = new Complex[n, n];
+            for (int r = 0; r < n; r++)
+            {
+                for (int c = 0; c < n; c++)
+                {
+                    turned[r, c] = Complex.Conjugate(u[c, r]);
+                }
+            }
+
+            return ComplexLinear.Multiply(ComplexLinear.Multiply(u, f), turned);
+        }
+
+        Complex[,] left = NormEstimators.Product(u, f, conjugateTranspose: false);
         var answer = new Complex[n, n];
         for (int r = 0; r < n; r++)
         {
@@ -845,8 +859,17 @@ public static class MatrixFunction
         }
     }
 
+    /// <summary>
+    /// The order from which a product goes to the backend's complex multiply. Under it the plain
+    /// triple loop is kept, so that the small matrices the fixtures hold keep their last bits; at
+    /// and over it the loop was most of what <c>funm</c> cost (the every-row plan's I4, ADR 0329).
+    /// </summary>
+    private const int BlockedProductOrder = 24;
+
     private static Complex[,] Multiply(Complex[,] a, Complex[,] b) =>
-        NormEstimators.Product(a, b, conjugateTranspose: false);
+        a.GetLength(0) >= BlockedProductOrder
+            ? ComplexLinear.Multiply(a, b)
+            : NormEstimators.Product(a, b, conjugateTranspose: false);
 
     private static Complex[,] Scaled(Complex[,] a, double by)
     {

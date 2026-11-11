@@ -5,11 +5,9 @@ namespace JGraph.Scripting.Jgs;
 
 /// <summary>
 /// The matrix-function builtins the stress tests asked for (M42): <c>hilb</c>, <c>polyval</c>,
-/// <c>peaks</c>, <c>cond</c>, <c>sqrtm</c>, <c>logm</c>, and the complex LU behind complex
-/// <c>det</c>/<c>inv</c>. The matrix square root is Denman–Beavers (a coupled Newton iteration —
-/// quadratic convergence, no Schur reordering needed) and the logarithm is inverse scaling and
-/// squaring on top of it: take square roots until the matrix is near identity, sum the Mercator
-/// series there, and double back up.
+/// <c>peaks</c>, <c>cond</c>, and the complex LU behind complex <c>det</c>/<c>inv</c>.
+/// <c>sqrtm</c> and <c>logm</c> were here as iterations over the full matrix until the every-row
+/// plan's I4 (ADR 0329); they are registered beside <c>funm</c> now, over the Schur form.
 /// </summary>
 internal static partial class JgsBuiltins
 {
@@ -140,126 +138,6 @@ internal static partial class JgsBuiltins
                 _ => throw new JgsRuntimeException(line, col, "cond supports p = 1, 2, Inf, or 'fro'."),
             });
         });
-
-        Define("sqrtm", (args, line, col) =>
-        {
-            Arity("sqrtm", args, 1, line, col);
-            double[,] a = SquareRect("sqrtm", args[0], line, col);
-            return FromRect(DenmanBeaversSqrt(a, line, col));
-        });
-
-        Define("logm", (args, line, col) =>
-        {
-            Arity("logm", args, 1, line, col);
-            double[,] b = SquareRect("logm", args[0], line, col);
-            int n = b.GetLength(0);
-
-            // Inverse scaling and squaring: square-root down toward the identity, take the Mercator
-            // series there, and scale the answer back up by the number of roots taken.
-            int roots = 0;
-            while (OneNorm(MatrixMinusIdentity(b)) > 0.25 && roots < 40)
-            {
-                b = DenmanBeaversSqrt(b, line, col);
-                roots++;
-            }
-
-            double[,] x = MatrixMinusIdentity(b);
-            var sum = new double[n, n];
-            double[,] power = (double[,])x.Clone();
-            for (int m = 1; m <= 32; m++)
-            {
-                double sign = m % 2 == 1 ? 1.0 : -1.0;
-                for (int r = 0; r < n; r++)
-                {
-                    for (int c = 0; c < n; c++)
-                    {
-                        sum[r, c] += sign * power[r, c] / m;
-                    }
-                }
-
-                power = Linear.Multiply(power, x);
-            }
-
-            double scale = System.Math.Pow(2, roots);
-            for (int r = 0; r < n; r++)
-            {
-                for (int c = 0; c < n; c++)
-                {
-                    sum[r, c] *= scale;
-                }
-            }
-
-            return FromRect(sum);
-        });
-    }
-
-    /// <summary>
-    /// The Denman–Beavers iteration for the principal matrix square root: Y ← (Y + Z⁻¹)/2,
-    /// Z ← (Z + Y⁻¹)/2 with Y₀ = A, Z₀ = I; Y converges quadratically to √A (and Z to its inverse)
-    /// for matrices with no eigenvalues on the closed negative real axis.
-    /// </summary>
-    private static double[,] DenmanBeaversSqrt(double[,] a, int line, int col)
-    {
-        int n = a.GetLength(0);
-        double[,] y = (double[,])a.Clone();
-        double[,] z = MatrixIdentity(n);
-        for (int iteration = 0; iteration < 64; iteration++)
-        {
-            LuDecomposition luZ = LuDecomposition.Factor(z);
-            LuDecomposition luY = LuDecomposition.Factor(y);
-            if (luZ.IsSingular || luY.IsSingular)
-            {
-                throw new JgsRuntimeException(line, col,
-                    "sqrtm: the iteration hit a singular intermediate — the matrix has no principal square root.");
-            }
-
-            double[,] zInverse = luZ.Inverse();
-            double[,] yInverse = luY.Inverse();
-            var nextY = new double[n, n];
-            var nextZ = new double[n, n];
-            double drift = 0;
-            for (int r = 0; r < n; r++)
-            {
-                for (int c = 0; c < n; c++)
-                {
-                    nextY[r, c] = 0.5 * (y[r, c] + zInverse[r, c]);
-                    nextZ[r, c] = 0.5 * (z[r, c] + yInverse[r, c]);
-                    drift = System.Math.Max(drift, System.Math.Abs(nextY[r, c] - y[r, c]));
-                }
-            }
-
-            y = nextY;
-            z = nextZ;
-            if (drift <= 1e-14 * (1 + OneNorm(y)))
-            {
-                break;
-            }
-        }
-
-        return y;
-    }
-
-    private static double[,] MatrixIdentity(int n)
-    {
-        var identity = new double[n, n];
-        for (int i = 0; i < n; i++)
-        {
-            identity[i, i] = 1;
-        }
-
-        return identity;
-    }
-
-    private static double[,] MatrixMinusIdentity(double[,] a)
-    {
-        int n = a.GetLength(0);
-        var result = (double[,])a.Clone();
-        for (int i = 0; i < n; i++)
-        {
-            result[i, i] -= 1;
-        }
-
-        return result;
     }
 
     // --- Complex square matrices (det/inv/trace) -----------------------------------------------

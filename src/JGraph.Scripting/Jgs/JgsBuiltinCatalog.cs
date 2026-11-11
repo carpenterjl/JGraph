@@ -621,8 +621,8 @@ public static class JgsBuiltinCatalog
         Add("peaks", "The peaks demonstration surface; [X, Y, Z] = peaks(n) hands back the grids too.", Opt("n"));
         Add("membrane", "An L-shaped membrane eigenfunction (1–12); plots a surface when no output is requested.", Opt("k"), Opt("m"), Opt("n"), Opt("np"));
         Add("cond", "The condition number of a matrix (2-norm by default; 1, Inf, and 'fro' accepted).", P("A"), Opt("p"));
-        Add("sqrtm", "The principal matrix square root, by the Denman-Beavers iteration.", P("A"));
-        Add("logm", "The principal matrix logarithm, by inverse scaling and squaring over sqrtm.", P("A"));
+        Add("sqrtm", "The principal matrix square root, over the Schur form.", P("A"));
+        Add("logm", "The principal matrix logarithm, by inverse scaling and squaring over the Schur form.", P("A"));
         Add("ode45", "Solves dy/dt = f(t, y): [t, y] = ode45(f, tspan, y0, options), Dormand-Prince with adaptive steps; [t, y, te, ye, ie] with Events; one output answers a solution structure instead.", P("f"), P("tspan"), P("y0"), Opt("options"));
         Add("ode23", "Solves dy/dt = f(t, y) with the Bogacki-Shampine 2(3) pair, the same forms as ode45: [t, y] = ode23(f, tspan, y0, options).", P("f"), P("tspan"), P("y0"), Opt("options"));
         Add("ode78", "Solves dy/dt = f(t, y) with Verner's 7(8) pair, for tight tolerances: [t, y] = ode78(f, tspan, y0, options).", P("f"), P("tspan"), P("y0"), Opt("options"));
