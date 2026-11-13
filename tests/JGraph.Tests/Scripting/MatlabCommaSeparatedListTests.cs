@@ -331,17 +331,25 @@ public class MatlabCommaSeparatedListTests : IDisposable
         """);
 
     [Fact]
-    public Task ArrayFunRefusesAMisspeltOptionAndNamesTheRealOnes() => RunAsserting("""
+    public Task ArrayFunReadsAMisspeltOptionAsDataOfTheWrongSize() => RunAsserting("""
         % M52 recorded that arrayfun scanned for 'UniformOutput' and ignored the rest of its tail, so
-        % this misspelling used to be accepted in silence and the option simply did not happen.
+        % this misspelling used to be accepted in silence and the option simply did not happen. Since
+        % ADR 0316 a char argument is walked as data, as R2025b walks it: the misspelling is a third
+        % input of 13 characters, refused as R2025b refuses it (recorded 2026-11-12, open item 253).
         caught = '';
+        id = '';
         try
             arrayfun(@(k) k, [1 2], 'UnifromOutput', false);
         catch err
             caught = err.message;
+            id = err.identifier;
         end
-        assert(contains(caught, 'UniformOutput'));
-        assert(contains(caught, 'ErrorHandler'));
+        assert(strcmp(id, 'MATLAB:arrayfun:UnequalSize'));
+        assert(strcmp(caught, sprintf(['All of the input arguments must be of the same size and shape.\n' ...
+            'Previous inputs had size 2 in dimension 2. Input #3 has size 13'])));
+
+        % Read as data, a misspelling that matches the others' size is simply walked.
+        assert(arrayfun(@(k, a, b) k + a + b, 1, 'U', false) == 86);
         """);
 
     [Fact]

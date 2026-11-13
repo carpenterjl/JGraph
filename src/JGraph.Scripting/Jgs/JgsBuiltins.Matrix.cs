@@ -28,34 +28,68 @@ internal static partial class JgsBuiltins
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>?> Define)
     {
-        void Predicate(string name, Func<double[,], bool> test) =>
+        // Each question reads any double, single or logical matrix - real, complex or sparse - the
+        // way R2025b does (open item 276); an N-D array is answered false by every predicate.
+        void Predicate(string name, Func<ShapeQuestionSubject, bool> test) =>
             Define(name, (args, line, col) =>
             {
                 Arity(name, args, 1, line, col);
-                return JgsValue.Bool(test(RectOf(name, args[0], line, col)));
+                ShapeQuestionSubject subject = ShapeSubjectOf(name, args[0], line, col);
+                return JgsValue.Bool(!subject.NotTwoD && test(subject));
             }, null);
 
-        Predicate("istril", static a => Bandwidth(a).Upper == 0);
-        Predicate("istriu", static a => Bandwidth(a).Lower == 0);
-        Predicate("isdiag", static a => Bandwidth(a) is (0, 0));
+        Predicate("istril", static a => ShapeBandwidth(a).Upper == 0);
+        Predicate("istriu", static a => ShapeBandwidth(a).Lower == 0);
+        Predicate("isdiag", static a => ShapeBandwidth(a) is (0, 0));
 
-        // For a real matrix these two ask the same question; the distinction only appears once a
-        // matrix can hold complex entries, and JGraph's matrices are real.
-        Predicate("issymmetric", IsSymmetric);
-        Predicate("ishermitian", IsSymmetric);
+        // The two differ once an entry is complex: ishermitian compares with the conjugate, so a
+        // complex diagonal entry is never Hermitian. Either takes R2025b's 'skew' or 'nonskew'.
+        void Symmetry(string name, bool conjugate, string flagId) =>
+            Define(name, (args, line, col) =>
+            {
+                ArityRange(name, args, 1, 2, line, col);
+                bool skew = false;
+                if (args.Count == 2)
+                {
+                    string flag = IsTextScalar(args[1]) ? TextOf(args[1]) : "";
+                    skew = flag.Equals("skew", StringComparison.OrdinalIgnoreCase)
+                        || (!flag.Equals("nonskew", StringComparison.OrdinalIgnoreCase)
+                            ? throw new JgsRuntimeException(line, col, flagId, "Option must be 'skew' or 'nonskew'.")
+                            : false);
+                }
+
+                ShapeQuestionSubject subject = ShapeSubjectOf(name, args[0], line, col);
+                return JgsValue.Bool(!subject.NotTwoD && ShapeIsSymmetric(subject, conjugate, skew));
+            }, null);
+
+        Symmetry("issymmetric", conjugate: false, "MATLAB:issymmetric:inputFlag");
+        Symmetry("ishermitian", conjugate: true, "MATLAB:isHermitian:inputFlag");
 
         Define("isbanded", (args, line, col) =>
         {
             Arity("isbanded", args, 3, line, col);
-            (int lower, int upper) = Bandwidth(RectOf("isbanded", args[0], line, col));
-            return JgsValue.Bool(lower <= Count("isbanded", args, 1, line, col)
-                && upper <= Count("isbanded", args, 2, line, col));
+            ShapeQuestionSubject subject = ShapeSubjectOf("isbanded", args[0], line, col);
+            int lowest = Count("isbanded", args, 1, line, col);
+            int highest = Count("isbanded", args, 2, line, col);
+            if (lowest < 0 || highest < 0)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:isbanded:nonNegIntScalar",
+                    "Second and third inputs must be nonnegative integer scalars.");
+            }
+
+            if (subject.NotTwoD)
+            {
+                return JgsValue.False;
+            }
+
+            (int lower, int upper) = ShapeBandwidth(subject);
+            return JgsValue.Bool(lower <= lowest && upper <= highest);
         }, null);
 
         Define("bandwidth", (args, line, col) =>
         {
             ArityRange("bandwidth", args, 1, 2, line, col);
-            (int lower, int upper) = Bandwidth(RectOf("bandwidth", args[0], line, col));
+            (int lower, int upper) = ShapeBandwidth(TwoDSubjectOf("bandwidth", args[0], line, col));
 
             // bandwidth(A) alone is the lower bandwidth (MATLAB's first output); the word picks one.
             if (args.Count == 1)
@@ -73,9 +107,186 @@ internal static partial class JgsBuiltins
         (args, _, line, col) =>
         {
             Arity("bandwidth", args, 1, line, col);
-            (int lower, int upper) = Bandwidth(RectOf("bandwidth", args[0], line, col));
+            (int lower, int upper) = ShapeBandwidth(TwoDSubjectOf("bandwidth", args[0], line, col));
             return [JgsValue.Number(lower), JgsValue.Number(upper)];
         });
+    }
+
+    /// <summary>
+    /// The matrix a shape question reads: real dense entries, complex dense entries, or a sparse
+    /// matrix's stored ones - or none at all for an N-D array, which every predicate answers false.
+    /// </summary>
+    private readonly record struct ShapeQuestionSubject(
+        double[,]? Real, System.Numerics.Complex[,]? Complex, JGraph.Numerics.Sparse.CscMatrix? Sparse, bool NotTwoD);
+
+    /// <summary>
+    /// A shape question's subject read once. A complex matrix used to reach the real reader and be
+    /// refused at its first complex entry (open item 276), and an empty one was read past its end.
+    /// </summary>
+    private static ShapeQuestionSubject ShapeSubjectOf(string name, JgsValue value, int line, int col)
+    {
+        if (value.Type == JgsType.Sparse)
+        {
+            return new(null, null, value.AsSparse, false);
+        }
+
+        if (value.Type == JgsType.Array && value.IsNd && !value.IsStringArray && !value.IsCategorical)
+        {
+            return new(null, null, null, true);
+        }
+
+        if (HasComplexElements(value) || (value.Type == JgsType.Array && value.ArrayLength == 0))
+        {
+            return new(null, ComplexRectOf(name, value, line, col), null, false);
+        }
+
+        return new(RectOf(name, value, line, col), null, null, false);
+    }
+
+    /// <summary>The subject of <c>bandwidth</c>, which refuses an N-D array where the predicates answer false.</summary>
+    private static ShapeQuestionSubject TwoDSubjectOf(string name, JgsValue value, int line, int col)
+    {
+        ShapeQuestionSubject subject = ShapeSubjectOf(name, value, line, col);
+        return subject.NotTwoD
+            ? throw (JgsRunningDialect.ThreadIsMatlab
+                ? new JgsRuntimeException(line, col, "MATLAB:bandwidth:inputMustBe2D", "Input must be 2-D.")
+                : new JgsRuntimeException(line, col, $"{name} needs a 2-D matrix."))
+            : subject;
+    }
+
+    /// <summary>How far below and above the diagonal a subject's non-zero entries reach.</summary>
+    private static (int Lower, int Upper) ShapeBandwidth(in ShapeQuestionSubject subject)
+    {
+        if (subject.Real is { } real)
+        {
+            return Bandwidth(real);
+        }
+
+        int lower = 0;
+        int upper = 0;
+        void Reach(int r, int c)
+        {
+            if (r > c)
+            {
+                lower = Math.Max(lower, r - c);
+            }
+            else if (c > r)
+            {
+                upper = Math.Max(upper, c - r);
+            }
+        }
+
+        if (subject.Complex is { } complex)
+        {
+            for (int r = 0; r < complex.GetLength(0); r++)
+            {
+                for (int c = 0; c < complex.GetLength(1); c++)
+                {
+                    if (complex[r, c] != System.Numerics.Complex.Zero)
+                    {
+                        Reach(r, c);
+                    }
+                }
+            }
+        }
+        else if (subject.Sparse is { } sparse)
+        {
+            for (int c = 0; c < sparse.Cols; c++)
+            {
+                for (int k = sparse.ColumnStarts[c]; k < sparse.ColumnStarts[c + 1]; k++)
+                {
+                    if (sparse.Values[k] != 0)
+                    {
+                        Reach(sparse.RowIndices[k], c);
+                    }
+                }
+            }
+        }
+
+        return (lower, upper);
+    }
+
+    /// <summary>
+    /// Whether a subject equals its transpose - its conjugate transpose when
+    /// <paramref name="conjugate"/>, the negative of either when <paramref name="skew"/>. Exact
+    /// equality, the diagonal included, as R2025b compares: a NaN anywhere it looks is unequal to
+    /// itself, and a complex diagonal entry is never Hermitian.
+    /// </summary>
+    private static bool ShapeIsSymmetric(in ShapeQuestionSubject subject, bool conjugate, bool skew)
+    {
+        if (subject.Sparse is { } sparse)
+        {
+            if (sparse.Rows != sparse.Cols)
+            {
+                return false;
+            }
+
+            // Real entries only, so the conjugate changes nothing: each stored entry against its mirror.
+            var stored = new Dictionary<(int, int), double>();
+            for (int c = 0; c < sparse.Cols; c++)
+            {
+                for (int k = sparse.ColumnStarts[c]; k < sparse.ColumnStarts[c + 1]; k++)
+                {
+                    stored[(sparse.RowIndices[k], c)] = sparse.Values[k];
+                }
+            }
+
+            foreach (((int r, int c), double value) in stored)
+            {
+                double mirror = stored.TryGetValue((c, r), out double found) ? found : 0;
+                if (value != (skew ? -mirror : mirror))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        if (subject.Real is { } real)
+        {
+            int n = real.GetLength(0);
+            if (n != real.GetLength(1))
+            {
+                return false;
+            }
+
+            for (int r = 0; r < n; r++)
+            {
+                for (int c = r; c < n; c++)
+                {
+                    if (real[r, c] != (skew ? -real[c, r] : real[c, r]))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        System.Numerics.Complex[,] complex = subject.Complex!;
+        int size = complex.GetLength(0);
+        if (size != complex.GetLength(1))
+        {
+            return false;
+        }
+
+        for (int r = 0; r < size; r++)
+        {
+            for (int c = r; c < size; c++)
+            {
+                System.Numerics.Complex mirror = conjugate
+                    ? System.Numerics.Complex.Conjugate(complex[c, r])
+                    : complex[c, r];
+                if (complex[r, c] != (skew ? -mirror : mirror))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /// <summary>How far below and above the diagonal a matrix's non-zero entries reach.</summary>

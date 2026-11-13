@@ -78,8 +78,10 @@ internal static partial class JgsBuiltins
         int length = inputs[0].Length;
         for (int a = 1; a < inputs.Count; a++)
         {
-            int[] first = JgsMatrix.DimsOf(args[1]);
-            int[] other = JgsMatrix.DimsOf(args[a + 1]);
+            // size's own dimensions: a char row's are its length, not the 0-by-0 a bare string
+            // value reads as (open item 253, R2025b names 'UnifromOutput' an input of size 13).
+            int[] first = SizeDims(args[1]);
+            int[] other = SizeDims(args[a + 1]);
             int dimension = -1;
             for (int k = 0; k < Math.Max(first.Length, other.Length) && dimension < 0; k++)
             {
@@ -176,8 +178,10 @@ internal static partial class JgsBuiltins
             outputs[o] = uniform
                 ? ObjectsAsArray("arrayfun", collected[o], 1, length, line, col) is { } objects
                     ? JgsMatrix.Like(args[1], objects)
-                    : UniformTextOrCategorical(collected[o], args[1], line, col)
-                        ?? JgsMatrix.Like(args[1], JgsMatrix.FromElements(collected[o], 1, length))
+                    : UniformComplex(collected[o], [1, length]) is { } complex
+                        ? JgsMatrix.Like(args[1], complex)
+                        : UniformTextOrCategorical(collected[o], args[1], line, col)
+                            ?? JgsMatrix.Like(args[1], JgsMatrix.FromElements(collected[o], 1, length))
                 : JgsMatrix.Like(args[1], JgsValue.Cell(collected[o]));
             if (args[1].Type == JgsType.String && !args[1].IsStringArray && outputs[o].Type is JgsType.Cell or JgsType.Array)
             {
@@ -289,11 +293,74 @@ internal static partial class JgsBuiltins
     /// </summary>
     internal static bool IsUniformScalar(JgsValue answer) =>
         answer.Type is JgsType.Number or JgsType.Bool
+        || IsComplexScalar(answer)
         || (answer.Type == JgsType.Object && !answer.IsObjectArray)
         || (JgsRunningDialect.ThreadIsMatlab && answer.Type == JgsType.Array && answer.ArrayLength == 1 && !answer.IsCategorical && !answer.IsCharMatrix
             && answer.ElementAt(0).Type is JgsType.Number or JgsType.Bool or JgsType.String)
         || (JgsRunningDialect.ThreadIsMatlab && answer.Type == JgsType.String && !answer.IsStringArray && answer.AsString.Length == 1)
         || (JgsRunningDialect.ThreadIsMatlab && answer.IsCategorical && answer.ArrayLength == 1);
+
+    /// <summary>
+    /// A complex scalar: a <see cref="JgsType.Complex"/> value, or the one-element planar array
+    /// <c>complex(a, 0)</c> builds to keep its type (open item 255).
+    /// </summary>
+    private static bool IsComplexScalar(JgsValue answer) =>
+        answer.Type == JgsType.Complex || (answer.IsPackedComplex && answer.ArrayLength == 1);
+
+    /// <summary>
+    /// The uniform answers as one complex array in the given dimensions, when at least one is a
+    /// complex scalar and every other is a real number; else null. R2025b's uniform
+    /// <c>arrayfun</c> and <c>cellfun</c> take a complex scalar as the scalar it is
+    /// (<c>arrayfun(@sqrt, [4 -1 9])</c> is <c>[2 0+1i 3]</c>), and the whole answer is then
+    /// complex, as a concatenation with one complex element is - <c>isreal</c> false even where
+    /// every imaginary part is zero (open item 255). The array is planar, as the complex
+    /// arithmetic keeps one.
+    /// </summary>
+    internal static JgsValue? UniformComplex(JgsValue[] answers, int[] dims)
+    {
+        bool anyComplex = false;
+        bool single = false;
+        foreach (JgsValue answer in answers)
+        {
+            if (IsComplexScalar(answer))
+            {
+                anyComplex = true;
+            }
+            else if (answer.Type != JgsType.Number || answer.NumericClass.IsInteger())
+            {
+                return null;
+            }
+
+            single |= answer.NumericClass == JgsNumericClass.Single;
+        }
+
+        if (!anyComplex)
+        {
+            return null;
+        }
+
+        if (answers.Length == 1 && answers[0].Type == JgsType.Complex && dims.All(static d => d == 1))
+        {
+            return answers[0]; // one complex answer is the complex scalar sqrt(-1) itself is
+        }
+
+        var values = new System.Numerics.Complex[answers.Length];
+        for (int i = 0; i < answers.Length; i++)
+        {
+            JgsValue answer = answers[i];
+            values[i] = answer.Type switch
+            {
+                JgsType.Complex => answer.AsComplex,
+                JgsType.Number => new System.Numerics.Complex(answer.AsNumber, 0),
+                _ => new System.Numerics.Complex(
+                    answer.AsPackedComplex.Re.AsSpan()[0], answer.AsPackedComplex.Im.AsSpan()[0]),
+            };
+        }
+
+        JgsValue result = ComplexStorage(values, dims, preserveComplex: true);
+        result.SetNumericClass(single ? JgsNumericClass.Single : JgsNumericClass.Double);
+        return result;
+    }
 
     /// <summary>
     /// The uniform answers as one char array or one categorical in the shape of

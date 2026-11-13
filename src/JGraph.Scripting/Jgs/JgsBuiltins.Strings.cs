@@ -623,6 +623,12 @@ internal static partial class JgsBuiltins
             return strings;
         }
 
+        // A complex scalar is a scalar: one apiece makes the whole answer complex (open item 255).
+        if (UniformComplex(values, [rows, columns]) is { } complex)
+        {
+            return complex;
+        }
+
         for (int i = 0; i < values.Length; i++)
         {
             if (values[i].Type is not (JgsType.Number or JgsType.Bool))

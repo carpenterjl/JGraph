@@ -252,8 +252,11 @@ internal static partial class JgsBuiltins
         {
             case "median":
             {
+                // Nothing present (all NaN) has no median and no spread: NaN fences, nothing out (open item 259).
                 double center = present.Length == 0 ? double.NaN : MedianOf(present);
-                double spread = ScaledMadFactor * MedianOf(Array.ConvertAll(present, v => Math.Abs(v - center)));
+                double spread = present.Length == 0
+                    ? double.NaN
+                    : ScaledMadFactor * MedianOf(Array.ConvertAll(present, v => Math.Abs(v - center)));
                 return new([center - (plan.Threshold * spread)], [center + (plan.Threshold * spread)], [center]);
             }
 
@@ -453,6 +456,30 @@ internal static partial class JgsBuiltins
         return new(lower, upper, centers);
     }
 
+    /// <summary>
+    /// The arguments with a scalar subject written as the 1-by-1 array it is. A bare scalar has no
+    /// dimensions of its own to cut along, so the outlier verbs read their fences and masks past the
+    /// end of nothing (open item 259); as a 1-by-1 it is one slice of one reading, which R2025b
+    /// never calls an outlier of itself.
+    /// </summary>
+    private static IReadOnlyList<JgsValue> WithScalarAsSlice(IReadOnlyList<JgsValue> args)
+    {
+        if (args[0].Type is not (JgsType.Number or JgsType.Bool))
+        {
+            return args;
+        }
+
+        var written = new JgsValue[args.Count];
+        for (int i = 0; i < args.Count; i++)
+        {
+            written[i] = args[i];
+        }
+
+        written[0] = JgsMatrix.FromColumnMajorDims([args[0].AsNumber], [1, 1]);
+        written[0].SetNumericClass(args[0].NumericClass);
+        return written;
+    }
+
     private static bool[] OutlierMask(double[] slice, in OutlierFencesOf fences)
     {
         var mask = new bool[slice.Length];
@@ -477,6 +504,8 @@ internal static partial class JgsBuiltins
         {
             throw new JgsRuntimeException(line, col, "isoutlier needs some data.");
         }
+
+        args = WithScalarAsSlice(args);
 
         if (args.Count == 1 && wanted <= 1
             && JgsVectorRoads.TryOutliers(args[0], new OutlierPlan().Threshold, ScaledMadFactor, out JgsValue outliers))
@@ -534,6 +563,8 @@ internal static partial class JgsBuiltins
         {
             throw new JgsRuntimeException(line, col, "rmoutliers needs some data.");
         }
+
+        args = WithScalarAsSlice(args);
 
         OutlierPlan plan = OutlierPlanOf(
             "rmoutliers", args, 1, "MATLAB:rmoutliers:SecondInputString", line, col);
@@ -628,6 +659,8 @@ internal static partial class JgsBuiltins
         {
             throw new JgsRuntimeException(line, col, "filloutliers(A, fill) needs the data and a fill.");
         }
+
+        args = WithScalarAsSlice(args);
 
         string fill;
         double constant = 0;

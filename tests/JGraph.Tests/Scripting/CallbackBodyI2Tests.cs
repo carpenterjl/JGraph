@@ -182,13 +182,11 @@ public class CallbackBodyI2Tests : IDisposable
             disp(h(arrayfun(@(a) a + 1, 4)));
             disp(size(arrayfun(@(a) a + 1, zeros(0, 3))));
             disp(h(arrayfun(@sin, [1 2])));
-            try
-                arrayfun(@(a) sqrt(a), [4 -1 9])
-            catch e
-                disp(e.message);
-            end
+            r = arrayfun(@(a) sqrt(a), [4 -1 9]);
+            disp(h([real(r) imag(r)])); fprintf('isreal=%d size=%s\n', isreal(r), mat2str(size(r)));
             """, compiled: 1);
         Assert.Equal(1, run.Walked); // the sqrt call compiled, met -1 and was walked whole
+        Assert.Contains("isreal=0 size=[1 3]", run.Output); // R2025b's complex row (open item 255)
     }
 
     [Fact]
@@ -218,16 +216,16 @@ public class CallbackBodyI2Tests : IDisposable
     public void AnIntegrandThatGoesComplexOnAPanelWalksThatPanel()
     {
         // The midpoint probe is real, so the panels are compiled; the first panel below 1 leaves the
-        // reals and the walk answers it (and refuses, as it does with the compiler off).
-        Run run = AssertParity("""
-            try
-                integral(@(x) sqrt(x - 1), 0, 2)
-            catch e
-                disp(e.message);
-            end
+        // reals and the walk answers it complex, which starts the integral again on the complex road
+        // (open item 256), as it does with the compiler off.
+        Run run = AssertParity(Hex + """
+            q = integral(@(x) sqrt(x - 1), 0, 2);
+            disp(h([real(q) imag(q)])); disp(isreal(q));
+            fprintf('%.6f %.6f\n', real(q), imag(q));
             disp(integral(@(x) log(x), 1, 2));
             """, compiled: 2);
         Assert.True(run.Walked >= 1);
+        Assert.Contains("0.666667 0.666667", run.Output);
     }
 
     [Fact]

@@ -195,13 +195,26 @@ internal static partial class JgsBuiltins
                 var one = new double[at.Length];
                 for (int i = 0; i < at.Length; i++)
                 {
-                    one[i] = OneValueOf(name, f, JgsValue.Number(at[i]), line, col);
+                    JgsValue point = f.Call([JgsValue.Number(at[i])], line, col);
+                    if (HasComplexElements(point))
+                    {
+                        throw new IntegrandWentComplex();
+                    }
+
+                    one[i] = OneValueOf(name, point, line, col);
                 }
 
                 return one;
             }
 
             JgsValue answered = f.Call([Numbers(at)], line, col);
+            if (HasComplexElements(answered))
+            {
+                // The midpoint probe was real, but this panel is not: the whole integral is complex,
+                // as R2025b's sums simply become complex there (open item 256).
+                throw new IntegrandWentComplex();
+            }
+
             double[] values = ToDoubles(name, answered, line, col);
             if (values.Length != at.Length)
             {
@@ -226,16 +239,26 @@ internal static partial class JgsBuiltins
         {
             throw new JgsRuntimeException(line, col, $"{name}: {ex.Message}");
         }
+        catch (IntegrandWentComplex)
+        {
+            // Started again on the complex road, which asks the integrand from the beginning.
+            return IntegrateComponents(name, f, start, stop, complexWaypoints, false, oneAtATime, relative, absolute, maximum, wanted, line, col);
+        }
 
         return wanted >= 2
             ? [JgsValue.Number(result.Value), JgsValue.Number(result.ErrorBound)]
             : [JgsValue.Number(result.Value)];
     }
 
-    /// <summary>One value out of an integrand asked about one point.</summary>
-    private static double OneValueOf(string name, IJgsCallable f, JgsValue at, int line, int col)
+    /// <summary>
+    /// Raised out of a real-road panel whose integrand answered a complex value, so that
+    /// <c>integral</c> starts again on the complex road rather than refusing (open item 256).
+    /// </summary>
+    private sealed class IntegrandWentComplex : Exception;
+
+    /// <summary>One value out of what an integrand answered about one point.</summary>
+    private static double OneValueOf(string name, JgsValue answered, int line, int col)
     {
-        JgsValue answered = f.Call([at], line, col);
         double[] values = ToDoubles(name, answered, line, col);
         return values.Length == 1
             ? values[0]
