@@ -492,6 +492,52 @@ public sealed class DeployedSessionTests : IDisposable
     }
 
     [Fact]
+    public async Task Runtime_AnswersTheSessionQuestionsK0Asked()
+    {
+        // Open item 169 (k0_env): prefdir under ctfroot, ver('MATLAB') the dialect's row and no compiler
+        // in a runtime, no Java, the locks and inmem as in a session; a path change refused.
+        string main = Main("""
+            fprintf('prefdir=%d\n', strcmp(prefdir, fullfile(ctfroot, '.matlab')));
+            v = ver('MATLAB');
+            fprintf('ver=%s %s %s\n', v.Name, v.Version, v.Release);
+            fprintf('compiler=%d jgraph=%d\n', numel(ver('compiler')), numel(ver('jgraph')));
+            fprintf('jvm=%d desktop=%d\n', usejava('jvm'), usejava('desktop'));
+            fprintf('numcores=%d\n', feature('numcores') >= 1);
+            m = inmem;
+            fprintf('inmem=%s %d\n', class(m), size(m, 2));
+            mlock;
+            fprintf('locked=%d\n', mislocked);
+            munlock;
+            fprintf('unlocked=%d\n', mislocked);
+            fprintf('userpath=%s %s\n', class(userpath), caught(@() userpath('reset')));
+            end
+
+            function s = caught(f)
+            try
+                f();
+                s = 'ok';
+            catch e
+                s = e.identifier;
+            end
+            """);
+
+        Assert.Equal(0, await Deployed(main));
+        Assert.Equal(
+            [
+                "prefdir=1",
+                "ver=MATLAB 25.2 (R2025b)",
+                "compiler=0 jgraph=1",
+                "jvm=0 desktop=0",
+                "numcores=1",
+                "inmem=cell 1",
+                "locked=1",
+                "unlocked=0",
+                "userpath=char MATLAB:mpath:PathAlterationNotSupported",
+            ],
+            _output.NormalLines);
+    }
+
+    [Fact]
     public async Task InputAndPause_ReadAClosedStandardInput()
     {
         string main = Main("""

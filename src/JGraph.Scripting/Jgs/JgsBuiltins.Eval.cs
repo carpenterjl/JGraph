@@ -131,6 +131,9 @@ internal static partial class JgsBuiltins
         // U11: GUIDE's runtime calls back into the app's own file, and guide answers its removal.
         // (openfig and hgload are re-declared here over their plain forms, so they are not listed.)
         "gui_mainfcn", "guide",
+
+        // Open items 169 and 245: the session questions; inmem and the locks ask the interpreter.
+        "ver", "prefdir", "userpath", "usejava", "inmem", "mlock", "munlock", "mislocked",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>
@@ -173,6 +176,7 @@ internal static partial class JgsBuiltins
         RegisterComponentMetadataBuiltins(env, interpreter, host); // a custom UI component's library metadata (App Designer window plan W15)
         RegisterComparisonBuiltins(env, interpreter, host); // App Designer window plan W14
         RegisterDebugBuiltins(env, interpreter, host); // App Designer window plan W11
+        RegisterSessionQuestions(env, interpreter, host); // open items 169 and 245
         RegisterCodeAnalyzerBuiltins(env, interpreter, host); // App Designer window plan W10
         RegisterFigFileBuiltins(env, interpreter, host); // U11
         RegisterTableVerbs(env, interpreter); // open item 122

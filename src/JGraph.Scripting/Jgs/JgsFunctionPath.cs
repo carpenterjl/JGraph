@@ -182,9 +182,10 @@ internal sealed class JgsFunctionPath
     /// </remarks>
     public void Unload()
     {
+        // A file mlock holds stays loaded too, as R2025b's inmem still lists it after clear all (open item 169).
         foreach ((string name, Loaded loaded) in _loaded.ToList())
         {
-            if (!_interpreter.IsFileActive(loaded.Path))
+            if (!_interpreter.IsFileActive(loaded.Path) && !_interpreter.IsFileLocked(loaded.Path))
             {
                 _loaded.Remove(name);
             }
@@ -192,7 +193,7 @@ internal sealed class JgsFunctionPath
 
         foreach ((string path, Loaded _) in _private.ToList())
         {
-            if (!_interpreter.IsFileActive(path))
+            if (!_interpreter.IsFileActive(path) && !_interpreter.IsFileLocked(path))
             {
                 _private.Remove(path);
             }
@@ -200,7 +201,7 @@ internal sealed class JgsFunctionPath
 
         foreach ((string name, Loaded loaded) in _dotted.ToList())
         {
-            if (!_interpreter.IsFileActive(loaded.Path))
+            if (!_interpreter.IsFileActive(loaded.Path) && !_interpreter.IsFileLocked(loaded.Path))
             {
                 _dotted.Remove(name);
             }
@@ -210,19 +211,46 @@ internal sealed class JgsFunctionPath
     }
 
     /// <summary>
+    /// The files loaded now, as <c>inmem</c> lists them (open item 169): each plain name, then each
+    /// package member by its dotted name, then each private file as <c>folder\private\name</c> after
+    /// the folder that holds <c>private</c> (R2025b's <c>scratch\private\f1priv</c>, measured), each with
+    /// its path.
+    /// </summary>
+    internal IEnumerable<(string Name, string Path)> LoadedFiles()
+    {
+        foreach ((string name, Loaded loaded) in _loaded)
+        {
+            yield return (name, loaded.Path);
+        }
+
+        foreach ((string name, Loaded loaded) in _dotted)
+        {
+            yield return (name, loaded.Path);
+        }
+
+        foreach ((string path, Loaded _) in _private)
+        {
+            string? privateFolder = System.IO.Path.GetDirectoryName(path);
+            string owner = System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(privateFolder ?? string.Empty) ?? string.Empty);
+            yield return ($"{owner}{System.IO.Path.DirectorySeparatorChar}private{System.IO.Path.DirectorySeparatorChar}{System.IO.Path.GetFileNameWithoutExtension(path)}", path);
+        }
+    }
+
+    /// <summary>
     /// <c>clear name</c> for a function file: forgets the loaded file <paramref name="name"/> answers
     /// to and the persistents of the functions it defines, unless one of them is running. A name no
     /// loaded file answers to is left alone — a script's own functions live with the script.
     /// </summary>
     public void Unload(string name)
     {
-        if (_loaded.TryGetValue(name, out Loaded? loaded) && _interpreter.ForgetPersistentsOf(loaded.Path))
+        // A file mlock holds is spared, persistents and all (open item 169).
+        if (_loaded.TryGetValue(name, out Loaded? loaded) && !_interpreter.IsFileLocked(loaded.Path) && _interpreter.ForgetPersistentsOf(loaded.Path))
         {
             _loaded.Remove(name);
         }
 
         // clear pkg.f: the member by its dotted name (P1).
-        if (_dotted.TryGetValue(name, out Loaded? member) && _interpreter.ForgetPersistentsOf(member.Path))
+        if (_dotted.TryGetValue(name, out Loaded? member) && !_interpreter.IsFileLocked(member.Path) && _interpreter.ForgetPersistentsOf(member.Path))
         {
             _dotted.Remove(name);
         }

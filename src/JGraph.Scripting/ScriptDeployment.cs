@@ -83,6 +83,21 @@ public sealed class ScriptDeployment : IDisposable
     /// <summary>The archive's manifest, when the deployment came from an archive.</summary>
     public CtfManifest? Manifest { get; private init; }
 
+    /// <summary>Whether the archive was the <c>mcc -C</c> one beside the program, extracted beside it rather than into the cache.</summary>
+    public bool ArchiveBeside { get; private init; }
+
+    /// <summary>
+    /// The folder <c>prefdir</c> answers in the deployed session (open item 169): <c>.matlab</c> under
+    /// <see cref="CtfRoot"/>, which the archive's extraction makes (R2025b, K0's env_plain and
+    /// env_cache_root), or, for an archive extracted beside its program, a folder named by the archive's
+    /// uuid under <c>%APPDATA%\JGraph\mcr_v252</c>, where R2025b's is under
+    /// <c>%APPDATA%\MathWorks\MATLAB\mcr_v252</c> (env_separate_ctf).
+    /// </summary>
+    public string PreferencesFolder => ArchiveBeside
+        ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "JGraph",
+            "mcr_v" + string.Concat(RuntimeVersion.Take(2)), Manifest?.Uuid ?? ComponentName)
+        : Path.Combine(CtfRoot, CtfManifest.PreferencesFolder);
+
     /// <summary>
     /// The runtime options the session runs under: the archive's <c>mcc -R</c> options, or the ones
     /// the runtime was started with (stage K4). Only <see cref="RuntimeOptions.SingleCompThread"/>
@@ -152,6 +167,7 @@ public sealed class ScriptDeployment : IDisposable
             {
                 MainFile = main,
                 Manifest = manifest,
+                ArchiveBeside = beside is not null,
                 RuntimeOptions = runtimeOptions ?? RuntimeOptions.Parse(manifest.RuntimeOptions),
                 Entry = entry,
                 CacheFolder = Path.GetFullPath(cache),

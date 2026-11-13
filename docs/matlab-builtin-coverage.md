@@ -34,7 +34,7 @@ so long. The live tracker is `matlab-r2021b-documented.html` in the demo workspa
 `tools/matlab-checklist/build-checklist.py`; this file is the standing summary, so the shape of what
 is left does not have to be re-derived each time.
 
-**450 of 514 builtins implemented** (440 before the App Designer window plan's stage W11, which added the ten debug words; 438 before the compiler and SDK plan's stage K12, which added `subsref` and `subsasgn`; 437 before its stage K9, which added `namedargs2cell`; 434 from app-building stage U6 to U7b; 433 from app-building stage U2 to U5; 432 at app-building stage U1; 431 from interop stage I8 to device classes stage D13; 428 from interop stage I4 to I7; 427 at interop stage I3; 424 at interop stage I2; 422 at interop stage I1; 417 from V10 to Z2; 416 from M87 to M144; 415 from M71 to M86; 413 from M68 to M70; 386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
+**454 of 514 builtins implemented** (450 before open items 169 and 245 (ADR 0341), which added `inmem`, `mlock`, `munlock` and `mislocked`; 440 before the App Designer window plan's stage W11, which added the ten debug words; 438 before the compiler and SDK plan's stage K12, which added `subsref` and `subsasgn`; 437 before its stage K9, which added `namedargs2cell`; 434 from app-building stage U6 to U7b; 433 from app-building stage U2 to U5; 432 at app-building stage U1; 431 from interop stage I8 to device classes stage D13; 428 from interop stage I4 to I7; 427 at interop stage I3; 424 at interop stage I2; 422 at interop stage I1; 417 from V10 to Z2; 416 from M87 to M144; 415 from M71 to M86; 413 from M68 to M70; 386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
 M39, 326 after M38, 185 after M37, 109 after M36) — M46 through M53 all added names MATLAB documents
 as *functions*, which this table does not hold. M45's eight are the drawing primitives the "handle
 graphics" section below used to list as missing and call the most useful thing left: `plot3`, `line`,
@@ -103,8 +103,8 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,280 of
-2,024** as of open item 171 (ADR 0340), which added `gzip`, `gunzip`, `tar` and `untar`; 1,276 as of the packages and class folders plan's stage P5 (ADR 0311), which added `edit` (silent headless, as R2025b's is); 1,275 as of the App Designer window plan's stage W15 (ADR 0305), which added `appdesigner.customcomponent.configureMetadata` and `appdesigner.customcomponent.removeMetadata`; 1,273 as of its stage W10 (ADR 0304), which added `checkcode` and `mlint` (`codeIssues` being a class beyond the list); 1,271 as of its stage W11 (ADR 0303), which added the ten debug words; 1,261 as of its stage W14 (ADR 0302), which added `visdiff`; 1,260 as of its stage W13 (ADR 0301), which added the `matlab.addons.toolbox`, `matlab.apputil` and
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,288 of
+2,024** as of open items 169 and 245 (ADR 0341), which added `ver`, `prefdir`, `userpath`, `usejava`, `inmem`, `mlock`, `munlock` and `mislocked`; 1,280 as of open item 171 (ADR 0340), which added `gzip`, `gunzip`, `tar` and `untar`; 1,276 as of the packages and class folders plan's stage P5 (ADR 0311), which added `edit` (silent headless, as R2025b's is); 1,275 as of the App Designer window plan's stage W15 (ADR 0305), which added `appdesigner.customcomponent.configureMetadata` and `appdesigner.customcomponent.removeMetadata`; 1,273 as of its stage W10 (ADR 0304), which added `checkcode` and `mlint` (`codeIssues` being a class beyond the list); 1,271 as of its stage W11 (ADR 0303), which added the ten debug words; 1,261 as of its stage W14 (ADR 0302), which added `visdiff`; 1,260 as of its stage W13 (ADR 0301), which added the `matlab.addons.toolbox`, `matlab.apputil` and
 `matlab.addons` names (fifteen, `matlab.addons.toolbox.ToolboxOptions` being a class beyond them); 1,245 as of the compiler and SDK plan's stage K20 (ADR 0275), which added `matlab.project.createProject`, `openProject`,
 `currentProject`, `matlab.project.loadProject`, `matlab.project.rootProject` and `matlab.project.deleteProject`; 1,239 as of its stage K12 (ADR 0268), which added `substruct`, `subsref` and
 `subsasgn`; 1,236 as of its stage K9 (ADR 0265), which added `namedargs2cell`; 1,235 as of its stage K3b (ADR 0259), which added `pcode`; 1,234 as of its
@@ -415,6 +415,7 @@ plus a short list of eleven odds and ends. Every one of them is accounted for be
 | Function introspection | M39 | `func2str` `functions` `mfilename` `inputname` |
 | Console session | M39 | `diary` `echo` `home` `more` `input` `lookfor` `what` `beep` `pack` `recycle` `rehash` `display` |
 | The installation | M39 | `version` `computer` `matlabroot` `matlabdrive` `license` `isstudent` `memory` `maxNumCompThreads` `fftw` |
+| The session's questions | open items 169 and 245 (ADR 0341) | `ver` `prefdir` `userpath` `usejava` `inmem` `mlock` `munlock` `mislocked` — all eight among the 2,024 (the total moves to 1,284; `inmem` and the three lock words are builtins, 454 of 514); `ver` lists JGraph, the MATLAB dialect it follows (R2025b's row), MATLAB Compiler and its SDK where `mcc` runs, and the toolboxes on the path by their `Contents.m`; `usejava` answers false for Java; `feature('numcores')` beside `feature('getpid')` (not among the 2,024) |
 | Deployment | K1 (ADR 0256) | `isdeployed` `ismcc` `ctfroot` `mcrversion` `mcrcachedir` `getmcruserdata` `setmcruserdata` — MATLAB Compiler's, outside the 2,024, so the total does not move; a deployed session also has `waitforallfiguresclosed`, the runtime's own |
 | Dependency analysis | K2 (ADR 0257) | `matlab.codetools.requiredFilesAndProducts` `compiler.codetools.deployableSupportPackages` — the first is one of the 2,024 (the total moves to 1,232); the support-package stub is MATLAB Compiler's, outside them |
 | Archives | K3 (ADR 0258) | `zip` `unzip` — both among the 2,024 (the total moves to 1,234); no encryption, and `unzip` refuses an entry that would land outside its folder |
@@ -1101,7 +1102,7 @@ M52 left these behind, each named rather than silent (the full table is in
   scoped out of M52 deliberately.~~ **`interp2` and `'SamplePoints'` closed in M66**; `'native'`
   output classes and the `histogram` object options are still out.
 
-## Not implemented — 64
+## Not implemented — 60
 
 ### Handle graphics and app building — 2
 
@@ -1273,10 +1274,10 @@ departs from R2025b is in the divergence index, under ADRs 0174–0183.
 The R2020b pattern API is a composable value type of its own. Plain regular expressions cover the
 same ground and are implemented in full, including MATLAB's option-word output ordering.
 
-### OOP and metaclass plumbing — 13
+### OOP and metaclass plumbing — 9
 
-~~`builtin`~~ `empty` `event.hasListener` `inmem` `listLength` `loadobj` `localfunctions`
-`mislocked` `mlock` `munlock` `numArgumentsFromSubscript` `saveobj` ~~`subsasgn`~~
+~~`builtin`~~ `empty` `event.hasListener` ~~`inmem`~~ `listLength` `loadobj` `localfunctions`
+~~`mislocked`~~ ~~`mlock`~~ ~~`munlock`~~ `numArgumentsFromSubscript` `saveobj` ~~`subsasgn`~~
 `subsindex` ~~`subsref`~~ `underlyingType`
 
 The sentence that used to close this section — "these exist to customize the behaviour of
@@ -1290,14 +1291,15 @@ from another class and there was a hierarchy to answer about. ~~`subsref`~~ and 
 compiler and SDK plan's stage **K12** (ADR 0268) as the functions they are to a caller: the indexing a
 subscript structure spells, done as that indexing written out would be, which the strongly typed C++
 interface reaches a class's properties by. A class that defines methods of those names still does not
-take over indexing, for the reason below.
+take over indexing, for the reason below. ~~`inmem`~~, ~~`mlock`~~, ~~`munlock`~~ and ~~`mislocked`~~
+left with open items 169 and 245 (ADR 0341): JGraph keeps a function cache of its own since M145 (the
+path's loaded files and their persistents), so there was a cache to list and to hold.
 
 What remains is the part of the object model M68 deliberately excluded, and the exclusions are the
 reasons: `subsindex`/`numArgumentsFromSubscript`, and a class's own `subsref`/`subsasgn` methods, would let a class take over
 indexing, and the interpreter's indexing pipeline stays authoritative (ADR 0068); `event.hasListener`
-belongs to events, which are excluded; `loadobj`/`saveobj` belong to a saved-object
-format there is none of; and `mlock`/`munlock`/`mislocked`/`inmem` are about MATLAB's own function
-cache.
+belongs to events, which are excluded; and `loadobj`/`saveobj` belong to a saved-object
+format there is none of.
 
 ### Sparse reorderings and incomplete factorizations — 0
 

@@ -387,8 +387,21 @@ internal static partial class JgsBuiltins
                 return JgsValue.Number(Environment.ProcessId);
             }
 
+            // feature('numcores'): the physical cores of every kind, the key in any case and a further
+            // argument refused (R2025b, open item 169: 14 on a 6 P-core, 8 E-core machine). R2025b's
+            // statement form also prints four or five lines of what it detected; JGraph's does not.
+            if (IsTextScalar(args[0]) && TextOf(args[0]).Equals("numcores", StringComparison.OrdinalIgnoreCase))
+            {
+                if (args.Count > 1)
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:maxrhs", "Too many input arguments.");
+                }
+
+                return JgsValue.Number(JGraph.Numerics.LinearAlgebra.Native.ProcessorTopology.PhysicalCoreCount() ?? Environment.ProcessorCount);
+            }
+
             throw new JgsRuntimeException(line, col, "JGraph:feature:unsupported",
-                "JGraph answers feature('getpid') and no other feature key.");
+                "JGraph answers feature('getpid') and feature('numcores') and no other feature key.");
         });
 
         Define("fieldnames", (args, line, col) =>

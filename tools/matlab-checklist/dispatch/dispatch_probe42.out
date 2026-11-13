@@ -1,0 +1,16 @@
+﻿[Warning: Function prefdir has the same name as a MATLAB built-in. We suggest you rename the function to avoid a potential name conflict.] 
+[> In dispatch_probe42 (line 44)
+In run (line 112)] 
+[Warning: Function inmem has the same name as a MATLAB built-in. We suggest you rename the function to avoid a potential name conflict.] 
+[> In dispatch_probe42 (line 44)
+In run (line 112)] 
+[Warning: Function mlock has the same name as a MATLAB built-in. We suggest you rename the function to avoid a potential name conflict.] 
+[> In dispatch_probe42 (line 44)
+In run (line 112)] 
+[Warning: Function munlock has the same name as a MATLAB built-in. We suggest you rename the function to avoid a potential name conflict.] 
+[> In dispatch_probe42 (line 44)
+In run (line 112)] 
+[Warning: Function mislocked has the same name as a MATLAB built-in. We suggest you rename the function to avoid a potential name conflict.] 
+[> In dispatch_probe42 (line 44)
+In run (line 112)] 
+dispatch probe 42 done

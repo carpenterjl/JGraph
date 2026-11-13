@@ -1,0 +1,9 @@
+name,kind,method_classes
+ver,other,
+prefdir,builtin,
+userpath,mfile,
+usejava,mfile,
+inmem,builtin,
+mlock,builtin,
+munlock,builtin,
+mislocked,builtin,

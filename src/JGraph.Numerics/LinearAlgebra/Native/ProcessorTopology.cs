@@ -33,7 +33,16 @@ internal static unsafe partial class ProcessorTopology
     /// The number of physical cores in the fastest efficiency class — every core on a homogeneous
     /// part, the performance cores on a hybrid one — or null when the platform will not say.
     /// </summary>
-    internal static int? PerformanceCoreCount()
+    internal static int? PerformanceCoreCount() => CountCores(fastestOnly: true);
+
+    /// <summary>
+    /// The number of physical cores of every efficiency class — what R2025b's
+    /// <c>feature('numcores')</c> answers (14 on a 6 P-core, 8 E-core part; open item 169) — or null
+    /// when the platform will not say.
+    /// </summary>
+    internal static int? PhysicalCoreCount() => CountCores(fastestOnly: false);
+
+    private static int? CountCores(bool fastestOnly)
     {
         if (!OperatingSystem.IsWindows())
         {
@@ -63,6 +72,7 @@ internal static unsafe partial class ProcessorTopology
                 // higher is faster, and a homogeneous part reports zero for all of them.
                 int best = -1;
                 int cores = 0;
+                int all = 0;
                 int offset = 0;
                 while (offset + 10 <= length)
                 {
@@ -75,6 +85,7 @@ internal static unsafe partial class ProcessorTopology
 
                     if (relationship == RelationProcessorCore)
                     {
+                        all++;
                         int efficiency = start[offset + 9];
                         if (efficiency > best)
                         {
@@ -91,7 +102,8 @@ internal static unsafe partial class ProcessorTopology
                     offset += size;
                 }
 
-                return cores > 0 ? cores : null;
+                int counted = fastestOnly ? cores : all;
+                return counted > 0 ? counted : null;
             }
         }
         catch (DllNotFoundException)

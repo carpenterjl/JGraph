@@ -242,12 +242,22 @@ public static class JgsBuiltinCatalog
         Add("computer", "The platform name, or its short form with 'arch'.", Opt("option"));
         Add("matlabroot", "The folder JGraph is installed in.");
         Add("matlabdrive", "Empty: JGraph has no cloud drive to point at.");
-        Add("feature", "feature('getpid'): this process's id, as a double. JGraph answers no other feature key.", P("name"));
+        Add("feature", "feature('getpid'): this process's id, as a double; feature('numcores'): the physical core count. JGraph answers no other feature key.", P("name"));
         Add("license","The licence name, or 1 from license('test', feature) — everything is present.", Opt("option"), Opt("feature"));
         Add("isstudent", "False: JGraph has no student edition.");
         Add("memory", "A struct of available and used memory, in bytes.");
         Add("maxNumCompThreads", "The computation thread count; an argument sets it and returns the old one.", Opt("count"));
         Add("fftw", "Reports or sets the FFT planner mode; JGraph's transform has no plan to tune.", P("what"), Opt("mode"));
+
+        // --- The session questions (open items 169 and 245) ---------------------------------------------
+        Add("ver", "The products and their versions: ver prints the header and a row per product, v = ver answers a struct array with Name, Version, Release and Date; ver(product) asks for one by its folder's name (matlab, compiler, a toolbox on the path with a Contents.m).", Opt("product"));
+        Add("prefdir", "The preferences folder (JGraph's settings folder, or a deployed program's); prefdir(1) makes it when it is not there.", Opt("create"));
+        Add("userpath", "The user folder, Documents\\MATLAB when it is there, else ''; userpath(folder), userpath('reset') and userpath('clear') change it for the session and put it first on the path.", Opt("newpath"));
+        Add("usejava", "Whether a Java feature is there: 'jvm', 'awt' and 'swing' are false (JGraph has no Java); 'desktop' is true under the Script Workspace's window.", P("feature"));
+        Add("inmem", "The files loaded now as a column of names, or of full paths with '-completenames'; [M, X, C] = inmem adds the MEX files (none) and the classes.", Opt("-completenames"));
+        Add("mlock", "Holds the running function's file in memory: clear spares it and its persistents until munlock.");
+        Add("munlock", "Lets a file mlock held go again: the running one, or the one a name resolves to.", Opt("fun"));
+        Add("mislocked", "Whether mlock holds the running file, or the file a name resolves to.", Opt("fun"));
 
         // --- Deployment (compiler and SDK plan, stage K1) ---------------------------------------------
         Add("isdeployed", "True when the code runs as a compiled program or component.");

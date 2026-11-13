@@ -2423,3 +2423,11 @@ gzip	-1	2
 gunzip	-1	2
 tar	-1	2
 untar	-1	2
+ver	1	6
+prefdir	ERR:MATLAB:narginout:doesNotApply	5
+userpath	1	2
+usejava	1	2
+inmem	2	5
+mlock	0	5
+munlock	0	5
+mislocked	1	5

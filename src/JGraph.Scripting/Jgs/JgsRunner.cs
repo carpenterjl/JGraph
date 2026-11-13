@@ -619,7 +619,7 @@ internal static class JgsRunner
                 if (everything || names.Contains("functions"))
                 {
                     interpreter.FunctionPath?.Unload();
-                    interpreter.ForgetPersistents();
+                    interpreter.ForgetUnlockedPersistents(); // an mlock'd file keeps its persistents (open item 169)
                 }
 
                 if (everything)

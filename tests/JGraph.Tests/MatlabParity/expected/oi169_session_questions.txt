@@ -1,0 +1,163 @@
+CHK|ver_class|struct|exact
+CHK|ver_fields|Name,Version,Release,Date|exact
+CHK|ver_is_row|logical [1 1] 1|exact
+CHK|ver_sorted|logical [1 1] 1|exact
+CHK|ver_matlab_name|MATLAB|exact
+CHK|ver_matlab_version|25.2|exact
+CHK|ver_matlab_release|(R2025b)|exact
+CHK|ver_matlab_date|28-Jul-2025|exact
+CHK|ver_matlab_size|double [1 2] 1 1|exact
+CHK|ver_lower|MATLAB|exact
+CHK|ver_string|MATLAB|exact
+CHK|ver_general|MATLAB|exact
+CHK|ver_tail|MATLAB|exact
+CHK|ver_backslash|MATLAB|exact
+CHK|ver_compiler|MATLAB Compiler / 25.2 / (R2025b) / 28-Jul-2025|exact
+CHK|ver_compiler_sdk|MATLAB Compiler SDK|exact
+CHK|ver_compiler_tail|MATLAB Compiler|exact
+CHK|ver_in_list|logical [1 1] 1|exact
+CHK|ver_full_name|double [1 2] 0 0|exact
+CHK|ver_nosuch|double [1 2] 0 0|exact
+CHK|ver_nosuch_class|struct|exact
+CHK|ver_nosuch_fields|Name,Version,Release,Date|exact
+CHK|ver_empty|double [1 2] 0 0|exact
+CHK|ver_trailing_blank|double [1 2] 0 0|exact
+CHK|ver_number|[0 0] MATLAB:ver:NotAString|exact
+CHK|ver_cell|[0 0] MATLAB:ver:NotAString|exact
+CHK|ver_two_inputs|MATLAB:TooManyInputs|exact
+CHK|ver_two_inputs_msg|Too many input arguments.|exact
+CHK|ver_two_outputs|MATLAB:TooManyOutputs|exact
+CHK|ver_two_outputs_msg|Too many output arguments.|exact
+CHK|ver_support_fields|Name,Version,Release,Date,Licenses|exact
+CHK|ver_support_licenses|cell|exact
+CHK|ver_disp_count|double [1 1] 7|exact
+CHK|ver_disp_rules|logical [1 1] 1|exact
+CHK|ver_disp_labels|MATLAB Version / MATLAB License Number / Operating System / Java Version|div=ADR0341|diverges|JGraph Version / JGraph License Number / Operating System / Java Version
+CHK|ver_disp_java|Java Version: Java is not enabled|exact
+CHK|ver_disp_row|MATLAB................................................Version.25.2........(R2025b)|exact
+CHK|ver_disp_compiler|MATLAB.Compiler.......................................Version.25.2........(R2025b)|exact
+CHK|ver_disp_nosuch_warn|MATLAB:ver:NotFound|exact
+CHK|ver_disp_nosuch_rows|logical [1 1] 1|exact
+CHK|box_values|My Toolbox / 1.2.3 / (R2024a) / 05-Mar-2024|exact
+CHK|box_case|My Toolbox|exact
+CHK|box_norel|No Release Toolbox / 2.0 / / 01-Jan-2020|exact
+CHK|box_norel_release|double [1 2] 0 0|exact
+CHK|box_nover|double [1 2] 0 0|exact
+CHK|box_dot|Dot Name Toolbox / 3 / (Beta 2) / 01-Feb-2021|exact
+CHK|box_long|A Toolbox Whose Name Is Rather Long Indeed, Over Fifty Characters / 4.5.6.7.8.9.10.11 / (R2023b) / 12-Dec-2023|exact
+CHK|box_longrel|Long Release Toolbox / 1.0 / (Release Twenty Twenty Five) / 2025-06-30|exact
+CHK|box_date|05-Mar-2025|exact
+CHK|box_by_name|double [1 2] 0 0|exact
+CHK|box_in_list|logical [1 1] 1|exact
+CHK|box_not_listed|logical [1 1] 0|exact
+CHK|box_list_sorted|logical [1 1] 1|exact
+CHK|box_disp_row|My.Toolbox............................................Version.1.2.3.......(R2024a)|exact
+CHK|box_disp_norel|No.Release.Toolbox....................................Version.2.0|exact
+CHK|box_disp_long|A.Toolbox.Whose.Name.Is.Rather.Long.Indeed,.Ove.......Version.4.5.6.7.8.9.10.11....(R2023b)|exact
+CHK|box_disp_longrel|Long.Release.Toolbox..................................Version.1.0.........(Release.Twenty.Twenty.Five)|exact
+CHK|box_disp_dot|Dot.Name.Toolbox......................................Version.3...........(Beta.2)|exact
+CHK|box_gone|double [1 2] 0 0|exact
+CHK|usejava_jvm|logical [1 1] 1|div=ADR0341|diverges|logical [1 1] 0
+CHK|usejava_awt|logical [1 1] 1|div=ADR0341|diverges|logical [1 1] 0
+CHK|usejava_swing|logical [1 1] 1|div=ADR0341|diverges|logical [1 1] 0
+CHK|usejava_desktop|logical [1 1] 0|exact
+CHK|usejava_desktop_upper|logical [1 1] 0|exact
+CHK|usejava_nosuch|logical [1 1] 0|exact
+CHK|usejava_empty|logical [1 1] 0|exact
+CHK|usejava_none|MATLAB:narginchk:notEnoughInputs|exact
+CHK|usejava_none_msg|Not enough input arguments.|exact
+CHK|usejava_number|MATLAB:unassignedOutputs|exact
+CHK|usejava_number_msg|One or more output arguments not assigned during call to "_feature_useJava".|exact
+CHK|usejava_cell|MATLAB:unassignedOutputs|exact
+CHK|usejava_cell_msg|One or more output arguments not assigned during call to "_feature_useJava".|exact
+CHK|usejava_two|MATLAB:TooManyInputs|exact
+CHK|usejava_two_msg|Too many input arguments.|exact
+CHK|usejava_two_outputs|MATLAB:TooManyOutputs|exact
+CHK|usejava_two_outputs_msg|Too many output arguments.|exact
+CHK|prefdir_class|char|exact
+CHK|prefdir_row|double [1 1] 1|exact
+CHK|prefdir_absolute|logical [1 1] 1|exact
+CHK|prefdir_one|logical [1 1] 1|exact
+CHK|prefdir_exists|double [1 1] 7|exact
+CHK|prefdir_zero|logical [1 1] 1|exact
+CHK|prefdir_true|logical [1 1] 1|exact
+CHK|prefdir_text|MATLAB:prefs:BadInput|exact
+CHK|prefdir_text_msg|PREFDIR input must be numeric or logical scalar.|exact
+CHK|prefdir_string|MATLAB:prefs:BadInput|exact
+CHK|prefdir_string_msg|PREFDIR input must be numeric or logical scalar.|exact
+CHK|prefdir_vector|MATLAB:prefs:BadInput|exact
+CHK|prefdir_vector_msg|PREFDIR input must be numeric or logical scalar.|exact
+CHK|prefdir_two|MATLAB:maxrhs|exact
+CHK|prefdir_two_msg|Too many input arguments.|exact
+CHK|prefdir_two_outputs|MATLAB:maxlhs|exact
+CHK|prefdir_two_outputs_msg|Too many output arguments.|exact
+CHK|userpath_class|char|exact
+CHK|userpath_there|logical [1 1] 1|exact
+CHK|userpath_two|MATLAB:TooManyInputs|exact
+CHK|userpath_two_msg|Too many input arguments.|exact
+CHK|userpath_number|MATLAB:invalidType|exact
+CHK|userpath_number_msg|Expected input to be one of these types: string, char Instead its type was double.|exact
+CHK|userpath_empty|MATLAB:userpath:invalidInput|exact
+CHK|userpath_empty_msg|Invalid directory or directory does not exist|exact
+CHK|userpath_missing|MATLAB:userpath:invalidInput|exact
+CHK|userpath_missing_msg|Invalid directory or directory does not exist|exact
+CHK|userpath_two_outputs|MATLAB:TooManyOutputs|exact
+CHK|userpath_two_outputs_msg|Too many output arguments.|exact
+CHK|numcores_class|double|exact
+CHK|numcores_whole|logical [1 1] 1|exact
+CHK|numcores_case|logical [1 1] 1|exact
+CHK|numcores_string|logical [1 1] 1|exact
+CHK|numcores_extra|MATLAB:maxrhs|exact
+CHK|numcores_extra_msg|Too many input arguments.|exact
+CHK|inmem_class|cell|exact
+CHK|inmem_column|double [1 1] 1|exact
+CHK|inmem_helper|logical [1 1] 1|exact
+CHK|inmem_complete_helper|logical [1 1] 1|exact
+CHK|inmem_upper_option|logical [1 1] 1|exact
+CHK|inmem_string_option|logical [1 1] 1|exact
+CHK|inmem_number|MATLAB:string:MustBeStringScalarOrCharacterVector|exact
+CHK|inmem_number_msg|Argument must be a text scalar.|exact
+CHK|inmem_three|cell 1 cell [0 1] cell 1|exact
+CHK|inmem_four|MATLAB:maxlhs|exact
+CHK|inmem_four_msg|Too many output arguments.|exact
+CHK|lock_first|double [1 2] 1 1|exact
+CHK|lock_second|double [1 2] 2 1|exact
+CHK|lock_is_locked|logical [1 1] 1|exact
+CHK|lock_is_locked_string|logical [1 1] 1|exact
+CHK|lock_in_inmem|logical [1 1] 1|exact
+CHK|lock_after_clear_name|double [1 2] 3 1|exact
+CHK|lock_after_clear_functions|double [1 2] 4 1|exact
+CHK|lock_after_clear_all|double [1 2] 5 1|exact
+CHK|lock_in_inmem_after_clear|logical [1 1] 1|exact
+CHK|lock_unlocked|logical [1 1] 0|exact
+CHK|lock_after_unlock_clear|double [1 2] 1 1|exact
+CHK|lock_unlock_inside|logical [1 3] 1 0 0|exact
+CHK|lock_local_function|logical [1 2] 1 1|exact
+CHK|lock_command_unlock|logical [1 1] 0|exact
+CHK|lock_anonymous|logical [1 1] 1|exact
+CHK|lock_script_mlock||exact
+CHK|lock_script_mislocked|logical [1 1] 1|exact
+CHK|lock_script_munlock||exact
+CHK|lock_nosuch_mislocked|logical [1 1] 0|exact
+CHK|lock_unlocked_mislocked|logical [1 1] 0|exact
+CHK|lock_builtin_mislocked|logical [1 1] 0|exact
+CHK|lock_builtin_munlock||exact
+CHK|lock_unlocked_munlock||exact
+CHK|lock_nosuch_munlock|MATLAB:dispatcher:mlockNotLocked|exact
+CHK|lock_nosuch_munlock_msg|The file 'oi169nosuch' is not locked.|exact
+CHK|lock_nosuch_munlock_string|MATLAB:dispatcher:mlockNotLocked|exact
+CHK|lock_nosuch_munlock_string_msg|The file 'oi169nosuch' is not locked.|exact
+CHK|lock_number_munlock|MATLAB:string:MustBeStringScalarOrCharacterVector|exact
+CHK|lock_number_munlock_msg|Argument must be a text scalar.|exact
+CHK|lock_munlock_output|MATLAB:maxlhs|exact
+CHK|lock_munlock_output_msg|Too many output arguments.|exact
+CHK|lock_number_mislocked|MATLAB:string:MustBeStringScalarOrCharacterVector|exact
+CHK|lock_number_mislocked_msg|Argument must be a text scalar.|exact
+CHK|lock_two_mislocked|MATLAB:maxrhs|exact
+CHK|lock_two_mislocked_msg|Too many input arguments.|exact
+CHK|lock_mlock_input|MATLAB:maxrhs|exact
+CHK|lock_mlock_input_msg|Too many input arguments.|exact
+CHK|lock_mlock_output|MATLAB:maxlhs|exact
+CHK|lock_mlock_output_msg|Too many output arguments.|exact
+CHK|lock_mislocked_two_outputs|MATLAB:maxlhs|exact
+CHK|lock_mislocked_two_outputs_msg|Too many output arguments.|exact
