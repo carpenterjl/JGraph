@@ -373,7 +373,12 @@ public sealed partial class JgsMlappLayout
                 return;
             }
 
-            int appendix = IndexOfLine(AppendixMarker, head + 1);
+            int appendix = AppendixLine(Lines);
+            if (appendix <= head)
+            {
+                appendix = -1;
+            }
+
             int classEnd = LastLineAt(string.Empty, head + 1, appendix < 0 ? Lines.Count : appendix);
             if (classEnd < 0)
             {
@@ -617,6 +622,81 @@ public sealed partial class JgsMlappLayout
         }
 
         return (startup, singleton);
+    }
+
+    /// <summary>
+    /// The zero-based line a plain-text app's appendix begins on (open item 161): the first
+    /// <c>%[appendix]</c> line after the class's last line of code, which in a class that parses is
+    /// its closing <c>end</c> - after it every line is blank or a comment (a <c>%</c> line, or a line
+    /// of a <c>%{</c> ... <c>%}</c> block, where the sections' XML stands). That is where App
+    /// Designer's writer puts it (<c>PlainTextFileContentGroupBehavior</c>). A marker line typed into
+    /// the user's code, a callback's comment, is not the appendix: code follows it. -1 when there is
+    /// none.
+    /// </summary>
+    /// <remarks>
+    /// R2025b's MATLAB side never cuts by this line (its loader and its run take each section by its
+    /// grammar line, <c>getAppendixByGrammarName</c>), so a marker line in the user's code is
+    /// harmless there: measured, such an app loads and runs as one without it.
+    /// </remarks>
+    public static int AppendixLine(IReadOnlyList<string> lines)
+    {
+        ArgumentNullException.ThrowIfNull(lines);
+        int lastCode = -1;
+        int depth = 0;
+        for (int i = 0; i < lines.Count; i++)
+        {
+            string line = lines[i].Trim();
+            if (line == "%{")
+            {
+                depth++;
+            }
+            else if (depth > 0)
+            {
+                if (line == "%}")
+                {
+                    depth--;
+                }
+            }
+            else if (line.Length > 0 && line[0] != '%')
+            {
+                lastCode = i;
+            }
+        }
+
+        for (int i = lastCode + 1; i < lines.Count; i++)
+        {
+            if (lines[i].Trim() == AppendixMarker)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /// <summary>The index in <paramref name="text"/> of the first character of its appendix's line (<see cref="AppendixLine"/>), or -1.</summary>
+    public static int AppendixOffset(string text)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        if (!text.Contains(AppendixMarker, StringComparison.Ordinal))
+        {
+            return -1;
+        }
+
+        string[] lines = text.Split('\n');
+        int line = AppendixLine(lines);
+        if (line < 0)
+        {
+            return -1;
+        }
+
+        int offset = 0;
+        for (int i = 0; i < line; i++)
+        {
+            offset += lines[i].Length + 1;
+        }
+
+        return offset;
     }
 
     /// <summary>The last line in [<paramref name="from"/>, <paramref name="limit"/>) that is an <c>end</c> standing at exactly <paramref name="indent"/>, or -1.</summary>

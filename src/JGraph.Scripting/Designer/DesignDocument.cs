@@ -256,7 +256,7 @@ public sealed partial class DesignDocument : IDisposable
         ArgumentNullException.ThrowIfNull(path);
         if (FormatOf(path) == DesignFileFormat.PlainText)
         {
-            return FromPlainText(System.IO.File.ReadAllText(path), path, pathFolders);
+            return FromPlainText(JgsSourceText.Read(path), path, pathFolders);
         }
 
         string text = JgsMlapp.ReadCode(path);
@@ -1485,7 +1485,7 @@ public sealed partial class DesignDocument : IDisposable
             _textDirty = false;
             Saved();
             OnChanged();
-            return $"Saved {Path}.";
+            return $"Saved {Path}.{PlainTextNote(text)}";
         }
 
         (string saved, MlappSaveResult result) = AppDesignerDocument.Save(Path!, Path!, CurrentText, Design.GroupRecords(), DetailsForPackage(), RunArgumentsForPackage());
@@ -1568,6 +1568,7 @@ public sealed partial class DesignDocument : IDisposable
                 _renderedText = null;
                 saved = CurrentText;
                 WriteWhole(target, saved);
+                note = PlainTextNote(saved);
             }
             else if (formatWas == DesignFileFormat.Mlapp && source is not null && System.IO.File.Exists(source))
             {
@@ -1613,6 +1614,24 @@ public sealed partial class DesignDocument : IDisposable
     }
 
     private static string AppSaveNote(MlappSaveResult result) => AppDesignerDocument.StatusNote(result);
+
+    /// <summary>
+    /// What a plain-text save adds to the status line when the user's code holds a grammar line
+    /// R2025b takes a section by (open item 161, <see cref="DesignPlainText.GrammarLinesInUserCode"/>):
+    /// the file is written as it stands and reads here, but R2025b's loader and run refuse it. The
+    /// save is not refused, since the code is the user's and nothing of it is lost.
+    /// </summary>
+    internal static string PlainTextNote(string text)
+    {
+        IReadOnlyList<(int Line, string Grammar)> found = DesignPlainText.GrammarLinesInUserCode(text);
+        if (found.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        string where = string.Join(", ", found.Select(static f => $"line {f.Line} holds '{f.Grammar}'"));
+        return $"  R2025b will not open or run it: {where} before the appendix, which App Designer's section cutter takes for the section's own.";
+    }
 
     /// <summary>
     /// The details a plain-text file gets for an app that had none: the package's metadata when the

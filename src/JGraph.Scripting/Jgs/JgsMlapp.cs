@@ -33,10 +33,11 @@ public static partial class JgsMlapp
 
     /// <summary>
     /// The text of a code file: an <c>.mlapp</c>'s document, any other file's own text. This is
-    /// what everything that reads a file to run it, list it or show it asks.
+    /// what everything that reads a file to run it, list it or show it asks. A code file's bytes are
+    /// decoded as R2025b decodes them (<see cref="JgsSourceText"/>: UTF-8, else Windows-1252).
     /// </summary>
     /// <exception cref="InvalidDataException">The file is an <c>.mlapp</c> and holds no document that can be read.</exception>
-    public static string ReadSource(string path) => IsMlapp(path) ? ReadCode(path) : File.ReadAllText(path);
+    public static string ReadSource(string path) => IsMlapp(path) ? ReadCode(path) : JgsSourceText.Read(path);
 
     /// <summary>The class file an <c>.mlapp</c> holds, its lines ended by a line feed as XML reads them.</summary>
     /// <exception cref="InvalidDataException">The file is not a package, or has no document part.</exception>

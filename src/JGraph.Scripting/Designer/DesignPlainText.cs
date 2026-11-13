@@ -188,12 +188,51 @@ public static partial class DesignPlainText
     private static readonly IReadOnlyDictionary<string, string> DesignNames =
         AppendixNames.ToDictionary(static p => p.Value, static p => p.Key, StringComparer.Ordinal);
 
-    /// <summary>Whether <paramref name="text"/> is a plain-text app: a class file with an appendix holding a layout section.</summary>
+    /// <summary>
+    /// Whether <paramref name="text"/> is a plain-text app: a class file with an appendix holding a
+    /// layout section, the appendix after the class's code (<see cref="JgsMlappLayout.AppendixLine"/>).
+    /// </summary>
     public static bool IsPlainTextApp(string text)
     {
         ArgumentNullException.ThrowIfNull(text);
-        int appendix = text.IndexOf(AppendixMarker, StringComparison.Ordinal);
+        int appendix = JgsMlappLayout.AppendixOffset(text);
         return appendix >= 0 && text.IndexOf("%[" + LayoutGrammar + "]", appendix, StringComparison.Ordinal) > appendix;
+    }
+
+    /// <summary>
+    /// The grammar names R2025b's loader and run take a section by, <c>%[app:layout]</c> and
+    /// <c>%[app:runConfiguration]</c>, wherever they stand in the class before the appendix, as
+    /// (one-based line, grammar line) - open item 161. App Designer's MATLAB side cuts each section
+    /// by the first place its grammar line's text occurs in the whole file
+    /// (<c>getAppendixByGrammarName</c>'s <c>strfind</c>), so one in the user's code - in a comment,
+    /// in a string, anywhere on a line - makes R2025b refuse the file: measured, its loader and its
+    /// run both fail with <c>MATLAB:string:InvalidArgumentSize</c> (the cutter's <c>extractAfter</c>
+    /// handed two positions), and a run configuration's grammar line in the code of an app that has
+    /// no such section fails the same way. The other sections' grammar lines in the code were
+    /// measured harmless. This build reads such a file (it cuts the appendix by the class's
+    /// structure); a save says R2025b will not.
+    /// </summary>
+    public static IReadOnlyList<(int Line, string Grammar)> GrammarLinesInUserCode(string text)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        var found = new List<(int, string)>();
+        string[] lines = text.Split('\n');
+        int appendix = JgsMlappLayout.AppendixLine(lines);
+        int end = appendix < 0 ? lines.Length : appendix;
+        foreach (string grammar in (ReadOnlySpan<string>)[LayoutGrammar, RunConfigurationGrammar])
+        {
+            string identifier = "%[" + grammar + "]";
+            for (int i = 0; i < end; i++)
+            {
+                if (lines[i].Contains(identifier, StringComparison.Ordinal))
+                {
+                    found.Add((i + 1, identifier));
+                }
+            }
+        }
+
+        found.Sort(static (a, b) => a.Item1.CompareTo(b.Item1));
+        return found;
     }
 
     // --- writing ---------------------------------------------------------------------------------
@@ -991,11 +1030,14 @@ public static partial class DesignPlainText
     /// <summary>
     /// Each section's XML text by its grammar name, cut as <c>getAppendixByGrammarName</c> cuts it:
     /// from the <c>%{</c> after the grammar line to the <c>%}</c> after the root's last closing tag.
+    /// The grammar lines are looked for in the appendix alone, which begins after the class's code
+    /// (<see cref="JgsMlappLayout.AppendixLine"/>), so a marker or grammar line in the user's code
+    /// cuts nothing (open item 161; R2025b refuses such a file, <see cref="GrammarLinesInUserCode"/>).
     /// </summary>
     private static Dictionary<string, string> Sections(string[] lines)
     {
         var sections = new Dictionary<string, string>(StringComparer.Ordinal);
-        int appendix = Array.FindIndex(lines, static l => l.Trim() == AppendixMarker);
+        int appendix = JgsMlappLayout.AppendixLine(lines);
         if (appendix < 0)
         {
             return sections;

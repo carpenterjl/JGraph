@@ -1012,6 +1012,161 @@ public class AppDesignerPlainTextTests(ITestOutputHelper output)
         Assert.False(model.IsAppDesignerFile);
         Assert.False(new ScriptDocumentModel(@"C:\apps\Plain3.m", "classdef Plain3\nend\n", "MATLAB").IsPlainTextApp);
     }
+
+    // --- open item 161: marker and grammar lines in the user's code ------------------------------------
+
+    /// <summary>Plain1 with <paramref name="lines"/> put in the button's callback ahead of its statement.</summary>
+    private static string WithCallbackLines(params string[] lines) =>
+        Plain1Text.ReplaceLineEndings("\n").Replace("            x = 1;\n", string.Concat(lines.Select(static l => l + "\n")) + "            x = 1;\n", StringComparison.Ordinal);
+
+    /// <summary>
+    /// The appendix begins after the class's code: a <c>%[appendix]</c> line in a callback's comment, or
+    /// in a block comment there, is the callback's, and the class is cut as it is without it (R2025b,
+    /// whose MATLAB side never cuts by that line, loads and runs such an app, probe <c>p161</c>).
+    /// </summary>
+    [Fact]
+    public void AnAppendixLineInACallbackIsTheCallbacksAndTheAppendixFollowsTheClass()
+    {
+        foreach (string text in (string[])[
+            WithCallbackLines("            %[appendix]"),
+            WithCallbackLines("            %{", "            %[appendix]", "            %}"),
+            WithCallbackLines("%[appendix]")])
+        {
+            string[] lines = Lines(text);
+            int appendix = JgsMlappLayout.AppendixLine(lines);
+            Assert.Equal("%[app:layout]", lines[appendix + 2]);
+            Assert.Equal(string.Join('\n', lines.Take(appendix)).Length + 1, JgsMlappLayout.AppendixOffset(text));
+
+            JgsMlappLayout layout = JgsMlappLayout.Of(text);
+            Assert.True(layout.IsPlainText);
+            Assert.True(layout.IsComplete);
+            Assert.True(layout.SingleInstance);
+            Assert.Equal("startupFcn", layout.Startup?.Name);
+            Assert.Contains("%[appendix]", layout.CodeOf(layout.Callbacks.Single()).Select(static l => l.Trim()));
+
+            Assert.True(DesignPlainText.IsPlainTextApp(text));
+            Assert.Equal(("startupFcn", true), DesignPlainText.RunConfiguration(text));
+            using DesignDocument document = DesignDocument.FromPlainText(text, null);
+            Assert.Empty(document.ReadProblems);
+            Assert.NotNull(document.Code);
+            Assert.NotNull(document.Design.Find("GoButton"));
+            Assert.Equal(text, document.CurrentText); // written again as it was read
+            Assert.Empty(DesignPlainText.GrammarLinesInUserCode(text));
+        }
+
+        // A file whose only marker line is in the code has no appendix.
+        string noAppendix = "classdef A < matlab.apps.App\n    methods\n        function f(app)\n            %[appendix]\n        end\n    end\nend\n";
+        Assert.Equal(-1, JgsMlappLayout.AppendixLine(Lines(noAppendix)));
+        Assert.False(DesignPlainText.IsPlainTextApp(noAppendix));
+    }
+
+    /// <summary>
+    /// A grammar line R2025b takes a section by, standing in the user's code (in a comment, in a string,
+    /// with a block comment of its own), cuts nothing here: the sections are the appendix's. R2025b's
+    /// loader and run refuse such a file (its cutter's <c>strfind</c> finds the line twice), so a save
+    /// names the lines; the other sections' grammar lines were measured harmless and are not named.
+    /// </summary>
+    [Fact]
+    public void AGrammarLineInUserCodeCutsNothingHereAndASaveNamesIt()
+    {
+        string text = WithCallbackLines(
+            "            % see %[app:layout]",
+            "            s = '%[app:runConfiguration]';",
+            "            %[app:runConfiguration]",
+            "            %{",
+            "            <RunConfiguration><StartupFcn>nope</StartupFcn></RunConfiguration>",
+            "            %}",
+            "            % %[app:appDetails] %[app:internalData]");
+        Assert.Equal(("startupFcn", true), DesignPlainText.RunConfiguration(text));
+        DesignPlainTextReadResult read = DesignPlainText.Read(text);
+        Assert.Empty(read.Read.Problems);
+        Assert.Equal("Plain1", read.Details.Name);
+        Assert.NotNull(read.Read.Design!.Find("GoButton"));
+        JgsMlappLayout layout = JgsMlappLayout.Of(text);
+        Assert.True(layout.IsPlainText);
+        Assert.Equal("startupFcn", layout.Startup?.Name);
+
+        string[] lines = Lines(text);
+        int first = Array.IndexOf(lines, "            % see %[app:layout]") + 1;
+        Assert.Equal([(first, "%[app:layout]"), (first + 1, "%[app:runConfiguration]"), (first + 2, "%[app:runConfiguration]")],
+            DesignPlainText.GrammarLinesInUserCode(text));
+
+        string folder = Path.Combine(Path.GetTempPath(), "jgraph-oi161-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(folder);
+        try
+        {
+            string path = Path.Combine(folder, "Plain1.m");
+            File.WriteAllText(path, text);
+            using (DesignDocument document = DesignDocument.Open(path))
+            {
+                Assert.True(document.CanSave);
+                string status = document.Save();
+                Assert.StartsWith($"Saved {path}.  R2025b will not open or run it: line {first} holds '%[app:layout]', line {first + 1} holds '%[app:runConfiguration]', line {first + 2} holds '%[app:runConfiguration]' before the appendix", status);
+                Assert.Equal(text, File.ReadAllText(path)); // written as it stands
+                Assert.Contains("R2025b will not open or run it", document.SaveAs(Path.Combine(folder, "Plain2.m")));
+            }
+
+            File.WriteAllText(path, Plain1Text.ReplaceLineEndings("\n"));
+            using DesignDocument clean = DesignDocument.Open(path);
+            Assert.Equal($"Saved {path}.", clean.Save());
+        }
+        finally
+        {
+            Directory.Delete(folder, recursive: true);
+        }
+    }
+
+    // --- open item 159: the bytes of a plain-text app ------------------------------------------------
+
+    /// <summary>
+    /// A code file is decoded as R2025b decodes one (probe <c>p159</c>, through its <c>readAppFile</c>,
+    /// <c>fileread</c> and its parser alike): UTF-8 when the whole file is valid UTF-8, its byte-order
+    /// mark dropped; else the whole file in Windows-1252, its undefined bytes as their own code points.
+    /// </summary>
+    [Fact]
+    public void ACodeFileIsDecodedAsR2025bDecodesIt()
+    {
+        Assert.Equal("% a\u00E9b\u20ACz", JgsSourceText.Decode([0x25, 0x20, 0x61, 0xC3, 0xA9, 0x62, 0xE2, 0x82, 0xAC, 0x7A]));
+        Assert.Equal("% a\u00E9b\u20ACz", JgsSourceText.Decode([0x25, 0x20, 0x61, 0xE9, 0x62, 0x80, 0x7A]));
+        Assert.Equal("% a\u00C3\u00A9b\u00E9z", JgsSourceText.Decode([0x25, 0x20, 0x61, 0xC3, 0xA9, 0x62, 0xE9, 0x7A]));
+        Assert.Equal("% a\u00E9z", JgsSourceText.Decode([0xEF, 0xBB, 0xBF, 0x25, 0x20, 0x61, 0xC3, 0xA9, 0x7A]));
+        Assert.Equal("%\u0081\u008D\u008F\u0090\u009D\u20AC\u0178\u00FF", JgsSourceText.Decode([0x25, 0x81, 0x8D, 0x8F, 0x90, 0x9D, 0x80, 0x9F, 0xFF]));
+        Assert.Equal("a\U0001F600", JgsSourceText.Decode([0x61, 0xF0, 0x9F, 0x98, 0x80]));
+        Assert.Equal("ab", JgsSourceText.Decode([0xFF, 0xFE, 0x61, 0x00, 0x62, 0x00])); // a UTF-16 file, as it was read before
+    }
+
+    /// <summary>
+    /// R2025b's writer stores a plain-text app as UTF-8 (<c>fopen(..., 'UTF-8')</c> then <c>fwrite</c>,
+    /// measured: <c>U+00E9</c> is <c>C3 A9</c>, not the one byte the review inferred), as this build does; a
+    /// file in Windows-1252 opens with its text whole and is written back as UTF-8, as App Designer's
+    /// own save would write what its reader read.
+    /// </summary>
+    [Fact]
+    public void ANonAsciiLabelOpensFromEitherEncodingAndIsWrittenAsUtf8()
+    {
+        string text = Plain1Text.ReplaceLineEndings("\n").Replace("<Text>'Go'</Text>", "<Text>'All\u00E9 \u20AC'</Text>", StringComparison.Ordinal);
+        string folder = Path.Combine(Path.GetTempPath(), "jgraph-oi159-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(folder);
+        try
+        {
+            string path = Path.Combine(folder, "Plain1.m");
+            byte[] utf8 = new System.Text.UTF8Encoding(false).GetBytes(text);
+            foreach (byte[] bytes in (byte[][])[utf8, text.Select(static c => c == '\u20AC' ? (byte)0x80 : (byte)c).ToArray()])
+            {
+                File.WriteAllBytes(path, bytes);
+                using DesignDocument document = DesignDocument.Open(path);
+                Assert.Empty(document.ReadProblems);
+                Assert.Equal("All\u00E9 \u20AC", Assert.IsType<CharValue>(document.Design.Find("GoButton")!.Get("Text")).Text);
+                Assert.Equal(text, document.CurrentText);
+                document.Save();
+                Assert.Equal(utf8, File.ReadAllBytes(path));
+            }
+        }
+        finally
+        {
+            Directory.Delete(folder, recursive: true);
+        }
+    }
 }
 
 /// <summary>Designer plan DS7a: a plain-text app running here, as <c>matlab.apps.App</c> runs it in R2025b with its feature on.</summary>
@@ -1185,6 +1340,46 @@ public class AppDesignerPlainTextRunTests : IAsyncLifetime
         Assert.True(Printed("same 1 started 1 figures 1"), _output.NormalText + _output.ErrorText);
         Assert.True(Printed("valid 0 0 figures 0"), _output.NormalText + _output.ErrorText);
         Assert.True(Printed("new 0 started 3"), _output.NormalText + _output.ErrorText);
+    }
+
+    /// <summary>
+    /// Every component carries its code name in a dynamic property, a char, as R2025b's generated
+    /// function gives it one (<c>addDynamicProperties(app.X, 'AD_CodeName', 'X')</c>; probe <c>p161</c>:
+    /// the figure and the button, transient, not hidden) - open item 161.
+    /// </summary>
+    [Fact]
+    public async Task EveryComponentCarriesItsCodeNameAsR2025bsRunGivesIt()
+    {
+        await Exec("""
+            app = DsPlain(1);
+            fprintf('codename %d %s %s %s %s\n', isprop(app.GoButton, 'AD_CodeName'), app.GoButton.AD_CodeName, class(app.GoButton.AD_CodeName), app.UIFigure.AD_CodeName, app.GridLayout.AD_CodeName);
+            fprintf('tagged %d\n', numel(findall(app.UIFigure, '-property', 'AD_CodeName')));
+            """);
+        Assert.True(Printed("codename 1 GoButton char UIFigure GridLayout"), _output.NormalText + _output.ErrorText);
+        Assert.True(Printed("tagged 4"), _output.NormalText + _output.ErrorText);
+    }
+
+    /// <summary>
+    /// An app whose startup function holds a grammar line and an appendix line in its comments runs
+    /// here (R2025b's run refuses the grammar line, a divergence; it runs past the appendix line), and
+    /// a label saved in Windows-1252 comes back whole, as R2025b reads a file that is not UTF-8 -
+    /// open items 159 and 161.
+    /// </summary>
+    [Fact]
+    public async Task AnAppRunsWithMarkerLinesInItsCodeAndALabelInWindows1252()
+    {
+        string apps = Path.Combine(_directory, "apps161");
+        Directory.CreateDirectory(apps);
+        string text = AppSource.ReplaceLineEndings("\n").Replace("DsPlain", "DsMarks", StringComparison.Ordinal)
+            .Replace("<Text>'Go'</Text>", "<Text>'All\u00E9'</Text>", StringComparison.Ordinal)
+            .Replace("app.Started = amp;", "% see %[app:layout]\n%[appendix]\napp.Started = amp;", StringComparison.Ordinal);
+        File.WriteAllBytes(Path.Combine(apps, "DsMarks.m"), text.Select(static c => checked((byte)c)).ToArray());
+        await Exec("""
+            addpath(fullfile(pwd, 'apps161'));
+            app = DsMarks(5);
+            fprintf('marks %g %d %d\n', app.Started, double(app.GoButton.Text(end)), numel(app.GoButton.Text));
+            """);
+        Assert.True(Printed("marks 5 233 4"), _output.NormalText + _output.ErrorText);
     }
 
     /// <summary>A 1-by-1 PNG, for an image kept beside an app.</summary>

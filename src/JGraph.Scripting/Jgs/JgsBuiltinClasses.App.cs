@@ -67,7 +67,7 @@ internal static partial class JgsBuiltinClasses
         string text;
         try
         {
-            text = File.ReadAllText(file);
+            text = JgsSourceText.Read(file);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
         {
@@ -144,6 +144,14 @@ internal static partial class JgsBuiltinClasses
                 : l);
         }
 
+        // Every component carries its code name in a transient dynamic property, as R2025b's
+        // generated function gives it one (createInitCodeLinesForComponent's addDynamicProperties
+        // line); a custom component that is not a graphics handle gets none (open item 161).
+        foreach (DesignComponent component in design.Components)
+        {
+            lines.Add($"{AddCodeNameFunction}(app.{component.CodeName}, '{component.CodeName}')");
+        }
+
         lines.Add($"registerApp(app, app.{design.Figure.CodeName})");
         if (startup is not null)
         {
@@ -171,10 +179,33 @@ internal static partial class JgsBuiltinClasses
         scope.OwnClass = instance.Class;
         scope.DeclareFunction("createCallbackFcn", JgsValue.Function(new BuiltinFunction("createCallbackFcn", (a, l, c) => CreateCallbackFcn(interpreter, a, l, c)) { KeepsStringArguments = true }));
         scope.DeclareFunction("registerApp", JgsValue.Function(new BuiltinFunction("registerApp", (a, l, c) => RegisterApp(interpreter, a, l, c)) { BindsAnsAsStatement = false }));
+        scope.DeclareFunction(AddCodeNameFunction, JgsValue.Function(new BuiltinFunction(AddCodeNameFunction, static (a, _, _) => AddCodeName(a)) { BindsAnsAsStatement = false }));
         scope.DeclareFunction("runStartupFcn", JgsValue.Function(new BuiltinFunction("runStartupFcn", (a, l, c) => RunStartupFcn(interpreter, a, l, c)) { BindsAnsAsStatement = false }));
         var function = new UserFunction(init, scope, interpreter) { Owner = instance.Class, OwnerClass = instance.Class.Name };
         function.Call([self, JgsValue.Cell(args.Skip(1).ToArray())], line, col);
         return self;
+    }
+
+    /// <summary>The dynamic property R2025b's run of a plain-text app gives every component: its code name, a char.</summary>
+    public const string CodeNameProperty = "AD_CodeName";
+
+    /// <summary>The generated function's helper that gives a component <see cref="CodeNameProperty"/>; a name no app's own code would use.</summary>
+    private const string AddCodeNameFunction = "ad_addCodeNameProperty";
+
+    /// <summary>
+    /// <c>AppManagementService.addDynamicProperties(h, 'AD_CodeName', name)</c>: a transient, visible
+    /// dynamic property holding the code name, added when the handle has no such property yet. A
+    /// value that is no graphics handle (a custom component's object) is passed over.
+    /// </summary>
+    private static JgsValue AddCodeName(IReadOnlyList<JgsValue> args)
+    {
+        if (args.Count == 2 && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? entry))
+        {
+            entry.AddedProperties ??= new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+            entry.AddedProperties.TryAdd(CodeNameProperty, args[1]);
+        }
+
+        return JgsValue.Null;
     }
 
     /// <summary><c>delete(app)</c>: the app's figure is deleted, which takes the app with it (<c>AppManagementService.unregisterMApp</c>).</summary>

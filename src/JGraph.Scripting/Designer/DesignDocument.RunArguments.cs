@@ -97,7 +97,7 @@ public sealed partial class DesignDocument
                 System.IO.File.Delete(temporary);
             }
 
-            string text = System.IO.File.ReadAllText(Path);
+            string text = JgsSourceText.Read(Path);
             string written = DesignPlainText.WithAutoThumbnail(text, uri);
             if (written != text)
             {

@@ -295,8 +295,8 @@ public sealed class FileComparison
 
         if (Kind == ComparisonKind.App)
         {
-            string whole = File.ReadAllText(RightPath);
-            if (whole.IndexOf(JgsMlappLayout.AppendixMarker, StringComparison.Ordinal) is int marker and >= 0)
+            string whole = JgsSourceText.Read(RightPath);
+            if (JgsMlappLayout.AppendixOffset(whole) is int marker and >= 0)
             {
                 // The class text was compared alone: the appendix stays as it is.
                 text = text.TrimEnd('\r', '\n') + RightNewline + RightNewline + whole[marker..];
@@ -450,7 +450,7 @@ public static class DesignCompare
 
         try
         {
-            return DesignPlainText.IsPlainTextApp(File.ReadAllText(path));
+            return DesignPlainText.IsPlainTextApp(JgsSourceText.Read(path));
         }
         catch (IOException)
         {
@@ -470,8 +470,8 @@ public static class DesignCompare
             return JgsMlapp.ReadCode(path);
         }
 
-        string text = File.ReadAllText(path);
-        if (asApp && text.IndexOf(JgsMlappLayout.AppendixMarker, StringComparison.Ordinal) is int marker and >= 0)
+        string text = JgsSourceText.Read(path);
+        if (asApp && JgsMlappLayout.AppendixOffset(text) is int marker and >= 0)
         {
             return text[..marker].TrimEnd('\r', '\n');
         }
@@ -505,7 +505,7 @@ public static class DesignCompare
 
         try
         {
-            DesignPlainTextReadResult read = DesignPlainText.Read(File.ReadAllText(path));
+            DesignPlainTextReadResult read = DesignPlainText.Read(JgsSourceText.Read(path));
             return read.Details.MatlabRelease;
         }
         catch (Exception ex) when (ex is IOException or InvalidDataException or FormatException)

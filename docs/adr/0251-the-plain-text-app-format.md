@@ -243,10 +243,12 @@ its feature is on.
 - Canvas groups (`app:componentGroups`), which the designer does not have (open item 150); a
   thumbnail captured here (the section is carried as read, empty for a new app).
 - The bytes R2025b writes for non-ASCII text in a plain-text file (its `fwrite` with `uint8`): a
-  file is read and written as UTF-8 here (open item 159).
+  file is read and written as UTF-8 here (open item 159). Measured since, in ADR 0338: R2025b
+  writes UTF-8, and reads UTF-8 with a fall-back to Windows-1252, which this build now does too.
 - A `%[appendix]` line inside the user's code: the first such line, wherever it stands, begins the
   appendix here, so the app opens view-only, and the writer passes a grammar line typed into a
-  callback through to a file R2025b cannot cut (open item 161).
+  callback through to a file R2025b cannot cut (open item 161). Measured and settled since, in ADR
+  0338: the appendix begins after the class's code, and a save names a grammar line R2025b refuses.
 - Any release but R2025b; R2026b's own form of the format.
 
 ## Divergences
@@ -275,8 +277,6 @@ its feature is on.
 - **A single-instance app is one whose `SingleRunningInstance` reads `true`**, at run time as in
   the designer. R2025b's run takes any such element, whatever its text (`false`, empty), while its
   loader reads the text: the loader's rule is kept for both.
-- **A component gets no `AD_CodeName` property.** R2025b's generated function gives every component
-  a transient dynamic property holding its code name; `isprop(app.X, 'AD_CodeName')` is false here.
 - **An appendix the reader cannot take whole is refused** (`AppAppendixException` with the
   problems: a name used twice, a value the reader does not read). R2025b's generator makes what it
   can and fails, or not, in the generated code.
@@ -295,3 +295,9 @@ its feature is on.
   own is kept.
 - **The two Simulink apps' components come back as calls of their class** with their properties by
   name, where the `.mlapp` holds `uisimprogress(...)` and the generator's order.
+
+Closed since: **a component got no `AD_CodeName` property**, where R2025b's generated function gives
+every component a transient dynamic property holding its code name. ADR 0338 (open items 159 and
+161) gives each component that is a graphics handle the property, a char, as R2025b's
+`addDynamicProperties` line does; the bullet is struck from the list above because
+`docs/matlab-divergences.md` is generated from it.
