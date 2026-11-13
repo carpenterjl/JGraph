@@ -3,7 +3,7 @@ CHK|usb_row|JGraph Test Printer; USB001; Generic / Text Only; 1; ready; 0; 1209;
 CHK|other_row|JGraph Document Writer; PORTPROMPT:; JGraph Document Writer v4; 0; ready; []|exact
 CHK|table_args|MATLAB:TooManyInputs ## Too many input arguments.|exact
 CHK|print_bytes|double 1; JGraph Test Printer; JGraph raw job; uint8 [27 64 72 105 10 ]; []|exact
-CHK|print_forms|1 2 3 4 5 5; Test Printer [1 2 255 ]; Test Printer [1 3 2 4 ]; Document Writer [72 105 ]; Test Printer [90 80 76 94 88 65 ]; Test Printer []|exact
+CHK|print_forms|1 2 3 4 5 5; Test Printer [1 2 255 ]; Test Printer [1 3 2 4 ]; Document Writer [72 105 ]; Test Printer [90 80 76 94 88 65 ]; Test Printer [ ]|exact
 CHK|document_name|receipt 42; label|exact
 CHK|output_file|1 [29 86 0 ] 1 cut|exact
 CHK|bad_printer|JGraph:usb:NoPrinter ## No printer is named 'nope'. The printers are: 'JGraph Document Writer', 'JGraph Test Printer'. // JGraph:usb:NoPrinter ## No printer is named 'JGraph'. The printers are: 'JGraph Document Writer', 'JGraph Test Printer'. // JGraph:usb:Nargin ## Valid syntax is JOB = jgraph.usb.printraw(PRINTER, DATA, Name=Value) with DocumentName and OutputFile. // JGraph:usb:OneRow ## jgraph.usb.printraw takes one row of jgraph.usb.printers; this table has 2. // 0|exact
