@@ -134,6 +134,9 @@ internal static partial class JgsBuiltins
 
         // Open items 169 and 245: the session questions; inmem and the locks ask the interpreter.
         "ver", "prefdir", "userpath", "usejava", "inmem", "mlock", "munlock", "mislocked",
+
+        // Open item 173: secretID constructs the class the interpreter supplies.
+        "secretID",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>
@@ -177,6 +180,7 @@ internal static partial class JgsBuiltins
         RegisterComparisonBuiltins(env, interpreter, host); // App Designer window plan W14
         RegisterDebugBuiltins(env, interpreter, host); // App Designer window plan W11
         RegisterSessionQuestions(env, interpreter, host); // open items 169 and 245
+        RegisterSecretIdBuiltin(env, interpreter); // open item 173
         RegisterCodeAnalyzerBuiltins(env, interpreter, host); // App Designer window plan W10
         RegisterFigFileBuiltins(env, interpreter, host); // U11
         RegisterTableVerbs(env, interpreter); // open item 122

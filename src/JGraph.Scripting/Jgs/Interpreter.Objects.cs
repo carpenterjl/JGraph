@@ -559,7 +559,8 @@ internal sealed partial class Interpreter
             _ = TryResolveOnPath(name, out _);
         }
 
-        return _classes.TryGetValue(name, out JgsClass? definition) ? definition : null;
+        // secretID.empty: the one class this build supplies under a plain name (open item 173).
+        return _classes.TryGetValue(name, out JgsClass? definition) ? definition : BuiltinClass(name);
     }
 
     /// <summary>

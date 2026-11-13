@@ -133,7 +133,7 @@ public class MatlabEnvironmentBuiltinTests : IDisposable
 
         _output.Mark();
         await Run(session, "help nonsensename");
-        Assert.Contains("No help found", _output.TextSinceMark, StringComparison.Ordinal);
+        Assert.Contains("nonsensename not found.", _output.TextSinceMark, StringComparison.Ordinal); // R2025b's words (open item 174)
 
         _output.Mark();
         await Run(session, "help");

@@ -65,6 +65,7 @@ internal sealed class JgsClass
         _lineage.Add(this);
 
         ResolveSuperclasses(declaration);
+        AddSuperclassNames(JgsBuiltinClasses.ShownSuperclassesOf(declaration.Name)); // secretID's mixins (open item 173)
 
         // Only a handle class may declare events (V6, #106): R2025b's refusal, made where the class
         // is defined, which is where a script that constructs it catches it.

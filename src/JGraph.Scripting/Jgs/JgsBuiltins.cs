@@ -687,6 +687,13 @@ internal static partial class JgsBuiltins
             }
 
             string name = Str("help", args, 0, line, col);
+
+            // A code file on the path shadows a builtin of its name, its help included (open item 174, measured).
+            if (dialect.IsMatlab && host.FunctionPath is { } shadowing && shadowing.Find(name) is not null && UserHelp(shadowing, name) is { } shadowed)
+            {
+                return shadowed;
+            }
+
             JgsBuiltinInfo? info = JgsBuiltinCatalog.Find(name);
             if (info is not null)
             {
@@ -706,7 +713,9 @@ internal static partial class JgsBuiltins
                 return text;
             }
 
-            return $"No help found for '{name}'.\n";
+            // R2025b answers a name it has no help for with no text, and prints that it was not
+            // found (open item 174, measured).
+            return dialect.IsMatlab ? string.Empty : $"No help found for '{name}'.\n";
         }
 
         env.Builtins.Register("help", JgsValue.Function(new BuiltinFunction(
@@ -723,7 +732,21 @@ internal static partial class JgsBuiltins
                     return [JgsValue.Str(text)];
                 }
 
-                host.print(text.TrimEnd('\n'));
+                if (!dialect.IsMatlab)
+                {
+                    host.print(text.TrimEnd('\n'));
+                }
+                else if (text.Length == 0)
+                {
+                    // In -batch the documentation links print as their text (open item 174, measured).
+                    string asked = Str("help", args, 0, line, col);
+                    host.WriteOut($"{asked} not found.\n\n    Search the documentation for {asked}\n       docsearch {asked}\n\n");
+                }
+                else
+                {
+                    host.WriteOut(text + "\n"); // R2025b prints the text and a blank line after it (measured)
+                }
+
                 return [JgsValue.Null];
             },
         }));

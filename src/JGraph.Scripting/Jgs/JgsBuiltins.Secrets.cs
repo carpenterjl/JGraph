@@ -156,6 +156,99 @@ internal static partial class JgsBuiltins
         return JgsValue.StringScalar(value);
     }
 
+    /// <summary>
+    /// <c>obj = secretID(name)</c> (open item 173): the class <see cref="JgsBuiltinClasses.SecretId"/>
+    /// declares, constructed by its own constructor, which checks the name.
+    /// </summary>
+    internal static void RegisterSecretIdBuiltin(JgsEnvironment env, Interpreter interpreter) =>
+        env.Builtins.Register(JgsBuiltinClasses.SecretId, JgsValue.Function(new BuiltinFunction(JgsBuiltinClasses.SecretId, (args, line, col) =>
+            (interpreter.BuiltinClass(JgsBuiltinClasses.SecretId)
+                ?? throw new JgsRuntimeException(line, col, $"The class '{JgsBuiltinClasses.SecretId}' is not available in this build."))
+            .Construct(args, line, col))
+        {
+            KeepsStringArguments = true,
+        }));
+
+    /// <summary>
+    /// <c>val = getSecret(obj)</c> on <c>secretID</c> objects (open item 173): R2025b's method calls
+    /// <c>getSecret(obj.Name)</c>, so an array hands every name over as its own argument - two are
+    /// <c>MATLAB:TooManyInputs</c>, an empty array none (<c>MATLAB:minrhs</c>), as measured - and one
+    /// name is answered as the function answers it.
+    /// </summary>
+    internal static JgsValue SecretOfIds(JGraphScriptGlobals? host, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count == 0)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+        }
+
+        if (args.Count > 1)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs", "Too many input arguments.");
+        }
+
+        JgsObject[] objects = args[0].IsObjectArray ? args[0].AsObjectArray.Elements
+            : args[0].Type == JgsType.Object ? [args[0].AsObject]
+            : [];
+        JgsValue[] names = [.. objects.Select(static o => o.Fields.TryGetValue("Name", out JgsValue? held) ? held : JgsValue.StringScalar(string.Empty))];
+        if (host is null)
+        {
+            SecretName(names, 1, line, col);
+            throw VaultNotFound("getSecret", line, col);
+        }
+
+        return GetSecret(host, names, 1, line, col);
+    }
+
+    /// <summary>
+    /// The <c>Name</c> a <c>secretID</c> constructor stores, as a string scalar, after R2025b's checks
+    /// in their order (open item 173, measured): one argument; of class char or string, a cell of char
+    /// passing as text (<c>MATLAB:invalidType</c>); a char row, <c>''</c> or a string scalar that is not
+    /// missing (<c>MATLAB:expectedScalartext</c>); and not an empty char (<c>MATLAB:expectedNonempty</c>;
+    /// <c>""</c> is a nonempty string scalar and is taken).
+    /// </summary>
+    internal static JgsValue SecretIdName(IReadOnlyList<JgsValue> given, int line, int col)
+    {
+        if (given.Count == 0)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+        }
+
+        if (given.Count > 1)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs", "Too many input arguments.");
+        }
+
+        JgsValue value = given[0];
+        string actual = ClassOf(value, JgsDialect.Matlab);
+        bool cellOfText = value.Type == JgsType.Cell && System.Array.TrueForAll(value.AsCell, static c => ClassOf(c, JgsDialect.Matlab) == "char");
+        if (actual is not ("char" or "string") && !cellOfText)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:invalidType",
+                $"Expected input to be one of these types:\n\nstring, char\n\nInstead its type was {actual}.");
+        }
+
+        int[] dims = SizeDims(value);
+        bool scalarText = actual switch
+        {
+            "char" => dims.Length == 2 && (dims[0] == 1 || (dims[0] == 0 && dims[1] == 0)),
+            "string" => value.ArrayLength == 1 && !IsMissingText(value.ElementAt(0).AsString),
+            _ => false,
+        };
+        if (!scalarText)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:expectedScalartext", "Expected input to be a non-missing string scalar or character vector.");
+        }
+
+        string text = actual == "char" && dims[1] == 0 ? string.Empty : TextOf(value);
+        if (actual == "char" && text.Length == 0)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:expectedNonempty", "Expected input to be nonempty.");
+        }
+
+        return JgsValue.StringScalar(text);
+    }
+
     /// <summary>The one argument of a secret function: a nonempty text scalar, in its validators' words.</summary>
     private static string SecretName(IReadOnlyList<JgsValue> args, int count, int line, int col)
     {

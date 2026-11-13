@@ -175,8 +175,9 @@ They are `getSecret`, `isSecret`, `getSecretMetadata`, `setSecret`, `removeSecre
 
 ## Still open
 
-- Item 173: `secretID`.
-- Item 174: help text from the `.m` beside a P-file (`help` reads no file's help in JGraph yet).
 - Item 175: about 0.15 ms per call of a file's function in a Debug build, seen while measuring
   the probe's cost.
 - Encryption, `-s`, `-k` and `-J` stay unbuilt unless the decision of 2026-10-24 changes.
+
+Closed since: items 173 and 174 by ADR 0348. `secretID` is a class in a session and in a deployed
+program, and `help` reads a code file's comments, and a P-file's from the `.m` beside it.

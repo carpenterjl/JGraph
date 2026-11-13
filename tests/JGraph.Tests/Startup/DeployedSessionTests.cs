@@ -794,6 +794,48 @@ public sealed class DeployedSessionTests : IDisposable
     }
 
     [Fact]
+    public async Task SecretId_ADeployedProgramReadsItsSecretFromTheEnvironment()
+    {
+        // Open item 173, k3b_secrets_run's secretID row: getSecret of a secretID is the function's
+        // answer for its Name - the environment's value, or SecretValueNotFound for a name it lacks.
+        string main = Main("""
+            s = secretID('JGRAPH_K173_SECRET');
+            fprintf('class=%s name=%s\n', class(s), s.Name);
+            v = getSecret(s);
+            fprintf('get=%s %s\n', class(v), v);
+            fprintf('dot=%s\n', s.getSecret());
+            try
+                getSecret(secretID('JGRAPH_K173_NOSUCH'));
+            catch e
+                fprintf('missing=%s\n', e.identifier);
+            end
+            try
+                getSecret([s s]);
+            catch e
+                fprintf('two=%s\n', e.identifier);
+            end
+            """);
+
+        string? before = Environment.GetEnvironmentVariable("JGRAPH_K173_SECRET");
+        Environment.SetEnvironmentVariable("JGRAPH_K173_SECRET", "from-environment");
+        try
+        {
+            Assert.Equal(0, await Archived(main));
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("JGRAPH_K173_SECRET", before);
+        }
+
+        Assert.Equal(
+            [
+                "class=secretID name=JGRAPH_K173_SECRET", "get=string from-environment", "dot=from-environment",
+                "missing=MATLAB:authnz:secretapis:SecretValueNotFound", "two=MATLAB:TooManyInputs",
+            ],
+            _output.NormalLines);
+    }
+
+    [Fact]
     public void CommandLine_TakesAnArchiveWithoutBatch_AndExtractCtfFirst()
     {
         StartupOptions archive = StartupCommandLine.Parse(["--deployed", "app.ctf", "--", "a", "-b"]);

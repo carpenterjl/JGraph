@@ -402,6 +402,7 @@ public static class JgsBuiltinCatalog
         Add("getSecret", "A secret's value as a string: in a compiled program, the environment variable of that name; JGraph has no vault, so elsewhere it refuses as R2025b does without one.", P("name"));
         Add("isSecret", "Whether a secret is set: in a compiled program, whether the environment holds a variable of that name.", P("name"));
         Add("getSecretMetadata", "A secret's metadata dictionary; a secret from the environment has none.", P("name"));
+        Add("secretID", "A secret's name as an object, s = secretID(\"name\"): its read-only Name, and getSecret(s) asks for the secret it names.", P("name"));
         Add("setSecret", "Adds a secret to the vault; JGraph has no vault, so it refuses after checking its arguments.", P("name"), Opt("Overwrite"));
         Add("removeSecret", "Removes a secret from the vault; JGraph has no vault, so it refuses after checking its argument.", P("name"));
         Add("setSecretMetadata", "Sets a secret's metadata from a dictionary of string keys and cell values; JGraph has no vault, so it refuses after checking its arguments.", P("name"), P("metadata"), Opt("WriteMode"));

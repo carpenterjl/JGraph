@@ -1674,6 +1674,8 @@ internal sealed class JgsValue
                     ? $"[{held.Rows}×{held.Cols} {held.ObjectClass.Name}]" // an array of objects inside one (open item 116)
                     : $"[1×1 {held.AsObject.Class.Name}]"
                 : held.Type == JgsType.String ? "'" + Truncate(held.AsString) + "'" // a char row, as R2025b shows one
+                : held.IsStringArray && held.ArrayLength == 1 // a string scalar in its quotes (open item 173: secretID's Name: "x")
+                    ? JgsBuiltins.IsMissingText(held.ElementAt(0).AsString) ? "<missing>" : "\"" + Truncate(held.ElementAt(0).AsString) + "\""
                 : held.AsExternalOrNull() is OnOffSwitchStateValue { States.Length: 1 } state ? (state.AllOn ? "on" : "off") // k8_build: DebugBuild: off
                 : Summary(held) ?? Truncate(held.Display());
             sb.Append("\n    ").Append(property.Spec.Name).Append(": ").Append(shown);

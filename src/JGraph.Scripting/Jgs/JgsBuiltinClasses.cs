@@ -49,6 +49,7 @@ internal static partial class JgsBuiltinClasses
         CodeIssues => CodeIssuesDeclaration(interpreter),
         BuildResults => BuildResultsDeclaration(),
         RuntimeDependencies => RuntimeDependenciesDeclaration(),
+        SecretId => SecretIdDeclaration(interpreter),
         _ => null,
     };
 

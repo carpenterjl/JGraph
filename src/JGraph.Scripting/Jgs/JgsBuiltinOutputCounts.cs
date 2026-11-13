@@ -1397,6 +1397,7 @@ internal static class JgsBuiltinOutputCounts
         ["sech"] = (1, true),
         ["second"] = (1, true),
         ["seconds"] = (1, true),
+        ["secretID"] = (1, true),
         ["semilogx"] = (1, false),
         ["semilogy"] = (1, false),
         ["serialExplorer"] = (0, true),
