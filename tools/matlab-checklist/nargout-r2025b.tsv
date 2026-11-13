@@ -2419,3 +2419,7 @@ compiler.build.excelClientForProductionServer	-1	0
 compiler.build.ExcelClientForProductionServerOptions	1	8
 compiler.package.excelClientForProductionServer	0	0
 compiler.package.ExcelClientForProductionServerOptions	1	8
+gzip	-1	2
+gunzip	-1	2
+tar	-1	2
+untar	-1	2

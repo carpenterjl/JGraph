@@ -1,0 +1,104 @@
+CHK|mk_new|ok ; warn / |exact
+CHK|mk_new_made|logical [1 1] 1|exact
+CHK|mk_exist|ok ; warn MATLAB:MKDIR:DirectoryExists / Directory already exists.|exact
+CHK|mk_exist_one_out|logical [1 1] true ; warn MATLAB:MKDIR:DirectoryExists / Directory already exists.|exact
+CHK|mk_exist_two_out|logical [1 1] true ; char [1 25] [Directory already exists.] ; warn / |exact
+CHK|mk_exist_three_out|logical [1 1] true ; char [1 25] [Directory already exists.] ; char [1 28] [MATLAB:MKDIR:DirectoryExists] ; warn / |exact
+CHK|mk_new_three_out|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / |exact
+CHK|mk_new_one_out|logical [1 1] true ; warn / |exact
+CHK|mk_parent_exist|logical [1 1] true ; char [1 25] [Directory already exists.] ; char [1 28] [MATLAB:MKDIR:DirectoryExists] ; warn / |exact
+CHK|mk_parent_exist_warns|ok ; warn MATLAB:MKDIR:DirectoryExists / Directory already exists.|exact
+CHK|mk_parent_new|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / |exact
+CHK|mk_parent_missing|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / |exact
+CHK|mk_parent_missing_made|logical [1 1] 1|exact
+CHK|mk_nested|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / |exact
+CHK|mk_file|MATLAB:MKDIR:ExistsAsFile / Unable to create directory. afile already exists as a file. ; warn / |exact
+CHK|mk_file_three_out|logical [1 1] false ; char [1 59] [Unable to create directory. afile already exists as a file.] ; char [1 25] [MATLAB:MKDIR:ExistsAsFile] ; warn / |exact
+CHK|mk_file_one_out|logical [1 1] false ; warn / |exact
+CHK|mk_file_parent|logical [1 1] false ; char [1 61] [Unable to create directory. .\afile already exists as a file.] ; char [1 25] [MATLAB:MKDIR:ExistsAsFile] ; warn / |exact
+CHK|mk_under_file|MATLAB:MKDIR:OSError / The system cannot find the path specified. ; warn / |exact
+CHK|mk_under_file_three_out|logical [1 1] false ; char [1 44] [The system cannot find the path specified.] ; char [1 20] [MATLAB:MKDIR:OSError] ; warn / |exact
+CHK|mk_bad_name|MATLAB:MKDIR:OSError / The filename, directory name, or volume label syntax is incorrect. ; warn / |exact
+CHK|mk_bad_name_three_out|logical [1 1] false ; char [1 68] [The filename, directory name, or volume label syntax is incorrect.] ; char [1 20] [MATLAB:MKDIR:OSError] ; warn / |exact
+CHK|mk_empty|ok ; warn MATLAB:MKDIR:EmptyDirectoryName / An empty directory name was given. No directory will be created. This syntax may not be supported in future releases.|exact
+CHK|mk_empty_three_out|logical [1 1] true ; char [1 117] [An empty directory name was given. No directory will be created. This syntax may not be supported in future releases.] ; char [1 31] [MATLAB:MKDIR:EmptyDirectoryName] ; warn / |exact
+CHK|mk_number|MATLAB:string|exact
+CHK|mk_number_msg|Argument must be a text scalar.|exact
+CHK|mk_string|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / |exact
+CHK|mk_string_exist|logical [1 1] true ; char [1 25] [Directory already exists.] ; char [1 28] [MATLAB:MKDIR:DirectoryExists] ; warn / |exact
+CHK|mk_no_args|MATLAB:minrhs|exact
+CHK|mk_no_args_msg|Not enough input arguments.|exact
+CHK|mk_three_args|MATLAB:maxrhs|exact
+CHK|mk_three_args_msg|Too many input arguments.|exact
+CHK|mk_four_out|MATLAB:maxlhs / Too many output arguments. ; warn / |exact
+CHK|mk_trailing_sep|logical [1 1] true ; char [1 25] [Directory already exists.] ; char [1 28] [MATLAB:MKDIR:DirectoryExists] ; warn / |exact
+CHK|mk_dot|logical [1 1] true ; char [1 25] [Directory already exists.] ; char [1 28] [MATLAB:MKDIR:DirectoryExists] ; warn / |exact
+CHK|mk_status_class|logical|exact
+CHK|cp_file_new|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; file(A)|exact
+CHK|cp_file_over|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; file(B)|exact
+CHK|cp_file_to_folder|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; {a.txt=A}|exact
+CHK|cp_file_no_parent|logical [1 1] false ; char [1 52] [The location '<root>\cnew\deep\x.txt' was not found.] ; char [1 32] [MATLAB:COPYFILE:resourceNotFound] ; warn / ; absent|exact
+CHK|cp_file_to_new_sep|logical [1 1] false ; char [1 66] [The filename, directory name, or volume label syntax is incorrect.] ; char [1 23] [MATLAB:COPYFILE:OSError] ; warn / ; absent|exact
+CHK|cp_folder_new|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; {a.txt=A b.txt=B c.m=C sub/ sub/s.txt=S}|exact
+CHK|cp_folder_exist|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; {a.txt=A b.txt=B c.m=C keep.txt=K sub/ sub/s.txt=S}|exact
+CHK|cp_folder_onto_file|logical [1 1] false ; char [1 110] [Destination <root>\c1.txt is not a folder. When moving a source folder, the destination must also be a folder.] ; char [1 23] [MATLAB:COPYFILE:OSError] ; warn / ; file(B)|exact
+CHK|cp_folder_nested_new|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; {a/ a/b/ a/b/a.txt=A a/b/b.txt=B a/b/c.m=C a/b/sub/ a/b/sub/s.txt=S}|exact
+CHK|cp_wild_new|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; {a.txt=A b.txt=B}|exact
+CHK|cp_wild_exist|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; {a.txt=A b.txt=B}|exact
+CHK|cp_wild_one|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; {c.m=C}|exact
+CHK|cp_wild_folders|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; {a.txt=A b.txt=B c.m=C sub/ sub/s.txt=S}|exact
+CHK|cp_wild_none|logical [1 1] false ; char [1 53] [No matching files named '<root>\cs\*.zzz' were found.] ; char [1 28] [MATLAB:COPYFILE:FileNotFound] ; warn / ; absent|exact
+CHK|cp_wild_none_no_out|MATLAB:COPYFILE:FileNotFound / No matching files named '<root>\cs\*.zzz' were found. ; warn / |exact
+CHK|cp_wild_onto_file|logical [1 1] false ; char [1 49] [The location '<root>\c1.txt\a.txt' was not found.] ; char [1 32] [MATLAB:COPYFILE:resourceNotFound] ; warn / ; file(B)|exact
+CHK|cp_wild_question|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; {a.txt=A b.txt=B}|exact
+CHK|cp_missing|logical [1 1] false ; char [1 55] [No matching files named '<root>\nosuch.txt' were found.] ; char [1 28] [MATLAB:COPYFILE:FileNotFound] ; warn / |exact
+CHK|cp_missing_no_out|MATLAB:COPYFILE:FileNotFound / No matching files named '<root>\nosuch.txt' were found. ; warn / |exact
+CHK|cp_missing_one_out|logical [1 1] false ; warn / |exact
+CHK|cp_missing_folder|logical [1 1] false ; char [1 56] [No matching files named '<root>\nodir\x.txt' were found.] ; char [1 28] [MATLAB:COPYFILE:FileNotFound] ; warn / |exact
+CHK|cp_self|logical [1 1] false ; char [1 52] [Cannot copy or move a file or directory onto itself.] ; char [1 40] [MATLAB:COPYFILE:SourceAndDestinationSame] ; warn / |exact
+CHK|cp_folder_into_itself|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; {a.txt=A sub/ sub/inside/ sub/inside/a.txt=A sub/s.txt=S}|exact
+CHK|cp_wild_into_match|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; {a.txt=A sub/ sub/a.txt=A sub/s.txt=S}|exact
+CHK|cp_file_into_folder|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; {cfile.txt=F}|exact
+CHK|cp_read_only|logical [1 1] false ; char [1 76] [Cannot write to destination: <root>\ro.txt. Use the 'f' option to override.] ; char [1 24] [MATLAB:COPYFILE:ReadOnly] ; warn / ; file(old)|exact
+CHK|cp_read_only_f|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; file(B)|exact
+CHK|cp_wild_read_only|logical [1 1] false ; char [1 77] [Cannot write to destination: <root>\ro2.txt. Use the 'f' option to override.] ; char [1 24] [MATLAB:COPYFILE:ReadOnly] ; warn / ; file(old)|exact
+CHK|cp_wild_read_only_F|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; file(new)|exact
+CHK|cp_mode_bad|MATLAB:COPYFILE:InvalidOption / 'x' is an invalid option. ; warn / |exact
+CHK|cp_mode_number|MATLAB:string / Argument must be a text scalar. ; warn / |exact
+CHK|cp_four_args|MATLAB:COPYFILE:InvalidOption|exact
+CHK|cp_four_args_msg|'g' is an invalid option.|exact
+CHK|cp_one_arg|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; file(C)|exact
+CHK|cp_number|MATLAB:string / Argument must be a text scalar. ; warn / |exact
+CHK|cp_string|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; file(A)|exact
+CHK|cp_four_out|MATLAB:maxlhs / Too many output arguments. ; warn / |exact
+CHK|cp_empty_source|logical [1 1] false ; char [1 68] [All arguments must be non-empty character vectors or string scalars.] ; char [1 27] [MATLAB:COPYFILE:IllegalName] ; warn / |exact
+CHK|cp_empty_destination|logical [1 1] false ; char [1 68] [All arguments must be non-empty character vectors or string scalars.] ; char [1 27] [MATLAB:COPYFILE:IllegalName] ; warn / |exact
+CHK|cp_status_class|logical|exact
+CHK|cp_statement|ok ; warn / |exact
+CHK|mv_file_new|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; absent ; file(one)|exact
+CHK|mv_file_over|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; file(three)|exact
+CHK|mv_file_to_folder|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; {mv2.txt=three}|exact
+CHK|mv_file_no_parent|logical [1 1] false ; char [1 52] [The location '<root>\mnew\deep\x.txt' was not found.] ; char [1 32] [MATLAB:MOVEFILE:resourceNotFound] ; warn / ; absent|exact
+CHK|mv_file_to_new_sep|logical [1 1] false ; char [1 66] [The filename, directory name, or volume label syntax is incorrect.] ; char [1 23] [MATLAB:MOVEFILE:OSError] ; warn / |exact
+CHK|mv_folder_new|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; absent ; {a.txt=A b.txt=B c.m=C sub/ sub/s.txt=S}|exact
+CHK|mv_folder_exist|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; absent ; {keep.txt=K mf1/ mf1/a.txt=A mf1/b.txt=B mf1/c.m=C mf1/sub/ mf1/sub/s.txt=S}|exact
+CHK|mv_folder_merge|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; absent ; {mfa/ mfa/x.txt=X mfa/y.txt=Y}|exact
+CHK|mv_wild_new|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; {c.m=C sub/ sub/s.txt=S} ; {a.txt=A b.txt=B}|exact
+CHK|mv_wild_exist|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; {c.m=C sub/ sub/s.txt=S} ; {a.txt=A b.txt=B}|exact
+CHK|mv_wild_one|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; {a.txt=A b.txt=B sub/ sub/s.txt=S} ; {c.m=C}|exact
+CHK|mv_wild_folders|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; {} ; {a.txt=A b.txt=B sub/ sub/s.txt=S}|exact
+CHK|mv_wild_none|logical [1 1] false ; char [1 53] [No matching files named '<root>\ms\*.zzz' were found.] ; char [1 28] [MATLAB:MOVEFILE:FileNotFound] ; warn / |exact
+CHK|mv_wild_none_no_out|MATLAB:MOVEFILE:FileNotFound / No matching files named '<root>\ms\*.zzz' were found. ; warn / |exact
+CHK|mv_wild_onto_file|logical [1 1] false ; char [1 52] [The location '<root>\cfile.txt\a.txt' was not found.] ; char [1 32] [MATLAB:MOVEFILE:resourceNotFound] ; warn / |exact
+CHK|mv_missing|logical [1 1] false ; char [1 55] [No matching files named '<root>\nosuch.txt' were found.] ; char [1 28] [MATLAB:MOVEFILE:FileNotFound] ; warn / |exact
+CHK|mv_missing_no_out|MATLAB:MOVEFILE:FileNotFound / No matching files named '<root>\nosuch.txt' were found. ; warn / |exact
+CHK|mv_self|logical [1 1] false ; char [1 52] [Cannot copy or move a file or directory onto itself.] ; char [1 40] [MATLAB:MOVEFILE:SourceAndDestinationSame] ; warn / |exact
+CHK|mv_into_own_folder|logical [1 1] false ; char [1 52] [Cannot copy or move a file or directory onto itself.] ; char [1 40] [MATLAB:MOVEFILE:SourceAndDestinationSame] ; warn / |exact
+CHK|mv_read_only|logical [1 1] false ; char [1 77] [Cannot write to destination: <root>\mro.txt. Use the 'f' option to override.] ; char [1 24] [MATLAB:MOVEFILE:ReadOnly] ; warn / ; file(old) ; file(new)|exact
+CHK|mv_read_only_f|logical [1 1] true ; char [0 0] [] ; char [0 0] [] ; warn / ; file(new) ; absent|exact
+CHK|mv_mode_bad|MATLAB:MOVEFILE:InvalidOption / 'x' is an invalid option. ; warn / |exact
+CHK|mv_one_arg_here|logical [1 1] false ; char [1 52] [Cannot copy or move a file or directory onto itself.] ; char [1 40] [MATLAB:MOVEFILE:SourceAndDestinationSame] ; warn / |exact
+CHK|mv_number|MATLAB:string / Argument must be a text scalar. ; warn / |exact
+CHK|mv_folder_onto_file|logical [1 1] false ; char [1 110] [Destination <root>\mx.txt is not a folder. When moving a source folder, the destination must also be a folder.] ; char [1 23] [MATLAB:MOVEFILE:OSError] ; warn / |exact
+CHK|mv_empty_destination|logical [1 1] false ; char [1 68] [All arguments must be non-empty character vectors or string scalars.] ; char [1 27] [MATLAB:MOVEFILE:IllegalName] ; warn / |exact
+CHK|mv_status_class|logical|exact

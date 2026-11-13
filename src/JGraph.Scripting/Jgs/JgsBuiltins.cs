@@ -2599,7 +2599,7 @@ internal static partial class JgsBuiltins
         RegisterGeneralizedBuiltins(env);
         RegisterDataTypeBuiltins(env, dialect);
         RegisterFileIoBuiltins(env, host);
-        RegisterArchiveBuiltins(env, host); // zip and unzip (stage K3)
+        RegisterArchiveBuiltins(env, host); // zip and unzip (stage K3); gzip, gunzip, tar and untar (open item 171)
         RegisterSecretBuiltins(env, host); // getSecret and the vault's functions (stage K3b)
         RegisterElementaryBuiltins(env, dialect);
         RegisterNumericBuiltins(env);

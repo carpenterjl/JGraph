@@ -1,0 +1,161 @@
+CHK|gz_one|a.txt.gz|exact
+CHK|gz_one_made|logical [1 1] 1|exact
+CHK|gz_class|cell [1 1]|exact
+CHK|gz_out|gz\a.txt.gz|exact
+CHK|gz_out_relative|gzrel\b.txt.gz|exact
+CHK|gz_cell|gz\a.txt.gz / gz\c.m.gz|exact
+CHK|gz_string|gz\a.txt.gz / gz\b.txt.gz|exact
+CHK|gz_wild|gz\a.txt.gz / gz\b.txt.gz|exact
+CHK|gz_folder|gzf\s.txt.gz / gzf\d.txt.gz|exact
+CHK|gz_folder_beside|twin\a.txt.gz|exact
+CHK|gz_relative_beside|sub\s.txt.gz|exact
+CHK|gz_absolute|gz\c.m.gz|exact
+CHK|gz_noext|gz\noext.gz|exact
+CHK|gz_of_gz|gz\a.txt.gz.gz|exact
+CHK|gz_new_nested|g1\g2\a.txt.gz|exact
+CHK|gz_dot_out|.\c.m.gz|exact
+CHK|gz_empty_out|b.txt.gz|exact
+CHK|gz_duplicate|gz\a.txt.gz|exact
+CHK|gz_overwrite|a.txt.gz|exact
+CHK|gz_no_output|[]|exact
+CHK|gz_empty_folder|MATLAB:gzip:noEntries / Nothing to gzip.|exact
+CHK|gz_missing|MATLAB:gzip:fileDoesNotExist / File "nosuch.txt" does not exist.|exact
+CHK|gz_missing_cleanup|0 0|exact
+CHK|gz_wild_none|MATLAB:gzip:noEntries / Nothing to gzip.|exact
+CHK|gz_number|MATLAB:io:archive:checkFilesDirInputs:isNumeric / FILES must be a character vector, cell array of character vectors, or a string array.|exact
+CHK|gz_cell_number|MATLAB:io:archive:checkFilesDirInputs:isNumeric / FILES must be a character vector, cell array of character vectors, or a string array.|exact
+CHK|gz_out_number|MATLAB:io:archive:checkFilesDirInputs:invalidDirname / OUTPUTDIR directory argument "5" is not type char or string scalar.|exact
+CHK|gz_out_file|MATLAB:io:archive:checkFilesDirInputs:invalidDir / OUTPUTDIR directory argument "b.txt" is the name of a file. OUTPUTDIR must refer to a directory.|exact
+CHK|gz_empty_name|MATLAB:gzip:fileDoesNotExist / File "" does not exist.|exact
+CHK|gz_empty_cell|MATLAB:gzip:noEntries / Nothing to gzip.|exact
+CHK|gz_wild_path|MATLAB:io:archive:getArchiveEntries:FilepathHasWildcard / Wildcards are not supported in the paths of the filenames input.|exact
+CHK|gz_no_args|MATLAB:narginchk:notEnoughInputs|exact
+CHK|gz_no_args_msg|Not enough input arguments.|exact
+CHK|gz_three_args|MATLAB:narginchk:tooManyInputs|exact
+CHK|gz_three_args_msg|Too many input arguments.|exact
+CHK|gz_two_outputs|MATLAB:nargoutchk:tooManyOutputs|exact
+CHK|gz_two_outputs_msg|Too many output arguments.|exact
+CHK|gun_one|gun1\a.txt|exact
+CHK|gun_content|alpha|exact
+CHK|gun_class|cell [1 1]|exact
+CHK|gun_beside|b.txt ; beta|exact
+CHK|gun_relative_beside|sub\s.txt|exact
+CHK|gun_overwrite|a.txt ; alpha|exact
+CHK|gun_folder|gun3\d.txt / gun3\s.txt|exact
+CHK|gun_wild|gun4\a.txt / gun4\a.txt.gz / gun4\b.txt / gun4\c.m / gun4\noext|exact
+CHK|gun_cell|gun5\a.txt / gun5\b.txt|exact
+CHK|gun_gz_of_gz|gun6\a.txt.gz|exact
+CHK|gun_noext|gun7\noext|exact
+CHK|gun_renamed|gunr\renamed|exact
+CHK|gun_upper_ext|gup\up|exact
+CHK|gun_no_output|[]|exact
+CHK|gun_roundtrip|260 1|exact
+CHK|gun_without_gz|MATLAB:gunzip:fileDoesNotExist / File "<root>\gz\c.m" does not exist.|exact
+CHK|gun_folder_beside|MATLAB:io:archive:gunzip:notGzipFormat / File "sub\s.txt" is not in GZIP format.|exact
+CHK|gun_not_gz|MATLAB:io:archive:gunzip:notGzipFormat / File "b.txt" is not in GZIP format.|exact
+CHK|gun_not_gz_cleanup|logical [1 1] 0|exact
+CHK|gun_missing|MATLAB:io:archive:checkfilename:invalidFilename / Function GUNZIP was unable to find file ''<root>\nosuch.gz''.|exact
+CHK|gun_missing_cleanup|logical [1 1] 0|exact
+CHK|gun_same_beside|MATLAB:io:archive:gunzip:destinationSameAsSource / Name of unzipped file must differ from name of zipped file if extracted to the same location. Specify a different destination or rename the zipped file(s): gzplain|exact
+CHK|gun_same_dot|MATLAB:io:archive:extractArchive:OverwriteOpenFile / Cannot overwrite file ".\gzplain". The file is already open.|exact
+CHK|gun_empty_name|MATLAB:io:archive:checkfilename:expectedNonEmpty / Function GUNZIP expected FILES to be nonempty.|exact
+CHK|gun_number|MATLAB:io:archive:checkFilesDirInputs:isNumeric / FILES must be a character vector, cell array of character vectors, or a string array.|exact
+CHK|gun_out_number|MATLAB:io:archive:checkFilesDirInputs:invalidDirname / OUTPUTDIR directory argument "5" is not type char or string scalar.|exact
+CHK|gun_no_args|MATLAB:narginchk:notEnoughInputs|exact
+CHK|gun_no_args_msg|Not enough input arguments.|exact
+CHK|gun_three_args|MATLAB:TooManyInputs|exact
+CHK|gun_three_args_msg|Too many input arguments.|exact
+CHK|gun_two_outputs|MATLAB:nargoutchk:tooManyOutputs|exact
+CHK|gun_two_outputs_msg|Too many output arguments.|exact
+CHK|tar_one|a.txt|exact
+CHK|tar_class|cell [1 1]|exact
+CHK|tar_adds_ext|1 0 1 1 0|exact
+CHK|tar_cell|b.txt / a.txt|exact
+CHK|tar_string|a.txt / c.m|exact
+CHK|tar_wild|a.txt / b.txt|exact
+CHK|tar_folder|sub/s.txt / sub/deep/d.txt|exact
+CHK|tar_empty_folder|empty|exact
+CHK|tar_dot|a.txt / b.txt / c.m / empty / noext / sub/s.txt / sub/deep/d.txt|exact
+CHK|tar_root|s.txt / deep/d.txt|exact
+CHK|tar_absolute|a.txt|exact
+CHK|tar_dotdot|../twin/a.txt|exact
+CHK|tar_tgz|a.txt / sub/s.txt / sub/deep/d.txt|exact
+CHK|tar_targz|a.txt|exact
+CHK|tar_gz|a.txt|exact
+CHK|tar_TGZ|a.txt|exact
+CHK|tar_made|1 0 1 1 1|exact
+CHK|tar_bytes|[31 139] ; ustar|exact
+CHK|tar_no_output|[]|exact
+CHK|tar_self|a.txt / b.txt / c.m / empty / noext / q.tar / sub/s.txt / sub/deep/d.txt ; MATLAB:tar:archiveName ; TAR cannot add the archive file: <root>\src\self.tar to the archive file itself.|exact
+CHK|tar_duplicate_names|MATLAB:tar:duplicateEntry / Function TAR tried to add two files as "a.txt".|exact
+CHK|tar_is_dir|MATLAB:tar:isDirectory / TAR filename "<root>\dir.tar" is a directory.|exact
+CHK|tar_is_dir_noext|MATLAB:tar:isDirectory / TAR filename "<root>\dir.tar" is a directory.|exact
+CHK|tar_empty_name|MATLAB:tar:isDirectory / TAR filename "" is a directory.|exact
+CHK|tar_missing|MATLAB:tar:fileDoesNotExist / File "nosuch.txt" does not exist.|exact
+CHK|tar_wild_none|MATLAB:tar:noEntries / Nothing to tar.|exact
+CHK|tar_empty_cell|MATLAB:tar:noEntries / Nothing to tar.|exact
+CHK|tar_number_name|MATLAB:tar:invalidFileString / File name TAR must be a character vector or string scalar.|exact
+CHK|tar_number_files|MATLAB:io:archive:checkFilesDirInputs:isNumeric / FILES must be a character vector, cell array of character vectors, or a string array.|exact
+CHK|tar_bad_root|MATLAB:io:archive:checkFilesDirInputs:nonExistDir / ROOTDIR directory "<root>\nosuchdir" does not exist.|exact
+CHK|tar_root_number|MATLAB:io:archive:checkFilesDirInputs:nonExistDir / ROOTDIR directory "5" does not exist.|exact
+CHK|tar_one_arg|MATLAB:narginchk:notEnoughInputs|exact
+CHK|tar_one_arg_msg|Not enough input arguments.|exact
+CHK|tar_four_args|MATLAB:narginchk:tooManyInputs|exact
+CHK|tar_four_args_msg|Too many input arguments.|exact
+CHK|tar_two_outputs|MATLAB:nargoutchk:tooManyOutputs|exact
+CHK|tar_two_outputs_msg|Too many output arguments.|exact
+CHK|untar_names|u1\sub\s.txt / u1\sub\deep\d.txt|exact
+CHK|untar_class|cell [1 2]|exact
+CHK|untar_content|deeper|exact
+CHK|untar_dot|u2\a.txt / u2\b.txt / u2\c.m / u2\empty\ / u2\noext / u2\sub\s.txt / u2\sub\deep\d.txt|exact
+CHK|untar_empty_folder|1 outputs [ue\empty\]; folder made 1|exact
+CHK|untar_tgz|u3\a.txt / u3\sub\s.txt / u3\sub\deep\d.txt|exact
+CHK|untar_targz|u4\a.txt|exact
+CHK|untar_gz|u5\a.txt|exact
+CHK|untar_noext|u6\a.txt|exact
+CHK|untar_noext_tgz|u7\a.txt / u7\sub\s.txt / u7\sub\deep\d.txt|exact
+CHK|untar_ext_order|uord\out\b.txt|exact
+CHK|untar_here|a.txt|exact
+CHK|untar_relative_out|urel\a.txt|exact
+CHK|untar_empty_out|a.txt|exact
+CHK|untar_nested_out|n1\n2\a.txt|exact
+CHK|untar_string|u8\a.txt|exact
+CHK|untar_overwrite|alpha|exact
+CHK|untar_roundtrip|260 1|exact
+CHK|untar_no_output|[]|exact
+CHK|untar_dotdot|ok: udd\inner\..\..\twin\a.txt ; above twin|div=ADR0340|diverges|JGraph:untar:entryOutsideFolder / The entry "../../twin/a.txt" in "<root>\udd\inner\dd.tar" would be written outside "<root>\udd\inner", so nothing was extracted. ; above before
+CHK|untar_missing|MATLAB:io:archive:checkfilename:invalidFilename / Function UNTAR was unable to find file ''<root>\nosuch.tar''.|exact
+CHK|untar_not_tar|MATLAB:io:archive:untar:invalidTarFile / Invalid TAR file <root>\src\b.txt.|exact
+CHK|untar_not_tgz|MATLAB:io:archive:untar:invalidTarFile / Invalid TAR file <root>\gz\a.txt.gz.|exact
+CHK|untar_zip|MATLAB:io:archive:untar:invalidTarFile / Invalid TAR file <root>\zz.tar.|exact
+CHK|untar_folder|MATLAB:untar:isDirectory / TARFILENAME "<root>\twin" is a directory.|exact
+CHK|untar_empty_name|MATLAB:io:archive:checkfilename:expectedNonEmpty / Function UNTAR expected TARFILENAME to be nonempty.|exact
+CHK|untar_number|MATLAB:exist:firstInputString / The first input to exist must be a string scalar or character vector.|exact
+CHK|untar_out_number|MATLAB:untar:invalidDir / Output directory must be a character vector or a string scalar.|exact
+CHK|untar_no_args|MATLAB:narginchk:notEnoughInputs|exact
+CHK|untar_no_args_msg|Not enough input arguments.|exact
+CHK|untar_three_args|MATLAB:narginchk:tooManyInputs|exact
+CHK|untar_three_args_msg|Too many input arguments.|exact
+CHK|untar_two_outputs|MATLAB:nargoutchk:tooManyOutputs|exact
+CHK|untar_two_outputs_msg|Too many output arguments.|exact
+CHK|untar_file_url|ok: u11\a.txt|div=ADR0340|diverges|JGraph:untar:urlNotSupported / JGraph's untar reads a file, not a URL; download "file:///<root>/one.tar" with websave first.
+CHK|zip_password_only|MATLAB:zip:missingEncryptionMethod / The 'EncryptionMethod' name-value argument must be specified when using the 'Password' name-value argument.|exact
+CHK|zip_method_only|MATLAB:zip:missingPassword / The 'Password' name-value argument must be specified when using the 'EncryptionMethod' name-value argument.|exact
+CHK|zip_method_bad|MATLAB:validators:mustBeMember / Value must be a member of this set: 'zipcrypto' 'aes-128' 'aes128' 'aes-256' 'aes256' |exact
+CHK|zip_root_password|MATLAB:zip:missingEncryptionMethod / The 'EncryptionMethod' name-value argument must be specified when using the 'Password' name-value argument.|exact
+CHK|zip_password_empty|MATLAB:validators:mustBeNonzeroLengthText / Invalid value for 'Password' argument. Value must be text with one or more characters.|exact
+CHK|zip_password_number|MATLAB:validators:mustBeTextScalar / Invalid value for 'Password' argument. Value must be a character vector or string scalar.|exact
+CHK|zip_method_number|MATLAB:validators:mustBeTextScalar / Invalid value for 'EncryptionMethod' argument. Value must be a character vector or string scalar.|exact
+CHK|zip_password_as_root|MATLAB:io:archive:checkFilesDirInputs:nonExistDir / ROOTDIR directory "Password" does not exist.|exact
+CHK|zip_password_dangling|MATLAB:TooManyInputs / Invalid argument list. Make sure name-value arguments include both the name and the value.|exact
+CHK|zip_password_partial|MATLAB:zip:missingEncryptionMethod / The 'EncryptionMethod' name-value argument must be specified when using the 'Password' name-value argument.|exact
+CHK|zip_bad_name|MATLAB:TooManyInputs / Invalid argument name 'Bogus'. Name must be 'Password' or 'EncryptionMethod'.|exact
+CHK|zip_encrypt|ok: a.txt|div=ADR0258|diverges|JGraph:zip:encryptionNotSupported / JGraph's zip does not encrypt archives; Password and EncryptionMethod are not supported.
+CHK|zip_encrypt_lower_names|ok: a.txt|div=ADR0258|diverges|JGraph:zip:encryptionNotSupported / JGraph's zip does not encrypt archives; Password and EncryptionMethod are not supported.
+CHK|unzip_encrypted_no_password|MATLAB:io:archive:extractArchive:unableToWrite / Unable to extract file "<root>\enc.zip". The file is password-protected. Use the "Password" Name-Value pair to extract password-protected zip files.|exact
+CHK|unzip_password_empty|MATLAB:validators:mustBeNonzeroLengthText / Invalid value for 'Password' argument. Value must be text with one or more characters.|exact
+CHK|unzip_password_number|MATLAB:validators:mustBeTextScalar / Invalid value for 'Password' argument. Value must be a character vector or string scalar.|exact
+CHK|unzip_bad_name|MATLAB:TooManyInputs / Invalid argument name 'Bogus'. Use 'Password'.|exact
+CHK|unzip_encrypted_password|ok: unp3\a.txt|div=ADR0258|diverges|JGraph:unzip:encryptionNotSupported / The entry "a.txt" in "<root>\enc.zip" is encrypted; JGraph's unzip does not decrypt archives.
+CHK|unzip_password_as_name|MATLAB:io:archive:extractArchive:incorrectPassword / The provided "Password" value is incorrect.|div=ADR0258|diverges|JGraph:unzip:encryptionNotSupported / The entry "a.txt" in "<root>\enc.zip" is encrypted; JGraph's unzip does not decrypt archives.
+CHK|unzip_file_url|ok: unp4\a.txt|div=ADR0258|diverges|JGraph:unzip:urlNotSupported / JGraph's unzip reads a file, not a URL; download "file:///<root>/plain.zip" with websave first.

@@ -30,6 +30,7 @@ internal static partial class JgsBuiltins
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         RegisterDirectoryBuiltins(Command, Query, host);
+        RegisterFileVerbs(env, host);
         RegisterPathBuiltins(Define, Query, env, host);
         RegisterStreamBuiltins(Define, env, host);
         RegisterMachineBuiltins(Define, Query, host);
@@ -72,17 +73,6 @@ internal static partial class JgsBuiltins
             return JgsValue.Str(left);
         });
 
-        Define("mkdir", (args, line, col) =>
-        {
-            ArityRange("mkdir", args, 1, 2, line, col);
-
-            // mkdir(parent, name) is the two-argument form; either way the whole path is created.
-            string path = args.Count == 2
-                ? Path.Combine(Str("mkdir", args, 0, line, col), Str("mkdir", args, 1, line, col))
-                : Str("mkdir", args, 0, line, col);
-            return Attempt("mkdir", line, col, () => Directory.CreateDirectory(host.ResolveForWrite(path)));
-        });
-
         Define("rmdir", (args, line, col) =>
         {
             ArityRange("rmdir", args, 1, 2, line, col);
@@ -93,23 +83,6 @@ internal static partial class JgsBuiltins
             // deleting a tree because the caller mistyped a name is not a recoverable mistake.
             bool recursive = args.Count == 2 && Str("rmdir", args, 1, line, col) == "s";
             return Attempt("rmdir", line, col, () => Directory.Delete(path, recursive));
-        });
-
-        Define("copyfile", (args, line, col) =>
-        {
-            ArityRange("copyfile", args, 2, 3, line, col);
-            string source = host.Resolve(Str("copyfile", args, 0, line, col));
-            string destination = host.ResolveForWrite(Str("copyfile", args, 1, line, col));
-            return Attempt("copyfile", line, col, () => CopyEntries(source, destination));
-        });
-
-        Define("movefile", (args, line, col) =>
-        {
-            ArityRange("movefile", args, 2, 3, line, col);
-            string source = host.Resolve(Str("movefile", args, 0, line, col));
-            host.NoteFileChanging(source); // the destination reports itself through ResolveForWrite
-            string destination = host.ResolveForWrite(Str("movefile", args, 1, line, col));
-            return Attempt("movefile", line, col, () => File.Move(source, DestinationFor(source, destination), overwrite: true));
         });
 
         Define("delete", (args, line, col) =>
@@ -191,11 +164,41 @@ internal static partial class JgsBuiltins
 
         Define("fileattrib", (args, line, col) =>
         {
-            Arity("fileattrib", args, 1, line, col);
+            ArityRange("fileattrib", args, 1, 3, line, col);
             string path = host.Resolve(Str("fileattrib", args, 0, line, col));
             if (!File.Exists(path) && !Directory.Exists(path))
             {
                 return JgsValue.Bool(false);
+            }
+
+            // fileattrib(name, '-w') and the like: +/- then the attribute letters, w (writable), h,
+            // s and a on Windows; x and the users argument have nothing to change here. Open item 190's
+            // fixture makes a read-only file this way for copyfile's 'f'.
+            if (args.Count >= 2)
+            {
+                string mode = Str("fileattrib", args, 1, line, col);
+                FileAttributes changed = File.GetAttributes(path);
+                bool add = true;
+                foreach (char c in mode)
+                {
+                    FileAttributes flag = c switch
+                    {
+                        '+' or '-' or ' ' or 'x' => 0,
+                        'w' => FileAttributes.ReadOnly,
+                        'h' => FileAttributes.Hidden,
+                        's' => FileAttributes.System,
+                        'a' => FileAttributes.Archive,
+                        _ => throw new JgsRuntimeException(line, col, $"fileattrib: '{mode}' is not an attribute mode such as '+w' or '-h'."),
+                    };
+                    add = c switch { '+' => true, '-' => false, _ => add };
+
+                    // Writable is the read-only flag's opposite.
+                    bool set = flag == FileAttributes.ReadOnly ? !add : add;
+                    changed = set ? changed | flag : changed & ~flag;
+                }
+
+                File.SetAttributes(path, changed);
+                return JgsValue.Bool(true);
             }
 
             FileAttributes attributes = File.GetAttributes(path);
@@ -229,37 +232,274 @@ internal static partial class JgsBuiltins
         }
     }
 
-    /// <summary>Copying onto a folder keeps the source's file name, as every shell does.</summary>
-    private static string DestinationFor(string source, string destination) =>
-        Directory.Exists(destination) ? Path.Combine(destination, Path.GetFileName(source)) : destination;
+    // --- mkdir, copyfile and movefile (open items 190 and 204) -----------------------------------
 
     /// <summary>
-    /// <c>copyfile</c>'s sources as MATLAB's: a file, a folder (its contents copied into the destination,
-    /// which is made), or a name with wildcards in its last part (every file and folder it matches copied
-    /// into the destination folder, which is made).
+    /// A file verb's failure in R2025b's words: a call with no outputs raises it, and a call with any
+    /// answers status 0 with this message and identifier.
     /// </summary>
-    private static void CopyEntries(string source, string destination)
+    private sealed class FileVerbRefusal(string identifier, string message) : Exception(message)
     {
-        string name = Path.GetFileName(source);
-        if (name.IndexOfAny(['*', '?']) >= 0)
+        public string Identifier { get; } = identifier;
+    }
+
+    /// <summary>
+    /// Declares <c>mkdir</c>, <c>copyfile</c> and <c>movefile</c> as R2025b answers them (measured,
+    /// open items 190 and 204): <c>[status, msg, msgID] = verb(...)</c>. With no outputs a failure is
+    /// an error; with any, it is status false and the error's words. A success with something to say
+    /// (<c>mkdir</c> of a folder already there, or of no name) answers it as the message and
+    /// identifier when two or more outputs are asked for, and warns it otherwise, one output included.
+    /// </summary>
+    private static void RegisterFileVerbs(JgsEnvironment env, JGraphScriptGlobals host)
+    {
+        void Verb(string name, Func<IReadOnlyList<JgsValue>, int, int, (string Identifier, string Message)> body)
         {
-            string folder = Path.GetDirectoryName(source) is { Length: > 0 } parent ? parent : ".";
-            string[] matches = Directory.Exists(folder) ? Directory.GetFileSystemEntries(folder, name) : [];
-            if (matches.Length == 0)
+            JgsValue[] Run(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
             {
-                throw new FileNotFoundException($"No matching files were found for '{source}'.");
+                if (wanted > 3)
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:maxlhs", "Too many output arguments.");
+                }
+
+                bool ok = true;
+                string identifier, message;
+                try
+                {
+                    (identifier, message) = body(args, line, col);
+                }
+                catch (FileVerbRefusal refused)
+                {
+                    (ok, identifier, message) = (false, refused.Identifier, refused.Message);
+                }
+
+                if (!ok && wanted == 0)
+                {
+                    throw new JgsRuntimeException(line, col, identifier, message);
+                }
+
+                if (ok && message.Length > 0 && wanted < 2)
+                {
+                    Warn(host, identifier, message);
+                }
+
+                JgsValue[] answers = [JgsValue.Bool(ok), JgsValue.Str(message), JgsValue.Str(identifier)];
+                return answers[..Math.Max(1, wanted)];
+            }
+
+            // A statement call asks for nothing, which is what makes a failure an error: `mkdir x`
+            // and `copyfile(a, b)` on their own lines raise, and neither binds ans.
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) => Run(args, 1, line, col)[0])
+            {
+                BindsAnsAsStatement = false,
+                KnowsWhenDiscarded = true,
+                MultiOutput = Run,
+            }));
+        }
+
+        Verb("mkdir", (args, line, col) =>
+        {
+            ArityRange("mkdir", args, 1, 2, line, col);
+
+            // mkdir(parent, name) is the two-argument form; either way every missing folder is made.
+            string folder = FileVerbText(args, 0, line, col);
+            return MakeFolder(host, args.Count == 2 ? MatlabFullFile(folder, FileVerbText(args, 1, line, col)) : folder);
+        });
+
+        Verb("copyfile", (args, line, col) => TransferFiles(host, "COPYFILE", move: false, args, line, col));
+        Verb("movefile", (args, line, col) => TransferFiles(host, "MOVEFILE", move: true, args, line, col));
+    }
+
+    /// <summary>A file verb's text argument: anything else is refused before the verb runs, outputs or not.</summary>
+    private static string FileVerbText(IReadOnlyList<JgsValue> args, int index, int line, int col) =>
+        IsTextScalar(args[index])
+            ? TextOf(args[index])
+            : throw new JgsRuntimeException(line, col, "MATLAB:string", "Argument must be a text scalar.");
+
+    /// <summary>
+    /// <c>mkdir</c>'s outcome: a folder already there is a success that says so, no name is a success
+    /// that makes nothing, a file in the way is <c>ExistsAsFile</c>, and anything the system refuses
+    /// is <c>OSError</c> with the system's own message, line end included, as R2025b reports it.
+    /// </summary>
+    private static (string, string) MakeFolder(JGraphScriptGlobals host, string given)
+    {
+        if (given.Length == 0)
+        {
+            return ("MATLAB:MKDIR:EmptyDirectoryName",
+                "An empty directory name was given. No directory will be created.\nThis syntax may not be supported in future releases.");
+        }
+
+        string full = Path.GetFullPath(host.ResolveForWrite(given));
+        if (Directory.Exists(full))
+        {
+            return ("MATLAB:MKDIR:DirectoryExists", "Directory already exists.");
+        }
+
+        if (File.Exists(full))
+        {
+            throw new FileVerbRefusal("MATLAB:MKDIR:ExistsAsFile", $"Unable to create directory. {given} already exists as a file.");
+        }
+
+        // A file where a folder is wanted further up is a path Windows cannot find (R2025b's code 3).
+        for (string? up = Path.GetDirectoryName(full); up is not null; up = Path.GetDirectoryName(up))
+        {
+            if (File.Exists(up))
+            {
+                throw new FileVerbRefusal("MATLAB:MKDIR:OSError", SystemErrorText(3, terminated: true));
+            }
+
+            if (Directory.Exists(up))
+            {
+                break;
+            }
+        }
+
+        try
+        {
+            Directory.CreateDirectory(full);
+            return ("", "");
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+        {
+            throw new FileVerbRefusal("MATLAB:MKDIR:OSError", SystemErrorText(ex, terminated: true));
+        }
+    }
+
+    /// <summary>
+    /// The system's message for a Windows error code: R2025b's <c>mkdir</c> reports it with its line end
+    /// (<paramref name="terminated"/>), <c>copyfile</c> and <c>movefile</c> without.
+    /// </summary>
+    private static string SystemErrorText(int code, bool terminated)
+    {
+        string text = new System.ComponentModel.Win32Exception(code).Message;
+        return terminated && OperatingSystem.IsWindows() ? text + "\r\n" : text;
+    }
+
+    private static string SystemErrorText(Exception ex, bool terminated) => ex switch
+    {
+        UnauthorizedAccessException => SystemErrorText(5, terminated),
+        IOException io when OperatingSystem.IsWindows() && (uint)io.HResult >> 16 == 0x8007 => SystemErrorText(io.HResult & 0xFFFF, terminated),
+        ArgumentException or NotSupportedException when OperatingSystem.IsWindows() => SystemErrorText(123, terminated),
+        _ => ex.Message,
+    };
+
+    /// <summary>
+    /// <c>copyfile(source, destination, 'f')</c> and <c>movefile</c>: the destination is the current
+    /// folder when left out; every argument from the third is a mode, and <c>'f'</c> (either case)
+    /// the only one, which lets a read-only destination file be replaced.
+    /// </summary>
+    private static (string, string) TransferFiles(JGraphScriptGlobals host, string verb, bool move, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        ArityRange(move ? "movefile" : "copyfile", args, 1, 4, line, col);
+        string[] texts = [.. Enumerable.Range(0, args.Count).Select(i => FileVerbText(args, i, line, col))];
+        bool force = false;
+        for (int i = 2; i < texts.Length; i++)
+        {
+            if (!texts[i].Equals("f", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new JgsRuntimeException(line, col, $"MATLAB:{verb}:InvalidOption", $"'{texts[i]}' is an invalid option.");
+            }
+
+            force = true;
+        }
+
+        if (texts[0].Length == 0 || texts.Length > 1 && texts[1].Length == 0)
+        {
+            throw new FileVerbRefusal($"MATLAB:{verb}:IllegalName", "All arguments must be non-empty character vectors or string scalars.");
+        }
+
+        string source = FullSourcePath(host, texts[0]);
+        string given = texts.Length > 1 ? texts[1] : host.CurrentDirectory;
+        string destination = Path.GetFullPath(host.ResolveForWrite(given));
+        if (move)
+        {
+            host.NoteFileChanging(source); // the destination reports itself through ResolveForWrite
+        }
+
+        try
+        {
+            TransferEntries(verb, move, force, source, destination, given.EndsWith('/') || given.EndsWith('\\'));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+        {
+            throw new FileVerbRefusal($"MATLAB:{verb}:OSError", SystemErrorText(ex, terminated: false));
+        }
+
+        return ("", "");
+    }
+
+    /// <summary>
+    /// A source's full name: the current folder's entry, else what the read resolver finds (a script's
+    /// own folder, a deployed program's frozen path), else the current folder's name for the refusal.
+    /// </summary>
+    private static string FullSourcePath(JGraphScriptGlobals host, string given)
+    {
+        string here = Path.GetFullPath(Path.Combine(host.CurrentDirectory, given));
+        if (!File.Exists(here) && !Directory.Exists(here) && given.IndexOfAny(['*', '?']) < 0
+            && host.Resolve(given) is var resolved && (File.Exists(resolved) || Directory.Exists(resolved)))
+        {
+            here = Path.GetFullPath(resolved);
+        }
+
+        return Path.TrimEndingDirectorySeparator(here);
+    }
+
+    private static readonly EnumerationOptions FileVerbMatching = new()
+    {
+        AttributesToSkip = 0,
+        IgnoreInaccessible = true,
+        MatchType = MatchType.Simple,
+        MatchCasing = OperatingSystem.IsWindows() ? MatchCasing.CaseInsensitive : MatchCasing.CaseSensitive,
+    };
+
+    /// <summary>
+    /// R2025b's three sources: a file (into a folder under its own name, else to the name given, whose
+    /// folder must exist); a folder (copied: its contents merged into the destination, which is made;
+    /// moved: renamed to a destination that is not there, else into it under its own name, merging with
+    /// a folder of that name); a name with <c>*</c> or <c>?</c> in its last part (every match into the
+    /// destination folder, which is made). A copy or move never takes its own destination, or a folder
+    /// holding it, along (R2025b skips both).
+    /// </summary>
+    private static void TransferEntries(string verb, bool move, bool force, string source, string destination, bool namesFolder)
+    {
+        string leaf = Path.GetFileName(source);
+        if (leaf.IndexOfAny(['*', '?']) >= 0)
+        {
+            string folder = Path.GetDirectoryName(source) ?? "";
+            List<string> matches = folder.IndexOfAny(['*', '?']) < 0 && Directory.Exists(folder)
+                ? [.. Directory.EnumerateFileSystemEntries(folder, leaf, FileVerbMatching)]
+                : [];
+            matches.Sort(StringComparer.Ordinal);
+            if (matches.Count == 0)
+            {
+                throw FileVerbNotFound(verb, source);
+            }
+
+            if (File.Exists(destination))
+            {
+                throw new FileVerbRefusal($"MATLAB:{verb}:resourceNotFound",
+                    $"The location '{Path.Combine(destination, Path.GetFileName(matches[0]))}' was not found.");
             }
 
             Directory.CreateDirectory(destination);
             foreach (string match in matches)
             {
-                if (Directory.Exists(match))
+                if (IsSameOrInside(destination, match))
                 {
-                    CopyFolder(match, Path.Combine(destination, Path.GetFileName(match)));
+                    continue;
+                }
+
+                string target = Path.Combine(destination, Path.GetFileName(match));
+                if (!Directory.Exists(match))
+                {
+                    TransferFile(verb, move, force, match, target);
+                }
+                else if (move)
+                {
+                    MoveFolder(verb, force, match, target);
                 }
                 else
                 {
-                    File.Copy(match, Path.Combine(destination, Path.GetFileName(match)), overwrite: true);
+                    CopyFolderInto(verb, force, match, target, destination);
                 }
             }
 
@@ -268,25 +508,145 @@ internal static partial class JgsBuiltins
 
         if (Directory.Exists(source))
         {
-            CopyFolder(source, destination);
+            if (SameFilePath(source, destination))
+            {
+                throw FileVerbSame(verb);
+            }
+
+            if (File.Exists(destination))
+            {
+                throw new FileVerbRefusal($"MATLAB:{verb}:OSError",
+                    $"Destination {destination} is not a folder.\nWhen moving a source folder, the destination must also be a folder.");
+            }
+
+            if (!move)
+            {
+                CopyFolderInto(verb, force, source, destination, destination);
+                return;
+            }
+
+            string target = Directory.Exists(destination) ? Path.Combine(destination, leaf) : destination;
+            if (SameFilePath(source, target))
+            {
+                throw FileVerbSame(verb);
+            }
+
+            MoveFolder(verb, force, source, target);
             return;
         }
 
-        File.Copy(source, DestinationFor(source, destination), overwrite: true);
+        if (!File.Exists(source))
+        {
+            throw FileVerbNotFound(verb, source);
+        }
+
+        // A destination written as a folder that is not there is a name Windows refuses (measured).
+        if (namesFolder && !Directory.Exists(destination))
+        {
+            throw new FileVerbRefusal($"MATLAB:{verb}:OSError", "The filename, directory name, or volume label syntax is incorrect.");
+        }
+
+        TransferFile(verb, move, force, source, Directory.Exists(destination) ? Path.Combine(destination, leaf) : destination);
     }
 
-    private static void CopyFolder(string source, string destination)
+    private static FileVerbRefusal FileVerbNotFound(string verb, string source) =>
+        new($"MATLAB:{verb}:FileNotFound", $"No matching files named '{source}' were found.");
+
+    private static FileVerbRefusal FileVerbSame(string verb) =>
+        new($"MATLAB:{verb}:SourceAndDestinationSame", "Cannot copy or move a file or directory onto itself.");
+
+    /// <summary>One file to its target: the target's folder must exist, and a read-only target is replaced only under 'f'.</summary>
+    private static void TransferFile(string verb, bool move, bool force, string source, string target)
+    {
+        if (SameFilePath(source, target))
+        {
+            throw FileVerbSame(verb);
+        }
+
+        if (Path.GetDirectoryName(target) is not { } parent || !Directory.Exists(parent))
+        {
+            throw new FileVerbRefusal($"MATLAB:{verb}:resourceNotFound", $"The location '{target}' was not found.");
+        }
+
+        if (File.Exists(target) && File.GetAttributes(target) is var attributes && attributes.HasFlag(FileAttributes.ReadOnly))
+        {
+            if (!force)
+            {
+                throw new FileVerbRefusal($"MATLAB:{verb}:ReadOnly", $"Cannot write to destination: {target}.  Use the 'f' option to override.");
+            }
+
+            File.SetAttributes(target, attributes & ~FileAttributes.ReadOnly);
+        }
+
+        if (move)
+        {
+            File.Move(source, target, overwrite: true);
+        }
+        else
+        {
+            File.Copy(source, target, overwrite: true);
+        }
+    }
+
+    /// <summary>A folder's contents merged into <paramref name="destination"/> (made), leaving out <paramref name="keepOut"/> and any folder holding it.</summary>
+    private static void CopyFolderInto(string verb, bool force, string source, string destination, string keepOut)
     {
         Directory.CreateDirectory(destination);
         foreach (string file in Directory.GetFiles(source))
         {
-            File.Copy(file, Path.Combine(destination, Path.GetFileName(file)), overwrite: true);
+            TransferFile(verb, move: false, force, file, Path.Combine(destination, Path.GetFileName(file)));
         }
 
         foreach (string folder in Directory.GetDirectories(source))
         {
-            CopyFolder(folder, Path.Combine(destination, Path.GetFileName(folder)));
+            if (!IsSameOrInside(keepOut, folder))
+            {
+                CopyFolderInto(verb, force, folder, Path.Combine(destination, Path.GetFileName(folder)), keepOut);
+            }
         }
+    }
+
+    /// <summary>A folder moved to <paramref name="target"/>: renamed when nothing is there (its parents made), merged into a folder that is.</summary>
+    private static void MoveFolder(string verb, bool force, string source, string target)
+    {
+        if (!Directory.Exists(target))
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+            if (string.Equals(Path.GetPathRoot(source), Path.GetPathRoot(target), StringComparison.OrdinalIgnoreCase))
+            {
+                Directory.Move(source, target);
+                return;
+            }
+
+            CopyFolderInto(verb, force, source, target, target);
+            Directory.Delete(source, recursive: true);
+            return;
+        }
+
+        foreach (string file in Directory.GetFiles(source))
+        {
+            TransferFile(verb, move: true, force, file, Path.Combine(target, Path.GetFileName(file)));
+        }
+
+        foreach (string folder in Directory.GetDirectories(source))
+        {
+            MoveFolder(verb, force, folder, Path.Combine(target, Path.GetFileName(folder)));
+        }
+
+        Directory.Delete(source);
+    }
+
+    private static bool SameFilePath(string first, string second) =>
+        string.Equals(Path.TrimEndingDirectorySeparator(first), Path.TrimEndingDirectorySeparator(second),
+            OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+
+    /// <summary>Whether <paramref name="path"/> is <paramref name="folder"/> or lies inside it.</summary>
+    private static bool IsSameOrInside(string path, string folder)
+    {
+        string inner = Path.TrimEndingDirectorySeparator(path);
+        string outer = Path.TrimEndingDirectorySeparator(folder);
+        StringComparison comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+        return inner.Equals(outer, comparison) || inner.StartsWith(outer + Path.DirectorySeparatorChar, comparison);
     }
 
     // --- Path names -------------------------------------------------------------------------------

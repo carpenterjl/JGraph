@@ -265,6 +265,10 @@ public static class JgsBuiltinCatalog
         // --- Archives (compiler and SDK plan, stage K3) ---------------------------------------------
         Add("zip", "Writes files, folders and wildcard matches into a .zip archive; entries = zip(zipfile, files, rootfolder) names each entry relative to rootfolder (the current folder when omitted).", P("zipfile"), P("files"), Opt("rootfolder"));
         Add("unzip", "Extracts a .zip archive into a folder (the current one when omitted), replacing files already there; files = unzip(zipfile, folder) lists what it wrote.", P("zipfile"), Opt("folder"));
+        Add("gzip", "Compresses each file named, found in a folder named or matched by a wildcard to its name plus .gz, beside itself or in a folder; names = gzip(files, outputfolder) lists what it wrote.", P("files"), Opt("outputfolder"));
+        Add("gunzip", "Uncompresses each .gz file named, found in a folder named or matched by a wildcard to its name less its extension, beside itself or in a folder; names = gunzip(files, outputfolder) lists what it wrote.", P("files"), Opt("outputfolder"));
+        Add("tar", "Writes files, folders and wildcard matches into a tar archive (.tar added unless the name ends .tar; gzip-compressed when it ends .tgz or .gz); entries = tar(tarfile, files, rootfolder) names each entry relative to rootfolder.", P("tarfile"), P("files"), Opt("rootfolder"));
+        Add("untar", "Extracts a tar archive, compressed or not, into a folder (the current one when omitted), finding it with .tgz, .tar.gz or .tar added; files = untar(tarfile, folder) lists what it wrote.", P("tarfile"), Opt("folder"));
 
         // --- P-code and secrets (compiler and SDK plan, stage K3b) -----------------------------------
         Add("mcc", "Builds a standalone program: mcc -m main.m makes a console program and mcc -e a windowed one, the main and everything it needs in an archive appended to JGraph's launcher (-C writes it beside), with -o, -n, -r icon.ico, -h help.txt, -a, -d and -v as R2025b's mcc reads them; the program runs on the JGraph Runtime. mcc -W dotnet:<assembly> builds a .NET assembly, mcc -W lib:<name> (or -l) a C shared library compiled with Microsoft Visual C++, mcc -W cpplib:<name>,generic a C++ shared library for the MATLAB Data API, and mcc -W python:<package> a Python package.", P("option"), Opt("file"));
@@ -396,12 +400,12 @@ public static class JgsBuiltinCatalog
         // --- Files, folders, and the machine --------------------------------------------------------
         Add("pwd", "The working directory relative paths resolve against.");
         Add("cd", "Moves to a folder; with no argument it reports where it is.", Opt("folder"));
-        Add("mkdir", "Creates a folder, including any parents it needs.", P("folder"), Opt("name"));
+        Add("mkdir", "Creates a folder, including any parents it needs; [status, msg, msgID] = mkdir(...) answers a failure, or a folder already there, rather than raising or warning it.", P("folder"), Opt("name"));
         Add("rmdir", "Removes an empty folder — or a whole tree when the second argument is 's'.", P("folder"), Opt("s"));
-        Add("copyfile", "Copies a file, overwriting the destination.", P("source"), P("destination"), Opt("mode"));
-        Add("movefile", "Moves a file, overwriting the destination.", P("source"), P("destination"), Opt("mode"));
+        Add("copyfile", "Copies a file, a folder's contents or every wildcard match to a destination (the current folder when omitted), overwriting what is there; 'f' replaces a read-only file; [status, msg, msgID] = copyfile(...) answers a failure rather than raising it.", P("source"), Opt("destination"), Opt("mode"));
+        Add("movefile", "Moves a file, a folder or every wildcard match to a destination (the current folder when omitted), overwriting what is there; 'f' replaces a read-only file; [status, msg, msgID] = movefile(...) answers a failure rather than raising it.", P("source"), Opt("destination"), Opt("mode"));
         Add("delete", "Deletes the named files, or removes the figure objects a handle names: delete(h).", P("path"));
-        Add("fileattrib", "A struct of a file's attributes, or false when it does not exist.", P("path"));
+        Add("fileattrib", "A struct of a file's attributes, or false when it does not exist; fileattrib(path, '-w') and the like set them.", P("path"), Opt("mode"));
         Add("filesep", "The character that separates folders on this system.");
         Add("tempdir", "The system's folder for temporary files.");
         Add("tempname", "A full path in the temporary folder that nothing is using yet.");

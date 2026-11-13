@@ -1,0 +1,5 @@
+name,kind,method_classes
+gzip,mfile,
+gunzip,mfile,
+tar,mfile,
+untar,mfile,

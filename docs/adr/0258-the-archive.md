@@ -183,7 +183,10 @@ They are transcribed from R2025b's `zip.m`, `unzip.m` and `getArchiveEntries.m`.
   refusal is `JGraph:unzip:entryOutsideFolder`.
 - **No encryption in `zip` or `unzip`.** `zip` refuses `Password` and `EncryptionMethod`
   (`JGraph:zip:encryptionNotSupported`). `unzip` accepts a `Password` for an archive that is not
-  encrypted, as R2025b does, and refuses an encrypted entry.
+  encrypted, as R2025b does, and refuses an encrypted entry. Since ADR 0340 (open item 172) the
+  refusals R2025b gives itself are in its words: one name without the other, a value that is not
+  text or is empty, a method outside its set, and an encrypted entry with no password. JGraph's
+  refusal stands only where R2025b would encrypt or decrypt.
 - **`unzip` does not download a URL** (`JGraph:unzip:urlNotSupported`). R2025b fetches http,
   https, ftp and file URLs first.
 - **`extractCTF` is `jgraph -extractCTF`** until K4 ships the utility. For a file that is an
