@@ -137,24 +137,41 @@ internal static class JgsTime
     // so nothing that never mentions a zone changes at all.
 
     /// <summary>Resolved zones, by the name a script wrote. Lookup is not cheap and names repeat.</summary>
-    private static readonly Dictionary<string, TimeZoneInfo> ResolvedZones = new(StringComparer.OrdinalIgnoreCase);
+    /// <remarks>
+    /// Ordinal since open item 209: R2025b tells <c>GMT</c> (UTC) from <c>gmt</c> (+00:00) and reads
+    /// <c>Etc/GMT-2</c> but not <c>etc/gmt-2</c>.
+    /// </remarks>
+    private static readonly Dictionary<string, TimeZoneInfo> ResolvedZones = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// The exact offset of each fixed-offset zone made here. .NET's custom zones hold whole minutes
+    /// within fourteen hours, and R2025b's fixed offsets reach 23:59:59 to the second, so the zone
+    /// object carries the offset cut to that and this table carries the true one (open item 209).
+    /// </summary>
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<TimeZoneInfo, StrongBoxOffset> FixedOffsets = new();
+
+    /// <summary>A boxed offset, the value type <see cref="FixedOffsets"/> needs.</summary>
+    private sealed class StrongBoxOffset(TimeSpan value)
+    {
+        public TimeSpan Value { get; } = value;
+    }
 
     /// <summary>
     /// The zone <paramref name="name"/> names, or false when nothing does.
     /// </summary>
     /// <remarks>
-    /// Four spellings are accepted: <c>'UTC'</c>, <c>'local'</c>, a fixed offset such as
-    /// <c>'+05:30'</c>, and an IANA or Windows zone id — .NET 8 resolves both on Windows. An
+    /// Accepted: <c>'local'</c>, every spelling of UTC or of a fixed offset that R2025b reads
+    /// (<see cref="JgsTimeZones.Read"/>), and an IANA or Windows zone id — .NET 8 resolves both on
+    /// Windows. The name is not trimmed: R2025b refuses a zone with a space before or after it. An
     /// unrecognised name is refused by the caller rather than accepted and ignored, which is what it
     /// was until M82 and is the worse of the two failures: a script asking for a zone this build
     /// cannot find should be told so, not quietly given wall-clock arithmetic.
     /// </remarks>
     public static bool TryResolveZone(string name, out TimeZoneInfo zone)
     {
-        string trimmed = name.Trim();
         lock (ResolvedZones)
         {
-            if (ResolvedZones.TryGetValue(trimmed, out TimeZoneInfo? cached))
+            if (ResolvedZones.TryGetValue(name, out TimeZoneInfo? cached))
             {
                 zone = cached;
                 return true;
@@ -162,30 +179,31 @@ internal static class JgsTime
         }
 
         TimeZoneInfo? found = null;
-        if (string.Equals(trimmed, "UTC", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(trimmed, "Z", StringComparison.OrdinalIgnoreCase))
-        {
-            found = TimeZoneInfo.Utc;
-        }
-        else if (string.Equals(trimmed, "local", StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(name, "local", StringComparison.OrdinalIgnoreCase))
         {
             found = TimeZoneInfo.Local;
         }
-        else if (TryReadFixedOffset(trimmed, out TimeSpan offset))
-        {
-            // A fixed offset has no daylight saving by construction, which is the whole reason a
-            // script reaches for one.
-            found = TimeZoneInfo.CreateCustomTimeZone(trimmed, offset, trimmed, trimmed);
-        }
         else
         {
-            try
+            switch (JgsTimeZones.Read(name, out string canonical, out TimeSpan offset, out _))
             {
-                found = TimeZoneInfo.FindSystemTimeZoneById(trimmed);
-            }
-            catch (Exception e) when (e is TimeZoneNotFoundException or InvalidTimeZoneException)
-            {
-                found = null;
+                case ZoneReading.Fixed when canonical == "UTC":
+                    found = TimeZoneInfo.Utc;
+                    break;
+                case ZoneReading.Fixed:
+                    found = FixedZone(canonical, offset);
+                    break;
+                case ZoneReading.NotFixed:
+                    try
+                    {
+                        found = TimeZoneInfo.FindSystemTimeZoneById(name);
+                    }
+                    catch (Exception e) when (e is TimeZoneNotFoundException or InvalidTimeZoneException)
+                    {
+                        found = null;
+                    }
+
+                    break;
             }
         }
 
@@ -197,7 +215,7 @@ internal static class JgsTime
 
         lock (ResolvedZones)
         {
-            ResolvedZones[trimmed] = found;
+            ResolvedZones[name] = found;
         }
 
         zone = found;
@@ -205,51 +223,21 @@ internal static class JgsTime
     }
 
     /// <summary>
-    /// Reads <c>+HH:mm</c>, <c>-HH:mm</c>, <c>+HH</c> or <c>-HH</c> as an offset, and <c>+HH:mm:00</c>, the
-    /// form a datetime from Python crosses in (compiler and SDK plan, stage K13). R2025b reads more
-    /// spellings, seconds among them, and names each <c>+HH:mm</c> (open item 209).
+    /// A zone with no daylight saving at <paramref name="offset"/>, named as R2025b names it.
     /// </summary>
-    private static bool TryReadFixedOffset(string text, out TimeSpan offset)
+    private static TimeZoneInfo FixedZone(string name, TimeSpan offset)
     {
-        offset = TimeSpan.Zero;
-        if (text.Length < 2 || (text[0] != '+' && text[0] != '-'))
-        {
-            return false;
-        }
-
-        string body = text[1..];
-        string[] parts = body.Split(':');
-        if (parts.Length > 3
-            || !int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out int hours))
-        {
-            return false;
-        }
-
-        int minutes = 0;
-        if (parts.Length >= 2
-            && !int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out minutes))
-        {
-            return false;
-        }
-
-        if (parts.Length == 3 && parts[2] != "00")
-        {
-            return false;
-        }
-
-        if (hours is < 0 or > 14 || minutes is < 0 or > 59)
-        {
-            return false;
-        }
-
-        offset = new TimeSpan(hours, minutes, 0);
-        if (text[0] == '-')
-        {
-            offset = -offset;
-        }
-
-        return true;
+        // Whole minutes within fourteen hours is all .NET will build; the true offset rides beside.
+        long minutes = (long)offset.TotalMinutes;
+        var held = TimeSpan.FromMinutes(System.Math.Clamp(minutes, -14 * 60, 14 * 60));
+        TimeZoneInfo zone = TimeZoneInfo.CreateCustomTimeZone(name, held, name, name);
+        FixedOffsets.AddOrUpdate(zone, new StrongBoxOffset(offset));
+        return zone;
     }
+
+    /// <summary>The offset from UTC of <paramref name="zone"/> at <paramref name="moment"/>, to the second for a fixed one.</summary>
+    private static TimeSpan UtcOffset(TimeZoneInfo zone, DateTime moment) =>
+        FixedOffsets.TryGetValue(zone, out StrongBoxOffset? exact) ? exact.Value : zone.GetUtcOffset(moment);
 
     /// <summary>The zone a tag names, or null for an unzoned value.</summary>
     public static TimeZoneInfo? ZoneOf(JgsTimeTag? tag) =>
@@ -257,7 +245,7 @@ internal static class JgsTime
 
     /// <summary>The offset from UTC at a stored instant, for a zoned value.</summary>
     public static TimeSpan OffsetAt(double ms, TimeZoneInfo zone) =>
-        zone.GetUtcOffset(DateTime.SpecifyKind(ToDateTime(ms), DateTimeKind.Utc));
+        UtcOffset(zone, DateTime.SpecifyKind(ToDateTime(ms), DateTimeKind.Utc));
 
     /// <summary>
     /// The wall-clock moment a stored value reads as in its own zone — the lens every calendar
@@ -328,12 +316,12 @@ internal static class JgsTime
         }
 
         DateTime unspecified = DateTime.SpecifyKind(wall, DateTimeKind.Unspecified);
-        return FromDateTime(wall) - zone.GetUtcOffset(unspecified).TotalMilliseconds;
+        return FromDateTime(wall) - UtcOffset(zone, unspecified).TotalMilliseconds;
     }
 
     /// <summary>The storage a wall-clock reading in <paramref name="zone"/> stands for.</summary>
     public static double ToUtc(double wallMs, TimeZoneInfo zone) =>
-        wallMs - zone.GetUtcOffset(DateTime.SpecifyKind(ToDateTime(wallMs), DateTimeKind.Unspecified))
+        wallMs - UtcOffset(zone, DateTime.SpecifyKind(ToDateTime(wallMs), DateTimeKind.Unspecified))
             .TotalMilliseconds;
 
     /// <summary>The storage value for a year/month/day and an optional time of day.</summary>
@@ -446,42 +434,92 @@ internal static class JgsTime
     /// Replaces MATLAB's zone tokens with the literal text they stand for, before .NET sees the format.
     /// </summary>
     /// <remarks>
-    /// <c>Z</c> is the offset and <c>z</c> the zone's name. They cannot be handed to .NET as its own
-    /// <c>zzz</c>, because the moment being formatted is a wall clock of unspecified kind and .NET
-    /// would answer with the offset of the machine rather than of the zone the value carries. An
-    /// unzoned value has no offset to print, so both tokens vanish.
+    /// <para>
+    /// The letters cannot be handed to .NET (its <c>zzz</c>), because the moment being formatted is a
+    /// wall clock of unspecified kind and .NET would answer with the offset of the machine rather
+    /// than of the zone the value carries. Each run of one letter is one field, as R2025b reads it
+    /// (open item 209, probe209): <c>x</c> to <c>xxxxx</c> and <c>X</c> to <c>XXXXX</c> are ICU's
+    /// ISO 8601 forms (<c>+02</c>, <c>+0200</c>, <c>+02:00</c>, then with seconds when there are
+    /// some; the X forms print <c>Z</c> for zero) and six or more print nothing; <c>Z</c> to
+    /// <c>ZZZ</c> is <c>+0200</c> with seconds when there are some, <c>ZZZZ</c> and six or more are
+    /// <c>UTC+02:00</c>, <c>ZZZZZ</c> is <c>XXXXX</c>; <c>z</c> is <c>UTC</c> for the UTC zone,
+    /// <c>GMT</c> for a zero fixed offset and <c>UTC+2</c> (<c>UTC-5:30</c>) for another, and the
+    /// zone's name for a named zone, whose abbreviation this build does not have.
+    /// </para>
+    /// <para>
+    /// An unzoned value prints a star for each letter, as R2025b's does. Quoted text is literal and
+    /// is copied through untouched.
+    /// </para>
     /// </remarks>
     private static string WithZoneTokens(string format, double ms, JgsTimeTag tag)
     {
-        if (!format.Contains('Z') && !format.Contains('z'))
+        if (format.IndexOfAny(['Z', 'z', 'x', 'X']) < 0)
         {
             return format;
         }
 
         TimeZoneInfo? zone = ZoneOf(tag);
-        string offset = string.Empty;
-        if (zone is not null)
-        {
-            TimeSpan at = OffsetAt(ms, zone);
-            offset = string.Create(CultureInfo.InvariantCulture,
-                $"{(at < TimeSpan.Zero ? '-' : '+')}{System.Math.Abs(at.Hours):00}:{System.Math.Abs(at.Minutes):00}");
-        }
-
-        string name = zone is null ? string.Empty : tag.TimeZone ?? string.Empty;
+        TimeSpan at = zone is null ? TimeSpan.Zero : OffsetAt(ms, zone);
+        string name = tag.TimeZone ?? string.Empty;
+        bool isFixed = zone is not null && name != "UTC" && JgsTimeZones.TryOffsetOf(name, out _);
         var built = new System.Text.StringBuilder(format.Length + 8);
-        foreach (char c in format)
+        int i = 0;
+        while (i < format.Length)
         {
-            switch (c)
+            char c = format[i];
+            if (c == '\'')
             {
-                case 'Z':
-                    built.Append('\'').Append(offset).Append('\'');
-                    break;
-                case 'z':
-                    built.Append('\'').Append(name).Append('\'');
-                    break;
-                default:
-                    built.Append(c);
-                    break;
+                int close = format.IndexOf('\'', i + 1);
+                int end = close < 0 ? format.Length : close + 1;
+                built.Append(format, i, end - i);
+                i = end;
+                continue;
+            }
+
+            int run = 1;
+            while (i + run < format.Length && format[i + run] == c)
+            {
+                run++;
+            }
+
+            i += run;
+            if (c is not ('Z' or 'z' or 'x' or 'X'))
+            {
+                built.Append(c, run);
+                continue;
+            }
+
+            string text;
+            if (zone is null)
+            {
+                text = new string('*', run);
+            }
+            else
+            {
+                text = c switch
+                {
+                    'x' or 'X' => run switch
+                    {
+                        1 => JgsTimeZones.Iso(at, 0, 1, colons: false, utcZ: c == 'X'),
+                        2 => JgsTimeZones.Iso(at, 1, 1, colons: false, utcZ: c == 'X'),
+                        3 => JgsTimeZones.Iso(at, 1, 1, colons: true, utcZ: c == 'X'),
+                        4 => JgsTimeZones.Iso(at, 1, 2, colons: false, utcZ: c == 'X'),
+                        5 => JgsTimeZones.Iso(at, 1, 2, colons: true, utcZ: c == 'X'),
+                        _ => string.Empty,
+                    },
+                    'Z' => run switch
+                    {
+                        <= 3 => JgsTimeZones.Iso(at, 1, 2, colons: false, utcZ: false),
+                        5 => JgsTimeZones.Iso(at, 1, 2, colons: true, utcZ: true),
+                        _ => JgsTimeZones.LongGmt(at),
+                    },
+                    _ => name == "UTC" ? "UTC" : isFixed ? JgsTimeZones.ShortGmt(at) : name,
+                };
+            }
+
+            if (text.Length > 0)
+            {
+                built.Append('\'').Append(text).Append('\'');
             }
         }
 

@@ -167,5 +167,8 @@ What it found, beyond the documented surface:
 ## Still open
 
 - Item 210: the Python package's leftovers: no sample drivers are written from `SampleGenerationFiles` (R2025b writes `samples\k13sample1.py` and `k13sample2.py` for `k13sample.m`); only CPython 3.12 was run, so the path before 3.12 (`__array_interface__`, `tomemoryview()`'s copy) and the version checks were reached by replacing `sys.version_info`; neither engine's package was installed with pip; a package's figures were not probed; and a `matlab.object` handed to another package is refused, unprobed in R2025b.
-- Item 209: fixed-offset time zones as R2025b reads and names them.
 - Item 194, seen again: a deployed value's display is JGraph's own layout. Item 170, seen again: no "> In" line after a deployed warning, and no "Error using *" heading an operator's error. Item 203, seen again: an undefined function's words in a deployed report.
+
+Closed since: item 209, fixed-offset time zones (ADR 0344). `JgsTime.TryReadFixedOffset` gave way to
+`JgsTimeZones.Read`, which reads every spelling R2025b reads and names it as R2025b does. A datetime
+from Python still crosses with `+HH:mm:ss` and keeps that name, as R2025b's runtime does.

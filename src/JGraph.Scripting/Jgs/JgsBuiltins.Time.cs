@@ -168,22 +168,40 @@ internal static partial class JgsBuiltins
         // tzoffset answers a duration, because an offset is a length of time and MATLAB's answers one
         // too. An unzoned datetime has no offset, which is a missing value rather than zero: zero is
         // what UTC answers, and the two must not read alike.
-        Define("tzoffset", (args, line, col) =>
+        // [tz, dst] = tzoffset(t): the whole offset and its daylight-saving part, both hh:mm as
+        // R2025b's tzoffset builds them (datetime.m), so +02:00:30 shows 02:00 (open item 209).
+        JgsValue[] ZoneOffsets(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
         {
             Arity("tzoffset", args, 1, line, col);
             JgsValue moment = RequireDatetime("tzoffset", args[0], line, col);
             TimeZoneInfo? zone = JgsTime.ZoneOf(moment.TimeTag);
             double[] source = TimeMs(moment);
             var values = new double[source.Length];
+            var saving = new double[source.Length];
             for (int i = 0; i < values.Length; i++)
             {
-                values[i] = zone is null || double.IsNaN(source[i])
-                    ? double.NaN
-                    : JgsTime.OffsetAt(source[i], zone).TotalMilliseconds;
+                if (zone is null || double.IsNaN(source[i]))
+                {
+                    values[i] = saving[i] = double.NaN;
+                    continue;
+                }
+
+                values[i] = JgsTime.OffsetAt(source[i], zone).TotalMilliseconds;
+                DateTime utc = DateTime.SpecifyKind(JgsTime.ToDateTime(source[i]), DateTimeKind.Utc);
+                saving[i] = zone.IsDaylightSavingTime(utc)
+                    ? (zone.GetUtcOffset(utc) - zone.BaseUtcOffset).TotalMilliseconds
+                    : 0;
             }
 
-            return TimeLike(moment, values, JgsTime.DurationTag("hh:mm:ss"));
-        });
+            JgsValue total = TimeLike(moment, values, JgsTime.DurationTag("hh:mm"));
+            return wanted < 2 ? [total] : [total, TimeLike(moment, saving, JgsTime.DurationTag("hh:mm"))];
+        }
+
+        env.Builtins.Register("tzoffset", JgsValue.Function(new BuiltinFunction("tzoffset",
+            (args, line, col) => ZoneOffsets(args, 1, line, col)[0])
+        {
+            MultiOutput = ZoneOffsets,
+        }));
 
         Define("isdst", (args, line, col) =>
         {
@@ -283,8 +301,15 @@ internal static partial class JgsBuiltins
         (List<JgsValue> positional, Dictionary<string, JgsValue> options) = SplitTimeOptions("datetime", args, line, col);
 
         string? inputFormat = OptionText("datetime", options, "inputformat", line, col);
-        string? timeZone = OptionText("datetime", options, "timezone", line, col);
+        // The zone as R2025b reads and names it: '+0200' is '+02:00', 'GMT' is 'UTC' (open item 209).
+        string? timeZone = options.TryGetValue("timezone", out JgsValue? zoneGiven)
+            ? ReadTimeZoneArgument(zoneGiven, line, col)
+            : null;
         string? displayFormat = OptionText("datetime", options, "format", line, col);
+        if (displayFormat is not null)
+        {
+            RefuseUnsupportedZoneLetters(displayFormat, line, col);
+        }
         string? convertFrom = OptionText("datetime", options, "convertfrom", line, col);
 
         double[] values;
@@ -357,9 +382,7 @@ internal static partial class JgsBuiltins
         {
             if (!JgsTime.TryResolveZone(timeZone, out TimeZoneInfo zone))
             {
-                throw new JgsRuntimeException(line, col,
-                    $"datetime: '{timeZone}' is not a time zone this machine knows. Use 'UTC', 'local', "
-                    + "a fixed offset like '+05:30', or a zone name like 'America/New_York'.");
+                throw UnknownTimeZone(timeZone, line, col);
             }
 
             bool alreadyAnInstant = positional.Count == 1 && positional[0].IsDatetime
@@ -698,6 +721,8 @@ internal static partial class JgsBuiltins
                     throw new JgsRuntimeException(line, col, "MATLAB:datetime:UnrecognizedFormat",
                         "The format '' is not valid. See the <a href=\"matlab:doc('datetime.Format')\">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.");
                 }
+
+                RefuseUnsupportedZoneLetters(format, line, col);
             }
 
             return value.WithTimeTag(tag with { Format = format, FormatSet = true });
@@ -719,7 +744,8 @@ internal static partial class JgsBuiltins
                 $"A {TimeClassName(value)} has no time zone; only a datetime is a point in time that one applies to.");
         }
 
-        string wanted = TextOfArgument("TimeZone", written, line, col).Trim();
+        // Read and named as R2025b does, untrimmed (open item 209).
+        string wanted = ReadTimeZoneArgument(written, line, col);
         bool wasZoned = tag.TimeZone is { Length: > 0 };
         double[] source = TimeMs(value);
         var values = new double[source.Length];
@@ -738,9 +764,7 @@ internal static partial class JgsBuiltins
 
         if (!JgsTime.TryResolveZone(wanted, out TimeZoneInfo zone))
         {
-            throw new JgsRuntimeException(line, col,
-                $"'{wanted}' is not a time zone this machine knows. Use 'UTC', 'local', a fixed offset "
-                + "like '+05:30', or a zone name like 'America/New_York'.");
+            throw UnknownTimeZone(wanted, line, col);
         }
 
         if (wasZoned)

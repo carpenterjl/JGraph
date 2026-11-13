@@ -405,14 +405,20 @@ internal static class NativeWire
             JgsValue.Str("datetime"), JgsValue.Number(at.Year), JgsValue.Number(at.Month), JgsValue.Number(at.Day),
             JgsValue.Number(at.Hour), JgsValue.Number(at.Minute), JgsValue.Number(JgsTime.SecondsOf(at)),
         };
+        string? zone = null;
         if (zoned)
         {
             var span = TimeSpan.FromSeconds(Math.Abs(offset));
-            args.AddRange([JgsValue.Str("TimeZone"), JgsValue.Str($"{(offset < 0 ? '-' : '+')}{(int)span.TotalHours:00}:{span.Minutes:00}:{span.Seconds:00}")]);
+            zone = $"{(offset < 0 ? '-' : '+')}{(int)span.TotalHours:00}:{span.Minutes:00}:{span.Seconds:00}";
+            args.AddRange([JgsValue.Str("TimeZone"), JgsValue.Str(zone)]);
         }
 
         args.AddRange([JgsValue.Str("Format"), JgsValue.Str(PythonDatetimeFormat)]);
-        return JgsBuiltins.Feval(session.Interpreter, [.. args], 1, 0, 0)[0];
+        JgsValue made = JgsBuiltins.Feval(session.Interpreter, [.. args], 1, 0, 0)[0];
+
+        // The constructor names the zone as R2025b's does (+02:00, open item 209); the runtime's
+        // crossing keeps the +HH:mm:ss it was handed, so the name goes back on as written.
+        return zone is not null && made.TimeTag is { } tag ? made.WithTimeTag(tag with { TimeZone = zone }) : made;
     }
 
     private static JgsValue Feval(ComponentSession session, string name, params JgsValue[] args) =>

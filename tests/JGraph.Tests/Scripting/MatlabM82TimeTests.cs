@@ -192,7 +192,8 @@ public class MatlabM82TimeTests : IDisposable
         Assert.Equal(5.5, Number(result, "a"), 9);
         Assert.Equal(0, Number(result, "b"), 9);
         Assert.True(Flag(result, "c"));
-        Assert.Equal("2024-01-15 12:00:00 -05:00", Text(result, "d"));
+        // Z is ICU's basic ISO form in R2025b, without a colon (open item 209).
+        Assert.Equal("2024-01-15 12:00:00 -0500", Text(result, "d"));
     }
 
     /// <summary>
@@ -202,8 +203,8 @@ public class MatlabM82TimeTests : IDisposable
     [Fact]
     public async Task AnUnknownZoneIsRefusedByName() =>
         await RefusesEach(
-            ("t = datetime(2024, 1, 1, 'TimeZone', 'Not/AZone');", "not a time zone"),
-            ("t = datetime(2024, 1, 1); t.TimeZone = 'Nowhere';", "not a time zone"),
+            ("t = datetime(2024, 1, 1, 'TimeZone', 'Not/AZone');", "Unable to create the specified time zone: 'Not/AZone'"),
+            ("t = datetime(2024, 1, 1); t.TimeZone = 'Nowhere';", "Unable to create the specified time zone: 'Nowhere'"),
             ("d = seconds(1); z = d.TimeZone;", "no time zone"));
 
     // --- Sub-millisecond ---------------------------------------------------------------------------

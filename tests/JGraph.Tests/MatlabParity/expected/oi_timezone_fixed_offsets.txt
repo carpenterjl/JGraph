@@ -1,0 +1,247 @@
+CHK|ctor_001|cell[1 5]{char[1 6]'+02:00';char[1 6]'+02:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:04:05';char[1 5]'02:00'}|exact
+CHK|ctor_002|cell[1 5]{char[1 9]'+02:00:00';char[1 6]'+02:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:04:05';char[1 5]'02:00'}|exact
+CHK|ctor_003|cell[1 5]{char[1 5]'+0200';char[1 6]'+02:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:04:05';char[1 5]'02:00'}|exact
+CHK|ctor_004|cell[1 5]{char[1 7]'+020030';char[1 9]'+02:00:30';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:03:35';char[1 5]'02:00'}|exact
+CHK|ctor_005|cell[1 5]{char[1 9]'+02:00:30';char[1 9]'+02:00:30';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:03:35';char[1 5]'02:00'}|exact
+CHK|ctor_006|cell[1 5]{char[1 6]'-00:00';char[1 6]'+00:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'}|exact
+CHK|ctor_007|cell[1 5]{char[1 1]'Z';char[1 6]'+00:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'}|exact
+CHK|ctor_008|cell[1 5]{char[1 1]'z';char[1 6]'+00:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'}|exact
+CHK|ctor_009|cell[1 5]{char[1 3]'utc';char[1 3]'UTC';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'}|exact
+CHK|ctor_010|cell[1 5]{char[1 3]'Utc';char[1 3]'UTC';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'}|exact
+CHK|ctor_011|cell[1 5]{char[1 3]'GMT';char[1 3]'UTC';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'}|exact
+CHK|ctor_012|cell[1 5]{char[1 3]'gmt';char[1 6]'+00:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'}|exact
+CHK|ctor_013|cell[1 5]{char[1 2]'UT';char[1 6]'+00:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'}|exact
+CHK|ctor_014|cell[1 5]{char[1 2]'ut';char[1 6]'+00:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'}|exact
+CHK|ctor_015|cell[1 5]{char[1 5]'UTC+2';char[1 6]'+02:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:04:05';char[1 5]'02:00'}|exact
+CHK|ctor_016|cell[1 5]{char[1 5]'utc+2';char[1 6]'+02:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:04:05';char[1 5]'02:00'}|exact
+CHK|ctor_017|cell[1 5]{char[1 9]'UTC-05:30';char[1 6]'-05:30';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 08:34:05';char[1 6]'-05:30'}|exact
+CHK|ctor_018|cell[1 5]{char[1 11]'UTC+2:00:30';char[1 9]'+02:00:30';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:03:35';char[1 5]'02:00'}|exact
+CHK|ctor_019|cell[1 5]{char[1 9]'UTC+00:00';char[1 6]'+00:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'}|exact
+CHK|ctor_020|cell[1 5]{char[1 7]'UT+0200';char[1 6]'+02:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:04:05';char[1 5]'02:00'}|exact
+CHK|ctor_021|cell[1 5]{char[1 4]'uT-3';char[1 6]'-03:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 06:04:05';char[1 6]'-03:00'}|exact
+CHK|ctor_022|cell[1 5]{char[1 5]'GMT+2';char[1 6]'+02:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:04:05';char[1 5]'02:00'} WARN MATLAB:datetime:NonstandardTimeZoneFixed|exact
+CHK|ctor_023|cell[1 5]{char[1 5]'gmt+2';char[1 6]'+02:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:04:05';char[1 5]'02:00'} WARN MATLAB:datetime:NonstandardTimeZoneFixed|exact
+CHK|ctor_024|cell[1 5]{char[1 8]'GMT-0530';char[1 6]'-05:30';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 08:34:05';char[1 6]'-05:30'} WARN MATLAB:datetime:NonstandardTimeZoneFixed|exact
+CHK|ctor_025|cell[1 5]{char[1 7]'GMT+020';char[1 6]'+00:20';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 02:44:05';char[1 5]'00:20'} WARN MATLAB:datetime:NonstandardTimeZoneFixed|exact
+CHK|ctor_026|cell[1 5]{char[1 10]'GMT+020030';char[1 9]'+02:00:30';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:03:35';char[1 5]'02:00'} WARN MATLAB:datetime:NonstandardTimeZoneFixed|exact
+CHK|ctor_027|cell[1 5]{char[1 6]'GMT+00';char[1 3]'UTC';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'}|exact
+CHK|ctor_028|cell[1 5]{char[1 5]'gmt-0';char[1 3]'UTC';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'}|exact
+CHK|ctor_029|cell[1 5]{char[1 6]'GMT-14';char[1 6]'-14:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 17:04:05';char[1 6]'-14:00'} WARN MATLAB:datetime:NonstandardTimeZoneFixed|exact
+CHK|ctor_030|cell[1 5]{char[1 4]'GMT0';char[1 6]'+00:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'} WARN MATLAB:datetime:NonstandardTimeZoneFixed|exact
+CHK|ctor_031|cell[1 5]{char[1 5]'GMT+0';char[1 6]'+00:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'} WARN MATLAB:datetime:NonstandardTimeZoneFixed|exact
+CHK|ctor_032|cell[1 5]{char[1 3]'UCT';char[1 6]'+00:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'} WARN MATLAB:datetime:NonstandardTimeZoneFixed|exact
+CHK|ctor_033|cell[1 5]{char[1 4]'Zulu';char[1 6]'+00:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'} WARN MATLAB:datetime:NonstandardTimeZoneFixed|exact
+CHK|ctor_034|cell[1 5]{char[1 9]'Etc/GMT-2';char[1 6]'+02:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:04:05';char[1 5]'02:00'}|exact
+CHK|ctor_035|cell[1 5]{char[1 9]'Etc/GMT+5';char[1 6]'-05:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 08:04:05';char[1 6]'-05:00'}|exact
+CHK|ctor_036|cell[1 5]{char[1 10]'Etc/GMT-14';char[1 6]'+14:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-01 13:04:05';char[1 5]'14:00'}|exact
+CHK|ctor_037|cell[1 5]{char[1 7]'Etc/GMT';char[1 6]'+00:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'}|exact
+CHK|ctor_038|cell[1 5]{char[1 7]'Etc/UTC';char[1 6]'+00:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'}|exact
+CHK|ctor_039|cell[1 5]{char[1 2]'+2';char[1 6]'+02:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:04:05';char[1 5]'02:00'}|exact
+CHK|ctor_040|cell[1 5]{char[1 3]'+02';char[1 6]'+02:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:04:05';char[1 5]'02:00'}|exact
+CHK|ctor_041|cell[1 5]{char[1 4]'+020';char[1 6]'+00:20';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 02:44:05';char[1 5]'00:20'}|exact
+CHK|ctor_042|cell[1 5]{char[1 6]'+02000';char[1 6]'+00:20';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 02:44:05';char[1 5]'00:20'}|exact
+CHK|ctor_043|cell[1 5]{char[1 2]'+0';char[1 6]'+00:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'}|exact
+CHK|ctor_044|cell[1 5]{char[1 2]'-0';char[1 6]'+00:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'}|exact
+CHK|ctor_045|cell[1 5]{char[1 4]'+000';char[1 6]'+00:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:05';char[1 5]'00:00'}|exact
+CHK|ctor_046|cell[1 5]{char[1 4]'+123';char[1 6]'+01:23';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:41:05';char[1 5]'01:23'}|exact
+CHK|ctor_047|cell[1 5]{char[1 6]'+12345';char[1 9]'+01:23:45';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:40:20';char[1 5]'01:23'}|exact
+CHK|ctor_048|cell[1 5]{char[1 7]'+123456';char[1 9]'+12:34:56';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-01 14:29:09';char[1 5]'12:34'}|exact
+CHK|ctor_049|cell[1 5]{char[1 4]'-130';char[1 6]'-01:30';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 04:34:05';char[1 6]'-01:30'}|exact
+CHK|ctor_050|cell[1 5]{char[1 7]'-013000';char[1 6]'-01:30';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 04:34:05';char[1 6]'-01:30'}|exact
+CHK|ctor_051|cell[1 5]{char[1 6]'+15:00';char[1 6]'+15:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-01 12:04:05';char[1 5]'15:00'}|exact
+CHK|ctor_052|cell[1 5]{char[1 6]'+23:59';char[1 6]'+23:59';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-01 03:05:05';char[1 5]'23:59'}|exact
+CHK|ctor_053|cell[1 5]{char[1 6]'-23:59';char[1 6]'-23:59';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-03 03:03:05';char[1 6]'-23:59'}|exact
+CHK|ctor_054|cell[1 5]{char[1 9]'+23:59:59';char[1 9]'+23:59:59';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-01 03:04:06';char[1 5]'23:59'}|exact
+CHK|ctor_055|cell[1 5]{char[1 9]'-02:30:15';char[1 9]'-02:30:15';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 05:34:20';char[1 6]'-02:30'}|exact
+CHK|ctor_056|cell[1 5]{char[1 7]'-023015';char[1 9]'-02:30:15';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 05:34:20';char[1 6]'-02:30'}|exact
+CHK|ctor_057|cell[1 5]{char[1 9]'-00:00:30';char[1 9]'-00:00:30';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 03:04:35';char[1 6]'-00:00'}|exact
+CHK|ctor_058|cell[1 5]{char[1 9]'+00:59:59';char[1 9]'+00:59:59';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 02:04:06';char[1 5]'00:59'}|exact
+CHK|ctor_059|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_059_msg|Unable to create the specified time zone: '+24:00'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_060|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_060_msg|Unable to create the specified time zone: '-24:00'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_061|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_061_msg|Unable to create the specified time zone: '+02:60'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_062|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_062_msg|Unable to create the specified time zone: '+02:00:60'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_063|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_063_msg|Unable to create the specified time zone: '+2:00'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_064|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_064_msg|Unable to create the specified time zone: '+02:0'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_065|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_065_msg|Unable to create the specified time zone: '+02:00:0'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_066|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_066_msg|Unable to create the specified time zone: '+02:00:00.5'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_067|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_067_msg|Unable to create the specified time zone: '02:00'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_068|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_068_msg|Unable to create the specified time zone: ' +02:00'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_069|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_069_msg|Unable to create the specified time zone: '+02:00 '. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_070|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_070_msg|Unable to create the specified time zone: ' '. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_071|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_071_msg|Unable to create the specified time zone: '+ 2'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_072|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_072_msg|Unable to create the specified time zone: '++2'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_073|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_073_msg|Unable to create the specified time zone: '+-2'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_074|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_074_msg|Unable to create the specified time zone: '+02:00:00:00'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_075|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_075_msg|Unable to create the specified time zone: '+0200:00'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_076|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_076_msg|Unable to create the specified time zone: '+0200000'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_077|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_077_msg|Unable to create the specified time zone: '+99'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_078|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_078_msg|Unable to create the specified time zone: '+096'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_079|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_079_msg|Unable to create the specified time zone: 'UTC+'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_080|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_080_msg|Unable to create the specified time zone: 'UTC+24'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_081|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_081_msg|Unable to create the specified time zone: 'UTC+0200'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_082|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_082_msg|Unable to create the specified time zone: 'UTC+020'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_083|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_083_msg|Unable to create the specified time zone: 'UTC 2'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_084|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_084_msg|Unable to create the specified time zone: 'UTC2'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_085|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_085_msg|Unable to create the specified time zone: 'UTC+2:0'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_086|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_086_msg|Unable to create the specified time zone: 'GMT+24'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_087|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_087_msg|Unable to create the specified time zone: 'GMT+2:0'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_088|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_088_msg|Unable to create the specified time zone: 'GMT+0200:30'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_089|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_089_msg|Unable to create the specified time zone: 'GMT+'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_090|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_090_msg|Unable to create the specified time zone: 'Z+2'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_091|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_091_msg|Unable to create the specified time zone: 'ZZ'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_092|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_092_msg|Unable to create the specified time zone: 'Etc/GMT+13'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_093|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_093_msg|Unable to create the specified time zone: 'Etc/GMT-15'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_094|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_094_msg|Unable to create the specified time zone: 'Etc/GMT-02'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_095|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_095_msg|Unable to create the specified time zone: '+'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|ctor_096|MATLAB:datetime:UnknownTimeZone|exact
+CHK|ctor_096_msg|Unable to create the specified time zone: '-'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|set_01|cell[1 3]{char[1 6]'+02:00';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'}|exact
+CHK|setz_01|cell[1 3]{char[1 6]'+02:00';char[1 4]'char';char[1 19]'2026-01-02 05:04:05'}|exact
+CHK|set_02|cell[1 3]{char[1 9]'+02:00:30';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'}|exact
+CHK|setz_02|cell[1 3]{char[1 9]'+02:00:30';char[1 4]'char';char[1 19]'2026-01-02 05:04:35'}|exact
+CHK|set_03|cell[1 3]{char[1 6]'+00:00';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'}|exact
+CHK|setz_03|cell[1 3]{char[1 6]'+00:00';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'}|exact
+CHK|set_04|cell[1 3]{char[1 6]'+00:00';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'}|exact
+CHK|setz_04|cell[1 3]{char[1 6]'+00:00';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'}|exact
+CHK|set_05|cell[1 3]{char[1 3]'UTC';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'}|exact
+CHK|setz_05|cell[1 3]{char[1 3]'UTC';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'}|exact
+CHK|set_06|cell[1 3]{char[1 6]'+00:00';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'}|exact
+CHK|setz_06|cell[1 3]{char[1 6]'+00:00';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'}|exact
+CHK|set_07|cell[1 3]{char[1 6]'+02:00';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'}|exact
+CHK|setz_07|cell[1 3]{char[1 6]'+02:00';char[1 4]'char';char[1 19]'2026-01-02 05:04:05'}|exact
+CHK|set_08|cell[1 3]{char[1 6]'+02:00';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'} WARN MATLAB:datetime:NonstandardTimeZoneFixed|exact
+CHK|setz_08|cell[1 3]{char[1 6]'+02:00';char[1 4]'char';char[1 19]'2026-01-02 05:04:05'} WARN MATLAB:datetime:NonstandardTimeZoneFixed|exact
+CHK|set_09|cell[1 3]{char[1 6]'+02:00';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'}|exact
+CHK|setz_09|cell[1 3]{char[1 6]'+02:00';char[1 4]'char';char[1 19]'2026-01-02 05:04:05'}|exact
+CHK|set_10|cell[1 3]{char[1 6]'+00:20';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'}|exact
+CHK|setz_10|cell[1 3]{char[1 6]'+00:20';char[1 4]'char';char[1 19]'2026-01-02 03:24:05'}|exact
+CHK|set_11|cell[1 3]{char[1 9]'-02:30:15';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'}|exact
+CHK|setz_11|cell[1 3]{char[1 9]'-02:30:15';char[1 4]'char';char[1 19]'2026-01-02 00:33:50'}|exact
+CHK|set_12|cell[1 3]{char[1 6]'+23:59';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'}|exact
+CHK|setz_12|cell[1 3]{char[1 6]'+23:59';char[1 4]'char';char[1 19]'2026-01-03 03:03:05'}|exact
+CHK|set_13|MATLAB:datetime:UnknownTimeZone|exact
+CHK|set_13_msg|Unable to create the specified time zone: '+24:00'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|setz_13|MATLAB:datetime:UnknownTimeZone|exact
+CHK|setz_13_msg|Unable to create the specified time zone: '+24:00'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|set_14|MATLAB:datetime:UnknownTimeZone|exact
+CHK|set_14_msg|Unable to create the specified time zone: '+2:00'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|setz_14|MATLAB:datetime:UnknownTimeZone|exact
+CHK|setz_14_msg|Unable to create the specified time zone: '+2:00'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|set_15|MATLAB:datetime:UnknownTimeZone|exact
+CHK|set_15_msg|Unable to create the specified time zone: ' +02:00'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|setz_15|MATLAB:datetime:UnknownTimeZone|exact
+CHK|setz_15_msg|Unable to create the specified time zone: ' +02:00'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|set_16|MATLAB:datetime:UnknownTimeZone|exact
+CHK|set_16_msg|Unable to create the specified time zone: 'UTC+0200'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|setz_16|MATLAB:datetime:UnknownTimeZone|exact
+CHK|setz_16_msg|Unable to create the specified time zone: 'UTC+0200'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|set_string|cell[1 3]{char[1 6]'+02:00';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'}|exact
+CHK|set_empty|cell[1 3]{char[0 0]'';char[1 4]'char';char[1 19]'2026-01-02 03:04:05'}|exact
+CHK|dur_2h|cell[1 5]{char[1 8]'hours(2)';char[1 6]'+02:00';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:04:05';char[1 5]'02:00'}|exact
+CHK|dur_minus|cell[1 5]{char[1 11]'hours(-5.5)';char[1 6]'-05:30';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 08:34:05';char[1 6]'-05:30'}|exact
+CHK|dur_seconds|cell[1 5]{char[1 13]'seconds(7230)';char[1 9]'+02:00:30';char[1 19]'2026-01-02 03:04:05';char[1 19]'2026-01-02 01:03:35';char[1 5]'02:00'}|exact
+CHK|dur_fraction|MATLAB:datetime:InvalidDurationTZPrecision|exact
+CHK|dur_fraction_msg|A duration ISO 8601 offset for 'TimeZone' cannot have fractional seconds. Use the round function to round the duration to the nearest whole number of seconds.|exact
+CHK|dur_24h|MATLAB:datetime:UnknownTimeZone|exact
+CHK|dur_24h_msg|Unable to create the specified time zone: '+24:00:00'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|zone_string|char[1 6]'+02:00'|exact
+CHK|zone_cell|MATLAB:datetime:InvalidTimeZone|exact
+CHK|zone_cell_msg|A time zone must be specified as a string scalar, non-NaN duration scalar, or character vector.|exact
+CHK|zone_number|MATLAB:datetime:InvalidTimeZone|exact
+CHK|zone_number_msg|A time zone must be specified as a string scalar, non-NaN duration scalar, or character vector.|exact
+CHK|fmt_01|char[1 122]'03:04/+02/+0200/+02:00/+0200/+02:00//+02/+0200/+02:00/+0200/+02:00//+0200/+0200/+0200/UTC+02:00/+02:00/UTC+02:00/UTC+02:00'|exact
+CHK|fmt_02|char[1 126]'03:04/-0530/-0530/-05:30/-0530/-05:30//-0530/-0530/-05:30/-0530/-05:30//-0530/-0530/-0530/UTC-05:30/-05:30/UTC-05:30/UTC-05:30'|exact
+CHK|fmt_03|char[1 150]'03:04/+02/+0200/+02:00/+020030/+02:00:30//+02/+0200/+02:00/+020030/+02:00:30//+020030/+020030/+020030/UTC+02:00:30/+02:00:30/UTC+02:00:30/UTC+02:00:30'|exact
+CHK|fmt_04|char[1 154]'03:04/-0230/-0230/-02:30/-023015/-02:30:15//-0230/-0230/-02:30/-023015/-02:30:15//-023015/-023015/-023015/UTC-02:30:15/-02:30:15/UTC-02:30:15/UTC-02:30:15'|exact
+CHK|fmt_05|char[1 79]'03:04/+00/+0000/+00:00/+0000/+00:00//Z/Z/Z/Z/Z//+0000/+0000/+0000/UTC/Z/UTC/UTC'|exact
+CHK|fmt_06|char[1 139]'03:04/+00/+0000/+00:00/-000030/-00:00:30//Z/Z/Z/-000030/-00:00:30//-000030/-000030/-000030/UTC-00:00:30/-00:00:30/UTC-00:00:30/UTC-00:00:30'|exact
+CHK|fmt_07|char[1 126]'03:04/+0030/+0030/+00:30/+0030/+00:30//+0030/+0030/+00:30/+0030/+00:30//+0030/+0030/+0030/UTC+00:30/+00:30/UTC+00:30/UTC+00:30'|exact
+CHK|fmt_08|char[1 122]'03:04/+14/+1400/+14:00/+1400/+14:00//+14/+1400/+14:00/+1400/+14:00//+1400/+1400/+1400/UTC+14:00/+14:00/UTC+14:00/UTC+14:00'|exact
+CHK|fmt_09|char[1 79]'03:04/+00/+0000/+00:00/+0000/+00:00//Z/Z/Z/Z/Z//+0000/+0000/+0000/UTC/Z/UTC/UTC'|exact
+CHK|fmt_10|char[1 122]'03:04/-05/-0500/-05:00/-0500/-05:00//-05/-0500/-05:00/-0500/-05:00//-0500/-0500/-0500/UTC-05:00/-05:00/UTC-05:00/UTC-05:00'|exact
+CHK|fmt_11|char[1 126]'03:04/+0530/+0530/+05:30/+0530/+05:30//+0530/+0530/+05:30/+0530/+05:30//+0530/+0530/+0530/UTC+05:30/+05:30/UTC+05:30/UTC+05:30'|exact
+CHK|fmt_z_01|char[1 17]'UTC+2/UTC+2/UTC+2'|exact
+CHK|fmt_z_02|char[1 26]'UTC-5:30/UTC-5:30/UTC-5:30'|exact
+CHK|fmt_z_03|char[1 35]'UTC+2:00:30/UTC+2:00:30/UTC+2:00:30'|exact
+CHK|fmt_z_04|char[1 35]'UTC-2:30:15/UTC-2:30:15/UTC-2:30:15'|exact
+CHK|fmt_z_05|char[1 11]'GMT/GMT/GMT'|exact
+CHK|fmt_z_06|char[1 35]'UTC-0:00:30/UTC-0:00:30/UTC-0:00:30'|exact
+CHK|fmt_z_07|char[1 26]'UTC+0:30/UTC+0:30/UTC+0:30'|exact
+CHK|fmt_z_08|char[1 20]'UTC+14/UTC+14/UTC+14'|exact
+CHK|fmt_z_09|char[1 20]'UTC-10/UTC-10/UTC-10'|exact
+CHK|fmt_z_10|char[1 11]'UTC/UTC/UTC'|exact
+CHK|fmt_z_11|char[1 11]'GMT/GMT/GMT'|exact
+CHK|fmt_z_12|char[1 11]'UTC/UTC/UTC'|exact
+CHK|fmt_z_13|char[1 11]'GMT/GMT/GMT'|exact
+CHK|fmt_z_14|char[1 17]'UTC+2/UTC+2/UTC+2'|exact
+CHK|fmt_mixed|char[1 17]'+02+02 UTC+2+0200'|exact
+CHK|fmt_quoted|char[1 11]'x Z z O/+02'|exact
+CHK|fmt_unzoned|char[1 31]'03:04/*/*****/*/****/*****/*/*/'|exact
+CHK|fmt_O_option|MATLAB:datetime:UnsupportedSymbol|exact
+CHK|fmt_O_option_msg|The format 'HH:mm O' contains an unsupported symbol: 'O'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|fmt_OO_set|MATLAB:datetime:UnsupportedSymbol|exact
+CHK|fmt_OO_set_msg|The format 'OO' contains an unsupported symbol: 'O'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|fmt_OOOO_set|MATLAB:datetime:UnsupportedSymbol|exact
+CHK|fmt_OOOO_set_msg|The format 'HH:mm/OOOO/' contains an unsupported symbol: 'O'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|fmt_zzzz_option|MATLAB:datetime:UnsupportedIdentifier|exact
+CHK|fmt_zzzz_option_msg|The format 'HH:mm zzzz' contains an unsupported identifier: 'zzzz'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|fmt_zzzzz_set|MATLAB:datetime:UnsupportedIdentifier|exact
+CHK|fmt_zzzzz_set_msg|The format 'zzzzz' contains an unsupported identifier: 'zzzz'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|tzoffset_1|cell[1 5]{char[1 5]'02:00';char[1 5]'00:00';char[1 5]'hh:mm';char[1 5]'hh:mm';char[1 8]'duration'}|exact
+CHK|tzoffset_2|cell[1 5]{char[1 6]'-05:30';char[1 5]'00:00';char[1 5]'hh:mm';char[1 5]'hh:mm';char[1 8]'duration'}|exact
+CHK|tzoffset_3|cell[1 5]{char[1 5]'02:00';char[1 5]'00:00';char[1 5]'hh:mm';char[1 5]'hh:mm';char[1 8]'duration'}|exact
+CHK|tzoffset_4|cell[1 5]{char[1 6]'-02:30';char[1 5]'00:00';char[1 5]'hh:mm';char[1 5]'hh:mm';char[1 8]'duration'}|exact
+CHK|tzoffset_5|cell[1 5]{char[1 6]'-00:00';char[1 5]'00:00';char[1 5]'hh:mm';char[1 5]'hh:mm';char[1 8]'duration'}|exact
+CHK|tzoffset_6|cell[1 5]{char[1 5]'23:59';char[1 5]'00:00';char[1 5]'hh:mm';char[1 5]'hh:mm';char[1 8]'duration'}|exact
+CHK|tzoffset_7|cell[1 5]{char[1 5]'00:00';char[1 5]'00:00';char[1 5]'hh:mm';char[1 5]'hh:mm';char[1 8]'duration'}|exact
+CHK|tzoffset_8|cell[1 5]{char[1 6]'-05:00';char[1 5]'00:00';char[1 5]'hh:mm';char[1 5]'hh:mm';char[1 8]'duration'}|exact
+CHK|tzoffset_9|cell[1 5]{char[1 5]'05:30';char[1 5]'00:00';char[1 5]'hh:mm';char[1 5]'hh:mm';char[1 8]'duration'}|exact
+CHK|tzoffset_summer|cell[1 5]{char[1 6]'-04:00';char[1 5]'01:00';char[1 5]'hh:mm';char[1 5]'hh:mm';char[1 8]'duration'}|exact
+CHK|tzoffset_unzoned|cell[1 5]{char[1 3]'NaN';char[1 3]'NaN';char[1 5]'hh:mm';char[1 5]'hh:mm';char[1 8]'duration'}|exact
+CHK|isdst_fixed|logical[1 1] 0|exact
+CHK|conv_to_named|cell[1 2]{char[1 16]'America/New_York';char[1 19]'2026-01-01 20:04:05'}|exact
+CHK|conv_from_named|cell[1 2]{char[1 6]'+02:00';char[1 19]'2026-01-02 10:04:05'}|exact
+CHK|conv_seconds_to_utc|cell[1 2]{char[1 3]'UTC';char[1 19]'2026-01-02 01:03:35'}|exact
+CHK|conv_utc_to_fixed|cell[1 2]{char[1 6]'-05:30';char[1 19]'2026-01-01 21:34:05'}|exact
+CHK|conv_same_offset|logical[1 1] 1|exact
+CHK|conv_minus|char[1 9]'-02:00:00'|exact
+CHK|conv_cat|cell[1 3]{char[1 6]'+02:00';char[1 8]'03:04:05';char[1 8]'03:04:05'}|exact
+CHK|conv_cat_utc|cell[1 3]{char[1 6]'+02:00';char[1 8]'03:04:05';char[1 8]'05:04:05'}|exact
+CHK|conv_default_display|char[1 20]'02-Jan-2026 03:04:05'|exact
