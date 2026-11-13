@@ -2180,6 +2180,10 @@ internal static partial class JgsBuiltins
             {
             foreach (var child in JgsGraphicsProperties.ChildrenOf(figure).ToArray())
                 if (reset || !JgsHandleRegistry.TryGetEntry(child,out var e) || e.HandleVisible) Remove(child,host);
+                // A plain clf keeps the hidden annotation pane and deletes what is in it (open item 143, pa_pane).
+                else if (child is JgsAnnotationPane pane)
+                    foreach (var shape in JgsGraphicsProperties.ChildrenOf(pane).ToArray())
+                        if (!JgsHandleRegistry.TryGetEntry(shape,out var s) || s.HandleVisible) Remove(shape,host);
             if (reset)
             {
                 var fresh = new FigureModel();

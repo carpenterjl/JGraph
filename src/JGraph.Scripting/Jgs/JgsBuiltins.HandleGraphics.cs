@@ -692,7 +692,7 @@ internal static partial class JgsBuiltins
         string type = StrOf("isgraphics", args[1], line, col);
         return MapToBool("isgraphics", args[0],
             handle => JgsHandleRegistry.TryGet(JgsValue.Number(handle), out JgsHandleEntry? entry)
-                && entry.TypeName.Equals(type, StringComparison.OrdinalIgnoreCase),
+                && JgsGraphicsProperties.TypeWordOf(entry.Target).Equals(type, StringComparison.OrdinalIgnoreCase),
             line, col);
     }
 
@@ -824,7 +824,7 @@ internal static partial class JgsBuiltins
         GraphObject? best = null;
         for (GraphObject? walk = start.Target; walk is not null; walk = JgsGraphicsProperties.ParentOf(walk))
         {
-            string type = JgsGraphicsProperties.TypeNameOf(walk);
+            string type = JgsGraphicsProperties.TypeWordOf(walk);
             if (!kinds.Any(kind => type.Equals(kind, StringComparison.OrdinalIgnoreCase)))
             {
                 continue;
@@ -1180,6 +1180,7 @@ internal static partial class JgsBuiltins
             return;
         }
 
+        JgsGraphicsProperties.DeleteGroupsIn(axes); // cla deletes an axes' groups too (open item 166)
         axes.Plots.Clear();
         axes.Annotations.Clear();
         axes.Lights.Clear();
@@ -1375,6 +1376,19 @@ internal static partial class JgsBuiltins
             case BubbleLegendModel bubbles:
                 GraphObjectLifecycle.NotifyDeleting(bubbles);
                 bubbles.Visible = false;
+                return;
+
+            // A group goes with the groups made in it and everything they hold (open item 166).
+            case JgsGraphicsGroup group:
+                JgsGraphicsProperties.DeleteGroup(group, member => Remove(member, host));
+                return;
+
+            // A figure's annotation pane goes with its annotations; the next one makes a new pane
+            // (open item 143, probe pa_pane).
+            case JgsAnnotationPane pane:
+                GraphObjectLifecycle.NotifyDeleting(pane);
+                pane.Figure.Annotations.Clear();
+                JgsAnnotationPane.Forget(pane.Figure);
                 return;
 
             // The legend reconciles its own rows against the plots before each layout, so taking the

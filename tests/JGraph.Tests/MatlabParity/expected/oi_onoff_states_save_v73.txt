@@ -77,7 +77,7 @@ CHK|ob_set_zero|cell[1 2]{char[1 28]'matlab.lang.OnOffSwitchState';onoff off}|ex
 CHK|ob_set_str|cell[1 2]{char[1 28]'matlab.lang.OnOffSwitchState';onoff off}|exact
 CHK|ob_set_two|char[1 8]'no error'|exact
 CHK|ob_set_member|cell[1 2]{char[1 28]'matlab.lang.OnOffSwitchState';onoff off}|exact
-CHK|ob_findobj|double[1 1] 16|div=ADR0235|diverges|double[1 1] 17
+CHK|ob_findobj|double[1 1] 16|div=ADR0235|diverges|double[1 1] 18
 CHK|ob_grid|char[1 28]'matlab.lang.OnOffSwitchState'|exact
 CHK|ob_hold|char[1 4]'char'|exact
 CHK|ob_figure_visible|char[1 28]'matlab.lang.OnOffSwitchState'|exact

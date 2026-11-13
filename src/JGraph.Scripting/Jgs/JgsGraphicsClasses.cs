@@ -100,6 +100,10 @@ internal static partial class JgsGraphicsClasses
     {
         AxesModel { IsUiAxes: true, IsPolar: false } => "uiaxes",
         ArrowAnnotation { Text.Length: 0, ShowTailHead: false, ShowHead: false } => "annotationline",
+
+        // The rectangle annotation keys "rectangle"; a drawn rectangle answers the same type word
+        // here but is R2025b's matlab.graphics.primitive.Rectangle (probe pa_groups).
+        PatchPlot drawn when JgsBuiltins.RectangleShapeOf(drawn) is not null => "rectangleprim",
         PiePlot => "piechart",
         _ => JgsGraphicsProperties.TypeNameOf(target),
     };

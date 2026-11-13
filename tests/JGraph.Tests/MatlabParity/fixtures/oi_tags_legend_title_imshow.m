@@ -34,8 +34,8 @@ close(f);
 h = openfig(tmp, 'invisible');
 u2_chk('tag_types_after', @() types(h, drawn));
 u2_chk('tag_shapes_after', @() counts(h, shapes, @findall));
-u9b_chkdiv('tag_shape_types_after', @() types(h, shapes), '0242'); % an annotation's Type is its kind here, R2025b's says shape (open item 143)
-u9b_chkdiv('tag_shapes_findobj', @() counts(h, shapes, @findobj), '0242'); % findobj reaches the annotations here; R2025b's keeps them for findall (open item 143)
+u2_chk('tag_shape_types_after', @() types(h, shapes)); % R2025b's shape words (open item 143)
+u2_chk('tag_shapes_findobj', @() counts(h, shapes, @findobj)); % the annotations' pane is hidden: findall reaches them, findobj does not (open item 143)
 r = findobj(h, 'Tag', 'rect');
 u2_chk('tag_rect_after', @() {r.Type, r.Position, r.Curvature});
 u2_chk('tag_text_after', @() get(findobj(h, 'Tag', 'text'), 'String'));

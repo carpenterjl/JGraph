@@ -149,6 +149,13 @@ public static class JG
     public static Action<FigureModel>? FigureMade { get; set; }
 
     /// <summary>
+    /// Told of an axes a replacing plot is about to empty, before anything leaves it. The script
+    /// layer deletes the axes' groups (<c>hggroup</c>, <c>hgtransform</c>), which this layer has no
+    /// notion of, as R2025b's replacing plot does (open item 166).
+    /// </summary>
+    public static Action<AxesModel>? AxesEmptying { get; set; }
+
+    /// <summary>
     /// Registers a figure that has no number (a <c>uifigure</c>) under a key of the hidden range,
     /// marks it touched so the run shows it, and leaves the current figure alone.
     /// </summary>
@@ -2012,6 +2019,8 @@ public static class JG
 
         // 'replacechildren' — a uiaxes — takes away what was drawn and nothing else (U5): the
         // limits follow the new data, and the title, labels, grid and view stay.
+        AxesEmptying?.Invoke(axes);
+
         if (axes.ReplaceChildrenOnly)
         {
             axes.Plots.Clear();

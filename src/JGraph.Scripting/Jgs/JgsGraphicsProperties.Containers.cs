@@ -72,7 +72,12 @@ internal static partial class JgsGraphicsProperties
     internal static GraphObject? ParentOf(GraphObject target) => target switch
     {
         AxesModel { Container: { } container } => container,
-        JgsGraphicsGroup group => (GraphObject?)group.Outer ?? group.Home, // beside the tree (item 89)
+        JgsGraphicsGroup group => (GraphObject?)group.Outer ?? group.Home, // the group or axes it was made in (items 89, 166)
+        JgsAnnotationPane pane => pane.Figure,
+
+        // A figure's annotations sit in its hidden pane in a MATLAB-dialect script (open item 143).
+        AnnotationObject { Parent: FigureModel figure } when JgsRunningDialect.ThreadIsMatlab => JgsAnnotationPane.For(figure),
+        PlotObject or AnnotationObject or LightModel when GroupOwning(target) is { } group => group, // open item 166
         _ => target.Parent,
     };
 

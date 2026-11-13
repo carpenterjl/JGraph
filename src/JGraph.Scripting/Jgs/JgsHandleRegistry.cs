@@ -406,8 +406,12 @@ internal static class JgsHandleRegistry
 
             double handle = _next;
             _next += 1;
-            // A ruler's handle is hidden in R2025b (probe_126b: HandleVisibility 'off').
-            Entries[handle] = new JgsHandleEntry(target) { HandleVisibility = target is AxisModel && JgsRunningDialect.ThreadIsMatlab ? "off" : "on" };
+            // A ruler's handle is hidden in R2025b (probe_126b: HandleVisibility 'off'), and so is a
+            // figure's annotation pane (open item 143, probe pa_pane).
+            Entries[handle] = new JgsHandleEntry(target)
+            {
+                HandleVisibility = (target is AxisModel && JgsRunningDialect.ThreadIsMatlab) || target is JgsAnnotationPane ? "off" : "on",
+            };
             Handles[target] = handle;
             return JgsValue.Number(handle);
         }
@@ -728,13 +732,9 @@ internal static class JgsHandleRegistry
             Collect(kept, live);
         }
 
-        // A group draws nothing, so it is not in the tree the walk above covers — and reading its
-        // absence as death dropped the handle of every live group at the first clf of the session,
-        // whichever figure that clf named. A group is alive while the axes it was made in is.
-        foreach (JgsGraphicsGroup group in JgsGraphicsProperties.KeepGroupsIn(live))
-        {
-            live.Add(group);
-        }
+        // A group is a child of its axes or of its outer group (open items 144, 166), so the walk
+        // above reached every live one; the book of groups forgets the rest.
+        JgsGraphicsProperties.ForgetGroupsOutside(live);
 
         // A legend's title is not among its children - searches must not find it, as R2025b's do
         // not - so it is alive while its legend is there (open item 141); a deleted legend's dies.

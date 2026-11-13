@@ -149,10 +149,6 @@ image call R2025b makes of the array, not `imshow`.
 - **`imshow` does not size the figure or move the axes** to show the picture at 100% (R2025b's
   `initSize`, from the screen's work area; fixture row `is_place_alone`). The axes keeps its place
   and the figure its size; the figure's `NextPlot` becomes `'replacechildren'` as there.
-- **An annotation's `Type` is its kind here** (`textbox`, `rectangle`, `ellipse`, `line`, `arrow`,
-  `doublearrow`, `textarrow`) where R2025b's say `…shape` (`textboxshape`, `doubleendarrowshape`, …),
-  **and `findobj` reaches the annotations here**, which R2025b keeps behind a hidden pane for `findall`
-  (rows `tag_shape_types_after`, `tag_shapes_findobj`; open item 143).
 - **`lg.Title = 'words'` titles the legend here**; R2025b refuses the write as read-only
   (`MATLAB:class:SetProhibited`; row `lt_assign`). This build has always taken it.
 - **A fresh legend title answers its settled values at once**; R2025b's first read of a fresh title
@@ -162,6 +158,11 @@ image call R2025b makes of the array, not `imshow`.
 - **`imshow` into a uiaxes sets the limits by hand here** (ADR 0241's uiaxes rule); R2025b leaves
   them automatic, reading `[0 5]` with the aspect manual (B50).
 - **`imshow`'s `Reduce` and numeric `InitialMagnification` have no effect** (above).
+
+Closed since: an annotation's `Type` and its reach (open item 143, ADR 0342). In a MATLAB-dialect
+script an annotation answers R2025b's shape word (`textboxshape`, `doubleendarrowshape`, …) and sits
+in a hidden annotation pane, so `findobj` passes it by and `findall` reaches it. Rows
+`tag_shape_types_after` and `tag_shapes_findobj` are agreeing lines now.
 
 ## Still open
 

@@ -188,6 +188,11 @@ internal static partial class JgsFigFile
                 {
                     annotations.Add(annotation); // all of them on one overlay, after the rest, as hgsave writes them
                 }
+                else if (child is JgsAnnotationPane pane)
+                {
+                    // A MATLAB-dialect script lists them in their pane (open item 143); the overlay is the file's pane.
+                    annotations.AddRange(JgsGraphicsProperties.ChildrenOf(pane).OfType<AnnotationObject>());
+                }
                 else
                 {
                     Append(children, child);
@@ -585,6 +590,11 @@ internal static partial class JgsFigFile
                         properties.Remove("ZData");
                     }
 
+                    break;
+                case "hgtransform":
+                    // This build's members hold the coordinates the matrix gave them; MATLAB would
+                    // apply it a second time (open item 166).
+                    properties.Remove("Matrix");
                     break;
             }
         }

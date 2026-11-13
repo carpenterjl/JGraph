@@ -47,6 +47,9 @@ internal static partial class JgsBuiltins
         DefineBare("hggroup", Making(GroupMade, (args, line, col) => Group("hggroup", args, line, col)));
         DefineBare("hgtransform", Making(GroupMade, (args, line, col) => Group("hgtransform", args, line, col)));
 
+        // A replacing plot deletes the axes' groups, as cla does (open item 166).
+        JG.AxesEmptying = JgsGraphicsProperties.DeleteGroupsIn;
+
         Define("frame2im", Frame2Im);
         Define("im2frame", Im2Frame);
     }
@@ -575,14 +578,13 @@ internal static partial class JgsBuiltins
         var spec = new OptionSpec(verb, [], ["Matrix", "Tag", "Visible", "Parent"]);
         ParsedArgs parsed = spec.Parse(args, start, line, col);
 
-        // The parent, first or as 'Parent', is the axes or the group the group was made in: a group is
-        // beside the render tree, so it is placed nowhere, but its Parent reads back as that one.
+        // The parent, first or as 'Parent', is the axes or the group the group was made in: the group
+        // is that one's child in the tree a script sees (open item 166), though it draws nothing.
         JgsHandleEntry? parent = start == 1 ? JgsHandleRegistry.Require(args[0], line, col)
             : parsed.Named("Parent") is { } named && JgsHandleRegistry.TryGet(named, out JgsHandleEntry? given) ? given : null;
 
-        // MATLAB's hggroup parents itself to gca, making a figure and an axes when there is none.
-        // Recording that axes is also what keeps the group's handle alive across a clf aimed
-        // elsewhere: the sweep has nowhere else to look for a group.
+        // MATLAB's hggroup parents itself to gca, making a figure and an axes when there is none,
+        // and leaves what the axes holds alone (probe pa_groups).
         var group = new JgsGraphicsGroup(transforms: verb == "hgtransform",
             home: (parent is null ? null : HomeOf(parent)) ?? JG.Gca(), outer: parent?.Target as JgsGraphicsGroup);
         JgsGraphicsProperties.Remember(group);

@@ -7,12 +7,18 @@ namespace JGraph.Scripting.Jgs;
 /// A named collection of drawn objects a script can act on as one — MATLAB's <c>hggroup</c>, and with
 /// a matrix, its <c>hgtransform</c>.
 /// <para>
-/// It is deliberately <b>beside</b> the render tree rather than in it. A group in the tree would have
-/// to be a plot object of its own: rendered, hit-tested, autoscaled, listed in the plot browser, and
-/// written into a saved figure — five surfaces to get right for a container that draws nothing. What a
-/// script actually does with a group is turn its members on and off together and move them together,
-/// and both of those are things the members already know how to do. So a group is a book of who
-/// belongs to it, and its verbs reach through to the members.
+/// It is deliberately <b>beside</b> the render tree rather than in it. A group in the render tree
+/// would have to be a plot object of its own: rendered, hit-tested, autoscaled, listed in the plot
+/// browser, and written into this build's document — five surfaces to get right for a container
+/// that draws nothing. What a script actually does with a group is turn its members on and off
+/// together and move them together, and both of those are things the members already know how to
+/// do. So a group is a book of who belongs to it, and its verbs reach through to the members.
+/// </para>
+/// <para>
+/// In the tree a <b>script</b> sees it is a child like any other (open items 144 and 166, ADR 0000):
+/// <c>Children</c> of its axes lists it and not its members, <c>findobj</c> and <c>findall</c> reach
+/// it and through it the members, a replacing plot or <c>cla</c> deletes it, and <c>delete</c> takes
+/// its members with it. The members stay in the axes' collections, which is what draws them.
 /// </para>
 /// <para>
 /// A transform therefore moves the members' own coordinates. To keep that from compounding, the group
@@ -46,11 +52,8 @@ internal sealed class JgsGraphicsGroup : GraphObject
     public bool Transforms { get; }
 
     /// <summary>
-    /// The axes this group was made in. A group is beside the render tree, so the sweep that reaps
-    /// handles no longer reachable from a live figure cannot see it — and without somewhere to look,
-    /// it read every group as unreachable and dropped its handle at the first <c>clf</c> in the
-    /// session, whichever figure that <c>clf</c> was aimed at. This is where it looks: a group lives
-    /// exactly as long as the axes it belongs to, which is what MATLAB means by parenting it there.
+    /// The axes this group was made in, or its outer group's: the axes whose children list it (or its
+    /// outermost group), and whose replacing plot or <c>cla</c> deletes it (open item 166).
     /// </summary>
     public AxesModel? Home { get; }
 

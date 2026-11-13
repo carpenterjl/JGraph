@@ -143,17 +143,18 @@ public class MatlabFigureToolsTests : IDisposable
     }
 
     [Theory]
-    [InlineData("annotation('rectangle', [0 0 1 1])", "rectangle")]
-    [InlineData("annotation('ellipse', [0 0 1 1])", "ellipse")]
-    [InlineData("annotation('textbox', [0 0 1 1])", "textbox")]
-    [InlineData("annotation('arrow', [0 1], [0 1])", "arrow")]
-    [InlineData("annotation('doublearrow', [0 1], [0 1])", "doublearrow")]
-    [InlineData("annotation('line', [0 1], [0 1])", "line")]
-    [InlineData("annotation('textarrow', [0 1], [0 1], 'String', 'x')", "textarrow")]
+    [InlineData("annotation('rectangle', [0 0 1 1])", "rectangleshape")]
+    [InlineData("annotation('ellipse', [0 0 1 1])", "ellipseshape")]
+    [InlineData("annotation('textbox', [0 0 1 1])", "textboxshape")]
+    [InlineData("annotation('arrow', [0 1], [0 1])", "arrowshape")]
+    [InlineData("annotation('doublearrow', [0 1], [0 1])", "doubleendarrowshape")]
+    [InlineData("annotation('line', [0 1], [0 1])", "lineshape")]
+    [InlineData("annotation('textarrow', [0 1], [0 1], 'String', 'x')", "textarrowshape")]
     public void EachKindAnswersItsOwnTypeName(string call, string expected)
     {
+        // R2025b's shape words in a MATLAB-dialect script (open item 143).
         Ok(Run($"figure(1); h = {call}; disp(get(h, 'Type'));"));
-        Assert.Contains(expected, _output.NormalText);
+        Assert.Equal(expected + "\n", _output.NormalText);
     }
 
     [Fact]

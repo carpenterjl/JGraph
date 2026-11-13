@@ -121,12 +121,12 @@ the letters it knew and drew.
 
 ## Still open
 
-- Open item 166: a replacing plot or `cla` deletes the axes' groups in R2025b, and an axes lists a
-  group among its children rather than the group's members; here a group lives until its axes does,
-  and the axes lists the members.
 - Open item 167: `pcolor`'s object type.
 - Open item 168: the leftovers the probes found next to these items: `title`, `hold` and the other
   axes verbs given a group (R2025b: `Using title with Group is not supported.`), a three-element colour
   read as a colour by `patch(x, y, c)` for three vertices, and R2025b's own words for a malformed
   `plot` (`MATLAB:plot:InvalidFirstInput`, `MATLAB:plot:InvalidPropertyValue` for a read-only name, a
   pair after the spec read as a property).
+
+Closed since: open item 166 (ADR 0342). A replacing plot and `cla` delete the axes' groups, and the
+axes lists a group among its children rather than the group's members.

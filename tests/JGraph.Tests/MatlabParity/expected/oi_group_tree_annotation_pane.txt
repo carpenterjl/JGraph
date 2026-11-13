@@ -1,0 +1,75 @@
+CHK|g_findobj_tag|double [1 1] 1|exact
+CHK|g_findobj_type|double [1 1] 1|exact
+CHK|g_findall_tag|double [1 1] 1|exact
+CHK|t_findobj_tag|double [1 1] 1|exact
+CHK|t_findobj_type|double [1 1] 1|exact
+CHK|t_findall_type|double [1 1] 1|exact
+CHK|g_is_found|logical [1 1] 1|exact
+CHK|g_ax_children_empty|cell [1 2] {char 'hgtransform', char 'hggroup'}|exact
+CHK|g_ax_children|cell [1 2] {char 'xform', char 'group'}|exact
+CHK|g_ax_children_types|cell [1 2] {char 'hgtransform', char 'hggroup'}|exact
+CHK|g_children|cell [1 2] {char 'inner', char 'member'}|exact
+CHK|g_findobj_member|double [1 1] 1|exact
+CHK|g_findobj_deep|double [1 1] 1|exact
+CHK|g_findobj_groups|double [1 1] 2|exact
+CHK|g_findobj_lines|double [1 1] 3|exact
+CHK|g_findobj_ax_tags|cell [1 7] {char '', char 'xform', char 'group', char 'tmember', char 'inner', char 'member', char 'deep'}|exact
+CHK|g_findobj_g_tags|cell [1 4] {char 'group', char 'inner', char 'member', char 'deep'}|exact
+CHK|g_findobj_depth1|cell [1 3] {char '', char 'xform', char 'group'}|exact
+CHK|g_findobj_flat|group|exact
+CHK|g_allchild|cell [1 2] {char 'xform', char 'group'}|exact
+CHK|g_parents|cell [1 4] {char 'group', char 'inner', char 'group', char 'axes'}|exact
+CHK|g_ancestor|axes|exact
+CHK|g_ancestor_group|inner|exact
+CHK|g_held_children|cell [1 3] {char 'held', char 'xform', char 'group'}|exact
+CHK|g_moved_out|cell [1 2] {cell [1 4] {char 'member', char 'held', char 'xform', char 'group'}, char [5 1] i;n;n;e;r}|exact
+CHK|g_moved_in|cell [1 2] {cell [1 3] {char 'held', char 'xform', char 'group'}, cell [1 2] {char 'member', char 'inner'}}|exact
+CHK|r_valid|cell [1 5] {logical [1 1] 0, logical [1 1] 0, logical [1 1] 0, logical [1 1] 0, logical [1 1] 0}|exact
+CHK|r_children|replacing|exact
+CHK|r_findobj|double [1 1] 0|exact
+CHK|cla_valid|logical [1 1] 0|exact
+CHK|cla_children|double [1 1] 0|exact
+CHK|clareset_valid|cell [1 2] {logical [1 1] 0, logical [1 1] 0}|exact
+CHK|del_valid|cell [1 4] {logical [1 1] 0, logical [1 1] 0, logical [1 1] 0, logical [1 1] 0}|exact
+CHK|del_children|double [1 1] 0|exact
+CHK|del_member|cell [1 3] {logical [1 1] 1, double [1 1] 0, double [1 1] 1}|exact
+CHK|nopar_children|cell [1 2] {char 'g6', char 'before'}|exact
+CHK|nopar_after_plot|logical [1 1] 0|exact
+CHK|hold_keeps|logical [1 1] 1|exact
+CHK|close_valid|logical [1 1] 0|exact
+CHK|order_children|cell [1 4] {char 'tx', char 'p2', char 'gmid', char 'p1'}|exact
+CHK|order_findobj|cell [1 7] {char '', char '', char 'tx', char 'p2', char 'gmid', char 'p1', char 'gm'}|exact
+CHK|hv_off_findobj|cell [1 4] {double [1 1] 0, double [1 1] 0, double [1 1] 1, double [1 1] 3}|exact
+CHK|file_lines|cell [1 2] {char 'inline', char 'plain'}|exact
+CHK|file_group|double[1 1] 1|div=0342|diverges|double[1 1] 0
+CHK|an_types|textboxshape rectangleshape ellipseshape lineshape arrowshape doubleendarrowshape textarrowshape|exact
+CHK|an_findobj|double [1 7] 0 0 0 0 0 0 0|exact
+CHK|an_findall|double [1 7] 1 1 1 1 1 1 1|exact
+CHK|an_findobj_type|double [1 1] 0|exact
+CHK|an_findall_type|double [1 1] 1|exact
+CHK|an_root_findobj|double [1 1] 0|exact
+CHK|an_parent_type|annotationpane|exact
+CHK|an_parent_hv|off|exact
+CHK|an_parent_parent|logical [1 1] 1|exact
+CHK|an_fig_children|axes|exact
+CHK|an_isa|cell [1 4] {logical [1 1] 1, logical [1 1] 1, logical [1 1] 1, logical [1 1] 1}|exact
+CHK|rect_isa|cell [1 3] {char 'rectangle', logical [1 1] 1, logical [1 1] 0}|exact
+CHK|an_hv|on|exact
+CHK|an_ancestor|figure|exact
+CHK|p_fresh|double [1 1] 0|exact
+CHK|p_after|double [1 1] 1|exact
+CHK|p_props|cell [1 5] {char 'annotationpane', char 'off', char 'on', char 'scribeOverlay', logical [1 1] 1}|exact
+CHK|p_children|a1|exact
+CHK|p_order|cell [1 2] {char 'annotationpane', char 'axes'}|exact
+CHK|p_same_pane|logical [1 1] 1|exact
+CHK|p_children2|cell [1 2] {char 'a2', char 'a1'}|exact
+CHK|p_after_delete|cell [1 2] {logical [1 1] 1, double [1 1] 1}|exact
+CHK|p_clf|cell [1 3] {logical [1 1] 0, logical [1 1] 1, double [1 1] 1}|exact
+CHK|p_clf_reset|cell [1 2] {logical [1 1] 0, logical [1 1] 0}|exact
+CHK|p_delete_pane|cell [1 2] {logical [1 1] 0, logical [1 1] 0}|exact
+CHK|p_new_pane|cell [1 2] {double [1 1] 1, double [1 1] 0}|exact
+CHK|p_show_hidden|double [1 1] 1|exact
+CHK|p_isgraphics|cell [1 3] {logical [1 1] 1, logical [1 1] 0, logical [1 1] 1}|exact
+CHK|p_ancestor|logical [1 1] 1|exact
+CHK|p_ancestor_pane|logical [1 1] 1|exact
+CHK|p_replacing_plot|logical [1 1] 1|exact

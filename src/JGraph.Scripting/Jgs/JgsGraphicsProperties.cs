@@ -86,6 +86,7 @@ internal static partial class JgsGraphicsProperties
         JgsTextLabel => "text",
         JgsGraphicsGroup { Transforms: true } => "hgtransform",
         JgsGraphicsGroup => "hggroup",
+        JgsAnnotationPane => "annotationpane",
         FigureModel => "figure",
         ContextMenuModel => "uicontextmenu",
         MenuItemModel => "uimenu",
@@ -208,6 +209,34 @@ internal static partial class JgsGraphicsProperties
         _ => FallbackTypeName(target.GetType()),
     };
 
+    /// <summary>
+    /// What a script reads from <c>Type</c>, and what <c>findobj</c>, <c>isgraphics</c> and
+    /// <c>ancestor</c> match a type word against. In a MATLAB-dialect script a figure's annotation
+    /// answers R2025b's shape word (open item 143, probe pa_groups); everything else, and every
+    /// object in a JGS script, answers <see cref="TypeNameOf"/>, which is also the word this build
+    /// keys its own tables by (the class rows, the <c>.fig</c> writer's words).
+    /// </summary>
+    public static string TypeWordOf(GraphObject target)
+    {
+        string type = TypeNameOf(target);
+        if (target is not AnnotationObject { Parent: FigureModel } || !JgsRunningDialect.ThreadIsMatlab)
+        {
+            return type;
+        }
+
+        return type switch
+        {
+            "textbox" => "textboxshape",
+            "rectangle" => "rectangleshape",
+            "ellipse" => "ellipseshape",
+            "line" => "lineshape",
+            "arrow" => "arrowshape",
+            "doublearrow" => "doubleendarrowshape",
+            "textarrow" => "textarrowshape",
+            _ => type,
+        };
+    }
+
     private static string FallbackTypeName(Type type)
     {
         string name = type.Name;
@@ -231,9 +260,9 @@ internal static partial class JgsGraphicsProperties
     /// <c>ax.XAxis</c>, which is where MATLAB puts it too.
     /// </summary>
     /// <summary>
-    /// Every group a script has made, so that an object can be asked which one owns it. Groups sit
-    /// beside the render tree (see <see cref="JgsGraphicsGroup"/>), so there is nowhere in the model
-    /// to hang this — and a live figure holds only its own objects, which is the point.
+    /// Every live group a script has made, so that an object can be asked which one owns it and an
+    /// axes which groups it holds. Groups sit beside the render tree (see
+    /// <see cref="JgsGraphicsGroup"/>), so there is nowhere in the model to hang this.
     /// </summary>
     private static readonly List<JgsGraphicsGroup> Groups = new();
 
@@ -275,17 +304,152 @@ internal static partial class JgsGraphicsProperties
     }
 
     /// <summary>
-    /// Forgets the groups whose axes has gone, and answers the ones that are left. The handle sweep
-    /// calls this: a group is beside the render tree, so it can neither be walked to from a figure
-    /// nor be reaped by walking one, and both halves of that have to be done here.
+    /// Forgets the groups the handle sweep did not reach. A group is a child of its axes or of the
+    /// group it was made in (open items 144, 166), so the sweep's walk of the live figures reaches
+    /// every live group; one it did not reach went with its axes, its figure or its outer group.
     /// </summary>
-    internal static IReadOnlyList<JgsGraphicsGroup> KeepGroupsIn(HashSet<GraphObject> live)
+    internal static void ForgetGroupsOutside(HashSet<GraphObject> live)
     {
         lock (Groups)
         {
-            Groups.RemoveAll(group => group.Home is not null && !live.Contains(group.Home));
-            return Groups.ToArray();
+            Groups.RemoveAll(group => !live.Contains(group));
         }
+    }
+
+    /// <summary>
+    /// The groups made straight in <paramref name="axes"/> (not in another group), oldest first, and
+    /// every object a group in it holds; null for both when it has none - the common case, which
+    /// costs a look at an empty list.
+    /// </summary>
+    private static (List<JgsGraphicsGroup>? Top, HashSet<GraphObject>? Held) GroupsIn(AxesModel axes)
+    {
+        lock (Groups)
+        {
+            List<JgsGraphicsGroup>? top = null;
+            HashSet<GraphObject>? held = null;
+            foreach (JgsGraphicsGroup group in Groups)
+            {
+                if (!ReferenceEquals(group.Home, axes))
+                {
+                    continue;
+                }
+
+                if (group.Outer is null)
+                {
+                    (top ??= []).Add(group);
+                }
+
+                held ??= new HashSet<GraphObject>(ReferenceEqualityComparer.Instance);
+                foreach (GraphObject member in group.Members)
+                {
+                    held.Add(member);
+                }
+            }
+
+            return (top, held);
+        }
+    }
+
+    /// <summary>
+    /// What R2025b's replacing plot and <c>cla</c> do to an axes' groups (open item 166, probe
+    /// pa_groups): each is deleted, with what it holds. Run before the axes empties, so a group's
+    /// <c>DeleteFcn</c> and its members' run while they are still in the tree.
+    /// </summary>
+    internal static void DeleteGroupsIn(AxesModel axes)
+    {
+        List<JgsGraphicsGroup> doomed;
+        lock (Groups)
+        {
+            doomed = Groups.Where(group => ReferenceEquals(group.Home, axes)).ToList();
+        }
+
+        if (doomed.Count == 0)
+        {
+            return;
+        }
+
+        foreach (JgsGraphicsGroup group in doomed.Where(static g => g.Outer is null))
+        {
+            GraphObjectLifecycle.NotifyDeleting(group);
+        }
+
+        // Marked whether or not a session listens, so isvalid answers false before the next sweep.
+        foreach (JgsGraphicsGroup group in doomed)
+        {
+            GraphObjectLifecycle.TryBeginDeleting(group);
+        }
+
+        lock (Groups)
+        {
+            Groups.RemoveAll(doomed.Contains);
+        }
+    }
+
+    /// <summary>
+    /// <c>delete(g)</c> of a group (open item 166): the group, the groups made in it, and what every
+    /// one of them holds. <paramref name="remove"/> takes one member out of its axes as
+    /// <c>delete</c> takes any drawn object.
+    /// </summary>
+    internal static void DeleteGroup(JgsGraphicsGroup group, Action<GraphObject> remove)
+    {
+        GraphObjectLifecycle.NotifyDeleting(group);
+        var gone = new List<JgsGraphicsGroup>();
+        void Take(JgsGraphicsGroup one)
+        {
+            gone.Add(one);
+            foreach (GraphObject member in one.Members.ToList())
+            {
+                if (member is JgsGraphicsGroup inner)
+                {
+                    Take(inner);
+                }
+                else
+                {
+                    remove(member);
+                }
+            }
+        }
+
+        Take(group);
+        group.Outer?.Release(group);
+        foreach (JgsGraphicsGroup one in gone)
+        {
+            GraphObjectLifecycle.TryBeginDeleting(one);
+        }
+
+        lock (Groups)
+        {
+            Groups.RemoveAll(gone.Contains);
+        }
+    }
+
+    /// <summary>
+    /// An axes' drawn children, back to front, with its groups among them: a member of a group is
+    /// the group's child and not the axes', and a group stands where it was made among the rest
+    /// (R2025b lists <c>ax.Children</c> by when each was made, probe pa_groups).
+    /// </summary>
+    private static void AddDrawnChildren(List<GraphObject> children, AxesModel axes)
+    {
+        (List<JgsGraphicsGroup>? top, HashSet<GraphObject>? held) = GroupsIn(axes);
+        if (held is null)
+        {
+            children.AddRange(axes.Plots);
+            children.AddRange(axes.Annotations);
+            children.AddRange(axes.Lights);
+            return;
+        }
+
+        var drawn = new List<GraphObject>();
+        drawn.AddRange(axes.Plots.Where(plot => !held.Contains(plot)));
+        drawn.AddRange(axes.Annotations.Where(text => !held.Contains(text)));
+        drawn.AddRange(axes.Lights.Where(light => !held.Contains(light)));
+        foreach (JgsGraphicsGroup group in top ?? [])
+        {
+            int at = drawn.FindIndex(other => other.CreationOrder > group.CreationOrder);
+            drawn.Insert(at < 0 ? drawn.Count : at, group);
+        }
+
+        children.AddRange(drawn);
     }
 
     /// <summary>The group holding <paramref name="target"/>, or null when nothing does.</summary>
@@ -511,7 +675,18 @@ internal static partial class JgsGraphicsProperties
                 group.Admit(member);
                 return;
             case AxesModel axes:
-                GroupOwning(member)?.Release(member);
+                if (GroupOwning(member) is { } owning)
+                {
+                    owning.Release(member);
+
+                    // Out of a group into its own axes, it comes to the front of the axes' children
+                    // as R2025b's does (probe pa_groups); its place among the drawn objects was the group's.
+                    if (ReferenceEquals(member.Parent, axes))
+                    {
+                        BringToFront(member, axes);
+                    }
+                }
+
                 MoveToAxes(member, axes);
                 return;
             default:
@@ -546,6 +721,26 @@ internal static partial class JgsGraphicsProperties
                 case LightModel light:
                     (light.Parent as AxesModel)?.Lights.Remove(light);
                     axes.Lights.Add(light);
+                    break;
+            }
+        }
+    }
+
+    /// <summary>Moves a drawn object, a text or a light to the front of its own collection in its axes: a move, not a deletion.</summary>
+    private static void BringToFront(GraphObject member, AxesModel axes)
+    {
+        using (GraphObjectLifecycle.SuppressNotifications())
+        {
+            switch (member)
+            {
+                case PlotObject plot when axes.Plots.IndexOf(plot) is var at and >= 0:
+                    axes.Plots.Move(at, axes.Plots.Count - 1);
+                    break;
+                case JGraph.Objects.Annotations.TextAnnotation text when axes.Annotations.IndexOf(text) is var at and >= 0:
+                    axes.Annotations.Move(at, axes.Annotations.Count - 1);
+                    break;
+                case LightModel light when axes.Lights.IndexOf(light) is var at and >= 0:
+                    axes.Lights.Move(at, axes.Lights.Count - 1);
                     break;
             }
         }
@@ -606,6 +801,9 @@ internal static partial class JgsGraphicsProperties
                 // A member deleted since it joined has left its axes, and the group with it.
                 children.AddRange(group.Members.Where(member => member is JgsGraphicsGroup || member.Parent is not null));
                 break;
+            case JgsAnnotationPane pane:
+                children.AddRange(pane.Figure.Annotations);
+                break;
             case JgsGraphicsRoot:
                 // Every figure; a search or a listing leaves out the ones whose handles are hidden.
                 children.AddRange(RootFigures(hidden: true));
@@ -613,7 +811,17 @@ internal static partial class JgsGraphicsProperties
             case FigureModel figure:
                 // The axes placed in the figure itself; one placed in a panel is the panel's child.
                 children.AddRange(figure.TopLevelAxes());
-                children.AddRange(figure.Annotations);
+
+                // In a MATLAB-dialect script the annotations sit in a pane whose handle is hidden,
+                // in front of the axes (open item 143, probe pa_pane).
+                if (!JgsRunningDialect.ThreadIsMatlab)
+                {
+                    children.AddRange(figure.Annotations);
+                }
+                else if (JgsAnnotationPane.Listed(figure) is { } pane)
+                {
+                    children.Add(pane);
+                }
 
                 // Last, so they come first: Children is newest first, and R2025b lists every
                 // component before every axes, whichever was made first (probe u2_tree). Menus,
@@ -648,9 +856,7 @@ internal static partial class JgsGraphicsProperties
                 children.AddRange(item.Items);
                 break;
             case AxesModel axes:
-                children.AddRange(axes.Plots);
-                children.AddRange(axes.Annotations);
-                children.AddRange(axes.Lights);
+                AddDrawnChildren(children, axes);
                 if (axes.Legend.Visible)
                 {
                     children.Add(axes.Legend);
@@ -715,6 +921,12 @@ internal static partial class JgsGraphicsProperties
         if (target is FigureModel withDialogs)
         {
             all.AddRange(withDialogs.Overlays);
+
+            // A pane a MATLAB-dialect script reached stays alive through a sweep run outside one.
+            if (!JgsRunningDialect.ThreadIsMatlab && JgsAnnotationPane.Existing(withDialogs) is { } pane)
+            {
+                all.Add(pane);
+            }
         }
 
         all.AddRange(JgsTextLabel.Existing(target));
@@ -1105,7 +1317,7 @@ internal static partial class JgsGraphicsProperties
     /// </summary>
     private static void AddAliases(Type type, IDictionary<string, GraphicsProperty> table)
     {
-        Put(table, "Type", entry => JgsValue.Str(TypeNameOf(entry.Target)));
+        Put(table, "Type", entry => JgsValue.Str(TypeWordOf(entry.Target)));
         Put(table, "Tag",
             entry => JgsValue.Str(entry.Target.Tag ?? string.Empty),
             (entry, value, line, col) => entry.Target.Tag = JgsBuiltins.StrOf("Tag", value, line, col));
