@@ -14,9 +14,13 @@ namespace JGraph.Scripting.Jgs;
 /// </remarks>
 internal sealed class JgsWarningState
 {
+    /// <summary>The state R2025b's <c>warning('error', id)</c> sets, as the query spells it.</summary>
+    public const string ErrorState = "error";
+
     // The identifiers a script has set explicitly, in the order it set them: that order is what a
-    // query of 'all' lists, after the default.
-    private readonly Dictionary<string, bool> _states = new(StringComparer.Ordinal);
+    // query of 'all' lists, after the default. The value is "on", "off" or "error" (open item 189:
+    // R2025b's warning('error', id) is a third state, which turns the warning into an error).
+    private readonly Dictionary<string, string> _states = new(StringComparer.Ordinal);
     private readonly List<string> _order = [];
 
     public JgsWarningState()
@@ -37,36 +41,58 @@ internal sealed class JgsWarningState
     /// <summary>The identifier of the last warning raised, or empty when it had none.</summary>
     public string LastIdentifier { get; set; } = string.Empty;
 
-    /// <summary>Whether a warning under <paramref name="identifier"/> would be shown.</summary>
+    /// <summary>
+    /// Whether a warning under <paramref name="identifier"/> would be shown. An identifier in the
+    /// error state counts as on here: a caller that cannot raise an error (a destructor, a callback's
+    /// report) still shows the warning rather than swallowing it.
+    /// </summary>
     public bool IsOn(string identifier) =>
-        _states.TryGetValue(identifier, out bool on) ? on : DefaultOn;
+        _states.TryGetValue(identifier, out string? state) ? state != "off" : DefaultOn;
+
+    /// <summary>
+    /// Whether <c>warning('error', id)</c> has turned warnings under <paramref name="identifier"/>
+    /// into errors. Never true for an empty identifier: R2025b refuses <c>'all'</c> with the error
+    /// state, so a warning without an identifier always stays a warning.
+    /// </summary>
+    public bool IsError(string identifier) =>
+        identifier.Length > 0 && _states.TryGetValue(identifier, out string? state) && state == ErrorState;
+
+    /// <summary>The state an identifier is in, as a query answers it: "on", "off" or "error".</summary>
+    public string StateOf(string identifier) =>
+        _states.TryGetValue(identifier, out string? state) ? state : DefaultOn ? "on" : "off";
 
     /// <summary>
     /// Turns one identifier on or off; <c>'all'</c> resets the default and forgets every explicit
     /// setting, which is what MATLAB's <c>warning('off', 'all')</c> does to the table.
     /// </summary>
-    public void Set(string identifier, bool on)
+    public void Set(string identifier, bool on) => SetState(identifier, on ? "on" : "off");
+
+    /// <summary>
+    /// Puts one identifier in "on", "off" or "error"; <c>'all'</c> takes only on or off and resets
+    /// the table (measured R2025b: warning('on', 'all') forgets an identifier's error state too).
+    /// </summary>
+    public void SetState(string identifier, string state)
     {
         if (identifier == "all")
         {
-            DefaultOn = on;
+            DefaultOn = state != "off";
             _states.Clear();
             _order.Clear();
             return;
         }
 
-        if (_states.TryAdd(identifier, on))
+        if (_states.TryAdd(identifier, state))
         {
             _order.Add(identifier);
         }
         else
         {
-            _states[identifier] = on;
+            _states[identifier] = state;
         }
     }
 
-    /// <summary>Every explicit setting, in the order it was made.</summary>
-    public IEnumerable<(string Identifier, bool On)> Explicit()
+    /// <summary>Every explicit setting, in the order it was made, with its state's word.</summary>
+    public IEnumerable<(string Identifier, string State)> Explicit()
     {
         foreach (string identifier in _order)
         {

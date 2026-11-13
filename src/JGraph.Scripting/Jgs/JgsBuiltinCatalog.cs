@@ -1096,7 +1096,7 @@ public static class JgsBuiltinCatalog
         Add("deal", "Hands one value to every output, or one value each: [a, b] = deal(1, 2).", P("value"), Opt("more..."));
         Add("str2double", "Parses text as a number (Inf, NaN, thousands commas and complex forms included), or NaN when it is not one.", P("text"));
         Add("error", "Stops the script with a message (accepts a format string and an optional 'id:sub' first).", P("message"), Opt("args..."));
-        Add("warning", "Raises a warning: warning(msg), warning(fmt, args...), warning('pkg:id', fmt, ...). warning('off' | 'on', id) switches one identifier or 'all' and hands back the state it replaced; s = warning('query', id) is a struct with identifier and state, and warning(s) restores it.", P("message"), Opt("args..."));
+        Add("warning", "Raises a warning: warning(msg), warning(fmt, args...), warning('pkg:id', fmt, ...). warning('off' | 'on', id) switches one identifier or 'all' and hands back the state it replaced; warning('error', id) makes that identifier's warnings errors; s = warning('query', id) is a struct with identifier and state, and warning(s) restores it.", P("message"), Opt("args..."));
         Add("assert", "Stops the script when the condition is false, with an optional message.", P("condition"), Opt("message"));
         Add("cell", "Creates a cell array of the given size, filled with empty arrays.", P("count"), Opt("count2"));
         Add("struct", "Builds a struct from name/value pairs; a cell value spreads across a struct array, so struct('a', {1, 2}) is 1-by-2 and struct('a', {}) is empty.", Opt("name"), Opt("value"));

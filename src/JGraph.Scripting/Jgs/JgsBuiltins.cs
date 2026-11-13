@@ -1279,6 +1279,11 @@ internal static partial class JgsBuiltins
             }
 
             string format = Str("sprintf", args, 0, line, col);
+            if (dialect!.IsMatlab)
+            {
+                RefusePrintfContainers(args, 1, line, col);
+            }
+
             try
             {
                 // MATLAB flattens array arguments and cycles the format over them; JGS stays strict.
@@ -1315,6 +1320,11 @@ internal static partial class JgsBuiltins
             }
 
             string format = Str("fprintf", args, start, line, col);
+            if (dialect!.IsMatlab)
+            {
+                RefusePrintfContainers(args, start + 1, line, col);
+            }
+
             string text;
             try
             {
@@ -7079,5 +7089,26 @@ internal static partial class JgsBuiltins
         axes.ZAxis.LimitMethod = method;
         axes.RAxis.LimitMethod = method;
         axes.RecomputeDataBounds();
+    }
+
+    /// <summary>
+    /// R2025b's sprintf and fprintf refuse a cell or a struct among the values, before writing
+    /// anything and whether or not a conversion would reach it (measured, open item 184):
+    /// <c>sprintf('abc', {1})</c> is MATLAB:printf:invalidInputType.
+    /// </summary>
+    private static void RefusePrintfContainers(IReadOnlyList<JgsValue> args, int start, int line, int col)
+    {
+        for (int i = start; i < args.Count; i++)
+        {
+            JgsValue arg = args[i];
+            string? kind = arg.Type == JgsType.Cell ? "cell"
+                : arg.Type == JgsType.Struct && !arg.IsTime && !arg.IsCategorical && arg.ClassName is null or "struct" ? "struct"
+                : null;
+            if (kind is not null)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:printf:invalidInputType",
+                    $"Function is not defined for '{kind}' inputs.");
+            }
+        }
     }
 }

@@ -39,33 +39,84 @@ internal static class JgsSprintf
     /// </summary>
     public static string FormatMatlab(string format, IReadOnlyList<JgsValue> args)
     {
+        // Each value remembers the argument it came from (open item 184): R2025b's %s takes the run
+        // of character codes left in one numeric argument, so fprintf('arg%d\t%s\n', 2, [2 3]) writes
+        // both codes under the one %s, while sprintf('%s,%s;', 65, 66, 67) is 'A,B;C,'. An empty
+        // argument is one value that writes nothing (open item 295), marked EmptyGroup.
         var stream = new List<JgsValue>();
+        var groups = new List<int>();
+        int group = 0;
+        void Add(JgsValue value, int from)
+        {
+            stream.Add(value);
+            groups.Add(from);
+        }
+
+        void AddEmpty() => Add(JgsValue.Str(string.Empty), EmptyGroup);
+
         foreach (JgsValue arg in args)
         {
+            group++;
+
             // A char matrix feeds one piece of text, not one value per code point (M105) — and the
             // text is its storage order, so fprintf('%s', ['a  '; 'bcd']) prints 'ab c d' exactly as
             // MATLAB's does. Spreading it would have handed %s the numbers underneath.
             if (arg.IsCharMatrix)
             {
-                stream.Add(JgsValue.Str(arg.CharMatrixText()));
+                string text = arg.CharMatrixText();
+                if (text.Length == 0)
+                {
+                    AddEmpty();
+                }
+                else
+                {
+                    Add(JgsValue.Str(text), group);
+                }
             }
             else if (arg.IsTime)
             {
                 // A datetime or duration prints as its text, one piece per element (open item 134:
                 // sprintf('%s', seconds(1.4142135624)) is '1.4142 sec' in R2025b).
                 int count = JgsBuiltins.IsCalendarDuration(arg) ? arg.AsStructArray.Length : arg.ArrayLength;
+                if (count == 0)
+                {
+                    AddEmpty();
+                }
+
                 for (int i = 0; i < count; i++)
                 {
-                    stream.Add(JgsValue.Str(JgsBuiltins.TimeText(arg, i)));
+                    Add(JgsValue.Str(JgsBuiltins.TimeText(arg, i)), group++);
                 }
             }
             else if (arg.Type == JgsType.Array)
             {
-                stream.AddRange(arg.BoxedElements());
+                JgsValue[] elements = arg.BoxedElements();
+                if (elements.Length == 0)
+                {
+                    AddEmpty();
+                }
+                else if (arg.IsStringArray)
+                {
+                    foreach (JgsValue element in elements)
+                    {
+                        Add(element, group++); // each string is its own piece of text
+                    }
+                }
+                else
+                {
+                    foreach (JgsValue element in elements)
+                    {
+                        Add(element, group);
+                    }
+                }
+            }
+            else if (arg.Type == JgsType.String && arg.AsString.Length == 0)
+            {
+                AddEmpty(); // '' takes a conversion and writes nothing, %d's included (measured)
             }
             else
             {
-                stream.Add(arg);
+                Add(arg, group);
             }
         }
 
@@ -74,7 +125,7 @@ internal static class JgsSprintf
         do
         {
             int before = at;
-            Emit(sb, format, stream, ref at, stopWhenExhausted: true, matlabRules: true);
+            Emit(sb, format, stream, ref at, stopWhenExhausted: true, matlabRules: true, groups);
             if (at == before)
             {
                 break; // the format consumes nothing — one pass is the whole answer
@@ -84,6 +135,9 @@ internal static class JgsSprintf
 
         return sb.ToString();
     }
+
+    /// <summary>The group of a value that stands for an empty argument: one conversion's worth of nothing.</summary>
+    private const int EmptyGroup = -1;
 
     /// <summary>
     /// Everything one specifier says about the value it prints, gathered between the <c>%</c> and the
@@ -103,9 +157,11 @@ internal static class JgsSprintf
     /// writable because MATLAB hands a numeric conversion the character codes of a text argument one
     /// at a time — <c>sprintf('%d', 'ab')</c> is <c>9798</c> — so a text value met by <c>%d</c> is
     /// spread into its codes in place and the rest of the format goes on over them.
+    /// <paramref name="groups"/>, on MATLAB's road only, runs beside the list and says which argument
+    /// each value came from, or <see cref="EmptyGroup"/> for an empty argument.
     /// </summary>
     private static void Emit(StringBuilder sb, string format, List<JgsValue> args, ref int argIndex,
-        bool stopWhenExhausted, bool matlabRules)
+        bool stopWhenExhausted, bool matlabRules, List<int>? groups = null)
     {
         bool positional = false;
         for (int i = 0; i < format.Length; i++)
@@ -207,7 +263,12 @@ internal static class JgsSprintf
             int width = 0;
             if (i < format.Length && format[i] == '*')
             {
-                width = TakeStarValue(format, args, ref argIndex, i);
+                if (TakeStarValue(format, args, groups, ref argIndex, i, stopWhenExhausted) is not { } star)
+                {
+                    return; // MATLAB stops where a '*' finds no value, as a conversion would
+                }
+
+                width = star;
                 if (width < 0)
                 {
                     leftAlign = true;
@@ -231,7 +292,12 @@ internal static class JgsSprintf
                 i++;
                 if (i < format.Length && format[i] == '*')
                 {
-                    precision = Math.Max(0, TakeStarValue(format, args, ref argIndex, i));
+                    if (TakeStarValue(format, args, groups, ref argIndex, i, stopWhenExhausted) is not { } star)
+                    {
+                        return;
+                    }
+
+                    precision = Math.Max(0, star);
                     i++;
                 }
                 else
@@ -266,16 +332,35 @@ internal static class JgsSprintf
                     + "then a width and a .precision).");
             }
 
-            if (position < 0 && matlabRules && verb is not ('s' or 'c') && argIndex < args.Count
-                && args[argIndex].Type == JgsType.String)
+            var spec = new Spec(leftAlign, zeroPad, forceSign, spaceSign, alternate, width, precision);
+            int next = position >= 0 ? position : argIndex;
+            if (groups is not null && next < args.Count && groups[next] == EmptyGroup)
             {
-                // Text met by a numeric conversion becomes its character codes, one value each; an
-                // empty text is no values at all.
+                if (position >= 0)
+                {
+                    return; // R2025b writes nothing at all for sprintf('%1$d|', [])
+                }
+
+                // An empty argument fills one conversion with nothing, padded to its width, whatever
+                // the conversion (open item 295: sprintf('%.17g ', []) is ' ', '%05d|' is '00000|').
+                argIndex++;
+                sb.Append(PadText(string.Empty, spec, spec.ZeroPad ? '0' : ' '));
+                continue;
+            }
+
+            // Text met by a numeric conversion becomes its character codes, one value each; so does
+            // text met by %c, which takes one character (sprintf('%c|', 'abc') is 'a|b|c|', measured).
+            if (position < 0 && matlabRules && argIndex < args.Count && args[argIndex].Type == JgsType.String
+                && (verb is not ('s' or 'c') || (verb == 'c' && args[argIndex].AsString.Length > 1)))
+            {
                 string text = args[argIndex].AsString;
+                int from = groups?[argIndex] ?? 0;
                 args.RemoveAt(argIndex);
+                groups?.RemoveAt(argIndex);
                 for (int k = text.Length - 1; k >= 0; k--)
                 {
                     args.Insert(argIndex, JgsValue.Number(text[k]));
+                    groups?.Insert(argIndex, from);
                 }
             }
 
@@ -289,7 +374,29 @@ internal static class JgsSprintf
                 throw new FormatException($"sprintf format needs more arguments: nothing left for \"{format[specStart..(i + 1)]}\".");
             }
 
-            var spec = new Spec(leftAlign, zeroPad, forceSign, spaceSign, alternate, width, precision);
+            // %s over numbers takes the whole run of character codes left in the argument at hand
+            // (open item 184): '%s|' of [65 66 67.5 68] is 'AB|6.750000e+01|D|'. A value that is not a
+            // code is left to Render, which writes it as %e.
+            if (groups is not null && position < 0 && verb == 's' && CodeOf(args[argIndex]) is not null)
+            {
+                int run = groups[argIndex];
+                var text = new StringBuilder();
+                while (argIndex < args.Count && groups[argIndex] == run && CodeOf(args[argIndex]) is { } code)
+                {
+                    text.Append(code);
+                    argIndex++;
+                }
+
+                string body = text.ToString();
+                if (spec.Precision >= 0 && body.Length > spec.Precision)
+                {
+                    body = body[..spec.Precision];
+                }
+
+                sb.Append(PadText(body, spec, spec.ZeroPad ? '0' : ' '));
+                continue;
+            }
+
             JgsValue arg = position >= 0 ? args[position] : args[argIndex++];
             sb.Append(Render(verb, spec, arg, matlabRules));
         }
@@ -305,11 +412,27 @@ internal static class JgsSprintf
     /// negative width means left-aligned, which is C's rule and the reason this hands the sign back
     /// rather than dropping it.
     /// </summary>
-    private static int TakeStarValue(string format, List<JgsValue> args, ref int argIndex, int at)
+    /// <remarks>
+    /// On MATLAB's road a '*' with no value left stops the pass (null), and one that meets an empty
+    /// argument takes it as no width at all (measured: sprintf('%*d|', 5, []) is five blanks and a bar).
+    /// </remarks>
+    private static int? TakeStarValue(string format, List<JgsValue> args, List<int>? groups, ref int argIndex, int at,
+        bool stopWhenExhausted)
     {
         if (argIndex >= args.Count)
         {
+            if (stopWhenExhausted)
+            {
+                return null;
+            }
+
             throw new FormatException($"sprintf format needs a width for the '*' at position {at + 1}.");
+        }
+
+        if (groups is not null && groups[argIndex] == EmptyGroup)
+        {
+            argIndex++;
+            return 0;
         }
 
         JgsValue given = args[argIndex++];
@@ -341,10 +464,11 @@ internal static class JgsSprintf
             }
             else if (arg.Type is JgsType.Number or JgsType.Bool)
             {
-                // MATLAB reads a number under %s as a character code, and one that is not a code —
-                // a fraction, a negative — as if %e had been asked for, flags and width included.
+                // MATLAB reads a number under %s or %c as a character code, and one that is not a
+                // code — a fraction, a negative, NaN, past 65535 — as if %e had been asked for, flags
+                // and width included (measured for %c too, open item 184: '%+c|' of 2.5 is '+2.500000e+00|').
                 double code = arg.AsNumber;
-                if (verb == 's' && matlabRules && !IsCharacterCode(code))
+                if (matlabRules && !IsCharacterCode(code))
                 {
                     return Render('e', spec, arg, matlabRules); // Inf and NaN keep their spelling
                 }
@@ -411,9 +535,26 @@ internal static class JgsSprintf
         return RenderFloat(verb, spec, value);
     }
 
-    /// <summary>Whether <paramref name="value"/> is a whole number a character can stand for.</summary>
+    /// <summary>
+    /// Whether <paramref name="value"/> is a whole number a MATLAB character can stand for: 0 to
+    /// 65535, since a MATLAB char is one UTF-16 unit (measured: sprintf('%s', 65536) is
+    /// '6.553600e+04', and 55296, a lone surrogate, is a character).
+    /// </summary>
     private static bool IsCharacterCode(double value) =>
-        value == Math.Floor(value) && value >= 0 && value <= 0x10FFFF;
+        value == Math.Floor(value) && value >= 0 && value <= 0xFFFF;
+
+    /// <summary>The character a number, logical or complex value (by its real part) stands for under %s, or null when it is not a code.</summary>
+    private static char? CodeOf(JgsValue value)
+    {
+        double number = value.Type switch
+        {
+            JgsType.Number or JgsType.Bool => value.AsNumber,
+            JgsType.Complex => value.AsComplex.Real,
+            _ => double.NaN,
+        };
+
+        return IsCharacterCode(number) ? (char)(int)number : null;
+    }
 
     /// <summary>The character with code <paramref name="value"/>, past the basic plane included.</summary>
     private static string CharacterOf(double value) =>

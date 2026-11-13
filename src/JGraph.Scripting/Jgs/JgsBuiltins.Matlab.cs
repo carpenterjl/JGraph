@@ -1399,7 +1399,12 @@ internal static partial class JgsBuiltins
                 if (fields.TryGetValue("identifier", out JgsValue? id) && id.Type == JgsType.String
                     && fields.TryGetValue("state", out JgsValue? on) && on.Type == JgsType.String)
                 {
-                    state.Set(id.AsString, on.AsString.Equals("on", StringComparison.OrdinalIgnoreCase));
+                    // A struct a query handed out may carry the error state, and puts it back
+                    // (open item 189, measured R2025b).
+                    string word = on.AsString.ToLowerInvariant();
+                    state.SetState(id.AsString, word == JgsWarningState.ErrorState && id.AsString != "all"
+                        ? JgsWarningState.ErrorState
+                        : word == "on" ? "on" : "off");
                 }
             }
 
@@ -1408,8 +1413,18 @@ internal static partial class JgsBuiltins
 
         string first = Str("warning", args, 0, line, col);
         string verb = first.ToLowerInvariant();
-        if (verb is "on" or "off" or "query")
+
+        // warning('error', id) is the third state (open item 189, measured R2025b): a warning under
+        // id is raised as an error with id and the warning's message. warning('error') alone is
+        // still a message whose text is "error", as R2025b's is.
+        bool errorVerb = verb == JgsWarningState.ErrorState && args.Count > 1;
+        if (verb is "on" or "off" or "query" || errorVerb)
         {
+            if (errorVerb && args.Count > 2)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:maxrhs", "Too many input arguments.");
+            }
+
             ArityRange("warning", args, 1, 2, line, col);
             if (args.Count == 2 && args[1].Type != JgsType.String)
             {
@@ -1417,7 +1432,14 @@ internal static partial class JgsBuiltins
             }
 
             string identifier = args.Count == 2 ? args[1].AsString : "all";
-            if (!IsWarningSetting(identifier))
+            if (errorVerb && identifier == "all")
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:warning:cannotUseAllWithError",
+                    "The 'all' message identifier cannot be used with the 'error' warning setting.");
+            }
+
+            // The two settings are switched on and off only; the error state is for identifiers.
+            if (!IsWarningSetting(identifier) || (errorVerb && identifier is "backtrace" or "verbose"))
             {
                 throw new JgsRuntimeException(line, col, "MATLAB:warning:unknownSettingOrId",
                     $"Unknown setting or incorrect message identifier '{identifier}'.");
@@ -1429,8 +1451,8 @@ internal static partial class JgsBuiltins
             }
 
             // The answer is the state being replaced, which is why it is read before the change.
-            JgsValue previous = identifier == "all" ? WarningTable(state) : WarningEntry(identifier, state.IsOn(identifier));
-            state.Set(identifier, verb == "on");
+            JgsValue previous = identifier == "all" ? WarningTable(state) : WarningEntry(identifier, state.StateOf(identifier));
+            state.SetState(identifier, verb);
             return wanted > 0 ? [previous] : [];
         }
 
@@ -1439,6 +1461,14 @@ internal static partial class JgsBuiltins
         bool hasIdentifier = args.Count > 1 && IsErrorIdentifier(first);
         string message = FormatMessage(env, host, dialect, "warning", args, hasIdentifier ? 1 : 0, hasIdentifier, line, col);
         string under = hasIdentifier ? first : string.Empty;
+
+        // An identifier in the error state raises the warning as an error under its own identifier,
+        // and lastwarn is left as it was (measured R2025b, open item 189).
+        if (state.IsError(under))
+        {
+            throw new JgsRuntimeException(line, col, under, message);
+        }
+
         state.Record(under, message);
         if (state.IsOn(under))
         {
@@ -1467,12 +1497,12 @@ internal static partial class JgsBuiltins
     {
         if (wanted > 0)
         {
-            return [identifier == "all" ? WarningTable(state) : WarningEntry(identifier, state.IsOn(identifier))];
+            return [identifier == "all" ? WarningTable(state) : WarningEntry(identifier, state.StateOf(identifier))];
         }
 
         if (identifier != "all")
         {
-            host.print($"The state of warning '{identifier}' is '{(state.IsOn(identifier) ? "on" : "off")}'.");
+            host.print($"The state of warning '{identifier}' is '{state.StateOf(identifier)}'.");
             return [];
         }
 
@@ -1480,35 +1510,36 @@ internal static partial class JgsBuiltins
         host.print(string.Empty);
         host.print("    State  Warning Identifier");
         host.print(string.Empty);
-        foreach ((string id, bool on) in state.Explicit())
+        string defaultState = state.DefaultOn ? "on" : "off";
+        foreach ((string id, string setting) in state.Explicit())
         {
-            if (on != state.DefaultOn)
+            if (setting != defaultState)
             {
-                host.print($"    {(on ? " on" : "off"),5}  {id}");
+                host.print($"    {setting,5}  {id}");
             }
         }
 
         return [];
     }
 
-    /// <summary>One row of the state table: <c>identifier</c> and <c>state</c>.</summary>
-    private static JgsValue WarningEntry(string identifier, bool on) =>
-        JgsValue.Struct(WarningFields(identifier, on));
+    /// <summary>One row of the state table: <c>identifier</c> and <c>state</c> ("on", "off" or "error").</summary>
+    private static JgsValue WarningEntry(string identifier, string setting) =>
+        JgsValue.Struct(WarningFields(identifier, setting));
 
-    private static Dictionary<string, JgsValue> WarningFields(string identifier, bool on) =>
+    private static Dictionary<string, JgsValue> WarningFields(string identifier, string setting) =>
         new(StringComparer.Ordinal)
         {
             ["identifier"] = JgsValue.Str(identifier),
-            ["state"] = JgsValue.Str(on ? "on" : "off"),
+            ["state"] = JgsValue.Str(setting),
         };
 
     /// <summary>The whole table as a column of structs: the default first, then every explicit setting.</summary>
     private static JgsValue WarningTable(JgsWarningState state)
     {
-        var rows = new List<Dictionary<string, JgsValue>> { WarningFields("all", state.DefaultOn) };
-        foreach ((string id, bool on) in state.Explicit())
+        var rows = new List<Dictionary<string, JgsValue>> { WarningFields("all", state.DefaultOn ? "on" : "off") };
+        foreach ((string id, string setting) in state.Explicit())
         {
-            rows.Add(WarningFields(id, on));
+            rows.Add(WarningFields(id, setting));
         }
 
         return JgsValue.StructArray(new JgsStructArray([.. rows]), rows.Count, 1);

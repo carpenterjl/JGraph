@@ -1,0 +1,73 @@
+CHK|set_error_returns|struct[1 1]{(identifier=char[1 7]'oi189:a',state=onoff on)}|exact
+CHK|query_error|struct[1 1]{(identifier=char[1 7]'oi189:a',state=char[1 5]'error')}|exact
+CHK|query_error_stmt|The state of warning 'oi189:a' is 'error'.|exact
+CHK|raise_format|error MException id=oi189:a lastwarn=|exact
+CHK|raise_format_msg|hello 5 and abc|exact
+CHK|raise_plain|error MException id=oi189:a lastwarn=|exact
+CHK|raise_plain_msg|plain text|exact
+CHK|raise_in_fn|error MException id=oi189:a lastwarn=|exact
+CHK|raise_in_fn_top|oi189_in_fn|exact
+CHK|raise_in_fn_msg|from a function|exact
+CHK|raise_tab|error MException id=oi189:a lastwarn=|exact
+CHK|raise_tab_msg|tab here 7%|exact
+CHK|raise_newline|error MException id=oi189:a lastwarn=|exact
+CHK|raise_newline_msg|line1 line2|exact
+CHK|other_id|warned id=oi189:b shown=1|exact
+CHK|other_id_msg|other id|exact
+CHK|no_id|warned id= shown=1|exact
+CHK|no_id_msg|no identifier here|exact
+CHK|set_error_again|struct[1 1]{(identifier=char[1 7]'oi189:a',state=char[1 5]'error')}|exact
+CHK|set_off_from_error|struct[1 1]{(identifier=char[1 7]'oi189:a',state=char[1 5]'error')}|exact
+CHK|raise_off|warned id=oi189:a shown=0|exact
+CHK|raise_off_msg|now off|exact
+CHK|set_on_from_off|struct[1 1]{(identifier=char[1 7]'oi189:a',state=onoff off)}|exact
+CHK|raise_on|warned id=oi189:a shown=1|exact
+CHK|raise_on_msg|now on|exact
+CHK|restored_by_struct|struct[1 1]{(identifier=char[1 7]'oi189:a',state=char[1 5]'error')}|exact
+CHK|raise_restored|error MException id=oi189:a lastwarn=|exact
+CHK|raise_restored_msg|restored error|exact
+CHK|error_all|MATLAB:warning:cannotUseAllWithError|exact
+CHK|error_all_msg|The 'all' message identifier cannot be used with the 'error' warning setting.|exact
+CHK|after_all_refused|struct[1 1]{(identifier=char[1 7]'oi189:c',state=onoff on)}|exact
+CHK|on_all_forgets|struct[1 1]{(identifier=char[1 7]'oi189:q',state=onoff on)}|exact
+CHK|off_all_forgets|struct[1 1]{(identifier=char[1 7]'oi189:r',state=onoff off)}|exact
+CHK|off_all_raise|warned id=oi189:r shown=0|exact
+CHK|off_all_raise_msg|silent now|exact
+CHK|error_under_off_all|error MException id=oi189:f lastwarn=|exact
+CHK|error_under_off_all_msg|error though all off|exact
+CHK|other_under_off_all|warned id=oi189:g shown=0|exact
+CHK|other_under_off_all_msg|silent|exact
+CHK|upper_verb|struct[1 1]{(identifier=char[1 7]'oi189:h',state=onoff on)}|exact
+CHK|upper_verb_query|struct[1 1]{(identifier=char[1 7]'oi189:h',state=char[1 5]'error')}|exact
+CHK|upper_verb_raise|error MException id=oi189:h lastwarn=|exact
+CHK|upper_verb_raise_msg|upper case verb|exact
+CHK|error_backtrace|MATLAB:warning:unknownSettingOrId|exact
+CHK|error_backtrace_msg|Unknown setting or incorrect message identifier 'backtrace'.|exact
+CHK|error_verbose|MATLAB:warning:unknownSettingOrId|exact
+CHK|error_verbose_msg|Unknown setting or incorrect message identifier 'verbose'.|exact
+CHK|error_bad_id|MATLAB:warning:unknownSettingOrId|exact
+CHK|error_bad_id_msg|Unknown setting or incorrect message identifier 'noColon'.|exact
+CHK|error_number|MATLAB:badopt|exact
+CHK|error_number_msg|Unknown command option.|exact
+CHK|error_three|MATLAB:maxrhs|exact
+CHK|error_three_msg|Too many input arguments.|exact
+CHK|statement_silent|char[0 0]''|exact
+CHK|one_arg_error|warned id= shown=1|exact
+CHK|one_arg_error_msg|error|exact
+CHK|backtrace_off|error MException id=oi189:j lastwarn=|exact
+CHK|backtrace_off_msg|backtrace off|exact
+CHK|verbose_on|error MException id=oi189:j lastwarn=|exact
+CHK|verbose_on_msg|verbose on|exact
+CHK|engine_rmpath|error MException id=MATLAB:rmpath:DirNotFound lastwarn=|exact
+CHK|engine_rmpath_on|warned id=MATLAB:rmpath:DirNotFound shown=1|exact
+CHK|engine_colon|error MException id=MATLAB:colon:nonIntegerIndex lastwarn=|exact
+CHK|engine_colon_msg|Integer operands are required for colon operator when used as index.|exact
+CHK|engine_colon_on|warned id=MATLAB:colon:nonIntegerIndex shown=1|exact
+CHK|engine_colon_on_msg|Integer operands are required for colon operator when used as index.|exact
+CHK|caught|MException oi189:k|exact
+CHK|caught_msg|caught here|exact
+CHK|caught_report|Error using warning/caught here|div=ADR0346|diverges|caught here
+CHK|table_m|struct[1 1]{(identifier=char[1 7]'oi189:m',state=char[1 5]'error')}|exact
+CHK|table_n|struct[1 1]{(identifier=char[1 7]'oi189:n',state=onoff off)}|exact
+CHK|table_all|struct[1 1]{(identifier=char[1 3]'all',state=onoff on)}|exact
+CHK|restored_whole_table|struct[1 1]{(identifier=char[1 7]'oi189:m',state=onoff on)}|exact

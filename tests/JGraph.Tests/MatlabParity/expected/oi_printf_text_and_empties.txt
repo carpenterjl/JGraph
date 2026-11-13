@@ -1,0 +1,118 @@
+CHK|k6_s|double[1 8] [97 114 103 50 9 2 3 10]|exact
+CHK|k6_f|double[1 8] [97 114 103 50 9 2 3 10]|exact
+CHK|s_hi|char[1 3]'Hi/'|exact
+CHK|s_hi_f|char[1 3]'Hi/'|exact
+CHK|s_3p5|char[1 12]'3.500000e+00'|exact
+CHK|s_neg|char[1 13]'-1.000000e+00'|exact
+CHK|s_pi|char[1 12]'3.141593e+00'|exact
+CHK|s_fracs|char[1 24]'1.500000e+002.500000e+00'|exact
+CHK|s_mix_frac|char[1 17]'A/6.650000e+01/C/'|exact
+CHK|s_run_frac|char[1 19]'AB/6.750000e+01/DE/'|exact
+CHK|s_neg_in_run|char[1 18]'A/-1.000000e+00/B/'|exact
+CHK|s_nan_in_run|char[1 8]'A/NaN/B/'|exact
+CHK|s_inf_in_run|char[1 8]'A/Inf/B/'|exact
+CHK|s_logical|double[1 4] [1 0 1 124]|exact
+CHK|s_true_frac|double[1 15] [1 124 50 46 53 48 48 48 48 48 101 43 48 48 124]|exact
+CHK|s_int8|char[1 19]'AB/-3.000000e+00/C/'|exact
+CHK|s_uint8|char[1 3]'Hi/'|exact
+CHK|s_int32_neg|char[1 13]'-5.000000e+00'|exact
+CHK|s_single|char[1 15]'A/2.500000e+00/'|exact
+CHK|s_uint16|double[1 2] [960 961]|exact
+CHK|s_complex|char[1 1]'A'|exact
+CHK|s_matrix|char[1 5]'ACBD/'|exact
+CHK|s_width|char[1 6]'   AB/'|exact
+CHK|s_left|char[1 6]'AB   /'|exact
+CHK|s_precision|char[1 2]'A/'|exact
+CHK|s_width_frac|char[1 27]'    AB/2.500000e+00/     C/'|exact
+CHK|s_precision_frac|char[1 10]'2.5e+00/A/'|exact
+CHK|s_plus_frac|char[1 16]'+2.500000e+00/A/'|exact
+CHK|s_p2_frac|char[1 9]'2.50e+00/'|exact
+CHK|s_code_65535|double[1 1] 65535|exact
+CHK|s_code_65536|char[1 12]'6.553600e+04'|exact
+CHK|s_code_surrogate|double[1 1] 55296|exact
+CHK|s_code_10ffff|char[1 12]'1.114111e+06'|exact
+CHK|s_negzero|double[1 1] 0|exact
+CHK|s_char_then_num|char[1 5]'ab/B/'|exact
+CHK|s_num_then_char|char[1 6]'AB/cd/'|exact
+CHK|d_s_args|char[1 7]'1 AB/4 '|exact
+CHK|d_s_one_arg|char[1 5]'1 AB/'|exact
+CHK|d_s_codes|double[1 5] [49 32 2 3 124]|exact
+CHK|s_d|char[1 5]'AB 5/'|exact
+CHK|s_name_value|char[1 5]'xy=1\n'|exact
+CHK|s_s_arrays|char[1 6]'AB,CD;'|exact
+CHK|s_s_scalars|char[1 6]'A,B;C,'|exact
+CHK|s_scalars|char[1 3]'ABC'|exact
+CHK|s_strings|char[1 6]'ab/cd/'|exact
+CHK|s_string_num|char[1 6]'ab/AB/'|exact
+CHK|x_s|char[1 6]'ff AB/'|exact
+CHK|e_s|char[1 39]'1.000000e+00 2.500000e+00/3.500000e+00 '|exact
+CHK|d_frac|char[1 17]'1/2.500000e+00/3/'|exact
+CHK|c_hi|char[1 4]'H/i/'|exact
+CHK|c_frac|char[1 15]'6.550000e+01/B/'|exact
+CHK|c_neg|char[1 16]'-2.000000e+00/B/'|exact
+CHK|c_nan|char[1 3]'NaN'|exact
+CHK|c_70000|char[1 12]'7.000000e+04'|exact
+CHK|c_plus_frac|char[1 14]'+2.500000e+00/'|exact
+CHK|c_text|char[1 6]'a/b/c/'|exact
+CHK|c_text_f|char[1 6]'a/b/c/'|exact
+CHK|c_texts|char[1 4]'ab/A'|exact
+CHK|c_char_matrix|char[1 8]'a/c/b/d/'|exact
+CHK|c_d|char[1 8]'A66/C68/'|exact
+CHK|c_s_codes|char[1 4]'ABC/'|exact
+CHK|s_c_codes|char[1 3]'ABC'|exact
+CHK|c_s_texts|char[1 7]'abc/de/'|exact
+CHK|s_c_texts|char[1 6]'abcd/e'|exact
+CHK|d_s_text|char[1 6]'97 bc/'|exact
+CHK|d_text_matrix|char[1 13]'97/99/98/100/'|exact
+CHK|s_cell|MATLAB:printf:invalidInputType|exact
+CHK|s_cell_msg|Function is not defined for 'cell' inputs.|exact
+CHK|cell_unused|MATLAB:printf:invalidInputType|exact
+CHK|cell_unused_msg|Function is not defined for 'cell' inputs.|exact
+CHK|cell_late_f|MATLAB:printf:invalidInputType|exact
+CHK|cell_late_f_msg|Function is not defined for 'cell' inputs.|exact
+CHK|struct_arg|MATLAB:printf:invalidInputType|exact
+CHK|struct_arg_msg|Function is not defined for 'struct' inputs.|exact
+CHK|e_g17|char[1 1]' '|exact
+CHK|e_g17_f|char[1 1]' '|exact
+CHK|e_d|char[1 0]''|exact
+CHK|e_around|char[1 2]'ab'|exact
+CHK|e_two_conversions|char[1 1]','|exact
+CHK|e_text_between|char[1 10]'lead  mid '|exact
+CHK|e_s_then_d|char[1 2]'AB'|exact
+CHK|e_newline|double[1 1] 10|exact
+CHK|e_escapes|double[1 4] [97 9 98 10]|exact
+CHK|e_percent|char[1 2]'%%'|exact
+CHK|e_trailing_percent|char[1 2]'x%'|exact
+CHK|e_zeros_0x3|char[1 2]'[]'|exact
+CHK|e_zeros_1x0|char[1 2]'[]'|exact
+CHK|e_then_value|double[1 3] [32 53 10]|exact
+CHK|e_value_between|char[1 7]'<><5><>'|exact
+CHK|e_two_args|char[1 2]'//'|exact
+CHK|e_width|char[1 6]'     /'|exact
+CHK|e_left|char[1 6]'     /'|exact
+CHK|e_zero_flag|char[1 6]'00000/'|exact
+CHK|e_plus_flag|char[1 1]'/'|exact
+CHK|e_float_width|char[1 9]'        /'|exact
+CHK|e_s_width|char[1 6]'     /'|exact
+CHK|e_c_width|char[1 4]'   /'|exact
+CHK|e_star|char[1 0]''|exact
+CHK|e_star_width|char[1 6]'     /'|exact
+CHK|e_star_precision|char[1 1]'/'|exact
+CHK|star_none|char[1 0]''|exact
+CHK|star_only|char[1 0]''|exact
+CHK|e_positional|char[1 0]''|exact
+CHK|e_empty_char|char[1 2]'ab'|exact
+CHK|e_empty_char_d|char[1 1]'/'|exact
+CHK|e_empty_char_zero|char[1 6]'00000/'|exact
+CHK|e_chars_between|char[1 4]',x,,'|exact
+CHK|e_c_text|char[1 5]',a,b,'|exact
+CHK|e_string0|char[1 1]'/'|exact
+CHK|e_string0_then|char[1 3]',y,'|exact
+CHK|e_logical0|char[1 3]',1,'|exact
+CHK|e_then_range|char[1 7]',1,2,3,'|exact
+CHK|e_d_then_text|char[1 4]' ab/'|exact
+CHK|e_only_literal|char[1 9]'just text'|exact
+CHK|n_no_args|char[1 1]'a'|exact
+CHK|n_width_no_args|char[1 0]''|exact
+CHK|r_runs_out|char[1 6]'x and '|exact
+CHK|r_cycle|char[1 8]'L1M2RL3M'|exact

@@ -58,9 +58,19 @@ internal static partial class JgsBuiltins
     internal static bool IsMatFile(JgsValue value) =>
         value.Type == JgsType.Struct && value.ClassName == MatFileClassName;
 
-    /// <summary>Records a warning for <c>lastwarn</c> and writes it when its identifier is on — the shape every builtin's warning takes.</summary>
+    /// <summary>
+    /// Records a warning for <c>lastwarn</c> and writes it when its identifier is on — the shape every
+    /// builtin's warning takes. An identifier a script put in the error state raises the warning as
+    /// an error instead, with lastwarn left alone (open item 189, measured R2025b with rmpath's
+    /// MATLAB:rmpath:DirNotFound and the colon's MATLAB:colon:nonIntegerIndex).
+    /// </summary>
     internal static void Warn(JGraphScriptGlobals host, string identifier, string text)
     {
+        if (host.Warnings.IsError(identifier))
+        {
+            throw new JgsRuntimeException(0, 0, identifier, text);
+        }
+
         host.Warnings.Record(identifier, text);
         if (host.Warnings.IsOn(identifier))
         {
