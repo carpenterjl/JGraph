@@ -195,8 +195,12 @@ A grid's child shows its `Position` and does not edit it (`DisabledPropertiesInG
 
 - The mouse in the real window: placing, dragging, spanning, the context menu and configuring are
   tested through `DesignGestures` and `DesignGridConfigure`, which the canvas only feeds.
-- A grid's pixels against App Designer's canvas: the cells are the shared layout's, which differs from
-  R2025b's own grid for some `'fit'` tracks (open item 153).
+
+Closed since: **a grid's pixels against R2025b's own grid for some `'fit'` tracks** (open item 153,
+ADR 0347). The shared layout `UiGridMath` is now transcribed from R2025b's runtime grid code, with
+node's answers kept as `GridFitOracle.json` and the four differences measured headless in R2025b
+(fixture `u5_grid_fit`). A design-time grid takes the same arithmetic, an empty `'fit'` track still
+10 pixels. The canvas itself was not compared with App Designer's in a window.
 
 ## Consequences
 
@@ -238,6 +242,5 @@ A grid's child shows its `Position` and does not edit it (`DisabledPropertiesInG
 ## Still open
 
 - Responsive apps (DS4b, ADR 0249).
-- The runtime's `'fit'` arithmetic against R2025b's grid (open item 153).
 - Paste, duplicate and Ctrl-drag copy into a grid, and Add Label in a grid (open item 151).
 - A labelled pair spanned and moved together in a grid (open item 150).

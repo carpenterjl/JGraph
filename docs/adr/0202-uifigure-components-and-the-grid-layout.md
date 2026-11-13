@@ -226,8 +226,14 @@ dialogs' `CloseFcn` were read from R2025b's installed source.
 - **A `uiaxes` in a grid keeps its cell when a `Position` is written to it**, silently. R2025b
   reads the written rectangle back until its layout runs again.
 - **`Children` is a row**, as everywhere here; R2025b's is a column.
-- **A scrollable grid lays out again in what its bars leave**, and its bars are this build's.
-  R2025b's scrolling was not measured.
+
+Closed since: **a scrollable grid lays out again in what its bars leave, and its bars are this
+build's** (open item 153, ADR 0347). Its scrolling is now transcribed from R2025b's own grid code
+(`calculateScrollableState`, the content to the last occupied row and column, 17-pixel bars) and
+measured headless in R2025b (fixture `u5_grid_fit`). R2025b's grid also lays out in what its bars
+leave. The same item replaced this ADR's `'fit'` rules with R2025b's: a 0-pixel unweighted track gives
+up its spacing, spanning children fill the `'fit'` tracks no child sits in alone, and a grid's own
+size takes weighted content times its weight.
 
 ## Still open
 

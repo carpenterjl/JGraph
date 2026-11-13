@@ -138,6 +138,13 @@
     <Content Include="Scripting\Designer\CodeTemplatesOracle.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <!-- What R2025b's own runtime grid code gives for a uigridlayout's tracks, cells, fit size and
+       scrolling (open item 153): its GridController, GridLayoutUtils, Grid view, GridLayoutStrategy
+       and scroll decision, run unaltered under node over fixed and seeded-random grids. -->
+  <ItemGroup>
+    <Content Include="Scripting\GridFitOracle.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\JGraph.Core\JGraph.Core.csproj" />
     <ProjectReference Include="..\..\src\JGraph.Data\JGraph.Data.csproj" />
