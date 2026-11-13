@@ -241,6 +241,22 @@ internal static partial class JgsBuiltins
             }
         });
 
+        // What imread answers for the file's samples: a logical matrix under MATLAB for a 1-bit
+        // greyscale file, as R2025b answers (open item 273), so that `G > 0` and indexing work on
+        // it; the picture value otherwise, and always under JGS, whose image verbs take it.
+        static JgsValue ReadPicture(ImageBuffer image, JgsRunningDialect dialect)
+        {
+            if (!dialect.IsMatlab || image.Class != ImageClass.Logical || image.Channels != 1)
+            {
+                return JgsValue.Image(image);
+            }
+
+            using (image)
+            {
+                return ImageNumbers(JgsValue.Image(image));
+            }
+        }
+
         // [X, map, alpha] = imread(path). The map is always empty: Skia decodes a palettized file
         // straight to truecolour and never exposes the palette, which is MATLAB's own answer for a
         // non-indexed file and a recorded divergence for a genuinely indexed one.
@@ -267,22 +283,23 @@ internal static partial class JgsBuiltins
                     image = ImageCodec.AutoOrient(path, image);
                     if (alpha is not null) alpha = ImageCodec.AutoOrient(path, alpha);
                 }
+                JgsValue picture = ReadPicture(image, dialect);
                 if (wanted < 2)
                 {
                     alpha?.Dispose();
-                    return [JgsValue.Image(image)];
+                    return [picture];
                 }
 
                 JgsValue map = palette is null ? JgsMatrix.Build(0, 3, static (_, _) => 0.0) : JgsMatrix.Build(palette.GetLength(0), 3, (r,c) => palette[r,c]);
                 if (wanted < 3)
                 {
                     alpha?.Dispose();
-                    return [JgsValue.Image(image), map];
+                    return [picture, map];
                 }
 
                 return
                 [
-                    JgsValue.Image(image),
+                    picture,
                     map,
                     alpha is null ? JgsMatrix.Build(0, 0, static (_, _) => 0.0) : JgsValue.Image(alpha),
                 ];

@@ -216,7 +216,70 @@ public class AppDesignerTreeWriterTests(ITestOutputHelper output)
         Assert.True(double.IsNaN(data.Data[2]));
     }
 
-    /// <summary>What the tree cannot hold is listed, and the rest of the tree is still written: a component class App Designer's catalog does not know, and an axes' colormap.</summary>
+    /// <summary>
+    /// An axes' colormap is stored as an axes whose colormap is set stores it in R2025b (probe
+    /// cmap_tree): <c>ColormapMode</c> 'manual', then <c>Colormap_I</c> as R2025b's own 256 rows of
+    /// the map, which App Designer names by isequal against each map it offers (open item 146). Its
+    /// <c>lines</c> is R2025b's colour order, not the classic one JGraph draws with.
+    /// </summary>
+    [Theory]
+    [InlineData("hot")]
+    [InlineData("jet")]
+    [InlineData("sky")]
+    [InlineData("colorcube")]
+    [InlineData("lines")]
+    public void AnAxesColormapIsStoredAsR2025bsRows(string map)
+    {
+        DesignCatalog catalog = DesignCatalog.R2025b;
+        var figure = new DesignComponent("UIFigure", catalog.ByType("matlab.ui.Figure")!);
+        var design = new AppDesign(figure);
+        var axes = new DesignComponent("Axes", catalog.ByType("matlab.ui.control.UIAxes")!);
+        figure.Add(axes);
+        axes.Set("AD_ColormapString", new CharValue(map));
+
+        var problems = new List<string>();
+        McosObject root = DesignTreeWriter.Tree(design, DesignCodeStyle.Default, appFolder: null, problems);
+        Assert.Empty(problems);
+        McosObject axesObject = Assert.Single(Children(root));
+        Assert.Equal(new McosValue.Word("manual"), axesObject.Get("ColormapMode"));
+        Assert.True(IndexOf(axesObject, "ColormapMode") < IndexOf(axesObject, "Colormap_I"));
+        var rows = (MatData.Numbers)((McosValue.Value)axesObject.Get("Colormap_I")!).Data;
+        Assert.Equal("double", rows.ClassName);
+        Assert.Equal([256, 3], rows.Size);
+        double[,] expected = JGraph.Core.Drawing.ColormapRows.Of(map, 256, JGraph.Core.Drawing.ColormapRows.MatlabLineColors);
+        for (int r = 0; r < 256; r++)
+        {
+            for (int c = 0; c < 3; c++)
+            {
+                Assert.Equal(expected[r, c], rows.Data[(c * 256) + r]);
+            }
+        }
+
+        if (map == "lines")
+        {
+            Assert.Equal([0.066, 0.866, 0.929], new[] { rows.Data[0], rows.Data[1], rows.Data[2] });
+        }
+
+        // And it reads back through the subsystem reader as the same 256-by-3 double.
+        string path = Path.Combine(Path.GetTempPath(), $"jgraph-oi146-{Guid.NewGuid():N}.mat");
+        try
+        {
+            File.WriteAllBytes(path, DesignTreeWriter.Write(design).Bytes);
+            (_, MatMcos? store) = MatFileReader.ReadWithSubsystem(path, null, new NullBinder());
+            Assert.NotNull(store);
+            int id = Enumerable.Range(1, store.Count).Single(i => store.ClassOf(i) == "matlab.ui.control.UIAxes");
+            JgsValue stored = store.Properties(id).Single(static p => p.Name == "Colormap_I").Value;
+            Assert.Equal([256, 3], JgsBuiltins.SizeDims(stored));
+            Assert.Equal(expected[255, 0], stored.ElementAt(255).AsNumber);
+            Assert.Equal(expected[0, 2], stored.ElementAt(512).AsNumber);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    /// <summary>What the tree cannot hold is listed, and the rest of the tree is still written: a component class App Designer's catalog does not know, and a colormap that is none of App Designer's maps.</summary>
     [Fact]
     public void WhatTheTreeCannotHoldIsListed()
     {
@@ -226,7 +289,7 @@ public class AppDesignerTreeWriterTests(ITestOutputHelper output)
         figure.Add(new DesignComponent("Tuner", "simulink.ui.control.VariableTuner", "uivariabletuner", string.Empty));
         var axes = new DesignComponent("Axes", catalog.ByType("matlab.ui.control.UIAxes")!);
         figure.Add(axes);
-        axes.Set("AD_ColormapString", new CharValue("hot"));
+        axes.Set("AD_ColormapString", new CharValue("viridis"));
         axes.Set("TitleString", new CharValue("Signal"));
 
         DesignTreeResult result = DesignTreeWriter.Write(design);

@@ -2337,7 +2337,7 @@ internal static partial class JgsBuiltins
                     AxesModel axes => axes.ResolveColormap() ?? Colormap.Parula,
                     _ => JG.CurrentColormap(),
                 };
-                return ColormapTable(current.Resample(DefaultColormapRows));
+                return ColormapRowsOf(current);
             }
 
             try

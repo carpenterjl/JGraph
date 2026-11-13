@@ -64,7 +64,7 @@ internal static partial class JgsBuiltins
                     ["Width"] = JgsValue.Number(probe.Width),
                     ["Height"] = JgsValue.Number(probe.Height),
                     ["BitDepth"] = JgsValue.Number(
-                        (probe.Class == ImageClass.UInt16 ? 16 : 8) * probe.Channels),
+                        (probe.Class switch { ImageClass.UInt16 => 16, ImageClass.Logical => 1, _ => 8 }) * probe.Channels),
                     ["ColorType"] = JgsValue.Str(palette is not null ? "indexed" : probe.Channels == 1 ? "grayscale" : "truecolor"),
                     ["NumberOfSamples"] = JgsValue.Number(probe.Channels),
                     ["Comment"] = JgsValue.Cell(ImageCodec.JpegComments(path).Select(JgsValue.Str).ToArray()),

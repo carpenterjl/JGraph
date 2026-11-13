@@ -1,0 +1,15 @@
+CHK|logical_class|char[1 7]'logical'|exact
+CHK|logical_size|double[1 2] [6 6]|exact
+CHK|logical_values|logical[6 6] [1 0 0 1 1 1;0 1 0 1 1 1;1 0 0 1 1 1;0 1 1 1 0 1;1 0 1 0 0 1;0 1 1 0 1 0]|exact
+CHK|logical_isequal|logical[1 1] 1|exact
+CHK|logical_gt0|logical[6 6] [1 0 0 1 1 1;0 1 0 1 1 1;1 0 0 1 1 1;0 1 1 1 0 1;1 0 1 0 0 1;0 1 1 0 1 0]|exact
+CHK|logical_sum|double[1 1] 22|exact
+CHK|logical_index|logical[1 3] [0 1 0]|exact
+CHK|logical_bitdepth|double[1 1] 1|exact
+CHK|wide_true|logical[3 9] [1 1 1 1 1 1 1 1 1;1 1 1 1 1 1 1 1 1;1 1 1 1 1 1 1 1 1]|exact
+CHK|all_false|logical[2 5] [0 0 0 0 0;0 0 0 0 0]|exact
+CHK|bd1_uint8|logical[1 7] [0 1 1 1 1 1 1]|exact
+CHK|bd1_double|logical[1 5] [0 1 1 1 1]|exact
+CHK|bd1_uint16|logical[1 3] [0 1 1]|exact
+CHK|uint8_class|char[1 5]'uint8'|exact
+CHK|uint8_bitdepth|double[1 1] 8|exact

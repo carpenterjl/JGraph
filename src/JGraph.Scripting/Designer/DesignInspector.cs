@@ -308,10 +308,7 @@ public sealed class DesignInspector
     private static IReadOnlyList<string> ChoicesOf(DesignEditorKind kind, string[] members, DesignEditorInfo info) => kind switch
     {
         DesignEditorKind.FontSize => ["8", "9", "10", "11", "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72"],
-        DesignEditorKind.Choice when info.Renderer == "ColormapEditor" =>
-        [
-            "parula", "jet", "hsv", "hot", "cool", "spring", "summer", "autumn", "winter", "gray", "bone", "copper", "pink", "lines", "colorcube", "prism", "flag", "white", "turbo", "sky", "abyss", "nebula",
-        ],
+        DesignEditorKind.Choice when info.Renderer == "ColormapEditor" => Core.Drawing.ColormapRows.Names, // ColormapEditor.PREDEFINED_COLORMAPS, in its order
         DesignEditorKind.Choice when members.Length == 0 => info.Categories,
         _ => members,
     };

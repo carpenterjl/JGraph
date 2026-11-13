@@ -83,9 +83,20 @@ public static partial class ImageCodec
         int width = codec.Info.Width;
         int height = codec.Info.Height;
 
-        return IsNativeSamplePng(bytes)
-            ? Png16Reader.Read(bytes, width, height)
-            : Read8Bit(codec, options, width, height, path);
+        if (IsNativeSamplePng(bytes))
+        {
+            return Png16Reader.Read(bytes, width, height);
+        }
+
+        (ImageBuffer image, ImageBuffer? alpha) = Read8Bit(codec, options, width, height, path);
+        if (IsOneBitGrayPng(bytes) && image.Channels == 1)
+        {
+            // Skia hands 1-bit grey back as 0 and 255; the samples are already 0 and 1, and the class
+            // says what R2025b's imread says: logical (open item 273).
+            image.Class = ImageClass.Logical;
+        }
+
+        return (image, alpha);
     }
 
     /// <summary>
@@ -220,6 +231,15 @@ public static partial class ImageCodec
             return;
         }
 
+        // A logical picture is a 1-bit greyscale PNG, as R2025b's writepng makes it, and so is any
+        // greyscale picture written with BitDepth 1 (open item 273); the reader answers it as logical.
+        if (format == SKEncodedImageFormat.Png && image.Channels == 1 && alpha is null
+            && (options.BitDepth == 1 || (options.BitDepth is null && image.Class == ImageClass.Logical)))
+        {
+            Write1BitPng(path, image);
+            return;
+        }
+
         int quality = Math.Clamp(options.JpegQuality ?? 95, 0, 100);
         if (format == SKEncodedImageFormat.Png)
         {
@@ -298,6 +318,58 @@ public static partial class ImageCodec
         PngChunks.Write(output, "IEND", []);
         return true;
     }
+    /// <summary>
+    /// Writes a 1-bit greyscale PNG: a sample is on when it is above zero (writepng's <c>data ~= 0</c>
+    /// after clamping to [0, 1]), eight to a byte, the first pixel in the high bit, each row padded
+    /// to a whole byte.
+    /// </summary>
+    private static void Write1BitPng(string path, ImageBuffer image)
+    {
+        using FileStream output = File.Create(path);
+        output.Write(PngChunks.Signature);
+        byte[] header = new byte[13];
+        System.Buffers.Binary.BinaryPrimitives.WriteInt32BigEndian(header.AsSpan(0, 4), image.Width);
+        System.Buffers.Binary.BinaryPrimitives.WriteInt32BigEndian(header.AsSpan(4, 4), image.Height);
+        header[8] = 1;
+        header[9] = 0;
+        PngChunks.Write(output, "IHDR", header);
+        using var compressed = new MemoryStream();
+        using (var zlib = new System.IO.Compression.ZLibStream(compressed,
+            System.IO.Compression.CompressionLevel.Optimal, leaveOpen: true))
+        {
+            byte[] row = new byte[checked(1 + ((image.Width + 7) / 8))];
+            ReadOnlySpan<double> pixels = image.Pixels;
+            for (int r = 0; r < image.Height; r++)
+            {
+                Array.Clear(row); // PNG filter None, and the padding bits.
+                ReadOnlySpan<double> samples = pixels.Slice(r * image.Width, image.Width);
+                for (int c = 0; c < samples.Length; c++)
+                {
+                    if (samples[c] > 0)
+                    {
+                        row[1 + (c >> 3)] |= (byte)(0x80 >> (c & 7));
+                    }
+                }
+
+                zlib.Write(row);
+            }
+        }
+
+        GC.KeepAlive(image);
+        PngChunks.Write(output, "IDAT", compressed.ToArray());
+        PngChunks.Write(output, "IEND", []);
+    }
+
+    /// <summary>
+    /// True when the bytes are a 1-bit greyscale PNG (IHDR depth 1, colour type 0), which R2025b's
+    /// imread answers as a logical matrix.
+    /// </summary>
+    private static bool IsOneBitGrayPng(byte[] bytes) =>
+        bytes.Length > 25 &&
+        bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47 &&
+        bytes[12] == (byte)'I' && bytes[13] == (byte)'H' && bytes[14] == (byte)'D' && bytes[15] == (byte)'R' &&
+        bytes[24] == 1 && bytes[25] == 0;
+
     private static byte ToByte(double value) => (byte)Math.Clamp((int)Math.Round(value * 255.0), 0, 255);
 
     private static ushort ToUShort(double value) => (ushort)Math.Clamp((int)Math.Round(value * 65535.0), 0, 65535);

@@ -55,7 +55,7 @@ public class MatlabAppearanceTests : IDisposable
 
             c = colorcube(64);
             disp(size(c, 1));
-            disp(isequal(c(end, :), [0 0 0]));
+            disp(any(all(c == 0, 2)) && all(c(end, :) == c(end, 1))); % colorcube.m: black, then the grey ramp last
             disp(min(min(c)) >= 0 && max(max(c)) <= 1);
 
             figure(1);

@@ -55,6 +55,9 @@ public static class JG
         }
     }
 
+    /// <summary>The current figure, or null when none is current; it never creates one.</summary>
+    public static FigureModel? CurrentFigureOrNull => _currentFigure;
+
     /// <summary>The current figure's number, or 0 when no figure is current; it never creates one.</summary>
     public static int CurrentFigureNumberOrZero => _currentFigure is null ? 0 : _currentNumber;
 
@@ -1121,7 +1124,8 @@ public static class JG
 
     /// <summary>
     /// Applies a built-in colormap ("parula", "viridis", "turbo", "jet", "hot", "cool", "gray",
-    /// "hsv", "bone", "copper", "pink", "spring", "summer", "autumn", "winter", "lines") to every
+    /// "hsv", "bone", "copper", "pink", "spring", "summer", "autumn", "winter", "lines", "flag", "prism",
+    /// "white", "colorcube", "sky", "abyss", "nebula") to every
     /// color-mapped plot in the current axes (MATLAB <c>colormap</c>).
     /// </summary>
     public static void Colormap(string name)

@@ -58,6 +58,15 @@ public sealed class Colormap
     public IReadOnlyList<Color> Stops => _stops;
 
     /// <summary>
+    /// The m-by-3 table of doubles this map was made from (<see cref="FromRows"/>), kept so that a
+    /// script reading the map back gets its own rows, at their own length and to the last bit, rather
+    /// than the 8-bit stops; null for a gradient defined by its stops. A copy is handed out.
+    /// </summary>
+    public double[,]? SourceRows => _sourceRows is null ? null : (double[,])_sourceRows.Clone();
+
+    private double[,]? _sourceRows;
+
+    /// <summary>
     /// Samples the colormap at <paramref name="t"/> (clamped to [0, 1]), interpolating between the two
     /// nearest stops. A non-finite input maps to the low-end color.
     /// </summary>
@@ -209,12 +218,15 @@ public sealed class Colormap
         }
 
         var stops = new Color[System.Math.Max(rows, 2)];
+        var source = new double[rows, 3];
         for (int r = 0; r < rows; r++)
         {
-            stops[r] = Color.FromScRgb(
-                System.Math.Clamp(rgb[r, 0], 0, 1),
-                System.Math.Clamp(rgb[r, 1], 0, 1),
-                System.Math.Clamp(rgb[r, 2], 0, 1));
+            for (int c = 0; c < 3; c++)
+            {
+                source[r, c] = System.Math.Clamp(rgb[r, c], 0, 1);
+            }
+
+            stops[r] = Color.FromScRgb(source[r, 0], source[r, 1], source[r, 2]);
         }
 
         if (rows == 1)
@@ -222,8 +234,12 @@ public sealed class Colormap
             stops[1] = stops[0];
         }
 
-        return new Colormap(name, stops) { Discrete = discrete };
+        return new Colormap(name, stops) { Discrete = discrete, _sourceRows = source };
     }
+
+    /// <summary>A named map whose drawing stops are R2025b's 256 rows of it (<see cref="ColormapRows"/>).</summary>
+    private static Colormap FromGenerator(string name, string generator, bool discrete = false) =>
+        FromRows(name, ColormapRows.Of(generator, 256), discrete);
 
     /// <summary>
     /// MATLAB's default map since R2014b (dark blue-violet → blue → teal → green → yellow), and
@@ -473,7 +489,10 @@ public sealed class Colormap
         Colors.Black)
     { Discrete = true };
 
-    /// <summary>MATLAB's <c>prism</c>: the six spectrum colours, repeating. Exact for the same reason.</summary>
+    /// <summary>
+    /// MATLAB's <c>prism</c>: the six spectrum colours, repeating. Exact for the same reason. The
+    /// sixth is prism.m's violet, two thirds red (it was half red here until open item 145).
+    /// </summary>
     public static Colormap Prism { get; } = new Colormap(
         "Prism",
         Color.FromRgb(0xFF, 0x00, 0x00),
@@ -481,15 +500,30 @@ public sealed class Colormap
         Color.FromRgb(0xFF, 0xFF, 0x00),
         Color.FromRgb(0x00, 0xFF, 0x00),
         Color.FromRgb(0x00, 0x00, 0xFF),
-        Color.FromRgb(0x80, 0x00, 0xFF))
+        Color.FromRgb(0xAA, 0x00, 0xFF))
     { Discrete = true };
+
+    /// <summary>MATLAB's <c>white</c>: every row white.</summary>
+    public static Colormap White { get; } = FromGenerator("White", "white");
+
+    /// <summary>MATLAB's <c>colorcube</c>: R2025b's 256 rows of it (the cube, its ramps, black and grey).</summary>
+    public static Colormap ColorCube { get; } = FromGenerator("Colorcube", "colorcube");
+
+    /// <summary>R2025b's <c>sky</c>: a pale tint down to one blue.</summary>
+    public static Colormap Sky { get; } = FromGenerator("Sky", "sky");
+
+    /// <summary>R2025b's <c>abyss</c>: a dark blue up to a light one.</summary>
+    public static Colormap Abyss { get; } = FromGenerator("Abyss", "abyss");
+
+    /// <summary>R2025b's <c>nebula</c>: its 256-row table.</summary>
+    public static Colormap Nebula { get; } = FromGenerator("Nebula", "nebula");
 
     /// <summary>The names accepted by <see cref="TryGetByName"/>, for error messages and completion.</summary>
     public static IReadOnlyList<string> KnownNames { get; } =
     [
         "parula", "viridis", "turbo", "jet", "hot", "cool", "gray", "hsv",
         "bone", "copper", "pink", "spring", "summer", "autumn", "winter", "lines",
-        "flag", "prism",
+        "flag", "prism", "white", "colorcube", "sky", "abyss", "nebula",
     ];
 
     /// <summary>
@@ -524,6 +558,11 @@ public sealed class Colormap
             "lines" => Lines,
             "flag" => Flag,
             "prism" => Prism,
+            "white" => White,
+            "colorcube" => ColorCube,
+            "sky" => Sky,
+            "abyss" => Abyss,
+            "nebula" => Nebula,
             _ => null,
         };
 

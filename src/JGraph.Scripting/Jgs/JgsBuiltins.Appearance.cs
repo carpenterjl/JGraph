@@ -25,16 +25,12 @@ internal static partial class JgsBuiltins
         void DefineBare(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
+        // colorcube.m's own construction (open item 145), sized as every generator is.
         DefineBare("colorcube", (args, line, col) =>
         {
             ArityRange("colorcube", args, 0, 1, line, col);
-            int rows = args.Count == 1 ? Count("colorcube", args, 0, line, col) : DefaultColormapRows;
-            if (rows < 1)
-            {
-                throw new JgsRuntimeException(line, col, "colorcube: the row count must be at least 1.");
-            }
-
-            return MatrixFromRows(ColorCube(rows));
+            int rows = args.Count == 1 ? GeneratorRowCount("colorcube", args[0], line, col) : ColormapHeight();
+            return GeneratorTable("colorcube", static () => Colormap.ColorCube, rows);
         });
 
         Define("rgbplot", (args, line, col) => RgbPlot(args, line, col));
@@ -54,84 +50,6 @@ internal static partial class JgsBuiltins
             ArityRange("opengl", args, 0, 2, line, col);
             return JgsValue.Null;
         });
-    }
-
-    /// <summary>
-    /// The <c>colorcube</c> table: as many evenly spaced colours of the RGB cube as fit, then the
-    /// pure red, green and blue ramps, then a grey ramp, then black.
-    /// </summary>
-    /// <remarks>
-    /// A construction to the documented description rather than a copy of MATLAB's row set — the
-    /// cube's step count and how the remainder is split between ramps are choices, and MATLAB's are
-    /// not published. The shape of the answer is the same: an even sweep of the cube with the axes
-    /// and the grey line reinforced at the end, and black last.
-    /// </remarks>
-    private static double[][] ColorCube(int rows)
-    {
-        var map = new List<double[]>(rows);
-
-        // The largest cube whose off-grey corners fit, leaving at least a quarter of the rows for
-        // the ramps — which is what stops a small request from being all cube and no grey.
-        int steps = 1;
-        while (Cube(steps + 1) <= rows * 3 / 4)
-        {
-            steps++;
-        }
-
-        for (int r = 0; r < steps && map.Count < rows; r++)
-        {
-            for (int g = 0; g < steps && map.Count < rows; g++)
-            {
-                for (int b = 0; b < steps && map.Count < rows; b++)
-                {
-                    // The grey line comes back at the end with more steps than the cube can give it.
-                    if (r == g && g == b)
-                    {
-                        continue;
-                    }
-
-                    map.Add([Level(r, steps), Level(g, steps), Level(b, steps)]);
-                }
-            }
-        }
-
-        // Whatever is left, split four ways: the three pure axes, then grey. Each ramp descends from
-        // full toward black without reaching it, so black can be the single last row.
-        int remaining = System.Math.Max(rows - map.Count - 1, 0);
-        int each = remaining / 4;
-        Ramp(map, each, (v, ramp) => ramp switch
-        {
-            0 => [v, 0, 0],
-            1 => [0, v, 0],
-            2 => [0, 0, v],
-            _ => [v, v, v],
-        });
-
-        while (map.Count < rows - 1)
-        {
-            map.Add([0.5, 0.5, 0.5]);
-        }
-
-        if (map.Count < rows)
-        {
-            map.Add([0, 0, 0]);
-        }
-
-        return [.. map];
-
-        static int Cube(int n) => n * n * n;
-        static double Level(int i, int n) => n == 1 ? 1 : i / (double)(n - 1);
-
-        static void Ramp(List<double[]> into, int each, Func<double, int, double[]> row)
-        {
-            for (int ramp = 0; ramp < 4; ramp++)
-            {
-                for (int i = 0; i < each; i++)
-                {
-                    into.Add(row((each - i) / (double)(each + 1), ramp));
-                }
-            }
-        }
     }
 
     /// <summary><c>rgbplot(map)</c>: the three columns of a colormap against the row number.</summary>

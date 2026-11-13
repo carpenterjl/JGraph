@@ -240,8 +240,17 @@ public static partial class DesignTreeWriter
             if (name == "AD_ColormapString")
             {
                 // App Designer names an axes' colormap by comparing its 256 rows with each map it
-                // offers, so the rows must be MATLAB's exactly (an open item).
-                problems.Add($"{component.CodeName}.{name}: a colormap other than parula is not yet written into App Designer's tree.");
+                // offers (getColormapString, isequal), so the rows are R2025b's own to the bit, with
+                // its lines' colour order, stored as an axes whose colormap is set stores them
+                // (probe cmap_tree: Colormap_I, then ColormapMode 'manual'; open item 146).
+                if (StoredColormap(value) is not { } rows)
+                {
+                    problems.Add($"{component.CodeName}.{name}: only a colormap App Designer names (its 22 maps) can be written into its tree.");
+                    continue;
+                }
+
+                Put(name, "ColormapMode", new McosValue.Word("manual"));
+                Put(name, "Colormap_I", new McosValue.Value(rows));
                 continue;
             }
 
@@ -459,6 +468,37 @@ public static partial class DesignTreeWriter
     };
 
     private static double[] Numbers(DesignValue value) => value is NumericValue n ? [.. n.Data] : [1];
+
+    /// <summary>
+    /// An axes' colormap by name as the 256-by-3 double App Designer stores and names it by: R2025b's
+    /// <c>map(256)</c> (<see cref="Core.Drawing.ColormapRows"/>), its <c>lines</c> in R2025b's colour
+    /// order, read down the columns; null for anything that is not one of its maps.
+    /// </summary>
+    private static MatData.Numbers? StoredColormap(DesignValue value)
+    {
+        string? name = value switch
+        {
+            CharValue c => c.Text,
+            StringValue s => s.Text,
+            _ => null,
+        };
+        if (!Core.Drawing.ColormapRows.IsGenerator(name)
+            || Core.Drawing.ColormapRows.TryOf(name, 256, Core.Drawing.ColormapRows.MatlabLineColors) is not { } rows)
+        {
+            return null;
+        }
+
+        var flat = new double[256 * 3];
+        for (int c = 0; c < 3; c++)
+        {
+            for (int r = 0; r < 256; r++)
+            {
+                flat[(c * 256) + r] = rows[r, c];
+            }
+        }
+
+        return new MatData.Numbers("double", [256, 3], flat);
+    }
 
     private static MatData.Cells Column(IReadOnlyList<string> lines) =>
         new([lines.Count, lines.Count == 0 ? 0 : 1], lines.Select(static l => (MatData)MatData.Text(l)).ToArray());

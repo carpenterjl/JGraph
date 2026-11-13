@@ -3,6 +3,7 @@ using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Objects;
+using MatlabColormapRows = JGraph.Core.Drawing.ColormapRows;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -33,6 +34,10 @@ internal static partial class JgsBuiltins
         ("viridis", () => Colormap.Viridis),
         ("flag", () => Colormap.Flag),
         ("prism", () => Colormap.Prism),
+        ("white", () => Colormap.White),
+        ("sky", () => Colormap.Sky),
+        ("abyss", () => Colormap.Abyss),
+        ("nebula", () => Colormap.Nebula),
     ];
 
     /// <summary>
@@ -53,19 +58,16 @@ internal static partial class JgsBuiltins
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
 
         // A bare `parula` is the table itself, exactly as `x = eps` is a number (M37's AutoCallsBare).
+        // Each computes its rows by its R2025b source's formula (open item 145), and with no size it
+        // is as long as the current figure's map, as colormapheight sizes it.
         void DefineGenerator(string name, Func<Colormap> map) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(
                 name,
                 (args, line, col) =>
                 {
                     ArityRange(name, args, 0, 1, line, col);
-                    int rows = args.Count == 1 ? Count(name, args, 0, line, col) : DefaultColormapRows;
-                    if (rows < 1)
-                    {
-                        throw new JgsRuntimeException(line, col, $"{name}: the row count must be at least 1.");
-                    }
-
-                    return ColormapTable(map().Resample(rows));
+                    int rows = args.Count == 1 ? GeneratorRowCount(name, args[0], line, col) : ColormapHeight();
+                    return GeneratorTable(name, map, rows);
                 })
             { AutoCallsBare = true }));
 
@@ -542,6 +544,101 @@ internal static partial class JgsBuiltins
             System.Math.Sin(az) * System.Math.Cos(el),
             System.Math.Sin(el),
             System.Math.Cos(az) * System.Math.Cos(el));
+    }
+
+    /// <summary>
+    /// A generator's <paramref name="rows"/> rows: R2025b's formula for the maps it ships
+    /// (<see cref="MatlabColormapRows"/>), and the drawing gradient resampled for JGraph's own
+    /// (<c>viridis</c>). <c>lines</c> repeats the colour order JGraph draws with (open item 105).
+    /// </summary>
+    private static JgsValue GeneratorTable(string name, Func<Colormap> map, int rows) =>
+        MatlabColormapRows.TryOf(name, rows) is { } table
+            ? ColormapMatrix(table)
+            : rows == 0 ? JgsMatrix.FromColumnMajor([], 0, 3) : ColormapTable(map().Resample(rows));
+
+    /// <summary>An m-by-3 table of doubles as the matrix value, m = 0 included (MATLAB's 0-by-3).</summary>
+    private static JgsValue ColormapMatrix(double[,] table)
+    {
+        int m = table.GetLength(0);
+        var flat = new double[m * 3];
+        for (int c = 0; c < 3; c++)
+        {
+            for (int r = 0; r < m; r++)
+            {
+                flat[(c * m) + r] = table[r, c];
+            }
+        }
+
+        return JgsMatrix.FromColumnMajor(flat, m, 3);
+    }
+
+    /// <summary>
+    /// A generator's size argument, checked as its <c>arguments</c> block checks it
+    /// (<c>m (1,1) double {mustBeInteger, mustBeNonnegative}</c>), with R2025b's identifiers.
+    /// </summary>
+    private static int GeneratorRowCount(string name, JgsValue value, int line, int col)
+    {
+        if (value.Type == JgsType.Array && !TrySoleNumber(value, out _) && !value.IsStringArray)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:validation:IncompatibleSize",
+                "Invalid argument at position 1. Value must be a scalar.");
+        }
+
+        double raw = Num(name, [value], 0, line, col);
+        if (!double.IsFinite(raw) || raw != System.Math.Floor(raw))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeInteger",
+                "Invalid argument at position 1. Value must be integer.");
+        }
+
+        if (raw < 0)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeNonnegative",
+                "Invalid argument at position 1. Value must be nonnegative.");
+        }
+
+        return raw > int.MaxValue / 4 ? throw new JgsRuntimeException(line, col, $"{name}: the row count is too large.") : (int)raw;
+    }
+
+    /// <summary>
+    /// How many rows a generator answers with no size: the current figure's colormap length, or the
+    /// default map's 256 when no figure is current (R2025b's matlab.graphics.internal.colormapheight).
+    /// The map an unaddressed <c>colormap(map)</c> sets lives on the current axes here, so that axes'
+    /// map counts first. A named map is 256 rows long; a table set by hand is its own length.
+    /// </summary>
+    private static int ColormapHeight()
+    {
+        if (JG.CurrentFigureOrNull is not { } figure)
+        {
+            return DefaultColormapRows;
+        }
+
+        Colormap? map = (JG.CurrentAxesOrNull is { } axes && axes.Parent == figure ? axes.ResolveColormap() : null)
+            ?? figure.Colormap;
+        return map?.SourceRows?.GetLength(0) ?? DefaultColormapRows;
+    }
+
+    /// <summary>
+    /// A colormap's rows as a script reads them back (<c>colormap</c> with no map): a table set by hand
+    /// is the rows it was given, a named map is R2025b's 256 rows of it, and anything else (a
+    /// brightened map, JGraph's own viridis) is its gradient sampled at 256 rows.
+    /// </summary>
+    private static JgsValue ColormapRowsOf(Colormap map)
+    {
+        if (map.SourceRows is { } rows)
+        {
+            return ColormapMatrix(rows);
+        }
+
+        foreach ((string name, Func<Colormap> generator) in ColormapGenerators)
+        {
+            if (ReferenceEquals(generator(), map) && MatlabColormapRows.TryOf(name, DefaultColormapRows) is { } table)
+            {
+                return ColormapMatrix(table);
+            }
+        }
+
+        return ColormapTable(map.Resample(DefaultColormapRows));
     }
 
     /// <summary>A colormap table as the N-by-3 matrix of components in [0, 1] MATLAB returns.</summary>

@@ -44,5 +44,10 @@ public sealed class StandardLibraryPlugin : IPlugin
         registry.AddColormap(Colormap.Lines);
         registry.AddColormap(Colormap.Flag);
         registry.AddColormap(Colormap.Prism);
+        registry.AddColormap(Colormap.White);
+        registry.AddColormap(Colormap.ColorCube);
+        registry.AddColormap(Colormap.Sky);
+        registry.AddColormap(Colormap.Abyss);
+        registry.AddColormap(Colormap.Nebula);
     }
 }

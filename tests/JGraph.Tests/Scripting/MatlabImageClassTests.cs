@@ -161,13 +161,33 @@ public sealed class MatlabImageClassTests : IDisposable
     [Fact]
     public async Task ImwriteOfALogicalMask_WritesBlackAndWhite()
     {
-        // MATLAB writes a mask as a one-bit PNG and reads it back logical; the same encoder floor
-        // that costs the 16-bit path makes this eight bits, so false is 0 and true is 255.
+        // MATLAB writes a mask as a one-bit PNG and reads it back as a logical matrix (open item 273):
+        // a matrix, so that comparisons, indexing and arithmetic take it as they take any logical.
         await RunAsserting("""
             imwrite([0 0.25; 0.5 1] > 0.3, 'mask.png');
             R = imread('mask.png');
-            assert(R(1, 1) == 0 && R(1, 2) == 0, 'false should be black');
-            assert(R(2, 1) == 255 && R(2, 2) == 255, 'true should be white');
+            assert(islogical(R) && isequal(size(R), [2 2]), 'a mask should read back logical');
+            assert(~R(1, 1) && ~R(1, 2), 'false should be black');
+            assert(R(2, 1) && R(2, 2), 'true should be white');
+            assert(isequal(R > 0, [false false; true true]), 'a comparison should take it');
+            assert(sum(R(:)) == 2 && isequal(R(1:4), [false true false true]), 'and indexing');
+            info = imfinfo('mask.png');
+            assert(info.BitDepth == 1, 'the file should be one bit deep');
+            """);
+    }
+
+    [Fact]
+    public async Task ImwriteWithBitDepthOne_WritesAMaskOfTheNonzeroSamples()
+    {
+        // writepng's BitDepth 1: a sample is on when it is not zero, whatever the class (probe bd1_probe).
+        await RunAsserting("""
+            imwrite(uint8([0 1 2 3 128 254 255]), 'b1.png', 'BitDepth', 1);
+            R = imread('b1.png');
+            assert(islogical(R) && isequal(R, logical([0 1 1 1 1 1 1])), 'uint8 nonzero is on');
+            imwrite([0 0.1 0.5 1 0.0001], 'b2.png', 'BitDepth', 1);
+            assert(isequal(imread('b2.png'), logical([0 1 1 1 1])), 'double nonzero is on');
+            imwrite(uint16([0 1 65535]), 'b3.png', 'BitDepth', 1);
+            assert(isequal(imread('b3.png'), logical([0 1 1])), 'uint16 nonzero is on');
             """);
     }
 

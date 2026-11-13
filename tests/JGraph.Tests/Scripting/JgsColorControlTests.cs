@@ -48,9 +48,10 @@ public class JgsColorControlTests : IDisposable
 
         Assert.Contains("[4, 3]", _output.NormalText);
 
-        // The first row is the low end of the map, in components rather than bytes.
-        Color low = Colormap.Parula.Sample(0);
-        Assert.Contains($"{low.R / 255.0:0.####}", _output.NormalText);
+        // The first row is the low end of R2025b's parula table, in components rather than bytes
+        // (open item 145).
+        Assert.Contains("0.2422", _output.NormalText);
+        Assert.Contains("0.6603", _output.NormalText);
     }
 
     /// <summary>A bare generator name is the table itself, the way <c>x = eps</c> is a number (M37).</summary>
@@ -105,8 +106,11 @@ public class JgsColorControlTests : IDisposable
             show()
             """));
 
+        // jet(64) is jet.m's 64 rows, whose first is [0 0 0.5625] (open item 145), not the drawing
+        // gradient's darker end.
         var surface = (SurfacePlot)_figures[0].Axes[^1].Plots[0];
-        Assert.Equal(Colormap.Jet.Sample(0), surface.Colormap.Sample(0));
+        Assert.Equal(Color.FromScRgb(0, 0, 0.5625), surface.Colormap.Sample(0));
+        Assert.Equal(64, surface.Colormap.Stops.Count);
     }
 
     // --- Color limits ---------------------------------------------------------------------------
