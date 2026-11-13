@@ -216,7 +216,10 @@ public sealed class ComponentTests : IDisposable
     [Fact]
     public async Task CallAsync_ACancelledToken_StopsTheFunction()
     {
-        using Component spin = Component.Open(Library("K4C", [("spin.m", "function spin\nwhile true\nend\nend\n")], ["spin"]));
+        // An empty `while true` compiles to a native loop that spends the 50 million step limit in
+        // well under 300 ms (since ADR 0325), so the step limit ended it before the token did. A
+        // pause in the body keeps the loop walked and the step count small; only the token stops it.
+        using Component spin = Component.Open(Library("K4C", [("spin.m", "function spin\nwhile true\npause(0.01);\nend\nend\n")], ["spin"]));
         using var cancel = new CancellationTokenSource(TimeSpan.FromMilliseconds(300));
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => spin.CallAsync("spin", 0, [], cancel.Token));
     }
