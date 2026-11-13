@@ -28,11 +28,13 @@ internal static class PackedFilterOps
     /// <summary>
     /// The filtered signal, and — when <paramref name="wanted"/> asks — the delay line each slice
     /// finishes on, together with the shapes the boxed assembly would have given them. False leaves
-    /// the call to that assembly untouched.
+    /// the call to that assembly untouched. <paramref name="initial"/> is one delay line for every
+    /// slice, or — when <paramref name="initialPerSlice"/> — one per slice in <c>zf</c>'s own
+    /// layout (<see cref="FinalConditionsShape"/>).
     /// </summary>
     public static bool TryFilter(
-        double[] numerator, double[] denominator, double[]? initial, JgsValue signal,
-        int[] dims, int dim, int wanted, out JgsValue[] results, out int[][] shapes)
+        double[] numerator, double[] denominator, double[]? initial, bool initialPerSlice,
+        JgsValue signal, int[] dims, int dim, int wanted, out JgsValue[] results, out int[][] shapes)
     {
         results = [];
         shapes = [];
@@ -61,8 +63,18 @@ internal static class PackedFilterOps
             taps[i] = numerator[i] / a0;
         }
 
-        var carried = new double[Math.Max(delays, 1)];
-        initial?.CopyTo(carried, 0);
+        double[] carried;
+        int stride = 0;
+        if (initialPerSlice && initial is not null && delays > 0)
+        {
+            carried = initial;
+            stride = delays;
+        }
+        else
+        {
+            carried = new double[Math.Max(delays, 1)];
+            initial?.CopyTo(carried, 0);
+        }
 
         NumericBuffer source = signal.AsBuffer;
         NumericBuffer answer = JgsPacking.AllocateForOverwrite(signal.ArrayLength);
@@ -71,7 +83,7 @@ internal static class PackedFilterOps
             : null;
         if (FilterKernels.IsFeedForward(denominator))
         {
-            FilterKernels.FeedForwardAlong(source, answer, finals, split, taps, carried);
+            FilterKernels.FeedForwardAlong(source, answer, finals, split, taps, carried, stride);
         }
         else
         {
@@ -84,7 +96,7 @@ internal static class PackedFilterOps
                 feedback[i] = denominator[i] / a0;
             }
 
-            FilterKernels.RecurrenceAlong(source, answer, finals, split, taps, feedback, carried);
+            FilterKernels.RecurrenceAlong(source, answer, finals, split, taps, feedback, carried, stride);
         }
 
         GC.KeepAlive(signal);
@@ -94,8 +106,52 @@ internal static class PackedFilterOps
             : [JgsValue.Packed(answer), JgsValue.Packed(finals)];
         shapes = finals is null
             ? [JgsMatrix.ShapeAlong(dims, dim, split.Count)]
-            : [JgsMatrix.ShapeAlong(dims, dim, split.Count), JgsMatrix.ShapeAlong(dims, dim, delays)];
+            : [JgsMatrix.ShapeAlong(dims, dim, split.Count), FinalConditionsShape(dims, dim, delays)];
         return true;
+    }
+
+    /// <summary>
+    /// The dimensions of the signal other than the one filtered, in order, with trailing
+    /// singletons dropped: the slices' own shape, which <c>zi</c> and <c>zf</c> carry after the
+    /// delays. A dimension past the signal's last counts as a singleton taken out.
+    /// </summary>
+    internal static int[] OtherDimensions(IReadOnlyList<int> dims, int dim)
+    {
+        int[] full = JgsMatrix.ShapeAlong(dims, dim, 1);
+        var others = new List<int>(full.Length);
+        for (int i = 0; i < full.Length; i++)
+        {
+            if (i != dim - 1)
+            {
+                others.Add(full[i]);
+            }
+        }
+
+        while (others.Count > 0 && others[^1] == 1)
+        {
+            others.RemoveAt(others.Count - 1);
+        }
+
+        return [.. others];
+    }
+
+    /// <summary>
+    /// R2025b's shape for <c>zf</c>: the delays first, then the other dimensions of the signal
+    /// (<see cref="OtherDimensions"/>) — <c>[L 1]</c> for any vector, <c>[L 4]</c> for a 4-by-5
+    /// filtered along its rows (ADR 0345). Slice <c>s</c>'s line is the run at <c>s · L</c>.
+    /// </summary>
+    internal static int[] FinalConditionsShape(IReadOnlyList<int> dims, int dim, int delays)
+    {
+        int[] others = OtherDimensions(dims, dim);
+        if (others.Length == 0)
+        {
+            return [delays, 1];
+        }
+
+        var shape = new int[others.Length + 1];
+        shape[0] = delays;
+        others.CopyTo(shape, 1);
+        return shape;
     }
 
     /// <summary>

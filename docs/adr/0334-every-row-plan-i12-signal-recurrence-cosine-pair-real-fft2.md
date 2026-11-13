@@ -216,5 +216,6 @@ build before in their last bits; the values are recorded above, and no printed l
 - **`d02_fft_4M`** (open item 280): under R2025b headless and at steady state, but 0.044 against 0.040 in
   the one app session. A half-length road would cost the `d02_roundtrip` line.
 - **The mixed-radix transform** at 4,000,000 points (open item 281): 63 ms against R2025b's 16.
-- **`filter`'s final conditions** (open item 279): laid out along the filtered dimension, where R2025b
-  puts the delays first. Found while writing the tests; it predates I12.
+
+Closed since: `filter`'s final conditions (open item 279) are laid out delays first, as R2025b lays them
+out, and its initial conditions are read the same way (ADR 0345).

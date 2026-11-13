@@ -249,6 +249,13 @@ internal static partial class JgsBuiltins
                         outputs[0] = Finish(outputs[0], carried, masks && AllMasks(args, from, subjects));
                     }
 
+                    // filter's second output is the delay line, a quantity like the first: a
+                    // single filter leaves a single zf (ADR 0345).
+                    if (name == "filter" && outputs.Length > 1)
+                    {
+                        outputs[1] = Finish(outputs[1], carried, false);
+                    }
+
                     return outputs;
                 },
             }));

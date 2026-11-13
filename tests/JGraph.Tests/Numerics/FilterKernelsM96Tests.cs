@@ -115,12 +115,11 @@ public class FilterKernelsM96Tests
                         BitConverter.DoubleToInt64Bits(got[at + (j * inner)]));
                 }
 
-                int state = inner == 1
-                    ? s * (order - 1)
-                    : ((s / inner) * inner * (order - 1)) + (s % inner);
+                // R2025b's zf layout: the delays first, so every slice's line is contiguous.
+                int state = s * (order - 1);
                 for (int j = 0; j < order - 1; j++)
                 {
-                    int where = inner == 1 ? state + j : state + (j * inner);
+                    int where = state + j;
                     Assert.Equal(
                         BitConverter.DoubleToInt64Bits(wantState[j]),
                         BitConverter.DoubleToInt64Bits(finals.AsSpan()[where]));

@@ -87,7 +87,7 @@ public class SignalTransformsI12Tests : IDisposable
             end
             for r = 1:100
                 [w, zw] = recur(b, a, X(r, :), zeros(1, 4));
-                assert(isequal(Y2(r, :), w) && isequal(Z2(r, :), zw));
+                assert(isequal(Y2(r, :), w) && isequal(Z2(:, r), zw')); % delays first (R2025b)
             end
 
             % A non-finite sample travels as the loop carried it.

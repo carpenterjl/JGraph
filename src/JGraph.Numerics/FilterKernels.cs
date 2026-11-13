@@ -136,11 +136,15 @@ public static class FilterKernels
     /// <summary>
     /// One filtered slice per slice along a dimension of packed column-major storage, threaded
     /// inside a long slice and across short ones. <paramref name="finals"/>, when asked for, takes
-    /// the same geometry with the delay line's length in place of the signal's.
+    /// R2025b's <c>zf</c> layout: the delays first, then the slices in storage order, so slice
+    /// <c>s</c>'s delay line is the contiguous run at <c>s · delays</c> (ADR 0345).
+    /// <paramref name="initial"/> is one delay line every slice starts from when
+    /// <paramref name="initialStride"/> is zero, and one line per slice in that same layout when it
+    /// is the delay line's length.
     /// </summary>
     public static void FeedForwardAlong(
         NumericBuffer src, NumericBuffer dst, NumericBuffer? finals,
-        ReduceKernels.Split split, double[] taps, double[] initial)
+        ReduceKernels.Split split, double[] taps, double[] initial, int initialStride = 0)
     {
         int slices = split.Slices;
         int inner = split.Inner;
@@ -155,22 +159,25 @@ public static class FilterKernels
         ParallelKernels.ForBlocks(slices, overSlices, s =>
         {
             int at = ((s / inner) * inner * n) + (s % inner);
+            double[] zi = initial;
+            int ziAt = initialStride == 0 ? 0 : s * initialStride;
+            int ziLength = initialStride == 0 ? initial.Length : delays;
             if (inner == 1)
             {
                 // A contiguous slice is filtered where it lies, in grains that own their outputs.
                 if (overSlices)
                 {
-                    FeedForward(taps, src.AsSpan(at, n), initial, dst.AsSpan(at, n), 0, n);
+                    FeedForward(taps, src.AsSpan(at, n), zi.AsSpan(ziAt, ziLength), dst.AsSpan(at, n), 0, n);
                 }
                 else
                 {
                     ParallelKernels.For(n, ParallelKernels.ComputeBoundThreshold, null, (start, len) =>
-                        FeedForward(taps, src.AsSpan(at, n), initial, dst.AsSpan(at, n), start, start + len));
+                        FeedForward(taps, src.AsSpan(at, n), zi.AsSpan(ziAt, ziLength), dst.AsSpan(at, n), start, start + len));
                 }
 
                 if (finals is not null)
                 {
-                    FinalState(taps, src.AsSpan(at, n), initial, finals.AsSpan(s * delays, delays));
+                    FinalState(taps, src.AsSpan(at, n), zi.AsSpan(ziAt, ziLength), finals.AsSpan(s * delays, delays));
                 }
 
                 return;
@@ -188,7 +195,7 @@ public static class FilterKernels
                 }
 
                 Span<double> answer = filtered.AsSpan(0, n);
-                FeedForward(taps, into, initial, answer, 0, n);
+                FeedForward(taps, into, zi.AsSpan(ziAt, ziLength), answer, 0, n);
                 Span<double> to = dst.AsSpan();
                 for (int j = 0; j < n; j++)
                 {
@@ -197,22 +204,8 @@ public static class FilterKernels
 
                 if (finals is not null && delays > 0)
                 {
-                    int state = ((s / inner) * inner * delays) + (s % inner);
-                    Span<double> tail = finals.AsSpan();
-                    double[] rented = System.Buffers.ArrayPool<double>.Shared.Rent(delays);
-                    try
-                    {
-                        Span<double> last = rented.AsSpan(0, delays);
-                        FinalState(taps, into, initial, last);
-                        for (int j = 0; j < delays; j++)
-                        {
-                            tail[state + (j * inner)] = last[j];
-                        }
-                    }
-                    finally
-                    {
-                        System.Buffers.ArrayPool<double>.Shared.Return(rented);
-                    }
+                    // The delays first, so a strided slice's line is contiguous all the same.
+                    FinalState(taps, into, zi.AsSpan(ziAt, ziLength), finals.AsSpan(s * delays, delays));
                 }
             }
             finally
@@ -367,11 +360,12 @@ public static class FilterKernels
     /// a contiguous slice where it lies, a strided one gathered and scattered, and the slices spread
     /// over threads (each slice's chain belongs to one thread, so the answer does not depend on how
     /// many there are). <paramref name="finals"/>, when asked for, takes the delay line each slice
-    /// finishes on, laid out like <see cref="FeedForwardAlong"/>'s.
+    /// finishes on, and <paramref name="initial"/> with <paramref name="initialStride"/> the line
+    /// each starts from, both laid out like <see cref="FeedForwardAlong"/>'s.
     /// </summary>
     public static void RecurrenceAlong(
         NumericBuffer src, NumericBuffer dst, NumericBuffer? finals,
-        ReduceKernels.Split split, double[] b, double[] a, double[] initial)
+        ReduceKernels.Split split, double[] b, double[] a, double[] initial, int initialStride = 0)
     {
         int slices = split.Slices;
         int inner = split.Inner;
@@ -392,7 +386,14 @@ public static class FilterKernels
             {
                 Span<double> state = line.AsSpan(0, delays);
                 state.Clear();
-                initial.AsSpan(0, Math.Min(initial.Length, delays)).CopyTo(state);
+                if (initialStride == 0)
+                {
+                    initial.AsSpan(0, Math.Min(initial.Length, delays)).CopyTo(state);
+                }
+                else
+                {
+                    initial.AsSpan(s * initialStride, delays).CopyTo(state);
+                }
                 if (inner == 1)
                 {
                     Recurrence(b, a, src.AsSpan(at, n), dst.AsSpan(at, n), state);
@@ -417,12 +418,7 @@ public static class FilterKernels
 
                 if (finals is not null)
                 {
-                    int place = ((s / inner) * inner * delays) + (s % inner);
-                    Span<double> tail = finals.AsSpan();
-                    for (int j = 0; j < delays; j++)
-                    {
-                        tail[place + (j * inner)] = state[j];
-                    }
+                    state.CopyTo(finals.AsSpan(s * delays, delays));
                 }
             }
             finally

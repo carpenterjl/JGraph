@@ -292,7 +292,7 @@ public class MatlabM76FormTests : IDisposable
         """);
 
     [Theory]
-    [InlineData("filter([1 0.5], [1 -0.3], [1 2 3], [1 2 3]);", "one entry per filter delay")]
+    [InlineData("filter([1 0.5], [1 -0.3], [1 2 3], [1 2 3]);", "Initial conditions must be a vector of length")]
     [InlineData("ifft([1 2 3], 'sideways');", "symmetric")]
     [InlineData("fft([1 2 3], 2, 0);", "positive whole number")]
     [InlineData("cast(1, 'nope', 2);", "follows 'like'")]

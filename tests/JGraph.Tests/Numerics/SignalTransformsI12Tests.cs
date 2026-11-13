@@ -172,7 +172,7 @@ public class SignalTransformsI12Tests
             double[] expected = RecurrenceAsItWas(b, a, slice, delays);
             var actual = new double[count];
             var finalActual = new double[3];
-            int place = ((s / split.Inner) * split.Inner * 3) + (s % split.Inner);
+            int place = s * 3; // the delays first (R2025b's zf layout)
             for (int j = 0; j < count; j++)
             {
                 actual[j] = dst.AsSpan()[at + (j * split.Inner)];
@@ -180,7 +180,7 @@ public class SignalTransformsI12Tests
 
             for (int j = 0; j < 3; j++)
             {
-                finalActual[j] = finals.AsSpan()[place + (j * split.Inner)];
+                finalActual[j] = finals.AsSpan()[place + j];
             }
 
             AssertBits(expected, actual, $"slice {s}");

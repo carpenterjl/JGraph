@@ -646,30 +646,26 @@ internal static partial class JgsBuiltins
         double[] denominator = NumericVector("filter", args, 1, line, col).ToArray();
 
         int order = System.Math.Max(numerator.Length, denominator.Length) - 1;
-        double[]? initial = null;
-        if (args.Count >= 4 && !IsEmptyValue(args[3]))
-        {
-            initial = NumericVector("filter", args, 3, line, col).ToArray();
-            if (initial.Length != order)
-            {
-                throw new JgsRuntimeException(line, col,
-                    $"filter: the initial conditions need one entry per filter delay ({order}), " +
-                    $"but got {initial.Length}.");
-            }
-        }
 
         JgsValue signal = args[2];
-        int[] dims = JgsMatrix.DimsOf(signal);
+        // A scalar signal is a 1-by-1 (its own Dims read 0-by-0, which filtered nothing).
+        int[] dims = signal.Type is JgsType.Number or JgsType.Bool ? [1, 1] : JgsMatrix.DimsOf(signal);
         int dim = args.Count >= 5
-            ? Count("filter", args, 4, line, col)
+            ? FilterDimension(args[4], line, col)
             : JgsMatrix.DefaultDim(dims);
+
+        // zi in R2025b's layout: one delay line for every slice, or the delays first and the
+        // signal's other dimensions after them, one line per slice (ADR 0345).
+        (double[]? initial, bool initialPerSlice) = args.Count >= 4
+            ? FilterInitialConditions(args[3], System.Math.Max(order, 0), dims, dim, line, col)
+            : (null, false);
 
         // M96b: a denominator with no feedback in it is a sum of taps per output, and a packed
         // signal takes those kernels where it lies (ADR 0096). A recurrence, a class that is not
         // double, a boxed array or a dimension that does not name itself falls through to the road
         // below, which is the only place this family's errors are worded.
         if (PackedFilterOps.TryFilter(
-                numerator, denominator, initial, signal, dims, dim, wanted,
+                numerator, denominator, initial, initialPerSlice, signal, dims, dim, wanted,
                 out JgsValue[] packed, out int[][] packedShapes))
         {
             for (int i = 0; i < packed.Length; i++)
@@ -683,29 +679,136 @@ internal static partial class JgsBuiltins
         double[] flat = FlattenColumnMajor("filter", signal, line, col);
         (double[][] slices, _) = JgsMatrix.SlicesAlong(flat, dims, dim);
 
+        int delays = System.Math.Max(order, 0);
         var filtered = new double[slices.Length][];
-        var finals = new double[slices.Length][];
+        var finals = new double[slices.Length * delays];
         for (int s = 0; s < slices.Length; s++)
         {
-            var state = new double[System.Math.Max(order, 0)];
-            initial?.CopyTo(state, 0);
+            var state = new double[delays];
+            if (initial is not null)
+            {
+                System.Array.Copy(initial, initialPerSlice ? s * delays : 0, state, 0, delays);
+            }
+
             filtered[s] = JGraph.Signal.DigitalFilter.Filter(numerator, denominator, slices[s], state);
-            finals[s] = state;
+            state.CopyTo(finals, s * delays);
         }
 
-        (double[] joined, int[] shape) = JgsMatrix.JoinAlong(filtered, dims, dim);
+        // The answer keeps the signal's shape, also when there are no slices to join (a 3-by-0
+        // filtered down its columns is still 3-by-0).
+        int length = dim <= dims.Length ? dims[dim - 1] : 1;
+        double[] joined = slices.Length == 0 ? [] : JgsMatrix.JoinAlong(filtered, dims, dim).ColumnMajor;
         JgsValue answer = Numbers(joined);
-        Shape(answer, shape);
+        Shape(answer, JgsMatrix.ShapeAlong(dims, dim, length));
         if (wanted <= 1)
         {
             return [answer];
         }
 
-        // The final conditions of every slice, laid out the way the initial ones arrive: one column
-        // per slice, so that a matrix filtered in pieces can be resumed column by column.
-        (double[] joinedFinals, int[] finalShape) = JgsMatrix.JoinAlong(finals, dims, dim);
-        JgsValue rest = Numbers(joinedFinals);
-        Shape(rest, finalShape);
+        // The final conditions of every slice in R2025b's layout: the delays first, the slices
+        // after them in storage order, so a matrix filtered in pieces resumes from zf as it is.
+        JgsValue rest = Numbers(finals);
+        Shape(rest, PackedFilterOps.FinalConditionsShape(dims, dim, delays));
         return [answer, rest];
+    }
+
+    /// <summary>
+    /// <c>filter</c>'s fifth argument: a positive whole number, refused in R2025b's words. A zero
+    /// used to reach the slicing and fail there with the runtime's own index message.
+    /// </summary>
+    private static int FilterDimension(JgsValue value, int line, int col)
+    {
+        if (value.Type is JgsType.String or JgsType.Cell || value.IsStringArray)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:filter:inputType",
+                "Invalid data type. Input arrays must be numeric or logical.");
+        }
+
+        if (value.Type is JgsType.Number or JgsType.Bool
+            || (value.Type == JgsType.Array && value.ArrayLength == 1 && value.ElementAt(0).Type == JgsType.Number))
+        {
+            double d = value.Type == JgsType.Array ? value.ElementAt(0).AsNumber : value.AsNumber;
+            if (d >= 1 && d == System.Math.Floor(d) && d <= int.MaxValue)
+            {
+                return (int)d;
+            }
+        }
+
+        throw new JgsRuntimeException(line, col, "MATLAB:getdimarg:dimensionMustBePositiveInteger",
+            "Dimension argument must be a positive integer scalar within indexing range.");
+    }
+
+    /// <summary>
+    /// <c>filter</c>'s fourth argument read as R2025b reads it: <c>[]</c> (0-by-0) starts every
+    /// slice from rest; a vector of length <c>L</c>, row or column, is the line every slice starts
+    /// from; otherwise <c>zi</c> must have <c>L</c> rows and the signal's other dimensions after
+    /// them — as a matrix, any <c>L</c>-by-(their product); with more dimensions, exactly them —
+    /// and gives one line per slice in <c>zf</c>'s layout (ADR 0345).
+    /// </summary>
+    private static (double[]? Values, bool PerSlice) FilterInitialConditions(
+        JgsValue zi, int delays, int[] dims, int dim, int line, int col)
+    {
+        if (zi.Type is JgsType.String or JgsType.Cell || zi.IsStringArray)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:filter:inputType",
+                "Invalid data type. Input arrays must be numeric or logical.");
+        }
+
+        if (zi.Type == JgsType.Null)
+        {
+            return (null, false);
+        }
+
+        int[] size = zi.Type is JgsType.Number or JgsType.Bool or JgsType.Complex ? [1, 1] : SizeDims(zi);
+        if (size.Length == 2 && size[0] == 0 && size[1] == 0)
+        {
+            return (null, false);
+        }
+
+        double[] values = zi.Type is JgsType.Number or JgsType.Bool
+            ? [zi.AsNumber]
+            : FlattenColumnMajor("filter", zi, line, col);
+        bool vector = size.Length == 2 && (size[0] == 1 || size[1] == 1);
+        if (vector && values.Length == delays)
+        {
+            return (values, false);
+        }
+
+        int[] others = PackedFilterOps.OtherDimensions(dims, dim);
+        long slices = 1;
+        foreach (int extent in others)
+        {
+            slices *= extent;
+        }
+
+        bool fits = size.Length > 0 && size[0] == delays;
+        if (fits && size.Length == 2)
+        {
+            fits = size[1] == slices;
+        }
+        else if (fits)
+        {
+            int significant = size.Length;
+            while (significant > 1 && size[significant - 1] == 1)
+            {
+                significant--;
+            }
+
+            fits = significant - 1 == others.Length;
+            for (int i = 1; fits && i < significant; i++)
+            {
+                fits = size[i] == others[i - 1];
+            }
+        }
+
+        if (!fits)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:filter:invalidInitialConditions",
+                "Initial conditions must be a vector of length max(length(a),length(b))-1, or an array " +
+                "with the leading dimension of size max(length(a),length(b))-1 and with remaining " +
+                "dimensions matching those of x.");
+        }
+
+        return (values, true);
     }
 }

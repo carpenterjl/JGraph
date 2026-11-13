@@ -1,0 +1,212 @@
+CHK|row_fir_y|double [1 8]|exact
+CHK|row_fir_zf|double [3 1]|exact
+CHK|row_fir_zfd|16.166666666666664|rel=1e-13
+CHK|row_fir_yd|141|rel=1e-13
+CHK|row_iir_y|double [1 8]|exact
+CHK|row_iir_zf|double [2 1]|exact
+CHK|row_iir_zfd|0.85546875|rel=1e-13
+CHK|row_iir_yd|118.38437500000001|rel=1e-13
+CHK|row_iir3_y|double [1 8]|exact
+CHK|row_iir3_zf|double [3 1]|exact
+CHK|row_iir3_zfd|8.2495565885000008|rel=1e-13
+CHK|row_iir3_yd|83.742406670000008|rel=1e-13
+CHK|col_fir_y|double [8 1]|exact
+CHK|col_fir_zf|double [2 1]|exact
+CHK|col_fir_zfd|9.5|rel=1e-13
+CHK|col_fir_yd|169.5|rel=1e-13
+CHK|col_iir3_y|double [8 1]|exact
+CHK|col_iir3_zf|double [3 1]|exact
+CHK|col_iir3_zfd|8.2495565885000008|rel=1e-13
+CHK|col_iir3_yd|83.742406670000008|rel=1e-13
+CHK|scalar_y|double [1 1]|exact
+CHK|scalar_zf|double [2 1]|exact
+CHK|scalar_zfd|1.5|rel=1e-13
+CHK|scalar_yd|1|rel=1e-13
+CHK|empty00_y|double [0 0]|exact
+CHK|empty00_zf|double [2 0]|exact
+CHK|empty10_y|double [1 0]|exact
+CHK|empty10_zf|double [2 1]|exact
+CHK|empty10_zfd|0|rel=1e-13
+CHK|empty03_y|double [0 3]|exact
+CHK|empty03_zf|double [2 3]|exact
+CHK|empty03_zfd|0|rel=1e-13
+CHK|empty30_y|double [3 0]|exact
+CHK|empty30_zf|double [2 0]|exact
+CHK|m45_d1_y|double [4 5]|exact
+CHK|m45_d1_zf|double [2 5]|exact
+CHK|m45_d1_zfd|4.4703749999999971|rel=1e-13
+CHK|m45_d1_yd|54.295499999999983|rel=1e-13
+CHK|m45_d2_y|double [4 5]|exact
+CHK|m45_d2_zf|double [2 4]|exact
+CHK|m45_d2_zfd|1.6482749999999977|rel=1e-13
+CHK|m45_d2_yd|70.172599999999989|rel=1e-13
+CHK|m45_d2_L3_y|double [4 5]|exact
+CHK|m45_d2_L3_zf|double [3 4]|exact
+CHK|m45_d2_L3_zfd|11.781470529999995|rel=1e-13
+CHK|m45_d2_L3_yd|47.098615300000006|rel=1e-13
+CHK|m45_d1_L3_y|double [4 5]|exact
+CHK|m45_d1_L3_zf|double [3 5]|exact
+CHK|m45_d1_L3_zfd|40.479999999999976|rel=1e-13
+CHK|m45_d1_L3_yd|29.776666666666685|rel=1e-13
+CHK|m45_d3_y|double [4 5]|exact
+CHK|m45_d3_zf|double [2 4 5]|exact
+CHK|m45_d3_zfd|66.549999999999983|rel=1e-13
+CHK|m45_d3_yd|20.131999999999998|rel=1e-13
+CHK|nd_d1_y|double [2 3 4]|exact
+CHK|nd_d1_zf|double [3 3 4]|exact
+CHK|nd_d1_zfd|188.00466666666654|rel=1e-13
+CHK|nd_d1_yd|-0.34400000000000253|rel=1e-13
+CHK|nd_d2_y|double [2 3 4]|exact
+CHK|nd_d2_zf|double [2 2 4]|exact
+CHK|nd_d2_zfd|11.286799999999998|rel=1e-13
+CHK|nd_d2_yd|83.832399999999922|rel=1e-13
+CHK|nd_d3_y|double [2 3 4]|exact
+CHK|nd_d3_zf|double [2 2 3]|exact
+CHK|nd_d3_zfd|5.4396249999999959|rel=1e-13
+CHK|nd_d3_yd|100.83744999999993|rel=1e-13
+CHK|row_d1_y|double [1 8]|exact
+CHK|row_d1_zf|double [2 8]|exact
+CHK|row_d1_zfd|113.70000000000002|rel=1e-13
+CHK|row_d1_yd|36.600000000000001|rel=1e-13
+CHK|col_d2_y|double [8 1]|exact
+CHK|col_d2_zf|double [2 8]|exact
+CHK|col_d2_zfd|113.70000000000002|rel=1e-13
+CHK|col_d2_yd|36.600000000000001|rel=1e-13
+CHK|row_d7_y|double [1 3]|exact
+CHK|row_d7_zf|double [2 1 3]|exact
+CHK|row_d7_zfd|7.4000000000000004|rel=1e-13
+CHK|row_d7_yd|2.8000000000000003|rel=1e-13
+CHK|L0_row_y|double [1 8]|exact
+CHK|L0_row_zf|double [0 1]|exact
+CHK|L0_row_yd|91.5|rel=1e-13
+CHK|L0_m45_y|double [4 5]|exact
+CHK|L0_m45_zf|double [0 4]|exact
+CHK|L0_m45_yd|50.329999999999991|rel=1e-13
+CHK|L1_m45_y|double [4 5]|exact
+CHK|L1_m45_zf|double [1 4]|exact
+CHK|L1_m45_zfd|8.8399999999999928|rel=1e-13
+CHK|L1_m45_yd|302.09999999999991|rel=1e-13
+CHK|zi_row_row_y|double [1 8]|exact
+CHK|zi_row_row_zf|double [2 1]|exact
+CHK|zi_row_row_zfd|0.853515625|rel=1e-13
+CHK|zi_row_row_yd|119.72031250000001|rel=1e-13
+CHK|zi_col_row_y|double [1 8]|exact
+CHK|zi_col_row_zf|double [2 1]|exact
+CHK|zi_col_row_zfd|0.853515625|rel=1e-13
+CHK|zi_col_row_yd|119.72031250000001|rel=1e-13
+CHK|zi_row_col_y|double [8 1]|exact
+CHK|zi_row_col_zf|double [2 1]|exact
+CHK|zi_row_col_zfd|0.853515625|rel=1e-13
+CHK|zi_row_col_yd|119.72031250000001|rel=1e-13
+CHK|zi_vec_m45_d2_y|double [4 5]|exact
+CHK|zi_vec_m45_d2_zf|double [2 4]|exact
+CHK|zi_vec_m45_d2_zfd|1.7107749999999977|rel=1e-13
+CHK|zi_vec_m45_d2_yd|85.172600000000003|rel=1e-13
+CHK|zi_vec_nd_d3_y|double [2 3 4]|exact
+CHK|zi_vec_nd_d3_zf|double [2 2 3]|exact
+CHK|zi_vec_nd_d3_zfd|3.8458749999999955|rel=1e-13
+CHK|zi_vec_nd_d3_yd|143.39994999999996|rel=1e-13
+CHK|zi_25_m45_d1_y|double [4 5]|exact
+CHK|zi_25_m45_d1_zf|double [2 5]|exact
+CHK|zi_25_m45_d1_zfd|1.6578749999999973|rel=1e-13
+CHK|zi_25_m45_d1_yd|155.04550000000003|rel=1e-13
+CHK|zi_24_m45_d2_y|double [4 5]|exact
+CHK|zi_24_m45_d2_zf|double [2 4]|exact
+CHK|zi_24_m45_d2_zfd|1.5545249999999973|rel=1e-13
+CHK|zi_24_m45_d2_yd|96.185100000000006|rel=1e-13
+CHK|zi_35_m45_d1_y|double [4 5]|exact
+CHK|zi_35_m45_d1_zf|double [3 5]|exact
+CHK|zi_35_m45_d1_zfd|14.146488749999993|rel=1e-13
+CHK|zi_35_m45_d1_yd|199.85235500000002|rel=1e-13
+CHK|zi_34_m45_d2_y|double [4 5]|exact
+CHK|zi_34_m45_d2_zf|double [3 4]|exact
+CHK|zi_34_m45_d2_zfd|24.999999999999989|rel=1e-13
+CHK|zi_34_m45_d2_yd|126.98000000000002|rel=1e-13
+CHK|zi_223_nd_d3_y|double [2 3 4]|exact
+CHK|zi_223_nd_d3_zf|double [2 2 3]|exact
+CHK|zi_223_nd_d3_zfd|0.63337499999999536|rel=1e-13
+CHK|zi_223_nd_d3_yd|203.37494999999996|rel=1e-13
+CHK|zi_26_nd_d3_y|double [2 3 4]|exact
+CHK|zi_26_nd_d3_zf|double [2 2 3]|exact
+CHK|zi_26_nd_d3_zfd|0.63337499999999536|rel=1e-13
+CHK|zi_26_nd_d3_yd|203.37494999999996|rel=1e-13
+CHK|zi_224_nd_d2_y|double [2 3 4]|exact
+CHK|zi_224_nd_d2_zf|double [2 2 4]|exact
+CHK|zi_224_nd_d2_zfd|-7.4132000000000016|rel=1e-13
+CHK|zi_224_nd_d2_yd|406.43239999999997|rel=1e-13
+CHK|zi_312_nd_d1_y|double [2 3 4]|exact
+CHK|zi_312_nd_d1_zf|double [3 3 4]|exact
+CHK|zi_312_nd_d1_zfd|726.20466666666653|rel=1e-13
+CHK|zi_312_nd_d1_yd|711.85599999999999|rel=1e-13
+CHK|zi_220_m45_d3_y|double [4 5]|exact
+CHK|zi_220_m45_d3_zf|double [2 4 5]|exact
+CHK|zi_220_m45_d3_zfd|1429.0500000000002|rel=1e-13
+CHK|zi_220_m45_d3_yd|573.13200000000006|rel=1e-13
+CHK|zi_scalar_L1_y|double [4 5]|exact
+CHK|zi_scalar_L1_zf|double [1 4]|exact
+CHK|zi_scalar_L1_zfd|8.8399999999999928|rel=1e-13
+CHK|zi_scalar_L1_yd|307.09999999999991|rel=1e-13
+CHK|zi_row4_L1_y|double [4 5]|exact
+CHK|zi_row4_L1_zf|double [1 4]|exact
+CHK|zi_row4_L1_zfd|8.8399999999999928|rel=1e-13
+CHK|zi_row4_L1_yd|305.09999999999991|rel=1e-13
+CHK|zi_scalar_x_y|double [1 1]|exact
+CHK|zi_scalar_x_zf|double [2 1]|exact
+CHK|zi_scalar_x_zfd|1.75|rel=1e-13
+CHK|zi_scalar_x_yd|1.5|rel=1e-13
+CHK|zi_empty_x_y|double [0 0]|exact
+CHK|zi_empty_x_zf|double [2 0]|exact
+CHK|zi_empty03_x_y|double [0 3]|exact
+CHK|zi_empty03_x_zf|double [2 3]|exact
+CHK|zi_empty03_x_zfd|21|rel=1e-13
+CHK|zi_empty03_xv_y|double [0 3]|exact
+CHK|zi_empty03_xv_zf|double [2 3]|exact
+CHK|zi_empty03_xv_zfd|33|rel=1e-13
+CHK|zi_L0_10_y|double [8 1]|exact
+CHK|zi_L0_10_zf|double [0 1]|exact
+CHK|zi_L0_10_yd|549|rel=1e-13
+CHK|zi_L0_05_y|double [4 5]|exact
+CHK|zi_L0_05_zf|double [0 5]|exact
+CHK|zi_L0_05_yd|301.9799999999999|rel=1e-13
+CHK|zi_logical_y|double [1 8]|exact
+CHK|zi_logical_zf|double [2 1]|exact
+CHK|zi_logical_zfd|0.8515625|rel=1e-13
+CHK|zi_logical_yd|119.74375000000001|rel=1e-13
+CHK|zi_int8_y|double [1 8]|exact
+CHK|zi_int8_zf|double [2 1]|exact
+CHK|zi_int8_zfd|0.8515625|rel=1e-13
+CHK|zi_int8_yd|124.99375000000001|rel=1e-13
+CHK|bad_len_err|MATLAB:filter:invalidInitialConditions|exact
+CHK|bad_scalar_L2_err|MATLAB:filter:invalidInitialConditions|exact
+CHK|bad_02_err|MATLAB:filter:invalidInitialConditions|exact
+CHK|bad_52_err|MATLAB:filter:invalidInitialConditions|exact
+CHK|bad_25_d2_err|MATLAB:filter:invalidInitialConditions|exact
+CHK|bad_1x2x5_err|MATLAB:filter:invalidInitialConditions|exact
+CHK|bad_2x1x4_err|MATLAB:filter:invalidInitialConditions|exact
+CHK|bad_232_err|MATLAB:filter:invalidInitialConditions|exact
+CHK|bad_col4_L1_err|MATLAB:filter:invalidInitialConditions|exact
+CHK|bad_112_err|MATLAB:filter:invalidInitialConditions|exact
+CHK|bad_L0_scalar_err|MATLAB:filter:invalidInitialConditions|exact
+CHK|bad_L0_03_err|MATLAB:filter:invalidInitialConditions|exact
+CHK|bad_char_err|MATLAB:filter:inputType|exact
+CHK|bad_char_empty_err|MATLAB:filter:inputType|exact
+CHK|bad_dim0_err|MATLAB:getdimarg:dimensionMustBePositiveInteger|exact
+CHK|bad_dim_frac_err|MATLAB:getdimarg:dimensionMustBePositiveInteger|exact
+CHK|y_only_bad|MATLAB:filter:invalidInitialConditions|exact
+CHK|y_only_bad_msg|Initial conditions must be a vector of length max(length(a),length(b))-1, or an array with the leading dimension of size max(length(a),length(b))-1 and with remaining dimensions matching those of x.|exact
+CHK|resume_m45_d2_y|0|abs=1e-15
+CHK|resume_m45_d2_zf|0|abs=1e-15
+CHK|resume_m45_d1_y|2.78e-17|abs=1e-15
+CHK|resume_m45_d1_zf|0|abs=1e-15
+CHK|resume_nd_d3_y|0|abs=1e-15
+CHK|resume_nd_d3_zf|0|abs=1e-15
+CHK|resume_nd_d2_y|0|abs=1e-15
+CHK|resume_nd_d2_zf|0|abs=1e-15
+CHK|resume_row_y|0|abs=1e-15
+CHK|resume_row_zf|0|abs=1e-15
+CHK|single_zf_class|single|exact
+CHK|single_zf_size|[2 1]|exact
+CHK|single_b_zf_class|single|exact
+CHK|single_b_zf_size|[2 4]|exact
+CHK|single_zf_last|-0.72656256|div=ADR0345|diverges|-0.7265625
+CHK|complex_zf|double [2 1]|div=ADR0345|diverges|refused
