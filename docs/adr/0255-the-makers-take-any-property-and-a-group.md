@@ -117,16 +117,15 @@ the letters it knew and drew.
 - **A refusal on an axes that is not held.** R2025b refuses an unknown option before it clears the
   axes and keeps what was there; here the maker clears it, then the refusal takes back what it made,
   and the axes is left empty.
-- **`pcolor`'s object is an `image` here**, a `surface` in R2025b (open item 167).
 
 ## Still open
 
-- Open item 167: `pcolor`'s object type.
-- Open item 168: the leftovers the probes found next to these items: `title`, `hold` and the other
-  axes verbs given a group (R2025b: `Using title with Group is not supported.`), a three-element colour
-  read as a colour by `patch(x, y, c)` for three vertices, and R2025b's own words for a malformed
-  `plot` (`MATLAB:plot:InvalidFirstInput`, `MATLAB:plot:InvalidPropertyValue` for a read-only name, a
-  pair after the spec read as a property).
+- Nothing from these items. What open item 168 left behind (`legend` and `cla` given a group, the
+  value refusals R2025b leaves a line behind for) is listed in ADR 0349.
 
 Closed since: open item 166 (ADR 0342). A replacing plot and `cla` delete the axes' groups, and the
 axes lists a group among its children rather than the group's members.
+Open items 167 and 168 (ADR 0349): `pcolor` makes R2025b's flat surface, so the fixture row
+`mk_pcolor` agrees and the divergence on `pcolor`'s object is gone; the axes verbs refuse a group or a transform in their own words, a
+three-element row given to `patch` is one colour, `plot` reads a malformed call in its own words, and
+a deleted parent is refused rather than read as data.

@@ -130,6 +130,7 @@ internal static class JgsGraphicsCallbackValues
         ContextMenuModel => "ContextMenu",
         MenuItemModel => "Menu",
         LinePlot => "Line",
+        JgsGraphicsGroup group => group.Transforms ? "Transform" : "Group", // "Axes cannot be a child of Group." (open item 168)
         AxesToolbarModel => "AxesToolbar",
         AxesToolbarButtonModel button => button.Style == ToolbarButtonStyle.State // probe u12_more
             ? "ToolbarStateButton"

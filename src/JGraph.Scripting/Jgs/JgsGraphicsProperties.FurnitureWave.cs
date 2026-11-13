@@ -495,6 +495,7 @@ internal static partial class JgsGraphicsProperties
         {
             sheet.Y = given;
             sheet.YImplied = false;
+            sheet.YColumn = given.Length > 1 && JgsMatrix.DimsOf(value) is [_, 1]; // kept as written (open item 167)
         }
     }
 

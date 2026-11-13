@@ -28,7 +28,7 @@ CHK|mk_surface|cell [1 5] {double [1 1] 1, char 'surface', char 't', double [1 1
 CHK|mk_image|cell [1 5] {double [1 1] 1, char 'image', char 't', double [1 1] 7, char 'axes'}|exact
 CHK|mk_quiver|cell [1 5] {double [1 1] 1, char 'quiver', char 't', double [1 1] 7, char 'axes'}|exact
 CHK|mk_semilogy|cell [1 5] {double [1 1] 1, char 'line', char 't', double [1 1] 7, char 'axes'}|exact
-CHK|mk_pcolor|cell[1 5]{double[1 1] 1;char[1 7]'surface';char[1 1]'t';double[1 1] 7;char[1 4]'axes'}|div=0255|diverges|cell[1 5]{double[1 1] 1;char[1 5]'image';char[1 1]'t';double[1 1] 7;char[1 4]'axes'}
+CHK|mk_pcolor|cell [1 5] {double [1 1] 1, char 'surface', char 't', double [1 1] 7, char 'axes'}|exact
 CHK|mk_bare_plot|cell [1 5] {double [1 1] 1, char 'line', char 't', double [1 1] 7, char 'axes'}|exact
 CHK|mk_bare_scatter|cell [1 5] {double [1 1] 1, char 'scatter', char 't', double [1 1] 7, char 'axes'}|exact
 CHK|mk_bare_bar|cell [1 5] {double [1 1] 1, char 'bar', char 't', double [1 1] 7, char 'axes'}|exact

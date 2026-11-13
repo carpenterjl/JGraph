@@ -40,13 +40,17 @@ internal static partial class JgsBuiltins
     /// <param name="KeepsOptions">The maker sets every property itself, in order (<c>line</c>, <c>text</c>, <c>surface</c>, <c>image</c>): only a group first and a <c>'Parent'</c> naming a group or an axes are taken.</param>
     /// <param name="OwnParent">The maker reads its parent itself (<c>hggroup</c>, <c>hgtransform</c>).</param>
     /// <param name="TableNames">How many variable names follow a table given first (<c>scatter(tbl, xvar, yvar)</c>: 2; <c>scatter3</c>: 3). They are data, however they are spelled, and the trailing pairs are found after them.</param>
+    /// <param name="PlotGroups">For <c>plot</c> and its log forms (2) and <c>plot3</c> (3): how many data arguments make a group, which turns on R2025b's own reading of a malformed call in the MATLAB dialect (open item 168). Zero for every other maker.</param>
+    /// <param name="Deleted">How R2025b refuses a deleted object given as the parent (open item 168).</param>
     internal sealed record MadeShape(
         Type Made,
         IReadOnlyCollection<string> Own,
         bool GroupFirst = true,
         bool KeepsOptions = false,
         bool OwnParent = false,
-        int TableNames = 0)
+        int TableNames = 0,
+        int PlotGroups = 0,
+        DeletedParentWords Deleted = DeletedParentWords.SetOnDeleted)
     {
         private readonly HashSet<string> _own = new(Own, StringComparer.OrdinalIgnoreCase);
 
@@ -68,15 +72,34 @@ internal static partial class JgsBuiltins
     {
         IReadOnlyList<JgsValue> rest = args;
         JgsGraphicsGroup? group = null;
+
+        // A deleted object where the parent goes is refused as R2025b refuses it, not read as data
+        // (open item 168: line(g, ...) on a deleted group).
+        if ((shape.GroupFirst || shape.OwnParent) && rest.Count > 0 && IsDeadHandle(rest[0]))
+        {
+            throw DeadParent(shape, rest[0], line, col);
+        }
+
         if (shape.GroupFirst && rest.Count > 0 && GroupNamedBy(rest[0]) is { } leading)
         {
             group = leading;
             rest = [.. rest.Skip(1)];
         }
 
+        // plot reads a malformed call in its own words before it draws anything (open item 168).
+        if (shape.PlotGroups > 0 && JgsRunningDialect.ThreadIsMatlab)
+        {
+            CheckPlotArguments(shape, rest, line, col);
+        }
+
         List<(string Name, JgsValue Value)> foreign;
         JgsHandleEntry? parent;
-        (rest, foreign, parent) = PeelMadeProperties(shape, rest);
+        JgsValue? deadParent;
+        (rest, foreign, parent, deadParent) = PeelMadeProperties(shape, rest);
+        if (deadParent is { } dead)
+        {
+            throw DeadParent(shape, dead, line, col);
+        }
 
         AxesModel? axes = null;
         switch (parent?.Target)
@@ -120,7 +143,7 @@ internal static partial class JgsBuiltins
             {
                 foreach ((string name, JgsValue value) in foreign)
                 {
-                    JgsGraphicsProperties.Set(entry, name, value, line, col);
+                    SetMadeProperty(shape, entry, name, value, line, col);
                     createFcn |= name.Equals("CreateFcn", StringComparison.OrdinalIgnoreCase);
                 }
 
@@ -160,16 +183,19 @@ internal static partial class JgsBuiltins
     /// a <c>'Parent'</c> naming a group or an axes is taken out to place what is made, and the rest
     /// are taken out to be set on it.
     /// </summary>
-    private static (IReadOnlyList<JgsValue> Remaining, List<(string Name, JgsValue Value)> Foreign, JgsHandleEntry? Parent)
+    private static (IReadOnlyList<JgsValue> Remaining, List<(string Name, JgsValue Value)> Foreign, JgsHandleEntry? Parent, JgsValue? DeadParent)
         PeelMadeProperties(MadeShape shape, IReadOnlyList<JgsValue> args)
     {
         var taken = new HashSet<int>();
         var foreign = new List<(string Name, JgsValue Value)>();
         JgsHandleEntry? parent = null;
+        JgsValue? deadParent = null;
         IReadOnlyDictionary<string, GraphicsProperty> table = JgsGraphicsProperties.TableFor(shape.Made);
         // A table first makes the words after it the variables' names, data whatever they are called
         // (a capitalised word would otherwise read as a property in the MATLAB dialect).
-        int first = args.Count > 0 && args[0].Type == JgsType.Table ? 1 + shape.TableNames : 0;
+        // An axes before the table counts too (open item 198: scatter(ax, tbl, 'Var1', 'Var2')).
+        int lead = LeadingAxes(args) is not null ? 1 : 0;
+        int first = args.Count > lead && args[lead].Type == JgsType.Table ? lead + 1 + shape.TableNames : 0;
         for (int i = args.Count - 2; i >= first; i -= 2)
         {
             if (!IsTextScalar(args[i]))
@@ -200,6 +226,14 @@ internal static partial class JgsBuiltins
                 continue;
             }
 
+            // A deleted object named as the parent is refused before anything is made (open item 168).
+            if (!shape.OwnParent && word.Equals("Parent", StringComparison.OrdinalIgnoreCase) && IsDeadHandle(args[i + 1]))
+            {
+                deadParent ??= args[i + 1];
+                taken.Add(i);
+                continue;
+            }
+
             // CreateFcn runs once every other property is set, so it is always set here, for every
             // maker; line, which sets every option itself, only stored it (R2025b, probe oi136_create).
             bool createFcn = word.Equals("CreateFcn", StringComparison.OrdinalIgnoreCase);
@@ -214,7 +248,7 @@ internal static partial class JgsBuiltins
 
         if (taken.Count == 0)
         {
-            return (args, foreign, parent);
+            return (args, foreign, parent, deadParent);
         }
 
         var rest = new List<JgsValue>(args.Count - (2 * taken.Count));
@@ -229,7 +263,7 @@ internal static partial class JgsBuiltins
             rest.Add(args[i]);
         }
 
-        return (rest, foreign, parent);
+        return (rest, foreign, parent, deadParent);
     }
 
     /// <summary>
@@ -253,6 +287,171 @@ internal static partial class JgsBuiltins
         return char.IsUpper(word[0])
             || table.Values.Any(property => property.Name.StartsWith(word, StringComparison.OrdinalIgnoreCase));
     }
+
+    /// <summary>How R2025b's makers refuse a deleted parent (probe <c>dl1</c>).</summary>
+    internal enum DeletedParentWords
+    {
+        /// <summary><c>line</c>, <c>text</c>, <c>patch</c>, <c>surface</c>, <c>image</c>, <c>imagesc</c>, <c>light</c>, <c>rectangle</c>, the groups: "Cannot set property to a deleted object."</summary>
+        SetOnDeleted,
+
+        /// <summary><c>plot</c>, its log forms, <c>plot3</c>, <c>fill</c>, <c>fill3</c>: "Invalid handle."</summary>
+        InvalidHandle,
+
+        /// <summary>The charts that go through <c>axescheck</c>: "Attempt to plot into deleted graphics object." (or "... deleted Axes.").</summary>
+        AxesCheck,
+    }
+
+    /// <summary>Whether a value is the handle of an object since deleted: minted here once and naming nothing now.</summary>
+    private static bool IsDeadHandle(JgsValue value) =>
+        value.Type == JgsType.Number && !JgsHandleRegistry.TryGet(value, out _) && JgsHandleRegistry.WasMinted(value.AsNumber);
+
+    /// <summary>R2025b's refusal of a deleted object given where a maker's parent goes.</summary>
+    private static JgsRuntimeException DeadParent(MadeShape shape, JgsValue handle, int line, int col) => shape.Deleted switch
+    {
+        DeletedParentWords.InvalidHandle => new(line, col, "MATLAB:hg:InvalidHandle", "Invalid handle."),
+        DeletedParentWords.AxesCheck when JgsHandleRegistry.RetiredClassOf(handle) is { } cls && cls.EndsWith(".Axes", StringComparison.Ordinal)
+            => new(line, col, "MATLAB:graphics:axescheck:DeletedAxes", "Attempt to plot into deleted Axes."),
+        DeletedParentWords.AxesCheck => new(line, col, "MATLAB:graphics:axescheck:DeletedObject", "Attempt to plot into deleted graphics object."),
+        _ => new(line, col, "MATLAB:hg:DeletedObject", "Cannot set property to a deleted object."),
+    };
+
+    /// <summary>
+    /// Sets one option a maker did not read itself. <c>plot</c>'s refusal of a read-only name is its own
+    /// (<c>MATLAB:plot:InvalidPropertyValue</c>, the message unchanged), where the other makers keep
+    /// the property table's <c>MATLAB:class:SetProhibited</c> (probe <c>pl1</c>).
+    /// </summary>
+    private static void SetMadeProperty(MadeShape shape, JgsHandleEntry entry, string name, JgsValue value, int line, int col)
+    {
+        try
+        {
+            JgsGraphicsProperties.Set(entry, name, value, line, col);
+        }
+        catch (JgsRuntimeException refused) when (shape.PlotGroups > 0 && refused.Identifier == "MATLAB:class:SetProhibited")
+        {
+            throw new JgsRuntimeException(refused.Line, refused.Column, "MATLAB:plot:InvalidPropertyValue", refused.Message);
+        }
+    }
+
+    /// <summary>
+    /// R2025b's reading of <c>plot</c>'s arguments, checked before anything is drawn (open item 168,
+    /// probes <c>pl1</c>-<c>pl3</c>, 45 tails measured). After the first group the arguments are read
+    /// a run at a time: data starts a group of <see cref="MadeShape.PlotGroups"/>; a word with an odd
+    /// count left is a line spec; with an even count left it is a spec when a group follows it, the
+    /// call is refused when it and the next are both specs, and otherwise the rest are name-value
+    /// pairs. Then data where a name goes, or a word where data goes, is "Invalid data argument."; a
+    /// group left short is R2025b's pairs mismatch; every name is checked before any spec, and an
+    /// unknown name is refused in the property table's words. A call this reads as well formed goes on
+    /// to the maker as it did.
+    /// </summary>
+    private static void CheckPlotArguments(MadeShape shape, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        int start = LeadingAxes(args) is not null ? 1 : 0;
+        int n = args.Count - start;
+        if (n == 0 || args[start].Type == JgsType.Table)
+        {
+            return;
+        }
+
+        JgsValue At(int i) => args[start + i];
+        bool Text(int i) => IsTextScalar(At(i));
+        bool Spec(int i) => Text(i) && IsLineSpecWord(TextOf(At(i)));
+
+        // Text first is open item 126's, refused before this runs (JgsCategoricalCharts.RefuseTextData).
+        if (Text(0))
+        {
+            return;
+        }
+
+        int k = shape.PlotGroups;
+        bool yAlone = k == 2 && (n == 1 || Text(1));
+        int i;
+        if (yAlone)
+        {
+            i = 1;
+        }
+        else
+        {
+            for (int j = 1; j < k; j++)
+            {
+                if (j >= n || Text(j))
+                {
+                    return; // a short first group is the maker's own to refuse
+                }
+            }
+
+            i = k;
+        }
+
+        var specs = new List<int>();
+        int pairs = n;
+        while (i < n)
+        {
+            if (!Text(i))
+            {
+                bool whole = !yAlone && i + k <= n && Enumerable.Range(i, k).All(j => !Text(j));
+                if (!whole)
+                {
+                    throw PlotPairsMismatch(line, col);
+                }
+
+                i += k;
+                continue;
+            }
+
+            if ((n - i) % 2 == 1)
+            {
+                specs.Add(i++);
+                continue;
+            }
+
+            if (i + k < n && Enumerable.Range(i + 1, k).All(j => !Text(j)))
+            {
+                specs.Add(i++);
+                continue;
+            }
+
+            if (Spec(i) && i + 1 < n && Spec(i + 1))
+            {
+                throw InvalidPlotData(line, col);
+            }
+
+            pairs = i;
+            break;
+        }
+
+        for (int j = pairs; j < n; j += 2)
+        {
+            if (!Text(j))
+            {
+                throw InvalidPlotData(line, col);
+            }
+        }
+
+        var sample = new LinePlot([], []);
+        for (int j = pairs; j < n; j += 2)
+        {
+            string name = TextOf(At(j));
+            if (!shape.Reads(name) && JgsGraphicsProperties.RefusalOfName(sample, name, line, col) is { } unknown)
+            {
+                throw unknown;
+            }
+        }
+
+        foreach (int at in specs)
+        {
+            if (!Spec(at))
+            {
+                throw NotALineSpec(line, col);
+            }
+        }
+    }
+
+    private static JgsRuntimeException InvalidPlotData(int line, int col) =>
+        new(line, col, "MATLAB:plot:InvalidFirstInput", "Invalid data argument.");
+
+    private static JgsRuntimeException PlotPairsMismatch(int line, int col) =>
+        new(line, col, "MATLAB:plot:DataPairsMismatch",
+            "Data must be a single input of y-values or one or more pairs of x- and y-values.");
 
     /// <summary>The group or transform a value names, when it is one.</summary>
     private static JgsGraphicsGroup? GroupNamedBy(JgsValue value) =>
@@ -339,31 +538,37 @@ internal static partial class JgsBuiltins
 
     private static readonly string[] GroupOptionNames = ["Matrix", "Tag", "Visible", "Parent"];
 
-    /// <summary><c>plot</c>, the log plots and <c>stairs</c>, which share plot's option list.</summary>
-    internal static MadeShape PlotMade => new(typeof(LinePlot), PlotOptionNames);
+    /// <summary><c>stairs</c>, which shares plot's option list but not its reading of a malformed call.</summary>
+    internal static MadeShape PlotMade => new(typeof(LinePlot), PlotOptionNames, Deleted: DeletedParentWords.AxesCheck);
 
-    internal static MadeShape Plot3Made => new(typeof(Line3DPlot), LineOptionNames);
+    /// <summary><c>plot</c> and the log plots: plot's option list and R2025b's reading of its arguments (open item 168).</summary>
+    internal static MadeShape PlotArgumentsMade => new(typeof(LinePlot), PlotOptionNames, PlotGroups: 2, Deleted: DeletedParentWords.InvalidHandle);
+
+    internal static MadeShape Plot3Made => new(typeof(Line3DPlot), LineOptionNames, PlotGroups: 3, Deleted: DeletedParentWords.InvalidHandle);
 
     internal static MadeShape LineMade => new(typeof(LinePlot), [], KeepsOptions: true);
 
-    internal static MadeShape StemMade => new(typeof(StemPlot), StemOptions.Names);
+    internal static MadeShape StemMade => new(typeof(StemPlot), StemOptions.Names, Deleted: DeletedParentWords.AxesCheck);
 
-    internal static MadeShape Stem3Made => new(typeof(Stem3DPlot), Stem3OptionNames);
+    internal static MadeShape Stem3Made => new(typeof(Stem3DPlot), Stem3OptionNames, Deleted: DeletedParentWords.AxesCheck);
 
-    internal static MadeShape ScatterMade => new(typeof(ScatterPlot), MarkerChartOptionNames, TableNames: 2);
+    internal static MadeShape ScatterMade => new(typeof(ScatterPlot), MarkerChartOptionNames, TableNames: 2, Deleted: DeletedParentWords.AxesCheck);
 
     internal static MadeShape Scatter3Made => new(typeof(Scatter3DPlot), Scatter3OptionNames, GroupFirst: false, TableNames: 3);
 
-    internal static MadeShape BarMade => new(typeof(BarPlot), BarOptionNames);
+    internal static MadeShape BarMade => new(typeof(BarPlot), BarOptionNames, Deleted: DeletedParentWords.AxesCheck);
 
-    internal static MadeShape AreaMade => new(typeof(AreaPlot), AreaOptionNames);
+    internal static MadeShape AreaMade => new(typeof(AreaPlot), AreaOptionNames, Deleted: DeletedParentWords.AxesCheck);
 
-    internal static MadeShape ErrorBarMade => new(typeof(ErrorBarPlot), ErrorBarOptions.Names);
+    internal static MadeShape ErrorBarMade => new(typeof(ErrorBarPlot), ErrorBarOptions.Names, Deleted: DeletedParentWords.AxesCheck);
 
-    internal static MadeShape HistogramMade => new(typeof(HistogramPlot), HistogramChartOptions.Names);
+    internal static MadeShape HistogramMade => new(typeof(HistogramPlot), HistogramChartOptions.Names, Deleted: DeletedParentWords.AxesCheck);
 
-    /// <summary><c>fill</c>, <c>fill3</c> and <c>patch</c>; the coordinates by name and an axes parent are patch's own too.</summary>
+    /// <summary><c>patch</c>; the coordinates by name and an axes parent are its own too.</summary>
     internal static MadeShape PatchMade => new(typeof(PatchPlot), [.. PatchOptionNames, "XData", "YData", "ZData", "Parent"]);
+
+    /// <summary><c>fill</c> and <c>fill3</c>: patch's options, plot's refusal of a deleted parent.</summary>
+    internal static MadeShape FillMade => PatchMade with { Deleted = DeletedParentWords.InvalidHandle };
 
     internal static MadeShape RectangleMade => new(typeof(PatchPlot), RectangleOptionNames);
 

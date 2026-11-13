@@ -964,6 +964,14 @@ internal static partial class JgsGraphicsProperties
         return names;
     }
 
+    /// <summary>
+    /// R2025b's refusal of a name an object of <paramref name="sample"/>'s kind does not answer to as
+    /// a creating call reads it (a start of a name stands for the name), or null when it answers:
+    /// <c>plot</c> checks every name before it draws (open item 168).
+    /// </summary>
+    internal static JgsRuntimeException? RefusalOfName(GraphObject sample, string name, int line, int col) =>
+        TryFind(sample, WholeName(sample, name), out _) ? null : Unknown(sample, name, line, col);
+
     public static bool TryFind(GraphObject target, string name, out GraphicsProperty property) =>
         (TableFor(target.GetType()).TryGetValue(name.ToLowerInvariant(), out property!)
             && (property.OnlyWhen is null || property.OnlyWhen(target))
@@ -1740,7 +1748,9 @@ internal static partial class JgsGraphicsProperties
             Put(table, "YData",
                 entry => ((SurfacePlot)entry.Target).YGrid is { } grid
                     ? Grid(grid)
-                    : Row(((SurfacePlot)entry.Target).Y),
+                    : ((SurfacePlot)entry.Target).YColumn
+                        ? JgsMatrix.FromColumnMajor(((SurfacePlot)entry.Target).Y, ((SurfacePlot)entry.Target).Y.Length, 1)
+                        : Row(((SurfacePlot)entry.Target).Y),
                 (entry, value, line, col) => WriteSurfaceRuler(entry, value, line, col, alongX: false));
             // Writable since M108: a surface whose heights could be read but not replaced left
             // set(h, 'ZData', Z) — the animation idiom — with nothing to write to, so a morphing

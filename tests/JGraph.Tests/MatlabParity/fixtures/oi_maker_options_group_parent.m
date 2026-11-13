@@ -46,7 +46,7 @@ u2_chk('mk_surface', @() made(surface(ax, [0 1; 0 1], [0 0; 1 1], Z, o{:})));
 u2_chk('mk_image', @() made(image(ax, C, o{:})));
 u2_chk('mk_quiver', @() made(quiver(ax, x, y, z, y, o{:})));
 u2_chk('mk_semilogy', @() made(semilogy(ax, x, y, o{:})));
-u9b_chkdiv('mk_pcolor', @() made(pcolor(ax, C, o{:})), '0255'); % pcolor's object is an image here, a surface in R2025b (open item 167)
+u2_chk('mk_pcolor', @() made(pcolor(ax, C, o{:}))); % a surface since open item 167
 
 % --- without an axes -------------------------------------------------------------------------------
 cla(ax);

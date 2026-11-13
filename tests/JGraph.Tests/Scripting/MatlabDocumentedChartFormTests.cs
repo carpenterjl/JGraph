@@ -104,14 +104,15 @@ public class MatlabDocumentedChartFormTests : IDisposable
     {
         await Run("pcolor([1 2 3; 4 5 6]);");
 
-        // pcolor draws through the image path in this build, so what it lands on is the raster and
-        // the span it covers. The generated grid is the one meshgrid would have made: the cells sit
-        // on their own column and row numbers, so a 2-by-3 matrix spans x 1..3 and y 1..2.
-        ImagePlot cells = Single<ImagePlot>();
-        Assert.Equal(1, cells.XExtent.Min);
-        Assert.Equal(3, cells.XExtent.Max);
-        Assert.Equal(1, cells.YExtent.Min);
-        Assert.Equal(2, cells.YExtent.Max);
+        // R2025b's pcolor is a flat surface (open item 167). The generated grid is the one meshgrid
+        // would have made: the cells sit on their own column and row numbers, so a 2-by-3 matrix
+        // spans x 1..3 and y 1..2, at height zero.
+        SurfacePlot cells = Single<SurfacePlot>();
+        Assert.Equal(1, cells.GetXDataBounds().Min);
+        Assert.Equal(3, cells.GetXDataBounds().Max);
+        Assert.Equal(1, cells.GetYDataBounds().Min);
+        Assert.Equal(2, cells.GetYDataBounds().Max);
+        Assert.All(cells.Z.Cast<double>(), z => Assert.Equal(0, z));
     }
 
     // --- subplot and tiledlayout ----------------------------------------------------------------

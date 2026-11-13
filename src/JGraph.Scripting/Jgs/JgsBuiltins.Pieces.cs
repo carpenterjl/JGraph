@@ -916,6 +916,12 @@ internal static partial class JgsBuiltins
                     : xs.Select(static column => new double[column.Length]).ToArray();
                 JgsValue colour = data[g + needed - 1];
                 int polygons = Math.Max(xs.Length, Math.Max(ys.Length, zs.Length));
+
+                // One polygon's three-element row is one colour, refused outside [0, 1] (open item 168).
+                if (polygons == 1 && RgbRowColour(colour, line, col) is { } rgb)
+                {
+                    colour = rgb;
+                }
                 for (int p = 0; p < polygons; p++)
                 {
                     double[] px = Pick(xs, p), py = Pick(ys, p), pz = Pick(zs, p);

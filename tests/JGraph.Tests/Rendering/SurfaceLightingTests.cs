@@ -59,8 +59,8 @@ public class SurfaceLightingTests
         RecordingRenderContext unlit = Render(axes);
         uint[] before = unlit.TriangleColors.ToArray();
 
-        // The mean height of the one cell is 1.5, dead centre of the 0..3 range.
-        Assert.Equal(surface.Colormap.Sample(1.5, 0, 3).ToArgb(), before[0]);
+        // A flat face takes its first corner's height, 0, the bottom of the 0..3 range (open item 167).
+        Assert.Equal(surface.Colormap.Sample(0, 0, 3).ToArgb(), before[0]);
 
         axes.Lights.Add(new LightModel());
         RecordingRenderContext lit = Render(axes);
@@ -79,7 +79,7 @@ public class SurfaceLightingTests
         AxesModel axes = AxesWith(surface);
         axes.Lights.Add(new LightModel());
 
-        Assert.Equal(surface.Colormap.Sample(1.5, 0, 3).ToArgb(), Render(axes).TriangleColors[0]);
+        Assert.Equal(surface.Colormap.Sample(0, 0, 3).ToArgb(), Render(axes).TriangleColors[0]);
     }
 
     /// <summary>
@@ -158,7 +158,7 @@ public class SurfaceLightingTests
         AxesModel axes = AxesWith(surface);
         axes.Lights.Add(new LightModel { Visible = false });
 
-        Assert.Equal(surface.Colormap.Sample(1.5, 0, 3).ToArgb(), Render(axes).TriangleColors[0]);
+        Assert.Equal(surface.Colormap.Sample(0, 0, 3).ToArgb(), Render(axes).TriangleColors[0]);
     }
 
     /// <summary>

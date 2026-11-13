@@ -395,9 +395,11 @@ public class Surface3DRenderingTests
             y[i] = i;
         }
 
-        // Flat everywhere except one tall spike on the far edge (largest y, middle column).
+        // Flat everywhere except one tall spike one row in from the far edge (largest y, middle
+        // column): a flat face takes its first corner's colour (open item 167), so the spike colours
+        // the one cell whose first corner it is.
         var z = new double[n, n];
-        z[n - 1, n / 2] = 100;
+        z[n - 2, n / 2] = 100;
 
         var figure = new FigureModel();
         AxesModel axes = figure.AddAxes();
@@ -408,7 +410,7 @@ public class Surface3DRenderingTests
         RecordingRenderContext context = Render(figure);
 
         // Six vertices per cell, all one color under flat shading, so the vertex stream divides
-        // cleanly into cells. Only the two cells straddling the spike differ from the flat color.
+        // cleanly into cells. Only the cell the spike is the first corner of differs from the flat color.
         uint flat = context.TriangleColors[0];
         var spikeCells = new List<int>();
         for (int i = 0; i < context.TriangleColors.Count; i += 6)
@@ -419,7 +421,7 @@ public class Surface3DRenderingTests
             }
         }
 
-        Assert.Equal(2, spikeCells.Count);
+        Assert.Single(spikeCells);
 
         // The spike sits on the far edge, so its cells belong to an early wavefront regardless of
         // how tall it is. Mean-vertex-depth sorting instead pushes them to the very end of the

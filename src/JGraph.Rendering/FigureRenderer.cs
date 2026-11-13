@@ -1643,21 +1643,55 @@ public sealed class FigureRenderer
             Color seriesColor = SeriesPalette.Resolve(palette, plot, colorIndex);
             colorIndex++;
 
-            if (!plot.Visible || plot is not IDrawable drawable)
+            if (!plot.Visible)
             {
                 continue;
             }
 
             AxisModel xAxis = axes.GetXAxisFor(plot);
             AxisModel yAxis = axes.GetYAxisFor(plot);
+            bool clip = clipPlots && plot.Clipping;
+            if (plot is not IDrawable drawable)
+            {
+                // A surface in a flat axes is drawn from straight above (open item 167).
+                if (plot is I3DDrawable { DrawsInFlatAxes: true } flat && FlatProjection(axes, xAxis, yAxis, plotArea) is { } above)
+                {
+                    if (clip) { context.PushClip(plotArea); }
+                    flat.Render3D(context, above, new RenderState(new NormalizedCoordinateMapper(plotArea), plotArea, seriesColor, depthSort: false));
+                    if (clip) { context.PopClip(); }
+                }
+
+                continue;
+            }
+
             var transform = AxisTransform.Create(plotArea, xAxis, yAxis);
             var state = new RenderState(transform, plotArea, seriesColor);
 
-            bool clip = clipPlots && plot.Clipping;
             if (clip) { context.PushClip(plotArea); }
             drawable.Render(context, state);
             if (clip) { context.PopClip(); }
         }
+    }
+
+    /// <summary>
+    /// The camera a flat axes sees a 3D object through: <c>view(0, 90)</c> with a box shaped like the
+    /// plot area, so x and y land where the 2D rulers put them. Only linear rulers have one; a log
+    /// ruler is a curve no orthographic camera can follow, and its surface is not drawn.
+    /// </summary>
+    private static Projection3D? FlatProjection(AxesModel axes, AxisModel xAxis, AxisModel yAxis, Rect2D plotArea)
+    {
+        if (xAxis.Scale == AxisScaleType.Logarithmic || yAxis.Scale == AxisScaleType.Logarithmic
+            || plotArea.Width <= 0 || plotArea.Height <= 0)
+        {
+            return null;
+        }
+
+        // A reversed ruler is a range read from its far end, which the projection takes as it is.
+        DataRange xr = xAxis.Inverted ? new DataRange(xAxis.Range.Max, xAxis.Range.Min) : xAxis.Range;
+        DataRange yr = yAxis.Inverted ? new DataRange(yAxis.Range.Max, yAxis.Range.Min) : yAxis.Range;
+        double side = System.Math.Min(plotArea.Width, plotArea.Height);
+        return new Projection3D(
+            xr, yr, axes.ZAxis.Range, 0, 90, plotArea, new Vector3D(plotArea.Width, plotArea.Height, side));
     }
 
     private static void DrawAnnotations(

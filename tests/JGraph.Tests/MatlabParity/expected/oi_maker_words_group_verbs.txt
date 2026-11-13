@@ -1,0 +1,566 @@
+CHK|pc_type|surface|exact
+CHK|pc_faces|cell [1 6] {char 'flat', double [1 3] 0.12941176470588237 0.12941176470588237 0.12941176470588237, char '-', double [1 1] 0.5, double [1 1] 1, double [1 1] 1}|exact
+CHK|pc_look|cell [1 5] {char 'flat', char 'none', char 'both', char 'on', char 'scaled'}|exact
+CHK|pc_data|cell [1 4] {double [1 4] 1 2 3 4, double [4 1] 1 2 3 4, double [4 4] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0, double [4 4] 16 5 9 4 2 11 7 14 3 10 6 15 13 8 12 1}|exact
+CHK|pc_modes|cell [1 3] {char 'manual', char 'manual', char 'manual'}|exact
+CHK|pc_axes|cell [1 9] {double [1 2] 0 90, char 'on', double [1 2] 1 4, double [1 2] 1 4, char 'manual', char 'manual', double [1 2] -1 1, double [1 2] 1 16, char 'off'}|exact
+CHK|pc_found|cell [1 3] {double [1 1] 1, double [1 1] 0, double [1 1] 1}|exact
+CHK|pc_shading_flat|cell [1 2] {char 'none', char 'flat'}|exact
+CHK|pc_shading_interp|cell [1 2] {char 'none', char 'interp'}|exact
+CHK|pc_shading_faceted|cell [1 2] {double [1 3] 0 0 0, char 'flat'}|exact
+CHK|pc_vectors|cell [1 8] {double [1 3] 1 2 4, double [1 2] 10 20, double [2 3] 0 0 0 0 0 0, double [2 3] 1 4 2 5 3 6, double [1 2] 1 4, double [1 2] 10 20, double [1 2] 0 90, char 'manual'}|exact
+CHK|pc_matrices|cell [1 4] {double [2 3] 0 0 1 1 3 3, double [2 3] 0 2 0 2 0 2, double [1 2] 0 3, double [1 2] 0 2}|exact
+CHK|pc_no_span|cell [1 2] {double [1 2] 5 6, double [1 2] 1 2}|exact
+CHK|pc_held|cell [1 3] {double [1 2] -37.5 30, char 'auto', double [1 1] 2}|exact
+CHK|pc_options|cell [1 3] {char 'none', char 'p', double [1 1] 0.5}|exact
+CHK|pc_bad_option|MATLAB:hg:InvalidProperty|exact
+CHK|pc_bad_option_msg|Unrecognized property Foo for class Surface.|exact
+CHK|pc_bad_option_left|double [1 1] 0|exact
+CHK|pc_vector|MATLAB:pcolor:NonMatrixColorInput|exact
+CHK|pc_vector_msg|Color data input must be a matrix.|exact
+CHK|pc_mismatch|MATLAB:pcolor:InputSizeMismatch|exact
+CHK|pc_mismatch_msg|Matrix dimensions must agree.|exact
+CHK|pc_complex|MATLAB:pcolor:NonRealInputs|exact
+CHK|pc_complex_msg|Data inputs must be real.|exact
+CHK|pc_none|MATLAB:narginchk:notEnoughInputs|exact
+CHK|pc_none_msg|Not enough input arguments.|exact
+CHK|pc_two|MATLAB:badsubscript|exact
+CHK|pc_two_msg|Index exceeds the number of array elements. Index must not exceed 2.|exact
+CHK|pc_group|MATLAB:badsubscript|exact
+CHK|pc_group_msg|Index exceeds the number of array elements. Index must not exceed 2.|exact
+CHK|gv_title_g|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|gv_title_g_msg|Using title with Group is not supported.|exact
+CHK|gv_title_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_title_t|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|gv_title_t_msg|Using title with Transform is not supported.|exact
+CHK|gv_title_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_subtitle_g|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|gv_subtitle_g_msg|Using subtitle with Group is not supported.|exact
+CHK|gv_subtitle_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_subtitle_t|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|gv_subtitle_t_msg|Using subtitle with Transform is not supported.|exact
+CHK|gv_subtitle_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_xlabel_g|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|gv_xlabel_g_msg|Using xlabel with Group is not supported.|exact
+CHK|gv_xlabel_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_xlabel_t|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|gv_xlabel_t_msg|Using xlabel with Transform is not supported.|exact
+CHK|gv_xlabel_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_ylabel_g|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|gv_ylabel_g_msg|Using ylabel with Group is not supported.|exact
+CHK|gv_ylabel_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_ylabel_t|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|gv_ylabel_t_msg|Using ylabel with Transform is not supported.|exact
+CHK|gv_ylabel_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_zlabel_g|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|gv_zlabel_g_msg|Using zlabel with Group is not supported.|exact
+CHK|gv_zlabel_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_zlabel_t|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|gv_zlabel_t_msg|Using zlabel with Transform is not supported.|exact
+CHK|gv_zlabel_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_title_pairs_g|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|gv_title_pairs_g_msg|Using title with Group is not supported.|exact
+CHK|gv_title_pairs_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_title_pairs_t|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|gv_title_pairs_t_msg|Using title with Transform is not supported.|exact
+CHK|gv_title_pairs_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_hold_on_g|MATLAB:hold:UnsupportedCurrentAxes|exact
+CHK|gv_hold_on_g_msg|Using hold with hggroup is not supported.|exact
+CHK|gv_hold_on_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_hold_on_t|MATLAB:hold:UnsupportedCurrentAxes|exact
+CHK|gv_hold_on_t_msg|Using hold with hgtransform is not supported.|exact
+CHK|gv_hold_on_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_hold_bare_g|MATLAB:hold:UnsupportedCurrentAxes|exact
+CHK|gv_hold_bare_g_msg|Using hold with hggroup is not supported.|exact
+CHK|gv_hold_bare_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_hold_bare_t|MATLAB:hold:UnsupportedCurrentAxes|exact
+CHK|gv_hold_bare_t_msg|Using hold with hgtransform is not supported.|exact
+CHK|gv_hold_bare_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_ishold_g|MATLAB:hold:UnsupportedCurrentAxes|exact
+CHK|gv_ishold_g_msg|Using hold with hggroup is not supported.|exact
+CHK|gv_ishold_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_ishold_t|MATLAB:hold:UnsupportedCurrentAxes|exact
+CHK|gv_ishold_t_msg|Using hold with hgtransform is not supported.|exact
+CHK|gv_ishold_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_grid_on_g|MATLAB:grid:FirstArgAxes|exact
+CHK|gv_grid_on_g_msg|First argument must be an axes handle.|exact
+CHK|gv_grid_on_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_grid_on_t|MATLAB:grid:FirstArgAxes|exact
+CHK|gv_grid_on_t_msg|First argument must be an axes handle.|exact
+CHK|gv_grid_on_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_grid_bare_g|MATLAB:grid:FirstArgAxes|exact
+CHK|gv_grid_bare_g_msg|First argument must be an axes handle.|exact
+CHK|gv_grid_bare_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_grid_bare_t|MATLAB:grid:FirstArgAxes|exact
+CHK|gv_grid_bare_t_msg|First argument must be an axes handle.|exact
+CHK|gv_grid_bare_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_box_on_g|MATLAB:hg:InvalidProperty|exact
+CHK|gv_box_on_g_msg|Unrecognized property Box for class Group.|exact
+CHK|gv_box_on_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_box_on_t|MATLAB:hg:InvalidProperty|exact
+CHK|gv_box_on_t_msg|Unrecognized property Box for class Transform.|exact
+CHK|gv_box_on_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_box_bare_g|MATLAB:hg:InvalidProperty|exact
+CHK|gv_box_bare_g_msg|Unrecognized property Box for class matlab.graphics.primitive.Group.|exact
+CHK|gv_box_bare_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_box_bare_t|MATLAB:hg:InvalidProperty|exact
+CHK|gv_box_bare_t_msg|Unrecognized property Box for class matlab.graphics.primitive.Transform.|exact
+CHK|gv_box_bare_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_axis_tight_g|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|gv_axis_tight_g_msg|Using axis with hggroup is not supported.|exact
+CHK|gv_axis_tight_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_axis_tight_t|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|gv_axis_tight_t_msg|Using axis with hgtransform is not supported.|exact
+CHK|gv_axis_tight_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_axis_lim_g|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|gv_axis_lim_g_msg|Using axis with hggroup is not supported.|exact
+CHK|gv_axis_lim_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_axis_lim_t|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|gv_axis_lim_t_msg|Using axis with hgtransform is not supported.|exact
+CHK|gv_axis_lim_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_colorbar_g|MATLAB:colorbar:InvalidInput|exact
+CHK|gv_colorbar_g_msg|Unrecognized input or invalid parameter/value pair arguments.|exact
+CHK|gv_colorbar_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_colorbar_t|MATLAB:colorbar:InvalidInput|exact
+CHK|gv_colorbar_t_msg|Unrecognized input or invalid parameter/value pair arguments.|exact
+CHK|gv_colorbar_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_xlim_g|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_xlim_g_msg|Invalid or deleted graphics object.|exact
+CHK|gv_xlim_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_xlim_t|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_xlim_t_msg|Invalid or deleted graphics object.|exact
+CHK|gv_xlim_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_xlim_q_g|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_xlim_q_g_msg|Invalid or deleted graphics object.|exact
+CHK|gv_xlim_q_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_xlim_q_t|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_xlim_q_t_msg|Invalid or deleted graphics object.|exact
+CHK|gv_xlim_q_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_ylim_g|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_ylim_g_msg|Invalid or deleted graphics object.|exact
+CHK|gv_ylim_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_ylim_t|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_ylim_t_msg|Invalid or deleted graphics object.|exact
+CHK|gv_ylim_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_zlim_g|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_zlim_g_msg|Invalid or deleted graphics object.|exact
+CHK|gv_zlim_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_zlim_t|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_zlim_t_msg|Invalid or deleted graphics object.|exact
+CHK|gv_zlim_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_clim_g|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_clim_g_msg|Invalid or deleted graphics object.|exact
+CHK|gv_clim_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_clim_t|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_clim_t_msg|Invalid or deleted graphics object.|exact
+CHK|gv_clim_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_caxis_g|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_caxis_g_msg|Invalid or deleted graphics object.|exact
+CHK|gv_caxis_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_caxis_t|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_caxis_t_msg|Invalid or deleted graphics object.|exact
+CHK|gv_caxis_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_xticks_g|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_xticks_g_msg|Invalid or deleted graphics object.|exact
+CHK|gv_xticks_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_xticks_t|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_xticks_t_msg|Invalid or deleted graphics object.|exact
+CHK|gv_xticks_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_yticks_g|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_yticks_g_msg|Invalid or deleted graphics object.|exact
+CHK|gv_yticks_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_yticks_t|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_yticks_t_msg|Invalid or deleted graphics object.|exact
+CHK|gv_yticks_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_zticks_g|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_zticks_g_msg|Invalid or deleted graphics object.|exact
+CHK|gv_zticks_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_zticks_t|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_zticks_t_msg|Invalid or deleted graphics object.|exact
+CHK|gv_zticks_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_xticklabels_g|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_xticklabels_g_msg|Invalid or deleted graphics object.|exact
+CHK|gv_xticklabels_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_xticklabels_t|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_xticklabels_t_msg|Invalid or deleted graphics object.|exact
+CHK|gv_xticklabels_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_yticklabels_g|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_yticklabels_g_msg|Invalid or deleted graphics object.|exact
+CHK|gv_yticklabels_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_yticklabels_t|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_yticklabels_t_msg|Invalid or deleted graphics object.|exact
+CHK|gv_yticklabels_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_xtickangle_g|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_xtickangle_g_msg|Invalid or deleted graphics object.|exact
+CHK|gv_xtickangle_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_xtickangle_t|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_xtickangle_t_msg|Invalid or deleted graphics object.|exact
+CHK|gv_xtickangle_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_ytickangle_g|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_ytickangle_g_msg|Invalid or deleted graphics object.|exact
+CHK|gv_ytickangle_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_ytickangle_t|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_ytickangle_t_msg|Invalid or deleted graphics object.|exact
+CHK|gv_ytickangle_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_xtickformat_g|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_xtickformat_g_msg|Invalid or deleted graphics object.|exact
+CHK|gv_xtickformat_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_xtickformat_t|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_xtickformat_t_msg|Invalid or deleted graphics object.|exact
+CHK|gv_xtickformat_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_ytickformat_g|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_ytickformat_g_msg|Invalid or deleted graphics object.|exact
+CHK|gv_ytickformat_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_ytickformat_t|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_ytickformat_t_msg|Invalid or deleted graphics object.|exact
+CHK|gv_ytickformat_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_rlim_g|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_rlim_g_msg|Invalid or deleted graphics object.|exact
+CHK|gv_rlim_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_rlim_t|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|gv_rlim_t_msg|Invalid or deleted graphics object.|exact
+CHK|gv_rlim_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_view_g|MATLAB:view:InvalidInputs|exact
+CHK|gv_view_g_msg|Invalid input arguments.|exact
+CHK|gv_view_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_view_t|MATLAB:view:InvalidInputs|exact
+CHK|gv_view_t_msg|Invalid input arguments.|exact
+CHK|gv_view_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_colormap_g|MATLAB:colormap:NeedScalarHandle|exact
+CHK|gv_colormap_g_msg|First argument must be a scalar axes or figure handle.|exact
+CHK|gv_colormap_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_colormap_t|MATLAB:colormap:NeedScalarHandle|exact
+CHK|gv_colormap_t_msg|First argument must be a scalar axes or figure handle.|exact
+CHK|gv_colormap_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_daspect_g|MATLAB:daspect:InvalidNumberArguments|exact
+CHK|gv_daspect_g_msg|Wrong number of arguments|exact
+CHK|gv_daspect_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_daspect_t|MATLAB:daspect:InvalidNumberArguments|exact
+CHK|gv_daspect_t_msg|Wrong number of arguments|exact
+CHK|gv_daspect_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_daspect_q_g|MATLAB:hg:set_chck:Expected3ElementVector|exact
+CHK|gv_daspect_q_g_msg|Error setting property 'DataAspectRatio' of class 'Axes': Value must be a 3 element numeric vector|exact
+CHK|gv_daspect_q_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_daspect_q_t|MATLAB:hg:set_chck:Expected3ElementVector|exact
+CHK|gv_daspect_q_t_msg|Error setting property 'DataAspectRatio' of class 'Axes': Value must be a 3 element numeric vector|exact
+CHK|gv_daspect_q_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_pbaspect_g|MATLAB:pbaspect:InvalidNumberArguments|exact
+CHK|gv_pbaspect_g_msg|Wrong number of arguments|exact
+CHK|gv_pbaspect_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_pbaspect_t|MATLAB:pbaspect:InvalidNumberArguments|exact
+CHK|gv_pbaspect_t_msg|Wrong number of arguments|exact
+CHK|gv_pbaspect_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_shading_g|MATLAB:shading:NeedAxesHandle|exact
+CHK|gv_shading_g_msg|First argument must be an axes handle.|exact
+CHK|gv_shading_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_shading_t|MATLAB:shading:NeedAxesHandle|exact
+CHK|gv_shading_t_msg|First argument must be an axes handle.|exact
+CHK|gv_shading_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_lighting_g|MATLAB:lighting:InputMustBeHandle|exact
+CHK|gv_lighting_g_msg|First argument must be an axes handle.|exact
+CHK|gv_lighting_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_lighting_t|MATLAB:lighting:InputMustBeHandle|exact
+CHK|gv_lighting_t_msg|First argument must be an axes handle.|exact
+CHK|gv_lighting_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_xline_g|MATLAB:graphics:constantline:InvalidParent|exact
+CHK|gv_xline_g_msg|Parent must be a Cartesian axes.|exact
+CHK|gv_xline_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_xline_t|MATLAB:graphics:constantline:InvalidParent|exact
+CHK|gv_xline_t_msg|Parent must be a Cartesian axes.|exact
+CHK|gv_xline_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_yline_g|MATLAB:graphics:constantline:InvalidParent|exact
+CHK|gv_yline_g_msg|Parent must be a Cartesian axes.|exact
+CHK|gv_yline_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_yline_t|MATLAB:graphics:constantline:InvalidParent|exact
+CHK|gv_yline_t_msg|Parent must be a Cartesian axes.|exact
+CHK|gv_yline_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_colororder_g|MATLAB:graphics:colororder:InvalidTarget|exact
+CHK|gv_colororder_g_msg|Target must be a scalar figure or axes.|exact
+CHK|gv_colororder_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_colororder_t|MATLAB:graphics:colororder:InvalidTarget|exact
+CHK|gv_colororder_t_msg|Target must be a scalar figure or axes.|exact
+CHK|gv_colororder_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_camlight_g|MATLAB:camlight:InvalidNumberOfArguments|exact
+CHK|gv_camlight_g_msg|Invalid arguments|exact
+CHK|gv_camlight_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_camlight_t|MATLAB:camlight:InvalidNumberOfArguments|exact
+CHK|gv_camlight_t_msg|Invalid arguments|exact
+CHK|gv_camlight_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_axes_g|MATLAB:handle_graphics:exceptions:HandleGraphicsException|exact
+CHK|gv_axes_g_msg|Axes cannot be a child of Group.|exact
+CHK|gv_axes_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_axes_t|MATLAB:handle_graphics:exceptions:HandleGraphicsException|exact
+CHK|gv_axes_t_msg|Axes cannot be a child of Transform.|exact
+CHK|gv_axes_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_text_g|made|exact
+CHK|gv_text_g_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|gv_text_t|made|exact
+CHK|gv_text_t_after|cell [1 4] {logical [1 1] 1, double [1 1] 2, char 'add', char ''}|exact
+CHK|patch_row|cell [1 3] {char '[1 0 0]', char '[1 1 3]', char '[1 3]'}|exact
+CHK|patch_row_columns|cell [1 3] {char '[1 0 0]', char '[1 1 3]', char '[1 3]'}|exact
+CHK|patch_column|cell [1 3] {char 'interp', char '[3 1]', char '[3 1]'}|exact
+CHK|patch_fraction|cell [1 3] {char '[0.2 0.4 0.6]', char '[1 1 3]', char '[1 3]'}|exact
+CHK|patch_out|MATLAB:hg:ColorBase:BadColorValue|exact
+CHK|patch_out_msg|Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.|exact
+CHK|patch_out_column|cell [1 3] {char 'interp', char '[3 1]', char '[3 1]'}|exact
+CHK|patch_negative|MATLAB:hg:ColorBase:BadColorValue|exact
+CHK|patch_negative_msg|Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.|exact
+CHK|patch_four|cell [1 3] {char 'interp', char '[4 1]', char '[4 1]'}|exact
+CHK|patch_four_row3|cell [1 3] {char '[1 0 0]', char '[1 1 3]', char '[1 3]'}|exact
+CHK|patch_z_row|cell [1 3] {char '[1 0 0]', char '[1 1 3]', char '[1 3]'}|exact
+CHK|patch_z_out|MATLAB:hg:ColorBase:BadColorValue|exact
+CHK|patch_z_out_msg|Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.|exact
+CHK|patch_two_faces|cell [1 3] {char '[1 0 0]', char '[1 1 3]', char '[1 3]'}|exact
+CHK|fill_row|cell [1 3] {char '[1 0 0]', char '[1 1 3]', char '[1 3]'}|exact
+CHK|fill_out|MATLAB:hg:ColorBase:BadColorValue|exact
+CHK|fill_out_msg|Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.|exact
+CHK|patch_uint8|cell [1 3] {char '[1 0 0]', char '[1 1 3]', char '[1 3]'}|exact
+CHK|patch_logical|MATLAB:fill:InvalidColorInput|exact
+CHK|patch_logical_msg|Invalid color argument|exact
+CHK|plot_tail_01|MATLAB:hg:InvalidProperty|exact
+CHK|plot_tail_01_msg|Unrecognized property a for class Line.|exact
+CHK|plot_tail_02|MATLAB:plot:DataPairsMismatch|exact
+CHK|plot_tail_02_msg|Data must be a single input of y-values or one or more pairs of x- and y-values.|exact
+CHK|plot_tail_03|MATLAB:plot:InvalidFirstInput|exact
+CHK|plot_tail_03_msg|Invalid data argument.|exact
+CHK|plot_tail_04|MATLAB:plot:DataPairsMismatch|exact
+CHK|plot_tail_04_msg|Data must be a single input of y-values or one or more pairs of x- and y-values.|exact
+CHK|plot_tail_05|MATLAB:plot:InvalidFirstInput|exact
+CHK|plot_tail_05_msg|Invalid data argument.|exact
+CHK|plot_tail_06|MATLAB:plot:InvalidPropertyValue|exact
+CHK|plot_tail_06_msg|Unable to set the 'Type' property of class ''Line'' because it is read-only.|exact
+CHK|plot_tail_07|MATLAB:plot:InvalidPropertyValue|exact
+CHK|plot_tail_07_msg|Unable to set the 'BeingDeleted' property of class ''Line'' because it is read-only.|exact
+CHK|plot_tail_08|MATLAB:plot:UnrecognizedLineStyleParameter|exact
+CHK|plot_tail_08_msg|Invalid color, marker, or line style.|exact
+CHK|plot_tail_09|MATLAB:hg:InvalidProperty|exact
+CHK|plot_tail_09_msg|Unrecognized property r for class Line.|exact
+CHK|plot_tail_10|MATLAB:hg:InvalidProperty|exact
+CHK|plot_tail_10_msg|Unrecognized property a for class Line.|exact
+CHK|plot_tail_11|MATLAB:plot:InvalidFirstInput|exact
+CHK|plot_tail_11_msg|Invalid data argument.|exact
+CHK|plot_tail_12|MATLAB:plot:UnrecognizedLineStyleParameter|exact
+CHK|plot_tail_12_msg|Invalid color, marker, or line style.|exact
+CHK|plot_tail_13|MATLAB:plot:InvalidFirstInput|exact
+CHK|plot_tail_13_msg|Invalid data argument.|exact
+CHK|plot_tail_14|cell [1 2] {double [1 1] 1, char 'a'}|exact
+CHK|plot_tail_15|MATLAB:hg:InvalidProperty|exact
+CHK|plot_tail_15_msg|Unrecognized property b for class Line.|exact
+CHK|plot_tail_16|MATLAB:hg:InvalidProperty|exact
+CHK|plot_tail_16_msg|Unrecognized property a for class Line.|exact
+CHK|plot_tail_17|MATLAB:plot:InvalidFirstInput|exact
+CHK|plot_tail_17_msg|Invalid data argument.|exact
+CHK|plot_tail_18|cell [1 2] {double [1 1] 1, char 'r'}|exact
+CHK|plot_tail_19|MATLAB:plot:InvalidFirstInput|exact
+CHK|plot_tail_19_msg|Invalid data argument.|exact
+CHK|plot_tail_20|MATLAB:hg:InvalidProperty|exact
+CHK|plot_tail_20_msg|Unrecognized property r for class Line.|exact
+CHK|plot_tail_21|MATLAB:plot:InvalidFirstInput|exact
+CHK|plot_tail_21_msg|Invalid data argument.|exact
+CHK|plot_tail_22|MATLAB:plot:DataPairsMismatch|exact
+CHK|plot_tail_22_msg|Data must be a single input of y-values or one or more pairs of x- and y-values.|exact
+CHK|plot_tail_23|MATLAB:hg:InvalidProperty|exact
+CHK|plot_tail_23_msg|Unrecognized property r for class Line.|exact
+CHK|plot_tail_24|MATLAB:plot:DataPairsMismatch|exact
+CHK|plot_tail_24_msg|Data must be a single input of y-values or one or more pairs of x- and y-values.|exact
+CHK|plot_tail_25|MATLAB:hg:InvalidProperty|exact
+CHK|plot_tail_25_msg|Unrecognized property a for class Line.|exact
+CHK|plot_tail_26|cell [1 2] {double [1 1] 2, char 'a'}|exact
+CHK|plot_tail_27|MATLAB:hg:InvalidProperty|exact
+CHK|plot_tail_27_msg|Unrecognized property r for class Line.|exact
+CHK|plot_tail_28|MATLAB:hg:InvalidProperty|exact
+CHK|plot_tail_28_msg|Unrecognized property ro for class Line.|exact
+CHK|plot_tail_29|MATLAB:hg:InvalidProperty|exact
+CHK|plot_tail_29_msg|Unrecognized property r for class Line.|exact
+CHK|plot_tail_30|MATLAB:plot:InvalidFirstInput|exact
+CHK|plot_tail_30_msg|Invalid data argument.|exact
+CHK|plot_tail_31|MATLAB:plot:InvalidPropertyValue|exact
+CHK|plot_tail_31_msg|Unable to set the 'Type' property of class ''Line'' because it is read-only.|exact
+CHK|plot_tail_32|MATLAB:hg:InvalidProperty|exact
+CHK|plot_tail_32_msg|Unrecognized property Foo for class Line.|exact
+CHK|plot_tail_33|MATLAB:plot:InvalidPropertyValue|exact
+CHK|plot_tail_33_msg|Unable to set the 'Type' property of class ''Line'' because it is read-only.|exact
+CHK|plot_tail_34|MATLAB:plot:DataPairsMismatch|exact
+CHK|plot_tail_34_msg|Data must be a single input of y-values or one or more pairs of x- and y-values.|exact
+CHK|plot_tail_35|cell [1 2] {double [1 1] 2, char ''}|exact
+CHK|plot_y_spec_xy|MATLAB:plot:DataPairsMismatch|exact
+CHK|plot_y_spec_xy_msg|Data must be a single input of y-values or one or more pairs of x- and y-values.|exact
+CHK|semilogy_pair_spec|MATLAB:hg:InvalidProperty|exact
+CHK|semilogy_pair_spec_msg|Unrecognized property a for class Line.|exact
+CHK|semilogy_data_after|MATLAB:plot:InvalidFirstInput|exact
+CHK|semilogy_data_after_msg|Invalid data argument.|exact
+CHK|semilogx_readonly|MATLAB:plot:InvalidPropertyValue|exact
+CHK|semilogx_readonly_msg|Unable to set the 'Type' property of class ''Line'' because it is read-only.|exact
+CHK|loglog_pair_spec|MATLAB:hg:InvalidProperty|exact
+CHK|loglog_pair_spec_msg|Unrecognized property a for class Line.|exact
+CHK|plot3_pair_spec|MATLAB:hg:InvalidProperty|exact
+CHK|plot3_pair_spec_msg|Unrecognized property a for class Line.|exact
+CHK|plot3_readonly|MATLAB:plot:InvalidPropertyValue|exact
+CHK|plot3_readonly_msg|Unable to set the 'Type' property of class ''Line'' because it is read-only.|exact
+CHK|line_readonly|MATLAB:class:SetProhibited|exact
+CHK|line_readonly_msg|Unable to set the 'Type' property of class ''Line'' because it is read-only.|exact
+CHK|bar_readonly|MATLAB:class:SetProhibited|exact
+CHK|bar_readonly_msg|Unable to set the 'Type' property of class ''Bar'' because it is read-only.|exact
+CHK|stem_readonly|MATLAB:class:SetProhibited|exact
+CHK|stem_readonly_msg|Unable to set the 'Type' property of class ''Stem'' because it is read-only.|exact
+CHK|dead_line_hggroup|MATLAB:hg:DeletedObject|exact
+CHK|dead_line_hggroup_msg|Cannot set property to a deleted object.|exact
+CHK|dead_line_hggroup_left|double [1 1] 0|exact
+CHK|dead_line_hgtransform|MATLAB:hg:DeletedObject|exact
+CHK|dead_line_hgtransform_msg|Cannot set property to a deleted object.|exact
+CHK|dead_line_hgtransform_left|double [1 1] 0|exact
+CHK|dead_line_props_hggroup|MATLAB:hg:DeletedObject|exact
+CHK|dead_line_props_hggroup_msg|Cannot set property to a deleted object.|exact
+CHK|dead_line_props_hggroup_left|double [1 1] 0|exact
+CHK|dead_line_props_hgtransform|MATLAB:hg:DeletedObject|exact
+CHK|dead_line_props_hgtransform_msg|Cannot set property to a deleted object.|exact
+CHK|dead_line_props_hgtransform_left|double [1 1] 0|exact
+CHK|dead_text_hggroup|MATLAB:hg:DeletedObject|exact
+CHK|dead_text_hggroup_msg|Cannot set property to a deleted object.|exact
+CHK|dead_text_hggroup_left|double [1 1] 0|exact
+CHK|dead_text_hgtransform|MATLAB:hg:DeletedObject|exact
+CHK|dead_text_hgtransform_msg|Cannot set property to a deleted object.|exact
+CHK|dead_text_hgtransform_left|double [1 1] 0|exact
+CHK|dead_patch_hggroup|MATLAB:hg:DeletedObject|exact
+CHK|dead_patch_hggroup_msg|Cannot set property to a deleted object.|exact
+CHK|dead_patch_hggroup_left|double [1 1] 0|exact
+CHK|dead_patch_hgtransform|MATLAB:hg:DeletedObject|exact
+CHK|dead_patch_hgtransform_msg|Cannot set property to a deleted object.|exact
+CHK|dead_patch_hgtransform_left|double [1 1] 0|exact
+CHK|dead_surface_hggroup|MATLAB:hg:DeletedObject|exact
+CHK|dead_surface_hggroup_msg|Cannot set property to a deleted object.|exact
+CHK|dead_surface_hggroup_left|double [1 1] 0|exact
+CHK|dead_surface_hgtransform|MATLAB:hg:DeletedObject|exact
+CHK|dead_surface_hgtransform_msg|Cannot set property to a deleted object.|exact
+CHK|dead_surface_hgtransform_left|double [1 1] 0|exact
+CHK|dead_image_hggroup|MATLAB:hg:DeletedObject|exact
+CHK|dead_image_hggroup_msg|Cannot set property to a deleted object.|exact
+CHK|dead_image_hggroup_left|double [1 1] 0|exact
+CHK|dead_image_hgtransform|MATLAB:hg:DeletedObject|exact
+CHK|dead_image_hgtransform_msg|Cannot set property to a deleted object.|exact
+CHK|dead_image_hgtransform_left|double [1 1] 0|exact
+CHK|dead_light_hggroup|MATLAB:hg:DeletedObject|exact
+CHK|dead_light_hggroup_msg|Cannot set property to a deleted object.|exact
+CHK|dead_light_hggroup_left|double [1 1] 0|exact
+CHK|dead_light_hgtransform|MATLAB:hg:DeletedObject|exact
+CHK|dead_light_hgtransform_msg|Cannot set property to a deleted object.|exact
+CHK|dead_light_hgtransform_left|double [1 1] 0|exact
+CHK|dead_rectangle_hggroup|MATLAB:hg:DeletedObject|exact
+CHK|dead_rectangle_hggroup_msg|Cannot set property to a deleted object.|exact
+CHK|dead_rectangle_hggroup_left|double [1 1] 0|exact
+CHK|dead_rectangle_hgtransform|MATLAB:hg:DeletedObject|exact
+CHK|dead_rectangle_hgtransform_msg|Cannot set property to a deleted object.|exact
+CHK|dead_rectangle_hgtransform_left|double [1 1] 0|exact
+CHK|dead_hggroup_hggroup|MATLAB:hg:DeletedObject|exact
+CHK|dead_hggroup_hggroup_msg|Cannot set property to a deleted object.|exact
+CHK|dead_hggroup_hggroup_left|double [1 1] 0|exact
+CHK|dead_hggroup_hgtransform|MATLAB:hg:DeletedObject|exact
+CHK|dead_hggroup_hgtransform_msg|Cannot set property to a deleted object.|exact
+CHK|dead_hggroup_hgtransform_left|double [1 1] 0|exact
+CHK|dead_hgtransform_hggroup|MATLAB:hg:DeletedObject|exact
+CHK|dead_hgtransform_hggroup_msg|Cannot set property to a deleted object.|exact
+CHK|dead_hgtransform_hggroup_left|double [1 1] 0|exact
+CHK|dead_hgtransform_hgtransform|MATLAB:hg:DeletedObject|exact
+CHK|dead_hgtransform_hgtransform_msg|Cannot set property to a deleted object.|exact
+CHK|dead_hgtransform_hgtransform_left|double [1 1] 0|exact
+CHK|dead_plot_hggroup|MATLAB:hg:InvalidHandle|exact
+CHK|dead_plot_hggroup_msg|Invalid handle.|exact
+CHK|dead_plot_hggroup_left|double [1 1] 0|exact
+CHK|dead_plot_hgtransform|MATLAB:hg:InvalidHandle|exact
+CHK|dead_plot_hgtransform_msg|Invalid handle.|exact
+CHK|dead_plot_hgtransform_left|double [1 1] 0|exact
+CHK|dead_plot3_hggroup|MATLAB:hg:InvalidHandle|exact
+CHK|dead_plot3_hggroup_msg|Invalid handle.|exact
+CHK|dead_plot3_hggroup_left|double [1 1] 0|exact
+CHK|dead_plot3_hgtransform|MATLAB:hg:InvalidHandle|exact
+CHK|dead_plot3_hgtransform_msg|Invalid handle.|exact
+CHK|dead_plot3_hgtransform_left|double [1 1] 0|exact
+CHK|dead_semilogy_hggroup|MATLAB:hg:InvalidHandle|exact
+CHK|dead_semilogy_hggroup_msg|Invalid handle.|exact
+CHK|dead_semilogy_hggroup_left|double [1 1] 0|exact
+CHK|dead_semilogy_hgtransform|MATLAB:hg:InvalidHandle|exact
+CHK|dead_semilogy_hgtransform_msg|Invalid handle.|exact
+CHK|dead_semilogy_hgtransform_left|double [1 1] 0|exact
+CHK|dead_stairs_hggroup|MATLAB:graphics:axescheck:DeletedObject|exact
+CHK|dead_stairs_hggroup_msg|Attempt to plot into deleted graphics object.|exact
+CHK|dead_stairs_hggroup_left|double [1 1] 0|exact
+CHK|dead_stairs_hgtransform|MATLAB:graphics:axescheck:DeletedObject|exact
+CHK|dead_stairs_hgtransform_msg|Attempt to plot into deleted graphics object.|exact
+CHK|dead_stairs_hgtransform_left|double [1 1] 0|exact
+CHK|dead_stem_hggroup|MATLAB:graphics:axescheck:DeletedObject|exact
+CHK|dead_stem_hggroup_msg|Attempt to plot into deleted graphics object.|exact
+CHK|dead_stem_hggroup_left|double [1 1] 0|exact
+CHK|dead_stem_hgtransform|MATLAB:graphics:axescheck:DeletedObject|exact
+CHK|dead_stem_hgtransform_msg|Attempt to plot into deleted graphics object.|exact
+CHK|dead_stem_hgtransform_left|double [1 1] 0|exact
+CHK|dead_scatter_hggroup|MATLAB:graphics:axescheck:DeletedObject|exact
+CHK|dead_scatter_hggroup_msg|Attempt to plot into deleted graphics object.|exact
+CHK|dead_scatter_hggroup_left|double [1 1] 0|exact
+CHK|dead_scatter_hgtransform|MATLAB:graphics:axescheck:DeletedObject|exact
+CHK|dead_scatter_hgtransform_msg|Attempt to plot into deleted graphics object.|exact
+CHK|dead_scatter_hgtransform_left|double [1 1] 0|exact
+CHK|dead_bar_hggroup|MATLAB:graphics:axescheck:DeletedObject|exact
+CHK|dead_bar_hggroup_msg|Attempt to plot into deleted graphics object.|exact
+CHK|dead_bar_hggroup_left|double [1 1] 0|exact
+CHK|dead_bar_hgtransform|MATLAB:graphics:axescheck:DeletedObject|exact
+CHK|dead_bar_hgtransform_msg|Attempt to plot into deleted graphics object.|exact
+CHK|dead_bar_hgtransform_left|double [1 1] 0|exact
+CHK|dead_area_hggroup|MATLAB:graphics:axescheck:DeletedObject|exact
+CHK|dead_area_hggroup_msg|Attempt to plot into deleted graphics object.|exact
+CHK|dead_area_hggroup_left|double [1 1] 0|exact
+CHK|dead_area_hgtransform|MATLAB:graphics:axescheck:DeletedObject|exact
+CHK|dead_area_hgtransform_msg|Attempt to plot into deleted graphics object.|exact
+CHK|dead_area_hgtransform_left|double [1 1] 0|exact
+CHK|dead_errorbar_hggroup|MATLAB:graphics:axescheck:DeletedObject|exact
+CHK|dead_errorbar_hggroup_msg|Attempt to plot into deleted graphics object.|exact
+CHK|dead_errorbar_hggroup_left|double [1 1] 0|exact
+CHK|dead_errorbar_hgtransform|MATLAB:graphics:axescheck:DeletedObject|exact
+CHK|dead_errorbar_hgtransform_msg|Attempt to plot into deleted graphics object.|exact
+CHK|dead_errorbar_hgtransform_left|double [1 1] 0|exact
+CHK|dead_histogram_hggroup|MATLAB:graphics:axescheck:DeletedObject|exact
+CHK|dead_histogram_hggroup_msg|Attempt to plot into deleted graphics object.|exact
+CHK|dead_histogram_hggroup_left|double [1 1] 0|exact
+CHK|dead_histogram_hgtransform|MATLAB:graphics:axescheck:DeletedObject|exact
+CHK|dead_histogram_hgtransform_msg|Attempt to plot into deleted graphics object.|exact
+CHK|dead_histogram_hgtransform_left|double [1 1] 0|exact
+CHK|dead_fill_hggroup|MATLAB:hg:InvalidHandle|exact
+CHK|dead_fill_hggroup_msg|Invalid handle.|exact
+CHK|dead_fill_hggroup_left|double [1 1] 0|exact
+CHK|dead_fill_hgtransform|MATLAB:hg:InvalidHandle|exact
+CHK|dead_fill_hgtransform_msg|Invalid handle.|exact
+CHK|dead_fill_hgtransform_left|double [1 1] 0|exact
+CHK|dead_imagesc_hggroup|MATLAB:hg:DeletedObject|exact
+CHK|dead_imagesc_hggroup_msg|Cannot set property to a deleted object.|exact
+CHK|dead_imagesc_hggroup_left|double [1 1] 0|exact
+CHK|dead_imagesc_hgtransform|MATLAB:hg:DeletedObject|exact
+CHK|dead_imagesc_hgtransform_msg|Cannot set property to a deleted object.|exact
+CHK|dead_imagesc_hgtransform_left|double [1 1] 0|exact
+CHK|dead_parent_line_hggroup|MATLAB:hg:DeletedObject|exact
+CHK|dead_parent_line_hggroup_msg|Cannot set property to a deleted object.|exact
+CHK|dead_parent_line_hggroup_left|double [1 1] 0|exact
+CHK|dead_parent_line_hgtransform|MATLAB:hg:DeletedObject|exact
+CHK|dead_parent_line_hgtransform_msg|Cannot set property to a deleted object.|exact
+CHK|dead_parent_line_hgtransform_left|double [1 1] 0|exact
+CHK|dead_parent_plot_hggroup|MATLAB:hg:InvalidHandle|exact
+CHK|dead_parent_plot_hggroup_msg|Invalid handle.|exact
+CHK|dead_parent_plot_hggroup_left|double [1 1] 0|exact
+CHK|dead_parent_plot_hgtransform|MATLAB:hg:InvalidHandle|exact
+CHK|dead_parent_plot_hgtransform_msg|Invalid handle.|exact
+CHK|dead_parent_plot_hgtransform_left|double [1 1] 0|exact
+CHK|dead_parent_bar_hggroup|MATLAB:graphics:axescheck:DeletedObject|exact
+CHK|dead_parent_bar_hggroup_msg|Attempt to plot into deleted graphics object.|exact
+CHK|dead_parent_bar_hggroup_left|double [1 1] 0|exact
+CHK|dead_parent_bar_hgtransform|MATLAB:graphics:axescheck:DeletedObject|exact
+CHK|dead_parent_bar_hgtransform_msg|Attempt to plot into deleted graphics object.|exact
+CHK|dead_parent_bar_hgtransform_left|double [1 1] 0|exact
+CHK|dead_parent_text_hggroup|MATLAB:hg:DeletedObject|exact
+CHK|dead_parent_text_hggroup_msg|Cannot set property to a deleted object.|exact
+CHK|dead_parent_text_hggroup_left|double [1 1] 0|exact
+CHK|dead_parent_text_hgtransform|MATLAB:hg:DeletedObject|exact
+CHK|dead_parent_text_hgtransform_msg|Cannot set property to a deleted object.|exact
+CHK|dead_parent_text_hgtransform_left|double [1 1] 0|exact
+CHK|tbl_scatter|cell [1 6] {char 'scatter', double [1 3] 1 2 3, double [1 3] 4 5 6, char 'Var1', char 'Var2', double [1 2] 3 3}|exact
+CHK|tbl_scatter_options|cell [1 2] {char 'k', char 'flat'}|exact
+CHK|tbl_scatter_color|Var3|exact
+CHK|tbl_scatter_size|Var3|exact
+CHK|tbl_scatter3|cell [1 4] {char 'Var1', char 'Var2', char 'Var3', double [1 3] 7 8 9}|exact

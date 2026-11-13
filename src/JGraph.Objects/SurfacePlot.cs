@@ -754,6 +754,14 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         set => _yImplied = value;
     }
 
+    /// <summary>
+    /// Whether a script reads the y positions back as a column rather than a row: R2025b's
+    /// <c>pcolor(C)</c> answers <c>YData</c> as <c>(1:m)'</c>, and a column written to it stays a
+    /// column (open item 167). Nothing is drawn differently.
+    /// </summary>
+    [Browsable(false)]
+    public bool YColumn { get; set; }
+
     /// <summary>MATLAB <c>AmbientStrength</c>: the fraction of the surface color present with no light on it.</summary>
     [Category("Lighting"), DisplayName("Ambient strength")]
     public double AmbientStrength
@@ -873,6 +881,9 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         _zBounds = bounds;
         return bounds;
     }
+
+    /// <inheritdoc />
+    public bool DrawsInFlatAxes => true;
 
     /// <inheritdoc />
     public void Render3D(IRenderContext context, Projection3D projection, RenderState state)
@@ -1561,12 +1572,14 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         }
         else
         {
+            // A flat face takes the colour of its first corner, C(r, c), as R2025b's FaceColor 'flat'
+            // does - which is what makes pcolor's last row and column colour nothing (open item 167).
+            // The mean of the four corners this read before blurred every pcolor cell into its neighbours.
             for (int r = 0; r < rows - 1; r++)
             {
                 for (int c = 0; c < cols - 1; c++)
                 {
-                    double mean = (source[r, c] + source[r, c + 1] + source[r + 1, c] + source[r + 1, c + 1]) / 4;
-                    built[(r * cols) + c] = Mapped(mean, colorMin, colorMax, logColor)
+                    built[(r * cols) + c] = Mapped(source[r, c], colorMin, colorMax, logColor)
                         .WithOpacity(Alpha(r, c))
                         .ToArgb();
                 }

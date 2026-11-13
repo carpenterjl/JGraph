@@ -58,8 +58,8 @@ internal static partial class JgsBuiltins
         Define("plot3", Making(Plot3Made, OnNamedAxes((args, line, col) => Plot3(args, line, col))));
         Define("scatter3", Making(Scatter3Made, OnNamedAxes((args, line, col) => Scatter3(args, line, col))));
 
-        Define("fill", Making(PatchMade, OnNamedAxes((args, line, col) => FillPatch("fill", args, line, col, Dimensions.Two))));
-        Define("fill3", Making(PatchMade, OnNamedAxes((args, line, col) => FillPatch("fill3", args, line, col, Dimensions.Three))));
+        Define("fill", Making(FillMade, OnNamedAxes((args, line, col) => FillPatch("fill", args, line, col, Dimensions.Two))));
+        Define("fill3", Making(FillMade, OnNamedAxes((args, line, col) => FillPatch("fill3", args, line, col, Dimensions.Three))));
         Define("patch", Making(PatchMade, OnNamedAxes((args, line, col) => FillPatch("patch", args, line, col, Dimensions.Either))));
 
         Define("line", Making(LineMade, OnNamedAxes((args, line, col) => LinePrimitive(args, line, col))));
@@ -746,7 +746,13 @@ internal static partial class JgsBuiltins
 
         if (coloured)
         {
-            ApplyPatchColor(verb, patch, data[needed - 1], line, col);
+            JgsValue given = data[needed - 1];
+            if (JgsRunningDialect.ThreadIsMatlab && RgbRowColour(given, line, col) is { } rgb)
+            {
+                given = rgb;
+            }
+
+            ApplyPatchColor(verb, patch, given, line, col);
         }
 
         return patch;
@@ -1238,6 +1244,50 @@ internal static partial class JgsBuiltins
     /// MATLAB uses. With three points a row is the colour and a column the data, as R2025b reads them
     /// (probe <c>probe_93d</c>).
     /// </summary>
+    /// <summary>
+    /// R2025b's reading of a three-element row given as a patch's colour (open item 168, probe
+    /// <c>pl1</c>): always one colour, never a value a vertex, however many vertices there are. A
+    /// <c>uint8</c> or <c>uint16</c> row is scaled from its class's range; a value outside [0, 1] is
+    /// refused as an RGB triplet, and a logical row as a colour argument. Null for anything else.
+    /// </summary>
+    private static JgsValue? RgbRowColour(JgsValue value, int line, int col)
+    {
+        if (value.Type != JgsType.Array || value.ArrayLength != 3 || value.Rows != 1 || value.IsNd)
+        {
+            return null;
+        }
+
+        if (IsLogicalValue(value))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:fill:InvalidColorInput", "Invalid color argument");
+        }
+
+        double scale = value.NumericClass switch
+        {
+            JgsNumericClass.UInt8 => byte.MaxValue,
+            JgsNumericClass.UInt16 => ushort.MaxValue,
+            _ => 1,
+        };
+        var rgb = new double[3];
+        for (int i = 0; i < 3; i++)
+        {
+            JgsValue component = value.ElementAt(i);
+            if (component.Type is not (JgsType.Number or JgsType.Bool))
+            {
+                return null;
+            }
+
+            rgb[i] = component.AsNumber / scale;
+            if (!(rgb[i] >= 0) || !(rgb[i] <= 1))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:hg:ColorBase:BadColorValue",
+                    "Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.");
+            }
+        }
+
+        return JgsMatrix.FromColumnMajor(rgb, 1, 3);
+    }
+
     private static bool IsSingleColor(JgsValue value, int points)
     {
         if (value.Type == JgsType.String)

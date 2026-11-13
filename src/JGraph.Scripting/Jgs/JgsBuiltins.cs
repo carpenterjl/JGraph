@@ -1912,7 +1912,8 @@ internal static partial class JgsBuiltins
         // JGraph -- 'faceted' is flat faces with grid lines, 'flat' drops the lines, and 'interp'
         // additionally colors each corner and interpolates between them. A mesh keeps its lines
         // whatever the mode, since without them there would be nothing left to draw.
-        DefineSilent("shading", (args, line, col) =>
+        // shading(ax, mode) names its axes (open item 167: pcolor's probes shade one).
+        DefineSilent("shading", OnNamedAxes((args, line, col) =>
         {
             ArityRange("shading", args, 0, 1, line, col);
             string mode = args.Count == 1 ? args[0].AsString.ToLowerInvariant() : "faceted";
@@ -1937,10 +1938,16 @@ internal static partial class JgsBuiltins
                 }
 
                 surface.Style = mode == "faceted" ? SurfaceStyle.FilledWithWireframe : SurfaceStyle.Filled;
+
+                // R2025b's faceted edges are black; an edge left to the colormap stays as it reads here.
+                if (mode == "faceted" && surface.EdgeColor is not null && JgsRunningDialect.ThreadIsMatlab)
+                {
+                    surface.EdgeColor = new JGraph.Core.Drawing.Color(0, 0, 0);
+                }
             }
 
             return JgsValue.Null;
-        });
+        }));
 
         // lighting: MATLAB's per-surface FaceLighting. 'none' opts a surface out; the other two decide
         // whether a facet takes one normal or interpolates its corners'. Nothing shows until a light
@@ -2257,7 +2264,7 @@ internal static partial class JgsBuiltins
         // MATLAB's rule: `plot(x, y)` on its own draws, and only `h = plot(x, y)` keeps the handle.
         // Registering them with Define instead would echo `ans = 1000000.5` at every unsuppressed
         // call — which is what `plot` did before M54, the one verb that already returned a handle.
-        DefineSilent("plot", Making(PlotMade, (args, line, col) => Plot(args, dialect, line, col)));
+        DefineSilent("plot", Making(PlotArgumentsMade, (args, line, col) => Plot(args, dialect, line, col)));
         DefineSilent("scatter", Making(ScatterMade, (args, line, col) => Scatter(args, line, col)));
         DefineSilent("stem", Making(StemMade, OnNamedAxes((args, line, col) => Stem(args, dialect, line, col))));
         DefineSilent("histogram", Making(HistogramMade, OnNamedAxes((args, line, col) => Histogram(args, line, col)))); // histogram(ax, x)
@@ -2304,6 +2311,12 @@ internal static partial class JgsBuiltins
 
         DefineSilent("pcolor", Making(PcolorMade, OnNamedAxes((args, line, col) =>
         {
+            // R2025b's pcolor is a flat surface (open item 167); a JGS script keeps its heatmap.
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                return MatlabPcolor(args, line, col);
+            }
+
             ArityRange("pcolor", args, 1, 3, line, col);
             if (args.Count == 1)
             {
@@ -2454,9 +2467,9 @@ internal static partial class JgsBuiltins
             BindsAnsAsStatement = false,
         }));
 
-        DefineSilent("semilogy", Making(PlotMade, OnNamedAxes((args, line, col) => Semilog("semilogy", args, dialect, line, col, logX: false, logY: true))));
-        DefineSilent("semilogx", Making(PlotMade, OnNamedAxes((args, line, col) => Semilog("semilogx", args, dialect, line, col, logX: true, logY: false))));
-        DefineSilent("loglog", Making(PlotMade, OnNamedAxes((args, line, col) => Semilog("loglog", args, dialect, line, col, logX: true, logY: true))));
+        DefineSilent("semilogy", Making(PlotArgumentsMade, OnNamedAxes((args, line, col) => Semilog("semilogy", args, dialect, line, col, logX: false, logY: true))));
+        DefineSilent("semilogx", Making(PlotArgumentsMade, OnNamedAxes((args, line, col) => Semilog("semilogx", args, dialect, line, col, logX: true, logY: false))));
+        DefineSilent("loglog", Making(PlotArgumentsMade, OnNamedAxes((args, line, col) => Semilog("loglog", args, dialect, line, col, logX: true, logY: true))));
 
         // Every axes-facing verb accepts a leading axes handle, MATLAB's title(ax, '…') form. The
         // named axes is made current only for the call, so gca does not move (M51).
@@ -2841,6 +2854,7 @@ internal static partial class JgsBuiltins
         RegisterTableCompatibility(env, host);
         WrapShapeVerbsOverObjects(env); // after every verb is in, so an array of objects reaches each (open item 116)
         RegisterCategoricalBuiltins(env, text => host.print(text)); // over the verbs it teaches (open item 115)
+        RefuseGroupsAtAxesVerbs(env); // last, round whatever each axes verb ended up as (open item 168)
 
         return env;
     }

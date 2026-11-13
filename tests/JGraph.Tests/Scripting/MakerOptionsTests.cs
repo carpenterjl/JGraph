@@ -247,4 +247,161 @@ public class MakerOptionsTests : IDisposable
             fprintf('%g %g\n', p(1), p(2));
             """));
     }
+
+    // --- open items 167, 168 and 198 -----------------------------------------------------------------
+
+    [Fact]
+    public void PcolorMakesAFlatSurfaceAndLaysTheAxesFlat()
+    {
+        // R2025b's pcolor.m (probe pc1): a surface at height zero, its CData the colours, the view
+        // flat, the box on and both limits set when the axes is not held.
+        Assert.Equal("surface flat 0.129412 0.5 on 1 4 manual 0 90 on 1 4 4 1\n", RunAndRead("""
+            f = figure('Visible', 'off'); ax = axes(f);
+            h = pcolor(ax, magic(4));
+            e = h.EdgeColor; v = ax.View;
+            fprintf('%s %s %g %g %s %g %g %s %g %g %s %g %g %d %d\n', h.Type, h.FaceColor, e(1), h.LineWidth, ...
+                char(h.AlignVertexCenters), ax.XLim, ax.XLimMode, v, char(ax.Box), ax.YLim, size(h.YData));
+            """));
+    }
+
+    [Fact]
+    public void PcolorOnAHeldAxesLeavesTheAxesAlone()
+    {
+        Assert.Equal("-37.5 30 auto 2\n", RunAndRead("""
+            f = figure('Visible', 'off'); ax = axes(f);
+            plot(ax, [0 10], [0 10]); hold(ax, 'on'); view(ax, 3);
+            pcolor(ax, magic(4));
+            fprintf('%g %g %s %d\n', ax.View, ax.XLimMode, numel(ax.Children));
+            """));
+    }
+
+    [Theory]
+    [InlineData("pcolor(ax, [1 2 3])", "MATLAB:pcolor:NonMatrixColorInput")]
+    [InlineData("pcolor(ax, 1:3, 1:2, magic(3))", "MATLAB:pcolor:InputSizeMismatch")]
+    [InlineData("pcolor(ax, [1 2; 3 4i])", "MATLAB:pcolor:NonRealInputs")]
+    [InlineData("pcolor(ax, magic(3), magic(3))", "MATLAB:badsubscript")]
+    [InlineData("pcolor(ax, magic(3), 'Foo', 1)", "MATLAB:hg:InvalidProperty")]
+    public void PcolorRefusesInItsOwnWords(string call, string identifier)
+    {
+        Assert.Equal($"{identifier}\n0\n", RunAndRead($$"""
+            f = figure('Visible', 'off'); ax = axes(f);
+            try, {{call}}; catch e, disp(e.identifier); end
+            disp(numel(ax.Children));
+            """));
+    }
+
+    [Fact]
+    public void AJgsPcolorKeepsItsHeatmap()
+    {
+        ScriptRunResult result = Run("pcolor([0, 5], [0, 10], [[1, 2], [3, 4]])", new JgsScriptEngine());
+        Assert.True(result.Success, Printed(result));
+        Assert.IsType<JGraph.Objects.ImagePlot>(JG.Gca().Plots[0]);
+    }
+
+    [Theory]
+    [InlineData("title(g, 'x')", "MATLAB:Chart:UnsupportedConvenienceFunction Using title with Group is not supported.")]
+    [InlineData("xlabel(t, 'x')", "MATLAB:Chart:UnsupportedConvenienceFunction Using xlabel with Transform is not supported.")]
+    [InlineData("hold(g, 'on')", "MATLAB:hold:UnsupportedCurrentAxes Using hold with hggroup is not supported.")]
+    [InlineData("hold(t)", "MATLAB:hold:UnsupportedCurrentAxes Using hold with hgtransform is not supported.")]
+    [InlineData("axis(g, 'tight')", "MATLAB:Chart:UnsupportedConvenienceFunction Using axis with hggroup is not supported.")]
+    [InlineData("grid(g, 'on')", "MATLAB:grid:FirstArgAxes First argument must be an axes handle.")]
+    [InlineData("box(g, 'on')", "MATLAB:hg:InvalidProperty Unrecognized property Box for class Group.")]
+    [InlineData("box(t)", "MATLAB:hg:InvalidProperty Unrecognized property Box for class matlab.graphics.primitive.Transform.")]
+    [InlineData("xlim(g, [0 1])", "MATLAB:rulerFunctions:InvalidObject Invalid or deleted graphics object.")]
+    [InlineData("view(g, 3)", "MATLAB:view:InvalidInputs Invalid input arguments.")]
+    [InlineData("colorbar(g)", "MATLAB:colorbar:InvalidInput Unrecognized input or invalid parameter/value pair arguments.")]
+    [InlineData("daspect(g)", "MATLAB:hg:set_chck:Expected3ElementVector Error setting property 'DataAspectRatio' of class 'Axes': Value must be a 3 element numeric vector")]
+    [InlineData("axes(g)", "MATLAB:handle_graphics:exceptions:HandleGraphicsException Axes cannot be a child of Group.")]
+    public void AnAxesVerbRefusesAGroupInItsOwnWords(string call, string words)
+    {
+        Assert.Equal($"{words}\n2 1\n", RunAndRead($$"""
+            f = figure('Visible', 'off'); ax = axes(f); plot(ax, 1:3); hold(ax, 'on');
+            g = hggroup(ax); t = hgtransform(g);
+            try, {{call}}; catch e, disp([e.identifier ' ' e.message]); end
+            fprintf('%d %d\n', numel(ax.Children), numel(g.Children));
+            """));
+    }
+
+    [Theory]
+    [InlineData("plot(ax, x, y, 'Tag', 'a', 'r')", "MATLAB:hg:InvalidProperty Unrecognized property a for class Line.")]
+    [InlineData("plot(ax, x, y, 'Tag', 'a', x, y)", "MATLAB:plot:InvalidFirstInput Invalid data argument.")]
+    [InlineData("plot(ax, x, y, 'r', 'b')", "MATLAB:plot:InvalidFirstInput Invalid data argument.")]
+    [InlineData("plot(ax, x, y, 'LineWidth', 2, 'r')", "MATLAB:plot:DataPairsMismatch Data must be a single input of y-values or one or more pairs of x- and y-values.")]
+    [InlineData("plot(ax, x, y, x)", "MATLAB:plot:DataPairsMismatch Data must be a single input of y-values or one or more pairs of x- and y-values.")]
+    [InlineData("plot(ax, x, y, 'Tag', 'Color', 'r')", "MATLAB:plot:UnrecognizedLineStyleParameter Invalid color, marker, or line style.")]
+    [InlineData("plot(ax, x, y, 'r', 2)", "MATLAB:hg:InvalidProperty Unrecognized property r for class Line.")]
+    [InlineData("plot(ax, x, y, 'Type', 'x')", "MATLAB:plot:InvalidPropertyValue Unable to set the 'Type' property of class ''Line'' because it is read-only.")]
+    [InlineData("plot3(ax, x, y, y, 'Tag', 'a', 'r')", "MATLAB:hg:InvalidProperty Unrecognized property a for class Line.")]
+    [InlineData("line(ax, x, y, 'Type', 'x')", "MATLAB:class:SetProhibited Unable to set the 'Type' property of class ''Line'' because it is read-only.")]
+    public void PlotReadsAMalformedCallInItsOwnWords(string call, string words)
+    {
+        Assert.Equal($"{words}\n", RunAndRead($$"""
+            f = figure('Visible', 'off'); ax = axes(f); hold(ax, 'on'); x = 1:3; y = [2 1 3];
+            try, {{call}}; catch e, disp([e.identifier ' ' e.message]); end
+            """));
+    }
+
+    [Theory]
+    [InlineData("plot(ax, x, y, 'r', 'Tag', 'a')", "1 a")]
+    [InlineData("plot(ax, x, y, 'Tag', 'r')", "1 r")]
+    [InlineData("plot(ax, x, y, 'r', x, y, 'b', 'Tag', 'k')", "2 k")]
+    [InlineData("plot(ax, x, y, x, y, 'Tag', 'k')", "2 k")]
+    [InlineData("plot(ax, y, 'g', 'LineWidth', 2)", "1 ")]
+    public void PlotStillTakesAWellFormedCall(string call, string made)
+    {
+        Assert.Equal($"{made}\n", RunAndRead($$"""
+            f = figure('Visible', 'off'); ax = axes(f); hold(ax, 'on'); x = 1:3; y = [2 1 3];
+            h = {{call}};
+            fprintf('%d %s\n', numel(h), get(h(1), 'Tag'));
+            """));
+    }
+
+    [Theory]
+    [InlineData("[1 0 0]", "[1 0 0]")]
+    [InlineData("uint8([255 0 0])", "[1 0 0]")]
+    [InlineData("[1 2 3]", "MATLAB:hg:ColorBase:BadColorValue")]
+    [InlineData("logical([1 0 0])", "MATLAB:fill:InvalidColorInput")]
+    [InlineData("[1 2 3]'", "interp")]
+    public void APatchsThreeElementRowIsOneColour(string colour, string answer)
+    {
+        Assert.Equal($"{answer}\n", RunAndRead($$"""
+            f = figure('Visible', 'off'); ax = axes(f);
+            try
+                h = patch(ax, [0 1 0], [0 0 1], {{colour}});
+                c = h.FaceColor; if ~ischar(c), c = mat2str(c); end
+                disp(c);
+            catch e
+                disp(e.identifier);
+            end
+            """));
+    }
+
+    [Theory]
+    [InlineData("line(g, x, y)", "MATLAB:hg:DeletedObject")]
+    [InlineData("plot(g, x, y)", "MATLAB:hg:InvalidHandle")]
+    [InlineData("bar(g, y)", "MATLAB:graphics:axescheck:DeletedObject")]
+    [InlineData("fill(g, x, y, 'r')", "MATLAB:hg:InvalidHandle")]
+    [InlineData("text(1, 1, 'a', 'Parent', g)", "MATLAB:hg:DeletedObject")]
+    [InlineData("hggroup(g)", "MATLAB:hg:DeletedObject")]
+    public void ADeletedParentIsRefusedNotReadAsData(string call, string identifier)
+    {
+        Assert.Equal($"{identifier}\n0\n", RunAndRead($$"""
+            f = figure('Visible', 'off'); ax = axes(f); hold(ax, 'on'); x = 1:3; y = [2 1 3];
+            g = hggroup(ax); delete(g);
+            try, {{call}}; catch e, disp(e.identifier); end
+            disp(numel(ax.Children));
+            """));
+    }
+
+    [Fact]
+    public void ScatterOfATableAfterAnAxesNamesItsVariables()
+    {
+        Assert.Equal("Var1 Var2 Var3 k\n", RunAndRead("""
+            f = figure('Visible', 'off'); ax = axes(f); hold(ax, 'on');
+            tbl = table([1; 2; 3], [4; 5; 6], [7; 8; 9], 'VariableNames', {'Var1', 'Var2', 'Var3'});
+            s = scatter(ax, tbl, 'Var1', 'Var2', 'Tag', 'k');
+            s3 = scatter3(ax, tbl, 'Var1', 'Var2', 'Var3');
+            fprintf('%s %s %s %s\n', s.XVariable, s.YVariable, s3.ZVariable, s.Tag);
+            """));
+    }
 }
