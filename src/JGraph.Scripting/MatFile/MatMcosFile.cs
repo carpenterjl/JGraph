@@ -49,6 +49,12 @@ internal sealed class MatMcosFile
     public McosSeed Seed { get; }
 
     /// <summary>
+    /// The description text of the version 7.3 file this was read from (open item 147, ADR 0357),
+    /// which <see cref="Write"/> writes back in that form; null for a level-5 file.
+    /// </summary>
+    public byte[]? Version73Header { get; private set; }
+
+    /// <summary>
     /// An element of this file - a part of a stored value - kept as it is, its references pointing at
     /// the objects whose ids they hold.
     /// </summary>
@@ -91,6 +97,20 @@ internal sealed class MatMcosFile
     {
         ArgumentNullException.ThrowIfNull(mat);
         why = null;
+
+        // A version 7.3 (HDF5) model is read as the level-5 file it stands for, and written back as
+        // version 7.3 (open item 147, ADR 0357).
+        if (mat.AsSpan().StartsWith("MATLAB 7.3 MAT-file"u8) && Hdf5.Hdf5File.Looks(mat))
+        {
+            if (MatV73Mcos.ToLevel5(mat, out why) is not { } level5 || Read(level5, out why) is not { } read)
+            {
+                return null;
+            }
+
+            read.Version73Header = mat[..116];
+            return read;
+        }
+
         if (mat.Length < HeaderLength || mat[126] != (byte)'I' || mat[127] != (byte)'M'
             || !mat.AsSpan().StartsWith("MATLAB 5.0 MAT-file"u8))
         {
@@ -154,9 +174,15 @@ internal sealed class MatMcosFile
         return Decode(mat, elements, table, cells, trailer, out why);
     }
 
-    /// <summary>The file with its objects as they now are, each variable compressed as MATLAB writes it.</summary>
-    public byte[] Write() =>
-        MatMcosWriter.WriteFile(Variables.Select(static v => (string.Empty, (MatData)v)).ToList(), Seed, compress: true);
+    /// <summary>
+    /// The file with its objects as they now are, each variable compressed as MATLAB writes it; in
+    /// the version 7.3 form when it was read from one (open item 147).
+    /// </summary>
+    public byte[] Write()
+    {
+        byte[] level5 = MatMcosWriter.WriteFile(Variables.Select(static v => (string.Empty, (MatData)v)).ToList(), Seed, compress: Version73Header is null);
+        return Version73Header is null ? level5 : MatV73Mcos.FromLevel5(level5, Version73Header);
+    }
 
     private static byte[] Inflate(byte[] mat, int at, int length)
     {

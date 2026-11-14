@@ -150,12 +150,28 @@ CHK|zip_password_as_root|MATLAB:io:archive:checkFilesDirInputs:nonExistDir / ROO
 CHK|zip_password_dangling|MATLAB:TooManyInputs / Invalid argument list. Make sure name-value arguments include both the name and the value.|exact
 CHK|zip_password_partial|MATLAB:zip:missingEncryptionMethod / The 'EncryptionMethod' name-value argument must be specified when using the 'Password' name-value argument.|exact
 CHK|zip_bad_name|MATLAB:TooManyInputs / Invalid argument name 'Bogus'. Name must be 'Password' or 'EncryptionMethod'.|exact
-CHK|zip_encrypt|ok: a.txt|div=ADR0258|diverges|JGraph:zip:encryptionNotSupported / JGraph's zip does not encrypt archives; Password and EncryptionMethod are not supported.
-CHK|zip_encrypt_lower_names|ok: a.txt|div=ADR0258|diverges|JGraph:zip:encryptionNotSupported / JGraph's zip does not encrypt archives; Password and EncryptionMethod are not supported.
+CHK|zip_encrypt|ok: a.txt|exact
+CHK|zip_encrypt_lower_names|ok: a.txt|exact
 CHK|unzip_encrypted_no_password|MATLAB:io:archive:extractArchive:unableToWrite / Unable to extract file "<root>\enc.zip". The file is password-protected. Use the "Password" Name-Value pair to extract password-protected zip files.|exact
 CHK|unzip_password_empty|MATLAB:validators:mustBeNonzeroLengthText / Invalid value for 'Password' argument. Value must be text with one or more characters.|exact
 CHK|unzip_password_number|MATLAB:validators:mustBeTextScalar / Invalid value for 'Password' argument. Value must be a character vector or string scalar.|exact
 CHK|unzip_bad_name|MATLAB:TooManyInputs / Invalid argument name 'Bogus'. Use 'Password'.|exact
-CHK|unzip_encrypted_password|ok: unp3\a.txt|div=ADR0258|diverges|JGraph:unzip:encryptionNotSupported / The entry "a.txt" in "<root>\enc.zip" is encrypted; JGraph's unzip does not decrypt archives.
-CHK|unzip_password_as_name|MATLAB:io:archive:extractArchive:incorrectPassword / The provided "Password" value is incorrect.|div=ADR0258|diverges|JGraph:unzip:encryptionNotSupported / The entry "a.txt" in "<root>\enc.zip" is encrypted; JGraph's unzip does not decrypt archives.
+CHK|unzip_encrypted_password|ok: unp3\a.txt|exact
+CHK|unzip_encrypted_content|alpha|exact
+CHK|unzip_password_as_name|MATLAB:io:archive:extractArchive:incorrectPassword / The provided "Password" value is incorrect.|exact
 CHK|unzip_file_url|ok: unp4\a.txt|div=ADR0258|diverges|JGraph:unzip:urlNotSupported / JGraph's unzip reads a file, not a URL; download "file:///<root>/plain.zip" with websave first.
+CHK|enc_round_zipcrypto|a.txt / zero.txt / empty / sub/s.txt / sub/deep/d.txt ; rt_ZipCrypto\a.txt / rt_ZipCrypto\zero.txt / rt_ZipCrypto\empty\ / rt_ZipCrypto\sub\s.txt / rt_ZipCrypto\sub\deep\d.txt ; same 1|exact
+CHK|enc_round_aes128|a.txt / zero.txt / empty / sub/s.txt / sub/deep/d.txt ; rt_AES-128\a.txt / rt_AES-128\zero.txt / rt_AES-128\empty\ / rt_AES-128\sub\s.txt / rt_AES-128\sub\deep\d.txt ; same 1|exact
+CHK|enc_round_aes256|a.txt / zero.txt / empty / sub/s.txt / sub/deep/d.txt ; rt_aes256\a.txt / rt_aes256\zero.txt / rt_aes256\empty\ / rt_aes256\sub\s.txt / rt_aes256\sub\deep\d.txt ; same 1|exact
+CHK|enc_wrong_zipcrypto|MATLAB:io:archive:extractArchive:incorrectPassword / The provided "Password" value is incorrect.|exact
+CHK|enc_wrong_zipcrypto_wrote||exact
+CHK|enc_wrong_aes|MATLAB:io:archive:extractArchive:incorrectPassword / The provided "Password" value is incorrect.|exact
+CHK|enc_wrong_aes_case|MATLAB:io:archive:extractArchive:incorrectPassword / The provided "Password" value is incorrect.|exact
+CHK|enc_no_password_aes|MATLAB:io:archive:extractArchive:unableToWrite / Unable to extract file "<root>\rt_aes256.zip". The file is password-protected. Use the "Password" Name-Value pair to extract password-protected zip files.|exact
+CHK|enc_password_on_plain|ok: wp\a.txt|exact
+CHK|enc_r2025b_aes256|ok: r_r256_1\a.txt ; wrote a.txt ; a.txt alpha|exact
+CHK|enc_r2025b_aes128|ok: r_r128_1\long.txt ; wrote long.txt ; long.txt alpha beta gamma delta epsilon|exact
+CHK|enc_r2025b_aes_wrong|MATLAB:io:archive:extractArchive:incorrectPassword / The provided "Password" value is incorrect. ; wrote |exact
+CHK|enc_mixed_password|ok: r_mixed_1\b.txt / r_mixed_1\a.txt ; wrote a.txt b.txt ; a.txt alpha|exact
+CHK|enc_mixed_no_password|MATLAB:io:archive:extractArchive:unableToWrite / Unable to extract file "<root>\mixed.zip". The file is password-protected. Use the "Password" Name-Value pair to extract password-protected zip files. ; wrote b.txt|exact
+CHK|enc_mixed_wrong|MATLAB:io:archive:extractArchive:incorrectPassword / The provided "Password" value is incorrect. ; wrote b.txt|exact

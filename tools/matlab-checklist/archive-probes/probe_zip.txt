@@ -1,0 +1,43 @@
+zip_ZipCrypto | ok | src/a.txt src/b.bin src/emptydir src/zero.txt src/sub/c.txt
+zip_AES-128 | ok | src/a.txt src/b.bin src/emptydir src/zero.txt src/sub/c.txt
+zip_AES-256 | ok | src/a.txt src/b.bin src/emptydir src/zero.txt src/sub/c.txt
+zip_aes128 | ok | src/a.txt src/b.bin src/emptydir src/zero.txt src/sub/c.txt
+zip_aes256 | ok | src/a.txt src/b.bin src/emptydir src/zero.txt src/sub/c.txt
+zip_zipcrypto | ok | src/a.txt src/b.bin src/emptydir src/zero.txt src/sub/c.txt
+zip_string_args | ok | src/a.txt
+zip_root_and_pw | ok | a.txt sub/c.txt
+zip_unicode_pw | ok | src/a.txt
+zip_unicode_pw_zc | ok | src/a.txt
+zip_long_pw | ok | src/a.txt
+zip_space_pw | ok | src/a.txt
+unzip_ZipCrypto | ok | x_ZipCrypto/src/a.txt x_ZipCrypto/src/b.bin x_ZipCrypto/src/emptydir/ x_ZipCrypto/src/zero.txt x_ZipCrypto/src/sub/c.txt
+content_ZipCrypto | 1 1 7
+unzip_AES-128 | ok | x_AES128/src/a.txt x_AES128/src/b.bin x_AES128/src/emptydir/ x_AES128/src/zero.txt x_AES128/src/sub/c.txt
+content_AES-128 | 1 1 7
+unzip_AES-256 | ok | x_AES256/src/a.txt x_AES256/src/b.bin x_AES256/src/emptydir/ x_AES256/src/zero.txt x_AES256/src/sub/c.txt
+content_AES-256 | 1 1 7
+unzip_aes128 | ok | x_aes128/src/a.txt x_aes128/src/b.bin x_aes128/src/emptydir/ x_aes128/src/zero.txt x_aes128/src/sub/c.txt
+content_aes128 | 1 1 7
+unzip_aes256 | ok | x_aes256/src/a.txt x_aes256/src/b.bin x_aes256/src/emptydir/ x_aes256/src/zero.txt x_aes256/src/sub/c.txt
+content_aes256 | 1 1 7
+unzip_zipcrypto | ok | x_zipcrypto/src/a.txt x_zipcrypto/src/b.bin x_zipcrypto/src/emptydir/ x_zipcrypto/src/zero.txt x_zipcrypto/src/sub/c.txt
+content_zipcrypto | 1 1 7
+unzip_wrong_zc | ERR | MATLAB:io:archive:extractArchive:incorrectPassword | The provided "Password" value is incorrect.
+unzip_wrong_aes128 | ERR | MATLAB:io:archive:extractArchive:incorrectPassword | The provided "Password" value is incorrect.
+unzip_wrong_aes256 | ERR | MATLAB:io:archive:extractArchive:incorrectPassword | The provided "Password" value is incorrect.
+listing w1 | 
+listing w2 | 
+listing w3 | 
+unzip_nopw_zc | ERR | MATLAB:io:archive:extractArchive:unableToWrite | Unable to extract file "<OUT>\enc_ZipCrypto.zip".\nThe file is password-protected. Use the "Password" Name-Value pair to extract password-protected zip files.
+unzip_nopw_aes | ERR | MATLAB:io:archive:extractArchive:unableToWrite | Unable to extract file "<OUT>\enc_AES256.zip".\nThe file is password-protected. Use the "Password" Name-Value pair to extract password-protected zip files.
+listing w4 | 
+listing w5 | 
+unzip_pw_on_plain | ok | w6/src/a.txt w6/src/b.bin w6/src/emptydir/ w6/src/zero.txt w6/src/sub/c.txt
+unzip_uni | ok | w7/src/a.txt
+unzip_unizc | ok | w8/src/a.txt
+unzip_long | ok | w9/src/a.txt
+unzip_space | ok | w10/src/a.txt
+unzip_case_pw | ERR | MATLAB:io:archive:extractArchive:incorrectPassword | The provided "Password" value is incorrect.
+unzip_str_pw | ok | w12/src/a.txt
+unzip_nameonly | ok | src/a.txt src/b.bin src/emptydir/ src/zero.txt src/sub/c.txt
+unzip_root | ok | w13/a.txt w13/sub/c.txt

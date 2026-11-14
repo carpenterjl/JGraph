@@ -144,9 +144,9 @@ public class AppDesignerGroupTests(ITestOutputHelper output)
     // --- the .mlapp tree ---------------------------------------------------------------------------------
 
     /// <summary>
-    /// Every shipped app's groups are read as the probe counted them: 26 apps with groups in a
-    /// level-5 model (SignalIntegrityLink's 7 are in a version 7.3 model), 136 groups, 279 members,
-    /// 133 labelled pairs, 3 groups inside another, bertool's two as the probe listed them.
+    /// Every shipped app's groups are read as the probe counted them: 27 apps with groups (since open
+    /// item 147, ADR 0357, SignalIntegrityLink's 7 in its version 7.3 model among them), 143 groups,
+    /// 293 members, 133 labelled pairs, 3 groups inside another, bertool's two as the probe listed them.
     /// </summary>
     [Fact]
     public void TheShippedAppsGroupsAreReadAsTheProbeCountedThem()
@@ -184,7 +184,7 @@ public class AppDesignerGroupTests(ITestOutputHelper output)
         }
 
         output.WriteLine($"{apps} apps, {groups} groups, {members} members, {labeled} labelled, {nested} nested");
-        Assert.Equal((26, 136, 279, 126, 3), (apps, groups, members, labeled, nested)); // the probe's 133 labelled pairs less SignalIntegrityLink's 7
+        Assert.Equal((27, 143, 293, 133, 3), (apps, groups, members, labeled, nested)); // the probe's 133 labelled pairs
     }
 
     /// <summary>

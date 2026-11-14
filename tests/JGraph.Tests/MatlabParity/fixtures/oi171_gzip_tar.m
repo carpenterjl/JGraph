@@ -2,7 +2,9 @@
 % Open items 171 and 172: gzip, gunzip, tar and untar beside zip and unzip - the names each answers
 % for files, folders and wildcards, beside the source or in an output folder, the extensions tar
 % adds or compresses by, what untar finds and writes, round trips, and the refusals; then how zip and
-% unzip split a positional argument from a name, and the encryption refusals R2025b gives itself.
+% unzip split a positional argument from a name, and the encryption refusals R2025b gives itself;
+% then encryption itself (open item 172, ADR 0357): ZipCrypto, AES-128 and AES-256 round trips, a wrong
+% password, and archives R2025b encrypted, mixed with plain entries among them.
 
 root = tempname;
 src = fullfile(root, 'src');
@@ -178,18 +180,36 @@ u2_chk('zip_password_as_root', @() failure(@() zip('z9.zip', 'a.txt', 'Password'
 u2_chk('zip_password_dangling', @() failure(@() zip('z10.zip', 'a.txt', '.', 'Password'), root));
 u2_chk('zip_password_partial', @() failure(@() zip('z11.zip', 'a.txt', 'Pass', 'p'), root));
 u2_chk('zip_bad_name', @() failure(@() zip('z12.zip', 'a.txt', '.', 'Bogus', 'p'), root));
-% R2025b encrypts; .NET's ZIP classes cannot, and JGraph refuses (ADR 0258).
-chkdiv('zip_encrypt', @() failure(@() zip('z3.zip', 'a.txt', 'Password', 'p', 'EncryptionMethod', 'zipcrypto'), root), 'ADR0258');
-chkdiv('zip_encrypt_lower_names', @() failure(@() zip('z6.zip', 'a.txt', 'password', 'p', 'encryptionmethod', 'AES128'), root), 'ADR0258');
+u2_chk('zip_encrypt', @() failure(@() zip('z3.zip', 'a.txt', 'Password', 'p', 'EncryptionMethod', 'zipcrypto'), root));
+u2_chk('zip_encrypt_lower_names', @() failure(@() zip('z6.zip', 'a.txt', 'password', 'p', 'encryptionmethod', 'AES128'), root));
 writeEncrypted(fullfile(root, 'enc.zip'));
 u2_chk('unzip_encrypted_no_password', @() failure(@() unzip(fullfile(root, 'enc.zip'), fullfile(root, 'unp1')), root));
 u2_chk('unzip_password_empty', @() failure(@() unzip(fullfile(root, 'enc.zip'), fullfile(root, 'unp2'), 'Password', ''), root));
 u2_chk('unzip_password_number', @() failure(@() unzip(fullfile(root, 'enc.zip'), fullfile(root, 'unp2'), 'Password', 5), root));
 u2_chk('unzip_bad_name', @() failure(@() unzip(fullfile(root, 'enc.zip'), fullfile(root, 'unp2'), 'Bogus', 'x'), root));
-% R2025b decrypts (or refuses a wrong password); JGraph decrypts nothing (ADR 0258).
-chkdiv('unzip_encrypted_password', @() failure(@() unzip(fullfile(root, 'enc.zip'), fullfile(root, 'unp3'), 'Password', 'p'), root), 'ADR0258');
-chkdiv('unzip_password_as_name', @() failure(@() unzip(fullfile(root, 'enc.zip'), 'Password', 'x'), root), 'ADR0258');
+u2_chk('unzip_encrypted_password', @() failure(@() unzip(fullfile(root, 'enc.zip'), fullfile(root, 'unp3'), 'Password', 'p'), root));
+u2_chk('unzip_encrypted_content', @() fileread(fullfile(root, 'unp3', 'a.txt')));
+u2_chk('unzip_password_as_name', @() failure(@() unzip(fullfile(root, 'enc.zip'), 'Password', 'x'), root));
+% R2025b reads a file URL; JGraph downloads nothing (ADR 0258).
 chkdiv('unzip_file_url', @() failure(@() unzipUrl(root), root), 'ADR0258');
+
+% ---- encryption (open item 172) ----
+writet(fullfile(src, 'zero.txt'), '');
+u2_chk('enc_round_zipcrypto', @() encRoundTrip(root, 'ZipCrypto'));
+u2_chk('enc_round_aes128', @() encRoundTrip(root, 'AES-128'));
+u2_chk('enc_round_aes256', @() encRoundTrip(root, 'aes256'));
+u2_chk('enc_wrong_zipcrypto', @() failure(@() unzip(fullfile(root, 'rt_ZipCrypto.zip'), fullfile(root, 'wz'), 'Password', 'nope'), root));
+u2_chk('enc_wrong_zipcrypto_wrote', @() listing(fullfile(root, 'wz')));
+u2_chk('enc_wrong_aes', @() failure(@() unzip(fullfile(root, 'rt_AES-128.zip'), fullfile(root, 'wa'), 'Password', 'nope'), root));
+u2_chk('enc_wrong_aes_case', @() failure(@() unzip(fullfile(root, 'rt_aes256.zip'), fullfile(root, 'wc'), 'Password', ['SECRET ' char(233)]), root));
+u2_chk('enc_no_password_aes', @() failure(@() unzip(fullfile(root, 'rt_aes256.zip'), fullfile(root, 'wn')), root));
+u2_chk('enc_password_on_plain', @() failure(@() unzip(fullfile(root, 'plain.zip'), fullfile(root, 'wp'), 'Password', 'p'), root));
+u2_chk('enc_r2025b_aes256', @() readEncrypted(root, 'r256.zip', aes256Bytes(), 'p'));
+u2_chk('enc_r2025b_aes128', @() readEncrypted(root, 'r128.zip', aes128Bytes(), 'p'));
+u2_chk('enc_r2025b_aes_wrong', @() readEncrypted(root, 'r256.zip', aes256Bytes(), 'q'));
+u2_chk('enc_mixed_password', @() readEncrypted(root, 'mixed.zip', mixedBytes(), 'p'));
+u2_chk('enc_mixed_no_password', @() readEncrypted(root, 'mixed.zip', mixedBytes(), ''));
+u2_chk('enc_mixed_wrong', @() readEncrypted(root, 'mixed.zip', mixedBytes(), 'q'));
 
 cd(old);
 rmdir(root, 's');
@@ -401,6 +421,81 @@ bytes = [80 75 3 4 20 0 9 0 8 0 42 148 108 93 0 0 0 0 0 0 0 0 0 0 0 0 5 0 32 0 9
 fid = fopen(name, 'w');
 fwrite(fid, bytes, 'uint8');
 fclose(fid);
+end
+
+function s = listing(folder)
+% The files under a folder, relative to it; 'none' when there is no folder.
+if ~isfolder(folder)
+    s = 'none';
+    return
+end
+l = dir(fullfile(folder, '**', '*'));
+l = l(~[l.isdir]);
+s = strjoin(sort(cellfun(@(f, n) strrep(fullfile(erase(f, folder), n), '\', '/'), {l.folder}, {l.name}, 'UniformOutput', false)), ' ');
+end
+
+function s = encRoundTrip(root, method)
+% zip with a password and a method, then unzip it with the password: the names each answers, and
+% whether every file came back as it was (zero.txt is empty, which R2025b writes unencrypted).
+f = fullfile(root, ['rt_' method '.zip']);
+z = zip(f, {'a.txt', 'zero.txt', 'sub', 'empty'}, 'Password', ['secret ' char(233)], 'EncryptionMethod', method);
+out = fullfile(root, ['rt_' method]);
+u = unzip(f, out, 'Password', ['secret ' char(233)]);
+same = isequal(fileread(fullfile(out, 'a.txt')), 'alpha') && isequal(fileread(fullfile(out, 'sub', 'deep', 'd.txt')), 'deeper') ...
+    && isfile(fullfile(out, 'zero.txt')) && isempty(fileread(fullfile(out, 'zero.txt'))) && isfolder(fullfile(out, 'empty'));
+s = sprintf('%s ; %s ; same %d', strjoin(z, ' | '), names(u, root), same);
+end
+
+function s = readEncrypted(root, name, bytes, password)
+% An archive R2025b wrote, unzipped with a password ('' for none): its names or refusal, and what was written.
+f = fullfile(root, name);
+fid = fopen(f, 'w');
+fwrite(fid, bytes, 'uint8');
+fclose(fid);
+out = fullfile(root, ['r_' strrep(name, '.zip', '') '_' num2str(numel(password))]);
+if exist(out, 'dir'), rmdir(out, 's'); end
+if isempty(password)
+    s = failure(@() unzip(f, out), root);
+else
+    s = failure(@() unzip(f, out, 'Password', password), root);
+end
+s = sprintf('%s ; wrote %s', s, listing(out));
+if isfile(fullfile(out, 'a.txt')), s = [s ' ; a.txt ' fileread(fullfile(out, 'a.txt'))]; end
+if isfile(fullfile(out, 'long.txt')), s = [s ' ; long.txt ' fileread(fullfile(out, 'long.txt'))]; end
+end
+
+function bytes = aes256Bytes()
+% R2025b: zip('aes256.zip', 'a.txt', 'Password', 'p', 'EncryptionMethod', 'AES-256'), a.txt holding 'alpha' (AE-2).
+bytes = [80 75 3 4 20 0 9 0 99 0 224 89 110 93 0 0 0 0 0 0 0 0 0 0 0 0 5 0 43 0 97 46 116 120 116 117 120 11 0 1 4 0 0 0 0 4 0 0 ...
+    0 0 1 153 7 0 2 0 65 69 3 8 0 85 84 13 0 7 37 165 248 106 37 165 248 106 37 165 248 106 151 202 200 40 242 200 103 113 ...
+    48 125 161 124 125 77 161 203 239 73 119 239 240 142 117 62 45 46 214 13 240 55 146 179 74 137 154 80 75 7 8 0 0 0 0 35 ...
+    0 0 0 5 0 0 0 80 75 1 2 20 3 20 0 9 0 99 0 224 89 110 93 0 0 0 0 35 0 0 0 5 0 0 0 5 0 35 0 0 0 0 0 0 0 0 0 182 129 0 0 ...
+    0 0 97 46 116 120 116 117 120 11 0 1 4 0 0 0 0 4 0 0 0 0 1 153 7 0 2 0 65 69 3 8 0 85 84 5 0 1 37 165 248 106 80 75 5 6 ...
+    0 0 0 0 1 0 1 0 86 0 0 0 129 0 0 0 0 0];
+end
+
+function bytes = aes128Bytes()
+% R2025b: zip('aes128.zip', 'long.txt', 'Password', 'p', 'EncryptionMethod', 'AES-128'), 30 bytes of text (AE-1).
+bytes = [80 75 3 4 20 0 9 0 99 0 224 89 110 93 0 0 0 0 0 0 0 0 0 0 0 0 8 0 43 0 108 111 110 103 46 116 120 116 117 120 11 0 1 4 ...
+    0 0 0 0 4 0 0 0 0 1 153 7 0 1 0 65 69 1 8 0 85 84 13 0 7 37 165 248 106 37 165 248 106 37 165 248 106 29 185 216 231 ...
+    133 93 135 70 35 43 9 41 87 243 241 169 111 60 207 2 243 105 130 148 183 230 45 27 48 108 162 1 76 11 46 249 154 137 6 ...
+    184 130 2 153 237 218 135 110 173 240 28 80 75 7 8 216 56 125 212 50 0 0 0 30 0 0 0 80 75 1 2 20 3 20 0 9 0 99 0 224 89 ...
+    110 93 216 56 125 212 50 0 0 0 30 0 0 0 8 0 35 0 0 0 0 0 0 0 0 0 182 129 0 0 0 0 108 111 110 103 46 116 120 116 117 120 ...
+    11 0 1 4 0 0 0 0 4 0 0 0 0 1 153 7 0 1 0 65 69 1 8 0 85 84 5 0 1 37 165 248 106 80 75 5 6 0 0 0 0 1 0 1 0 89 0 0 0 147 ...
+    0 0 0 0 0];
+end
+
+function bytes = mixedBytes()
+% b.txt ('beta') from R2025b's plain zip, then a.txt ('alpha') from its ZipCrypto zip with password 'p'.
+bytes = [80 75 3 4 20 0 8 0 8 0 224 89 110 93 0 0 0 0 0 0 0 0 0 0 0 0 5 0 32 0 98 46 116 120 116 117 120 11 0 1 4 0 0 0 0 4 0 0 ...
+    0 0 85 84 13 0 7 37 165 248 106 37 165 248 106 37 165 248 106 75 74 45 73 4 0 80 75 7 8 99 4 145 143 6 0 0 0 4 0 0 0 80 ...
+    75 3 4 20 0 9 0 8 0 224 89 110 93 0 0 0 0 0 0 0 0 0 0 0 0 5 0 32 0 97 46 116 120 116 117 120 11 0 1 4 0 0 0 0 4 0 0 0 0 ...
+    85 84 13 0 7 37 165 248 106 38 165 248 106 37 165 248 106 144 96 43 221 47 182 187 191 11 32 152 212 224 153 87 98 240 ...
+    60 126 80 75 7 8 106 57 224 208 19 0 0 0 5 0 0 0 80 75 1 2 20 3 20 0 8 0 8 0 224 89 110 93 99 4 145 143 6 0 0 0 4 0 0 0 ...
+    5 0 24 0 0 0 0 0 0 0 0 0 182 129 0 0 0 0 98 46 116 120 116 117 120 11 0 1 4 0 0 0 0 4 0 0 0 0 85 84 5 0 1 37 165 248 ...
+    106 80 75 1 2 20 3 20 0 9 0 8 0 224 89 110 93 106 57 224 208 19 0 0 0 5 0 0 0 5 0 24 0 0 0 0 0 0 0 0 0 182 129 89 0 0 0 ...
+    97 46 116 120 116 117 120 11 0 1 4 0 0 0 0 4 0 0 0 0 85 84 5 0 1 37 165 248 106 80 75 5 6 0 0 0 0 2 0 2 0 150 0 0 0 191 ...
+    0 0 0 0 0];
 end
 
 function chkdiv(name, fn, adr)

@@ -169,16 +169,18 @@ Encryption and URLs are not implemented: .NET's ZIP classes neither encrypt nor 
 - **`gunzip` and `untar` do not download a URL** (`JGraph:gunzip:urlNotSupported`,
   `JGraph:untar:urlNotSupported`). R2025b fetches http, https, ftp and file URLs first. A file URL is
   the fixture's row, `untar_file_url`.
-- **`zip` with both `Password` and `EncryptionMethod`, and `unzip` of an encrypted entry with a
-  password, are refused** as ADR 0258 records. This includes a wrong password, which R2025b answers
-  `incorrectPassword` (fixture rows `zip_encrypt`, `zip_encrypt_lower_names`,
-  `unzip_encrypted_password`, `unzip_password_as_name`, `unzip_file_url`, all ADR 0258's).
 - **`movefile` of a folder into its own subtree is refused.** R2025b answers status 1 having moved part
   of it: `movefile('ms', 'ms/sub/inside')` moved `a.txt` into `inside` and left `ms` and `sub`. JGraph
   raises `MATLAB:MOVEFILE:OSError` with the system's message. Not in a fixture.
 - **`gzip`, `gunzip` and `tar` write failures, and `untar`'s, are JGraph's words**
   (`JGraph:gzip:writeError`, `JGraph:gunzip:writeError`, `MATLAB:tar:openError`, `MATLAB:untar:openError`).
   R2025b's compiled helpers were not driven to fail.
+
+Closed since: **`zip` with both `Password` and `EncryptionMethod`, and `unzip` of an encrypted
+entry with a password, were refused.** ADR 0357 (open item 172) encrypts and decrypts as R2025b
+does, and answers a wrong password with its `incorrectPassword`; the fixture rows `zip_encrypt`,
+`zip_encrypt_lower_names`, `unzip_encrypted_password` and `unzip_password_as_name` agree.
+`unzip_file_url` stays ADR 0258's divergence.
 
 ## Still open
 

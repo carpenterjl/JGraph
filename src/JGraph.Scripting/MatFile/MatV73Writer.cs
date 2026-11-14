@@ -448,6 +448,105 @@ internal static class MatV73Writer
         public long StructGroup(IReadOnlyList<(string Name, long Header)> fields, out long tree, out long heap) =>
             Group([.. fields], [ClassAttribute("struct"), FieldsAttribute([.. fields.Select(static f => f.Name)])], out tree, out heap);
 
+        // --- Raw values: a model's elements carried over as they are (open item 147, ADR 0357) -------
+
+        /// <summary>Lists an object already written in <c>#refs#</c>, where what a reference points at is kept, and answers its address.</summary>
+        public long Listed(long header)
+        {
+            Refs.Add((RefName(_refCount++), header));
+            return header;
+        }
+
+        /// <summary>
+        /// A numeric or logical array of <paramref name="className"/> whose elements are
+        /// <paramref name="data"/> in its class's bytes, column-major; complex when
+        /// <paramref name="imaginary"/> is given, as a compound of the two parts.
+        /// </summary>
+        public long Numeric(string className, int[] dims, byte[] data, byte[]? imaginary = null)
+        {
+            if (className == "logical")
+            {
+                return Dataset(Fixed(1, signed: false), Reversed(dims), data, [ClassAttribute("logical"), IntDecode(1)]);
+            }
+
+            (byte[] type, int width) = className switch
+            {
+                "double" => (Float(8), 8),
+                "single" => (Float(4), 4),
+                "int8" => (Fixed(1, true), 1),
+                "uint8" => (Fixed(1, false), 1),
+                "int16" => (Fixed(2, true), 2),
+                "uint16" => (Fixed(2, false), 2),
+                "int32" => (Fixed(4, true), 4),
+                "uint32" => (Fixed(4, false), 4),
+                "int64" => (Fixed(8, true), 8),
+                "uint64" => (Fixed(8, false), 8),
+                _ => throw new NotSupportedException($"a {className} array cannot be written into a version 7.3 model"),
+            };
+            if (imaginary is null)
+            {
+                return Dataset(type, Reversed(dims), data, [ClassAttribute(className)]);
+            }
+
+            var both = new byte[data.Length * 2];
+            for (int i = 0; i < data.Length / width; i++)
+            {
+                data.AsSpan(i * width, width).CopyTo(both.AsSpan(i * 2 * width));
+                imaginary.AsSpan(i * width, width).CopyTo(both.AsSpan(((i * 2) + 1) * width));
+            }
+
+            return Dataset(Compound(type, width), Reversed(dims), both, [ClassAttribute(className)]);
+        }
+
+        /// <summary>A char array of UTF-16 code units, column-major.</summary>
+        public long CharUnits(int[] dims, byte[] units) =>
+            Dataset(Fixed(2, signed: false), Reversed(dims), units, [ClassAttribute("char"), IntDecode(2)]);
+
+        /// <summary>An empty value of <paramref name="className"/>; a struct's field names are listed only when it has some, as R2025b lists them.</summary>
+        public long EmptyOf(string className, int[] dims, string[]? fields) =>
+            Empty(className, dims, fields is { Length: > 0 } ? fields : null);
+
+        /// <summary>
+        /// An object as a variable, a field or a cell's element holds one: its reference words, a
+        /// <c>uint32</c> array marked with the object's class and <c>MATLAB_object_decode</c> 3.
+        /// </summary>
+        public long ObjectWords(string className, int[] dims, byte[] words) =>
+            Dataset(Fixed(4, signed: false), Reversed(dims), words, [ClassAttribute(className), ObjectDecode()]);
+
+        /// <summary>The subsystem's <c>FileWrapper__</c>: a dataset of references to the objects already written, marked as R2025b marks it.</summary>
+        public long Wrapper(IReadOnlyList<long> addresses, int[] dims)
+        {
+            var data = new byte[addresses.Count * 8];
+            for (int i = 0; i < addresses.Count; i++)
+            {
+                BinaryPrimitives.WriteInt64LittleEndian(data.AsSpan(i * 8), addresses[i]);
+            }
+
+            return Dataset(Reference(), Reversed(dims), data, [ClassAttribute("FileWrapper__"), ObjectDecode()]);
+        }
+
+        /// <summary>
+        /// A struct's group over objects already written - a 1-by-1 struct's values, or a struct
+        /// array's reference datasets - its fields in the order given; no field list when it has none.
+        /// </summary>
+        public long StructOf(IReadOnlyList<(string Name, long Header)> fields)
+        {
+            List<Message> attributes = [ClassAttribute("struct")];
+            if (fields.Count > 0)
+            {
+                attributes.Add(FieldsAttribute([.. fields.Select(static f => f.Name)]));
+            }
+
+            return Group([.. fields], attributes, out _, out _);
+        }
+
+        private static Message ObjectDecode()
+        {
+            var data = new byte[4];
+            BinaryPrimitives.WriteInt32LittleEndian(data, 3);
+            return Attribute("MATLAB_object_decode", Fixed(4, signed: true), Dataspace([]), data);
+        }
+
         // --- Objects --------------------------------------------------------------------------
 
         private long Dataset(byte[] datatype, long[] dims, byte[] data, IReadOnlyList<Message> attributes)
@@ -642,16 +741,23 @@ internal static class MatV73Writer
         // --- Finishing ------------------------------------------------------------------------
 
         /// <summary>Writes the global heap, patches the addresses that point at it, then the userblock and superblock.</summary>
-        public byte[] Finish(long rootHeader, long rootTree, long rootHeap)
+        public byte[] Finish(long rootHeader, long rootTree, long rootHeap, byte[]? description = null)
         {
             WriteGlobalHeap();
             Align();
             byte[] file = _bytes.ToArray();
-            string description = "MATLAB 7.3 MAT-file, Platform: PCWIN64, Created on: "
-                + DateTime.Now.ToString("ddd MMM dd HH:mm:ss yyyy", System.Globalization.CultureInfo.InvariantCulture)
-                + " HDF5 schema 1.00 .";
-            byte[] text = Encoding.ASCII.GetBytes(description.PadRight(116));
-            Array.Copy(text, file, 116);
+            if (description is { Length: >= 116 })
+            {
+                Array.Copy(description, file, 116); // a rewritten model keeps the text it had (open item 147)
+            }
+            else
+            {
+                string created = "MATLAB 7.3 MAT-file, Platform: PCWIN64, Created on: "
+                    + DateTime.Now.ToString("ddd MMM dd HH:mm:ss yyyy", System.Globalization.CultureInfo.InvariantCulture)
+                    + " HDF5 schema 1.00 .";
+                Array.Copy(Encoding.ASCII.GetBytes(created.PadRight(116)), file, 116);
+            }
+
             file[124] = 0x00;
             file[125] = 0x02;
             file[126] = (byte)'I';

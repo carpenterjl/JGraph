@@ -181,18 +181,19 @@ They are transcribed from R2025b's `zip.m`, `unzip.m` and `getArchiveEntries.m`.
 - **`unzip` refuses an entry that would land outside its folder**, and so writes nothing.
   R2025b writes `../outside.txt` above the output folder (`k3_zip_unzip`'s `unzip_dotdot`). The
   refusal is `JGraph:unzip:entryOutsideFolder`.
-- **No encryption in `zip` or `unzip`.** `zip` refuses `Password` and `EncryptionMethod`
-  (`JGraph:zip:encryptionNotSupported`). `unzip` accepts a `Password` for an archive that is not
-  encrypted, as R2025b does, and refuses an encrypted entry. Since ADR 0340 (open item 172) the
-  refusals R2025b gives itself are in its words: one name without the other, a value that is not
-  text or is empty, a method outside its set, and an encrypted entry with no password. JGraph's
-  refusal stands only where R2025b would encrypt or decrypt.
 - **`unzip` does not download a URL** (`JGraph:unzip:urlNotSupported`). R2025b fetches http,
   https, ftp and file URLs first.
 - **`extractCTF` is `jgraph -extractCTF`** until K4 ships the utility. For a file that is an
   archive it cannot read, it adds a line saying why.
 - **The path puts the main's folder first.** R2025b put an `-a` folder before the main's (K0's
   `env_plain`); K6 measures `mcc`'s order.
+
+Closed since: **no encryption in `zip` or `unzip`.** `zip` refused `Password` and
+`EncryptionMethod`, and `unzip` refused an encrypted entry, because .NET's ZIP classes neither
+encrypt nor decrypt. ADR 0357 (open item 172) encrypts and decrypts in managed code as R2025b does:
+ZipCrypto and WinZip AES-128 and AES-256, a wrong password refused in R2025b's words. The fixture
+rows `zip_encrypt`, `zip_encrypt_lower_names`, `unzip_encrypted_password` and
+`unzip_password_as_name` in `oi171_gzip_tar` now agree.
 
 ## Still open
 

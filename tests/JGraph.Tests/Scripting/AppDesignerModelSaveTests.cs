@@ -549,12 +549,13 @@ public class AppDesignerModelSaveTests(ITestOutputHelper output)
     private static string Helper(string name) => Path.Combine(AppContext.BaseDirectory, "MatlabParity", "fixtures", "helpers", name);
 
     /// <summary>
-    /// A model kept as a version 7.3 (HDF5) file holds its tree in a form this does not rewrite: an
-    /// edit to createComponents is saved and runs, the copy of the code is spliced (ADR 0239), the
-    /// tree is left as it was, and the status line says App Designer will show the components it had.
+    /// A model kept as a version 7.3 (HDF5) file (open item 147, ADR 0357): an edit to
+    /// createComponents is saved and runs, the copy of the code is spliced (ADR 0239), the tree is
+    /// brought to the code as a level-5 model's is, and the model stays a version 7.3 file, read
+    /// back with the edit in it; the status line says the tree was brought up to date.
     /// </summary>
     [Fact]
-    public void AVersion73ModelsTreeIsLeft_AndTheSaveSaysSo()
+    public void AVersion73ModelsTreeIsBroughtUp_AndStaysVersion73()
     {
         string folder = Path.Combine(Path.GetTempPath(), $"jgraph-ds6-{Guid.NewGuid():N}");
         Directory.CreateDirectory(folder);
@@ -571,9 +572,27 @@ public class AppDesignerModelSaveTests(ITestOutputHelper output)
             Assert.Equal(edited, JgsMlapp.ReadCode(app));
             Assert.True(saved.GeneratedCodeChanged);
             Assert.NotNull(saved.Tree);
-            Assert.False(saved.Tree.IsUpdated);
-            Assert.Contains("version 7.3", saved.Tree.Problems[0], StringComparison.Ordinal);
-            Assert.Contains("App Designer will show the components it had", JGraph.Scripting.Workspace.AppDesignerDocument.StatusNote(saved), StringComparison.Ordinal);
+            Assert.True(saved.Tree.IsUpdated, string.Join(" ", saved.Tree.Problems));
+            Assert.Contains("component tree was brought up to date", JGraph.Scripting.Workspace.AppDesignerDocument.StatusNote(saved), StringComparison.Ordinal);
+
+            byte[] model = ModelOf(app);
+            Assert.StartsWith("MATLAB 7.3 MAT-file", System.Text.Encoding.ASCII.GetString(model, 0, 19), StringComparison.Ordinal);
+            MatMcosFile file = MatMcosFile.Read(model) ?? throw new InvalidOperationException("the written model does not read");
+            Assert.NotNull(file.Version73Header);
+            Assert.Contains(file.Objects, static o => o.ClassName == "matlab.ui.control.Button"
+                && o.Entries.Any(static e => e.Value is McosValue.Value { Data: MatData.Kept k } && MatRaw.Text(k.Element) == "Run"));
+            Assert.NotNull(JgsMlappModel.Read(model)); // the code copy still reads, spliced into the rewritten file
+            if (Environment.GetEnvironmentVariable("JGRAPH_DS6_OUT") is { Length: > 0 } outFolder)
+            {
+                // For R2025b to read (open item 147's probe).
+                Directory.CreateDirectory(Path.Combine(outFolder, "v73"));
+                File.Copy(app, Path.Combine(outFolder, "v73", "U7bApp73.mlapp"), overwrite: true);
+            }
+
+            // Saved again unchanged, nothing moves.
+            MlappSaveResult again = JgsMlapp.WriteCode(app, edited);
+            Assert.Null(again.Tree);
+            Assert.Equal(model, ModelOf(app));
         }
         finally
         {

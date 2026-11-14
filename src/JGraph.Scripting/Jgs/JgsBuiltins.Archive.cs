@@ -15,9 +15,9 @@ namespace JGraph.Scripting.Jgs;
 /// <remarks>
 /// Divergences (ADR 0258 and the open-items ADR that added the four): <c>unzip</c> and <c>untar</c>
 /// refuse an entry that would land outside the output folder (R2025b writes <c>../x</c> above it), and
-/// neither <c>zip</c> nor <c>unzip</c> encrypts or decrypts (R2025b's <c>Password</c> and
-/// <c>EncryptionMethod</c>): the refusals R2025b gives itself are given in its words, and what it would
-/// encrypt or decrypt is refused in JGraph's. A URL is not downloaded.
+/// a URL is not downloaded. <c>zip</c>'s <c>Password</c> and <c>EncryptionMethod</c> and
+/// <c>unzip</c>'s <c>Password</c> encrypt and decrypt as R2025b does, ZipCrypto and WinZip AES, in
+/// <see cref="ZipEncryption"/> (open item 172, ADR 0357).
 /// </remarks>
 internal static partial class JgsBuiltins
 {
@@ -120,12 +120,13 @@ internal static partial class JgsBuiltins
                 "The 'EncryptionMethod' name-value argument must be specified when using the 'Password' name-value argument.");
         }
 
-        // Both given is where R2025b encrypts and .NET's ZIP classes cannot (divergence, ADR 0258).
-        if (password is not null)
+        // Both given: every file with content is encrypted, ZipCrypto or WinZip AES (open item 172, ADR 0357).
+        int strength = method?.ToLowerInvariant() switch
         {
-            throw new JgsRuntimeException(line, col, "JGraph:zip:encryptionNotSupported",
-                "JGraph's zip does not encrypt archives; Password and EncryptionMethod are not supported.");
-        }
+            "aes-128" or "aes128" => 1,
+            "aes-256" or "aes256" => 3,
+            _ => 0,
+        };
 
         string cwd = host.CurrentDirectory;
         if (rootDir.Length > 0 && !Directory.Exists(Path.Combine(cwd, rootDir)))
@@ -157,6 +158,30 @@ internal static partial class JgsBuiltins
         }
 
         string target = host.ResolveForWrite(Path.Combine(cwd, zipName));
+        if (password is not null)
+        {
+            try
+            {
+                var written = new List<ZipEncryption.NewEntry>(entries.Count);
+                foreach ((string file, string entry) in entries)
+                {
+                    string source = Path.Combine(cwd, file);
+                    written.Add(Directory.Exists(source)
+                        ? new ZipEncryption.NewEntry(entry + "/", true, [], Directory.GetLastWriteTime(source))
+                        : new ZipEncryption.NewEntry(entry, false, File.ReadAllBytes(source), File.GetLastWriteTime(source)));
+                }
+
+                using FileStream stream = File.Create(target);
+                ZipEncryption.WriteArchive(stream, written, ZipEncryption.PasswordBytes(password), strength);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:zip:openError", $"Could not create \"{zipName}\": {ex.Message}");
+            }
+
+            return [ArchiveNames(entries.Select(e => e.Entry))];
+        }
+
         try
         {
             using FileStream stream = File.Create(target);
@@ -326,11 +351,10 @@ internal static partial class JgsBuiltins
         (int positional, List<(string Name, JgsValue Value)> options) = ArchiveOptions(args, 2, ["Password"], line, col);
         string zipName = ArchiveTextScalar(args[0], 1, line, col);
         string outputDir = positional > 1 ? ArchiveTextScalar(args[1], 2, line, col, allowEmpty: true) : ".";
-        bool hasPassword = false;
+        string? password = null;
         foreach ((string name, JgsValue value) in options)
         {
-            ArchiveOptionValue(name, value, line, col);
-            hasPassword = true;
+            password = ArchiveOptionValue(name, value, line, col);
         }
 
         if (wanted > 1)
@@ -392,27 +416,55 @@ internal static partial class JgsBuiltins
                         $"The entry \"{entry.FullName}\" in \"{found}\" would be written outside \"{outputDir}\", so nothing was extracted.");
                 }
 
-                // Without a password R2025b refuses as well, in these words; with one it decrypts, and
-                // .NET's ZIP classes cannot (divergence, ADR 0258).
-                if (entry.IsEncrypted && !hasPassword)
-                {
-                    throw new JgsRuntimeException(line, col, "MATLAB:io:archive:extractArchive:unableToWrite",
-                        $"Unable to extract file \"{Path.GetFullPath(Path.Combine(cwd, found))}\".\nThe file is password-protected. Use the \"Password\" Name-Value pair to extract password-protected zip files.");
-                }
-
-                if (entry.IsEncrypted)
-                {
-                    throw new JgsRuntimeException(line, col, "JGraph:unzip:encryptionNotSupported",
-                        $"The entry \"{entry.FullName}\" in \"{found}\" is encrypted; JGraph's unzip does not decrypt archives.");
-                }
-
                 plan.Add((entry, name, target, isFolder));
             }
 
+            // An encrypted entry is read from the archive's own records (open item 172, ADR 0357):
+            // .NET's ZIP classes list it but cannot decrypt it.
+            List<ZipEncryption.CentralEntry>? records = null;
+            using FileStream? raw = plan.Exists(static p => p.Entry.IsEncrypted) ? File.OpenRead(Path.Combine(cwd, found)) : null;
+            if (raw is not null)
+            {
+                records = ZipEncryption.CentralDirectory(raw);
+                if (records is null || records.Count != archive.Entries.Count)
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:io:archive:unzip:invalidZipFile", $"Invalid ZIP file \"{found}\".");
+                }
+            }
+
+            byte[]? passwordBytes = password is null ? null : ZipEncryption.PasswordBytes(password);
+
+            // Entries are written in order, as R2025b writes them: an encrypted entry it cannot read
+            // stops the extraction there, with what came before it written and the folder made.
             Directory.CreateDirectory(outputFull);
             var written = new List<string>();
-            foreach ((ZipArchiveEntry entry, string name, string target, bool isFolder) in plan)
+            for (int index = 0; index < plan.Count; index++)
             {
+                (ZipArchiveEntry entry, string name, string target, bool isFolder) = plan[index];
+                byte[]? decrypted = null;
+                if (entry.IsEncrypted && !isFolder)
+                {
+                    if (passwordBytes is null)
+                    {
+                        throw new JgsRuntimeException(line, col, "MATLAB:io:archive:extractArchive:unableToWrite",
+                            $"Unable to extract file \"{Path.GetFullPath(Path.Combine(cwd, found))}\".\nThe file is password-protected. Use the \"Password\" Name-Value pair to extract password-protected zip files.");
+                    }
+
+                    ZipEncryption.CentralEntry record = records![archive.Entries.IndexOf(entry)];
+                    decrypted = ZipEncryption.Decrypt(raw!, record, passwordBytes, out ZipEncryption.Failure failure);
+                    if (failure == ZipEncryption.Failure.WrongPassword)
+                    {
+                        throw new JgsRuntimeException(line, col, "MATLAB:io:archive:extractArchive:incorrectPassword",
+                            "The provided \"Password\" value is incorrect.");
+                    }
+
+                    if (decrypted is null)
+                    {
+                        throw new JgsRuntimeException(line, col, "JGraph:unzip:encryptionNotSupported",
+                            $"The entry \"{entry.FullName}\" in \"{found}\" is encrypted in a way JGraph's unzip does not read (it reads ZipCrypto and WinZip AES).");
+                    }
+                }
+
                 string shown = (outputDir == "." ? name : MatlabFullFile(outputDir, name)) + (isFolder ? Path.DirectorySeparatorChar : "");
                 try
                 {
@@ -424,9 +476,16 @@ internal static partial class JgsBuiltins
                     {
                         Directory.CreateDirectory(Path.GetDirectoryName(target)!);
                         using (FileStream into = File.Create(host.ResolveForWrite(target)))
-                        using (Stream from = entry.Open())
                         {
-                            from.CopyTo(into);
+                            if (decrypted is not null)
+                            {
+                                into.Write(decrypted);
+                            }
+                            else
+                            {
+                                using Stream from = entry.Open();
+                                from.CopyTo(into);
+                            }
                         }
 
                         File.SetLastWriteTime(target, entry.LastWriteTime.DateTime);

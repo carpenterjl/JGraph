@@ -246,6 +246,38 @@ internal static class MatMcosWriter
         return file;
     }
 
+    /// <summary>
+    /// A level-5 file of variable elements already built, with a subsystem whose <c>FileWrapper__</c>
+    /// cell holds <paramref name="wrapperCells"/> (open item 147, ADR 0357: a version 7.3 model read
+    /// as the level-5 file it stands for), in the layout <see cref="WriteFile"/> writes, uncompressed.
+    /// </summary>
+    internal static byte[] Level5File(IReadOnlyList<byte[]> variables, byte[][] wrapperCells)
+    {
+        byte[] wrapper = Opaque(string.Empty, "FileWrapper__", CellElement(wrapperCells, [wrapperCells.Length, 1]));
+        byte[] holder = StructElement(string.Empty, ["MCOS"], [[wrapper]], [1, 1]);
+        byte[] trailer = Uint8Row([.. StreamHead, .. StructElement(string.Empty, ["MCOS"], [[EmptyElement()]], [1, 1])]);
+        using var stream = new MemoryStream();
+        var header = new byte[116];
+        Array.Fill(header, (byte)' ');
+        byte[] text = Encoding.ASCII.GetBytes(Description);
+        Array.Copy(text, header, text.Length);
+        stream.Write(header);
+        stream.Write(new byte[12]);
+        foreach (byte[] variable in variables)
+        {
+            stream.Write(variable);
+        }
+
+        long subsystemAt = stream.Position;
+        stream.Write(Uint8Row([.. StreamHead, .. holder, .. trailer]));
+        byte[] file = stream.ToArray();
+        BinaryPrimitives.WriteInt64LittleEndian(file.AsSpan(116), subsystemAt);
+        BinaryPrimitives.WriteUInt16LittleEndian(file.AsSpan(124), 0x0100);
+        file[126] = (byte)'I';
+        file[127] = (byte)'M';
+        return file;
+    }
+
     /// <summary>An element as it goes into the file: compressed with zlib inside a <c>miCOMPRESSED</c> element, or as it is.</summary>
     private static byte[] Packed(byte[] element, bool compress)
     {
@@ -542,7 +574,7 @@ internal static class MatMcosWriter
         _ => [],
     };
 
-    private static readonly byte[] StreamHead = [0x00, 0x01, (byte)'I', (byte)'M', 0, 0, 0, 0];
+    internal static readonly byte[] StreamHead = [0x00, 0x01, (byte)'I', (byte)'M', 0, 0, 0, 0];
 
     private static byte[] PropertyLists(List<(int Name, int Kind, uint Datum)[]> lists)
     {
@@ -699,10 +731,10 @@ internal static class MatMcosWriter
         return Matrix(Flags(arrayClass | flagBits), Dimensions(n.Size), Sub(MiInt8, Encoding.ASCII.GetBytes(name)), Sub(dataType, data));
     }
 
-    private static byte[] CellElement(byte[][] items, int[] size) =>
+    internal static byte[] CellElement(byte[][] items, int[] size) =>
         Matrix([Flags(MxCell), Dimensions(size), Sub(MiInt8, []), .. items]);
 
-    private static byte[] StructElement(string name, string[] fields, byte[][][] elements, int[] size)
+    internal static byte[] StructElement(string name, string[] fields, byte[][][] elements, int[] size)
     {
         int width = fields.Length == 0 ? 1 : fields.Max(static f => Encoding.ASCII.GetByteCount(f)) + 1;
         var packed = new byte[width * fields.Length];
@@ -717,7 +749,7 @@ internal static class MatMcosWriter
             Sub(MiInt32, widthBytes), Sub(MiInt8, packed), .. elements.SelectMany(static e => e)]);
     }
 
-    private static byte[] Opaque(string name, string className, byte[] content) =>
+    internal static byte[] Opaque(string name, string className, byte[] content) =>
         Matrix(Flags(MxOpaque), Sub(MiInt8, Encoding.ASCII.GetBytes(name)), Sub(MiInt8, "MCOS"u8.ToArray()),
             Sub(MiInt8, Encoding.ASCII.GetBytes(className)), content);
 
@@ -727,17 +759,17 @@ internal static class MatMcosWriter
     private static byte[] Uint8Column(byte[] data) =>
         Matrix(Flags(MxUInt8), Dimensions([data.Length, 1]), Sub(MiInt8, []), Sub(MiUInt8, data));
 
-    private static byte[] Uint8Row(byte[] data) =>
+    internal static byte[] Uint8Row(byte[] data) =>
         Matrix(Flags(MxUInt8), Dimensions([1, data.Length]), Sub(MiInt8, []), Sub(MiUInt8, data));
 
     /// <summary>A matrix element with nothing in it, which MATLAB writes for the subsystem cell's second entry.</summary>
-    private static byte[] EmptyElement() => Words([MiMatrix, 0]);
+    internal static byte[] EmptyElement() => Words([MiMatrix, 0]);
 
-    private static byte[] Flags(int flags) => Sub(MiUInt32, Words([(uint)flags, 0]));
+    internal static byte[] Flags(int flags) => Sub(MiUInt32, Words([(uint)flags, 0]));
 
-    private static byte[] Dimensions(int[] size) => Sub(MiInt32, Words(size.Select(static d => (uint)d)));
+    internal static byte[] Dimensions(int[] size) => Sub(MiInt32, Words(size.Select(static d => (uint)d)));
 
-    private static byte[] Matrix(params byte[][] parts) => Matrix(parts.Select(Built.Plain).ToArray()).Bytes;
+    internal static byte[] Matrix(params byte[][] parts) => Matrix(parts.Select(Built.Plain).ToArray()).Bytes;
 
     /// <summary>A matrix element of <paramref name="parts"/>, their references moved to where each part lands.</summary>
     private static Built Matrix(Built[] parts)
@@ -759,7 +791,7 @@ internal static class MatMcosWriter
     }
 
     /// <summary>A data element: four bytes or fewer packed into its tag, as MATLAB packs them; longer data padded to eight.</summary>
-    private static byte[] Sub(int type, byte[] data)
+    internal static byte[] Sub(int type, byte[] data)
     {
         if (data.Length is > 0 and <= 4)
         {

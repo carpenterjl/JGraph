@@ -243,9 +243,11 @@ build number. A text whose `createComponents` cannot be read is written as its c
   version 4 whatever it was, its objects are numbered as reached with each dependency id its own
   id, and its elements are compressed by .NET's zlib. R2025b's reader loads it as the original
   (`ds6_verify`).
-- **A version 7.3 model's tree is not rewritten** (open item 147). The code and its copy are saved,
-  and App Designer shows the components the tree had. The status line says so.
 - **A new app has no screenshot**, and no part recording MathWorks' build number. App Designer
   makes the screenshot when it next saves the app.
 - **A changed component of a class the designer cannot make** (a Simulink component, open item
   148) keeps its saved object unchanged, and the save lists it among its problems.
+
+Closed since: **a version 7.3 model's tree was not rewritten** (open item 147). ADR 0357 reads the
+HDF5 subsystem as the level-5 file it stands for, brings the tree to the code by the rules above,
+and writes the model back as a version 7.3 file.

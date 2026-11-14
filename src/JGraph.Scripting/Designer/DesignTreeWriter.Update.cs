@@ -58,7 +58,8 @@ public static partial class DesignTreeWriter
     /// </para>
     /// <para>
     /// The tree is left as it was (and <see cref="DesignTreeUpdate.Bytes"/> is null) when the model
-    /// is not a level-5 MAT-file with the subsystem this reads - a version 7.3 model is one.
+    /// is not a MAT-file with the subsystem this reads. A version 7.3 (HDF5) model is read as the
+    /// level-5 file it stands for and written back as version 7.3 (open item 147, ADR 0357).
     /// </para>
     /// </remarks>
     public static DesignTreeUpdate Update(byte[] model, AppDesign design, DesignCodeStyle? style = null, string? appFolder = null, IReadOnlyList<DesignGroupRecord>? groups = null)
@@ -77,9 +78,9 @@ public static partial class DesignTreeWriter
         }
 
         var problems = new List<string>();
-        if (MatMcosFile.Read(model) is not { } file)
+        if (MatMcosFile.Read(model, out string? unread) is not { } file)
         {
-            return Left("The model is not a level-5 MAT-file with a subsystem this can rewrite (a version 7.3 model is not).");
+            return Left("The model is not a MAT-file with a subsystem this can rewrite" + (unread is null ? "." : $": {unread}"));
         }
 
         if (file.Variable(Variable) is not { } components
@@ -239,7 +240,18 @@ public static partial class DesignTreeWriter
 
         // A tree the design did not change is the model as it was, to the byte.
         List<string> removed = saved.Values.Where(s => gone.Contains(s.Object) && design.Find(s.CodeName) is null).Select(static s => s.CodeName).ToList();
-        return new DesignTreeUpdate(touched ? file.Write() : model, kept, changed, added, rebuilt, removed, problems);
+        byte[] written;
+        try
+        {
+            written = touched ? file.Write() : model;
+        }
+        catch (NotSupportedException ex)
+        {
+            // A version 7.3 model holding a kind of value its form does not carry here (open item 147).
+            return Left($"The version 7.3 model cannot be written back: {ex.Message}.");
+        }
+
+        return new DesignTreeUpdate(written, kept, changed, added, rebuilt, removed, problems);
 
         DesignTreeUpdate Left(string why) => new(null, [], [], [], [], [], [why]);
     }

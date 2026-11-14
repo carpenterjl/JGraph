@@ -151,14 +151,16 @@ public class AppDesignerV73ModelTests : IAsyncLifetime
         string text = Insert(_text, "function GoButtonPushed", "            note(app, 'edited callback');");
         text = Insert(text, "Log = {}", "        Extra = 7 % added outside App Designer: é 中");
         text = Insert(text, "function startupFcn", "            note(app, 'edited startup');");
-        text = text.Replace("startupFcn(app, amp)", "startupFcn(app, amp, more)", StringComparison.Ordinal);
         Dictionary<string, byte[]> before = Parts(_app);
 
+        // The users' regions alone: no generated code changes, so the tree is not touched and the
+        // copy is spliced (a startup function's new signature is generated code; it comes last).
         MlappSaveResult result = JgsMlapp.WriteCode(_app, text);
 
         Assert.Equal(text, JgsMlapp.ReadCode(_app));
         Assert.True(result.DesignCopyInStep);
-        Assert.True(result.GeneratedCodeChanged);
+        Assert.False(result.GeneratedCodeChanged);
+        Assert.Null(result.Tree);
         MlappCodeCopy copy = Copy(_app);
         Assert.Equal(["ClassName", "EditableSectionCode", "Callbacks", "StartupCallback", "InputParameters"], copy.Fields);
         Assert.Equal("            note(app, 'edited callback');", copy.Callbacks[0].Code![0]);
@@ -167,7 +169,7 @@ public class AppDesignerV73ModelTests : IAsyncLifetime
         Assert.Contains("        Extra = 7 % added outside App Designer: é 中", copy.EditableSection!);
         Assert.Equal(13, copy.EditableSection!.Count);
         Assert.Equal("            note(app, 'edited startup');", copy.Startup!.Value.Code![0]);
-        Assert.Equal("amp, more", copy.InputParameters);
+        Assert.Equal("amp", copy.InputParameters);
 
         // Only the document and the model differ, and in the model the old bytes are all still
         // there: the new objects follow them, and the splice wrote in two places only - the root
@@ -196,7 +198,7 @@ public class AppDesignerV73ModelTests : IAsyncLifetime
         Assert.Equal(Described(was), Described(now));
         JgsValue code = Assert.Single(MatV73Reader.Read(now, new HashSet<string> { "code" })).Value;
         Assert.Equal(JgsType.Struct, code.Type);
-        Assert.Equal("amp, more", code.AsStructArray.Elements[0]["InputParameters"].AsString);
+        Assert.Equal("amp", code.AsStructArray.Elements[0]["InputParameters"].AsString);
 
         // The section's twelve old lines are the objects they were; only the added line is new. The
         // edited callback's three old lines likewise, and the untouched callback's body is its old object.
@@ -211,6 +213,23 @@ public class AppDesignerV73ModelTests : IAsyncLifetime
         Assert.True(callbacks[1] + Superblock < was.Length);
         Assert.Equal(3, ReferencesIn(bodies.At(callbacks[0])).Count(a => a + Superblock < was.Length));
         Assert.True(now.Length - was.Length < 12_000, $"grew by {now.Length - was.Length}");
+
+        // The startup function's new signature is generated code: the copy is spliced, and the tree
+        // is brought to the code (open item 147, ADR 0357), which rewrites the model as a version 7.3
+        // file holding every edit.
+        string signed = text.Replace("startupFcn(app, amp)", "startupFcn(app, amp, more)", StringComparison.Ordinal);
+        MlappSaveResult again = JgsMlapp.WriteCode(_app, signed);
+        Assert.True(again.DesignCopyInStep);
+        Assert.True(again.GeneratedCodeChanged);
+        Assert.True(again.Tree?.IsUpdated, string.Join(" ", again.Tree?.Problems ?? []));
+        byte[] rewritten = Parts(_app)[Model];
+        Assert.StartsWith("MATLAB 7.3 MAT-file", System.Text.Encoding.ASCII.GetString(rewritten, 0, 19), StringComparison.Ordinal);
+        copy = Copy(_app);
+        Assert.Equal("amp, more", copy.InputParameters);
+        Assert.Equal("            note(app, 'edited callback');", copy.Callbacks[0].Code![0]);
+        Assert.Contains("        Extra = 7 % added outside App Designer: é 中", copy.EditableSection!);
+        Assert.Equal("            note(app, 'edited startup');", copy.Startup!.Value.Code![0]);
+        Assert.Equal(Described(was), Described(rewritten));
     }
 
     private static List<long> ReferencesIn(Hdf5Object dataset)
