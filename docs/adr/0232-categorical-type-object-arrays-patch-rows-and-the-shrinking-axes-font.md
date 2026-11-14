@@ -141,10 +141,13 @@ and `JgsRulerTicks` answers the theta ruler's ticks by the 30/15/5-degree rule.
 
 ## Divergences
 
-- **A patch's default ink is 0.251 grey where R2025b's is `[0.1294 0.1294 0.1294]`**: `CData`,
-  `FaceVertexCData` and the face colour of a patch given no colour read this build's ink (item 105's
-  decision; a patch whose axes came as `'Parent'` is filled from the colour order, as R2025b's is),
-  and a text's default `Color` reads `'none'`.
+- **A patch's default ink is 0.251 grey where R2025b's is `[0.1294 0.1294 0.1294]`**: the face colour
+  of a patch given no colour reads this build's ink (item 105's decision; a patch whose axes came as
+  `'Parent'` is filled from the colour order, as R2025b's is), and a text's default `Color` reads
+  `'none'`.
+
+  Closed since: a patch's unset `CData` and `FaceVertexCData` read R2025b's 33/255 grey (open item
+  314, ADR 0361); the fixture's ten CData and FaceVertexCData rows agree.
 - **A column write of `XData` onto a two-face patch keeps the vertices it uses**: R2025b keeps all
   eight of the old vertex list after `p.XData = [5; 6; 7; 8]`; this build keeps the four the one
   face names.

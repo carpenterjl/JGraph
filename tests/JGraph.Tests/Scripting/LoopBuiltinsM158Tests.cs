@@ -147,15 +147,18 @@ public class LoopBuiltinsM158Tests : IDisposable
     [Fact]
     public void ARequestedBinCountsWidthIsWrittenAsItsDecimal()
     {
-        // 1002 hundred-thousandths: multiplying by the inexact 1e-5 lands an ulp above the decimal,
-        // dividing by the exact 1e5 lands on it, and R2025b's edges are the decimal's multiples.
+        // R2025b's binpicker (probe bp1, ADR 0361): its 10^-5 is an ulp low (9.9999999999999991e-06),
+        // so ceil(ll / p10) is 1003 and the width p10 * 1003; the fifth edge is -1.2098800000000001
+        // and the second -1.25 + 0.010029999999999999. This test asserted 1002 before it was measured.
+        const double P10 = 9.9999999999999991e-06;
         double[] edges = Binning.CountedEdges(-1.25, 1.3151200000000003, 256);
         Assert.Equal(257, edges.Length);
         Assert.Equal(-1.25, edges[0]);
-        Assert.Equal(-1.2099200000000001, edges[4]);
+        Assert.Equal(-1.2098800000000001, edges[4]);
+        Assert.Equal(-1.22994, edges[2]);
         for (int i = 1; i < 256; i++)
         {
-            Assert.Equal(-1.25 + (i * 0.01002), edges[i]);
+            Assert.Equal(-1.25 + (i * (P10 * 1003)), edges[i]);
         }
 
         // The left edge is written as itself, so a -0 minimum keeps its sign, as R2025b's does.

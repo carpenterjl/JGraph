@@ -1,0 +1,201 @@
+CHK|s_Z_EdgeColor|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|s_Z_FaceColor|char[1 4]'flat'|exact
+CHK|s_Z_LineWidth|double[1 1] 0.5|exact
+CHK|s_Z_XData|double[1 3] [1 2 3]|exact
+CHK|s_Z_YData|double[2 1] [1;2]|exact
+CHK|s_Z_ZData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|s_Z_CData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|s_Z_XDataMode|char[1 6]'manual'|exact
+CHK|s_Z_YDataMode|char[1 6]'manual'|exact
+CHK|s_Z_CDataMode|char[1 6]'manual'|exact
+CHK|s_Z_FaceLighting|char[1 4]'flat'|exact
+CHK|s_Z_EdgeLighting|char[1 4]'none'|exact
+CHK|s_ZC_EdgeColor|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|s_ZC_FaceColor|char[1 4]'flat'|exact
+CHK|s_ZC_LineWidth|double[1 1] 0.5|exact
+CHK|s_ZC_XData|double[1 3] [1 2 3]|exact
+CHK|s_ZC_YData|double[2 1] [1;2]|exact
+CHK|s_ZC_ZData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|s_ZC_CData|double[2 3] [6 5 4;3 2 1]|exact
+CHK|s_ZC_XDataMode|char[1 6]'manual'|exact
+CHK|s_ZC_YDataMode|char[1 6]'manual'|exact
+CHK|s_ZC_CDataMode|char[1 6]'manual'|exact
+CHK|s_ZC_FaceLighting|char[1 4]'flat'|exact
+CHK|s_ZC_EdgeLighting|char[1 4]'none'|exact
+CHK|s_XYZ_EdgeColor|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|s_XYZ_FaceColor|char[1 4]'flat'|exact
+CHK|s_XYZ_LineWidth|double[1 1] 0.5|exact
+CHK|s_XYZ_XData|double[2 3] [1 2 3;1 2 3]|exact
+CHK|s_XYZ_YData|double[2 3] [10 10 10;11 11 11]|exact
+CHK|s_XYZ_ZData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|s_XYZ_CData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|s_XYZ_XDataMode|char[1 6]'manual'|exact
+CHK|s_XYZ_YDataMode|char[1 6]'manual'|exact
+CHK|s_XYZ_CDataMode|char[1 6]'manual'|exact
+CHK|s_XYZ_FaceLighting|char[1 4]'flat'|exact
+CHK|s_XYZ_EdgeLighting|char[1 4]'none'|exact
+CHK|s_xyZ_EdgeColor|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|s_xyZ_FaceColor|char[1 4]'flat'|exact
+CHK|s_xyZ_LineWidth|double[1 1] 0.5|exact
+CHK|s_xyZ_XData|double[1 3] [1 2 3]|exact
+CHK|s_xyZ_YData|double[1 2] [10 11]|exact
+CHK|s_xyZ_ZData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|s_xyZ_CData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|s_xyZ_XDataMode|char[1 6]'manual'|exact
+CHK|s_xyZ_YDataMode|char[1 6]'manual'|exact
+CHK|s_xyZ_CDataMode|char[1 6]'manual'|exact
+CHK|s_xyZ_FaceLighting|char[1 4]'flat'|exact
+CHK|s_xyZ_EdgeLighting|char[1 4]'none'|exact
+CHK|s_XYZC_EdgeColor|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|s_XYZC_FaceColor|char[1 4]'flat'|exact
+CHK|s_XYZC_LineWidth|double[1 1] 0.5|exact
+CHK|s_XYZC_XData|double[2 3] [1 2 3;1 2 3]|exact
+CHK|s_XYZC_YData|double[2 3] [10 10 10;11 11 11]|exact
+CHK|s_XYZC_ZData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|s_XYZC_CData|double[2 3] [6 5 4;3 2 1]|exact
+CHK|s_XYZC_XDataMode|char[1 6]'manual'|exact
+CHK|s_XYZC_YDataMode|char[1 6]'manual'|exact
+CHK|s_XYZC_CDataMode|char[1 6]'manual'|exact
+CHK|s_XYZC_FaceLighting|char[1 4]'flat'|exact
+CHK|s_XYZC_EdgeLighting|char[1 4]'none'|exact
+CHK|s_xyZC_EdgeColor|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|s_xyZC_FaceColor|char[1 4]'flat'|exact
+CHK|s_xyZC_LineWidth|double[1 1] 0.5|exact
+CHK|s_xyZC_XData|double[1 3] [1 2 3]|exact
+CHK|s_xyZC_YData|double[1 2] [10 11]|exact
+CHK|s_xyZC_ZData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|s_xyZC_CData|double[2 3] [6 5 4;3 2 1]|exact
+CHK|s_xyZC_XDataMode|char[1 6]'manual'|exact
+CHK|s_xyZC_YDataMode|char[1 6]'manual'|exact
+CHK|s_xyZC_CDataMode|char[1 6]'manual'|exact
+CHK|s_xyZC_FaceLighting|char[1 4]'flat'|exact
+CHK|s_xyZC_EdgeLighting|char[1 4]'none'|exact
+CHK|s_Z_flat_EdgeColor|char[1 4]'flat'|exact
+CHK|s_Z_flat_LineWidth|double[1 1] 0.5|exact
+CHK|s_Z_wide_EdgeColor|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|s_Z_wide_LineWidth|double[1 1] 2|exact
+CHK|surf_Z_EdgeColor|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|surf_Z_FaceColor|char[1 4]'flat'|exact
+CHK|surf_Z_LineWidth|double[1 1] 0.5|exact
+CHK|surf_Z_XData|double[1 3] [1 2 3]|exact
+CHK|surf_Z_YData|double[2 1] [1;2]|exact
+CHK|surf_Z_ZData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|surf_Z_CData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|surf_Z_XDataMode|char[1 4]'auto'|exact
+CHK|surf_Z_YDataMode|char[1 4]'auto'|exact
+CHK|surf_Z_CDataMode|char[1 4]'auto'|exact
+CHK|surf_Z_FaceLighting|char[1 4]'flat'|exact
+CHK|surf_Z_EdgeLighting|char[1 4]'none'|exact
+CHK|surf_XYZ_EdgeColor|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|surf_XYZ_FaceColor|char[1 4]'flat'|exact
+CHK|surf_XYZ_LineWidth|double[1 1] 0.5|exact
+CHK|surf_XYZ_XData|double[2 3] [1 2 3;1 2 3]|exact
+CHK|surf_XYZ_YData|double[2 3] [10 10 10;11 11 11]|exact
+CHK|surf_XYZ_ZData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|surf_XYZ_CData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|surf_XYZ_XDataMode|char[1 6]'manual'|exact
+CHK|surf_XYZ_YDataMode|char[1 6]'manual'|exact
+CHK|surf_XYZ_CDataMode|char[1 4]'auto'|exact
+CHK|surf_XYZ_FaceLighting|char[1 4]'flat'|exact
+CHK|surf_XYZ_EdgeLighting|char[1 4]'none'|exact
+CHK|surf_xyZ_EdgeColor|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|surf_xyZ_FaceColor|char[1 4]'flat'|exact
+CHK|surf_xyZ_LineWidth|double[1 1] 0.5|exact
+CHK|surf_xyZ_XData|double[1 3] [1 2 3]|exact
+CHK|surf_xyZ_YData|double[1 2] [10 11]|exact
+CHK|surf_xyZ_ZData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|surf_xyZ_CData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|surf_xyZ_XDataMode|char[1 6]'manual'|exact
+CHK|surf_xyZ_YDataMode|char[1 6]'manual'|exact
+CHK|surf_xyZ_CDataMode|char[1 4]'auto'|exact
+CHK|surf_xyZ_FaceLighting|char[1 4]'flat'|exact
+CHK|surf_xyZ_EdgeLighting|char[1 4]'none'|exact
+CHK|mesh_Z_EdgeColor|char[1 4]'flat'|exact
+CHK|mesh_Z_FaceColor|double[1 3] [1 1 1]|exact
+CHK|mesh_Z_LineWidth|double[1 1] 0.5|exact
+CHK|mesh_Z_XData|double[1 3] [1 2 3]|exact
+CHK|mesh_Z_YData|double[2 1] [1;2]|exact
+CHK|mesh_Z_ZData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|mesh_Z_CData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|mesh_Z_XDataMode|char[1 4]'auto'|exact
+CHK|mesh_Z_YDataMode|char[1 4]'auto'|exact
+CHK|mesh_Z_CDataMode|char[1 4]'auto'|exact
+CHK|mesh_Z_FaceLighting|char[1 4]'none'|exact
+CHK|mesh_Z_EdgeLighting|char[1 4]'flat'|exact
+CHK|mesh_xyZ_EdgeColor|char[1 4]'flat'|exact
+CHK|mesh_xyZ_FaceColor|double[1 3] [1 1 1]|exact
+CHK|mesh_xyZ_LineWidth|double[1 1] 0.5|exact
+CHK|mesh_xyZ_XData|double[1 3] [1 2 3]|exact
+CHK|mesh_xyZ_YData|double[1 2] [10 11]|exact
+CHK|mesh_xyZ_ZData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|mesh_xyZ_CData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|mesh_xyZ_XDataMode|char[1 6]'manual'|exact
+CHK|mesh_xyZ_YDataMode|char[1 6]'manual'|exact
+CHK|mesh_xyZ_CDataMode|char[1 4]'auto'|exact
+CHK|mesh_xyZ_FaceLighting|char[1 4]'none'|exact
+CHK|mesh_xyZ_EdgeLighting|char[1 4]'flat'|exact
+CHK|pcolor_Z_EdgeColor|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|pcolor_Z_FaceColor|char[1 4]'flat'|exact
+CHK|pcolor_Z_LineWidth|double[1 1] 0.5|exact
+CHK|pcolor_Z_XData|double[1 3] [1 2 3]|exact
+CHK|pcolor_Z_YData|double[2 1] [1;2]|exact
+CHK|pcolor_Z_ZData|double[2 3] [0 0 0;0 0 0]|exact
+CHK|pcolor_Z_CData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|pcolor_Z_XDataMode|char[1 6]'manual'|exact
+CHK|pcolor_Z_YDataMode|char[1 6]'manual'|exact
+CHK|pcolor_Z_CDataMode|char[1 6]'manual'|exact
+CHK|pcolor_Z_FaceLighting|char[1 4]'flat'|exact
+CHK|pcolor_Z_EdgeLighting|char[1 4]'none'|exact
+CHK|pcolor_xyZ_EdgeColor|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|pcolor_xyZ_FaceColor|char[1 4]'flat'|exact
+CHK|pcolor_xyZ_LineWidth|double[1 1] 0.5|exact
+CHK|pcolor_xyZ_XData|double[1 3] [1 2 3]|exact
+CHK|pcolor_xyZ_YData|double[1 2] [10 11]|exact
+CHK|pcolor_xyZ_ZData|double[2 3] [0 0 0;0 0 0]|exact
+CHK|pcolor_xyZ_CData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|pcolor_xyZ_XDataMode|char[1 6]'manual'|exact
+CHK|pcolor_xyZ_YDataMode|char[1 6]'manual'|exact
+CHK|pcolor_xyZ_CDataMode|char[1 6]'manual'|exact
+CHK|pcolor_xyZ_FaceLighting|char[1 4]'flat'|exact
+CHK|pcolor_xyZ_EdgeLighting|char[1 4]'none'|exact
+CHK|pcolor_XYZ_EdgeColor|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|pcolor_XYZ_FaceColor|char[1 4]'flat'|exact
+CHK|pcolor_XYZ_LineWidth|double[1 1] 0.5|exact
+CHK|pcolor_XYZ_XData|double[2 3] [1 2 3;1 2 3]|exact
+CHK|pcolor_XYZ_YData|double[2 3] [10 10 10;11 11 11]|exact
+CHK|pcolor_XYZ_ZData|double[2 3] [0 0 0;0 0 0]|exact
+CHK|pcolor_XYZ_CData|double[2 3] [1 2 3;4 5 6]|exact
+CHK|pcolor_XYZ_XDataMode|char[1 6]'manual'|exact
+CHK|pcolor_XYZ_YDataMode|char[1 6]'manual'|exact
+CHK|pcolor_XYZ_CDataMode|char[1 6]'manual'|exact
+CHK|pcolor_XYZ_FaceLighting|char[1 4]'flat'|exact
+CHK|pcolor_XYZ_EdgeLighting|char[1 4]'none'|exact
+CHK|surf_XYZ_written_XData|double[1 3] [5 6 7]|exact
+CHK|surf_XYZ_written_YData|double[2 3] [10 10 10;11 11 11]|exact
+CHK|surf_XYZ_written_XDataMode|char[1 6]'manual'|exact
+CHK|surf_Z_resized_XData|double[1 4] [1 2 3 4]|exact
+CHK|surf_Z_resized_YData|double[4 1] [1;2;3;4]|exact
+CHK|p_r_FaceColor|double[1 3] [1 0 0]|exact
+CHK|p_r_CData|double[1 1 3] nd [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|p_r_CDataMode|char[1 4]'auto'|exact
+CHK|p_r_FaceVertexCData|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|p_rgb_FaceColor|double[1 3] [1 0 0]|exact
+CHK|p_rgb_CData|double[1 1 3] nd [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|p_rgb_CDataMode|char[1 4]'auto'|exact
+CHK|p_rgb_FaceVertexCData|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|p_scalar_FaceColor|char[1 4]'flat'|exact
+CHK|p_scalar_CData|double[1 1] 5|exact
+CHK|p_scalar_CDataMode|char[1 6]'manual'|exact
+CHK|p_scalar_FaceVertexCData|double[1 1] 5|exact
+CHK|p_vert_FaceColor|char[1 6]'interp'|exact
+CHK|p_vert_CData|double[3 1] [1;2;3]|exact
+CHK|p_vert_CDataMode|char[1 6]'manual'|exact
+CHK|p_vert_FaceVertexCData|double[3 1] [1;2;3]|exact
+CHK|p_column_FaceColor|char[1 6]'interp'|exact
+CHK|p_column_CData|double[3 1] [0;0;1]|exact
+CHK|p_column_CDataMode|char[1 6]'manual'|exact
+CHK|p_column_FaceVertexCData|double[3 1] [0;0;1]|exact
+CHK|fill_r_FaceColor|double[1 3] [1 0 0]|exact
+CHK|fill_r_CData|double[1 1 3] nd [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|fill_r_CDataMode|char[1 4]'auto'|exact
+CHK|fill_r_FaceVertexCData|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact

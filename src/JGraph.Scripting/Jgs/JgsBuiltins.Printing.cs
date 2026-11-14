@@ -26,6 +26,83 @@ internal static partial class JgsBuiltins
                 $"Unknown colormap '{name}'. Known colormaps: "
                 + $"{string.Join(", ", Core.Drawing.Colormap.KnownNames)}.");
 
+    /// <summary>
+    /// A colormap by name as R2025b's colormap.m reads one (open item 293, ADR 0361): 'default' is the
+    /// figure's default map, 'name(k)' is the generator called with k, and a bare name is the
+    /// generator called with no size, which is as long as the current figure's map
+    /// (colormapheight). At 256 rows the named map itself is kept, so it draws as it always has.
+    /// </summary>
+    private static Core.Drawing.Colormap MatlabNamedColormap(string text, int line, int col)
+    {
+        string word = text.Trim();
+        if (word.Equals("default", StringComparison.OrdinalIgnoreCase))
+        {
+            return Core.Drawing.Colormap.Parula;
+        }
+
+        int? size = null;
+        int open = word.IndexOf('(');
+        if (open > 0 && word.EndsWith(')'))
+        {
+            string inside = word[(open + 1)..^1].Trim();
+            if (double.TryParse(inside, System.Globalization.NumberStyles.Float,
+                    System.Globalization.CultureInfo.InvariantCulture, out double asked)
+                && asked >= 0 && asked == System.Math.Floor(asked) && asked <= int.MaxValue / 4)
+            {
+                size = (int)asked;
+                word = word[..open].Trim();
+            }
+        }
+
+        Core.Drawing.Colormap found = NamedColormap(word, line, col);
+        int rows = size ?? ColormapHeight();
+        if (size is null && rows == DefaultColormapRows)
+        {
+            return found;
+        }
+
+        double[,] table = Core.Drawing.ColormapRows.TryOf(word, rows) ?? RowsOf(found.Resample(System.Math.Max(1, rows)));
+        return Core.Drawing.Colormap.FromRows(found.Name, table, found.Discrete);
+    }
+
+    /// <summary>A drawn table's colours as the m-by-3 components a generator answers.</summary>
+    private static double[,] RowsOf(IReadOnlyList<Core.Drawing.Color> colors)
+    {
+        var rows = new double[colors.Count, 3];
+        for (int i = 0; i < colors.Count; i++)
+        {
+            rows[i, 0] = colors[i].R / 255.0;
+            rows[i, 1] = colors[i].G / 255.0;
+            rows[i, 2] = colors[i].B / 255.0;
+        }
+
+        return rows;
+    }
+
+    /// <summary>
+    /// Sets a figure's colormap. In the MATLAB dialect every axes in it then follows the figure again,
+    /// its own map let go, as R2025b's do (probe cm2: an axes given copper reads the figure's map, and
+    /// ColormapMode 'auto', after colormap(f, ...), f.Colormap = ... or an unaddressed colormap;
+    /// ADR 0361). In JGS an axes that chose its own keeps it.
+    /// </summary>
+    internal static void SetFigureColormap(FigureModel figure, Core.Drawing.Colormap map)
+    {
+        figure.Colormap = map;
+        bool matlab = JgsRunningDialect.ThreadIsMatlab;
+        foreach (AxesModel axes in figure.Axes)
+        {
+            if (matlab && axes.Colormap is not null)
+            {
+                axes.Colormap = null;
+            }
+
+            if (axes.Colormap is null)
+            {
+                ReseedPlots(axes);
+            }
+        }
+    }
+
     /// <summary>Hands an axes' colour choice back to the plots that hold working copies of it.</summary>
     private static void ReseedPlots(AxesModel axes)
     {

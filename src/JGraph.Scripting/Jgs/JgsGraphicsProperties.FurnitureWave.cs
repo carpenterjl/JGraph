@@ -490,13 +490,26 @@ internal static partial class JgsGraphicsProperties
         {
             sheet.X = given;
             sheet.XImplied = false;
+            sheet.XReadsAsGrid = false;
         }
         else
         {
             sheet.Y = given;
             sheet.YImplied = false;
             sheet.YColumn = given.Length > 1 && JgsMatrix.DimsOf(value) is [_, 1]; // kept as written (open item 167)
+            sheet.YReadsAsGrid = false;
         }
+    }
+
+    /// <summary>
+    /// A rectilinear surface's positions as the meshgrid matrix they came from: the x positions
+    /// repeated down every row, or the y positions repeated across every column (ADR 0361).
+    /// </summary>
+    private static JgsValue SpreadRuler(SurfacePlot sheet, bool alongX)
+    {
+        int rows = sheet.Z.GetLength(0), cols = sheet.Z.GetLength(1);
+        double[] x = sheet.X, y = sheet.Y;
+        return JgsMatrix.Build(rows, cols, (r, c) => alongX ? x[c] : y[r]);
     }
 
     /// <summary>
@@ -833,7 +846,9 @@ internal static partial class JgsGraphicsProperties
 
         if (data is null)
         {
-            Color ink = Colors.DarkGray;
+            // Unset (CDataMode 'auto'), the colour data is R2025b's factory 33/255 grey whatever the
+            // face is drawn in (open item 314, probe sf1; ADR 0361). It used to read this build's ink.
+            Color ink = Color.FromRgb(33, 33, 33);
             double[] rgb = [ink.R / 255.0, ink.G / 255.0, ink.B / 255.0];
             return asCData ? JgsMatrix.FromColumnMajorDims(rgb, [1, 1, 3]) : JgsMatrix.FromColumnMajor(rgb, 1, 3);
         }
@@ -934,6 +949,15 @@ internal static partial class JgsGraphicsProperties
                 double[] given = JgsBuiltins.ToDoubles("CData", value, line, col);
                 SetPatchColorData(Shape(entry), given);
             });
+
+        // Values given for the patch to colour by are chosen colour data; a colour named for the face
+        // is not (probe sf1: patch(x, y, 5) and a value per vertex read 'manual', 'r' and [1 0 0]
+        // 'auto'; ADR 0361). Writing either word leaves the colours as they are: R2025b's patch keeps
+        // CData 5 after CDataMode 'auto' and draws by it (it then reads 'auto', which is not tracked).
+        AddNullableMode(table, "CDataMode",
+            entry => Shape(entry).ColorData is not null,
+            static _ => { },
+            static _ => { });
 
         // The same array under the name that says what indexes it. One property, two spellings, as
         // MATLAB has them — CData is the short way of naming a patch's colours and this is the long.

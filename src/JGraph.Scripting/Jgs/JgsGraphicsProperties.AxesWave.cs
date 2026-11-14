@@ -880,7 +880,7 @@ internal static partial class JgsGraphicsProperties
             {
                 AxesModel axes = Axes(entry);
                 Colormap map = axes.ResolveColormap() ?? FirstMappedColormap(axes) ?? Colormap.Parula;
-                return ColorTable(map.Stops);
+                return JgsBuiltins.ColormapRowsOf(map); // the rows set, not the drawing stops (ADR 0361)
             },
             (entry, value, line, col) =>
             {
@@ -901,6 +901,21 @@ internal static partial class JgsGraphicsProperties
                 }
 
                 axes.Colormap = map;
+                foreach (PlotObject plot in axes.Plots)
+                {
+                    plot.AdoptAxesDefaults(axes);
+                }
+            });
+
+        // R2025b's hidden ColormapMode: 'manual' while the axes holds a map of its own, 'auto' while
+        // it follows its figure (open item 293, ADR 0361). 'auto' lets its own map go.
+        AddNullableMode(table, "ColormapMode",
+            entry => Axes(entry).Colormap is not null,
+            entry => Axes(entry).Colormap ??= Axes(entry).ResolveColormap() ?? Colormap.Parula,
+            entry =>
+            {
+                AxesModel axes = Axes(entry);
+                axes.Colormap = null;
                 foreach (PlotObject plot in axes.Plots)
                 {
                     plot.AdoptAxesDefaults(axes);

@@ -822,10 +822,30 @@ internal static partial class JgsGraphicsProperties
         // Both counted things carry a mode saying whether anybody chose them. Neither is a second
         // copy: the limits remember whether they were given, and counts given outright are exactly
         // the histogram that has no readings left behind it.
+        // 'auto' lets the limits go and lays the bins over all the readings at the width they had,
+        // as R2025b does (open item 271, ADR 0361); it used to count again under the same limits.
         AddNullableMode(table, "BinLimitsMode",
             static entry => Histogram(entry).BinLimitsChosen,
-            static entry => Histogram(entry).BinLimits = Histogram(entry).BinLimits,
-            static entry => Histogram(entry).Data = Histogram(entry).Data);
+            static entry => Histogram(entry).FreezeBinLimits(),
+            static entry => Histogram(entry).ReleaseBinLimits());
+
+        // R2025b answers 'nonuniform' for bins that are not evenly spread (ADR 0361); JGS keeps the
+        // span over the count.
+        Put(table, "BinWidth",
+            entry => JgsRunningDialect.ThreadIsMatlab && Histogram(entry).BinWidthNonuniform
+                ? JgsValue.Str("nonuniform")
+                : JgsValue.Number(Histogram(entry).BinWidth),
+            (entry, value, line, col) =>
+            {
+                try
+                {
+                    Histogram(entry).BinWidth = Numbers("BinWidth", value, 1, line, col)[0];
+                }
+                catch (ArgumentException ex)
+                {
+                    throw new JgsRuntimeException(line, col, ex.Message);
+                }
+            });
         AddNullableMode(table, "BinCountsMode",
             static entry => Histogram(entry).SampleCount == 0,
             static entry => Histogram(entry).BinCounts = Histogram(entry).BinCounts,

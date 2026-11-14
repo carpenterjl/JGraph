@@ -76,6 +76,32 @@ internal static partial class JgsBuiltins
             DefineGenerator(name, map);
         }
 
+        // prism.m with no size and no output recolours the current axes' lines instead of answering
+        // (`if nargin + nargout == 0`); flag.m has no such branch (open item 293, ADR 0361).
+        // The dialect is read at the call, not here: it is the running one.
+        {
+            JgsValue[] Prism(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+            {
+                ArityRange("prism", args, 0, 1, line, col);
+                if (args.Count == 0 && wanted == 0 && dialect.IsMatlab)
+                {
+                    RecolourLinesByPrism(line, col);
+                    return [];
+                }
+
+                int rows = args.Count == 1 ? GeneratorRowCount("prism", args[0], line, col) : ColormapHeight();
+                return [GeneratorTable("prism", static () => Colormap.Prism, rows)];
+            }
+
+            env.Builtins.Register("prism", JgsValue.Function(new BuiltinFunction(
+                "prism", (args, line, col) => Prism(args, 1, line, col)[0])
+            {
+                AutoCallsBare = true,
+                MultiOutput = Prism,
+                TakesOutputCount = true,
+            }));
+        }
+
         env.Builtins.Register("caxis", JgsValue.Function(new BuiltinFunction(
             "caxis", OnAxesArray((args, line, col) => ColorLimits("caxis", args, line, col)))
         { AutoCallsBare = true }));
@@ -613,17 +639,43 @@ internal static partial class JgsBuiltins
             return DefaultColormapRows;
         }
 
-        Colormap? map = (JG.CurrentAxesOrNull is { } axes && axes.Parent == figure ? axes.ResolveColormap() : null)
-            ?? figure.Colormap;
+        // In the MATLAB dialect an unaddressed colormap(map) sets the figure, as R2025b's does, so the
+        // figure's map is the height, whatever an axes holds (probe cm2's bone after colormap(ax, ...);
+        // open item 293, ADR 0361).
+        Colormap? map = JgsRunningDialect.ThreadIsMatlab
+            ? figure.Colormap
+            : (JG.CurrentAxesOrNull is { } axes && axes.Parent == figure ? axes.ResolveColormap() : null)
+                ?? figure.Colormap;
         return map?.SourceRows?.GetLength(0) ?? DefaultColormapRows;
     }
 
     /// <summary>
-    /// A colormap's rows as a script reads them back (<c>colormap</c> with no map): a table set by hand
-    /// is the rows it was given, a named map is R2025b's 256 rows of it, and anything else (a
-    /// brightened map, JGraph's own viridis) is its gradient sampled at 256 rows.
+    /// prism.m's no-size, no-output branch: the current axes' children are counted, prism's rows are
+    /// built for that many, and the k-th child is given the k-th colour when it is a line
+    /// (<c>get(gca, 'Child')</c> order, newest first).
     /// </summary>
-    private static JgsValue ColormapRowsOf(Colormap map)
+    private static void RecolourLinesByPrism(int line, int col)
+    {
+        JgsHandleEntry axesEntry = JgsHandleRegistry.EntryFor(JG.Gca());
+        double[] children = ToDoubles("prism", JgsGraphicsProperties.Get(axesEntry, "Children", line, col), line, col);
+        double[,] rows = MatlabColormapRows.Of("prism", children.Length);
+        for (int k = 0; k < children.Length; k++)
+        {
+            if (JgsHandleRegistry.TryGet(JgsValue.Number(children[k]), out JgsHandleEntry? child)
+                && JgsGraphicsProperties.TypeNameOf(child.Target) == "line")
+            {
+                JgsGraphicsProperties.Set(child, "Color", Numbers([rows[k, 0], rows[k, 1], rows[k, 2]]), line, col);
+            }
+        }
+    }
+
+    /// <summary>
+    /// A colormap's rows as a script reads them back (<c>colormap</c> with no map, and the figure's
+    /// and the axes' <c>Colormap</c>, open item 293): a table set by hand is the rows it was given, a
+    /// named map is R2025b's 256 rows of it, and anything else (a brightened map, a map reopened from
+    /// a saved figure, JGraph's own viridis) is its stops.
+    /// </summary>
+    internal static JgsValue ColormapRowsOf(Colormap map)
     {
         if (map.SourceRows is { } rows)
         {
@@ -638,7 +690,9 @@ internal static partial class JgsBuiltins
             }
         }
 
-        return ColormapTable(map.Resample(DefaultColormapRows));
+        // A map rebuilt from its stops (a saved figure reopened) reads those stops, its own rows;
+        // resampling it to 256 lost a hot(16) across savefig and openfig (oi_fig_struct_form).
+        return ColormapTable(map.Stops);
     }
 
     /// <summary>A colormap table as the N-by-3 matrix of components in [0, 1] MATLAB returns.</summary>

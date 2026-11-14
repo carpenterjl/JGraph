@@ -1159,13 +1159,13 @@ public static class JG
     }
 
     /// <summary>
-    /// The colormap in force: the axes' own choice when one was made, else the first color-mapped
-    /// plot's, else parula.
+    /// The colormap in force: the axes' own choice when one was made, else its figure's, else the
+    /// first color-mapped plot's, else parula.
     /// </summary>
     public static Core.Drawing.Colormap CurrentColormap()
     {
         AxesModel axes = Gca();
-        if (axes.Colormap is { } chosen)
+        if (axes.ResolveColormap() is { } chosen) // its own, else its figure's (ADR 0361)
         {
             return chosen;
         }

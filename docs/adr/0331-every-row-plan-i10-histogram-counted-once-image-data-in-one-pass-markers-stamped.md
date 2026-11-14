@@ -173,15 +173,13 @@ before (260).
 
 ## Divergences
 
-- **Setting `BinLimits` on a histogram whose bins were named keeps neither their width nor their
-  count.** R2025b keeps the bin width of a histogram made with a count or a width when its
-  limits are then set (`histogram(x, 200); h.BinLimits = [-1 2]` has 86 bins there) and rescales
-  named edges onto the new limits; here the bins are cut again by the automatic rule (30 bins).
-  Only the calls that name the bins when the histogram is made were put right in this stage.
-- **The automatic and the square-root rule choose a different count under `BinLimits`.**
-  `histogram(x, 'BinLimits', [-1 2])` over the probe's 30,000 readings has 21 bins in R2025b and
-  30 here; with `'BinMethod', 'sqrt'` it is 101 there and 100 here. Both differences were there
-  before this stage; `histcounts` shares them.
+None left standing.
+
+Closed since: **setting `BinLimits` on a histogram whose bins were named re-cut them by the
+automatic rule**, and **the automatic and the square-root rule chose a different count under
+`BinLimits`** (21 and 101 bins there, 30 and 100 here). Open item 271 (ADR 0361) transcribed
+R2025b's histcounts.m limits branch, binpickerbl and integerrule, and a histogram whose limits are
+set afterwards keeps its bin width as R2025b's does; the two bullets are struck from the list.
 
 ## Still open
 

@@ -32,26 +32,15 @@ internal static partial class JgsGraphicsProperties
 
     private static void AddFigureMaps(IDictionary<string, GraphicsProperty> table)
     {
+        // Read back as the rows that were set (open item 293, ADR 0361), not the drawing stops.
         Put(table, "Colormap",
-            entry => ColorTable((Figure(entry).Colormap ?? Colormap.Parula).Stops),
+            entry => JgsBuiltins.ColormapRowsOf(Figure(entry).Colormap ?? Colormap.Parula),
             (entry, value, line, col) =>
-            {
-                FigureModel figure = Figure(entry);
-                figure.Colormap = ReadColormap("Colormap", value, line, col);
 
                 // An axes that never chose its own reads through to here, but the plots already in
-                // it hold working copies seeded when they were made, so they have to be told.
-                foreach (AxesModel axes in figure.Axes)
-                {
-                    if (axes.Colormap is null)
-                    {
-                        foreach (PlotObject plot in axes.Plots)
-                        {
-                            plot.AdoptAxesDefaults(axes);
-                        }
-                    }
-                }
-            });
+                // it hold working copies seeded when they were made, so they have to be told; in the
+                // MATLAB dialect an axes that chose its own follows the figure again too.
+                JgsBuiltins.SetFigureColormap(Figure(entry), ReadColormap("Colormap", value, line, col)));
 
         Put(table, "Alphamap",
             entry =>

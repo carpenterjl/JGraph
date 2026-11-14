@@ -134,6 +134,7 @@ public sealed class HistogramPlot : PlotObject, IDrawable, ILegendItem
     private double[] _categoryCounts = [];
     private string _binMethod = "auto";
     private double[]? _binLimits;
+    private double? _keptWidth; // the width R2025b keeps when the limits are set afterwards (ADR 0361)
     private HistogramNormalization _normalization = HistogramNormalization.Count;
     private HistogramDisplayStyle _displayStyle = HistogramDisplayStyle.Bar;
     private HistogramOrientation _orientation = HistogramOrientation.Vertical;
@@ -241,6 +242,7 @@ public sealed class HistogramPlot : PlotObject, IDrawable, ILegendItem
         {
             _binEdges = Checked(value);
             _binMethod = Manual;
+            _keptWidth = null;
             _binCounts = _data.Length > 0
                 ? Binning.Counts(_data, _binEdges)
                 : Fitted(_binCounts, _binEdges);
@@ -281,6 +283,7 @@ public sealed class HistogramPlot : PlotObject, IDrawable, ILegendItem
                 ? Binning.EdgesFor(_data, bins, null, _binLimits, Rule)
                 : Binning.Spanning(_binEdges[0], _binEdges[^1], bins));
             _binMethod = Manual;
+            _keptWidth = null;
             _binCounts = _data.Length > 0 ? Binning.Counts(_data, _binEdges) : Fitted(_binCounts, _binEdges);
             Invalidate(InvalidationKind.Data);
         }
@@ -290,10 +293,19 @@ public sealed class HistogramPlot : PlotObject, IDrawable, ILegendItem
     /// How wide each bin is. Setting it lays bins of that width over the readings, which is a
     /// different question from how many bins there are and is answered by the same one kernel.
     /// </summary>
+    /// <remarks>
+    /// Read back as R2025b reads it (open item 271, ADR 0361): the width the bins were kept at when
+    /// their limits were last set, else the first bin's width when the bins are evenly spread, else
+    /// the span over the count (which R2025b answers as 'nonuniform'; see
+    /// <see cref="BinWidthNonuniform"/>).
+    /// </remarks>
     [Category("Appearance"), DisplayName("Bin width")]
     public double BinWidth
     {
-        get => (_binEdges[^1] - _binEdges[0]) / System.Math.Max(1, _binCounts.Length);
+        get => _keptWidth
+            ?? (_binEdges.Length > 1 && EdgesEvenlySpread(_binEdges)
+                ? _binEdges[1] - _binEdges[0]
+                : (_binEdges[^1] - _binEdges[0]) / System.Math.Max(1, _binCounts.Length));
         set
         {
             if (!(value > 0) || !double.IsFinite(value))
@@ -328,9 +340,67 @@ public sealed class HistogramPlot : PlotObject, IDrawable, ILegendItem
             }
 
             _binLimits = [value[0], value[1]];
-            Rebin();
+            if (_data.Length == 0)
+            {
+                Invalidate(InvalidationKind.Data);
+                return;
+            }
+
+            // R2025b keeps the bins' width when their limits are set afterwards, whatever chose
+            // them, and reads the method back as 'manual' (open item 271, ADR 0361): the width it
+            // reads (the one kept last time, or the first bin's) is stepped from the low limit and
+            // the last bin closed on the high one. Bins that are not evenly spread keep their
+            // count instead, stepped the same way at the span over the count (the colon's edges:
+            // [-2 2] in three is -2, -2 + 4/3, 2 - 4/3, 2, measured).
+            bool even = !BinWidthNonuniform;
+            double width = even ? BinWidth : (value[1] - value[0]) / System.Math.Max(1, NumBins);
+            _binEdges = Checked(Binning.LimitedByWidth(value[0], value[1], width));
+            _keptWidth = even ? width : null;
+            _binMethod = Manual;
+            _binCounts = Binning.Counts(_data, _binEdges);
+            Invalidate(InvalidationKind.Data);
         }
     }
+
+    /// <summary>
+    /// Whether R2025b reads this histogram's <c>BinWidth</c> as 'nonuniform': its bins are not
+    /// evenly spread, and no width was kept when its limits were last set.
+    /// </summary>
+    [Browsable(false)]
+    public bool BinWidthNonuniform => _keptWidth is null && _binEdges.Length > 1 && !EdgesEvenlySpread(_binEdges);
+
+    /// <summary>
+    /// <c>BinLimitsMode</c> set to 'auto': the limits are let go and the bins laid over all the
+    /// readings again at the width they had (the span over the count when they were not evenly
+    /// spread), and the method reads 'manual' — what R2025b does (open item 271, ADR 0361). A
+    /// histogram whose limits were never chosen is left as it is.
+    /// </summary>
+    public void ReleaseBinLimits()
+    {
+        if (_binLimits is null)
+        {
+            return;
+        }
+
+        double width = BinWidthNonuniform
+            ? (_binEdges[^1] - _binEdges[0]) / System.Math.Max(1, _binCounts.Length)
+            : BinWidth;
+        _binLimits = null;
+        if (_data.Length == 0)
+        {
+            Invalidate(InvalidationKind.Data);
+            return;
+        }
+
+        _binEdges = Checked(Binning.EdgesFor(_data, null, width, null, Rule));
+        _keptWidth = null;
+        _binMethod = Manual;
+        _binCounts = Binning.Counts(_data, _binEdges);
+        Invalidate(InvalidationKind.Data);
+    }
+
+    /// <summary><c>BinLimitsMode</c> set to 'manual': the span the bins cover now is the chosen one.</summary>
+    public void FreezeBinLimits() => _binLimits ??= [_binEdges[0], _binEdges[^1]];
 
     /// <summary>Whether the span was chosen or is whatever the readings happened to cover.</summary>
     [Browsable(false)]
@@ -372,6 +442,7 @@ public sealed class HistogramPlot : PlotObject, IDrawable, ILegendItem
     {
         _binMethod = method ?? "auto";
         _binLimits = limits is { Length: 2 } ? [limits[0], limits[1]] : null;
+        _keptWidth = null;
     }
 
     /// <summary>
@@ -680,8 +751,37 @@ public sealed class HistogramPlot : PlotObject, IDrawable, ILegendItem
         }
 
         _binEdges = Checked(Binning.EdgesFor(_data, null, null, _binLimits, Rule));
+        _keptWidth = null;
         _binCounts = Binning.Counts(_data, _binEdges);
         Invalidate(InvalidationKind.Data);
+    }
+
+    /// <summary>
+    /// Whether the edges are evenly spread, to within rounding: every bin's width is the first's
+    /// up to a millionth of a millionth of it, or sixteen ulps of the largest edge, whichever is
+    /// wider. R2025b's own test (areBinEdgesUniform) is compiled; this one is measured to agree on
+    /// the edges binpicker and the colon make and on the named edges probed (ADR 0361).
+    /// </summary>
+    private static bool EdgesEvenlySpread(double[] edges)
+    {
+        if (edges.Length < 3)
+        {
+            return true;
+        }
+
+        double first = edges[1] - edges[0];
+        double magnitude = System.Math.Max(System.Math.Abs(edges[0]), System.Math.Abs(edges[^1]));
+        double slack = System.Math.Max(1e-12 * System.Math.Abs(first),
+            16 * (System.Math.BitIncrement(magnitude) - magnitude));
+        for (int i = 2; i < edges.Length; i++)
+        {
+            if (!(System.Math.Abs(edges[i] - edges[i - 1] - first) <= slack))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /// <summary>

@@ -512,8 +512,12 @@ public class MatlabM75FigurePropertyTests : IDisposable
         Assert.Equal(0, Number(result, "same"), 12);
     }
 
+    /// <summary>
+    /// R2025b's axes follows its figure's next map even after choosing its own (probe cm2, open item
+    /// 293, ADR 0361): the documented rule is not what it does, and this test used to assert the rule.
+    /// </summary>
     [Fact]
-    public async Task AnAxesThatChoseItsOwnColormapKeepsIt()
+    public async Task AnAxesThatChoseItsOwnColormapFollowsTheFiguresNextOne()
     {
         ScriptRunResult result = await RunMatlab("""
             surf(peaks(8));
@@ -525,7 +529,7 @@ public class MatlabM75FigurePropertyTests : IDisposable
             """);
 
         Succeeded(result);
-        Assert.True(Number(result, "differ") > 0.1);
+        Assert.Equal(0, Number(result, "differ"), 12);
     }
 
     [Fact]

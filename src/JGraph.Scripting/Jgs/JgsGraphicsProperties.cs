@@ -1775,14 +1775,19 @@ internal static partial class JgsGraphicsProperties
             // could report whether its positions were counted out but not be given real ones would be
             // answering a question a script cannot act on. A parametric grid keeps its read-only
             // answer — its positions are a pair of matrices and replacing one alone is not a move.
+            // A meshgrid pair reads back as the two matrices it was given (open item 314, ADR 0361).
             Put(table, "XData",
                 entry => ((SurfacePlot)entry.Target).XGrid is { } grid
                     ? Grid(grid)
-                    : Row(((SurfacePlot)entry.Target).X),
+                    : ((SurfacePlot)entry.Target).XReadsAsGrid
+                        ? SpreadRuler((SurfacePlot)entry.Target, alongX: true)
+                        : Row(((SurfacePlot)entry.Target).X),
                 (entry, value, line, col) => WriteSurfaceRuler(entry, value, line, col, alongX: true));
             Put(table, "YData",
                 entry => ((SurfacePlot)entry.Target).YGrid is { } grid
                     ? Grid(grid)
+                    : ((SurfacePlot)entry.Target).YReadsAsGrid
+                        ? SpreadRuler((SurfacePlot)entry.Target, alongX: false)
                     : ((SurfacePlot)entry.Target).YColumn
                         ? JgsMatrix.FromColumnMajor(((SurfacePlot)entry.Target).Y, ((SurfacePlot)entry.Target).Y.Length, 1)
                         : Row(((SurfacePlot)entry.Target).Y),

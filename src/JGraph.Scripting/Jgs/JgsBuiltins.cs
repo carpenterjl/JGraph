@@ -2395,13 +2395,16 @@ internal static partial class JgsBuiltins
             }));
 
         // Bare `m = colormap` is the read, the way `x = eps` is a number (M37's AutoCallsBare);
-        // the callee position stays exempt, so colormap(jet) still calls.
-        env.Builtins.Register("colormap", JgsValue.Function(new BuiltinFunction("colormap", (args, line, col) =>
+        // the callee position stays exempt, so colormap(jet) still calls. The output count is
+        // part of what it does (open item 293, ADR 0361): `c = colormap('gray')` answers the map
+        // it set, as colormap.m's `if nargout == 1` does, and a statement that sets prints nothing.
+        JgsValue[] ColormapCall(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
         {
             ArityRange("colormap", args, 0, 2, line, col);
 
             // A leading handle names what the map belongs to: an axes, or the figure whose axes fall
-            // back on it. Without one it is the current axes, which is what it has always been.
+            // back on it. Without one it is the current figure in the MATLAB dialect, as colormap.m's
+            // gcf is (ADR 0361), and the current axes in JGS, which is what it has always been.
             GraphObject? target = null;
             IReadOnlyList<JgsValue> rest = args;
             if (args.Count > 0 && args[0].Type != JgsType.String
@@ -2417,23 +2420,26 @@ internal static partial class JgsBuiltins
                     "colormap(target, map) expects a figure or axes handle as its first argument.");
             }
 
+            Colormap Held() => target switch
+            {
+                FigureModel figure => figure.Colormap ?? Colormap.Parula,
+                AxesModel axes => axes.ResolveColormap() ?? Colormap.Parula,
+                _ => dialect.IsMatlab ? JG.CurrentFigure.Colormap ?? Colormap.Parula : JG.CurrentColormap(),
+            };
+
             // No map reads one back, which is what makes rgbplot(colormap) and
             // colormap(flipud(colormap)) mean anything.
             if (rest.Count == 0)
             {
-                Colormap current = target switch
-                {
-                    FigureModel figure => figure.Colormap ?? Colormap.Parula,
-                    AxesModel axes => axes.ResolveColormap() ?? Colormap.Parula,
-                    _ => JG.CurrentColormap(),
-                };
-                return ColormapRowsOf(current);
+                return [ColormapRowsOf(Held())];
             }
 
             try
             {
                 Colormap chosen = rest[0].Type == JgsType.String
-                    ? NamedColormap(Str("colormap", rest, 0, line, col), line, col)
+                    ? dialect.IsMatlab
+                        ? MatlabNamedColormap(Str("colormap", rest, 0, line, col), line, col)
+                        : NamedColormap(Str("colormap", rest, 0, line, col), line, col)
 
                     // An m-by-3 table of components in [0, 1], which is what every generator returns
                     // and so what `colormap(parula(64))` and `colormap(flipud(gray))` hand over.
@@ -2442,15 +2448,7 @@ internal static partial class JgsBuiltins
                 switch (target)
                 {
                     case FigureModel figure:
-                        figure.Colormap = chosen;
-                        foreach (AxesModel axes in figure.Axes)
-                        {
-                            if (axes.Colormap is null)
-                            {
-                                ReseedPlots(axes);
-                            }
-                        }
-
+                        SetFigureColormap(figure, chosen);
                         break;
 
                     case AxesModel axes:
@@ -2459,7 +2457,17 @@ internal static partial class JgsBuiltins
                         break;
 
                     default:
-                        JG.Colormap(chosen);
+                        if (dialect.IsMatlab)
+                        {
+                            FigureModel current = JG.CurrentFigure;
+                            target = current;
+                            SetFigureColormap(current, chosen);
+                        }
+                        else
+                        {
+                            JG.Colormap(chosen);
+                        }
+
                         break;
                 }
             }
@@ -2468,9 +2476,16 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, ex.Message);
             }
 
-            return JgsValue.Null;
-        })
-        { AutoCallsBare = true }));
+            return wanted == 0 ? [] : [ColormapRowsOf(Held())];
+        }
+
+        env.Builtins.Register("colormap", JgsValue.Function(new BuiltinFunction(
+            "colormap", (args, line, col) => ColormapCall(args, 1, line, col)[0])
+        {
+            AutoCallsBare = true,
+            MultiOutput = ColormapCall,
+            TakesOutputCount = true,
+        }));
 
         // AutoCallsBare because 'h = colorbar;' — no parentheses, and the handle kept — is how MATLAB
         // documents it and how a script reaches the bar to label it. Without it the bare name bound
@@ -4404,8 +4419,11 @@ internal static partial class JgsBuiltins
         // rule, which threw away a named count, a named width and named edges alike
         // (histogram(x, 200) drew the automatic rule's bins) and ranged and counted the readings
         // twice. R2025b reads the method of such a histogram back as 'manual'.
+        // Named edges are named limits too: R2025b reads BinLimitsMode 'manual' (ADR 0361).
         bool named1 = givenEdges is not null || requested is not null || width is not null;
-        plot.NameBinning(named1 ? "manual" : rule, limits);
+        plot.NameBinning(
+            named1 ? "manual" : rule,
+            limits ?? (givenEdges is not null && givenCounts is null ? [edges[0], edges[^1]] : null));
 
         return Handle(HistogramTail(JG.Histogram(plot), parsed, line, col));
     }
@@ -4894,7 +4912,7 @@ internal static partial class JgsBuiltins
 
         if (args.Count == 1)
         {
-            return Coloured(zOnly(Matrix(name, args, 0, line, col)));
+            return Coloured(AsR2025bMade(name, zOnly(Matrix(name, args, 0, line, col)), counted: true, gridShaped: false));
         }
 
         Arity(name, args, 3, line, col);
@@ -4905,25 +4923,80 @@ internal static partial class JgsBuiltins
             // the rectilinear fast path and what every surface built on `meshgrid` wants. A pair that
             // varies in both directions -- a sphere, a cylinder -- has no generating vectors to
             // collapse to and is carried through per vertex.
+            bool gridShaped = false;
             if (IsFullGrid(args[0]) && IsFullGrid(args[1]))
             {
                 double[,] xGrid = Matrix(name, args, 0, line, col);
                 double[,] yGrid = Matrix(name, args, 1, line, col);
                 if (!IsRectilinearGrid(xGrid, yGrid))
                 {
-                    return Coloured(parametric(xGrid, yGrid, z));
+                    return Coloured(AsR2025bMade(name, parametric(xGrid, yGrid, z), counted: false, gridShaped: false));
                 }
+
+                gridShaped = true;
             }
 
-            return Coloured(full(
+            return Coloured(AsR2025bMade(name, full(
                 GridVector(name, args, 0, firstRow: true, line, col),
                 GridVector(name, args, 1, firstRow: false, line, col),
-                z));
+                z), counted: false, gridShaped));
         }
         catch (ArgumentException ex)
         {
             throw new JgsRuntimeException(line, col, ex.Message);
         }
+    }
+
+    /// <summary>
+    /// The readings R2025b's <c>surf</c>, <c>surface</c> and <c>mesh</c> give what they make, in the
+    /// MATLAB dialect (open item 314, probe sf1; ADR 0361). Counted positions are 1 to n across and
+    /// (1:m)' down, as surf.m and the surface built-in count them, not from 0. A meshgrid pair reads
+    /// back as the two matrices it was, though it is drawn over its two vectors. The edges are half a
+    /// point wide; a surf's and a surface's are the dark grey 33/255 rather than the colormap, and a
+    /// mesh lights its edges and not its faces. The low-level <c>surface</c> holds what it was given:
+    /// its positions and its colours read 'manual'. JGS's surfaces are what they were.
+    /// </summary>
+    private static PlotObject AsR2025bMade(string name, PlotObject made, bool counted, bool gridShaped)
+    {
+        if (!JgsRunningDialect.ThreadIsMatlab || made is not SurfacePlot surface
+            || name is not ("surf" or "surface" or "mesh"))
+        {
+            return made;
+        }
+
+        if (counted)
+        {
+            int rows = surface.Z.GetLength(0), cols = surface.Z.GetLength(1);
+            surface.SetData(Ramp1(cols), Ramp1(rows), surface.Z);
+            surface.YColumn = true;
+        }
+
+        surface.XReadsAsGrid = gridShaped;
+        surface.YReadsAsGrid = gridShaped;
+        surface.EdgeWidth = 0.5;
+        if (name == "mesh")
+        {
+            surface.FaceLighting = SurfaceLighting.None;
+            surface.EdgeLighting = SurfaceLighting.Flat;
+        }
+        else if (surface.EdgeColor is null && !surface.ColormapEdges && surface.Style != SurfaceStyle.Wireframe)
+        {
+            surface.EdgeColor = PcolorEdgeColor;
+        }
+
+        if (name == "surface")
+        {
+            surface.XImplied = false;
+            surface.YImplied = false;
+            surface.CData ??= (double[,])surface.Z.Clone();
+        }
+        else
+        {
+            surface.XImplied = counted;
+            surface.YImplied = counted;
+        }
+
+        return made;
     }
 
     /// <summary>Whether a grid argument arrived as a full matrix rather than a generating vector.</summary>

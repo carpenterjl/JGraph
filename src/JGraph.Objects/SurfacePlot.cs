@@ -762,6 +762,19 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     [Browsable(false)]
     public bool YColumn { get; set; }
 
+    /// <summary>
+    /// Whether a script reads the x positions back as a full grid, a row of them per row of
+    /// <see cref="Z"/>: R2025b's <c>surf(X, Y, Z)</c> keeps the meshgrid matrices it was given, though
+    /// they are drawn here over their generating vectors (open item 314, ADR 0361). Nothing is drawn
+    /// differently; a vector written to XData clears it.
+    /// </summary>
+    [Browsable(false)]
+    public bool XReadsAsGrid { get; set; }
+
+    /// <summary>The same for the y positions, a column of them per column of <see cref="Z"/>.</summary>
+    [Browsable(false)]
+    public bool YReadsAsGrid { get; set; }
+
     /// <summary>MATLAB <c>AmbientStrength</c>: the fraction of the surface color present with no light on it.</summary>
     [Category("Lighting"), DisplayName("Ambient strength")]
     public double AmbientStrength

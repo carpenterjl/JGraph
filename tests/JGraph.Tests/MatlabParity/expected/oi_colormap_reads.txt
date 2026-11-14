@@ -1,0 +1,73 @@
+CHK|a_fig_default|[256 3] 0.2422 0.24440000000000001 0.97689999999999999 0.15040000000000001 0.15340000000000001 0.9839 0.6603 0.67279999999999995 0.080500000000000002|exact
+CHK|a_fig_default_sum|426.1746|abs=1e-6
+CHK|a_gca_default|[256 3] 0.2422 0.24440000000000001 0.97689999999999999 0.15040000000000001 0.15340000000000001 0.9839 0.6603 0.67279999999999995 0.080500000000000002|exact
+CHK|a_gca_default_sum|426.1746|abs=1e-6
+CHK|a_ax_default|[256 3] 0.2422 0.24440000000000001 0.97689999999999999 0.15040000000000001 0.15340000000000001 0.9839 0.6603 0.67279999999999995 0.080500000000000002|exact
+CHK|a_ax_default_sum|426.1746|abs=1e-6
+CHK|a_read_default|[256 3] 0.2422 0.24440000000000001 0.97689999999999999 0.15040000000000001 0.15340000000000001 0.9839 0.6603 0.67279999999999995 0.080500000000000002|exact
+CHK|a_read_default_sum|426.1746|abs=1e-6
+CHK|a_hot_default|[256 3] 0.010416666666666666 0.020833333333333332 1 0 0 1 0 0 1|exact
+CHK|a_hot_default_sum|353.5|abs=1e-6
+CHK|b_fig_jet5|[5 3] 0 0 1 0.5 1 0.5 1 1 0|exact
+CHK|b_fig_jet5_sum|9|abs=1e-6
+CHK|b_gca_jet5|[5 3] 0 0 1 0.5 1 0.5 1 1 0|exact
+CHK|b_gca_jet5_sum|9|abs=1e-6
+CHK|b_read_jet5|[5 3] 0 0 1 0.5 1 0.5 1 1 0|exact
+CHK|b_read_jet5_sum|9|abs=1e-6
+CHK|b_hot_after_jet5|[5 3] 1 1 1 0 1 1 0 0 1|exact
+CHK|b_hot_after_jet5_sum|11|abs=1e-6
+CHK|b_read_hot|[5 3] 1 1 1 0 1 1 0 0 1|exact
+CHK|b_read_hot_sum|11|abs=1e-6
+CHK|b_fig_hot|[5 3] 1 1 1 0 1 1 0 0 1|exact
+CHK|b_fig_hot_sum|11|abs=1e-6
+CHK|b_ax_hot|[5 3] 1 1 1 0 1 1 0 0 1|exact
+CHK|b_ax_hot_sum|11|abs=1e-6
+CHK|b_answer_gray|[5 3] 0 0.25 1 0 0.25 1 0 0.25 1|exact
+CHK|b_answer_gray_sum|7.5|abs=1e-6
+CHK|c_ax_copper|[5 3] 0 0.3125 1 0 0.1953 0.78120000000000001 0 0.124375 0.4975|exact
+CHK|c_ax_copper_sum|6.07175|abs=1e-6
+CHK|c_fig_after_ax|[5 3] 0 0.25 1 0 0.25 1 0 0.25 1|exact
+CHK|c_fig_after_ax_sum|7.5|abs=1e-6
+CHK|c_read_ax|[5 3] 0 0.3125 1 0 0.1953 0.78120000000000001 0 0.124375 0.4975|exact
+CHK|c_read_ax_sum|6.07175|abs=1e-6
+CHK|c_read_fig|[5 3] 0 0.25 1 0 0.25 1 0 0.25 1|exact
+CHK|c_read_fig_sum|7.5|abs=1e-6
+CHK|c_read_bare|[5 3] 0 0.25 1 0 0.25 1 0 0.25 1|exact
+CHK|c_read_bare_sum|7.5|abs=1e-6
+CHK|c_fig_parula7|[7 3] 0.2422 0.27800000000000002 0.97689999999999999 0.15040000000000001 0.35560000000000003 0.9839 0.6603 0.97770000000000001 0.080500000000000002|exact
+CHK|c_fig_parula7_sum|11.5307|abs=1e-6
+CHK|c_ax_follows_fig|[7 3] 0.2422 0.27800000000000002 0.97689999999999999 0.15040000000000001 0.35560000000000003 0.9839 0.6603 0.97770000000000001 0.080500000000000002|exact
+CHK|c_ax_follows_fig_sum|11.5307|abs=1e-6
+CHK|c_bone_height|[7 3] 0 0.14583333333333331 1 0 0.14583333333333331 1 0.0625 0.27083333333333331 1|exact
+CHK|c_bone_height_sum|10.8125|abs=1e-6
+CHK|d_ax_summer3|[3 3] 0 0.5 1 0.5 0.75 1 0.40000000000000002 0.40000000000000002 0.40000000000000002|exact
+CHK|d_ax_summer3_sum|4.95|abs=1e-6
+CHK|d_fig_default_again|[256 3] 0.2422 0.24440000000000001 0.97689999999999999 0.15040000000000001 0.15340000000000001 0.9839 0.6603 0.67279999999999995 0.080500000000000002|exact
+CHK|d_fig_default_again_sum|426.1746|abs=1e-6
+CHK|d_ax_default_again|[256 3] 0.2422 0.24440000000000001 0.97689999999999999 0.15040000000000001 0.15340000000000001 0.9839 0.6603 0.67279999999999995 0.080500000000000002|exact
+CHK|d_ax_default_again_sum|426.1746|abs=1e-6
+CHK|d_answer_hot3|[3 3] 1 1 1 0 1 1 0 0 1|exact
+CHK|d_answer_hot3_sum|6|abs=1e-6
+CHK|d_fig_hot3|[3 3] 1 1 1 0 1 1 0 0 1|exact
+CHK|d_fig_hot3_sum|6|abs=1e-6
+CHK|m_mode_fresh|char[1 4]'auto'|exact
+CHK|m_mode_after_ax|char[1 6]'manual'|exact
+CHK|m_mode_after_fig|char[1 4]'auto'|exact
+CHK|m_rows_after_fig|double[1 1] 7|exact
+CHK|m_mode_after_property|char[1 6]'manual'|exact
+CHK|m_mode_after_fig_property|char[1 4]'auto'|exact
+CHK|m_rows_after_fig_property|double[1 1] 4|exact
+CHK|m_rows_after_set|double[1 1] 6|exact
+CHK|m_rows_after_bare|double[1 2] [9 9]|exact
+CHK|m_new_axes_rows|double[1 1] 9|exact
+CHK|m_two_axes_after_fig|double[1 3] [9 9 9]|exact
+CHK|m_answer_named_on_axes|double[1 2] [9 9]|exact
+CHK|surf_axes_follows|double[1 1] 0|exact
+CHK|prism_bare_colours|double[3 3] [1 0 0;1 0.5 0;1 1 0]|exact
+CHK|prism_bare_fig|[256 3] 0.2422 0.24440000000000001 0.97689999999999999 0.15040000000000001 0.15340000000000001 0.9839 0.6603 0.67279999999999995 0.080500000000000002|exact
+CHK|prism_bare_fig_sum|426.1746|abs=1e-6
+CHK|flag_bare_leaves_lines|logical[1 1] 1|exact
+CHK|prism_4|[4 3] 1 1 0 0 0.5 1 0 0 0|exact
+CHK|prism_4_sum|5.5|abs=1e-6
+CHK|prism_answer|[256 3] 1 1 0 0 0.5 1 0 0 0|exact
+CHK|prism_answer_sum|348.5|abs=1e-6

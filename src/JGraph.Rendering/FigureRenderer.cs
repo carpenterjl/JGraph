@@ -1686,13 +1686,18 @@ public sealed class FigureRenderer
 
     /// <summary>
     /// The camera a flat axes sees a 3D object through: <c>view(0, 90)</c> with a box shaped like the
-    /// plot area, so x and y land where the 2D rulers put them. Only linear rulers have one; a log
-    /// ruler is a curve no orthographic camera can follow, and its surface is not drawn.
+    /// plot area, so x and y land where the 2D rulers put them. A log ruler is read in decades
+    /// (<see cref="Projection3D.WithLogarithmicRulers"/>), which is what puts a surface beside one
+    /// where that ruler's ticks are (open item 314, ADR 0361); it used to go undrawn. A log ruler
+    /// whose range reaches zero has no decades, and there is no camera.
     /// </summary>
     private static Projection3D? FlatProjection(AxesModel axes, AxisModel xAxis, AxisModel yAxis, Rect2D plotArea)
     {
-        if (xAxis.Scale == AxisScaleType.Logarithmic || yAxis.Scale == AxisScaleType.Logarithmic
-            || plotArea.Width <= 0 || plotArea.Height <= 0)
+        bool logX = xAxis.Scale == AxisScaleType.Logarithmic;
+        bool logY = yAxis.Scale == AxisScaleType.Logarithmic;
+        if (plotArea.Width <= 0 || plotArea.Height <= 0
+            || (logX && !(xAxis.Range.Min > 0 && xAxis.Range.Max > 0))
+            || (logY && !(yAxis.Range.Min > 0 && yAxis.Range.Max > 0)))
         {
             return null;
         }
@@ -1701,8 +1706,9 @@ public sealed class FigureRenderer
         DataRange xr = xAxis.Inverted ? new DataRange(xAxis.Range.Max, xAxis.Range.Min) : xAxis.Range;
         DataRange yr = yAxis.Inverted ? new DataRange(yAxis.Range.Max, yAxis.Range.Min) : yAxis.Range;
         double side = System.Math.Min(plotArea.Width, plotArea.Height);
-        return new Projection3D(
+        var above = new Projection3D(
             xr, yr, axes.ZAxis.Range, 0, 90, plotArea, new Vector3D(plotArea.Width, plotArea.Height, side));
+        return logX || logY ? above.WithLogarithmicRulers(logX, logY) : above;
     }
 
     private static void DrawAnnotations(

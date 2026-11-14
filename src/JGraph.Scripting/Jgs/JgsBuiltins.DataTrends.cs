@@ -666,8 +666,19 @@ internal static partial class JgsBuiltins
             yEdges = NumericVector("histcounts2", parsed.Positional[3], line, col);
         }
 
-        xEdges ??= Histogram2Edges(xs, xBins, widths?[0], xLimits, rule);
-        yEdges ??= Histogram2Edges(ys, yBins, widths?[1], yLimits, rule);
+        // Under named limits a rule reads the pairs inside both: histcounts2.m's inrange takes the
+        // other coordinate's limits too, when it has them (ADR 0361).
+        bool InBoth(int i) =>
+            (xLimits is null || (xs[i] >= xLimits[0] && xs[i] <= xLimits[1]))
+            && (yLimits is null || (ys[i] >= yLimits[0] && ys[i] <= yLimits[1]));
+        double[] xRuled = xLimits is not null && yLimits is not null
+            ? [.. Enumerable.Range(0, xs.Length).Where(InBoth).Select(i => xs[i])]
+            : xs;
+        double[] yRuled = xLimits is not null && yLimits is not null
+            ? [.. Enumerable.Range(0, ys.Length).Where(InBoth).Select(i => ys[i])]
+            : ys;
+        xEdges ??= Histogram2Edges(xRuled, xBins, widths?[0], xLimits, rule);
+        yEdges ??= Histogram2Edges(yRuled, yBins, widths?[1], yLimits, rule);
 
         int nx = Math.Max(0, xEdges.Length - 1);
         int ny = Math.Max(0, yEdges.Length - 1);
@@ -709,32 +720,23 @@ internal static partial class JgsBuiltins
     {
         double[] finite = [.. data.Where(double.IsFinite)
             .Where(v => limits is null || (v >= limits[0] && v <= limits[1]))];
+
+        // Named limits go to the shared chooser's limits branch, which is histcounts2.m's own: a
+        // count by linspace, a width by the colon closed on the high limit (at most 1024 bins), and
+        // a rule over the readings inside, fitted as whole bins to the span (open item 271, ADR 0361).
+        if (limits is not null)
+        {
+            return Binning.EdgesFor(finite, requested, width, limits, rule, 4);
+        }
+
         if (requested is null && width is null)
         {
-            if (limits is null)
-            {
-                return Binning.EdgesFor(finite, null, null, null, rule, 4);
-            }
-
-            // Named limits are exact, so the automatic rule only chooses how many bins fit between
-            // them — with a forgiving ceiling, where the shared chooser rounds (measured: R2024a
-            // cuts [0.2, 0.8] into two 0.3-wide bins, not one 0.6-wide one).
-            double span = limits[1] - limits[0];
-            double rough = RawAutomaticWidth(finite, rule, span);
-            double powerOfTen = Math.Pow(10, Math.Floor(Math.Log10(rough)));
-            double relative = rough / powerOfTen;
-            double nice = powerOfTen
-                * (relative < 1.5 ? 1 : relative < 2.5 ? 2 : relative < 4 ? 3 : relative < 7.5 ? 5 : 10);
-            return Binning.Spanning(limits[0], limits[1], Math.Max(1, CeilWithGrace(span / nice)));
+            return Binning.EdgesFor(finite, null, null, null, rule, 4);
         }
 
         double low;
         double high;
-        if (limits is not null)
-        {
-            (low, high) = (limits[0], limits[1]);
-        }
-        else if (finite.Length == 0)
+        if (finite.Length == 0)
         {
             (low, high) = (0, 1);
         }
@@ -750,7 +752,7 @@ internal static partial class JgsBuiltins
 
         if (width is { } step)
         {
-            double left = limits is not null ? low : step * Math.Floor(low / step);
+            double left = step * Math.Floor(low / step);
             int bins = Math.Max(1, CeilWithGrace((high - left) / step));
             var fromWidth = new double[bins + 1];
             for (int i = 0; i <= bins; i++)
@@ -765,10 +767,6 @@ internal static partial class JgsBuiltins
         }
 
         int count = Math.Max(1, requested!.Value);
-        if (limits is not null)
-        {
-            return Binning.Spanning(low, high, count);
-        }
 
         // An asked bin count picks the nice width the automatic table would (1, 2, 3, 5 or 10
         // times a power of ten), snaps the left edge down onto that width's grid, and only when the
@@ -799,24 +797,6 @@ internal static partial class JgsBuiltins
         }
 
         return edges;
-    }
-
-    /// <summary>The unrounded automatic bin width — Scott by default, with the fourth root.</summary>
-    private static double RawAutomaticWidth(double[] finite, string rule, double span)
-    {
-        if (finite.Length == 0)
-        {
-            return span;
-        }
-
-        double quarterRoot = Math.Pow(finite.Length, 0.25);
-        double raw = rule switch
-        {
-            "fd" => 2 * (Quartiles.Percentile(finite, 75) - Quartiles.Percentile(finite, 25))
-                / quarterRoot,
-            _ => 3.5 * Math.Sqrt(SampleVarianceOf(finite)) / quarterRoot,
-        };
-        return raw > 0 && double.IsFinite(raw) ? raw : span / 10;
     }
 
     /// <summary>A ceiling that forgives a few ulps, so <c>0.9/0.3</c> asks for three bins, not four.</summary>

@@ -1092,10 +1092,19 @@ internal static class PlotMapper
             histogram.BinCounts = counts;
         }
 
-        histogram.BinMethod = d.BinMethod;
-        if (d.BinLimits is { Length: 2 } limits)
+        if (d.Categories is null && d.BinEdges is { Length: > 1 })
         {
-            histogram.BinLimits = limits;
+            // The edges are the answer; the rule and the limits are written down beside them, not
+            // applied again (setting BinLimits afterwards keeps the width, ADR 0361).
+            histogram.NameBinning(d.BinMethod, d.BinLimits);
+        }
+        else
+        {
+            histogram.BinMethod = d.BinMethod;
+            if (d.BinLimits is { Length: 2 } limits)
+            {
+                histogram.BinLimits = limits;
+            }
         }
 
         histogram.DisplayOrder = d.DisplayOrder;

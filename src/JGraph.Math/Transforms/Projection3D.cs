@@ -17,8 +17,9 @@ public sealed class Projection3D : ISpatialMapper
     private readonly double _vx, _vy, _vz;        // v row
     private readonly double _dx, _dy, _dz;        // depth row
 
-    private readonly double _xMin, _xSpan;
-    private readonly double _yMin, _ySpan;
+    private double _xMin, _xSpan;                // not readonly: WithLogarithmicRulers re-reads them in decades
+    private double _yMin, _ySpan;
+    private bool _xLog, _yLog;                   // x or y is read through log10 first (ADR 0361)
     private readonly double _zMin, _zSpan;
 
     private readonly double _ax, _ay, _az;        // plot box aspect, scaled so the largest side is 1
@@ -272,6 +273,9 @@ public sealed class Projection3D : ISpatialMapper
             (x, y, z) = Model(x, y, z);
         }
 
+        // The group's matrix moves the point in data units first; a log ruler then reads it in decades.
+        if (_xLog) { x = System.Math.Log10(x); }
+        if (_yLog) { y = System.Math.Log10(y); }
         double nx = (((x - _xMin) / _xSpan) - 0.5) * _ax;
         double ny = (((y - _yMin) / _ySpan) - 0.5) * _ay;
         double nz = (((z - _zMin) / _zSpan) - 0.5) * _az;
@@ -327,8 +331,8 @@ public sealed class Projection3D : ISpatialMapper
         }
 
         return new(
-            ((((x - _xMin) / _xSpan) - 0.5) * _ax),
-            ((((y - _yMin) / _ySpan) - 0.5) * _ay),
+            ((((Ruled(x, _xLog) - _xMin) / _xSpan) - 0.5) * _ax),
+            ((((Ruled(y, _yLog) - _yMin) / _ySpan) - 0.5) * _ay),
             ((((z - _zMin) / _zSpan) - 0.5) * _az));
     }
 
@@ -376,6 +380,37 @@ public sealed class Projection3D : ISpatialMapper
         }
 
         return m;
+    }
+
+    /// <summary>A coordinate as its ruler reads it: in decades on a logarithmic one.</summary>
+    private static double Ruled(double value, bool logarithmic) => logarithmic ? System.Math.Log10(value) : value;
+
+    /// <summary>
+    /// The same camera with the x or the y ruler logarithmic: the coordinate is read in decades before
+    /// it is placed, and the ruler's range is the decades it spans. A flat axes with a log ruler draws a
+    /// surface through this (open item 314, ADR 0361); a range that reaches zero or below has no
+    /// decades and is left linear.
+    /// </summary>
+    public Projection3D WithLogarithmicRulers(bool logX, bool logY)
+    {
+        var copy = (Projection3D)MemberwiseClone();
+        if (logX && !_xLog && _xMin > 0 && _xMin + _xSpan > 0)
+        {
+            double low = System.Math.Log10(_xMin);
+            copy._xMin = low;
+            copy._xSpan = System.Math.Log10(_xMin + _xSpan) - low;
+            copy._xLog = true;
+        }
+
+        if (logY && !_yLog && _yMin > 0 && _yMin + _ySpan > 0)
+        {
+            double low = System.Math.Log10(_yMin);
+            copy._yMin = low;
+            copy._ySpan = System.Math.Log10(_yMin + _ySpan) - low;
+            copy._yLog = true;
+        }
+
+        return copy;
     }
 
     /// <summary>The plot box's side lengths, scaled so the longest is 1.</summary>
@@ -436,10 +471,13 @@ public sealed class Projection3D : ISpatialMapper
                 origin.Z + (direction.Z * exit))));
     }
 
+    /// <summary>A ruler's coordinate back in data units: out of decades on a logarithmic one.</summary>
+    private static double Unruled(double value, bool logarithmic) => logarithmic ? System.Math.Pow(10, value) : value;
+
     /// <summary>Undoes <see cref="Normalize"/>: a point in the plot box read back in data units.</summary>
     public Vector3D Denormalize(Vector3D boxPoint) => new(
-        (((boxPoint.X / _ax) + 0.5) * _xSpan) + _xMin,
-        (((boxPoint.Y / _ay) + 0.5) * _ySpan) + _yMin,
+        Unruled((((boxPoint.X / _ax) + 0.5) * _xSpan) + _xMin, _xLog),
+        Unruled((((boxPoint.Y / _ay) + 0.5) * _ySpan) + _yMin, _yLog),
         (((boxPoint.Z / _az) + 0.5) * _zSpan) + _zMin);
 
     /// <summary>
