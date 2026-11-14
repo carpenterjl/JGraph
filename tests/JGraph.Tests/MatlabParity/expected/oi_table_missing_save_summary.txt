@@ -187,7 +187,7 @@ CHK|rm_two_col|double[1 2] [1 1]|exact
 CHK|rm_rownames|cell[1 1]{char[1 1]'a'}|exact
 CHK|rm_dv_tf|logical[3 1] [0;0;0]|exact
 CHK|sm_text|char[1 21]'cell[3 1]:{''/''/'z'}'|exact
-CHK|sm_str|char[1 33]'string[3 1]:<missing>,<missing>,r'|div=ADR0234|diverges|char[1 21]'string[3 1]:<missing>'
+CHK|sm_str|char[1 33]'string[3 1]:<missing>,<missing>,r'|div=ADR0234|diverges|char[1 33]'MATLAB:string:MissingNotSupported'
 CHK|sm_mixed|char[1 18]'cell[2 1]:{'a'/''}'|exact
 CHK|sm_mixed_num|char[1 19]'double[2 1]:[1;NaN]'|exact
 CHK|sm_cat|char[1 52]'categorical[3 1]:<undefined>,<undefined>,<undefined>'|exact
@@ -205,7 +205,7 @@ CHK|ts_single|char[1 17]'single[2 1]:[0;0]'|exact
 CHK|ts_int8|char[1 15]'int8[2 1]:[0;0]'|exact
 CHK|ts_uint16|char[1 17]'uint16[2 1]:[0;0]'|exact
 CHK|ts_logical|char[1 26]'logical[2 1]:[false;false]'|exact
-CHK|ts_string|char[1 31]'string[2 1]:<missing>,<missing>'|div=ADR0234|diverges|char[1 21]'string[2 1]:<missing>'
+CHK|ts_string|char[1 31]'string[2 1]:<missing>,<missing>'|div=ADR0234|diverges|char[1 33]'MATLAB:string:MissingNotSupported'
 CHK|ts_cellstr|char[1 17]'cell[2 1]:{''/''}'|exact
 CHK|ts_cell|char[1 17]'cell[2 1]:{[]/[]}'|exact
 CHK|ts_categorical|char[1 40]'categorical[2 1]:<undefined>,<undefined>'|exact

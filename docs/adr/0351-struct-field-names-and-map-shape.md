@@ -31,8 +31,10 @@ bridge; item 301 was found by wave 1 (ADR 0341).
   `MATLAB:Cell2Struct:InvalidFieldName` ('Invalid field name "1bad".'), an empty name or a string
   array of names `MATLAB:Cell2Struct:NonStringFieldNames`. Reading an absent name is
   `MATLAB:nonExistentField`, whatever its spelling; reading a present one no field may have, which only
-  a struct made outside the language can hold, is `InvalidFieldName` (`k10_feval` risky 11 and K16's
-  `in.struct.badname`). `getfield` of an absent name is `nonExistentField` (it is `s.(deblank(name))`),
+  a struct made outside the language can hold, is `InvalidFieldName` when a paren subscript reached
+  the struct, `x(k).(n)` (`k10_feval` risky 11 and K16's `in.struct.badname`); on the variable itself,
+  `v.(n)`, R2025b reads it (K17's `x.struct.init_names_bad`, found by the wave-3 lanes gate).
+  `getfield` of an absent name is `nonExistentField` (it is `s.(deblank(name))`, so a present bad name is read),
   `rmfield` refuses an absent one (`MATLAB:rmfield:InvalidFieldname`, "A field named '1bad' doesn't
   exist."), and `orderfields` a list that is not a rearrangement
   (`MATLAB:orderfields:CellStrMismatchFieldnames`). JGraph wrote and read every such name, answered

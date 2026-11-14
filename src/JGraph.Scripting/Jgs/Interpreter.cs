@@ -10594,8 +10594,8 @@ internal sealed partial class Interpreter
         if (target.AsStruct.TryGetValue(field, out JgsValue? value))
         {
             // A name no field may have, which only a struct made outside the language can hold, is
-            // refused on reading as on writing (open item 202, ADR 0351: k10_feval risky 11).
-            if (Dialect.IsMatlab && !JgsBuiltins.IsValidFieldName(field))
+            // refused when a paren subscript reached the struct (open item 202, ADR 0351; ThroughParen).
+            if (Dialect.IsMatlab && ThroughParen(member) && !JgsBuiltins.IsValidFieldName(field))
             {
                 throw JgsBuiltins.InvalidFieldNameRead(field, member.Line, member.Column);
             }

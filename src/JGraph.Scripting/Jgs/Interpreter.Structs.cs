@@ -122,6 +122,14 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
+    /// Whether a dot reads a struct reached by a paren subscript, <c>x(k).(n)</c>. Only there does
+    /// R2025b refuse a field name no field may have, which only a struct made outside the language
+    /// holds: <c>x(k).('1bad')</c> is <c>MATLAB:AddField:InvalidFieldName</c> (k10_feval risky 11),
+    /// while <c>v.('1bad')</c> on the variable reads the field (k17_com_extra x.struct.init_names_bad).
+    /// </summary>
+    private static bool ThroughParen(Node member) => member is MemberExpr { Target: CallExpr or IndexExpr };
+
+    /// <summary>
     /// One field across every element of a struct array, in order — the comma-separated list
     /// <c>stats.Area</c> names.
     /// </summary>
@@ -141,8 +149,10 @@ internal sealed partial class Interpreter
             throw NoSuchField(field, member);
         }
 
-        // A name no field may have is refused where the struct has it (open item 202, ADR 0351).
-        if (Dialect.IsMatlab && payload.Length > 0 && !JgsBuiltins.IsValidFieldName(field) && payload.Elements[0].ContainsKey(field))
+        // A name no field may have is refused where the struct has it and was reached by a paren
+        // subscript (open item 202, ADR 0351; see ThroughParen).
+        if (Dialect.IsMatlab && payload.Length > 0 && ThroughParen(member) && !JgsBuiltins.IsValidFieldName(field)
+            && payload.Elements[0].ContainsKey(field))
         {
             throw JgsBuiltins.InvalidFieldNameRead(field, member.Line, member.Column);
         }

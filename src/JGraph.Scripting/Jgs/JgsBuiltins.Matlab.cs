@@ -553,13 +553,13 @@ internal static partial class JgsBuiltins
             string name = Str("getfield", args, 1, line, col);
 
             // R2025b's getfield is f = s.(deblank(name)), so it reads a dynamic field's way: an absent
-            // name is MATLAB:nonExistentField, and a present one no field may have is refused
-            // (open item 202, ADR 0351).
+            // name is MATLAB:nonExistentField, and a present one no field may have is read, as a dot on
+            // the variable reads it (open item 202, ADR 0351; Interpreter.ThroughParen).
             if (JgsRunningDialect.ThreadIsMatlab)
             {
                 name = Deblanked(name);
                 return fields.TryGetValue(name, out JgsValue? read)
-                    ? IsValidFieldName(name) ? read : throw InvalidFieldNameRead(name, line, col)
+                    ? read
                     : throw new JgsRuntimeException(line, col, "MATLAB:nonExistentField", $"Unrecognized field name \"{name}\".");
             }
 

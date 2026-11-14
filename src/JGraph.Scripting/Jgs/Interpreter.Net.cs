@@ -56,7 +56,10 @@ internal sealed partial class Interpreter
         var values = new JgsValue?[subscripts.Count];
         for (int i = 0; i < values.Length; i++)
         {
-            values[i] = EvaluateIndexArgument(subscripts[i], () => throw NetArrays.EndRefused(at.Line, at.Column), i, env);
+            // Taken as they come, not as character codes: a .NET array refuses a char subscript with
+            // MATLAB:NET:InvalidArrayIndex (net_arrays' index_char_refused; ADR 0354's codes are MATLAB data's).
+            values[i] = EvaluateIndexArgument(subscripts[i],
+                new IndexContext(null, () => throw NetArrays.EndRefused(at.Line, at.Column), i), env, named: true);
         }
 
         return values;

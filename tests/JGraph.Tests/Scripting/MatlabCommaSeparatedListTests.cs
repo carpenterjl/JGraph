@@ -183,7 +183,7 @@ public class MatlabCommaSeparatedListTests : IDisposable
         catch err
             caught = err.message;
         end
-        assert(contains(caught, 'writes one'));
+        assert(contains(caught, 'simple assignment statement is not supported'));
         """);
 
     [Fact]
