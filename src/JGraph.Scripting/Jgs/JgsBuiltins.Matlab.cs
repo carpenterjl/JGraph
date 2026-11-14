@@ -832,11 +832,12 @@ internal static partial class JgsBuiltins
                     return inner.Call(args, line, col); // JGS decoded its escapes in the literal
                 }
 
-                // The format is normally first; fprintf(fid, fmt, …) shifts it one slot right.
-                int at = args.Count > 0 && args[0].Type == JgsType.String
+                // The format is normally first; fprintf(fid, fmt, …) shifts it one slot right. It may
+                // be a string scalar, now that the two keep their string arguments (open item 306).
+                int at = args.Count > 0 && (args[0].Type == JgsType.String || IsStringScalar(args[0]))
                     ? 0
                     : args.Count > 1 && args[0].Type is JgsType.Number or JgsType.Bool
-                        && args[1].Type == JgsType.String
+                        && (args[1].Type == JgsType.String || IsStringScalar(args[1]))
                         ? 1
                         : -1;
                 if (at < 0)
@@ -844,7 +845,7 @@ internal static partial class JgsBuiltins
                     return inner.Call(args, line, col);
                 }
 
-                string format = JgsFormatEscapes.Decode(args[at].AsString, out JgsFormatEscapes.Fault? fault);
+                string format = JgsFormatEscapes.Decode(TextOf(args[at]), out JgsFormatEscapes.Fault? fault);
                 if (fault is { } bad)
                 {
                     Warn(env, host, bad.Message, line, col);
@@ -1495,6 +1496,15 @@ internal static partial class JgsBuiltins
         if (args[0].Type == JgsType.Struct)
         {
             Arity("warning", args, 1, line, col);
+
+            // A struct without both fields is refused, a message struct among them (measured, open
+            // item 306: warning(struct('message', 'm', 'identifier', 'a:b'))).
+            if (dialect.IsMatlab && StructElements(args[0]).Any(static f => !f.ContainsKey("state") || !f.ContainsKey("identifier")))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:warning:missingStructureField",
+                    "The input to WARNING must have fields named 'state' and 'identifier'.");
+            }
+
             foreach (Dictionary<string, JgsValue> fields in StructElements(args[0]))
             {
                 if (fields.TryGetValue("identifier", out JgsValue? id) && id.Type == JgsType.String
@@ -1557,6 +1567,13 @@ internal static partial class JgsBuiltins
             return wanted > 0 ? [previous] : [];
         }
 
+        // An identifier alone, with no message after it, is refused (measured R2025b, open item 306):
+        // warning('pkg:id') is an error, where warning('pkg:') and warning('a:1b') are messages.
+        if (dialect.IsMatlab)
+        {
+            RefuseLoneIdentifier("warning", args, line, col);
+        }
+
         // A message. The identifier rule is error's own: at least one colon, no whitespace, no
         // conversion, and something after it to be the format.
         bool hasIdentifier = args.Count > 1 && IsErrorIdentifier(first);
@@ -1564,10 +1581,11 @@ internal static partial class JgsBuiltins
         string under = hasIdentifier ? first : string.Empty;
 
         // An identifier in the error state raises the warning as an error under its own identifier,
-        // and lastwarn is left as it was (measured R2025b, open item 189).
+        // and lastwarn is left as it was (measured R2025b, open item 189). Its report is headed
+        // "Error using warning", as R2025b's getReport heads it (open item 306).
         if (state.IsError(under))
         {
-            throw new JgsRuntimeException(line, col, under, message);
+            throw new JgsRuntimeException(line, col, under, message) { UsingName = "warning" };
         }
 
         state.Record(under, message);
@@ -1577,6 +1595,37 @@ internal static partial class JgsBuiltins
         }
 
         return [];
+    }
+
+    /// <summary>
+    /// R2025b's refusal of an identifier given with no message (measured, open item 306):
+    /// <c>warning('pkg:id')</c> and <c>error('pkg:id')</c> are <c>MATLAB:&lt;verb&gt;:missingMessageArgument</c>.
+    /// An identifier here is two or more parts between colons, each a letter then letters, digits or
+    /// underscores; anything else alone is the message (<c>'pkg:'</c>, <c>'a:1b'</c>, <c>'a-b:c'</c>).
+    /// An identifier followed by something other than text is <c>badMessageArgument</c> (measured for
+    /// <c>warning</c>, so asked for by <paramref name="messageType"/>).
+    /// </summary>
+    private static void RefuseLoneIdentifier(string verb, IReadOnlyList<JgsValue> args, int line, int col, bool messageType = true)
+    {
+        if (args.Count == 1 && IsTextScalar(args[0]) && IsMessageIdentifier(TextOf(args[0])))
+        {
+            throw new JgsRuntimeException(line, col, $"MATLAB:{verb}:missingMessageArgument",
+                "If you specify a message identifier argument, you must specify the message text argument.");
+        }
+
+        if (messageType && args.Count > 1 && IsTextScalar(args[0]) && IsErrorIdentifier(TextOf(args[0])) && !IsTextScalar(args[1]))
+        {
+            throw new JgsRuntimeException(line, col, $"MATLAB:{verb}:badMessageArgument",
+                "A message identifier must be followed by a message that is a character vector or string scalar.");
+        }
+    }
+
+    /// <summary>Whether <paramref name="text"/> is a message identifier by R2025b's stricter rule for a lone argument.</summary>
+    private static bool IsMessageIdentifier(string text)
+    {
+        string[] parts = text.Split(':');
+        return parts.Length >= 2 && parts.All(static part =>
+            part.Length > 0 && char.IsAsciiLetter(part[0]) && part.All(static c => char.IsAsciiLetterOrDigit(c) || c == '_'));
     }
 
     /// <summary>
@@ -1607,19 +1656,27 @@ internal static partial class JgsBuiltins
             return [];
         }
 
-        host.print($"The default warning state is '{(state.DefaultOn ? "on" : "off")}'. Warnings not set to the default are:");
-        host.print(string.Empty);
-        host.print("    State  Warning Identifier");
-        host.print(string.Empty);
+        // R2025b's layout (measured, open item 306): no colon after the heading, the column heads not
+        // indented and the rows by two, a blank line after the rows; the two settings are not
+        // identifiers and are not listed; and with nothing to list, one line saying so.
         string defaultState = state.DefaultOn ? "on" : "off";
-        foreach ((string id, string setting) in state.Explicit())
+        var rows = state.Explicit().Where(e => e.State != defaultState && e.Identifier is not ("backtrace" or "verbose")).ToList();
+        if (rows.Count == 0)
         {
-            if (setting != defaultState)
-            {
-                host.print($"    {setting,5}  {id}");
-            }
+            host.print($"All warnings have the state '{defaultState}'.");
+            return [];
         }
 
+        host.print($"The default warning state is '{defaultState}'. Warnings not set to the default are");
+        host.print(string.Empty);
+        host.print("State  Warning Identifier");
+        host.print(string.Empty);
+        foreach ((string id, string setting) in rows)
+        {
+            host.print($"  {setting,5}  {id}");
+        }
+
+        host.print(string.Empty);
         return [];
     }
 

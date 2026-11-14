@@ -16,10 +16,20 @@ public abstract class JgsException : Exception
     }
 
     /// <summary>The 1-based line the error refers to, or 0 when unknown.</summary>
-    public int Line { get; }
+    public int Line { get; private set; }
 
     /// <summary>The 1-based column the error refers to, or 0 when unknown.</summary>
-    public int Column { get; }
+    public int Column { get; private set; }
+
+    /// <summary>
+    /// Gives an error raised with no location the location of the statement it failed in (open
+    /// item 306): an engine warning raised as an error is thrown where no line is known.
+    /// </summary>
+    internal void PlaceAt(int line, int column)
+    {
+        Line = line;
+        Column = column;
+    }
 
     /// <summary>
     /// The file <see cref="Line"/> and <see cref="Column"/> count in, or "" when the error belongs to
@@ -92,6 +102,26 @@ public sealed class JgsRuntimeException : JgsException
 
     /// <summary>Whether the debugger's hook has already seen this error at the statement that raised it (W11): it pauses for an error once, at the innermost block.</summary>
     internal bool DebuggerSaw { get; set; }
+
+    /// <summary>
+    /// Raised at line 0 by code that knows no location, to take the line of the statement it fails
+    /// in (open item 306, ADR 0352): <see cref="JgsBuiltins.Warn(JGraphScriptGlobals, string, string)"/>'s warning raised as an error.
+    /// </summary>
+    internal bool TakesStatementLine { get; init; }
+
+    /// <summary>
+    /// The exception filter of a block's statement loop: places an error that takes its statement's
+    /// line at <paramref name="statement"/>, and never catches.
+    /// </summary>
+    internal static bool PlaceAtStatement(JgsRuntimeException error, Stmt? statement)
+    {
+        if (error.TakesStatementLine && error.Line == 0 && error.Frames.Count == 0 && statement is not null)
+        {
+            error.PlaceAt(statement.Line, statement.Column);
+        }
+
+        return false;
+    }
 
     private readonly List<(string Name, string File, int Line)> _frames = [];
     private int _lineForNextFrame = -1;

@@ -54,6 +54,10 @@ internal static partial class JgsBuiltins
         // hold a string, where a demoted argument held the char row (open item 201, ADR 0351). Both
         // still take a field name written as a string.
         "struct", "setfield",
+
+        // sprintf and fprintf refuse a string a numeric conversion meets, and read one under %f, %e
+        // and %g as the number it spells (open item 306, ADR 0352); demoted, "5" was the code 53.
+        "sprintf", "fprintf",
     };
 
     /// <summary>

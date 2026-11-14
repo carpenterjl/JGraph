@@ -445,6 +445,14 @@ internal static partial class JgsBuiltins
                 captured = host.EndCapture();
             }
 
+            // R2025b's evalc answers without the U+FFFF characters that lead its capture (measured,
+            // open item 308: evalc of fprintf('%s', char(65535)) is empty, of fprintf('a%s',
+            // char(65535)) keeps it, and of disp(char(65535)) is the newline alone).
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                captured = captured.TrimStart('\uFFFF');
+            }
+
             return JgsValue.Str(captured);
         });
 

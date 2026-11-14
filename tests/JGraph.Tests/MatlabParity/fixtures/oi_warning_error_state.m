@@ -73,7 +73,7 @@ try
 catch e
     fprintf('CHK|caught|%s %s|exact\n', class(e), e.identifier);
     fprintf('CHK|caught_msg|%s|exact\n', e.message);
-    fprintf('CHK|caught_report|%s|div=ADR0346\n', strrep(getReport(e, 'basic'), newline, '/'));
+    fprintf('CHK|caught_report|%s|exact\n', strrep(getReport(e, 'basic'), newline, '/'));
 end
 warning('on', 'oi189:k');
 % The state table.

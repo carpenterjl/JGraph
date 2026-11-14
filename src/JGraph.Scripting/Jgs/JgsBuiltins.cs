@@ -1331,6 +1331,7 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "sprintf expects a format string first.");
             }
 
+            args = PrintfArguments(args, 0, dialect!.IsMatlab);
             string format = Str("sprintf", args, 0, line, col);
             if (dialect!.IsMatlab)
             {
@@ -1342,13 +1343,13 @@ internal static partial class JgsBuiltins
                 // MATLAB flattens array arguments and cycles the format over them; JGS stays strict.
                 // MATLAB's answer is always a row, so nothing written is the 1-by-0 char (open item 31).
                 string written = dialect!.IsMatlab
-                    ? JgsSprintf.FormatMatlab(format, args.Skip(1).ToArray())
+                    ? JgsSprintf.FormatMatlab(format, args.Skip(1).ToArray(), stringRules: true)
                     : JgsSprintf.Format(format, args.Skip(1).ToArray());
                 return written.Length == 0 && dialect.IsMatlab ? EmptyChar(1, 0) : JgsValue.Str(written);
             }
             catch (FormatException ex)
             {
-                throw new JgsRuntimeException(line, col, ex.Message);
+                throw new JgsRuntimeException(line, col, (ex as JgsSprintf.PrintfRefusal)?.Identifier ?? string.Empty, ex.Message);
             }
         });
 
@@ -1372,6 +1373,7 @@ internal static partial class JgsBuiltins
                 }
             }
 
+            args = PrintfArguments(args, start, dialect!.IsMatlab);
             string format = Str("fprintf", args, start, line, col);
             if (dialect!.IsMatlab)
             {
@@ -1385,12 +1387,12 @@ internal static partial class JgsBuiltins
                 // format's own \n, so this goes through the raw (no-newline) output seam. Array
                 // arguments flatten and the format cycles under MATLAB, exactly like sprintf.
                 text = dialect!.IsMatlab
-                    ? JgsSprintf.FormatMatlab(format, args.Skip(start + 1).ToArray())
+                    ? JgsSprintf.FormatMatlab(format, args.Skip(start + 1).ToArray(), stringRules: true)
                     : JgsSprintf.Format(format, args.Skip(start + 1).ToArray());
             }
             catch (FormatException ex)
             {
-                throw new JgsRuntimeException(line, col, ex.Message);
+                throw new JgsRuntimeException(line, col, (ex as JgsSprintf.PrintfRefusal)?.Identifier ?? string.Empty, ex.Message);
             }
 
             int written;
@@ -6467,13 +6469,17 @@ internal static partial class JgsBuiltins
     private static string NotFoundNotice(JGraphScriptGlobals host, string query) =>
         $"'{(query.Length == 0 ? ResolveFolder(host, string.Empty) : query)}' not found. Check the path or file permissions.{'\n'}";
 
-    /// <summary>Anchors a (possibly empty) relative folder to the run's working directory. Patterns
-    /// cannot go through the workspace resolver — it probes for existing files.</summary>
+    /// <summary>Anchors a (possibly empty) relative folder to the current folder, the one <c>pwd</c>
+    /// reports — where <c>cd</c> moved to, else the run's working directory. Patterns cannot go
+    /// through the workspace resolver — it probes for existing files.</summary>
+    /// <remarks>
+    /// It anchored to the run's starting folder until open item 300 (ADR 0352), so after a
+    /// <c>cd</c> every relative <c>dir</c> and <c>ls</c> — <c>dir(fullfile('rel', '**'))</c> among
+    /// them — listed the folder the run began in, and usually nothing.
+    /// </remarks>
     private static string ResolveFolder(JGraphScriptGlobals host, string path)
     {
-        string baseDir = host.WorkingDirectory is { Length: > 0 } working
-            ? working
-            : Directory.GetCurrentDirectory();
+        string baseDir = host.CurrentDirectory;
         return path.Length == 0 ? baseDir : Path.IsPathRooted(path) ? path : Path.Combine(baseDir, path);
     }
 
@@ -7156,6 +7162,27 @@ internal static partial class JgsBuiltins
         axes.ZAxis.LimitMethod = method;
         axes.RAxis.LimitMethod = method;
         axes.RecomputeDataBounds();
+    }
+
+    /// <summary>
+    /// What sprintf and fprintf work from, which keep string arguments (open item 306, ADR 0352): the
+    /// format at <paramref name="formatAt"/> as its char row, and, on MATLAB's road, every value as it
+    /// was given, so the formatter can refuse a string a numeric conversion meets as R2025b does.
+    /// JGS's road demotes every string scalar, as the builtins always had them.
+    /// </summary>
+    private static IReadOnlyList<JgsValue> PrintfArguments(IReadOnlyList<JgsValue> args, int formatAt, bool matlab)
+    {
+        JgsValue[]? demoted = null;
+        for (int i = 0; i < args.Count; i++)
+        {
+            if ((i == formatAt || !matlab) && IsStringScalar(args[i]))
+            {
+                demoted ??= [.. args];
+                demoted[i] = args[i].ElementAt(0);
+            }
+        }
+
+        return demoted ?? args;
     }
 
     /// <summary>

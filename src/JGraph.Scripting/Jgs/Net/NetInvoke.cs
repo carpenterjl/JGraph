@@ -641,6 +641,7 @@ internal static class NetInvoke
             ["message"] = JgsValue.Str(message),
             ["cause"] = JgsBuiltins.NoCausesValue(),
             ["stack"] = JgsBuiltins.StackValue([]),
+            ["Correction"] = JgsBuiltins.NoCorrection(), // listed by properties already (open item 308)
         });
         exception.SetClassName(NetExceptionClass);
         return new JgsRuntimeException(line, col, identifier, message) { Carried = exception };

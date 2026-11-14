@@ -861,11 +861,7 @@ internal static partial class JgsBuiltins
     private static void WarnListenerFailure(JGraphScriptGlobals host, string where, string message)
     {
         string text = $"Error occurred while executing the listener callback {where}:\n{message}";
-        host.Warnings.Record(CallbackWarningId, text);
-        if (host.Warnings.IsOn(CallbackWarningId))
-        {
-            host.WriteWarning("Warning: " + text);
-        }
+        host.Warnings.ReportUnraisable(host, CallbackWarningId, text); // open item 306: silent in the error state
     }
 
     // --- events ---------------------------------------------------------------------------------

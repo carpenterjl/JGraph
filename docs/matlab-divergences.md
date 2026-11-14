@@ -1389,9 +1389,9 @@ probe found gaps recorded in none of the three.
 | [0342](adr/0342-groups-in-the-tree-annotation-pane.md) | groups in the tree annotation pane | Hiding a group hides its members here |
 | [0342](adr/0342-groups-in-the-tree-annotation-pane.md) | groups in the tree annotation pane | A transform moves its members' own coordinates here. |
 | [0343](adr/0343-colormap-generators-by-their-own-formula.md) | colormap generators by their own formula | `lines` repeats the classic colour order here and R2025b's newer palette there. |
-| [0346](adr/0346-warning-error-state-and-printf-text-runs.md) | warning error state and printf text runs | `getReport(ME, 'basic')` of a warning raised as an error is the message alone here |
 | [0348](adr/0348-secretid-and-help-from-files.md) | secretid and help from files | `secretID(obj)` with a secretID argument is `MATLAB:minrhs` here. |
 | [0350](adr/0350-filter-classes-and-named-time-zones.md) | filter classes and named time zones | A single filter's first final delay can differ from R2025b's in its last bit. |
 | [0350](adr/0350-filter-classes-and-named-time-zones.md) | filter classes and named time zones | Four zones R2025b names are refused here |
 | [0350](adr/0350-filter-classes-and-named-time-zones.md) | filter classes and named time zones | Seven zones' offsets differ in 2026 |
+| [0352](adr/0352-files-printf-evalc-leftovers.md) | files printf evalc leftovers | `fileread` keeps a character past the basic plane as its surrogate pair |
 

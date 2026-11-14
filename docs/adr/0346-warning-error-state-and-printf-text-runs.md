@@ -118,8 +118,13 @@ own roads.
 
 ## Divergences
 
-- **`getReport(ME, 'basic')` of a warning raised as an error is the message alone here**; R2025b heads
-  it with `Error using warning`. Fixture row `caught_report`.
+None left.
+
+Closed since: **`getReport(ME, 'basic')` of a warning raised as an error was the message alone
+here**, where R2025b heads it with `Error using warning` (open item 306, ADR 0352). The caught
+exception now remembers the built-in that raised it, and fixture row `caught_report` is an agreeing
+line. ADR 0352 also takes up four of the items still open below: an engine warning's line, the
+reports that cannot raise, string scalars under printf, and evalc's NUL.
 
 ## Still open
 

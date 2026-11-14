@@ -37,8 +37,29 @@ internal static class JgsSprintf
     /// repeats until every value is consumed — <c>sprintf('%d,', 1:5)</c> is <c>1,2,3,4,5,</c>.
     /// A pass that runs out of values mid-format stops there, as MATLAB does.
     /// </summary>
-    public static string FormatMatlab(string format, IReadOnlyList<JgsValue> args)
+    public static string FormatMatlab(string format, IReadOnlyList<JgsValue> args) =>
+        FormatMatlab(format, args, stringRules: false);
+
+    /// <summary>
+    /// A refusal R2025b's printf makes under an identifier of its own (open item 306): a string a
+    /// numeric conversion meets, one of other than one character under %c, a missing string under %s.
+    /// </summary>
+    internal sealed class PrintfRefusal(string identifier, string message) : FormatException(message)
     {
+        public string Identifier { get; } = identifier;
+    }
+
+    /// <summary>
+    /// <see cref="FormatMatlab(string, IReadOnlyList{JgsValue})"/>, with <paramref name="stringRules"/>
+    /// telling a string argument from text: sprintf and fprintf keep their strings (open item 306, ADR
+    /// 0352), and R2025b refuses a string under %d, %i, %u, %o, %x or %X (MATLAB:invalidConversion),
+    /// one of other than one character under %c (MATLAB:printf:UnableToConvertToOneElement) and a
+    /// missing one under %s or %c, and reads one under %f, %e or %g as the number it spells (NaN when
+    /// it spells none, the real part of a complex one). A '*' reads it as a number too.
+    /// </summary>
+    public static string FormatMatlab(string format, IReadOnlyList<JgsValue> args, bool stringRules)
+    {
+        HashSet<int>? strings = stringRules ? [] : null;
         // Each value remembers the argument it came from (open item 184): R2025b's %s takes the run
         // of character codes left in one numeric argument, so fprintf('arg%d\t%s\n', 2, [2 3]) writes
         // both codes under the one %s, while sprintf('%s,%s;', 65, 66, 67) is 'A,B;C,'. An empty
@@ -99,6 +120,7 @@ internal static class JgsSprintf
                 {
                     foreach (JgsValue element in elements)
                     {
+                        strings?.Add(group);
                         Add(element, group++); // each string is its own piece of text
                     }
                 }
@@ -125,7 +147,7 @@ internal static class JgsSprintf
         do
         {
             int before = at;
-            Emit(sb, format, stream, ref at, stopWhenExhausted: true, matlabRules: true, groups);
+            Emit(sb, format, stream, ref at, stopWhenExhausted: true, matlabRules: true, groups, strings);
             if (at == before)
             {
                 break; // the format consumes nothing — one pass is the whole answer
@@ -161,7 +183,7 @@ internal static class JgsSprintf
     /// each value came from, or <see cref="EmptyGroup"/> for an empty argument.
     /// </summary>
     private static void Emit(StringBuilder sb, string format, List<JgsValue> args, ref int argIndex,
-        bool stopWhenExhausted, bool matlabRules, List<int>? groups = null)
+        bool stopWhenExhausted, bool matlabRules, List<int>? groups = null, HashSet<int>? strings = null)
     {
         bool positional = false;
         for (int i = 0; i < format.Length; i++)
@@ -263,7 +285,7 @@ internal static class JgsSprintf
             int width = 0;
             if (i < format.Length && format[i] == '*')
             {
-                if (TakeStarValue(format, args, groups, ref argIndex, i, stopWhenExhausted) is not { } star)
+                if (TakeStarValue(format, args, groups, ref argIndex, i, stopWhenExhausted, strings) is not { } star)
                 {
                     return; // MATLAB stops where a '*' finds no value, as a conversion would
                 }
@@ -292,7 +314,7 @@ internal static class JgsSprintf
                 i++;
                 if (i < format.Length && format[i] == '*')
                 {
-                    if (TakeStarValue(format, args, groups, ref argIndex, i, stopWhenExhausted) is not { } star)
+                    if (TakeStarValue(format, args, groups, ref argIndex, i, stopWhenExhausted, strings) is not { } star)
                     {
                         return;
                     }
@@ -346,6 +368,14 @@ internal static class JgsSprintf
                 argIndex++;
                 sb.Append(PadText(string.Empty, spec, spec.ZeroPad ? '0' : ' '));
                 continue;
+            }
+
+            // A string, as opposed to text, meets a conversion on R2025b's terms (open item 306).
+            int target = position >= 0 ? position : argIndex;
+            if (strings is not null && groups is not null && target < args.Count && strings.Contains(groups[target])
+                && args[target].Type == JgsType.String)
+            {
+                args[target] = StringUnder(verb, args[target].AsString);
             }
 
             // Text met by a numeric conversion becomes its character codes, one value each; so does
@@ -417,7 +447,7 @@ internal static class JgsSprintf
     /// argument takes it as no width at all (measured: sprintf('%*d|', 5, []) is five blanks and a bar).
     /// </remarks>
     private static int? TakeStarValue(string format, List<JgsValue> args, List<int>? groups, ref int argIndex, int at,
-        bool stopWhenExhausted)
+        bool stopWhenExhausted, HashSet<int>? strings = null)
     {
         if (argIndex >= args.Count)
         {
@@ -435,6 +465,15 @@ internal static class JgsSprintf
             return 0;
         }
 
+        // A string gives the width it spells; one that spells none ends the pass, as R2025b's
+        // sprintf('%*d|', "x", 5) is empty (open item 306).
+        if (strings is not null && groups is not null && strings.Contains(groups[argIndex]) && args[argIndex].Type == JgsType.String)
+        {
+            JgsValue spelled = JgsBuiltins.NumberSpelledBy(args[argIndex++].AsString);
+            double number = spelled.Type == JgsType.Complex ? spelled.AsComplex.Real : spelled.AsNumber;
+            return double.IsFinite(number) ? (int)number : null;
+        }
+
         JgsValue given = args[argIndex++];
         if (given.Type is not (JgsType.Number or JgsType.Bool))
         {
@@ -442,6 +481,34 @@ internal static class JgsSprintf
         }
 
         return (int)given.AsNumber;
+    }
+
+    /// <summary>
+    /// What one string argument is to the conversion <paramref name="verb"/> (open item 306, measured
+    /// in R2025b): the text itself under %s and %c, the number it spells under %f, %e and %g, and a
+    /// refusal where R2025b refuses.
+    /// </summary>
+    private static JgsValue StringUnder(char verb, string text)
+    {
+        bool missing = JgsBuiltins.IsMissingText(text);
+        switch (verb)
+        {
+            case 'd' or 'i':
+                throw new PrintfRefusal("MATLAB:invalidConversion", "Conversion to int64 from string is not possible.");
+            case 'u' or 'o' or 'x' or 'X':
+                throw new PrintfRefusal("MATLAB:invalidConversion", "Conversion to uint64 from string is not possible.");
+            case 'c' when missing:
+                throw new PrintfRefusal("MATLAB:invalidConversion", "Conversion to char from string is not possible.");
+            case 'c' when text.Length != 1:
+                throw new PrintfRefusal("MATLAB:printf:UnableToConvertToOneElement",
+                    "Unable to convert 'string' element to exactly one element of type 'char'.");
+            case 's' when missing:
+                throw new PrintfRefusal("MATLAB:string:MissingNotSupported", "<missing> string element not supported.");
+            case 's' or 'c':
+                return JgsValue.Str(text);
+            default:
+                return missing ? JgsValue.Number(double.NaN) : JgsBuiltins.NumberSpelledBy(text);
+        }
     }
 
     /// <summary>One value written the way its specifier asks, width and all.</summary>
@@ -889,7 +956,7 @@ internal static class JgsSprintf
     /// A format with exactly one numeric conversion and nothing that reads the argument list but
     /// that conversion — no <c>*</c>, no <c>n$</c> — parsed once (I7, ADR 0326): the literal text
     /// either side of it with <c>%%</c> already folded, the conversion and its flags. Applied to one
-    /// number, it writes what <see cref="FormatMatlab"/> writes for that format and that number.
+    /// number, it writes what <see cref="FormatMatlab(string, IReadOnlyList{JgsValue})"/> writes for that format and that number.
     /// </summary>
     internal sealed class SingleNumeric
     {
@@ -914,7 +981,7 @@ internal static class JgsSprintf
         /// <summary>
         /// The parsed format, or null for anything else: no conversion or more than one, a text
         /// conversion, a star, a position, a repeated flag, a format ending inside a specifier.
-        /// Those keep <see cref="FormatMatlab"/>'s own reading and its own errors.
+        /// Those keep <see cref="FormatMatlab(string, IReadOnlyList{JgsValue})"/>'s own reading and its own errors.
         /// </summary>
         public static SingleNumeric? TryParse(string format)
         {

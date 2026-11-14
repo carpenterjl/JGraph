@@ -482,10 +482,21 @@ internal static partial class JgsBuiltins
         if (state.Running)
         {
             const string warning = "You are deleting one or more running timer objects. MATLAB has automatically stopped them before deletion.";
-            host.Warnings.Record("MATLAB:timer:deleterunning", warning);
-            if (host.Warnings.IsOn("MATLAB:timer:deleterunning"))
+            if (host.Warnings.IsError("MATLAB:timer:deleterunning"))
             {
-                host.WriteWarning("Warning: " + warning);
+                // R2025b's timer/delete raises the warning as an error, its destructor machinery
+                // reports that as a destructor's error, and the timer is deleted all the same
+                // (measured, open item 306).
+                host.Warnings.ReportUnraisable(host, "MATLAB:class:DestructorError",
+                    $"The following error was caught while executing 'timer' class destructor:\n{warning}");
+            }
+            else
+            {
+                host.Warnings.Record("MATLAB:timer:deleterunning", warning);
+                if (host.Warnings.IsOn("MATLAB:timer:deleterunning"))
+                {
+                    host.WriteWarning("Warning: " + warning);
+                }
             }
 
             StopTimer(state, runStopFcn: true, line, col);

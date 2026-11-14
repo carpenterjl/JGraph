@@ -68,7 +68,8 @@ internal static partial class JgsBuiltins
     {
         if (host.Warnings.IsError(identifier))
         {
-            throw new JgsRuntimeException(0, 0, identifier, text);
+            // No location is known here; the statement it fails in gives its line (open item 306).
+            throw new JgsRuntimeException(0, 0, identifier, text) { TakesStatementLine = true };
         }
 
         host.Warnings.Record(identifier, text);

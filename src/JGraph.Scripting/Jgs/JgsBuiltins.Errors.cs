@@ -25,11 +25,19 @@ internal static partial class JgsBuiltins
             ["message"] = JgsValue.Str(message),
             ["cause"] = NoCauses(),
             ["stack"] = stack,
+            ["Correction"] = NoCorrection(),
         });
 
         exception.SetClassName(ExceptionClass);
         return exception;
     }
+
+    /// <summary>
+    /// <c>ME.Correction</c>: R2025b's fifth MException property, the suggested fix. It is the 0-by-0
+    /// double for every error measured - error(), MException(), a misspelled function, an undefined
+    /// name, a bad index, a syntax error - since a -batch session suggests none (open item 308, ADR 0352).
+    /// </summary>
+    internal static JgsValue NoCorrection() => JgsEmpty.Zero();
 
     /// <summary>An MException with no stack — what a script builds when it calls <c>MException</c> itself.</summary>
     internal static JgsValue MakeException(string identifier, string message) =>
@@ -91,6 +99,11 @@ internal static partial class JgsBuiltins
             fields["stack"] = stack ?? StackValue([]);
         }
 
+        if (!fields.ContainsKey("Correction") && (thrown.ClassName ?? ExceptionClass) is ExceptionClass or Net.NetInvoke.NetExceptionClass)
+        {
+            fields["Correction"] = NoCorrection();
+        }
+
         JgsValue caught = JgsValue.Struct(fields);
         caught.SetClassName(thrown.ClassName ?? ExceptionClass); // a NET.NetException stays one (ADR 0174)
         return caught;
@@ -150,6 +163,21 @@ internal static partial class JgsBuiltins
     private static bool IsRaised(JgsValue exception) =>
         exception.Type == JgsType.Struct && RaisedExceptions.TryGetValue(exception.AsStructArray, out _);
 
+    /// <summary>The built-in a caught exception's report is headed with, by its payload (open item 306).</summary>
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<object, string> UsingNames = new();
+
+    /// <summary>
+    /// Marks a caught exception as one the built-in <paramref name="name"/> raised with no frame of its
+    /// own, a warning raised as an error among them, so <c>getReport</c> heads it "Error using name".
+    /// </summary>
+    internal static void MarkUsing(JgsValue exception, string name)
+    {
+        if (exception.Type == JgsType.Struct)
+        {
+            UsingNames.AddOrUpdate(exception.AsStructArray, name);
+        }
+    }
+
     /// <summary>
     /// A stack frame's name as R2025b's report header writes it: a local function of a file is
     /// <c>file&gt;local</c>, a file's own function its name (open item 13, measured).
@@ -191,6 +219,12 @@ internal static partial class JgsBuiltins
                 Arity("error", args, 1, line, col);
                 (string existingId, string existingMessage) = ReadErrorValue("error", args[0], line, col);
                 throw new JgsRuntimeException(line, col, existingId, existingMessage) { Raised = true };
+            }
+
+            // error('pkg:id') alone is refused, as warning's is (measured R2025b, open item 306).
+            if (dialect.IsMatlab)
+            {
+                RefuseLoneIdentifier("error", args, line, col, messageType: false);
             }
 
             string first = Str("error", args, 0, line, col);
@@ -267,6 +301,15 @@ internal static partial class JgsBuiltins
             // An error error() or throw raised keeps its header under 'basic' too in R2025b; a refusal
             // of the runtime's (an index past the end) is its message alone (open item 13, measured).
             basic &= !IsRaised(args[0]);
+
+            // A warning raised as an error is headed with the built-in that raised it in every form,
+            // as R2025b's "Error using warning" (open item 306, measured; its "Error in" lines are
+            // not written here, as for every other report).
+            if (args[0].Type == JgsType.Struct && UsingNames.TryGetValue(args[0].AsStructArray, out string? usingName))
+            {
+                return JgsValue.Str($"Error using {usingName}\n{message}");
+            }
+
             if (basic || stack is not { Type: JgsType.Struct } || stack.AsStructArray.Length == 0)
             {
                 return JgsValue.Str(message);

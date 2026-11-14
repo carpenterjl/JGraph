@@ -43,8 +43,8 @@ internal sealed class JgsWarningState
 
     /// <summary>
     /// Whether a warning under <paramref name="identifier"/> would be shown. An identifier in the
-    /// error state counts as on here: a caller that cannot raise an error (a destructor, a callback's
-    /// report) still shows the warning rather than swallowing it.
+    /// error state counts as on here; a caller that cannot raise an error goes through
+    /// <see cref="ReportUnraisable"/>, which shows nothing in that state, as R2025b (open item 306).
     /// </summary>
     public bool IsOn(string identifier) =>
         _states.TryGetValue(identifier, out string? state) ? state != "off" : DefaultOn;
@@ -97,6 +97,27 @@ internal sealed class JgsWarningState
         foreach (string identifier in _order)
         {
             yield return (identifier, _states[identifier]);
+        }
+    }
+
+    /// <summary>
+    /// A warning from code that cannot raise an error in its caller's place: a destructor's report,
+    /// a listener callback's. In the error state R2025b neither shows nor records it (measured, open
+    /// item 306, ADR 0352: <c>warning('error', 'MATLAB:class:DestructorError')</c> and
+    /// <c>'MATLAB:callback:error'</c> leave the console and lastwarn as they were); otherwise it is
+    /// recorded, and shown when on.
+    /// </summary>
+    public void ReportUnraisable(JGraphScriptGlobals host, string identifier, string text)
+    {
+        if (IsError(identifier))
+        {
+            return;
+        }
+
+        Record(identifier, text);
+        if (IsOn(identifier))
+        {
+            host.WriteWarning("Warning: " + text);
         }
     }
 

@@ -1,0 +1,236 @@
+CHK|dir_rel|[5 1] 5 [~/rel/.:1 ~/rel/..:1 ~/rel/a.txt:0 ~/rel/empty:1 ~/rel/sub:1]|exact
+CHK|dir_rel_pattern|[1 1] 1 [~/rel/sub/b.txt:0]|exact
+CHK|dir_rel_starstar|[15 1] 15 [~/rel/.:1 ~/rel/..:1 ~/rel/a.txt:0 ~/rel/empty:1 ~/rel/sub:1 ~/rel/empty/.:1 ~/rel/empty/..:1 ~/rel/sub/.:1 ~/rel/sub/..:1 ~/rel/sub/b.txt:0 ~/rel/sub/deep:1 ~/rel/sub/z.m:0 ~/rel/sub/deep/.:1 ~/rel/sub/deep/..:1 ~/rel/sub/deep/c.txt:0]|exact
+CHK|dir_rel_starstar_txt|[3 1] 3 [~/rel/a.txt:0 ~/rel/sub/b.txt:0 ~/rel/sub/deep/c.txt:0]|exact
+CHK|dir_slash_starstar|[3 1] 3 [~/rel/a.txt:0 ~/rel/sub/b.txt:0 ~/rel/sub/deep/c.txt:0]|exact
+CHK|dir_cwd_starstar|[1 1] 1 [~/rel/sub/z.m:0]|exact
+CHK|dir_dot_starstar|[3 1] 3 [~/rel/a.txt:0 ~/rel/sub/b.txt:0 ~/rel/sub/deep/c.txt:0]|exact
+CHK|dir_mid_starstar|[3 1] 3 [~/rel/sub/deep/.:1 ~/rel/sub/deep/..:1 ~/rel/sub/deep/c.txt:0]|exact
+CHK|dir_sub_starstar|[8 1] 8 [~/rel/sub/.:1 ~/rel/sub/..:1 ~/rel/sub/b.txt:0 ~/rel/sub/deep:1 ~/rel/sub/z.m:0 ~/rel/sub/deep/.:1 ~/rel/sub/deep/..:1 ~/rel/sub/deep/c.txt:0]|exact
+CHK|dir_missing_starstar|[0 1] 0 []|exact
+CHK|dir_abs_starstar|[3 1] 3 [~/rel/a.txt:0 ~/rel/sub/b.txt:0 ~/rel/sub/deep/c.txt:0]|exact
+CHK|del_star|ok MATLAB:DELETE:DirectoryDeletion '~/d/fold.tmp' is a directory.  Use rmdir to delete directories.|exact
+CHK|after_star|q1.dat,q22.dat,y.txt|exact
+CHK|del_sub_wild|ok  |exact
+CHK|after_sub_wild|b.txt|exact
+CHK|del_question|ok  |exact
+CHK|after_question|q22.dat,y.txt|exact
+CHK|del_nomatch|ok  |exact
+CHK|del_missing|ok MATLAB:DELETE:FileNotFound File 'missing.txt' not found.|exact
+CHK|del_missing_folder|ok MATLAB:DELETE:FileNotFound File 'nodir/missing.txt' not found.|exact
+CHK|del_folder|ok MATLAB:DELETE:DirectoryDeletion 'sub' is a directory.  Use rmdir to delete directories.|exact
+CHK|del_empty|ok MATLAB:DELETE:FileNotFound File '' not found.|exact
+CHK|del_dot|ok MATLAB:DELETE:DirectoryDeletion '.' is a directory.  Use rmdir to delete directories.|exact
+CHK|del_bracket|ok MATLAB:DELETE:FileNotFound File '[ab].tmp' not found.|exact
+CHK|del_two|ok  |exact
+CHK|del_two_one_missing|ok MATLAB:DELETE:FileNotFound File 'nothere.tmp' not found.|exact
+CHK|after_two|q22.dat,y.txt|exact
+CHK|del_string_wild|ok  |exact
+CHK|after_string_wild|q22.dat,y.txt|exact
+CHK|del_string_missing|ok MATLAB:DELETE:FileNotFound File 'gone.txt' not found.|exact
+CHK|del_wild_folder_part|ok  |exact
+CHK|after_wild_folder_part|1|exact
+CHK|del_case|ok MATLAB:DELETE:DirectoryDeletion '~/d/fold.tmp' is a directory.  Use rmdir to delete directories.|exact
+CHK|after_case|q22.dat,y.txt|exact
+CHK|del_readonly|ok  |exact
+CHK|after_readonly|0|exact
+CHK|del_abs_wild|ok  |exact
+CHK|after_abs_wild|0|exact
+CHK|del_cell|ERR MATLAB:string Name must be a text scalar.|exact
+CHK|del_string_array|ERR MATLAB:string Name must be a text scalar.|exact
+CHK|del_none|ERR MATLAB:minrhs Not enough input arguments.|exact
+CHK|del_missing_error|ERR MATLAB:DELETE:FileNotFound File 'missing.txt' not found.|exact
+CHK|fr_utf8|char n=2 [233 8364]|exact
+CHK|fr_cp1252|char n=2 [233 8364]|exact
+CHK|fr_mixed_end|char n=2 [233 65533]|exact
+CHK|fr_mixed_mid|char n=4 [195 169 233 65]|exact
+CHK|fr_undefined|char n=6 [129 141 143 144 157 65]|exact
+CHK|fr_high|char n=32 [8364 129 8218 402 .. 339 157 382 376]|exact
+CHK|fr_bom_ascii|char n=3 [65279 97 98]|exact
+CHK|fr_bom_only|char n=1 [65279]|exact
+CHK|fr_bom_bad|char n=5 [239 187 191 233 97]|exact
+CHK|fr_bom_v10_i1|char n=12 [65279 233 233 233 233 233 233 233 233 233 233 65533]|exact
+CHK|fr_bom_v9_i1|char n=22 [239 187 191 195 169 195 169 195 169 195 169 195 169 195 169 195 169 195 169 195 169 8364]|exact
+CHK|fr_v11_i1|char n=23 [195 169 195 169 195 169 195 169 195 169 195 169 195 169 195 169 195 169 195 169 195 169 8364]|exact
+CHK|fr_v4|char n=4 [233 233 233 233]|exact
+CHK|fr_lone_cont|char n=3 [97 8364 98]|exact
+CHK|fr_overlong|char n=2 [65533 65533]|exact
+CHK|fr_surrogate|char n=3 [65533 65533 65533]|exact
+CHK|fr_astral|char n=3 [26 97 26]|div=ADR0352|diverges|char n=5 [55357 56832 97 55357 56833]
+CHK|fr_truncated|char n=3 [97 226 8218]|exact
+CHK|fr_trail_cut|char n=2 [233 65533]|exact
+CHK|fr_c3c3|char n=3 [195 195 169]|exact
+CHK|fr_e98080|char n=1 [36864]|exact
+CHK|fr_f8|char n=5 [248 710 8364 8364 8364]|exact
+CHK|fr_sjis|char n=4 [8218 160 8218 162]|exact
+CHK|fr_utf16le_bom|char n=3 [65279 97 98]|exact
+CHK|fr_utf16be_bom|char n=3 [65279 97 98]|exact
+CHK|fr_latin_a0ff|char n=2 [160 255]|exact
+CHK|fr_nul|char n=3 [97 0 98]|exact
+CHK|fr_crlf|char n=4 [97 13 10 98]|exact
+CHK|fr_late_valid|char n=9001 [97 97 97 97 .. 97 97 97 233]|exact
+CHK|fr_late_broken|char n=9005 [195 169 32 97 .. 97 97 233 32]|exact
+CHK|enc_utf8_bad|char n=1 [65533]|exact
+CHK|enc_utf8_mixed|char n=3 [233 65533 65]|exact
+CHK|enc_utf8_bom|char n=3 [65279 97 98]|exact
+CHK|enc_1252_utf8|char n=5 [195 169 226 8218 172]|exact
+CHK|enc_1252_high|char n=32 [8364 129 8218 402 .. 339 157 382 376]|exact
+CHK|enc_1252_bom|char n=5 [239 187 191 97 98]|exact
+CHK|enc_latin1_high|char n=32 [128 129 130 131 .. 156 157 158 159]|exact
+CHK|enc_ascii_utf8|char n=5 [65533 65533 65533 65533 65533]|exact
+CHK|enc_utf16le|char n=3 [65279 97 98]|exact
+CHK|enc_string|char n=1 [65533]|exact
+CHK|enc_bogus|MATLAB:iofun:InvalidEncoding|exact
+CHK|enc_bogus_msg|The encoding 'bogus-enc' is not valid.|exact
+CHK|pf_d_str|MATLAB:invalidConversion|exact
+CHK|pf_d_str_msg|Conversion to int64 from string is not possible.|exact
+CHK|pf_d_str_text|MATLAB:invalidConversion|exact
+CHK|pf_d_str_text_msg|Conversion to int64 from string is not possible.|exact
+CHK|pf_i_str|MATLAB:invalidConversion|exact
+CHK|pf_i_str_msg|Conversion to int64 from string is not possible.|exact
+CHK|pf_u_str|MATLAB:invalidConversion|exact
+CHK|pf_u_str_msg|Conversion to uint64 from string is not possible.|exact
+CHK|pf_x_str|MATLAB:invalidConversion|exact
+CHK|pf_x_str_msg|Conversion to uint64 from string is not possible.|exact
+CHK|pf_o_str|MATLAB:invalidConversion|exact
+CHK|pf_o_str_msg|Conversion to uint64 from string is not possible.|exact
+CHK|pf_f_str_text|char[1 3]'NaN'|exact
+CHK|pf_e_str|char[1 12]'1.000000e+00'|exact
+CHK|pf_g_str|char[1 3]'1.5'|exact
+CHK|pf_g_str_spaces|char[1 2]'2;'|exact
+CHK|pf_g_str_hex|char[1 4]'NaN;'|exact
+CHK|pf_g_str_complex|char[1 2]'1;'|exact
+CHK|pf_e_str_empty|char[1 4]'NaN;'|exact
+CHK|pf_f_strarr|char[1 13]'1.000000;NaN;'|exact
+CHK|pf_c_str1|char[1 2]'a;'|exact
+CHK|pf_c_str2|MATLAB:printf:UnableToConvertToOneElement|exact
+CHK|pf_c_str2_msg|Unable to convert 'string' element to exactly one element of type 'char'.|exact
+CHK|pf_c_str0|MATLAB:printf:UnableToConvertToOneElement|exact
+CHK|pf_c_str0_msg|Unable to convert 'string' element to exactly one element of type 'char'.|exact
+CHK|pf_c_strarr|char[1 4]'a;b;'|exact
+CHK|pf_c_strarr2|MATLAB:printf:UnableToConvertToOneElement|exact
+CHK|pf_c_strarr2_msg|Unable to convert 'string' element to exactly one element of type 'char'.|exact
+CHK|pf_c_str_num|char[1 3]'aB;'|exact
+CHK|pf_s_str|char[1 4]'abc;'|exact
+CHK|pf_s_width|char[1 6]'   ab;'|exact
+CHK|pf_s_strarr|char[1 4]'a b;'|exact
+CHK|pf_s_num_after|char[1 5]'ab;A;'|exact
+CHK|pf_d_s_mixed|char[1 4]'1 x;'|exact
+CHK|pf_d_s_pairs|char[1 9]'1 ab;2 c;'|exact
+CHK|pf_d_strarr|MATLAB:invalidConversion|exact
+CHK|pf_d_strarr_msg|Conversion to int64 from string is not possible.|exact
+CHK|pf_s_d_two|MATLAB:invalidConversion|exact
+CHK|pf_s_d_two_msg|Conversion to int64 from string is not possible.|exact
+CHK|pf_d_after_num|MATLAB:invalidConversion|exact
+CHK|pf_d_after_num_msg|Conversion to int64 from string is not possible.|exact
+CHK|pf_d_empty_str|MATLAB:invalidConversion|exact
+CHK|pf_d_empty_str_msg|Conversion to int64 from string is not possible.|exact
+CHK|pf_d_missing|MATLAB:invalidConversion|exact
+CHK|pf_d_missing_msg|Conversion to int64 from string is not possible.|exact
+CHK|pf_s_missing|MATLAB:string:MissingNotSupported|exact
+CHK|pf_s_missing_msg|<missing> string element not supported.|exact
+CHK|pf_c_missing|MATLAB:invalidConversion|exact
+CHK|pf_c_missing_msg|Conversion to char from string is not possible.|exact
+CHK|pf_f_missing|char[1 4]'NaN;'|exact
+CHK|pf_star_str|char[1 4]'  5;'|exact
+CHK|pf_star_str_bad|char[1 0]''|exact
+CHK|pf_prec_star_str|char[1 5]'3.14;'|exact
+CHK|pf_width_d_str|MATLAB:invalidConversion|exact
+CHK|pf_width_d_str_msg|Conversion to int64 from string is not possible.|exact
+CHK|pf_no_conversion|char[1 3]'abc'|exact
+CHK|pf_format_string|string[1 1]"5;"|exact
+CHK|pf_format_string_escape|string[1 1]"a	b5"|exact
+CHK|pf_fprintf_d_str|MATLAB:invalidConversion|exact
+CHK|pf_fprintf_d_str_msg|Conversion to int64 from string is not possible.|exact
+CHK|pf_fprintf_c_str2|MATLAB:printf:UnableToConvertToOneElement|exact
+CHK|pf_fprintf_c_str2_msg|Unable to convert 'string' element to exactly one element of type 'char'.|exact
+CHK|pf_fprintf_s_str|char[1 3]'ab;'|exact
+CHK|pf_fprintf_format_string|char[1 2]'7;'|exact
+CHK|lone_1_warning|ERR MATLAB:warning:missingMessageArgument|exact
+CHK|lone_1_error|MATLAB:error:missingMessageArgument If you specify a message identifier argument, you must specify the message text argument.|exact
+CHK|lone_2_warning|ERR MATLAB:warning:missingMessageArgument|exact
+CHK|lone_2_error|MATLAB:error:missingMessageArgument If you specify a message identifier argument, you must specify the message text argument.|exact
+CHK|lone_3_warning|ERR MATLAB:warning:missingMessageArgument|exact
+CHK|lone_3_error|MATLAB:error:missingMessageArgument If you specify a message identifier argument, you must specify the message text argument.|exact
+CHK|lone_4_warning|ERR MATLAB:warning:missingMessageArgument|exact
+CHK|lone_4_error|MATLAB:error:missingMessageArgument If you specify a message identifier argument, you must specify the message text argument.|exact
+CHK|lone_5_warning|ERR MATLAB:warning:missingMessageArgument|exact
+CHK|lone_5_error|MATLAB:error:missingMessageArgument If you specify a message identifier argument, you must specify the message text argument.|exact
+CHK|lone_6_warning|ERR MATLAB:warning:missingMessageArgument|exact
+CHK|lone_6_error|MATLAB:error:missingMessageArgument If you specify a message identifier argument, you must specify the message text argument.|exact
+CHK|lone_7_warning|ok  pkg:|exact
+CHK|lone_7_error| pkg:|exact
+CHK|lone_8_warning|ok  :pkg|exact
+CHK|lone_8_error| :pkg|exact
+CHK|lone_9_warning|ok  a::b|exact
+CHK|lone_9_error| a::b|exact
+CHK|lone_10_warning|ok  a: b|exact
+CHK|lone_10_error| a: b|exact
+CHK|lone_11_warning|ok  a:%d|exact
+CHK|lone_11_error| a:%d|exact
+CHK|lone_12_warning|ok  a:1b|exact
+CHK|lone_12_error| a:1b|exact
+CHK|lone_13_warning|ok  _a:b|exact
+CHK|lone_13_error| _a:b|exact
+CHK|lone_14_warning|ok  a:_b|exact
+CHK|lone_14_error| a:_b|exact
+CHK|lone_15_warning|ok  a-b:c|exact
+CHK|lone_15_error| a-b:c|exact
+CHK|lone_16_warning|ok  a.b:c|exact
+CHK|lone_16_error| a.b:c|exact
+CHK|lone_17_warning|ok  plain text|exact
+CHK|lone_17_error| plain text|exact
+CHK|lone_18_warning|ok  http://x.y|exact
+CHK|lone_18_error| http://x.y|exact
+CHK|lone_string_warning|ERR MATLAB:warning:missingMessageArgument|exact
+CHK|lone_string_error|MATLAB:error:missingMessageArgument If you specify a message identifier argument, you must specify the message text argument.|exact
+CHK|warn_id_number|MATLAB:warning:badMessageArgument|exact
+CHK|warn_id_number_msg|A message identifier must be followed by a message that is a character vector or string scalar.|exact
+CHK|warn_struct_message|MATLAB:warning:missingStructureField|exact
+CHK|warn_struct_message_msg|The input to WARNING must have fields named 'state' and 'identifier'.|exact
+CHK|table_all_on|All warnings have the state 'on'./|exact
+CHK|table_backtrace_off|All warnings have the state 'on'./|exact
+CHK|table_explicit_on|All warnings have the state 'on'./|exact
+CHK|table_two|The default warning state is 'on'. Warnings not set to the default are//State  Warning Identifier//    off  ofp:a/  error  ofp:b//|exact
+CHK|table_query_all|The default warning state is 'on'. Warnings not set to the default are//State  Warning Identifier//    off  ofp:a/  error  ofp:b//|exact
+CHK|table_all_off|All warnings have the state 'off'./|exact
+CHK|table_default_off|The default warning state is 'off'. Warnings not set to the default are//State  Warning Identifier//     on  ofp:c//|exact
+CHK|report_basic|Error using warning/raised 4|exact
+CHK|report_fn_basic|Error using warning/from a function|exact
+CHK|report_fn_top_line|384|exact
+CHK|engine_warn_id|MATLAB:colon:nonIntegerIndex|exact
+CHK|engine_warn_line|389|exact
+CHK|engine_warn_basic|Integer operands are required for colon operator when used as index.|exact
+CHK|listener_error_state|out=0 lastwarn= 0|exact
+CHK|listener_on|MATLAB:callback:error|exact
+CHK|destructor_error_state|out=0 lastwarn= 0|exact
+CHK|timer_delete_error_state|MATLAB:class:DestructorError The following error was caught while executing 'timer' class destructor: valid=0|exact
+CHK|ev_fprintf_nul|[97 32 98]|exact
+CHK|ev_disp_nul|[97 32 98 10]|exact
+CHK|ev_disp_two_nul|[32 32 10]|exact
+CHK|ev_format_nul|[97 32 98]|exact
+CHK|ev_escape_nul|[97 32 98]|exact
+CHK|ev_disp_string_nul|[97 32 98 10]|exact
+CHK|ev_error_message_nul|[97 32 98 10]|exact
+CHK|ev_ffff_alone|[]|exact
+CHK|ev_ffff_two|[]|exact
+CHK|ev_a_ffff_b|[97 65535 98]|exact
+CHK|ev_ffff_then_a|97|exact
+CHK|ev_a_then_ffff|[97 65535]|exact
+CHK|ev_two_writes|[97 65535]|exact
+CHK|ev_ffff_then_write|98|exact
+CHK|ev_disp_ffff|10|exact
+CHK|ev_ffff_nl|10|exact
+CHK|ev_nul_ffff|[32 65535]|exact
+CHK|ev_ffff_nul|32|exact
+CHK|ev_fffe|65534|exact
+CHK|ev_controls|[1 7 8 9 27 127 128 159 160]|exact
+CHK|sprintf_keeps_nul|[97 0 98]|exact
+CHK|file_keeps_nul|[97 0 98 239 191 191 99]|exact
+CHK|corr_error|double [0 0]|exact
+CHK|corr_undefined|double [0 0]|exact
+CHK|corr_index|double [0 0]|exact
+CHK|corr_built|double [0 0]|exact
+CHK|corr_properties|identifier,message,cause,stack,Correction|exact
+CHK|corr_isprop|1|exact
+CHK|corr_thrown|double [0 0]|exact

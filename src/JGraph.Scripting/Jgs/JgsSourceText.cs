@@ -56,6 +56,114 @@ public static class JgsSourceText
         }
     }
 
+    /// <summary>
+    /// The text <paramref name="bytes"/> hold as R2025b's <c>fileread</c> reads them: <c>fopen</c>
+    /// with no encoding named, which detects one (open item 303, ADR 0352, 49 files measured).
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The rule is ICU's UTF-8 recogniser over the whole file. It counts the complete multi-byte
+    /// sequences (by their lead and trail bits alone, so an overlong form or a surrogate counts) and
+    /// the broken ones: a byte that cannot lead, or a lead whose trail stops early. A sequence the
+    /// file's end cuts short is neither. A file starting with the UTF-8 byte-order mark counts the
+    /// mark as one sequence. The file is UTF-8 when nothing is broken and something is valid or the
+    /// mark is there, or when the mark is there and the valid outnumber the broken more than ten to
+    /// one. Every other file, plain ASCII included, is Windows-1252, the system's encoding here.
+    /// </para>
+    /// <para>
+    /// Read as UTF-8, a broken sequence is U+FFFD (as .NET decodes it), the byte-order mark stays as
+    /// U+FEFF, and a character past the basic plane is its surrogate pair. R2025b writes U+001A for
+    /// one, losing it: a defect of its own (ADR 0338 saw it too), and a divergence here. A UTF-16
+    /// byte-order mark reads the file in that order, its mark kept. Measured cases:
+    /// <c>C3 A9 E9</c> (the E9 cut short by the end) is U+00E9 U+FFFD; <c>C3 A9 E9 41</c> is four
+    /// Windows-1252 characters; eleven <c>C3 A9</c> and one lone <c>80</c> are Windows-1252, but the
+    /// mark, ten <c>C3 A9</c> and a lone <c>80</c> are UTF-8.
+    /// </para>
+    /// <para>
+    /// This is not <see cref="Decode"/>'s rule for a code file, which needs every byte valid and
+    /// drops the mark (ADR 0338). Whether R2025b's parser follows ICU too was not measured.
+    /// </para>
+    /// </remarks>
+    public static string DecodeDetected(byte[] bytes)
+    {
+        ArgumentNullException.ThrowIfNull(bytes);
+        ReadOnlySpan<byte> span = bytes;
+        if (span.StartsWith((ReadOnlySpan<byte>)[0xFF, 0xFE]))
+        {
+            return Encoding.Unicode.GetString(bytes);
+        }
+
+        if (span.StartsWith((ReadOnlySpan<byte>)[0xFE, 0xFF]))
+        {
+            return Encoding.BigEndianUnicode.GetString(bytes);
+        }
+
+        return RecognisedAsUtf8(span)
+            ? new UTF8Encoding(encoderShouldEmitUTF8Identifier: false).GetString(bytes)
+            : Windows1252(span);
+    }
+
+    /// <summary>The bytes as Windows-1252 text, every byte one character (the undefined five as C1 controls).</summary>
+    internal static string Windows1252Text(byte[] bytes) => Windows1252(bytes);
+
+    /// <summary>ICU's UTF-8 recogniser (<c>CharsetRecog_UTF8::match</c>) at a confidence of 80 or more.</summary>
+    private static bool RecognisedAsUtf8(ReadOnlySpan<byte> bytes)
+    {
+        bool mark = bytes.StartsWith((ReadOnlySpan<byte>)[0xEF, 0xBB, 0xBF]);
+        int valid = 0;
+        int broken = 0;
+        for (int i = 0; i < bytes.Length; i++)
+        {
+            int b = bytes[i];
+            if ((b & 0x80) == 0)
+            {
+                continue;
+            }
+
+            int trail;
+            if ((b & 0xE0) == 0xC0)
+            {
+                trail = 1;
+            }
+            else if ((b & 0xF0) == 0xE0)
+            {
+                trail = 2;
+            }
+            else if ((b & 0xF8) == 0xF0)
+            {
+                trail = 3;
+            }
+            else
+            {
+                broken++;
+                continue;
+            }
+
+            while (true)
+            {
+                i++;
+                if (i >= bytes.Length)
+                {
+                    break;
+                }
+
+                if ((bytes[i] & 0xC0) != 0x80)
+                {
+                    broken++; // the byte that broke it is not read as a lead (ICU steps past it)
+                    break;
+                }
+
+                if (--trail == 0)
+                {
+                    valid++;
+                    break;
+                }
+            }
+        }
+
+        return (mark && broken == 0) || (mark && valid > broken * 10) || (valid > 0 && broken == 0);
+    }
+
     private static string Windows1252(ReadOnlySpan<byte> bytes)
     {
         var text = new StringBuilder(bytes.Length);

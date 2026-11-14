@@ -1268,11 +1268,7 @@ internal sealed partial class Interpreter
             string text = $"The following error was caught while executing '{instance.Class.Name}' class destructor:\n{failure.Message}";
             if (Host is { } host)
             {
-                host.Warnings.Record(DestructorWarningId, text);
-                if (host.Warnings.IsOn(DestructorWarningId))
-                {
-                    host.WriteWarning("Warning: " + text);
-                }
+                host.Warnings.ReportUnraisable(host, DestructorWarningId, text); // open item 306: silent in the error state
             }
         }
     }
@@ -1540,6 +1536,7 @@ internal sealed partial class Interpreter
 
         // The plain path stays allocation-free and hook-free — full speed for normal runs.
         _blockDepth++;
+        Stmt? running = null;
         try
         {
             foreach (Stmt statement in statements)
@@ -1550,6 +1547,7 @@ internal sealed partial class Interpreter
                     StatementEpoch++;
                 }
 
+                running = statement;
                 Completion completion = Execute(statement, env);
                 if (completion.Kind != CompletionKind.Normal)
                 {
@@ -1558,6 +1556,10 @@ internal sealed partial class Interpreter
             }
 
             return Completion.Normal;
+        }
+        catch (JgsRuntimeException error) when (JgsRuntimeException.PlaceAtStatement(error, running))
+        {
+            throw; // never reached: the filter only places an error raised with no line (open item 306)
         }
         finally
         {
@@ -1596,6 +1598,10 @@ internal sealed partial class Interpreter
                 try
                 {
                     completion = Execute(block.Statements[i], env);
+                }
+                catch (JgsRuntimeException error) when (JgsRuntimeException.PlaceAtStatement(error, block.Statements[i]))
+                {
+                    throw; // never reached: the filter only places an error raised with no line (open item 306)
                 }
                 catch (JgsRuntimeException error) when (!error.DebuggerSaw)
                 {
@@ -2712,6 +2718,10 @@ internal sealed partial class Interpreter
             if (error.Raised)
             {
                 JgsBuiltins.MarkRaised(caught);
+            }
+            else if (error.UsingName is { } refused)
+            {
+                JgsBuiltins.MarkUsing(caught, refused); // getReport's "Error using warning" (open item 306)
             }
 
             handler.Declare(name, caught);

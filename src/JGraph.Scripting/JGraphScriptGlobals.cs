@@ -111,7 +111,7 @@ public sealed class JGraphScriptGlobals
     /// <summary>Writes a value followed by a newline to the output console (C# scripts).</summary>
     public void print(object? value = null)
     {
-        string text = Format(value);
+        string text = Blanked(Format(value));
         if (_capture is { } buffer)
         {
             buffer.Append(text).Append('\n');
@@ -132,6 +132,7 @@ public sealed class JGraphScriptGlobals
     /// <summary>Writes raw text (no newline) to the output console. Backs Python's redirected stdout.</summary>
     public void WriteOut(string text)
     {
+        text = Blanked(text);
         if (_capture is { } buffer)
         {
             buffer.Append(text);
@@ -142,6 +143,15 @@ public sealed class JGraphScriptGlobals
         _context.Output.Write(text);
         Record(text);
     }
+
+    /// <summary>
+    /// What the console shows of <paramref name="text"/>: R2025b's console and <c>evalc</c> show the
+    /// NUL character as a blank (measured, open item 308, ADR 0352: <c>evalc('fprintf(''a%sb'',
+    /// char(0))')</c> is <c>'a b'</c>, and so for disp, a display and a warning). A file written with
+    /// fprintf keeps it. MATLAB-dialect code only; JGS writes what it was given.
+    /// </summary>
+    private static string Blanked(string text) =>
+        Jgs.JgsRunningDialect.ThreadIsMatlab && text.Contains('\0', StringComparison.Ordinal) ? text.Replace('\0', ' ') : text;
 
     // --- Diary ------------------------------------------------------------------------------------
 
@@ -344,6 +354,7 @@ public sealed class JGraphScriptGlobals
     /// </summary>
     internal void WriteWarning(string text)
     {
+        text = Blanked(text);
         if (_capture is { } buffer)
         {
             buffer.Append(text).Append('\n');

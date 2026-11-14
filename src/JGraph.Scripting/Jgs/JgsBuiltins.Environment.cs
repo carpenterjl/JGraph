@@ -154,9 +154,26 @@ internal static partial class JgsBuiltins
                     continue;
                 }
 
+                if (JgsRunningDialect.ThreadIsMatlab)
+                {
+                    // R2025b's names: one text scalar each, a pattern among them (open item 300).
+                    if (!IsTextScalar(args[i]))
+                    {
+                        throw new JgsRuntimeException(line, col, "MATLAB:string", "Name must be a text scalar.");
+                    }
+
+                    DeleteNamedFiles(host, TextOf(args[i]), line, col);
+                    continue;
+                }
+
                 string path = host.Resolve(Str("delete", args, i, line, col));
                 host.NoteFileChanging(path);
                 File.Delete(path);
+            }
+
+            if (args.Count == 0 && JgsRunningDialect.ThreadIsMatlab)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
             }
 
             return JgsValue.Null;
@@ -229,6 +246,87 @@ internal static partial class JgsBuiltins
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
         {
             throw new JgsRuntimeException(line, col, $"{name}: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// The MATLAB dialect's <c>delete(name)</c> of files, as R2025b deletes them (open item 300,
+    /// ADR 0352, measured):
+    /// <list type="bullet">
+    /// <item>A name holding <c>*</c> or <c>?</c> anywhere is a pattern over its last part. Every
+    /// file it matches in the current folder (or the folder it names) is deleted, read-only ones
+    /// included. A folder it matches warns <c>MATLAB:DELETE:DirectoryDeletion</c> at its full path.
+    /// A pattern that matches nothing, or whose folder part does not exist, is silent.</item>
+    /// <item>A plain name that is a folder warns <c>DirectoryDeletion</c>, and one that is not
+    /// there warns <c>MATLAB:DELETE:FileNotFound</c>, each with the name as given.</item>
+    /// </list>
+    /// The warnings go through <see cref="Warn(JGraphScriptGlobals, string, string)"/>, so <c>warning('error', id)</c> raises them.
+    /// </summary>
+    private static void DeleteNamedFiles(JGraphScriptGlobals host, string name, int line, int col)
+    {
+        if (name.IndexOfAny(['*', '?']) >= 0)
+        {
+            string part = Path.GetDirectoryName(name) ?? string.Empty;
+            string folder = Path.IsPathRooted(part) ? part : Path.Combine(host.CurrentDirectory, part);
+            string pattern = Path.GetFileName(name);
+            if (part.IndexOfAny(['*', '?']) >= 0 || pattern.Length == 0 || !Directory.Exists(folder))
+            {
+                return;
+            }
+
+            foreach (string entry in Directory.EnumerateFileSystemEntries(folder, pattern, FileVerbMatching).Order(StringComparer.Ordinal))
+            {
+                if (Directory.Exists(entry))
+                {
+                    Warn(host, "MATLAB:DELETE:DirectoryDeletion",
+                        $"'{Path.GetFullPath(entry)}' is a directory.  Use rmdir to delete directories.");
+                    continue;
+                }
+
+                RemoveFile(host, entry, line, col);
+            }
+
+            return;
+        }
+
+        string path = name.Length == 0 ? string.Empty : Path.IsPathRooted(name) ? name : Path.Combine(host.CurrentDirectory, name);
+        if (name.Length > 0 && !File.Exists(path) && !Directory.Exists(path)
+            && host.Resolve(name) is var resolved && (File.Exists(resolved) || Directory.Exists(resolved)))
+        {
+            path = resolved;
+        }
+
+        if (name.Length > 0 && Directory.Exists(path))
+        {
+            Warn(host, "MATLAB:DELETE:DirectoryDeletion", $"'{name}' is a directory.  Use rmdir to delete directories.");
+        }
+        else if (name.Length == 0 || !File.Exists(path))
+        {
+            Warn(host, "MATLAB:DELETE:FileNotFound", $"File '{name}' not found.");
+        }
+        else
+        {
+            RemoveFile(host, path, line, col);
+        }
+    }
+
+    /// <summary>Deletes one file, read-only or not, as R2025b's <c>delete</c> does (measured).</summary>
+    private static void RemoveFile(JGraphScriptGlobals host, string path, int line, int col)
+    {
+        host.NoteFileChanging(path);
+        try
+        {
+            FileAttributes attributes = File.GetAttributes(path);
+            if (attributes.HasFlag(FileAttributes.ReadOnly))
+            {
+                File.SetAttributes(path, attributes & ~FileAttributes.ReadOnly);
+            }
+
+            File.Delete(path);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            throw new JgsRuntimeException(line, col, $"delete: {ex.Message}");
         }
     }
 

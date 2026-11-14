@@ -121,8 +121,8 @@ internal static partial class JgsBuiltins
 
     /// <summary>
     /// <c>fileread(file)</c> and <c>fileread(file, 'Encoding', name)</c> (open item 34, measured in
-    /// R2025b): the whole file as one char row, line ends kept, read as UTF-8 unless an encoding is
-    /// named; an empty file is <c>''</c>.
+    /// R2025b): the whole file as one char row, line ends kept, in the encoding R2025b's fopen detects
+    /// (UTF-8 or Windows-1252, open item 303) unless one is named; an empty file is <c>''</c>.
     /// </summary>
     private static JgsValue FileRead(JGraphScriptGlobals host, IReadOnlyList<JgsValue> args, int line, int col)
     {
@@ -195,10 +195,34 @@ internal static partial class JgsBuiltins
                 $"Could not open file {name}. No such file or directory.");
         }
 
-        // UTF-8 by default. A byte-order mark is kept as the character U+FEFF, as R2025b keeps it
-        // (measured), so GetString and not a reader that would step over it.
-        System.Text.Encoding reading = encoding ?? new System.Text.UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
-        return JgsValue.Str(reading.GetString(bytes));
+        // With no encoding named, R2025b's fopen detects one: UTF-8 or Windows-1252 for the whole
+        // file, by ICU's UTF-8 recogniser (open item 303, ADR 0352). A byte-order mark is kept as the
+        // character U+FEFF, as R2025b keeps it (measured).
+        // The JGS dialect keeps reading UTF-8.
+        if (encoding is null)
+        {
+            return JgsValue.Str(JgsRunningDialect.ThreadIsMatlab
+                ? JgsSourceText.DecodeDetected(bytes)
+                : new System.Text.UTF8Encoding(encoderShouldEmitUTF8Identifier: false).GetString(bytes));
+        }
+
+        // A named encoding decodes as R2025b's does (measured): windows-1252 is the real code page,
+        // its undefined five bytes the C1 controls, not ISO-8859-1; US-ASCII reads a byte past 127
+        // as U+FFFD, not '?'.
+        string key = encoding.WebName.Replace("-", string.Empty, StringComparison.Ordinal).ToLowerInvariant();
+        string chosen = TextOf(args[^1]).Replace("-", string.Empty, StringComparison.Ordinal).ToLowerInvariant();
+        if (chosen is "windows1252" or "cp1252")
+        {
+            return JgsValue.Str(JgsSourceText.Windows1252Text(bytes));
+        }
+
+        if (key == "usascii")
+        {
+            encoding = System.Text.Encoding.GetEncoding("us-ascii", System.Text.EncoderFallback.ReplacementFallback,
+                new System.Text.DecoderReplacementFallback("�"));
+        }
+
+        return JgsValue.Str(encoding.GetString(bytes));
     }
 
     /// <summary>
