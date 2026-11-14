@@ -1,0 +1,151 @@
+CHK|zone_01|cell[1 7]{char[1 16]'America/New_York';char[1 11]'EST/EST/EST';char[1 11]'EDT/EDT/EDT';char[1 5]'17:00';char[1 5]'16:00';logical[1 1] 0;logical[1 1] 1}|exact
+CHK|zone_02|cell[1 7]{char[1 15]'America/Chicago';char[1 11]'CST/CST/CST';char[1 11]'CDT/CDT/CDT';char[1 5]'18:00';char[1 5]'17:00';logical[1 1] 0;logical[1 1] 1}|exact
+CHK|zone_03|cell[1 7]{char[1 14]'America/Denver';char[1 11]'MST/MST/MST';char[1 11]'MDT/MDT/MDT';char[1 5]'19:00';char[1 5]'18:00';logical[1 1] 0;logical[1 1] 1}|exact
+CHK|zone_04|cell[1 7]{char[1 15]'America/Phoenix';char[1 11]'MST/MST/MST';char[1 11]'MST/MST/MST';char[1 5]'19:00';char[1 5]'19:00';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|zone_05|cell[1 7]{char[1 19]'America/Los_Angeles';char[1 11]'PST/PST/PST';char[1 11]'PDT/PDT/PDT';char[1 5]'20:00';char[1 5]'19:00';logical[1 1] 0;logical[1 1] 1}|exact
+CHK|zone_06|cell[1 7]{char[1 17]'America/Anchorage';char[1 14]'AKST/AKST/AKST';char[1 14]'AKDT/AKDT/AKDT';char[1 5]'21:00';char[1 5]'20:00';logical[1 1] 0;logical[1 1] 1}|exact
+CHK|zone_07|cell[1 7]{char[1 16]'Pacific/Honolulu';char[1 11]'HST/HST/HST';char[1 11]'HST/HST/HST';char[1 5]'22:00';char[1 5]'22:00';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|zone_08|cell[1 7]{char[1 12]'America/Adak';char[1 14]'HAST/HAST/HAST';char[1 14]'HADT/HADT/HADT';char[1 5]'22:00';char[1 5]'21:00';logical[1 1] 0;logical[1 1] 1}|exact
+CHK|zone_09|cell[1 7]{char[1 15]'America/Halifax';char[1 11]'AST/AST/AST';char[1 11]'ADT/ADT/ADT';char[1 5]'16:00';char[1 5]'15:00';logical[1 1] 0;logical[1 1] 1}|exact
+CHK|zone_10|cell[1 7]{char[1 16]'America/St_Johns';char[1 26]'UTC-3:30/UTC-3:30/UTC-3:30';char[1 26]'UTC-2:30/UTC-2:30/UTC-2:30';char[1 5]'15:30';char[1 5]'14:30';logical[1 1] 0;logical[1 1] 1}|exact
+CHK|zone_11|cell[1 7]{char[1 19]'America/Mexico_City';char[1 11]'CST/CST/CST';char[1 11]'CST/CST/CST';char[1 5]'18:00';char[1 5]'18:00';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|zone_12|cell[1 7]{char[1 15]'America/Toronto';char[1 11]'EST/EST/EST';char[1 11]'EDT/EDT/EDT';char[1 5]'17:00';char[1 5]'16:00';logical[1 1] 0;logical[1 1] 1}|exact
+CHK|zone_13|cell[1 7]{char[1 19]'America/Puerto_Rico';char[1 11]'AST/AST/AST';char[1 11]'AST/AST/AST';char[1 5]'16:00';char[1 5]'16:00';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|zone_14|cell[1 7]{char[1 14]'America/Panama';char[1 11]'EST/EST/EST';char[1 11]'EST/EST/EST';char[1 5]'17:00';char[1 5]'17:00';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|zone_15|cell[1 7]{char[1 17]'America/Sao_Paulo';char[1 17]'UTC-3/UTC-3/UTC-3';char[1 17]'UTC-3/UTC-3/UTC-3';char[1 5]'15:00';char[1 5]'15:00';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|zone_16|cell[1 7]{char[1 16]'America/Santiago';char[1 17]'UTC-3/UTC-3/UTC-3';char[1 17]'UTC-4/UTC-4/UTC-4';char[1 5]'15:00';char[1 5]'16:00';logical[1 1] 1;logical[1 1] 0}|exact
+CHK|zone_17|cell[1 7]{char[1 13]'Europe/London';char[1 11]'GMT/GMT/GMT';char[1 17]'UTC+1/UTC+1/UTC+1';char[1 5]'12:00';char[1 5]'11:00';logical[1 1] 0;logical[1 1] 1}|exact
+CHK|zone_18|cell[1 7]{char[1 13]'Europe/Dublin';char[1 11]'GMT/GMT/GMT';char[1 17]'UTC+1/UTC+1/UTC+1';char[1 5]'12:00';char[1 5]'11:00';logical[1 1] 0;logical[1 1] 1}|exact
+CHK|zone_19|cell[1 7]{char[1 13]'Europe/Lisbon';char[1 11]'UTC/UTC/UTC';char[1 17]'UTC+1/UTC+1/UTC+1';char[1 5]'12:00';char[1 5]'11:00';logical[1 1] 0;logical[1 1] 1}|exact
+CHK|zone_20|cell[1 7]{char[1 12]'Europe/Paris';char[1 17]'UTC+1/UTC+1/UTC+1';char[1 17]'UTC+2/UTC+2/UTC+2';char[1 5]'11:00';char[1 5]'10:00';logical[1 1] 0;logical[1 1] 1}|exact
+CHK|zone_21|cell[1 7]{char[1 13]'Europe/Moscow';char[1 17]'UTC+3/UTC+3/UTC+3';char[1 17]'UTC+3/UTC+3/UTC+3';char[1 5]'09:00';char[1 5]'09:00';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|zone_22|cell[1 7]{char[1 14]'Africa/Abidjan';char[1 11]'GMT/GMT/GMT';char[1 11]'GMT/GMT/GMT';char[1 5]'12:00';char[1 5]'12:00';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|zone_23|cell[1 7]{char[1 12]'Africa/Cairo';char[1 17]'UTC+2/UTC+2/UTC+2';char[1 17]'UTC+3/UTC+3/UTC+3';char[1 5]'10:00';char[1 5]'09:00';logical[1 1] 0;logical[1 1] 1}|exact
+CHK|zone_24|cell[1 7]{char[1 19]'Africa/Johannesburg';char[1 17]'UTC+2/UTC+2/UTC+2';char[1 17]'UTC+2/UTC+2/UTC+2';char[1 5]'10:00';char[1 5]'10:00';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|zone_25|cell[1 7]{char[1 13]'Asia/Calcutta';char[1 26]'UTC+5:30/UTC+5:30/UTC+5:30';char[1 26]'UTC+5:30/UTC+5:30/UTC+5:30';char[1 5]'06:30';char[1 5]'06:30';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|zone_26|cell[1 7]{char[1 13]'Asia/Katmandu';char[1 26]'UTC+5:45/UTC+5:45/UTC+5:45';char[1 26]'UTC+5:45/UTC+5:45/UTC+5:45';char[1 5]'06:15';char[1 5]'06:15';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|zone_27|cell[1 7]{char[1 10]'Asia/Tokyo';char[1 17]'UTC+9/UTC+9/UTC+9';char[1 17]'UTC+9/UTC+9/UTC+9';char[1 5]'03:00';char[1 5]'03:00';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|zone_28|cell[1 7]{char[1 11]'Asia/Tehran';char[1 26]'UTC+3:30/UTC+3:30/UTC+3:30';char[1 26]'UTC+3:30/UTC+3:30/UTC+3:30';char[1 5]'08:30';char[1 5]'08:30';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|zone_29|cell[1 7]{char[1 16]'Australia/Sydney';char[1 20]'UTC+11/UTC+11/UTC+11';char[1 20]'UTC+10/UTC+10/UTC+10';char[1 5]'01:00';char[1 5]'02:00';logical[1 1] 1;logical[1 1] 0}|exact
+CHK|zone_30|cell[1 7]{char[1 18]'Australia/Adelaide';char[1 29]'UTC+10:30/UTC+10:30/UTC+10:30';char[1 26]'UTC+9:30/UTC+9:30/UTC+9:30';char[1 5]'01:30';char[1 5]'02:30';logical[1 1] 1;logical[1 1] 0}|exact
+CHK|zone_31|cell[1 7]{char[1 19]'Australia/Lord_Howe';char[1 20]'UTC+11/UTC+11/UTC+11';char[1 29]'UTC+10:30/UTC+10:30/UTC+10:30';char[1 5]'01:00';char[1 5]'01:30';logical[1 1] 1;logical[1 1] 0}|exact
+CHK|zone_32|cell[1 7]{char[1 16]'Pacific/Auckland';char[1 20]'UTC+13/UTC+13/UTC+13';char[1 20]'UTC+12/UTC+12/UTC+12';char[1 5]'23:00';char[1 5]'00:00';logical[1 1] 1;logical[1 1] 0}|exact
+CHK|zone_33|cell[1 7]{char[1 15]'Pacific/Chatham';char[1 29]'UTC+13:45/UTC+13:45/UTC+13:45';char[1 29]'UTC+12:45/UTC+12:45/UTC+12:45';char[1 5]'22:15';char[1 5]'23:15';logical[1 1] 1;logical[1 1] 0}|exact
+CHK|zone_34|cell[1 7]{char[1 15]'Atlantic/Azores';char[1 17]'UTC-1/UTC-1/UTC-1';char[1 11]'UTC/UTC/UTC';char[1 5]'13:00';char[1 5]'12:00';logical[1 1] 0;logical[1 1] 1}|exact
+CHK|zone_35|cell[1 7]{char[1 18]'Atlantic/Reykjavik';char[1 11]'GMT/GMT/GMT';char[1 11]'GMT/GMT/GMT';char[1 5]'12:00';char[1 5]'12:00';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|zone_36|cell[1 7]{char[1 3]'UTC';char[1 11]'UTC/UTC/UTC';char[1 11]'UTC/UTC/UTC';char[1 5]'12:00';char[1 5]'12:00';logical[1 1] 0;logical[1 1] 0}|exact
+CHK|dst_turn|cell[1 2]{char[1 20]'2026-03-08 01:59 EST';char[1 20]'2026-03-08 03:00 EDT'}|exact
+CHK|dst_turn_back|cell[1 2]{char[1 20]'2026-11-01 01:59 EDT';char[1 20]'2026-11-01 01:00 EST'}|exact
+CHK|dst_london|cell[1 2]{char[1 20]'2026-03-29 00:59 GMT';char[1 22]'2026-03-29 02:00 UTC+1'}|exact
+CHK|bad_01|MATLAB:datetime:UnknownTimeZone|exact
+CHK|bad_01_msg|Unable to create the specified time zone: 'america/new_york'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|bad_02|MATLAB:datetime:UnknownTimeZone|exact
+CHK|bad_02_msg|Unable to create the specified time zone: 'AMERICA/NEW_YORK'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|bad_03|MATLAB:datetime:UnknownTimeZone|exact
+CHK|bad_03_msg|Unable to create the specified time zone: 'America/new_York'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|bad_04|MATLAB:datetime:UnknownTimeZone|exact
+CHK|bad_04_msg|Unable to create the specified time zone: 'etc/gmt-2'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|bad_05|MATLAB:datetime:UnknownTimeZone|exact
+CHK|bad_05_msg|Unable to create the specified time zone: 'us/eastern'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|bad_06|MATLAB:datetime:UnknownTimeZone|exact
+CHK|bad_06_msg|Unable to create the specified time zone: 'est'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|bad_07|MATLAB:datetime:UnknownTimeZone|exact
+CHK|bad_07_msg|Unable to create the specified time zone: 'Eastern Standard Time'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|bad_08|MATLAB:datetime:UnknownTimeZone|exact
+CHK|bad_08_msg|Unable to create the specified time zone: 'Mars/Olympus'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|bad_09|MATLAB:datetime:UnknownTimeZone|exact
+CHK|bad_09_msg|Unable to create the specified time zone: 'Asia/Kolkata '. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|bad_10|MATLAB:datetime:UnknownTimeZone|exact
+CHK|bad_10_msg|Unable to create the specified time zone: 'Factory'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.|exact
+CHK|link_01|cell[1 2]{char[1 16]'America/New_York';char[1 9]'12:00 EST'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_set_01|cell[1 2]{char[1 16]'America/New_York';char[1 16]'2026-01-15 12:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_setz_01|cell[1 2]{char[1 16]'America/New_York';char[1 16]'2026-01-15 07:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_02|cell[1 2]{char[1 14]'America/Panama';char[1 9]'12:00 EST'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_set_02|cell[1 2]{char[1 14]'America/Panama';char[1 16]'2026-01-15 12:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_setz_02|cell[1 2]{char[1 14]'America/Panama';char[1 16]'2026-01-15 07:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_03|cell[1 2]{char[1 13]'Europe/London';char[1 9]'12:00 GMT'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_set_03|cell[1 2]{char[1 13]'Europe/London';char[1 16]'2026-01-15 12:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_setz_03|cell[1 2]{char[1 13]'Europe/London';char[1 16]'2026-01-15 12:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_04|cell[1 2]{char[1 10]'Asia/Tokyo';char[1 11]'12:00 UTC+9'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_set_04|cell[1 2]{char[1 10]'Asia/Tokyo';char[1 16]'2026-01-15 12:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_setz_04|cell[1 2]{char[1 10]'Asia/Tokyo';char[1 16]'2026-01-15 21:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_05|cell[1 2]{char[1 15]'America/Phoenix';char[1 9]'12:00 MST'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_set_05|cell[1 2]{char[1 15]'America/Phoenix';char[1 16]'2026-01-15 12:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_setz_05|cell[1 2]{char[1 15]'America/Phoenix';char[1 16]'2026-01-15 05:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_06|cell[1 2]{char[1 16]'Pacific/Honolulu';char[1 9]'12:00 HST'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_set_06|cell[1 2]{char[1 16]'Pacific/Honolulu';char[1 16]'2026-01-15 12:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_setz_06|cell[1 2]{char[1 16]'Pacific/Honolulu';char[1 16]'2026-01-15 02:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_07|cell[1 2]{char[1 15]'Europe/Brussels';char[1 11]'12:00 UTC+1'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_set_07|cell[1 2]{char[1 15]'Europe/Brussels';char[1 16]'2026-01-15 12:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_setz_07|cell[1 2]{char[1 15]'Europe/Brussels';char[1 16]'2026-01-15 13:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_08|cell[1 2]{char[1 19]'America/Los_Angeles';char[1 9]'12:00 PST'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_set_08|cell[1 2]{char[1 19]'America/Los_Angeles';char[1 16]'2026-01-15 12:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_setz_08|cell[1 2]{char[1 19]'America/Los_Angeles';char[1 16]'2026-01-15 04:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_09|cell[1 2]{char[1 15]'America/Toronto';char[1 9]'12:00 EST'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_set_09|cell[1 2]{char[1 15]'America/Toronto';char[1 16]'2026-01-15 12:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_setz_09|cell[1 2]{char[1 15]'America/Toronto';char[1 16]'2026-01-15 07:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_10|cell[1 2]{char[1 13]'Asia/Calcutta';char[1 14]'12:00 UTC+5:30'}|exact
+CHK|link_set_10|cell[1 2]{char[1 13]'Asia/Calcutta';char[1 16]'2026-01-15 12:00'}|exact
+CHK|link_setz_10|cell[1 2]{char[1 13]'Asia/Calcutta';char[1 16]'2026-01-15 17:30'}|exact
+CHK|link_11|cell[1 2]{char[1 11]'Europe/Kiev';char[1 11]'12:00 UTC+2'}|exact
+CHK|link_set_11|cell[1 2]{char[1 11]'Europe/Kiev';char[1 16]'2026-01-15 12:00'}|exact
+CHK|link_setz_11|cell[1 2]{char[1 11]'Europe/Kiev';char[1 16]'2026-01-15 14:00'}|exact
+CHK|link_12|cell[1 2]{char[1 16]'America/New_York';char[1 9]'12:00 EST'}|exact
+CHK|link_set_12|cell[1 2]{char[1 16]'America/New_York';char[1 16]'2026-01-15 12:00'}|exact
+CHK|link_setz_12|cell[1 2]{char[1 16]'America/New_York';char[1 16]'2026-01-15 07:00'}|exact
+CHK|link_13|cell[1 2]{char[1 19]'America/Los_Angeles';char[1 9]'12:00 PST'}|exact
+CHK|link_set_13|cell[1 2]{char[1 19]'America/Los_Angeles';char[1 16]'2026-01-15 12:00'}|exact
+CHK|link_setz_13|cell[1 2]{char[1 19]'America/Los_Angeles';char[1 16]'2026-01-15 04:00'}|exact
+CHK|link_14|cell[1 2]{char[1 20]'America/Buenos_Aires';char[1 11]'12:00 UTC-3'}|exact
+CHK|link_set_14|cell[1 2]{char[1 20]'America/Buenos_Aires';char[1 16]'2026-01-15 12:00'}|exact
+CHK|link_setz_14|cell[1 2]{char[1 20]'America/Buenos_Aires';char[1 16]'2026-01-15 09:00'}|exact
+CHK|link_15|cell[1 2]{char[1 11]'Asia/Saigon';char[1 11]'12:00 UTC+7'}|exact
+CHK|link_set_15|cell[1 2]{char[1 11]'Asia/Saigon';char[1 16]'2026-01-15 12:00'}|exact
+CHK|link_setz_15|cell[1 2]{char[1 11]'Asia/Saigon';char[1 16]'2026-01-15 19:00'}|exact
+CHK|link_16|cell[1 2]{char[1 20]'America/Indianapolis';char[1 9]'12:00 EST'}|exact
+CHK|link_set_16|cell[1 2]{char[1 20]'America/Indianapolis';char[1 16]'2026-01-15 12:00'}|exact
+CHK|link_setz_16|cell[1 2]{char[1 20]'America/Indianapolis';char[1 16]'2026-01-15 07:00'}|exact
+CHK|link_17|cell[1 2]{char[1 13]'Asia/Calcutta';char[1 14]'12:00 UTC+5:30'}|exact
+CHK|link_set_17|cell[1 2]{char[1 13]'Asia/Calcutta';char[1 16]'2026-01-15 12:00'}|exact
+CHK|link_setz_17|cell[1 2]{char[1 13]'Asia/Calcutta';char[1 16]'2026-01-15 17:30'}|exact
+CHK|link_18|cell[1 2]{char[1 11]'Europe/Kiev';char[1 11]'12:00 UTC+2'}|exact
+CHK|link_set_18|cell[1 2]{char[1 11]'Europe/Kiev';char[1 16]'2026-01-15 12:00'}|exact
+CHK|link_setz_18|cell[1 2]{char[1 11]'Europe/Kiev';char[1 16]'2026-01-15 14:00'}|exact
+CHK|link_19|cell[1 2]{char[1 14]'America/Denver';char[1 9]'12:00 MST'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_set_19|cell[1 2]{char[1 14]'America/Denver';char[1 16]'2026-01-15 12:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_setz_19|cell[1 2]{char[1 14]'America/Denver';char[1 16]'2026-01-15 05:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_20|cell[1 2]{char[1 13]'Europe/Dublin';char[1 9]'12:00 GMT'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_set_20|cell[1 2]{char[1 13]'Europe/Dublin';char[1 16]'2026-01-15 12:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_setz_20|cell[1 2]{char[1 13]'Europe/Dublin';char[1 16]'2026-01-15 12:00'} WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_message|char[1 227]''US/Eastern' does not specify a single time zone unambiguously. It will be treated as 'America/New_York'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.' WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_message_est|char[1 218]''EST' does not specify a single time zone unambiguously. It will be treated as 'America/Panama'. See the <a href="matlab:doc('datetime.TimeZone')">datetime.TimeZone property</a> for details about specifying time zones.' WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|link_string|char[1 19]'America/Los_Angeles' WARN MATLAB:datetime:NonstandardTimeZone|exact
+CHK|local|cell[1 4]{logical[1 1] 0;logical[1 1] 0;logical[1 1] 1;char[1 4]'char'}|exact
+CHK|local_upper|cell[1 4]{logical[1 1] 0;logical[1 1] 0;logical[1 1] 1;char[1 4]'char'}|exact
+CHK|local_same|logical[1 1] 1|exact
+CHK|local_set|cell[1 2]{logical[1 1] 1;char[1 16]'2026-01-15 00:00'}|exact
+CHK|str_fmt|string[1 1]"2026-01-15 EST"|exact
+CHK|char_fmt|char[1 20]'2026-01-15 12:30 EST'|exact
+CHK|str_fmt_x|string[1 1]"12:30 -05:00"|exact
+CHK|str_fmt_kolkata|string[1 1]"UTC+5:30"|exact
+CHK|str_fmt_O|MATLAB:datetime:UnsupportedSymbol|exact
+CHK|str_fmt_O_msg|The format 'O' contains an unsupported symbol: 'O'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|char_fmt_O|MATLAB:datetime:UnsupportedSymbol|exact
+CHK|char_fmt_O_msg|The format 'O' contains an unsupported symbol: 'O'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|str_fmt_zzzz|MATLAB:datetime:UnsupportedIdentifier|exact
+CHK|str_fmt_zzzz_msg|The format 'zzzz' contains an unsupported identifier: 'zzzz'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|char_fmt_zzzz|MATLAB:datetime:UnsupportedIdentifier|exact
+CHK|char_fmt_zzzz_msg|The format 'zzzz' contains an unsupported identifier: 'zzzz'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|str_fmt_loc|string[1 1]"janvier"|exact
+CHK|char_fmt_loc|char[1 6]'Januar'|exact
+CHK|str_fmt_bad|MATLAB:datetime:InvalidFormat|exact
+CHK|str_fmt_bad_msg|A datetime format must be specified as a non-empty and non-missing string or character row vector.|exact
+CHK|char_fmt_bad|MATLAB:datetime:InvalidFormat|exact
+CHK|char_fmt_bad_msg|A datetime format must be specified as a non-empty and non-missing string or character row vector.|exact
+CHK|str_fmt_empty|string[1 1]"15-Jan-2026 12:30:45"|exact
+CHK|char_fmt_string|char[1 5]'15/01'|exact
+CHK|str_arr|string[1 2]"15","16"|exact
+CHK|str_col|string[2 1]"01-15","01-16"|exact
+CHK|str_nat|logical[1 1] 1|exact
+CHK|str_unzoned_z|string[1 1]"00 *"|exact
+CHK|str_duration|string[1 1]"01:30"|exact

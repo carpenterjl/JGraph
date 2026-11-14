@@ -1,0 +1,258 @@
+CHK|cx_x|double [1 8] 0 / double [2 1] 0|exact
+CHK|cx_x_y_re|118.38437500000001|rel=1e-13
+CHK|cx_x_y_im|107.48749999999997|rel=1e-13
+CHK|cx_x_zf_re|0.85546875|rel=1e-13
+CHK|cx_x_zf_im|-0.27187499999999998|rel=1e-13
+CHK|cx_b|double [1 8] 0 / double [2 1] 0|exact
+CHK|cx_b_y_re|118.38437500000001|rel=1e-13
+CHK|cx_b_y_im|47.560937500000001|rel=1e-13
+CHK|cx_b_zf_re|0.85546875|rel=1e-13
+CHK|cx_b_zf_im|0.240234375|rel=1e-13
+CHK|cx_a|double [1 8] 0 / double [2 1] 0|exact
+CHK|cx_a_y_re|116.6296992|rel=1e-13
+CHK|cx_a_y_im|-15.451982840000003|rel=1e-13
+CHK|cx_a_zf_re|0.82071815199999976|rel=1e-13
+CHK|cx_a_zf_im|-0.12983632000000001|rel=1e-13
+CHK|cx_a1|double [1 8] 0 / double [2 1] 0|exact
+CHK|cx_a1_y_re|-21.03125|rel=1e-13
+CHK|cx_a1_y_im|-80.534375000000011|rel=1e-13
+CHK|cx_a1_zf_re|0.56953125000000004|rel=1e-13
+CHK|cx_a1_zf_im|-1.9359374999999999|rel=1e-13
+CHK|cx_zi|double [1 8] 0 / double [2 1] 0|exact
+CHK|cx_zi_y_re|119.06406250000001|rel=1e-13
+CHK|cx_zi_y_im|0.65625|rel=1e-13
+CHK|cx_zi_zf_re|0.853515625|rel=1e-13
+CHK|cx_zi_zf_im|0|rel=1e-13
+CHK|cx_all|double [1 8] 0 / double [3 1] 0|exact
+CHK|cx_all_y_re|3.590736693074251|rel=1e-13
+CHK|cx_all_y_im|160.55272711808934|rel=1e-13
+CHK|cx_all_zf_re|5.5428678684105614|rel=1e-13
+CHK|cx_all_zf_im|7.948840463482604|rel=1e-13
+CHK|cx_fir|double [1 8] 0 / double [2 1] 0|exact
+CHK|cx_fir_y_re|351|rel=1e-13
+CHK|cx_fir_y_im|972|rel=1e-13
+CHK|cx_fir_zf_re|43|rel=1e-13
+CHK|cx_fir_zf_im|30|rel=1e-13
+CHK|cx_fir2|double [1 8] 0 / double [2 1] 0|exact
+CHK|cx_fir2_y_re|343.5|rel=1e-13
+CHK|cx_fir2_y_im|165|rel=1e-13
+CHK|cx_fir2_zf_re|22.5|rel=1e-13
+CHK|cx_fir2_zf_im|6|rel=1e-13
+CHK|cx_m45|double [4 5] 0 / double [2 4] 0|exact
+CHK|cx_m45_y_re|70.172599999999989|rel=1e-13
+CHK|cx_m45_y_im|71.004199999999983|rel=1e-13
+CHK|cx_m45_zf_re|1.6482749999999977|rel=1e-13
+CHK|cx_m45_zf_im|2.3188749999999998|rel=1e-13
+CHK|cx_m45_zi|double [4 5] 0 / double [3 5] 0|exact
+CHK|cx_m45_zi_y_re|24.015355|rel=1e-13
+CHK|cx_m45_zi_y_im|1782.3853549999999|rel=1e-13
+CHK|cx_m45_zi_zf_re|20.706038749999991|rel=1e-13
+CHK|cx_m45_zi_zf_im|-44.889461250000004|rel=1e-13
+CHK|cx_real_parts|double [1 8] 1 / double [2 1] 1|exact
+CHK|cx_real_parts_y_re|118.38437500000001|rel=1e-13
+CHK|cx_real_parts_zf_re|0.85546875|rel=1e-13
+CHK|cx_real_m45|double [4 5] 1 / double [2 4] 1|exact
+CHK|cx_real_m45_y_re|70.172599999999989|rel=1e-13
+CHK|cx_real_m45_zf_re|1.6482749999999977|rel=1e-13
+CHK|cx_zf_real|double [1 2] 0 / double [1 1] 1|exact
+CHK|cx_zf_real_y_re|1|rel=1e-13
+CHK|cx_zf_real_y_im|2|rel=1e-13
+CHK|cx_zf_real_zf_re|0|rel=1e-13
+CHK|cx_zi_real_zf|double [1 2] 0 / double [1 1] 1|exact
+CHK|cx_zi_real_zf_y_re|9|rel=1e-13
+CHK|cx_zi_real_zf_y_im|1|rel=1e-13
+CHK|cx_zi_real_zf_zf_re|4|rel=1e-13
+CHK|cx_scalar|double [1 1] 0 / double [0 1] 1|exact
+CHK|cx_scalar_y_re|0|rel=1e-13
+CHK|cx_scalar_y_im|1|rel=1e-13
+CHK|s_x|single [1 8] / single [2 1]|exact
+CHK|s_x_y|0.200000003 1.20000005 2.1500001 2.9749999 4.3499999 4.33125019 3.77812529 2.90625024|exact
+CHK|s_x_zf1_1|2.30859375|rel=2.5e-7
+CHK|s_x_zf|-0.72656256|exact
+CHK|s_b|single [1 8] / single [2 1]|exact
+CHK|s_b_y|0.200000003 1.20000005 2.1500001 2.9749999 4.3499999 4.33125019 3.77812529 2.90625024|exact
+CHK|s_b_zf1_1|2.30859375|rel=2.5e-7
+CHK|s_b_zf|-0.72656256|exact
+CHK|s_a|single [1 8] / single [2 1]|exact
+CHK|s_a_y|0.200000003 1.20000005 2.1500001 2.9749999 4.3499999 4.33125019 3.77812529 2.90625024|exact
+CHK|s_a_zf1_1|2.30859375|rel=2.5e-7
+CHK|s_a_zf|-0.72656256|exact
+CHK|s_zi|single [1 8] / single [2 1]|exact
+CHK|s_zi_y|0.699999988 1.70000005 2.2750001 2.9124999 4.2874999 4.31562519 3.78593779 2.91406274|exact
+CHK|s_zi_zf1_1|2.31054688|rel=2.5e-7
+CHK|s_zi_zf|-0.728515685|exact
+CHK|s_iir3|single [1 8] / single [3 1]|exact
+CHK|s_iir3_y|0.0500000007 0.310000002 0.70450002 1.49439991 2.34320498 2.6944809 3.38741541 2.923311|exact
+CHK|s_iir3_zf1_1|2.52654982|rel=2.5e-7
+CHK|s_iir3_zf|1.06150329 1.20000005|exact
+CHK|s_fir|single [1 8] / single [3 1]|exact
+CHK|s_fir_y|0.100000001 0.600000024 1.30000007 2.79999995 4.30000019 4.89999962 6.4000001 5.30000019|exact
+CHK|s_fir_zf1_1|4.9000001|rel=2.5e-7
+CHK|s_fir_zf|3 2.4000001|exact
+CHK|s_long|single [1 40] / single [4 1]|exact
+CHK|s_long_y|0.705859125 -0.733102202 -1.25139511 -1.09586406 0.541949868 1.53152347 0.968028247 -0.485065937 -1.47866225 -1.11311769 0.274726212 1.41022909 1.24930453 -0.0602626801 -1.31443918 -1.36012173 -0.155313432 1.19228888 1.44370604 0.367786735 -1.04627395 -1.4983952 -0.572898805 0.879318178 1.52309418 0.766544342 -0.694762766 -1.517308 -0.944847345 0.496301711 1.48115325 1.10423934 -0.287907064 -1.41535306 -1.24153006 0.0737498999 1.32122469 1.35397148 0.141883135 -1.20065188|exact
+CHK|s_long_zf1_1|-1.32510471|rel=2.5e-7
+CHK|s_long_zf|0.499313176 0.040252436 0.009605214|exact
+CHK|s_m45|single [4 5] / single [3 4]|exact
+CHK|s_m45_y|0.0308999997 0.0118000004 0.0427000001 0.0236000009 0.0724800006 0.0613600016 0.110239998 0.099120006 0.139660999 0.125702009 0.216242999 0.202284008 0.212060183 0.219936416 0.33971262 0.347588807 0.152462885 0.26513195 0.284506053 0.397175193|exact
+CHK|s_m45_zf1_1|0.166783541|rel=2.5e-7
+CHK|s_m45_zf1_2|0.166235939|rel=2.5e-7
+CHK|s_m45_zf1_3|0.280244321|rel=2.5e-7
+CHK|s_m45_zf1_4|0.279696733|rel=2.5e-7
+CHK|s_m45_zf|0.0598305725 0.101199999 0.109230205 0.0248000007 0.122624084 0.148399994 0.172023743 0.0720000044|exact
+CHK|s_int|single [1 8] / single [2 1]|exact
+CHK|s_int_y|0.200000003 1.20000005 2.1500001 2.9749999 4.3499999 4.33125019 3.77812529 2.90625024|exact
+CHK|s_int_zf1_1|2.30859375|rel=2.5e-7
+CHK|s_int_zf|-0.72656256|exact
+CHK|s_cx|single [1 8] / single [2 1]|exact
+CHK|s_cx_y|0.200000003+1.20000005i 1.20000005+3i 2.1500001+3.5i 2.9749999+4.10000038i 4.3499999+4.2750001i 4.33125019+3.91250014i 3.77812529+2.28750014i 2.90625024+1.56562519i|exact
+CHK|s_cx_zf|2.30859375+0.510937572i -0.72656256-0.391406298i|exact
+CHK|s_zi_int_x|single [1 2] / single [1 1]|exact
+CHK|s_zi_int_x_y|4 4|exact
+CHK|s_zi_int_x_zf1_1|4|rel=2.5e-7
+CHK|s_zi_int_x_zf||exact
+CHK|s_mixed_int|single [1 2] / single [1 1]|exact
+CHK|s_mixed_int_y|1 4|exact
+CHK|s_mixed_int_zf1_1|4|rel=2.5e-7
+CHK|s_mixed_int_zf||exact
+CHK|s_dim_only|double [1 2] / double [1 1]|exact
+CHK|s_dim_only_y|1 4|exact
+CHK|s_dim_only_zf|4|exact
+CHK|int_x|double [1 8] / double [2 1]|exact
+CHK|int_x_y|0.20000000000000001 1.2000000000000002 2.1499999999999999 2.9750000000000001 4.3499999999999996 4.3312499999999998 3.7781250000000002 2.90625|exact
+CHK|int_x_zf|2.30859375 -0.7265625|exact
+CHK|int_b|double [1 8] / double [1 1]|exact
+CHK|int_b_y|1 6 10 12 21 17 17 12|exact
+CHK|int_b_zf|12|exact
+CHK|int_all|double [1 8] / double [1 1]|exact
+CHK|int_all_y|1 6 10 12 21 17 17 12|exact
+CHK|int_all_zf|12|exact
+CHK|int_mixed|double [1 2] / double [1 1]|exact
+CHK|int_mixed_y|1 4|exact
+CHK|int_mixed_zf|4|exact
+CHK|int_zi|double [1 2] / double [1 1]|exact
+CHK|int_zi_y|4 4|exact
+CHK|int_zi_zf|4|exact
+CHK|uint_x|double [1 8] / double [2 1]|exact
+CHK|uint_x_y|0.20000000000000001 1.2000000000000002 2.1499999999999999 2.9750000000000001 4.3499999999999996 4.3312499999999998 3.7781250000000002 2.90625|exact
+CHK|uint_x_zf|2.30859375 -0.7265625|exact
+CHK|log_x|double [1 8] / double [2 1]|exact
+CHK|log_x_y|0 0.20000000000000001 0.40000000000000002 0.35000000000000003 0.57499999999999996 0.69999999999999996 0.50624999999999998 0.27812500000000001|exact
+CHK|log_x_zf|0.3125 -0.069531250000000003|exact
+CHK|log_b|double [1 8] / double [1 1]|exact
+CHK|log_b_y|1 5 6 10 13 12 10 9|exact
+CHK|log_b_zf|6|exact
+CHK|log_all|double [1 2] / double [0 1]|exact
+CHK|log_all_y|1 0|exact
+CHK|log_all_zf||exact
+CHK|log_dim|double [1 4] / double [1 4]|exact
+CHK|log_dim_y|1 4 2 8|exact
+CHK|log_dim_zf|2 8 4 16|exact
+CHK|col_b|double [1 8] / double [1 1]|exact
+CHK|col_b_y|1 5.5 7.25 8.375 16.8125 8.59375 12.703125 5.6484375|exact
+CHK|col_b_zf|9.17578125|exact
+CHK|empty_b10|double [1 8] / double [2 1]|exact
+CHK|empty_b10_y|0 0 0 0 0 0 0 0|exact
+CHK|empty_b10_zf|0 0|exact
+CHK|empty_b01|double [1 8] / double [0 1]|exact
+CHK|empty_b01_y|0 0 0 0 0 0 0 0|exact
+CHK|empty_b01_zf||exact
+CHK|empty_b_zi|double [1 4] / double [1 1]|exact
+CHK|empty_b_zi_y|0 0 0 0|exact
+CHK|empty_b_zi_zf|0|exact
+CHK|empty_a10|double [1 4] / double [2 1]|exact
+CHK|empty_a10_y|0 0 0 0|exact
+CHK|empty_a10_zf|22 24|exact
+CHK|empty_a01|double [1 8] / double [1 1]|exact
+CHK|empty_a01_y|0 0 0 0 0 0 0 0|exact
+CHK|empty_a01_zf|12|exact
+CHK|empty_a_col|double [4 1] / double [2 1]|exact
+CHK|empty_a_col_y|0 0 0 0|exact
+CHK|empty_a_col_zf|22 24|exact
+CHK|empty_a_single|single [1 4] / single [1 1]|exact
+CHK|empty_a_single_y|0 0 0 0|exact
+CHK|empty_a_single_zf1_1|8|rel=2.5e-7
+CHK|empty_a_single_zf||exact
+CHK|empty_both|double [1 4] / double [0 1]|exact
+CHK|empty_both_y|0 0 0 0|exact
+CHK|empty_both_zf||exact
+CHK|empty_a_cx|double [1 4] 1 / double [1 1] 0|exact
+CHK|empty_a_cx_y_re|0|rel=1e-13
+CHK|empty_a_cx_zf_re|16|rel=1e-13
+CHK|empty_a_cx_zf_im|2|rel=1e-13
+CHK|mat_b_err|MATLAB:filter:notVectorInput|exact
+CHK|mat_b_msg|First two arguments must be vectors.|exact
+CHK|mat_a_err|MATLAB:filter:notVectorInput|exact
+CHK|mat_a_msg|First two arguments must be vectors.|exact
+CHK|nd_b_err|MATLAB:filter:notVectorInput|exact
+CHK|nd_b_msg|First two arguments must be vectors.|exact
+CHK|empty00_b_err|MATLAB:filter:notVectorInput|exact
+CHK|empty00_b_msg|First two arguments must be vectors.|exact
+CHK|empty00_a_err|MATLAB:filter:notVectorInput|exact
+CHK|empty00_a_msg|First two arguments must be vectors.|exact
+CHK|sp_b_err|MATLAB:filter:sparseInput|exact
+CHK|sp_b_msg|Sparse inputs are not supported.|exact
+CHK|sp_a_err|MATLAB:filter:sparseInput|exact
+CHK|sp_a_msg|Sparse inputs are not supported.|exact
+CHK|sp_x_err|MATLAB:filter:sparseInput|exact
+CHK|sp_x_msg|Sparse inputs are not supported.|exact
+CHK|sp_zi_err|MATLAB:filter:sparseInput|exact
+CHK|sp_zi_msg|Sparse inputs are not supported.|exact
+CHK|sp_dim_err|MATLAB:filter:sparseInput|exact
+CHK|sp_dim_msg|Sparse inputs are not supported.|exact
+CHK|char_x_err|MATLAB:filter:inputType|exact
+CHK|char_x_msg|Invalid data type. Input arrays must be numeric or logical.|exact
+CHK|char_b_err|MATLAB:filter:inputType|exact
+CHK|char_b_msg|Invalid data type. Input arrays must be numeric or logical.|exact
+CHK|char_a_err|MATLAB:filter:inputType|exact
+CHK|char_a_msg|Invalid data type. Input arrays must be numeric or logical.|exact
+CHK|str_x_err|MATLAB:filter:inputType|exact
+CHK|str_x_msg|Invalid data type. Input arrays must be numeric or logical.|exact
+CHK|cell_x_err|MATLAB:filter:inputType|exact
+CHK|cell_x_msg|Invalid data type. Input arrays must be numeric or logical.|exact
+CHK|struct_x_err|MATLAB:filter:inputType|exact
+CHK|struct_x_msg|Invalid data type. Input arrays must be numeric or logical.|exact
+CHK|str_dim_err|MATLAB:filter:inputType|exact
+CHK|str_dim_msg|Invalid data type. Input arrays must be numeric or logical.|exact
+CHK|a1_zero_err|MATLAB:filter:firstElementOfDenominatorFilterZero|exact
+CHK|a1_zero_msg|First denominator filter coefficient must be non-zero.|exact
+CHK|a1_zero_fir_err|MATLAB:filter:firstElementOfDenominatorFilterZero|exact
+CHK|a1_zero_fir_msg|First denominator filter coefficient must be non-zero.|exact
+CHK|a1_zero_cx_err|MATLAB:filter:firstElementOfDenominatorFilterZero|exact
+CHK|a1_zero_cx_msg|First denominator filter coefficient must be non-zero.|exact
+CHK|a1_nan_err|MATLAB:filter:firstElementOfDenominatorFilterNotFinite|exact
+CHK|a1_nan_msg|First denominator filter coefficient must be finite.|exact
+CHK|a1_inf_err|MATLAB:filter:firstElementOfDenominatorFilterNotFinite|exact
+CHK|a1_inf_msg|First denominator filter coefficient must be finite.|exact
+CHK|cx_dim_err|MATLAB:getdimarg:dimensionMustBePositiveInteger|exact
+CHK|cx_dim_msg|Dimension argument must be a positive integer scalar within indexing range.|exact
+CHK|vec_dim_err|MATLAB:getdimarg:dimensionMustBePositiveInteger|exact
+CHK|vec_dim_msg|Dimension argument must be a positive integer scalar within indexing range.|exact
+CHK|ord_sp_mat_err|MATLAB:filter:sparseInput|exact
+CHK|ord_sp_mat_msg|Sparse inputs are not supported.|exact
+CHK|ord_char_mat_err|MATLAB:filter:inputType|exact
+CHK|ord_char_mat_msg|Invalid data type. Input arrays must be numeric or logical.|exact
+CHK|ord_charb_spx_err|MATLAB:filter:inputType|exact
+CHK|ord_charb_spx_msg|Invalid data type. Input arrays must be numeric or logical.|exact
+CHK|ord_spb_chara_err|MATLAB:filter:sparseInput|exact
+CHK|ord_spb_chara_msg|Sparse inputs are not supported.|exact
+CHK|ord_spzi_charx_err|MATLAB:filter:inputType|exact
+CHK|ord_spzi_charx_msg|Invalid data type. Input arrays must be numeric or logical.|exact
+CHK|ord_mat_spdim_err|MATLAB:filter:sparseInput|exact
+CHK|ord_mat_spdim_msg|Sparse inputs are not supported.|exact
+CHK|ord_mat_a0_err|MATLAB:filter:notVectorInput|exact
+CHK|ord_mat_a0_msg|First two arguments must be vectors.|exact
+CHK|ord_dim_a0_err|MATLAB:getdimarg:dimensionMustBePositiveInteger|exact
+CHK|ord_dim_a0_msg|Dimension argument must be a positive integer scalar within indexing range.|exact
+CHK|ord_dim_mat_err|MATLAB:filter:notVectorInput|exact
+CHK|ord_dim_mat_msg|First two arguments must be vectors.|exact
+CHK|ord_zi_dim_err|MATLAB:getdimarg:dimensionMustBePositiveInteger|exact
+CHK|ord_zi_dim_msg|Dimension argument must be a positive integer scalar within indexing range.|exact
+CHK|ord_a0_zi_err|MATLAB:filter:firstElementOfDenominatorFilterZero|exact
+CHK|ord_a0_zi_msg|First denominator filter coefficient must be non-zero.|exact
+CHK|ord_inf_zi_err|MATLAB:filter:firstElementOfDenominatorFilterNotFinite|exact
+CHK|ord_inf_zi_msg|First denominator filter coefficient must be finite.|exact
+CHK|ord_a0_charx_err|MATLAB:filter:inputType|exact
+CHK|ord_a0_charx_msg|Invalid data type. Input arrays must be numeric or logical.|exact
+CHK|ord_charzi_a0_err|MATLAB:filter:inputType|exact
+CHK|ord_charzi_a0_msg|Invalid data type. Input arrays must be numeric or logical.|exact

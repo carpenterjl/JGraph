@@ -208,5 +208,5 @@ CHK|single_zf_class|single|exact
 CHK|single_zf_size|[2 1]|exact
 CHK|single_b_zf_class|single|exact
 CHK|single_b_zf_size|[2 4]|exact
-CHK|single_zf_last|-0.72656256|div=ADR0345|diverges|-0.7265625
-CHK|complex_zf|double [2 1]|div=ADR0345|diverges|refused
+CHK|single_zf_last|-0.72656256|exact
+CHK|complex_zf|double [2 1]|exact

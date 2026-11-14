@@ -513,7 +513,7 @@ internal static class JgsTime
                         5 => JgsTimeZones.Iso(at, 1, 2, colons: true, utcZ: true),
                         _ => JgsTimeZones.LongGmt(at),
                     },
-                    _ => name == "UTC" ? "UTC" : isFixed ? JgsTimeZones.ShortGmt(at) : name,
+                    _ => name == "UTC" ? "UTC" : isFixed ? JgsTimeZones.ShortGmt(at) : NamedZoneLetters(name, zone, ms, at),
                 };
             }
 
@@ -524,6 +524,22 @@ internal static class JgsTime
         }
 
         return built.ToString();
+    }
+
+    /// <summary>
+    /// A named zone's <c>z</c> as R2025b prints it: the 'en' locale's abbreviation for the zone at
+    /// that instant (<c>EST</c> or <c>EDT</c>), or, where the locale has none, the offset written
+    /// <c>UTC+5:30</c>, and <c>UTC</c> alone at zero (ADR 0350).
+    /// </summary>
+    private static string NamedZoneLetters(string name, TimeZoneInfo zone, double ms, TimeSpan at)
+    {
+        bool daylight = zone.IsDaylightSavingTime(DateTime.SpecifyKind(ToDateTime(ms), DateTimeKind.Utc));
+        if (JgsTimeZoneNames.Abbreviation(name, daylight) is { } abbreviation)
+        {
+            return abbreviation;
+        }
+
+        return at == TimeSpan.Zero ? "UTC" : JgsTimeZones.ShortGmt(at);
     }
 
     // --- datestr's own format language (ADR 0152) ------------------------------------------------

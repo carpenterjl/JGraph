@@ -89,12 +89,8 @@ internal static partial class JgsBuiltins
                     string[] calendar = Enumerable.Range(0,time.ArrayLength).Select(i => TimeText(time,i)).ToArray();
                     return calendar.Length == 1 ? JgsValue.Str(calendar[0]) : PadIntoCharMatrix(calendar);
                 }
-                var tag = time.TimeTag!;
-                if (args.Count > 1 && !(args[1].Type == JgsType.Array && args[1].ArrayLength == 0))
-                    tag = tag with { Format = Str("char", args, 1, line, col) };
-                CultureInfo culture = args.Count > 2
-                    ? CultureInfo.GetCultureInfo(Str("char", args, 2, line, col).Replace('_', '-'))
-                    : CultureInfo.InvariantCulture;
+                // The format and locale as string(t, fmt, locale) reads them (ADR 0350).
+                (JgsTimeTag tag, CultureInfo culture) = TimeFormatArguments("char", args, line, col);
                 var texts = new string[time.ArrayLength];
                 for (int i = 0; i < texts.Length; i++)
                 {

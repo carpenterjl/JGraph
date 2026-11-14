@@ -129,9 +129,9 @@ internal static partial class JgsBuiltins
     /// </para>
     /// <para>
     /// The names here genuinely take a second array whose class combines with the first: a
-    /// concatenation, a two-argument extreme, a set operation, a convolution. <c>filter</c> is on the
-    /// list because its data is the <em>third</em> argument, which is the same problem read the other
-    /// way round.
+    /// concatenation, a two-argument extreme, a set operation, a convolution. <c>filter</c> is not
+    /// wrapped at all: it decides its own class, single from any of b, a, x and zi but never from the
+    /// dimension, and works a single call in single arithmetic (ADR 0350).
     /// </para>
     /// </remarks>
     private static readonly string[] MultiSubjectBuiltins =
@@ -139,7 +139,7 @@ internal static partial class JgsBuiltins
         "cat", "horzcat", "vertcat", "kron", "cross",
         "max", "min", "union", "intersect", "setdiff", "setxor",
         "mod", "rem", "idivide", "bitand", "bitor", "bitxor", "bitshift",
-        "hypot", "atan2", "dot", "nthroot", "conv", "conv2", "filter",
+        "hypot", "atan2", "dot", "nthroot", "conv", "conv2",
         "trapz", "cumtrapz", "interp1", "linspace",
     ];
 
@@ -163,7 +163,7 @@ internal static partial class JgsBuiltins
     private static readonly string[] FloatCarryingBuiltins =
     [
         "sum", "prod", "mean", "trapz", "var", "std", "norm", "dot",
-        "conv", "conv2", "fft", "ifft", "dct", "idct", "filter", "movmean", "movsum", "movstd", "movvar",
+        "conv", "conv2", "fft", "ifft", "dct", "idct", "movmean", "movsum", "movstd", "movvar",
         "rescale", "normalize", "roots", "linspace", "interp1", "interpft",
         "polyder", "polyint", "polyval", "polyvalm", "polyfit", "polyarea",
         "deconv", "convn", "cplxpair", "hypot",
@@ -247,13 +247,6 @@ internal static partial class JgsBuiltins
                     if (outputs.Length > 0)
                     {
                         outputs[0] = Finish(outputs[0], carried, masks && AllMasks(args, from, subjects));
-                    }
-
-                    // filter's second output is the delay line, a quantity like the first: a
-                    // single filter leaves a single zf (ADR 0345).
-                    if (name == "filter" && outputs.Length > 1)
-                    {
-                        outputs[1] = Finish(outputs[1], carried, false);
                     }
 
                     return outputs;

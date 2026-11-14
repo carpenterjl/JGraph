@@ -10,7 +10,7 @@ internal static partial class JgsBuiltins
 {
     /// <summary>
     /// The zone name a <c>TimeZone</c> value stands for: empty for none, R2025b's name for UTC or a
-    /// fixed offset (<c>+0200</c> is <c>+02:00</c>), or a zone database name as written.
+    /// fixed offset (<c>+0200</c> is <c>+02:00</c>), or R2025b's canonical name for a named zone.
     /// </summary>
     /// <remarks>
     /// R2025b's <c>verifyTimeZone</c> takes a string scalar, a character vector or a duration, which
@@ -42,9 +42,15 @@ internal static partial class JgsBuiltins
                 "A time zone must be specified as a string scalar, non-NaN duration scalar, or character vector.");
         }
 
-        if (given.Length == 0 || string.Equals(given, "local", StringComparison.OrdinalIgnoreCase))
+        if (given.Length == 0)
         {
             return given;
+        }
+
+        // 'local', in any case, is the system's zone under R2025b's name for it (ADR 0350).
+        if (string.Equals(given, "local", StringComparison.OrdinalIgnoreCase))
+        {
+            return JgsTimeZoneNames.LocalName();
         }
 
         switch (JgsTimeZones.Read(given, out string name, out _, out string? warnAs))
@@ -57,12 +63,77 @@ internal static partial class JgsBuiltins
 
                 return name;
 
-            case ZoneReading.NotFixed when JgsTime.TryResolveZone(given, out _):
-                return given;
+            // A named zone is matched with its case and stored under R2025b's canonical name,
+            // with a warning for an alias that does not name a single zone (ADR 0350).
+            case ZoneReading.NotFixed when JgsTimeZoneNames.TryLookup(given, out string stored, out bool warns)
+                                           && JgsTime.TryResolveZone(stored, out _):
+                if (warns)
+                {
+                    WarnAboutZone(JgsTimeZoneNames.NonstandardWarningId, JgsTimeZoneNames.NonstandardWarning(given, stored));
+                }
+
+                return stored;
 
             default:
                 throw UnknownTimeZone(given, line, col);
         }
+    }
+
+    /// <summary>
+    /// The display tag and culture <c>string(t, fmt, locale)</c> and <c>char(t, fmt, locale)</c>
+    /// format with: an empty second argument keeps the value's own format, text replaces it (a
+    /// datetime's refused zone letters refused as the <c>Format</c> setter refuses them), and
+    /// anything else is <c>MATLAB:datetime:InvalidFormat</c> (ADR 0350).
+    /// </summary>
+    private static (JgsTimeTag Tag, CultureInfo Culture) TimeFormatArguments(
+        string verb, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        JgsTimeTag tag = args[0].TimeTag!;
+        if (args.Count > 1 && !IsEmptyValue(args[1]))
+        {
+            if (!IsTextScalar(args[1]))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:datetime:InvalidFormat",
+                    "A datetime format must be specified as a non-empty and non-missing string or character row vector.");
+            }
+
+            string format = TextOf(args[1]);
+            if (format.Length > 0)
+            {
+                if (args[0].IsDatetime)
+                {
+                    RefuseUnsupportedZoneLetters(format, line, col);
+                }
+
+                tag = tag with { Format = format };
+            }
+        }
+
+        CultureInfo culture = args.Count > 2 && !IsEmptyValue(args[2])
+            ? CultureInfo.GetCultureInfo(Str(verb, args, 2, line, col).Replace('_', '-'))
+            : CultureInfo.InvariantCulture;
+        return (tag, culture);
+    }
+
+    /// <summary>
+    /// <c>string(t, fmt)</c> and <c>string(t, fmt, locale)</c>: each moment in that format, a
+    /// missing one the missing string, the array's shape kept (ADR 0350).
+    /// </summary>
+    private static JgsValue FormattedTimeStrings(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        ArityRange("string", args, 1, 3, line, col);
+        JgsValue time = args[0];
+        (JgsTimeTag tag, CultureInfo culture) = TimeFormatArguments("string", args, line, col);
+        var texts = new JgsValue[time.ArrayLength];
+        for (int i = 0; i < texts.Length; i++)
+        {
+            double ms = time.ElementAt(i).AsNumber;
+            texts[i] = JgsValue.Str(JgsRunningDialect.ThreadIsMatlab && double.IsNaN(ms)
+                ? MissingSentinel
+                : JgsTime.Format(ms, tag, culture));
+        }
+
+        return ShapedLike(time, texts).MarkStringArray();
     }
 
     /// <summary>R2025b's refusal of a zone it cannot read.</summary>

@@ -642,17 +642,31 @@ internal static partial class JgsBuiltins
         }
 
         ArityRange("filter", args, 3, 5, line, col);
-        double[] numerator = NumericVector("filter", args, 0, line, col).ToArray();
-        double[] denominator = NumericVector("filter", args, 1, line, col).ToArray();
 
-        int order = System.Math.Max(numerator.Length, denominator.Length) - 1;
+        // R2025b's refusals in its own order: the kinds of every argument, then the coefficients'
+        // shapes, then the dimension, then a(1), then zi (ADR 0350).
+        FilterArgumentKinds(args, line, col);
+        FilterCoefficientShapes(args, line, col);
 
         JgsValue signal = args[2];
         // A scalar signal is a 1-by-1 (its own Dims read 0-by-0, which filtered nothing).
-        int[] dims = signal.Type is JgsType.Number or JgsType.Bool ? [1, 1] : JgsMatrix.DimsOf(signal);
+        int[] dims = signal.Type is JgsType.Number or JgsType.Bool or JgsType.Complex ? [1, 1] : JgsMatrix.DimsOf(signal);
         int dim = args.Count >= 5
             ? FilterDimension(args[4], line, col)
             : JgsMatrix.DefaultDim(dims);
+
+        // A complex or single call, or an empty b or a, takes its own road: R2025b filters a
+        // complex one and works a single one in single arithmetic (ADR 0350).
+        if (FilterNeedsWideRoad(args, out bool single, out _))
+        {
+            return FilterWide(args, single, dims, dim, wanted, line, col);
+        }
+
+        double[] numerator = FlattenColumnMajor("filter", args[0], line, col);
+        double[] denominator = FlattenColumnMajor("filter", args[1], line, col);
+        FilterLeadingCoefficient(denominator[0], 0, line, col);
+
+        int order = System.Math.Max(numerator.Length, denominator.Length) - 1;
 
         // zi in R2025b's layout: one delay line for every slice, or the delays first and the
         // signal's other dimensions after them, one line per slice (ADR 0345).
@@ -748,6 +762,25 @@ internal static partial class JgsBuiltins
     private static (double[]? Values, bool PerSlice) FilterInitialConditions(
         JgsValue zi, int delays, int[] dims, int dim, int line, int col)
     {
+        (bool present, bool perSlice) = FilterInitialLayout(zi, delays, dims, dim, line, col);
+        if (!present)
+        {
+            return (null, false);
+        }
+
+        double[] values = zi.Type is JgsType.Number or JgsType.Bool
+            ? [zi.AsNumber]
+            : FlattenColumnMajor("filter", zi, line, col);
+        return (values, perSlice);
+    }
+
+    /// <summary>
+    /// Which of R2025b's three forms <c>zi</c> takes — rest, one line for every slice, or one line
+    /// per slice — refusing every other shape in its words; the values are the caller's to read.
+    /// </summary>
+    private static (bool Present, bool PerSlice) FilterInitialLayout(
+        JgsValue zi, int delays, int[] dims, int dim, int line, int col)
+    {
         if (zi.Type is JgsType.String or JgsType.Cell || zi.IsStringArray)
         {
             throw new JgsRuntimeException(line, col, "MATLAB:filter:inputType",
@@ -756,22 +789,25 @@ internal static partial class JgsBuiltins
 
         if (zi.Type == JgsType.Null)
         {
-            return (null, false);
+            return (false, false);
         }
 
         int[] size = zi.Type is JgsType.Number or JgsType.Bool or JgsType.Complex ? [1, 1] : SizeDims(zi);
         if (size.Length == 2 && size[0] == 0 && size[1] == 0)
         {
-            return (null, false);
+            return (false, false);
         }
 
-        double[] values = zi.Type is JgsType.Number or JgsType.Bool
-            ? [zi.AsNumber]
-            : FlattenColumnMajor("filter", zi, line, col);
-        bool vector = size.Length == 2 && (size[0] == 1 || size[1] == 1);
-        if (vector && values.Length == delays)
+        long count = 1;
+        foreach (int extent in size)
         {
-            return (values, false);
+            count *= extent;
+        }
+
+        bool vector = size.Length == 2 && (size[0] == 1 || size[1] == 1);
+        if (vector && count == delays)
+        {
+            return (true, false);
         }
 
         int[] others = PackedFilterOps.OtherDimensions(dims, dim);
@@ -809,6 +845,6 @@ internal static partial class JgsBuiltins
                 "dimensions matching those of x.");
         }
 
-        return (values, true);
+        return (true, true);
     }
 }

@@ -62,6 +62,12 @@ internal static partial class JgsBuiltins
         // character: that a piece of text is a single element is the whole point of the type.
         Define("string", (args, line, col) =>
         {
+            // string(t, fmt, locale) formats a datetime or duration as R2025b does (ADR 0350).
+            if (args.Count > 1 && args[0].IsTime && !IsCalendarDuration(args[0]))
+            {
+                return FormattedTimeStrings(args, line, col);
+            }
+
             Arity("string", args, 1, line, col);
             JgsValue input = args[0];
             if (input.IsStringArray)

@@ -98,11 +98,12 @@ collects the final lines straight into that layout, in place of a second `JoinAl
 
 ## Divergences
 
-- **A single filter is worked in double and rounded once.** R2025b works it in single, so `y` and `zf`
-  differ in the last bit or two of a single (`zf(2)` of the probe's IIR is -0.7265625 here and
-  -0.72656256 there). The class and the layout agree.
-- **A complex signal, coefficient or zi is refused.** R2025b filters it, and its `zf` is complex in
-  the same layout.
+Closed since: **a single filter was worked in double and rounded once**, and **a complex signal,
+coefficient or zi was refused** (open item 305, ADR 0350). A single call is now worked in single
+arithmetic, the same recurrence in `float`, and a complex one in complex arithmetic, each output real
+when its imaginary part is all zeros, as in R2025b. `filter_conditions`' two rows are agreeing lines.
+The same item took up this ADR's first "Still open" bullet: a matrix `b`, a sparse argument, a char
+signal, an empty `b` or `a` and `a(1) = 0` are now refused, or answered, in R2025b's words.
 
 ## Still open
 

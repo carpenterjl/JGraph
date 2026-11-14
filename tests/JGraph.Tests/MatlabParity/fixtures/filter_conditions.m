@@ -5,8 +5,8 @@
 % read the same way, or as one vector of length L that every slice starts from. Each case pins zf's
 % size and class exactly, and its values by an order-weighted digest, so a transposed layout with
 % the same numbers in it still fails. Both parities of L are swept (2 and 3), FIR and IIR, and a(1)
-% other than one. A complex filter is refused here and a single one is worked in double; both are
-% recorded as divergences (div=ADR0345).
+% other than one. A complex filter is filtered in complex arithmetic and a single one in single
+% arithmetic, as R2025b does (ADR 0350 closed the two divergences ADR 0345 recorded here).
 
 bi = [0.2 0.3];  ai = [1 -0.5 0.25];          % L = 2, feedback
 b3 = [1 -2 3 0.5] / 3;                          % L = 3, no feedback
@@ -107,15 +107,15 @@ fprintf('CHK|single_zf_size|%s|exact\n', mat2str(size(zs)));
 [~, zs2] = filter(single(bi), ai, X45, [], 2);
 fprintf('CHK|single_b_zf_class|%s|exact\n', class(zs2));
 fprintf('CHK|single_b_zf_size|%s|exact\n', mat2str(size(zs2)));
-% R2025b works a single filter in single; JGraph works it in double and rounds once.
-fprintf('CHK|single_zf_last|%.9g|div=ADR0345\n', double(zs(2)));
+% Both engines work a single filter in single arithmetic (ADR 0350).
+fprintf('CHK|single_zf_last|%.9g|exact\n', double(zs(2)));
 try
     [~, zx] = filter(bi, ai, xr + 1i * xr(end:-1:1));
     cx = sprintf('%s %s', class(zx), mat2str(size(zx)));
 catch
     cx = 'refused';
 end
-fprintf('CHK|complex_zf|%s|div=ADR0345\n', cx);
+fprintf('CHK|complex_zf|%s|exact\n', cx);
 
 function fc_zf(key, b, a, x, zi, dim)
 try

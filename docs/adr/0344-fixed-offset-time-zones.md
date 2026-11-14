@@ -148,3 +148,8 @@ None new.
   zone.
 - **`string(t, fmt)` and `char(t, fmt)`** do not take a format here ("Too many input arguments"), so
   R2025b's refusal of `O` through them is not reached.
+
+Closed since: all three of the above (open item 311, ADR 0350). A named zone's `z` is R2025b's 'en'
+abbreviation or its offset, a name is matched with its case and stored under R2025b's canonical name
+(with its warning for an alias), `'local'` stores the system zone's name, and `string(t, fmt)` and
+`char(t, fmt)` take a format and refuse its letters.
