@@ -1520,12 +1520,15 @@ internal sealed class JgsValue
 
     /// <summary>
     /// A value shown inside a struct or a cell: a single OnOffSwitchState is its member's name there,
-    /// as R2025b shows <c>v: on</c> and <c>{[on]}</c> (open item 132), not its block display.
+    /// as R2025b shows <c>v: on</c> and <c>{[on]}</c> (open item 132), not its block display; a class that
+    /// gives a compact display of its own gives it there (secretID's, open item 310, ADR 0353).
     /// </summary>
-    private static string NestedDisplay(JgsValue value) =>
+    private static string NestedDisplay(JgsValue value, bool inCell = false) =>
         value._reference is OnOffSwitchStateValue { States.Length: 1 } state && value.Type == JgsType.External
             ? state.Summary()!
-            : value.Display();
+            : value.Type == JgsType.Object && JgsBuiltinClasses.CompactDisplay(value, inCell) is { } compact
+                ? compact
+                : value.Display();
 
     /// <summary>
     /// An array of objects as R2025b shows one (open item 65, probe <c>probe_65</c>): its size and
@@ -1780,7 +1783,7 @@ internal sealed class JgsValue
                 sb.Append(", ");
             }
 
-            sb.Append(elements[i].Type == JgsType.String ? $"'{elements[i].AsString}'" : NestedDisplay(elements[i]));
+            sb.Append(elements[i].Type == JgsType.String ? $"'{elements[i].AsString}'" : NestedDisplay(elements[i], inCell: true));
         }
 
         if (shown < elements.Length)

@@ -1,0 +1,850 @@
+CHK|mc196val_class|matlab.metadata.Class|exact
+CHK|mc196val_props|Name Description DetailedDescription Hidden Sealed Abstract Enumeration ConstructOnLoad HandleCompatible InferiorClasses Namespace Aliases RestrictsSubclassing PropertyList MethodList EventList EnumerationMemberList SuperclassList|exact
+CHK|mc196val_name|Mc196Val|exact
+CHK|mc196val_desc|A value class with property blocks of mixed attributes.|exact
+CHK|mc196val_detail||exact
+CHK|mc196val_flags|logical [1 7] 0 0 0 0 0 0 0|exact
+CHK|mc196val_inferior||exact
+CHK|mc196val_inferior_size|double [1 2] 0 1|exact
+CHK|mc196val_namespace|matlab.metadata.Namespace [0 0]|exact
+CHK|mc196val_aliases|string [0 1]|exact
+CHK|mc196val_ml_class|matlab.metadata.Method|exact
+CHK|mc196val_ml_size|double [1 2] 8 1|exact
+CHK|mc196val_ml_names|third second first Mc196Val make helper secret empty|exact
+CHK|mc196val_ml_defining|Mc196Val Mc196Val Mc196Val Mc196Val Mc196Val Mc196Val Mc196Val Mc196Val|exact
+CHK|mc196val_ml_access|public public public public public private public public|exact
+CHK|mc196val_ml_static|logical [1 8] 0 0 0 0 1 0 0 1|exact
+CHK|mc196val_ml_abstract|logical [1 8] 0 0 0 0 0 0 0 0|exact
+CHK|mc196val_ml_sealed|logical [1 8] 0 0 0 0 0 0 1 0|exact
+CHK|mc196val_ml_hidden|logical [1 8] 0 0 0 0 0 0 1 1|exact
+CHK|mc196val_ml_inputs|obj,varargin obj obj,x,y a n obj obj varargin|exact
+CHK|mc196val_ml_input_sizes|double [2 8] 2 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1|exact
+CHK|mc196val_ml_outputs|varargout p,q r obj r r E|exact
+CHK|mc196val_ml_desc|;;;A value class with property blocks of mixed attributes.;;;;Returns an empty object array of the given size|exact
+CHK|mc196val_ml_detail|;;;;;;;|exact
+CHK|mc196val_pl_class|matlab.metadata.Property|exact
+CHK|mc196val_pl_size|double [1 2] 11 1|exact
+CHK|mc196val_pl_names|A B C D Priv K Dep Hid Prot Imm PrivX|exact
+CHK|mc196val_pl_defining|Mc196Val Mc196Val Mc196Val Mc196Val Mc196Val Mc196Val Mc196Val Mc196Val Mc196Val Mc196Val Mc196Val|exact
+CHK|mc196val_pl_get|public public public public public public public public protected public private|exact
+CHK|mc196val_pl_set|public public public public private none public public protected immutable private|exact
+CHK|mc196val_pl_dependent|logical [1 11] 0 0 0 0 0 0 1 0 0 0 0|exact
+CHK|mc196val_pl_constant|logical [1 11] 0 0 0 0 0 1 0 0 0 0 0|exact
+CHK|mc196val_pl_abstract|logical [1 11] 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196val_pl_transient|logical [1 11] 0 0 0 0 0 0 0 1 0 0 0|exact
+CHK|mc196val_pl_hidden|logical [1 11] 0 0 0 0 0 0 0 1 0 0 0|exact
+CHK|mc196val_pl_observable|logical [2 11] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196val_pl_abortset|logical [1 11] 0 0 0 0 0 0 0 0 0 1 0|exact
+CHK|mc196val_pl_noncopyable|logical [1 11] 0 0 0 0 0 1 1 0 0 0 0|exact
+CHK|mc196val_pl_weak|logical [1 11] 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196val_pl_priority|double [1 11] 1 1 1 1 1 1 1 1 1 1 1|exact
+CHK|mc196val_pl_hasdefault|logical [1 11] 1 0 0 1 1 1 0 0 1 1 1|exact
+CHK|mc196val_pl_defaults|double [1 1] 1 ; - ; - ; char [1 1] 120 ; char [1 1] 112 ; double [1 1] 42 ; - ; - ; double [0 0] [] ; int8 [1 1] 3 ; double [1 1] 0|exact
+CHK|mc196val_pl_getmethod|logical [1 11] 1 1 1 1 1 1 0 1 1 1 1|exact
+CHK|mc196val_pl_setmethod|logical [1 11] 1 1 1 1 1 1 1 1 1 1 1|exact
+CHK|mc196val_pl_validation|- ; - ; double matlab.metadata.FixedDimension 2 0 ; char matlab.metadata.ArrayDimension 2 1 ; - ; - ; - ; - ; - ; - ; -|exact
+CHK|mc196val_pl_desc|;;;;;;;;;;|exact
+CHK|mc196val_el_class|matlab.metadata.Event|exact
+CHK|mc196val_el_size|double [1 2] 0 1|exact
+CHK|mc196val_el_names||exact
+CHK|mc196val_el_access||exact
+CHK|mc196val_el_defining||exact
+CHK|mc196val_el_desc||exact
+CHK|mc196val_el_hidden|double [0 0]|exact
+CHK|mc196val_eml_class|matlab.metadata.EnumerationMember|exact
+CHK|mc196val_eml_size|double [1 2] 0 1|exact
+CHK|mc196val_eml_names||exact
+CHK|mc196val_eml_defining||exact
+CHK|mc196val_sl_class|matlab.metadata.Class|exact
+CHK|mc196val_sl_size|double [1 2] 0 1|exact
+CHK|mc196val_sl_names||exact
+CHK|mc196handle_class|matlab.metadata.Class|exact
+CHK|mc196handle_props|Name Description DetailedDescription Hidden Sealed Abstract Enumeration ConstructOnLoad HandleCompatible InferiorClasses Namespace Aliases RestrictsSubclassing PropertyList MethodList EventList EnumerationMemberList SuperclassList|exact
+CHK|mc196handle_name|Mc196Handle|exact
+CHK|mc196handle_desc|A handle class with events and an override of a handle method.|exact
+CHK|mc196handle_detail||exact
+CHK|mc196handle_flags|logical [1 7] 0 0 0 0 0 1 0|exact
+CHK|mc196handle_inferior||exact
+CHK|mc196handle_inferior_size|double [1 2] 0 1|exact
+CHK|mc196handle_namespace|matlab.metadata.Namespace [0 0]|exact
+CHK|mc196handle_aliases|string [0 1]|exact
+CHK|mc196handle_ml_class|matlab.metadata.Method|exact
+CHK|mc196handle_ml_size|double [1 2] 35 1|exact
+CHK|mc196handle_ml_names|delete bump Mc196Handle empty eq ne lt gt le ge isvalid findprop notify notify addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener findobj|exact
+CHK|mc196handle_ml_defining|Mc196Handle Mc196Handle Mc196Handle Mc196Handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle|exact
+CHK|mc196handle_ml_access|public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public|exact
+CHK|mc196handle_ml_static|logical [1 35] 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196handle_ml_abstract|logical [1 35] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196handle_ml_sealed|logical [1 35] 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196handle_ml_hidden|logical [1 35] 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 0|exact
+CHK|mc196handle_ml_inputs|obj obj varargin A,B A,B A,B A,B A,B A,B obj object,propname sources,eventname sources,eventname,eventdata sources,eventname,callback sources,eventname,callback sources,properties,eventname,callback sources,properties,eventname,callback sources,propertyname,eventname,callback sources,propertyname,eventname,callback sources,propertyname,eventname,callback sources,propertyname,eventname,callback sources,propertynames,eventname,callback sources,propertynames,eventname,callback sources,eventname,callback,rhs4,rhs5 sources,eventname,callback,rhs4,rhs5 sources,properties,eventname,callback,rhs5,rhs6 sources,properties,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertynames,eventname,callback,rhs5,rhs6 sources,propertynames,eventname,callback,rhs5,rhs6 H,varargin|exact
+CHK|mc196handle_ml_input_sizes|double [2 35] 1 1 1 1 0 1 1 1 2 1 2 1 2 1 2 1 2 1 2 1 1 1 2 1 2 1 3 1 3 1 3 1 4 1 4 1 4 1 4 1 4 1 4 1 4 1 4 1 5 1 5 1 6 1 6 1 6 1 6 1 6 1 6 1 6 1 6 1 2 1|exact
+CHK|mc196handle_ml_outputs| obj E TF TF TF TF TF TF validity prop L L L L L L L L L L L L L L L L L L L L HM|exact
+CHK|mc196handle_ml_desc|;;A handle class with events and an override of a handle method.;Returns an empty object array of the given size;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;|exact
+CHK|mc196handle_ml_detail|;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;|exact
+CHK|mc196handle_pl_class|matlab.metadata.Property|exact
+CHK|mc196handle_pl_size|double [1 2] 2 1|exact
+CHK|mc196handle_pl_names|Level Tag|exact
+CHK|mc196handle_pl_defining|Mc196Handle Mc196Handle|exact
+CHK|mc196handle_pl_get|public public|exact
+CHK|mc196handle_pl_set|public public|exact
+CHK|mc196handle_pl_dependent|logical [1 2] 0 0|exact
+CHK|mc196handle_pl_constant|logical [1 2] 0 0|exact
+CHK|mc196handle_pl_abstract|logical [1 2] 0 0|exact
+CHK|mc196handle_pl_transient|logical [1 2] 0 0|exact
+CHK|mc196handle_pl_hidden|logical [1 2] 0 0|exact
+CHK|mc196handle_pl_observable|logical [2 2] 0 1 0 0|exact
+CHK|mc196handle_pl_abortset|logical [1 2] 0 0|exact
+CHK|mc196handle_pl_noncopyable|logical [1 2] 0 1|exact
+CHK|mc196handle_pl_weak|logical [1 2] 0 0|exact
+CHK|mc196handle_pl_priority|double [1 2] 1 1|exact
+CHK|mc196handle_pl_hasdefault|logical [1 2] 1 0|exact
+CHK|mc196handle_pl_defaults|double [1 1] 0 ; -|exact
+CHK|mc196handle_pl_getmethod|logical [1 2] 1 1|exact
+CHK|mc196handle_pl_setmethod|logical [1 2] 1 1|exact
+CHK|mc196handle_pl_validation|- ; -|exact
+CHK|mc196handle_pl_desc|;|exact
+CHK|mc196handle_el_class|matlab.metadata.Event|exact
+CHK|mc196handle_el_size|double [1 2] 3 1|exact
+CHK|mc196handle_el_names|Changed Quiet ObjectBeingDestroyed|exact
+CHK|mc196handle_el_access|public/public private/protected private/public|exact
+CHK|mc196handle_el_defining|Mc196Handle Mc196Handle handle|exact
+CHK|mc196handle_el_desc|;;Notifies listeners that a particular object has been destroyed.|exact
+CHK|mc196handle_el_hidden|logical [1 3] 0 0 0|exact
+CHK|mc196handle_eml_class|matlab.metadata.EnumerationMember|exact
+CHK|mc196handle_eml_size|double [1 2] 0 1|exact
+CHK|mc196handle_eml_names||exact
+CHK|mc196handle_eml_defining||exact
+CHK|mc196handle_sl_class|matlab.metadata.Class|exact
+CHK|mc196handle_sl_size|double [1 2] 1 1|exact
+CHK|mc196handle_sl_names|handle|exact
+CHK|mc196sub_class|matlab.metadata.Class|exact
+CHK|mc196sub_props|Name Description DetailedDescription Hidden Sealed Abstract Enumeration ConstructOnLoad HandleCompatible InferiorClasses Namespace Aliases RestrictsSubclassing PropertyList MethodList EventList EnumerationMemberList SuperclassList|exact
+CHK|mc196sub_name|Mc196Sub|exact
+CHK|mc196sub_desc|A value subclass: overrides one method, adds one, adds a property.|exact
+CHK|mc196sub_detail||exact
+CHK|mc196sub_flags|logical [1 7] 0 0 0 0 0 0 0|exact
+CHK|mc196sub_inferior||exact
+CHK|mc196sub_inferior_size|double [1 2] 0 1|exact
+CHK|mc196sub_namespace|matlab.metadata.Namespace [0 0]|exact
+CHK|mc196sub_aliases|string [0 1]|exact
+CHK|mc196sub_ml_class|matlab.metadata.Method|exact
+CHK|mc196sub_ml_size|double [1 2] 8 1|exact
+CHK|mc196sub_ml_names|own first Mc196Sub empty third second make secret|exact
+CHK|mc196sub_ml_defining|Mc196Sub Mc196Sub Mc196Sub Mc196Sub Mc196Val Mc196Val Mc196Val Mc196Val|exact
+CHK|mc196sub_ml_access|public public public public public public public public|exact
+CHK|mc196sub_ml_static|logical [1 8] 0 0 0 1 0 0 1 0|exact
+CHK|mc196sub_ml_abstract|logical [1 8] 0 0 0 0 0 0 0 0|exact
+CHK|mc196sub_ml_sealed|logical [1 8] 0 0 0 0 0 0 0 1|exact
+CHK|mc196sub_ml_hidden|logical [1 8] 0 0 0 1 0 0 0 1|exact
+CHK|mc196sub_ml_inputs|obj obj,x,y varargin varargin obj,varargin obj n obj|exact
+CHK|mc196sub_ml_input_sizes|double [2 8] 1 1 3 1 1 1 1 1 2 1 1 1 1 1 1 1|exact
+CHK|mc196sub_ml_outputs| r obj E varargout p,q r r|exact
+CHK|mc196sub_ml_desc|;;A value subclass: overrides one method, adds one, adds a property.;Returns an empty object array of the given size;;;;|exact
+CHK|mc196sub_ml_detail|;;;;;;;|exact
+CHK|mc196sub_pl_class|matlab.metadata.Property|exact
+CHK|mc196sub_pl_size|double [1 2] 11 1|exact
+CHK|mc196sub_pl_names|Extra A B C D Priv K Dep Hid Prot Imm|exact
+CHK|mc196sub_pl_defining|Mc196Sub Mc196Val Mc196Val Mc196Val Mc196Val Mc196Val Mc196Val Mc196Val Mc196Val Mc196Val Mc196Val|exact
+CHK|mc196sub_pl_get|public public public public public public public public public protected public|exact
+CHK|mc196sub_pl_set|public public public public public private none public public protected immutable|exact
+CHK|mc196sub_pl_dependent|logical [1 11] 0 0 0 0 0 0 0 1 0 0 0|exact
+CHK|mc196sub_pl_constant|logical [1 11] 0 0 0 0 0 0 1 0 0 0 0|exact
+CHK|mc196sub_pl_abstract|logical [1 11] 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196sub_pl_transient|logical [1 11] 0 0 0 0 0 0 0 0 1 0 0|exact
+CHK|mc196sub_pl_hidden|logical [1 11] 0 0 0 0 0 0 0 0 1 0 0|exact
+CHK|mc196sub_pl_observable|logical [2 11] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196sub_pl_abortset|logical [1 11] 0 0 0 0 0 0 0 0 0 0 1|exact
+CHK|mc196sub_pl_noncopyable|logical [1 11] 0 0 0 0 0 0 1 1 0 0 0|exact
+CHK|mc196sub_pl_weak|logical [1 11] 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196sub_pl_priority|double [1 11] 1 1 1 1 1 1 1 1 1 1 1|exact
+CHK|mc196sub_pl_hasdefault|logical [1 11] 1 1 0 0 1 1 1 0 0 1 1|exact
+CHK|mc196sub_pl_defaults|char [1 1] 101 ; double [1 1] 1 ; - ; - ; char [1 1] 120 ; char [1 1] 112 ; double [1 1] 42 ; - ; - ; double [0 0] [] ; int8 [1 1] 3|exact
+CHK|mc196sub_pl_getmethod|logical [1 11] 1 1 1 1 1 1 1 0 1 1 1|exact
+CHK|mc196sub_pl_setmethod|logical [1 11] 1 1 1 1 1 1 1 1 1 1 1|exact
+CHK|mc196sub_pl_validation|- ; - ; - ; double matlab.metadata.FixedDimension 2 0 ; char matlab.metadata.ArrayDimension 2 1 ; - ; - ; - ; - ; - ; -|exact
+CHK|mc196sub_pl_desc|;;;;;;;;;;|exact
+CHK|mc196sub_el_class|matlab.metadata.Event|exact
+CHK|mc196sub_el_size|double [1 2] 0 1|exact
+CHK|mc196sub_el_names||exact
+CHK|mc196sub_el_access||exact
+CHK|mc196sub_el_defining||exact
+CHK|mc196sub_el_desc||exact
+CHK|mc196sub_el_hidden|double [0 0]|exact
+CHK|mc196sub_eml_class|matlab.metadata.EnumerationMember|exact
+CHK|mc196sub_eml_size|double [1 2] 0 1|exact
+CHK|mc196sub_eml_names||exact
+CHK|mc196sub_eml_defining||exact
+CHK|mc196sub_sl_class|matlab.metadata.Class|exact
+CHK|mc196sub_sl_size|double [1 2] 1 1|exact
+CHK|mc196sub_sl_names|Mc196Val|exact
+CHK|mc196enum_class|matlab.metadata.Class|exact
+CHK|mc196enum_props|Name Description DetailedDescription Hidden Sealed Abstract Enumeration ConstructOnLoad HandleCompatible InferiorClasses Namespace Aliases RestrictsSubclassing PropertyList MethodList EventList EnumerationMemberList SuperclassList|exact
+CHK|mc196enum_name|Mc196Enum|exact
+CHK|mc196enum_desc|An enumeration.|exact
+CHK|mc196enum_detail||exact
+CHK|mc196enum_flags|logical [1 7] 0 0 0 1 0 0 0|exact
+CHK|mc196enum_inferior|string|exact
+CHK|mc196enum_inferior_size|double [1 2] 1 1|exact
+CHK|mc196enum_namespace|matlab.metadata.Namespace [0 0]|exact
+CHK|mc196enum_aliases|string [0 1]|exact
+CHK|mc196enum_ml_class|matlab.metadata.Method|exact
+CHK|mc196enum_ml_size|double [1 2] 19 1|exact
+CHK|mc196enum_ml_names|Mc196Enum empty char eq ne colon cellstr string strcmp strncmp strcmpi strncmpi setdiff setxor union intersect ismember isequal isequaln|exact
+CHK|mc196enum_ml_defining|Mc196Enum Mc196Enum Mc196Enum Mc196Enum Mc196Enum Mc196Enum Mc196Enum Mc196Enum Mc196Enum Mc196Enum Mc196Enum Mc196Enum Mc196Enum Mc196Enum Mc196Enum Mc196Enum Mc196Enum Mc196Enum Mc196Enum|exact
+CHK|mc196enum_ml_access|public public public public public public public public public public public public public public public public public public public|exact
+CHK|mc196enum_ml_static|logical [1 19] 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196enum_ml_abstract|logical [1 19] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196enum_ml_sealed|logical [1 19] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196enum_ml_hidden|logical [1 19] 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196enum_ml_inputs| varargin rhs1 A,B A,B varargin rhs1 rhs1 rhs1,rhs2 rhs1,rhs2,rhs3 rhs1,rhs2 rhs1,rhs2,rhs3 varargin varargin varargin varargin varargin rhs1 rhs1|exact
+CHK|mc196enum_ml_input_sizes|double [2 19] 0 1 1 1 1 1 2 1 2 1 1 1 1 1 1 1 2 1 3 1 2 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1|exact
+CHK|mc196enum_ml_outputs|obj E lhs1 TF TF varargout lhs1 lhs1 lhs1 lhs1 lhs1 lhs1 varargout varargout varargout varargout varargout lhs1 lhs1|exact
+CHK|mc196enum_ml_desc|An enumeration.;Returns an empty object array of the given size;Char conversion for enumeration classes;;;colon method for enumeration derived from built-in classes;Cellstr conversion for enumeration classes;string conversion for enumeration classes;strcmp for enumeration classes;strncmp for enumeration classes;strcmpi for enumeration classes;strncmpi for enumeration classes;setdiff for enumeration classes;setxor for enumeration classes;union for enumeration classes;intersect for enumeration classes;ismember for enumeration classes;isequal for enumerations, including support for string/char vector/cellstr comparisons;isequaln for enumerations, including support for string/char vector/cellstr comparisons|exact
+CHK|mc196enum_ml_detail|;;;;;;;;;;;;;;;;;;|exact
+CHK|mc196enum_pl_class|matlab.metadata.Property|exact
+CHK|mc196enum_pl_size|double [1 2] 0 1|exact
+CHK|mc196enum_pl_names||exact
+CHK|mc196enum_pl_defining||exact
+CHK|mc196enum_pl_get||exact
+CHK|mc196enum_pl_set||exact
+CHK|mc196enum_pl_dependent|double [0 0]|exact
+CHK|mc196enum_pl_constant|double [0 0]|exact
+CHK|mc196enum_pl_abstract|double [0 0]|exact
+CHK|mc196enum_pl_transient|double [0 0]|exact
+CHK|mc196enum_pl_hidden|double [0 0]|exact
+CHK|mc196enum_pl_observable|double [0 0]|exact
+CHK|mc196enum_pl_abortset|double [0 0]|exact
+CHK|mc196enum_pl_noncopyable|double [0 0]|exact
+CHK|mc196enum_pl_weak|double [0 0]|exact
+CHK|mc196enum_pl_priority|double [0 0]|exact
+CHK|mc196enum_pl_hasdefault|double [0 0]|exact
+CHK|mc196enum_pl_defaults||exact
+CHK|mc196enum_pl_getmethod|double [0 0]|exact
+CHK|mc196enum_pl_setmethod|double [0 0]|exact
+CHK|mc196enum_pl_validation||exact
+CHK|mc196enum_pl_desc||exact
+CHK|mc196enum_el_class|matlab.metadata.Event|exact
+CHK|mc196enum_el_size|double [1 2] 0 1|exact
+CHK|mc196enum_el_names||exact
+CHK|mc196enum_el_access||exact
+CHK|mc196enum_el_defining||exact
+CHK|mc196enum_el_desc||exact
+CHK|mc196enum_el_hidden|double [0 0]|exact
+CHK|mc196enum_eml_class|matlab.metadata.EnumerationMember|exact
+CHK|mc196enum_eml_size|double [1 2] 2 1|exact
+CHK|mc196enum_eml_names|Low High|exact
+CHK|mc196enum_eml_defining|Mc196Enum Mc196Enum|exact
+CHK|mc196enum_sl_class|matlab.metadata.Class|exact
+CHK|mc196enum_sl_size|double [1 2] 0 1|exact
+CHK|mc196enum_sl_names||exact
+CHK|mc196abs_class|matlab.metadata.Class|exact
+CHK|mc196abs_props|Name Description DetailedDescription Hidden Sealed Abstract Enumeration ConstructOnLoad HandleCompatible InferiorClasses Namespace Aliases RestrictsSubclassing PropertyList MethodList EventList EnumerationMemberList SuperclassList|exact
+CHK|mc196abs_name|Mc196Abs|exact
+CHK|mc196abs_desc|An abstract handle class.|exact
+CHK|mc196abs_detail| Its second comment line./ / After a blank comment line.|exact
+CHK|mc196abs_flags|logical [1 7] 0 0 1 0 0 1 0|exact
+CHK|mc196abs_inferior||exact
+CHK|mc196abs_inferior_size|double [1 2] 0 1|exact
+CHK|mc196abs_namespace|matlab.metadata.Namespace [0 0]|exact
+CHK|mc196abs_aliases|string [0 1]|exact
+CHK|mc196abs_ml_class|matlab.metadata.Method|exact
+CHK|mc196abs_ml_size|double [1 2] 36 1|exact
+CHK|mc196abs_ml_names|area twice Mc196Abs empty eq ne lt gt le ge delete isvalid findprop notify notify addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener findobj|exact
+CHK|mc196abs_ml_defining|Mc196Abs Mc196Abs Mc196Abs Mc196Abs handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle|exact
+CHK|mc196abs_ml_access|public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public|exact
+CHK|mc196abs_ml_static|logical [1 36] 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196abs_ml_abstract|logical [1 36] 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196abs_ml_sealed|logical [1 36] 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196abs_ml_hidden|logical [1 36] 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 0|exact
+CHK|mc196abs_ml_inputs|obj obj varargin A,B A,B A,B A,B A,B A,B obj obj object,propname sources,eventname sources,eventname,eventdata sources,eventname,callback sources,eventname,callback sources,properties,eventname,callback sources,properties,eventname,callback sources,propertyname,eventname,callback sources,propertyname,eventname,callback sources,propertyname,eventname,callback sources,propertyname,eventname,callback sources,propertynames,eventname,callback sources,propertynames,eventname,callback sources,eventname,callback,rhs4,rhs5 sources,eventname,callback,rhs4,rhs5 sources,properties,eventname,callback,rhs5,rhs6 sources,properties,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertynames,eventname,callback,rhs5,rhs6 sources,propertynames,eventname,callback,rhs5,rhs6 H,varargin|exact
+CHK|mc196abs_ml_input_sizes|double [2 36] 1 1 1 1 0 1 1 1 2 1 2 1 2 1 2 1 2 1 2 1 1 1 1 1 2 1 2 1 3 1 3 1 3 1 4 1 4 1 4 1 4 1 4 1 4 1 4 1 4 1 5 1 5 1 6 1 6 1 6 1 6 1 6 1 6 1 6 1 6 1 2 1|exact
+CHK|mc196abs_ml_outputs|r r obj E TF TF TF TF TF TF validity prop L L L L L L L L L L L L L L L L L L L L HM|exact
+CHK|mc196abs_ml_desc|;the area.;An abstract handle class.;Returns an empty object array of the given size;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;|exact
+CHK|mc196abs_ml_detail|; Second line of twice.; Its second comment line./ / After a blank comment line.;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;|exact
+CHK|mc196abs_pl_class|matlab.metadata.Property|exact
+CHK|mc196abs_pl_size|double [1 2] 1 1|exact
+CHK|mc196abs_pl_names|Shape|exact
+CHK|mc196abs_pl_defining|Mc196Abs|exact
+CHK|mc196abs_pl_get|public|exact
+CHK|mc196abs_pl_set|public|exact
+CHK|mc196abs_pl_dependent|logical [1 1] 0|exact
+CHK|mc196abs_pl_constant|logical [1 1] 0|exact
+CHK|mc196abs_pl_abstract|logical [1 1] 1|exact
+CHK|mc196abs_pl_transient|logical [1 1] 0|exact
+CHK|mc196abs_pl_hidden|logical [1 1] 0|exact
+CHK|mc196abs_pl_observable|logical [2 1] 0 0|exact
+CHK|mc196abs_pl_abortset|logical [1 1] 0|exact
+CHK|mc196abs_pl_noncopyable|logical [1 1] 0|exact
+CHK|mc196abs_pl_weak|logical [1 1] 0|exact
+CHK|mc196abs_pl_priority|double [1 1] 1|exact
+CHK|mc196abs_pl_hasdefault|logical [1 1] 0|exact
+CHK|mc196abs_pl_defaults|-|exact
+CHK|mc196abs_pl_getmethod|logical [1 1] 1|exact
+CHK|mc196abs_pl_setmethod|logical [1 1] 1|exact
+CHK|mc196abs_pl_validation|-|exact
+CHK|mc196abs_pl_desc|the shape's name|exact
+CHK|mc196abs_el_class|matlab.metadata.Event|exact
+CHK|mc196abs_el_size|double [1 2] 1 1|exact
+CHK|mc196abs_el_names|ObjectBeingDestroyed|exact
+CHK|mc196abs_el_access|private/public|exact
+CHK|mc196abs_el_defining|handle|exact
+CHK|mc196abs_el_desc|Notifies listeners that a particular object has been destroyed.|exact
+CHK|mc196abs_el_hidden|logical [1 1] 0|exact
+CHK|mc196abs_eml_class|matlab.metadata.EnumerationMember|exact
+CHK|mc196abs_eml_size|double [1 2] 0 1|exact
+CHK|mc196abs_eml_names||exact
+CHK|mc196abs_eml_defining||exact
+CHK|mc196abs_sl_class|matlab.metadata.Class|exact
+CHK|mc196abs_sl_size|double [1 2] 1 1|exact
+CHK|mc196abs_sl_names|handle|exact
+CHK|mc196hsub_class|matlab.metadata.Class|exact
+CHK|mc196hsub_props|Name Description DetailedDescription Hidden Sealed Abstract Enumeration ConstructOnLoad HandleCompatible InferiorClasses Namespace Aliases RestrictsSubclassing PropertyList MethodList EventList EnumerationMemberList SuperclassList|exact
+CHK|mc196hsub_name|Mc196HSub|exact
+CHK|mc196hsub_desc||exact
+CHK|mc196hsub_detail||exact
+CHK|mc196hsub_flags|logical [1 7] 0 0 0 0 0 1 0|exact
+CHK|mc196hsub_inferior||exact
+CHK|mc196hsub_inferior_size|double [1 2] 0 1|exact
+CHK|mc196hsub_namespace|matlab.metadata.Namespace [0 0]|exact
+CHK|mc196hsub_aliases|string [0 1]|exact
+CHK|mc196hsub_ml_class|matlab.metadata.Method|exact
+CHK|mc196hsub_ml_size|double [1 2] 36 1|exact
+CHK|mc196hsub_ml_names|more Mc196HSub empty delete bump eq ne lt gt le ge isvalid findprop notify notify addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener findobj|exact
+CHK|mc196hsub_ml_defining|Mc196HSub Mc196HSub Mc196HSub Mc196Handle Mc196Handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle|exact
+CHK|mc196hsub_ml_access|public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public|exact
+CHK|mc196hsub_ml_static|logical [1 36] 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196hsub_ml_abstract|logical [1 36] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196hsub_ml_sealed|logical [1 36] 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196hsub_ml_hidden|logical [1 36] 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 0|exact
+CHK|mc196hsub_ml_inputs|obj varargin obj obj A,B A,B A,B A,B A,B A,B obj object,propname sources,eventname sources,eventname,eventdata sources,eventname,callback sources,eventname,callback sources,properties,eventname,callback sources,properties,eventname,callback sources,propertyname,eventname,callback sources,propertyname,eventname,callback sources,propertyname,eventname,callback sources,propertyname,eventname,callback sources,propertynames,eventname,callback sources,propertynames,eventname,callback sources,eventname,callback,rhs4,rhs5 sources,eventname,callback,rhs4,rhs5 sources,properties,eventname,callback,rhs5,rhs6 sources,properties,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertynames,eventname,callback,rhs5,rhs6 sources,propertynames,eventname,callback,rhs5,rhs6 H,varargin|exact
+CHK|mc196hsub_ml_input_sizes|double [2 36] 1 1 0 1 1 1 1 1 1 1 2 1 2 1 2 1 2 1 2 1 2 1 1 1 2 1 2 1 3 1 3 1 3 1 4 1 4 1 4 1 4 1 4 1 4 1 4 1 4 1 5 1 5 1 6 1 6 1 6 1 6 1 6 1 6 1 6 1 6 1 2 1|exact
+CHK|mc196hsub_ml_outputs| obj E TF TF TF TF TF TF validity prop L L L L L L L L L L L L L L L L L L L L HM|exact
+CHK|mc196hsub_ml_desc|;;Returns an empty object array of the given size;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;|exact
+CHK|mc196hsub_ml_detail|;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;|exact
+CHK|mc196hsub_pl_class|matlab.metadata.Property|exact
+CHK|mc196hsub_pl_size|double [1 2] 3 1|exact
+CHK|mc196hsub_pl_names|More Level Tag|exact
+CHK|mc196hsub_pl_defining|Mc196HSub Mc196Handle Mc196Handle|exact
+CHK|mc196hsub_pl_get|public public public|exact
+CHK|mc196hsub_pl_set|public public public|exact
+CHK|mc196hsub_pl_dependent|logical [1 3] 0 0 0|exact
+CHK|mc196hsub_pl_constant|logical [1 3] 0 0 0|exact
+CHK|mc196hsub_pl_abstract|logical [1 3] 0 0 0|exact
+CHK|mc196hsub_pl_transient|logical [1 3] 0 0 0|exact
+CHK|mc196hsub_pl_hidden|logical [1 3] 0 0 0|exact
+CHK|mc196hsub_pl_observable|logical [2 3] 0 0 0 1 0 0|exact
+CHK|mc196hsub_pl_abortset|logical [1 3] 0 0 0|exact
+CHK|mc196hsub_pl_noncopyable|logical [1 3] 0 0 1|exact
+CHK|mc196hsub_pl_weak|logical [1 3] 0 0 0|exact
+CHK|mc196hsub_pl_priority|double [1 3] 1 1 1|exact
+CHK|mc196hsub_pl_hasdefault|logical [1 3] 0 1 0|exact
+CHK|mc196hsub_pl_defaults|- ; double [1 1] 0 ; -|exact
+CHK|mc196hsub_pl_getmethod|logical [1 3] 1 1 1|exact
+CHK|mc196hsub_pl_setmethod|logical [1 3] 1 1 1|exact
+CHK|mc196hsub_pl_validation|- ; - ; -|exact
+CHK|mc196hsub_pl_desc|;;|exact
+CHK|mc196hsub_el_class|matlab.metadata.Event|exact
+CHK|mc196hsub_el_size|double [1 2] 4 1|exact
+CHK|mc196hsub_el_names|Extra Changed Quiet ObjectBeingDestroyed|exact
+CHK|mc196hsub_el_access|public/public public/public private/protected private/public|exact
+CHK|mc196hsub_el_defining|Mc196HSub Mc196Handle Mc196Handle handle|exact
+CHK|mc196hsub_el_desc|;;;Notifies listeners that a particular object has been destroyed.|exact
+CHK|mc196hsub_el_hidden|logical [1 4] 0 0 0 0|exact
+CHK|mc196hsub_eml_class|matlab.metadata.EnumerationMember|exact
+CHK|mc196hsub_eml_size|double [1 2] 0 1|exact
+CHK|mc196hsub_eml_names||exact
+CHK|mc196hsub_eml_defining||exact
+CHK|mc196hsub_sl_class|matlab.metadata.Class|exact
+CHK|mc196hsub_sl_size|double [1 2] 1 1|exact
+CHK|mc196hsub_sl_names|Mc196Handle|exact
+CHK|mc196named_class|matlab.metadata.Class|exact
+CHK|mc196named_props|Name Description DetailedDescription Hidden Sealed Abstract Enumeration ConstructOnLoad HandleCompatible InferiorClasses Namespace Aliases RestrictsSubclassing PropertyList MethodList EventList EnumerationMemberList SuperclassList|exact
+CHK|mc196named_name|Mc196Named|exact
+CHK|mc196named_desc|starts with its own name.|exact
+CHK|mc196named_detail||exact
+CHK|mc196named_flags|logical [1 7] 0 0 0 0 0 1 0|exact
+CHK|mc196named_inferior||exact
+CHK|mc196named_inferior_size|double [1 2] 0 1|exact
+CHK|mc196named_namespace|matlab.metadata.Namespace [0 0]|exact
+CHK|mc196named_aliases|string [0 1]|exact
+CHK|mc196named_ml_class|matlab.metadata.Method|exact
+CHK|mc196named_ml_size|double [1 2] 36 1|exact
+CHK|mc196named_ml_names|go Mc196Named listed empty eq ne lt gt le ge delete isvalid findprop notify notify addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener findobj|exact
+CHK|mc196named_ml_defining|Mc196Named Mc196Named Mc196Named Mc196Named handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle|exact
+CHK|mc196named_ml_access|public public {Mc196Val} public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public|exact
+CHK|mc196named_ml_static|logical [1 36] 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196named_ml_abstract|logical [1 36] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196named_ml_sealed|logical [1 36] 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|mc196named_ml_hidden|logical [1 36] 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 0|exact
+CHK|mc196named_ml_inputs|obj obj varargin A,B A,B A,B A,B A,B A,B obj obj object,propname sources,eventname sources,eventname,eventdata sources,eventname,callback sources,eventname,callback sources,properties,eventname,callback sources,properties,eventname,callback sources,propertyname,eventname,callback sources,propertyname,eventname,callback sources,propertyname,eventname,callback sources,propertyname,eventname,callback sources,propertynames,eventname,callback sources,propertynames,eventname,callback sources,eventname,callback,rhs4,rhs5 sources,eventname,callback,rhs4,rhs5 sources,properties,eventname,callback,rhs5,rhs6 sources,properties,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertynames,eventname,callback,rhs5,rhs6 sources,propertynames,eventname,callback,rhs5,rhs6 H,varargin|exact
+CHK|mc196named_ml_input_sizes|double [2 36] 1 1 0 1 1 1 1 1 2 1 2 1 2 1 2 1 2 1 2 1 1 1 1 1 2 1 2 1 3 1 3 1 3 1 4 1 4 1 4 1 4 1 4 1 4 1 4 1 4 1 5 1 5 1 6 1 6 1 6 1 6 1 6 1 6 1 6 1 6 1 2 1|exact
+CHK|mc196named_ml_outputs| obj E TF TF TF TF TF TF validity prop L L L L L L L L L L L L L L L L L L L L HM|exact
+CHK|mc196named_ml_desc|goes somewhere.;makes one.;;Returns an empty object array of the given size;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;|exact
+CHK|mc196named_ml_detail|; More about making one.;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;|exact
+CHK|mc196named_pl_class|matlab.metadata.Property|exact
+CHK|mc196named_pl_size|double [1 2] 4 1|exact
+CHK|mc196named_pl_names|Listed Ranged Typed Checked|exact
+CHK|mc196named_pl_defining|Mc196Named Mc196Named Mc196Named Mc196Named|exact
+CHK|mc196named_pl_get|{Mc196Val} public public public|exact
+CHK|mc196named_pl_set|{Mc196Val,Mc196Sub} public public public|exact
+CHK|mc196named_pl_dependent|logical [1 4] 0 0 0 0|exact
+CHK|mc196named_pl_constant|logical [1 4] 0 0 0 0|exact
+CHK|mc196named_pl_abstract|logical [1 4] 0 0 0 0|exact
+CHK|mc196named_pl_transient|logical [1 4] 0 0 0 0|exact
+CHK|mc196named_pl_hidden|logical [1 4] 0 0 0 0|exact
+CHK|mc196named_pl_observable|logical [2 4] 0 0 0 0 0 0 0 0|exact
+CHK|mc196named_pl_abortset|logical [1 4] 0 0 0 0|exact
+CHK|mc196named_pl_noncopyable|logical [1 4] 0 0 0 0|exact
+CHK|mc196named_pl_weak|logical [1 4] 0 0 0 0|exact
+CHK|mc196named_pl_priority|double [1 4] 1 1 1 1|exact
+CHK|mc196named_pl_hasdefault|logical [1 4] 1 1 0 0|exact
+CHK|mc196named_pl_defaults|double [1 1] 1 ; double [1 1] 5 ; - ; -|exact
+CHK|mc196named_pl_getmethod|logical [1 4] 1 1 1 1|exact
+CHK|mc196named_pl_setmethod|logical [1 4] 1 1 1 1|exact
+CHK|mc196named_pl_validation|- ; double matlab.metadata.FixedDimension 2 1 ; string matlab.metadata.ArrayDimension 0 0 ; [] matlab.metadata.ArrayDimension 0 1|exact
+CHK|mc196named_pl_desc|;;;|exact
+CHK|mc196named_el_class|matlab.metadata.Event|exact
+CHK|mc196named_el_size|double [1 2] 1 1|exact
+CHK|mc196named_el_names|ObjectBeingDestroyed|exact
+CHK|mc196named_el_access|private/public|exact
+CHK|mc196named_el_defining|handle|exact
+CHK|mc196named_el_desc|Notifies listeners that a particular object has been destroyed.|exact
+CHK|mc196named_el_hidden|logical [1 1] 0|exact
+CHK|mc196named_eml_class|matlab.metadata.EnumerationMember|exact
+CHK|mc196named_eml_size|double [1 2] 0 1|exact
+CHK|mc196named_eml_names||exact
+CHK|mc196named_eml_defining||exact
+CHK|mc196named_sl_class|matlab.metadata.Class|exact
+CHK|mc196named_sl_size|double [1 2] 1 1|exact
+CHK|mc196named_sl_names|handle|exact
+CHK|handle_class|matlab.metadata.Class|exact
+CHK|handle_props|Name Description DetailedDescription Hidden Sealed Abstract Enumeration ConstructOnLoad HandleCompatible InferiorClasses Namespace Aliases RestrictsSubclassing PropertyList MethodList EventList EnumerationMemberList SuperclassList|exact
+CHK|handle_name|handle|exact
+CHK|handle_desc|Base class for handle classes|exact
+CHK|handle_detail||exact
+CHK|handle_flags|logical [1 7] 0 0 1 0 1 1 0|exact
+CHK|handle_inferior||exact
+CHK|handle_inferior_size|double [1 2] 0 1|exact
+CHK|handle_namespace|matlab.metadata.Namespace [0 0]|exact
+CHK|handle_aliases|string [0 1]|exact
+CHK|handle_ml_class|matlab.metadata.Method|exact
+CHK|handle_ml_size|double [1 2] 33 1|exact
+CHK|handle_ml_names|eq ne lt gt le ge delete isvalid findprop notify notify addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener addlistener listener findobj empty|exact
+CHK|handle_ml_defining|handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle handle|exact
+CHK|handle_ml_access|public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public public|exact
+CHK|handle_ml_static|logical [1 33] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1|exact
+CHK|handle_ml_abstract|logical [1 33] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|handle_ml_sealed|logical [1 33] 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0|exact
+CHK|handle_ml_hidden|logical [1 33] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 0 1|exact
+CHK|handle_ml_inputs|A,B A,B A,B A,B A,B A,B obj obj object,propname sources,eventname sources,eventname,eventdata sources,eventname,callback sources,eventname,callback sources,properties,eventname,callback sources,properties,eventname,callback sources,propertyname,eventname,callback sources,propertyname,eventname,callback sources,propertyname,eventname,callback sources,propertyname,eventname,callback sources,propertynames,eventname,callback sources,propertynames,eventname,callback sources,eventname,callback,rhs4,rhs5 sources,eventname,callback,rhs4,rhs5 sources,properties,eventname,callback,rhs5,rhs6 sources,properties,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertyname,eventname,callback,rhs5,rhs6 sources,propertynames,eventname,callback,rhs5,rhs6 sources,propertynames,eventname,callback,rhs5,rhs6 H,varargin varargin|exact
+CHK|handle_ml_input_sizes|double [2 33] 2 1 2 1 2 1 2 1 2 1 2 1 1 1 1 1 2 1 2 1 3 1 3 1 3 1 4 1 4 1 4 1 4 1 4 1 4 1 4 1 4 1 5 1 5 1 6 1 6 1 6 1 6 1 6 1 6 1 6 1 6 1 2 1 1 1|exact
+CHK|handle_ml_outputs|TF TF TF TF TF TF validity prop L L L L L L L L L L L L L L L L L L L L HM E|exact
+CHK|handle_ml_desc|;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Returns an empty object array of the given size|exact
+CHK|handle_ml_detail|;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;|exact
+CHK|handle_pl_class|matlab.metadata.Property|exact
+CHK|handle_pl_size|double [1 2] 0 1|exact
+CHK|handle_pl_names||exact
+CHK|handle_pl_defining||exact
+CHK|handle_pl_get||exact
+CHK|handle_pl_set||exact
+CHK|handle_pl_dependent|double [0 0]|exact
+CHK|handle_pl_constant|double [0 0]|exact
+CHK|handle_pl_abstract|double [0 0]|exact
+CHK|handle_pl_transient|double [0 0]|exact
+CHK|handle_pl_hidden|double [0 0]|exact
+CHK|handle_pl_observable|double [0 0]|exact
+CHK|handle_pl_abortset|double [0 0]|exact
+CHK|handle_pl_noncopyable|double [0 0]|exact
+CHK|handle_pl_weak|double [0 0]|exact
+CHK|handle_pl_priority|double [0 0]|exact
+CHK|handle_pl_hasdefault|double [0 0]|exact
+CHK|handle_pl_defaults||exact
+CHK|handle_pl_getmethod|double [0 0]|exact
+CHK|handle_pl_setmethod|double [0 0]|exact
+CHK|handle_pl_validation||exact
+CHK|handle_pl_desc||exact
+CHK|handle_el_class|matlab.metadata.Event|exact
+CHK|handle_el_size|double [1 2] 1 1|exact
+CHK|handle_el_names|ObjectBeingDestroyed|exact
+CHK|handle_el_access|private/public|exact
+CHK|handle_el_defining|handle|exact
+CHK|handle_el_desc|Notifies listeners that a particular object has been destroyed.|exact
+CHK|handle_el_hidden|logical [1 1] 0|exact
+CHK|handle_eml_class|matlab.metadata.EnumerationMember|exact
+CHK|handle_eml_size|double [1 2] 0 1|exact
+CHK|handle_eml_names||exact
+CHK|handle_eml_defining||exact
+CHK|handle_sl_class|matlab.metadata.Class|exact
+CHK|handle_sl_size|double [1 2] 0 1|exact
+CHK|handle_sl_names||exact
+CHK|mo_same|logical [1 1] 1|exact
+CHK|mo_question_class|matlab.metadata.Class|exact
+CHK|mo_method_props|Name Description DetailedDescription Access Static Abstract Sealed Hidden InputNames OutputNames DefiningClass|exact
+CHK|mo_property_props|Name Description DetailedDescription GetAccess SetAccess Dependent Constant Abstract Transient Hidden GetObservable SetObservable AbortSet NonCopyable WeakHandle PartialMatchPriority HasDefault DefaultValue GetMethod SetMethod Validation DefiningClass|exact
+CHK|mo_event_props|Name Description DetailedDescription Hidden NotifyAccess ListenAccess DefiningClass|exact
+CHK|mo_member_props|Name Description DetailedDescription Hidden DefiningClass|exact
+CHK|mo_isobject|logical [1 1] 1|exact
+CHK|mo_isstruct|logical [1 1] 0|exact
+CHK|mo_set_name|MATLAB:class:SetProhibited|exact
+CHK|mo_set_name_msg|Unable to set the 'Name' property of class ''Method'' because it is read-only.|exact
+CHK|mo_end|empty|exact
+CHK|mo_range|double [1 2] 2 1|exact
+CHK|mo_mask|make empty|exact
+CHK|mo_numel|double [1 1] 8|exact
+CHK|mo_isempty_events|logical [1 1] 1|exact
+CHK|mo_def_class|matlab.metadata.Class|exact
+CHK|mo_def_methods|double [1 1] 8|exact
+CHK|mo_def_def|Mc196Val|exact
+CHK|mo_super_methods|double [1 1] 8|exact
+CHK|mo_super_class|matlab.metadata.Class|exact
+CHK|mo_getfield|third|exact
+CHK|mo_val_class|matlab.metadata.Validation|exact
+CHK|mo_val_classname|double|exact
+CHK|mo_val_size_class|matlab.metadata.FixedDimension|exact
+CHK|mo_val_size_length|uint64 [1 1] 1|exact
+CHK|mo_val_mixed|matlab.metadata.ArrayDimension|exact
+CHK|mo_val_fn|mustBeNonempty|exact
+CHK|mo_val_none|double [1 2] 0 0|exact
+CHK|mo_getmethod|logical [1 1] 1|exact
+CHK|mo_access_list|cell|exact
+CHK|mo_access_list_name|Mc196Sub|exact
+CHK|mo_double_class|matlab.metadata.Class|exact
+CHK|mo_double_name|double|exact
+CHK|mo_double_ml_class|matlab.metadata.Method|exact
+CHK|mo_fromname_nosuch|double [1 2] 0 0|exact
+CHK|pkg_name|mc196pkg.Thing|exact
+CHK|pkg_methods|go Thing empty|exact
+CHK|pkg_defining|mc196pkg.Thing mc196pkg.Thing mc196pkg.Thing|exact
+CHK|pkg_namespace_size|double [1 2] 1 1|exact
+CHK|pkg_namespace_name|mc196pkg|exact
+CHK|pv_default_S|string [1 1] |exact
+CHK|pv_default_N|double [1 1] 0|exact
+CHK|pv_default_V|double [1 3] [0 0 0]|exact
+CHK|pv_default_R|double [1 0] zeros(1,0)|exact
+CHK|pv_default_T|char [1 0] zeros(1,0)|exact
+CHK|pv_default_L|logical [1 1] false|exact
+CHK|pv_default_I|int8 [1 1] 0|exact
+CHK|pv_default_U|uint16 [1 1] 0|exact
+CHK|pv_default_C|cell [0 1]|exact
+CHK|pv_default_Sv|string [1 0] |exact
+CHK|pv_default_Sd|string [1 1] d|exact
+CHK|pv_default_Nd|double [1 1] 7|exact
+CHK|pv_default_Nm|double [2 2] [0 0;0 0]|exact
+CHK|pv_default_Nc|double [0 0] []|exact
+CHK|pv_default_Pos|double [1 1] 1|exact
+CHK|pv_default_Cx|char [1 1] 97|exact
+CHK|pv_default_Free|double [0 0] []|exact
+CHK|pv_set_S_char|string [1 1] abc|exact
+CHK|pv_set_S_num|string [1 1] 5|exact
+CHK|pv_set_S_numrow|MATLAB:validation:IncompatibleSize|exact
+CHK|pv_set_S_numrow_msg|Error setting property 'S' of class 'Pv309'. Value must be a scalar.|exact
+CHK|pv_set_S_strrow|MATLAB:validation:IncompatibleSize|exact
+CHK|pv_set_S_strrow_msg|Error setting property 'S' of class 'Pv309'. Value must be a scalar.|exact
+CHK|pv_set_S_cell|string [1 1] a|exact
+CHK|pv_set_S_cell2|MATLAB:validation:IncompatibleSize|exact
+CHK|pv_set_S_cell2_msg|Error setting property 'S' of class 'Pv309'. Value must be a scalar.|exact
+CHK|pv_set_S_empty|string [1 1] |exact
+CHK|pv_set_S_logical|string [1 1] true|exact
+CHK|pv_set_S_charmat|MATLAB:validation:IncompatibleSize|exact
+CHK|pv_set_S_charmat_msg|Error setting property 'S' of class 'Pv309'. Value must be a scalar.|exact
+CHK|pv_set_S_struct|MATLAB:validation:UnableToConvert|exact
+CHK|pv_set_S_struct_msg|Error setting property 'S' of class 'Pv309'. Value must be of type string or be convertible to string.|exact
+CHK|pv_set_N_char|double [1 1] 97|exact
+CHK|pv_set_N_charrow|MATLAB:validation:IncompatibleSize|exact
+CHK|pv_set_N_charrow_msg|Error setting property 'N' of class 'Pv309'. Value must be a scalar.|exact
+CHK|pv_set_N_row|MATLAB:validation:IncompatibleSize|exact
+CHK|pv_set_N_row_msg|Error setting property 'N' of class 'Pv309'. Value must be a scalar.|exact
+CHK|pv_set_N_cell|MATLAB:validation:UnableToConvert|exact
+CHK|pv_set_N_cell_msg|Error setting property 'N' of class 'Pv309'. Value must be of type double or be convertible to double.|exact
+CHK|pv_set_N_cell2|MATLAB:validation:UnableToConvert|exact
+CHK|pv_set_N_cell2_msg|Error setting property 'N' of class 'Pv309'. Value must be of type double or be convertible to double.|exact
+CHK|pv_set_N_str|double [1 1] 5|exact
+CHK|pv_set_N_strrow|MATLAB:validation:IncompatibleSize|exact
+CHK|pv_set_N_strrow_msg|Error setting property 'N' of class 'Pv309'. Value must be a scalar.|exact
+CHK|pv_set_N_empty|MATLAB:validation:IncompatibleSize|exact
+CHK|pv_set_N_empty_msg|Error setting property 'N' of class 'Pv309'. Value must be a scalar.|exact
+CHK|pv_set_N_int|double [1 1] 4|exact
+CHK|pv_set_N_logical|double [1 1] 1|exact
+CHK|pv_set_N_complex|double [1 1] 1+2i|exact
+CHK|pv_set_N_struct|MATLAB:validation:UnableToConvert|exact
+CHK|pv_set_N_struct_msg|Error setting property 'N' of class 'Pv309'. Value must be of type double or be convertible to double.|exact
+CHK|pv_set_V_scalar|double [1 3] [5 5 5]|exact
+CHK|pv_set_V_col|double [1 3] [1 2 3]|exact
+CHK|pv_set_V_row4|MATLAB:validation:IncompatibleSize|exact
+CHK|pv_set_V_row4_msg|Error setting property 'V' of class 'Pv309'. Value must be a vector with 3 elements.|exact
+CHK|pv_set_V_char|double [1 3] [97 98 99]|exact
+CHK|pv_set_V_cell|MATLAB:validation:UnableToConvert|exact
+CHK|pv_set_V_cell_msg|Error setting property 'V' of class 'Pv309'. Value must be of type double or be convertible to double.|exact
+CHK|pv_set_R_col|double [1 2] [1 2]|exact
+CHK|pv_set_R_empty|double [1 0] zeros(1,0)|exact
+CHK|pv_set_R_zeros|MATLAB:validation:IncompatibleSize|exact
+CHK|pv_set_R_zeros_msg|Error setting property 'R' of class 'Pv309'. Value must be a vector.|exact
+CHK|pv_set_T_num|char [1 1] 65|exact
+CHK|pv_set_T_str|char [1 2] [104 105]|exact
+CHK|pv_set_T_col|char [1 2] [97 98]|exact
+CHK|pv_set_L_num|logical [1 1] true|exact
+CHK|pv_set_L_char|logical [1 1] true|exact
+CHK|pv_set_L_nan|MATLAB:validation:UnableToConvert|exact
+CHK|pv_set_L_nan_msg|Error setting property 'L' of class 'Pv309'. Value must be of type logical or be convertible to logical.|exact
+CHK|pv_set_I_big|int8 [1 1] 127|exact
+CHK|pv_set_I_frac|int8 [1 1] 3|exact
+CHK|pv_set_I_char|int8 [1 1] 97|exact
+CHK|pv_set_U_neg|uint16 [1 1] 0|exact
+CHK|pv_set_C_num|MATLAB:validation:UnableToConvert|exact
+CHK|pv_set_C_num_msg|Error setting property 'C' of class 'Pv309'. Value must be of type cell or be convertible to cell.|exact
+CHK|pv_set_C_row|cell [2 1]|exact
+CHK|pv_set_Sv_char|string [1 1] abc|exact
+CHK|pv_set_Sv_col|string [1 2] a,b|exact
+CHK|pv_set_Nm_scalar|double [2 2] [3 3;3 3]|exact
+CHK|pv_set_Nm_row|MATLAB:validation:IncompatibleSize|exact
+CHK|pv_set_Nm_row_msg|Error setting property 'Nm' of class 'Pv309'. Value must be a matrix of size 2-by-2.|exact
+CHK|pv_set_Pos_neg|MATLAB:validators:mustBePositive|exact
+CHK|pv_set_Pos_neg_msg|Error setting property 'Pos' of class 'Pv309'. Value must be positive.|exact
+CHK|pv_set_Pos_row|MATLAB:validation:IncompatibleSize|exact
+CHK|pv_set_Pos_row_msg|Error setting property 'Pos' of class 'Pv309'. Value must be a scalar.|exact
+CHK|pv_set_Pos_char|double [1 1] 97|exact
+CHK|pv_set_Cx_str|char [1 1] 98|exact
+CHK|pv_set_Cx_two|MATLAB:validation:IncompatibleSize|exact
+CHK|pv_set_Cx_two_msg|Error setting property 'Cx' of class 'Pv309'. Value must be a scalar.|exact
+CHK|pv_set_Cx_num|char [1 1] 66|exact
+CHK|pv_set_F_char|MATLAB:validation:UnableToConvert|exact
+CHK|pv_set_F_char_msg|Error setting property 'F' of class 'Pv309'. Value must be of type function_handle or be convertible to function_handle.|exact
+CHK|pv_set_St_num|MATLAB:validation:UnableToConvert|exact
+CHK|pv_set_St_num_msg|Error setting property 'St' of class 'Pv309'. Value must be of type struct or be convertible to struct.|exact
+CHK|pd_pa|char [1 1] 0|exact
+CHK|pd_pb|cell [1 1]|exact
+CHK|pd_pc|struct [1 1]|exact
+CHK|pd_pf|double [0 0] []|exact
+CHK|pd_pg|string [0 0] |exact
+CHK|pd_ph|string [2 1] ,|exact
+CHK|pd_pi|single [1 1] 0|exact
+CHK|pd_pj|logical [1 2] [false false]|exact
+CHK|pd_pk|Vh309 [1 1]|exact
+CHK|pd_pl|Mc196Enum [1 1]|exact
+CHK|pd_pm|double [2 0] zeros(2,0)|exact
+CHK|pd_pq|int64 [1 1] 0|exact
+CHK|pd_pr|MATLAB:validators:mustBePositive|exact
+CHK|pd_pr_msg|Error using implicit default value of property 'X' of class 'G309Pr'. Value must be positive.|exact
+CHK|pd_pt|MATLAB:mat2str:TwoDInput|exact
+CHK|pd_pt_msg|Input matrix must be 2-D.|exact
+CHK|pd_pw|cell [0 0]|exact
+CHK|pd_px|uint8 [1 1] 255|exact
+CHK|va_cls_num_char|MATLAB:invalidType|exact
+CHK|va_cls_num_char_msg|Expected input to be one of these types: char Instead its type was double.|exact
+CHK|va_cls_num_two|MATLAB:invalidType|exact
+CHK|va_cls_num_two_msg|Expected input to be one of these types: char, string Instead its type was double.|exact
+CHK|va_cls_strlist|MATLAB:invalidType|exact
+CHK|va_cls_strlist_msg|Expected input to be one of these types: string, char Instead its type was double.|exact
+CHK|va_cls_strlist_ok|ok|exact
+CHK|va_cls_numeric_ok|ok|exact
+CHK|va_cls_numeric_char|MATLAB:invalidType|exact
+CHK|va_cls_numeric_char_msg|Expected input to be one of these types: double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64|exact
+CHK|va_cls_float_int|MATLAB:invalidType|exact
+CHK|va_cls_float_int_msg|Expected input to be one of these types: float Instead its type was int8.|exact
+CHK|va_cls_integer_dbl|MATLAB:invalidType|exact
+CHK|va_cls_integer_dbl_msg|Expected input to be one of these types: integer Instead its type was double.|exact
+CHK|va_cls_empty_list|MATLAB:invalidType|exact
+CHK|va_cls_empty_list_msg|Expected input to be one of these types: Instead its type was double.|exact
+CHK|va_cls_charlist|ok|exact
+CHK|va_cls_numlist|MATLAB:validateattributes:badClassList|exact
+CHK|va_cls_numlist_msg|Valid data types must be a string vector or cell array of character vectors.|exact
+CHK|va_cls_cellnum|MATLAB:validateattributes:badClassList|exact
+CHK|va_cls_cellnum_msg|Valid data types must be a string vector or cell array of character vectors.|exact
+CHK|va_cls_logical|MATLAB:invalidType|exact
+CHK|va_cls_logical_msg|Expected input to be one of these types: double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 Instead its type was logical.|exact
+CHK|va_cls_cellstr_val|MATLAB:invalidType|exact
+CHK|va_cls_cellstr_val_msg|Expected input to be one of these types: char|exact
+CHK|va_attr_strarray|MATLAB:expectedScalar|exact
+CHK|va_attr_strarray_msg|Expected input to be a scalar.|exact
+CHK|va_attr_charlist|MATLAB:validateattributes:badAttributeList|exact
+CHK|va_attr_charlist_msg|Valid attributes must be a cell array or a string array.|exact
+CHK|va_scalartext_row|ok|exact
+CHK|va_scalartext_mat|MATLAB:expectedScalartext|exact
+CHK|va_scalartext_mat_msg|Expected input to be a non-missing string scalar or character vector.|exact
+CHK|va_scalartext_str2|MATLAB:expectedScalartext|exact
+CHK|va_scalartext_str2_msg|Expected input to be a non-missing string scalar or character vector.|exact
+CHK|va_scalartext_missing|MATLAB:expectedScalartext|exact
+CHK|va_scalartext_missing_msg|Expected input to be a non-missing string scalar or character vector.|exact
+CHK|va_scalartext_col|MATLAB:expectedScalartext|exact
+CHK|va_scalartext_col_msg|Expected input to be a non-missing string scalar or character vector.|exact
+CHK|va_scalartext_empty|ok|exact
+CHK|va_scalartext_num|MATLAB:expectedScalartext|exact
+CHK|va_scalartext_num_msg|Expected input to be a non-missing string scalar or character vector.|exact
+CHK|va_scalartext_cell|MATLAB:expectedScalartext|exact
+CHK|va_scalartext_cell_msg|Expected input to be a non-missing string scalar or character vector.|exact
+CHK|va_scalar|MATLAB:expectedScalar|exact
+CHK|va_scalar_msg|Expected input to be a scalar.|exact
+CHK|va_vector|MATLAB:expectedVector|exact
+CHK|va_vector_msg|Expected input to be a vector.|exact
+CHK|va_row|MATLAB:expectedRow|exact
+CHK|va_row_msg|Expected input to be a row vector.|exact
+CHK|va_column|MATLAB:expectedColumn|exact
+CHK|va_column_msg|Expected input to be a column vector.|exact
+CHK|va_square|MATLAB:expectedSquare|exact
+CHK|va_square_msg|Expected input to be a square matrix.|exact
+CHK|va_twod|MATLAB:expected2D|exact
+CHK|va_twod_msg|Expected input to be two-dimensional.|exact
+CHK|va_threed|MATLAB:expected3D|exact
+CHK|va_threed_msg|Expected input to be three-dimensional.|exact
+CHK|va_nonempty|MATLAB:expectedNonempty|exact
+CHK|va_nonempty_msg|Expected input to be nonempty.|exact
+CHK|va_nonsparse|MATLAB:expectedNonsparse|exact
+CHK|va_nonsparse_msg|Expected input to be nonsparse.|exact
+CHK|va_real|MATLAB:expectedReal|exact
+CHK|va_real_msg|Expected input to be real.|exact
+CHK|va_positive|MATLAB:expectedPositive|exact
+CHK|va_positive_msg|Expected input to be positive.|exact
+CHK|va_positive_scalar|MATLAB:expectedPositive|exact
+CHK|va_positive_scalar_msg|Expected input to be positive.|exact
+CHK|va_nonnegative|MATLAB:expectedNonnegative|exact
+CHK|va_nonnegative_msg|Expected input to be nonnegative.|exact
+CHK|va_nonzero|MATLAB:expectedNonZero|exact
+CHK|va_nonzero_msg|Expected input to be nonzero.|exact
+CHK|va_integer|MATLAB:expectedInteger|exact
+CHK|va_integer_msg|Expected input to be integer-valued.|exact
+CHK|va_finite|MATLAB:expectedFinite|exact
+CHK|va_finite_msg|Expected input to be finite.|exact
+CHK|va_nonnan|MATLAB:expectedNonNaN|exact
+CHK|va_nonnan_msg|Expected input to be non-NaN.|exact
+CHK|va_even|MATLAB:expectedEven|exact
+CHK|va_even_msg|Expected input to be even.|exact
+CHK|va_odd|MATLAB:expectedOdd|exact
+CHK|va_odd_msg|Expected input to be odd.|exact
+CHK|va_binary|MATLAB:expectedBinary|exact
+CHK|va_binary_msg|Expected input to be binary.|exact
+CHK|va_diag|MATLAB:expectedDiag|exact
+CHK|va_diag_msg|Expected input to be a diagonal matrix.|exact
+CHK|va_increasing|MATLAB:expectedIncreasing|exact
+CHK|va_increasing_msg|Expected input to be strictly increasing.|exact
+CHK|va_decreasing|MATLAB:expectedDecreasing|exact
+CHK|va_decreasing_msg|Expected input to be strictly decreasing.|exact
+CHK|va_nondecreasing|MATLAB:expectedNondecreasing|exact
+CHK|va_nondecreasing_msg|Expected input to be monotonically increasing.|exact
+CHK|va_nonincreasing|MATLAB:expectedNonincreasing|exact
+CHK|va_nonincreasing_msg|Expected input to be monotonically decreasing.|exact
+CHK|va_gt_scalar|MATLAB:notGreater|exact
+CHK|va_gt_scalar_msg|Expected input to be an array with all of the values > 5.|exact
+CHK|va_gt_array|MATLAB:notGreater|exact
+CHK|va_gt_array_msg|Expected input to be an array with all of the values > 5.|exact
+CHK|va_ge|MATLAB:notGreaterEqual|exact
+CHK|va_ge_msg|Expected input to be an array with all of the values >= 5.|exact
+CHK|va_lt|MATLAB:notLess|exact
+CHK|va_lt_msg|Expected input to be an array with all of the values < 5.|exact
+CHK|va_le|MATLAB:notLessEqual|exact
+CHK|va_le_msg|Expected input to be an array with all of the values <= 5.5.|exact
+CHK|va_gt_noarg|MATLAB:validateattributes:notEnoughArguments|exact
+CHK|va_gt_noarg_msg|Not enough arguments for attribute >.|exact
+CHK|va_gt_badarg|MATLAB:validateattributes:badComparison|exact
+CHK|va_gt_badarg_msg|Value for > must be a real scalar.|exact
+CHK|va_gt_char|MATLAB:validateattributes:UnsupportedTypeForComparison|exact
+CHK|va_gt_char_msg|Type char is not supported in VALIDATEATTRIBUTES for >.|exact
+CHK|va_size|MATLAB:incorrectSize|exact
+CHK|va_size_msg|Expected input to be of size 1x3, but it is of size 1x2.|exact
+CHK|va_size_nan|MATLAB:incorrectSize|exact
+CHK|va_size_nan_msg|Expected input to be of size Mx2, but it is of size 2x3.|exact
+CHK|va_size_3d|MATLAB:incorrectSize|exact
+CHK|va_size_3d_msg|Expected input to be of size 2x3x2, but it is of size 2x3.|exact
+CHK|va_size_bad|MATLAB:validateattributes:badSizeArray|exact
+CHK|va_size_bad_msg|Argument 'size' must be followed by a real array of integers.|exact
+CHK|va_numel|MATLAB:incorrectNumel|exact
+CHK|va_numel_msg|Expected input to be an array with number of elements equal to 3.|exact
+CHK|va_ncols|MATLAB:incorrectNumcols|exact
+CHK|va_ncols_msg|Expected input to be an array with number of columns equal to 3.|exact
+CHK|va_nrows|MATLAB:incorrectNumrows|exact
+CHK|va_nrows_msg|Expected input to be an array with number of rows equal to 3.|exact
+CHK|va_ndims|MATLAB:incorrectNumdims|exact
+CHK|va_ndims_msg|Expected input to be an array with number of dimensions equal to 3.|exact
+CHK|va_numel_bad|MATLAB:validateattributes:badnumel|exact
+CHK|va_numel_bad_msg|Argument 'numel' must be followed by a nonnegative real scalar integer.|exact
+CHK|va_positive_char|MATLAB:expectedPositive|exact
+CHK|va_positive_char_msg|Expected input to be positive.|exact
+CHK|va_positive_cell|MATLAB:expectedPositive|exact
+CHK|va_positive_cell_msg|Expected input to be positive.|exact
+CHK|va_positive_logical|MATLAB:expectedPositive|exact
+CHK|va_positive_logical_msg|Expected input to be positive.|exact
+CHK|va_nonempty_cell|MATLAB:expectedNonempty|exact
+CHK|va_nonempty_cell_msg|Expected input to be nonempty.|exact
+CHK|va_nonempty_str|ok|exact
+CHK|va_func|MATLAB:myfun:expectedPositive|exact
+CHK|va_func_msg|Expected input to be positive.|exact
+CHK|va_func_var|MATLAB:myfun:expectedPositive|exact
+CHK|va_func_var_msg|Expected x to be positive.|exact
+CHK|va_func_var_idx|MATLAB:myfun:expectedPositive|exact
+CHK|va_func_var_idx_msg|Expected input number 2, x, to be positive.|exact
+CHK|va_idx|MATLAB:expectedPositive|exact
+CHK|va_idx_msg|Expected input number 3 to be positive.|exact
+CHK|va_func_empty_var|MATLAB:expectedPositive|exact
+CHK|va_func_empty_var_msg|Expected x to be positive.|exact
+CHK|va_func_var_cls|MATLAB:myfun:invalidType|exact
+CHK|va_func_var_cls_msg|Expected x to be one of these types: char Instead its type was double.|exact
+CHK|va_func_var_idx_cls|MATLAB:myfun:invalidType|exact
+CHK|va_func_var_idx_cls_msg|Expected input number 2, x, to be one of these types: char Instead its type was double.|exact
+CHK|va_idx_cls|MATLAB:invalidType|exact
+CHK|va_idx_cls_msg|Expected input number 2 to be one of these types: char Instead its type was double.|exact
+CHK|va_func_cls|MATLAB:myfun:invalidType|exact
+CHK|va_func_cls_msg|Expected input to be one of these types: char Instead its type was double.|exact
+CHK|va_var_only|MATLAB:expectedPositive|exact
+CHK|va_var_only_msg|Expected x to be positive.|exact
+CHK|va_size_func_var|MATLAB:f:incorrectSize|exact
+CHK|va_size_func_var_msg|Expected input number 1, x, to be of size 1x3, but it is of size 1x2.|exact
+CHK|va_gt_func_var|MATLAB:f:notGreater|exact
+CHK|va_gt_func_var_msg|Expected input number 1, x, to be an array with all of the values > 5.|exact
+CHK|va_numel_func_var|MATLAB:f:incorrectNumel|exact
+CHK|va_numel_func_var_msg|Expected input number 1, x, to be an array with number of elements equal to 3.|exact
+CHK|va_bad_func|MATLAB:validateattributes:badArgPosition|exact
+CHK|va_bad_func_msg|The last argument must be a positive integer.|exact
+CHK|va_bad_func2|MATLAB:validateattributes:badFunctionName|exact
+CHK|va_bad_func2_msg|Fourth argument must be an ASCII string scalar or character vector to specify function name, or a scalar double to specify argument position.|exact
+CHK|va_bad_var|MATLAB:validateattributes:badVariableName|exact
+CHK|va_bad_var_msg|Fifth argument must be a string scalar or character vector to specify input variable name.|exact
+CHK|va_bad_idx|MATLAB:validateattributes:badArgPosition|exact
+CHK|va_bad_idx_msg|The last argument must be a positive integer.|exact
+CHK|va_bad_idx2|MATLAB:validateattributes:badArgPositionClass|exact
+CHK|va_bad_idx2_msg|The last argument must be a numeric scalar or empty, to specify argument position.|exact
+CHK|va_toofew|MATLAB:minrhs|exact
+CHK|va_toofew_msg|Not enough input arguments.|exact
+CHK|va_toomany|MATLAB:maxrhs|exact
+CHK|va_toomany_msg|Too many input arguments.|exact
+CHK|va_ok|ok|exact
+CHK|va_order_class_first|MATLAB:invalidType|exact
+CHK|va_order_class_first_msg|Expected input to be one of these types: double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64|exact
+CHK|va_order_attrs|MATLAB:expectedScalar|exact
+CHK|va_order_attrs_msg|Expected input to be a scalar.|exact
+CHK|va_order_attrs2|MATLAB:expectedPositive|exact
+CHK|va_order_attrs2_msg|Expected input to be positive.|exact
+CHK|va_handle_cls|ok|exact
+CHK|va_obj_cls|ok|exact
+CHK|va_obj_cls_handle|ok|exact
+CHK|va_obj_cls_wrong|MATLAB:invalidType|exact
+CHK|va_obj_cls_wrong_msg|Expected input to be one of these types: double Instead its type was Vh309.|exact
+CHK|va_struct_cls|MATLAB:invalidType|exact
+CHK|va_struct_cls_msg|Expected input to be one of these types: double Instead its type was struct.|exact
+CHK|va_multi_cls_msg|MATLAB:invalidType|exact
+CHK|va_multi_cls_msg_msg|Expected input to be one of these types: char, string, cell Instead its type was double.|exact
+CHK|va_membrane_size|ok|exact
+CHK|va_size_column|ok|exact
+CHK|va_size_inf|MATLAB:validateattributes:badSizeArray|exact
+CHK|va_size_inf_msg|Argument 'size' must be followed by a real array of integers.|exact
+CHK|isvalid_value|MATLAB:UndefinedFunction|exact
+CHK|isvalid_value_msg|Undefined function 'isvalid' for input arguments of type 'Pv309'.|exact
+CHK|isvalid_handle|logical [1 1] 1|exact
+CHK|isvalid_struct|MATLAB:UndefinedFunction|exact
+CHK|isvalid_struct_msg|Undefined function 'isvalid' for input arguments of type 'struct'.|exact
+CHK|isvalid_secret|MATLAB:UndefinedFunction|exact
+CHK|isvalid_secret_msg|Undefined function 'isvalid' for input arguments of type 'secretID'.|exact
+CHK|isvalid_deleted|logical [1 1] 0|exact
+CHK|isvalid_array|logical [1 2] 1 1|exact
+CHK|sid_nargin|double [1 1] 1|exact
+CHK|sid_nargout|double [1 1] 1|exact
+CHK|sid_exist_class|double [1 1] 8|exact
+CHK|sid_exist|double [1 1] 2|div=ADR0353|diverges|double [1 1] 5
+CHK|help_two|double [1 2] 0 0|exact
+CHK|help_two_builtins|double [1 2] 0 0|exact
+CHK|help_three|double [1 2] 0 0|exact
+CHK|help_both| Comment above Both./|exact
+CHK|help_tail| Tail - Only at the end./|exact
+CHK|help_above| Above only./|exact
+CHK|help_above_two| Above two, first./ Above two, second./|exact
+CHK|help_plain|Hp310/Plain is a property./|exact
+CHK|help_slash_both| Comment above Both./|exact

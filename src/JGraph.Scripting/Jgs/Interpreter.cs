@@ -10758,8 +10758,10 @@ internal sealed partial class Interpreter
         // A component's or a figure's event data is an object whose properties are read-only (open
         // item 69, recorded in u9b_bridge): e.EventName = 'x' is R2025b's SetProhibited, and a name it
         // does not have is no property of it.
+        // So are a metaclass's and its members' (open item 196, ADR 0353: m.Name = 'x' on a matlab.metadata.Method).
         if (Dialect.IsMatlab && member.Target is VariableExpr eventTarget
-            && LookUp(eventTarget.Name, env, out JgsValue heldEvent) && JgsUiEventData.IsBuiltinEventData(heldEvent))
+            && LookUp(eventTarget.Name, env, out JgsValue heldEvent)
+            && (JgsUiEventData.IsBuiltinEventData(heldEvent) || JgsBuiltins.IsMetadataValue(heldEvent)))
         {
             string eventField = FieldName(member, env);
             string className = heldEvent.ClassName!;

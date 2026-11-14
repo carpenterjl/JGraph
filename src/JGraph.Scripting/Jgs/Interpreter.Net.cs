@@ -297,6 +297,11 @@ internal sealed partial class Interpreter
             return JgsBuiltins.MetaClassOf(definition);
         }
 
+        if (meta.Name == "handle")
+        {
+            return JgsBuiltins.MetaClassOfHandle(this); // open item 196, ADR 0353
+        }
+
         throw Unresolved(meta.Name, meta);
     }
 
@@ -308,7 +313,10 @@ internal sealed partial class Interpreter
             return JgsValue.External(new NetMetaClass(type!));
         }
 
-        return ClassForLoad(name) is { } definition ? JgsBuiltins.MetaClassOf(definition) : JgsEmpty.Zero();
+        // handle's own metaclass, and a 0-by-0 metaclass for a name that is no class (open item 196, ADR 0353).
+        return ClassForLoad(name) is { } definition ? JgsBuiltins.MetaClassOf(definition)
+            : name == "handle" ? JgsBuiltins.MetaClassOfHandle(this)
+            : JgsBuiltins.EmptyMetaClass();
     }
 
     /// <summary>A dot on an external value: a .NET object's member, a metaclass's name, an assembly's lists.</summary>

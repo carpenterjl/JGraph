@@ -341,6 +341,13 @@ internal sealed class JgsClass
     /// </summary>
     internal IEnumerable<ClassMethod> ListedMethods => _methods.Values.Where(static m => m.Access.IsPublic && !m.Hidden);
 
+    /// <summary>The methods the class itself defines, every access and the class folder's files included, in the order they were declared (open item 196, ADR 0353).</summary>
+    internal IEnumerable<ClassMethod> OwnMethods => _own.Values;
+
+    /// <summary>Evaluates <paramref name="expression"/> as a default is, in the class's file (a metaproperty's validator handles, ADR 0353).</summary>
+    internal JgsValue EvaluateForMeta(Expr expression, string label) =>
+        _interpreter.EvaluateInContext(expression, DefaultWorkspace(), Declaration.SourceId, label, Declaration.Line, Declaration.Dialect);
+
     /// <summary>Whether the class wrote no constructor and still has one (it is not abstract).</summary>
     internal bool HasImplicitConstructor => !_own.ContainsKey(Declaration.Name) && !Declaration.Abstract;
 
@@ -699,15 +706,21 @@ internal sealed class JgsClass
     /// Checks a value against a property's declared size, class and validators, answering the value as
     /// it should be stored. Runs on the defaults at construction and on every later write, because a
     /// property whose declaration is only honoured once is a declaration that stops being true. The
-    /// validators run in the file of the class that declares the property.
+    /// validators run in the file of the class that declares the property. A refusal in the MATLAB dialect opens
+    /// with <paramref name="lead"/>; an implicit default's is R2025b's own (open item 309).
     /// </summary>
-    public JgsValue Check(ClassProperty property, JgsValue value, int line, int col)
+    public JgsValue Check(ClassProperty property, JgsValue value, int line, int col, string lead = "Error setting property")
     {
         JgsClass owner = property.Owner ?? this;
         JgsValue verified;
         try
         {
-            verified = JgsBuiltins.CheckArgument(property.Spec, value, line, col, _interpreter.Globals, _interpreter, property: true);
+            // A class file converts the class first and then fits the size, as an arguments line does (open
+            // item 309, ADR 0353, measured by probe p309): a char row given to (1,1) string is a string, 5 given to
+            // (1,3) double is [5 5 5], 'abc' given to (1,3) double is its codes.
+            verified = owner.Declaration.Dialect == JgsDialect.Matlab
+                ? DeclaredArgument.Check(property.Spec, value, string.Empty, line, col, _interpreter.Globals, _interpreter)
+                : JgsBuiltins.CheckArgument(property.Spec, value, line, col, _interpreter.Globals, _interpreter, property: true);
             using Interpreter.FileContext classFile = _interpreter.EnterFile(owner.Declaration.SourceId);
             using Interpreter.DialectContext classCode = _interpreter.EnterDialect(owner.Declaration.Dialect); // V11
             // A validator written with the property's name among its arguments - Limits {mustBeNumeric(Limits)},
@@ -724,7 +737,7 @@ internal sealed class JgsClass
                 || JgsRunningDialect.ThreadIsMatlab)
             {
                 throw new JgsRuntimeException(line, col, failure.Identifier,
-                    $"Error setting property '{property.Spec.Name}' of class '{owner.Name}'. {failure.Message}");
+                    $"{lead} '{property.Spec.Name}' of class '{owner.Name}'. {failure.Message}");
             }
 
             // The validator's identifier travels with the refusal (U6): a script branches on it.
@@ -762,7 +775,28 @@ internal sealed class JgsClass
         if (property.Spec.Default is null && property.Spec.ClassName is { } typed
             && _interpreter.ClassForLoad(typed) is { } typedClass)
         {
+            // Declared (1,1) in a class file it is one object (open item 309, measured by probe p309b): an
+            // enumeration's first member, or what the class's constructor makes of no arguments.
+            if (owner.Declaration.Dialect == JgsDialect.Matlab && IsScalarSize(property.Spec.Dims))
+            {
+                JgsValue one = typedClass.IsEnumeration && typedClass.TryMember(typedClass.EnumerationNames[0], out JgsValue first)
+                    ? first
+                    : typedClass.Construct([], line, col);
+                return Check(property, one, line, col, "Error using implicit default value of property");
+            }
+
             return JgsObjectArray.ValueOf(typedClass, [], 0, 0);
+        }
+
+        // With no default, a property declared with a built-in class in a class file starts as that class's
+        // zeros at the declared size, a ':' holding none (open item 309, measured by probe p309b: (1,1) double is
+        // 0, (1,:) char is '', (:,1) cell a 0-by-1, (1,1) string ""); its validators run on that, refused in
+        // R2025b's words for an implicit default.
+        if (property.Spec.Default is null && owner.Declaration.Dialect == JgsDialect.Matlab
+            && property.Spec.ClassName is { } builtinClass
+            && JgsBuiltins.ImplicitPropertyDefault(builtinClass, property.Spec.Dims, _interpreter.Globals, line, col) is { } implicitStart)
+        {
+            return Check(property, implicitStart, line, col, "Error using implicit default value of property");
         }
 
         JgsValue start = property.Spec.Default is { } expression
@@ -772,6 +806,10 @@ internal sealed class JgsClass
             : JgsMatrix.FromColumnMajor([], 0, 0); // MATLAB's [], 0-by-0 (U7, measured)
         return Check(property, start, line, col);
     }
+
+    /// <summary>Whether a declared size is (1,1).</summary>
+    private static bool IsScalarSize(IReadOnlyList<Expr?>? dims) =>
+        dims is { Count: 2 } && dims.All(static d => d is NumberLiteral { Value: 1 });
 
     /// <summary>Builds an instance with every property holding its default, checked as a write would be.</summary>
     public JgsObject NewDefault(int line, int col)

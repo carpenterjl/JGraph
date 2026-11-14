@@ -45,5 +45,10 @@ event.proplistener,struct,never swept; a handle object with methods of its own
 matlab.io.MatFile,struct,never swept; a handle object with methods of its own
 matlab.io.matfile.Properties,struct,never swept; the Properties of a matfile object
 matlab.metadata.Property,struct,never swept; a metaclass's property description
+matlab.metadata.Method,struct,never swept; a metaclass's method description (open item 196)
+matlab.metadata.Event,struct,never swept; a metaclass's event description (open item 196)
+matlab.metadata.EnumerationMember,struct,never swept; a metaclass's enumeration member (open item 196)
+matlab.metadata.Validation,struct,never swept; a metaproperty's validation (open item 196)
+matlab.metadata.Namespace,struct,never swept; a metaclass's namespace (open item 196)
 categorical,categorical,a type of its own since open item 115 (ADR 0232); the sweep measured it as a pattern class
 vartype,struct,never swept; a table subscript that is a tagged struct (open item 122; ADR 0233)

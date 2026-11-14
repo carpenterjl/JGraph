@@ -709,6 +709,14 @@ internal static partial class JgsBuiltins
         // folders in the MATLAB dialect (packages plan, P1).
         string HelpText(IReadOnlyList<JgsValue> args, int line, int col)
         {
+            // Several names are one topic, the names joined by spaces, which no file answers: R2025b's
+            // help('a', 'b') is empty text, and printed it is "a b not found." (open item 310, ADR 0353).
+            if (dialect.IsMatlab && args.Count > 1)
+            {
+                _ = HelpTopic(args, line, col);
+                return string.Empty;
+            }
+
             ArityRange("help", args, 0, 1, line, col);
             if (args.Count == 0)
             {
@@ -748,6 +756,10 @@ internal static partial class JgsBuiltins
             return dialect.IsMatlab ? string.Empty : $"No help found for '{name}'.\n";
         }
 
+        // The topic help was asked for: its one name, or several joined by spaces (open item 310).
+        static string HelpTopic(IReadOnlyList<JgsValue> args, int line, int col) =>
+            string.Join(' ', args.Select((_, i) => Str("help", args, i, line, col)));
+
         env.Builtins.Register("help", JgsValue.Function(new BuiltinFunction(
             "help", (args, line, col) => JgsValue.Str(HelpText(args, line, col)))
         {
@@ -769,7 +781,7 @@ internal static partial class JgsBuiltins
                 else if (text.Length == 0)
                 {
                     // In -batch the documentation links print as their text (open item 174, measured).
-                    string asked = Str("help", args, 0, line, col);
+                    string asked = HelpTopic(args, line, col);
                     host.WriteOut($"{asked} not found.\n\n    Search the documentation for {asked}\n       docsearch {asked}\n\n");
                 }
                 else

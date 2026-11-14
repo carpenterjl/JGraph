@@ -40,6 +40,13 @@ internal static partial class JgsBuiltins
         // builtins outside one, which is how MATLAB's are, so they register with everything else.
         RegisterValidators(Define);
 
+        // R2025b's validateattributes, in its catalog's words (open item 309, ADR 0353). A string scalar is
+        // its own class there - "" is a string, nonempty - so its arguments arrive as written.
+        env.Builtins.Register("validateattributes", JgsValue.Function(new BuiltinFunction("validateattributes", ValidateAttributes)
+        {
+            KeepsStringArguments = true,
+        }));
+
         // --- Numeric ----------------------------------------------------------------------------
         Define("rem", (args, line, col) =>
         {

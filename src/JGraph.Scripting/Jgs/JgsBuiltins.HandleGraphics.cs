@@ -744,7 +744,8 @@ internal static partial class JgsBuiltins
                 : MapToBool("isvalid", asked, IsLiveHandle, line, col);
         }
 
-        throw new JgsRuntimeException(line, col,
+        // A value object, a struct, a cell: no isvalid for the class (open item 309, ADR 0353: R2025b's identifier).
+        throw new JgsRuntimeException(line, col, "MATLAB:UndefinedFunction",
             $"Undefined function 'isvalid' for input arguments of type '{ClassOf(asked, JgsDialect.Matlab)}'.");
     }
 

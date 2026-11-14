@@ -330,6 +330,54 @@ internal static partial class JgsBuiltins
         CallSessionBuiltin(env, "reshape", [value, JgsGraphicsProperties.Row([.. dims.Select(static d => (double)d)])], line, col);
 
     /// <summary>
+    /// The value a property declared with a built-in class and no default starts with in a class file (open
+    /// item 309, ADR 0353, measured by probe p309b): the class's zeros - false, character 0, "", {[]} - at the
+    /// declared size, a ':' holding none and no size a 0-by-0; a scalar struct with no fields. Null for a class
+    /// this build makes no such value of (datetime, duration, a function handle, a table), which keeps the
+    /// older reading.
+    /// </summary>
+    internal static JgsValue? ImplicitPropertyDefault(string className, IReadOnlyList<Expr?>? declared, JgsEnvironment env, int line, int col)
+    {
+        int[] dims = declared is null ? [0, 0] : new int[declared.Count];
+        for (int i = 0; declared is not null && i < declared.Count; i++)
+        {
+            switch (declared[i])
+            {
+                case null:
+                    dims[i] = 0;
+                    break;
+                case NumberLiteral literal:
+                    dims[i] = (int)System.Math.Round(literal.Value);
+                    break;
+                default:
+                    return null;
+            }
+        }
+
+        if (dims.Length < 2)
+        {
+            return null;
+        }
+
+        JgsValue[] size = [.. dims.Select(static d => JgsValue.Number(d))];
+        int count = dims.Aggregate(1, static (a, b) => a * b);
+        if (JgsNumericClasses.Parse(className) is { } numericClass)
+        {
+            return JgsNumericClasses.Stamp(JgsMatrix.FromColumnMajorDims(new double[count], dims), numericClass);
+        }
+
+        return className switch
+        {
+            "logical" => CallSessionBuiltin(env, "false", size, line, col),
+            "char" => CallSessionBuiltin(env, "char", [JgsMatrix.FromColumnMajorDims(new double[count], dims)], line, col),
+            "string" => CallSessionBuiltin(env, "strings", size, line, col),
+            "cell" => CallSessionBuiltin(env, "cell", size, line, col),
+            "struct" when count == 1 && dims.Length == 2 => JgsValue.EmptyStruct(),
+            _ => null,
+        };
+    }
+
+    /// <summary>
     /// The function <paramref name="name"/> as <paramref name="env"/> binds it: the session's
     /// builtin with the wrappers that teach it chars, strings and the rest.
     /// </summary>
@@ -595,146 +643,6 @@ internal static partial class JgsBuiltins
             NamesMustHold("mustBeFolder", args,
                 static path => System.IO.Directory.Exists(path),
                 "The following folders do not exist", line, col));
-
-        Define("validateattributes", (args, line, col) =>
-        {
-            ArityRange("validateattributes", args, 3, 6, line, col);
-            JgsValue value = args[0];
-            string what = args.Count > 3 ? Str("validateattributes", args, 3, line, col) : "Input";
-
-            // The classes list is a cell of names, any one of which the value may be.
-            if (args[1].Type != JgsType.Cell)
-            {
-                throw new JgsRuntimeException(line, col, "validateattributes expects a cell of class names.");
-            }
-
-            string actual = ClassOf(value, JgsDialect.Matlab);
-            var classes = args[1].AsCell.Select(static c => c.AsString).ToList();
-            bool classOk = classes.Count == 0 || classes.Exists(c => c switch
-            {
-                "numeric" => IsNumericValue(value),
-                "float" => IsNumericValue(value),
-                "integer" => IsNumericValue(value),
-                _ => string.Equals(c, actual, StringComparison.Ordinal),
-            });
-
-            if (!classOk)
-            {
-                throw new JgsRuntimeException(line, col,
-                    $"{what} must be {string.Join(" or ", classes)}, but it is {actual}.");
-            }
-
-            if (args[2].Type != JgsType.Cell)
-            {
-                throw new JgsRuntimeException(line, col, "validateattributes expects a cell of attributes.");
-            }
-
-            CheckAttributes(what, value, args[2].AsCell, line, col);
-            return JgsValue.Null;
-        });
-    }
-
-    /// <summary>Runs <c>validateattributes</c>' attribute list, which mixes bare words with word/value pairs.</summary>
-    private static void CheckAttributes(
-        string what, JgsValue value, JgsValue[] attributes, int line, int col)
-    {
-        double[]? numericCache = null;
-        double[] Numbers() => numericCache ??= ToDoubles("validateattributes", value, line, col);
-        int[] dims = SizeDims(value);
-
-        void Require(bool ok, string requirement)
-        {
-            if (!ok)
-            {
-                throw new JgsRuntimeException(line, col, $"{what} must be {requirement}.");
-            }
-        }
-
-        for (int i = 0; i < attributes.Length; i++)
-        {
-            string attribute = attributes[i].Type == JgsType.String
-                ? attributes[i].AsString
-                : throw new JgsRuntimeException(line, col, "validateattributes: each attribute is a word.");
-
-            // The paired attributes read the number that follows them, so the loop steps twice.
-            double Paired()
-            {
-                if (++i >= attributes.Length)
-                {
-                    throw new JgsRuntimeException(line, col, $"validateattributes: '{attribute}' needs a value after it.");
-                }
-
-                return attributes[i].AsNumber;
-            }
-
-            switch (attribute)
-            {
-                case "size":
-                {
-                    if (++i >= attributes.Length)
-                        throw new JgsRuntimeException(line, col, "validateattributes: 'size' needs a dimension vector after it.");
-                    double[] expected = ToDoubles("validateattributes", attributes[i], line, col);
-                    if (expected.Length < 2 ||
-                        expected.Any(d => !double.IsNaN(d) && (!double.IsFinite(d) || d < 0 || !double.IsInteger(d))))
-                        throw new JgsRuntimeException(line, col, "validateattributes: 'size' needs an array of nonnegative integers or NaN with at least two elements.");
-                    bool matches = true;
-                    for (int d = 0; d < Math.Max(dims.Length, expected.Length); d++)
-                    {
-                        double wanted = d < expected.Length ? expected[d] : 1;
-                        int actualSize = d < dims.Length ? dims[d] : 1;
-                        matches &= double.IsNaN(wanted) || wanted == actualSize;
-                    }
-                    Require(matches, "of the specified size");
-                    break;
-                }
-                case "positive": Require(System.Array.TrueForAll(Numbers(), static x => x > 0), "positive"); break;
-                case "nonnegative": Require(System.Array.TrueForAll(Numbers(), static x => x >= 0), "nonnegative"); break;
-                case "negative": Require(System.Array.TrueForAll(Numbers(), static x => x < 0), "negative"); break;
-                case "nonpositive": Require(System.Array.TrueForAll(Numbers(), static x => x <= 0), "nonpositive"); break;
-                case "nonzero": Require(System.Array.TrueForAll(Numbers(), static x => x != 0), "nonzero"); break;
-                case "finite": Require(System.Array.TrueForAll(Numbers(), static x => !double.IsNaN(x) && !double.IsInfinity(x)), "finite"); break;
-                case "nonnan": Require(System.Array.TrueForAll(Numbers(), static x => !double.IsNaN(x)), "free of NaN"); break;
-                case "integer": Require(System.Array.TrueForAll(Numbers(), double.IsInteger), "made of integers"); break;
-                case "real": Require(value.Type != JgsType.Complex, "real"); break;
-                case "nonempty": Require(!IsEmptyValue(value), "nonempty"); break;
-                case "scalar": Require(System.Array.TrueForAll(dims, static d => d == 1), "a scalar"); break;
-                case "vector": Require(dims.Length == 2 && (dims[0] == 1 || dims[1] == 1), "a vector"); break;
-                case "row": Require(dims.Length == 2 && dims[0] == 1, "a row vector"); break;
-                case "column": Require(dims.Length == 2 && dims[1] == 1, "a column vector"); break;
-                case "2d": Require(dims.Length == 2, "two-dimensional"); break;
-                case "square": Require(dims.Length == 2 && dims[0] == dims[1], "square"); break;
-                case "increasing": Require(IsOrdered(Numbers(), static (a, b) => b > a), "increasing"); break;
-                case "decreasing": Require(IsOrdered(Numbers(), static (a, b) => b < a), "decreasing"); break;
-                case "nondecreasing": Require(IsOrdered(Numbers(), static (a, b) => b >= a), "nondecreasing"); break;
-                case "nonincreasing": Require(IsOrdered(Numbers(), static (a, b) => b <= a), "nonincreasing"); break;
-
-                case ">": { double bound = Paired(); Require(System.Array.TrueForAll(Numbers(), x => x > bound), $"greater than {Format(bound)}"); break; }
-                case ">=": { double bound = Paired(); Require(System.Array.TrueForAll(Numbers(), x => x >= bound), $"greater than or equal to {Format(bound)}"); break; }
-                case "<": { double bound = Paired(); Require(System.Array.TrueForAll(Numbers(), x => x < bound), $"less than {Format(bound)}"); break; }
-                case "<=": { double bound = Paired(); Require(System.Array.TrueForAll(Numbers(), x => x <= bound), $"less than or equal to {Format(bound)}"); break; }
-
-                case "numel": { double count = Paired(); Require(Numbers().Length == (int)count, $"{(int)count} elements long"); break; }
-                case "ncols": { double count = Paired(); Require(dims.Length > 1 && dims[1] == (int)count, $"{(int)count} columns wide"); break; }
-                case "nrows": { double count = Paired(); Require(dims[0] == (int)count, $"{(int)count} rows tall"); break; }
-
-                default:
-                    throw new JgsRuntimeException(line, col,
-                        $"validateattributes: '{attribute}' is not an attribute it knows.");
-            }
-        }
-    }
-
-    private static bool IsOrdered(double[] values, Func<double, double, bool> ok)
-    {
-        for (int i = 1; i < values.Length; i++)
-        {
-            if (!ok(values[i - 1], values[i]))
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /// <summary>The elements <c>mustBeMember</c> checks: a cell's entries, an array's, or the value itself.</summary>

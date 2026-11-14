@@ -19,6 +19,18 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue IndexStruct(JgsValue target, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
     {
+        // An element of a metaclass's member list is still a matlab.metadata.Method (open item 196, ADR 0353).
+        JgsValue picked = IndexStructElements(target, subscripts, at, env);
+        if (JgsBuiltins.IsMetadataValue(target))
+        {
+            picked.SetClassName(target.ClassName);
+        }
+
+        return picked;
+    }
+
+    private JgsValue IndexStructElements(JgsValue target, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
+    {
         JgsStructArray payload = target.AsStructArray;
         if (subscripts.Count == 2)
         {

@@ -494,13 +494,16 @@ public class MatlabFunctionsFilesAndErrorsTests : IDisposable
             catch me
                 refused = 1;
                 msg = me.message;
+                id = me.identifier;
             end
             """);
 
+        // R2025b names the function in the identifier and not in the message (open item 309, probe p309).
         Assert.True(result.Success, result.Message + _output.ErrorText);
         Assert.Equal(1.0, Number(result, "ok"));
         Assert.Equal(1.0, Number(result, "refused"));
-        Assert.Contains("reading", Text(result, "msg"), StringComparison.Ordinal);
+        Assert.Equal("MATLAB:reading:expectedPositive", Text(result, "id"));
+        Assert.Equal("Expected input to be positive.", Text(result, "msg"));
     }
 
     /// <summary>A name-value declaration takes the pairs a caller passes (stage K9, ADR 0265; deferred since M62).</summary>

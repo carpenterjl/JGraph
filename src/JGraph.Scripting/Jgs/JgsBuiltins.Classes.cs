@@ -335,36 +335,31 @@ internal static partial class JgsBuiltins
             {
                 // A device class's declaration as R2025b's metaclass shows one: the properties with their
                 // access, the superclasses, the methods (stage K20, for a project's task configuration).
-                var propertyList = device.Class.Properties.Select(p => new Dictionary<string, JgsValue>(StringComparer.Ordinal)
-                {
-                    ["Name"] = JgsValue.Str(p.Name),
-                    ["GetAccess"] = JgsValue.Str("public"),
-                    ["SetAccess"] = JgsValue.Str(p.Set is null ? "none" : "public"),
-                    ["Dependent"] = JgsValue.Bool(false),
-                    ["Constant"] = JgsValue.Bool(false),
-                    ["Hidden"] = JgsValue.Bool(p.Hidden),
-                }).ToArray();
-                var superclassList = device.Class.Superclasses.Select(s => new Dictionary<string, JgsValue>(StringComparer.Ordinal) { ["Name"] = JgsValue.Str(s) }).ToArray();
-                JgsValue meta = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
-                {
-                    ["Name"] = JgsValue.Str(device.ClassName),
-                    ["PropertyList"] = propertyList.Length == 0 ? JgsValue.StructArray(new JgsStructArray([], ["Name", "GetAccess", "SetAccess", "Dependent", "Constant", "Hidden"]), 0, 1) : JgsValue.StructArray(new JgsStructArray(propertyList), propertyList.Length, 1),
-                    ["SuperclassList"] = superclassList.Length == 0 ? JgsValue.StructArray(new JgsStructArray([], ["Name"]), 0, 1) : JgsValue.StructArray(new JgsStructArray(superclassList), superclassList.Length, 1),
-                    ["MethodList"] = CellColumn(device.Class.MethodListing.ToList()),
-                });
-                meta.SetClassName(JgsRunningDialect.ThreadIsMatlab ? "matlab.metadata.Class" : MetaClassName);
-                return meta;
+                return MetaClassOfDevice(device, interpreter);
             }
 
-            JgsValue described = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
-            {
-                ["Name"] = JgsValue.Str(ClassOf(args[0], JgsDialect.Matlab)),
-                ["PropertyList"] = CellColumn(PropertyNames("metaclass", args[0], interpreter, line, col)),
-                ["MethodList"] = CellColumn(MethodNames("metaclass", args[0], interpreter, line, col)),
-            });
+            // Any other value: its class's name, and its methods and properties as the listings name them,
+            // each a metamethod or metaproperty (open item 196, ADR 0353); matlab.metadata.Class is R2025b's
+            // name (open item 123).
+            return MetaClassOfValue(
+                ClassOf(args[0], JgsDialect.Matlab),
+                ListedOrNone(() => PropertyNames("metaclass", args[0], interpreter, line, col)),
+                ListedOrNone(() => MethodNames("metaclass", args[0], interpreter, line, col)),
+                interpreter);
 
-            described.SetClassName(JgsRunningDialect.ThreadIsMatlab ? "matlab.metadata.Class" : MetaClassName); // R2025b's name (open item 123)
-            return described;
+            // A number, a cell or a char has no listing here, and its metaclass lists none (R2025b's double has
+            // no properties, measured).
+            static string[] ListedOrNone(Func<IEnumerable<string>> listing)
+            {
+                try
+                {
+                    return [.. listing()];
+                }
+                catch (JgsRuntimeException)
+                {
+                    return [];
+                }
+            }
         });
 
         Define("addCause", (args, line, col) =>
@@ -435,91 +430,9 @@ internal static partial class JgsBuiltins
     private static JgsValue EmptyMetaProperty()
     {
         // It has the fields, so that findprop(h, 'Bogus').Name is a list of nothing, as in R2025b.
-        string[] fields =
-        [
-            "Name", "Description", "DetailedDescription", "GetAccess", "SetAccess", "Dependent", "Constant",
-            "Abstract", "Transient", "Hidden", "GetObservable", "SetObservable", "AbortSet", "NonCopyable",
-            "WeakHandle", "PartialMatchPriority", "HasDefault", "DefaultValue", "GetMethod", "SetMethod",
-            "Validation", "DefiningClass",
-        ];
-        JgsValue empty = JgsValue.StructArray(new JgsStructArray([], fields), 0, 0);
+        JgsValue empty = JgsValue.StructArray(new JgsStructArray([], MetaPropertyFieldNames), 0, 0);
         empty.SetClassName(MetaPropertyClassName);
         return empty;
-    }
-
-    /// <summary>A user class's property as a <c>matlab.metadata.Property</c>, its fields in R2025b's order.</summary>
-    private static JgsValue UserMetaProperty(ClassProperty property)
-    {
-        static JgsValue Access(MemberAccess access) => access.Kind == MemberAccessKind.List
-            ? JgsValue.Cell([.. (access.Classes ?? []).Select(JgsValue.Str)])
-            : JgsValue.Str(access.Kind.ToString().ToLowerInvariant());
-
-        JgsValue definer = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
-        {
-            ["Name"] = JgsValue.Str(property.Owner?.Name ?? ""),
-        });
-        definer.SetClassName("matlab.metadata.Class");
-        JgsValue meta = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
-        {
-            ["Name"] = JgsValue.Str(property.Spec.Name),
-            ["Description"] = JgsValue.Str(""),
-            ["DetailedDescription"] = JgsValue.Str(""),
-            ["GetAccess"] = Access(property.GetAccess),
-            ["SetAccess"] = Access(property.SetAccess),
-            ["Dependent"] = JgsValue.Bool(property.Dependent),
-            ["Constant"] = JgsValue.Bool(property.Constant),
-            ["Abstract"] = JgsValue.Bool(property.Abstract),
-            ["Transient"] = JgsValue.Bool(property.Transient),
-            ["Hidden"] = JgsValue.Bool(property.Hidden),
-            ["GetObservable"] = JgsValue.Bool(property.Observable),
-            ["SetObservable"] = JgsValue.Bool(property.Observable),
-            ["AbortSet"] = JgsValue.Bool(property.AbortSet),
-            ["NonCopyable"] = JgsValue.Bool(property.NonCopyable),
-            ["WeakHandle"] = JgsValue.Bool(false),
-            ["PartialMatchPriority"] = JgsValue.Number(1),
-            ["HasDefault"] = JgsValue.Bool(property.Spec.Default is not null),
-            ["DefaultValue"] = JgsEmpty.Zero(),
-            ["GetMethod"] = JgsEmpty.Zero(),
-            ["SetMethod"] = JgsEmpty.Zero(),
-            ["Validation"] = JgsEmpty.Zero(),
-            ["DefiningClass"] = definer,
-        });
-        meta.SetClassName(MetaPropertyClassName);
-        return meta;
-    }
-
-    /// <summary>The <c>meta.class</c> of a user class named rather than instantiated: <c>?Circle</c>.</summary>
-    internal static JgsValue MetaClassOf(JgsClass definition)
-    {
-        JgsValue described = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
-        {
-            ["Name"] = JgsValue.Str(definition.Name),
-            ["PropertyList"] = CellColumn(definition.Properties.Select(static p => p.Spec.Name)),
-            ["MethodList"] = CellColumn(definition.MethodNames),
-            ["Abstract"] = JgsValue.Bool(definition.IsAbstract),
-            ["Sealed"] = JgsValue.Bool(definition.Declaration.Sealed),
-            ["HandleCompatible"] = JgsValue.Bool(definition.IsHandle || definition.Declaration.HandleCompatible),
-            ["SuperclassList"] = SuperclassList(definition),
-        });
-
-        described.SetClassName(JgsRunningDialect.ThreadIsMatlab ? "matlab.metadata.Class" : MetaClassName); // R2025b's name (open item 123)
-        return described;
-    }
-
-    /// <summary>
-    /// A metaclass's <c>SuperclassList</c>: the classes its header names, each by its name, as a
-    /// column a script indexes and counts (U6). <c>handle</c> has no entry here, as it has no file.
-    /// </summary>
-    private static JgsValue SuperclassList(JgsClass definition)
-    {
-        Dictionary<string, JgsValue>[] direct =
-        [
-            .. definition.Supers.Select(static super => new Dictionary<string, JgsValue>(StringComparer.Ordinal)
-            {
-                ["Name"] = JgsValue.Str(super.Name),
-            }),
-        ];
-        return JgsValue.StructArray(new JgsStructArray(direct), direct.Length, direct.Length == 0 ? 0 : 1);
     }
 
     /// <summary>The causes an exception already carries, or none.</summary>

@@ -68,6 +68,32 @@ internal static partial class JgsBuiltinClasses
         };
     }
 
+    /// <summary>
+    /// What R2025b's compact display shows for a secretID in a struct field or a cell (open item 310, ADR 0353,
+    /// measured by probe p310b): the names of a row, four spaces apart and bracketed when there are several (in
+    /// a cell always), an empty name as <c>&lt;missing&gt;</c>; any other shape its size and class; then the
+    /// annotation " (secretID)". Null for an object of any other class, which keeps its display.
+    /// </summary>
+    internal static string? CompactDisplay(JgsValue value, bool inCell)
+    {
+        if (value.ObjectClass.Name != SecretId)
+        {
+            return null;
+        }
+
+        int[] dims = value.IsObjectArray ? value.Dims : [1, 1]; // one object is a scalar
+        JgsObject[] elements = value.IsObjectArray ? value.AsObjectArray.Elements : [value.AsObject];
+        if (dims.Length == 2 && dims[0] == 1 && dims[1] >= 1)
+        {
+            string names = string.Join("    ", elements.Select(static e =>
+                e.Fields.TryGetValue("Name", out JgsValue? name) && JgsBuiltins.TextOf(name) is { Length: > 0 } text ? text : "<missing>"));
+            return inCell || elements.Length > 1 ? $"[{names}] ({SecretId})" : $"{names} ({SecretId})";
+        }
+
+        string size = string.Join("\u00D7", dims);
+        return inCell ? $"{size} {SecretId} ({SecretId})" : $"[{size} {SecretId}] ({SecretId})";
+    }
+
     /// <summary><c>res = annotation(obj)</c>: a column of <c>"secretID"</c>, one per row of the array (R2025b's own body).</summary>
     private static JgsValue SecretIdAnnotation(IReadOnlyList<JgsValue> args, int line, int col)
     {
