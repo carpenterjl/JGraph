@@ -163,17 +163,19 @@ public class MatlabHandleGraphicsVerbTests : IDisposable
     [Fact]
     public async Task FindallReachesTheFurnitureFindobjLeavesAlone()
     {
-        // An axes' rulers are not its children, so a plain search never sees them — which is the
-        // distinction MATLAB draws between the two verbs.
+        // An axes' rulers are its parts, not its children: neither search reaches them in R2025b
+        // (open item 297, probe p297), though findall reaches the labels a script has made.
         await RunAsserting("""
             figure(1);
             plot(1:3, [1 2 3]);
             ax = gca;
+            xlabel(ax, 'x');
             disp(numel(findobj(ax, 'Type', 'numericruler')));
-            disp(numel(findall(ax, 'Type', 'numericruler')) > 0);
+            disp(numel(findall(ax, 'Type', 'numericruler')));
+            disp(numel(findall(ax, 'Type', 'text')));
             """);
 
-        Assert.Equal(new[] { "0", "true" }, _output.NormalLines);
+        Assert.Equal(new[] { "0", "0", "1" }, _output.NormalLines);
     }
 
     [Fact]

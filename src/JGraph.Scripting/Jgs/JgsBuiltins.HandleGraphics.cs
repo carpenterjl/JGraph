@@ -559,10 +559,13 @@ internal static partial class JgsBuiltins
                 // What a custom component's setup built is no one's to find (U10, probe u10_more).
                 if (at < depth && target is not UiComponentContainerModel)
                 {
-                    // Front first, the order Children lists them in.
-                    next.AddRange((hidden
-                        ? JgsGraphicsProperties.DescendantsOf(target)
-                        : JgsGraphicsProperties.ChildrenOf(target)).Reverse());
+                    // Front first, the order Children lists them in. A MATLAB-dialect findall reaches
+                    // the hidden children R2025b's does and none of an axes' parts (open item 297).
+                    // While the root shows hidden handles, findobj is findall there.
+                    bool matlab = JgsRunningDialect.ThreadIsMatlab;
+                    next.AddRange(matlab && (hidden || JgsHandleRegistry.ShowHiddenHandles) ? JgsGraphicsProperties.SearchedUnder(target)
+                        : !hidden ? JgsGraphicsProperties.ChildrenOf(target).Reverse()
+                        : JgsGraphicsProperties.DescendantsOf(target).Reverse());
                 }
             }
 
@@ -1142,6 +1145,11 @@ internal static partial class JgsBuiltins
     /// <summary>Empties an axes of what was drawn in it; <c>cla reset</c> also puts its settings back.</summary>
     private static JgsValue Cla(IReadOnlyList<JgsValue> args, int line, int col)
     {
+        if (JgsRunningDialect.ThreadIsMatlab)
+        {
+            return MatlabCla(args, line, col);
+        }
+
         ArityRange("cla", args, 0, 2, line, col);
         (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
         ArityRange("cla", rest, 0, 1, line, col);
@@ -1162,8 +1170,123 @@ internal static partial class JgsBuiltins
         return JgsValue.Null;
     }
 
-    private static void ClearAxes(AxesModel axes, bool reset)
+    /// <summary>
+    /// R2025b's <c>cla</c> (open item 313, probes p313, p313b): <c>cla(ax)</c> and <c>cla(ax,
+    /// 'reset')</c> as before; any other object first is kept rather than cleared - cla.m clears the
+    /// current axes and hands clo the rest as the objects to keep - so <c>cla(g)</c> empties the axes
+    /// of everything but the group. A kept object that is not valid is <c>MATLAB:clo:invalidHandle</c>,
+    /// before anything is cleared or after, when the clearing took it. The axes is the answer when
+    /// one is asked for.
+    /// </summary>
+    private static JgsValue MatlabCla(IReadOnlyList<JgsValue> args, int line, int col)
     {
+        ArityRange("cla", args, 0, 3, line, col);
+        (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
+        AxesModel axes = named ?? JG.Gca();
+
+        bool reset = false;
+        JgsValue? keep = null;
+        foreach (JgsValue arg in rest)
+        {
+            if (IsTextScalar(arg))
+            {
+                reset = StrOf("cla", arg, line, col).Equals("reset", StringComparison.OrdinalIgnoreCase)
+                    ? true
+                    : throw new JgsRuntimeException(line, col, "MATLAB:clo:unknownOption", "Unknown command option.");
+            }
+            else if (keep is null)
+            {
+                keep = arg;
+            }
+            else
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:maxrhs", "Too many input arguments.");
+            }
+        }
+
+        if (keep is null)
+        {
+            ClearAxes(axes, reset);
+            return JgsHandleRegistry.For(axes);
+        }
+
+        var kept = new HashSet<GraphObject>(ReferenceEqualityComparer.Instance);
+        var given = new List<JgsValue>();
+        int count = keep.Type == JgsType.Array ? keep.ArrayLength : 1;
+        for (int i = 0; i < count; i++)
+        {
+            JgsValue one = keep.Type == JgsType.Array ? keep.ElementAt(i) : keep;
+            given.Add(one);
+            if (!JgsHandleRegistry.TryGet(one, out JgsHandleEntry? entry))
+            {
+                throw BadKeptHandle(line, col);
+            }
+
+            kept.Add(entry.Target);
+        }
+
+        ClearAxesKeeping(axes, kept);
+        if (reset)
+        {
+            ClearAxes(axes, reset: true, keepDrawn: true);
+        }
+
+        JgsHandleRegistry.DropUnreachable();
+        if (given.Any(one => !JgsHandleRegistry.TryGet(one, out _)))
+        {
+            throw BadKeptHandle(line, col);
+        }
+
+        return JgsHandleRegistry.For(axes);
+    }
+
+    private static JgsRuntimeException BadKeptHandle(int line, int col) =>
+        new(line, col, "MATLAB:clo:invalidHandle", "Bad handle");
+
+    /// <summary>
+    /// Empties <paramref name="axes"/> of its drawn children but those in <paramref name="kept"/>: a
+    /// group that is not kept goes with what it holds, a kept one keeps its members.
+    /// </summary>
+    private static void ClearAxesKeeping(AxesModel axes, HashSet<GraphObject> kept)
+    {
+        void Remove(GraphObject member)
+        {
+            switch (member)
+            {
+                case PlotObject plot:
+                    axes.Plots.Remove(plot);
+                    break;
+                case AnnotationObject text:
+                    axes.Annotations.Remove(text);
+                    break;
+                case LightModel light:
+                    axes.Lights.Remove(light);
+                    break;
+            }
+        }
+
+        foreach (JgsGraphicsGroup group in axes.Groups.Where(g => g.Outer is null && !kept.Contains(g)).ToList())
+        {
+            JgsGraphicsProperties.DeleteGroup(group, Remove);
+        }
+
+        foreach (GraphObject drawn in axes.Plots.Cast<GraphObject>().Concat(axes.Annotations).Concat(axes.Lights).ToList())
+        {
+            if (!kept.Contains(drawn) && JgsGraphicsProperties.GroupOwning(drawn) is null)
+            {
+                Remove(drawn);
+            }
+        }
+    }
+
+    private static void ClearAxes(AxesModel axes, bool reset, bool keepDrawn = false)
+    {
+        if (keepDrawn)
+        {
+            ResetClearedAxes(axes);
+            return;
+        }
+
         // Under yyaxis a plain cla empties the active side and leaves the other's plots, as R2025b's
         // does (open item 106); the side's line styles start over.
         if (!reset && axes.YAxes.Count > 1)
@@ -1203,6 +1326,19 @@ internal static partial class JgsBuiltins
         {
             return;
         }
+
+        ResetClearedAxes(axes);
+    }
+
+    /// <summary>What <c>cla reset</c> puts back besides what was drawn: everything a script had set on the axes itself.</summary>
+    private static void ResetClearedAxes(AxesModel axes)
+    {
+        if (JgsRunningDialect.ThreadIsMatlab)
+        {
+            DeleteLegend(axes.Legend);
+        }
+
+        axes.Legend.Visible = false;
 
         // 'reset' puts back everything a script had set on the axes itself, not only what it drew.
         axes.Title = string.Empty;

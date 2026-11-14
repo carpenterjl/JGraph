@@ -600,6 +600,12 @@ internal static partial class JgsBuiltins
             group.SetMatrix(TransformMatrix(verb, matrix, line, col));
         }
 
+        // The group's own Visible, which its members are drawn through (open item 296).
+        if (parsed.Named("Visible") is { } visible)
+        {
+            JgsGraphicsProperties.Set(JgsHandleRegistry.EntryFor(group), "Visible", visible, line, col);
+        }
+
         return JgsHandleRegistry.For(group);
     }
 

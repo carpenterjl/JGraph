@@ -267,6 +267,11 @@ public sealed class Projection3D : ISpatialMapper
     /// </summary>
     public (Point2D Position, double Depth) Project(double x, double y, double z)
     {
+        if (_model is not null)
+        {
+            (x, y, z) = Model(x, y, z);
+        }
+
         double nx = (((x - _xMin) / _xSpan) - 0.5) * _ax;
         double ny = (((y - _yMin) / _ySpan) - 0.5) * _ay;
         double nz = (((z - _zMin) / _zSpan) - 0.5) * _az;
@@ -314,10 +319,64 @@ public sealed class Projection3D : ISpatialMapper
     /// directions are computed here rather than in data units, so a surface whose Z spans millions and
     /// whose X spans ones does not light like a wall — and a stretched box lights as it looks.
     /// </summary>
-    public Vector3D Normalize(double x, double y, double z) => new(
-        ((((x - _xMin) / _xSpan) - 0.5) * _ax),
-        ((((y - _yMin) / _ySpan) - 0.5) * _ay),
-        ((((z - _zMin) / _zSpan) - 0.5) * _az));
+    public Vector3D Normalize(double x, double y, double z)
+    {
+        if (_model is not null)
+        {
+            (x, y, z) = Model(x, y, z);
+        }
+
+        return new(
+            ((((x - _xMin) / _xSpan) - 0.5) * _ax),
+            ((((y - _yMin) / _ySpan) - 0.5) * _ay),
+            ((((z - _zMin) / _zSpan) - 0.5) * _az));
+    }
+
+    // A transform the points pass through before the camera sees them: an hgtransform's matrix, which
+    // R2025b applies when it draws its members rather than to their data (open item 296).
+    private double[,]? _model;
+
+    /// <summary>
+    /// This camera, seeing every point after <paramref name="matrix"/> (a 4-by-4, row-major) has moved
+    /// it: an hgtransform's members drawn where its matrix puts them (open item 296). Only
+    /// <see cref="Project"/> and <see cref="Normalize"/> apply it; reading a pixel back is still in the
+    /// axes' own coordinates.
+    /// </summary>
+    public Projection3D WithModel(double[,] matrix)
+    {
+        ArgumentNullException.ThrowIfNull(matrix);
+        var moved = (Projection3D)MemberwiseClone();
+        moved._model = _model is null ? matrix : Multiply(_model, matrix);
+        return moved;
+    }
+
+    private (double X, double Y, double Z) Model(double x, double y, double z)
+    {
+        double[,] m = _model!;
+        double w = (m[3, 0] * x) + (m[3, 1] * y) + (m[3, 2] * z) + m[3, 3];
+        w = w == 0 ? 1 : w;
+        return (
+            ((m[0, 0] * x) + (m[0, 1] * y) + (m[0, 2] * z) + m[0, 3]) / w,
+            ((m[1, 0] * x) + (m[1, 1] * y) + (m[1, 2] * z) + m[1, 3]) / w,
+            ((m[2, 0] * x) + (m[2, 1] * y) + (m[2, 2] * z) + m[2, 3]) / w);
+    }
+
+    private static double[,] Multiply(double[,] a, double[,] b)
+    {
+        var m = new double[4, 4];
+        for (int r = 0; r < 4; r++)
+        {
+            for (int c = 0; c < 4; c++)
+            {
+                for (int k = 0; k < 4; k++)
+                {
+                    m[r, c] += a[r, k] * b[k, c];
+                }
+            }
+        }
+
+        return m;
+    }
 
     /// <summary>The plot box's side lengths, scaled so the longest is 1.</summary>
     public Vector3D BoxAspect => new(_ax, _ay, _az);

@@ -2900,6 +2900,7 @@ internal static partial class JgsBuiltins
         WrapShapeVerbsOverObjects(env); // after every verb is in, so an array of objects reaches each (open item 116)
         RegisterCategoricalBuiltins(env, text => host.print(text)); // over the verbs it teaches (open item 115)
         RefuseGroupsAtAxesVerbs(env); // last, round whatever each axes verb ended up as (open item 168)
+        RefuseDeadTargetsAtAxesVerbs(env); // and a deleted object first (open item 313)
 
         return env;
     }
@@ -3830,6 +3831,16 @@ internal static partial class JgsBuiltins
         (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
         return OnAxes(named, () =>
         {
+            // A channel naming several variables makes a chart for each (open item 313).
+            if (TableRuns(rest, 2, line, col) is { } runs)
+            {
+                return ChartPerRun(runs, run =>
+                {
+                    (IReadOnlyList<JgsValue> one, ScatterSource? from) = PeelScatterTable("scatter", run, spatial: false, sized: false, line, col);
+                    return Sourced(ScatterSeries("scatter", one, line, col), from);
+                }, line, col);
+            }
+
             (IReadOnlyList<JgsValue> data, ScatterSource? source) =
                 PeelScatterTable("scatter", rest, spatial: false, sized: false, line, col);
             return Sourced(ScatterSeries("scatter", data, line, col), source);

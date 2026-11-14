@@ -164,19 +164,18 @@ before.
 
 ## Divergences
 
-- **A group does not survive this build's own figure file.** The `.graph` document keeps a group's
-  members and forgets the group, as M67 recorded, so `openfig` of this build's own file finds no
-  `hggroup` (row `file_group`). R2025b's file, and R2025b reading this build's `.fig`, keep it.
-- **Hiding a group hides its members here** (their own `Visible` reads `'off'`). R2025b leaves a
-  member's `Visible` `'on'` and hides it through the group (`pa_groups` `vis_off_member`); this is
-  M67's design, since the group is not drawn.
-- **A transform moves its members' own coordinates here.** A member reads back its moved data, and a
-  `.fig` this build writes holds the moved data under an identity matrix (`pa_figread`: `YData`
-  `[5 5]`, where R2025b's own file has `[0 0]` and the translation in `Matrix`).
+None open.
+
+Closed since: **a group did not survive this build's own figure file**, and **hiding a group hid its
+members** (their own `Visible` read `'off'`), and **a transform moved its members' own coordinates**
+(a `.fig` this build wrote held the moved data under an identity matrix). Open item 296 (ADR 0360)
+put the group in its axes' model (`AxesModel.Groups`, `GraphicsGroupModel`): the `.graph` document
+writes it and reads it back (row `file_group` agrees), the renderer and the autoscaler read a group's
+`Visible` and a transform's `Matrix` when they draw and fit its members, a member keeps its own
+`Visible` and its own data, and the `.fig` writer writes the `Matrix`.
 
 ## Still open
 
 - `line(g, x, y)` on a deleted group reads the dead handle as data here. R2025b refuses it with
   `MATLAB:hg:DeletedObject` ("Cannot set property to a deleted object."). This belongs to the makers'
   wrapper (`JgsBuiltins.MadeProperties`), which the next batch owns with items 167 and 168.
-- A group in this build's `.graph` document (the divergence above).

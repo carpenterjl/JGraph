@@ -237,8 +237,9 @@ public class MakerOptionsTests : IDisposable
     [Fact]
     public void ATextInATransformMovesWithIt()
     {
-        // The members' own coordinates move, as for every member here (the group's recorded limit).
-        Assert.Equal("11 2\n", RunAndRead("""
+        // The text is drawn where the matrix puts it and keeps its own Position, as R2025b's does
+        // (open item 296, probe p296: tf_text_pos).
+        Assert.Equal("1 2\n", RunAndRead("""
             f = figure('Visible', 'off'); ax = axes(f);
             t = hgtransform(ax);
             h = text(t, 1, 2, 'hi');

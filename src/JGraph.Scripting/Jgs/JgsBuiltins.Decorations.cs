@@ -42,7 +42,7 @@ internal static partial class JgsBuiltins
             });
 
         // --- The titling family --------------------------------------------------------------
-        JgsValue[] Titles(IReadOnlyList<JgsValue> args, int line, int col)
+        JgsValue[] Titles(IReadOnlyList<JgsValue> args, int line, int col, bool both = true)
         {
             // title(lg, 'words', ...) titles the legend and answers its title object, the options
             // that object's (open item 141, oi141_title T13 to T22). Before open-items batch 28 the
@@ -77,13 +77,17 @@ internal static partial class JgsBuiltins
                 if (rest.Count == 0) throw new JgsRuntimeException(line,col,"title expects text.");
                 bool subtitle = rest.Count % 2 == 0;
                 JgsValue t = WriteLabel(JgsTextLabel.For(JG.Gca(), "Title"), rest[0], rest.Skip(subtitle ? 2 : 1).ToArray(), line,col);
+
+                // The subtitle object is made when it is asked for, as R2025b's is: findall finds an
+                // axes' subtitle only once something reached it (open item 297, probe p297b).
+                if (!subtitle && !both) return new[] { t };
                 var sub = JgsTextLabel.For(JG.Gca(), "Subtitle");
                 if (subtitle) WriteLabel(sub, rest[1], rest.Skip(2).ToArray(), line,col);
                 return new[] { t, JgsHandleRegistry.For(sub) };
             });
         }
-        env.Builtins.Register("title", JgsValue.Function(new BuiltinFunction("title", (a,l,c) => Titles(a,l,c)[0])
-        { BindsAnsAsStatement = false, MultiOutput = (a,w,l,c) => Titles(a,l,c) }));
+        env.Builtins.Register("title", JgsValue.Function(new BuiltinFunction("title", (a,l,c) => Titles(a,l,c, both: false)[0])
+        { BindsAnsAsStatement = false, MultiOutput = (a,w,l,c) => Titles(a,l,c, both: w > 1) }));
         DefineOnAxes("subtitle", (a,l,c) => WriteLabel(JgsTextLabel.For(JG.Gca(), "Subtitle"), a[0], a.Skip(1).ToArray(), l,c));
 
         // sgtitle names the figure, not an axes — but it still accepts a leading handle, which for

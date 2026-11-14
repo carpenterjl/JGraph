@@ -6,7 +6,7 @@ using Xunit;
 namespace JGraph.Tests.Scripting;
 
 /// <summary>
-/// Open items 143, 144 and 166 (ADR 0000): a group is a child of its axes in the tree a script sees,
+/// Open items 143, 144 and 166 (ADR 0342): a group is a child of its axes in the tree a script sees,
 /// reached by findobj and findall and deleted by a replacing plot, cla and delete; a figure's
 /// annotations answer R2025b's shape words and sit in a hidden pane (probes pa_groups, pa_pane).
 /// </summary>

@@ -792,10 +792,11 @@ public sealed class FigureRenderer
                 item.Plot.GetXDataBounds().Center, item.Plot.GetYDataBounds().Center,
                 item.Plot is IHasZData z ? z.GetZDataBounds().Center : 0).Item2);
         }
+        GraphicsGroupIndex? groups = GraphicsGroupIndex.For(axes);
         foreach ((PlotObject plot, int colorIndex) in plots)
         {
             Color seriesColor = SeriesPalette.Resolve(palette, plot, colorIndex);
-            if (plot.Visible && plot is I3DDrawable drawable)
+            if (plot.Visible && plot is I3DDrawable drawable && groups?.Shown(plot) != false)
             {
                 var state = new RenderState(
                     new NormalizedCoordinateMapper(plotArea), plotArea, seriesColor,
@@ -805,7 +806,7 @@ public sealed class FigureRenderer
                 // its own draw and puts it back — the same meaning as the flat path's per-plot push.
                 bool unclip = clip3D && !plot.Clipping;
                 if (unclip) { context.PopClip(); }
-                drawable.Render3D(context, projection, state);
+                drawable.Render3D(context, groups?.MatrixFor(plot) is { } moved ? projection.WithModel(moved) : projection, state);
                 if (unclip) { context.PushClip(plotArea); }
             }
         }
@@ -818,9 +819,9 @@ public sealed class FigureRenderer
             depthSort: axes.SortMethod == SortMethodType.Depth);
         foreach (AnnotationObject annotation in axes.Annotations.InDrawOrder())
         {
-            if (annotation.Visible && annotation is I3DDrawable projected)
+            if (annotation.Visible && annotation is I3DDrawable projected && groups?.Shown(annotation) != false)
             {
-                projected.Render3D(context, projection, annotationState);
+                projected.Render3D(context, groups?.MatrixFor(annotation) is { } moved ? projection.WithModel(moved) : projection, annotationState);
             }
         }
 
@@ -1036,12 +1037,13 @@ public sealed class FigureRenderer
         // an axes is polar or it is not, and a chart cannot be half in one coordinate system.
         IReadOnlyList<Color> palette = SeriesPalette.Of(axes, theme);
         int colorIndex = 0;
+        GraphicsGroupIndex? groups = GraphicsGroupIndex.For(axes);
         foreach (PlotObject plot in axes.Plots.InDrawOrder())
         {
             Color seriesColor = SeriesPalette.Resolve(palette, plot, colorIndex);
             colorIndex++;
 
-            if (plot.Visible && plot is IDrawable drawable)
+            if (plot.Visible && plot is IDrawable drawable && groups?.Shown(plot) != false)
             {
                 bool unclip = clipPolar && !plot.Clipping;
                 if (unclip) { context.PopClip(); }
@@ -1638,15 +1640,19 @@ public sealed class FigureRenderer
         // property of each object: a series told not to clip draws past the plot box while its
         // neighbours stay inside it, and the draw order between them is unchanged.
         bool clipPlots = axes.Clipping;
+        GraphicsGroupIndex? groups = GraphicsGroupIndex.For(axes);
         foreach (PlotObject plot in axes.Plots.InDrawOrder())
         {
             Color seriesColor = SeriesPalette.Resolve(palette, plot, colorIndex);
             colorIndex++;
 
-            if (!plot.Visible)
+            // A member of a hidden group keeps its own Visible and is not drawn (open item 296).
+            if (!plot.Visible || groups?.Shown(plot) == false)
             {
                 continue;
             }
+
+            double[,]? moved = groups?.MatrixFor(plot);
 
             AxisModel xAxis = axes.GetXAxisFor(plot);
             AxisModel yAxis = axes.GetYAxisFor(plot);
@@ -1657,14 +1663,19 @@ public sealed class FigureRenderer
                 if (plot is I3DDrawable { DrawsInFlatAxes: true } flat && FlatProjection(axes, xAxis, yAxis, plotArea) is { } above)
                 {
                     if (clip) { context.PushClip(plotArea); }
-                    flat.Render3D(context, above, new RenderState(new NormalizedCoordinateMapper(plotArea), plotArea, seriesColor, depthSort: false));
+                    flat.Render3D(context, moved is null ? above : above.WithModel(moved), new RenderState(new NormalizedCoordinateMapper(plotArea), plotArea, seriesColor, depthSort: false));
                     if (clip) { context.PopClip(); }
                 }
 
                 continue;
             }
 
-            var transform = AxisTransform.Create(plotArea, xAxis, yAxis);
+            ICoordinateMapper transform = AxisTransform.Create(plotArea, xAxis, yAxis);
+            if (moved is not null)
+            {
+                transform = new GroupMatrixMapper(transform, moved); // drawn where the matrix puts it (open item 296)
+            }
+
             var state = new RenderState(transform, plotArea, seriesColor);
 
             if (clip) { context.PushClip(plotArea); }
@@ -1710,6 +1721,9 @@ public sealed class FigureRenderer
 
         // Annotations without an explicit color use the theme's label ink so they read in any theme.
         var state = new RenderState(mapper, area, theme.AxisLabel);
+
+        // A text in an axes may be a group's member: hidden with it, moved by its matrix (open item 296).
+        GraphicsGroupIndex? groups = annotations[0].Parent is AxesModel owner ? GraphicsGroupIndex.For(owner) : null;
         foreach (AnnotationObject annotation in annotations.InDrawOrder())
         {
             // Under a clip, the ones that ignore it wait for the pass that follows without one.
@@ -1718,9 +1732,11 @@ public sealed class FigureRenderer
                 continue;
             }
 
-            if (annotation.Visible && annotation is IDrawable drawable)
+            if (annotation.Visible && annotation is IDrawable drawable && groups?.Shown(annotation) != false)
             {
-                drawable.Render(context, state);
+                drawable.Render(context, groups?.MatrixFor(annotation) is { } moved
+                    ? new RenderState(new GroupMatrixMapper(mapper, moved), area, theme.AxisLabel)
+                    : state);
             }
         }
     }

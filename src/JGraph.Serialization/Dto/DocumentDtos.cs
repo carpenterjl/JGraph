@@ -476,6 +476,50 @@ public sealed class AxesDto
     public List<PlotDto> Plots { get; set; } = new();
 
     public List<AnnotationDto> Annotations { get; set; } = new();
+
+    /// <summary>
+    /// The axes' groups and transforms, oldest first (open item 296). Null when it has none, and in
+    /// every document written before they were kept: such a document reads back with the members and
+    /// no group, as it was saved.
+    /// </summary>
+    public List<GroupDto>? Groups { get; set; }
+}
+
+/// <summary>The serialized form of a <see cref="GraphicsGroupModel"/> (open item 296).</summary>
+public sealed class GroupDto
+{
+    /// <summary>True for an hgtransform, false for an hggroup.</summary>
+    public bool Transforms { get; set; }
+
+    public string? Tag { get; set; }
+
+    public bool Visible { get; set; } = true;
+
+    public string? DisplayName { get; set; }
+
+    /// <summary>The transform's 4-by-4 row by row; null for the identity and for a plain group.</summary>
+    public double[]? Matrix { get; set; }
+
+    /// <summary>The index in <see cref="AxesDto.Groups"/> of the group this one was made in, or -1.</summary>
+    public int Outer { get; set; } = -1;
+
+    /// <summary>The members in the order they joined, each named by where it is kept.</summary>
+    public List<GroupMemberDto> Members { get; set; } = new();
+
+    /// <summary>
+    /// The drawn object the group stands just before among its axes' children, named as a member is,
+    /// or null when it stands after all of them.
+    /// </summary>
+    public GroupMemberDto? Before { get; set; }
+}
+
+/// <summary>One object a group names: a plot, a text, a light or a group, by its index in its list.</summary>
+public sealed class GroupMemberDto
+{
+    /// <summary><c>plot</c>, <c>text</c>, <c>light</c> or <c>group</c>.</summary>
+    public string Kind { get; set; } = "plot";
+
+    public int Index { get; set; }
 }
 
 /// <summary>The serialized form of an <see cref="AxisModel"/>.</summary>

@@ -2433,3 +2433,6 @@ mlock	0	5
 munlock	0	5
 mislocked	1	5
 secretID	1	2
+xscale	-1	2
+yscale	-1	2
+zscale	-1	2

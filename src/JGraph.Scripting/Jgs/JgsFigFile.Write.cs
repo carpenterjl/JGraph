@@ -238,6 +238,12 @@ internal static partial class JgsFigFile
                 return;
             }
 
+            // Written after its axes by AppendAxes, wherever a script's tree lists it (open item 297).
+            if (target is LegendModel or ColorbarModel or BubbleLegendModel)
+            {
+                return;
+            }
+
             if (Word(target) is not { } word)
             {
                 Skipped.Add(JgsGraphicsProperties.TypeNameOf(target));
@@ -262,7 +268,16 @@ internal static partial class JgsFigFile
         {
             var children = new List<Dictionary<string, JgsValue>>();
             var furniture = new List<Dictionary<string, JgsValue>>();
-            foreach (GraphObject child in JgsGraphicsProperties.ChildrenOf(axes))
+
+            // The legend and the colour bars are the figure's children in a MATLAB-dialect script
+            // (open item 297); hgsave writes them after their axes either way.
+            IEnumerable<GraphObject> held = JgsGraphicsProperties.ChildrenOf(axes);
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                held = held.Concat(((GraphObject[])[axes.Legend, axes.Colorbar, axes.BubbleLegend]).Where(static f => f.Visible));
+            }
+
+            foreach (GraphObject child in held)
             {
                 switch (child)
                 {
@@ -590,11 +605,6 @@ internal static partial class JgsFigFile
                         properties.Remove("ZData");
                     }
 
-                    break;
-                case "hgtransform":
-                    // This build's members hold the coordinates the matrix gave them; MATLAB would
-                    // apply it a second time (open item 166).
-                    properties.Remove("Matrix");
                     break;
             }
         }

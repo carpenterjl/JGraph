@@ -37,7 +37,8 @@ internal static partial class JgsGraphicsProperties
         {
             var legend = (LegendModel)entry.Target;
             JgsBuiltins.RefreshLegend(legend);
-            return HandleColumn([.. legend.Entries.Where(static e => e.Visible).Select(static e => e.Plot).OfType<GraphObject>()]);
+            // A group's row is the group (open item 313).
+            return HandleColumn([.. legend.Entries.Where(static e => e.Visible).Select(static e => (GraphObject?)e.Group ?? e.Plot).OfType<GraphObject>()]);
         });
 
         // The legend's title is a text object of its own, as R2025b's is (open item 141). Written
@@ -71,7 +72,11 @@ internal static partial class JgsGraphicsProperties
                 continue;
             }
 
-            if (row < names.Length)
+            if (row < names.Length && entry.Group is { } group)
+            {
+                group.DisplayName = names[row]; // a group's row names the group (open item 313)
+            }
+            else if (row < names.Length)
             {
                 plot.DisplayName = names[row];
             }

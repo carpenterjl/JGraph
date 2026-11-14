@@ -48,7 +48,7 @@ internal static partial class JgsBuiltins
         // stairs is the one verb here that can answer with data instead of drawing: asked for two
         // outputs it hands back the stairstep path, which is what a script wants when it means to
         // draw the steps itself or measure them.
-        env.Builtins.Register("stairs", JgsValue.Function(new BuiltinFunction("stairs", Making(PlotMade, (args, line, col) =>
+        env.Builtins.Register("stairs", JgsValue.Function(new BuiltinFunction("stairs", Making(StairsMade, (args, line, col) =>
             Stairs(args, dialect, line, col)))
         {
             BindsAnsAsStatement = false,

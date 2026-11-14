@@ -61,7 +61,7 @@ internal static class LegendRenderer
                 continue;
             }
 
-            string label = entry.ResolveLabel(item.LegendLabel);
+            string label = entry.ResolveRowLabel(item.LegendLabel); // a group's row reads the group's name (open item 313)
             if (string.IsNullOrEmpty(label))
             {
                 continue;

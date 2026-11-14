@@ -90,6 +90,17 @@ public sealed class AxesModel : GraphObject
         Colorbar.SetParent(this);
         BubbleLegend = new BubbleLegendModel();
         BubbleLegend.SetParent(this);
+        foreach (GraphObject furniture in (GraphObject[])[Legend, Colorbar, BubbleLegend])
+        {
+            GraphObject shown = furniture;
+            shown.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(Visible) && shown.Visible)
+                {
+                    _shownAt[shown] = Interlocked.Increment(ref _shownCount);
+                }
+            };
+        }
 
         ZAxis = new AxisModel(AxisOrientation.Vertical, AxisPosition.Left) { Name = "ZAxis" };
         ZAxis.SetParent(this);
@@ -178,6 +189,61 @@ public sealed class AxesModel : GraphObject
     /// sum, and 2D content ignores them entirely.
     /// </summary>
     public GraphObjectCollection<LightModel> Lights { get; }
+
+    private static long _shownCount;
+    private readonly Dictionary<GraphObject, long> _shownAt = new(ReferenceEqualityComparer.Instance);
+
+    /// <summary>
+    /// When the legend, the colour bar or the bubble legend was last shown, as a number that grows
+    /// with every showing: R2025b lists them among their figure's children newest first (open item
+    /// 297, probe p297b). Zero for one never shown.
+    /// </summary>
+    public long ShownOrder(GraphObject furniture) =>
+        _shownAt.TryGetValue(furniture, out long at) ? at : 0;
+
+    private GraphicsGroupModel[] _groups = [];
+
+    /// <summary>
+    /// The groups and transforms made in this axes, nested ones included, oldest first (open item
+    /// 296). They draw nothing themselves; their members stay in <see cref="Plots"/>,
+    /// <see cref="Annotations"/> and <see cref="Lights"/>, and a group's visibility and matrix reach
+    /// them when they are drawn and fitted (<see cref="GraphicsGroupIndex"/>). A snapshot: adding or
+    /// removing a group replaces the list.
+    /// </summary>
+    [Browsable(false)]
+    public IReadOnlyList<GraphicsGroupModel> Groups => _groups;
+
+    /// <summary>Records a group made in this axes or in one of its groups.</summary>
+    public void AddGroup(GraphicsGroupModel group)
+    {
+        ArgumentNullException.ThrowIfNull(group);
+        if (Array.IndexOf(_groups, group) >= 0)
+        {
+            return;
+        }
+
+        group.SetParent(this);
+        _groups = [.. _groups, group];
+        Invalidate(InvalidationKind.Render);
+    }
+
+    /// <summary>Forgets the groups <paramref name="gone"/> names, as a deletion does.</summary>
+    public void RemoveGroups(IEnumerable<GraphicsGroupModel> gone)
+    {
+        var doomed = new HashSet<GraphicsGroupModel>(gone, ReferenceEqualityComparer.Instance);
+        if (!_groups.Any(doomed.Contains))
+        {
+            return;
+        }
+
+        foreach (GraphicsGroupModel group in _groups.Where(doomed.Contains))
+        {
+            group.SetParent(null);
+        }
+
+        _groups = [.. _groups.Where(group => !doomed.Contains(group))];
+        Invalidate(InvalidationKind.Render);
+    }
 
     /// <summary>
     /// The colors plots cycle through, overriding the theme's series palette for this axes only
@@ -1675,9 +1741,10 @@ public sealed class AxesModel : GraphObject
 
         DataRange rBounds = DataRange.Empty;
         DataRange thetaBounds = DataRange.Empty;
+        GraphicsGroupIndex? groups = GraphicsGroupIndex.For(this);
         foreach (PlotObject plot in Plots)
         {
-            if (!plot.Visible)
+            if (!plot.Visible || groups?.Shown(plot) == false)
             {
                 continue;
             }
@@ -1709,11 +1776,17 @@ public sealed class AxesModel : GraphObject
     private void UpdateZAxisBounds()
     {
         DataRange bounds = DataRange.Empty;
+        GraphicsGroupIndex? groups = GraphicsGroupIndex.For(this);
         foreach (PlotObject plot in Plots)
         {
-            if (plot.Visible && plot is IHasZData zData)
+            if (plot.Visible && plot is IHasZData zData && groups?.Shown(plot) != false)
             {
                 DataRange plotBounds = zData.GetZDataBounds();
+                if (groups?.MatrixFor(plot) is { } moved)
+                {
+                    plotBounds = GraphicsGroupIndex.Move(moved, plot.GetXDataBounds(), plot.GetYDataBounds(), plotBounds).Z;
+                }
+
                 if (!plotBounds.IsEmpty)
                 {
                     bounds = bounds.Union(plotBounds);
@@ -1729,8 +1802,17 @@ public sealed class AxesModel : GraphObject
         }
     }
 
+    /// <summary>One extent of a plot a transform moves: its data box, moved (open item 296).</summary>
+    private static DataRange MovedBounds(double[,] matrix, PlotObject plot, bool isX)
+    {
+        DataRange z = plot is IHasZData zData ? zData.GetZDataBounds() : DataRange.Empty;
+        (DataRange x, DataRange y, _) = GraphicsGroupIndex.Move(matrix, plot.GetXDataBounds(), plot.GetYDataBounds(), z);
+        return isX ? x : y;
+    }
+
     private void UpdateAxisBounds(GraphObjectCollection<AxisModel> axes, bool isX)
     {
+        GraphicsGroupIndex? groups = GraphicsGroupIndex.For(this);
         for (int i = 0; i < axes.Count; i++)
         {
             AxisModel axis = axes[i];
@@ -1738,7 +1820,9 @@ public sealed class AxesModel : GraphObject
 
             foreach (PlotObject plot in Plots)
             {
-                if (!plot.Visible)
+                // A member of a hidden group is not drawn, and R2025b leaves it out of the limits
+                // too; a transform's members are fitted where its matrix puts them (open item 296).
+                if (!plot.Visible || groups?.Shown(plot) == false)
                 {
                     continue;
                 }
@@ -1749,7 +1833,9 @@ public sealed class AxesModel : GraphObject
                     continue;
                 }
 
-                DataRange plotBounds = isX ? plot.GetXDataBounds() : plot.GetYDataBounds();
+                DataRange plotBounds = groups?.MatrixFor(plot) is { } moved
+                    ? MovedBounds(moved, plot, isX)
+                    : isX ? plot.GetXDataBounds() : plot.GetYDataBounds();
                 if (!plotBounds.IsEmpty)
                 {
                     bounds = bounds.Union(plotBounds);

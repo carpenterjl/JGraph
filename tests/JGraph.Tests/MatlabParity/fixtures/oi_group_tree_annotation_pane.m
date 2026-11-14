@@ -123,7 +123,7 @@ savefig(f, tmp);
 close(f);
 h = openfig(tmp, 'invisible');
 u2_chk('file_lines', @() sort(get(findobj(h, 'Type', 'line'), 'Tag'))');
-u9b_chkdiv('file_group', @() numel(findobj(h, 'Type', 'hggroup')), '0342'); % this build's document keeps a group's members and forgets the group
+u2_chk('file_group', @() numel(findobj(h, 'Type', 'hggroup'))); % this build's document keeps the group (open item 296)
 delete(h);
 delete(tmp);
 

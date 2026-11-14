@@ -82,6 +82,7 @@ internal static partial class JgsBuiltins
         Define("thetatickformat", (args, line, col) => OneRuler(
             "thetatickformat", RulerSide.Theta, args, line, col, JgsRulerTicks.ReadFormat, JgsRulerTicks.WriteFormat));
         Define("thetalim", ThetaLimits);
+        RegisterRulerScaleBuiltins(env); // xscale, yscale, zscale (open item 313)
     }
 
     /// <summary>

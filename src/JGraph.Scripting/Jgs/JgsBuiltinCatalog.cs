@@ -2607,6 +2607,9 @@ public static class JgsBuiltinCatalog
         Add("texlabel", "The TeX an expression written in plain characters would have been: texlabel('lambda12^(3y)').", P("expression"), Opt("literal"));
         Add("xlim", "The x-axis range: xlim([0 10]), xlim(0, 10), xlim('auto'), xlim('manual'), or xlim to read it back.", Opt("ax"), Opt("limits"), Opt("max"));
         Add("ylim", "The range of the active y ruler: ylim([0 10]), ylim(0, 10), ylim('auto'), ylim('manual'), or ylim to read it back.", Opt("ax"), Opt("limits"), Opt("max"));
+        Add("xscale", "The x ruler's scale: xscale('log'), xscale(ax, 'linear'), or xscale to read it back.", Opt("ax"), Opt("scale"));
+        Add("yscale", "The active y ruler's scale: yscale('log'), yscale(ax, 'linear'), or yscale to read it back.", Opt("ax"), Opt("scale"));
+        Add("zscale", "The z ruler's scale: zscale('log'), zscale(ax, 'linear'), or zscale to read it back.", Opt("ax"), Opt("scale"));
         Add("yyaxis", "Makes one side's y ruler active, so the label, limits, ticks, and the plots drawn next belong to it: yyaxis left or yyaxis right.", P("side"));
         Add("grid", "Turns grid lines on (default) or off; 'minor' toggles the minor lines instead.", Opt("on"));
         Add("hold", "Keeps existing series when plotting more (default on).", Opt("on"));

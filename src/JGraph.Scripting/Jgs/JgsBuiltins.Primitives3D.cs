@@ -177,7 +177,9 @@ internal static partial class JgsBuiltins
     /// name, or an [r g b] triplet) or one colormapped value per point.
     /// </summary>
     private static JgsValue Scatter3(IReadOnlyList<JgsValue> args, int line, int col) =>
-        Scatter3Series("scatter3", args, line, col, bubbles: false);
+        TableRuns(args, 3, line, col) is { } runs // a chart per variable (open item 313)
+            ? ChartPerRun(runs, run => Scatter3Series("scatter3", run, line, col, bubbles: false), line, col)
+            : Scatter3Series("scatter3", args, line, col, bubbles: false);
 
     /// <summary>
     /// The body <c>scatter3</c>, <c>swarmchart3</c> and <c>bubblechart3</c> share. The three read the

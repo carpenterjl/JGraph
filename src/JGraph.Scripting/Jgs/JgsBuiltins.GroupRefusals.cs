@@ -82,6 +82,102 @@ internal static partial class JgsBuiltins
             "First argument must be a valid annotation type or a handle to a figure, uipanel, or uitab."));
     }
 
+    /// <summary>How R2025b refuses one verb a deleted object first: whether it was an axes, its class, and where.</summary>
+    private delegate JgsRuntimeException DeadTargetRefusal(bool wasAxes, string? retiredClass, int line, int col);
+
+    private static DeadTargetRefusal DeadTargetSaying(string identifier, string message) => (_, _, line, col) =>
+        new(line, col, identifier, message);
+
+    /// <summary>
+    /// Every axes verb R2025b refuses a deleted group, transform or axes first, and its words (open
+    /// item 313, probe p313): this build read the dead handle's number as a title, a limit or data.
+    /// </summary>
+    private static IEnumerable<(string Verb, DeadTargetRefusal Refusal)> AxesVerbDeadTargetRefusals()
+    {
+        foreach (string verb in (string[])["title", "subtitle", "xlabel", "ylabel", "zlabel"])
+        {
+            yield return (verb, DeadTargetSaying($"MATLAB:{verb}:InvalidTarget", "Invalid target."));
+        }
+
+        yield return ("hold", (axes, cls, line, col) => axes
+            ? new(line, col, "MATLAB:graphics:axescheck:DeletedAxes", "Attempt to plot into deleted Axes.")
+            : new(line, col, "MATLAB:hold:UnsupportedCurrentAxes", $"Using hold with {cls ?? "matlab.graphics.primitive.Group"} is not supported."));
+        yield return ("grid", DeadTargetSaying("MATLAB:grid:FirstArgAxes", "First argument must be an axes handle."));
+        yield return ("box", DeadTargetSaying("MATLAB:box:ExpectedAxesHandle", "First argument must be an axes handle."));
+        yield return ("axis", (axes, _, line, col) => axes
+            ? new(line, col, "MATLAB:hg:dt_conv:Matrix_to_HObject:BadHandle", "Value must be a handle.")
+            : new(line, col, "MATLAB:class:InvalidHandle", "Invalid or deleted object."));
+
+        // The ruler verbs read a first argument as R2025b's rulerFunctions does: a deleted object is
+        // a graphics object that is not valid (xscale reads its own, JgsBuiltins.RulerScale).
+        foreach (string verb in (string[])[
+            "xlim", "ylim", "zlim", "xticks", "yticks", "zticks", "xticklabels", "yticklabels", "zticklabels",
+            "xtickangle", "ytickangle", "ztickangle", "xtickformat", "ytickformat", "ztickformat"])
+        {
+            yield return (verb, DeadTargetSaying("MATLAB:rulerFunctions:InvalidObject", "Invalid or deleted graphics object."));
+        }
+
+        yield return ("legend", DeadTargetSaying("MATLAB:legend:InvalidGraphicsHandle", "At least one of the specified objects is invalid or deleted."));
+        yield return ("cla", (axes, _, line, col) => axes
+            ? new(line, col, "MATLAB:cla:InvalidAxesHandle", "Specify an axes object or array of axes objects.")
+            : new(line, col, "MATLAB:clo:invalidHandle", "Bad handle"));
+        yield return ("colorbar", DeadTargetSaying("MATLAB:colorbar:InvalidInput", "Unrecognized input or invalid parameter/value pair arguments."));
+        yield return ("view", (axes, _, line, col) => axes
+            ? new(line, col, "MATLAB:view:InvalidFirstArgument", "When specified as a graphics object, first argument must be one or more axes objects.")
+            : new(line, col, "MATLAB:view:InvalidInputs", "Invalid input arguments."));
+    }
+
+    /// <summary>
+    /// Puts R2025b's refusal of a deleted object first round each axes verb that has one, in a
+    /// MATLAB-dialect script (open item 313). Run with <see cref="RefuseGroupsAtAxesVerbs"/>.
+    /// </summary>
+    private static void RefuseDeadTargetsAtAxesVerbs(JgsEnvironment env)
+    {
+        foreach ((string verb, DeadTargetRefusal refusal) in AxesVerbDeadTargetRefusals())
+        {
+            GuardAxesVerb(env, verb, (args, line, col) =>
+            {
+                if (args.Count > 0 && JgsRunningDialect.ThreadIsMatlab && IsDeadHandle(args[0]))
+                {
+                    string? cls = JgsHandleRegistry.RetiredClassOf(args[0]);
+                    throw refusal(cls?.EndsWith(".Axes", StringComparison.Ordinal) == true, cls, line, col);
+                }
+            });
+        }
+    }
+
+    /// <summary>Wraps whatever <paramref name="verb"/> is registered as so that <paramref name="refuse"/> runs first, at every door.</summary>
+    private static void GuardAxesVerb(JgsEnvironment env, string verb, Action<IReadOnlyList<JgsValue>, int, int> refuse)
+    {
+        if (!env.Builtins.TryGet(verb, out JgsValue existing) || existing.Type != JgsType.Function
+            || existing.AsCallable is not BuiltinFunction inner)
+        {
+            return;
+        }
+
+        var guarded = new BuiltinFunction(verb, (args, line, col) =>
+        {
+            refuse(args, line, col);
+            return inner.Call(args, line, col);
+        })
+        {
+            MultiOutput = inner.MultiOutput is null
+                ? null
+                : (args, wanted, line, col) =>
+                {
+                    refuse(args, line, col);
+                    return inner.CallMultiple(args, wanted, line, col);
+                },
+            BindsAnsAsStatement = inner.BindsAnsAsStatement,
+            AutoCallsBare = inner.AutoCallsBare,
+            KnowsWhenDiscarded = inner.KnowsWhenDiscarded,
+            TakesOutputCount = inner.TakesOutputCount,
+            ScriptFile = inner.ScriptFile,
+        };
+        guarded.KeepsStringArguments = inner.KeepsStringArguments;
+        env.Builtins.Register(verb, JgsValue.Function(guarded));
+    }
+
     /// <summary>
     /// Puts R2025b's refusal of a group or a transform first round each verb that has one. Run after
     /// every verb is registered, so it wraps whatever each name ended up as.

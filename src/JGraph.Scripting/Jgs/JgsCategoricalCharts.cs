@@ -99,7 +99,7 @@ internal static class JgsCategoricalCharts
         Wrap(env, "pie", Pie);
 
         // Text where the data goes is R2025b's refusal, verb by verb (open item 126, probe_126).
-        foreach (string textVerb in (string[])["plot", "scatter", "area", "stem", "line"])
+        foreach (string textVerb in (string[])["plot", "scatter", "area", "stem", "line", "semilogx", "semilogy", "loglog", "plot3"])
         {
             string verb = textVerb;
             Wrap(env, verb, (inner, args, wanted, line, col) =>
@@ -146,10 +146,18 @@ internal static class JgsCategoricalCharts
         bool listText = first.Type == JgsType.Cell || (first.IsStringArray && first.ArrayLength > 1);
         switch (verb)
         {
-            case "plot" when first.Type == JgsType.Cell || (firstText && args.Count - start == 1):
+            case "plot" when first.Type == JgsType.Cell:
                 throw new JgsRuntimeException(line, col, "MATLAB:plot:InvalidFirstInput", "Invalid data argument.");
-            case "plot" when firstText:
+
+            // Text and one argument after it is read as a line spec and the data run out (probe_126);
+            // text alone or before two or more is "Invalid first data argument." when a char row
+            // stands first with no axes before it, and "Invalid data argument." otherwise, in plot
+            // and its relatives alike (open item 313, probe p313; R2025b 25.2).
+            case "plot" when firstText && args.Count - start == 2:
                 throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+            case "plot" or "semilogx" or "semilogy" or "loglog" or "plot3" when firstText:
+                throw new JgsRuntimeException(line, col, "MATLAB:plot:InvalidFirstInput",
+                    start == 0 && first.Type == JgsType.String ? "Invalid first data argument." : "Invalid data argument.");
             case "plot" when start + 1 < args.Count && (args[start + 1].Type == JgsType.Cell || (args[start + 1].IsStringArray && args[start + 1].ArrayLength > 1)):
                 throw new JgsRuntimeException(line, col, "MATLAB:plot:InvalidSecondInput", "Invalid data argument.");
             case "scatter" or "area" or "stem" when listText || (first.IsStringArray && args.Count - start > 1):

@@ -304,38 +304,46 @@ public class MatlabLivingGraphicsTests : IDisposable
     [Fact]
     public void HidingAGroupHidesWhatIsInIt()
     {
-        Assert.Equal("off off\n", RunAndRead("""
-            figure(1); a = plot(1:3);
+        // The group's Visible is its own; a member keeps its own and is not drawn (R2025b, open item
+        // 296, probe p296): the limits leave the hidden member out.
+        Assert.Equal("off on 0 1\n", RunAndRead("""
+            figure(1); a = plot(1:3, [5 6 7]);
             g = hggroup; set(a, 'Parent', g);
             set(g, 'Visible', 'off');
-            fprintf('%s %s\n', get(g, 'Visible'), get(a, 'Visible'));
+            yl = ylim;
+            fprintf('%s %s %g %g\n', get(g, 'Visible'), get(a, 'Visible'), yl(1), yl(2));
             """));
     }
 
     [Fact]
     public void ATransformMovesItsMembers()
     {
-        Assert.Equal("11 12 13\n", RunAndRead("""
+        // The matrix moves the drawing and the limits, not the member's data (R2025b, open item 296).
+        Assert.Equal("1 2 3 11 13\n", RunAndRead("""
             figure(1); a = plot([1 2 3], [0 0 0]);
             t = hgtransform; set(a, 'Parent', t);
             set(t, 'Matrix', makehgtform('translate', [10 0 0]));
             x = get(a, 'XData');
-            fprintf('%g %g %g\n', x(1), x(2), x(3));
+            axis tight;
+            xl = xlim;
+            fprintf('%g %g %g %g %g\n', x(1), x(2), x(3), xl(1), xl(2));
             """));
     }
 
     [Fact]
     public void SettingTheMatrixAgainIsNotCumulative()
     {
-        // The group remembers where its members started, which is what makes a matrix set in a loop
+        // Each matrix is applied to the member's own data, which is what makes a matrix set in a loop
         // an animation rather than a drift.
-        Assert.Equal("21\n", RunAndRead("""
+        Assert.Equal("1 21\n", RunAndRead("""
             figure(1); a = plot([1 2 3], [0 0 0]);
             t = hgtransform; set(a, 'Parent', t);
             set(t, 'Matrix', makehgtform('translate', [10 0 0]));
             set(t, 'Matrix', makehgtform('translate', [20 0 0]));
             x = get(a, 'XData');
-            fprintf('%g\n', x(1));
+            axis tight;
+            xl = xlim;
+            fprintf('%g %g\n', x(1), xl(1));
             """));
     }
 

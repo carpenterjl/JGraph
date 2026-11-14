@@ -1,0 +1,335 @@
+CHK|vis_group|off|exact
+CHK|vis_member|on|exact
+CHK|vis_inner|on|exact
+CHK|vis_deep|on|exact
+CHK|vis_limits|double [1 4] 0 1 0 1|exact
+CHK|vis_member_after|off|exact
+CHK|vis_group_after|on|exact
+CHK|vis_ylim_member_off|double [1 2] 5 6|exact
+CHK|tf_data|double [1 4] 0 1 0 0|exact
+CHK|tf_matrix|double [4 4] 1 0 0 0 0 1 0 0 0 0 1 0 0 5 0 1|exact
+CHK|tf_limits|double [1 4] 0 1 4 6|exact
+CHK|tf_scale|cell [1 2] {double [1 2] 0 3, double [1 2] 0 1}|exact
+CHK|tf_rot_ylim|double [1 2] 0 1|exact
+CHK|tf_set_ydata|double [1 2] 1 1|exact
+CHK|tf_text_pos|double [1 3] 1 0 0|exact
+CHK|tf_released_ydata|double [1 2] 1 1|exact
+CHK|nest_limits|double [1 4] 0 2 4 6|exact
+CHK|file_children|cell [1 4] {char 'last', char 'xf', char 'grp', char 'plain'}|exact
+CHK|file_types|cell [1 4] {char 'line', char 'hgtransform', char 'hggroup', char 'line'}|exact
+CHK|file_group_vis|off|exact
+CHK|file_group_children|cell [1 2] {char 'inner', char 'inline'}|exact
+CHK|file_member_vis|on|exact
+CHK|file_matrix|double [4 4] 1 0 0 0 0 1 0 0 0 0 1 0 0 5 0 1|exact
+CHK|file_tline_y|double [1 2] 0 0|exact
+CHK|file_deep_parent|inner|exact
+CHK|file_groups|double [1 1] 2|exact
+CHK|file_limits|double [1 2] 1 5|exact
+CHK|bare_findall_ax|axes|exact
+CHK|plot_findall_ax|cell [1 2] {char 'axes', char 'line'}|exact
+CHK|plot_allchild_ax|line|exact
+CHK|full_findall_ax|cell [1 6] {char 'axes', char 'hggroup', char 'line', char 'text', char 'text', char 'line'}|exact
+CHK|full_findall_ax_tag|cell [1 6] {char '', char 'g', char 'p', char '', char '', char 'gm'}|exact
+CHK|full_findobj_ax|cell [1 4] {char 'axes', char 'hggroup', char 'line', char 'line'}|exact
+CHK|full_findobj_f|cell [1 7] {char 'figure', char 'colorbar', char 'legend', char 'axes', char 'hggroup', char 'line', char 'line'}|exact
+CHK|full_allchild_ax|cell [1 2] {char 'hggroup', char 'line'}|exact
+CHK|full_children_f|cell [1 3] {char 'colorbar', char 'legend', char 'axes'}|exact
+CHK|full_children_ax|cell [1 2] {char 'hggroup', char 'line'}|exact
+CHK|full_counts_ax|double [1 6] 2 2 0 0 0 0|exact
+CHK|full_counts_f|double [1 5] 2 1 1 0 0|exact
+CHK|full_findall_g|cell [1 2] {char 'hggroup', char 'line'}|exact
+CHK|full_allchild_g|line|exact
+CHK|full_findall_ax_depth1|cell [1 5] {char 'axes', char 'hggroup', char 'line', char 'text', char 'text'}|exact
+CHK|full_parents|cell [1 5] {char 'figure', char 'figure', char 'axes', char 'axes', char 'axes'}|exact
+CHK|full_findall_legend|legend|exact
+CHK|full_findall_colorbar|colorbar|exact
+CHK|shh_findobj_ax|cell [1 6] {char 'axes', char 'hggroup', char 'line', char 'text', char 'text', char 'line'}|exact
+CHK|shh_children_ax|cell [1 2] {char 'hggroup', char 'line'}|exact
+CHK|surf_findall_ax|cell [1 3] {char 'axes', char 'light', char 'surface'}|exact
+CHK|polar_findall_ax|cell [1 2] {char 'polaraxes', char 'line'}|exact
+CHK|yy_findall_ax|cell [1 3] {char 'axes', char 'line', char 'line'}|exact
+CHK|l_x|cell [1 3] {char '', char 'p', char 'XL'}|exact
+CHK|l_xt|cell [1 4] {char '', char 'p', char 'TT', char 'XL'}|exact
+CHK|l_y_read|cell [1 5] {char '', char 'p', char 'TT', char 'XL', char 'YL'}|exact
+CHK|l_sub|cell [1 7] {char '', char 'p', char 'TT', char 'ST', char 'XL', char 'YL', char 'ZL'}|exact
+CHK|l_findobj|cell [1 2] {char '', char 'p'}|exact
+CHK|l_title_cleared|cell [1 7] {char '', char 'p', char 'TT', char 'ST', char 'XL', char 'YL', char 'ZL'}|exact
+CHK|fresh_title_read|cell [1 2] {char '', double [1 1] 2}|exact
+CHK|two_children_f|cell [1 5] {char 'legend', char 'colorbar', char 'axes', char 'legend', char 'axes'}|exact
+CHK|two_findobj_f|cell [1 8] {char 'figure', char 'legend', char 'colorbar', char 'axes', char 'legend', char 'axes', char 'line', char 'line'}|exact
+CHK|two_children_ax1|line|exact
+CHK|off_children_f|cell [1 4] {char 'legend', char 'colorbar', char 'axes', char 'axes'}|exact
+CHK|hidden_children_f|cell [1 4] {char 'legend', char 'colorbar', char 'axes', char 'axes'}|exact
+CHK|hidden_findobj_f|double [1 1] 1|exact
+CHK|panel_parents|cell [1 2] {char 'uipanel', char 'uipanel'}|exact
+CHK|panel_children|cell [1 3] {char 'colorbar', char 'legend', char 'axes'}|exact
+CHK|lg_ancestors|cell [1 2] {logical [1 1] 1, char 'figure'}|exact
+CHK|lg_after_cla|cell [1 2] {logical [1 1] 1, cell [1 2] {char 'legend', char 'axes'}}|exact
+CHK|lg_after_delete_ax|logical [1 1] 0|exact
+CHK|lg_displayname0||exact
+CHK|lg_group|cell [1 4] {cell [1 1] {char 'a'}, double [1 1] 1, char 'hggroup', char 'figure'}|exact
+CHK|lg_group_name|cell [1 2] {char 'a', char 'off'}|exact
+CHK|lg_bare_string|cell [1 1] {char 'a'}|exact
+CHK|lg_pair|cell [1 2] {cell [1 2] {char 'grp', char 'line'}, cell [1 2] {char 'hggroup', char 'line'}}|exact
+CHK|lg_after_plot|cell [1 3] {char 'grp', char 'line', char 'data1'}|exact
+CHK|lg_transform|cell [1 2] {cell [1 1] {char 'tt'}, char 'hgtransform'}|exact
+CHK|lg_group_location|north|exact
+CHK|cla_g|logical [1 1] 1|exact
+CHK|cla_g_after|cell [1 6] {logical [1 1] 1, double [1 1] 1, char 'T', char 'add', char 'g', double [1 1] 1}|exact
+CHK|cla_g_reset_after|cell [1 4] {logical [1 1] 1, double [1 1] 1, double [1 2] 0 1, char 'auto'}|exact
+CHK|cla_inner|MATLAB:clo:invalidHandle|exact
+CHK|cla_inner_msg|Bad handle|exact
+CHK|cla_inner_after|cell [1 3] {logical [1 1] 0, logical [1 1] 0, double [1 1] 1}|exact
+CHK|cla_two_after|cell [1 2] {char 'b', char 'a'}|exact
+CHK|cla_word|MATLAB:clo:unknownOption|exact
+CHK|cla_word_msg|Unknown command option.|exact
+CHK|cla_reset_word|MATLAB:clo:unknownOption|exact
+CHK|cla_reset_word_msg|Unknown command option.|exact
+CHK|cla_dead|MATLAB:clo:invalidHandle|exact
+CHK|cla_dead_msg|Bad handle|exact
+CHK|cla_dead_after|double [1 1] 3|exact
+CHK|dead_g_title|MATLAB:title:InvalidTarget|exact
+CHK|dead_g_title_msg|Invalid target.|exact
+CHK|dead_ax_title|MATLAB:title:InvalidTarget|exact
+CHK|dead_ax_title_msg|Invalid target.|exact
+CHK|dead_g_subtitle|MATLAB:subtitle:InvalidTarget|exact
+CHK|dead_g_subtitle_msg|Invalid target.|exact
+CHK|dead_ax_subtitle|MATLAB:subtitle:InvalidTarget|exact
+CHK|dead_ax_subtitle_msg|Invalid target.|exact
+CHK|dead_g_xlabel|MATLAB:xlabel:InvalidTarget|exact
+CHK|dead_g_xlabel_msg|Invalid target.|exact
+CHK|dead_ax_xlabel|MATLAB:xlabel:InvalidTarget|exact
+CHK|dead_ax_xlabel_msg|Invalid target.|exact
+CHK|dead_g_ylabel|MATLAB:ylabel:InvalidTarget|exact
+CHK|dead_g_ylabel_msg|Invalid target.|exact
+CHK|dead_ax_ylabel|MATLAB:ylabel:InvalidTarget|exact
+CHK|dead_ax_ylabel_msg|Invalid target.|exact
+CHK|dead_g_zlabel|MATLAB:zlabel:InvalidTarget|exact
+CHK|dead_g_zlabel_msg|Invalid target.|exact
+CHK|dead_ax_zlabel|MATLAB:zlabel:InvalidTarget|exact
+CHK|dead_ax_zlabel_msg|Invalid target.|exact
+CHK|dead_g_hold_on|MATLAB:hold:UnsupportedCurrentAxes|exact
+CHK|dead_g_hold_on_msg|Using hold with matlab.graphics.primitive.Group is not supported.|exact
+CHK|dead_ax_hold_on|MATLAB:graphics:axescheck:DeletedAxes|exact
+CHK|dead_ax_hold_on_msg|Attempt to plot into deleted Axes.|exact
+CHK|dead_g_grid_on|MATLAB:grid:FirstArgAxes|exact
+CHK|dead_g_grid_on_msg|First argument must be an axes handle.|exact
+CHK|dead_ax_grid_on|MATLAB:grid:FirstArgAxes|exact
+CHK|dead_ax_grid_on_msg|First argument must be an axes handle.|exact
+CHK|dead_g_box_on|MATLAB:box:ExpectedAxesHandle|exact
+CHK|dead_g_box_on_msg|First argument must be an axes handle.|exact
+CHK|dead_ax_box_on|MATLAB:box:ExpectedAxesHandle|exact
+CHK|dead_ax_box_on_msg|First argument must be an axes handle.|exact
+CHK|dead_g_axis_tight|MATLAB:class:InvalidHandle|exact
+CHK|dead_g_axis_tight_msg|Invalid or deleted object.|exact
+CHK|dead_ax_axis_tight|MATLAB:hg:dt_conv:Matrix_to_HObject:BadHandle|exact
+CHK|dead_ax_axis_tight_msg|Value must be a handle.|exact
+CHK|dead_g_xlim|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|dead_g_xlim_msg|Invalid or deleted graphics object.|exact
+CHK|dead_ax_xlim|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|dead_ax_xlim_msg|Invalid or deleted graphics object.|exact
+CHK|dead_g_legend|MATLAB:legend:InvalidGraphicsHandle|exact
+CHK|dead_g_legend_msg|At least one of the specified objects is invalid or deleted.|exact
+CHK|dead_ax_legend|MATLAB:legend:InvalidGraphicsHandle|exact
+CHK|dead_ax_legend_msg|At least one of the specified objects is invalid or deleted.|exact
+CHK|dead_g_cla|MATLAB:clo:invalidHandle|exact
+CHK|dead_g_cla_msg|Bad handle|exact
+CHK|dead_ax_cla|MATLAB:cla:InvalidAxesHandle|exact
+CHK|dead_ax_cla_msg|Specify an axes object or array of axes objects.|exact
+CHK|dead_g_colorbar|MATLAB:colorbar:InvalidInput|exact
+CHK|dead_g_colorbar_msg|Unrecognized input or invalid parameter/value pair arguments.|exact
+CHK|dead_ax_colorbar|MATLAB:colorbar:InvalidInput|exact
+CHK|dead_ax_colorbar_msg|Unrecognized input or invalid parameter/value pair arguments.|exact
+CHK|dead_g_view|MATLAB:view:InvalidInputs|exact
+CHK|dead_g_view_msg|Invalid input arguments.|exact
+CHK|dead_ax_view|MATLAB:view:InvalidFirstArgument|exact
+CHK|dead_ax_view_msg|When specified as a graphics object, first argument must be one or more axes objects.|exact
+CHK|dead_g_xscale|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|dead_g_xscale_msg|Invalid or deleted graphics object.|exact
+CHK|dead_ax_xscale|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|dead_ax_xscale_msg|Invalid or deleted graphics object.|exact
+CHK|dead_left|cell [1 2] {double [1 1] 0, char ''}|exact
+CHK|pv_01|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_01_msg|Value not a numeric scalar|exact
+CHK|pv_02|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_02_msg|Value must be a character vector or a string scalar.|exact
+CHK|pv_03|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_03_msg|Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|pv_04|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_04_msg|Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', 'white', and 'none'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.|exact
+CHK|pv_05|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_05_msg|'q' is not a valid value. Use one of these values: '-' / '--' / ':' / '-.' / 'none'.|exact
+CHK|pv_06|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_06_msg|'w' is not a valid value. Use one of these values: '+' / 'o' / '*' / '.' / 'x' / 'square' / 'diamond' / 'v' / '^' / '>' / '<' / 'pentagram' / 'hexagram' / '/' / '_' / 'none'.|exact
+CHK|pv_07|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_07_msg|Value should be a finite number greater than 0|exact
+CHK|pv_08|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_08_msg|Value should be a finite number greater than 0|exact
+CHK|pv_09|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_09_msg|Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.|exact
+CHK|pv_10|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_10_msg|Value must be a character vector or a string scalar.|exact
+CHK|pv_11|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_11_msg|Value not a numeric scalar|exact
+CHK|pv_12|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_12_msg|Value not a numeric scalar|exact
+CHK|pv_13|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_13_msg|Value must be a character vector or a string scalar.|exact
+CHK|pv_14|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_14_msg|Value not a numeric scalar|exact
+CHK|pv_15|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_15_msg|Value should be a finite number greater than 0|exact
+CHK|pv_16|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_16_msg|Value should be a finite number greater than 0|exact
+CHK|pv_17|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_17_msg|Value not a numeric scalar|exact
+CHK|pv_18|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_18_msg|Value not a numeric scalar|exact
+CHK|pv_19|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_19_msg|Value not a numeric scalar|exact
+CHK|pv_20|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_20_msg|Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.|exact
+CHK|pv_21|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_21_msg|Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.|exact
+CHK|pv_22|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_22_msg|Invalid enum value. Use one of these values: '-' / '--' / ':' / '-.' / 'none'.|exact
+CHK|pv_23|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_23_msg|Invalid enum value. Use one of these values: '+' / 'o' / '*' / '.' / 'x' / 'square' / 'diamond' / 'v' / '^' / '>' / '<' / 'pentagram' / 'hexagram' / '/' / '_' / 'none'.|exact
+CHK|pv_24|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_24_msg|Value must be a character vector or a string scalar.|exact
+CHK|pv_25|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_25_msg|Value must be a character vector or a string scalar.|exact
+CHK|pv_26|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_26_msg|Value not a numeric scalar|exact
+CHK|pv_27|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_27_msg|Value not a numeric scalar|exact
+CHK|pv_ok_01|double [1 1] 1|exact
+CHK|pv_ok_02|double [1 1] 1|exact
+CHK|pv_ok_03|double [1 1] 1|exact
+CHK|pv_ok_04|double [1 1] 1|exact
+CHK|pv_ok_05|double [1 1] 1|exact
+CHK|pv_ok_06|double [1 1] 1|exact
+CHK|pv_ok_07|double [1 1] 1|exact
+CHK|pv_ok_08|double [1 1] 1|exact
+CHK|pv_ok_09|double [1 1] 1|exact
+CHK|pv_ok_10|double [1 1] 1|exact
+CHK|pv_semilogy|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_semilogy_msg|Value not a numeric scalar|exact
+CHK|pv_semilogx|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_semilogx_msg|Value must be a character vector or a string scalar.|exact
+CHK|pv_loglog|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_loglog_msg|Invalid enum value. Use one of these values: 'on' / 'off'.|exact
+CHK|pv_plot3|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_plot3_msg|Value not a numeric scalar|exact
+CHK|pv_two_groups|MATLAB:plot:InvalidPropertyValue|exact
+CHK|pv_two_groups_msg|Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', 'white', and 'none'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.|exact
+CHK|pv_left|double[1 1] 42|div=ADR0360|diverges|double[1 1] 10
+CHK|stem_spec_pair|double [1 1] 1|exact
+CHK|stem_spec_name|MATLAB:checkpvpairs:EvenPropValuePairs|exact
+CHK|stem_spec_name_msg|Incorrect number of inputs for property-value pairs.|exact
+CHK|stem_name|MATLAB:checkpvpairs:UnrecognizedLineStyleParameter|exact
+CHK|stem_name_msg|Error in color/linetype argument.|exact
+CHK|stem_spec_filled_pair|double [1 1] 1|exact
+CHK|stem_y_spec_pair|double [1 1] 1|exact
+CHK|stem_spec_spec|MATLAB:checkpvpairs:EvenPropValuePairs|exact
+CHK|stem_spec_spec_msg|Incorrect number of inputs for property-value pairs.|exact
+CHK|stem_pair_spec|MATLAB:checkpvpairs:EvenPropValuePairs|exact
+CHK|stem_pair_spec_msg|Incorrect number of inputs for property-value pairs.|exact
+CHK|stem_filled_name|MATLAB:checkpvpairs:EvenPropValuePairs|exact
+CHK|stem_filled_name_msg|Incorrect number of inputs for property-value pairs.|exact
+CHK|stem_spec_filled_name|MATLAB:checkpvpairs:EvenPropValuePairs|exact
+CHK|stem_spec_filled_name_msg|Incorrect number of inputs for property-value pairs.|exact
+CHK|stem_bad_spec|MATLAB:checkpvpairs:UnrecognizedLineStyleParameter|exact
+CHK|stem_bad_spec_msg|Error in color/linetype argument.|exact
+CHK|stem_bad_spec_pair|MATLAB:checkpvpairs:EvenPropValuePairs|exact
+CHK|stem_bad_spec_pair_msg|Incorrect number of inputs for property-value pairs.|exact
+CHK|stem_three|MATLAB:checkpvpairs:EvenPropValuePairs|exact
+CHK|stem_three_msg|Incorrect number of inputs for property-value pairs.|exact
+CHK|stem_noax_spec_name|MATLAB:checkpvpairs:EvenPropValuePairs|exact
+CHK|stem_noax_spec_name_msg|Incorrect number of inputs for property-value pairs.|exact
+CHK|stairs_spec_pair|double [1 1] 1|exact
+CHK|stairs_spec_name|MATLAB:checkpvpairs:EvenPropValuePairs|exact
+CHK|stairs_spec_name_msg|Incorrect number of inputs for property-value pairs.|exact
+CHK|stairs_name|MATLAB:checkpvpairs:UnrecognizedLineStyleParameter|exact
+CHK|stairs_name_msg|Error in color/linetype argument.|exact
+CHK|stairs_y_spec_pair|double [1 1] 1|exact
+CHK|stairs_spec_spec|MATLAB:checkpvpairs:EvenPropValuePairs|exact
+CHK|stairs_spec_spec_msg|Incorrect number of inputs for property-value pairs.|exact
+CHK|stairs_pair_spec|MATLAB:checkpvpairs:EvenPropValuePairs|exact
+CHK|stairs_pair_spec_msg|Incorrect number of inputs for property-value pairs.|exact
+CHK|stairs_bad_spec|MATLAB:checkpvpairs:UnrecognizedLineStyleParameter|exact
+CHK|stairs_bad_spec_msg|Error in color/linetype argument.|exact
+CHK|stairs_three|MATLAB:checkpvpairs:EvenPropValuePairs|exact
+CHK|stairs_three_msg|Incorrect number of inputs for property-value pairs.|exact
+CHK|stairs_y_name|MATLAB:checkpvpairs:UnrecognizedLineStyleParameter|exact
+CHK|stairs_y_name_msg|Error in color/linetype argument.|exact
+CHK|stairs_spec_only|double [1 1] 1|exact
+CHK|txt_ax|MATLAB:plot:InvalidFirstInput|exact
+CHK|txt_ax_msg|Invalid data argument.|exact
+CHK|txt_bare|MATLAB:plot:InvalidFirstInput|exact
+CHK|txt_bare_msg|Invalid first data argument.|exact
+CHK|txt_bare_one|MATLAB:plot:InvalidFirstInput|exact
+CHK|txt_bare_one_msg|Invalid first data argument.|exact
+CHK|txt_ax_one|MATLAB:plot:InvalidFirstInput|exact
+CHK|txt_ax_one_msg|Invalid data argument.|exact
+CHK|txt_semilogy|MATLAB:plot:InvalidFirstInput|exact
+CHK|txt_semilogy_msg|Invalid first data argument.|exact
+CHK|txt_plot3|MATLAB:plot:InvalidFirstInput|exact
+CHK|txt_plot3_msg|Invalid first data argument.|exact
+CHK|txt_second|MATLAB:hg:InvalidProperty|exact
+CHK|txt_second_msg|Unrecognized property a for class Line.|exact
+CHK|tbl_multi|cell [1 5] {double [1 1] 2, cell [1 2] {char 'Var2', char 'Var3'}, cell [1 2] {char 'Var1', char 'Var1'}, cell [1 2] {double [1 3] 4 5 6, double [1 3] 7 8 9}, cell [1 2] {char 'Var2', char 'Var3'}}|exact
+CHK|tbl_multi_axes|cell [1 2] {char 'replace', logical [1 1] 1}|exact
+CHK|tbl_multix|cell [1 2] {double [1 1] 2, cell [1 2] {char 'Var1', char 'Var2'}}|exact
+CHK|tbl_pair|cell [1 2] {double [1 1] 2, cell [2 2] {char 'Var1', char 'Var2', char 'Var2', char 'Var3'}}|exact
+CHK|tbl_mismatch|MATLAB:graphics:chart:NumVariablesMismatch|exact
+CHK|tbl_mismatch_msg|The number of variables specified for 'Y' did not match the number of variables specified in one of the previous arguments.|exact
+CHK|tbl_string|double [1 1] 2|exact
+CHK|tbl_index|double [1 1] 2|exact
+CHK|tbl3|cell [1 2] {double [1 1] 2, cell [1 2] {char 'Var2', char 'Var3'}}|exact
+CHK|xs_get|cell [1 2] {char 'linear', char 'char'}|exact
+CHK|xs_set|cell [1 4] {char 'log', char 'log', char 'log', char 'log'}|exact
+CHK|xs_out|MATLAB:nargoutchk:tooManyOutputs|exact
+CHK|xs_out_msg|Too many output arguments.|exact
+CHK|xs_three|MATLAB:narginchk:tooManyInputs|exact
+CHK|xs_three_msg|Too many input arguments.|exact
+CHK|xs_bad_ax|MATLAB:rulerFunctions:InvalidAxes|exact
+CHK|xs_bad_ax_msg|When 2 input arguments are specified, the first argument must be an axes.|exact
+CHK|xs_str_ax|MATLAB:rulerFunctions:InvalidAxes|exact
+CHK|xs_str_ax_msg|When 2 input arguments are specified, the first argument must be an axes.|exact
+CHK|xs_cmd|linear|exact
+CHK|xs_gca|cell [1 2] {char 'log', char 'log'}|exact
+CHK|xs_vec_get|cell [2 1] {char 'log', char 'log'}|exact
+CHK|xs_bad|MATLAB:rulerFunctions:InvalidValueScaling|exact
+CHK|xs_bad_msg|Invalid scale value. To set ruler scaling use values of 'linear' or 'log'.|exact
+CHK|xs_num|MATLAB:rulerFunctions:InvalidValueScaling|exact
+CHK|xs_num_msg|Invalid scale value. To set ruler scaling use values of 'linear' or 'log'.|exact
+CHK|xs_mode|MATLAB:rulerFunctions:InvalidValueScaling|exact
+CHK|xs_mode_msg|Invalid scale value. To set ruler scaling use values of 'linear' or 'log'.|exact
+CHK|xs_empty|MATLAB:datatypes:InvalidValue|exact
+CHK|xs_empty_msg|Error setting property 'Scale' of class 'NumericRuler': Value cannot be empty. Use one of these values: 'linear' / 'log'.|exact
+CHK|xs_cell|ok|exact
+CHK|xs_cell_after|linear|exact
+CHK|xs_partial|ok|exact
+CHK|xs_partial_after|log|exact
+CHK|xs_cap|ok|exact
+CHK|xs_cap_after|linear|exact
+CHK|ys_bad|MATLAB:rulerFunctions:InvalidValueScaling|exact
+CHK|ys_bad_msg|Invalid scale value. To set ruler scaling use values of 'linear' or 'log'.|exact
+CHK|yy_right|cell [1 3] {char 'log', char 'log', char 'log'}|exact
+CHK|yy_left|log|exact
+CHK|xs_polar|MATLAB:rulerFunctions:PolarAxes|exact
+CHK|xs_polar_msg|xscale is not supported for polar axes.|exact
+CHK|ys_polar|MATLAB:rulerFunctions:PolarAxes|exact
+CHK|ys_polar_msg|yscale is not supported for polar axes.|exact
+CHK|xs_datetime|linear|exact
+CHK|xs_datetime_set|MATLAB:PolarAxes:LogScale|exact
+CHK|xs_datetime_set_msg|The coordinate system or ruler class does not support log axis scale.|exact
+CHK|xs_colorbar|MATLAB:rulerFunctions:ColorBar|exact
+CHK|xs_colorbar_msg|xscale is not supported for colorbars.|exact
+CHK|ys_colorbar_set|MATLAB:rulerFunctions:ColorBar|exact
+CHK|ys_colorbar_set_msg|yscale is not supported for colorbars.|exact
+CHK|xs_group|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|xs_group_msg|Invalid or deleted graphics object.|exact
+CHK|xs_line|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|xs_line_msg|Invalid or deleted graphics object.|exact

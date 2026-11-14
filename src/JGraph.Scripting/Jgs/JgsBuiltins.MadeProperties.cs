@@ -42,6 +42,7 @@ internal static partial class JgsBuiltins
     /// <param name="TableNames">How many variable names follow a table given first (<c>scatter(tbl, xvar, yvar)</c>: 2; <c>scatter3</c>: 3). They are data, however they are spelled, and the trailing pairs are found after them.</param>
     /// <param name="PlotGroups">For <c>plot</c> and its log forms (2) and <c>plot3</c> (3): how many data arguments make a group, which turns on R2025b's own reading of a malformed call in the MATLAB dialect (open item 168). Zero for every other maker.</param>
     /// <param name="Deleted">How R2025b refuses a deleted object given as the parent (open item 168).</param>
+    /// <param name="PairFlags">For <c>stem</c> and <c>stairs</c>: the flag words their parseparams takes before the pairs (<c>filled</c>), which turns on R2025b's <c>checkpvpairs</c> in the MATLAB dialect (open item 313). Null for every other maker.</param>
     internal sealed record MadeShape(
         Type Made,
         IReadOnlyCollection<string> Own,
@@ -50,7 +51,8 @@ internal static partial class JgsBuiltins
         bool OwnParent = false,
         int TableNames = 0,
         int PlotGroups = 0,
-        DeletedParentWords Deleted = DeletedParentWords.SetOnDeleted)
+        DeletedParentWords Deleted = DeletedParentWords.SetOnDeleted,
+        string[]? PairFlags = null)
     {
         private readonly HashSet<string> _own = new(Own, StringComparer.OrdinalIgnoreCase);
 
@@ -90,6 +92,12 @@ internal static partial class JgsBuiltins
         if (shape.PlotGroups > 0 && JgsRunningDialect.ThreadIsMatlab)
         {
             CheckPlotArguments(shape, rest, line, col);
+        }
+
+        // stem and stairs count their words as R2025b's checkpvpairs does (open item 313).
+        if (shape.PairFlags is { } flags && JgsRunningDialect.ThreadIsMatlab)
+        {
+            CheckPvPairs(flags, rest, line, col);
         }
 
         List<(string Name, JgsValue Value)> foreign;
@@ -444,6 +452,174 @@ internal static partial class JgsBuiltins
                 throw NotALineSpec(line, col);
             }
         }
+
+        // Then each value, in order, in the words of the property it is given to (open item 313,
+        // probes p313, p313b): R2025b's plot names the property's own complaint under its own id.
+        for (int j = pairs; j + 1 < n; j += 2)
+        {
+            string name = JgsGraphicsProperties.WholeName(sample, TextOf(At(j)));
+            if (PlotValueRefusal(name, At(j + 1)) is { } message)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:plot:InvalidPropertyValue", message);
+            }
+        }
+    }
+
+    private static readonly string[] PlotColorNames = ["red", "green", "blue", "cyan", "magenta", "yellow", "black", "white", "none"];
+
+    private static readonly string[] PlotLineStyles = ["-", "--", ":", "-.", "none"];
+
+    private static readonly string[] PlotMarkerSymbols = ["+", "o", "*", ".", "x", "v", "^", ">", "<", "/", "_"];
+
+    private static readonly string[] PlotMarkerWords = ["square", "diamond", "pentagram", "hexagram", "none"];
+
+    private const string PlotMarkerList =
+        "'+' / 'o' / '*' / '.' / 'x' / 'square' / 'diamond' / 'v' / '^' / '>' / '<' / 'pentagram' / 'hexagram' / '/' / '_' / 'none'";
+
+    /// <summary>
+    /// R2025b's complaint about a value <c>plot</c> is given for one of the properties measured
+    /// (probes p313, p313b), or null when it takes the value or the property is not one of them.
+    /// </summary>
+    private static string? PlotValueRefusal(string name, JgsValue value)
+    {
+        switch (name.ToLowerInvariant())
+        {
+            case "linewidth" or "markersize":
+                if (value.Type != JgsType.Number)
+                {
+                    return "Value not a numeric scalar";
+                }
+
+                return value.AsNumber > 0 && !double.IsInfinity(value.AsNumber) ? null : "Value should be a finite number greater than 0";
+            case "tag" or "displayname":
+                return IsTextScalar(value) ? null : "Value must be a character vector or a string scalar.";
+            case "visible":
+                return !IsTextScalar(value) || TextOf(value).ToLowerInvariant() is "on" or "off"
+                    ? null
+                    : "Invalid enum value. Use one of these values: 'on' / 'off'.";
+            case "color":
+                if (IsTextScalar(value))
+                {
+                    string word = TextOf(value);
+                    bool known = (word.Length > 0 && PlotColorNames.Any(c => c.StartsWith(word, StringComparison.OrdinalIgnoreCase)))
+                        || (word.Length == 1 && "rgbcmykw".Contains(char.ToLowerInvariant(word[0])))
+                        || HexColor(word) is not null;
+                    return known
+                        ? null
+                        : "Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', "
+                            + "'yellow', 'black', 'white', and 'none'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.";
+                }
+
+                return value.Type is JgsType.Number or JgsType.Array && !value.IsCharMatrix
+                    && ToDoublesOrNull(value) is { Length: 3 or 4 } rgb && rgb.All(static v => v is >= 0 and <= 1)
+                    ? null
+                    : "Invalid RGB triplet. Specify a three-element vector of values between 0 and 1.";
+            case "linestyle":
+                if (!IsTextScalar(value))
+                {
+                    return "Invalid enum value. Use one of these values: '-' / '--' / ':' / '-.' / 'none'.";
+                }
+
+                string style = TextOf(value);
+                return PlotLineStyles.Contains(style, StringComparer.OrdinalIgnoreCase)
+                    ? null
+                    : $"'{style}' is not a valid value. Use one of these values: '-' / '--' / ':' / '-.' / 'none'.";
+            case "marker":
+                if (!IsTextScalar(value))
+                {
+                    return $"Invalid enum value. Use one of these values: {PlotMarkerList}.";
+                }
+
+                string marker = TextOf(value);
+                return PlotMarkerSymbols.Contains(marker)
+                    || (marker.Length > 0 && PlotMarkerWords.Any(w => w.StartsWith(marker, StringComparison.OrdinalIgnoreCase)))
+                    ? null
+                    : $"'{marker}' is not a valid value. Use one of these values: {PlotMarkerList}.";
+            default:
+                return null;
+        }
+    }
+
+    /// <summary>A numeric value's elements, or null when it has none to read.</summary>
+    private static double[]? ToDoublesOrNull(JgsValue value)
+    {
+        try
+        {
+            return ToDoubles("Color", value, 0, 0);
+        }
+        catch (JgsException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// R2025b's <c>stem</c> and <c>stairs</c> on the words after their data (probes p313, p313b; their
+    /// sources): parseparams takes everything from the first word; a leading flag (<c>filled</c>, any
+    /// start of it) and a leading line spec become name-value pairs, so they count two to a part; then
+    /// a single word left is <c>MATLAB:checkpvpairs:UnrecognizedLineStyleParameter</c> and an odd count
+    /// <c>MATLAB:checkpvpairs:EvenPropValuePairs</c>. A table first is read otherwise and is left alone.
+    /// </summary>
+    private static void CheckPvPairs(string[] flags, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        int start = LeadingAxes(args) is not null ? 1 : 0;
+        if (start >= args.Count || args[start].Type == JgsType.Table)
+        {
+            return;
+        }
+
+        int first = start;
+        while (first < args.Count && !IsTextScalar(args[first]))
+        {
+            first++;
+        }
+
+        if (first >= args.Count)
+        {
+            return;
+        }
+
+        var left = new List<string?>();
+        for (int i = first; i < args.Count; i++)
+        {
+            left.Add(IsTextScalar(args[i]) ? TextOf(args[i]) : null);
+        }
+
+        // Each leading flag once and one line spec, in either order (convertFlagsToNameValuePairs).
+        var flagsLeft = new List<string>(flags);
+        bool converted = false;
+        bool specSeen = false;
+        while (left.Count > 0 && left[0] is { } word)
+        {
+            string? flag = flagsLeft.FirstOrDefault(f => f.StartsWith(word.Length == 0 ? " " : word, StringComparison.OrdinalIgnoreCase));
+            if (flag is not null)
+            {
+                flagsLeft.Remove(flag);
+                left.RemoveAt(0);
+                converted = true;
+                continue;
+            }
+
+            if (!specSeen && word.Length > 0 && IsLineSpecWord(word))
+            {
+                specSeen = true;
+                left.RemoveAt(0);
+                converted = true;
+                continue;
+            }
+
+            break;
+        }
+
+        if (!converted && left.Count == 1)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:checkpvpairs:UnrecognizedLineStyleParameter", "Error in color/linetype argument.");
+        }
+
+        if (left.Count % 2 == 1)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:checkpvpairs:EvenPropValuePairs", "Incorrect number of inputs for property-value pairs.");
+        }
     }
 
     private static JgsRuntimeException InvalidPlotData(int line, int col) =>
@@ -541,6 +717,9 @@ internal static partial class JgsBuiltins
     /// <summary><c>stairs</c>, which shares plot's option list but not its reading of a malformed call.</summary>
     internal static MadeShape PlotMade => new(typeof(LinePlot), PlotOptionNames, Deleted: DeletedParentWords.AxesCheck);
 
+    /// <summary>stairs: plot's old shape, with R2025b's checkpvpairs (open item 313).</summary>
+    internal static MadeShape StairsMade => PlotMade with { PairFlags = [] };
+
     /// <summary><c>plot</c> and the log plots: plot's option list and R2025b's reading of its arguments (open item 168).</summary>
     internal static MadeShape PlotArgumentsMade => new(typeof(LinePlot), PlotOptionNames, PlotGroups: 2, Deleted: DeletedParentWords.InvalidHandle);
 
@@ -548,7 +727,7 @@ internal static partial class JgsBuiltins
 
     internal static MadeShape LineMade => new(typeof(LinePlot), [], KeepsOptions: true);
 
-    internal static MadeShape StemMade => new(typeof(StemPlot), StemOptions.Names, Deleted: DeletedParentWords.AxesCheck);
+    internal static MadeShape StemMade => new(typeof(StemPlot), StemOptions.Names, Deleted: DeletedParentWords.AxesCheck, PairFlags: ["filled"]);
 
     internal static MadeShape Stem3Made => new(typeof(Stem3DPlot), Stem3OptionNames, Deleted: DeletedParentWords.AxesCheck);
 

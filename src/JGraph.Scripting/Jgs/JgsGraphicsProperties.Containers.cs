@@ -75,6 +75,11 @@ internal static partial class JgsGraphicsProperties
         JgsGraphicsGroup group => (GraphObject?)group.Outer ?? group.Home, // the group or axes it was made in (items 89, 166)
         JgsAnnotationPane pane => pane.Figure,
 
+        // A legend and the colour bars are the children of their axes' figure or panel in a
+        // MATLAB-dialect script, as R2025b's are (open item 297, probe p297b).
+        LegendModel or ColorbarModel or BubbleLegendModel when JgsRunningDialect.ThreadIsMatlab && target.Parent is AxesModel owner
+            => ParentOf(owner),
+
         // A figure's annotations sit in its hidden pane in a MATLAB-dialect script (open item 143).
         AnnotationObject { Parent: FigureModel figure } when JgsRunningDialect.ThreadIsMatlab => JgsAnnotationPane.For(figure),
         PlotObject or AnnotationObject or LightModel when GroupOwning(target) is { } group => group, // open item 166

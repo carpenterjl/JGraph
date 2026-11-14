@@ -75,9 +75,10 @@ internal static partial class JgsBuiltins
         // A leading handle, or array of them, picks the series; labels follow, then the options.
         int at = 0;
         List<PlotObject>? subset = null;
+        Dictionary<PlotObject, JgsGraphicsGroup>? groups = null;
         if (args.Count > 0 && !IsTextScalar(args[0]) && TextElementsOf(args[0]) is null && args[0].Type != JgsType.Cell)
         {
-            subset = PlotsOf("legend", args[0], line, col);
+            (subset, groups) = LegendTargets(axes, args[0], line, col);
             at = 1;
         }
 
@@ -111,7 +112,7 @@ internal static partial class JgsBuiltins
             }
         }
 
-        MakeLegend(axes, subset, labels, host, line, col);
+        MakeLegend(axes, subset, labels, host, line, col, groups);
         JgsHandleEntry entry = JgsHandleRegistry.Require(JgsHandleRegistry.For(legend), line, col);
         for (int i = options; i + 1 < args.Count; i += 2)
         {
@@ -121,9 +122,59 @@ internal static partial class JgsBuiltins
         return JgsHandleRegistry.For(legend);
     }
 
+    /// <summary>
+    /// The series a leading handle array names, in order: a plotted series is itself, and a group or a
+    /// transform is one row, drawn with its first member that a legend can show, named by the group
+    /// (open item 313, probe p313). A group with nothing to show is left out.
+    /// </summary>
+    private static (List<PlotObject> Plots, Dictionary<PlotObject, JgsGraphicsGroup>? Groups) LegendTargets(
+        AxesModel axes, JgsValue value, int line, int col)
+    {
+        var plots = new List<PlotObject>();
+        Dictionary<PlotObject, JgsGraphicsGroup>? groups = null;
+        int count = value.Type == JgsType.Array ? value.ArrayLength : 1;
+        IReadOnlyList<PlotObject> legendable = LegendablePlots(axes);
+        for (int i = 0; i < count; i++)
+        {
+            JgsValue element = value.Type == JgsType.Array ? value.ElementAt(i) : value;
+            if (JgsHandleRegistry.TryGet(element, out JgsHandleEntry? held) && held.Target is JgsGraphicsGroup group)
+            {
+                if (FirstLegendableMember(group, legendable) is { } swatch)
+                {
+                    plots.Add(swatch);
+                    (groups ??= new(ReferenceEqualityComparer.Instance))[swatch] = group;
+                }
+
+                continue;
+            }
+
+            plots.AddRange(PlotsOf("legend", element, line, col));
+        }
+
+        return (plots, groups);
+    }
+
+    /// <summary>A group's first member, in the order they joined and through the groups in it, that a legend can show.</summary>
+    private static PlotObject? FirstLegendableMember(JgsGraphicsGroup group, IReadOnlyList<PlotObject> legendable)
+    {
+        foreach (GraphObject member in group.Members)
+        {
+            switch (member)
+            {
+                case JgsGraphicsGroup inner when FirstLegendableMember(inner, legendable) is { } deep:
+                    return deep;
+                case PlotObject plot when legendable.Contains(plot):
+                    return plot;
+            }
+        }
+
+        return null;
+    }
+
     /// <summary>Makes <paramref name="axes"/>' legend, or makes it again, of the series asked for.</summary>
     private static void MakeLegend(
-        AxesModel axes, List<PlotObject>? subset, List<string> labels, JGraphScriptGlobals host, int line, int col)
+        AxesModel axes, List<PlotObject>? subset, List<string> labels, JGraphScriptGlobals host, int line, int col,
+        Dictionary<PlotObject, JgsGraphicsGroup>? groups = null)
     {
         LegendModel legend = axes.Legend;
         if (legend.Visible)
@@ -149,10 +200,25 @@ internal static partial class JgsBuiltins
 
         for (int k = 0; k < chosen.Count && k < labels.Count; k++)
         {
-            chosen[k].DisplayName = labels[k];
+            if (groups is not null && groups.TryGetValue(chosen[k], out JgsGraphicsGroup? group))
+            {
+                group.DisplayName = labels[k]; // a group's label names the group (open item 313)
+            }
+            else
+            {
+                chosen[k].DisplayName = labels[k];
+            }
         }
 
         JG.Legend(axes, chosen);
+
+        // Each row stands for its group, when it was asked for as one; a legend made again forgets
+        // the groups it is no longer asked to show.
+        foreach (LegendEntryModel row in legend.Entries)
+        {
+            row.Group = groups is not null && row.Plot is { } plot && groups.TryGetValue(plot, out JgsGraphicsGroup? group) ? group : null;
+        }
+
         legend.NameUnnamedRows();
     }
 

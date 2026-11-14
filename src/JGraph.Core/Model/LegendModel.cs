@@ -326,7 +326,8 @@ public sealed class LegendModel : GraphObject
         int count = 0;
         foreach (LegendEntryModel entry in Entries)
         {
-            if (entry.Visible && entry.Plot is { DisplayNameIsManual: false } plot)
+            // A group's row reads the group's name, and takes no number (open item 313).
+            if (entry.Visible && entry.Group is null && entry.Plot is { DisplayNameIsManual: false } plot)
             {
                 plot.NameAutomatically($"data{++count}");
             }

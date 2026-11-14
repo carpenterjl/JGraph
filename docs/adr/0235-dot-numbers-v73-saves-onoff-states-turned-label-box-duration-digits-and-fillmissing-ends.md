@@ -133,7 +133,10 @@ marks only what was filled.
 - **`methods` of an `OnOffSwitchState` lists its own**, where R2025b lists the 153 it inherits,
   some from the toolboxes installed (as ADR 0234).
 - **`save` and `load` with `-v4`** are refused here (`save does not support the option '-v4'`).
-- **findobj counts one handle more** under an axes than R2025b (as before).
+
+Closed since: **findobj counted handles more** under an axes than R2025b (row `ob_findobj`). They
+were the axes' legend and colour bar, which R2025b keeps among the figure's children; open item 297
+(ADR 0360) put them there in MATLAB code, and the row agrees.
 
 ## Consequences
 

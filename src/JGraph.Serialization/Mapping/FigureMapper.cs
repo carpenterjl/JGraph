@@ -9,7 +9,7 @@ namespace JGraph.Serialization.Mapping;
 /// Maps the figure object tree to and from its document DTO. The plot and annotation subtrees are
 /// delegated to <see cref="PlotMapper"/> and <see cref="AnnotationMapper"/>.
 /// </summary>
-internal static class FigureMapper
+internal static partial class FigureMapper
 {
     public static FigureDto ToDto(FigureModel figure)
     {
@@ -458,6 +458,8 @@ internal static class FigureMapper
             dto.Lights.Add(ToDto(light));
         }
 
+        dto.Groups = GroupsToDto(axes);
+
         dto.ColorOrder = axes.ColorOrder is { } order ? [.. order] : null;
         dto.PlotBoxAspect = new Point3Dto(
             axes.PlotBoxAspect.X, axes.PlotBoxAspect.Y, axes.PlotBoxAspect.Z);
@@ -692,6 +694,9 @@ internal static class FigureMapper
         {
             axes.Lights.Add(ToModel(lightDto));
         }
+
+        // After the plots, the texts and the lights, so every member a group names is there.
+        GroupsToModel(axes, dto.Groups);
 
         axes.ColorOrder = dto.ColorOrder is { Count: > 0 } order ? [.. order] : null;
         axes.PlotBoxAspect = new Vector3D(

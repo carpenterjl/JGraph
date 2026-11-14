@@ -134,7 +134,7 @@ u9b_chk('ob_set_zero', @() setv(ax, 0));
 u9b_chk('ob_set_str', @() setv(ax, "off"));
 u9b_chk('ob_set_two', @() msgof(@() setv(ax, 2)));
 u9b_chk('ob_set_member', @() setv(ax, matlab.lang.OnOffSwitchState.off));
-u9b_chkdiv('ob_findobj', @() oi_try( @() numel(findobj(ax, 'Visible', 'on'))), 'ADR0235');
+u9b_chk('ob_findobj', @() oi_try( @() numel(findobj(ax, 'Visible', 'on')))); % the legend and colour bar are the figure's (open item 297, ADR 0360)
 u9b_chk('ob_grid', @() class(ax.XGrid));
 u9b_chk('ob_hold', @() class(ax.NextPlot));
 u9b_chk('ob_figure_visible', @() class(f.Visible));

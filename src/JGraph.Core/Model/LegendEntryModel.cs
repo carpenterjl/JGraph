@@ -43,6 +43,24 @@ public sealed class LegendEntryModel : GraphObject
         set => SetProperty(ref _label, value, InvalidationKind.Layout);
     }
 
+    /// <summary>
+    /// The group this row stands for, when a script legended a group (open item 313): the row's
+    /// <see cref="Plot"/> is then the group's first member, which gives the swatch, and the words are
+    /// the group's <see cref="GraphicsGroupModel.DisplayName"/>. Null for an ordinary row.
+    /// </summary>
+    [Browsable(false)]
+    public GraphicsGroupModel? Group
+    {
+        get => _group;
+        set => SetProperty(ref _group, value, InvalidationKind.Layout);
+    }
+
+    private GraphicsGroupModel? _group;
+
+    /// <summary>The words this row shows: its override, else its group's name, else <paramref name="seriesLabel"/>.</summary>
+    public string ResolveRowLabel(string seriesLabel) =>
+        ResolveLabel(_group is { } group ? group.DisplayName : seriesLabel);
+
     /// <summary>The override if there is one, else <paramref name="seriesLabel"/>.</summary>
     public string ResolveLabel(string seriesLabel) =>
         string.IsNullOrEmpty(_label) ? seriesLabel : _label;
