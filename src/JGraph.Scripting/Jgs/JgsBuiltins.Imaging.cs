@@ -63,7 +63,8 @@ internal static partial class JgsBuiltins
                     ["Format"] = JgsValue.Str(Path.GetExtension(path).TrimStart('.').ToUpperInvariant()),
                     ["Width"] = JgsValue.Number(probe.Width),
                     ["Height"] = JgsValue.Number(probe.Height),
-                    ["BitDepth"] = JgsValue.Number(
+                    // A PNG's depth is its header's, so a 2- or 4-bit file says 2 or 4 (open item 294).
+                    ["BitDepth"] = JgsValue.Number(ImageCodec.PngBitDepth(path) ??
                         (probe.Class switch { ImageClass.UInt16 => 16, ImageClass.Logical => 1, _ => 8 }) * probe.Channels),
                     ["ColorType"] = JgsValue.Str(palette is not null ? "indexed" : probe.Channels == 1 ? "grayscale" : "truecolor"),
                     ["NumberOfSamples"] = JgsValue.Number(probe.Channels),
@@ -195,6 +196,10 @@ internal static partial class JgsBuiltins
             double depth = parsed.Scalar("BitDepth", double.NaN);
             using ImgArg? alphaSource = parsed.Named("Alpha") is { } a ? ImgLike("imwrite: Alpha", [a], 0, line, col) : null;
             ImageBuffer? alpha = alphaSource?.Buffer;
+            if (!double.IsNaN(depth) && Path.GetExtension(path).Equals(".png", StringComparison.OrdinalIgnoreCase))
+            {
+                RefusePngBitDepth(depth, image.Channels, alpha is not null, line, col);
+            }
             try
             {
                 ImageCodec.Write(path, image, new CodecWriteOptions(
@@ -349,7 +354,9 @@ internal static partial class JgsBuiltins
         define("im2mat", (args, line, col) =>
         {
             ArityRange("im2mat", args, 1, 2, line, col);
-            ImageBuffer image = Img("im2mat", args, 0, line, col);
+            // A plain array is taken too: under MATLAB imread answers one (open item 292, ADR 0356).
+            using ImgArg source = ImgLike("im2mat", args, 0, line, col);
+            ImageBuffer image = source.Buffer;
             int channel = args.Count == 2 ? Count("im2mat", args, 1, line, col) - 1 : 0;
             if ((uint)channel >= (uint)image.Channels)
             {
@@ -378,6 +385,32 @@ internal static partial class JgsBuiltins
                 if (args[0].Type == JgsType.Image)
                 {
                     return ImgOut(args[0].AsImage.Clone(), target);
+                }
+
+                // Under MATLAB every array goes this road (open item 292, ADR 0356), as does an
+                // integer, logical or M-by-N-by-3 array under JGS: an integer or logical array is
+                // read in its class's units and colour planes plane by plane, so that imread's
+                // array converts (before this im2double(uint8(128)) was 1, an RGB array and a
+                // vector were refused, and im2uint8 of a double answered a double). As in R2025b
+                // a float array keeps its values for a float target (im2double(2) is 2) and is
+                // clamped to [0, 1] for an integer one; the answer carries the target's class.
+                if (args[0].Type is JgsType.Array or JgsType.Number or JgsType.Bool
+                    && (dialect.IsMatlab
+                        || CarriedClass(args[0]) is not (ImageClass.Double or ImageClass.Single)
+                        || JgsMatrix.DimsOf(args[0]) is [_, _, 3]))
+                {
+                    using ImgArg source = ImgLike(name, args, 0, line, col);
+                    bool keep = source.Buffer.Class is ImageClass.Double or ImageClass.Single
+                        && target is ImageClass.Double or ImageClass.Single;
+                    ImageBuffer converted = source.Buffer.Clone();
+                    Span<double> samples = converted.Pixels;
+                    for (int i = 0; i < samples.Length; i++)
+                    {
+                        double sample = keep ? samples[i] : Math.Clamp(samples[i], 0, 1);
+                        samples[i] = target == ImageClass.Single ? (float)sample : sample;
+                    }
+
+                    return NumbersOut(converted, source.Shape, target);
                 }
 
                 double[,] values = Matrix(name, args, 0, line, col);
@@ -1506,6 +1539,12 @@ internal static partial class JgsBuiltins
         bool scalarIsLevel)
     {
         Arity(name, args, 2, line, col);
+        if (args[0].Type != JgsType.Image && dialect.IsMatlab
+            && CarriedClass(args[0]) is ImageClass.UInt8 or ImageClass.UInt16)
+        {
+            return IntegerArrayArithmetic(name, args, line, col, combine, scalar, scalarIsLevel);
+        }
+
         ImageBuffer image = Img(name, args, 0, line, col);
         if (args[1].Type == JgsType.Image)
         {
@@ -1536,6 +1575,48 @@ internal static partial class JgsBuiltins
         {
             throw new JgsRuntimeException(line, col, ex.Message);
         }
+    }
+
+    /// <summary>
+    /// <c>imadd</c> and its siblings on a plain uint8 or uint16 array under MATLAB, which is what
+    /// <c>imread</c> answers there (open item 292, ADR 0356): the array is read in its class's units,
+    /// combined as a picture is, saturated to the class's range, and handed back as an array of the
+    /// class. A float array is still refused here: MATLAB's imadd of doubles does not clamp, which
+    /// the picture arithmetic does.
+    /// </summary>
+    private static JgsValue IntegerArrayArithmetic(
+        string name, IReadOnlyList<JgsValue> args, int line, int col,
+        Func<ImageBuffer, ImageBuffer, ImageBuffer> combine,
+        Func<ImageBuffer, double, ImageBuffer> scalar,
+        bool scalarIsLevel)
+    {
+        using ImgArg first = ImgLike(name, args, 0, line, col);
+        ImageBuffer result;
+        try
+        {
+            if (args[1].Type is JgsType.Number or JgsType.Bool)
+            {
+                double value = args[1].AsNumber;
+                result = scalar(first.Buffer, scalarIsLevel ? value / first.Buffer.Class.Scale() : value);
+            }
+            else
+            {
+                using ImgArg second = ImgLike(name, args, 1, line, col);
+                result = combine(first.Buffer, second.Buffer);
+            }
+        }
+        catch (ArgumentException ex)
+        {
+            throw new JgsRuntimeException(line, col, ex.Message);
+        }
+
+        Span<double> samples = result.Pixels;
+        for (int i = 0; i < samples.Length; i++)
+        {
+            samples[i] = double.IsNaN(samples[i]) ? 0 : Math.Clamp(samples[i], 0, 1);
+        }
+
+        return ImgLikeOut(result, first);
     }
 
     /// <summary>
@@ -1656,6 +1737,36 @@ internal static partial class JgsBuiltins
             or JgsNumericClass.UInt32 or JgsNumericClass.UInt64
             ? value.NumericClass.MatlabName()
             : null;
+
+    /// <summary>
+    /// Refuses a PNG BitDepth the picture's kind cannot have, with writepng's identifiers and words
+    /// (open item 294, ADR 0356): greyscale takes 1, 2, 4, 8 or 16, greyscale with alpha 8 or 16,
+    /// and RGB 8 or 16. Before this a depth outside the list was quietly written at eight bits.
+    /// </summary>
+    private static void RefusePngBitDepth(double depth, int channels, bool hasAlpha, int line, int col)
+    {
+        if (channels == 1 && !hasAlpha)
+        {
+            if (depth is not (1 or 2 or 4 or 8 or 16))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:imagesci:writepng:invalidGrayscaleBitDepth",
+                    "Invalid bitdepth for grayscale image; must be 1, 2, 4, 8, or 16.");
+            }
+        }
+        else if (channels == 1)
+        {
+            if (depth is not (8 or 16))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:imagesci:writepng:invalidGrayscaleAlphaBitDepth",
+                    "Invalid bitdepth for grayscale image with alpha; must be 8 or 16.");
+            }
+        }
+        else if (depth is not (8 or 16))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:imagesci:writepng:invalidRgbBitDepth",
+                "Invalid bitdepth for RGB image; must be 8 or 16.");
+        }
+    }
 
     /// <summary>Whether a value is shaped like a colour map: an n-by-3 matrix of at most 256 rows.</summary>
     private static bool IsColorMap(JgsValue value) =>

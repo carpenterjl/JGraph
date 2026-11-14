@@ -241,20 +241,30 @@ internal static partial class JgsBuiltins
             }
         });
 
-        // What imread answers for the file's samples: a logical matrix under MATLAB for a 1-bit
-        // greyscale file, as R2025b answers (open item 273), so that `G > 0` and indexing work on
-        // it; the picture value otherwise, and always under JGS, whose image verbs take it.
+        // What imread answers for the file's samples. Under MATLAB it is the plain array R2025b
+        // answers: a logical matrix for a 1-bit greyscale file (open item 273), and otherwise a
+        // uint8 or uint16 M-by-N or M-by-N-by-3 array (open item 292, ADR 0356), so that operators,
+        // indexing, assignment and reductions take it as they take any array of that class. Under
+        // JGS it stays the picture value its image verbs take. A sample count other than one or
+        // three (a CMYK TIFF page) is left a picture, as before.
         static JgsValue ReadPicture(ImageBuffer image, JgsRunningDialect dialect)
         {
-            if (!dialect.IsMatlab || image.Class != ImageClass.Logical || image.Channels != 1)
+            if (!dialect.IsMatlab || image.Channels is not (1 or 3))
             {
                 return JgsValue.Image(image);
             }
 
-            using (image)
+            if (image.Class == ImageClass.Logical && image.Channels == 1)
             {
-                return ImageNumbers(JgsValue.Image(image));
+                using (image)
+                {
+                    return ImageNumbers(JgsValue.Image(image));
+                }
             }
+
+            // NumbersOut owns and disposes the buffer it is handed, so the read buffer goes in
+            // directly rather than through ImageNumbers' copy.
+            return NumbersOut(image, image.Channels == 3 ? ImgShape.Planes : ImgShape.Matrix, image.Class);
         }
 
         // [X, map, alpha] = imread(path). The map is always empty: Skia decodes a palettized file
@@ -290,7 +300,8 @@ internal static partial class JgsBuiltins
                     return [picture];
                 }
 
-                JgsValue map = palette is null ? JgsMatrix.Build(0, 3, static (_, _) => 0.0) : JgsMatrix.Build(palette.GetLength(0), 3, (r,c) => palette[r,c]);
+                // A file with no palette has a 0-by-0 map, as R2025b answers (open item 294).
+                JgsValue map = palette is null ? JgsMatrix.Build(0, 0, static (_, _) => 0.0) : JgsMatrix.Build(palette.GetLength(0), 3, (r,c) => palette[r,c]);
                 if (wanted < 3)
                 {
                     alpha?.Dispose();
@@ -301,7 +312,7 @@ internal static partial class JgsBuiltins
                 [
                     picture,
                     map,
-                    alpha is null ? JgsMatrix.Build(0, 0, static (_, _) => 0.0) : JgsValue.Image(alpha),
+                    alpha is null ? JgsMatrix.Build(0, 0, static (_, _) => 0.0) : ReadPicture(alpha, dialect),
                 ];
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException

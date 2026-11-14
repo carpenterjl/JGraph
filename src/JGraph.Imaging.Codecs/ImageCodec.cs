@@ -233,10 +233,11 @@ public static partial class ImageCodec
 
         // A logical picture is a 1-bit greyscale PNG, as R2025b's writepng makes it, and so is any
         // greyscale picture written with BitDepth 1 (open item 273); the reader answers it as logical.
+        // BitDepth 2 and 4 pack a greyscale picture's levels the same way (open item 294, ADR 0356).
         if (format == SKEncodedImageFormat.Png && image.Channels == 1 && alpha is null
-            && (options.BitDepth == 1 || (options.BitDepth is null && image.Class == ImageClass.Logical)))
+            && (options.BitDepth is 1 or 2 or 4 || (options.BitDepth is null && image.Class == ImageClass.Logical)))
         {
-            Write1BitPng(path, image);
+            WritePackedGrayPng(path, image, options.BitDepth ?? 1);
             return;
         }
 
@@ -305,9 +306,11 @@ public static partial class ImageCodec
                 {
                     for (int ch = 0; ch < channels; ch++)
                     {
-                        double sample = ch < image.Channels ? image[r, c, ch] : alpha![r, c, 0];
+                        ushort sample = ch < image.Channels
+                            ? (ushort)PngLevel(image[r, c, ch], image.Class, 16)
+                            : (ushort)PngLevel(alpha![r, c, 0], alpha.Class, 16);
                         System.Buffers.Binary.BinaryPrimitives.WriteUInt16BigEndian(
-                            row.AsSpan(at, 2), ToUShort(sample));
+                            row.AsSpan(at, 2), sample);
                         at += 2;
                     }
                 }
@@ -319,25 +322,27 @@ public static partial class ImageCodec
         return true;
     }
     /// <summary>
-    /// Writes a 1-bit greyscale PNG: a sample is on when it is above zero (writepng's <c>data ~= 0</c>
-    /// after clamping to [0, 1]), eight to a byte, the first pixel in the high bit, each row padded
-    /// to a whole byte.
+    /// Writes a 1-, 2- or 4-bit greyscale PNG, 8 / <paramref name="bits"/> samples to a byte, the
+    /// first pixel in the high bits, each row padded to a whole byte. At one bit a sample is on when
+    /// it is above zero (writepng's <c>data ~= 0</c> after clamping to [0, 1]); at two and four it is
+    /// <see cref="PngLevel"/>'s level.
     /// </summary>
-    private static void Write1BitPng(string path, ImageBuffer image)
+    private static void WritePackedGrayPng(string path, ImageBuffer image, int bits)
     {
         using FileStream output = File.Create(path);
         output.Write(PngChunks.Signature);
         byte[] header = new byte[13];
         System.Buffers.Binary.BinaryPrimitives.WriteInt32BigEndian(header.AsSpan(0, 4), image.Width);
         System.Buffers.Binary.BinaryPrimitives.WriteInt32BigEndian(header.AsSpan(4, 4), image.Height);
-        header[8] = 1;
+        header[8] = (byte)bits;
         header[9] = 0;
         PngChunks.Write(output, "IHDR", header);
+        int perByte = 8 / bits;
         using var compressed = new MemoryStream();
         using (var zlib = new System.IO.Compression.ZLibStream(compressed,
             System.IO.Compression.CompressionLevel.Optimal, leaveOpen: true))
         {
-            byte[] row = new byte[checked(1 + ((image.Width + 7) / 8))];
+            byte[] row = new byte[checked(1 + ((image.Width + perByte - 1) / perByte))];
             ReadOnlySpan<double> pixels = image.Pixels;
             for (int r = 0; r < image.Height; r++)
             {
@@ -345,10 +350,8 @@ public static partial class ImageCodec
                 ReadOnlySpan<double> samples = pixels.Slice(r * image.Width, image.Width);
                 for (int c = 0; c < samples.Length; c++)
                 {
-                    if (samples[c] > 0)
-                    {
-                        row[1 + (c >> 3)] |= (byte)(0x80 >> (c & 7));
-                    }
+                    int level = bits == 1 ? (samples[c] > 0 ? 1 : 0) : PngLevel(samples[c], image.Class, bits);
+                    row[1 + (c / perByte)] |= (byte)(level << (8 - (bits * ((c % perByte) + 1))));
                 }
 
                 zlib.Write(row);
@@ -370,7 +373,77 @@ public static partial class ImageCodec
         bytes[12] == (byte)'I' && bytes[13] == (byte)'H' && bytes[14] == (byte)'D' && bytes[15] == (byte)'R' &&
         bytes[24] == 1 && bytes[25] == 0;
 
-    private static byte ToByte(double value) => (byte)Math.Clamp((int)Math.Round(value * 255.0), 0, 255);
+    /// <summary>
+    /// An eight-bit sample for an encoder that takes bytes, rounding half away from zero as
+    /// R2025b's conversion to uint8 does (open item 294).
+    /// </summary>
+    private static byte ToByte(double value) =>
+        value > 0 ? (byte)Math.Min(255.0, Math.Round(value * 255.0, MidpointRounding.AwayFromZero)) : (byte)0;
 
-    private static ushort ToUShort(double value) => (ushort)Math.Clamp((int)Math.Round(value * 65535.0), 0, 65535);
+    /// <summary>
+    /// The level a PNG of <paramref name="bits"/> bits a sample stores for a normalized sample of
+    /// class <paramref name="imageClass"/>, as R2025b's writepng chooses it (open item 294, ADR 0356,
+    /// probes oi_image_values and extra_probe): an integer class keeps its top bits (a uint16 sample
+    /// at depth 8 is <c>x &gt;&gt; 8</c>, a uint8 sample at depth 4 is <c>x &gt;&gt; 4</c>) and widens
+    /// by repeating its bits (a uint8 sample at depth 16 is <c>x * 257</c>); a logical sample is its
+    /// own 0 or 1 at any depth; a double or single sample is <c>round(x * (2^bits - 1))</c>, half
+    /// away from zero, after clamping to [0, 1]. Depth 1 is not read here: it is on for any nonzero
+    /// sample.
+    /// </summary>
+    internal static int PngLevel(double sample, ImageClass imageClass, int bits)
+    {
+        if (!(sample > 0))
+        {
+            return 0; // zero, below zero, and NaN
+        }
+
+        switch (imageClass)
+        {
+            case ImageClass.Logical:
+                return 1;
+            case ImageClass.UInt8:
+            {
+                int native = (int)Math.Min(255.0, Math.Round(sample * 255.0));
+                return bits <= 8 ? native >> (8 - bits) : native * 257;
+            }
+
+            case ImageClass.UInt16:
+            {
+                int native = (int)Math.Min(65535.0, Math.Round(sample * 65535.0));
+                return native >> (16 - bits);
+            }
+
+            default:
+            {
+                int top = (1 << bits) - 1;
+                return (int)Math.Min(top, Math.Round(sample * top, MidpointRounding.AwayFromZero));
+            }
+        }
+    }
+
+    /// <summary>
+    /// The bit depth imfinfo reports for a PNG file, read from its header: the depth of one sample
+    /// times the colour samples a pixel has, not counting alpha (R2025b reports a greyscale file with
+    /// alpha as 8 and an RGBA file as 24) and counting a palette index as one. Null for any other
+    /// file.
+    /// </summary>
+    public static int? PngBitDepth(string path)
+    {
+        byte[] head = new byte[26];
+        using (FileStream file = File.OpenRead(path))
+        {
+            if (file.Read(head, 0, head.Length) != head.Length)
+            {
+                return null;
+            }
+        }
+
+        if (!head.AsSpan(0, 8).SequenceEqual(PngChunks.Signature) || head[12] != (byte)'I' || head[13] != (byte)'H'
+            || head[14] != (byte)'D' || head[15] != (byte)'R')
+        {
+            return null;
+        }
+
+        return head[24] * (head[25] is 2 or 6 ? 3 : 1);
+    }
 }

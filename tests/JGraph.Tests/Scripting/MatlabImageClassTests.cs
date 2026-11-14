@@ -192,6 +192,62 @@ public sealed class MatlabImageClassTests : IDisposable
     }
 
     [Fact]
+    public async Task ImreadAnswersAPlainArrayThatOperatorsAndAssignmentTake()
+    {
+        // Open item 292 (ADR 0356): a uint8, uint16 or RGB picture read back is R2025b's plain array,
+        // so `G > 0`, saturating arithmetic, end, logical subscripts and element assignment work.
+        await RunAsserting("""
+            A = magic(6) * 7;
+            imwrite(uint8(A), 'g8.png'); G = imread('g8.png');
+            assert(isequal(G > 100, A > 100) && islogical(G > 100));
+            assert(isa(G + 200, 'uint8') && max(max(G + 200)) == 255 && min(min(G - 250)) == 0);
+            assert(isequal(G ./ 3, uint8(A / 3)) && G(end) == 77 && isequal(G(G > 240)', uint8([245 252])));
+            G(1, 1) = 300; assert(G(1, 1) == 255 && isa(G, 'uint8'));
+            assert(isequal(sum(imread('g8.png')), sum(A)) && mean(imread('g8.png'), 'all') == 129.5);
+            imwrite(uint16(A) * 250, 'g16.png'); H = imread('g16.png');
+            assert(isa(H, 'uint16') && isequal(H(1, :) + 60000, uint16([65535 61750 65535 65535 65535 65535])));
+            imwrite(uint8(cat(3, A, 255 - A, A)), 'rgb.png'); C = imread('rgb.png');
+            assert(isequal(size(C > 128), [6 6 3]) && isequal(sum(C, 3), A + 255));
+            imwrite(uint8(A), 'alpha.png', 'Alpha', A / 252); [~, ~, al] = imread('alpha.png');
+            assert(isa(al, 'uint8') && isequal(al > 128, A / 252 * 255 > 128));
+            [~, map] = imread('g8.png'); assert(isequal(size(map), [0 0]));
+            assert(isequal(size(im2mat(imread('g8.png'))), [6 6]));
+            """);
+    }
+
+    [Fact]
+    public async Task ImwriteBitDepthsTwoFourEightAndSixteenStoreR2025bsLevels()
+    {
+        // Open item 294 (ADR 0356): an integer class keeps its top bits, a logical its own 0 or 1, a
+        // double rounds half away; imfinfo reads the depth from the file's header.
+        await RunAsserting("""
+            imwrite(uint8([0 63 64 127 128 191 192 255]), 'b2.png', 'BitDepth', 2);
+            assert(isequal(imread('b2.png'), uint8([0 0 85 85 170 170 255 255])));
+            assert(getfield(imfinfo('b2.png'), 'BitDepth') == 2);
+            imwrite([0 0.16 0.17 0.5 0.84 1], 'b2d.png', 'BitDepth', 2);
+            assert(isequal(imread('b2d.png'), uint8([0 0 85 170 255 255])));
+            imwrite(uint8([8 9 25 26 127 128 246 247]), 'b4.png', 'BitDepth', 4);
+            assert(isequal(imread('b4.png'), uint8([0 0 17 17 119 136 255 255])));
+            assert(getfield(imfinfo('b4.png'), 'BitDepth') == 4);
+            imwrite(logical([0 1 1 0]), 'l8.png', 'BitDepth', 8);
+            assert(isequal(imread('l8.png'), uint8([0 1 1 0])));
+            imwrite(logical([0 1 1 0]), 'l16.png', 'BitDepth', 16);
+            assert(isequal(imread('l16.png'), uint16([0 1 1 0])), 'a logical is its own 0 or 1 at depth 16 too');
+            imwrite(uint16([0 128 129 257 32768 65535]), 'u8.png', 'BitDepth', 8);
+            assert(isequal(imread('u8.png'), uint8([0 0 0 1 128 255])));
+            imwrite(uint8([0 1 128 255]), 'u16.png', 'BitDepth', 16);
+            assert(isequal(imread('u16.png'), uint16([0 257 32896 65535])));
+            imwrite([0.5 1.5 2.5 3.5 126.5 127.5] / 255, 'half.png');
+            assert(isequal(imread('half.png'), uint8([1 2 3 4 127 128])));
+            failed = '';
+            try, imwrite(uint8(magic(3)), 'b3.png', 'BitDepth', 3); catch err, failed = err.identifier; end
+            assert(strcmp(failed, 'MATLAB:imagesci:writepng:invalidGrayscaleBitDepth'));
+            try, imwrite(uint8(ones(2, 2, 3)), 'b3.png', 'BitDepth', 4); catch err, failed = err.identifier; end
+            assert(strcmp(failed, 'MATLAB:imagesci:writepng:invalidRgbBitDepth'));
+            """);
+    }
+
+    [Fact]
     public async Task ImwriteRefusesAClassNoImageFormatStores()
     {
         // Silence would mean writing whatever a [0, 1] reading of 0-255 produces, which is white.

@@ -29,6 +29,8 @@ public static partial class ImageCodec
         int width = image.Width;
         int height = image.Height;
         int channels = image.Channels;
+        ImageClass imageClass = image.Class; // the level a sample stores goes by its class (ADR 0356)
+        ImageClass alphaClass = alpha?.Class ?? ImageClass.Double;
         int colour = Math.Min(3, channels);
         bool coverage = alpha is not null || channels == 4;
         int stride = checked(1 + (width * (colour + (coverage ? 1 : 0))));
@@ -59,7 +61,7 @@ public static partial class ImageCodec
                     {
                         for (int c = 0; c < row.Length; c++)
                         {
-                            raw[at++] = ToByte(row[c]);
+                            raw[at++] = (byte)PngLevel(row[c], imageClass, 8);
                         }
 
                         continue;
@@ -70,16 +72,16 @@ public static partial class ImageCodec
                         int b = c * channels;
                         for (int channel = 0; channel < colour; channel++)
                         {
-                            raw[at++] = ToByte(row[b + channel]);
+                            raw[at++] = (byte)PngLevel(row[b + channel], imageClass, 8);
                         }
 
                         if (alpha is not null)
                         {
-                            raw[at++] = ToByte(alphaPixels[(r * width) + c]);
+                            raw[at++] = (byte)PngLevel(alphaPixels[(r * width) + c], alphaClass, 8);
                         }
                         else if (channels == 4)
                         {
-                            raw[at++] = ToByte(row[b + 3]);
+                            raw[at++] = (byte)PngLevel(row[b + 3], imageClass, 8);
                         }
                     }
                 }

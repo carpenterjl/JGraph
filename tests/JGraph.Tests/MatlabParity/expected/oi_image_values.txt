@@ -1,0 +1,135 @@
+CHK|g8_class|char[1 5]'uint8'|exact
+CHK|g8_size|double[1 2] [6 6]|exact
+CHK|g8_isequal|logical[1 1] 1|exact
+CHK|g8_gt|logical[6 6] [1 0 0 1 1 1;0 1 0 1 1 1;1 0 0 1 1 1;0 1 1 1 0 1;1 0 1 0 0 1;0 1 1 0 1 0]|exact
+CHK|g8_eq|logical[6 6] [0 1 0 0 0 0;0 0 0 0 0 0;0 0 0 0 0 0;0 0 0 0 0 0;0 0 0 0 0 0;0 0 0 0 0 0]|exact
+CHK|g8_ge_array|logical[6 6] [1 0 0 1 0 1;1 1 0 0 1 0;1 1 1 0 0 0;0 1 1 1 0 1;1 0 1 1 1 0;0 1 1 0 1 1]|exact
+CHK|g8_plus|uint8[6 6] [255 207 242 255 255 255;221 255 249 255 255 255;255 255 214 255 255 255;255 255 255 255 255 255;255 235 255 255 255 255;228 255 255 255 255 255]|exact
+CHK|g8_minus|uint8[6 6] [195 0 0 132 83 118;0 174 0 97 111 125;167 13 0 104 139 90;6 146 181 69 20 55;160 0 188 34 48 62;0 202 153 41 76 27]|exact
+CHK|g8_times|uint8[6 6] [255 14 84 255 255 255;42 255 98 255 255 255;255 126 28 255 255 255;112 255 255 238 140 210;255 70 255 168 196 224;56 255 255 182 252 154]|exact
+CHK|g8_rdivide|uint8[6 6] [82 2 14 61 44 56;7 75 16 49 54 58;72 21 5 51 63 47;19 65 77 40 23 35;70 12 79 28 33 37;9 84 68 30 42 26]|exact
+CHK|g8_mtimes|uint8[6 6] [255 14 84 255 255 255;42 255 98 255 255 255;255 126 28 255 255 255;112 255 255 238 140 210;255 70 255 168 196 224;56 255 255 182 252 154]|exact
+CHK|g8_uminus|uint8[6 6] [0 0 0 0 0 0;0 0 0 0 0 0;0 0 0 0 0 0;0 0 0 0 0 0;0 0 0 0 0 0;0 0 0 0 0 0]|exact
+CHK|g8_not|logical[6 6] [0 0 0 0 0 0;0 0 0 0 0 0;0 0 0 0 0 0;0 0 0 0 0 0;0 0 0 0 0 0;0 0 0 0 0 0]|exact
+CHK|g8_plus_array|uint8[6 6] [255 28 255 238 255 196;28 255 112 255 196 255;255 112 28 255 255 255;238 255 255 238 154 196;255 196 255 154 196 238;196 255 255 196 238 154]|exact
+CHK|g8_double|double[1 1] 4662|exact
+CHK|g8_sum|double[1 1] 4662|exact
+CHK|g8_sum_cols|double[1 6] [777 777 777 777 777 777]|exact
+CHK|g8_mean|double[1 1] 129.5|exact
+CHK|g8_max|uint8[1 1] 252|exact
+CHK|g8_min_cols|uint8[1 6] [21 7 14 84 70 77]|exact
+CHK|g8_index|uint8[1 1] 49|exact
+CHK|g8_end|uint8[1 1] 77|exact
+CHK|g8_column|uint8[1 6] [245 21 217 56 210 28]|exact
+CHK|g8_logical_index|uint8[1 2] [245 252]|exact
+CHK|g8_horzcat|char[1 5]'uint8'|exact
+CHK|g8_mixed_cat|uint8[1 3] [245 7 255]|exact
+CHK|g8_assign|uint8[1 1] 255|exact
+CHK|g8_isnumeric|logical[1 4] [1 1 1 1]|exact
+CHK|g8_mat2str|char[1 14]'[245 7;21 224]'|exact
+CHK|g8_find|double[1 1] 7|exact
+CHK|g8_int16|int16[1 6] [-55 -293 -258 -118 -167 -132]|exact
+CHK|g8_roundtrip|logical[1 1] 1|exact
+CHK|g8_image_cdata|char[1 5]'uint8'|exact
+CHK|g8_imshow_cdata|char[1 5]'uint8'|exact
+CHK|g8_imshow_size|double[1 2] [6 6]|exact
+CHK|g16_class|char[1 6]'uint16'|exact
+CHK|g16_isequal|logical[1 1] 1|exact
+CHK|g16_gt|logical[6 6] [1 0 0 1 1 1;0 1 0 1 1 1;1 0 0 1 1 1;0 1 1 0 0 0;1 0 1 0 0 0;0 1 1 0 1 0]|exact
+CHK|g16_plus|uint16[1 6] [65535 61750 65535 65535 65535 65535]|exact
+CHK|g16_minus|uint16[1 6] [51250 0 500 35500 23250 32000]|exact
+CHK|g16_rdivide|uint16[1 6] [8750 250 1500 6500 4750 6000]|exact
+CHK|g16_sum|double[1 1] 1165500|exact
+CHK|g16_mean|double[1 1] 32375|exact
+CHK|g16_double|double[1 6] [0.080109864957656221 0.85450522621499958 0.18692301823453117 0.56076905470359351 0.61417563134203101 0.66758220798046841]|exact
+CHK|g16_roundtrip|logical[1 1] 1|exact
+CHK|rgb_class|char[1 5]'uint8'|exact
+CHK|rgb_size|double[1 3] [6 6 3]|exact
+CHK|rgb_isequal|logical[1 1] 1|exact
+CHK|rgb_gt_count|double[1 1] 54|exact
+CHK|rgb_gt_size|double[1 3] [6 6 3]|exact
+CHK|rgb_plane|uint8[6 6] [10 248 213 73 122 87;234 31 206 108 94 80;38 192 241 101 66 115;199 59 24 136 185 150;45 220 17 171 157 143;227 3 52 164 129 178]|exact
+CHK|rgb_pixel|uint8[1 3] [49 206 147]|exact
+CHK|rgb_sum3|double[6 6] [478 276 381 289 398 503;318 415 402 440 482 268;394 444 297 461 310 419;423 331 436 356 465 314;373 360 457 507 293 335;339 499 352 272 377 486]|exact
+CHK|rgb_plus|uint8[2 2 3] nd [255 121 107 255 110 255 255 131 255 163 121 255]|exact
+CHK|rgb_mean|double[1 1] 129.16666666666666|exact
+CHK|rgb_numel|double[1 1] 108|exact
+CHK|rgb_roundtrip|logical[1 1] 1|exact
+CHK|rgb_image_cdata|char[1 13]'uint8 [6 6 3]'|exact
+CHK|ind_class|char[1 5]'uint8'|exact
+CHK|ind_values|uint8[2 3] [0 1 2;3 2 1]|exact
+CHK|ind_plus|uint8[2 3] [1 2 3;4 3 2]|exact
+CHK|ind_map_size|double[1 2] [4 3]|exact
+CHK|ind_map|double[4 3] [0 0 0;1 0 0;0 1 0;0 0 1]|exact
+CHK|alpha_image_class|char[1 11]'uint8 [6 6]'|exact
+CHK|alpha_class|char[1 5]'uint8'|exact
+CHK|alpha_values|uint8[6 6] [248 7 43 184 135 170;21 227 50 149 163 177;220 64 14 156 191 142;57 198 234 120 71 106;213 35 241 85 99 113;28 255 205 92 128 78]|exact
+CHK|alpha_gt|logical[6 6] [1 0 0 1 1 1;0 1 0 1 1 1;1 0 0 1 1 1;0 1 1 0 0 0;1 0 1 0 0 0;0 1 1 0 0 0]|exact
+CHK|alpha_isequal|logical[1 1] 1|exact
+CHK|plain_map|double[1 2] [0 0]|exact
+CHK|plain_map_class|char[1 6]'double'|exact
+CHK|bd2_uint8|uint8[1 11] [0 0 0 0 85 85 170 170 255 255 255]|exact
+CHK|bd2_info|double[1 1] 2|exact
+CHK|bd2_type|char[1 9]'grayscale'|exact
+CHK|bd2_double|uint8[1 8] [0 0 85 85 170 170 255 255]|exact
+CHK|bd2_uint16|uint8[1 5] [0 0 0 170 255]|exact
+CHK|bd4_uint8|uint8[1 16] [0 17 34 51 68 85 102 119 136 153 170 187 204 221 238 255]|exact
+CHK|bd4_info|double[1 1] 4|exact
+CHK|bd4_uint8_edges|uint8[1 8] [0 0 17 17 119 136 255 255]|exact
+CHK|bd4_double|uint8[1 16] [0 17 34 51 68 85 102 119 136 153 170 187 204 221 238 255]|exact
+CHK|bd4_magic|uint8[6 6] [255 0 34 187 136 170;17 238 51 153 170 170;221 51 0 153 187 136;51 204 238 119 68 102;221 34 238 85 102 119;17 255 204 85 119 68]|exact
+CHK|bd8_logical|uint8[1 4] [0 1 1 0]|exact
+CHK|bd8_logical_info|double[1 1] 8|exact
+CHK|bd4_logical|uint8[1 4] [0 17 17 0]|exact
+CHK|bd16_uint8|uint16[1 4] [0 257 32896 65535]|exact
+CHK|bd8_uint16|uint8[1 6] [0 0 0 1 128 255]|exact
+CHK|double_round|uint8[6 6] [248 7 43 184 135 170;21 227 50 149 163 177;220 64 14 156 191 142;57 198 234 120 71 106;213 35 241 85 99 113;28 255 205 92 128 78]|exact
+CHK|double_halves|uint8[1 8] [1 2 3 4 127 128 254 255]|exact
+CHK|double_halves16|uint16[1 6] [1 2 3 4 32768 65535]|exact
+CHK|single_halves|uint8[1 4] [1 2 3 4]|exact
+CHK|rgb16_class|char[1 6]'uint16'|exact
+CHK|rgb16_isequal|logical[1 1] 1|exact
+CHK|rgb16_info|double[1 1] 48|exact
+CHK|rgb16_type|char[1 9]'truecolor'|exact
+CHK|rgb_bd16|uint16[1 3] [12593 52942 37779]|exact
+CHK|rgb_bd4|MATLAB:imagesci:writepng:invalidRgbBitDepth|exact
+CHK|g8_bd3|MATLAB:imagesci:writepng:invalidGrayscaleBitDepth|exact
+CHK|g8_bd4_alpha|MATLAB:imagesci:writepng:invalidGrayscaleAlphaBitDepth|exact
+CHK|g8_bd4_alpha_msg|Invalid bitdepth for grayscale image with alpha; must be 8 or 16.|exact
+CHK|rgb16_bd8|uint8[1 6] [0 0 0 1 128 255]|exact
+CHK|bd2_logical|uint8[1 4] [0 85 85 0]|exact
+CHK|alpha_uint16_bd8|uint8[1 4] [0 1 128 255]|exact
+CHK|alpha_double_bd16|uint16[1 4] [0 32768 65535 65535]|exact
+CHK|info_g8|double[1 1] 8|exact
+CHK|info_g8_type|char[1 9]'grayscale'|exact
+CHK|info_g16|double[1 1] 16|exact
+CHK|info_rgb|double[1 1] 24|exact
+CHK|info_rgb_type|char[1 9]'truecolor'|exact
+CHK|info_alpha|double[1 1] 8|exact
+CHK|info_alpha_type|char[1 9]'grayscale'|exact
+CHK|info_ind|double[1 1] 8|exact
+CHK|info_ind_type|char[1 7]'indexed'|exact
+CHK|info_rgba|double[1 1] 24|exact
+CHK|info_rgba_type|char[1 9]'truecolor'|exact
+CHK|v_im2double_u8|double[1 6] [0.96078431372549022 0.027450980392156862 0.16470588235294117 0.71372549019607845 0.52156862745098043 0.6588235294117647]|exact
+CHK|v_im2double_u16|double[1 6] [0.93461509117265584 0.026703288319218737 0.16021972991531244 0.69428549629968717 0.507362478065156 0.64087891966124977]|exact
+CHK|v_im2double_rgb|double[1 3] [6 6 3]|exact
+CHK|v_im2double_rgb_px|double[1 3] [0.19215686274509805 0.80784313725490198 0.57647058823529407]|exact
+CHK|v_im2double_scalar|double[1 1] 0.027450980392156862|exact
+CHK|v_im2uint8_u16|uint8[1 6] [238 7 41 177 129 163]|exact
+CHK|v_im2uint16_u8|uint16[1 6] [62965 1799 10794 46774 34181 43176]|exact
+CHK|v_im2single_u8|single[1 2] [0.96078431606292725 0.027450980618596077]|exact
+CHK|v_im2uint8_rgb|char[1 5]'uint8'|exact
+CHK|v_im2uint8_logical|uint8[1 6] [255 0 0 255 255 255]|exact
+CHK|v_im2uint8_back|uint8[1 6] [245 7 42 182 133 168]|exact
+CHK|v_im2uint8_double|uint8[1 6] [0 64 128 255 255 0]|exact
+CHK|v_im2uint16_double|uint16[1 4] [0 16384 32768 65535]|exact
+CHK|v_im2single_double|single[1 4] [0.10000000149011612 0.5 2 -1]|exact
+CHK|v_im2double_double|double[1 4] [0.10000000000000001 0.5 2 -1]|exact
+CHK|v_imadd_u8|uint8[1 6] [255 57 92 232 183 218]|exact
+CHK|v_imadd_u8_arr|uint8[1 6] [255 231 91 255 255 255]|exact
+CHK|v_imsubtract_u8|uint8[1 6] [145 0 0 82 33 68]|exact
+CHK|v_immultiply_u8|uint8[1 6] [123 4 21 91 67 84]|exact
+CHK|v_imdivide_u8|uint8[1 6] [82 2 14 61 44 56]|exact
+CHK|v_imadd_u16|uint16[1 6] [65535 11750 20500 55500 43250 52000]|exact
+CHK|v_imadd_rgb|uint8[2 2 3] nd [255 31 17 234 20 244 255 41 233 73 31 170]|exact
