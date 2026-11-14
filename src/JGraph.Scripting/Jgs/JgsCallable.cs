@@ -901,6 +901,9 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
             case FunctionHandleExpr handle:
                 names.Add(handle.Name);
                 return;
+            case BoolLiteral literal when (literal.Shadow & LiteralShadow.Variable) != 0:
+                names.Add(literal.Word); // a true or false a variable may answer takes the one the workspace holds (ADR 0363)
+                return;
             case UnaryExpr unary:
                 Walk(unary.Operand, names);
                 return;

@@ -93,9 +93,37 @@ internal sealed class StringLiteral(string value) : Expr
 }
 
 /// <summary>A boolean literal (<c>true</c>/<c>false</c>).</summary>
+/// <remarks>
+/// In MATLAB the two words are names, not keywords (open item 205, ADR 0363): <see cref="Shadow"/>
+/// says what may answer one in place of the built-in. <see cref="LiteralShadow.None"/> is the
+/// literal and nothing else, which is every JGS literal.
+/// </remarks>
 internal sealed class BoolLiteral(bool value) : Expr
 {
     public bool Value { get; } = value;
+
+    /// <summary>What may answer this word instead of the built-in; set while the file is read.</summary>
+    public LiteralShadow Shadow { get; set; }
+
+    /// <summary>The word as MATLAB spells it.</summary>
+    public string Word => Value ? "true" : "false";
+}
+
+/// <summary>What may answer a MATLAB <c>true</c> or <c>false</c> in place of the built-in (ADR 0363).</summary>
+[Flags]
+internal enum LiteralShadow : byte
+{
+    /// <summary>Nothing: the literal (JGS).</summary>
+    None = 0,
+
+    /// <summary>A <c>true.m</c> or <c>false.m</c> on the path, as for every MATLAB word.</summary>
+    File = 1,
+
+    /// <summary>A variable of the workspace: outside every function, or in one whose text binds the word.</summary>
+    Variable = 2,
+
+    /// <summary>A local or nested function of the same file named after the word.</summary>
+    Function = 4,
 }
 
 /// <summary>An array literal such as <c>[1, 2, 3]</c>.</summary>
@@ -456,6 +484,13 @@ internal sealed class FnStmt(
 
     /// <summary>The <c>name@Superclass</c> references written in a method's body, or null (U6).</summary>
     internal IReadOnlyList<SuperRefExpr>? SuperRefs;
+
+    /// <summary>
+    /// Which of MATLAB's <c>true</c> (1) and <c>false</c> (2) this function's own text binds, its
+    /// enclosing functions' included (ADR 0363): a name it does not bind stays the built-in in its
+    /// frame, whatever an <c>eval</c>, <c>load</c> or <c>assignin</c> puts there, as in R2025b.
+    /// </summary>
+    internal int LiteralBindings;
 
     /// <summary>What the body's leading <c>arguments</c> blocks declare (stage K9), read once; null when it has none.</summary>
     internal ArgumentsSignature? Signature

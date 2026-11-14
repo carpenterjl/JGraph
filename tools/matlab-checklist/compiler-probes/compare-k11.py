@@ -44,7 +44,7 @@ SHARED_PRINTED = re.compile(r"^  \|(mcc |Analyzing|Parsing|\t\(referenced|Genera
 
 # Names whose wrapper text differs by a recorded divergence, by build.
 KNOWN_NAMES = [
-    (r"^k11cpp\.", "JGraph cannot read a function whose argument is named true (open item 205), so its wrappers take no arguments"),
+    (r"^k11cpp\.", "the C++ words new, this, delete, template, namespace, operator and private are renamed with a 0 so a C++ client compiles; R2025b keeps them"),
     (r"^k11cw3\.", "restrict, mxArray and MW_CALL_CONV are renamed with a 0 so the library compiles; R2025b keeps them and its source does not"),
     (r"^k11cw4\.", "an argument named mclMlfFeval is renamed with a 0 so the wrapper's call compiles; R2025b keeps it"),
     (r"^k11nargin\.", "an argument named nargout is renamed nargout0 beside the wrapper's own nargout; R2025b declares nargout twice"),

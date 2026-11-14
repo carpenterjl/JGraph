@@ -38,6 +38,9 @@ internal sealed partial class LoopCompiler
     private readonly List<string> _unaryNames = [];
     private readonly Dictionary<string, int> _unaryIndex = new(StringComparer.Ordinal);
     private readonly HashSet<string> _requiredBuiltins = new(StringComparer.Ordinal);
+
+    // Whether a pooled 0 or 1 stands for a shadowable true or false (ADR 0363).
+    private bool _readsShadowableLiteral;
     private readonly HashSet<string> _calledNames = new(StringComparer.Ordinal);
     private readonly List<LoopBail> _bails = [];
     private readonly List<int> _labels = [];
@@ -266,6 +269,7 @@ internal sealed partial class LoopCompiler
             Unary = [.. _unary],
             UnaryGuard = [.. _unaryGuard],
             RequiredBuiltins = [.. _requiredBuiltins],
+            ReadsShadowableLiteral = _readsShadowableLiteral,
             Bails = [.. _bails],
             OuterRegBase = _outerRegBase,
             Root = root,
@@ -612,7 +616,13 @@ internal sealed partial class LoopCompiler
                 Constant(number.Value);
                 return;
 
-            case BoolLiteral:
+            case BoolLiteral { Shadow: var shadow }:
+                if ((shadow & LiteralShadow.Function) != 0)
+                {
+                    throw Refuse(); // a function of the file answers the word: the walk calls it
+                }
+
+                _readsShadowableLiteral |= shadow != LiteralShadow.None; // the entry check asks whether something took the word
                 return; // 0 and 1 are already pooled
 
             case VariableExpr variable:

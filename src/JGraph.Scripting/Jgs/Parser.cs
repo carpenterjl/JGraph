@@ -8,7 +8,7 @@ namespace JGraph.Scripting.Jgs;
 /// closing <c>end</c> (with <c>elseif</c>/<c>else</c> arms sharing the one <c>end</c>). Every node records
 /// the source position of the token it started at, for runtime error reporting.
 /// </summary>
-internal sealed class Parser
+internal sealed partial class Parser
 {
     private readonly IReadOnlyList<Token> _tokens;
     private readonly string _sourceId;
@@ -37,6 +37,19 @@ internal sealed class Parser
 
     /// <summary>How many <c>function</c> bodies the parser is currently inside.</summary>
     private int _functionDepth;
+
+    /// <summary>
+    /// The MATLAB function body being read, for the words <c>true</c> and <c>false</c> (ADR 0363):
+    /// which of them its text binds so far and the literals read in it that would become that
+    /// binding's reads. Null outside every function, where a variable may answer every such literal.
+    /// </summary>
+    private LiteralScope? _literalScope;
+
+    /// <summary>Every literal this MATLAB source spelled as a word, for a function named after one.</summary>
+    private List<BoolLiteral>? _spelledLiterals;
+
+    /// <summary>Which of the two words this source defines a function under (1 true, 2 false).</summary>
+    private int _literalFunctions;
 
     /// <summary>
     /// How deep the parser is inside a MATLAB <c>[...]</c>/<c>{...}</c> literal, ignoring anything nested
@@ -173,6 +186,18 @@ internal sealed class Parser
         {
             statements.Add(ParseTerminatedStatement());
             SkipSeparators();
+        }
+
+        // A local function named true answers the bare word everywhere in its file (R2025b).
+        if (_literalFunctions != 0 && _spelledLiterals is not null)
+        {
+            foreach (BoolLiteral literal in _spelledLiterals)
+            {
+                if ((_literalFunctions & LiteralBit(literal.Value)) != 0)
+                {
+                    literal.Shadow |= LiteralShadow.Function;
+                }
+            }
         }
 
         return statements;
@@ -457,6 +482,7 @@ internal sealed class Parser
         }
 
         Token variable = Expect(TokenType.Identifier, "a loop variable name");
+        Binds(variable.Text);
         if (!Match(TokenType.In))
         {
             Expect(TokenType.Assign, "'in' or '='"); // MATLAB header: for k = 2:n
@@ -1114,6 +1140,7 @@ internal sealed class Parser
     {
         null => true,
         BoolLiteral literal => literal.Value,
+        VariableExpr { Name: "true" or "false" } word => word.Name == "true", // a class file that binds the word (ADR 0363)
         _ => throw Error(attribute, $"The attribute '{attribute.Text}' is true or false."),
     };
 
@@ -1236,6 +1263,10 @@ internal sealed class Parser
 
         // One-line bodies spell 'function f(), body; end' — the comma is the ordinary MATLAB
         // statement separator, consumed by the body's own separator skipping.
+        _literalFunctions |= LiteralBits(name.Text);
+        LiteralScope? outerLiterals = _literalScope;
+        var literals = new LiteralScope(outerLiterals, LiteralBits(parameters) | LiteralBits(outputs));
+        _literalScope = literals;
         _functionDepth++;
         List<SuperRefExpr>? outerRefs = _superRefs;
         _superRefs = _inMethodsBlock ? [] : null;
@@ -1254,7 +1285,9 @@ internal sealed class Parser
         {
             _functionDepth--;
             _superRefs = outerRefs;
+            _literalScope = outerLiterals;
         }
+
 
         if (_functionEnds)
         {
@@ -1267,13 +1300,13 @@ internal sealed class Parser
 
         // A class method is built here and never flows through ParseStatement, so it is stamped
         // here: a method runs in the class file's dialect however it is called (V11, ADR 0172).
-        return new FnStmt(name.Text, parameters, body, outputs)
+        return literals.Adopt(new FnStmt(name.Text, parameters, body, outputs)
         {
             Line = start.Line,
             Column = start.Column,
             Dialect = Dialect,
             SuperRefs = ownRefs is { Count: > 0 } ? ownRefs : null,
-        };
+        });
     }
 
     private Stmt ParseSwitch(Token start)
@@ -1331,6 +1364,7 @@ internal sealed class Parser
         do
         {
             names.Add(Expect(TokenType.Identifier, "a variable name").Text);
+            Binds(names[^1]);
         }
         while (Match(TokenType.Comma) || Check(TokenType.Identifier)); // 'global a b' or 'global a, b'
 
@@ -1387,6 +1421,7 @@ internal sealed class Parser
         do
         {
             names.Add(Expect(TokenType.Identifier, "a variable name").Text);
+            Binds(names[^1]);
         }
         while (Match(TokenType.Comma) || Check(TokenType.Identifier)); // 'persistent a b' or 'persistent a, b'
 
@@ -1440,7 +1475,7 @@ internal sealed class Parser
                     continue;
                 }
 
-                Expr target = ParsePostfix();
+                Expr target = AsTarget(ParsePostfix());
                 RequireAssignable(target, start);
                 targets.Add(target);
             }
@@ -1540,6 +1575,7 @@ internal sealed class Parser
         {
             Token op = Advance();
             Expr value = ParseAssignment(); // right-associative: a = b = 0
+            left = AsTarget(left);
             RequireAssignable(left, op);
 
             // y() = 5 is refused as the file is read, as R2025b refuses it (open item 208, ADR 0354).
@@ -1912,6 +1948,11 @@ internal sealed class Parser
                 return new BoolLiteral(token.Type == TokenType.True) { Line = token.Line, Column = token.Column };
             case TokenType.Identifier:
                 Advance();
+                if (_matlab && token.Text is "true" or "false" && Current.Type is not (TokenType.LParen or TokenType.LBrace or TokenType.Dot))
+                {
+                    return SpelledLiteral(token);
+                }
+
                 return new VariableExpr(token.Text) { Line = token.Line, Column = token.Column };
             case TokenType.LParen:
                 Advance();
@@ -2128,6 +2169,7 @@ internal sealed class Parser
             do
             {
                 parameters.Add(Match(TokenType.Bang) ? "~" : Expect(TokenType.Identifier, "a parameter name").Text);
+                Binds(parameters[^1]);
             }
             while (Match(TokenType.Comma));
         }

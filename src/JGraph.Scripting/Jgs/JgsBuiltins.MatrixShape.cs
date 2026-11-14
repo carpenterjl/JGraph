@@ -623,6 +623,27 @@ internal static partial class JgsBuiltins
 
             args = args.Take(args.Count - 2).ToList();
         }
+        else if (args.Count >= 1 && IsTextScalar(args[^1]))
+        {
+            // A class name last, which only 'logical' (as spelled) can be: true(2, 'logical'), and
+            // the command word of `true 2` (open item 205, ADR 0363; measured in R2025b).
+            if (!string.Equals(TextOf(args[^1]), "logical", StringComparison.Ordinal))
+            {
+                string word = value ? "True" : "False";
+                throw new JgsRuntimeException(line, col, $"MATLAB:{word}:invalidStringInput",
+                    $"Class name must be a class that supports {word.ToUpperInvariant()}, such as \"logical\".");
+            }
+
+            args = args.Take(args.Count - 1).ToList();
+        }
+
+        foreach (JgsValue size in args)
+        {
+            if (IsTextScalar(size) || size.IsStringArray || size.Type == JgsType.Cell)
+            {
+                throw new JgsRuntimeException(line, col, $"MATLAB:{(value ? "True" : "False")}:inputType", "Size inputs must be numeric.");
+            }
+        }
 
         if (args.Count == 0)
         {

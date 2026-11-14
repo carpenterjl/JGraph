@@ -224,6 +224,11 @@ internal sealed partial class Interpreter
     /// </summary>
     private bool TryLoadHotLoopEntry(RegisterProgram program, JgsEnvironment env, double[] regs, bool[] logical, HotLoopVectors vectors)
     {
+        if (!LiteralsStillLiteral(program, env))
+        {
+            return Refused("'true' or 'false' names a variable or a function", program); // ADR 0363
+        }
+
         LoopSlot[] vslots = program.VectorSlots;
         for (int i = 0; i < vslots.Length; i++)
         {
@@ -325,6 +330,11 @@ internal sealed partial class Interpreter
     /// <summary>After a walked statement: whether every builtin the program bound still resolves to itself.</summary>
     private bool HotLoopBuiltinsStillResolve(RegisterProgram program, JgsEnvironment env, HotLoopVectors vectors)
     {
+        if (!LiteralsStillLiteral(program, env))
+        {
+            return false; // a walked statement bound true or false (ADR 0363)
+        }
+
         foreach (string name in program.RequiredBuiltins)
         {
             if (_resolver.CompiledBuiltin(name, env, bare: false) is null)

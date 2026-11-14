@@ -51,6 +51,13 @@ internal sealed class JgsBuiltinLayer
     public bool IsSealed { get; private set; }
 
     /// <summary>
+    /// Whether any workspace over this layer has ever bound MATLAB's <c>true</c> or <c>false</c>
+    /// (ADR 0363). Until one does, which is almost always, a shadowable literal is the literal
+    /// without a lookup; once one has, it asks the workspace. It never goes back to false.
+    /// </summary>
+    internal bool LiteralNameBound;
+
+    /// <summary>
     /// The running dialect the built-ins of this layer read (V11, ADR 0172): set by
     /// <c>CreateGlobals</c> before the registrars run, shared with the interpreter that runs over
     /// the workspace, and null for a bare layer nothing was registered into.

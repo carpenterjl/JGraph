@@ -100,6 +100,11 @@ internal sealed class JgsEnvironment
     /// </summary>
     private void Store(string name, JgsValue value)
     {
+        if (name.Length is 4 or 5 && _layer is { LiteralNameBound: false } layer && !IsBuiltinLayer && Parser.LiteralBits(name) != 0)
+        {
+            layer.LiteralNameBound = true; // a variable named true or false (ADR 0363)
+        }
+
         if (_lifetimes is null)
         {
             _values[name] = value;
@@ -451,7 +456,17 @@ internal sealed class JgsEnvironment
     {
         ThrowIfLayer("the scope of a global declaration");
         (_globalNames ??= new HashSet<string>(StringComparer.Ordinal)).Add(name);
+        if (_layer is { } layer && Parser.LiteralBits(name) != 0)
+        {
+            layer.LiteralNameBound = true; // its value lives in the global workspace, which has no layer (ADR 0363)
+        }
     }
+
+    /// <summary>
+    /// Whether a shadowable <c>true</c> or <c>false</c> read here has to ask the workspace (ADR 0363):
+    /// false while nothing over this scope's layer has ever bound either word.
+    /// </summary>
+    internal bool LiteralNamesMayBeBound => _layer is not { LiteralNameBound: false };
 
     /// <summary>
     /// Whether a <c>global</c> declaration reaching this scope binds <paramref name="name"/>.
@@ -502,6 +517,10 @@ internal sealed class JgsEnvironment
         (_persistentSlots ??= new Dictionary<string, JgsEnvironment>(StringComparer.Ordinal))[name] = slots;
         Drop(name);
         _functionBindings.Remove(name);
+        if (_layer is { } layer && Parser.LiteralBits(name) != 0)
+        {
+            layer.LiteralNameBound = true; // its slot need not sit over the layer (ADR 0363)
+        }
     }
 
     /// <summary>

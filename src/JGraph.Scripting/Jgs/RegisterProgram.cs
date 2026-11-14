@@ -453,6 +453,12 @@ internal sealed class RegisterProgram
     /// </summary>
     public required string[] RequiredBuiltins { get; init; }
 
+    /// <summary>
+    /// Whether the program reads a MATLAB <c>true</c> or <c>false</c> a workspace could bind (ADR 0363):
+    /// at each entry, and after each walked statement, neither word may have become a variable.
+    /// </summary>
+    public bool ReadsShadowableLiteral { get; init; }
+
     /// <summary>The bail table.</summary>
     public required LoopBail[] Bails { get; init; }
 

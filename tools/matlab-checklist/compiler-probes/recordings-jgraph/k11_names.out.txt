@@ -72,7 +72,7 @@ k11t3.k11t3lib.h	62 lines
   |
 k11cpp	ok
 k11cpp.files	buildresult.json | includedSupportPackages.txt | k11cpplib.c | k11cpplib.ctf | k11cpplib.exports | k11cpplib.h | mccExcludedFiles.log | readme.txt | requiredMCRProducts.txt | unresolvedSymbols.txt
-k11cpp.k11cpplib.c	149 lines
+k11cpp.k11cpplib.c	152 lines
   |LIB_k11cpplib_C_API 
   |bool MW_CALL_CONV mlxK11cpp(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
   |{
@@ -80,9 +80,12 @@ k11cpp.k11cpplib.c	149 lines
   |}
   |
   |LIB_k11cpplib_C_API 
-  |bool MW_CALL_CONV mlfK11cpp()
+  |bool MW_CALL_CONV mlfK11cpp(int nargout, mxArray** new0, mxArray** this0, mxArray* 
+  |                            class0, mxArray* delete0, mxArray* template0, mxArray* bool0, 
+  |                            mxArray* true0, mxArray* namespace0, mxArray* operator0, 
+  |                            mxArray* private0)
   |{
-  |    return mclMlfFeval(_mcr_inst, "k11cpp", 0, 0, 0);
+  |    return mclMlfFeval(_mcr_inst, "k11cpp", nargout, 2, 8, new0, this0, class0, delete0, template0, bool0, true0, namespace0, operator0, private0);
   |}
   |
   |
@@ -96,7 +99,7 @@ k11cpp.k11cpplib.h	62 lines
   |
   |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
   |
-  |extern LIB_k11cpplib_C_API bool MW_CALL_CONV mlfK11cpp();
+  |extern LIB_k11cpplib_C_API bool MW_CALL_CONV mlfK11cpp(int nargout, mxArray** new0, mxArray** this0, mxArray* class0, mxArray* delete0, mxArray* template0, mxArray* bool0, mxArray* true0, mxArray* namespace0, mxArray* operator0, mxArray* private0);
   |
   |#ifdef __cplusplus
   |}

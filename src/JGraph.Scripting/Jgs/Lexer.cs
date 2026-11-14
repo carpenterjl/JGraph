@@ -39,6 +39,8 @@ internal static class Lexer
     /// <summary>
     /// MATLAB's keywords. <c>let</c>, <c>fn</c> and <c>in</c> are absent — they are not MATLAB words, so a
     /// script may use them as ordinary variable names — and the block words MATLAB adds are present.
+    /// <c>true</c> and <c>false</c> are absent too: in MATLAB they are functions a workspace may shadow
+    /// (<c>true = 1</c>, <c>function y = f(true)</c>), and the parser reads them as names (ADR 0363).
     /// </summary>
     private static readonly IReadOnlyDictionary<string, TokenType> MatlabKeywords = new Dictionary<string, TokenType>(StringComparer.Ordinal)
     {
@@ -50,8 +52,6 @@ internal static class Lexer
         ["while"] = TokenType.While,
         ["break"] = TokenType.Break,
         ["continue"] = TokenType.Continue,
-        ["true"] = TokenType.True,
-        ["false"] = TokenType.False,
         ["end"] = TokenType.End,
         ["function"] = TokenType.Function,
         ["switch"] = TokenType.Switch,

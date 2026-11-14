@@ -3621,7 +3621,9 @@ internal sealed partial class Interpreter
                     : JgsValue.StringScalar(str.Value);
 
             case BoolLiteral boolean:
-                return JgsValue.Bool(boolean.Value);
+                return boolean.Shadow == LiteralShadow.None
+                    ? JgsValue.Bool(boolean.Value)
+                    : ShadowableLiteral(boolean, env); // MATLAB's true and false are names (ADR 0363)
 
             case ArrayLiteral array:
                 return EvaluateArrayLiteral(array, env);
@@ -5981,7 +5983,7 @@ internal sealed partial class Interpreter
     /// </remarks>
     private static bool MintsItsValue(Expr expression) => expression is
         ArrayLiteral or MatrixLiteral or CellLiteral or RangeExpr or NumberLiteral or StringLiteral
-        or BoolLiteral or ComplexLiteral or AnonymousFnExpr or FunctionHandleExpr;
+        or BoolLiteral { Shadow: LiteralShadow.None } or ComplexLiteral or AnonymousFnExpr or FunctionHandleExpr;
 
     /// <summary>
     /// The value a write is aimed at, resolved through its entry rather than read out of it (M16).

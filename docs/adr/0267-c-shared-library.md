@@ -155,5 +155,7 @@ They found:
 ## Still open
 
 - Item 204: `mkdir` of a folder that exists warns in R2025b ("Directory already exists."), not in JGraph.
-- Item 205: `true` and `false` as names in the MATLAB dialect (JGraph's lexer makes them keywords), which K11's names probe met as an argument.
+- ~~Item 205: `true` and `false` as names in the MATLAB dialect (JGraph's lexer makes them keywords), which K11's names probe met as an argument.~~
+
+Closed since: item 205 by ADR 0363. `k11cpp`'s wrappers take their ten arguments; the key still differs from R2025b's by the C++ words renamed with a `0` (the divergence above), so the names compare stays 70 of 78.
 - Item 206: the C library's leftovers: MinGW-w64, `-M` and `-f`, `windows.h`'s macros as argument names, `mbuild` itself, sample drivers.

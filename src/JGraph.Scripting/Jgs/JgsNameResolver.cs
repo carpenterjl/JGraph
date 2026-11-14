@@ -669,7 +669,7 @@ internal sealed class JgsNameResolver
     /// <paramref name="name"/> — the one question a built-in call asks on its way, answered from the
     /// index without a disk probe.
     /// </summary>
-    private bool IsShadowed(string name)
+    internal bool IsShadowed(string name) // also asked for a bare MATLAB true or false (ADR 0363)
     {
         if (_interpreter.FunctionPath is not { } path)
         {

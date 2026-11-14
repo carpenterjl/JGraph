@@ -589,7 +589,7 @@ k11_names k11cpp.k11cpplib.c
   |                            private)
   |{
   |    return mclMlfFeval(_mcr_inst, "k11cpp", nargout, 2, 8,
-  JGraph: 149 lines
+  JGraph: 152 lines
   |LIB_k11cpplib_C_API
   |bool MW_CALL_CONV mlxK11cpp(int nlhs, mxArray *plhs[], int nrhs, mxArray *prhs[])
   |{
@@ -597,13 +597,13 @@ k11_names k11cpp.k11cpplib.c
   |}
   |
   |LIB_k11cpplib_C_API
-  |bool MW_CALL_CONV mlfK11cpp()
+  |bool MW_CALL_CONV mlfK11cpp(int nargout, mxArray** new0, mxArray** this0, mxArray*
+  |                            class0, mxArray* delete0, mxArray* template0, mxArray* bool0,
+  |                            mxArray* true0, mxArray* namespace0, mxArray* operator0,
+  |                            mxArray* private0)
   |{
-  |    return mclMlfFeval(_mcr_inst, "k11cpp", 0, 0, 0);
-  |}
-  |
-  |
-  recorded: JGraph cannot read a function whose argument is named true (open item 205), so its wrappers take no arguments
+  |    return mclMlfFeval(_mcr_inst, "k11cpp", nargout
+  recorded: the C++ words new, this, delete, template, namespace, operator and private are renamed with a 0 so a C++ client compiles; R2025b keeps them
 
 k11_names k11cpp.k11cpplib.h
   R2025b: 62 lines
@@ -627,16 +627,8 @@ k11_names k11cpp.k11cpplib.h
   |
   |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- START */
   |
-  |extern LIB_k11cpplib_C_API bool MW_CALL_CONV mlfK11cpp();
-  |
-  |#ifdef __cplusplus
-  |}
-  |#endif
-  |/* C INTERFACE -- MLF WRAPPERS FOR USER-DEFINED MATLAB FUNCTIONS -- END */
-  |
-  |#endif
-  |
-  recorded: JGraph cannot read a function whose argument is named true (open item 205), so its wrappers take no arguments
+  |extern LIB_k11cpplib_C_API bool MW_CALL_CONV mlfK11cpp(int nargout, mxArray** new0, mxArray** this0, mxArray* class0, mxArray* delete0, mxArray* template0, mxArray* bool0, mxArray* true0, mxArray* namespace0, mxArray* 
+  recorded: the C++ words new, this, delete, template, namespace, operator and private are renamed with a 0 so a C++ client compiles; R2025b keeps them
 
 k11_names k11cw3.k11cw3lib.c
   R2025b: 151 lines
