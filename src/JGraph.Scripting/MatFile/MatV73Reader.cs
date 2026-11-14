@@ -275,11 +275,21 @@ internal static class MatV73Reader
         byte[] data = node.ReadData();
         int count = (int)node.ElementCount;
         var elements = new JgsValue[count];
+        var reals = new double[count];
+        bool anyImaginary = false;
         for (int i = 0; i < count; i++)
         {
             double re = realType.ElementAt(data, (i * type.Size) + realAt);
             double im = imagType.ElementAt(data, (i * type.Size) + imagAt);
+            reals[i] = re;
+            anyImaginary |= im != 0;
             elements[i] = im == 0 ? JgsValue.Number(re) : JgsValue.ComplexNum(new Complex(re, im));
+        }
+
+        // Every imaginary part zero: it loads complex, flag and all (R2025b; open item 298, ADR 0364).
+        if (!anyImaginary)
+        {
+            return JgsBuiltins.ZeroImagFlaggedOf(reals, Shape(node), JgsNumericClass.Double);
         }
 
         return Lay(elements, Shape(node));

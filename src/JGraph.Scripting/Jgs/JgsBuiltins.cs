@@ -633,7 +633,7 @@ internal static partial class JgsBuiltins
                 JgsType.Object => args[0].IsObjectArray && args[0].ArrayLength == 0, // a 0-by-1 array of objects is (open item 65)
                 JgsType.String => args[0].AsString.Length == 0,
                 JgsType.Table => args[0].AsTable.RowCount == 0 || args[0].AsTable.ColumnCount == 0, // a 3-by-0 table is empty (open item 128)
-                JgsType.Sparse => args[0].AsSparse.Rows == 0 || args[0].AsSparse.Cols == 0,
+                JgsType.Sparse => args[0].SparseExtent.Rows == 0 || args[0].SparseExtent.Cols == 0,
                 _ => false,
             });
         });
@@ -1054,7 +1054,7 @@ internal static partial class JgsBuiltins
                 JgsType.Cell => JgsValue.Number(args[0].AsCell.Length),
                 JgsType.String => JgsValue.Number(args[0].AsString.Length),
                 JgsType.Image => JgsValue.Number(args[0].AsImage.SampleCount),
-                JgsType.Sparse => JgsValue.Number((double)args[0].AsSparse.Rows * args[0].AsSparse.Cols),
+                JgsType.Sparse => JgsValue.Number((double)args[0].SparseExtent.Rows * args[0].SparseExtent.Cols),
                 JgsType.Struct => JgsValue.Number(args[0].AsStructArray.Length), // a struct is 1-by-1 (M65)
                 JgsType.Object => JgsValue.Number(args[0].IsObjectArray ? args[0].ArrayLength : 1), // an object is 1-by-1, an array its elements (open item 65)
                 JgsType.Number or JgsType.Bool or JgsType.Complex => JgsValue.Number(1), // a scalar is one element
@@ -1123,7 +1123,9 @@ internal static partial class JgsBuiltins
             ArityRange("find", args, 1, dialect.IsMatlab ? 3 : 2, line, col);
             if (args[0].Type == JgsType.Sparse)
             {
-                return SparseFind(args[0].AsSparse, 1, dialect, line, col)[0];
+                return args[0].IsComplexSparse
+                    ? ComplexSparseFind(args[0].AsComplexSparse, 1, dialect)[0]
+                    : SparseFind(args[0].AsSparse, 1, dialect, line, col)[0];
             }
 
             (int origin, int? wanted, bool fromEnd) = FindLimit("find", args, dialect, line, col);
@@ -2914,6 +2916,7 @@ internal static partial class JgsBuiltins
         RegisterTableCompatibility(env, host);
         WrapShapeVerbsOverObjects(env); // after every verb is in, so an array of objects reaches each (open item 116)
         RegisterCategoricalBuiltins(env, text => host.print(text)); // over the verbs it teaches (open item 115)
+        WrapSparseVerbs(env); // real, imag, abs, conj, nonzeros and nzmax of a sparse matrix (open item 298)
         RefuseGroupsAtAxesVerbs(env); // last, round whatever each axes verb ended up as (open item 168)
         RefuseDeadTargetsAtAxesVerbs(env); // and a deleted object first (open item 313)
 
@@ -6796,7 +6799,7 @@ internal static partial class JgsBuiltins
         JgsType.Cell => value.IsNd ? value.Dims : [value.Rows, value.Cols], // a cell grown into a third dimension (V6)
         JgsType.Struct => value.IsNd ? value.Dims : [value.Rows, value.Cols], // a struct is 1-by-1 and a struct array is its shape (M65), N-D included (open item 127)
         JgsType.Object when value.IsObjectArray => value.IsNd ? value.Dims : [value.Rows, value.Cols], // its shape, N-D included (open items 65, 121)
-        JgsType.Sparse => [value.AsSparse.Rows, value.AsSparse.Cols],
+        JgsType.Sparse => [value.SparseExtent.Rows, value.SparseExtent.Cols],
         JgsType.Table => [value.AsTable.RowCount, value.AsTable.ColumnCount],
         _ => [1, 1],
     };

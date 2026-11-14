@@ -564,6 +564,13 @@ internal static partial class JgsBuiltins
             return converted;
         }
 
+        // int8(complex(1, 0)) is a real int8 in R2025b: a planar value with no imaginary part
+        // converts as its real plane (open item 298, ADR 0364).
+        if (numericClass.IsInteger())
+        {
+            source = RealPlaneOfZeroImag(source);
+        }
+
         JgsValue result = MapNumeric(name, source, x => JgsNumericClasses.Convert(x, numericClass), line, col,
                                      rounding: JgsNumericClasses.RoundingFor(numericClass));
         result.SetNumericClass(numericClass);
@@ -795,6 +802,13 @@ internal static partial class JgsBuiltins
         if (value.Type == JgsType.Complex)
         {
             return value.AsComplex.Imaginary != 0;
+        }
+
+        // A complex sparse matrix is complex, as its flag says even with no imaginary part
+        // (sparse(complex([1 0], 0)); open item 298, ADR 0364).
+        if (value.IsComplexSparse)
+        {
+            return true;
         }
 
         if (value.Type != JgsType.Array || value.IsPacked)

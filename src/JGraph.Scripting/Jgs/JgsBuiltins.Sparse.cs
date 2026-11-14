@@ -1,3 +1,4 @@
+using System.Numerics;
 using JGraph.Api;
 using JGraph.Numerics.Sparse;
 
@@ -27,6 +28,8 @@ internal static partial class JgsBuiltins
             {
                 case 1 when args[0].Type == JgsType.Sparse:
                     return args[0];
+                case 1 when IsComplexDense(args[0]):
+                    return ComplexSparseFromDense("sparse", args[0], line, col); // open item 298, ADR 0364
                 case 1:
                     return JgsValue.Sparse(CscFromDense("sparse", args[0], line, col));
                 case 2:
@@ -38,11 +41,15 @@ internal static partial class JgsBuiltins
                 {
                     double[] i = ToDoubles("sparse", args[0], line, col);
                     double[] j = ToDoubles("sparse", args[1], line, col);
-                    double[] v = ToDoubles("sparse", args[2], line, col);
+                    // Complex values make a complex matrix, real when nothing imaginary is left
+                    // (open item 298, ADR 0364).
+                    Complex[]? complexValues = IsComplexDense(args[2]) ? ColumnComplex("sparse", args[2], line, col) : null;
+                    double[] v = complexValues is null ? ToDoubles("sparse", args[2], line, col) : new double[complexValues.Length];
                     int length = Math.Max(i.Length, Math.Max(j.Length, v.Length));
                     if (i.Length == 1 && length > 1) i = Enumerable.Repeat(i[0], length).ToArray();
                     if (j.Length == 1 && length > 1) j = Enumerable.Repeat(j[0], length).ToArray();
                     if (v.Length == 1 && length > 1) v = Enumerable.Repeat(v[0], length).ToArray();
+                    if (complexValues is { Length: 1 } && length > 1) complexValues = Enumerable.Repeat(complexValues[0], length).ToArray();
                     if (i.Length != j.Length || i.Length != v.Length)
                     {
                         throw new JgsRuntimeException(line, col,
@@ -51,6 +58,11 @@ internal static partial class JgsBuiltins
 
                     int rows = args.Count >= 5 ? Count("sparse", args, 3, line, col) : (i.Length == 0 ? 0 : (int)i.Max());
                     int cols = args.Count >= 5 ? Count("sparse", args, 4, line, col) : (j.Length == 0 ? 0 : (int)j.Max());
+                    if (complexValues is not null)
+                    {
+                        return ComplexSparseFromTriplets(i, j, complexValues, rows, cols, line, col);
+                    }
+
                     var triplets = new (int, int, double)[i.Length];
                     for (int t = 0; t < i.Length; t++)
                     {
@@ -204,6 +216,11 @@ internal static partial class JgsBuiltins
     internal static JgsValue SparseSubscript(
         JgsValue value, IReadOnlyList<JgsValue> subscripts, JgsDialect dialect, int line, int col)
     {
+        if (value.IsComplexSparse)
+        {
+            return ComplexSparseSubscript(value, subscripts, dialect, line, col); // open item 298
+        }
+
         CscMatrix matrix = value.AsSparse;
         if (subscripts.Count == 2 && IsScalarSubscript(subscripts[0]) && IsScalarSubscript(subscripts[1]))
         {
@@ -363,6 +380,12 @@ internal static partial class JgsBuiltins
     /// </summary>
     internal static JgsValue SparseBinary(TokenType op, JgsValue left, JgsValue right, Node at)
     {
+        // A complex sparse operand, or a complex scalar beside a real one (open item 298, ADR 0364).
+        if (ComplexSparseBinary(op, left, right, at) is { } complexAnswer)
+        {
+            return complexAnswer;
+        }
+
         int line = at.Line;
         int col = at.Column;
         JgsValue other = left.Type == JgsType.Sparse ? right : left;
@@ -398,6 +421,7 @@ internal static partial class JgsBuiltins
                     TokenType.Plus => JgsValue.Sparse(a.Add(b)),
                     TokenType.Minus => JgsValue.Sparse(a.Add(b, -1)),
                     TokenType.Star => JgsValue.Sparse(a.Multiply(b)),
+                    TokenType.DotStar => SparseOfComplex(JgsComplexSparse.FromReal(a).ElementwiseMultiply(JgsComplexSparse.FromReal(b))), // open item 298
                     _ => throw new JgsRuntimeException(line, col,
                         $"'{OpName(op)}' is not supported between sparse matrices; use full() first."),
                 };

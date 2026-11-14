@@ -426,6 +426,13 @@ internal sealed class MatFileReader
             cols = real.Length;
         }
 
+        // A complex array saved with every imaginary part zero loads complex, flag and all
+        // (R2025b; open item 298, ADR 0364).
+        if (isComplex && arrayClass is (MxDouble or MxSingle) &&!imaginary!.AsSpan().ContainsAnyExcept(0.0))
+        {
+            return JgsBuiltins.ZeroImagFlaggedOf(real, [rows, cols], NumericClassOf(arrayClass));
+        }
+
         if (isComplex)
         {
             var elements = new JgsValue[real.Length];
@@ -479,14 +486,32 @@ internal sealed class MatFileReader
 
     private JgsValue ReadSparse(ref int at, int rows, int cols, bool isComplex)
     {
-        if (isComplex)
-        {
-            throw new InvalidDataException("Complex sparse matrices cannot be loaded.");
-        }
-
         double[] rowIndices = ReadNumericData(ref at);
         double[] columnStarts = ReadNumericData(ref at);
         double[] values = ReadNumericData(ref at);
+
+        // A complex sparse matrix loads complex, flag and all (open item 298, ADR 0364).
+        if (isComplex)
+        {
+            double[] imaginary = ReadNumericData(ref at);
+            var entries = new List<(int Row, int Col, Complex Value)>(values.Length);
+            for (int c = 0; c + 1 < columnStarts.Length; c++)
+            {
+                for (int k = (int)columnStarts[c]; k < (int)columnStarts[c + 1] && k < values.Length; k++)
+                {
+                    entries.Add(((int)rowIndices[k], c, new Complex(values[k], k < imaginary.Length ? imaginary[k] : 0)));
+                }
+            }
+
+            try
+            {
+                return JgsValue.ComplexSparse(JgsComplexSparse.FromTriplets(rows, cols, entries));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw new InvalidDataException("Malformed MAT-file: a sparse matrix indexes outside itself.");
+            }
+        }
 
         // Compressed sparse column on disk is the same layout CscMatrix keeps, but its constructor
         // takes triplets, which also re-checks the file's arithmetic instead of trusting it.

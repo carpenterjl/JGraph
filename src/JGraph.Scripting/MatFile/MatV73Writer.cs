@@ -233,7 +233,8 @@ internal static class MatV73Writer
                     [ClassAttribute("logical"), IntDecode(1)]);
             }
 
-            if (Array.Exists(elements, static e => e.Type == JgsType.Complex))
+            // complex(1, 0) is written complex too (open item 298, ADR 0364).
+            if (Array.Exists(elements, static e => e.Type == JgsType.Complex) || JgsBuiltins.IsZeroImagFlagged(value))
             {
                 var data = new byte[elements.Length * 16];
                 for (int i = 0; i < elements.Length; i++)

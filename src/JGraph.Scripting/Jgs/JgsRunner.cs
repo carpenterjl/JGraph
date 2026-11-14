@@ -822,7 +822,7 @@ internal static class JgsRunner
         JgsType.Cell => $"{value.Rows}x{value.Cols}",
         JgsType.Table => $"{value.AsTable.RowCount}x{value.AsTable.ColumnCount}",
         JgsType.Image => $"{value.AsImage.Height}x{value.AsImage.Width}x{value.AsImage.Channels}",
-        JgsType.Sparse => $"{value.AsSparse.Rows}x{value.AsSparse.Cols}",
+        JgsType.Sparse => $"{value.SparseExtent.Rows}x{value.SparseExtent.Cols}",
         _ => "1x1",
     };
 

@@ -145,14 +145,17 @@ variable).
   a workspace or a file is not R2025b's internal size (393 against 1988 bytes for the fixture's
   table).
 - **`save` refuses `-v7.3`, and a bare `datetime`, `string` or `duration`**; inside a table they save.
-- **A logical sparse array is a double one, and a complex one is refused** (ADRs 0167, 0213), so
-  `whos` of them differs.
+- **A logical sparse array is a double one** (ADRs 0167, 0213), so `whos` of it differs.
 - **`T.(n)` with a number is refused**; R2025b reads and writes the n-th variable.
 - **`get` and `set` with no output display a struct as this build does**, as do a struct and a cell
   holding an `OnOffSwitchState`.
 - **`methods` of an `OnOffSwitchState` lists its own** where R2025b lists all 153 it inherits.
 - **`exist` answers 5 for the table verbs** (ADR 0149), where R2025b answers 2 for its M-files and 0
   for `convertvars`, `innerjoin` and `stack`, which it keeps only as table methods.
+
+Closed since: **a complex sparse array was refused**, so `whos` of one in a workspace or a file
+differed. Open item 298 (ADR 0364) builds one, and `whos` reads it as R2025b does (fixture rows
+`wh_file_13` and `wh_mem_13` agree).
 
 ## Consequences
 

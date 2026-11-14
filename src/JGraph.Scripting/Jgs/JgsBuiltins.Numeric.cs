@@ -413,7 +413,12 @@ internal static partial class JgsBuiltins
         {
             ArityRange("complex", args, 1, 2, line, col);
             JgsValue imaginary = args.Count == 2 ? args[1] : JgsValue.Number(0);
-            JgsValue result = ZipComplex("complex", args[0], imaginary, line, col);
+            if (ComplexOfParts(args[0], imaginary, line, col) is { } sparseAnswer)
+            {
+                return sparseAnswer;
+            }
+
+            JgsValue result = ZipComplex("complex", ComplexPart(args[0], line, col), ComplexPart(imaginary, line, col), line, col);
             result.SetNumericClass(args[0].NumericClass == JgsNumericClass.Single || imaginary.NumericClass == JgsNumericClass.Single ? JgsNumericClass.Single : JgsNumericClass.Double);
             return result;
         });
@@ -451,7 +456,11 @@ internal static partial class JgsBuiltins
         bool imaginaryScalar = imaginary.Type is JgsType.Number or JgsType.Bool;
         if (realScalar && imaginaryScalar)
         {
-            return JgsValue.ComplexNum(new Complex(real.AsNumber, imaginary.AsNumber));
+            // complex(1, 0) stays complex (open item 298, ADR 0364): a zero imaginary part is the
+            // one-element planar array whose flag says so, as complex([1 2], 0) is the two-element one.
+            return imaginary.AsNumber == 0
+                ? ComplexStorage([new Complex(real.AsNumber, 0)], [1, 1], preserveComplex: true)
+                : JgsValue.ComplexNum(new Complex(real.AsNumber, imaginary.AsNumber));
         }
 
         double[] res = realScalar ? [real.AsNumber] : ToDoubles(name, real, line, col);
@@ -463,6 +472,25 @@ internal static partial class JgsBuiltins
         if (!realScalar && !imaginaryScalar && res.Length != ims.Length)
         {
             throw new JgsRuntimeException(line, col, $"{name} cannot pair {res.Length} real parts with {ims.Length} imaginary parts.");
+        }
+
+        bool anyImaginary = false;
+        for (int i = 0; i < ims.Length && !anyImaginary; i++)
+        {
+            anyImaginary = ims[i] != 0;
+        }
+
+        // Every imaginary part zero: the planar array with its complex flag set, so isreal is false
+        // (R2025b; open item 298, ADR 0364). Otherwise the elements say it themselves.
+        if (!anyImaginary)
+        {
+            var flagged = new Complex[length];
+            for (int i = 0; i < length; i++)
+            {
+                flagged[i] = new Complex(res[realScalar ? 0 : i], 0);
+            }
+
+            return ComplexStorage(flagged, SizeDims(shape), preserveComplex: true);
         }
 
         var result = new JgsValue[length];
@@ -676,6 +704,11 @@ internal static partial class JgsBuiltins
                 return args[0]; // dense stays dense
             }
 
+            if (args[0].IsComplexSparse)
+            {
+                return SparseDense(args[0]); // complex, flag and all (open item 298, ADR 0364)
+            }
+
             JGraph.Numerics.Sparse.CscMatrix sparse = args[0].AsSparse;
             return JgsMatrix.FromColumnMajorDims(sparse.ToColumnMajor(), [sparse.Rows, sparse.Cols]);
         });
@@ -685,7 +718,7 @@ internal static partial class JgsBuiltins
             Arity("nnz", args, 1, line, col);
             if (args[0].Type == JgsType.Sparse)
             {
-                return JgsValue.Number(args[0].AsSparse.NonZeroCount);
+                return JgsValue.Number(args[0].IsComplexSparse ? args[0].AsComplexSparse.NonZeroCount : args[0].AsSparse.NonZeroCount);
             }
 
             // A mask is the argument this is nearly always given, and Flatten would copy the whole

@@ -733,7 +733,7 @@ probe found gaps recorded in none of the three.
 | [0234](adr/0234-turned-labels-repmat-table-leftovers-handle-arrays-and-onoffswitchstate.md) | turned labels repmat table leftovers handle arrays and onoffswitchstate | `string` and `char` of a duration keep every digit |
 | [0234](adr/0234-turned-labels-repmat-table-leftovers-handle-arrays-and-onoffswitchstate.md) | turned labels repmat table leftovers handle arrays and onoffswitchstate | `whos` counts an object's bytes as this build stores it |
 | [0234](adr/0234-turned-labels-repmat-table-leftovers-handle-arrays-and-onoffswitchstate.md) | turned labels repmat table leftovers handle arrays and onoffswitchstate | `save` refuses `-v7.3`, and a bare `datetime`, `string` or `duration` |
-| [0234](adr/0234-turned-labels-repmat-table-leftovers-handle-arrays-and-onoffswitchstate.md) | turned labels repmat table leftovers handle arrays and onoffswitchstate | A logical sparse array is a double one, and a complex one is refused |
+| [0234](adr/0234-turned-labels-repmat-table-leftovers-handle-arrays-and-onoffswitchstate.md) | turned labels repmat table leftovers handle arrays and onoffswitchstate | A logical sparse array is a double one |
 | [0234](adr/0234-turned-labels-repmat-table-leftovers-handle-arrays-and-onoffswitchstate.md) | turned labels repmat table leftovers handle arrays and onoffswitchstate | `T.(n)` with a number is refused |
 | [0234](adr/0234-turned-labels-repmat-table-leftovers-handle-arrays-and-onoffswitchstate.md) | turned labels repmat table leftovers handle arrays and onoffswitchstate | `get` and `set` with no output display a struct as this build does |
 | [0234](adr/0234-turned-labels-repmat-table-leftovers-handle-arrays-and-onoffswitchstate.md) | turned labels repmat table leftovers handle arrays and onoffswitchstate | `methods` of an `OnOffSwitchState` lists its own |
@@ -1015,7 +1015,7 @@ probe found gaps recorded in none of the three.
 | [0270](adr/0270-production-server-core.md) | production server core | A discovery file's JSON fault is R2025b's `E0008` text when a value lacks its quotes, and .NET's words otherwise |
 | [0270](adr/0270-production-server-core.md) | production server core | `ObfuscateArchive` builds nothing |
 | [0270](adr/0270-production-server-core.md) | production server core | A too-many-outputs call of `compiler.build.productionServerArchive` ends its message without R2025b's line break. |
-| [0270](adr/0270-production-server-core.md) | production server core | A complex integer array and a complex sparse array are refused |
+| [0270](adr/0270-production-server-core.md) | production server core | A complex integer array is refused |
 | [0270](adr/0270-production-server-core.md) | production server core | An int64 or uint64 past 2^53 loses its last digits |
 | [0270](adr/0270-production-server-core.md) | production server core | A sparse logical array is a sparse double |
 | [0270](adr/0270-production-server-core.md) | production server core | A char array of three dimensions is refused |

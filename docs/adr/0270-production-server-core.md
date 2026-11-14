@@ -170,7 +170,7 @@ name from a file, not its statement (`run-k14.ps1` writes the build statement to
 - **A discovery file's JSON fault is R2025b's `E0008` text when a value lacks its quotes, and .NET's words otherwise**; a routes file's JSON fault and a regular expression's fault are .NET's words.
 - **`ObfuscateArchive` builds nothing**: JGraph builds no encrypted archives (decision K3b, ADR 0259).
 - **A too-many-outputs call of `compiler.build.productionServerArchive` ends its message without R2025b's line break.**
-- **A complex integer array and a complex sparse array are refused**, and a complex array that is empty or whose imaginary parts are all zero comes out real; JGraph holds none of them (ADR 0266).
+- **A complex integer array is refused**, and a decoded complex array that is empty comes out real (ADR 0266).
 - **An int64 or uint64 past 2^53 loses its last digits**, in the fixture and in the server's answers (ADR 0174, ADR 0355).
 - **A sparse logical array is a sparse double** (ADR 0266).
 - **A char array of three dimensions is refused** in JGraph's words; R2025b holds it.
@@ -197,6 +197,13 @@ Closed since: **`intmax('int64')` and `intmax('uint64')` encoded as 2^63 and 2^6
 Closed since: **A string in a struct field encoded as char.** ADR 0351 (open item 201) let `struct`
 and `setfield` keep a string value, so a struct field holding a string encodes as R2025b's `mwtype`
 `string` object and fixture rows `e_sa_string_small` and `e_sa_string_large` agree.
+
+Closed since: **A complex sparse array refused, and a complex array with zero imaginary parts or
+none encoded as real.** ADR 0364 (open item 298) keeps the complex flag of `complex(1, 0)` and
+`complex(zeros(0, 2), 0)` and holds a complex sparse array, which `mps.json.encode` writes and
+`decode` reads with each value's real and imaginary parts in turn, so fixture rows
+`e_c_zero_imag_small`, `e_c_zero_imag_large`, `e_c_empty_small`, `e_c_empty_large`,
+`e_sp_complex_small`, `e_sp_complex_large`, `e_sp_complex_round` and `y_sparse_complex` agree.
 
 ## Still open
 

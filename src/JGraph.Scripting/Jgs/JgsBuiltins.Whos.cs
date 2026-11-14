@@ -153,7 +153,8 @@ internal static partial class JgsBuiltins
     {
         string className = ClassOf(value, JgsDialect.Matlab);
         bool sparse = value.Type == JgsType.Sparse;
-        bool complex = value.Type == JgsType.Complex || (value.Type == JgsType.Array && (value.IsPackedComplex || HasComplexElements(value)));
+        bool complex = value.Type == JgsType.Complex || value.IsComplexSparse
+            || (value.Type == JgsType.Array && (value.IsPackedComplex || HasComplexElements(value)));
         // A containers.Map is its Count by 1 and, a handle, 8 bytes (open item 200, ADR 0351, measured).
         if (!inFile && IsMatlabMapShape(value, out int mapCount))
         {
@@ -177,6 +178,14 @@ internal static partial class JgsBuiltins
                 return 2 * ClassWidth(value.NumericClass);
             case JgsType.String:
                 return 2L * value.AsString.Length;
+            case JgsType.Sparse when value.IsComplexSparse:
+            {
+                // Two values and a row index per stored entry (open item 298, ADR 0364).
+                JgsComplexSparse complexMatrix = value.AsComplexSparse;
+                long stored = Math.Max(complexMatrix.NonZeroCount, 1);
+                return (stored * 24) + ((complexMatrix.Cols + 1L) * 8);
+            }
+
             case JgsType.Sparse:
             {
                 var matrix = value.AsSparse;

@@ -244,8 +244,8 @@ internal static class JgsStdlib
 
         left = JgsBuiltins.ImageNumbers(left);
         right = JgsBuiltins.ImageNumbers(right);
-        if (left.Type == JgsType.Sparse) left = JgsBuiltins.SparseAsDense(left.AsSparse);
-        if (right.Type == JgsType.Sparse) right = JgsBuiltins.SparseAsDense(right.AsSparse);
+        if (left.Type == JgsType.Sparse) left = JgsBuiltins.SparseDense(left);
+        if (right.Type == JgsType.Sparse) right = JgsBuiltins.SparseDense(right);
         // A char row is its codes, and '' is the 0-by-0 of them: isequal('', blanks(0)) is false, the
         // 1-by-0 char being another shape (open item 31, measured), where isequal('', []) is true.
         static JgsValue Codes(JgsValue text)

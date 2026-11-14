@@ -290,6 +290,9 @@ internal static class MatFileWriter
             case JgsType.Array:
                 WriteArray(w, name, value);
                 break;
+            case JgsType.Sparse when value.IsComplexSparse:
+                WriteComplexSparse(w, name, value.AsComplexSparse); // open item 298, ADR 0364
+                break;
             case JgsType.Sparse:
                 WriteSparse(w, name, value.AsSparse);
                 break;
@@ -357,6 +360,9 @@ internal static class MatFileWriter
             allBool &= elementType == JgsType.Bool;
             anyComplex |= elementType == JgsType.Complex;
         }
+
+        // complex(1, 0) is saved complex, and loads complex in R2025b (open item 298, ADR 0364).
+        anyComplex |= JgsBuiltins.IsZeroImagFlagged(value);
 
         if (allBool)
         {
@@ -489,6 +495,22 @@ internal static class MatFileWriter
         WriteInt32Data(w, matrix.RowIndices, matrix.NonZeroCount);
         WriteInt32Data(w, matrix.ColumnStarts, matrix.Cols + 1);
         WriteTypedData(w, matrix.Values.AsSpan(0, matrix.NonZeroCount).ToArray(), MiDouble);
+    }
+
+    /// <summary>A complex sparse array: the real sparse layout with the complex flag and an imaginary part.</summary>
+    private static void WriteComplexSparse(BinaryWriter w, string name, JgsComplexSparse matrix)
+    {
+        w.Write(MiUInt32);
+        w.Write(8);
+        w.Write(MxSparse | FlagComplex);
+        w.Write(Math.Max(matrix.NonZeroCount, 1));
+
+        WriteDimensions(w, [matrix.Rows, matrix.Cols]);
+        WriteName(w, name);
+        WriteInt32Data(w, matrix.RowIndices, matrix.NonZeroCount);
+        WriteInt32Data(w, matrix.ColumnStarts, matrix.Cols + 1);
+        WriteTypedData(w, Array.ConvertAll(matrix.Values, static v => v.Real), MiDouble);
+        WriteTypedData(w, Array.ConvertAll(matrix.Values, static v => v.Imaginary), MiDouble);
     }
 
     private static void WriteCell(Session session, BinaryWriter w, string name, JgsValue value)

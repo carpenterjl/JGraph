@@ -2441,7 +2441,8 @@ internal sealed partial class Interpreter
         // [3 2 1 0; 4 5 6 7] as [3, 4, 2, 5, 1, 6, 0, 7], which is not the thing that was typed.
         // That formatter caps itself at a thousand elements and answers '[RxC matrix]' past it, so
         // echoing a large one stays bounded the same way this does.
-        if (value.IsShaped)
+        // complex(1, 0) echoes complex, as its display does (open item 298, ADR 0364).
+        if (value.IsShaped || JgsBuiltins.IsZeroImagFlagged(value))
         {
             return value.Display();
         }
@@ -4171,7 +4172,8 @@ internal sealed partial class Interpreter
             }
         }
 
-        return JgsNumericClasses.Stamp(assembled, numericClass);
+        // A piece's zero-imaginary complex flag carries into the join (open item 298, ADR 0364).
+        return JgsBuiltins.JoinKeepsComplexFlag(JgsNumericClasses.Stamp(assembled, numericClass), rows);
     }
 
     /// <summary>
@@ -4966,6 +4968,12 @@ internal sealed partial class Interpreter
         {
             throw new JgsRuntimeException(unary.Line, unary.Column,
                 "Invalid data type. Argument must be numeric, char, or logical.");
+        }
+
+        // -S is sparse, real or complex (open item 298, ADR 0364).
+        if (operand.Type == JgsType.Sparse)
+        {
+            return JgsBuiltins.SparseNegated(operand);
         }
 
         // Minus: numeric negation, element-wise over arrays (complex included). Negation stays inside
@@ -8232,8 +8240,8 @@ internal sealed partial class Interpreter
         // otherwise, and until M66 nothing said so for sparse.
         if (JgsBuiltins.IsSparseSubscript(callee) && call.Arguments.Count > 0)
         {
-            var sparse = callee.AsSparse;
-            int[] extents = SubscriptExtents([sparse.Rows, sparse.Cols], call.Arguments.Count);
+            (int sparseRows, int sparseCols) = callee.SparseExtent; // real or complex (open item 298)
+            int[] extents = SubscriptExtents([sparseRows, sparseCols], call.Arguments.Count);
             var indices = new JgsValue[call.Arguments.Count];
             for (int i = 0; i < indices.Length; i++)
             {
@@ -11718,7 +11726,9 @@ internal sealed partial class Interpreter
         // storage a script chose on purpose was silently discarded by a single quote.
         if (value.Type == JgsType.Sparse)
         {
-            return JgsValue.Sparse(value.AsSparse.Transpose());
+            return value.IsComplexSparse
+                ? JgsBuiltins.ComplexSparseTransposed(value, transpose.Conjugate) // open item 298
+                : JgsValue.Sparse(value.AsSparse.Transpose());
         }
 
         // A quoted word is 1-by-n characters in MATLAB, so it stands up like any other row (M122).
@@ -12422,6 +12432,12 @@ internal sealed partial class Interpreter
                 }
 
                 return KeepShape(value, JgsValue.Packed(dest));
+            }
+
+            if (value.IsPackedComplex && complexOp is not null)
+            {
+                // A planar array maps both planes; the answer keeps no complex flag (ADR 0364).
+                return KeepShape(value, JgsBuiltins.MapPlanesDroppingFlag(value.AsPackedComplex, complexOp));
             }
 
             JgsValue[] source = value.AsArray;

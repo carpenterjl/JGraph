@@ -35,8 +35,12 @@ internal sealed class JgsPackedComplex : IDisposable
     /// <summary>The imaginary plane.</summary>
     public NumericBuffer Im { get; }
 
-    /// <summary>Explicit complex construction retains its type even when its imaginary plane is zero.</summary>
-    public bool PreserveComplex { get; }
+    /// <summary>
+    /// Explicit complex construction retains its type even when its imaginary plane is zero. An
+    /// indexed write clears it (ADR 0364): R2025b's <c>x = complex([1 2], 0); x(1) = 5</c> is real,
+    /// as an assignment leaves a value real once every imaginary part is zero.
+    /// </summary>
+    public bool PreserveComplex { get; internal set; }
 
     /// <summary>Element count.</summary>
     public int Length => Re.Length;

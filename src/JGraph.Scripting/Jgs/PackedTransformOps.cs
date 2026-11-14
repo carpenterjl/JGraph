@@ -62,7 +62,11 @@ internal static class PackedTransformOps
 
         bool complex = value.IsPackedComplex;
         NumericBuffer sourceRe = complex ? value.AsPackedComplex.Re : value.AsBuffer;
-        NumericBuffer? sourceIm = complex ? value.AsPackedComplex.Im : null;
+        // A zero imaginary plane (complex([1 2 3 4], 0), open item 298) transforms by the real road,
+        // which is the boxed road's answer to the bit.
+        NumericBuffer? sourceIm = complex && value.AsPackedComplex.Im.AsSpan().ContainsAnyExcept(0.0)
+            ? value.AsPackedComplex.Im
+            : null;
         // Both kernels' roads write every element of the answer, so zeroing it first was two passes
         // over memory nothing read (ADR 0323, as Z2e did for the arithmetic).
         NumericBuffer re = JgsPacking.AllocateForOverwrite(total);

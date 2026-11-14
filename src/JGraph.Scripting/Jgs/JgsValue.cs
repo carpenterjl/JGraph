@@ -299,8 +299,28 @@ internal sealed class JgsValue
     /// </summary>
     public static JgsValue Sparse(JGraph.Numerics.Sparse.CscMatrix matrix) => new(JgsType.Sparse, 0, matrix);
 
-    /// <summary>The sparse payload (valid only for <see cref="JgsType.Sparse"/>).</summary>
-    public JGraph.Numerics.Sparse.CscMatrix AsSparse => (JGraph.Numerics.Sparse.CscMatrix)_reference!;
+    /// <summary>
+    /// The sparse payload (valid only for <see cref="JgsType.Sparse"/>). A complex sparse matrix has
+    /// no real payload, and a verb that reads one here was not taught the complex kind: it is refused
+    /// in words that say so (open item 298, ADR 0364), never read as its real parts.
+    /// </summary>
+    public JGraph.Numerics.Sparse.CscMatrix AsSparse => _reference as JGraph.Numerics.Sparse.CscMatrix
+        ?? throw new JgsRuntimeException(0, 0,
+            "This operation does not take a complex sparse matrix here; use full() first.");
+
+    /// <summary>Wraps a complex sparse matrix (open item 298, ADR 0364).</summary>
+    internal static JgsValue ComplexSparse(JgsComplexSparse matrix) => new(JgsType.Sparse, 0, matrix);
+
+    /// <summary>Whether this is a complex sparse matrix.</summary>
+    internal bool IsComplexSparse => _reference is JgsComplexSparse;
+
+    /// <summary>The complex sparse payload (valid only when <see cref="IsComplexSparse"/>).</summary>
+    internal JgsComplexSparse AsComplexSparse => (JgsComplexSparse)_reference!;
+
+    /// <summary>A sparse matrix's rows and columns, real or complex.</summary>
+    internal (int Rows, int Cols) SparseExtent => _reference is JgsComplexSparse complex
+        ? (complex.Rows, complex.Cols)
+        : (AsSparse.Rows, AsSparse.Cols);
 
     /// <summary>
     /// Wraps a cell array (the array is used directly, not copied). Like an ordinary array it is
@@ -592,7 +612,9 @@ internal sealed class JgsValue
     internal JgsPackedComplex WritablePlanes()
     {
         Detach();
-        return (JgsPackedComplex)_reference!;
+        var planes = (JgsPackedComplex)_reference!;
+        planes.PreserveComplex = false; // an indexed write keeps no zero-imaginary flag (ADR 0364)
+        return planes;
     }
 
     /// <summary>M7: the struct array, ready for an element to be added, removed or replaced.</summary>
@@ -742,6 +764,7 @@ internal sealed class JgsValue
     {
         Detach();
         var planes = (JgsPackedComplex)_reference!;
+        planes.PreserveComplex = false; // an indexed write keeps no zero-imaginary flag (ADR 0364)
         planes.Re.AsSpan()[index] = value.Real;
         planes.Im.AsSpan()[index] = value.Imaginary;
         GC.KeepAlive(planes);
@@ -1511,6 +1534,7 @@ internal sealed class JgsValue
         // length of time it is rather than as the three numbers it keeps that length in.
         JgsType.Struct when _time is not null => FormatTime(this),
         JgsType.Struct => FormatStructValue(this),
+        JgsType.Sparse when _reference is JgsComplexSparse complexSparse => FormatComplexSparse(complexSparse),
         JgsType.Sparse => FormatSparse(AsSparse),
         JgsType.Object when _reference is JgsObjectArray objects => FormatObjectArray(objects, Dims),
         JgsType.Object => FormatObject(AsObject),
@@ -1816,6 +1840,36 @@ internal sealed class JgsValue
         return sb.ToString();
     }
 
+    /// <summary>
+    /// A complex sparse matrix as a real one is shown, its kind named and every stored value complex
+    /// (<c>1+2i</c>, <c>3+0i</c>), as R2025b names a <c>sparse complex double</c> matrix and writes
+    /// <c>3.0000 + 0.0000i</c> (open item 298, ADR 0364).
+    /// </summary>
+    private static string FormatComplexSparse(JgsComplexSparse matrix)
+    {
+        var sb = new StringBuilder();
+        sb.Append(matrix.Rows).Append('x').Append(matrix.Cols)
+          .Append(" sparse complex double, ").Append(matrix.NonZeroCount).Append(" nonzeros");
+        int shown = 0;
+        foreach ((int r, int c, Complex v) in matrix.Entries())
+        {
+            if (shown == DisplayMaxElements)
+            {
+                break;
+            }
+
+            sb.Append("\n   (").Append(r + 1).Append(',').Append(c + 1).Append(")  ").Append(FormatComplexAlways(v));
+            shown++;
+        }
+
+        if (shown < matrix.NonZeroCount)
+        {
+            sb.Append("\n   ... (").Append(matrix.NonZeroCount - shown).Append(" more)");
+        }
+
+        return sb.ToString();
+    }
+
     /// <summary>Formats a cell array as MATLAB writes one: <c>{1, 'two'}</c>, capped like an array.</summary>
     private static string FormatCell(JgsValue[] elements)
     {
@@ -1934,12 +1988,20 @@ internal sealed class JgsValue
     /// </summary>
     private static string FormatArray(JgsValue array)
     {
+        int count = array.ArrayLength;
+
+        // complex(1, 0) is one value, shown as a complex scalar is (open item 298, ADR 0364).
+        bool zeroImaginary = ShowsZeroImaginary(array);
+        if (count == 1 && !array.IsNd && zeroImaginary)
+        {
+            return ElementDisplay(array, 0, zeroImaginary);
+        }
+
         if (array.IsShaped)
         {
             return FormatMatrix(array);
         }
 
-        int count = array.ArrayLength;
         int shown = count <= DisplayMaxElements ? count : DisplayPrefixElements;
         var sb = new StringBuilder("[");
         for (int i = 0; i < shown; i++)
@@ -1949,7 +2011,7 @@ internal sealed class JgsValue
                 sb.Append(", ");
             }
 
-            sb.Append(array.ElementAt(i).Display());
+            sb.Append(ElementDisplay(array, i, zeroImaginary));
         }
 
         return shown < count
@@ -2062,6 +2124,7 @@ internal sealed class JgsValue
             return $"[{rows}x{cols} matrix]";
         }
 
+        bool zeroImaginary = ShowsZeroImaginary(matrix);
         var sb = new StringBuilder("[");
         for (int r = 0; r < rows; r++)
         {
@@ -2077,10 +2140,28 @@ internal sealed class JgsValue
                     sb.Append(", ");
                 }
 
-                sb.Append(matrix.ElementAt((c * rows) + r).Display());
+                sb.Append(ElementDisplay(matrix, (c * rows) + r, zeroImaginary));
             }
         }
 
         return sb.Append(']').ToString();
     }
+
+    /// <summary>
+    /// One element as the array shows it. An array that keeps its complex flag with no imaginary
+    /// part shows every element complex, <c>1+0i</c>, as R2025b shows <c>complex(1, 0)</c> as
+    /// <c>1.0000 + 0.0000i</c> (open item 298, ADR 0364); an element read out of it is real.
+    /// </summary>
+    private static string ElementDisplay(JgsValue array, int index, bool zeroImaginary) =>
+        zeroImaginary && array._reference is JgsPackedComplex planes
+            ? FormatComplexAlways(new Complex(planes.Re.AsSpan()[index], planes.Im.AsSpan()[index]))
+            : array.ElementAt(index).Display();
+
+    /// <summary>Whether an array keeps its complex flag with every imaginary part zero.</summary>
+    private static bool ShowsZeroImaginary(JgsValue array) =>
+        array._reference is JgsPackedComplex { PreserveComplex: true } planes && !planes.Im.AsSpan().ContainsAnyExcept(0.0);
+
+    /// <summary><see cref="FormatComplex"/>, with a zero imaginary part written out (<c>1+0i</c>).</summary>
+    private static string FormatComplexAlways(Complex value) =>
+        value.Imaginary == 0 ? FormatNumber(value.Real) + "+0i" : FormatComplex(value);
 }

@@ -140,12 +140,12 @@ R2025b's words. The old real `IsSymmetric(double[,])`, which `eig` and `linsolve
 
 - `complex(1, 0)` is a real scalar in JGraph (`isreal` true). R2025b keeps it complex, so
   `arrayfun(@(a) complex(a, 0), [1 2])` is real in JGraph and complex in R2025b. This is the scalar
-  representation, not the collection.
+  representation, not the collection. Closed by ADR 0364.
 - `isoutlier` of a `single` input answers `double` fences, for a vector as for a scalar. R2025b
   answers `single`. Closed by ADR 0355.
 - `sqrt(true)` answers 1 in JGraph. R2025b refuses it (`MATLAB:math:mustBeFloat`). Closed by ADR 0355.
 - `isoutlier(true)` answers in JGraph. R2025b refuses a logical (`MATLAB:isoutlier:invalidType`). Closed by ADR 0355.
 - `integral(..., 'Vectorized', false)` is a JGraph extra. R2025b's `integral` refuses the name. Kept as an extra and recorded as a divergence by ADR 0355.
 - A sparse complex matrix cannot be built in JGraph (`sparse needs numbers`), so the shape questions
-  over one were not tried.
+  over one were not tried. Built since ADR 0364; the shape questions still refuse one.
 - A char matrix is refused by the shape questions in JGraph's words, not R2025b's identifiers.

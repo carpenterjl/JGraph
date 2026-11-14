@@ -5,9 +5,9 @@
 % loading a table and whos('-file') with R2025b's byte rules, ismissing, anymissing, fillmissing,
 % rmmissing and standardizeMissing over a table, and summary's struct. Lines marked div=ADR0234 are
 % this build's display of a table with variables and of summary's statistics, whos's byte counts for
-% objects, saving a table to -v7.3, logical and complex sparse, and the probe printer's missing
-% strings (ADR 0156); ADR 0235 made a duration's text, a bare datetime saved and a number through a
-% dot exact.
+% objects, saving a table to -v7.3, logical sparse, and the probe printer's missing strings (ADR
+% 0156); ADR 0235 made a duration's text, a bare datetime saved and a number through a dot exact,
+% and ADR 0364 (open item 298) complex sparse.
 T = table([1; NaN; 3], categorical({'a'; ''; 'a'}), {'x'; ''; 'z'}, ["p"; missing; "r"], [true; false; true], ...
 'VariableNames', {'n', 'kind', 'name', 'str', 'flag'});
 u9b_chk('vt_class', @() class(vartype('numeric'))); u9b_chk('vt_isstruct', @() isstruct(vartype('numeric'))); u9b_chk('vt_isobject', @() isobject(vartype('numeric')));
@@ -172,8 +172,8 @@ struct(), struct('a', struct('b', 1)), {int8(1)}, sparse(logical([1 0; 0 1])), '
 zeros(2, 3, 4), {1, 2}, cell(2, 2), struct('a', {}), {struct('a', 1)}, true, single(1), int64([1 2 3]), 1:0, ...
 struct('a', {1, 2, 3}), {[1 2 3]}, sparse(3, 3), {''}};
 for k = 1:numel(vals)
-oi_chk(sprintf('wh_file_%02d', k), @() whfb(vals{k}), {'wh_file_12', 'wh_file_13'});
-oi_chk(sprintf('wh_mem_%02d', k), @() whm(vals{k}), {'wh_mem_12', 'wh_mem_13'});
+oi_chk(sprintf('wh_file_%02d', k), @() whfb(vals{k}), {'wh_file_12'});
+oi_chk(sprintf('wh_mem_%02d', k), @() whm(vals{k}), {'wh_mem_12'});
 end
 u9b_chk('wh_disp_order', @() whdisp());
 u9b_chk('wh_disp_wide', @() whdispwide());

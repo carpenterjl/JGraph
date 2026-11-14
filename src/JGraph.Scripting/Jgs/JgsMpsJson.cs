@@ -192,7 +192,7 @@ internal static class JgsMpsJson
                 case JgsType.Image:
                     throw Unsupported("image");
                 case JgsType.Sparse:
-                    return Sparse(value.AsSparse);
+                    return value.IsComplexSparse ? ComplexSparse(value.AsComplexSparse) : Sparse(value.AsSparse);
                 case JgsType.External:
                     if (value.AsExternalOrNull() is OnOffSwitchStateValue onOff)
                     {
@@ -495,6 +495,27 @@ internal static class JgsMpsJson
             }
 
             return Wrap("double", [matrix.Rows, matrix.Cols], new Arr([new Arr(rows), new Arr(cols), new Arr(values)]), sparse: true);
+        }
+
+        private Node ComplexSparse(JgsComplexSparse matrix)
+        {
+            // As Sparse, with each value's real and imaginary parts in turn and mwcomplex true
+            // (e_sp_complex_*, ADR 0364).
+            var rows = new List<Node>(matrix.NonZeroCount);
+            var cols = new List<Node>(matrix.NonZeroCount);
+            var values = new List<Node>(2 * matrix.NonZeroCount);
+            for (int c = 0; c < matrix.Cols; c++)
+            {
+                for (int k = matrix.ColumnStarts[c]; k < matrix.ColumnStarts[c + 1]; k++)
+                {
+                    rows.Add(new Num(matrix.RowIndices[k].ToString(CultureInfo.InvariantCulture)));
+                    cols.Add(new Num(c.ToString(CultureInfo.InvariantCulture)));
+                    values.Add(Number(matrix.Values[k].Real, JgsNumericClass.Double, inSmall: false));
+                    values.Add(Number(matrix.Values[k].Imaginary, JgsNumericClass.Double, inSmall: false));
+                }
+            }
+
+            return Wrap("double", [matrix.Rows, matrix.Cols], new Arr([new Arr(rows), new Arr(cols), new Arr(values)]), complex: true, sparse: true);
         }
 
         private Node Enumeration(string className, string[] names, int[] dims) =>
@@ -1561,11 +1582,6 @@ internal static class JgsMpsJson
                 throw Unsupported("Sparse Array can only have two dimensions.");
             }
 
-            if (complex)
-            {
-                throw new Refused("JGraph:mps:json:complexSparse", "JGraph holds no complex sparse array (compiler and SDK plan, ADR 0266); the value cannot be decoded.");
-            }
-
             // R2025b's decoder ends the process on a malformed sparse mwdata; JGraph refuses with the
             // text it printed as it went (ADR 0270).
             if (data is not Arr lists || lists.Items.Any(static l => l is not Arr) || lists.Items.Count is not (2 or 3) || (lists.Items.Count == 2 && type != "logical"))
@@ -1576,7 +1592,9 @@ internal static class JgsMpsJson
             Arr rows = (Arr)lists.Items[0];
             Arr cols = (Arr)lists.Items[1];
             Arr? values = lists.Items.Count == 3 ? (Arr)lists.Items[2] : null;
-            if (rows.Items.Count != cols.Items.Count || (values is not null && values.Items.Count != rows.Items.Count))
+            // A complex one lists each value as its real and imaginary parts in turn (y_sparse_complex, ADR 0364).
+            int perValue = complex && values is not null ? 2 : 1;
+            if (rows.Items.Count != cols.Items.Count || (values is not null && values.Items.Count != perValue * rows.Items.Count))
             {
                 throw Unsupported("Expected JSON array of JSON arrays to be of appropriate size in \"mwdata\" for a sparse array");
             }
@@ -1585,6 +1603,19 @@ internal static class JgsMpsJson
             {
                 int index = (int)Math.Truncate(Floating(node, "double")); // a fraction is dropped (risky4: 0.5 reads as 0)
                 return index < 0 || index >= limit ? throw Unsupported(check) : index;
+            }
+
+            if (perValue == 2)
+            {
+                var entries = new List<(int Row, int Col, System.Numerics.Complex Value)>(rows.Items.Count);
+                for (int k = 0; k < rows.Items.Count; k++)
+                {
+                    int r = Index(rows.Items[k], "Row Range Check", dims[0]);
+                    int c = Index(cols.Items[k], "Column Range Check", dims[1]);
+                    entries.Add((r, c, new System.Numerics.Complex(Floating(values!.Items[2 * k], "double"), Floating(values.Items[2 * k + 1], "double"))));
+                }
+
+                return JgsValue.ComplexSparse(JgsComplexSparse.FromTriplets(dims[0], dims[1], entries));
             }
 
             var triplets = new List<(int Row, int Col, double Value)>(rows.Items.Count);

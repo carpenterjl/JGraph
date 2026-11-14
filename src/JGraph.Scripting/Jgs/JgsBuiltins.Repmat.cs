@@ -283,7 +283,9 @@ internal static partial class JgsBuiltins
                 parts[i] = elements[picks[i]];
             }
 
-            return ComplexStorage(parts, dims, source.AsPackedComplex.PreserveComplex);
+            // R2025b's repmat(complex(1, 0), 1, 2) is real: the tiles keep no zero-imaginary flag
+            // (open item 298, ADR 0364).
+            return RealPlaneOfZeroImag(ComplexStorage(parts, dims));
         }
 
         if (source.Type == JgsType.Array && source.IsStringArray)

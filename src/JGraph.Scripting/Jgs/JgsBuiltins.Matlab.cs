@@ -210,7 +210,7 @@ internal static partial class JgsBuiltins
         // strcmp, strcmpi and strtrim are declared in JgsBuiltins.TextFamily.cs.
         Define("strsplit", (args, line, col) => SplitText(args, 1, line, col)[0]);
         Define("strjoin", (args, line, col) => JoinText(args, line, col));
-        Define("num2str", (args, line, col) => NumberText(args, line, col));
+        Define("num2str", (args, line, col) => NumberText(FirstWithoutZeroImag(args), line, col)); // num2str and mat2str write complex(1, 0) as 1 (R2025b; ADR 0364)
 
         // num2str writes a number for a person to read; mat2str writes one for the language to read
         // back, which is why it keeps the brackets and the semicolons (M52 wave E).
@@ -218,7 +218,7 @@ internal static partial class JgsBuiltins
         // back as the same value, and a string demoted to a char row on the way in cannot be told
         // from one that was written as a char row (M122).
         env.Builtins.Register("mat2str", JgsValue.Function(
-            new BuiltinFunction("mat2str", (args, line, col) => MatrixText(args, line, col))
+            new BuiltinFunction("mat2str", (args, line, col) => MatrixText(FirstWithoutZeroImag(args), line, col))
             { KeepsStringArguments = true }));
         Define("int2str", (args, line, col) => WholeNumberText(args, line, col));
 
@@ -1107,7 +1107,9 @@ internal static partial class JgsBuiltins
         // billion places should cost a thousand.
         if (args.Count > 0 && args[0].Type == JgsType.Sparse)
         {
-            return SparseFind(args[0].AsSparse, outputs, dialect, line, col);
+            return args[0].IsComplexSparse
+                ? ComplexSparseFind(args[0].AsComplexSparse, outputs, dialect)
+                : SparseFind(args[0].AsSparse, outputs, dialect, line, col);
         }
 
         (int origin, int? wanted, bool fromEnd) = FindLimit("find", args, dialect, line, col);

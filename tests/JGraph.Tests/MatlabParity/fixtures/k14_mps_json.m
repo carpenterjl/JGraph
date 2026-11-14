@@ -546,7 +546,7 @@ large = {
 for k = 1:size(large, 1)
     [key, js] = large{k, :};
     if any(strcmp(key, {'y_char_3d', 'y_sparse_complex'}))
-        chk(key, @() decq(js));  % JGraph holds neither (ADR 0270): one line, a divergence
+        chk(key, @() decq(js));  % one line: JGraph holds no char array of three dimensions (ADR 0270)
     else
         chk(key, @() dec(js));
     end
@@ -689,7 +689,7 @@ end
 end
 
 function v = complexSparse()
-% sparse([1+2i 0; 0 3]) is a complex sparse array, which JGraph has not (ADR 0266): its three rows diverge.
+% sparse([1+2i 0; 0 3]) is a complex sparse array, which JGraph holds since ADR 0364.
 try
     v = sparse([1+2i 0; 0 3]);
 catch e
@@ -708,18 +708,18 @@ end
 end
 
 function chk(name, fn)
-% u2_chk, with the rule div=ADR0270 on the lines ADR 0270 records as divergences: a complex integer, a complex
-% sparse array, a complex array that is empty or has zero imaginary parts, a char array of three dimensions
-% and a logical sparse array, which JGraph holds otherwise (ADR 0266); int64 and uint64 past 2^53, which
-% JGraph holds as doubles (ADR 0174, ADR 0355); inputParser, which JGraph has not; and nargout of
-% mps.json.decode, which R2025b refuses as a built-in method's. The intmax of int64 and uint64 agree
-% since ADR 0359.
-diverging = {'e_c_empty_small', 'e_c_empty_large', 'e_c_int16_small', 'e_c_int16_large', 'e_c_int16_round', ...
-    'e_c_zero_imag_small', 'e_c_zero_imag_large', 'e_ch_2x2x2_round', 'e_f_int64_big_small', 'e_f_int64_big_large', ...
-    'e_sp_complex_small', 'e_sp_complex_large', 'e_sp_complex_round', 'e_sp_logical_small', 'e_sp_logical_large', ...
+% u2_chk, with the rule div=ADR0270 on the lines ADR 0270 records as divergences: a complex integer, a char
+% array of three dimensions and a logical sparse array, which JGraph holds otherwise (ADR 0266); int64 and
+% uint64 past 2^53, which JGraph holds as doubles (ADR 0174, ADR 0355); inputParser, which JGraph has not;
+% and nargout of mps.json.decode, which R2025b refuses as a built-in method's. The intmax of int64 and
+% uint64 agree since ADR 0359; a complex array that is empty or has zero imaginary parts, and a complex
+% sparse array, since ADR 0364.
+diverging = {'e_c_int16_small', 'e_c_int16_large', 'e_c_int16_round', ...
+    'e_ch_2x2x2_round', 'e_f_int64_big_small', 'e_f_int64_big_large', ...
+    'e_sp_logical_small', 'e_sp_logical_large', ...
     'e_sp_logical_round', 'e_u_inputparser_small', 'e_u_inputparser_large', 'e_u_inputparser_round', ...
     'i_11', 'o_decode_nargout', 'y_char_3d', 'y_complex_empty', 'y_int64_big', ...
-    'y_sparse_complex', 'y_sparse_logical'};
+    'y_sparse_logical'};
 if ~any(strcmp(name, diverging))
     u2_chk(name, fn);
     return;
