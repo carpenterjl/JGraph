@@ -627,7 +627,7 @@ public static class JgsBuiltinCatalog
         Add("setdiff", "The values in a that are not in b: [c, ia] = setdiff(a, b, 'rows', 'stable').", P("a"), P("b"), Opt("option"));
         Add("setxor", "The values in exactly one of the sets: [c, ia, ib] = setxor(a, b, 'rows', 'stable').", P("a"), P("b"), Opt("option"));
         Add("dot", "The inner product of two equal-length vectors (conjugating the first when complex).", P("a"), P("b"));
-        Add("inv", "The inverse of a square matrix (errors when singular).", P("A"));
+        Add("inv", "The inverse of a square matrix; a singular one is Inf, with the MATLAB:singularMatrix warning.", P("A"));
         Add("det", "The determinant of a square matrix.", P("A"));
         Add("rank", "The number of linearly independent rows/columns, by singular values above tol.", P("A"), Opt("tol"));
         Add("trace", "The sum of a square matrix's diagonal (complex-aware).", P("A"));

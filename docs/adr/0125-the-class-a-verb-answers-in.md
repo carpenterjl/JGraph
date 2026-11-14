@@ -194,14 +194,18 @@ of 40. `dct` and `idct` are Signal Processing Toolbox names and are counted in n
 
 Two are added and one is closed.
 
-- **A verb MATLAB refuses for an integer answers a double here.** `sqrt(int16(4))` is an error in
-  MATLAB and is 2 here, and the same holds for the whole transcendental family, `var`, `std`, `norm`,
-  `dot` and `hypot`. Adding the refusal would close the difference by making scripts that run today
-  stop running, which is the wrong trade for a difference nobody has reported. The single half of
-  each of those names now agrees exactly.
+- **A verb MATLAB refuses for an integer answers a double here.** `var(int16([1 2]))` is an error in
+  MATLAB and a double here, and the same holds for `std` and `dot`. Adding the refusal would close
+  the difference by making scripts that run today stop running, which is the wrong trade for a
+  difference nobody has reported. The single half of each of those names now agrees exactly.
 - **A compiled loop drops the class of a *nested* range.** The outer loop refuses a classed range and
   lets the walk have it; a nested one is already running on registers with no way back out. It takes
   an explicit conversion inside a nested range inside an already-compiled scalar loop to reach.
+
+Closed since: **`sqrt(int16(4))` answered 2**, and so did the rest of the transcendental family,
+`norm` and `hypot`, for an integer argument. The difference was reported for a logical (open item
+299) and R2025b refuses all three non-floats with one rule, so ADR 0355 refuses them as R2025b does;
+what is left of the entry is `var`, `std` and `dot`, above.
 
 Closed: **a `single` or integer-class argument comes back as a double** (ADR 0101). Every name that
 divergence listed — `nextpow2`, `conv`, `roots`, `unwrap`, `cplxpair`, `rectint` — now answers in the

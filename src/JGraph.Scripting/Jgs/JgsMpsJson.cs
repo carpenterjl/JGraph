@@ -1228,7 +1228,11 @@ internal static class JgsMpsJson
                 }
             }
 
-            return (double)value;
+            // Through long or ulong, which round to nearest: BigInteger's own conversion truncates,
+            // so the saturated int64 maximum came back as 2^63 - 1024 rather than the 2^63 that
+            // intmax('int64') and int64(2^63) hold, and a round trip of intmax did not compare
+            // equal (open item 199, ADR 0355).
+            return unsigned ? (double)(ulong)value : (double)(long)value;
         }
 
         private JgsValue Numbers(string type, int[] dims, Node data, bool complex, long count)

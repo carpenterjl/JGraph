@@ -171,10 +171,9 @@ name from a file, not its statement (`run-k14.ps1` writes the build statement to
 - **`ObfuscateArchive` builds nothing**: JGraph builds no encrypted archives (decision K3b, ADR 0259).
 - **A too-many-outputs call of `compiler.build.productionServerArchive` ends its message without R2025b's line break.**
 - **A complex integer array and a complex sparse array are refused**, and a complex array that is empty or whose imaginary parts are all zero comes out real; JGraph holds none of them (ADR 0266).
-- **`intmin('int64')`, `intmax('int64')` and `intmax('uint64')` encode as doubles, and an int64 or uint64 past 2^53 loses its last digits**, in the fixture and in the server's answers (ADR 0174, open item 199).
+- **`intmax('int64')` and `intmax('uint64')` encode as 2^63 and 2^64, one past R2025b's, and an int64 or uint64 past 2^53 loses its last digits**, in the fixture and in the server's answers (ADR 0174, ADR 0355).
 - **A sparse logical array is a sparse double** (ADR 0266).
 - **A char array of three dimensions is refused** in JGraph's words; R2025b holds it.
-- **A string in a struct field encodes as char** (open item 201).
 - **`inputParser` is not a class JGraph has**; the fixture's stand-in, an `MException`, is refused by its own name.
 - **`nargout('mps.json.decode')` answers 1**; R2025b refuses a built-in method's count.
 - **The four inputs R2025b's decode ends its process on are refused** in JGraph's words.
@@ -183,6 +182,15 @@ name from a file, not its statement (`run-k14.ps1` writes the build statement to
 - **The deployed function `k14quiet` answers `on`**: the in-MATLAB server inherits the probe's `beep('off')`; JGraph's worker is a fresh runtime.
 - **A number printed with `%.17g` carries JGraph's own digits** (the client's `in.big.number` and `in.tiny.number`).
 - **An options or results object displays in JGraph's layout** (open item 194), and **a warning prints without `> In` lines** (open item 170).
+
+Closed since: **`intmin('int64')` encoded as a double.** ADR 0355 (open item 199) made `intmin` and
+`intmax` answer in their class, so `intmin('int64')` encodes as R2025b's `-9223372036854775808` and
+fixture row `i_08` agrees, and `intmax('uint64')` survives a round trip as a `uint64` that compares
+equal (`e_f_uint64_max_round`); what is left of the entry is the bullet above.
+
+Closed since: **A string in a struct field encoded as char.** ADR 0351 (open item 201) let `struct`
+and `setfield` keep a string value, so a struct field holding a string encodes as R2025b's `mwtype`
+`string` object and fixture rows `e_sa_string_small` and `e_sa_string_large` agree.
 
 ## Still open
 

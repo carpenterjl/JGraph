@@ -152,7 +152,7 @@ public class MatlabLinearAlgebraBuiltinTests : IDisposable
 
     [Fact]
     public Task SingularMatrices_ReportClearErrors() => RunExpectingError(
-        "inv([1 2; 2 4]);", "singular");
+        "warning('error', 'MATLAB:singularMatrix'); inv([1 2; 2 4]);", "singular"); // a warning in R2025b (ADR 0355)
 
     [Fact]
     public Task NonIntegerMatrixPower_IsAnError() => RunExpectingError(

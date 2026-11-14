@@ -5425,6 +5425,18 @@ internal sealed partial class Interpreter
 
         JgsNumericClass numericClass =
             JgsNumericClasses.Combine(left, right, OperatorSymbol(op), at.Line, at.Column);
+
+        // R2025b raises an integer only to a power that is a whole number and not negative: x.^0.5,
+        // x.^-1 and x.^NaN are refused for an integer class on either side (open item 272, ADR 0355).
+        // An empty base raises nothing, and R2025b answers it.
+        if (Dialect.IsMatlab && op is (TokenType.Caret or TokenType.DotCaret) && numericClass.IsInteger()
+            && !(left.Type == JgsType.Array && left.ArrayLength == 0)
+            && !JgsBuiltins.IntegerPowerAllowed(right))
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:integerPower",
+                "Integers can only be raised to positive integral powers.");
+        }
+
         JgsValue answer = ApplyBinaryCore(op, left, right, at, numericClass, out bool alreadyInClass);
         if (!alreadyInClass)
         {
@@ -5846,7 +5858,7 @@ internal sealed partial class Interpreter
             case TokenType.Caret:
                 // The one operator with a domain (M81): a negative base and a fractional exponent
                 // leave the reals, and Math.Pow answers NaN where MATLAB answers a complex number.
-                return NumericBinary(left, right, PackedMath.Power, "^", at.Line, at.Column, Complex.Pow,
+                return NumericBinary(left, right, PackedMath.Power, "^", at.Line, at.Column, JgsBuiltins.ComplexPower,
                     JgsBuiltins.PowerStaysReal);
             case TokenType.Less:
                 return Compare(left, right, op, at, (a, b) => a < b);
@@ -9352,7 +9364,8 @@ internal sealed partial class Interpreter
                 (rowsB, colsB) = (colsB, rowsB);
             }
 
-            return MatrixSolve(coefficients, rowsA, colsA, rhs, rowsB, colsB, transposeResult: false, at);
+            return MatrixSolve(coefficients, rowsA, colsA, rhs, rowsB, colsB, transposeResult: false, at,
+                single: left.NumericClass == JgsNumericClass.Single || right.NumericClass == JgsNumericClass.Single);
         }
 
         if (op == TokenType.Slash)
@@ -9368,7 +9381,8 @@ internal sealed partial class Interpreter
 
             double[] coefficients = TransposedColumnMajorOf(right, out int rowsA, out int colsA, at);
             double[] rhs = TransposedColumnMajorOf(left, out int rowsB, out int colsB, at);
-            return MatrixSolve(coefficients, rowsA, colsA, rhs, rowsB, colsB, transposeResult: true, at);
+            return MatrixSolve(coefficients, rowsA, colsA, rhs, rowsB, colsB, transposeResult: true, at,
+                single: left.NumericClass == JgsNumericClass.Single || right.NumericClass == JgsNumericClass.Single);
         }
 
         // A'*A and A*A' are recognized syntactically — the way MATLAB recognizes its syrk
@@ -9560,6 +9574,13 @@ internal sealed partial class Interpreter
         }
 
         string message = $"Rank deficient, rank = {rank}, tol = {tolerance,13:0.000000e+00}.";
+        if (Host is { } host)
+        {
+            // Under R2025b's identifier, so warning('off', 'MATLAB:rankDeficientMatrix') reaches it (ADR 0355).
+            JgsBuiltins.Warn(host, "MATLAB:rankDeficientMatrix", message);
+            return;
+        }
+
         if (_globals.TryGet("warning", out JgsValue warning) && warning.Type == JgsType.Function)
         {
             warning.AsCallable.Call([JgsValue.Str(message)], 0, 0);
@@ -9570,11 +9591,33 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
+    /// R2025b's warning for a square solve that was singular or nearly so, under its identifier so
+    /// <c>warning('off'|'error', id)</c> reaches it (open item 307, ADR 0355).
+    /// </summary>
+    private void WarnIfSingular(JGraph.Numerics.LinearAlgebra.SquareCondition condition, double rcond)
+    {
+        if (condition == JGraph.Numerics.LinearAlgebra.SquareCondition.Fine)
+        {
+            return;
+        }
+
+        if (Host is { } host)
+        {
+            JgsBuiltins.WarnSquareCondition(host, condition, rcond);
+            return;
+        }
+
+        _echo?.Invoke(condition == JGraph.Numerics.LinearAlgebra.SquareCondition.Singular
+            ? "Warning: Matrix is singular to working precision."
+            : "Warning: Matrix is close to singular or badly scaled. Results may be inaccurate.");
+    }
+
+    /// <summary>
     /// Runs the dense solver over column-major operands, translating its shape and rank complaints
     /// into script errors. Both arrays are the solver's to overwrite — they were built for it here.
     /// </summary>
     private JgsValue MatrixSolve(double[] a, int rowsA, int colsA, double[] b, int rowsB, int colsB,
-        bool transposeResult, Node at)
+        bool transposeResult, Node at, bool single = false)
     {
         if (rowsB != rowsA)
         {
@@ -9584,9 +9627,20 @@ internal sealed partial class Interpreter
 
         try
         {
-            double[] x = JGraph.Numerics.LinearAlgebra.Linear.Solve(a, rowsA, colsA, b, colsB,
-                out int rank, out double tolerance);
-            WarnIfRankDeficient(rank, System.Math.Min(rowsA, colsA), tolerance);
+            double[] x;
+            if (rowsA == colsA)
+            {
+                // A square system answers where it is singular, under R2025b's warning (open item 307).
+                WarnIfSingular(JGraph.Numerics.LinearAlgebra.SquareSystems.Solve(a, rowsA, b, colsB, out double rcond, single), rcond);
+                x = b;
+            }
+            else
+            {
+                x = JGraph.Numerics.LinearAlgebra.Linear.Solve(a, rowsA, colsA, b, colsB,
+                    out int rank, out double tolerance);
+                WarnIfRankDeficient(rank, System.Math.Min(rowsA, colsA), tolerance);
+            }
+
             if (!transposeResult)
             {
                 return JgsBuiltins.FromColumnMajorRect(x, colsA, colsB);
@@ -9696,6 +9750,13 @@ internal sealed partial class Interpreter
         try
         {
             return MatrixResult(JGraph.Numerics.LinearAlgebra.Linear.Power(a, (int)System.Math.Round(exponent)));
+        }
+        catch (InvalidOperationException) when (exponent < 0)
+        {
+            // A negative power of a singular matrix is Inf throughout in R2025b, with no warning
+            // (measured: [1 2; 2 4] ^ -1 and ^ -2; open item 307, ADR 0355).
+            int order = a.GetLength(0);
+            return JgsMatrix.Build(order, order, static (_, _) => double.PositiveInfinity);
         }
         catch (InvalidOperationException ex)
         {

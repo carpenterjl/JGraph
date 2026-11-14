@@ -13,28 +13,36 @@ namespace JGraph.Scripting.Jgs;
 internal static partial class JgsBuiltins
 {
     /// <summary>Registers the linear algebra builtins into <paramref name="env"/>.</summary>
-    private static void RegisterLinearAlgebraBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
+    private static void RegisterLinearAlgebraBuiltins(JgsEnvironment env, JgsRunningDialect dialect, JGraphScriptGlobals host)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
 
+        // A singular matrix inverts to Inf under MATLAB:singularMatrix, and a nearly singular one
+        // under MATLAB:nearlySingularMatrix with RCOND in the text: warnings, so warning('off',
+        // id) silences them and warning('error', id) refuses (open item 307, ADR 0355).
         Define("inv", (args, line, col) =>
         {
             Arity("inv", args, 1, line, col);
             if (HasComplexElements(args[0]))
             {
+                Complex[,] square = ComplexSquareOf("inv", args[0], line, col);
+                if (!ComplexLinear.TryInvert(square, out _))
+                {
+                    WarnSquareCondition(host, SquareCondition.Singular, 0);
+                    int order = square.GetLength(0);
+                    return FromColumnMajorRect(Enumerable.Repeat(double.PositiveInfinity, order * order).ToArray(), order, order);
+                }
+
                 return ComplexInverse("inv", args[0], line, col);
             }
 
+            bool single = args[0].NumericClass == JgsNumericClass.Single;
             double[] a = SquareColumnMajorOf("inv", args[0], out int n, line, col);
-            LuDecomposition lu = LuDecomposition.FactorAdopting(a, n);
-            if (lu.IsSingular)
-            {
-                throw new JgsRuntimeException(line, col, "inv: the matrix is singular to working precision.");
-            }
-
-            return FromColumnMajorRect(lu.InverseColumnMajor(), n, n);
+            SquareCondition condition = SquareSystems.Invert(a, n, out double[] inverse, out double rcond, single);
+            WarnSquareCondition(host, condition, rcond);
+            return FromColumnMajorRect(inverse, n, n);
         });
 
         Define("det", (args, line, col) =>
@@ -106,6 +114,29 @@ internal static partial class JgsBuiltins
             QrAnswer);
 
         Define("svd", (a, l, c) => SvdFormatted(a, 1, l, c)[0], SvdFormatted);
+    }
+
+    /// <summary>
+    /// R2025b's warning for a square matrix <c>inv</c> or <c>\</c> found singular or nearly so,
+    /// under its identifier (open item 307, ADR 0355). The operators reach it through
+    /// <c>Interpreter.WarnIfSingular</c>.
+    /// </summary>
+    internal static void WarnSquareCondition(JGraphScriptGlobals host, SquareCondition condition, double rcond)
+    {
+        switch (condition)
+        {
+            case SquareCondition.Singular:
+                Warn(host, "MATLAB:singularMatrix", "Matrix is singular to working precision.");
+                break;
+            case SquareCondition.NearlySingular:
+                Warn(host, "MATLAB:nearlySingularMatrix",
+                    $"Matrix is close to singular or badly scaled. Results may be inaccurate. RCOND = {rcond,13:0.000000e+00}.");
+                break;
+            case SquareCondition.IllConditioned:
+                Warn(host, "MATLAB:illConditionedMatrix",
+                    "Matrix is singular, close to singular or badly scaled. Results may be inaccurate. RCOND = NaN.");
+                break;
+        }
     }
 
     /// <summary>s = svd(A) — the singular values, as MATLAB's column.</summary>

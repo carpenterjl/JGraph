@@ -1223,10 +1223,22 @@ public static class PackedMath
     /// <summary>
     /// A real power as the <c>^</c> and <c>.^</c> operators answer it everywhere: the product for
     /// an exponent of exactly 2, which is what R2025b answers to the bit and what a correctly
-    /// rounded square is, and <see cref="Math.Pow"/> for every other exponent (ADR 0330).
+    /// rounded square is (ADR 0330); the square root for an exponent of exactly 0.5 and the
+    /// reciprocal for exactly -1, which is what R2025b answers to the bit (open item 272, ADR 0355);
+    /// and <see cref="Math.Pow"/> for every other exponent.
     /// </summary>
+    /// <remarks>
+    /// The root is taken of <c>x + 0.0</c>, which is <c>x</c> for every input but negative zero,
+    /// where it is positive zero: <c>(-0).^0.5</c> is +0 in R2025b (and in <c>pow</c>), where the
+    /// square root alone would keep the sign. A negative base never reaches here with 0.5 — it
+    /// leaves the reals first (<c>PowerStaysReal</c>).
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double Power(double x, double y) => y == 2.0 ? x * x : Math.Pow(x, y);
+    public static double Power(double x, double y) =>
+        y == 2.0 ? x * x
+        : y == 0.5 ? Math.Sqrt(x + 0.0)
+        : y == -1.0 ? 1.0 / x
+        : Math.Pow(x, y);
 
     private static void UnaryChunk(UnaryOp op, Span<double> x, Span<double> d)
     {
@@ -1318,6 +1330,22 @@ public static class PackedMath
                 if (scalar == 2.0)
                 {
                     TensorPrimitives.Multiply<double>(x, x, d);
+                    break;
+                }
+
+                // The root and the reciprocal, as Power answers them (open item 272, ADR 0355):
+                // adding +0 first turns a negative zero positive and leaves every other element
+                // as it was, so the root of -0 is +0 as R2025b's is. Both may run with d over x.
+                if (scalar == 0.5)
+                {
+                    TensorPrimitives.Add<double>(x, 0.0, d);
+                    TensorPrimitives.Sqrt<double>(d, d);
+                    break;
+                }
+
+                if (scalar == -1.0)
+                {
+                    TensorPrimitives.Divide<double>(1.0, x, d);
                     break;
                 }
 

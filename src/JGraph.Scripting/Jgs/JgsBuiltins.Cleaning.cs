@@ -91,6 +91,9 @@ internal static partial class JgsBuiltins
 
         public double[]? Locations;
 
+        /// <summary>The data is a single, so the fences are too (open item 299, ADR 0355).</summary>
+        public bool Single;
+
         public bool Moving => Window is not null;
     }
 
@@ -254,6 +257,20 @@ internal static partial class JgsBuiltins
             {
                 // Nothing present (all NaN) has no median and no spread: NaN fences, nothing out (open item 259).
                 double center = present.Length == 0 ? double.NaN : MedianOf(present);
+                if (plan.Single)
+                {
+                    // R2025b computes a single's fences in single arithmetic, one rounding per
+                    // operation: each operation done in double and rounded to float is that same
+                    // correctly rounded float, so the fences agree to the bit (ADR 0355).
+                    float c = (float)center;
+                    float mad = present.Length == 0
+                        ? float.NaN
+                        : (float)MedianOf(Array.ConvertAll(present, v => (double)(float)Math.Abs(v - c)));
+                    float s = (float)ScaledMadFactor * mad;
+                    float reach = (float)plan.Threshold * s;
+                    return new([c - reach], [c + reach], [c]);
+                }
+
                 double spread = present.Length == 0
                     ? double.NaN
                     : ScaledMadFactor * MedianOf(Array.ConvertAll(present, v => Math.Abs(v - center)));
@@ -505,9 +522,10 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "isoutlier needs some data.");
         }
 
+        bool single = args[0].NumericClass == JgsNumericClass.Single;
         args = WithScalarAsSlice(args);
 
-        if (args.Count == 1 && wanted <= 1
+        if (args.Count == 1 && wanted <= 1 && !single
             && JgsVectorRoads.TryOutliers(args[0], new OutlierPlan().Threshold, ScaledMadFactor, out JgsValue outliers))
         {
             return [outliers];
@@ -515,6 +533,7 @@ internal static partial class JgsBuiltins
 
         OutlierPlan plan = OutlierPlanOf(
             "isoutlier", args, 1, "MATLAB:unrecognizedStringChoice", line, col);
+        plan.Single = single;
         (double[][] slices, int[] dims, int dim) = Cut("isoutlier", args[0], plan.Dim, line, col);
 
         var masks = new double[slices.Length][];
@@ -547,10 +566,18 @@ internal static partial class JgsBuiltins
         return Outputs(
             wanted,
             PrepMask(Array.ConvertAll(joined, static v => v != 0), shape),
-            Fence(lows),
-            Fence(highs),
-            Fence(centers));
+            InDataClass(Fence(lows), single),
+            InDataClass(Fence(highs), single),
+            InDataClass(Fence(centers), single));
     }
+
+    /// <summary>
+    /// A quantity of the outlier verbs in the data's class: a single's fences and cleaned data are
+    /// single in R2025b (open item 299, ADR 0355). Only the median fences are computed in single
+    /// arithmetic; the other methods' fences are their double values rounded to single.
+    /// </summary>
+    private static JgsValue InDataClass(JgsValue value, bool single) =>
+        single ? JgsNumericClasses.Stamp(value, JgsNumericClass.Single) : value;
 
     /// <summary>
     /// <c>[B, TF] = rmoutliers(A, …)</c>: the data with its outliers removed — elements of a vector,
@@ -564,10 +591,12 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "rmoutliers needs some data.");
         }
 
+        bool single = args[0].NumericClass == JgsNumericClass.Single;
         args = WithScalarAsSlice(args);
 
         OutlierPlan plan = OutlierPlanOf(
             "rmoutliers", args, 1, "MATLAB:rmoutliers:SecondInputString", line, col);
+        plan.Single = single;
         int[] dims = SizeDims(args[0]);
         bool vector = dims.Count(static d => d > 1) <= 1;
 
@@ -644,7 +673,7 @@ internal static partial class JgsBuiltins
         int[] flagDims = vector ? dims : (dim == 2 ? [1, positions] : [positions, 1]);
         return Outputs(
             wanted,
-            JgsMatrix.FromColumnMajorDims(joined, outDims),
+            InDataClass(JgsMatrix.FromColumnMajorDims(joined, outDims), single),
             PrepMask(remove, flagDims));
     }
 
@@ -660,6 +689,7 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "filloutliers(A, fill) needs the data and a fill.");
         }
 
+        bool single = args[0].NumericClass == JgsNumericClass.Single;
         args = WithScalarAsSlice(args);
 
         string fill;
@@ -684,6 +714,7 @@ internal static partial class JgsBuiltins
 
         OutlierPlan plan = OutlierPlanOf(
             "filloutliers", args, 2, "MATLAB:filloutliers:unrecognizedStringChoice", line, col);
+        plan.Single = single;
         if (plan.Locations is not null && fill is "center" or "clip")
         {
             throw new JgsRuntimeException(line, col, "MATLAB:filloutliers:UnsupportedFill",
@@ -744,11 +775,11 @@ internal static partial class JgsBuiltins
 
         return Outputs(
             wanted,
-            JgsMatrix.FromColumnMajorDims(joined, shape),
+            InDataClass(JgsMatrix.FromColumnMajorDims(joined, shape), single),
             PrepMask(Array.ConvertAll(flat, static v => v != 0), shape),
-            Fence(lows),
-            Fence(highs),
-            Fence(centers));
+            InDataClass(Fence(lows), single),
+            InDataClass(Fence(highs), single),
+            InDataClass(Fence(centers), single));
     }
 
     /// <summary>One slice with its flagged readings replaced by the chosen fill.</summary>

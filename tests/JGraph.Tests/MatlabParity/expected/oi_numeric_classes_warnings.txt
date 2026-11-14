@@ -1,0 +1,383 @@
+CHK|max_int8|int8[1 1] 127|exact
+CHK|min_int8|int8[1 1] -128|exact
+CHK|max_plus_int8|int8[1 1] 127|exact
+CHK|min_minus_int8|int8[1 1] -128|exact
+CHK|max_half_int8|int8[1 1] 64|exact
+CHK|max_int16|int16[1 1] 32767|exact
+CHK|min_int16|int16[1 1] -32768|exact
+CHK|max_plus_int16|int16[1 1] 32767|exact
+CHK|min_minus_int16|int16[1 1] -32768|exact
+CHK|max_half_int16|int16[1 1] 16384|exact
+CHK|max_int32|int32[1 1] 2147483647|exact
+CHK|min_int32|int32[1 1] -2147483648|exact
+CHK|max_plus_int32|int32[1 1] 2147483647|exact
+CHK|min_minus_int32|int32[1 1] -2147483648|exact
+CHK|max_half_int32|int32[1 1] 1073741824|exact
+CHK|max_uint8|uint8[1 1] 255|exact
+CHK|min_uint8|uint8[1 1] 0|exact
+CHK|max_plus_uint8|uint8[1 1] 255|exact
+CHK|min_minus_uint8|uint8[1 1] 0|exact
+CHK|max_half_uint8|uint8[1 1] 128|exact
+CHK|max_uint16|uint16[1 1] 65535|exact
+CHK|min_uint16|uint16[1 1] 0|exact
+CHK|max_plus_uint16|uint16[1 1] 65535|exact
+CHK|min_minus_uint16|uint16[1 1] 0|exact
+CHK|max_half_uint16|uint16[1 1] 32768|exact
+CHK|max_uint32|uint32[1 1] 4294967295|exact
+CHK|min_uint32|uint32[1 1] 0|exact
+CHK|max_plus_uint32|uint32[1 1] 4294967295|exact
+CHK|min_minus_uint32|uint32[1 1] 0|exact
+CHK|max_half_uint32|uint32[1 1] 2147483648|exact
+CHK|max_none|int32[1 1] 2147483647|exact
+CHK|min_none|int32[1 1] -2147483648|exact
+CHK|max_string|int16[1 1] 32767|exact
+CHK|max_like|int8[1 1] 127|exact
+CHK|min_like|uint16[1 1] 0|exact
+CHK|max_like_upper|int16[1 1] 32767|exact
+CHK|max_like_double|MATLAB:intmax:invalidPrototype|exact
+CHK|max_like_double_msg|Argument following "like" must be a variable with a data type that supports INTMAX, such as an int64 or uint64 variable.|exact
+CHK|min_like_logical|MATLAB:intmin:invalidPrototype|exact
+CHK|min_like_logical_msg|Argument following "like" must be a variable with a data type that supports INTMIN, such as an int64 or uint64 variable.|exact
+CHK|max_like_single|MATLAB:intmax:invalidPrototype|exact
+CHK|max_like_single_msg|Argument following "like" must be a variable with a data type that supports INTMAX, such as an int64 or uint64 variable.|exact
+CHK|max_value|MATLAB:intmax:invalidClassName|exact
+CHK|max_value_msg|Class name must be a class that supports INTMAX, such as "int64" or "uint64".|exact
+CHK|max_double|MATLAB:intmax:invalidClassName|exact
+CHK|max_double_msg|Class name must be a class that supports INTMAX, such as "int64" or "uint64".|exact
+CHK|min_bad|MATLAB:intmin:invalidClassName|exact
+CHK|min_bad_msg|Class name must be a class that supports INTMIN, such as "int64" or "uint64".|exact
+CHK|max_upper|MATLAB:intmax:invalidClassName|exact
+CHK|max_upper_msg|Class name must be a class that supports INTMAX, such as "int64" or "uint64".|exact
+CHK|max_two|MATLAB:intmax:mustBeLike|exact
+CHK|max_two_msg|With two input arguments, the first argument must be "like".|exact
+CHK|max_three|MATLAB:maxrhs|exact
+CHK|max_three_msg|Too many input arguments.|exact
+CHK|max_like_only|MATLAB:intmax:invalidClassName|exact
+CHK|max_like_only_msg|Class name must be a class that supports INTMAX, such as "int64" or "uint64".|exact
+CHK|neg_min_int8|int8[1 1] 127|exact
+CHK|abs_min_int8|int8[1 1] 127|exact
+CHK|max_cat|int32[1 2] [2147483647 2]|exact
+CHK|class_int64_max|char[1 5]'int64'|exact
+CHK|class_uint64_max|char[1 6]'uint64'|exact
+CHK|class_int64_min|char[1 5]'int64'|exact
+CHK|int64_max_is_saturated|logical[1 1] 1|exact
+CHK|uint64_max_is_saturated|logical[1 1] 1|exact
+CHK|int64_min_exact|logical[1 1] 1|exact
+CHK|int64_max_plus|logical[1 1] 1|exact
+CHK|int64_min_neg|logical[1 1] 1|exact
+CHK|int64_max_to_int32|int32[1 1] 2147483647|exact
+CHK|int64_max_below_2p63|logical[1 1] 1|div=ADR0355|diverges|logical[1 1] 0
+CHK|int64_max_text|9223372036854775807|div=ADR0355|diverges|9.223372e+18
+CHK|uint64_max_text|18446744073709551615|div=ADR0355|diverges|1.844674407370955e+19
+CHK|half_bits|00000000000000000000000000000000000000007ff0000000000000fff80000000000003ff00000667f3bcd3ff6a09e00000000400000006248490f3fd43d130000000020000000000000001ff00000000000001e600000ffffffff5fefffff2e5096af5f138d35|exact
+CHK|half_eq_sqrt|1|exact
+CHK|inv_bits|000000007ff0000000000000fff00000000000000000000000000000fff80000000000003ff00000000000003fe00000000000003fd000000000000040240000000000007fd00000000000007ff00000000000007ff000000000000000040000c2f8f35901a56e1f|exact
+CHK|inv_eq_recip|1|exact
+CHK|m0_half|0000000000000000|exact
+CHK|m0_half_scalar|0000000000000000|exact
+CHK|m0_inv|00000000fff00000|exact
+CHK|zero_inv|000000007ff00000|exact
+CHK|realmax_half|ffffffff5fefffff|exact
+CHK|realmax_half_scalar|ffffffff5fefffff|exact
+CHK|tenth_inv_scalar|0000000040240000|exact
+CHK|loop_half|1|exact
+CHK|loop_inv|1|exact
+CHK|anon_half|1|exact
+CHK|anon_inv|1|exact
+CHK|vec_half|1|exact
+CHK|vec_inv|1|exact
+CHK|scalar_base_vec|0000000040000000000000003fd000000000000040300000|exact
+CHK|neg_half|double[1 1] 0+2i|exact
+CHK|neg_half_real_part|double[1 1] 0|exact
+CHK|neginf_half|double[1 2] [0 Inf]|exact
+CHK|neg_vec_half|double[1 2] [0+2i 2]|exact
+CHK|neg_vec_eq_sqrt|logical[1 1] 1|exact
+CHK|cplx_half|double[1 1] 0+2i|exact
+CHK|cplx_half_eq|logical[1 1] 1|exact
+CHK|cplx_inv_eq|logical[1 1] 1|exact
+CHK|single_half|1 single|exact
+CHK|single_inv|1 single|exact
+CHK|single_m0_half|00000000|exact
+CHK|single_m0_inv|ff800000|exact
+CHK|logical_half|double[1 1] 1|exact
+CHK|logical_inv|double[1 2] [1 Inf]|exact
+CHK|int_half|MATLAB:integerPower|exact
+CHK|int_half_msg|Integers can only be raised to positive integral powers.|exact
+CHK|int_half_mpower|MATLAB:integerPower|exact
+CHK|int_half_mpower_msg|Integers can only be raised to positive integral powers.|exact
+CHK|int_inv|MATLAB:integerPower|exact
+CHK|int_inv_msg|Integers can only be raised to positive integral powers.|exact
+CHK|int_inv_mpower|MATLAB:integerPower|exact
+CHK|int_inv_mpower_msg|Integers can only be raised to positive integral powers.|exact
+CHK|int_nan|MATLAB:integerPower|exact
+CHK|int_nan_msg|Integers can only be raised to positive integral powers.|exact
+CHK|int_neginf|MATLAB:integerPower|exact
+CHK|int_neginf_msg|Integers can only be raised to positive integral powers.|exact
+CHK|int_inf|int32[1 1] 2147483647|exact
+CHK|int_zero|int32[1 1] 1|exact
+CHK|int_negzero|int32[1 1] 1|exact
+CHK|int_cuberoot|MATLAB:integerPower|exact
+CHK|int_cuberoot_msg|Integers can only be raised to positive integral powers.|exact
+CHK|int_int_neg|MATLAB:integerPower|exact
+CHK|int_int_neg_msg|Integers can only be raised to positive integral powers.|exact
+CHK|dbl_int_neg|MATLAB:integerPower|exact
+CHK|dbl_int_neg_msg|Integers can only be raised to positive integral powers.|exact
+CHK|dbl_int_pos|int8[1 1] 6|exact
+CHK|neg_dbl_int|int8[1 1] -8|exact
+CHK|int_square|int32[1 3] [9 9 2147483647]|exact
+CHK|int_empty_half|int32[0 0]|exact
+CHK|power_fn_int|MATLAB:integerPower|exact
+CHK|power_fn_int_msg|Integers can only be raised to positive integral powers.|exact
+CHK|mpower_fn_int|MATLAB:integerPower|exact
+CHK|mpower_fn_int_msg|Integers can only be raised to positive integral powers.|exact
+CHK|float_sqrt_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_sqrt_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_sqrt_char|MATLAB:math:mustBeFloat|exact
+CHK|float_sqrt_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_sqrt_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_sqrt_double|double|exact
+CHK|float_exp_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_exp_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_exp_char|MATLAB:math:mustBeFloat|exact
+CHK|float_exp_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_exp_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_exp_double|double|exact
+CHK|float_log_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_log_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_log_char|MATLAB:math:mustBeFloat|exact
+CHK|float_log_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_log_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_log_double|double|exact
+CHK|float_log2_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_log2_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_log2_char|MATLAB:math:mustBeFloat|exact
+CHK|float_log2_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_log2_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_log2_double|double|exact
+CHK|float_sin_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_sin_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_sin_char|MATLAB:math:mustBeFloat|exact
+CHK|float_sin_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_sin_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_sin_double|double|exact
+CHK|float_atan_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_atan_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_atan_char|MATLAB:math:mustBeFloat|exact
+CHK|float_atan_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_atan_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_atan_double|double|exact
+CHK|float_sinh_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_sinh_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_sinh_char|MATLAB:math:mustBeFloat|exact
+CHK|float_sinh_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_sinh_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_sinh_double|double|exact
+CHK|float_acosh_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_acosh_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_acosh_char|MATLAB:math:mustBeFloat|exact
+CHK|float_acosh_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_acosh_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_acosh_double|double|exact
+CHK|float_sind_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_sind_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_sind_char|MATLAB:math:mustBeFloat|exact
+CHK|float_sind_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_sind_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_sind_double|double|exact
+CHK|float_asecd_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_asecd_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_asecd_char|MATLAB:math:mustBeFloat|exact
+CHK|float_asecd_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_asecd_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_asecd_double|double|exact
+CHK|float_gamma_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_gamma_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_gamma_char|MATLAB:math:mustBeFloat|exact
+CHK|float_gamma_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_gamma_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_gamma_double|double|exact
+CHK|float_gammaln_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_gammaln_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_gammaln_char|MATLAB:math:mustBeFloat|exact
+CHK|float_gammaln_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_gammaln_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_gammaln_double|double|exact
+CHK|float_erf_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_erf_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_erf_char|MATLAB:math:mustBeFloat|exact
+CHK|float_erf_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_erf_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_erf_double|double|exact
+CHK|float_erfinv_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_erfinv_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_erfinv_char|MATLAB:math:mustBeFloat|exact
+CHK|float_erfinv_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_erfinv_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_erfinv_double|double|exact
+CHK|float_reallog_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_reallog_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_reallog_char|MATLAB:math:mustBeFloat|exact
+CHK|float_reallog_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_reallog_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_reallog_double|double|exact
+CHK|float_realsqrt_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_realsqrt_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_realsqrt_char|MATLAB:math:mustBeFloat|exact
+CHK|float_realsqrt_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_realsqrt_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_realsqrt_double|double|exact
+CHK|float_pow2_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_pow2_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_pow2_char|MATLAB:math:mustBeFloat|exact
+CHK|float_pow2_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_pow2_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_pow2_double|double|exact
+CHK|float_psi_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_psi_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_psi_char|MATLAB:math:mustBeFloat|exact
+CHK|float_psi_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_psi_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_psi_double|double|exact
+CHK|float_det_logical|MATLAB:math:mustBeFloat|exact
+CHK|float_det_int32|MATLAB:math:mustBeFloat|exact
+CHK|float_det_char|MATLAB:math:mustBeFloat|exact
+CHK|float_det_uint8|MATLAB:math:mustBeFloat|exact
+CHK|float_det_mask|MATLAB:math:mustBeFloat|exact
+CHK|float_det_double|double|exact
+CHK|sqrt_true|MATLAB:math:mustBeFloat|exact
+CHK|sqrt_true_msg|Invalid data type. Argument must be double or single.|exact
+CHK|sqrt_empty_mask|MATLAB:math:mustBeFloat|exact
+CHK|sqrt_empty_mask_msg|Invalid data type. Argument must be double or single.|exact
+CHK|hypot_second|MATLAB:math:mustBeFloat|exact
+CHK|hypot_second_msg|Invalid data type. Argument must be double or single.|exact
+CHK|atan2_int|MATLAB:math:mustBeFloat|exact
+CHK|atan2_int_msg|Invalid data type. Argument must be double or single.|exact
+CHK|pow2_two|MATLAB:math:mustBeFloat|exact
+CHK|pow2_two_msg|Invalid data type. Argument must be double or single.|exact
+CHK|deg2rad_true|MATLAB:deg2rad:nonFloatInput|exact
+CHK|deg2rad_true_msg|Input must be single or double.|exact
+CHK|rad2deg_int|MATLAB:rad2deg:nonFloatInput|exact
+CHK|rad2deg_int_msg|Input must be single or double.|exact
+CHK|inv_int|MATLAB:inv:inputType|exact
+CHK|inv_int_msg|Invalid data type. Input matrix must be double or single.|exact
+CHK|inv_true|MATLAB:inv:inputType|exact
+CHK|inv_true_msg|Invalid data type. Input matrix must be double or single.|exact
+CHK|eig_true|MATLAB:eig:inputType|exact
+CHK|eig_true_msg|Invalid data type. Input matrix must be double or single.|exact
+CHK|svd_int|MATLAB:svd:inputType|exact
+CHK|svd_int_msg|First input must be single or double.|exact
+CHK|rank_true|MATLAB:svd:inputType|exact
+CHK|rank_true_msg|First input must be single or double.|exact
+CHK|norm_char|MATLAB:norm:inputType|exact
+CHK|norm_char_msg|First argument must be single or double.|exact
+CHK|lu_true|MATLAB:lu:inputType|exact
+CHK|lu_true_msg|Invalid data type. First argument must be double or single.|exact
+CHK|chol_int|MATLAB:chol:inputType|exact
+CHK|chol_int_msg|Invalid data type. First argument must be a double or single matrix.|exact
+CHK|qr_true|MATLAB:qr:inputType|exact
+CHK|qr_true_msg|Invalid data type. First argument must be double or single.|exact
+CHK|expm_true|MATLAB:expm:inputType|exact
+CHK|expm_true_msg|Input must be single or double matrix.|exact
+CHK|sqrtm_int|MATLAB:sqrtm:inputType|exact
+CHK|sqrtm_int_msg|Input must be a single or double matrix.|exact
+CHK|rcond_true|MATLAB:math:mustBeFloat|exact
+CHK|rcond_true_msg|Invalid data type. Argument must be double or single.|exact
+CHK|besselj_true|MATLAB:math:mustBeFloat|exact
+CHK|besselj_true_msg|Invalid data type. Argument must be double or single.|exact
+CHK|abs_true|double[1 1] 1|exact
+CHK|floor_int|int8[1 1] 3|exact
+CHK|mod_true|double[1 1] 0|exact
+CHK|power_true|double[1 1] 1|exact
+CHK|nthroot_true|double[1 1] 1|exact
+CHK|isoutlier_true|MATLAB:isoutlier:invalidType|exact
+CHK|isoutlier_true_msg|Expected input number 1, A, to be one of these types: single, double, table, timetable Instead its type was logical.|exact
+CHK|isoutlier_mask|MATLAB:isoutlier:invalidType|exact
+CHK|isoutlier_mask_msg|Expected input number 1, A, to be one of these types: single, double, table, timetable Instead its type was logical.|exact
+CHK|isoutlier_int|MATLAB:isoutlier:invalidType|exact
+CHK|isoutlier_int_msg|Expected input number 1, A, to be one of these types: single, double, table, timetable Instead its type was int8.|exact
+CHK|isoutlier_char|MATLAB:isoutlier:invalidType|exact
+CHK|isoutlier_char_msg|Expected input number 1, A, to be one of these types: single, double, table, timetable|exact
+CHK|isoutlier_cell|MATLAB:isoutlier:invalidType|exact
+CHK|isoutlier_cell_msg|Expected input number 1, A, to be one of these types: single, double, table, timetable Instead its type was cell.|exact
+CHK|rmoutliers_int|MATLAB:isoutlier:invalidType|exact
+CHK|rmoutliers_int_msg|Expected input number 1, A, to be one of these types: single, double, table, timetable Instead its type was int8.|exact
+CHK|filloutliers_true|MATLAB:filloutliers:invalidType|exact
+CHK|filloutliers_true_msg|Expected input number 1, A, to be one of these types: single, double, table, timetable Instead its type was logical.|exact
+CHK|filloutliers_int|MATLAB:filloutliers:invalidType|exact
+CHK|filloutliers_int_msg|Expected input number 1, A, to be one of these types: single, double, table, timetable Instead its type was int8.|exact
+CHK|iso_single_tf|logical[1 8] [0 0 0 0 1 0 0 0]|exact
+CHK|iso_single_lower|single[1 1] -1.9478068351745605|exact
+CHK|iso_single_upper|single[1 1] 6.9478068351745605|exact
+CHK|iso_single_center|single[1 1] 2.5|exact
+CHK|iso_double_lower|double[1 1] -1.9478066555168052|exact
+CHK|iso_double_upper|double[1 1] 6.9478066555168052|exact
+CHK|iso_single_scalar|cell[1 3]{single[1 1] 7;single[1 1] 7;single[1 1] 7}|exact
+CHK|iso_single_matrix|single[1 2] [-0.72390341758728027 0.27609658241271973]|exact
+CHK|iso_single_mean_class|cell[1 3]{char[1 6]'single';char[1 6]'single';char[1 6]'single'}|exact
+CHK|iso_single_quartiles_class|cell[1 3]{char[1 6]'single';char[1 6]'single';char[1 6]'single'}|exact
+CHK|iso_single_moving_class|char[1 6]'single'|exact
+CHK|rmoutliers_single|single[1 7] [1 2 3 4 3 2 1]|exact
+CHK|filloutliers_single|single[1 8] [1 2 3 4 3.5 3 2 1]|exact
+CHK|filloutliers_single_center|single[1 8] [1 2 3 4 2.5 3 2 1]|exact
+CHK|integral_vectorized|MATLAB:TooManyInputs|div=ADR0355|diverges|double[1 1] 0.33333333333333315
+CHK|inv_singular|double[2 2] [Inf Inf;Inf Inf] WARN MATLAB:singularMatrix|exact
+CHK|inv_zeros|double[3 3] [Inf 0 0;0 Inf 0;0 0 Inf] WARN MATLAB:singularMatrix|exact
+CHK|inv_zero_scalar|double[1 1] Inf WARN MATLAB:singularMatrix|exact
+CHK|inv_upper_singular|double[2 2] [Inf Inf;0 Inf] WARN MATLAB:singularMatrix|exact
+CHK|inv_lower_singular|double[2 2] [Inf 0;Inf Inf] WARN MATLAB:singularMatrix|exact
+CHK|inv_diag_singular|double[3 3] [1 0 0;0 Inf 0;0 0 0.5] WARN MATLAB:singularMatrix|exact
+CHK|inv_upper3_singular|double[3 3] [Inf Inf Inf;0 Inf Inf;0 0 Inf] WARN MATLAB:singularMatrix|exact
+CHK|inv_inf|double[2 2] [0 0.5;0 0] WARN MATLAB:singularMatrix|exact
+CHK|inv_nan|double[2 2] [NaN NaN;NaN NaN] WARN MATLAB:illConditionedMatrix|exact
+CHK|inv_tiny|double[2 2] [1 0;0 1e+17] WARN MATLAB:nearlySingularMatrix|exact
+CHK|inv_magic4_warns|double[1 2] [4 4] WARN MATLAB:nearlySingularMatrix|exact
+CHK|inv_single_singular|single[2 2] [Inf Inf;Inf Inf] WARN MATLAB:singularMatrix|exact
+CHK|inv_single_near|single[2 2] [1 0;0 100000000] WARN MATLAB:nearlySingularMatrix|exact
+CHK|inv_complex_singular|double[2 2] [Inf Inf;Inf Inf] WARN MATLAB:singularMatrix|exact
+CHK|inv_empty|double[0 0]|exact
+CHK|inv_fine|double[2 2] [0.59999999999999998 -0.20000000000000001;-0.20000000000000001 0.40000000000000002]|exact
+CHK|mld_singular|double[2 1] [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|mld_fn_singular|double[2 1] [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|mld_zeros|double[3 1] [Inf;NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|mld_scalar_zero|double[1 1] Inf|exact
+CHK|mld_upper_singular|double[2 1] [-Inf;Inf] WARN MATLAB:singularMatrix|exact
+CHK|mld_lower_singular|double[2 1] [Inf;-Inf] WARN MATLAB:singularMatrix|exact
+CHK|mld_ones_singular|double[2 1] [-Inf;Inf] WARN MATLAB:singularMatrix|exact
+CHK|mld_diag_singular|double[3 1] [1;Inf;NaN] WARN MATLAB:singularMatrix|exact
+CHK|mld_diag_zero_rhs|double[3 1] [1;NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|mld_upper_zero_rhs|double[2 1] [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|mld_identity_rhs|double[2 2] [-Inf Inf;Inf -Inf] WARN MATLAB:singularMatrix|exact
+CHK|mld_wide_rhs|double[2 3] [-Inf -Inf -Inf;Inf Inf Inf] WARN MATLAB:singularMatrix|exact
+CHK|mld_spd_singular|double[3 1] [NaN;NaN;1] WARN MATLAB:singularMatrix|exact
+CHK|mld_inf|double[2 1] [0.5;0] WARN MATLAB:singularMatrix|exact
+CHK|mld_nan|double[2 1] [NaN;NaN] WARN MATLAB:illConditionedMatrix|exact
+CHK|mld_nan_rhs|double[2 1] [NaN;NaN]|exact
+CHK|mld_tiny|double[2 1] [1;1e+17] WARN MATLAB:nearlySingularMatrix|exact
+CHK|mld_upper_tiny|double[2 1] [-1e+17;1e+17] WARN MATLAB:nearlySingularMatrix|exact
+CHK|mld_magic4_warns|double[1 2] [4 1] WARN MATLAB:nearlySingularMatrix|exact
+CHK|mld_single_singular|single[2 1] [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|mld_single_near|single[2 1] [1;100000000] WARN MATLAB:nearlySingularMatrix|exact
+CHK|mld_fine|double[2 1] [0.80000000000000004;1.3999999999999999]|exact
+CHK|mrd_singular|double[1 2] [NaN NaN] WARN MATLAB:singularMatrix|exact
+CHK|mrd_fn_singular|double[1 2] [NaN NaN] WARN MATLAB:singularMatrix|exact
+CHK|mrd_triangular|double[1 2] [1 -Inf] WARN MATLAB:singularMatrix|exact
+CHK|mrd_row|double[1 2] [NaN NaN] WARN MATLAB:singularMatrix|exact
+CHK|mpower_singular|double[2 2] [Inf Inf;Inf Inf]|exact
+CHK|mpower_singular_two|double[2 2] [Inf Inf;Inf Inf]|exact
+CHK|mld_rect_deficient|double[2 1] [0;0.5] WARN MATLAB:rankDeficientMatrix|exact
+CHK|mld_rect_wide|double[3 1] [0;0;0.33333333333333331] WARN MATLAB:rankDeficientMatrix|exact
+CHK|near_text|MATLAB:nearlySingularMatrix Matrix is close to singular or badly scaled. Results may be inaccurate. RCOND =  1.000000e-17.|exact
+CHK|singular_text|MATLAB:singularMatrix Matrix is singular to working precision.|exact
+CHK|nan_text|MATLAB:illConditionedMatrix Matrix is singular, close to singular or badly scaled. Results may be inaccurate. RCOND = NaN.|exact
+CHK|off_inv|double[2 2] [Inf Inf;Inf Inf] WARN MATLAB:singularMatrix|exact
+CHK|off_mld|double[2 1] [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|error_inv|MATLAB:singularMatrix|exact
+CHK|error_inv_msg|Matrix is singular to working precision.|exact
+CHK|error_mld|MATLAB:singularMatrix|exact
+CHK|error_mld_msg|Matrix is singular to working precision.|exact
+CHK|error_mrd|MATLAB:singularMatrix|exact
+CHK|error_mrd_msg|Matrix is singular to working precision.|exact
+CHK|error_near|MATLAB:nearlySingularMatrix|exact
+CHK|error_near_msg|Matrix is close to singular or badly scaled. Results may be inaccurate. RCOND = 1.000000e-17.|exact
+CHK|error_nan|MATLAB:illConditionedMatrix|exact
+CHK|error_nan_msg|Matrix is singular, close to singular or badly scaled. Results may be inaccurate. RCOND = NaN.|exact

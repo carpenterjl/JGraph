@@ -195,12 +195,13 @@ item 273).
 
 ## Divergences
 
-- **`x.^0.5` and `x.^-1` are the C runtime's `pow`.** R2025b's are `sqrt(x)` and `1./x` to the bit
-  (probe `probe_pow.m`); here they may differ from those in the last bit. Only the square was
-  moved to its exact form in this stage.
 - **A PNG written by `imwrite` is not R2025b's file.** The pixels are the same; R2025b writes
   libpng's adaptive row filters in one stream, this build writes unfiltered rows in strips, so
   the bytes and the size differ. This was already so before the strips.
+
+Closed since: **`x.^0.5` and `x.^-1` were the C runtime's `pow`**, where R2025b's are `sqrt(x)` and
+`1./x` to the bit. ADR 0355 (open item 272) gave `PackedMath.Power` and the packed scalar-exponent
+kernel the root and the reciprocal, and the complex road `sqrt` and `1./z`.
 
 ## Still open
 
@@ -210,6 +211,6 @@ item 273).
 - **`d06_threshold`** is 0.013 to 0.019 against 0.014 (open item 270): `double(mask)`, the 9 by
   9 box and the comparison are each 1.5 to 3 times R2025b's. Not changed by this stage.
 - **`x.^0.5` and `x.^-1`** are R2025b's `sqrt(x)` and `1./x` to the bit and are still `pow`
-  here (open item 272).
+  here (open item 272). Closed by ADR 0355.
 - **`imread`** of a 2048-square PNG is 81 ms against R2025b's 35, and of a logical PNG answers a
   picture value that `>` refuses (open item 273). Found in passing; not a row.

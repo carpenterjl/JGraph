@@ -138,10 +138,23 @@ public class MatlabLinalgProviderM89Tests : IDisposable
         Assert.Contains("as many rows as the matrix", message, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// R2025b warns MATLAB:singularMatrix and answers what the substitutions give (open item 307,
+    /// ADR 0355); warning('error', id) is how a script asks for the refusal.
+    /// </summary>
     [Fact]
-    public void SolveRefusesASingularMatrix()
+    public void SolveOfASingularMatrixWarnsAndAnswers()
     {
-        string message = RunExpectingFailure("[1 2; 2 4] \\ [1; 2];");
+        string output = RunAndRead("""
+            A = [1 2; 2 4];
+            lastwarn('');
+            x = A \ [1; 2];
+            [~, id] = lastwarn;
+            fprintf('%s %d\n', id, all(isnan(x)));
+            """);
+        Assert.Contains("MATLAB:singularMatrix 1", output, StringComparison.Ordinal);
+
+        string message = RunExpectingFailure("warning('error', 'MATLAB:singularMatrix'); A = [1 2; 2 4]; x = A \\ [1; 2];");
         Assert.Contains("singular", message, StringComparison.Ordinal);
     }
 
@@ -169,11 +182,17 @@ public class MatlabLinalgProviderM89Tests : IDisposable
             """);
     }
 
+    /// <summary>The inverse of a singular matrix is Inf under MATLAB:singularMatrix (open item 307, ADR 0355).</summary>
     [Fact]
-    public void InverseRefusesASingularMatrix()
+    public void InverseOfASingularMatrixWarnsAndAnswersInf()
     {
-        string message = RunExpectingFailure("inv([1 2; 2 4]);");
-        Assert.Contains("singular", message, StringComparison.Ordinal);
+        string output = RunAndRead("""
+            lastwarn('');
+            v = inv([1 2; 2 4]);
+            [~, id] = lastwarn;
+            fprintf('%s %d\n', id, all(isinf(v(:))));
+            """);
+        Assert.Contains("MATLAB:singularMatrix 1", output, StringComparison.Ordinal);
     }
 
     [Fact]

@@ -99,9 +99,9 @@ CHK|i_04|{"mwdata":[32767],"mwsize":[1,1],"mwtype":"int16"}|exact
 CHK|i_05|{"mwdata":[65535],"mwsize":[1,1],"mwtype":"uint16"}|exact
 CHK|i_06|{"mwdata":[-2147483648],"mwsize":[1,1],"mwtype":"int32"}|exact
 CHK|i_07|{"mwdata":[4294967295],"mwsize":[1,1],"mwtype":"uint32"}|exact
-CHK|i_08|{"mwdata":[-9223372036854775808],"mwsize":[1,1],"mwtype":"int64"}|div=ADR0270|diverges|-9.2233720368547758E+18
-CHK|i_09|{"mwdata":[9223372036854775807],"mwsize":[1,1],"mwtype":"int64"}|div=ADR0270|diverges|9.2233720368547758E+18
-CHK|i_10|{"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|1.8446744073709552E+19
+CHK|i_08|{"mwdata":[-9223372036854775808],"mwsize":[1,1],"mwtype":"int64"}|exact
+CHK|i_09|{"mwdata":[9223372036854775807],"mwsize":[1,1],"mwtype":"int64"}|div=ADR0270|diverges|{"mwdata":[9223372036854775808],"mwsize":[1,1],"mwtype":"int64"}
+CHK|i_10|{"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|{"mwdata":[18446744073709551616],"mwsize":[1,1],"mwtype":"uint64"}
 CHK|i_11|{"mwdata":[-9007199254740993],"mwsize":[1,1],"mwtype":"int64"}|div=ADR0270|diverges|{"mwdata":[-9007199254740992],"mwsize":[1,1],"mwtype":"int64"}
 CHK|i_12|{"mwdata":[0],"mwsize":[1,1],"mwtype":"int64"}|exact
 CHK|i_13|{"mwdata":[0],"mwsize":[1,1],"mwtype":"uint64"}|exact
@@ -199,9 +199,9 @@ CHK|e_f_int32_2x2_round|int32 [2 2] eq=1 / int32 [2 2] eq=1|exact
 CHK|e_f_int64_big_small|{"mwdata":[9007199254740993],"mwsize":[1,1],"mwtype":"int64"}|div=ADR0270|diverges|{"mwdata":[9007199254740992],"mwsize":[1,1],"mwtype":"int64"}
 CHK|e_f_int64_big_large|{"mwdata":[9007199254740993],"mwsize":[1,1],"mwtype":"int64"}|div=ADR0270|diverges|{"mwdata":[9007199254740992],"mwsize":[1,1],"mwtype":"int64"}
 CHK|e_f_int64_big_round|int64 [1 1] eq=1 / int64 [1 1] eq=1|exact
-CHK|e_f_uint64_max_small|{"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|1.8446744073709552E+19
-CHK|e_f_uint64_max_large|{"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|{"mwdata":[1.8446744073709552E+19],"mwsize":[1,1],"mwtype":"double"}
-CHK|e_f_uint64_max_round|uint64 [1 1] eq=1 / uint64 [1 1] eq=1|div=ADR0270|diverges|double [1 1] eq=1 / double [1 1] eq=1
+CHK|e_f_uint64_max_small|{"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|{"mwdata":[18446744073709551616],"mwsize":[1,1],"mwtype":"uint64"}
+CHK|e_f_uint64_max_large|{"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|{"mwdata":[18446744073709551616],"mwsize":[1,1],"mwtype":"uint64"}
+CHK|e_f_uint64_max_round|uint64 [1 1] eq=1 / uint64 [1 1] eq=1|exact
 CHK|e_f_int8_3d_small|{"mwdata":[1,2,3,4,5,6,7,8],"mwsize":[2,2,2],"mwtype":"int8"}|exact
 CHK|e_f_int8_3d_large|{"mwdata":[1,2,3,4,5,6,7,8],"mwsize":[2,2,2],"mwtype":"int8"}|exact
 CHK|e_f_int8_3d_round|int8 [2 2 2] eq=1 / int8 [2 2 2] eq=1|exact
@@ -364,8 +364,8 @@ CHK|e_sa_matrix_round|struct [1 1] eq=1 / struct [1 1] eq=1|exact
 CHK|e_sa_cell_small|{"c":{"mwdata":[1,"a"],"mwsize":[1,2],"mwtype":"cell"}}|exact
 CHK|e_sa_cell_large|{"mwdata":{"c":[{"mwdata":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"},{"mwdata":["a"],"mwsize":[1,1],"mwtype":"char"}],"mwsize":[1,2],"mwtype":"cell"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
 CHK|e_sa_cell_round|struct [1 1] eq=1 / struct [1 1] eq=1|exact
-CHK|e_sa_string_small|{"s":{"mwdata":["str"],"mwsize":[1,1],"mwtype":"string"}}|div=ADR0270|diverges|{"s":"str"}
-CHK|e_sa_string_large|{"mwdata":{"s":[{"mwdata":["str"],"mwsize":[1,1],"mwtype":"string"}]},"mwsize":[1,1],"mwtype":"struct"}|div=ADR0270|diverges|{"mwdata":{"s":[{"mwdata":["str"],"mwsize":[1,3],"mwtype":"char"}]},"mwsize":[1,1],"mwtype":"struct"}
+CHK|e_sa_string_small|{"s":{"mwdata":["str"],"mwsize":[1,1],"mwtype":"string"}}|exact
+CHK|e_sa_string_large|{"mwdata":{"s":[{"mwdata":["str"],"mwsize":[1,1],"mwtype":"string"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
 CHK|e_sa_string_round|struct [1 1] eq=1 / struct [1 1] eq=1|exact
 CHK|e_sa_logical_small|{"l":[[true,false]]}|exact
 CHK|e_sa_logical_large|{"mwdata":{"l":[{"mwdata":[true,false],"mwsize":[1,2],"mwtype":"logical"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
@@ -894,8 +894,8 @@ CHK|y_int64_big|int64 [1 1] real=1 sparse=0 {"mwdata":[9007199254740993],"mwsize
 CHK|y_int64_over|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
 CHK|y_int64_over_msg|Invalid value for type int or uint. Value must be an integral number.|exact
 CHK|y_int64_neg|int64 [1 1] real=1 sparse=0 {"mwdata":[-9223372036854775808],"mwsize":[1,1],"mwtype":"int64"}|exact
-CHK|y_uint64_max|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709549568],"mwsize":[1,1],"mwtype":"uint64"}
-CHK|y_uint64_over|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709549568],"mwsize":[1,1],"mwtype":"uint64"}
+CHK|y_uint64_max|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709551616],"mwsize":[1,1],"mwtype":"uint64"}
+CHK|y_uint64_over|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709551616],"mwsize":[1,1],"mwtype":"uint64"}
 CHK|y_uint64_exp|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
 CHK|y_uint64_exp_msg|Invalid value for type int or uint. Value must be an integral number.|exact
 CHK|y_logical|logical [1 2] {"mwdata":[true,false],"mwsize":[1,2],"mwtype":"logical"}|exact

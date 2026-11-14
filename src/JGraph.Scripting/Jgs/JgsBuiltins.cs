@@ -2686,7 +2686,7 @@ internal static partial class JgsBuiltins
         // Shape/generation builtins may re-register MATLAB-shaped constructors, and the reduction
         // semantics wrap builtins the two calls above declared — order matters here.
         RegisterShapeBuiltins(env, random, dialect);
-        RegisterLinearAlgebraBuiltins(env, dialect);
+        RegisterLinearAlgebraBuiltins(env, dialect, host);
         RegisterMatrixFunctionBuiltins(env);
         RegisterSparseBuiltins(env, random);
         RegisterSparseOrderingBuiltins(env, dialect);
@@ -2891,6 +2891,7 @@ internal static partial class JgsBuiltins
         // row has no numeric class and a classed array has no text in it — but the order is the one
         // that stays right if they ever do (M123).
         CarryNumericClass(env);
+        RefuseNonFloatSubjects(env, dialect); // outside the class carry: a refused class never reaches it (open item 299)
 
         // Last of all, so it wraps whichever wrapper each name ended up with (M105) — the same reason
         // the string-array marks are applied last.

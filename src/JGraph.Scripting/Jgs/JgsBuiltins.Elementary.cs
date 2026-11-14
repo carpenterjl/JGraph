@@ -127,8 +127,66 @@ internal static partial class JgsBuiltins
         Constant("flintmax", (args, line, col) =>
             JgsValue.Number(SinglePrecisionAsked("flintmax", args, line, col) ? 16777216.0 : 9007199254740992.0));
 
-        Constant("intmax", (args, line, col) => JgsValue.Number(IntegerLimit("intmax", args, true, line, col)));
-        Constant("intmin", (args, line, col) => JgsValue.Number(IntegerLimit("intmin", args, false, line, col)));
+        // MATLAB answers in the class it names (int32 with none), so arithmetic on the limit
+        // saturates (open item 199, ADR 0355). JGS code keeps the plain double it always had; the
+        // running dialect is read at the call (V11, ADR 0172).
+        Constant("intmax", (args, line, col) => dialect.IsMatlab
+            ? ClassedIntegerLimit("intmax", args, true, line, col)
+            : JgsValue.Number(IntegerLimit("intmax", args, true, line, col)));
+        Constant("intmin", (args, line, col) => dialect.IsMatlab
+            ? ClassedIntegerLimit("intmin", args, false, line, col)
+            : JgsValue.Number(IntegerLimit("intmin", args, false, line, col)));
+    }
+
+    /// <summary>
+    /// <c>intmax</c> and <c>intmin</c> as R2025b answers them: <c>intmax</c>, <c>intmax(name)</c> and
+    /// <c>intmax('like', p)</c>, each an integer of the class named, in R2025b's words when the name
+    /// or the prototype is not an integer class.
+    /// </summary>
+    /// <remarks>
+    /// Storage is a double with a class tag (ADR 0069), so <c>intmax('int64')</c> is the double
+    /// 2^63 tagged int64 and <c>intmax('uint64')</c> the double 2^64 tagged uint64: the class's
+    /// saturation point, which is exactly what <c>int64(2^63)</c> already held here, so the two
+    /// compare equal as they do in R2025b. Neither can be held exactly; formatting them is the
+    /// int64-past-2^53 divergence ADRs 0069 and 0156 record (ADR 0355).
+    /// </remarks>
+    private static JgsValue ClassedIntegerLimit(string name, IReadOnlyList<JgsValue> args, bool maximum, int line, int col)
+    {
+        ArityRange(name, args, 0, 2, line, col);
+        string upper = name.ToUpperInvariant();
+        JgsNumericClass numericClass = JgsNumericClass.Int32;
+        if (args.Count == 1)
+        {
+            JgsNumericClass? named = IsTextScalar(args[0]) ? JgsNumericClasses.Parse(TextOf(args[0])) : null;
+            if (named is not { } found || !found.IsInteger())
+            {
+                throw new JgsRuntimeException(line, col, $"MATLAB:{name}:invalidClassName",
+                    $"Class name must be a class that supports {upper}, such as \"int64\" or \"uint64\".");
+            }
+
+            numericClass = found;
+        }
+        else if (args.Count == 2)
+        {
+            if (!IsTextScalar(args[0]) || !TextOf(args[0]).Equals("like", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new JgsRuntimeException(line, col, $"MATLAB:{name}:mustBeLike",
+                    "With two input arguments, the first argument must be \"like\".");
+            }
+
+            JgsValue prototype = args[1];
+            if (prototype.Type is not (JgsType.Number or JgsType.Complex or JgsType.Array)
+                || !prototype.NumericClass.IsInteger())
+            {
+                throw new JgsRuntimeException(line, col, $"MATLAB:{name}:invalidPrototype",
+                    $"Argument following \"like\" must be a variable with a data type that supports {upper}, such as an int64 or uint64 variable.");
+            }
+
+            numericClass = prototype.NumericClass;
+        }
+
+        (double min, double max) = JgsNumericClasses.Range(numericClass);
+        return JgsNumericClasses.Stamp(JgsValue.Number(maximum ? max : min), numericClass);
     }
 
     /// <summary>Whether a precision word names doubles; anything but 'double'/'single' is an error.</summary>

@@ -172,6 +172,77 @@ internal static partial class JgsBuiltins
     internal static bool PowerStaysReal(double a, double b) =>
         a >= 0 || double.IsNaN(a) || double.IsNaN(b) || b == System.Math.Floor(b);
 
+    /// <summary>
+    /// The power operator's complex road: <c>z.^0.5</c> is <c>sqrt(z)</c> and <c>z.^-1</c> is
+    /// <c>1./z</c>, to the bit, as R2025b answers them (open item 272, ADR 0355) — so
+    /// <c>(-4).^0.5</c> is exactly <c>2i</c> and <c>(-Inf).^0.5</c> is <c>Inf·i</c>, where the
+    /// general complex power leaves a rounding residue in the real part, or NaN.
+    /// </summary>
+    internal static Complex ComplexPower(Complex z, Complex exponent)
+    {
+        if (exponent.Imaginary == 0)
+        {
+            if (exponent.Real == 0.5)
+            {
+                return Complex.Sqrt(z);
+            }
+
+            if (exponent.Real == -1)
+            {
+                return Complex.One / z;
+            }
+        }
+
+        return Complex.Pow(z, exponent);
+    }
+
+    /// <summary>
+    /// Whether every element of an exponent is a power R2025b raises an integer class to: a whole
+    /// number that is not negative (<c>Inf</c> is one; <c>NaN</c>, <c>0.5</c> and <c>-1</c> are not).
+    /// </summary>
+    internal static bool IntegerPowerAllowed(JgsValue exponent)
+    {
+        static bool Allowed(double p) => p >= 0 && (double.IsPositiveInfinity(p) || p == System.Math.Floor(p));
+
+        switch (exponent.Type)
+        {
+            case JgsType.Number:
+                return Allowed(exponent.AsNumber);
+            case JgsType.Bool:
+                return true;
+            case JgsType.Array when exponent.IsPacked:
+            {
+                NumericBuffer buffer = exponent.AsBuffer;
+                ReadOnlySpan<double> powers = buffer.AsSpan(0, exponent.ArrayLength);
+                foreach (double p in powers)
+                {
+                    if (!Allowed(p))
+                    {
+                        GC.KeepAlive(buffer);
+                        return false;
+                    }
+                }
+
+                GC.KeepAlive(buffer);
+                return true;
+            }
+
+            case JgsType.Array:
+                for (int i = 0; i < exponent.ArrayLength; i++)
+                {
+                    JgsValue element = exponent.ElementAt(i);
+                    if (element.Type == JgsType.Number && !Allowed(element.AsNumber))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            default:
+                return true;
+        }
+    }
+
     // --- Complex definitions ---------------------------------------------------------------------
 
     /// <summary>Radians in a degree, for the degree spellings.</summary>
