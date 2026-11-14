@@ -147,6 +147,11 @@ internal static partial class JgsBuiltins
                         args[0], boxes, inner.Call(WithFirst(args, PositionsLike(args[0])), line, col));
                 }
 
+                if (gathersPositions && args.Count > 0 && IsPlainStructArray(args[0]))
+                {
+                    return GatheredStructs(args[0], inner.Call(WithFirst(args, StructPositionsLike(args[0])), line, col));
+                }
+
                 if (gathersComplex && args.Count > 0 && TryReadComplexElements(
                         name, args[0], line, col, out Complex[] parts, out bool complexFlag))
                 {
@@ -192,6 +197,18 @@ internal static partial class JgsBuiltins
                         if (outputs.Length > 0)
                         {
                             outputs[0] = GatheredBoxes(args[0], boxes, outputs[0]);
+                        }
+
+                        return outputs;
+                    }
+
+                    if (gathersPositions && args.Count > 0 && IsPlainStructArray(args[0]))
+                    {
+                        JgsValue[] outputs = inner.MultiOutput(
+                            WithFirst(args, StructPositionsLike(args[0])), wanted, line, col);
+                        if (outputs.Length > 0)
+                        {
+                            outputs[0] = GatheredStructs(args[0], outputs[0]);
                         }
 
                         return outputs;
@@ -252,6 +269,51 @@ internal static partial class JgsBuiltins
 
         boxes = [];
         return false;
+    }
+
+    /// <summary>
+    /// Whether the value is a plain struct array (open item 208, ADR 0354): R2025b reshapes, permutes
+    /// and flips one as it does any array, and its elements ride the positions as a cell's do.
+    /// </summary>
+    private static bool IsPlainStructArray(JgsValue value) =>
+        value.Type == JgsType.Struct && value.ClassName is null && !IsKeyedCollection(value) && !IsInterpolant(value);
+
+    /// <summary>1 to N laid out in a struct array's shape.</summary>
+    private static JgsValue StructPositionsLike(JgsValue structs)
+    {
+        var positions = new double[structs.AsStructArray.Length];
+        for (int i = 0; i < positions.Length; i++)
+        {
+            positions[i] = i + 1;
+        }
+
+        return positions.Length == 1 ? JgsValue.Number(1) : JgsMatrix.FromColumnMajorDims(positions, structs.Dims);
+    }
+
+    /// <summary>
+    /// The struct elements the verb's answer points at, in the shape it chose. Each element is now in
+    /// a second array, so it takes a share (M2), as a selection's elements do.
+    /// </summary>
+    private static JgsValue GatheredStructs(JgsValue source, JgsValue positions)
+    {
+        JgsStructArray payload = source.AsStructArray;
+        bool many = positions.Type == JgsType.Array;
+        int count = many ? positions.ArrayLength : 1;
+        var picked = new Dictionary<string, JgsValue>[count];
+        for (int i = 0; i < count; i++)
+        {
+            picked[i] = payload.Elements[(int)(many ? positions.ElementAt(i) : positions).AsNumber - 1];
+            JgsHolders.Share(picked[i]);
+        }
+
+        JgsValue gathered = JgsValue.StructArray(new JgsStructArray(picked, payload.EmptyFields),
+            many ? positions.Rows : 1, many ? positions.Cols : 1);
+        if (many && positions.IsNd)
+        {
+            gathered.ReshapeDims(positions.Dims);
+        }
+
+        return gathered;
     }
 
     /// <summary>1 to N laid out in the container's own shape — what the verb is actually asked about.</summary>

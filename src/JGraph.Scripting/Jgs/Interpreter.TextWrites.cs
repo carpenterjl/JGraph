@@ -310,6 +310,11 @@ internal sealed partial class Interpreter
 
         char[] written = CharsWritten(rhs, at);
         int[] picks = WritePicks(index, text.Length, at);
+        if (subscripts.Count == 2 && written.Length != 1 && !rhs.IsStringArray)
+        {
+            RefuseMisfit([1, picks.Length], WrittenDims(rhs), false, at); // c(1, k) fits the block (ADR 0354)
+        }
+
         if (written.Length != 1 && written.Length != picks.Length)
         {
             throw new JgsRuntimeException(at.Line, at.Column, CountMismatch);
@@ -343,7 +348,7 @@ internal sealed partial class Interpreter
     private JgsValue AssignIntoCharRowAsMatrix(
         Expr target, string text, IReadOnlyList<Expr> subscripts, JgsValue rhs, Node at, JgsEnvironment env)
     {
-        JgsValue current = JgsValue.CharMatrix([text]);
+        JgsValue current = JgsValue.CharMatrix(text.Length == 0 ? [] : [text]); // '' is the 0-by-0 (ADR 0354)
         var scratch = new JgsEnvironment(env);
         scratch.Declare(LevelSlot, current);
         var slot = new VariableExpr(LevelSlot) { Line = at.Line, Column = at.Column };
@@ -422,6 +427,9 @@ internal sealed partial class Interpreter
         {
             throw rhs.IsStringArray
                 ? NotConvertible("string", "cell", at)
+                : Dialect.IsMatlab
+                ? new JgsRuntimeException(at.Line, at.Column, "MATLAB:invalidConversion", // R2025b's identifier (ADR 0354)
+                    $"Conversion to cell from {MatlabClassWord(rhs)} is not possible.")
                 : new JgsRuntimeException(at.Line, at.Column,
                     $"Conversion to cell from {MatlabClassWord(rhs)} is not possible.");
         }
@@ -458,6 +466,11 @@ internal sealed partial class Interpreter
             picks[i] = WritePicks(EvaluateIndexArgument(subscripts[i], extents, i, env), extents[i], at, i + 1);
             grown[i] = Math.Max(extents[i], Highest(picks[i]) + 1);
             wanted = checked(wanted * picks[i].Length);
+        }
+
+        if (Dialect.IsMatlab && rhs.AsCell.Length != 1)
+        {
+            RefuseMisfit(System.Array.ConvertAll(picks, static p => p.Length), rhs.Dims, IsShapelessTarget(callee), at); // open item 285
         }
 
         CheckCellCount(wanted, rhs.AsCell, at); // M14: before the cell grows
@@ -624,8 +637,14 @@ internal sealed partial class Interpreter
         }
 
         bool shapeless = rows == 0 && cols == 0;
+        (int Rows, int Cols)? spread = Dialect.IsMatlab && shapeless ? ShapelessColonExtents(rhs) : null; // ADR 0354
         (int[] rowPicks, int[] colPicks) = ShapelessPicks(
-            shapeless, rowIndex, colIndex, rows, cols, rhs.Rows, rhs.Cols, rhs.Rows * rhs.Cols, at);
+            shapeless, rowIndex, colIndex, rows, cols, spread?.Rows ?? rhs.Rows, spread?.Cols ?? rhs.Cols, rhs.AsCell.Length, at);
+        if (Dialect.IsMatlab && rhs.AsCell.Length != 1)
+        {
+            RefuseMisfit([rowPicks.Length, colPicks.Length], rhs.Dims, shapeless, at); // open item 285
+        }
+
         CheckCellCount(rowPicks.Length * colPicks.Length, rhs.AsCell, at); // M14: before the cell grows
         int neededRows = Math.Max(rows, Highest(rowPicks) + 1);
         int neededCols = Math.Max(cols, Highest(colPicks) + 1);

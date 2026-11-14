@@ -1541,6 +1541,17 @@ internal sealed class Parser
             Token op = Advance();
             Expr value = ParseAssignment(); // right-associative: a = b = 0
             RequireAssignable(left, op);
+
+            // y() = 5 is refused as the file is read, as R2025b refuses it (open item 208, ADR 0354).
+            if (_matlab && left is CallExpr { Arguments.Count: 0 } emptied)
+            {
+                throw new JgsSyntaxException(emptied.Line, emptied.Column,
+                    "An indexing expression on the left side of an assignment must have at least one subscript.")
+                {
+                    Identifier = "MATLAB:m_empty_indices",
+                };
+            }
+
             return new AssignExpr(left, op.Type, value) { Line = op.Line, Column = op.Column };
         }
 
@@ -1751,6 +1762,17 @@ internal sealed class Parser
             {
                 Token brace = Advance();
                 List<Expr> indices = ParseSubscripts(TokenType.RBrace, "'}'");
+                if (indices.Count == 0)
+                {
+                    // c{} is refused as the file is read (open item 208, ADR 0354, measured).
+                    throw new JgsSyntaxException(brace.Line, brace.Column,
+                        "Invalid expression. When calling a function or indexing a variable, use parentheses. "
+                        + "Otherwise, check for mismatched delimiters.")
+                    {
+                        Identifier = "MATLAB:m_improper_grouping",
+                    };
+                }
+
                 expr = new BraceIndexExpr(expr, indices) { Line = brace.Line, Column = brace.Column };
             }
             else if (_matlab && Check(TokenType.Dot))

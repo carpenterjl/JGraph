@@ -157,9 +157,10 @@ public class ShapedArrayTests : IDisposable
     [Fact]
     public async Task DeletingOneElementOfAMatrix_IsRefused_NotGuessedAt()
     {
-        // There is no rectangle left after removing a lone cell, so MATLAB refuses and so does this.
+        // There is no rectangle left after removing a lone cell, so MATLAB refuses and so does this,
+        // in R2025b's words (MATLAB:badnullassign, measured; ADR 0354).
         string message = await RunFailing("A = [1 2; 3 4];\nA(1, 1) = [];");
-        Assert.Contains("whole row or column", message, StringComparison.Ordinal);
+        Assert.Contains("A null assignment can have only one non-colon index.", message, StringComparison.Ordinal);
     }
 
     [Fact]

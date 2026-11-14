@@ -828,8 +828,10 @@ internal sealed partial class Interpreter
         }
         catch (JgsException ex)
         {
+            // R2025b's eval puts "Error: " before an empty-subscript refusal, not before the others (ADR 0354).
             throw ex is JgsSyntaxException { Identifier: { } identifier }
-                ? new JgsRuntimeException(line, column, identifier, ex.Message)
+                ? new JgsRuntimeException(line, column, identifier,
+                    identifier == "MATLAB:m_empty_indices" ? "Error: " + ex.Message : ex.Message)
                 : new JgsRuntimeException(line, column, ex.Message);
         }
 
@@ -6880,6 +6882,13 @@ internal sealed partial class Interpreter
             return AssignIntoCellParen(target, callee, subscripts, op, rhs, at, env, ref holds);
         }
 
+        // b(r, c) = s, b(:, 1) = t and b(r, :) = [] on a struct array, and on the [] one starts
+        // from: the numeric road over a stand-in of the positions (open item 286, ADR 0354).
+        if (IsStructGridWrite(callee, rhs, op))
+        {
+            return AssignStructByStandIn(target, callee, subscripts, rhs, at, env);
+        }
+
         // b(r, c) = s on a struct array, and on the [] one starts from (V6).
         if (op == TokenType.Assign && rhs.Type == JgsType.Struct && rhs.ClassName is null && !rhs.IsStructArray
             && ((callee.Type == JgsType.Struct && callee.ClassName is null)
@@ -6942,18 +6951,29 @@ internal sealed partial class Interpreter
         // makes it, where reading the row count of 1:5 refused it.
         bool shapeless = rows == 0 && cols == 0;
         bool rhsArray = rhs.Type == JgsType.Array;
+        (int Rows, int Cols)? spread = Dialect.IsMatlab && shapeless ? ShapelessColonExtents(rhs) : null; // ADR 0354
         (int[] rowPicks, int[] colPicks) = ShapelessPicks(
             shapeless, rowIndex, colIndex, rows, cols,
-            rhsArray ? JgsMatrix.RowCount(rhs) : 1, rhsArray ? JgsMatrix.ColCount(rhs) : 1,
+            spread?.Rows ?? (rhsArray ? JgsMatrix.RowCount(rhs) : 1), spread?.Cols ?? (rhsArray ? JgsMatrix.ColCount(rhs) : 1),
             rhsArray ? rhs.ArrayLength : 1, at);
 
         // M14: the count is held against the selection before the target grows, so a refused
-        // write leaves the target as it was.
+        // write leaves the target as it was. In the MATLAB dialect the right side fits the block
+        // by its extents, not its count (open item 285, ADR 0354), and a one-element array fills.
+        if (Dialect.IsMatlab && rhsArray && rhs.ArrayLength == 1)
+        {
+            rhs = rhs.ElementAt(0);
+        }
+
         bool scalarRhs = rhs.Type is not JgsType.Array;
         if (!scalarRhs)
         {
             int wanted = rowPicks.Length * colPicks.Length;
-            if (rhs.ArrayLength != wanted)
+            if (Dialect.IsMatlab)
+            {
+                RefuseMisfit([rowPicks.Length, colPicks.Length], WrittenDims(rhs), shapeless, at);
+            }
+            else if (rhs.ArrayLength != wanted)
             {
                 throw AssignShapeMismatch(rhs, rowPicks.Length, colPicks.Length, at);
             }
@@ -7114,11 +7134,14 @@ internal sealed partial class Interpreter
         bool deletingRows = colIndex is null;
         if (deletingRows == (rowIndex is null))
         {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                "Deleting from a matrix takes a whole row or column: A(i, :) = [] or A(:, j) = [].");
+            throw Dialect.IsMatlab && rowIndex is not null
+                ? NullAssignmentOneNonColon(at) // R2025b's words (ADR 0354)
+                : new JgsRuntimeException(at.Line, at.Column,
+                    "Deleting from a matrix takes a whole row or column: A(i, :) = [] or A(:, j) = [].");
         }
 
         RefuseNonPositive(deletingRows ? rowIndex! : colIndex!, deletingRows ? 1 : 2, at); // M14
+        RefuseDeletionPastEnd(deletingRows ? rowIndex! : colIndex!, deletingRows ? rows : cols, at);
         int[] removed = deletingRows
             ? ComputePicks(AsIndexArray(rowIndex!), rows, "row", at.Line, at.Column)
             : ComputePicks(AsIndexArray(colIndex!), cols, "column", at.Line, at.Column);
@@ -8069,6 +8092,12 @@ internal sealed partial class Interpreter
             call = new CallExpr(call.Callee, spread) { Line = call.Line, Column = call.Column };
         }
 
+        // x() and s() on data are the value itself (open item 208, ADR 0354).
+        if (call.Arguments.Count == 0 && IsEmptyCallTheValue(callee))
+        {
+            return callee;
+        }
+
         // "Calling" an array, string, or image with subscripts is indexing, identical to the bracket
         // form — a scalar lookup, a bool-mask filter, an index-array/range gather, 'end', or ':'.
         if (callee.Type is JgsType.Array or JgsType.String or JgsType.Image)
@@ -8606,6 +8635,13 @@ internal sealed partial class Interpreter
         ref ScopeHolds holds)
     {
         JgsValue callee = EvaluateForWrite(target, env);
+
+        // s(i, j, k) = t on a struct array (open item 286, ADR 0354).
+        if (IsStructGridWrite(callee, rhs, op))
+        {
+            return AssignStructByStandIn(target, callee, subscripts, rhs, at, env);
+        }
+
         if (callee.Type is JgsType.Number or JgsType.Bool or JgsType.Complex)
         {
             if (target is not VariableExpr)
@@ -8707,7 +8743,13 @@ internal sealed partial class Interpreter
         }
 
         bool scalarRhs = rhs.Type is not JgsType.Array || rhs.ArrayLength == 1;
-        if (!scalarRhs && rhs.ArrayLength != wanted)
+        if (!scalarRhs && Dialect.IsMatlab)
+        {
+            // The right side fits the block by its extents (open item 285, ADR 0354).
+            RefuseMisfit(System.Array.ConvertAll(picks, static p => p.Length), WrittenDims(rhs),
+                emptyTarget && IsShapelessTarget(callee), at);
+        }
+        else if (!scalarRhs && rhs.ArrayLength != wanted)
         {
             throw new JgsRuntimeException(at.Line, at.Column,
                 $"Cannot assign {rhs.ArrayLength} values into a selection of {wanted} element(s).");
@@ -8786,9 +8828,12 @@ internal sealed partial class Interpreter
             RefuseNonPositive(index, i + 1, at);
             if (along >= 0)
             {
-                throw new JgsRuntimeException(at.Line, at.Column, "A null assignment can have only one non-colon index.");
+                throw Dialect.IsMatlab
+                    ? NullAssignmentOneNonColon(at) // with R2025b's identifier (ADR 0354)
+                    : new JgsRuntimeException(at.Line, at.Column, "A null assignment can have only one non-colon index.");
             }
 
+            RefuseDeletionPastEnd(index, extents[i], at);
             along = i;
             drop = ComputePicks(AsIndexArray(index), extents[i], "dimension", at.Line, at.Column);
         }
@@ -9023,7 +9068,7 @@ internal sealed partial class Interpreter
     private JgsValue? EvaluateIndexArgument(Expr argument, Func<int[]> extents, int slot, JgsEnvironment env) =>
         EvaluateIndexArgument(argument, new IndexContext(null, extents, slot), env);
 
-    private JgsValue? EvaluateIndexArgument(Expr argument, IndexContext context, JgsEnvironment env)
+    private JgsValue? EvaluateIndexArgument(Expr argument, IndexContext context, JgsEnvironment env, bool named = false)
     {
         if (argument is AllExpr)
         {
@@ -9057,7 +9102,9 @@ internal sealed partial class Interpreter
                 return null;
             }
 
-            return index.Type == JgsType.Bool ? JgsValue.Shaped([index], 1, 1, JgsPackedKind.Bool) : index;
+            return index.Type == JgsType.Bool ? JgsValue.Shaped([index], 1, 1, JgsPackedKind.Bool)
+                : named ? index
+                : PositionalIndex(index, argument); // a char is its codes, a string or a cell refused (ADR 0354)
         }
         finally
         {
@@ -10468,6 +10515,13 @@ internal sealed partial class Interpreter
                     "Attempt to reference field of non-structure array."); // open item 123
             }
 
+            // A string's dot is a method or a property it does not have (open item 208, measured).
+            if (Dialect.IsMatlab && target.IsStringArray)
+            {
+                throw new JgsRuntimeException(member.Line, member.Column, "MATLAB:noSuchMethodOrField",
+                    $"Unrecognized method, property, or field '{field}' for class 'string'.");
+            }
+
             // R2025b's words for a dot on a number (measured, packages plan P1: pkg = 3; pkg.f(2)).
             throw Dialect.IsMatlab
                 ? new JgsRuntimeException(member.Line, member.Column, "MATLAB:structRefFromNonStruct",
@@ -10969,16 +11023,17 @@ internal sealed partial class Interpreter
 
                     if (existing.Type != JgsType.Struct)
                     {
-                        throw new JgsRuntimeException(variable.Line, variable.Column, RefusesDots(existing)
+                        throw FieldWriteRefusal(variable, RefusesDots(existing)
                             ? DotNotSupported
                             : $"Cannot set a field on '{variable.Name}': it is a {existing.TypeName}, not a struct.");
                     }
 
                     if (existing.IsStructArray)
                     {
-                        throw new JgsRuntimeException(variable.Line, variable.Column, Dialect.IsMatlab
-                            ? "Scalar structure required for this assignment."
-                            : $"'{variable.Name}' is a struct array, so a field write must name an element, like {variable.Name}(1).field = v.");
+                        throw Dialect.IsMatlab
+                            ? ScalarStructRequired(existing, variable)
+                            : new JgsRuntimeException(variable.Line, variable.Column,
+                                $"'{variable.Name}' is a struct array, so a field write must name an element, like {variable.Name}(1).field = v.");
                     }
 
                     return existing;
@@ -11199,8 +11254,19 @@ internal sealed partial class Interpreter
 
         // `end` inside the subscript counts the elements already there, so S(end+1).f = v appends —
         // the accumulation idiom that used to be refused because nothing told `end` what it was in.
-        JgsValue index = EvaluateIndexArgument(
-            subscript, isStruct ? existing.AsStructArray.Length : 0, env)
+        int elementCount = isStruct ? existing.AsStructArray.Length : 0;
+        JgsValue? named = EvaluateIndexArgument(subscript, elementCount, env);
+
+        // s(:).a = v and s(1:2).a = v fill one element only if they name one (open item 208, ADR 0354).
+        if (Dialect.IsMatlab && (named is null || named.Type == JgsType.Array))
+        {
+            int[] picked = WritePicks(named, elementCount, at);
+            named = picked.Length == 1
+                ? JgsValue.Number(picked[0] + Dialect.IndexBase)
+                : throw AssigningToSeveral(picked.Length, at);
+        }
+
+        JgsValue index = named
             ?? throw new JgsRuntimeException(at.Line, at.Column,
                 "A struct-array element is named by one whole-number subscript, not ':'.");
 
@@ -11370,6 +11436,11 @@ internal sealed partial class Interpreter
             }
 
             int[] slots = BraceSlots(target, brace.Indices, brace, env);
+            if (slots.Length != 1 && Dialect.IsMatlab)
+            {
+                throw AssigningToSeveral(slots.Length, brace); // R2025b's words (open item 208, ADR 0354)
+            }
+
             if (slots.Length != 1)
             {
                 throw new JgsRuntimeException(brace.Line, brace.Column,
@@ -11383,16 +11454,31 @@ internal sealed partial class Interpreter
 
         JgsValue? index = EvaluateIndexArgument(
             Single(brace.Indices, brace, "A cell index"), elements.Length, env);
-        if (index is null || index.Type != JgsType.Number)
+        int position;
+        if (Dialect.IsMatlab && (index is null || index.Type == JgsType.Array))
         {
-            throw new JgsRuntimeException(brace.Line, brace.Column, "A cell index must be a single number.");
-        }
+            // c{:} = v and c{1:2} = v fill one place only if they name one (open item 208, ADR 0354).
+            int[] named = WritePicks(index, elements.Length, brace);
+            if (named.Length != 1)
+            {
+                throw AssigningToSeveral(named.Length, brace);
+            }
 
-        int position = (int)index.AsNumber - Dialect.IndexBase;
-        if (position < 0)
+            position = named[0];
+        }
+        else
         {
-            throw new JgsRuntimeException(brace.Line, brace.Column,
-                $"Index {(int)index.AsNumber} is out of range (indexing is {Dialect.IndexBase}-based).");
+            if (index is null || index.Type != JgsType.Number)
+            {
+                throw new JgsRuntimeException(brace.Line, brace.Column, "A cell index must be a single number.");
+            }
+
+            position = (int)index.AsNumber - Dialect.IndexBase;
+            if (position < 0)
+            {
+                throw new JgsRuntimeException(brace.Line, brace.Column,
+                    $"Index {(int)index.AsNumber} is out of range (indexing is {Dialect.IndexBase}-based).");
+            }
         }
 
         if (position >= elements.Length)
@@ -11569,6 +11655,12 @@ internal sealed partial class Interpreter
             JgsValue result = JgsValue.Cell(stood);
             result.Reshape(cellCols, cellRows);
             return result;
+        }
+
+        // A struct array stands on its side too (ADR 0354): s' came back unturned.
+        if (value.Type == JgsType.Struct && value.ClassName is null && value.IsStructArray && !value.IsNd)
+        {
+            return TransposedStructs(value);
         }
 
         if (value.Type != JgsType.Array)

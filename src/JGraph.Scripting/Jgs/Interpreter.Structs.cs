@@ -247,8 +247,11 @@ internal sealed partial class Interpreter
         bool deleting = rhs.Type == JgsType.Array && rhs.ArrayLength == 0;
         if (!deleting && rhs.Type != JgsType.Struct)
         {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                $"An element of a struct array takes a struct or [], not a {rhs.TypeName}.");
+            throw Dialect.IsMatlab
+                ? new JgsRuntimeException(at.Line, at.Column, "MATLAB:heterogeneousAssignment", // measured (ADR 0354)
+                    "Assignment between unlike types is not allowed.")
+                : new JgsRuntimeException(at.Line, at.Column,
+                    $"An element of a struct array takes a struct or [], not a {rhs.TypeName}.");
         }
 
         JgsValue written;

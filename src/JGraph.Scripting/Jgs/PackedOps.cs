@@ -637,8 +637,10 @@ internal static class PackedOps
         {
             if (isTrue(i))
             {
-                throw new JgsRuntimeException(line, column, "MATLAB:badsubscript",
-                    "The logical indices contain a true value outside of the array bounds.");
+                // With several subscripts R2025b names the mask's place (ADR 0354, measured).
+                throw new JgsRuntimeException(line, column, "MATLAB:badsubscript", SubscriptPosition == 0
+                    ? "The logical indices contain a true value outside of the array bounds."
+                    : $"The logical indices in position {SubscriptPosition} contain a true value outside of the array bounds.");
             }
         }
 

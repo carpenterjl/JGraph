@@ -100,3 +100,6 @@ shape (`zeros(0, 3)`, `zeros(3, 0)`) is unchanged.
   alone here.
 - **Open item 286.** `s = struct('a', {}); s(:, 1) = struct('a', {1, 2})` is refused: "Cannot assign
   by index into a struct". R2025b makes a 2-by-1 struct array.
+
+Closed since: ADR 0354 closed both. A write with two subscripts or more fits its right side by its
+extents, and a struct array is written through a grid on the numeric road.

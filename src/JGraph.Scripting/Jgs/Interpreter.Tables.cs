@@ -228,8 +228,8 @@ internal sealed partial class Interpreter
         }
 
         int[] extents = [table.RowCount, table.ColumnCount];
-        JgsValue? rowIndex = EvaluateIndexArgument(subscripts[0], extents, 0, env);
-        JgsValue? columnIndex = EvaluateIndexArgument(subscripts[1], extents, 1, env);
+        JgsValue? rowIndex = EvaluateNamedIndexArgument(subscripts[0], extents, 0, env);
+        JgsValue? columnIndex = EvaluateNamedIndexArgument(subscripts[1], extents, 1, env);
         columnIndex = JgsBuiltins.VartypeAsNames(table, columnIndex); // T(:, vartype(...)) (open item 122)
 
         int[] rows = rowIndex is null
@@ -285,8 +285,8 @@ internal sealed partial class Interpreter
         }
 
         int[] extents = [table.RowCount, table.ColumnCount];
-        JgsValue? rowIndex = EvaluateIndexArgument(brace.Indices[0], extents, 0, env);
-        JgsValue? columnIndex = EvaluateIndexArgument(brace.Indices[1], extents, 1, env);
+        JgsValue? rowIndex = EvaluateNamedIndexArgument(brace.Indices[0], extents, 0, env);
+        JgsValue? columnIndex = EvaluateNamedIndexArgument(brace.Indices[1], extents, 1, env);
         columnIndex = JgsBuiltins.VartypeAsNames(table, columnIndex); // T(:, vartype(...)) (open item 122)
 
         Expr rowExpr;
@@ -440,8 +440,8 @@ internal sealed partial class Interpreter
         }
 
         int[] extents = [table.RowCount, table.ColumnCount];
-        JgsValue? rowIndex = EvaluateIndexArgument(subscripts[0], extents, 0, env);
-        JgsValue? columnIndex = EvaluateIndexArgument(subscripts[1], extents, 1, env);
+        JgsValue? rowIndex = EvaluateNamedIndexArgument(subscripts[0], extents, 0, env);
+        JgsValue? columnIndex = EvaluateNamedIndexArgument(subscripts[1], extents, 1, env);
         columnIndex = JgsBuiltins.VartypeAsNames(table, columnIndex); // T(:, vartype(...)) (open item 122)
 
         if (IsDeletion(rhs))
