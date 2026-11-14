@@ -116,7 +116,12 @@ internal static partial class JgsBuiltins
                     case "horzcat":
                         return interpreter.JoinAsBracket(args, across: true, line, col);
                     case "vertcat":
-                        return interpreter.JoinAsBracket(args, across: false, line, col);
+                        // vertcat(m) of one map runs the class's method, which answers a new map (open item 317).
+                        return args.Count == 1 && IsMatlabMapShape(args[0], out _)
+                            ? JoinOneMap(args[0], vertical: true, line, col)
+                            : interpreter.JoinAsBracket(args, across: false, line, col);
+                    case "cat" when args.Count >= 2 && AnyMatlabMap([[.. args.Skip(1)]]):
+                        return CatMaps(args, line, col);
                     default:
                         if (args.Count >= 2 && args[0].Type == JgsType.Number && args[0].AsNumber is 1 or 2)
                         {

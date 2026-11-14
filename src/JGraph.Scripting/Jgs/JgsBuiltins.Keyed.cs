@@ -776,6 +776,14 @@ internal static partial class JgsBuiltins
             return value.BoxedElements();
         }
 
+        // A 1-by-1 numeric array ([1.5], a computed key) is the one number it holds: Put refused it as
+        // an array, so containers.Map([1.5], 2) could not be made (open item 317, ADR 0358).
+        if (value.Type == JgsType.Array && !value.IsStringArray && !value.IsCharMatrix && value.ArrayLength == 1
+            && value.TimeTag is null && !value.IsCategorical)
+        {
+            return value.BoxedElements();
+        }
+
         return [value];
     }
 

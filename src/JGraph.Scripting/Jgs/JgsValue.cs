@@ -1528,7 +1528,52 @@ internal sealed class JgsValue
             ? state.Summary()!
             : value.Type == JgsType.Object && JgsBuiltinClasses.CompactDisplay(value, inCell) is { } compact
                 ? compact
-                : value.Display();
+                : JgsRunningDialect.ThreadIsMatlab && MatlabNestedSummary(value, inCell) is { } summary
+                    ? summary
+                    : value.Display();
+
+    /// <summary>
+    /// What R2025b shows for an object or a map inside a struct field or a cell (open items 317 and
+    /// 319, ADR 0358, probes p317c and p319): its size and full class name, <c>[2×1 containers.Map]</c>
+    /// in a field and <c>2×1 containers.Map</c> in a cell, whose braces this build's cell display writes
+    /// itself, as it does for secretID's (ADR 0353). A deleted handle shows the same way; a member of
+    /// an enumeration is its name, and in a cell a row of members is their names in brackets. Null
+    /// for anything else, which keeps this build's display.
+    /// </summary>
+    private static string? MatlabNestedSummary(JgsValue value, bool inCell)
+    {
+        int[] dims;
+        string className;
+        if (value.Type == JgsType.Struct && value.ClassName == JgsBuiltins.MapClassName && JgsBuiltins.IsKeyedCollection(value))
+        {
+            dims = [JgsBuiltins.EntryCount(value), 1];
+            className = JgsBuiltins.MapClassName;
+        }
+        else if (JgsBuiltins.IsMetadataValue(value))
+        {
+            dims = JgsBuiltins.SizeDims(value);
+            className = value.ClassName!;
+        }
+        else if (value.Type == JgsType.Object)
+        {
+            JgsObject[] members = value._reference is JgsObjectArray objects ? objects.Elements : [value.AsObject];
+            dims = value._reference is JgsObjectArray ? value.Dims : [1, 1];
+            className = value.ObjectClass.Name;
+            if (value.ObjectClass.IsEnumeration && members.Length > 0 && dims is [1, _]
+                && System.Array.TrueForAll(members, static m => m.EnumerationName is not null))
+            {
+                string names = string.Join("    ", members.Select(static m => m.EnumerationName));
+                return inCell || members.Length > 1 ? "[" + names + "]" : names;
+            }
+        }
+        else
+        {
+            return null;
+        }
+
+        string size = string.Join('×', dims);
+        return inCell ? size + " " + className : "[" + size + " " + className + "]";
+    }
 
     /// <summary>
     /// An array of objects as R2025b shows one (open item 65, probe <c>probe_65</c>): its size and

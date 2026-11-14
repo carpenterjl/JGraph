@@ -83,9 +83,13 @@ public class MatlabArrayBuiltinTests : IDisposable
         assert(iscell(c));
         assert(c{1} == 1);
 
-        back = cell2struct({7, 8}, {'x', 'y'});
+        % The fields run down the first dimension unless a third argument names another; a row of
+        % two under two names is R2025b's NumberOfNamesMismatch (open item 317, ADR 0358).
+        back = cell2struct({7; 8}, {'x', 'y'});
         assert(back.x == 7);
         assert(back.y == 8);
+        across = cell2struct({7, 8}, {'x', 'y'}, 2);
+        assert(across.y == 8);
         """);
 
     [Fact]

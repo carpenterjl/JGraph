@@ -3280,6 +3280,13 @@ internal sealed partial class Interpreter
             return ExecuteForOverCell(statement, iterable, env);
         }
 
+        // A containers.Map is not walked: R2025b's subsref refuses the column a for loop asks of it,
+        // whatever its Count (open item 317, ADR 0358).
+        if (JgsBuiltins.IsMatlabMapShape(iterable, out _))
+        {
+            throw JgsBuiltins.MapIncorrectIndexing(statement.Line, statement.Column);
+        }
+
         // A struct array iterates element by element, each pass binding a 1-by-1 struct (M65) — so
         // `for s = stats` reads s.Area in the body, the way a MATLAB script writes it.
         if (iterable.Type == JgsType.Struct)
@@ -4019,6 +4026,12 @@ internal sealed partial class Interpreter
             return ConcatenateCategoricals(rows, matrix);
         }
 
+        // A containers.Map joins by its class's own verbs (open item 317, ADR 0358).
+        if (Dialect.IsMatlab && JgsBuiltins.AnyMatlabMap(rows))
+        {
+            return JgsBuiltins.JoinMaps(rows, matrix.Line, matrix.Column);
+        }
+
         // Structs concatenate into a struct array (M65) rather than through the numeric block
         // machinery, which read them as one element apiece and answered with a double.
         if (AnyStruct(rows))
@@ -4331,6 +4344,12 @@ internal sealed partial class Interpreter
         if (Dialect.ConcatenatesBrackets && Dialect.IsMatlab && Array.Exists(joinable, static e => e.Type == JgsType.Function))
         {
             return JoinFunctionHandles([joinable], array);
+        }
+
+        // A containers.Map joins by its class's own verbs, its empties included (open item 317, ADR 0358).
+        if (Dialect.IsMatlab && JgsBuiltins.AnyMatlabMap([elements]))
+        {
+            return JgsBuiltins.JoinMaps([elements], array.Line, array.Column);
         }
 
         // A bracket holding any struct concatenates into a struct array (M65). Asked before the
@@ -10552,6 +10571,13 @@ internal sealed partial class Interpreter
         if (target.Type == JgsType.Struct && target.ClassName == JgsBuiltins.DictionaryClassName)
         {
             return JgsBuiltins.DictionaryMember(target, field, member.Line, member.Column);
+        }
+
+        // A metaproperty's missing default raises, and a deep metaclass makes its lists (open item 319, ADR 0358).
+        if (Dialect.IsMatlab && JgsBuiltins.IsMetadataValue(target)
+            && JgsBuiltins.MetadataMember(target, field, this, member.Line, member.Column) is { } metadata)
+        {
+            return metadata;
         }
 
         // S.field on an array reads that field across every element (M65). A 1-by-1 falls through to

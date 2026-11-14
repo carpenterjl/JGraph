@@ -1,0 +1,231 @@
+CHK|hcat|MATLAB:Containers:Map:HorzcatNotSupported|exact
+CHK|hcat_msg|Horizontal concatenation is not supported by a containers.Map.|exact
+CHK|hcat_same|MATLAB:Containers:Map:HorzcatNotSupported|exact
+CHK|hcat_same_msg|Horizontal concatenation is not supported by a containers.Map.|exact
+CHK|hcat_fn|MATLAB:Containers:Map:HorzcatNotSupported|exact
+CHK|hcat_fn_msg|Horizontal concatenation is not supported by a containers.Map.|exact
+CHK|hcat_with_empty|MATLAB:class:RequireClass|exact
+CHK|hcat_with_empty_msg|Invalid input for argument 2 (varargin): Value must be 'containers.Map scalar'.|exact
+CHK|hcat_with_number|MATLAB:class:RequireClass|exact
+CHK|hcat_with_number_msg|Invalid input for argument 2 (varargin): Value must be 'containers.Map scalar'.|exact
+CHK|hcat_three|MATLAB:class:RequireClass|exact
+CHK|hcat_three_msg|Invalid input for argument 3 (varargin): Value must be 'containers.Map scalar'.|exact
+CHK|grid|MATLAB:Containers:Map:HorzcatNotSupported|exact
+CHK|grid_msg|Horizontal concatenation is not supported by a containers.Map.|exact
+CHK|grid_lower_row|MATLAB:Containers:Map:HorzcatNotSupported|exact
+CHK|grid_lower_row_msg|Horizontal concatenation is not supported by a containers.Map.|exact
+CHK|vcat_class|char[1 14]'containers.Map'|exact
+CHK|vcat|cell[1 4]{cell[1 3]{char[1 1]'a';char[1 1]'b';char[1 1]'c'};cell[1 3]{double[1 1] 1;double[1 1] 20;double[1 1] 30};char[1 4]'char';char[1 6]'double'}|exact
+CHK|vcat_count|uint64[1 1] 3|exact
+CHK|vcat_size|double[1 2] [3 1]|exact
+CHK|vcat_fn|cell[1 4]{cell[1 3]{char[1 1]'a';char[1 1]'b';char[1 1]'c'};cell[1 3]{double[1 1] 1;double[1 1] 20;double[1 1] 30};char[1 4]'char';char[1 6]'double'}|exact
+CHK|vcat_later_wins|cell[1 4]{cell[1 3]{char[1 1]'a';char[1 1]'b';char[1 1]'c'};cell[1 3]{double[1 1] 1;double[1 1] 2;double[1 1] 30};char[1 4]'char';char[1 6]'double'}|exact
+CHK|vcat_same|cell[1 4]{cell[1 2]{char[1 1]'a';char[1 1]'b'};cell[1 2]{double[1 1] 1;double[1 1] 2};char[1 4]'char';char[1 6]'double'}|exact
+CHK|vcat_empty_map_first|cell[1 4]{cell[1 2]{char[1 1]'a';char[1 1]'b'};cell[1 2]{double[1 1] 1;double[1 1] 2};char[1 4]'char';char[1 3]'any'}|exact
+CHK|vcat_empty_maps|uint64[1 1] 0|exact
+CHK|vcat_numeric_keys|cell[1 4]{cell[1 3]{double[1 1] 1;double[1 1] 2;double[1 1] 3};cell[1 3]{char[1 1]'x';char[1 1]'Y';char[1 1]'Z'};char[1 6]'double';char[1 4]'char'}|exact
+CHK|vcat_copies|cell[1 3]{uint64[1 1] 2;uint64[1 1] 2;uint64[1 1] 4}|exact
+CHK|vcat_three_mismatch|MATLAB:Containers:TypeMismatch|exact
+CHK|vcat_three_mismatch_msg|Specified value type does not match the type expected for this container.|exact
+CHK|vcat_value_char_into_double|MATLAB:Containers:TypeMismatch|exact
+CHK|vcat_value_char_into_double_msg|Specified value type does not match the type expected for this container.|exact
+CHK|vcat_value_double_double|cell[1 4]{cell[1 1]{char[1 1]'a'};cell[1 1]{double[1 1] 5};char[1 4]'char';char[1 6]'double'}|exact
+CHK|vcat_value_any_double|cell[1 4]{cell[1 3]{char[1 1]'a';char[1 1]'p';char[1 1]'q'};cell[1 3]{double[1 1] 5;double[1 1] 1;char[1 3]'two'};char[1 4]'char';char[1 3]'any'}|exact
+CHK|vcat_value_double_any|MATLAB:Containers:TypeMismatch|exact
+CHK|vcat_value_double_any_msg|Specified value type does not match the type expected for this container.|exact
+CHK|vcat_value_double_any_of_doubles|cell[1 4]{cell[1 2]{char[1 1]'a';char[1 1]'k'};cell[1 2]{double[1 1] 5;double[1 1] 4};char[1 4]'char';char[1 6]'double'}|exact
+CHK|vcat_value_double_logical|cell[1 4]{cell[1 2]{char[1 1]'a';char[1 1]'t'};cell[1 2]{double[1 1] 5;double[1 1] 1};char[1 4]'char';char[1 6]'double'}|exact
+CHK|vcat_value_logical_double|cell[1 4]{cell[1 2]{char[1 1]'a';char[1 1]'t'};cell[1 2]{logical[1 1] 1;logical[1 1] 1};char[1 4]'char';char[1 7]'logical'}|exact
+CHK|vcat_value_double_int32|cell[1 4]{cell[1 2]{char[1 1]'a';char[1 1]'i'};cell[1 2]{double[1 1] 5;double[1 1] 3};char[1 4]'char';char[1 6]'double'}|exact
+CHK|vcat_value_int32_double|cell[1 4]{cell[1 2]{char[1 1]'a';char[1 1]'i'};cell[1 2]{int32[1 1] 5;int32[1 1] 3};char[1 4]'char';char[1 5]'int32'}|exact
+CHK|vcat_value_char_any|MATLAB:Containers:TypeMismatch|exact
+CHK|vcat_value_char_any_msg|Specified value type does not match the type expected for this container.|exact
+CHK|vcat_value_any_char|cell[1 4]{cell[1 3]{char[1 1]'p';char[1 1]'q';char[1 1]'z'};cell[1 3]{double[1 1] 1;char[1 3]'two';char[1 4]'text'};char[1 4]'char';char[1 3]'any'}|exact
+CHK|vcat_key_char_double|MATLAB:Containers:TypeMismatch|exact
+CHK|vcat_key_char_double_msg|Specified key type does not match the type expected for this container.|exact
+CHK|vcat_key_double_single|cell[1 4]{cell[1 2]{double[1 1] 1;double[1 1] 2};cell[1 2]{char[1 1]'x';char[1 1]'w'};char[1 6]'double';char[1 4]'char'}|exact
+CHK|vcat_key_single_double|cell[1 4]{cell[1 2]{single[1 1] 1;single[1 1] 2};cell[1 2]{char[1 1]'x';char[1 1]'y'};char[1 6]'single';char[1 3]'any'}|exact
+CHK|vcat_key_int32_double|cell[1 4]{cell[1 2]{int32[1 1] 2;int32[1 1] 4};cell[1 2]{double[1 1] 2;double[1 1] 7};char[1 5]'int32';char[1 6]'double'}|exact
+CHK|vcat_key_double_int32|cell[1 4]{cell[1 2]{double[1 1] 1.5;double[1 1] 4};cell[1 2]{double[1 1] 2;double[1 1] 7};char[1 6]'double';char[1 6]'double'}|exact
+CHK|vcat_key_int32_char_values|MATLAB:Containers:TypeMismatch|exact
+CHK|vcat_key_int32_char_values_msg|Specified value type does not match the type expected for this container.|exact
+CHK|vcat_key_double_int32_char|MATLAB:Containers:TypeMismatch|exact
+CHK|vcat_key_double_int32_char_msg|Specified value type does not match the type expected for this container.|exact
+CHK|vcat_with_number|MATLAB:class:RequireClass|exact
+CHK|vcat_with_number_msg|Invalid input for argument 2 (varargin): Value must be 'containers.Map scalar'.|exact
+CHK|vcat_with_empty|MATLAB:class:RequireClass|exact
+CHK|vcat_with_empty_msg|Invalid input for argument 2 (varargin): Value must be 'containers.Map scalar'.|exact
+CHK|vcat_with_struct|MATLAB:class:RequireClass|exact
+CHK|vcat_with_struct_msg|Invalid input for argument 2 (varargin): Value must be 'containers.Map scalar'.|exact
+CHK|vcat_with_cell|MATLAB:class:RequireClass|exact
+CHK|vcat_with_cell_msg|Invalid input for argument 2 (varargin): Value must be 'containers.Map scalar'.|exact
+CHK|vcat_with_char|MATLAB:class:RequireClass|exact
+CHK|vcat_with_char_msg|Invalid input for argument 2 (varargin): Value must be 'containers.Map scalar'.|exact
+CHK|vcat_with_zeros|MATLAB:class:RequireClass|exact
+CHK|vcat_with_zeros_msg|Invalid input for argument 2 (varargin): Value must be 'containers.Map scalar'.|exact
+CHK|vcat_three_number|MATLAB:class:RequireClass|exact
+CHK|vcat_three_number_msg|Invalid input for argument 3 (varargin): Value must be 'containers.Map scalar'.|exact
+CHK|vcat_fn_number|MATLAB:class:RequireClass|exact
+CHK|vcat_fn_number_msg|Invalid input for argument 3 (varargin): Value must be 'containers.Map scalar'.|exact
+CHK|vcat_empty_middle|MATLAB:class:RequireClass|exact
+CHK|vcat_empty_middle_msg|Invalid input for argument 2 (varargin): Value must be 'containers.Map scalar'.|exact
+CHK|vcat_number_first|MATLAB:UnableToConvert|exact
+CHK|vcat_number_first_msg|The following error occurred converting from double to containers.Map: Incorrect number of inputs specified.|exact
+CHK|vcat_char_first|MATLAB:UnableToConvert|exact
+CHK|vcat_char_first_msg|The following error occurred converting from char to containers.Map: Incorrect number of inputs specified.|exact
+CHK|vcat_cell_first|MATLAB:UnableToConvert|exact
+CHK|vcat_cell_first_msg|The following error occurred converting from cell to containers.Map: Incorrect number of inputs specified.|exact
+CHK|vcat_struct_first|MATLAB:UnableToConvert|exact
+CHK|vcat_struct_first_msg|The following error occurred converting from struct to containers.Map: Incorrect number of inputs specified.|exact
+CHK|hcat_number_first|MATLAB:UnableToConvert|exact
+CHK|hcat_number_first_msg|The following error occurred converting from double to containers.Map: Incorrect number of inputs specified.|exact
+CHK|vcat_empty_then_map|cell[1 4]{cell[1 2]{char[1 1]'a';char[1 1]'b'};cell[1 2]{double[1 1] 1;double[1 1] 2};char[1 4]'char';char[1 6]'double'}|exact
+CHK|vcat_empty_char_then_map|cell[1 4]{cell[1 2]{char[1 1]'a';char[1 1]'b'};cell[1 2]{double[1 1] 1;double[1 1] 2};char[1 4]'char';char[1 6]'double'}|exact
+CHK|vcat_empty_cell_then_map|cell[1 4]{cell[1 2]{char[1 1]'a';char[1 1]'b'};cell[1 2]{double[1 1] 1;double[1 1] 2};char[1 4]'char';char[1 6]'double'}|exact
+CHK|vcat_empty_struct_then_map|cell[1 4]{cell[1 2]{char[1 1]'a';char[1 1]'b'};cell[1 2]{double[1 1] 1;double[1 1] 2};char[1 4]'char';char[1 6]'double'}|exact
+CHK|vcat_zeros_then_map|cell[1 4]{cell[1 2]{char[1 1]'a';char[1 1]'b'};cell[1 2]{double[1 1] 1;double[1 1] 2};char[1 4]'char';char[1 6]'double'}|exact
+CHK|vcat_empties_around|cell[1 4]{cell[1 2]{char[1 1]'a';char[1 1]'b'};cell[1 2]{double[1 1] 1;double[1 1] 2};char[1 4]'char';char[1 6]'double'}|exact
+CHK|hcat_empties_around|cell[1 4]{cell[1 2]{char[1 1]'a';char[1 1]'b'};cell[1 2]{double[1 1] 1;double[1 1] 2};char[1 4]'char';char[1 6]'double'}|exact
+CHK|vcat_one_fn|cell[1 4]{cell[1 2]{char[1 1]'a';char[1 1]'b'};cell[1 2]{double[1 1] 1;double[1 1] 2};char[1 4]'char';char[1 6]'double'}|exact
+CHK|cat1|cell[1 4]{cell[1 3]{char[1 1]'a';char[1 1]'b';char[1 1]'c'};cell[1 3]{double[1 1] 1;double[1 1] 20;double[1 1] 30};char[1 4]'char';char[1 6]'double'}|exact
+CHK|cat1_one|cell[1 4]{cell[1 2]{char[1 1]'a';char[1 1]'b'};cell[1 2]{double[1 1] 1;double[1 1] 2};char[1 4]'char';char[1 6]'double'}|exact
+CHK|cat2|MATLAB:Containers:Map:HorzcatNotSupported|exact
+CHK|cat2_msg|Horizontal concatenation is not supported by a containers.Map.|exact
+CHK|cat3|MATLAB:Containers:Map:NDCatNotSupported|exact
+CHK|cat3_msg|Concatenation in dimension 3 is not supported by a containers.Map.|exact
+CHK|cat3_one|MATLAB:Containers:Map:NDCatNotSupported|exact
+CHK|cat3_one_msg|Concatenation in dimension 3 is not supported by a containers.Map.|exact
+CHK|cat3_empty_first|MATLAB:class:RequireClass|exact
+CHK|cat3_empty_first_msg|Invalid input for argument 2 (varargin): Value must be 'containers.Map scalar'.|exact
+CHK|cat3_number|MATLAB:class:RequireClass|exact
+CHK|cat3_number_msg|Invalid input for argument 3 (varargin): Value must be 'containers.Map scalar'.|exact
+CHK|cat1_number|MATLAB:class:RequireClass|exact
+CHK|cat1_number_msg|Invalid input for argument 3 (varargin): Value must be 'containers.Map scalar'.|exact
+CHK|cat1_number_first|MATLAB:class:RequireClass|exact
+CHK|cat1_number_first_msg|Invalid input for argument 2 (varargin): Value must be 'containers.Map scalar'.|exact
+CHK|vcat_nested|MATLAB:Containers:TypeMismatch|exact
+CHK|vcat_nested_msg|Specified value type does not match the type expected for this container.|exact
+CHK|vcat_in_cell|double[1 2] [1 1]|exact
+CHK|vcat_empty_then_two_maps|char[1 26]'MATLAB:class:RequireScalar'|div=ADR0358|diverges|uint64[1 1] 3
+CHK|for_map|MATLAB:Containers:Map:IncorrectIndexing|exact
+CHK|for_map_msg|Only one-dimensional indexing is supported.|exact
+CHK|for_empty_map|MATLAB:Containers:Map:IncorrectIndexing|exact
+CHK|for_empty_map_msg|Only one-dimensional indexing is supported.|exact
+CHK|for_one_map|MATLAB:Containers:Map:IncorrectIndexing|exact
+CHK|for_one_map_msg|Only one-dimensional indexing is supported.|exact
+CHK|for_map_body|MATLAB:Containers:Map:IncorrectIndexing|exact
+CHK|for_map_body_msg|Only one-dimensional indexing is supported.|exact
+CHK|show_struct_field|char[1 20]'[2×1 containers.Map]'|exact
+CHK|show_struct_field_empty|char[1 20]'[0×1 containers.Map]'|exact
+CHK|show_struct_field_one|char[1 20]'[1×1 containers.Map]'|exact
+CHK|show_struct_second_field|char[1 20]'[2×1 containers.Map]'|exact
+CHK|show_nested_struct_field|char[1 20]'[2×1 containers.Map]'|exact
+CHK|show_cell|char[1 20]'{2×1 containers.Map}'|exact
+CHK|show_cell_empty|char[1 20]'{0×1 containers.Map}'|exact
+CHK|c2s_col_dim1|struct[1 1]{(a=double[1 1] 1,b=double[1 1] 2)}|exact
+CHK|c2s_row_dim2|struct[1 1]{(a=double[1 1] 1,b=double[1 1] 2)}|exact
+CHK|c2s_row_dim1|struct[2 1]{(a=double[1 1] 1)(a=double[1 1] 2)}|exact
+CHK|c2s_col_dim2|struct[2 1]{(a=double[1 1] 1)(a=double[1 1] 2)}|exact
+CHK|c2s_23_dim1|struct[3 1]{(a=double[1 1] 1,b=double[1 1] 4)(a=double[1 1] 2,b=double[1 1] 5)(a=double[1 1] 3,b=double[1 1] 6)}|exact
+CHK|c2s_23_dim2|struct[2 1]{(x=double[1 1] 1,y=double[1 1] 2,z=double[1 1] 3)(x=double[1 1] 4,y=double[1 1] 5,z=double[1 1] 6)}|exact
+CHK|c2s_23_dim3|struct[2 3]{(q=double[1 1] 1)(q=double[1 1] 4)(q=double[1 1] 2)(q=double[1 1] 5)(q=double[1 1] 3)(q=double[1 1] 6)}|exact
+CHK|c2s_23_dim4_size|double[1 2] [2 3]|exact
+CHK|c2s_nd_dim1_size|double[1 2] [3 4]|exact
+CHK|c2s_nd_dim2_size|double[1 2] [2 4]|exact
+CHK|c2s_nd_dim3_size|double[1 2] [2 3]|exact
+CHK|c2s_nd_dim1|struct[3 4]{(a=double[1 1] 1,b=double[1 1] 2)(a=double[1 1] 3,b=double[1 1] 4)(a=double[1 1] 5,b=double[1 1] 6)(a=double[1 1] 7,b=double[1 1] 8)(a=double[1 1] 9,b=double[1 1] 10)(a=double[1 1] 11,b=double[1 1] 12)(a=double[1 1] 13,b=double[1 1] 14)(a=double[1 1] 15,b=double[1 1] 16)(a=double[1 1] 17,b=double[1 1] 18)(a=double[1 1] 19,b=double[1 1] 20)(a=double[1 1] 21,b=double[1 1] 22)(a=double[1 1] 23,b=double[1 1] 24)}|exact
+CHK|c2s_nd_dim2_element|struct[1 1]{(a=double[1 1] 20,b=double[1 1] 22,c=double[1 1] 24)}|exact
+CHK|c2s_nd_dim3_element|struct[1 1]{(a=double[1 1] 6,b=double[1 1] 12,c=double[1 1] 18,d=double[1 1] 24)}|exact
+CHK|c2s_4d_dim2_size|double[1 3] [2 2 2]|exact
+CHK|c2s_4d_dim4_size|double[1 3] [2 2 2]|exact
+CHK|c2s_4d_dim4_element|struct[1 1]{(a=double[1 1] 6,b=double[1 1] 14)}|exact
+CHK|c2s_two_args|struct[1 1]{(a=double[1 1] 1,b=double[1 1] 2)}|exact
+CHK|c2s_two_args_row|MATLAB:Cell2Struct:NumberOfNamesMismatch|exact
+CHK|c2s_two_args_row_msg|Number of field names must match number of fields in new structure.|exact
+CHK|c2s_fields_char_matrix|struct[1 1]{(ab=double[1 1] 1,cd=double[1 1] 2)}|exact
+CHK|c2s_fields_char_row|struct[1 1]{(abc=double[1 1] 1)}|exact
+CHK|c2s_fields_char_padded|MATLAB:Cell2Struct:InvalidFieldName|exact
+CHK|c2s_fields_char_padded_msg|Invalid field name "a ".|exact
+CHK|c2s_fields_string|struct[1 1]{(a=double[1 1] 1,b=double[1 1] 2)}|exact
+CHK|c2s_fields_string_scalar|struct[1 1]{(a=double[1 1] 1)}|exact
+CHK|c2s_fields_string_column|struct[1 1]{(a=double[1 1] 1,b=double[1 1] 2)}|exact
+CHK|c2s_fields_string_empty|MATLAB:Cell2Struct:NumberOfNamesMismatch|exact
+CHK|c2s_fields_string_empty_msg|Number of field names must match number of fields in new structure.|exact
+CHK|c2s_fields_missing|MATLAB:string:MissingNotSupported|exact
+CHK|c2s_fields_missing_msg|<missing> string element not supported.|exact
+CHK|c2s_fields_column_cell|struct[1 1]{(a=double[1 1] 1,b=double[1 1] 2)}|exact
+CHK|c2s_fields_cell_char_matrix|MATLAB:Cell2Struct:NonStringVector|exact
+CHK|c2s_fields_cell_char_matrix_msg|Field name must be a character vector or string scalar.|exact
+CHK|c2s_fields_cell_number|MATLAB:Cell2Struct:NonStringFieldNames|exact
+CHK|c2s_fields_cell_number_msg|Field names must be non-empty character vectors or string scalars.|exact
+CHK|c2s_fields_cell_empty_name|MATLAB:Cell2Struct:NonStringFieldNames|exact
+CHK|c2s_fields_cell_empty_name_msg|Field names must be non-empty character vectors or string scalars.|exact
+CHK|c2s_fields_cell_string|MATLAB:Cell2Struct:NonStringFieldNames|exact
+CHK|c2s_fields_cell_string_msg|Field names must be non-empty character vectors or string scalars.|exact
+CHK|c2s_fields_number|MATLAB:badopt|exact
+CHK|c2s_fields_number_msg|Unknown command option.|exact
+CHK|c2s_fields_leading_blank|MATLAB:Cell2Struct:InvalidFieldName|exact
+CHK|c2s_fields_leading_blank_msg|Invalid field name " a".|exact
+CHK|c2s_fields_trailing_blank|MATLAB:Cell2Struct:InvalidFieldName|exact
+CHK|c2s_fields_trailing_blank_msg|Invalid field name "a ".|exact
+CHK|c2s_long_name|cell[1 1]{char[1 70]'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'}|exact
+CHK|c2s_count_wrong|MATLAB:Cell2Struct:NumberOfNamesMismatch|exact
+CHK|c2s_count_wrong_msg|Number of field names must match number of fields in new structure.|exact
+CHK|c2s_count_short|MATLAB:Cell2Struct:NumberOfNamesMismatch|exact
+CHK|c2s_count_short_msg|Number of field names must match number of fields in new structure.|exact
+CHK|c2s_count_before_name|MATLAB:Cell2Struct:NumberOfNamesMismatch|exact
+CHK|c2s_count_before_name_msg|Number of field names must match number of fields in new structure.|exact
+CHK|c2s_duplicate|MATLAB:DuplicateFieldName|exact
+CHK|c2s_duplicate_msg|Duplicate field name "a"|exact
+CHK|c2s_invalid|MATLAB:Cell2Struct:InvalidFieldName|exact
+CHK|c2s_invalid_msg|Invalid field name "1a".|exact
+CHK|c2s_invalid_after_duplicate|MATLAB:Cell2Struct:InvalidFieldName|exact
+CHK|c2s_invalid_after_duplicate_msg|Invalid field name "1a".|exact
+CHK|c2s_dim0|MATLAB:Cell2Struct:DimensionNumber|exact
+CHK|c2s_dim0_msg|Dimension number out of range.|exact
+CHK|c2s_dim_negative|MATLAB:Cell2Struct:DimensionNumber|exact
+CHK|c2s_dim_negative_msg|Dimension number out of range.|exact
+CHK|c2s_dim_fraction|MATLAB:NonIntegerInput|exact
+CHK|c2s_dim_fraction_msg|Size inputs must be integers.|exact
+CHK|c2s_dim_vector|MATLAB:NonScalarInput|exact
+CHK|c2s_dim_vector_msg|Size inputs must be scalar.|exact
+CHK|c2s_dim_empty|MATLAB:Cell2Struct:DimensionNumber|exact
+CHK|c2s_dim_empty_msg|Dimension number out of range.|exact
+CHK|c2s_dim_char|MATLAB:badopt|exact
+CHK|c2s_dim_char_msg|Unknown command option.|exact
+CHK|c2s_dim_single|MATLAB:badopt|exact
+CHK|c2s_dim_single_msg|Unknown command option.|exact
+CHK|c2s_dim_int8|MATLAB:badopt|exact
+CHK|c2s_dim_int8_msg|Unknown command option.|exact
+CHK|c2s_dim_logical|MATLAB:badopt|exact
+CHK|c2s_dim_logical_msg|Unknown command option.|exact
+CHK|c2s_dim_inf|MATLAB:nonaninf|exact
+CHK|c2s_dim_inf_msg|NaN and Inf not allowed.|exact
+CHK|c2s_dim_nan|MATLAB:nonaninf|exact
+CHK|c2s_dim_nan_msg|NaN and Inf not allowed.|exact
+CHK|c2s_dim_past_ndims|double[1 2] [2 1]|exact
+CHK|c2s_not_cell|MATLAB:Cell2Struct:FirstArgNotACell|exact
+CHK|c2s_not_cell_msg|First argument must be a cell array.|exact
+CHK|c2s_not_cell_before_dim|MATLAB:Cell2Struct:FirstArgNotACell|exact
+CHK|c2s_not_cell_before_dim_msg|First argument must be a cell array.|exact
+CHK|c2s_dim_before_fields|MATLAB:Cell2Struct:DimensionNumber|exact
+CHK|c2s_dim_before_fields_msg|Dimension number out of range.|exact
+CHK|c2s_dim_before_count|MATLAB:Cell2Struct:DimensionNumber|exact
+CHK|c2s_dim_before_count_msg|Dimension number out of range.|exact
+CHK|c2s_one_arg|MATLAB:minrhs|exact
+CHK|c2s_one_arg_msg|Not enough input arguments.|exact
+CHK|c2s_four_args|MATLAB:maxrhs|exact
+CHK|c2s_four_args_msg|Too many input arguments.|exact
+CHK|c2s_empty_rows|double[1 2] [0 1]|exact
+CHK|c2s_empty_rows_dim1|double[1 2] [3 1]|exact
+CHK|c2s_empty_columns|double[1 2] [0 1]|exact
+CHK|c2s_empty_both_dim1|double[1 2] [0 1]|exact
+CHK|c2s_empty_both_dim2|double[1 2] [0 1]|exact
+CHK|c2s_no_fields|struct[2 1]{()()}|exact
+CHK|c2s_roundtrip|logical[1 1] 1|exact
+CHK|c2s_roundtrip_size|double[1 2] [1 2]|exact
+CHK|c2s_roundtrip_column|double[1 2] [2 1]|exact
+CHK|c2s_scalar_roundtrip|struct[1 1]{(a=double[1 1] 1,b=char[1 1]'x')}|exact
+CHK|c2s_one|double[1 2] [1 1]|exact
+CHK|c2s_row_dim1_size|double[1 2] [4 1]|exact
+CHK|c2s_struct_value|struct[1 1]{(s=struct[1 1]{(x=double[1 1] 1)},v=double[1 2] [1 2])}|exact

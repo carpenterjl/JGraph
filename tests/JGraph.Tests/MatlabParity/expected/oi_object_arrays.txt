@@ -485,7 +485,7 @@ CHK|DISP_SCALAR|  Val116 with properties:\n\n       p: 1\n    name: 'x'\n\n|div=
 CHK|DISPLAY_COL|ac = \n\n  3×1 Val116 array with properties:\n\n    p\n    name\n\n|exact
 CHK|DISPLAY_3D|t3 = \n\n  1×3×2 Val116 array with properties:\n\n    p\n    name\n\n|exact
 CHK|DISPLAY_SUB_ARR|sa = \n\n  1×2 Sub116 array with properties:\n\n    q\n    p\n    name\n\n|exact
-CHK|DISPLAY_OBJ_PROP|nn = \n\n  Val116 with properties:\n\n       p: [1×3 Val116]\n    name: 'x'\n\n|div=ADR0232|diverges|nn = struct(p:   1×3 Val116 array with properties:\n\n    p\n    name\n)\n
+CHK|DISPLAY_OBJ_PROP|nn = \n\n  Val116 with properties:\n\n       p: [1×3 Val116]\n    name: 'x'\n\n|div=ADR0232|diverges|nn = struct(p: [1×3 Val116])\n
 CHK|DISPLAY_H_ARR|ha = \n\n  1×3 Hnd116 array with properties:\n\n    p\n    name\n\n|exact
 CHK|DISPLAY_H_SCALAR|h1 = \n\n  Hnd116 with properties:\n\n       p: 1\n    name: 'x'\n\n|div=ADR0232|diverges|h1 = Hnd116 with properties:\n    p: 1\n    name: 'x'\n
 CHK|DISPLAY_H_2D|hb = \n\n  2×2 Hnd116 array with properties:\n\n    p\n    name\n\n|exact

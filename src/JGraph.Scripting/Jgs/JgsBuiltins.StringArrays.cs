@@ -58,6 +58,13 @@ internal static partial class JgsBuiltins
         // sprintf and fprintf refuse a string a numeric conversion meets, and read one under %f, %e
         // and %g as the number it spells (open item 306, ADR 0352); demoted, "5" was the code 53.
         "sprintf", "fprintf",
+
+        // cell2struct reads a string array of names as the char matrix char makes of it, a missing
+        // element refused (open item 317, ADR 0358).
+        "cell2struct",
+
+        // mustBeNonzeroLengthText refuses a missing string, which its char row would hide (open item 319).
+        "mustBeNonzeroLengthText",
     };
 
     /// <summary>

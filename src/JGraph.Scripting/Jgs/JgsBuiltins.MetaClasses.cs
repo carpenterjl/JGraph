@@ -106,6 +106,56 @@ internal static partial class JgsBuiltins
         value.Type == JgsType.Struct && value.ClassName is { } name
         && (name.StartsWith("matlab.metadata.", StringComparison.Ordinal) || name == MetaClassName);
 
+    /// <summary>The member lists a metaclass rendered past <see cref="MetaDepth"/> leaves out.</summary>
+    private static readonly HashSet<string> MetaListFields = new(StringComparer.Ordinal)
+    {
+        "InferiorClasses", "PropertyList", "MethodList", "EventList", "EnumerationMemberList", "SuperclassList",
+    };
+
+    /// <summary>
+    /// A dot read of a metadata value that a struct field cannot answer (open item 319, ADR 0358, probe p319),
+    /// or null to read the field as it stands:
+    /// <list type="bullet">
+    /// <item><c>DefaultValue</c> of a metaproperty with no default raises as R2025b's does,
+    /// <c>MATLAB:class:NoDefaultDefined</c>, or <c>NoDefaultPermitted</c> for an abstract one; over an array of
+    /// them (<c>{mc.PropertyList.DefaultValue}</c>) the first without one raises.</item>
+    /// <item>A member list of a metaclass rendered below <see cref="MetaDepth"/>, which has none, is made
+    /// then from the class's name, so a chain of <c>DefiningClass</c> and lists goes as deep as R2025b's
+    /// handles do (<c>mc.MethodList(1).DefiningClass.PropertyList(1).DefiningClass.MethodList</c>).</item>
+    /// </list>
+    /// </summary>
+    internal static JgsValue? MetadataMember(JgsValue target, string field, Interpreter? interpreter, int line, int col)
+    {
+        if (field == "DefaultValue" && target.ClassName == MetaPropertyClassName)
+        {
+            foreach (Dictionary<string, JgsValue> element in target.AsStructArray.Elements)
+            {
+                if (element.TryGetValue("HasDefault", out JgsValue? has) && has.Type == JgsType.Bool && has.AsNumber == 0
+                    && element.TryGetValue("Name", out JgsValue? name))
+                {
+                    bool isAbstract = element.TryGetValue("Abstract", out JgsValue? flag) && flag.Type == JgsType.Bool && flag.AsNumber != 0;
+                    throw isAbstract
+                        ? new JgsRuntimeException(line, col, "MATLAB:class:NoDefaultPermitted",
+                            $"Property {name.AsString} is abstract and therefore cannot have a default value.")
+                        : new JgsRuntimeException(line, col, "MATLAB:class:NoDefaultDefined",
+                            $"No default value has been defined for property {name.AsString}.");
+                }
+            }
+
+            return null;
+        }
+
+        if (MetaListFields.Contains(field) && target.ClassName == "matlab.metadata.Class" && !target.IsStructArray
+            && !target.AsStruct.ContainsKey(field) && target.AsStruct.TryGetValue("Name", out JgsValue? className))
+        {
+            var context = new MetaContext(interpreter);
+            JgsValue rendered = context.Render(context.Model(className.AsString), MetaDepth);
+            return rendered.AsStruct.TryGetValue(field, out JgsValue? list) ? JgsValue.Share(list) : null;
+        }
+
+        return null;
+    }
+
     /// <summary>The <c>matlab.metadata.Class</c> of a class: <c>?C</c>, <c>metaclass(obj)</c>, <c>meta.class.fromName('C')</c>.</summary>
     internal static JgsValue MetaClassOf(JgsClass definition)
     {

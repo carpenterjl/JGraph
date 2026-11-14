@@ -142,6 +142,12 @@ internal sealed partial class Interpreter
         JgsStructArray payload = array.AsStructArray;
         field = RefuseNumberedField(field, member); // a char matrix's name, a string array's refusal (open item 208)
 
+        // {mc.PropertyList.DefaultValue} raises for the first metaproperty with no default (open item 319, ADR 0358).
+        if (Dialect.IsMatlab && field == "DefaultValue" && JgsBuiltins.IsMetadataValue(array))
+        {
+            JgsBuiltins.MetadataMember(array, field, this, member.Line, member.Column);
+        }
+
         // An empty struct array still knows its fields, and a dot naming another is refused as for
         // one element (R2025b, shrlib_structs: a 0-by-1 struct's .Value is MATLAB:nonExistentField).
         if (payload.Length == 0 && Dialect.IsMatlab && !payload.FieldNames.Contains(field, StringComparer.Ordinal))

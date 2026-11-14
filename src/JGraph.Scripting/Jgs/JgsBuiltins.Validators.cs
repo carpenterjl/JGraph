@@ -586,6 +586,40 @@ internal static partial class JgsBuiltins
         Whole("mustBeTextScalar", static v => v.Type == JgsType.String,
             "a character vector or string scalar");
 
+        // R2025b's mustBeNonzeroLengthText.m (open item 319, ADR 0358, probe p319b): istext, then every
+        // element's strlength above zero, both refused under its own identifier. A string keeps its kind,
+        // so a missing one (strlength NaN) is refused as empty text is (the name is a StringAwareBuiltin).
+        Define("mustBeNonzeroLengthText", static (args, line, col) =>
+        {
+            if (args.Count == 0)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+            }
+
+            if (args.Count > 1)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs", "Too many input arguments.");
+            }
+
+            static bool IsCharRow(JgsValue v) => (v.Type == JgsType.String && !v.IsCharMatrix) || IsEmptyCharRow(v);
+            static string RowText(JgsValue v) => IsEmptyCharRow(v) ? string.Empty : v.AsString; // blanks(0) is held as a char matrix
+            JgsValue value = args[0];
+            string[]? texts = IsCharRow(value) ? [RowText(value)]
+                : value.IsStringArray ? [.. Enumerable.Range(0, value.ArrayLength).Select(i => value.ElementAt(i).AsString)]
+                : value.Type == JgsType.Cell && System.Array.TrueForAll(value.AsCell, IsCharRow) ? [.. value.AsCell.Select(RowText)]
+                : null;
+            if (texts is null)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeNonzeroLengthText",
+                    "Value must be a character vector, string array, or cell array of character vectors.");
+            }
+
+            return System.Array.TrueForAll(texts, static t => t.Length > 0 && !(IsMissingText(t)))
+                ? JgsValue.Null
+                : throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeNonzeroLengthText",
+                    "Value must be text with one or more characters.");
+        });
+
         Define("mustBeMember", (args, line, col) =>
         {
             Arity("mustBeMember", args, 2, line, col);

@@ -1100,6 +1100,7 @@ internal static class JgsBuiltinOutputCounts
         ["mustBeNonpositive"] = (0, true),
         ["mustBeNonsparse"] = (0, true),
         ["mustBeNonzero"] = (0, true),
+        ["mustBeNonzeroLengthText"] = (0, true),
         ["mustBeNumeric"] = (0, true),
         ["mustBeNumericOrLogical"] = (0, true),
         ["mustBePositive"] = (0, true),

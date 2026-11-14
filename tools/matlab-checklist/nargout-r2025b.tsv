@@ -1355,6 +1355,7 @@ mustBeNonnegative	0	2
 mustBeNonpositive	0	2
 mustBeNonsparse	0	2
 mustBeNonzero	0	2
+mustBeNonzeroLengthText	0	2
 mustBeNumeric	0	2
 mustBeNumericOrLogical	0	2
 mustBePositive	0	2

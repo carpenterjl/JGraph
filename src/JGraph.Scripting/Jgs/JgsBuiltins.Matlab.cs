@@ -558,6 +558,11 @@ internal static partial class JgsBuiltins
             if (JgsRunningDialect.ThreadIsMatlab)
             {
                 name = Deblanked(name);
+                if (IsMetadataValue(args[0]) && name == "DefaultValue")
+                {
+                    MetadataMember(args[0], name, null, line, col); // a missing default raises here too (open item 319, ADR 0358)
+                }
+
                 return fields.TryGetValue(name, out JgsValue? read)
                     ? read
                     : throw new JgsRuntimeException(line, col, "MATLAB:nonExistentField", $"Unrecognized field name \"{name}\".");

@@ -2421,6 +2421,7 @@ public static class JgsBuiltinCatalog
         Add("mustBeVector", "Errors unless the value is a nonempty row or column.", P("value"));
         Add("mustBeText", "Errors unless the value is text, or a cell of text.", P("value"));
         Add("mustBeTextScalar", "Errors unless the value is one piece of text.", P("value"));
+        Add("mustBeNonzeroLengthText", "Errors unless the value is text, every piece of it with one or more characters.", P("value"));
         Add("mustBeMember", "Errors unless every element is one of the allowed values.", P("value"), P("allowed"));
         Add("mustBeA", "Errors unless the value's class is one of those named.", P("value"), P("classes"));
         Add("mustBeGreaterThan", "Errors unless every element is greater than the bound.", P("value"), P("bound"));

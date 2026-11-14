@@ -1,0 +1,112 @@
+CHK|dv_has|double[1 1] 1|exact
+CHK|dv_none|MATLAB:class:NoDefaultDefined|exact
+CHK|dv_none_msg|No default value has been defined for property B.|exact
+CHK|dv_none_has|logical[1 1] 0|exact
+CHK|dv_typed|MATLAB:class:NoDefaultDefined|exact
+CHK|dv_typed_msg|No default value has been defined for property C.|exact
+CHK|dv_dependent|MATLAB:class:NoDefaultDefined|exact
+CHK|dv_dependent_msg|No default value has been defined for property Dep.|exact
+CHK|dv_constant|double[1 1] 42|exact
+CHK|dv_abstract|MATLAB:class:NoDefaultPermitted|exact
+CHK|dv_abstract_msg|Property Shape is abstract and therefore cannot have a default value.|exact
+CHK|dv_abstract_has|logical[1 1] 0|exact
+CHK|dv_handle_none|MATLAB:class:NoDefaultDefined|exact
+CHK|dv_handle_none_msg|No default value has been defined for property Tag.|exact
+CHK|dv_getfield|MATLAB:class:NoDefaultDefined|exact
+CHK|dv_getfield_msg|No default value has been defined for property B.|exact
+CHK|dv_list|MATLAB:class:NoDefaultDefined|exact
+CHK|dv_list_msg|No default value has been defined for property B.|exact
+CHK|deep3_name|char[1 8]'Mc196Val'|exact
+CHK|deep3_count|double[1 1] 8|exact
+CHK|deep4_name|char[1 6]'second'|exact
+CHK|deep5_name|char[1 1]'B'|exact
+CHK|deep_super|double[1 1] 8|exact
+CHK|deep_super_props|double[1 1] 11|exact
+CHK|obj_struct|char[1 14]'[1×1 Mc196Val]'|exact
+CHK|obj_struct_handle|char[1 17]'[1×1 Mc196Handle]'|exact
+CHK|obj_struct_second|char[1 14]'[1×1 Mc196Val]'|exact
+CHK|obj_cell|char[1 14]'{1×1 Mc196Val}'|exact
+CHK|obj_cell_handle|char[1 17]'{1×1 Mc196Handle}'|exact
+CHK|objarr_struct|char[1 14]'[1×2 Mc196Val]'|exact
+CHK|objarr_cell|char[1 14]'{3×1 Mc196Val}'|exact
+CHK|objempty_struct|char[1 14]'[0×0 Mc196Val]'|exact
+CHK|objempty_cell|char[1 14]'{0×3 Mc196Val}'|exact
+CHK|enum_struct|char[1 3]'Low'|exact
+CHK|enum_cell|char[1 7]'{[Low]}'|exact
+CHK|enumarr_cell|char[1 14]'{[Low    Low]}'|exact
+CHK|enumarr_struct|char[1 12]'[Low    Low]'|exact
+CHK|meta_struct|char[1 27]'[1×1 matlab.metadata.Class]'|exact
+CHK|meta_cell|char[1 27]'{1×1 matlab.metadata.Class}'|exact
+CHK|metalist_struct|char[1 31]'[11×1 matlab.metadata.Property]'|exact
+CHK|deleted_struct|char[1 17]'[1×1 Mc196Handle]'|exact
+CHK|af_column|double[1 2] [3 1]|exact
+CHK|af_column_values|double[3 1] [1;2;3]|exact
+CHK|af_row|double[1 2] [1 3]|exact
+CHK|af_matrix|double[1 2] [2 3]|exact
+CHK|af_nd|double[1 3] [2 1 2]|exact
+CHK|af_column_cells|double[1 2] [3 1]|exact
+CHK|af_empty_column|double[1 2] [0 1]|exact
+CHK|af_empty|double[1 2] [0 0]|exact
+CHK|af_column_two_outputs|cell[1 2]{double[1 2] [2 1];double[1 2] [2 1]}|exact
+CHK|af_object_column|double[1 2] [2 1]|exact
+CHK|nzlt_char|char[1 2]'ok'|exact
+CHK|nzlt_empty_char|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_empty_char_msg|Value must be text with one or more characters.|exact
+CHK|nzlt_string|char[1 2]'ok'|exact
+CHK|nzlt_empty_string|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_empty_string_msg|Value must be text with one or more characters.|exact
+CHK|nzlt_strings|char[1 2]'ok'|exact
+CHK|nzlt_strings_empty_element|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_strings_empty_element_msg|Value must be text with one or more characters.|exact
+CHK|nzlt_missing|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_missing_msg|Value must be text with one or more characters.|exact
+CHK|nzlt_strings_missing|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_strings_missing_msg|Value must be text with one or more characters.|exact
+CHK|nzlt_cellstr|char[1 2]'ok'|exact
+CHK|nzlt_cellstr_empty|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_cellstr_empty_msg|Value must be text with one or more characters.|exact
+CHK|nzlt_cell_mixed|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_cell_mixed_msg|Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|nzlt_number|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_number_msg|Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|nzlt_logical|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_logical_msg|Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|nzlt_empty_cell|char[1 2]'ok'|exact
+CHK|nzlt_empty_strings|char[1 2]'ok'|exact
+CHK|nzlt_char_matrix|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_char_matrix_msg|Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|nzlt_char_column|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_char_column_msg|Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|nzlt_empty_double|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_empty_double_msg|Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|nzlt_cell_column_empty|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_cell_column_empty_msg|Value must be text with one or more characters.|exact
+CHK|nzlt_blank|char[1 2]'ok'|exact
+CHK|nzlt_cell_string|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_cell_string_msg|Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|nzlt_cell_char_matrix|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_cell_char_matrix_msg|Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|nzlt_cell_nested|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_cell_nested_msg|Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|nzlt_struct|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_struct_msg|Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|nzlt_char_1x0|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_char_1x0_msg|Value must be text with one or more characters.|exact
+CHK|nzlt_char_0x1|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_char_0x1_msg|Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|nzlt_cell_char_0x1|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_cell_char_0x1_msg|Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|nzlt_none|MATLAB:minrhs|exact
+CHK|nzlt_none_msg|Not enough input arguments.|exact
+CHK|nzlt_two|MATLAB:TooManyInputs|exact
+CHK|nzlt_two_msg|Too many input arguments.|exact
+CHK|nzlt_output|MATLAB:TooManyOutputs|exact
+CHK|nzlt_output_msg|Too many output arguments.|exact
+CHK|nzlt_argument|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_argument_msg|Invalid argument at position 1. Value must be text with one or more characters.|exact
+CHK|nzlt_argument_number|MATLAB:validators:mustBeNonzeroLengthText|exact
+CHK|nzlt_argument_number_msg|Invalid argument at position 1. Value must be a character vector, string array, or cell array of character vectors.|exact
+CHK|nzlt_argument_ok|char[1 2]'ok'|exact
+CHK|nzlt_nargin|double[1 1] 1|exact
+CHK|nzlt_nargout|double[1 1] 0|exact
+CHK|nzlt_handle|char[1 23]'mustBeNonzeroLengthText'|exact

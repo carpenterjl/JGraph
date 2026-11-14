@@ -562,6 +562,11 @@ internal static partial class JgsBuiltins
 
         Define("cell2struct", (args, line, col) =>
         {
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                return CellToStructAlong(args, line, col);
+            }
+
             ArityRange("cell2struct", args, 2, 3, line, col);
             if (args[0].Type != JgsType.Cell || args[1].Type != JgsType.Cell)
             {
@@ -600,6 +605,202 @@ internal static partial class JgsBuiltins
 
             return JgsValue.Struct(fields);
         });
+    }
+
+    /// <summary>
+    /// R2025b's <c>cell2struct(c, fields, dim)</c> (open item 317, ADR 0358, probe p317d): the cell's
+    /// dimension <c>dim</c> (1 when it is not given) holds the fields, one name a slice, and the struct
+    /// array is the cell's size with that dimension taken out, a column when one dimension is left. A
+    /// dimension past the cell's own is a slice of one. The names are a cell of char rows, a char
+    /// matrix's rows as they stand (a padded row is refused) or a string array.
+    /// </summary>
+    private static JgsValue CellToStructAlong(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count < 2)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+        }
+
+        if (args.Count > 3)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:maxrhs", "Too many input arguments.");
+        }
+
+        if (args[0].Type != JgsType.Cell)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:Cell2Struct:FirstArgNotACell", "First argument must be a cell array.");
+        }
+
+        int dim = 1;
+        if (args.Count == 3)
+        {
+            dim = CellToStructDimension(args[2], line, col);
+        }
+
+        string?[] names = CellToStructNames(args[1], line, col);
+        int[] own = SizeDims(args[0]);
+        int[] dims = [.. own, .. Enumerable.Repeat(1, Math.Max(0, dim - own.Length))];
+        int along = dims[dim - 1];
+        if (names.Length != along)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:Cell2Struct:NumberOfNamesMismatch",
+                "Number of field names must match number of fields in new structure.");
+        }
+
+        // Every name is checked before any is compared with another (measured: {'b', 'b', '1a'} is
+        // refused for '1a').
+        foreach (string? name in names)
+        {
+            if (name == NonVectorFieldName)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:Cell2Struct:NonStringVector", "Field name must be a character vector or string scalar.");
+            }
+
+            if (name is null or { Length: 0 })
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:Cell2Struct:NonStringFieldNames", "Field names must be non-empty character vectors or string scalars.");
+            }
+
+            if (!IsValidFieldName(name))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:Cell2Struct:InvalidFieldName", $"Invalid field name \"{name}\".");
+            }
+        }
+
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        foreach (string? name in names)
+        {
+            if (!seen.Add(name!))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:DuplicateFieldName", $"Duplicate field name \"{name}\"");
+            }
+        }
+
+        // The struct's dimensions are the cell's without `dim`; one left over is a column.
+        int[] kept = [.. dims.Where((_, i) => i != dim - 1)];
+        if (kept.Length == 1)
+        {
+            kept = [kept[0], 1];
+        }
+
+        int count = kept.Aggregate(1, static (a, b) => a * b);
+        var elements = new Dictionary<string, JgsValue>[count];
+        for (int e = 0; e < count; e++)
+        {
+            elements[e] = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+        }
+
+        // Each slot of the cell lands in the element its other subscripts name, under the field its
+        // subscript along `dim` names; a slot shares its value with the cell (M2, as struct2cell).
+        JgsValue[] slots = args[0].AsCell;
+        int below = 1;
+        for (int i = 0; i < dim - 1; i++)
+        {
+            below *= dims[i];
+        }
+
+        for (int s = 0; s < slots.Length; s++)
+        {
+            int k = s / below % along;
+            int element = (s % below) + (s / (below * along) * below);
+            elements[element][names[k]!] = JgsValue.Share(slots[s]);
+        }
+
+        if (count == 1)
+        {
+            return JgsValue.Struct(elements[0]);
+        }
+
+        int columns = kept.Skip(1).Aggregate(1, static (a, b) => a * b);
+        JgsValue result = JgsValue.StructArray(new JgsStructArray(elements, count == 0 ? [.. names.Select(static n => n!)] : null), kept[0], columns);
+        if (kept.Length > 2)
+        {
+            result.ReshapeDims(kept);
+        }
+
+        return result;
+    }
+
+    /// <summary>A cell's slot that is a char matrix, which cell2struct refuses in words of its own.</summary>
+    private const string NonVectorFieldName = "\u0002";
+
+    /// <summary>
+    /// cell2struct's <c>dim</c>, checked as R2025b checks it (probes p317d, p317e): a double, else
+    /// <c>badopt</c>; one element (an empty is out of range); finite; whole; at least 1.
+    /// </summary>
+    private static int CellToStructDimension(JgsValue d, int line, int col)
+    {
+        if (d.Type is not (JgsType.Number or JgsType.Array) || d.IsStringArray || d.IsCharMatrix || d.IsTime
+            || d.NumericClass != JgsNumericClass.Double)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:badopt", "Unknown command option.");
+        }
+
+        if (d.Type == JgsType.Array && d.ArrayLength > 1)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:NonScalarInput", "Size inputs must be scalar.");
+        }
+
+        if (d.Type == JgsType.Array && d.ArrayLength == 0)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:Cell2Struct:DimensionNumber", "Dimension number out of range.");
+        }
+
+        double asked = d.Type == JgsType.Array ? d.ElementAt(0).AsNumber : d.AsNumber;
+        if (double.IsNaN(asked) || double.IsInfinity(asked))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:nonaninf", "NaN and Inf not allowed.");
+        }
+
+        if (asked != Math.Floor(asked))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:NonIntegerInput", "Size inputs must be integers.");
+        }
+
+        return asked < 1
+            ? throw new JgsRuntimeException(line, col, "MATLAB:Cell2Struct:DimensionNumber", "Dimension number out of range.")
+            : (int)Math.Min(asked, int.MaxValue);
+    }
+
+    /// <summary>
+    /// cell2struct's names (probes p317d, p317e): a cell's char rows (any other slot is null, a char
+    /// matrix <see cref="NonVectorFieldName"/>); a char matrix's rows as they stand, padding and all; a
+    /// string array as the char matrix <c>char</c> makes of it, so <c>""</c> names nothing.
+    /// </summary>
+    private static string?[] CellToStructNames(JgsValue given, int line, int col)
+    {
+        if (given.Type == JgsType.Cell)
+        {
+            return Array.ConvertAll(given.AsCell, static e =>
+                e.Type == JgsType.String && !e.IsCharMatrix ? e.AsString
+                : IsEmptyCharRow(e) ? string.Empty
+                : e.IsCharMatrix ? NonVectorFieldName
+                : null);
+        }
+
+        if (given.IsStringArray)
+        {
+            string[] texts = [.. Enumerable.Range(0, given.ArrayLength).Select(i => given.ElementAt(i).AsString)];
+            if (Array.Exists(texts, IsMissingText))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:string:MissingNotSupported", "<missing> string element not supported.");
+            }
+
+            int width = texts.Length == 0 ? 0 : texts.Max(static t => t.Length);
+            return texts.Length == 1 && width == 0 ? [] : [.. texts.Select(t => t.PadRight(width))];
+        }
+
+        if (given.Type == JgsType.String && !given.IsCharMatrix)
+        {
+            return given.AsString.Length == 0 ? [] : [given.AsString];
+        }
+
+        if (given.IsCharMatrix)
+        {
+            return given.CharMatrixRows();
+        }
+
+        throw new JgsRuntimeException(line, col, "MATLAB:badopt", "Unknown command option.");
     }
 
     /// <summary>

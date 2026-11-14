@@ -200,28 +200,76 @@ def strip_code(text: str) -> str:
             i += 2
             continue
         if c in "\"'":
-            verbatim = c == '"' and i > 0 and text[i - 1] == "@"
-            out.append(" ")
-            i += 1
-            while i < n:
-                if text[i] == "\\" and not verbatim:
-                    out.append("  ")
-                    i += 2
-                    continue
-                if text[i] == c:
-                    if verbatim and i + 1 < n and text[i + 1] == c:
-                        out.append("  ")
-                        i += 2
-                        continue
-                    out.append(" ")
-                    i += 1
-                    break
-                out.append("\n" if text[i] == "\n" else " ")
-                i += 1
+            end = skip_literal(text, i)
+            out.extend("\n" if ch == "\n" else " " for ch in text[i:end])
+            i = end
             continue
         out.append(c)
         i += 1
     return "".join(out)
+
+
+def skip_literal(text: str, i: int) -> int:
+    """The index just past the char or string literal that opens at `text[i]`. An interpolated
+    string's holes are skipped as code, so a literal inside one (`$"{s.Replace("'", "''")}"`) does not
+    end the string (that turned the splitter's phase over in JgsBuiltinClasses.App.cs and crashed
+    `registrations`); a raw string (`\"\"\"`) ends at a run of as many quotes as opened it."""
+    n = len(text)
+    c = text[i]
+    prefix_start = i
+    while prefix_start > 0 and text[prefix_start - 1] in "$@":
+        prefix_start -= 1
+    prefix = text[prefix_start:i]
+    verbatim = c == '"' and "@" in prefix
+    interpolated = c == '"' and "$" in prefix
+    if c == '"':
+        run = 0
+        while i + run < n and text[i + run] == '"':
+            run += 1
+        if run >= 3:
+            k = i + run
+            while k < n:
+                if text.startswith('"' * run, k):
+                    return k + run
+                k += 1
+            return n
+    i += 1
+    while i < n:
+        ch = text[i]
+        if ch == "\\" and not verbatim:
+            i += 2
+            continue
+        if interpolated and ch == "{":
+            if i + 1 < n and text[i + 1] == "{":
+                i += 2
+                continue
+            i = skip_hole(text, i + 1)
+            continue
+        if ch == c:
+            if verbatim and i + 1 < n and text[i + 1] == c:
+                i += 2
+                continue
+            return i + 1
+        i += 1
+    return n
+
+
+def skip_hole(text: str, i: int) -> int:
+    """The index just past the `}` that closes an interpolation hole whose code starts at `text[i]`."""
+    n, depth = len(text), 0
+    while i < n:
+        ch = text[i]
+        if ch in "\"'":
+            i = skip_literal(text, i)
+            continue
+        if ch in "([{":
+            depth += 1
+        elif ch in ")]}":
+            if depth == 0:
+                return i + 1
+            depth -= 1
+        i += 1
+    return n
 
 
 def statements(text: str) -> list[tuple[int, str]]:

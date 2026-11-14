@@ -19,7 +19,7 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 ## Where it stands
 
-**348 of 377 names implemented**, and
+**349 of 377 names implemented**, and
 **724 of 1036 documented syntax forms accepted**.
 
 | Folder | Names | Forms documented | Forms accepted | Names missing |
@@ -30,7 +30,7 @@ below is — and that is why an entire folder could sit at nought implemented wi
 | `sparfun` | 31 / 35 | 185 | 150 | 4 |
 | `polyfun` | 32 / 34 | 94 | 62 | 2 |
 | `elmat` | 33 / 33 | 68 | 59 | 0 |
-| `validators` | 28 / 31 | 33 | 20 | 3 |
+| `validators` | 29 / 31 | 33 | 20 | 2 |
 | `matfun` | 25 / 25 | 62 | 51 | 0 |
 | `specfun` | 23 / 23 | 38 | 30 | 0 |
 | `datatypes` | 14 / 22 | 40 | 3 | 8 |
@@ -84,9 +84,9 @@ command that quite rightly rejects it.
 
 `datetick` `timeit`
 
-### `validators` — 3
+### `validators` — 2
 
-`mustBeNonmissing` `mustBeNonzeroLengthText` `mustBeUnderlyingType`
+`mustBeNonmissing` `mustBeUnderlyingType`
 
 ## Keeping this current
 
