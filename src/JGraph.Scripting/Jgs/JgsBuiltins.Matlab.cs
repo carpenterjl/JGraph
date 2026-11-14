@@ -459,6 +459,11 @@ internal static partial class JgsBuiltins
             }
 
             string[] doomed = FieldNameList("rmfield", args[1], line, col);
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                doomed = RemovableFieldNames(args[0].AsStructArray.FieldNames, args[1], doomed, line, col);
+            }
+
             return MapStructElements("rmfield", args[0], line, col, element =>
             {
                 // A field that is not there is simply not removed: R2025b's rmfield answers the
@@ -490,6 +495,16 @@ internal static partial class JgsBuiltins
             string[] order = args.Count > 1
                 ? FieldNameList("orderfields", args[1], line, col)
                 : [.. StructOf("orderfields", args[0], line, col).Keys.OrderBy(n => n, StringComparer.Ordinal)];
+
+            // An order of as many names as there are fields that is not a rearrangement of them is
+            // R2025b's refusal in its words (open item 202, ADR 0351, measured).
+            if (JgsRunningDialect.ThreadIsMatlab && args.Count > 1 && (args[1].Type == JgsType.Cell || args[1].IsStringArray)
+                && args[0].Type == JgsType.Struct && args[0].AsStructArray.FieldNames is { } present && present.Length == order.Length
+                && !present.OrderBy(n => n, StringComparer.Ordinal).SequenceEqual(order.OrderBy(n => n, StringComparer.Ordinal), StringComparer.Ordinal))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:orderfields:CellStrMismatchFieldnames",
+                    "Text in second input must match fieldnames of the struct.");
+            }
 
             return MapStructElements("orderfields", args[0], line, col, element =>
             {
@@ -529,6 +544,18 @@ internal static partial class JgsBuiltins
 
             Dictionary<string, JgsValue> fields = StructOf("getfield", args[0], line, col);
             string name = Str("getfield", args, 1, line, col);
+
+            // R2025b's getfield is f = s.(deblank(name)), so it reads a dynamic field's way: an absent
+            // name is MATLAB:nonExistentField, and a present one no field may have is refused
+            // (open item 202, ADR 0351).
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                name = Deblanked(name);
+                return fields.TryGetValue(name, out JgsValue? read)
+                    ? IsValidFieldName(name) ? read : throw InvalidFieldNameRead(name, line, col)
+                    : throw new JgsRuntimeException(line, col, "MATLAB:nonExistentField", $"Unrecognized field name \"{name}\".");
+            }
+
             return fields.TryGetValue(name, out JgsValue? held)
                 ? held
                 : throw new JgsRuntimeException(line, col, $"getfield: this struct has no field '{name}'.");
@@ -537,7 +564,20 @@ internal static partial class JgsBuiltins
         Define("setfield", (args, line, col) =>
         {
             Arity("setfield", args, 3, line, col);
-            string name = Str("setfield", args, 1, line, col);
+
+            // setfield keeps its string arguments, so the value stays a string (open item 201) and
+            // the name may be one. In the MATLAB dialect it is R2025b's s.(deblank(name)) = v: the
+            // name loses its trailing blanks and must be one a field can have (open item 202, ADR 0351).
+            string name = IsStringScalar(args[1]) ? TextOf(args[1]) : Str("setfield", args, 1, line, col);
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                name = Deblanked(name);
+                if (!IsValidFieldName(name))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:AddField:InvalidFieldName", $"Invalid field name: '{name}'.");
+                }
+            }
+
             JgsValue held = args[2];
 
             // setfield answers with a changed copy and leaves its argument alone, which is what
@@ -1203,7 +1243,7 @@ internal static partial class JgsBuiltins
         var names = new string[args.Count / 2];
         for (int i = 0; i < names.Length; i++)
         {
-            names[i] = Str("struct", args, i * 2, line, col);
+            names[i] = StructNameArgument(args[i * 2], i * 2, line, col);
         }
 
         // The element count is the size of the cell values, which must agree; a non-cell value is
@@ -1250,6 +1290,67 @@ internal static partial class JgsBuiltins
         // An empty cell value gives its shape to the empty struct array: struct('f', cell(0, 3)) is
         // 0-by-3 (open item 98, measured).
         return JgsValue.StructArray(new JgsStructArray(elements, names), rows, cols);
+    }
+
+    /// <summary>
+    /// A field name handed to <c>struct</c>, which keeps string arguments (open item 201): a char row
+    /// or a string scalar. In the MATLAB dialect anything else, and an empty name, is R2025b's
+    /// <c>NonStringFieldNames</c>, and a name no field may have its <c>InvalidFieldName</c> (open
+    /// item 202, ADR 0351, measured); JGS keeps its own sentence and takes any text.
+    /// </summary>
+    private static string StructNameArgument(JgsValue value, int index, int line, int col)
+    {
+        bool matlab = JgsRunningDialect.ThreadIsMatlab;
+        string? name = value.Type == JgsType.String ? value.AsString
+            : IsStringScalar(value) && value.ElementAt(0).AsString != MissingSentinel ? value.ElementAt(0).AsString
+            : IsEmptyCharRow(value) ? string.Empty
+            : null;
+        if (matlab && string.IsNullOrEmpty(name))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:Cell2Struct:NonStringFieldNames",
+                "Field names must be non-empty character vectors or string scalars.");
+        }
+
+        if (name is null)
+        {
+            throw new JgsRuntimeException(line, col, $"struct expects argument {index + 1} to be a string, but got a {value.TypeName}.");
+        }
+
+        return matlab && !IsValidFieldName(name)
+            ? throw new JgsRuntimeException(line, col, "MATLAB:Cell2Struct:InvalidFieldName", $"Invalid field name \"{name}\".")
+            : name;
+    }
+
+    /// <summary>Text without its trailing whitespace and null characters, as <c>deblank</c> leaves it.</summary>
+    private static string Deblanked(string text) => text.TrimEnd(' ', '\t', '\n', '\v', '\f', '\r', '\0');
+
+    /// <summary>
+    /// R2025b's refusal to read a field whose name no field may have, which only a struct built
+    /// outside the language can hold (open item 202, ADR 0351: k10_feval risky 11, k16 in.struct.badname).
+    /// </summary>
+    internal static JgsRuntimeException InvalidFieldNameRead(string name, int line, int col) =>
+        new(line, col, "MATLAB:AddField:InvalidFieldName", $"Invalid field name: '{name}'.");
+
+    /// <summary>
+    /// The names R2025b's <c>rmfield</c> removes, each without its trailing blanks, or its refusal of
+    /// the first that names no field (open item 202, ADR 0351, from rmfield.m): one name is refused
+    /// only when the struct has fields to miss, several are refused at the first absent one.
+    /// </summary>
+    private static string[] RemovableFieldNames(string[] present, JgsValue asked, string[] names, int line, int col)
+    {
+        bool one = asked.Type == JgsType.String || names.Length == 1;
+        for (int i = 0; i < names.Length; i++)
+        {
+            string trimmed = Deblanked(names[i]);
+            if (System.Array.IndexOf(present, trimmed) < 0 && (!one || present.Length > 0))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:rmfield:InvalidFieldname", $"A field named '{names[i]}' doesn't exist.");
+            }
+
+            names[i] = trimmed;
+        }
+
+        return names;
     }
 
     /// <summary>One field name, or a cell of them — the shape <c>rmfield</c> and friends accept.</summary>

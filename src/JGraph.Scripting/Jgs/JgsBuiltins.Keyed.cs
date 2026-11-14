@@ -421,6 +421,25 @@ internal static partial class JgsBuiltins
     /// <summary>How many entries a collection holds.</summary>
     internal static int EntryCount(JgsValue map) => KeyCell(map).Length;
 
+    /// <summary>
+    /// Whether <paramref name="value"/> is a <c>containers.Map</c> read in the MATLAB dialect, where
+    /// the class's own <c>size</c> makes it a column of its keys: <c>size(m)</c> is <c>[Count 1]</c>,
+    /// and <c>isempty</c>, <c>isscalar</c>, <c>isrow</c>, <c>iscolumn</c> and <c>isvector</c> answer
+    /// for that shape, while <c>numel</c> stays 1 (open item 200, ADR 0351, measured). The JGS
+    /// dialect keeps its 1-by-1 reading. <paramref name="count"/> is the Count.
+    /// </summary>
+    internal static bool IsMatlabMapShape(JgsValue value, out int count)
+    {
+        if (value.Type == JgsType.Struct && value.ClassName == MapClassName && JgsRunningDialect.ThreadIsMatlab)
+        {
+            count = EntryCount(value);
+            return true;
+        }
+
+        count = 0;
+        return false;
+    }
+
     /// <summary>A <c>containers.Map</c>'s Count is a uint64, as MATLAB's (V6.17, measured).</summary>
     private static JgsValue CountOf(int count) =>
         JgsNumericClasses.Stamp(JgsValue.Number(count), JgsNumericClass.UInt64);

@@ -49,6 +49,11 @@ internal static partial class JgsBuiltins
         // The class constructors read a string as the number it spells: double("5") is 5, where
         // the char row it would be demoted to is the code 53.
         "double", "single", "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64",
+
+        // A field keeps the string it is given: struct('s', "text") and setfield(s, 'f', "text")
+        // hold a string, where a demoted argument held the char row (open item 201, ADR 0351). Both
+        // still take a field name written as a string.
+        "struct", "setfield",
     };
 
     /// <summary>

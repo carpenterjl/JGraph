@@ -120,6 +120,7 @@ internal sealed partial class Interpreter
     private JgsValue[] StructArrayFieldValues(JgsValue array, string field, Node member)
     {
         JgsStructArray payload = array.AsStructArray;
+        field = RefuseNumberedField(field, member); // a char matrix's name, a string array's refusal (open item 208)
 
         // An empty struct array still knows its fields, and a dot naming another is refused as for
         // one element (R2025b, shrlib_structs: a 0-by-1 struct's .Value is MATLAB:nonExistentField).
@@ -128,13 +129,22 @@ internal sealed partial class Interpreter
             throw NoSuchField(field, member);
         }
 
+        // A name no field may have is refused where the struct has it (open item 202, ADR 0351).
+        if (Dialect.IsMatlab && payload.Length > 0 && !JgsBuiltins.IsValidFieldName(field) && payload.Elements[0].ContainsKey(field))
+        {
+            throw JgsBuiltins.InvalidFieldNameRead(field, member.Line, member.Column);
+        }
+
         var gathered = new JgsValue[payload.Length];
         for (int i = 0; i < gathered.Length; i++)
         {
             if (!payload.Elements[i].TryGetValue(field, out JgsValue? value))
             {
-                throw new JgsRuntimeException(member.Line, member.Column,
-                    $"Element {i + Dialect.IndexBase} of this struct array has no field '{field}'.");
+                // R2025b names the field as a lone struct's read does (open item 202, measured).
+                throw Dialect.IsMatlab
+                    ? NoSuchField(field, member)
+                    : new JgsRuntimeException(member.Line, member.Column,
+                        $"Element {i + Dialect.IndexBase} of this struct array has no field '{field}'.");
             }
 
             gathered[i] = value;

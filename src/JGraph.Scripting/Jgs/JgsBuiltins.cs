@@ -543,6 +543,29 @@ internal static partial class JgsBuiltins
                 return Numbers([.. MatFileVariableDims(args[0], TextOf(args[1]), line, col).Select(static d => (double)d)]);
             }
 
+            // A containers.Map's own size (open item 200, ADR 0351, measured): [Count 1], or one
+            // number for one dimension, Count for the first and 1 past it. Its method takes one
+            // dimension, a scalar, and no more.
+            if (IsMatlabMapShape(args[0], out int mapCount))
+            {
+                if (args.Count > 2)
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:maxrhs", "Too many input arguments.");
+                }
+
+                if (args.Count == 1)
+                {
+                    return Numbers([mapCount, 1]);
+                }
+
+                if (!(args[1].Type is JgsType.Number or JgsType.Bool || (args[1].Type == JgsType.Array && args[1].ArrayLength == 1 && !args[1].IsStringArray && !args[1].IsCharMatrix)))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:class:InvalidInputArgumentTypeSizeOrValue", "Invalid input argument for function 'size'.");
+                }
+
+                return JgsValue.Number(NumericVector("size", args[1], line, col)[0] == 1 ? mapCount : 1);
+            }
+
             int[] dims = SizeDims(args[0]);
 
             // Dimensions past the value's rank are 1, exactly as in MATLAB.
@@ -592,6 +615,13 @@ internal static partial class JgsBuiltins
         Define("isempty", (args, line, col) =>
         {
             Arity("isempty", args, 1, line, col);
+
+            // A containers.Map is empty when it holds no keys (open item 200, ADR 0351, measured).
+            if (IsMatlabMapShape(args[0], out int mapCount))
+            {
+                return JgsValue.Bool(mapCount == 0);
+            }
+
             return JgsValue.Bool(args[0].Type switch
             {
                 JgsType.Null => true,

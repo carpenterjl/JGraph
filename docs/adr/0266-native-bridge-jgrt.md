@@ -147,10 +147,14 @@ They found:
 - **A negative output count is refused in JGraph's words**; R2025b reports a C++ "vector too long".
 - **`mclGetLogFileName` answers the file's full name**; R2025b's puts `>` before it. JGraph's runtime makes the file when it starts, R2025b's at the first write.
 - **What JGraph cannot hold is refused at the call, not changed**: an int64 or uint64 past 2^53 (`JGraph:interop:int64Precision`), a complex integer array, a complex sparse array. A sparse logical array comes in as sparse double, and a complex array whose imaginary parts are zero comes back real, as the engine keeps them; a sparse array comes back with room for exactly its nonzeros.
-- **What the engine answers differently shows through the bridge**: `intmin`/`intmax` as doubles (open item 199), a `containers.Map`'s size (open item 200), `struct('s', "text")` keeping a char (open item 201), a field name MATLAB could not write read without complaint (open item 202), the display's layout (open item 194), no `> In` line after a warning (open item 170), and an undefined function in the desktop's words (open item 203).
+- **What the engine answers differently shows through the bridge**: `intmin`/`intmax` as doubles (open item 199), the display's layout (open item 194), no `> In` line after a warning (open item 170), and an undefined function in the desktop's words (open item 203).
 - **The `jg*` launcher API is not built**: K6's launcher starts .NET on `jglaunch.dll` itself.
+
+Closed since: a `containers.Map`'s size (open item 200), `struct('s', "text")` keeping a char (open
+item 201) and a field name MATLAB could not write read without complaint (open item 202) are R2025b's
+answers since ADR 0351.
 
 ## Still open
 
-- Items 199-202: the engine's answers above.
+- Item 199: the engine's answer above.
 - Item 203: the bridge's leftovers (a sparse array's room, zero imaginary parts, the log file's moment, the undefined function's words, handler text beyond ASCII, the mcl functions not provided, joining a .NET process without the desktop framework, the exported `get_hostfxr_path`).

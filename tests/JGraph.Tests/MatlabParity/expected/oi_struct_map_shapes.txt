@@ -1,0 +1,203 @@
+CHK|map_size_empty|double[1 2] [0 1]|exact
+CHK|map_size_two|double[1 2] [2 1]|exact
+CHK|map_size_numeric_keys|double[1 2] [3 1]|exact
+CHK|map_size_dim1|double[1 1] 2|exact
+CHK|map_size_dim2|double[1 1] 1|exact
+CHK|map_size_dim3|double[1 1] 1|exact
+CHK|map_size_empty_dim1|double[1 1] 0|exact
+CHK|map_size_dim_vector|MATLAB:class:InvalidInputArgumentTypeSizeOrValue|exact
+CHK|map_size_dim_vector_msg|Invalid input argument for function 'size'.|exact
+CHK|map_size_two_dims|MATLAB:maxrhs|exact
+CHK|map_size_two_dims_msg|Too many input arguments.|exact
+CHK|map_size_outputs_two|double[1 2] [2 1]|exact
+CHK|map_size_outputs_three|double[1 3] [2 1 1]|exact
+CHK|map_numel_empty|double[1 1] 1|exact
+CHK|map_numel_two|double[1 1] 1|exact
+CHK|map_length_empty|double[1 1] 0|exact
+CHK|map_length_two|double[1 1] 2|exact
+CHK|map_isempty_empty|logical[1 1] 1|exact
+CHK|map_isempty_two|logical[1 1] 0|exact
+CHK|map_ndims|double[1 1] 2|exact
+CHK|map_isscalar_two|logical[1 1] 0|exact
+CHK|map_isscalar_empty|logical[1 1] 0|exact
+CHK|map_isscalar_one|logical[1 1] 1|exact
+CHK|map_isvector|logical[1 1] 1|exact
+CHK|map_isrow|logical[1 1] 0|exact
+CHK|map_isrow_one|logical[1 1] 1|exact
+CHK|map_iscolumn|logical[1 1] 1|exact
+CHK|map_ismatrix|logical[1 1] 1|exact
+CHK|map_grows|double[1 2] [3 1]|exact
+CHK|map_shrinks|double[1 2] [1 1]|exact
+CHK|map_in_struct|double[1 2] [1 1]|exact
+CHK|map_held_by_field|double[1 2] [2 1]|exact
+CHK|map_cellfun_numel|double[1 2] [1 1]|exact
+CHK|map_cellfun_isempty|logical[1 2] [1 0]|exact
+CHK|map_cellfun_length|double[1 2] [0 2]|exact
+CHK|map_cellfun_size|double[1 2] [0 2]|exact
+CHK|map_cellfun_named_isempty|logical[1 2] [0 0]|exact
+CHK|map_cellfun_named_length|double[1 2] [1 1]|exact
+CHK|map_cellfun_named_prodofsize|double[1 2] [1 1]|exact
+CHK|map_cellfun_named_ndims|double[1 2] [2 2]|exact
+CHK|map_cellfun_named_size|double[1 2] [1 1]|exact
+CHK|map_text|<containers.Map[2 1]>|exact
+CHK|map_whos_size|double[1 2] [2 1]|exact
+CHK|map_whos_bytes|double[1 1] 8|exact
+CHK|dictionary_size|double[1 2] [1 1]|exact
+CHK|dictionary_numel|double[1 1] 1|exact
+CHK|dictionary_length|double[1 1] 1|exact
+CHK|struct_string_value|string[1 1]"text"|exact
+CHK|struct_string_name_and_value|struct[1 1]{(s=string[1 1]"text")}|exact
+CHK|struct_string_row|struct[1 1]{(s=string[1 2]"a","b")}|exact
+CHK|struct_string_column|struct[1 1]{(s=string[2 1]"a","b")}|exact
+CHK|struct_string_cell|struct[1 2]{(s=string[1 1]"x")(s=string[1 1]"y")}|exact
+CHK|struct_string_cell_one|struct[1 1]{(s=string[1 1]"x")}|exact
+CHK|struct_string_empty|struct[1 1]{(s=string[0 0]"")}|exact
+CHK|struct_string_mixed|struct[1 1]{(a=string[1 1]"x",b=char[1 1]'y')}|exact
+CHK|struct_string_spread|struct[1 2]{(a=char[1 1]'x',b=string[1 1]"y",c=string[1 1]"p")(a=char[1 1]'x',b=string[1 1]"y",c=string[1 1]"q")}|exact
+CHK|struct_string_length|double[1 1] 1|exact
+CHK|struct_string_missing|logical[1 1] 1|exact
+CHK|struct_string_array_name|MATLAB:Cell2Struct:NonStringFieldNames|exact
+CHK|struct_string_array_name_msg|Field names must be non-empty character vectors or string scalars.|exact
+CHK|setfield_string_value|struct[1 1]{(a=double[1 1] 1,b=string[1 1]"str")}|exact
+CHK|setfield_string_name|struct[1 1]{(a=double[1 1] 1,b=double[1 1] 2)}|exact
+CHK|cell2struct_string_value|struct[1 1]{(f=string[1 1]"a",g=double[1 1] 1)}|exact
+CHK|dyn_write_digit_first|MATLAB:AddField:InvalidFieldName|exact
+CHK|dyn_write_digit_first_msg|Invalid field name: '1bad'.|exact
+CHK|dyn_write_string_name|MATLAB:AddField:InvalidFieldName|exact
+CHK|dyn_write_string_name_msg|Invalid field name: '1bad'.|exact
+CHK|dyn_write_space|MATLAB:AddField:InvalidFieldName|exact
+CHK|dyn_write_space_msg|Invalid field name: 'a b'.|exact
+CHK|dyn_write_empty|MATLAB:AddField:InvalidFieldName|exact
+CHK|dyn_write_empty_msg|Invalid field name: ''.|exact
+CHK|dyn_write_underscore_first|MATLAB:AddField:InvalidFieldName|exact
+CHK|dyn_write_underscore_first_msg|Invalid field name: '_x'.|exact
+CHK|dyn_write_trailing_space|MATLAB:AddField:InvalidFieldName|exact
+CHK|dyn_write_trailing_space_msg|Invalid field name: 'a '.|exact
+CHK|dyn_write_leading_space|MATLAB:AddField:InvalidFieldName|exact
+CHK|dyn_write_leading_space_msg|Invalid field name: ' a'.|exact
+CHK|dyn_write_letter_digits|struct[1 1]{(a=double[1 1] 1,x_1=double[1 1] 1)}|exact
+CHK|dyn_write_keyword_if|struct[1 1]{(a=double[1 1] 1,if=double[1 1] 1)}|exact
+CHK|dyn_write_keyword_end|struct[1 1]{(a=double[1 1] 1,end=double[1 1] 1)}|exact
+CHK|dyn_write_63_letters|double[1 1] 2|exact
+CHK|dyn_write_64_letters|double[1 1] 2|exact
+CHK|dyn_write_non_ascii|MATLAB:AddField:InvalidFieldName|exact
+CHK|dyn_write_non_ascii_msg|Invalid field name: 'é'.|exact
+CHK|dyn_read_digit_first|MATLAB:nonExistentField|exact
+CHK|dyn_read_digit_first_msg|Unrecognized field name "1bad".|exact
+CHK|dyn_read_empty|MATLAB:nonExistentField|exact
+CHK|dyn_read_empty_msg|Unrecognized field name "".|exact
+CHK|dyn_read_keyword|MATLAB:nonExistentField|exact
+CHK|dyn_read_keyword_msg|Unrecognized field name "if".|exact
+CHK|dyn_read_absent|MATLAB:nonExistentField|exact
+CHK|dyn_read_absent_msg|Unrecognized field name "zz".|exact
+CHK|dyn_read_present|double[1 1] 1|exact
+CHK|dyn_write_new_variable|MATLAB:AddField:InvalidFieldName|exact
+CHK|dyn_write_new_variable_msg|Invalid field name: '1bad'.|exact
+CHK|dyn_write_new_variable_left|double[1 1] 0|exact
+CHK|dyn_write_then_dot|MATLAB:AddField:InvalidFieldName|exact
+CHK|dyn_write_then_dot_msg|Invalid field name: '1bad'.|exact
+CHK|dyn_write_indexed|MATLAB:AddField:InvalidFieldName|exact
+CHK|dyn_write_indexed_msg|Invalid field name: '1bad'.|exact
+CHK|dyn_write_empty_value|MATLAB:AddField:InvalidFieldName|exact
+CHK|dyn_write_empty_value_msg|Invalid field name: '1bad'.|exact
+CHK|dyn_write_element|MATLAB:AddField:InvalidFieldName|exact
+CHK|dyn_write_element_msg|Invalid field name: '1bad'.|exact
+CHK|dyn_write_deal|MATLAB:AddField:InvalidFieldName|exact
+CHK|dyn_write_deal_msg|Invalid field name: '1bad'.|exact
+CHK|dyn_write_in_cell|MATLAB:AddField:InvalidFieldName|exact
+CHK|dyn_write_in_cell_msg|Invalid field name: '1bad'.|exact
+CHK|dyn_read_array_absent|MATLAB:nonExistentField|exact
+CHK|dyn_read_array_absent_msg|Unrecognized field name "1bad".|exact
+CHK|dyn_table_spaced_name|double[1 1] 2|exact
+CHK|dyn_table_digit_first|double[1 1] 2|exact
+CHK|setfield_digit_first|MATLAB:AddField:InvalidFieldName|exact
+CHK|setfield_digit_first_msg|Invalid field name: '1bad'.|exact
+CHK|setfield_trailing_blank|struct[1 1]{(a=double[1 1] 1,b=double[1 1] 1)}|exact
+CHK|getfield_digit_first|MATLAB:nonExistentField|exact
+CHK|getfield_digit_first_msg|Unrecognized field name "1bad".|exact
+CHK|getfield_trailing_blank|double[1 1] 1|exact
+CHK|isfield_digit_first|logical[1 1] 0|exact
+CHK|isfield_cell|logical[1 3] [1 0 0]|exact
+CHK|rmfield_absent|MATLAB:rmfield:InvalidFieldname|exact
+CHK|rmfield_absent_msg|A field named '1bad' doesn't exist.|exact
+CHK|rmfield_absent_cell|MATLAB:rmfield:InvalidFieldname|exact
+CHK|rmfield_absent_cell_msg|A field named 'zz' doesn't exist.|exact
+CHK|rmfield_trailing_blank|struct[1 1]{(b=double[1 1] 2)}|exact
+CHK|rmfield_from_no_fields|struct[1 1]{()}|exact
+CHK|rmfield_empty_cell|struct[1 1]{(a=double[1 1] 1)}|exact
+CHK|orderfields_absent|MATLAB:orderfields:CellStrMismatchFieldnames|exact
+CHK|orderfields_absent_msg|Text in second input must match fieldnames of the struct.|exact
+CHK|orderfields_names|struct[1 1]{(a=double[1 1] 2,b=double[1 1] 1)}|exact
+CHK|struct_digit_first|MATLAB:Cell2Struct:InvalidFieldName|exact
+CHK|struct_digit_first_msg|Invalid field name "1bad".|exact
+CHK|struct_space|MATLAB:Cell2Struct:InvalidFieldName|exact
+CHK|struct_space_msg|Invalid field name "a b".|exact
+CHK|struct_empty_name|MATLAB:Cell2Struct:NonStringFieldNames|exact
+CHK|struct_empty_name_msg|Field names must be non-empty character vectors or string scalars.|exact
+CHK|struct_keyword|struct[1 1]{(if=double[1 1] 1)}|exact
+CHK|cell2struct_digit_first|MATLAB:Cell2Struct:InvalidFieldName|exact
+CHK|cell2struct_digit_first_msg|Invalid field name "1bad".|exact
+CHK|cell2struct_space|MATLAB:Cell2Struct:InvalidFieldName|exact
+CHK|cell2struct_space_msg|Invalid field name "a b".|exact
+CHK|cell2struct_empty_name|MATLAB:Cell2Struct:NonStringFieldNames|exact
+CHK|cell2struct_empty_name_msg|Field names must be non-empty character vectors or string scalars.|exact
+CHK|dyn_string_row|MATLAB:index:dotParenArgsMustBeStringScalarOrCharacterVector|exact
+CHK|dyn_string_row_msg|Dynamic field or property name must be a string scalar or character vector.|exact
+CHK|dyn_string_row_write|MATLAB:index:dotParenArgsMustBeStringScalarOrCharacterVector|exact
+CHK|dyn_string_row_write_msg|Dynamic field or property name must be a string scalar or character vector.|exact
+CHK|dyn_string_column|MATLAB:index:dotParenArgsMustBeStringScalarOrCharacterVector|exact
+CHK|dyn_string_column_msg|Dynamic field or property name must be a string scalar or character vector.|exact
+CHK|dyn_string_empty|MATLAB:index:dotParenArgsMustBeStringScalarOrCharacterVector|exact
+CHK|dyn_string_empty_msg|Dynamic field or property name must be a string scalar or character vector.|exact
+CHK|dyn_string_missing|MATLAB:string:MissingNotSupported|exact
+CHK|dyn_string_missing_msg|<missing> string element not supported.|exact
+CHK|dyn_char_column|double[1 1] 3|exact
+CHK|dyn_char_column_write|double[1 1] 1|exact
+CHK|dyn_char_matrix|double[1 1] 4|exact
+CHK|dyn_char_column_new|double[1 1] 1|exact
+CHK|dyn_char_pages|double[1 1] 3|exact
+CHK|dyn_char_empty_column|MATLAB:nonExistentField|exact
+CHK|dyn_char_empty_column_msg|Unrecognized field name "".|exact
+CHK|dyn_char_column_new_variable|struct[1 1]{(ab=double[1 1] 1)}|exact
+CHK|dyn_cell|MATLAB:mustBeFieldName|exact
+CHK|dyn_cell_msg|Argument to dynamic structure reference must evaluate to a valid field name.|exact
+CHK|dyn_cell_write|MATLAB:mustBeFieldName|exact
+CHK|dyn_cell_write_msg|Argument to dynamic structure reference must evaluate to a valid field name.|exact
+CHK|dyn_number|MATLAB:mustBeFieldName|exact
+CHK|dyn_number_msg|Argument to dynamic structure reference must evaluate to a valid field name.|exact
+CHK|dyn_number_write|MATLAB:mustBeFieldName|exact
+CHK|dyn_number_write_msg|Argument to dynamic structure reference must evaluate to a valid field name.|exact
+CHK|dyn_vector|MATLAB:mustBeFieldName|exact
+CHK|dyn_vector_msg|Argument to dynamic structure reference must evaluate to a valid field name.|exact
+CHK|dyn_logical|MATLAB:mustBeFieldName|exact
+CHK|dyn_logical_msg|Argument to dynamic structure reference must evaluate to a valid field name.|exact
+CHK|dyn_string_scalar|double[1 1] 3|exact
+CHK|dyn_array_string_row|MATLAB:index:dotParenArgsMustBeStringScalarOrCharacterVector|exact
+CHK|dyn_array_string_row_msg|Dynamic field or property name must be a string scalar or character vector.|exact
+CHK|dyn_array_char_column|cell[1 2]{double[1 1] 1;double[1 1] 2}|exact
+CHK|dyn_deal_char_column|double[1 2] [5 5]|exact
+CHK|dyn_table_string_row|MATLAB:table:IllegalVarSubscript|exact
+CHK|dyn_table_string_row_msg|A table variable name must be a string scalar or a character vector.|exact
+CHK|dyn_table_string_missing|MATLAB:string:MissingNotSupported|exact
+CHK|dyn_table_string_missing_msg|<missing> string element not supported.|exact
+CHK|dyn_table_char_column|MATLAB:table:IllegalVarSubscript|exact
+CHK|dyn_table_char_column_msg|A table variable name must be a string scalar or a character vector.|exact
+CHK|dyn_table_cell|MATLAB:table:IllegalVarSubscript|exact
+CHK|dyn_table_cell_msg|A table variable name must be a string scalar or a character vector.|exact
+CHK|dyn_table_number|double[1 1] 2|exact
+CHK|s2c_scalar|cell[3 1]{double[1 1] 1;char[1 1]'x';cell[0 0]{}}|exact
+CHK|s2c_one_field|cell[1 1]{double[1 1] 1}|exact
+CHK|s2c_row|cell[2 1 2]{double[1 1] 1;double[1 1] 3;double[1 1] 2;double[1 1] 4}|exact
+CHK|s2c_column|cell[2 2]{double[1 1] 1;double[1 1] 3;double[1 1] 2;double[1 1] 4}|exact
+CHK|s2c_grid|cell[2 2 3]{double[1 1] 1;double[1 1] 0;double[1 1] 4;double[1 1] 0;double[1 1] 2;double[1 1] 0;double[1 1] 5;double[1 1] 0;double[1 1] 3;double[1 1] 0;double[1 1] 6;double[1 1] 0}|exact
+CHK|s2c_empty_one_field|cell[1 0 0]{}|exact
+CHK|s2c_empty_two_fields|cell[2 0 0]{}|exact
+CHK|s2c_no_fields|cell[0 1]{}|exact
+CHK|s2c_bracket|cell[0 0 0]{}|exact
+CHK|s2c_empty_0x3|cell[1 0 3]{}|exact
+CHK|s2c_pages|cell[2 1 1 2]{double[1 1] 1;double[1 1] 2;double[1 1] 1;double[1 1] 2}|exact
+CHK|s2c_index|double[1 1] 2|exact
+CHK|s2c_index_three|double[1 1] 4|exact
+CHK|s2c_number|MATLAB:UndefinedFunction|exact
+CHK|s2c_number_msg|Undefined function 'struct2cell' for input arguments of type 'double'.|exact
+CHK|s2c_round_trip|struct[1 1]{(a=double[1 1] 1,b=double[1 1] 2)}|exact

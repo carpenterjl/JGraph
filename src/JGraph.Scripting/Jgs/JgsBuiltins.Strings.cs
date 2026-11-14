@@ -535,6 +535,19 @@ internal static partial class JgsBuiltins
         JgsEnvironment env, string question, JgsValue item, JgsValue? detail, int line, int col)
     {
         string builtin = CellQuestions[question];
+
+        // The named questions are the built-in ones and call no class's own: a containers.Map, whose
+        // size is its Count by 1, is the one object it is to them (open item 200, ADR 0351, measured).
+        if (question is "isempty" or "length" or "size" or "ndims" or "prodofsize" && IsMatlabMapShape(item, out _))
+        {
+            return question switch
+            {
+                "isempty" => JgsValue.Bool(false),
+                "ndims" => JgsValue.Number(2),
+                _ => JgsValue.Number(1),
+            };
+        }
+
         if (question == "isclass")
         {
             string wanted = TextIn("cellfun", detail!, line, col);

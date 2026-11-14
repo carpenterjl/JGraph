@@ -154,6 +154,12 @@ internal static partial class JgsBuiltins
         string className = ClassOf(value, JgsDialect.Matlab);
         bool sparse = value.Type == JgsType.Sparse;
         bool complex = value.Type == JgsType.Complex || (value.Type == JgsType.Array && (value.IsPackedComplex || HasComplexElements(value)));
+        // A containers.Map is its Count by 1 and, a handle, 8 bytes (open item 200, ADR 0351, measured).
+        if (!inFile && IsMatlabMapShape(value, out int mapCount))
+        {
+            return new WhosEntry(name, [mapCount, 1], 8, className, global, sparse, complex);
+        }
+
         int[]? size = inFile && IsObjectClass(className) ? null : SizeDims(value);
         return new WhosEntry(name, size, WhosBytes(value), className, global, sparse, complex);
     }

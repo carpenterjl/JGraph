@@ -1018,4 +1018,27 @@ internal static partial class JgsBuiltins
 
         return Array.IndexOf(MatlabKeywordList, name) < 0;
     }
+
+    /// <summary>
+    /// Whether a piece of text is a name R2025b lets a struct field have: an ASCII letter, then ASCII
+    /// letters, digits and underscores. Unlike a variable's name it may be a keyword (<c>s.('if')</c>)
+    /// and longer than <c>namelengthmax</c> (open item 202, ADR 0351, measured).
+    /// </summary>
+    internal static bool IsValidFieldName(string name)
+    {
+        if (name.Length == 0 || !char.IsAsciiLetter(name[0]))
+        {
+            return false;
+        }
+
+        foreach (char c in name)
+        {
+            if (!char.IsAsciiLetterOrDigit(c) && c != '_')
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

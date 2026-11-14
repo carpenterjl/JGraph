@@ -5961,6 +5961,13 @@ internal sealed partial class Interpreter
             {
                 JgsValue owner = EvaluateForWrite(member.Target, env);
                 string field = FieldName(member, env);
+
+                // s.(['a';'b'])(2) = v names ab (open item 208); s.('1bad')(2) = v is refused (open item 202).
+                if (owner.Type == JgsType.Struct && owner.ClassName is null && !owner.IsTime && !owner.IsCategorical)
+                {
+                    field = WritableFieldName(field, member);
+                }
+
                 if (owner.Type == JgsType.Struct && !owner.IsStructArray
                     && owner.WritableStruct().TryGetValue(field, out JgsValue? held))
                 {
@@ -10461,6 +10468,13 @@ internal sealed partial class Interpreter
 
         if (target.AsStruct.TryGetValue(field, out JgsValue? value))
         {
+            // A name no field may have, which only a struct made outside the language can hold, is
+            // refused on reading as on writing (open item 202, ADR 0351: k10_feval risky 11).
+            if (Dialect.IsMatlab && !JgsBuiltins.IsValidFieldName(field))
+            {
+                throw JgsBuiltins.InvalidFieldNameRead(field, member.Line, member.Column);
+            }
+
             // A dotted name that stands for a value rather than a function calls itself on mention,
             // exactly as a bare name does (M37's AutoCallsBare). Without this `m = containers.Map;`
             // bound the constructor, and every later mention of m called it afresh — so m('x') = 10
@@ -10519,6 +10533,31 @@ internal sealed partial class Interpreter
                     return name.ElementAt(0).AsString;
                 }
 
+                // A missing string names nothing on anything, a table included; a string array of
+                // any other size and a char matrix are settled where the dot meets what it is on
+                // (open item 208, ADR 0351, measured).
+                if (name.IsStringArray && name.ArrayLength == 1)
+                {
+                    throw new JgsRuntimeException(member.Line, member.Column, "MATLAB:string:MissingNotSupported",
+                        "<missing> string element not supported.");
+                }
+
+                if (name.IsStringArray)
+                {
+                    return NumberedField + "A";
+                }
+
+                if (name.IsCharMatrix)
+                {
+                    var text = new System.Text.StringBuilder(name.ArrayLength);
+                    for (int i = 0; i < name.ArrayLength; i++)
+                    {
+                        text.Append((char)(int)name.ElementAt(i).AsNumber); // column-major, as R2025b reads it
+                    }
+
+                    return NumberedField + "C" + text;
+                }
+
                 return name.Type == JgsType.Number && !name.IsTime
                     ? NumberedField + "#" + name.AsNumber.ToString("R", System.Globalization.CultureInfo.InvariantCulture)
                     : name.Type == JgsType.Array && !name.IsStringArray && !name.IsCharMatrix && !name.IsTime && !name.IsCategorical
@@ -10553,7 +10592,7 @@ internal sealed partial class Interpreter
             return field;
         }
 
-        if (field[1] == 'S')
+        if (field[1] is 'S' or 'A' or 'C') // a char matrix and a string array are no name to a table (open item 208)
         {
             throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:table:IllegalVarSubscript",
                 "A table variable name must be a string scalar or a character vector.");
@@ -10584,12 +10623,32 @@ internal sealed partial class Interpreter
                 "Cannot create a table variable with a discontiguous index.");
     }
 
-    /// <summary>A numbered dot on anything but a table: R2025b's refusal of a field name that is not text (open item 130).</summary>
+    /// <summary>
+    /// A numbered dot on anything but a table: R2025b's refusal of a field name that is not text (open
+    /// item 130). A char matrix names the field its characters spell in column order, and a string
+    /// array of other than one element is refused in its own words (open item 208, ADR 0351, measured).
+    /// </summary>
     private static string RefuseNumberedField(string field, Node at) =>
-        field.StartsWith(NumberedField, StringComparison.Ordinal)
-            ? throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:mustBeFieldName",
-                "Argument to dynamic structure reference must evaluate to a valid field name.")
+        !field.StartsWith(NumberedField, StringComparison.Ordinal) ? field
+        : field[1] == 'C' ? field[2..]
+        : field[1] == 'A'
+            ? throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:index:dotParenArgsMustBeStringScalarOrCharacterVector",
+                "Dynamic field or property name must be a string scalar or character vector.")
+            : throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:mustBeFieldName",
+                "Argument to dynamic structure reference must evaluate to a valid field name.");
+
+    /// <summary>
+    /// The name a struct write lands under, in the MATLAB dialect R2025b's refusal of one no field
+    /// may have: <c>s.('1bad') = v</c> is <c>MATLAB:AddField:InvalidFieldName</c> (open item 202,
+    /// ADR 0351, measured). A sentinel name is settled first, as <see cref="RefuseNumberedField"/> does.
+    /// </summary>
+    private string WritableFieldName(string field, Node at)
+    {
+        field = RefuseNumberedField(field, at);
+        return Dialect.IsMatlab && !JgsBuiltins.IsValidFieldName(field)
+            ? throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:AddField:InvalidFieldName", $"Invalid field name: '{field}'.")
             : field;
+    }
 
     private static Expr Single(IReadOnlyList<Expr> subscripts, Node at, string what)
     {
@@ -10709,8 +10768,13 @@ internal sealed partial class Interpreter
             return value;
         }
 
+        // y.('1bad') = v with no y refuses the name and leaves y undefined, as R2025b does; a y that
+        // is there answers for itself first (open item 202, measured).
+        string? named = member.Target is VariableExpr unborn && !LookUp(unborn.Name, env, out _)
+            ? WritableFieldName(FieldName(member, env), member)
+            : null;
         JgsValue container = ResolveStructForWrite(member.Target, env, out JgsStructArray? owner);
-        string field = RefuseNumberedField(FieldName(member, env), member);
+        string field = named ?? WritableFieldName(FieldName(member, env), member); // open item 202
         Dictionary<string, JgsValue> fields = container.WritableStruct(); // M7: the write gate
         fields.TryGetValue(field, out JgsValue? replaced);
         fields[field] = value;
@@ -10953,6 +11017,7 @@ internal sealed partial class Interpreter
                 }
 
                 JgsValue parent = ResolveStructForWrite(nested.Target, env, out _);
+                field = WritableFieldName(field, nested); // s.('1bad').f = v (open item 202)
 
                 // M3: the write detaches at every level on the way down, and the entry holds this
                 // very dictionary, so the child handed back is the one the write will land in.

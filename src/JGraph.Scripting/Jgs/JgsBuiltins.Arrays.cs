@@ -536,9 +536,24 @@ internal static partial class JgsBuiltins
         Define("struct2cell", (args, line, col) =>
         {
             Arity("struct2cell", args, 1, line, col);
+            if (args[0].Type != JgsType.Struct && JgsRunningDialect.ThreadIsMatlab)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:UndefinedFunction",
+                    $"Undefined function 'struct2cell' for input arguments of type '{ClassOf(args[0], JgsDialect.Matlab)}'.");
+            }
+
             if (args[0].Type != JgsType.Struct)
             {
                 throw new JgsRuntimeException(line, col, $"struct2cell expects a struct, but got a {args[0].TypeName}.");
+            }
+
+            // In the MATLAB dialect the answer is fields by the struct's own size, a scalar's fields
+            // a column: n-by-1 for one element, 2-by-1-by-2 for a 1-by-2 array of two fields, 1-by-0-by-0
+            // for an empty one with one field (open item 301, ADR 0351, measured). The JGS dialect
+            // keeps its row of the first element's values.
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                return StructFieldsByElement(args[0]);
             }
 
             // M2: every slot is an entry over the struct's own field values, so each takes a share.
@@ -569,6 +584,14 @@ internal static partial class JgsBuiltins
                     throw new JgsRuntimeException(line, col, $"cell2struct: field name {i + 1} is a {names[i].TypeName}, not a string.");
                 }
 
+                // A name no field may have is R2025b's refusal, as struct's (open item 202, ADR 0351).
+                if (JgsRunningDialect.ThreadIsMatlab && !IsValidFieldName(names[i].AsString))
+                {
+                    throw names[i].AsString.Length == 0
+                        ? new JgsRuntimeException(line, col, "MATLAB:Cell2Struct:NonStringFieldNames", "Field names must be non-empty character vectors or string scalars.")
+                        : new JgsRuntimeException(line, col, "MATLAB:Cell2Struct:InvalidFieldName", $"Invalid field name \"{names[i].AsString}\".");
+                }
+
                 // Share, not store: the new struct's field and the source cell's slot are two
                 // holders of one payload, so a later `c{1}(1) = 7` detaches instead of leaking
                 // into `st.f` (the sibling struct2cell and the struct(...) ctor do the same).
@@ -577,6 +600,33 @@ internal static partial class JgsBuiltins
 
             return JgsValue.Struct(fields);
         });
+    }
+
+    /// <summary>
+    /// R2025b's <c>struct2cell</c>: one row a field, in the struct's field order, and the struct's own
+    /// dimensions after it, so element k's values are column k (open item 301, ADR 0351). Each slot
+    /// is an entry over the struct's field value and takes a share (M2).
+    /// </summary>
+    private static JgsValue StructFieldsByElement(JgsValue value)
+    {
+        JgsStructArray payload = value.AsStructArray;
+        string[] names = payload.FieldNames;
+        var slots = new JgsValue[names.Length * payload.Length];
+        for (int e = 0; e < payload.Length; e++)
+        {
+            Dictionary<string, JgsValue> element = payload.Elements[e];
+            for (int f = 0; f < names.Length; f++)
+            {
+                slots[(e * names.Length) + f] = element.TryGetValue(names[f], out JgsValue? held)
+                    ? JgsValue.Share(held)
+                    : JgsEmpty.Zero();
+            }
+        }
+
+        int[] shape = value.IsNd ? value.Dims : [value.Rows, value.Cols];
+        JgsValue cells = JgsValue.Cell(slots);
+        cells.ReshapeDims([names.Length, .. shape]);
+        return cells;
     }
 
     /// <summary>Reads the trailing 'UniformOutput' switch the apply family shares.</summary>

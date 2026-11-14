@@ -241,8 +241,10 @@ internal static partial class JgsBuiltins
         // new place.
         // An object array and a table are asked by their size too (stage K9: k9describe of a 1-by-2
         // k9point array, and of a 2-by-2 table, which R2025b's isscalar calls no scalar).
+        // A containers.Map is a Count-by-1 column to these four (open item 200, ADR 0351, measured).
         Predicate("isscalar", static v =>
-            v.Type == JgsType.Array ? !v.IsNd && Extent(v) == 1
+            IsMatlabMapShape(v, out int mapCount) ? mapCount == 1
+            : v.Type == JgsType.Array ? !v.IsNd && Extent(v) == 1
             : v.IsObjectArray || v.Type == JgsType.Table ? SizeDims(v).Aggregate(1, static (a, b) => a * b) == 1
             : v.Type is not (JgsType.Cell or JgsType.Struct) || Extent(v) == 1);
         Predicate("isvector", IsVectorShape);
@@ -255,8 +257,8 @@ internal static partial class JgsBuiltins
 
         // Arrays carry a shape now (ADR 0043), so these read it: a literal is 1-by-n and answers
         // isrow, and a transposed vector or a column of a matrix genuinely answers iscolumn.
-        Predicate("isrow", IsRowShape);
-        Predicate("iscolumn", IsColumnShape);
+        Predicate("isrow", static v => IsMatlabMapShape(v, out int mapCount) ? mapCount == 1 : IsRowShape(v));
+        Predicate("iscolumn", static v => IsMatlabMapShape(v, out _) || IsColumnShape(v));
 
         Predicate("isstr", static v => v.Type == JgsType.String); // the pre-R2016 spelling of ischar
         Predicate("isstring", static v => v.IsStringArray);       // M63: true only for double-quoted text
