@@ -138,6 +138,11 @@ internal static partial class JgsBuiltins
 
         Define("cellstr", (args, line, col) =>
         {
+            if (CellStrFormattedTime(args, line, col) is { } formattedTime)
+            {
+                return formattedTime; // open item 316, ADR 0359
+            }
+
             Arity("cellstr", args, 1, line, col);
             JgsValue input = args[0];
             if (input.Type == JgsType.External)

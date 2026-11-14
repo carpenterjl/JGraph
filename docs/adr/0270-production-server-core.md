@@ -171,7 +171,7 @@ name from a file, not its statement (`run-k14.ps1` writes the build statement to
 - **`ObfuscateArchive` builds nothing**: JGraph builds no encrypted archives (decision K3b, ADR 0259).
 - **A too-many-outputs call of `compiler.build.productionServerArchive` ends its message without R2025b's line break.**
 - **A complex integer array and a complex sparse array are refused**, and a complex array that is empty or whose imaginary parts are all zero comes out real; JGraph holds none of them (ADR 0266).
-- **`intmax('int64')` and `intmax('uint64')` encode as 2^63 and 2^64, one past R2025b's, and an int64 or uint64 past 2^53 loses its last digits**, in the fixture and in the server's answers (ADR 0174, ADR 0355).
+- **An int64 or uint64 past 2^53 loses its last digits**, in the fixture and in the server's answers (ADR 0174, ADR 0355).
 - **A sparse logical array is a sparse double** (ADR 0266).
 - **A char array of three dimensions is refused** in JGraph's words; R2025b holds it.
 - **`inputParser` is not a class JGraph has**; the fixture's stand-in, an `MException`, is refused by its own name.
@@ -187,6 +187,12 @@ Closed since: **`intmin('int64')` encoded as a double.** ADR 0355 (open item 199
 `intmax` answer in their class, so `intmin('int64')` encodes as R2025b's `-9223372036854775808` and
 fixture row `i_08` agrees, and `intmax('uint64')` survives a round trip as a `uint64` that compares
 equal (`e_f_uint64_max_round`); what is left of the entry is the bullet above.
+
+Closed since: **`intmax('int64')` and `intmax('uint64')` encoded as 2^63 and 2^64.** ADR 0359
+(open item 212) writes the 64-bit classes' saturation points as R2025b's `9223372036854775807` and
+`18446744073709551615`, so fixture rows `i_09`, `i_10`, `e_f_uint64_max_small`,
+`e_f_uint64_max_large`, `y_uint64_max` and `y_uint64_over` agree. It also measured a field name past
+63 characters: R2025b's decode keeps one of up to 2049 whole, and so does JGraph's now.
 
 Closed since: **A string in a struct field encoded as char.** ADR 0351 (open item 201) let `struct`
 and `setfield` keep a string value, so a struct field holding a string encodes as R2025b's `mwtype`

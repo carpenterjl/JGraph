@@ -175,3 +175,7 @@ letters as the setter does.
   not modelled here.
 - Seen while probing, and not this item's: `num2str(z, 17)` of a complex row prints the shortest
   form of each part here (`0.7`), where R2025b prints 17 digits (`0.69999999999999996`).
+
+Closed since: **`cellstr(t, fmt)`, the locale's abbreviated month and `num2str(z, 17)`.** ADR 0359
+(open item 316) takes a format and a locale in `cellstr`, prints R2025b's recorded month and weekday
+names under a locale (`janv`), and lays complex `num2str` out as num2str.m does.

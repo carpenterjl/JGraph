@@ -285,6 +285,11 @@ internal static class JgsMpsJson
             {
                 JgsNumericClass.Double => new Num(JgsJson.FormatDouble(x)),
                 JgsNumericClass.Single => new Num(JgsJson.FormatSingle((float)x)),
+                // The 64-bit classes' maxima are held as 2^63 and 2^64, their saturation points
+                // (ADR 0355); no other value of the class reaches them, so they are written as
+                // R2025b writes intmax (open item 212, ADR 0359).
+                JgsNumericClass.Int64 when x >= 9223372036854775808.0 => new Num("9223372036854775807"),
+                JgsNumericClass.UInt64 when x >= 18446744073709551616.0 => new Num("18446744073709551615"),
                 _ => new Num(x.ToString("F0", CultureInfo.InvariantCulture)),
             };
         }
@@ -1035,7 +1040,9 @@ internal static class JgsMpsJson
         /// <summary>
         /// A field name MATLAB can hold. R2025b's decoder ends the process on one it cannot ("Invalid
         /// field name "1a" specified."); JGraph refuses with that text. An empty name is refused in
-        /// R2025b's own words.
+        /// R2025b's own words. A name may be as long as 2049 characters, one past R2025b's
+        /// <c>namelengthmax</c> of 2048, which R2025b's decoder keeps whole; at 2050 it ends the
+        /// process (probe_mps4; open item 212, ADR 0359).
         /// </summary>
         private static void CheckFieldName(string name)
         {
@@ -1044,7 +1051,7 @@ internal static class JgsMpsJson
                 throw Error("DecodeInvalidMWType", "Unsupported \"mwtype\": \"invalid string position\".");
             }
 
-            if (name.Length > 63 || !char.IsAsciiLetter(name[0]) || name.Any(static c => !(char.IsAsciiLetterOrDigit(c) || c == '_')))
+            if (name.Length > 2049 || !char.IsAsciiLetter(name[0]) || name.Any(static c => !(char.IsAsciiLetterOrDigit(c) || c == '_')))
             {
                 throw Error("DecodeInvalidFieldName", $"Invalid field name \"{name}\" specified.");
             }

@@ -688,13 +688,6 @@ internal static partial class JgsBuiltins
             return subject; // MATLAB hands char straight back rather than describing it
         }
 
-        if (subject.Type == JgsType.Complex || HasComplexElements(subject))
-        {
-            // A complex number's two halves have their own widths; printing it the way the console
-            // prints it is the honest answer until there is a column rule that covers both.
-            return JgsValue.Str(subject.Display());
-        }
-
         // Nothing to describe, so the description is the empty char row — never a cell, which is
         // what a 0-by-0 subject fell into once the row list below came back with no rows in it
         // (M96b). MATLAB answers 0-by-0 char for every empty, whatever shape it wore.
@@ -703,15 +696,38 @@ internal static partial class JgsBuiltins
             return JgsValue.Str(string.Empty);
         }
 
+        // A complex array is num2str.m's own two-part column layout (open item 316, ADR 0359).
+        if (subject.Type == JgsType.Complex || HasComplexElements(subject))
+        {
+            return Num2StrComplex(subject, args, line, col);
+        }
+
         double[][] rows = subject.Type is JgsType.Number or JgsType.Bool
             ? [[subject.AsNumber]]
             : JgsMatrix.ToRows("num2str", subject, line, col);
 
         DropNegativeZero(rows);
 
+        // A format must hold a conversion, and a second argument must be text or a number
+        // (num2str.m's two refusals; open item 316, ADR 0359).
+        if (args.Count == 2 && args[1].Type == JgsType.String && !args[1].AsString.Contains('%', StringComparison.Ordinal))
+        {
+            throw Num2StrFormatInvalid(args[1].AsString, line, col);
+        }
+
+        if (args.Count == 2 && args[1].Type is not (JgsType.String or JgsType.Number or JgsType.Bool or JgsType.Complex or JgsType.Array))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:num2str:invalidSecondArgument",
+                "Second argument to num2str must be a character vector, string scalar, or numeric.");
+        }
+
+        // An integer class ignores a digit count: num2str(int8([1 -2 3]), 17) is int2str's
+        // '1 -2  3' (num2str.m; open item 316, ADR 0359).
+        bool countIgnored = args.Count == 2 && args[1].Type != JgsType.String
+            && subject.NumericClass.IsInteger() && !IsLogicalValue(subject);
         string[] text = args.Count == 2 && args[1].Type == JgsType.String
-            ? FormattedRows(args[1].AsString, rows, line, col)
-            : AlignedRows(rows, args.Count == 2 ? Count("num2str", args, 1, line, col) : null);
+            ? Num2StrFormatted(args[1].AsString, rows, line, col)
+            : AlignedRows(rows, args.Count == 2 && !countIgnored ? Count("num2str", args, 1, line, col) : null);
 
         // Several rows are a char matrix, which is what MATLAB answers and what the aligned columns
         // above were computed for (M105). It used to be a cell, so num2str([1; 22]) came back 1-by-2

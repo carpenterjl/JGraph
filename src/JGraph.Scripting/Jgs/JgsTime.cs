@@ -409,7 +409,15 @@ internal static class JgsTime
         // The wall clock in the value's own zone, which for an unzoned value is the stored moment
         // itself. Only the reading moves; the storage stays the instant (M82).
         DateTime moment = WallClock(ms, tag);
-        string net = ToNetFormat(WithZoneTokens(tag.Format, ms, tag));
+        string net = ToNetFormat(WithNameTokens(WithZoneTokens(tag.Format, ms, tag), moment, culture ?? CultureInfo.InvariantCulture));
+
+        // One letter alone is a standard format to .NET ('d' its short date); '%' makes it the
+        // custom field it is in MATLAB's format (open item 316, ADR 0359).
+        if (net.Length == 1 && char.IsAsciiLetter(net[0]))
+        {
+            net = "%" + net;
+        }
+
         string text;
         try
         {
@@ -524,6 +532,102 @@ internal static class JgsTime
         }
 
         return built.ToString();
+    }
+
+    /// <summary>
+    /// Replaces the month, weekday and AM/PM fields with the text R2025b prints for them, quoted,
+    /// before .NET sees the format (open item 316, ADR 0359).
+    /// </summary>
+    /// <remarks>
+    /// <c>y</c> and <c>u</c> alone are the whole year (.NET's <c>y</c> is the year mod 100);
+    /// <c>M</c> is the month's number unpadded and six or more <c>M</c> it zero-padded to the run;
+    /// <c>e</c> and <c>ee</c> are the weekday's number counted from Sunday as 1, in every locale
+    /// (probe_tok). <c>MMM</c>, <c>MMMM</c>, <c>MMMMM</c>, <c>eee</c>, <c>eeee</c>, <c>eeeee</c>
+    /// and <c>a</c> are the recorded names (<see cref="JgsLocaleNames"/>); a locale the table does
+    /// not hold keeps .NET's, and without a locale only the narrow forms are replaced, .NET's
+    /// invariant names being R2025b's en_US ones. <c>MM</c> stays .NET's. Quoted text is literal.
+    /// </remarks>
+    private static string WithNameTokens(string format, DateTime moment, CultureInfo culture)
+    {
+        if (format.IndexOfAny(['M', 'e', 'a', 'y', 'u']) < 0)
+        {
+            return format;
+        }
+
+        bool invariant = culture.Name.Length == 0;
+        JgsLocaleNames.Names? names = null;
+        bool looked = false;
+        System.Text.StringBuilder? built = null;
+        int i = 0;
+        while (i < format.Length)
+        {
+            char c = format[i];
+            if (c == '\'')
+            {
+                int close = format.IndexOf('\'', i + 1);
+                int end = close < 0 ? format.Length : close + 1;
+                built?.Append(format, i, end - i);
+                i = end;
+                continue;
+            }
+
+            int run = 1;
+            while (i + run < format.Length && format[i + run] == c)
+            {
+                run++;
+            }
+
+            string? text = null;
+            if (c is 'y' or 'u' && run == 1)
+            {
+                text = moment.Year.ToString(CultureInfo.InvariantCulture); // .NET's 'y' is the year mod 100
+            }
+            else if (c is 'M' or 'e' or 'a')
+            {
+                bool named = (c == 'a' && !invariant) || (c != 'a' && run is 3 or 4 or 5 && (!invariant || run == 5));
+                if (named && !looked)
+                {
+                    names = JgsLocaleNames.For(culture);
+                    looked = true;
+                }
+
+                int day = (int)moment.DayOfWeek; // Sunday is 0
+                text = c switch
+                {
+                    'M' when run == 1 => moment.Month.ToString(CultureInfo.InvariantCulture),
+                    'M' when run >= 6 => moment.Month.ToString(new string('0', run), CultureInfo.InvariantCulture),
+                    'M' when named && names is not null => run switch
+                    {
+                        3 => names.MonthsShort[moment.Month - 1],
+                        4 => names.MonthsWide[moment.Month - 1],
+                        _ => names.MonthsNarrow[moment.Month - 1],
+                    },
+                    'e' when run <= 2 => (day + 1).ToString(new string('0', run), CultureInfo.InvariantCulture),
+                    'e' when named && names is not null => run switch
+                    {
+                        3 => names.DaysShort[day],
+                        4 => names.DaysWide[day],
+                        _ => names.DaysNarrow[day],
+                    },
+                    'a' when named && names is not null => names.Periods[moment.Hour < 12 ? 0 : 1],
+                    _ => null,
+                };
+            }
+
+            if (text is not null)
+            {
+                built ??= new System.Text.StringBuilder(format, 0, i, format.Length + 16);
+                built.Append('\'').Append(text).Append('\'');
+            }
+            else
+            {
+                built?.Append(c, run);
+            }
+
+            i += run;
+        }
+
+        return built?.ToString() ?? format;
     }
 
     /// <summary>

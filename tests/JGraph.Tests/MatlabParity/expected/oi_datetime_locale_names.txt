@@ -1,0 +1,148 @@
+CHK|n_fr_FR_MMM|char[1 69]'janv;f\u00E9vr;mars;avr;mai;juin;juil;ao\u00FBt;sept;oct;nov;d\u00E9c'|exact
+CHK|n_fr_FR_MMMM|char[1 99]'janvier;f\u00E9vrier;mars;avril;mai;juin;juillet;ao\u00FBt;septembre;octobre;novembre;d\u00E9cembre'|exact
+CHK|n_fr_FR_MMMMM|char[1 23]'J;F;M;A;M;J;J;A;S;O;N;D'|exact
+CHK|n_fr_FR_eee|char[1 27]'dim;lun;mar;mer;jeu;ven;sam'|exact
+CHK|n_fr_FR_eeee|char[1 51]'dimanche;lundi;mardi;mercredi;jeudi;vendredi;samedi'|exact
+CHK|n_fr_FR_eeeee|char[1 13]'D;L;M;M;J;V;S'|exact
+CHK|n_fr_FR_a|char[1 5]'AM;PM'|exact
+CHK|n_de_DE_MMM|char[1 56]'Jan;Feb;M\u00E4rz;Apr;Mai;Juni;Juli;Aug;Sept;Okt;Nov;Dez'|exact
+CHK|n_de_DE_MMMM|char[1 87]'Januar;Februar;M\u00E4rz;April;Mai;Juni;Juli;August;September;Oktober;November;Dezember'|exact
+CHK|n_de_DE_MMMMM|char[1 23]'J;F;M;A;M;J;J;A;S;O;N;D'|exact
+CHK|n_de_DE_eee|char[1 20]'So;Mo;Di;Mi;Do;Fr;Sa'|exact
+CHK|n_de_DE_eeee|char[1 59]'Sonntag;Montag;Dienstag;Mittwoch;Donnerstag;Freitag;Samstag'|exact
+CHK|n_de_DE_eeeee|char[1 13]'S;M;D;M;D;F;S'|exact
+CHK|n_de_DE_a|char[1 5]'AM;PM'|exact
+CHK|n_ru_RU_MMM|char[1 245]'\u044F\u043D\u0432;\u0444\u0435\u0432\u0440;\u043C\u0430\u0440;\u0430\u043F\u0440;\u043C\u0430\u044F;\u0438\u044E\u043D;\u0438\u044E\u043B;\u0430\u0432\u0433;\u0441\u0435\u043D\u0442;\u043E\u043A\u0442;\u043D\u043E\u044F\u0431;\u0434\u0435\u043A'|exact
+CHK|n_ru_RU_MMMM|char[1 431]'\u044F\u043D\u0432\u0430\u0440\u044F;\u0444\u0435\u0432\u0440\u0430\u043B\u044F;\u043C\u0430\u0440\u0442\u0430;\u0430\u043F\u0440\u0435\u043B\u044F;\u043C\u0430\u044F;\u0438\u044E\u043D\u044F;\u0438\u044E\u043B\u044F;\u0430\u0432\u0433\u0443\u0441\u0442\u0430;\u0441\u0435\u043D\u0442\u044F\u0431\u0440\u044F;\u043E\u043A\u0442\u044F\u0431\u0440\u044F;\u043D\u043E\u044F\u0431\u0440\u044F;\u0434\u0435\u043A\u0430\u0431\u0440\u044F'|exact
+CHK|n_ru_RU_MMMMM|char[1 83]'\u042F;\u0424;\u041C;\u0410;\u041C;\u0418;\u0418;\u0410;\u0421;\u041E;\u041D;\u0414'|exact
+CHK|n_ru_RU_eee|char[1 90]'\u0432\u0441;\u043F\u043D;\u0432\u0442;\u0441\u0440;\u0447\u0442;\u043F\u0442;\u0441\u0431'|exact
+CHK|n_ru_RU_eeee|char[1 336]'\u0432\u043E\u0441\u043A\u0440\u0435\u0441\u0435\u043D\u044C\u0435;\u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A;\u0432\u0442\u043E\u0440\u043D\u0438\u043A;\u0441\u0440\u0435\u0434\u0430;\u0447\u0435\u0442\u0432\u0435\u0440\u0433;\u043F\u044F\u0442\u043D\u0438\u0446\u0430;\u0441\u0443\u0431\u0431\u043E\u0442\u0430'|exact
+CHK|n_ru_RU_eeeee|char[1 48]'\u0412;\u041F;\u0412;\u0421;\u0427;\u041F;\u0421'|exact
+CHK|n_ru_RU_a|char[1 5]'AM;PM'|exact
+CHK|n_pl_PL_MMM|char[1 52]'sty;lut;mar;kwi;maj;cze;lip;sie;wrz;pa\u017A;lis;gru'|exact
+CHK|n_pl_PL_MMMM|char[1 108]'stycznia;lutego;marca;kwietnia;maja;czerwca;lipca;sierpnia;wrze\u015Bnia;pa\u017Adziernika;listopada;grudnia'|exact
+CHK|n_pl_PL_MMMMM|char[1 23]'s;l;m;k;m;c;l;s;w;p;l;g'|exact
+CHK|n_pl_PL_eee|char[1 31]'niedz;pon;wt;\u015Br;czw;pt;sob'|exact
+CHK|n_pl_PL_eeee|char[1 73]'niedziela;poniedzia\u0142ek;wtorek;\u015Broda;czwartek;pi\u0105tek;sobota'|exact
+CHK|n_pl_PL_eeeee|char[1 18]'n;p;w;\u015B;c;p;s'|exact
+CHK|n_pl_PL_a|char[1 5]'AM;PM'|exact
+CHK|n_fi_FI_MMM|char[1 90]'tammik;helmik;maalisk;huhtik;toukok;kes\u00E4k;hein\u00E4k;elok;syysk;lokak;marrask;jouluk'|exact
+CHK|n_fi_FI_MMMM|char[1 138]'tammikuuta;helmikuuta;maaliskuuta;huhtikuuta;toukokuuta;kes\u00E4kuuta;hein\u00E4kuuta;elokuuta;syyskuuta;lokakuuta;marraskuuta;joulukuuta'|exact
+CHK|n_fi_FI_MMMMM|char[1 23]'T;H;M;H;T;K;H;E;S;L;M;J'|exact
+CHK|n_fi_FI_eee|char[1 20]'su;ma;ti;ke;to;pe;la'|exact
+CHK|n_fi_FI_eeee|char[1 80]'sunnuntaina;maanantaina;tiistaina;keskiviikkona;torstaina;perjantaina;lauantaina'|exact
+CHK|n_fi_FI_eeeee|char[1 13]'S;M;T;K;T;P;L'|exact
+CHK|n_fi_FI_a|char[1 7]'ap.;ip.'|exact
+CHK|n_ja_JP_MMM|char[1 98]'1\u6708;2\u6708;3\u6708;4\u6708;5\u6708;6\u6708;7\u6708;8\u6708;9\u6708;10\u6708;11\u6708;12\u6708'|exact
+CHK|n_ja_JP_MMMM|char[1 98]'1\u6708;2\u6708;3\u6708;4\u6708;5\u6708;6\u6708;7\u6708;8\u6708;9\u6708;10\u6708;11\u6708;12\u6708'|exact
+CHK|n_ja_JP_MMMMM|char[1 26]'1;2;3;4;5;6;7;8;9;10;11;12'|exact
+CHK|n_ja_JP_eee|char[1 48]'\u65E5;\u6708;\u706B;\u6C34;\u6728;\u91D1;\u571F'|exact
+CHK|n_ja_JP_eeee|char[1 132]'\u65E5\u66DC\u65E5;\u6708\u66DC\u65E5;\u706B\u66DC\u65E5;\u6C34\u66DC\u65E5;\u6728\u66DC\u65E5;\u91D1\u66DC\u65E5;\u571F\u66DC\u65E5'|exact
+CHK|n_ja_JP_eeeee|char[1 48]'\u65E5;\u6708;\u706B;\u6C34;\u6728;\u91D1;\u571F'|exact
+CHK|n_ja_JP_a|char[1 25]'\u5348\u524D;\u5348\u5F8C'|exact
+CHK|n_es_MX_MMM|char[1 47]'ene;feb;mar;abr;may;jun;jul;ago;sep;oct;nov;dic'|exact
+CHK|n_es_MX_MMMM|char[1 88]'enero;febrero;marzo;abril;mayo;junio;julio;agosto;septiembre;octubre;noviembre;diciembre'|exact
+CHK|n_es_MX_MMMMM|char[1 23]'E;F;M;A;M;J;J;A;S;O;N;D'|exact
+CHK|n_es_MX_eee|char[1 37]'dom;lun;mar;mi\u00E9;jue;vie;s\u00E1b'|exact
+CHK|n_es_MX_eeee|char[1 62]'domingo;lunes;martes;mi\u00E9rcoles;jueves;viernes;s\u00E1bado'|exact
+CHK|n_es_MX_eeeee|char[1 13]'D;L;M;M;J;V;S'|exact
+CHK|n_es_MX_a|char[1 9]'a.m.;p.m.'|exact
+CHK|n_pt_BR_MMM|char[1 47]'jan;fev;mar;abr;mai;jun;jul;ago;set;out;nov;dez'|exact
+CHK|n_pt_BR_MMMM|char[1 93]'janeiro;fevereiro;mar\u00E7o;abril;maio;junho;julho;agosto;setembro;outubro;novembro;dezembro'|exact
+CHK|n_pt_BR_MMMMM|char[1 23]'J;F;M;A;M;J;J;A;S;O;N;D'|exact
+CHK|n_pt_BR_eee|char[1 32]'dom;seg;ter;qua;qui;sex;s\u00E1b'|exact
+CHK|n_pt_BR_eeee|char[1 88]'domingo;segunda-feira;ter\u00E7a-feira;quarta-feira;quinta-feira;sexta-feira;s\u00E1bado'|exact
+CHK|n_pt_BR_eeeee|char[1 13]'D;S;T;Q;Q;S;S'|exact
+CHK|n_pt_BR_a|char[1 5]'AM;PM'|exact
+CHK|n_en_US_MMM|char[1 47]'Jan;Feb;Mar;Apr;May;Jun;Jul;Aug;Sep;Oct;Nov;Dec'|exact
+CHK|n_en_US_MMMM|char[1 85]'January;February;March;April;May;June;July;August;September;October;November;December'|exact
+CHK|n_en_US_MMMMM|char[1 23]'J;F;M;A;M;J;J;A;S;O;N;D'|exact
+CHK|n_en_US_eee|char[1 27]'Sun;Mon;Tue;Wed;Thu;Fri;Sat'|exact
+CHK|n_en_US_eeee|char[1 56]'Sunday;Monday;Tuesday;Wednesday;Thursday;Friday;Saturday'|exact
+CHK|n_en_US_eeeee|char[1 13]'S;M;T;W;T;F;S'|exact
+CHK|n_en_US_a|char[1 5]'AM;PM'|exact
+CHK|n_nb_NO_MMM|char[1 50]'jan;feb;mars;apr;mai;juni;juli;aug;sep;okt;nov;des'|exact
+CHK|n_nb_NO_MMMM|char[1 82]'januar;februar;mars;april;mai;juni;juli;august;september;oktober;november;desember'|exact
+CHK|n_nb_NO_MMMMM|char[1 23]'J;F;M;A;M;J;J;A;S;O;N;D'|exact
+CHK|n_nb_NO_eee|char[1 37]'s\u00F8n;man;tir;ons;tor;fre;l\u00F8r'|exact
+CHK|n_nb_NO_eeee|char[1 60]'s\u00F8ndag;mandag;tirsdag;onsdag;torsdag;fredag;l\u00F8rdag'|exact
+CHK|n_nb_NO_eeeee|char[1 13]'S;M;T;O;T;F;L'|exact
+CHK|n_nb_NO_a|char[1 9]'a.m.;p.m.'|exact
+CHK|n_el_GR_MMM|char[1 239]'\u0399\u03B1\u03BD;\u03A6\u03B5\u03B2;\u039C\u03B1\u03C1;\u0391\u03C0\u03C1;\u039C\u03B1\u0390;\u0399\u03BF\u03C5\u03BD;\u0399\u03BF\u03C5\u03BB;\u0391\u03C5\u03B3;\u03A3\u03B5\u03C0;\u039F\u03BA\u03C4;\u039D\u03BF\u03B5;\u0394\u03B5\u03BA'|exact
+CHK|n_el_GR_MMMM|char[1 629]'\u0399\u03B1\u03BD\u03BF\u03C5\u03B1\u03C1\u03AF\u03BF\u03C5;\u03A6\u03B5\u03B2\u03C1\u03BF\u03C5\u03B1\u03C1\u03AF\u03BF\u03C5;\u039C\u03B1\u03C1\u03C4\u03AF\u03BF\u03C5;\u0391\u03C0\u03C1\u03B9\u03BB\u03AF\u03BF\u03C5;\u039C\u03B1\u0390\u03BF\u03C5;\u0399\u03BF\u03C5\u03BD\u03AF\u03BF\u03C5;\u0399\u03BF\u03C5\u03BB\u03AF\u03BF\u03C5;\u0391\u03C5\u03B3\u03BF\u03CD\u03C3\u03C4\u03BF\u03C5;\u03A3\u03B5\u03C0\u03C4\u03B5\u03BC\u03B2\u03C1\u03AF\u03BF\u03C5;\u039F\u03BA\u03C4\u03C9\u03B2\u03C1\u03AF\u03BF\u03C5;\u039D\u03BF\u03B5\u03BC\u03B2\u03C1\u03AF\u03BF\u03C5;\u0394\u03B5\u03BA\u03B5\u03BC\u03B2\u03C1\u03AF\u03BF\u03C5'|exact
+CHK|n_el_GR_MMMMM|char[1 83]'\u0399;\u03A6;\u039C;\u0391;\u039C;\u0399;\u0399;\u0391;\u03A3;\u039F;\u039D;\u0394'|exact
+CHK|n_el_GR_eee|char[1 132]'\u039A\u03C5\u03C1;\u0394\u03B5\u03C5;\u03A4\u03C1\u03AF;\u03A4\u03B5\u03C4;\u03A0\u03AD\u03BC;\u03A0\u03B1\u03C1;\u03A3\u03AC\u03B2'|exact
+CHK|n_el_GR_eeee|char[1 294]'\u039A\u03C5\u03C1\u03B9\u03B1\u03BA\u03AE;\u0394\u03B5\u03C5\u03C4\u03AD\u03C1\u03B1;\u03A4\u03C1\u03AF\u03C4\u03B7;\u03A4\u03B5\u03C4\u03AC\u03C1\u03C4\u03B7;\u03A0\u03AD\u03BC\u03C0\u03C4\u03B7;\u03A0\u03B1\u03C1\u03B1\u03C3\u03BA\u03B5\u03C5\u03AE;\u03A3\u03AC\u03B2\u03B2\u03B1\u03C4\u03BF'|exact
+CHK|n_el_GR_eeeee|char[1 48]'\u039A;\u0394;\u03A4;\u03A4;\u03A0;\u03A0;\u03A3'|exact
+CHK|n_el_GR_a|char[1 29]'\u03C0.\u03BC.;\u03BC.\u03BC.'|exact
+CHK|n_ca_ES_MMM|char[1 103]'de gen;de febr;de mar\u00E7;d\u2019abr;de maig;de juny;de jul;d\u2019ag;de set;d\u2019oct;de nov;de des'|exact
+CHK|n_ca_ES_MMMM|char[1 134]'de gener;de febrer;de mar\u00E7;d\u2019abril;de maig;de juny;de juliol;d\u2019agost;de setembre;d\u2019octubre;de novembre;de desembre'|exact
+CHK|n_ca_ES_MMMMM|char[1 40]'GN;FB;M\u00C7;AB;MG;JN;JL;AG;ST;OC;NV;DS'|exact
+CHK|n_ca_ES_eee|char[1 20]'dg;dl;dt;dc;dj;dv;ds'|exact
+CHK|n_ca_ES_eeee|char[1 59]'diumenge;dilluns;dimarts;dimecres;dijous;divendres;dissabte'|exact
+CHK|n_ca_ES_eeeee|char[1 27]'dg.;dl.;dt.;dc.;dj.;dv.;ds.'|exact
+CHK|n_ca_ES_a|char[1 21]'a.\u00A0m.;p.\u00A0m.'|exact
+CHK|n_fr_MMM|char[1 69]'janv;f\u00E9vr;mars;avr;mai;juin;juil;ao\u00FBt;sept;oct;nov;d\u00E9c'|exact
+CHK|n_fr_MMMM|char[1 99]'janvier;f\u00E9vrier;mars;avril;mai;juin;juillet;ao\u00FBt;septembre;octobre;novembre;d\u00E9cembre'|exact
+CHK|n_fr_MMMMM|char[1 23]'J;F;M;A;M;J;J;A;S;O;N;D'|exact
+CHK|n_fr_eee|char[1 27]'dim;lun;mar;mer;jeu;ven;sam'|exact
+CHK|n_fr_eeee|char[1 51]'dimanche;lundi;mardi;mercredi;jeudi;vendredi;samedi'|exact
+CHK|n_fr_eeeee|char[1 13]'D;L;M;M;J;V;S'|exact
+CHK|n_fr_a|char[1 5]'AM;PM'|exact
+CHK|f_01|char[1 1]'N'|exact
+CHK|f_02|char[1 1]'T'|exact
+CHK|f_03|char[1 2]'11'|exact
+CHK|f_04|char[1 1]'3'|exact
+CHK|f_05|char[1 2]'03'|exact
+CHK|f_06|char[1 6]'000011'|exact
+CHK|f_07|char[1 1]'3'|exact
+CHK|f_08|char[1 1]'3'|exact
+CHK|f_09|char[1 2]'15'|exact
+CHK|f_10|char[1 1]'4'|exact
+CHK|f_11|char[1 1]'5'|exact
+CHK|f_12|char[1 4]'2026'|exact
+CHK|f_13|char[1 10]'03/11/2026'|exact
+CHK|f_14|char[1 9]'Tue 3 Nov'|exact
+CHK|f_display|char[1 3]'N T'|exact
+CHK|c_01|char[1 44]'03 \u043D\u043E\u044F\u0431\u0440\u044F 2026'|exact
+CHK|c_02|char[1 41]'\u043D\u043E\u044F\u0431\u0440\u044F 2026'|exact
+CHK|c_03|char[1 17]'mardi, 3 novembre'|exact
+CHK|c_04|char[1 4]'nov.'|exact
+CHK|c_05|char[1 10]'03:04 p.m.'|exact
+CHK|c_06|char[1 18]'03:04 \u5348\u5F8C'|exact
+CHK|c_07|char[1 16]'3. November 2026'|exact
+CHK|c_08|char[1 17]'03-lis-2026 15:04'|exact
+CHK|c_09|char[1 15]'ter 03-nov-2026'|exact
+CHK|c_10|char[1 4]'11/3'|exact
+CHK|cs_fmt|char[1 34]'cell [1 2] 15-Jan-2026;16-Jan-2026'|exact
+CHK|cs_locale|char[1 36]'cell [1 2] 15-janv-2026;16-janv-2026'|exact
+CHK|cs_col|char[1 24]'cell [2 1] Januar;Januar'|exact
+CHK|cs_nat|char[1 36]'cell [1 3] 2026-01-15;2026-01-16;NaT'|exact
+CHK|cs_empty_fmt|char[1 34]'cell [1 2] 15-Jan-2026;16-Jan-2026'|exact
+CHK|cs_empty_fmt_locale|char[1 36]'cell [1 2] 15-janv-2026;16-janv-2026'|exact
+CHK|cs_string_fmt|char[1 26]'cell [1 2] Thursday;Friday'|exact
+CHK|cs_2x2|char[1 26]'cell [2 2] Jan;Feb;Mar;Apr'|exact
+CHK|cs_none|char[1 11]'cell [1 0] '|exact
+CHK|cs_zone|char[1 20]'cell [1 1] 12:00 UTC'|exact
+CHK|cs_duration|char[1 22]'cell [1 2] 01:30;02:00'|exact
+CHK|cs_bad_fmt|MATLAB:datetime:InvalidFormat|exact
+CHK|cs_bad_fmt_msg|A datetime format must be specified as a non-empty and non-missing string or character row vector.|exact
+CHK|cs_bad_locale|MATLAB:datetime:InvalidLocaleString|exact
+CHK|cs_bad_locale_msg|Unrecognized locale: 'french'.|exact
+CHK|cs_zone_letter|MATLAB:datetime:UnsupportedSymbol|exact
+CHK|cs_zone_letter_msg|The format 'O' contains an unsupported symbol: 'O'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|cs_four|MATLAB:TooManyInputs|exact
+CHK|cs_four_msg|Too many input arguments.|exact
+CHK|sp_01|char[1 4]'janv'|exact
+CHK|sp_02|char[1 4]'janv'|exact
+CHK|sp_03|char[1 4]'janv'|exact
+CHK|sp_04|char[1 3]'Jan'|exact
+CHK|sp_05|char[1 7]'1\u6708'|exact
+CHK|sp_06|char[1 3]'jan'|exact
+CHK|sp_07|char[1 3]'ene'|exact
+CHK|sp_08|char[1 3]'Jan'|exact
+CHK|sp_french|MATLAB:datetime:InvalidLocaleString|exact
+CHK|sp_french_msg|Unrecognized locale: 'french'.|exact
+CHK|sp_system|char[1 6]'string'|exact
+CHK|sp_unknown|char[1 39]'ERR MATLAB:datetime:InvalidLocaleString'|div=ADR0359|diverges|char[1 3]'Jan'
+CHK|sp_zh|char[1 39]'ERR MATLAB:datetime:InvalidLocaleString'|div=ADR0359|diverges|char[1 7]'1\u6708'

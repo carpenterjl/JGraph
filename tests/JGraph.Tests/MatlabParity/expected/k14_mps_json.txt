@@ -100,8 +100,8 @@ CHK|i_05|{"mwdata":[65535],"mwsize":[1,1],"mwtype":"uint16"}|exact
 CHK|i_06|{"mwdata":[-2147483648],"mwsize":[1,1],"mwtype":"int32"}|exact
 CHK|i_07|{"mwdata":[4294967295],"mwsize":[1,1],"mwtype":"uint32"}|exact
 CHK|i_08|{"mwdata":[-9223372036854775808],"mwsize":[1,1],"mwtype":"int64"}|exact
-CHK|i_09|{"mwdata":[9223372036854775807],"mwsize":[1,1],"mwtype":"int64"}|div=ADR0270|diverges|{"mwdata":[9223372036854775808],"mwsize":[1,1],"mwtype":"int64"}
-CHK|i_10|{"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|{"mwdata":[18446744073709551616],"mwsize":[1,1],"mwtype":"uint64"}
+CHK|i_09|{"mwdata":[9223372036854775807],"mwsize":[1,1],"mwtype":"int64"}|exact
+CHK|i_10|{"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|exact
 CHK|i_11|{"mwdata":[-9007199254740993],"mwsize":[1,1],"mwtype":"int64"}|div=ADR0270|diverges|{"mwdata":[-9007199254740992],"mwsize":[1,1],"mwtype":"int64"}
 CHK|i_12|{"mwdata":[0],"mwsize":[1,1],"mwtype":"int64"}|exact
 CHK|i_13|{"mwdata":[0],"mwsize":[1,1],"mwtype":"uint64"}|exact
@@ -199,8 +199,8 @@ CHK|e_f_int32_2x2_round|int32 [2 2] eq=1 / int32 [2 2] eq=1|exact
 CHK|e_f_int64_big_small|{"mwdata":[9007199254740993],"mwsize":[1,1],"mwtype":"int64"}|div=ADR0270|diverges|{"mwdata":[9007199254740992],"mwsize":[1,1],"mwtype":"int64"}
 CHK|e_f_int64_big_large|{"mwdata":[9007199254740993],"mwsize":[1,1],"mwtype":"int64"}|div=ADR0270|diverges|{"mwdata":[9007199254740992],"mwsize":[1,1],"mwtype":"int64"}
 CHK|e_f_int64_big_round|int64 [1 1] eq=1 / int64 [1 1] eq=1|exact
-CHK|e_f_uint64_max_small|{"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|{"mwdata":[18446744073709551616],"mwsize":[1,1],"mwtype":"uint64"}
-CHK|e_f_uint64_max_large|{"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|{"mwdata":[18446744073709551616],"mwsize":[1,1],"mwtype":"uint64"}
+CHK|e_f_uint64_max_small|{"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|exact
+CHK|e_f_uint64_max_large|{"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|exact
 CHK|e_f_uint64_max_round|uint64 [1 1] eq=1 / uint64 [1 1] eq=1|exact
 CHK|e_f_int8_3d_small|{"mwdata":[1,2,3,4,5,6,7,8],"mwsize":[2,2,2],"mwtype":"int8"}|exact
 CHK|e_f_int8_3d_large|{"mwdata":[1,2,3,4,5,6,7,8],"mwsize":[2,2,2],"mwtype":"int8"}|exact
@@ -894,8 +894,8 @@ CHK|y_int64_big|int64 [1 1] real=1 sparse=0 {"mwdata":[9007199254740993],"mwsize
 CHK|y_int64_over|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
 CHK|y_int64_over_msg|Invalid value for type int or uint. Value must be an integral number.|exact
 CHK|y_int64_neg|int64 [1 1] real=1 sparse=0 {"mwdata":[-9223372036854775808],"mwsize":[1,1],"mwtype":"int64"}|exact
-CHK|y_uint64_max|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709551616],"mwsize":[1,1],"mwtype":"uint64"}
-CHK|y_uint64_over|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|div=ADR0270|diverges|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709551616],"mwsize":[1,1],"mwtype":"uint64"}
+CHK|y_uint64_max|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|exact
+CHK|y_uint64_over|uint64 [1 1] real=1 sparse=0 {"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|exact
 CHK|y_uint64_exp|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact
 CHK|y_uint64_exp_msg|Invalid value for type int or uint. Value must be an integral number.|exact
 CHK|y_logical|logical [1 2] {"mwdata":[true,false],"mwsize":[1,2],"mwtype":"logical"}|exact
@@ -1023,6 +1023,36 @@ CHK|y_type_complexword|MPS:MATLAB:JSON:DecodeInvalidMWDataType|exact
 CHK|y_type_complexword_msg|"mwdata" for complex arrays must be a object.|exact
 CHK|y_type_inputparser|MPS:MATLAB:JSON:DecodeInvalidMWType|exact
 CHK|y_type_inputparser_msg|Unsupported "mwtype": "Invalid enumeration".|exact
+CHK|l_row64|{"mwdata":[-9223372036854775808,9223372036854775807,0],"mwsize":[1,3],"mwtype":"int64"}|exact
+CHK|l_rowu64|{"mwdata":[0,18446744073709551615],"mwsize":[1,2],"mwtype":"uint64"}|exact
+CHK|l_max64_large|{"mwdata":[9223372036854775807],"mwsize":[1,1],"mwtype":"int64"}|exact
+CHK|l_cast64|{"mwdata":[9223372036854775807],"mwsize":[1,1],"mwtype":"int64"}|exact
+CHK|l_castu64|{"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}|exact
+CHK|l_castneg64|{"mwdata":[-9223372036854775808],"mwsize":[1,1],"mwtype":"int64"}|exact
+CHK|l_plus1|{"mwdata":[9223372036854775807],"mwsize":[1,1],"mwtype":"int64"}|exact
+CHK|l_struct64|{"a":{"mwdata":[9223372036854775807],"mwsize":[1,1],"mwtype":"int64"}}|exact
+CHK|l_cell64|{"mwdata":[{"mwdata":[18446744073709551615],"mwsize":[1,1],"mwtype":"uint64"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|l_below64|{"mwdata":[9223372036854774784],"mwsize":[1,1],"mwtype":"int64"}|exact
+CHK|l_halfu64|{"mwdata":[9223372036854775808],"mwsize":[1,1],"mwtype":"uint64"}|exact
+CHK|l_belowu64|{"mwdata":[18446744073709549568],"mwsize":[1,1],"mwtype":"uint64"}|exact
+CHK|l_round64|logical [1 1] 1|exact
+CHK|l_round64_small|logical [1 1] 1|exact
+CHK|l_decode_max64|int64 [1 1] real=1 sparse=0 {"mwdata":[9223372036854775807],"mwsize":[1,1],"mwtype":"int64"}|exact
+CHK|l_name64_small|struct [1 1] 64|exact
+CHK|l_name64_large|struct [1 1] 64|exact
+CHK|l_name70_small|struct [1 1] 70|exact
+CHK|l_name70_large|struct [1 1] 70|exact
+CHK|l_name2048_small|struct [1 1] 2048|exact
+CHK|l_name2048_large|struct [1 1] 2048|exact
+CHK|l_name2049_small|struct [1 1] 2049|exact
+CHK|l_name2049_large|struct [1 1] 2049|exact
+CHK|l_name64_nested|struct [1 1] 64|exact
+CHK|l_name64_two|struct [1 1] [64 64]|exact
+CHK|l_name64_value|double [2 1] 1 2|exact
+CHK|l_name64_response|cell [1 1] {"mwdata":[{"mwdata":{"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}],"mwsize":[1,1],"mwtype":"cell"}|exact
+CHK|l_name64_encode|{"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc":1}|exact
+CHK|l_name64_encode_large|{"mwdata":{"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc":[{"mwdata":[1],"mwsize":[1,1],"mwtype":"double"}]},"mwsize":[1,1],"mwtype":"struct"}|exact
+CHK|l_name63_encode|{"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee":1}|exact
 CHK|r_req_default|{"rhs":[[[1,2,3]],"abc"],"nargout":1,"outputFormat":{"mode":"small","nanType":"string"}}|exact
 CHK|r_req_nargout|{"rhs":[[[1,2,3]],"abc"],"nargout":2,"outputFormat":{"mode":"small","nanType":"string"}}|exact
 CHK|r_req_nargout0|{"rhs":[1],"nargout":0,"outputFormat":{"mode":"small","nanType":"string"}}|exact

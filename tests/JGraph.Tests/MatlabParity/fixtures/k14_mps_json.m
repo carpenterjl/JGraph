@@ -552,6 +552,41 @@ for k = 1:size(large, 1)
     end
 end
 
+% --- the 64-bit limits and long field names (open item 212, ADR 0359) -------------------------------
+% intmax('int64') and intmax('uint64') are held as their saturation points, 2^63 and 2^64, and
+% written as R2025b writes them. A field name may be as long as 2049 characters, one past
+% namelengthmax (2048); at 2050 R2025b's decode ends its process, so no row holds that.
+chk('l_row64', @() mps.json.encode([intmin('int64') intmax('int64') int64(0)]));
+chk('l_rowu64', @() mps.json.encode([uint64(0) intmax('uint64')]));
+chk('l_max64_large', @() mps.json.encode(intmax('int64'), 'Format', 'large'));
+chk('l_cast64', @() mps.json.encode(int64(1e19)));
+chk('l_castu64', @() mps.json.encode(uint64(1e20)));
+chk('l_castneg64', @() mps.json.encode(int64(-1e19)));
+chk('l_plus1', @() mps.json.encode(intmax('int64') + 1));
+chk('l_struct64', @() mps.json.encode(struct('a', intmax('int64'))));
+chk('l_cell64', @() mps.json.encode({intmax('uint64')}));
+chk('l_below64', @() mps.json.encode(int64(2^63 - 1024)));
+chk('l_halfu64', @() mps.json.encode(uint64(2^63)));
+chk('l_belowu64', @() mps.json.encode(uint64(2^64 - 2048)));
+chk('l_round64', @() isequal(mps.json.decode(mps.json.encode(intmax('int64'), 'Format', 'large')), intmax('int64')));
+chk('l_round64_small', @() isequal(mps.json.decode(mps.json.encode(intmax('int64'))), intmax('int64')));
+chk('l_decode_max64', @() dec('{"mwdata":[9223372036854775807],"mwsize":[1,1],"mwtype":"int64"}'));
+longNames = {64, 70, 2048, 2049};
+for k = 1:numel(longNames)
+    n = longNames{k};
+    name = ['a' repmat('b', 1, n - 1)];
+    chk(sprintf('l_name%d_small', n), @() fieldlens(mps.json.decode(['{"' name '":1}'])));
+    chk(sprintf('l_name%d_large', n), @() fieldlens(mps.json.decode(['{"mwdata":{"' name '":[1]},"mwsize":[1,1],"mwtype":"struct"}'])));
+end
+name64 = repmat('c', 1, 64);
+chk('l_name64_nested', @() fieldlens(getfield(mps.json.decode(['{"s":{"' name64 '":1}}']), 's')));
+chk('l_name64_two', @() fieldlens(mps.json.decode(['{"' name64 '":1,"' name64(1:63) 'd":2}'])));
+chk('l_name64_value', @() getfield(mps.json.decode(['{"' name64 '":[1,2]}']), name64));
+chk('l_name64_response', @() desc(mps.json.decoderesponse(['{"lhs":[{"' name64 '":1}]}'])));
+chk('l_name64_encode', @() mps.json.encode(mps.json.decode(['{"' name64 '":1}'])));
+chk('l_name64_encode_large', @() mps.json.encode(mps.json.decode(['{"' name64 '":1}']), 'Format', 'large'));
+chk('l_name63_encode', @() mps.json.encode(struct(repmat('e', 1, 63), 1)));
+
 % --- encoderequest and decoderesponse ---------------------------------------------------------------
 chk('r_req_default', @() mps.json.encoderequest({[1 2 3], 'abc'}));
 chk('r_req_nargout', @() mps.json.encoderequest({[1 2 3], 'abc'}, 'Nargout', 2));
@@ -675,17 +710,16 @@ end
 function chk(name, fn)
 % u2_chk, with the rule div=ADR0270 on the lines ADR 0270 records as divergences: a complex integer, a complex
 % sparse array, a complex array that is empty or has zero imaginary parts, a char array of three dimensions
-% and a logical sparse array, which JGraph holds otherwise (ADR 0266); int64 and uint64 past 2^53 and the
-% intmax of int64 and uint64, 2^63 and 2^64 in JGraph (ADR 0174, ADR 0355);
-% inputParser, which JGraph has not; and nargout of mps.json.decode, which
-% R2025b refuses as a built-in method's.
+% and a logical sparse array, which JGraph holds otherwise (ADR 0266); int64 and uint64 past 2^53, which
+% JGraph holds as doubles (ADR 0174, ADR 0355); inputParser, which JGraph has not; and nargout of
+% mps.json.decode, which R2025b refuses as a built-in method's. The intmax of int64 and uint64 agree
+% since ADR 0359.
 diverging = {'e_c_empty_small', 'e_c_empty_large', 'e_c_int16_small', 'e_c_int16_large', 'e_c_int16_round', ...
     'e_c_zero_imag_small', 'e_c_zero_imag_large', 'e_ch_2x2x2_round', 'e_f_int64_big_small', 'e_f_int64_big_large', ...
-    'e_f_uint64_max_small', 'e_f_uint64_max_large', ...
     'e_sp_complex_small', 'e_sp_complex_large', 'e_sp_complex_round', 'e_sp_logical_small', 'e_sp_logical_large', ...
     'e_sp_logical_round', 'e_u_inputparser_small', 'e_u_inputparser_large', 'e_u_inputparser_round', ...
-    'i_09', 'i_10', 'i_11', 'o_decode_nargout', 'y_char_3d', 'y_complex_empty', 'y_int64_big', ...
-    'y_sparse_complex', 'y_sparse_logical', 'y_uint64_max', 'y_uint64_over'};
+    'i_11', 'o_decode_nargout', 'y_char_3d', 'y_complex_empty', 'y_int64_big', ...
+    'y_sparse_complex', 'y_sparse_logical'};
 if ~any(strcmp(name, diverging))
     u2_chk(name, fn);
     return;
@@ -712,6 +746,12 @@ try
 catch e
     s = ['ERR ' e.identifier];
 end
+end
+
+function s = fieldlens(d)
+% A decoded struct as its class, size and the length of each field name, in order.
+f = fieldnames(d);
+s = sprintf('%s %s %s', class(d), mat2str(size(d)), mat2str(cellfun(@numel, f')));
 end
 
 function s = nargoutq(name)

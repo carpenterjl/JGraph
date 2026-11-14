@@ -110,9 +110,30 @@ internal static partial class JgsBuiltins
         }
 
         CultureInfo culture = args.Count > 2 && !IsEmptyValue(args[2])
-            ? CultureInfo.GetCultureInfo(Str(verb, args, 2, line, col).Replace('_', '-'))
+            ? TimeLocale(Str(verb, args, 2, line, col), line, col)
             : CultureInfo.InvariantCulture;
         return (tag, culture);
+    }
+
+    /// <summary>
+    /// The culture a datetime locale names: <c>'system'</c> is the machine's own, and a name .NET
+    /// does not know is R2025b's <c>MATLAB:datetime:InvalidLocaleString</c> (open item 316, ADR 0359).
+    /// </summary>
+    private static CultureInfo TimeLocale(string given, int line, int col)
+    {
+        if (string.Equals(given, "system", StringComparison.OrdinalIgnoreCase))
+        {
+            return CultureInfo.CurrentCulture;
+        }
+
+        try
+        {
+            return CultureInfo.GetCultureInfo(given.Replace('_', '-'));
+        }
+        catch (CultureNotFoundException)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:datetime:InvalidLocaleString", $"Unrecognized locale: '{given}'.");
+        }
     }
 
     /// <summary>

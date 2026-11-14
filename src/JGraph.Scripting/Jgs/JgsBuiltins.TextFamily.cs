@@ -891,12 +891,47 @@ internal static partial class JgsBuiltins
     // --- cellstr ------------------------------------------------------------------------------------
 
     /// <summary>
+    /// <c>cellstr(t, fmt)</c> and <c>cellstr(t, fmt, locale)</c> of a datetime or duration: each
+    /// moment as <c>string(t, fmt, locale)</c> formats it, a missing one written NaT, in the array's
+    /// shape (open item 316, ADR 0359); null for any other call.
+    /// </summary>
+    private static JgsValue? CellStrFormattedTime(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count < 2 || !args[0].IsTime || IsCalendarDuration(args[0]) || !JgsRunningDialect.ThreadIsMatlab)
+        {
+            return null;
+        }
+
+        if (args.Count > 3)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs", "Too many input arguments.");
+        }
+
+        (JgsTimeTag tag, System.Globalization.CultureInfo culture) = TimeFormatArguments("cellstr", args, line, col);
+        JgsValue time = args[0];
+        var formatted = new JgsValue[time.ArrayLength];
+        for (int i = 0; i < formatted.Length; i++)
+        {
+            formatted[i] = JgsValue.Str(JgsTime.Format(time.ElementAt(i).AsNumber, tag, culture));
+        }
+
+        JgsValue texts = JgsValue.Cell(formatted);
+        texts.Reshape(JgsMatrix.RowCount(time), JgsMatrix.ColCount(time));
+        return texts;
+    }
+
+    /// <summary>
     /// <c>cellstr(A)</c>: a cell of char rows in the shape of the string array or char matrix given,
     /// trailing blanks removed from char, the missing string read as ''. A cell that already holds
     /// char rows is itself; one that holds anything else is refused, as MATLAB refuses it.
     /// </summary>
     private static JgsValue CellStr(IReadOnlyList<JgsValue> args, int line, int col)
     {
+        if (CellStrFormattedTime(args, line, col) is { } formattedTime)
+        {
+            return formattedTime;
+        }
+
         Arity("cellstr", args, 1, line, col);
         JgsValue input = args[0];
         if (input.Type == JgsType.External)

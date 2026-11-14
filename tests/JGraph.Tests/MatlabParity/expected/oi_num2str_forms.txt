@@ -1,0 +1,67 @@
+CHK|c_row17|char[1 101]'char [1 89] 0.69999999999999996+0.10000000000000001i_________0.29999999999999999-0.20000000000000001i'|exact
+CHK|c_row10|char[1 55]'char [1 43] 0.7+0.1i___________________________0.3-0.2i'|exact
+CHK|c_row4|char[1 43]'char [1 31] 0.7+0.1i_______________0.3-0.2i'|exact
+CHK|c_row1|char[1 37]'char [1 25] 0.7+0.1i_________0.3-0.2i'|exact
+CHK|c_scalar17|char[1 52]'char [1 40] 0.69999999999999996+0.10000000000000001i'|exact
+CHK|c_scalar5|char[1 26]'char [1 14] 3.1416+2.7183i'|exact
+CHK|c_scalar20|char[1 55]'char [1 43] 3.141592653589793116+2.7182818284590450908i'|exact
+CHK|c_int17|char[1 15]'char [1 4] 3+4i'|exact
+CHK|c_int5|char[1 41]'char [1 29] 3+4i__________________10-200i'|exact
+CHK|c_neg17|char[1 53]'char [1 41] -0.69999999999999996-0.10000000000000001i'|exact
+CHK|c_mat17|char[1 193]'char [2 89] 0.69999999999999996+0.10000000000000001i___________________________0.29999999999999999+0i / __________________0-0.33333333333333331i_____________________________________________2+0i'|exact
+CHK|c_mat6|char[1 95]'char [2 40] 0.7+0.1i__________________________0.3+0i / __0-0.333333i_______________________2+0i'|exact
+CHK|c_big17|char[1 30]'char [1 18] 10000000000+1e-10i'|exact
+CHK|c_nan17|char[1 19]'char [1 8] NaN+Infi'|exact
+CHK|c_nan5|char[1 43]'char [1 31] NaN+1i___________________2-Infi'|exact
+CHK|c_fmt|char[1 47]'char [1 35] 0.70000+0.10000i___0.30000-0.20000i'|exact
+CHK|c_fmt2|char[1 19]'char [1 8] 0.7+0.1i'|exact
+CHK|c_fmt3|char[1 19]'char [1 8] 1+2i3+4i'|exact
+CHK|c_fmt_col|char[1 24]'char [2 5] _1+2i / 30-4i'|exact
+CHK|c_fmt_lit|char[1 28]'char [1 16] x1yx+2iyx3yx-4iy'|exact
+CHK|c_fmt_left|char[1 37]'char [2 11] _1.50+2.00i / 30.00-4.00i'|exact
+CHK|c_fmt_zero|char[1 27]'char [1 15] 0000.500-0.250i'|exact
+CHK|c_fmt_e|char[1 38]'char [1 26] 5.000000e-01-2.500000e-01i'|exact
+CHK|c_single17|char[1 52]'char [1 40] 0.69999998807907104+0.10000000149011612i'|exact
+CHK|c_single|char[1 19]'char [1 8] 0.7+0.1i'|exact
+CHK|c_default|char[1 45]'char [1 33] 0.7+0.1i_________________0.3-0.2i'|exact
+CHK|c_default_mat|char[1 89]'char [2 37] 0.7+0.1i_______________________0.3+0i / __0-0.33333i_____________________2+0i'|exact
+CHK|c_default_int|char[1 45]'char [2 15] 1+2i____30-400i / 5+0i_____0+6i__'|exact
+CHK|c_default_big|char[1 41]'char [1 29] 1000000+1i_______________2+0i'|exact
+CHK|c_default_nan|char[1 29]'char [1 17] NaN+1i_______2+3i'|exact
+CHK|c_default_col|char[1 32]'char [2 9] ___0.5+1i / 100.25-2i'|exact
+CHK|c_zero17|char[1 31]'char [1 19] 0.10000000000000001'|exact
+CHK|r_row17|char[1 79]'char [1 67] 0.69999999999999996_____0.29999999999999999_____0.33333333333333331'|exact
+CHK|r_row10|char[1 49]'char [1 37] 0.7______________0.3_____0.3333333333'|exact
+CHK|r_row2|char[1 33]'char [1 21] 0.7______0.3_____0.33'|exact
+CHK|r_scalar17|char[1 31]'char [1 19] 0.69999999999999996'|exact
+CHK|r_scalar20|char[1 34]'char [1 22] 0.10000000000000000555'|exact
+CHK|r_mat17|char[1 101]'char [2 43] 0.69999999999999996_____0.29999999999999999 / 0.33333333333333331_______________________2'|exact
+CHK|r_mat5|char[1 51]'char [2 18] 3.1416_______1e+05 / -1e-05___________2'|exact
+CHK|r_int17|char[1 61]'char [1 49] 1_______________________2_____________________300'|exact
+CHK|r_int3|char[1 33]'char [1 21] 1_________2_____3e+05'|exact
+CHK|r_nan17|char[1 87]'char [1 75] NaN_____________________Inf____________________-Inf_______________________1'|exact
+CHK|r_fmt|char[1 29]'char [1 17] 0.70000___0.30000'|exact
+CHK|r_fmt_mat|char[1 22]'char [2 4] 1,2, / 3,4,'|exact
+CHK|r_fmt_col|char[1 18]'char [2 2] _1 / 10'|exact
+CHK|r_fmt_widths|char[1 30]'char [2 8] ___1_100 / 1000___2'|exact
+CHK|r_fmt_leftbar|char[1 20]'char [2 3] _1/ / 10/'|exact
+CHK|r_fmt_left3|char[1 22]'char [2 4] 1___ / 1000'|exact
+CHK|r_fmt_col82|char[1 24]'char [2 5] _1.50 / 10.00'|exact
+CHK|r_fmt_scalar|char[1 15]'char [1 4] 5.00'|exact
+CHK|r_fmt_pad|char[1 19]'char [1 8] 0003.142'|exact
+CHK|r_fmt_two|char[1 22]'char [2 4] 1,2; / 3,4;'|exact
+CHK|r_fmt_trail|char[1 15]'char [1 4] 1__2'|exact
+CHK|i_int8|char[1 18]'char [1 7] 1_-2__3'|exact
+CHK|i_int32_3|char[1 26]'char [1 14] 123456_______7'|exact
+CHK|i_uint8_fmt|char[1 13]'char [1 2] c8'|exact
+CHK|i_int16_def|char[1 19]'char [1 8] 100___-2'|exact
+CHK|i_int16_col|char[1 20]'char [2 3] 100 / _-2'|exact
+CHK|l_true17|char[1 37]'char [1 25] 1_______________________0'|exact
+CHK|s_single17|char[1 31]'char [1 19] 0.10000000149011612'|exact
+CHK|s_single_row|char[1 41]'char [1 29] 0.1000000015_____0.6999999881'|exact
+CHK|e_fmt_none_c|MATLAB:num2str:fmtInvalid|exact
+CHK|e_fmt_none_c_msg|'abc' is an invalid format.|exact
+CHK|e_fmt_none_r|MATLAB:num2str:fmtInvalid|exact
+CHK|e_fmt_none_r_msg|'abc' is an invalid format.|exact
+CHK|e_cell_c|MATLAB:num2str:invalidSecondArgument|exact
+CHK|e_cell_c_msg|Second argument to num2str must be a character vector, string scalar, or numeric.|exact
