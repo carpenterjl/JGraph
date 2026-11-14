@@ -211,6 +211,31 @@ public class AxisOffAndViewAngleTests
         Assert.True(bare.Height > framed.Height, $"{bare.Height} should exceed {framed.Height}");
     }
 
+    /// <summary>
+    /// Open item 155: the test above failed in the full suite because a MATLAB-dialect session built
+    /// earlier on the same test thread left its dialect in a thread-static, and the hook that gives a
+    /// MATLAB script's new axes R2025b's plot box read it for an axes no script was making. Building
+    /// the session's dialect slot here is that leftover; an axes made outside any run stays tight.
+    /// </summary>
+    [Fact]
+    public void AnAxesMadeOutsideAnyRunIgnoresADialectLeftOnTheThread()
+    {
+        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(
+            typeof(JGraph.Scripting.Jgs.JgsGraphicsProperties).TypeHandle); // the hook is registered
+        _ = new JGraph.Scripting.Jgs.JgsRunningDialect(JGraph.Scripting.Jgs.JgsDialect.Matlab);
+        try
+        {
+            AxesModel axes = new FigureModel().AddAxes();
+            Assert.Null(axes.PlotBoxMargins);
+            Assert.Equal(1.0, axes.FurnitureFontFactor);
+            AnInvisibleAxesGivesItsMarginsBackToThePlotBox(); // was "496 should exceed 496"
+        }
+        finally
+        {
+            _ = new JGraph.Scripting.Jgs.JgsRunningDialect(JGraph.Scripting.Jgs.JgsDialect.Jgs);
+        }
+    }
+
     [Fact]
     public void AnInvisible3DAxesKeepsTheSurfaceAndDropsTheBox()
     {

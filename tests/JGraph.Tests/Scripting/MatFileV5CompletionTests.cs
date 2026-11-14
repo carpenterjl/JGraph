@@ -426,6 +426,28 @@ public class MatFileV5CompletionTests : IDisposable
         Assert.Contains("datetime", MatFileWriter.WhyNotWritable(holder)!);
     }
 
+    /// <summary>
+    /// Open item 164: the three refusals above read null in the full suite because a MATLAB-dialect
+    /// session built earlier on the same test thread left its dialect in a thread-static, and the
+    /// writer, which writes these as object elements for MATLAB code, read it with no script running.
+    /// Building the session's dialect slot here is that leftover; outside any run the writer refuses.
+    /// </summary>
+    [Fact]
+    public void TheRefusalsIgnoreADialectLeftOnTheThreadOutsideAnyRun()
+    {
+        _ = new JgsRunningDialect(JgsDialect.Matlab);
+        try
+        {
+            AStringArray_IsRefusedByNameRatherThanWrittenAsNumbers();
+            ADatetimeAndADuration_AreBothRefusedByName();
+            ARefusalReachesInsideACellOrAStruct();
+        }
+        finally
+        {
+            _ = new JgsRunningDialect(JgsDialect.Jgs);
+        }
+    }
+
     [Fact]
     public void EverythingVersionFiveCanHold_ReportsNoReason()
     {

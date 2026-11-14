@@ -217,6 +217,7 @@ internal sealed partial class Interpreter
     {
         JgsDialect previous = _running.Current;
         _running.Current = dialect;
+        JgsRunningDialect.Enter(); // code is running on this thread until the token goes (ADR 0362)
         return new DialectContext(this, previous);
     }
 
@@ -224,7 +225,11 @@ internal sealed partial class Interpreter
     internal readonly struct DialectContext(Interpreter interpreter, JgsDialect previous) : IDisposable
     {
         /// <inheritdoc />
-        public void Dispose() => interpreter._running.Current = previous;
+        public void Dispose()
+        {
+            interpreter._running.Current = previous;
+            JgsRunningDialect.Leave();
+        }
     }
 
     /// <summary>

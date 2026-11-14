@@ -51,6 +51,26 @@ internal sealed class JgsRunningDialect
     /// </summary>
     internal static bool ThreadIsMatlab => t_matlab;
 
+    /// <summary>How many bodies of code this thread is inside now: the interpreter's entries count it.</summary>
+    [ThreadStatic]
+    private static int t_entered;
+
+    /// <summary>
+    /// Whether MATLAB code is running on this thread now - <see cref="ThreadIsMatlab"/> inside a body
+    /// the interpreter entered, and false outside every run (open items 155 and 164, ADR 0362).
+    /// <see cref="ThreadIsMatlab"/> outlives its session: building a slot sets it and nothing clears
+    /// it, so a thread that once built a MATLAB session reads MATLAB for host code run on it later.
+    /// A reader reachable from code no script is running - the hook every new axes in the process
+    /// passes through, the MAT-file writer's static API - asks this instead.
+    /// </summary>
+    internal static bool ThreadRunsMatlab => t_entered > 0 && t_matlab;
+
+    /// <summary>Counts an entry into a body of code on this thread; <see cref="Leave"/> undoes it.</summary>
+    internal static void Enter() => t_entered++;
+
+    /// <summary>Counts a body of code left on this thread.</summary>
+    internal static void Leave() => t_entered--;
+
     /// <inheritdoc cref="JgsDialect.Name"/>
     public string Name => Current.Name;
 

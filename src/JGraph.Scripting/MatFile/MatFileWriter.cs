@@ -128,8 +128,9 @@ internal static class MatFileWriter
 
         // In the MATLAB dialect a string array, a datetime and a duration are written anywhere as the
         // object elements a table's have been since open item 128 (open item 131: R2025b saves them
-        // bare); the JGS dialect keeps refusing them.
-        bool ownElements = JgsRunningDialect.ThreadIsMatlab;
+        // bare); the JGS dialect keeps refusing them. MATLAB code running now, not a dialect a session
+        // built on this thread left behind (open item 164, ADR 0362).
+        bool ownElements = JgsRunningDialect.ThreadRunsMatlab;
         if (value.IsStringArray && !ownElements)
         {
             return "a string array, which only version 7.3 MAT-files can hold — convert it with cellstr or char";
@@ -240,7 +241,7 @@ internal static class MatFileWriter
 
         // A calendarDuration was written as the struct it is kept in and came back a struct (open
         // item 131); in the MATLAB dialect it is an object element of its class, read back as itself.
-        if (JgsBuiltins.IsCalendarDuration(value) && JgsRunningDialect.ThreadIsMatlab)
+        if (JgsBuiltins.IsCalendarDuration(value) && JgsRunningDialect.ThreadRunsMatlab)
         {
             WriteFlags(w, MxObject);
             WriteDimensions(w, [1, 1]);

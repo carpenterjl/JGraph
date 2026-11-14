@@ -75,10 +75,13 @@ internal static partial class JgsGraphicsProperties
     /// item 87): <c>Position [0.13 0.11 0.775 0.815]</c> in an <c>OuterPosition</c> of <c>[0 0 1 1]</c>,
     /// scaled with the cell, and grown only when the decorations need more. The JGS dialect keeps the
     /// tight plot box it has always drawn. An axes read from a document keeps what the document says.
+    /// Every axes in the process passes through here, so the test is MATLAB code running now: a
+    /// session built on this thread earlier must not reach an axes host code makes (open item 155,
+    /// ADR 0362).
     /// </summary>
     private static void GiveMatlabPlotBox(GraphObject child)
     {
-        if (child is AxesModel { PlotBoxMargins: null, InnerTarget: null } axes && JgsRunningDialect.ThreadIsMatlab)
+        if (child is AxesModel { PlotBoxMargins: null, InnerTarget: null } axes && JgsRunningDialect.ThreadRunsMatlab)
         {
             axes.PlotBoxMargins = AxesModel.MatlabPlotBoxMargins;
             axes.FurnitureFontFactor = 0.9; // the legend and colorbar at nine tenths of the axes font (open item 118)
