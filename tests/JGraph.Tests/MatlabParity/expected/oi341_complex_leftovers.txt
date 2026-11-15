@@ -1,0 +1,987 @@
+CHK|pp_x|double[1 1] real 3|exact
+CHK|mm_x|double[1 1] real 3|exact
+CHK|pp_char|double[1 1] real 97|exact
+CHK|mm_true|double[1 1] real 1|exact
+CHK|a_pp_b|double[1 1] real 5|exact
+CHK|a_mm_b|double[1 1] real 5|exact
+CHK|a_pm_b|double[1 1] real 1|exact
+CHK|a_mp_b|double[1 1] real 1|exact
+CHK|mat_pp|double[1 2] real [3 2]|exact
+CHK|mat_mm|double[1 2] real [3 2]|exact
+CHK|mat_pp_sp|double[1 2] real [3 2]|exact
+CHK|mat_ppp|double[1 2] real [3 2]|exact
+CHK|ppp_x|double[1 1] real 3|exact
+CHK|mmm_x|double[1 1] real -3|exact
+CHK|pmpm_x|double[1 1] real 3|exact
+CHK|pp_paren|double[1 1] real 3|exact
+CHK|x_pow_plus|double[1 1] real 9|exact
+CHK|x_pow_pp|double[1 1] real 9|exact
+CHK|x_pow_mm|double[1 1] real 9|exact
+CHK|x_times_mm|double[1 1] real 6|exact
+CHK|pp_flag|double[1 3] real [3 1 2]|exact
+CHK|mm_flag|double[1 3] real [3 1 2]|exact
+CHK|uplus_str|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|uplus_str_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|uplus_strarr|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|uplus_strarr_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|uplus_cell|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|uplus_cell_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|uplus_char|double[1 1] real 97|exact
+CHK|uplus_true|double[1 1] real 1|exact
+CHK|uminus_str|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|uminus_str_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|uminus_strop|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|uminus_strop_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|uminus_cell|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|uminus_cell_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|neg_cell|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|neg_cell_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|neg_struct|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|neg_struct_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|uminus_char|double[1 2] real [-97 -98]|exact
+CHK|pow_lit1|double[1 3] complex re [3 1 2] im [0 0 0]|exact
+CHK|pow_var1|double[1 3] real [3 1 2]|exact
+CHK|pow_ones|double[1 3] real [3 1 2]|exact
+CHK|pow_eye1|double[1 3] real [3 1 2]|exact
+CHK|pow_double1|double[1 3] real [3 1 2]|exact
+CHK|pow_2m1|double[1 3] complex re [3 1 2] im [0 0 0]|exact
+CHK|pow_brk1|double[1 3] complex re [3 1 2] im [0 0 0]|exact
+CHK|pow_plus1|double[1 3] complex re [3 1 2] im [0 0 0]|exact
+CHK|pow_1p0|double[1 3] complex re [3 1 2] im [0 0 0]|exact
+CHK|pow_negneg|double[1 3] complex re [3 1 2] im [0 0 0]|exact
+CHK|pow_2d2|double[1 3] complex re [3 1 2] im [0 0 0]|exact
+CHK|pow_1pow|double[1 3] complex re [3 1 2] im [0 0 0]|exact
+CHK|pow_e1p0|double[1 3] real [3 1 2]|exact
+CHK|pow_true|double[1 3] real [3 1 2]|exact
+CHK|pow_m_ones|double[2 2] real [3 1;2 4]|exact
+CHK|pow_m_lit|double[2 2] complex re [3 1;2 4] im [0 0;0 0]|exact
+CHK|pow_s_var|double[1 1] real 2|exact
+CHK|mpow_var1|double[2 2] real [3 1;2 4]|exact
+CHK|pow_power_fn|double[1 3] complex re [3 1 2] im [0 0 0]|exact
+CHK|pow_power_fn_var|double[1 3] real [3 1 2]|div=ADR0377|diverges|double[1 3] complex re [3 1 2] im [0 0 0]
+CHK|pow_lambda_1|double[1 3] real [3 1 2]|exact
+CHK|pow_bound|double[1 3] complex re [3 1 2] im [0 0 0]|exact
+CHK|c2m_col|double[2 2] real [1 2;3 4]|exact
+CHK|c2m_row|double[1 4] real [1 2 3 4]|exact
+CHK|c2m_2x2|double[2 2] real [1 2;3 4]|exact
+CHK|c2m_cols|double[2 2] real [1 3;2 4]|exact
+CHK|c2m_blocks|double[2 3] real [1 2 3;4 5 6]|exact
+CHK|c2m_blocks2|double[3 3] real [1 2 5;3 4 6;7 8 9]|exact
+CHK|c2m_mismatch|MATLAB:catenate:dimensionMismatch|exact
+CHK|c2m_mismatch_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|c2m_mismatch2|MATLAB:catenate:dimensionMismatch|exact
+CHK|c2m_mismatch2_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|c2m_int8|int8[1 2] real [1 2]|exact
+CHK|c2m_int8_col|int8[2 2] real [1 2;3 4]|exact
+CHK|c2m_char|char[2 2] 'acbd'|exact
+CHK|c2m_char_row|char[1 4] 'abcd'|exact
+CHK|c2m_logical|logical[2 2] real [1 0;0 1]|exact
+CHK|c2m_single|single[2 1] real [1;2]|exact
+CHK|c2m_empty|double[0 0] real []|exact
+CHK|c2m_emptypiece|double[0 0] real []|exact
+CHK|c2m_one|double[2 2] real [1 2;3 4]|exact
+CHK|c2m_with_empty|double[1 2] real [1 2]|exact
+CHK|c2m_with_empty_col|double[1 2] real [1 2]|exact
+CHK|c2m_mixed|char[1 2] 'a'|exact
+CHK|c2m_mixed_int|int8[1 2] real [1 2]|exact
+CHK|c2m_mixed_single|single[1 2] real [1 2]|exact
+CHK|c2m_mixed_logical|double[1 2] real [1 2]|exact
+CHK|c2m_cplx|double[2 1] complex re [1;3] im [2;0]|exact
+CHK|c2m_cplx_row|double[1 4] complex re [1 2 0 4] im [0 0 3 0]|exact
+CHK|c2m_cplx_flag|double[1 2] complex re [1 2] im [0 0]|exact
+CHK|c2m_3x2|double[3 2] real [1 2;3 4;5 6]|exact
+CHK|c2m_2x3|double[2 3] real [1 2 3;4 5 6]|exact
+CHK|c2m_3x2_blk|double[3 3] real [1 1 2;3 3 4;5 5 6]|exact
+CHK|c2m_tall_blocks|double[3 2] real [1 2;1 2;3 4]|exact
+CHK|c2m_wide_rows|MATLAB:catenate:dimensionMismatch|exact
+CHK|c2m_wide_rows_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|c2m_cellcell|MATLAB:cell2mat:UnsupportedCellContent|exact
+CHK|c2m_cellcell_msg|cell2mat does not support cell arrays containing cell arrays.|exact
+CHK|c2m_later_cell|MATLAB:cell2mat:UnsupportedCellContent|exact
+CHK|c2m_later_cell_msg|cell2mat does not support cell arrays containing cell arrays.|exact
+CHK|c2m_notcell|MATLAB:validation:UnableToConvert|exact
+CHK|c2m_notcell_msg|Invalid argument at position 1. Value must be of type cell or be convertible to cell.|exact
+CHK|c2m_col_3|double[3 2] real [1 2;3 4;5 6]|exact
+CHK|c2m_rowcells|double[3 3] real [1 2 3;4 5 6;7 8 9]|exact
+CHK|c2m_big|double[4 4] real [16 2 3 13;5 11 10 8;9 7 6 12;4 14 15 1]|exact
+CHK|c2m_empty_rows|double[1 2] real [1 2]|exact
+CHK|c2m_empty_cols|double[1 2] real [2 1]|exact
+CHK|c2m_empty_2x2|double[1 2] real [0 0]|exact
+CHK|c2m_empty_0x3|double[1 2] real [0 0]|exact
+CHK|c2m_struct|struct[1 2]|exact
+CHK|c2m_struct_col|struct[2 1]|exact
+CHK|c2m_catfail|MATLAB:cell2mat:CatFailed|exact
+CHK|c2m_catfail_msg|Unable to concatenate cell array contents.|exact
+CHK|c2m_logchar|MATLAB:cell2mat:IncompatibleTypes|exact
+CHK|c2m_logchar_msg|Concatenation of logical and char is not supported.|exact
+CHK|c2m_str|string[1 2] a,b|exact
+CHK|c2m_struct_num|MATLAB:cell2mat:CatFailed|exact
+CHK|c2m_struct_num_msg|Unable to concatenate cell array contents.|exact
+CHK|c2m_int_single|int8[1 2] real [1 2]|exact
+CHK|c2m_dbl_logical_col|double[2 1] real [1;1]|exact
+CHK|c2m_char_mixed_rows|MATLAB:catenate:dimensionMismatch|exact
+CHK|c2m_char_mixed_rows_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|c2m_empty_char|char[1 2] 'ab'|exact
+CHK|urows|double[4 2] complex re [1 2;-1 0;2 -5;-3 1] im [0 0;0 0;0 0;0 0]|exact
+CHK|urows_stable|double[4 2] complex re [-3 1;1 2;-1 0;2 -5] im [0 0;0 0;0 0;0 0]|exact
+CHK|urows_ia|double[4 1] real [2;3;4;1]|exact
+CHK|urows_ic|double[5 1] real [4;1;2;3;1]|exact
+CHK|urows_last_ia|double[4 1] real [5;3;4;1]|exact
+CHK|urows_stable_ia|double[4 1] real [1;2;3;4]|exact
+CHK|urows_stable_ic|double[5 1] real [1;2;3;4;2]|exact
+CHK|urows_rows_sorted|double[4 2] complex re [1 2;-1 0;2 -5;-3 1] im [0 0;0 0;0 0;0 0]|exact
+CHK|srows|double[5 2] real [1 2;1 2;-1 0;2 -5;-3 1]|exact
+CHK|srows_neg1|double[5 2] real [-3 1;2 -5;-1 0;1 2;1 2]|exact
+CHK|srows_2|double[5 2] real [-1 0;-3 1;1 2;1 2;2 -5]|exact
+CHK|srows_desc|double[5 2] real [-3 1;2 -5;-1 0;1 2;1 2]|exact
+CHK|srows_12|double[5 2] real [-1 0;-3 1;1 2;1 2;2 -5]|exact
+CHK|srows_cols_desc|double[5 2] real [1 2;1 2;-1 0;2 -5;-3 1]|exact
+CHK|srows_k|double[5 1] real [2;5;3;4;1]|exact
+CHK|srows_k_neg|double[5 1] real [1;4;3;2;5]|exact
+CHK|srows_real|double[5 2] real [-3 1;-1 0;1 2;1 2;2 -5]|exact
+CHK|srows_abs|double[5 2] real [1 2;1 2;-1 0;2 -5;-3 1]|exact
+CHK|srows_cm_real|double[5 2] real [-3 1;-1 0;1 2;1 2;2 -5]|exact
+CHK|srows_descend_1|double[5 2] real [-3 1;2 -5;-1 0;1 2;1 2]|exact
+CHK|srows_tie|double[3 2] real [1 0;-1 0;-1 1]|exact
+CHK|urows_tie|double[3 2] complex re [1 0;-1 0;-1 1] im [0 0;0 0;0 0]|exact
+CHK|srows_col|double[4 1] real [1;-1;-2;3]|exact
+CHK|urows_col|double[4 1] complex re [1;-1;-2;3] im [0;0;0;0]|exact
+CHK|urows_nan|double[3 2] complex re [-1 2;NaN 1;NaN 1] im [0 0;0 0;0 0]|exact
+CHK|srows_nan|double[3 2] real [1 1;-1 2;NaN 1]|exact
+CHK|srows_negzero|double[2 2] real [0 0;0 1]|exact
+CHK|urows_negzero|double[2 2] complex re [0 1;1 0] im [0 0;0 0]|exact
+CHK|srows_single|single[2 2] real [1 0;-2 1]|exact
+CHK|urows_single|single[2 2] complex re [1 0;-2 1] im [0 0;0 0]|exact
+CHK|srows_empty|double[0 2] real zeros(0,2)|exact
+CHK|urows_empty|double[0 2] complex re zeros(0,2) im zeros(0,2)|exact
+CHK|srows_nan_desc|double[5 2] real [NaN 1;-2 3;2 0;-1 2;1 1]|exact
+CHK|srows_nan_desc2|double[5 2] real [NaN 1;-2 3;2 0;-1 2;1 1]|exact
+CHK|srows_nan_desc_k|double[5 1] real [1;5;4;2;3]|exact
+CHK|srows_cell_dir|double[5 2] real [NaN 1;-2 3;2 0;-1 2;1 1]|exact
+CHK|srows_cplx|double[4 2] complex re [-1 0;1 2;2 -5;-3 1] im [0 0;1 0;0 0;0 0]|exact
+CHK|srows_cplx2|double[3 2] complex re [-1 3;1 0;1 2] im [0 0;-1 0;1 0]|exact
+CHK|srows_cplx2_k|double[3 1] real [2;3;1]|exact
+CHK|m_infp1_i|double[1 1] complex re -1 im Inf|exact
+CHK|m_infp1_i_el|double[1 1] complex re -1 im Inf|exact
+CHK|m_vec_el|double[1 3] complex re [-1 Inf 0] im [Inf Inf Inf]|exact
+CHK|d_inf_i|double[1 1] complex re 0 im -Inf|exact
+CHK|d_inf_i_el|double[1 1] complex re 0 im -Inf|exact
+CHK|d_vec_el|double[1 3] complex re [0 0 0] im [-Inf Inf 0]|exact
+CHK|ld_vec_el|double[1 3] complex re [0 0 0] im [-Inf Inf 0]|exact
+CHK|m_overflow|double[1 1] complex re 0 im Inf|exact
+CHK|m_overflow_sq|double[1 1] complex re 0 im Inf|exact
+CHK|mm_inf_vec|double[1 1] complex re NaN im Inf|exact
+CHK|mm_real_cinf|double[1 1] complex re 1 im Inf|exact
+CHK|mm_cinf_real|double[1 1] complex re 1 im Inf|exact
+CHK|mm_mat_inf|double[2 2] complex re [NaN Inf;1 1] im [Inf NaN;1 1]|exact
+CHK|mm_cc_inf|double[1 1] complex re NaN im Inf|exact
+CHK|mm_outer_inf|double[2 2] complex re [NaN Inf;0 1] im [Inf NaN;1 0]|exact
+CHK|mm_scalar_mat|double[1 2] complex re [-1 Inf] im [Inf 2]|exact
+CHK|mm_nan|double[1 1] complex re NaN im NaN|exact
+CHK|mm_finite|double[2 2] complex re [6 2;12 6] im [1 8;3 16]|exact
+CHK|g_0_0_0_1|0 0 / 0 0|exact
+CHK|g_0_0_0_Inf|0 NaN / 0 0|exact
+CHK|g_0_0_0_nInf|0 NaN / 0 0|exact
+CHK|g_0_0_0_NaN|0 NaN / NaN 0|exact
+CHK|g_0_0_1_1|0 0 / 0 0|exact
+CHK|g_0_0_1_Inf|NaN NaN / 0 0|exact
+CHK|g_0_0_1_nInf|NaN NaN / 0 0|exact
+CHK|g_0_0_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_0_Inf_1|NaN NaN / 0 0|exact
+CHK|g_0_0_Inf_Inf|0 NaN / 0 0|exact
+CHK|g_0_0_Inf_nInf|NaN 0 / 0 0|exact
+CHK|g_0_0_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_0_nInf_1|NaN NaN / 0 0|exact
+CHK|g_0_0_nInf_Inf|NaN 0 / 0 0|exact
+CHK|g_0_0_nInf_nInf|0 NaN / 0 0|exact
+CHK|g_0_0_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_0_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_0_0_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_0_0_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_0_0_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_1_0_0|0 0 / 0 Inf|exact
+CHK|g_0_1_0_1|-1 0 / 1 0|exact
+CHK|g_0_1_0_Inf|-Inf 0 / 0 0|exact
+CHK|g_0_1_0_nInf|Inf 0 / 0 0|exact
+CHK|g_0_1_0_NaN|NaN NaN / NaN 0|exact
+CHK|g_0_1_1_0|0 1 / 0 1|exact
+CHK|g_0_1_1_1|-1 1 / 0.5 0.5|exact
+CHK|g_0_1_1_Inf|-Inf 1 / 0 0|exact
+CHK|g_0_1_1_nInf|Inf 1 / 0 0|exact
+CHK|g_0_1_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_1_Inf_0|0 Inf / 0 0|exact
+CHK|g_0_1_Inf_1|-1 Inf / 0 0|exact
+CHK|g_0_1_Inf_Inf|-Inf Inf / 0 0|exact
+CHK|g_0_1_Inf_nInf|Inf Inf / 0 0|exact
+CHK|g_0_1_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_1_nInf_0|0 -Inf / 0 0|exact
+CHK|g_0_1_nInf_1|-1 -Inf / 0 0|exact
+CHK|g_0_1_nInf_Inf|-Inf -Inf / 0 0|exact
+CHK|g_0_1_nInf_nInf|Inf -Inf / 0 0|exact
+CHK|g_0_1_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_1_NaN_0|0 NaN / 0 NaN|exact
+CHK|g_0_1_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_0_1_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_0_1_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_0_1_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_Inf_0_0|0 NaN / 0 Inf|exact
+CHK|g_0_Inf_0_1|-Inf 0 / Inf 0|exact
+CHK|g_0_Inf_0_Inf|-Inf 0 / NaN 0|exact
+CHK|g_0_Inf_0_nInf|Inf 0 / NaN 0|exact
+CHK|g_0_Inf_0_NaN|NaN NaN / NaN 0|exact
+CHK|g_0_Inf_1_0|0 Inf / 0 Inf|exact
+CHK|g_0_Inf_1_1|-Inf Inf / Inf Inf|exact
+CHK|g_0_Inf_1_Inf|-Inf Inf / NaN NaN|exact
+CHK|g_0_Inf_1_nInf|Inf Inf / NaN NaN|exact
+CHK|g_0_Inf_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_Inf_Inf_0|0 Inf / 0 NaN|exact
+CHK|g_0_Inf_Inf_1|-Inf Inf / NaN NaN|exact
+CHK|g_0_Inf_Inf_Inf|-Inf Inf / NaN NaN|exact
+CHK|g_0_Inf_Inf_nInf|Inf Inf / NaN NaN|exact
+CHK|g_0_Inf_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_Inf_nInf_0|0 -Inf / 0 NaN|exact
+CHK|g_0_Inf_nInf_1|-Inf -Inf / NaN NaN|exact
+CHK|g_0_Inf_nInf_Inf|-Inf -Inf / NaN NaN|exact
+CHK|g_0_Inf_nInf_nInf|Inf -Inf / NaN NaN|exact
+CHK|g_0_Inf_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_Inf_NaN_0|0 NaN / 0 NaN|exact
+CHK|g_0_Inf_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_0_Inf_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_0_Inf_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_0_Inf_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_nInf_0_0|0 NaN / 0 -Inf|exact
+CHK|g_0_nInf_0_1|Inf 0 / -Inf 0|exact
+CHK|g_0_nInf_0_Inf|Inf 0 / NaN 0|exact
+CHK|g_0_nInf_0_nInf|-Inf 0 / NaN 0|exact
+CHK|g_0_nInf_0_NaN|NaN NaN / NaN 0|exact
+CHK|g_0_nInf_1_0|0 -Inf / 0 -Inf|exact
+CHK|g_0_nInf_1_1|Inf -Inf / -Inf -Inf|exact
+CHK|g_0_nInf_1_Inf|Inf -Inf / NaN NaN|exact
+CHK|g_0_nInf_1_nInf|-Inf -Inf / NaN NaN|exact
+CHK|g_0_nInf_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_nInf_Inf_0|0 -Inf / 0 NaN|exact
+CHK|g_0_nInf_Inf_1|Inf -Inf / NaN NaN|exact
+CHK|g_0_nInf_Inf_Inf|Inf -Inf / NaN NaN|exact
+CHK|g_0_nInf_Inf_nInf|-Inf -Inf / NaN NaN|exact
+CHK|g_0_nInf_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_nInf_nInf_0|0 Inf / 0 NaN|exact
+CHK|g_0_nInf_nInf_1|Inf Inf / NaN NaN|exact
+CHK|g_0_nInf_nInf_Inf|Inf Inf / NaN NaN|exact
+CHK|g_0_nInf_nInf_nInf|-Inf Inf / NaN NaN|exact
+CHK|g_0_nInf_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_nInf_NaN_0|0 NaN / 0 NaN|exact
+CHK|g_0_nInf_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_0_nInf_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_0_nInf_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_0_nInf_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_NaN_0_0|0 NaN / 0 NaN|exact
+CHK|g_0_NaN_0_1|NaN NaN / NaN 0|exact
+CHK|g_0_NaN_0_Inf|NaN NaN / NaN 0|exact
+CHK|g_0_NaN_0_nInf|NaN NaN / NaN 0|exact
+CHK|g_0_NaN_0_NaN|NaN NaN / NaN 0|exact
+CHK|g_0_NaN_1_0|0 NaN / 0 NaN|exact
+CHK|g_0_NaN_1_1|NaN NaN / NaN NaN|exact
+CHK|g_0_NaN_1_Inf|NaN NaN / NaN NaN|exact
+CHK|g_0_NaN_1_nInf|NaN NaN / NaN NaN|exact
+CHK|g_0_NaN_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_NaN_Inf_0|0 NaN / 0 NaN|exact
+CHK|g_0_NaN_Inf_1|NaN NaN / NaN NaN|exact
+CHK|g_0_NaN_Inf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_0_NaN_Inf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_0_NaN_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_NaN_nInf_0|0 NaN / 0 NaN|exact
+CHK|g_0_NaN_nInf_1|NaN NaN / NaN NaN|exact
+CHK|g_0_NaN_nInf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_0_NaN_nInf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_0_NaN_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_0_NaN_NaN_0|0 NaN / 0 NaN|exact
+CHK|g_0_NaN_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_0_NaN_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_0_NaN_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_0_NaN_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_0_0_1|0 1 / 0 -1|exact
+CHK|g_1_0_0_Inf|0 Inf / 0 0|exact
+CHK|g_1_0_0_nInf|0 -Inf / 0 0|exact
+CHK|g_1_0_0_NaN|0 NaN / 0 NaN|exact
+CHK|g_1_0_1_1|1 1 / 0.5 -0.5|exact
+CHK|g_1_0_1_Inf|1 Inf / 0 0|exact
+CHK|g_1_0_1_nInf|1 -Inf / 0 0|exact
+CHK|g_1_0_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_0_Inf_1|Inf 1 / 0 0|exact
+CHK|g_1_0_Inf_Inf|Inf Inf / 0 0|exact
+CHK|g_1_0_Inf_nInf|Inf -Inf / 0 0|exact
+CHK|g_1_0_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_0_nInf_1|-Inf 1 / 0 0|exact
+CHK|g_1_0_nInf_Inf|-Inf Inf / 0 0|exact
+CHK|g_1_0_nInf_nInf|-Inf -Inf / 0 0|exact
+CHK|g_1_0_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_0_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_1_0_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_1_0_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_1_0_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_1_0_0|0 0 / Inf Inf|exact
+CHK|g_1_1_0_1|-1 1 / 1 -1|exact
+CHK|g_1_1_0_Inf|-Inf Inf / 0 0|exact
+CHK|g_1_1_0_nInf|Inf -Inf / 0 0|exact
+CHK|g_1_1_0_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_1_1_0|1 1 / 1 1|exact
+CHK|g_1_1_1_1|0 2 / 1 0|exact
+CHK|g_1_1_1_Inf|-Inf Inf / 0 0|exact
+CHK|g_1_1_1_nInf|Inf -Inf / 0 0|exact
+CHK|g_1_1_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_1_Inf_0|Inf Inf / 0 0|exact
+CHK|g_1_1_Inf_1|Inf Inf / 0 0|exact
+CHK|g_1_1_Inf_Inf|0 Inf / 0 0|exact
+CHK|g_1_1_Inf_nInf|Inf 0 / 0 0|exact
+CHK|g_1_1_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_1_nInf_0|-Inf -Inf / 0 0|exact
+CHK|g_1_1_nInf_1|-Inf -Inf / 0 0|exact
+CHK|g_1_1_nInf_Inf|-Inf 0 / 0 0|exact
+CHK|g_1_1_nInf_nInf|0 -Inf / 0 0|exact
+CHK|g_1_1_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_1_NaN_0|NaN NaN / NaN NaN|exact
+CHK|g_1_1_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_1_1_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_1_1_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_1_1_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_Inf_0_0|NaN NaN / Inf Inf|exact
+CHK|g_1_Inf_0_1|-Inf 1 / Inf -1|exact
+CHK|g_1_Inf_0_Inf|-Inf Inf / NaN 0|exact
+CHK|g_1_Inf_0_nInf|Inf -Inf / NaN 0|exact
+CHK|g_1_Inf_0_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_Inf_1_0|1 Inf / 1 Inf|exact
+CHK|g_1_Inf_1_1|-Inf Inf / Inf Inf|exact
+CHK|g_1_Inf_1_Inf|-Inf Inf / NaN NaN|exact
+CHK|g_1_Inf_1_nInf|Inf 0 / NaN NaN|exact
+CHK|g_1_Inf_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_Inf_Inf_0|Inf Inf / 0 NaN|exact
+CHK|g_1_Inf_Inf_1|0 Inf / NaN NaN|exact
+CHK|g_1_Inf_Inf_Inf|-Inf Inf / NaN NaN|exact
+CHK|g_1_Inf_Inf_nInf|Inf Inf / NaN NaN|exact
+CHK|g_1_Inf_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_Inf_nInf_0|-Inf -Inf / 0 NaN|exact
+CHK|g_1_Inf_nInf_1|-Inf -Inf / NaN NaN|exact
+CHK|g_1_Inf_nInf_Inf|-Inf -Inf / NaN NaN|exact
+CHK|g_1_Inf_nInf_nInf|Inf -Inf / NaN NaN|exact
+CHK|g_1_Inf_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_Inf_NaN_0|NaN NaN / NaN NaN|exact
+CHK|g_1_Inf_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_1_Inf_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_1_Inf_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_1_Inf_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_nInf_0_0|NaN NaN / Inf -Inf|exact
+CHK|g_1_nInf_0_1|Inf 1 / -Inf -1|exact
+CHK|g_1_nInf_0_Inf|Inf Inf / NaN 0|exact
+CHK|g_1_nInf_0_nInf|-Inf -Inf / NaN 0|exact
+CHK|g_1_nInf_0_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_nInf_1_0|1 -Inf / 1 -Inf|exact
+CHK|g_1_nInf_1_1|Inf -Inf / -Inf -Inf|exact
+CHK|g_1_nInf_1_Inf|Inf 0 / NaN NaN|exact
+CHK|g_1_nInf_1_nInf|-Inf -Inf / NaN NaN|exact
+CHK|g_1_nInf_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_nInf_Inf_0|Inf -Inf / 0 NaN|exact
+CHK|g_1_nInf_Inf_1|Inf -Inf / NaN NaN|exact
+CHK|g_1_nInf_Inf_Inf|Inf -Inf / NaN NaN|exact
+CHK|g_1_nInf_Inf_nInf|-Inf -Inf / NaN NaN|exact
+CHK|g_1_nInf_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_nInf_nInf_0|-Inf Inf / 0 NaN|exact
+CHK|g_1_nInf_nInf_1|0 Inf / NaN NaN|exact
+CHK|g_1_nInf_nInf_Inf|Inf Inf / NaN NaN|exact
+CHK|g_1_nInf_nInf_nInf|-Inf Inf / NaN NaN|exact
+CHK|g_1_nInf_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_nInf_NaN_0|NaN NaN / NaN NaN|exact
+CHK|g_1_nInf_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_1_nInf_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_1_nInf_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_1_nInf_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_0_0|NaN NaN / Inf NaN|exact
+CHK|g_1_NaN_0_1|NaN NaN / NaN -1|exact
+CHK|g_1_NaN_0_Inf|NaN NaN / NaN 0|exact
+CHK|g_1_NaN_0_nInf|NaN NaN / NaN 0|exact
+CHK|g_1_NaN_0_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_1_0|NaN NaN / 1 NaN|exact
+CHK|g_1_NaN_1_1|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_1_Inf|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_1_nInf|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_Inf_0|NaN NaN / 0 NaN|exact
+CHK|g_1_NaN_Inf_1|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_Inf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_Inf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_nInf_0|NaN NaN / 0 NaN|exact
+CHK|g_1_NaN_nInf_1|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_nInf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_nInf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_NaN_0|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_1_NaN_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_0_0_1|0 Inf / 0 -Inf|exact
+CHK|g_Inf_0_0_Inf|0 Inf / 0 NaN|exact
+CHK|g_Inf_0_0_nInf|0 -Inf / 0 NaN|exact
+CHK|g_Inf_0_0_NaN|0 NaN / 0 NaN|exact
+CHK|g_Inf_0_1_1|Inf Inf / Inf -Inf|exact
+CHK|g_Inf_0_1_Inf|Inf Inf / NaN NaN|exact
+CHK|g_Inf_0_1_nInf|Inf -Inf / NaN NaN|exact
+CHK|g_Inf_0_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_0_Inf_1|Inf Inf / NaN NaN|exact
+CHK|g_Inf_0_Inf_Inf|Inf Inf / NaN NaN|exact
+CHK|g_Inf_0_Inf_nInf|Inf -Inf / NaN NaN|exact
+CHK|g_Inf_0_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_0_nInf_1|-Inf Inf / NaN NaN|exact
+CHK|g_Inf_0_nInf_Inf|-Inf Inf / NaN NaN|exact
+CHK|g_Inf_0_nInf_nInf|-Inf -Inf / NaN NaN|exact
+CHK|g_Inf_0_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_0_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_Inf_0_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_0_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_0_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_1_0_0|NaN NaN / Inf Inf|exact
+CHK|g_Inf_1_0_1|-1 Inf / 1 -Inf|exact
+CHK|g_Inf_1_0_Inf|-Inf Inf / 0 NaN|exact
+CHK|g_Inf_1_0_nInf|Inf -Inf / 0 NaN|exact
+CHK|g_Inf_1_0_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_1_1_0|Inf 1 / Inf 1|exact
+CHK|g_Inf_1_1_1|Inf Inf / Inf -Inf|exact
+CHK|g_Inf_1_1_Inf|0 Inf / NaN NaN|exact
+CHK|g_Inf_1_1_nInf|Inf -Inf / NaN NaN|exact
+CHK|g_Inf_1_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_1_Inf_0|Inf Inf / NaN 0|exact
+CHK|g_Inf_1_Inf_1|Inf Inf / NaN NaN|exact
+CHK|g_Inf_1_Inf_Inf|Inf Inf / NaN NaN|exact
+CHK|g_Inf_1_Inf_nInf|Inf -Inf / NaN NaN|exact
+CHK|g_Inf_1_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_1_nInf_0|-Inf -Inf / NaN 0|exact
+CHK|g_Inf_1_nInf_1|-Inf 0 / NaN NaN|exact
+CHK|g_Inf_1_nInf_Inf|-Inf Inf / NaN NaN|exact
+CHK|g_Inf_1_nInf_nInf|-Inf -Inf / NaN NaN|exact
+CHK|g_Inf_1_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_1_NaN_0|NaN NaN / NaN NaN|exact
+CHK|g_Inf_1_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_Inf_1_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_1_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_1_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_Inf_0_0|0 NaN / Inf Inf|exact
+CHK|g_Inf_Inf_0_1|-Inf Inf / Inf -Inf|exact
+CHK|g_Inf_Inf_0_Inf|-Inf Inf / NaN NaN|exact
+CHK|g_Inf_Inf_0_nInf|Inf -Inf / NaN NaN|exact
+CHK|g_Inf_Inf_0_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_Inf_1_0|Inf Inf / Inf Inf|exact
+CHK|g_Inf_Inf_1_1|0 Inf / Inf NaN|exact
+CHK|g_Inf_Inf_1_Inf|-Inf Inf / NaN NaN|exact
+CHK|g_Inf_Inf_1_nInf|Inf -Inf / NaN NaN|exact
+CHK|g_Inf_Inf_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_Inf_Inf_0|Inf Inf / NaN NaN|exact
+CHK|g_Inf_Inf_Inf_1|Inf Inf / NaN NaN|exact
+CHK|g_Inf_Inf_Inf_Inf|0 Inf / NaN NaN|exact
+CHK|g_Inf_Inf_Inf_nInf|Inf 0 / NaN NaN|exact
+CHK|g_Inf_Inf_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_Inf_nInf_0|-Inf -Inf / NaN NaN|exact
+CHK|g_Inf_Inf_nInf_1|-Inf -Inf / NaN NaN|exact
+CHK|g_Inf_Inf_nInf_Inf|-Inf 0 / NaN NaN|exact
+CHK|g_Inf_Inf_nInf_nInf|0 -Inf / NaN NaN|exact
+CHK|g_Inf_Inf_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_Inf_NaN_0|NaN NaN / NaN NaN|exact
+CHK|g_Inf_Inf_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_Inf_Inf_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_Inf_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_Inf_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_nInf_0_0|NaN 0 / Inf -Inf|exact
+CHK|g_Inf_nInf_0_1|Inf Inf / -Inf -Inf|exact
+CHK|g_Inf_nInf_0_Inf|Inf Inf / NaN NaN|exact
+CHK|g_Inf_nInf_0_nInf|-Inf -Inf / NaN NaN|exact
+CHK|g_Inf_nInf_0_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_nInf_1_0|Inf -Inf / Inf -Inf|exact
+CHK|g_Inf_nInf_1_1|Inf 0 / NaN -Inf|exact
+CHK|g_Inf_nInf_1_Inf|Inf Inf / NaN NaN|exact
+CHK|g_Inf_nInf_1_nInf|-Inf -Inf / NaN NaN|exact
+CHK|g_Inf_nInf_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_nInf_Inf_0|Inf -Inf / NaN NaN|exact
+CHK|g_Inf_nInf_Inf_1|Inf -Inf / NaN NaN|exact
+CHK|g_Inf_nInf_Inf_Inf|Inf 0 / NaN NaN|exact
+CHK|g_Inf_nInf_Inf_nInf|0 -Inf / NaN NaN|exact
+CHK|g_Inf_nInf_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_nInf_nInf_0|-Inf Inf / NaN NaN|exact
+CHK|g_Inf_nInf_nInf_1|-Inf Inf / NaN NaN|exact
+CHK|g_Inf_nInf_nInf_Inf|0 Inf / NaN NaN|exact
+CHK|g_Inf_nInf_nInf_nInf|-Inf 0 / NaN NaN|exact
+CHK|g_Inf_nInf_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_nInf_NaN_0|NaN NaN / NaN NaN|exact
+CHK|g_Inf_nInf_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_Inf_nInf_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_nInf_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_nInf_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_0_0|NaN NaN / Inf NaN|exact
+CHK|g_Inf_NaN_0_1|NaN NaN / NaN -Inf|exact
+CHK|g_Inf_NaN_0_Inf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_0_nInf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_0_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_1_0|NaN NaN / Inf NaN|exact
+CHK|g_Inf_NaN_1_1|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_1_Inf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_1_nInf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_Inf_0|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_Inf_1|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_Inf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_Inf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_nInf_0|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_nInf_1|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_nInf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_nInf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_NaN_0|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_Inf_NaN_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_0_0_1|0 -Inf / 0 Inf|exact
+CHK|g_nInf_0_0_Inf|0 -Inf / 0 NaN|exact
+CHK|g_nInf_0_0_nInf|0 Inf / 0 NaN|exact
+CHK|g_nInf_0_0_NaN|0 NaN / 0 NaN|exact
+CHK|g_nInf_0_1_1|-Inf -Inf / -Inf Inf|exact
+CHK|g_nInf_0_1_Inf|-Inf -Inf / NaN NaN|exact
+CHK|g_nInf_0_1_nInf|-Inf Inf / NaN NaN|exact
+CHK|g_nInf_0_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_0_Inf_1|-Inf -Inf / NaN NaN|exact
+CHK|g_nInf_0_Inf_Inf|-Inf -Inf / NaN NaN|exact
+CHK|g_nInf_0_Inf_nInf|-Inf Inf / NaN NaN|exact
+CHK|g_nInf_0_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_0_nInf_1|Inf -Inf / NaN NaN|exact
+CHK|g_nInf_0_nInf_Inf|Inf -Inf / NaN NaN|exact
+CHK|g_nInf_0_nInf_nInf|Inf Inf / NaN NaN|exact
+CHK|g_nInf_0_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_0_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_nInf_0_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_0_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_0_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_1_0_0|NaN NaN / -Inf Inf|exact
+CHK|g_nInf_1_0_1|-1 -Inf / 1 Inf|exact
+CHK|g_nInf_1_0_Inf|-Inf -Inf / 0 NaN|exact
+CHK|g_nInf_1_0_nInf|Inf Inf / 0 NaN|exact
+CHK|g_nInf_1_0_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_1_1_0|-Inf 1 / -Inf 1|exact
+CHK|g_nInf_1_1_1|-Inf -Inf / -Inf Inf|exact
+CHK|g_nInf_1_1_Inf|-Inf -Inf / NaN NaN|exact
+CHK|g_nInf_1_1_nInf|0 Inf / NaN NaN|exact
+CHK|g_nInf_1_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_1_Inf_0|-Inf Inf / NaN 0|exact
+CHK|g_nInf_1_Inf_1|-Inf 0 / NaN NaN|exact
+CHK|g_nInf_1_Inf_Inf|-Inf -Inf / NaN NaN|exact
+CHK|g_nInf_1_Inf_nInf|-Inf Inf / NaN NaN|exact
+CHK|g_nInf_1_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_1_nInf_0|Inf -Inf / NaN 0|exact
+CHK|g_nInf_1_nInf_1|Inf -Inf / NaN NaN|exact
+CHK|g_nInf_1_nInf_Inf|Inf -Inf / NaN NaN|exact
+CHK|g_nInf_1_nInf_nInf|Inf Inf / NaN NaN|exact
+CHK|g_nInf_1_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_1_NaN_0|NaN NaN / NaN NaN|exact
+CHK|g_nInf_1_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_nInf_1_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_1_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_1_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_Inf_0_0|NaN 0 / -Inf Inf|exact
+CHK|g_nInf_Inf_0_1|-Inf -Inf / Inf Inf|exact
+CHK|g_nInf_Inf_0_Inf|-Inf -Inf / NaN NaN|exact
+CHK|g_nInf_Inf_0_nInf|Inf Inf / NaN NaN|exact
+CHK|g_nInf_Inf_0_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_Inf_1_0|-Inf Inf / -Inf Inf|exact
+CHK|g_nInf_Inf_1_1|-Inf 0 / NaN Inf|exact
+CHK|g_nInf_Inf_1_Inf|-Inf -Inf / NaN NaN|exact
+CHK|g_nInf_Inf_1_nInf|Inf Inf / NaN NaN|exact
+CHK|g_nInf_Inf_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_Inf_Inf_0|-Inf Inf / NaN NaN|exact
+CHK|g_nInf_Inf_Inf_1|-Inf Inf / NaN NaN|exact
+CHK|g_nInf_Inf_Inf_Inf|-Inf 0 / NaN NaN|exact
+CHK|g_nInf_Inf_Inf_nInf|0 Inf / NaN NaN|exact
+CHK|g_nInf_Inf_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_Inf_nInf_0|Inf -Inf / NaN NaN|exact
+CHK|g_nInf_Inf_nInf_1|Inf -Inf / NaN NaN|exact
+CHK|g_nInf_Inf_nInf_Inf|0 -Inf / NaN NaN|exact
+CHK|g_nInf_Inf_nInf_nInf|Inf 0 / NaN NaN|exact
+CHK|g_nInf_Inf_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_Inf_NaN_0|NaN NaN / NaN NaN|exact
+CHK|g_nInf_Inf_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_nInf_Inf_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_Inf_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_Inf_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_nInf_0_0|0 NaN / -Inf -Inf|exact
+CHK|g_nInf_nInf_0_1|Inf -Inf / -Inf Inf|exact
+CHK|g_nInf_nInf_0_Inf|Inf -Inf / NaN NaN|exact
+CHK|g_nInf_nInf_0_nInf|-Inf Inf / NaN NaN|exact
+CHK|g_nInf_nInf_0_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_nInf_1_0|-Inf -Inf / -Inf -Inf|exact
+CHK|g_nInf_nInf_1_1|0 -Inf / -Inf NaN|exact
+CHK|g_nInf_nInf_1_Inf|Inf -Inf / NaN NaN|exact
+CHK|g_nInf_nInf_1_nInf|-Inf Inf / NaN NaN|exact
+CHK|g_nInf_nInf_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_nInf_Inf_0|-Inf -Inf / NaN NaN|exact
+CHK|g_nInf_nInf_Inf_1|-Inf -Inf / NaN NaN|exact
+CHK|g_nInf_nInf_Inf_Inf|0 -Inf / NaN NaN|exact
+CHK|g_nInf_nInf_Inf_nInf|-Inf 0 / NaN NaN|exact
+CHK|g_nInf_nInf_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_nInf_nInf_0|Inf Inf / NaN NaN|exact
+CHK|g_nInf_nInf_nInf_1|Inf Inf / NaN NaN|exact
+CHK|g_nInf_nInf_nInf_Inf|Inf 0 / NaN NaN|exact
+CHK|g_nInf_nInf_nInf_nInf|0 Inf / NaN NaN|exact
+CHK|g_nInf_nInf_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_nInf_NaN_0|NaN NaN / NaN NaN|exact
+CHK|g_nInf_nInf_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_nInf_nInf_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_nInf_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_nInf_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_0_0|NaN NaN / -Inf NaN|exact
+CHK|g_nInf_NaN_0_1|NaN NaN / NaN Inf|exact
+CHK|g_nInf_NaN_0_Inf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_0_nInf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_0_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_1_0|NaN NaN / -Inf NaN|exact
+CHK|g_nInf_NaN_1_1|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_1_Inf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_1_nInf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_Inf_0|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_Inf_1|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_Inf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_Inf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_nInf_0|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_nInf_1|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_nInf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_nInf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_NaN_0|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_nInf_NaN_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_0_0_1|0 NaN / 0 NaN|exact
+CHK|g_NaN_0_0_Inf|0 NaN / 0 NaN|exact
+CHK|g_NaN_0_0_nInf|0 NaN / 0 NaN|exact
+CHK|g_NaN_0_0_NaN|0 NaN / 0 NaN|exact
+CHK|g_NaN_0_1_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_0_1_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_0_1_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_0_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_0_Inf_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_0_Inf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_0_Inf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_0_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_0_nInf_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_0_nInf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_0_nInf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_0_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_0_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_0_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_0_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_0_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_0_0|NaN NaN / NaN Inf|exact
+CHK|g_NaN_1_0_1|NaN NaN / 1 NaN|exact
+CHK|g_NaN_1_0_Inf|NaN NaN / 0 NaN|exact
+CHK|g_NaN_1_0_nInf|NaN NaN / 0 NaN|exact
+CHK|g_NaN_1_0_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_1_0|NaN NaN / NaN 1|exact
+CHK|g_NaN_1_1_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_1_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_1_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_Inf_0|NaN NaN / NaN 0|exact
+CHK|g_NaN_1_Inf_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_Inf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_Inf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_nInf_0|NaN NaN / NaN 0|exact
+CHK|g_NaN_1_nInf_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_nInf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_nInf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_NaN_0|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_1_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_0_0|NaN NaN / NaN Inf|exact
+CHK|g_NaN_Inf_0_1|NaN NaN / Inf NaN|exact
+CHK|g_NaN_Inf_0_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_0_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_0_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_1_0|NaN NaN / NaN Inf|exact
+CHK|g_NaN_Inf_1_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_1_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_1_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_Inf_0|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_Inf_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_Inf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_Inf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_nInf_0|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_nInf_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_nInf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_nInf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_NaN_0|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_Inf_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_0_0|NaN NaN / NaN -Inf|exact
+CHK|g_NaN_nInf_0_1|NaN NaN / -Inf NaN|exact
+CHK|g_NaN_nInf_0_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_0_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_0_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_1_0|NaN NaN / NaN -Inf|exact
+CHK|g_NaN_nInf_1_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_1_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_1_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_Inf_0|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_Inf_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_Inf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_Inf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_nInf_0|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_nInf_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_nInf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_nInf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_NaN_0|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_nInf_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_0_0|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_0_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_0_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_0_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_0_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_1_0|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_1_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_1_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_1_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_1_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_Inf_0|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_Inf_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_Inf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_Inf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_nInf_0|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_nInf_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_nInf_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_nInf_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_NaN_0|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_NaN_1|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|g_NaN_NaN_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|r_0_0_1|0 0 / 0 Inf|exact
+CHK|r_0_0_Inf|0 0 / 0 Inf|exact
+CHK|r_0_0_nInf|0 0 / 0 -Inf|exact
+CHK|r_0_0_NaN|NaN 0 / 0 NaN|exact
+CHK|r_0_1_1|0 0 / Inf Inf|exact
+CHK|r_0_1_Inf|0 0 / Inf Inf|exact
+CHK|r_0_1_nInf|0 0 / Inf -Inf|exact
+CHK|r_0_1_NaN|NaN NaN / Inf NaN|exact
+CHK|r_0_Inf_1|0 0 / Inf Inf|exact
+CHK|r_0_Inf_Inf|0 0 / Inf Inf|exact
+CHK|r_0_Inf_nInf|0 0 / Inf -Inf|exact
+CHK|r_0_Inf_NaN|NaN NaN / Inf NaN|exact
+CHK|r_0_nInf_1|0 0 / -Inf Inf|exact
+CHK|r_0_nInf_Inf|0 0 / -Inf Inf|exact
+CHK|r_0_nInf_nInf|0 0 / -Inf -Inf|exact
+CHK|r_0_nInf_NaN|NaN NaN / -Inf NaN|exact
+CHK|r_0_NaN_1|NaN NaN / NaN Inf|exact
+CHK|r_0_NaN_Inf|NaN NaN / NaN Inf|exact
+CHK|r_0_NaN_nInf|NaN NaN / NaN -Inf|exact
+CHK|r_0_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|r_1_0_1|0 -1 / 0 1|exact
+CHK|r_1_0_Inf|0 0 / 0 Inf|exact
+CHK|r_1_0_nInf|0 0 / 0 -Inf|exact
+CHK|r_1_0_NaN|0 NaN / 0 NaN|exact
+CHK|r_1_1_1|0.5 -0.5 / 1 1|exact
+CHK|r_1_1_Inf|0 0 / 1 Inf|exact
+CHK|r_1_1_nInf|0 0 / 1 -Inf|exact
+CHK|r_1_1_NaN|NaN NaN / 1 NaN|exact
+CHK|r_1_Inf_1|0 0 / Inf 1|exact
+CHK|r_1_Inf_Inf|0 0 / Inf Inf|exact
+CHK|r_1_Inf_nInf|0 0 / Inf -Inf|exact
+CHK|r_1_Inf_NaN|NaN NaN / Inf NaN|exact
+CHK|r_1_nInf_1|0 0 / -Inf 1|exact
+CHK|r_1_nInf_Inf|0 0 / -Inf Inf|exact
+CHK|r_1_nInf_nInf|0 0 / -Inf -Inf|exact
+CHK|r_1_nInf_NaN|NaN NaN / -Inf NaN|exact
+CHK|r_1_NaN_1|NaN NaN / NaN 1|exact
+CHK|r_1_NaN_Inf|NaN NaN / NaN Inf|exact
+CHK|r_1_NaN_nInf|NaN NaN / NaN -Inf|exact
+CHK|r_1_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|r_Inf_0_1|0 -Inf / 0 0|exact
+CHK|r_Inf_0_Inf|0 NaN / 0 NaN|exact
+CHK|r_Inf_0_nInf|0 NaN / 0 NaN|exact
+CHK|r_Inf_0_NaN|0 NaN / 0 NaN|exact
+CHK|r_Inf_1_1|Inf -Inf / 0 0|exact
+CHK|r_Inf_1_Inf|NaN NaN / 0 NaN|exact
+CHK|r_Inf_1_nInf|NaN NaN / 0 NaN|exact
+CHK|r_Inf_1_NaN|NaN NaN / 0 NaN|exact
+CHK|r_Inf_Inf_1|NaN NaN / NaN 0|exact
+CHK|r_Inf_Inf_Inf|NaN NaN / NaN NaN|exact
+CHK|r_Inf_Inf_nInf|NaN NaN / NaN NaN|exact
+CHK|r_Inf_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|r_Inf_nInf_1|NaN NaN / NaN 0|exact
+CHK|r_Inf_nInf_Inf|NaN NaN / NaN NaN|exact
+CHK|r_Inf_nInf_nInf|NaN NaN / NaN NaN|exact
+CHK|r_Inf_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|r_Inf_NaN_1|NaN NaN / NaN 0|exact
+CHK|r_Inf_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|r_Inf_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|r_Inf_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|r_nInf_0_1|0 Inf / 0 0|exact
+CHK|r_nInf_0_Inf|0 NaN / 0 NaN|exact
+CHK|r_nInf_0_nInf|0 NaN / 0 NaN|exact
+CHK|r_nInf_0_NaN|0 NaN / 0 NaN|exact
+CHK|r_nInf_1_1|-Inf Inf / 0 0|exact
+CHK|r_nInf_1_Inf|NaN NaN / 0 NaN|exact
+CHK|r_nInf_1_nInf|NaN NaN / 0 NaN|exact
+CHK|r_nInf_1_NaN|NaN NaN / 0 NaN|exact
+CHK|r_nInf_Inf_1|NaN NaN / NaN 0|exact
+CHK|r_nInf_Inf_Inf|NaN NaN / NaN NaN|exact
+CHK|r_nInf_Inf_nInf|NaN NaN / NaN NaN|exact
+CHK|r_nInf_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|r_nInf_nInf_1|NaN NaN / NaN 0|exact
+CHK|r_nInf_nInf_Inf|NaN NaN / NaN NaN|exact
+CHK|r_nInf_nInf_nInf|NaN NaN / NaN NaN|exact
+CHK|r_nInf_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|r_nInf_NaN_1|NaN NaN / NaN 0|exact
+CHK|r_nInf_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|r_nInf_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|r_nInf_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|r_NaN_0_1|0 NaN / 0 NaN|exact
+CHK|r_NaN_0_Inf|0 NaN / 0 NaN|exact
+CHK|r_NaN_0_nInf|0 NaN / 0 NaN|exact
+CHK|r_NaN_0_NaN|0 NaN / 0 NaN|exact
+CHK|r_NaN_1_1|NaN NaN / NaN NaN|exact
+CHK|r_NaN_1_Inf|NaN NaN / NaN NaN|exact
+CHK|r_NaN_1_nInf|NaN NaN / NaN NaN|exact
+CHK|r_NaN_1_NaN|NaN NaN / NaN NaN|exact
+CHK|r_NaN_Inf_1|NaN NaN / NaN NaN|exact
+CHK|r_NaN_Inf_Inf|NaN NaN / NaN NaN|exact
+CHK|r_NaN_Inf_nInf|NaN NaN / NaN NaN|exact
+CHK|r_NaN_Inf_NaN|NaN NaN / NaN NaN|exact
+CHK|r_NaN_nInf_1|NaN NaN / NaN NaN|exact
+CHK|r_NaN_nInf_Inf|NaN NaN / NaN NaN|exact
+CHK|r_NaN_nInf_nInf|NaN NaN / NaN NaN|exact
+CHK|r_NaN_nInf_NaN|NaN NaN / NaN NaN|exact
+CHK|r_NaN_NaN_1|NaN NaN / NaN NaN|exact
+CHK|r_NaN_NaN_Inf|NaN NaN / NaN NaN|exact
+CHK|r_NaN_NaN_nInf|NaN NaN / NaN NaN|exact
+CHK|r_NaN_NaN_NaN|NaN NaN / NaN NaN|exact
+CHK|pow_0_i|double[1 1] complex re NaN im NaN|exact
+CHK|pow_0_1pi|double[1 1] real 0|exact
+CHK|pow_0_m1pi|double[1 1] complex re NaN im NaN|exact
+CHK|pow_0_flag1|double[1 1] real 0|exact
+CHK|pow_0_flag0|double[1 1] real 1|exact
+CHK|pow_0_flagm1|double[1 1] real Inf|exact
+CHK|pow_0_mi|double[1 1] complex re NaN im NaN|exact
+CHK|pow_zr_i|double[1 1] complex re NaN im NaN|exact
+CHK|pow_0_i_m|double[1 1] complex re NaN im NaN|exact
+CHK|pow_0vec_i|double[1 3] complex re [NaN 1 0.76923890136397211] im [NaN 0 0.63896127631363475]|exact
+CHK|pow_negz_i|double[1 1] complex re NaN im NaN|exact
+CHK|pow_0_vec|double[1 2] complex re [NaN 0] im [NaN 0]|exact
+CHK|pow_0_infre|double[1 1] real 0|exact
+CHK|pow_0_infim|double[1 1] complex re NaN im NaN|exact
+CHK|pow_0_nan|double[1 1] complex re NaN im NaN|exact
+CHK|pow_i_i|double[1 1] real 0.20787957635076193|exact
+CHK|sq_12i|double[1 1] complex re -3 im 4|exact
+CHK|sq_12i_m|double[1 1] complex re -3 im 4|exact
+CHK|sq_12i_mul|double[1 1] complex re -3 im 4|exact
+CHK|cube_12i|double[1 1] complex re -11 im -2|exact
+CHK|pow10_12i|double[1 1] complex re 237 im -3116|exact
+CHK|powm2_12i|double[1 1] complex re -0.12 im -0.16|exact
+CHK|powm3_12i|double[1 1] complex re -0.088000000000000009 im 0.016|exact
+CHK|pow2_34i|double[1 1] complex re -11.200000000000005 im 31.02|exact
+CHK|pow2_vec|double[1 4] complex re [-3 -0.47999999999999993 10.889999 -11.200000000000005] im [4 0.13999999999999999 -0.0066 31.02]|exact
+CHK|pow3_vec|double[1 4] complex re [-11 -0.14599999999999999 -35.936990099999996 -182.75400000000002] im [-2 -0.3219999999999999 0.032669998999999998 49.725999999999978]|exact
+CHK|pow4_vec|double[1 4] complex re [-7 0.21079999999999993 118.59203466000099 -836.80039999999997] im [-24 -0.13439999999999996 -0.1437479868 -694.8480000000003]|exact
+CHK|pow5_vec|double[1 4] complex re [41 0.11515999999999996 -391.35357063001646 504.34428000000162] im [-38 0.13411999999999993 0.59296039110000098 -6225.9602800000011]|exact
+CHK|pow17_vec|double[1 4] complex re [873121 0.0018406312869913572 -652726964.79915595 -6683382173521.0566] im [-24478 -0.0020594831867724777 3362562.491441234 -4465047616895.6309]|exact
+CHK|pow100_vec|double[1 4] complex re [-6.443164690985892e+34 -4.6642114425975175e-17 7.0989897758653415e+51 -3.7438031411619248e+74] im [-6.1132413077625076e+34 -8.8695288397009773e-16 -2.1518676652171243e+50 8.1672672906825302e+75]|exact
+CHK|powm2_vec|double[1 4] complex re [-0.12 -1.9200000000000004 0.091827339257846516 -0.010297142432648416] im [-0.16 -0.56000000000000016 5.5652937994005976e-05 -0.028519406987567299]|exact
+CHK|pow_n_vec|double[1 3] complex re [-3 -11 -7] im [4 -2 -24]|exact
+CHK|pow_big1|double[1 1] complex re -2.6429195825062336e-151 im 1.5321919806068008e-151|exact
+CHK|pow_big2|double[1 1] complex re 0.99999999997857691 im 6.5536999999534289e-06|exact
+CHK|pow_big3|double[1 1] complex re 0.87557889663371047 im 0.48307514505538701|exact
+CHK|pow_big4|double[1 1] complex re -Inf im Inf|exact
+CHK|pow_bigneg|double[1 1] complex re -0.86513081388008228 im -0.50154628388129707|exact
+CHK|pow_inf_base|double[1 2] complex re [Inf -Inf] im [Inf -Inf]|exact
+CHK|pow_imag_base|double[1 3] complex re [0 0 0] im [-1 1 -128]|exact
+CHK|pow_half|double[1 1] complex re 1.272019649514069 im 0.78615137775742328|exact
+CHK|any_cm|logical[1 2] real [1 0]|exact
+CHK|any_cm_2|logical[2 1] real [1;0]|exact
+CHK|any_cm_all|logical[1 1] real 1|exact
+CHK|all_cm|logical[1 2] real [0 1]|exact
+CHK|all_cm_2|logical[2 1] real [1;0]|exact
+CHK|any_flag|logical[1 2] real [0 0]|exact
+CHK|any_cvec|logical[1 1] real 1|exact
+CHK|any_ccol|logical[1 1] real 1|exact
+CHK|all_flag|logical[1 2] real [0 1]|exact
+CHK|any_cnan|logical[1 1] real 0|exact
+CHK|any_cempty|logical[1 3] real [0 0 0]|exact
+CHK|any_nan_re1|logical[1 1] real 0|exact
+CHK|any_1_nan|logical[1 1] real 0|exact
+CHK|all_0_nan|logical[1 1] real 1|exact
+CHK|all_nan_0|logical[1 1] real 1|exact
+CHK|any_nan_vec|logical[1 1] real 1|exact
+CHK|any_nan_mat|logical[1 2] real [0 0]|exact
+CHK|all_nan_mat|logical[1 2] real [1 1]|exact
+CHK|any_vecdim|logical[1 1] real 1|exact
+CHK|all_single|logical[1 2] real [0 1]|exact
+CHK|any_cnum|logical[1 1] real 1|exact
+CHK|any_czero|logical[1 1] real 0|exact
+CHK|psi_kvec|MATLAB:psi:kScalar|exact
+CHK|psi_kvec_msg|K must be a scalar.|exact
+CHK|psi_kcol|MATLAB:psi:kScalar|exact
+CHK|psi_kcol_msg|K must be a scalar.|exact
+CHK|psi_kmat|MATLAB:psi:kScalar|exact
+CHK|psi_kmat_msg|K must be a scalar.|exact
+CHK|psi_kempty|MATLAB:psi:kScalar|exact
+CHK|psi_kempty_msg|K must be a scalar.|exact
+CHK|psi_kfrac|MATLAB:psi:validOrder|exact
+CHK|psi_kfrac_msg|Order must be nonnegative integer value smaller than 2^31-1.|exact
+CHK|psi_1|double[1 1] real -0.57721566490153231|exact
+CHK|psi_exact|double[1 7] real [-0.57721566490153231 0.42278433509846747 0.92278433509846747 2.2517525890667214 4.6001618527380881 -1000.5755719318104 11.512920464961896]|exact
+CHK|psi_near|double[1 2] real [-1.96351002602 0.0364899739786]|exact
+CHK|psi_0_inf|double[1 1] real Inf|exact
+CHK|psi_inf|double[1 1] real Inf|exact
+CHK|psi_1_inf|double[1 1] real Inf|div=ADR0377|diverges|double[1 1] real 0
+CHK|psi_2_inf|double[1 1] real -Inf|div=ADR0377|diverges|double[1 1] real 0
+CHK|psi_3_inf|double[1 1] real Inf|div=ADR0377|diverges|double[1 1] real 0
+CHK|psi_1_vec_inf|double[1 2] real [1.6449340668482264 Inf]|div=ADR0377|diverges|double[1 2] real [1.6449340668482264 0]
+CHK|psi_s_inf|single[1 1] real Inf|div=ADR0377|diverges|single[1 1] real 0
+CHK|psi_1_1|double[1 1] real 1.6449340668482264|exact
+CHK|psi_1_vals|double[1 5] real [4.93480220054 1.64493406685 0.644934066848 0.394934066848 0.105166335682]|exact
+CHK|psi_2_vals|double[1 5] real [-16.8287966442 -2.40411380632 -0.404113806319 -0.154113806319 -0.0110498349708]|exact
+CHK|psi_1_big|double[1 2] real [1.00000000005e-10 1e-100]|exact
+CHK|psi_1_nan|double[1 1] real NaN|exact
+CHK|psi_s1|single[1 1] real -0.57721567153930664|exact
+CHK|sing_rdiv|double[1 2] real [NaN Inf] WARN MATLAB:singularMatrix|exact
+CHK|sing_rdiv_flag|double[1 2] complex re [NaN Inf] im [NaN NaN] WARN MATLAB:singularMatrix|exact
+CHK|sing_ldiv|double[2 1] real [Inf;NaN] WARN MATLAB:singularMatrix|exact
+CHK|sing_ldiv_flag|double[2 1] complex re [Inf;NaN] im [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|rdiv_real_sing2|double[2 2] real [NaN Inf;NaN Inf] WARN MATLAB:singularMatrix|exact
+CHK|rdiv_diag|double[1 2] real [NaN Inf] WARN MATLAB:singularMatrix|exact
+CHK|rdiv_cplx_rhs|double[1 2] complex re [NaN Inf] im [NaN NaN] WARN MATLAB:singularMatrix|exact
+CHK|rdiv_real_sing|double[1 2] real [NaN NaN] WARN MATLAB:singularMatrix|exact
+CHK|rdiv_lower|double[1 2] real [-Inf Inf] WARN MATLAB:singularMatrix|exact
+CHK|inv_flag_zeros|double[2 2] real [Inf 0;0 Inf] WARN MATLAB:singularMatrix|exact
+CHK|inv_zeros|double[2 2] real [Inf 0;0 Inf] WARN MATLAB:singularMatrix|exact
+CHK|inv_flag_zeros3|double[3 3] real [Inf 0 0;0 Inf 0;0 0 Inf] WARN MATLAB:singularMatrix|exact
+CHK|inv_cplx_sing|double[2 2] real [Inf Inf;Inf Inf] WARN MATLAB:singularMatrix|exact
+CHK|inv_flag_sing|double[2 2] real [Inf Inf;Inf Inf] WARN MATLAB:singularMatrix|exact
+CHK|inv_flag_diag0|double[2 2] real [1 0;0 Inf] WARN MATLAB:singularMatrix|exact
+CHK|inv_flag_triu0|double[2 2] real [Inf Inf;0 Inf] WARN MATLAB:singularMatrix|exact
+CHK|inv_cplx_diag0|double[2 2] complex re [0 0;0 Inf] im [-0.5 0;0 0] WARN MATLAB:singularMatrix|exact
+CHK|inv_cplx_tril0|double[2 2] real [Inf 0;Inf Inf] WARN MATLAB:singularMatrix|exact

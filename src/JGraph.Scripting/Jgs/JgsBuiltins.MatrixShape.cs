@@ -1651,6 +1651,11 @@ internal static partial class JgsBuiltins
             // pattern (R2025b's r_cany, r_call).
             if (sparse && args[0].IsComplexSparse && name is "any" or "all")
                 normalized[0] = SparseDense(JgsValue.Sparse(args[0].AsComplexSparse.MapReal(static _ => 1)));
+
+            // A dense complex array reduces along its dimension like a real one (open item 341,
+            // ADR 0377): each entry read as whether it is non-zero.
+            if (!sparse && name is "any" or "all" && args.Count > 0 && ComplexTruthPlane(args[0], name == "all" ? 1 : 0) is { } truth)
+                normalized[0] = truth;
             JgsValue result = SingleCore(normalized, line, col);
             if (spec.Words.HasFlag(TailWords.Outtype) && args.Skip(1).Any(v => IsTextScalar(v) && TextOf(v).Equals("native", StringComparison.OrdinalIgnoreCase)))
                 result = IsLogicalValue(args[0]) ? AsMask(result) : ToNumericClass(name, args[0].NumericClass, result, line, col);

@@ -1762,6 +1762,14 @@ internal sealed partial class Parser
             return new UnaryExpr(op.Type, ParsePowerOperand()) { Line = op.Line, Column = op.Column };
         }
 
+        // MATLAB takes a unary plus there too: 2^+3, and 2^++3 now that ++ is two signs (open item
+        // 341, ADR 0377).
+        if (_matlab && Check(TokenType.Plus))
+        {
+            Token plus = Advance();
+            return new UnaryExpr(TokenType.Plus, ParsePowerOperand()) { Line = plus.Line, Column = plus.Column };
+        }
+
         return ParsePostfix();
     }
 

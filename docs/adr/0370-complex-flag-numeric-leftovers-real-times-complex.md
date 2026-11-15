@@ -201,3 +201,13 @@ None opened.
 - `psi(1, Inf)` is Inf in R2025b and 0 here (trigamma tends to 0; R2025b's answer looks wrong);
   `psi(k, x)` with a vector `k` is `MATLAB:psi:kScalar`; `psi(1)` differs from R2025b's in the 14th
   digit.
+
+Closed since: ADR 0377 (open item 341) makes `++x` two signs in the MATLAB dialect and refuses
+`uplus("a")`, keeps the flag of `x .^ 1` only for a written constant (so `x .^ ones(1, 1)` drops it),
+joins every plain numeric cell by `CellContentsJoined`, orders `unique(x, 'rows')` and `sortrows` of a
+flagged array in the complex order, answers `b.' / zeros(2)` and `inv(complex(zeros(2)))` as R2025b
+does, forms complex products and quotients with infinite parts by R2025b's rule (and the matrix
+product with an Inf), makes `0.^1i` NaN and whole complex powers square-and-multiply, reduces `any` of
+a complex matrix per column, refuses a vector `psi` order, and fixes `psi(1)`'s digits. `psi(1, Inf)`
+stays 0 as a divergence there; the Hermitian Cholesky, the `[1 2 3; 4 5 6; 7 8 9]` pivot, complex
+integers, the complex-integer comparisons and the mixed-class verbs stay open.

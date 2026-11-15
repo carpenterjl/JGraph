@@ -357,10 +357,12 @@ internal static class Lexer
                 case '.' when matlab: type = TokenType.Dot; lexeme = "."; break;
                 case '@' when matlab: type = TokenType.At; lexeme = "@"; break;
                 case '?' when matlab: type = TokenType.Question; lexeme = "?"; break;
-                case '+' when Peek(source, i) == '+': type = TokenType.PlusPlus; lexeme = "++"; break;
+                // MATLAB has no increment operator: ++x is +(+x), a--b is a-(-b), and x++ is an
+                // incomplete statement (open item 341, ADR 0377). JGS keeps ++ and --.
+                case '+' when !matlab && Peek(source, i) == '+': type = TokenType.PlusPlus; lexeme = "++"; break;
                 case '+' when Peek(source, i) == '=': type = TokenType.PlusAssign; lexeme = "+="; break;
                 case '+': type = TokenType.Plus; lexeme = "+"; break;
-                case '-' when Peek(source, i) == '-': type = TokenType.MinusMinus; lexeme = "--"; break;
+                case '-' when !matlab && Peek(source, i) == '-': type = TokenType.MinusMinus; lexeme = "--"; break;
                 case '-' when Peek(source, i) == '=': type = TokenType.MinusAssign; lexeme = "-="; break;
                 case '-': type = TokenType.Minus; lexeme = "-"; break;
                 case '*' when Peek(source, i) == '=': type = TokenType.StarAssign; lexeme = "*="; break;

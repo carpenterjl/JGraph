@@ -85,7 +85,7 @@ internal static partial class JgsBuiltins
             // zero is the limit from the right, -Inf, where JGS answers the pole's +Inf (open item
             // 333, ADR 0370); a negative argument has been refused before MATLAB code gets here.
             Func<double, double> digamma = JgsRunningDialect.ThreadIsMatlab
-                ? static x => x == 0 ? double.NegativeInfinity : SpecialFunctions.Digamma(x)
+                ? static x => x == 0 ? double.NegativeInfinity : SpecialFunctions.DigammaSevenTerms(x) // open item 341, ADR 0377
                 : SpecialFunctions.Digamma;
             if (args.Count == 1)
             {

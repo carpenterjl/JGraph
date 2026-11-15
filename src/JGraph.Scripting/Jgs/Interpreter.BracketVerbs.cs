@@ -75,10 +75,11 @@ internal sealed partial class Interpreter
                 run[i] = byRows ? pieces[o + (i * rows)] : pieces[i + (o * rows)];
             }
 
-            joined[o] = JoinAsBracket(run, across: byRows, line, col);
+            // One piece is itself, as cat of one array is (open item 341, ADR 0377).
+            joined[o] = inner == 1 ? run[0] : JoinAsBracket(run, across: byRows, line, col);
         }
 
-        return JoinAsBracket(joined, across: !byRows, line, col);
+        return outer == 1 ? joined[0] : JoinAsBracket(joined, across: !byRows, line, col);
     }
 
     private static JgsValue WithTime(JgsValue built, JgsValue[] elements)
@@ -110,12 +111,19 @@ internal static partial class JgsBuiltins
             IJgsCallable plain = cellToMat.AsCallable;
             env.Builtins.Register("cell2mat", JgsValue.Function(new BuiltinFunction("cell2mat", (args, line, col) =>
             {
-                // A piece with the zero-imaginary flag keeps it in the join (open item 330, ADR 0370).
-                if (JgsRunningDialect.ThreadIsMatlab && args.Count == 1 && args[0].Type == JgsType.Cell && !args[0].IsNd
-                    && Array.Exists(args[0].AsCell, IsZeroImagFlagged)
-                    && !Array.Exists(args[0].AsCell, static e => e.Type == JgsType.Cell))
+                if (JgsRunningDialect.ThreadIsMatlab && args.Count == 1 && CellToMatRefusal(args[0], line, col) is { } refusal)
                 {
-                    return interpreter.CellContentsJoined(args[0], line, col);
+                    throw refusal; // open item 341, ADR 0377
+                }
+
+                // A piece with the zero-imaginary flag keeps it in the join (open item 330, ADR 0370),
+                // and a cell of numbers, text or logicals is joined as R2025b's cell2mat.m joins it,
+                // not flattened (open item 341, ADR 0377).
+                if (JgsRunningDialect.ThreadIsMatlab && args.Count == 1 && args[0].Type == JgsType.Cell && !args[0].IsNd
+                    && ((Array.Exists(args[0].AsCell, IsZeroImagFlagged) && !Array.Exists(args[0].AsCell, static e => e.Type == JgsType.Cell))
+                        || Array.TrueForAll(args[0].AsCell, JoinsAsCellContents)))
+                {
+                    return CellContentsChecked(interpreter, args[0], line, col);
                 }
 
                 if (!JgsRunningDialect.ThreadIsMatlab || args.Count != 1 || args[0].Type != JgsType.Cell

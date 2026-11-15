@@ -45,7 +45,10 @@ public static class ComplexSquareSystems
     /// Solves A·X = B for a square <paramref name="a"/> and an n-by-k <paramref name="b"/>; neither is
     /// modified. A <paramref name="single"/> system is nearly singular below single's eps.
     /// </summary>
-    public static SquareCondition Solve(Complex[,] a, Complex[,] b, bool single, out Complex[,] x, out double rcond)
+    /// <remarks>A diagonal matrix is substituted as an upper triangle when <paramref name="diagonalAsUpper"/>,
+    /// as R2025b's <c>b / D</c> does (open item 341, ADR 0377).</remarks>
+    public static SquareCondition Solve(Complex[,] a, Complex[,] b, bool single, out Complex[,] x, out double rcond,
+        bool diagonalAsUpper = false)
     {
         ArgumentNullException.ThrowIfNull(a);
         ArgumentNullException.ThrowIfNull(b);
@@ -61,8 +64,10 @@ public static class ComplexSquareSystems
         Complex[] lu = Flatten(a);
         Complex[] rhs = Flatten(b);
         bool lower = IsLowerTriangular(lu, n);
-        if (lower || IsUpperTriangular(lu, n))
+        bool upper = IsUpperTriangular(lu, n);
+        if (lower || upper)
         {
+            lower &= !(diagonalAsUpper && upper);
             bool zeroDiagonal = HasZeroDiagonal(lu, n);
             rcond = zeroDiagonal ? 0 : DiagonalRatio(lu, n);
             for (int c = 0; c < nrhs; c++)

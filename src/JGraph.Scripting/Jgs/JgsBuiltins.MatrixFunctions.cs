@@ -199,16 +199,25 @@ internal static partial class JgsBuiltins
     /// both parts leaves one part zero by the sign of the three factors' product
     /// (<c>0*complex(Inf, Inf)</c> is <c>0+NaNi</c>, <c>-0*complex(Inf, Inf)</c> a real NaN).
     /// </remarks>
+    /// <remarks>
+    /// Two complex factors (open item 341, ADR 0377; lane 7D's probe 2, 2,205 pairs with parts in
+    /// {0, -0, 1, Inf, -Inf, NaN, 2}): a factor with no real part is an imaginary number yi, whose
+    /// product with a+bi is y times -b+ai by the rule above (two such factors are the real -b·y,
+    /// or NaN for a NaN part); otherwise a NaN part makes both parts NaN, and an infinite factor
+    /// takes C99's recovery with a part that comes out zero kept zero (<c>(1+1i)*complex(Inf, Inf)</c>
+    /// is <c>0+Infi</c>). A zero imaginary part's sign joins the signed-zero rule above. Every pair
+    /// agrees but for the sign of a zero part in 44 of them.
+    /// </remarks>
     internal static Complex MultiplyMatlab(Complex x, Complex y)
     {
         if (x.Imaginary == 0 && y.Imaginary != 0)
         {
-            return RealTimesComplex(x.Real, y);
+            return RealTimesComplex(x.Real, y, double.IsNegative(x.Imaginary));
         }
 
         if (y.Imaginary == 0 && x.Imaginary != 0)
         {
-            return RealTimesComplex(y.Real, x);
+            return RealTimesComplex(y.Real, x, double.IsNegative(y.Imaginary));
         }
 
         if (x.Imaginary == 0 && y.Imaginary == 0)
@@ -216,11 +225,121 @@ internal static partial class JgsBuiltins
             return new Complex(x.Real * y.Real, 0);
         }
 
-        return MultiplyC99(x, y);
+        if (x.Real == 0 && y.Real == 0)
+        {
+            return double.IsNaN(x.Imaginary) || double.IsNaN(y.Imaginary)
+                ? new Complex(double.NaN, double.NaN)
+                : new Complex(-(x.Imaginary * y.Imaginary), 0);
+        }
+
+        if (x.Real == 0)
+        {
+            return RealTimesComplex(x.Imaginary, new Complex(-y.Imaginary, y.Real), false);
+        }
+
+        if (y.Real == 0)
+        {
+            return RealTimesComplex(y.Imaginary, new Complex(-x.Imaginary, x.Real), false);
+        }
+
+        if (double.IsNaN(x.Real) || double.IsNaN(x.Imaginary) || double.IsNaN(y.Real) || double.IsNaN(y.Imaginary))
+        {
+            return new Complex(double.NaN, double.NaN);
+        }
+
+        Complex naive = x * y;
+        if (!double.IsNaN(naive.Real) && !double.IsNaN(naive.Imaginary))
+        {
+            return naive;
+        }
+
+        // C99's recovery over the direction vectors, a zero part staying zero; two finite factors
+        // whose product overflowed are scaled to unit size, multiplied, and scaled back, so
+        // complex(1e200, 1e200)^2 is 0+Infi as R2025b has it.
+        static double Box(double v) => System.Math.CopySign(double.IsInfinity(v) ? 1 : 0, v);
+        double a = x.Real, b = x.Imaginary, c = y.Real, d = y.Imaginary;
+        bool xInfinite = double.IsInfinity(a) || double.IsInfinity(b);
+        bool yInfinite = double.IsInfinity(c) || double.IsInfinity(d);
+        if (!xInfinite && !yInfinite)
+        {
+            double sx = System.Math.Max(System.Math.Abs(a), System.Math.Abs(b));
+            double sy = System.Math.Max(System.Math.Abs(c), System.Math.Abs(d));
+            (a, b, c, d) = (a / sx, b / sx, c / sy, d / sy);
+            double scaledRe = (a * c) - (b * d);
+            double scaledIm = (a * d) + (b * c);
+            return new Complex(scaledRe == 0 ? scaledRe : scaledRe * sx * sy, scaledIm == 0 ? scaledIm : scaledIm * sx * sy);
+        }
+
+        if (xInfinite)
+        {
+            (a, b) = (Box(a), Box(b));
+        }
+
+        if (yInfinite)
+        {
+            (c, d) = (Box(c), Box(d));
+        }
+
+        double re = (a * c) - (b * d);
+        double im = (a * d) + (b * c);
+        return new Complex(re == 0 ? re : double.PositiveInfinity * re, im == 0 ? im : double.PositiveInfinity * im);
+    }
+
+    /// <summary>
+    /// A complex quotient as R2025b forms it (open item 341, ADR 0377; lane 7D's probe 2, 2,205
+    /// pairs and 1,323 with one real side): a divisor with no imaginary part divides each part,
+    /// a part that is zero staying zero when the other is not (<c>1i/0</c> is <c>0+Infi</c>); a
+    /// divisor with no real part is that rule over the numerator turned by -i (<c>Inf/1i</c> is
+    /// <c>0-Infi</c>); anything else is Smith's quotient, with C99's recovery for an infinite side
+    /// when no part is NaN (<c>(1+1i)/complex(Inf, Inf)</c> is 0). Agrees but for the sign of a
+    /// zero part in some pairs.
+    /// </summary>
+    internal static Complex DivideMatlab(Complex x, Complex y)
+    {
+        static Complex ByReal(double p, double q, double d) =>
+            q == 0 ? new Complex(p / d, 0)
+            : p == 0 ? new Complex(0, q / d)
+            : new Complex(p / d, q / d);
+
+        if (y.Imaginary == 0)
+        {
+            return ByReal(x.Real, x.Imaginary, y.Real);
+        }
+
+        if (y.Real == 0)
+        {
+            return ByReal(x.Imaginary, -x.Real, y.Imaginary);
+        }
+
+        Complex smith = x / y;
+        double a = x.Real, b = x.Imaginary, c = y.Real, d = y.Imaginary;
+        if (!double.IsNaN(smith.Real) || !double.IsNaN(smith.Imaginary)
+            || double.IsNaN(a) || double.IsNaN(b) || double.IsNaN(c) || double.IsNaN(d))
+        {
+            return smith;
+        }
+
+        static double Box(double v) => System.Math.CopySign(double.IsInfinity(v) ? 1 : 0, v);
+        if ((double.IsInfinity(a) || double.IsInfinity(b)) && double.IsFinite(c) && double.IsFinite(d))
+        {
+            (a, b) = (Box(a), Box(b));
+            return new Complex(double.PositiveInfinity * ((a * c) + (b * d)), double.PositiveInfinity * ((b * c) - (a * d)));
+        }
+
+        if ((double.IsInfinity(c) || double.IsInfinity(d)) && double.IsFinite(a) && double.IsFinite(b))
+        {
+            (c, d) = (Box(c), Box(d));
+            return new Complex(0.0 * ((a * c) + (b * d)), 0.0 * ((b * c) - (a * d)));
+        }
+
+        return smith;
     }
 
     /// <summary>A real number times a complex one with a non-zero imaginary part, as <see cref="MultiplyMatlab"/> describes.</summary>
-    private static Complex RealTimesComplex(double x, Complex z)
+    /// <param name="x">The real factor.</param>
+    /// <param name="z">The complex factor.</param>
+    /// <param name="negativeZeroImaginary">Whether the real factor is a complex number whose zero imaginary part is -0.</param>
+    private static Complex RealTimesComplex(double x, Complex z, bool negativeZeroImaginary)
     {
         double a = z.Real;
         double b = z.Imaginary;
@@ -239,7 +358,7 @@ internal static partial class JgsBuiltins
 
         if (x == 0 && double.IsInfinity(a) && double.IsInfinity(b))
         {
-            bool negative = double.IsNegative(x) ^ (a < 0) ^ (b < 0);
+            bool negative = double.IsNegative(x) ^ (a < 0) ^ (b < 0) ^ negativeZeroImaginary;
             return negative ? new Complex(double.NaN, 0) : new Complex(0, double.NaN);
         }
 
@@ -290,7 +409,9 @@ internal static partial class JgsBuiltins
 
         int rows = a.GetLength(0);
         int cols = b.GetLength(1);
-        Complex[,] product = ComplexLinear.Multiply(a, b);
+        Complex[,] product = JgsRunningDialect.ThreadIsMatlab && (HoldsNonFinite(a) || HoldsNonFinite(b))
+            ? NonFiniteComplexProduct(a, b, !HasComplexElements(left), !HasComplexElements(right))
+            : ComplexLinear.Multiply(a, b);
 
         // Every element boxes as a complex, real-valued sums included — the convention this
         // product has always had, as distinct from FromComplexRect's demotion to plain numbers.
@@ -304,6 +425,66 @@ internal static partial class JgsBuiltins
         }
 
         return rows == 1 && cols == 1 ? elements[0] : JgsValue.Shaped(elements, rows, cols);
+    }
+
+    private static bool HoldsNonFinite(Complex[,] m)
+    {
+        foreach (Complex z in m)
+        {
+            if (!double.IsFinite(z.Real) || !double.IsFinite(z.Imaginary))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// A matrix product with an Inf or NaN in it, as R2025b forms it (open item 341, ADR 0377): a real
+    /// side multiplies each plane of the complex one as a real product, so <c>[Inf 1] * [1i; 1]</c> is
+    /// <c>NaN+Infi</c> and <c>[1 1] * [complex(0, Inf); 1]</c> is <c>1+Infi</c>; two complex sides sum
+    /// the plain complex products term by term. Each sum runs in order and multiplies every term,
+    /// zeros included, so no backend's scaling by alpha or skipping of zeros changes an Inf or a NaN.
+    /// </summary>
+    private static Complex[,] NonFiniteComplexProduct(Complex[,] a, Complex[,] b, bool leftReal, bool rightReal)
+    {
+        int m = a.GetLength(0);
+        int inner = a.GetLength(1);
+        int n = b.GetLength(1);
+        var product = new Complex[m, n];
+        for (int r = 0; r < m; r++)
+        {
+            for (int c = 0; c < n; c++)
+            {
+                double re = 0;
+                double im = 0;
+                for (int k = 0; k < inner; k++)
+                {
+                    Complex x = a[r, k];
+                    Complex y = b[k, c];
+                    if (leftReal)
+                    {
+                        re += x.Real * y.Real;
+                        im += x.Real * y.Imaginary;
+                    }
+                    else if (rightReal)
+                    {
+                        re += x.Real * y.Real;
+                        im += x.Imaginary * y.Real;
+                    }
+                    else
+                    {
+                        re += (x.Real * y.Real) - (x.Imaginary * y.Imaginary);
+                        im += (x.Real * y.Imaginary) + (x.Imaginary * y.Real);
+                    }
+                }
+
+                product[r, c] = new Complex(re, im);
+            }
+        }
+
+        return product;
     }
 
     /// <summary>
@@ -476,9 +657,10 @@ internal static partial class JgsBuiltins
             // part, so its Inf and NaN are the real substitutions' ([1 2; 0 0] \ [1i; 2] is
             // [-Inf + NaN·i; Inf + NaN·i], where one complex solve would give NaN + NaN·i above).
             bool single = coefficients.NumericClass == JgsNumericClass.Single || rhs.NumericClass == JgsNumericClass.Single;
+            bool diagonalAsUpper = divide && JgsRunningDialect.ThreadIsMatlab; // open item 341, ADR 0377
             condition = HasComplexElements(coefficients)
-                ? ComplexSquareSystems.Solve(a, b, single, out solution, out rcond)
-                : SolveRealByParts(a, b, single, out solution, out rcond);
+                ? ComplexSquareSystems.Solve(a, b, single, out solution, out rcond, diagonalAsUpper)
+                : SolveRealByParts(a, b, single, out solution, out rcond, diagonalAsUpper);
             rank = cols;
             tolerance = 0.0;
         }
@@ -505,7 +687,7 @@ internal static partial class JgsBuiltins
     /// parts side by side as one real system, so the matrix is factored once.
     /// </summary>
     private static SquareCondition SolveRealByParts(Complex[,] a, Complex[,] b, bool single,
-        out Complex[,] solution, out double rcond)
+        out Complex[,] solution, out double rcond, bool diagonalAsUpper = false)
     {
         int n = a.GetLength(0);
         int nrhs = b.GetLength(1);
@@ -528,7 +710,7 @@ internal static partial class JgsBuiltins
             }
         }
 
-        SquareCondition condition = SquareSystems.Solve(flat, n, parts, nrhs * 2, out rcond, single);
+        SquareCondition condition = SquareSystems.Solve(flat, n, parts, nrhs * 2, out rcond, single, diagonalAsUpper);
         solution = new Complex[n, nrhs];
         for (int c = 0; c < nrhs; c++)
         {

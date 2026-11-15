@@ -949,6 +949,14 @@ internal sealed partial class Interpreter
     internal JgsValue ApplyOperator(TokenType op, JgsValue left, JgsValue right, int line, int column) =>
         ApplyBinary(op, left, right, new PreEvaluated(JgsValue.Null) { Line = line, Column = column });
 
+    /// <summary>
+    /// MATLAB's <c>uplus(x)</c>, the function form of <see cref="UnaryPlus"/>: a string, cell, struct
+    /// or function handle is refused rather than read as its char codes (open item 341, ADR 0377).
+    /// </summary>
+    internal JgsValue ApplyUplus(JgsValue operand, int line, int column) =>
+        UnaryPlus(IsCharOperand(operand) ? CharCodes(operand) : operand,
+            new PreEvaluated(JgsValue.Null) { Line = line, Column = column });
+
     /// <summary>Builds a range from already-evaluated bounds, for <c>colon(a, b)</c>.</summary>
     internal JgsValue BuildRange(JgsValue start, JgsValue? step, JgsValue stop, int line, int column) =>
         EvaluateRange(
@@ -5045,6 +5053,13 @@ internal sealed partial class Interpreter
             return UnaryPlus(operand, unary);
         }
 
+        // MATLAB's -x refuses what +x refuses (open item 341, ADR 0377).
+        if (Dialect.IsMatlab && unary.Op == TokenType.Minus && RefusesUnarySign(operand))
+        {
+            throw new JgsRuntimeException(unary.Line, unary.Column, "MATLAB:math:mustBeNumericCharOrLogical",
+                "Invalid data type. Argument must be numeric, char, or logical.");
+        }
+
         if (unary.Op == TokenType.Bang)
         {
             // MATLAB's ~ is element-wise over arrays (~mask negates the mask, M43); JGS keeps
@@ -5091,9 +5106,13 @@ internal sealed partial class Interpreter
     /// sparse matrix, a time and anything else this does not judge is handed back as it came, as
     /// the parser that dropped the + handed it back.
     /// </summary>
-    private JgsValue UnaryPlus(JgsValue operand, UnaryExpr unary)
+    /// <summary>Whether MATLAB's <c>+x</c> and <c>-x</c> refuse an operand: a string, cell, struct or function handle.</summary>
+    internal static bool RefusesUnarySign(JgsValue operand) =>
+        operand.IsStringArray || operand.Type is JgsType.Cell or JgsType.Struct or JgsType.Function;
+
+    private JgsValue UnaryPlus(JgsValue operand, Node unary)
     {
-        if (operand.IsStringArray || operand.Type is JgsType.Cell or JgsType.Struct or JgsType.Function)
+        if (RefusesUnarySign(operand))
         {
             throw new JgsRuntimeException(unary.Line, unary.Column, "MATLAB:math:mustBeNumericCharOrLogical",
                 "Invalid data type. Argument must be numeric, char, or logical.");
@@ -5806,6 +5825,22 @@ internal sealed partial class Interpreter
         or TokenType.Star or TokenType.Slash or TokenType.Backslash or TokenType.Caret
         or TokenType.DotStar or TokenType.DotSlash or TokenType.DotBackslash or TokenType.DotCaret;
 
+    /// <summary>
+    /// Whether an operand is written as a constant: number literals joined by arithmetic operators
+    /// and signs, which R2025b folds when it reads the file (open item 341, ADR 0377).
+    /// </summary>
+    private static bool IsWrittenConstant(Expr operand) => operand switch
+    {
+        NumberLiteral number => number.IntegerClass is null,
+        ArrayLiteral { Elements.Count: 1 } bracketed => IsWrittenConstant(bracketed.Elements[0]),
+        MatrixLiteral { Rows: [{ Count: 1 } row] } => IsWrittenConstant(row[0]),
+        UnaryExpr { Op: TokenType.Minus or TokenType.Plus } signed => IsWrittenConstant(signed.Operand),
+        BinaryExpr { Op: TokenType.Plus or TokenType.Minus or TokenType.Star or TokenType.Slash or TokenType.DotStar
+            or TokenType.DotSlash or TokenType.Caret or TokenType.DotCaret } arithmetic
+            => IsWrittenConstant(arithmetic.Left) && IsWrittenConstant(arithmetic.Right),
+        _ => false,
+    };
+
     private JgsValue ApplyBinaryCore(TokenType op, JgsValue left, JgsValue right, Node at) =>
         ApplyBinaryCore(op, left, right, at, JgsNumericClass.Double, out _);
 
@@ -5883,9 +5918,15 @@ internal sealed partial class Interpreter
             };
 
             // x .^ 1 hands a flagged array back complex, as R2025b does; a scalar, any other exponent
-            // and an exponent of another class drop the flag (open item 330, ADR 0370).
-            if (op == TokenType.DotCaret && right.Type == JgsType.Number && right.NumericClass == JgsNumericClass.Double
-                && right.AsNumber == 1 && left.Type == JgsType.Array && left.ArrayLength > 1
+            // and an exponent of another class drop the flag (open item 330, ADR 0370). R2025b keeps
+            // it only for a 1 written as a constant (x .^ 1, x .^ (2 - 1)); a 1 held in a variable or
+            // answered by a call drops it like any other exponent (open item 341, ADR 0377).
+            if (op == TokenType.DotCaret && right.NumericClass == JgsNumericClass.Double
+                && (right.Type == JgsType.Number ? right.AsNumber == 1
+                    : right.Type == JgsType.Array && right.ArrayLength == 1 && !right.IsPackedComplex
+                      && !JgsBuiltins.IsLogicalValue(right) && right.ElementAt(0) is { Type: JgsType.Number } held && held.AsNumber == 1)
+                && left.Type == JgsType.Array && left.ArrayLength > 1
+                && (at is not BinaryExpr written || IsWrittenConstant(written.Right))
                 && JgsBuiltins.IsZeroImagFlagged(left))
             {
                 return JgsBuiltins.FlaggedToFirstPower(left);
@@ -6065,7 +6106,8 @@ internal sealed partial class Interpreter
                 return NumericBinary(left, right, (a, b) => a * b, "*", at.Line, at.Column,
                     Dialect.IsMatlab ? JgsBuiltins.MultiplyMatlab : JgsBuiltins.MultiplyC99);
             case TokenType.Slash:
-                return NumericBinary(left, right, (a, b) => a / b, "/", at.Line, at.Column, static (a, b) => a / b);
+                return NumericBinary(left, right, (a, b) => a / b, "/", at.Line, at.Column,
+                    Dialect.IsMatlab ? JgsBuiltins.DivideMatlab : static (a, b) => a / b); // open item 341, ADR 0377
             case TokenType.Percent:
                 return NumericBinary(left, right, (a, b) => a % b, "%", at.Line, at.Column);
             case TokenType.Caret:
@@ -9864,7 +9906,8 @@ internal sealed partial class Interpreter
             if (rowsA == colsA)
             {
                 // A square system answers where it is singular, under R2025b's warning (open item 307).
-                WarnIfSingular(JGraph.Numerics.LinearAlgebra.SquareSystems.Solve(a, rowsA, b, colsB, out double rcond, single), rcond);
+                WarnIfSingular(JGraph.Numerics.LinearAlgebra.SquareSystems.Solve(a, rowsA, b, colsB, out double rcond, single,
+                    diagonalAsUpper: transposeResult && Dialect.IsMatlab), rcond); // b / D runs backwards (open item 341, ADR 0377)
                 x = b;
             }
             else

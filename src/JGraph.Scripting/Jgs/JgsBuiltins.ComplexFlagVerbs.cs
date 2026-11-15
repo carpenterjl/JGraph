@@ -68,6 +68,12 @@ internal static partial class JgsBuiltins
                 return answers;
             });
 
+        // sortrows: a flagged or complex array's rows in the complex order, column by column; R2025b
+        // answers a flagged array's real (open item 341, ADR 0377). The index output is the verb's.
+        Wrap("sortrows",
+            (inner, args, line, col) => ComplexFirst(args) ? SortRowsOfComplex(inner, args, 1, line, col)?[0] : null,
+            (inner, args, wanted, line, col) => ComplexFirst(args) ? SortRowsOfComplex(inner, args, wanted, line, col) : null);
+
         Wrap("unique",
             (inner, args, line, col) => FlaggedFirst(args) ? UniqueOfFlagged(inner, args, 1, line, col)[0] : null,
             (inner, args, wanted, line, col) => FlaggedFirst(args) ? UniqueOfFlagged(inner, args, wanted, line, col) : null);
@@ -121,6 +127,13 @@ internal static partial class JgsBuiltins
         {
             if (args.Count is 1 or 2 && args.All(static a => NonFloatClassName(a) is null))
             {
+                // The order is one number: a vector or an empty one is refused (open item 341, ADR 0377).
+                if (args.Count == 2 && args[0].Type is not (JgsType.Number or JgsType.Bool)
+                    && !(args[0].Type == JgsType.Array && args[0].ArrayLength == 1))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:psi:kScalar", "K must be a scalar.");
+                }
+
                 if (args.Count == 2 && args[0].Type == JgsType.Number && (args[0].AsNumber < 0
                     || args[0].AsNumber != Math.Floor(args[0].AsNumber) || args[0].AsNumber >= int.MaxValue))
                 {
@@ -145,6 +158,10 @@ internal static partial class JgsBuiltins
     }
 
     private static bool FlaggedFirst(IReadOnlyList<JgsValue> args) => args.Count > 0 && IsZeroImagFlagged(args[0]);
+
+    /// <summary>Whether the first argument is a flagged or complex dense array (open item 341, ADR 0377).</summary>
+    private static bool ComplexFirst(IReadOnlyList<JgsValue> args) =>
+        args.Count > 0 && args[0].Type != JgsType.Sparse && (IsZeroImagFlagged(args[0]) || HasComplexPart(args[0]));
 
     /// <summary>Whether a real value holds an element below zero (-Inf included; -0 and NaN are not).</summary>
     private static bool AnyNegative(string name, JgsValue value, int line, int col)
@@ -211,23 +228,27 @@ internal static partial class JgsBuiltins
     /// <c>unique</c> of a flagged array. Its sorted answer is in the complex order (magnitude, then
     /// angle), which the verb's real order is not, so the values are put in that order first and
     /// the verb asked for them as they first appear; the index outputs are then read back through
-    /// the order. Every other form (<c>'stable'</c>, <c>'rows'</c>) does not depend on the order and
-    /// is the verb's over the real plane, with the values flagged again.
+    /// the order. <c>'rows'</c> orders the rows so, column by column (open item 341, ADR 0377).
+    /// Every other form (<c>'stable'</c>) does not depend on the order and is the verb's over the
+    /// real plane, with the values flagged again.
     /// </summary>
     private static JgsValue[] UniqueOfFlagged(BuiltinFunction unique, IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         JgsValue real = RealPlaneOfZeroImag(args[0]);
         bool sorted = true;
         bool last = false;
+        bool rows = false;
         for (int i = 1; i < args.Count; i++)
         {
             string option = IsTextScalar(args[i]) ? TextOf(args[i]).ToLowerInvariant() : string.Empty;
-            sorted &= option is "sorted" or "first" or "last";
+            sorted &= option is "sorted" or "first" or "last" or "rows";
             last |= option == "last";
+            rows |= option == "rows";
         }
 
         double[] values = real.Type == JgsType.Number ? [real.AsNumber] : FlattenColumnMajor("unique", real, line, col);
-        if (!sorted || values.Length < 2)
+        int height = rows && real.Type == JgsType.Array ? JgsMatrix.RowCount(real) : values.Length;
+        if (!sorted || height < 2 || (rows && (real.Type != JgsType.Array || real.IsNd)))
         {
             JgsValue[] plain = unique.CallMultiple([real, .. args.Skip(1)], Math.Max(wanted, 1), line, col);
             plain[0] = Reflagged(plain[0]);
@@ -235,30 +256,54 @@ internal static partial class JgsBuiltins
         }
 
         // The complex order of numbers with no imaginary part: magnitude, then +x before -x, NaN last.
-        int[] order = Enumerable.Range(0, values.Length).ToArray();
+        // With 'rows' the rows are ordered so, column by column (open item 341, ADR 0377).
+        int width = rows ? values.Length / height : 1;
+        int[] order = Enumerable.Range(0, height).ToArray();
         static double Angle(double v) => double.IsNegative(v) && v != 0 ? Math.PI : 0;
-        Array.Sort(order, (p, q) =>
+        static int ComplexOrder(double a, double b)
         {
-            double a = values[p], b = values[q];
             int byNaN = double.IsNaN(a).CompareTo(double.IsNaN(b));
             if (byNaN != 0 || double.IsNaN(a))
             {
-                return byNaN != 0 ? byNaN : p.CompareTo(q);
+                return byNaN;
             }
 
             int byMagnitude = Math.Abs(a).CompareTo(Math.Abs(b));
-            int byAngle = Angle(a).CompareTo(Angle(b));
-            return byMagnitude != 0 ? byMagnitude : byAngle != 0 ? byAngle : p.CompareTo(q);
+            return byMagnitude != 0 ? byMagnitude : Angle(a).CompareTo(Angle(b));
+        }
+
+        Array.Sort(order, (p, q) =>
+        {
+            for (int c = 0; c < width; c++)
+            {
+                int byColumn = ComplexOrder(values[p + (c * height)], values[q + (c * height)]);
+                if (byColumn != 0)
+                {
+                    return byColumn;
+                }
+            }
+
+            return p.CompareTo(q);
         });
 
-        double[] ordered = Array.ConvertAll(order, i => values[i] + 0.0); // -0 is 0 here, as R2025b's unique has it
+        var ordered = new double[values.Length];
+        for (int k = 0; k < height; k++)
+        {
+            for (int c = 0; c < width; c++)
+            {
+                ordered[k + (c * height)] = values[order[k] + (c * height)] + 0.0; // -0 is 0 here, as R2025b's unique has it
+            }
+        }
+
         JgsValue orderedValue = JgsMatrix.FromColumnMajorDims(ordered, SizeDims(real));
         orderedValue.SetNumericClass(real.NumericClass);
-        JgsValue[] answers = unique.CallMultiple([orderedValue, JgsValue.Str("stable")], 3, line, col);
+        JgsValue[] answers = rows
+            ? unique.CallMultiple([orderedValue, JgsValue.Str("rows"), JgsValue.Str("stable")], 3, line, col)
+            : unique.CallMultiple([orderedValue, JgsValue.Str("stable")], 3, line, col);
 
         // ic in the ordered array, read back to each element's own position; ia from it, first or last.
         double[] orderedGroups = FlattenColumnMajor("unique", answers[2], line, col);
-        var groups = new double[values.Length];
+        var groups = new double[height];
         for (int k = 0; k < order.Length; k++)
         {
             groups[order[k]] = orderedGroups[k];

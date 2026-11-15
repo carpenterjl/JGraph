@@ -188,8 +188,24 @@ internal static partial class JgsBuiltins
     /// <c>(-4).^0.5</c> is exactly <c>2i</c> and <c>(-Inf).^0.5</c> is <c>Inf·i</c>, where the
     /// general complex power leaves a rounding residue in the real part, or NaN.
     /// </summary>
+    /// <remarks>
+    /// In MATLAB code (open item 341, ADR 0377; lane 7D's probes 4 and 5): a zero base raised to a
+    /// complex exponent is 0 when the exponent's real part is positive and its imaginary part
+    /// finite, else NaN+NaNi (<c>0.^1i</c>); a complex base raised to a whole exponent n with
+    /// 2 &lt;= |n| &lt;= 2^53 is R2025b's square-and-multiply over <see cref="MultiplyMatlab"/>, then
+    /// <see cref="DivideMatlab"/> of 1 by it for a negative n, which agrees to the bit
+    /// (<c>(1+2i).^2</c> is exactly <c>-3+4i</c>; an overflow lands on R2025b's infinities).
+    /// </remarks>
     internal static Complex ComplexPower(Complex z, Complex exponent)
     {
+        bool matlab = JgsRunningDialect.ThreadIsMatlab;
+        if (matlab && z.Real == 0 && z.Imaginary == 0 && exponent.Imaginary != 0)
+        {
+            return exponent.Real > 0 && double.IsFinite(exponent.Imaginary) && !double.IsNaN(exponent.Real)
+                ? Complex.Zero
+                : new Complex(double.NaN, double.NaN);
+        }
+
         if (exponent.Imaginary == 0)
         {
             if (exponent.Real == 0.5)
@@ -199,7 +215,12 @@ internal static partial class JgsBuiltins
 
             if (exponent.Real == -1)
             {
-                return Complex.One / z;
+                return matlab ? DivideMatlab(Complex.One, z) : Complex.One / z;
+            }
+
+            if (matlab && z.Imaginary != 0 && WholePowerBySquaring(exponent.Real))
+            {
+                return SquareAndMultiply(z, exponent.Real);
             }
 
             // z^1 is z, to the bit: Complex.Pow goes through the logarithm and answered
@@ -211,6 +232,33 @@ internal static partial class JgsBuiltins
         }
 
         return Complex.Pow(z, exponent);
+    }
+
+    private static bool WholePowerBySquaring(double n) =>
+        n == System.Math.Floor(n) && System.Math.Abs(n) >= 2 && System.Math.Abs(n) <= 9007199254740992.0;
+
+    /// <summary>z^n for a whole n by squaring, as R2025b raises a complex number (ADR 0377).</summary>
+    private static Complex SquareAndMultiply(Complex z, double n)
+    {
+        ulong bits = (ulong)System.Math.Abs(n);
+        Complex? result = null;
+        Complex power = z;
+        while (bits != 0)
+        {
+            if ((bits & 1) != 0)
+            {
+                result = result is { } r ? MultiplyMatlab(r, power) : power;
+            }
+
+            bits >>= 1;
+            if (bits != 0)
+            {
+                power = MultiplyMatlab(power, power);
+            }
+        }
+
+        Complex positive = result ?? Complex.One;
+        return n < 0 ? DivideMatlab(Complex.One, positive) : positive;
     }
 
     /// <summary>

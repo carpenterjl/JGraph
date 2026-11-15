@@ -55,8 +55,12 @@ public static class SquareSystems
     /// Solves A·X = B for an n-by-n column-major <paramref name="a"/> (overwritten) and an
     /// n-by-<paramref name="nrhs"/> column-major <paramref name="b"/> (overwritten with X). A
     /// <paramref name="single"/> system is nearly singular below single's eps, as R2025b says it.
+    /// A diagonal matrix is substituted as an upper triangle when <paramref name="diagonalAsUpper"/>:
+    /// R2025b's <c>b / D</c> runs from the last column back (<c>[1 2] / zeros(2)</c> is
+    /// <c>[NaN Inf]</c>; open item 341, ADR 0377), which is the transpose's back substitution.
     /// </summary>
-    public static SquareCondition Solve(double[] a, int n, Span<double> b, int nrhs, out double rcond, bool single = false)
+    public static SquareCondition Solve(double[] a, int n, Span<double> b, int nrhs, out double rcond, bool single = false,
+        bool diagonalAsUpper = false)
     {
         ArgumentNullException.ThrowIfNull(a);
         rcond = double.PositiveInfinity;
@@ -68,7 +72,7 @@ public static class SquareSystems
         double anorm = DenseLinalg.OneNorm(n, n, a, n);
         if (IsLowerTriangular(a, n) || IsUpperTriangular(a, n))
         {
-            bool lower = IsLowerTriangular(a, n);
+            bool lower = IsLowerTriangular(a, n) && !(diagonalAsUpper && IsUpperTriangular(a, n));
             bool zeroDiagonal = HasZeroDiagonal(a, n);
             // R2025b's triangular solve judges by its diagonal alone: RCOND is the smallest
             // magnitude over the largest (measured: [1 1; 0 1e-17] says 1e-17 where the true

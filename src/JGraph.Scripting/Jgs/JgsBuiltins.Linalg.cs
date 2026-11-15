@@ -43,6 +43,11 @@ internal static partial class JgsBuiltins
                 {
                     WarnSquareCondition(host, SquareCondition.Singular, 0);
                     int order = square.GetLength(0);
+                    if (dialect.IsMatlab && SingularComplexInverse(square) is { } patterned)
+                    {
+                        return patterned; // open item 341, ADR 0377
+                    }
+
                     return FromColumnMajorRect(Enumerable.Repeat(double.PositiveInfinity, order * order).ToArray(), order, order);
                 }
 

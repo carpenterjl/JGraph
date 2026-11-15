@@ -60,11 +60,19 @@ internal static partial class JgsBuiltins
         Define("uminus", (args, line, col) =>
         {
             Arity("uminus", args, 1, line, col);
-
             // -S of a sparse matrix is sparse, as the unary operator answers it (0 - S is not; ADR 0374).
-            return args[0].Type == JgsType.Sparse
-                ? SparseNegated(args[0])
-                : interpreter.ApplyOperator(TokenType.Minus, JgsValue.Number(0), args[0], line, col);
+            if (args[0].Type == JgsType.Sparse)
+            {
+                return SparseNegated(args[0]);
+            }
+
+            if (interpreter.Dialect.IsMatlab && Interpreter.RefusesUnarySign(args[0]))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:math:mustBeNumericCharOrLogical",
+                    "Invalid data type. Argument must be numeric, char, or logical."); // open item 341, ADR 0377
+            }
+
+            return interpreter.ApplyOperator(TokenType.Minus, JgsValue.Number(0), args[0], line, col);
         });
 
         Define("uplus", (args, line, col) =>
@@ -77,7 +85,11 @@ internal static partial class JgsBuiltins
                 return args[0].IsLogicalSparse ? JgsValue.Sparse(args[0].AsSparse) : args[0];
             }
 
-            return interpreter.ApplyOperator(TokenType.Plus, JgsValue.Number(0), args[0], line, col);
+            // MATLAB's uplus is the + operator's, which refuses a string rather than reading its
+            // codes (open item 341, ADR 0377); JGS keeps 0 + x.
+            return interpreter.Dialect.IsMatlab
+                ? interpreter.ApplyUplus(args[0], line, col)
+                : interpreter.ApplyOperator(TokenType.Plus, JgsValue.Number(0), args[0], line, col);
         });
 
         // xor has no operator to defer to; it is the one member of the family defined here.

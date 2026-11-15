@@ -167,6 +167,54 @@ public static class SpecialFunctions
     }
 
     /// <summary>
+    /// ψ(x) as MATLAB code's <c>psi</c> computes it (open item 341, ADR 0377): the walk to x ≥ 10 of
+    /// <see cref="Digamma"/>, its steps summed in order, then seven terms of the asymptotic series
+    /// summed smallest power first. <see cref="Digamma"/>'s five terms left ψ(1) wrong in the 14th
+    /// digit; this agrees with R2025b to the bit at 1, 2, 3, 10, 100, 1e-3 and 1e5 (lane 7D's
+    /// psi probe) and is within a few ulps of the true value elsewhere, R2025b's included.
+    /// </summary>
+    public static double DigammaSevenTerms(double x)
+    {
+        if (double.IsNaN(x))
+        {
+            return double.NaN;
+        }
+
+        if (x <= 0 && x == Math.Floor(x))
+        {
+            return double.PositiveInfinity;
+        }
+
+        if (x < 0)
+        {
+            return DigammaSevenTerms(1.0 - x) - (Math.PI / Math.Tan(Math.PI * x));
+        }
+
+        double steps = 0;
+        while (x < 10)
+        {
+            steps += 1.0 / x;
+            x += 1.0;
+        }
+
+        // B₂ₖ/(2k) for k = 1..7, each formed as the Bernoulli number over 2k.
+        ReadOnlySpan<double> coefficients =
+        [
+            (1.0 / 6) / 2, (-1.0 / 30) / 4, (1.0 / 42) / 6, (-1.0 / 30) / 8, (5.0 / 66) / 10, (-691.0 / 2730) / 12, (7.0 / 6) / 14,
+        ];
+        double inverseSquare = 1.0 / (x * x);
+        double tail = 0;
+        double power = inverseSquare;
+        foreach (double coefficient in coefficients)
+        {
+            tail += coefficient * power;
+            power *= inverseSquare;
+        }
+
+        return Math.Log(x) - (0.5 / x) - tail - steps;
+    }
+
+    /// <summary>
     /// ψ⁽ᵏ⁾(x), the k-th derivative of the digamma function. k = 0 is <see cref="Digamma"/>; higher
     /// orders go through the Hurwitz zeta identity ψ⁽ᵏ⁾(x) = (-1)^(k+1)·k!·ζ(k+1, x).
     /// </summary>
