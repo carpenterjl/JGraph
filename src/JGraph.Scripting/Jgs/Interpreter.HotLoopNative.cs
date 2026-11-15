@@ -156,18 +156,21 @@ internal sealed partial class Interpreter
             typeof(CancellationToken).GetProperty(nameof(CancellationToken.IsCancellationRequested))!.GetGetMethod()!;
 
         private static readonly MethodInfo Pow = typeof(JGraph.Numerics.PackedMath).GetMethod(nameof(JGraph.Numerics.PackedMath.Power), [typeof(double), typeof(double)])!;
-        private static readonly MethodInfo Min = typeof(Math).GetMethod(nameof(Math.Min), [typeof(double), typeof(double)])!;
-        private static readonly MethodInfo Max = typeof(Math).GetMethod(nameof(Math.Max), [typeof(double), typeof(double)])!;
+        // MATLAB's min/max/mod/rem of two doubles, as the walk answers them (NaN left out, infinite divisors; ADR 0379).
+        private static readonly MethodInfo Min =
+            typeof(JgsBuiltins).GetMethod(nameof(JgsBuiltins.MatlabMin2), BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)!;
+        private static readonly MethodInfo Max =
+            typeof(JgsBuiltins).GetMethod(nameof(JgsBuiltins.MatlabMax2), BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)!;
         private static readonly MethodInfo Atan2 = typeof(Math).GetMethod(nameof(Math.Atan2), [typeof(double), typeof(double)])!;
 
         private static readonly MethodInfo PowerStaysReal =
             typeof(JgsBuiltins).GetMethod(nameof(JgsBuiltins.PowerStaysReal), BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)!;
 
         private static readonly MethodInfo ScalarMod =
-            typeof(JgsBuiltins).GetMethod(nameof(JgsBuiltins.ScalarMod), BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)!;
+            typeof(JgsBuiltins).GetMethod(nameof(JgsBuiltins.MatlabMod), BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)!;
 
         private static readonly MethodInfo ScalarRem =
-            typeof(JgsBuiltins).GetMethod(nameof(JgsBuiltins.ScalarRem), BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)!;
+            typeof(JgsBuiltins).GetMethod(nameof(JgsBuiltins.MatlabRem), BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)!;
 
         private static readonly MethodInfo RangeCount =
             typeof(Interpreter).GetMethod(nameof(NativeRangeCount), BindingFlags.Static | BindingFlags.NonPublic)!;
@@ -861,6 +864,18 @@ internal sealed partial class Interpreter
                     case LoopOp.Walk:
                         Exit(op.Arg);
                         break;
+
+                    case LoopOp.GuardNaN:
+                    {
+                        // x == x is false only for NaN, which leaves for the walk (ADR 0379).
+                        Label number = il.DefineLabel();
+                        Load(op.A);
+                        Load(op.A);
+                        il.Emit(OpCodes.Beq, number);
+                        Exit(op.Arg);
+                        il.MarkLabel(number);
+                        break;
+                    }
 
                     default:
                         throw new InvalidOperationException($"The loop emitter has no {op.Code}.");

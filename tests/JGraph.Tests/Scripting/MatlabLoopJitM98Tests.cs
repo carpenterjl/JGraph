@@ -145,12 +145,42 @@ public class MatlabLoopJitM98Tests : IDisposable
         """, expectCompiled: true);
 
     [Fact]
-    public void NanIsTruthyInACompiledCondition() => AssertParity("""
+    public void NanIsRefusedInACompiledCondition() => AssertParity("""
         hits = 0;
         for k = 1:5
             v = 0/0;
             if v
                 hits = hits + 1;
+            end
+        end
+        fprintf('%.17g\n', hits);
+        """, expectSuccess: false, expectCompiled: true); // R2025b's MATLAB:nologicalnan on both roads (ADR 0379)
+
+    [Fact]
+    public void NanIsRefusedUnderACompiledNotAndShortCircuit() => AssertParity("""
+        hits = 0;
+        for k = 1:5
+            v = 0;
+            if k == 3
+                v = 0/0;
+            end
+            if ~v && k > 0
+                hits = hits + 1;
+            end
+        end
+        fprintf('%.17g\n', hits);
+        """, expectSuccess: false, expectCompiled: true); // the ~ of a NaN bails to the walk, which refuses it (ADR 0379)
+
+    [Fact]
+    public void ANumberThatIsNotNaNStillReadsAsACompiledCondition() => AssertParity("""
+        hits = 0;
+        for k = 1:5
+            v = k - 3;
+            if v
+                hits = hits + 1;
+            end
+            while v > 10 || v
+                v = 0;
             end
         end
         fprintf('%.17g\n', hits);

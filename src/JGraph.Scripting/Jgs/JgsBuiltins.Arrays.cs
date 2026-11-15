@@ -57,7 +57,7 @@ internal static partial class JgsBuiltins
             }
 
             // A categorical is walked one categorical element at a time, not code by code (open item 122).
-            inputs.Add(args[i].IsCategorical ? JgsCategorical.Elements(args[i]) : ElementsOf("arrayfun", args[i]));
+            inputs.Add(args[i].IsCategorical ? JgsCategorical.Elements(args[i]) : ClassedElementsOf(args[i]));
             i++;
         }
 
@@ -168,6 +168,11 @@ internal static partial class JgsBuiltins
                     answers[o] = UniformSparseAnswer("arrayfun", answers[o], k, line, col); // ADR 0374
                 }
 
+                if (uniform && k > 0)
+                {
+                    CheckUniformClass("arrayfun", collected[o][0], answers[o], k + 1, o + 1, line, col); // ADR 0379
+                }
+
                 if (uniform && !IsUniformScalar(answers[o]) && !(JgsRunningDialect.ThreadIsMatlab && IsGatheredKind(answers[o])))
                 {
                     throw JgsRunningDialect.ThreadIsMatlab
@@ -199,8 +204,8 @@ internal static partial class JgsBuiltins
                     ? JgsMatrix.Like(args[1], objects)
                     : UniformComplex(collected[o], [1, length]) is { } complex
                         ? JgsMatrix.Like(args[1], complex)
-                        : UniformTextOrCategorical(collected[o], args[1], line, col)
-                            ?? JgsMatrix.Like(args[1], JgsMatrix.FromElements(collected[o], 1, length))
+                        : UniformClassOf(UniformTextOrCategorical(collected[o], args[1], line, col)
+                            ?? JgsMatrix.Like(args[1], JgsMatrix.FromElements(collected[o], 1, length)), collected[o])
                 : JgsMatrix.Like(args[1], JgsValue.Cell(collected[o]));
             if (args[1].Type == JgsType.String && !args[1].IsStringArray && outputs[o].Type is JgsType.Cell or JgsType.Array)
             {

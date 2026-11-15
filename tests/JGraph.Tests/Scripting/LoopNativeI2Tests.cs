@@ -145,11 +145,22 @@ public class LoopNativeI2Tests : IDisposable
             if x >= 3, h = h + 1000; end
             if x == 7, h = h + 10000; end
             if x ~= 7, h = h + 100000; end
-            if x, q = q + 1; end
-            if ~x, q = q + 10; end
+            % a NaN condition (if x, if ~x) is MATLAB:nologicalnan on every road since ADR 0379
+            if x == x, q = q + 1; end
+            if ~(x == x), q = q + 10; end
             q = q + (x < 3) + (x ~= 7) * 2 + ~(x > 3) * 4;
         end
         fprintf('%d %d\n', h, q);
+        """);
+
+    [Fact]
+    public Task ANaNConditionLateInTheLoopIsRefusedOnEveryRoad() => AssertRoadsAgreeAsync("""
+        q = 0;
+        for k = 1:12
+            x = k;
+            if k == 12, x = NaN; end
+            if x, q = q + 1; end
+        end
         """);
 
     [Fact]

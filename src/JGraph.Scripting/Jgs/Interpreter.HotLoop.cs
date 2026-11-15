@@ -517,22 +517,22 @@ internal sealed partial class Interpreter
                     }
 
                     case LoopOp.Mod:
-                        TAccess.At(regs, op.Dest) = JgsBuiltins.ScalarMod(TAccess.At(regs, op.A), TAccess.At(regs, op.B));
+                        TAccess.At(regs, op.Dest) = JgsBuiltins.MatlabMod(TAccess.At(regs, op.A), TAccess.At(regs, op.B)); // ADR 0379
                         ip++;
                         break;
 
                     case LoopOp.Rem:
-                        TAccess.At(regs, op.Dest) = JgsBuiltins.ScalarRem(TAccess.At(regs, op.A), TAccess.At(regs, op.B));
+                        TAccess.At(regs, op.Dest) = JgsBuiltins.MatlabRem(TAccess.At(regs, op.A), TAccess.At(regs, op.B));
                         ip++;
                         break;
 
                     case LoopOp.Min2:
-                        TAccess.At(regs, op.Dest) = Math.Min(TAccess.At(regs, op.A), TAccess.At(regs, op.B));
+                        TAccess.At(regs, op.Dest) = JgsBuiltins.MatlabMin2(TAccess.At(regs, op.A), TAccess.At(regs, op.B));
                         ip++;
                         break;
 
                     case LoopOp.Max2:
-                        TAccess.At(regs, op.Dest) = Math.Max(TAccess.At(regs, op.A), TAccess.At(regs, op.B));
+                        TAccess.At(regs, op.Dest) = JgsBuiltins.MatlabMax2(TAccess.At(regs, op.A), TAccess.At(regs, op.B));
                         ip++;
                         break;
 
@@ -580,6 +580,24 @@ internal sealed partial class Interpreter
                         TAccess.At(regs, op.Dest) = TAccess.At(regs, op.A) != 0 ? 1 : 0;
                         ip++;
                         break;
+
+                    case LoopOp.GuardNaN:
+                    {
+                        if (!double.IsNaN(TAccess.At(regs, op.A)))
+                        {
+                            ip++;
+                            break;
+                        }
+
+                        ip = HotLoopBail(program, op.Arg, env, regs, written, logical, vectors,
+                                         ref steps, ref regsAuthoritative, out Completion? leftGuard);
+                        if (leftGuard is { } guardDone)
+                        {
+                            return guardDone;
+                        }
+
+                        break;
+                    }
 
                     case LoopOp.And:
                         TAccess.At(regs, op.Dest) = TAccess.At(regs, op.A) != 0 && TAccess.At(regs, op.B) != 0 ? 1 : 0;
@@ -1030,7 +1048,7 @@ internal sealed partial class Interpreter
             case LoopBailKind.Condition:
             {
                 // Conditions assign nothing, so the environment cannot move: evaluate, branch, resume.
-                bool truth = Evaluate(bail.Expression!, env).IsTruthy;
+                bool truth = ConditionTruth(Evaluate(bail.Expression!, env), bail.Expression!);
                 steps = _steps;
                 regsAuthoritative = true;
                 return truth ? bail.OnTrue : bail.OnFalse;
@@ -1280,7 +1298,7 @@ internal sealed partial class Interpreter
                 }
 
                 completion = Completion.Normal;
-                while (Evaluate(frame.While.Condition, env).IsTruthy)
+                while (ConditionTruth(Evaluate(frame.While.Condition, env), frame.While.Condition))
                 {
                     Tick();
                     Completion one = ExecuteBlock(frame.While.Body, env);

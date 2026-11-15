@@ -187,6 +187,10 @@ internal static class LoopProgramValidator
                     if (!Reg(op.Arg, bails)) return false;
                     break;
 
+                case LoopOp.GuardNaN:
+                    if (!Reg(op.A, registers) || !Reg(op.Arg, bails)) return false;
+                    break;
+
                 default:
                     return false; // an opcode the validator does not know is not proved
             }

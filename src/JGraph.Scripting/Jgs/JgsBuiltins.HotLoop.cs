@@ -55,10 +55,10 @@ internal static partial class JgsBuiltins
 
     /// <summary>
     /// Whether a two-argument call of <paramref name="name"/> on scalars is one of the compiled
-    /// binary opcodes. The opcodes bind: <c>mod</c> to <see cref="ScalarMod"/>, <c>rem</c> to
-    /// <see cref="ScalarRem"/>, <c>atan2</c> to <see cref="System.Math.Atan2"/>, and <c>min</c>/
-    /// <c>max</c> to <see cref="System.Math.Min(double, double)"/>/<see cref="System.Math.Max(double, double)"/> — for two scalars
-    /// the reduction wrapper hands straight to the inner fold, which is exactly that call.
+    /// binary opcodes. The opcodes bind: <c>mod</c> to <see cref="MatlabMod"/>, <c>rem</c> to
+    /// <see cref="MatlabRem"/>, <c>atan2</c> to <see cref="System.Math.Atan2"/>, and <c>min</c>/
+    /// <c>max</c> to <see cref="MatlabMin2"/>/<see cref="MatlabMax2"/> — the MATLAB walk's answers
+    /// for two scalars (a NaN left out, an infinite divisor; ADR 0379). A loop compiles in MATLAB code only.
     /// </summary>
     internal static bool IsHotLoopBinary(string name) =>
         name is "mod" or "rem" or "atan2" or "min" or "max";

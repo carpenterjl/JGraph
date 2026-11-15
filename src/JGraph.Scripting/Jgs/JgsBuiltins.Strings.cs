@@ -474,6 +474,11 @@ internal static partial class JgsBuiltins
                 }
 
                 collected[o][k] = JgsValue.Share(answers[o]);
+                if (uniform && k > 0)
+                {
+                    CheckUniformClass("cellfun", collected[o][0], collected[o][k], k + 1, o + 1, line, col); // ADR 0379
+                }
+
                 if (uniform)
                 {
                     // A cell, struct, handle, time apiece is R2025b's to collect or refuse (ADR 0371).
@@ -685,7 +690,7 @@ internal static partial class JgsBuiltins
             }
         }
 
-        return JgsMatrix.FromElements(values, rows, columns);
+        return UniformClassOf(JgsMatrix.FromElements(values, rows, columns), values); // an int8 apiece is int8 (ADR 0379)
     }
 
     // --- num2str ----------------------------------------------------------------------------------

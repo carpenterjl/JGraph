@@ -285,8 +285,8 @@ public class MatlabM81ComplexDomainTests : IDisposable
             ("x = reallog(-1);", "Reallog produced complex result."),
             ("x = realpow(-8, 0.5);", "Realpow produced complex result."),
             ("x = nthroot(-8, 2);", "no real even root"),
-            ("x = mod(1i, 2);", "complex"),
-            ("x = rem(1i, 2);", "complex"));
+            ("x = mod(1i, 2);", "Argument must be real."), // R2025b's MATLAB:math:mustBeReal (ADR 0379)
+            ("x = rem(1i, 2);", "Argument must be real."));
 
         ScriptRunResult result = await RunMatlab("a = nthroot(-8, 3);");
         Succeeded(result);

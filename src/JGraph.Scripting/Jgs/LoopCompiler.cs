@@ -302,7 +302,7 @@ internal sealed partial class LoopCompiler
         or LoopOp.ForHead or LoopOp.ForNext or LoopOp.ForStep or LoopOp.IterTick or LoopOp.Halt
         or LoopOp.PowG or LoopOp.Call1G or LoopOp.RangeCount or LoopOp.StepBlock
         or LoopOp.VLoad or LoopOp.VStore or LoopOp.VArithVV or LoopOp.VArithVS or LoopOp.VArithSV
-        or LoopOp.VNeg or LoopOp.VCall1 or LoopOp.Walk;
+        or LoopOp.VNeg or LoopOp.VCall1 or LoopOp.Walk or LoopOp.GuardNaN;
 
     /// <summary>Whether <c>Arg</c> is an op index (a jump target) rather than a bail index or nothing.</summary>
     internal static bool ArgIsOpIndex(LoopOp code) => code is LoopOp.Jump or LoopOp.JumpIfFalse or LoopOp.JumpIfTrue
@@ -773,6 +773,18 @@ internal sealed partial class LoopCompiler
         public int Id = -1;
     }
 
+    /// <summary>
+    /// A value about to be read as a logical: unless it is one already, a NaN in it bails to the walk,
+    /// which refuses it as R2025b does (ADR 0379).
+    /// </summary>
+    private void GuardNotNaN(int register, bool isLogical, BailScope bail)
+    {
+        if (!isLogical)
+        {
+            EmitOp(LoopOp.GuardNaN, a: register, arg: EnsureBail(bail));
+        }
+    }
+
     private int EmitOp(LoopOp code, int dest = 0, int a = 0, int b = 0, int arg = 0, int c = 0)
     {
         _ops.Add(new RegOp(code, (ushort)dest, (ushort)a, (ushort)b, arg, (ushort)c));
@@ -1180,7 +1192,8 @@ internal sealed partial class LoopCompiler
         }
         else
         {
-            (int value, _) = EmitExpr(condition, scope);
+            (int value, bool isLogical) = EmitExpr(condition, scope);
+            GuardNotNaN(value, isLogical, scope);
             EmitJump(LoopOp.JumpIfFalse, onFalse, a: value);
         }
 
@@ -1282,7 +1295,8 @@ internal sealed partial class LoopCompiler
 
             case UnaryExpr { Op: TokenType.Bang } not:
             {
-                (int operand, _) = EmitExpr(not.Operand, bail);
+                (int operand, bool operandLogical) = EmitExpr(not.Operand, bail);
+                GuardNotNaN(operand, operandLogical, bail);
                 int dest = AllocReg();
                 EmitOp(LoopOp.Not, dest: dest, a: operand);
                 return (dest, true);
@@ -1317,8 +1331,14 @@ internal sealed partial class LoopCompiler
         (Expr leftExpr, Expr rightExpr) = binary.Op is TokenType.Backslash or TokenType.DotBackslash
             ? (binary.Right, binary.Left)
             : (binary.Left, binary.Right);
-        (int left, _) = EmitExpr(leftExpr, bail);
-        (int right, _) = EmitExpr(rightExpr, bail);
+        (int left, bool leftLogical) = EmitExpr(leftExpr, bail);
+        (int right, bool rightLogical) = EmitExpr(rightExpr, bail);
+        if (binary.Op is TokenType.Amp or TokenType.Pipe)
+        {
+            GuardNotNaN(left, leftLogical, bail);
+            GuardNotNaN(right, rightLogical, bail);
+        }
+
         int dest = AllocReg();
         switch (binary.Op)
         {
@@ -1371,11 +1391,13 @@ internal sealed partial class LoopCompiler
         int dest = AllocReg();
         int shortcut = NewLabel();
         int end = NewLabel();
-        (int left, _) = EmitExpr(logical.Left, bail);
+        (int left, bool leftLogical) = EmitExpr(logical.Left, bail);
+        GuardNotNaN(left, leftLogical, bail);
         if (logical.Op == TokenType.AmpAmp)
         {
             EmitJump(LoopOp.JumpIfFalse, shortcut, a: left);
-            (int right, _) = EmitExpr(logical.Right, bail);
+            (int right, bool rightLogical) = EmitExpr(logical.Right, bail);
+            GuardNotNaN(right, rightLogical, bail);
             EmitOp(LoopOp.ToBool, dest: dest, a: right);
             EmitJump(LoopOp.Jump, end);
             MarkLabel(shortcut);
@@ -1384,7 +1406,8 @@ internal sealed partial class LoopCompiler
         else
         {
             EmitJump(LoopOp.JumpIfTrue, shortcut, a: left);
-            (int right, _) = EmitExpr(logical.Right, bail);
+            (int right, bool rightLogical) = EmitExpr(logical.Right, bail);
+            GuardNotNaN(right, rightLogical, bail);
             EmitOp(LoopOp.ToBool, dest: dest, a: right);
             EmitJump(LoopOp.Jump, end);
             MarkLabel(shortcut);

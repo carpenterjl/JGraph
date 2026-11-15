@@ -1841,7 +1841,7 @@ internal sealed partial class Interpreter
                 return Completion.Normal;
 
             case IfStmt ifStmt:
-                if (EvaluateOne(ifStmt.Condition, env, ListUse.Condition).IsTruthy)
+                if (ConditionTruth(EvaluateOne(ifStmt.Condition, env, ListUse.Condition), ifStmt.Condition))
                 {
                     return ExecuteBlock(ifStmt.Then, BlockScope(env));
                 }
@@ -3370,7 +3370,7 @@ internal sealed partial class Interpreter
             return compiled;
         }
 
-        while (EvaluateOne(statement.Condition, env, ListUse.Condition).IsTruthy)
+        while (ConditionTruth(EvaluateOne(statement.Condition, env, ListUse.Condition), statement.Condition))
         {
             IterationTick();
             Completion completion = ExecuteBlock(statement.Body, BlockScope(env));
@@ -3962,6 +3962,11 @@ internal sealed partial class Interpreter
                 "Inputs must be numeric, char, or logical."); // open item 115
         }
 
+        if (Dialect.IsMatlab)
+        {
+            RefuseColonClassMix(range, startValue, stepValue, stopValue, range.Step is not null); // ADR 0379
+        }
+
         if (Dialect.IsMatlab && (IsColonText(startValue) || IsColonText(stopValue) || IsColonText(stepValue)))
         {
             return CharRange(range, startValue, stepValue, stopValue); // 'a':'c' (open item 320)
@@ -3971,6 +3976,11 @@ internal sealed partial class Interpreter
         double start = RangeBoundValue(startValue, range.Start, "start", ref carried);
         double step = RangeBoundValue(stepValue, range.Step ?? range.Start, "step", ref carried);
         double stop = RangeBoundValue(stopValue, range.Stop, "stop", ref carried);
+        if (Dialect.IsMatlab && carried == JgsNumericClass.Double)
+        {
+            carried = ColonEmptyOperandClass(startValue, stepValue, stopValue); // int8([]):3 is an int8 1-by-0 (ADR 0379)
+        }
+
         if (time is not null)
         {
             if (!startValue.IsTime) start *= JgsTime.MsPerDay;
@@ -5127,6 +5137,11 @@ internal sealed partial class Interpreter
         {
             // MATLAB's ~ is element-wise over arrays (~mask negates the mask, M43); JGS keeps
             // its scalar truthiness reading of !arr.
+            if (Dialect.IsMatlab && MatlabNotOperand(operand, unary.Line, unary.Column) is { } notEmpty)
+            {
+                return notEmpty; // a NaN or complex refused, an empty's logical empty (ADR 0379)
+            }
+
             if (Dialect.IsMatlab && operand.Type == JgsType.Array)
             {
                 return JgsBuiltins.MapToBool("~", operand, static x => x == 0, unary.Line, unary.Column,
@@ -5197,11 +5212,15 @@ internal sealed partial class Interpreter
         JgsValue left = EvaluateOne(logical.Left, env, ListUse.Condition);
         if (logical.Op == TokenType.AmpAmp)
         {
-            return left.IsTruthy ? JgsValue.Bool(EvaluateOne(logical.Right, env, ListUse.Condition).IsTruthy) : JgsValue.False;
+            return ShortCircuitTruth(left, logical.Left)
+                ? JgsValue.Bool(ShortCircuitTruth(EvaluateOne(logical.Right, env, ListUse.Condition), logical.Right))
+                : JgsValue.False;
         }
 
         // ||
-        return left.IsTruthy ? JgsValue.True : JgsValue.Bool(EvaluateOne(logical.Right, env, ListUse.Condition).IsTruthy);
+        return ShortCircuitTruth(left, logical.Left)
+            ? JgsValue.True
+            : JgsValue.Bool(ShortCircuitTruth(EvaluateOne(logical.Right, env, ListUse.Condition), logical.Right));
     }
 
     private JgsValue EvaluateBinary(BinaryExpr binary, JgsEnvironment env) =>
@@ -5639,6 +5658,13 @@ internal sealed partial class Interpreter
         if (left.Type == JgsType.Sparse || right.Type == JgsType.Sparse)
         {
             return JgsBuiltins.SparseOperator(op, left, right, at, (o, l, r) => ApplyBinary(o, l, r, at));
+        }
+
+        // A NaN, a complex or a non-numeric operand of & or |, an integer compared with a complex
+        // number, and an empty operand's logical empty (open items 340, 341; ADR 0379).
+        if (Dialect.IsMatlab && IsRelationalOrLogical(op) && MatlabLogicalOperands(op, left, right, at) is { } logicalEmpty)
+        {
+            return logicalEmpty;
         }
 
         // An integer class combines only with its own class or a scalar double under every arithmetic

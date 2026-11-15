@@ -287,6 +287,13 @@ internal enum LoopOp : byte
     /// <c>Arg</c> unconditionally, then resume.
     /// </summary>
     Walk,
+
+    /// <summary>
+    /// ADR 0379: bail <c>Arg</c> when regs[A] is NaN, else fall through — a NaN that would be read as
+    /// a logical (a condition, an operand of <c>~</c>, <c>&amp;</c>, <c>|</c>, <c>&amp;&amp;</c>,
+    /// <c>||</c>) is handed to the walk, which refuses it as R2025b does (<c>MATLAB:nologicalnan</c>).
+    /// </summary>
+    GuardNaN,
 }
 
 /// <summary>

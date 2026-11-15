@@ -169,7 +169,7 @@ public class MatlabReductionOptionTests : IDisposable
         try
             max([1 2 3], 'linear');
         catch err
-            ok = ~isempty(strfind(err.message, 'reducing form'));
+            ok = strcmp(err.identifier, 'MATLAB:max:secondInputFlag'); % R2025b's refusal (ADR 0379)
         end
         assert(ok == 1);
         """);

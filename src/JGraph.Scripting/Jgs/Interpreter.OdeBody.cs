@@ -229,11 +229,11 @@ internal sealed class CompiledBody
 
                 case BodyOp.Mod:
                     sp--;
-                    stack[sp - 1] = JgsBuiltins.ScalarMod(stack[sp - 1], stack[sp]);
+                    stack[sp - 1] = JgsBuiltins.MatlabMod(stack[sp - 1], stack[sp]); // ADR 0379
                     break;
                 case BodyOp.Rem:
                     sp--;
-                    stack[sp - 1] = JgsBuiltins.ScalarRem(stack[sp - 1], stack[sp]);
+                    stack[sp - 1] = JgsBuiltins.MatlabRem(stack[sp - 1], stack[sp]);
                     break;
                 case BodyOp.Atan2:
                     sp--;

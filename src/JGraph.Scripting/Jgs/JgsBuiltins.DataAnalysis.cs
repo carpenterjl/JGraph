@@ -183,7 +183,13 @@ internal static partial class JgsBuiltins
         JgsEnvironment env, IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         ArityRange("bounds", args, 1, 3, line, col);
-        var forwarded = new List<JgsValue> { args[0], JgsValue.Array([]) };
+        // bounds(X) alone asks the reducing min(X): min(X, []) is the two-array form in R2025b (ADR 0379).
+        var forwarded = new List<JgsValue> { args[0] };
+        if (args.Count > 1)
+        {
+            forwarded.Add(JgsValue.Array([]));
+        }
+
         for (int i = 1; i < args.Count; i++)
         {
             forwarded.Add(args[i]);

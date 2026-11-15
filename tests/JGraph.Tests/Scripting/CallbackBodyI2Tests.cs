@@ -173,7 +173,7 @@ public class CallbackBodyI2Tests : IDisposable
     public void ArrayfunLeavesEverythingElseToTheWalk()
     {
         Run run = AssertParity(Hex + """
-            disp(h(arrayfun(@(a) a^2, int8([1 2 3]))));
+            disp(h(double(arrayfun(@(a) a^2, int8([1 2 3]))))); % an int8 row since ADR 0379; num2hex takes floats only
             disp(h(arrayfun(@(a) a^2, [true false true])));
             disp(h(arrayfun(@(a) a^2, single([1 2]))));
             disp(h(arrayfun(@(a, b) a + b, [1 2], [3 4])));

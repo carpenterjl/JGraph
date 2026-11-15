@@ -2946,6 +2946,7 @@ internal static partial class JgsBuiltins
         RegisterCategoricalBuiltins(env, text => host.print(text)); // over the verbs it teaches (open item 115)
         WrapSparseVerbs(env); // real, imag, abs, conj, nonzeros and nzmax of a sparse matrix (open item 298)
         WrapComplexFlagVerbs(env, dialect); // the zero-imaginary flag's verbs and ADR 0365's refusals (open items 330, 333)
+        WrapMixedClassVerbs(env, dialect); // max/min/rem/mod/bit verbs/idivide's class rules, logical of a NaN (open items 340, 341; ADR 0379)
         WrapSparseFunctions(env); // the elementwise family and the class conversions over a sparse argument (open item 331)
         RefuseGroupsAtAxesVerbs(env); // last, round whatever each axes verb ended up as (open item 168)
         RefuseDeadTargetsAtAxesVerbs(env); // and a deleted object first (open item 313)

@@ -20,6 +20,9 @@ internal static partial class JgsBuiltins
         "eq", "ne", "lt", "le", "gt", "ge", "xor", "colon",
     ];
 
+    /// <summary>The verb each MATLAB-dialect <c>and</c>/<c>or</c>/<c>not</c> wrapper stands over (ADR 0379).</summary>
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<BuiltinFunction, BuiltinFunction> McLogicalVerbOriginals = new();
+
     /// <summary>
     /// Declares the operator function forms into <paramref name="env"/>, evaluated by
     /// <paramref name="interpreter"/>.
@@ -95,6 +98,13 @@ internal static partial class JgsBuiltins
         // xor has no operator to defer to; it is the one member of the family defined here.
         Define("xor", (args, line, col) =>
         {
+            // MATLAB code: the operators' own refusals, expansion and logical empties (open items 340, 341; ADR 0379).
+            if (JgsRunningDialect.ThreadIsMatlab && args.Count == 2 && args[0].Type != JgsType.Sparse && args[1].Type != JgsType.Sparse
+                && args[0].Type != JgsType.External && args[1].Type != JgsType.External)
+            {
+                return interpreter.ApplyMatlabXor(args[0], args[1], line, col);
+            }
+
             // Of sparse matrices, a logical sparse matrix (open item 331, R2025b's l_xor); a sparse
             // matrix beside a dense value reads full and answers dense (b_xor_f, ADR 0374).
             if (args.Count == 2 && (args[0].Type == JgsType.Sparse || args[1].Type == JgsType.Sparse))
@@ -106,6 +116,31 @@ internal static partial class JgsBuiltins
 
             return Logical2("xor", args, line, col, static (a, b) => a ^ b);
         });
+
+        // and, or and not are the operators & | ~ in MATLAB code, refusals and logical empties included
+        // (open items 340, 341; ADR 0379); JGS code keeps the verbs CreateGlobals declared.
+        foreach ((string name, TokenType op) in new[] { ("and", TokenType.Amp), ("or", TokenType.Pipe), ("not", TokenType.Bang) })
+        {
+            if (!env.Builtins.TryGet(name, out JgsValue declared) || declared.AsCallable is not BuiltinFunction found)
+            {
+                continue;
+            }
+
+            // A second interpreter over the same globals wraps the verb CreateGlobals declared, not this wrapper.
+            BuiltinFunction jgs = McLogicalVerbOriginals.TryGetValue(found, out BuiltinFunction? original) ? original : found;
+            var wrapper = new BuiltinFunction(name, (args, line, col) =>
+                !JgsRunningDialect.ThreadIsMatlab || args.Any(static a => a.Type == JgsType.External) ? jgs.Call(args, line, col)
+                : op == TokenType.Bang && args.Count == 1 ? interpreter.ApplyMatlabNot(args[0], line, col)
+                : op != TokenType.Bang && args.Count == 2 ? interpreter.ApplyOperator(op, args[0], args[1], line, col)
+                : jgs.Call(args, line, col))
+            {
+                KeepsStringArguments = jgs.KeepsStringArguments,
+                BindsAnsAsStatement = jgs.BindsAnsAsStatement,
+                AutoCallsBare = jgs.AutoCallsBare,
+            };
+            McLogicalVerbOriginals.AddOrUpdate(wrapper, jgs);
+            env.Builtins.Register(name, JgsValue.Function(wrapper));
+        }
 
         Define("colon", (args, line, col) =>
         {
