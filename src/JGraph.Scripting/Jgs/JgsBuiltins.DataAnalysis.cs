@@ -1719,7 +1719,9 @@ internal static partial class JgsBuiltins
             // (0, 1) span EdgesFor spreads the count over. Scott, FD, sturges, sqrt, a width and
             // named limits keep EdgesFor as it is.
             (double low, double high, bool any) = PackedMath.FiniteRange(data);
-            edges = any ? Binning.CountedEdges(low, high, bins) : Binning.CountedEdges(0, 1, bins);
+            edges = any ? Binning.CountedEdges(low, high, bins)
+                : JgsRunningDialect.ThreadIsMatlab ? Binning.UnitEdges(bins) // R2025b's 0:n (open item 327, ADR 0372)
+                : Binning.CountedEdges(0, 1, bins);
         }
         else
         {

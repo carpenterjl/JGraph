@@ -951,6 +951,7 @@ internal static partial class JgsBuiltins
                     JG.Hold(true);
                     lifted |= pz.Any(z => double.IsFinite(z) && z != 0);
                     ColourPolygon(verb, patch, colour, p, polygons, line, col);
+                    MatlabPatchEdge(patch);
                     ApplyPatchOptions(verb, patch, options, line, col);
                     made.Add(patch);
                 }

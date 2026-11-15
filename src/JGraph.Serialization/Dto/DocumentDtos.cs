@@ -824,4 +824,10 @@ public sealed class LegendEntryDto
     public string? Label { get; set; }
 
     public bool Visible { get; set; } = true;
+
+    /// <summary>
+    /// The group the row stands for, by its index in the axes' groups (open item 326), or null for an
+    /// ordinary row and in every older document.
+    /// </summary>
+    public int? GroupIndex { get; set; }
 }

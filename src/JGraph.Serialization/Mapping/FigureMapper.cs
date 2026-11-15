@@ -698,6 +698,9 @@ internal static partial class FigureMapper
         // After the plots, the texts and the lights, so every member a group names is there.
         GroupsToModel(axes, dto.Groups);
 
+        // A row standing for a group finds it once the groups are back (open item 326).
+        ApplyLegendGroups(axes, dto.Legend);
+
         axes.ColorOrder = dto.ColorOrder is { Count: > 0 } order ? [.. order] : null;
         axes.PlotBoxAspect = new Vector3D(
             dto.PlotBoxAspect.X, dto.PlotBoxAspect.Y, dto.PlotBoxAspect.Z);
@@ -1061,11 +1064,13 @@ internal static partial class FigureMapper
                 continue;
             }
 
+            int group = entry.Group is { } standing ? IndexOfGroup(axes, standing) : -1;
             dto.Entries.Add(new LegendEntryDto
             {
                 PlotIndex = index,
                 Label = entry.Label,
                 Visible = entry.Visible,
+                GroupIndex = group >= 0 ? group : null, // a row standing for a group (open item 326)
             });
         }
 
@@ -1121,6 +1126,42 @@ internal static partial class FigureMapper
     /// index no longer resolves are skipped; the renderer's sync pass then supplies a default row for
     /// any plot left without one, which is also what happens for a document written before M26.
     /// </summary>
+    private static int IndexOfGroup(AxesModel axes, GraphicsGroupModel group)
+    {
+        for (int i = 0; i < axes.Groups.Count; i++)
+        {
+            if (ReferenceEquals(axes.Groups[i], group))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /// <summary>
+    /// Gives each legend row that stood for a group its group again, by the index the document
+    /// wrote; the rows were rebuilt in <see cref="ApplyLegendEntries"/> in the same order.
+    /// </summary>
+    private static void ApplyLegendGroups(AxesModel axes, LegendDto dto)
+    {
+        int row = 0;
+        foreach (LegendEntryDto entryDto in dto.Entries)
+        {
+            if (entryDto.PlotIndex < 0 || entryDto.PlotIndex >= axes.Plots.Count)
+            {
+                continue;
+            }
+
+            if (entryDto.GroupIndex is { } at && at >= 0 && at < axes.Groups.Count && row < axes.Legend.Entries.Count)
+            {
+                axes.Legend.Entries[row].Group = axes.Groups[at];
+            }
+
+            row++;
+        }
+    }
+
     private static void ApplyLegendEntries(AxesModel axes, LegendDto dto)
     {
         axes.Legend.Entries.Clear();

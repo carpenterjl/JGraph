@@ -1,0 +1,188 @@
+CHK|fig_findall_types|char[1 746]'figure uitoolbar uimenu uimenu uimenu uimenu uimenu uimenu uipushtool uitoggletool uitoggletool uitoggletool uitoggletool uipushtool uipushtool uipushtool uipushtool uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu'|exact
+CHK|fig_allchild_types|char[1 51]'uitoolbar uimenu uimenu uimenu uimenu uimenu uimenu'|exact
+CHK|fig_children_n|double[1 1] 0|exact
+CHK|fig_findobj_n|double[1 1] 1|exact
+CHK|fig_findall_tags|char[1 2001]' FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile Standard.OpenInspector Standard.EditPlot Annotation.InsertLegend Annotation.InsertColorbar DataManager.Linking Standard.PrintFigure Standard.SaveFigure Standard.FileOpen Standard.NewFigure figMenuHelpPatents figMenuHelpTerms figMenuHelpPrintingExport figMenuHelpAnnotatingGraphs figMenuHelpPlottingTools figMenuHelpGraphics figMenuToolsDS figMenuToolsBF figMenuToolsAlignDistrib figMenuToolsAlign figMenuToolsAlignDistributeSmart figMenuViewGrid figMenuSnapToGrid figMenuEditPinning figDataManagerBrushTools figLinked figMenuToolsPlotedit figMenuInsertLight figMenuInsertAxes figMenuInsertEllipse figMenuInsertRectangle figMenuInsertTextbox figMenuInsertArrow2 figMenuInsertTextArrow figMenuInsertArrow figMenuInsertLine figMenuInsertColorbar figMenuInsertLegend figMenuInsertTitle figMenuInsertZLabel figMenuInsertYLabel figMenuInsertXLabel figMenuObjectBrowser figMenuPropertyInspector figMenuPloteditToolbar figMenuCameraToolbar figMenuFigureToolbar figMenuEditColormap figMenuEditGCO figMenuEditGCA figMenuEditGCF figMenuEditCopyOptions figMenuEditCopyFigure figMenuEditSelectAll figMenuEditDelete figMenuEditClear figMenuEditPaste figMenuEditCopy figMenuEditCut figMenuEditRedo figMenuEditUndo printMenu figMenuFilePrintPreview figMenuFileExportSetup figMenuGenerateCode figMenuFileSaveAs figMenuFileSave figMenuFileClose figMenuOpen figMenuNewFigure figMenuToolsDistributeHRight figMenuToolsDistributeHCent figMenuToolsDistributeHLeft figMenuToolsDistributeHAdj figMenuToolsDistributeVBot figMenuToolsDistributeVMid figMenuToolsDistributeVTop figMenuToolsDistributeVAdj figMenuToolsAlignBottom figMenuToolsAlignMiddle figMenuToolsAlignTop figMenuToolsAlignRight figMenuToolsAlignCenter figMenuToolsAlignLeft figDataManagerCopy figDataManagerPaste figDataManagerNewVar figDataManagerRemoveUnbr figDataManagerRemove figDataManagerColor figDataManagerBrush figDataManagerReplaceConst figDataManagerReplaceNaN'|exact
+CHK|figax_findall_types|char[1 766]'figure uitoolbar uimenu uimenu uimenu uimenu uimenu uimenu annotationpane axes uipushtool uitoggletool uitoggletool uitoggletool uitoggletool uipushtool uipushtool uipushtool uipushtool uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu'|exact
+CHK|figax_allchild_types|char[1 71]'uitoolbar uimenu uimenu uimenu uimenu uimenu uimenu annotationpane axes'|exact
+CHK|figax_children_n|double[1 1] 1|exact
+CHK|figann_findall_types|char[1 776]'figure uitoolbar uimenu uimenu uimenu uimenu uimenu uimenu annotationpane axes uipushtool uitoggletool uitoggletool uitoggletool uitoggletool uipushtool uipushtool uipushtool uipushtool uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu lineshape uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu'|exact
+CHK|figann_allchild_types|char[1 71]'uitoolbar uimenu uimenu uimenu uimenu uimenu uimenu annotationpane axes'|exact
+CHK|fignone_findall_types|char[1 6]'figure'|exact
+CHK|fignomenu_findall_types|char[1 6]'figure'|exact
+CHK|fignotool_findall_n|double[1 1] 90|exact
+CHK|figtool_findall_types|char[1 123]'figure uitoolbar uipushtool uitoggletool uitoggletool uitoggletool uitoggletool uipushtool uipushtool uipushtool uipushtool'|exact
+CHK|figplot_findall_types|char[1 771]'figure uitoolbar uimenu uimenu uimenu uimenu uimenu uimenu annotationpane axes uipushtool uitoggletool uitoggletool uitoggletool uitoggletool uipushtool uipushtool uipushtool uipushtool uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu line uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu uimenu'|exact
+CHK|menu_n|double[1 1] 89|exact
+CHK|menu_top_tags|char[1 74]'figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile'|exact
+CHK|menu_top_text|char[1 38]'&Help &Tools &Insert &View &Edit &File'|exact
+CHK|tb_tag|char[1 13]'FigureToolBar'|exact
+CHK|tb_tools|char[1 188]'Standard.OpenInspector Standard.EditPlot Annotation.InsertLegend Annotation.InsertColorbar DataManager.Linking Standard.PrintFigure Standard.SaveFigure Standard.FileOpen Standard.NewFigure'|exact
+CHK|tb_tool_types|char[1 106]'uipushtool uitoggletool uitoggletool uitoggletool uitoggletool uipushtool uipushtool uipushtool uipushtool'|exact
+CHK|tb_vis|onoff on|exact
+CHK|tb_hv|onoff off|exact
+CHK|tb_children|double[1 2] [0 9]|exact
+CHK|tb_parent|logical[1 1] 1|exact
+CHK|tool_tip|char[1 11]'Save Figure'|exact
+CHK|tool_sep|onoff on|exact
+CHK|mf_text|char[1 5]'&File'|exact
+CHK|mf_parent|logical[1 1] 1|exact
+CHK|mf_children|double[1 2] [0 9]|exact
+CHK|mf_items|char[1 156]'printMenu figMenuFilePrintPreview figMenuFileExportSetup figMenuGenerateCode figMenuFileSaveAs figMenuFileSave figMenuFileClose figMenuOpen figMenuNewFigure'|exact
+CHK|save_acc|char[1 1]'S'|exact
+CHK|undo_enable|onoff off|exact
+CHK|nan_parent|char[1 19]'figDataManagerBrush'|exact
+CHK|ap_tag|char[1 13]'scribeOverlay'|exact
+CHK|findobj_menu_n|double[1 1] 0|exact
+CHK|groot_menu_n|double[1 1] 89|exact
+CHK|mf_vis|onoff off|exact
+CHK|mf_deleted_n|double[1 1] 79|exact
+CHK|mf_deleted_valid|logical[1 1] 0|exact
+CHK|mine_order|char[1 93]'mine FigureToolBar figMenuHelp figMenuTools figMenuInsert figMenuView figMenuEdit figMenuFile'|exact
+CHK|mine_children|double[1 1] 1|exact
+CHK|mb_none_after|double[1 2] [0 0]|exact
+CHK|mb_fig_after|double[1 2] [89 1]|exact
+CHK|tb_none_after|double[1 2] [89 0]|exact
+CHK|clf_keeps|double[1 2] [89 0]|exact
+CHK|delall|double[1 2] [0 0]|exact
+CHK|pane_fresh|double[1 1] 0|exact
+CHK|pane_axes|double[1 1] 1|exact
+CHK|pane_order|char[1 19]'annotationpane axes'|exact
+CHK|pane_after_delete|double[1 1] 1|exact
+CHK|pane_after_clf|double[1 1] 1|exact
+CHK|pane_order_uicontrol|char[1 29]'uicontrol annotationpane axes'|exact
+CHK|pane_order_two|char[1 34]'uicontrol annotationpane axes axes'|exact
+CHK|pane_children_n|double[1 1] 3|exact
+CHK|pane_plot|char[1 19]'annotationpane axes'|exact
+CHK|pane_uicontrol_only|char[1 9]'uicontrol'|exact
+CHK|pane_polar|char[1 24]'annotationpane polaraxes'|exact
+CHK|lg_tag|char[1 6]'legend'|exact
+CHK|cb_tag|char[1 8]'Colorbar'|exact
+CHK|lg_tag_new|char[1 6]'legend'|exact
+CHK|cb_tag_kept|char[1 3]'bar'|exact
+CHK|cb_tag_given|char[1 5]'given'|exact
+CHK|lg_tag_given|char[1 5]'given'|exact
+CHK|get_empty_type|double[0 0]|exact
+CHK|get_empty_tag|double[0 0]|exact
+CHK|get_empty_all|double[0 0]|exact
+CHK|get_empty_gobj|double[0 0]|exact
+CHK|get_empty_cell|cell[0 1]{}|exact
+CHK|get_empty_bogus|double[0 0]|exact
+CHK|get_empty_zeros|double[0 0]|exact
+CHK|get_empty_char|double[0 0]|exact
+CHK|lgg_string|cell[1 1]{char[1 5]'plain'}|exact
+CHK|lgg_n|double[1 1] 1|exact
+CHK|lgg_on_string|cell[1 2]{char[1 3]'grp';char[1 5]'plain'}|exact
+CHK|lgg_on_types|char[1 12]'hggroup line'|exact
+CHK|lgt_string|cell[1 1]{char[1 5]'plain'}|exact
+CHK|lgsave_string|cell[1 1]{char[1 3]'grp'}|exact
+CHK|lgsave_types|char[1 7]'hggroup'|exact
+CHK|stem_f|logical[1 1] 1|exact
+CHK|stem_fi|logical[1 1] 1|exact
+CHK|stem_FILL|logical[1 1] 1|exact
+CHK|stem_fil_r|double[1 3] [1 0 0]|exact
+CHK|stem_r_f|double[1 3] [1 0 0]|exact
+CHK|stem_y_f|double[1 1] 1|exact
+CHK|stem_filledx|MATLAB:checkpvpairs:UnrecognizedLineStyleParameter|exact
+CHK|stem_filledx_msg|Error in color/linetype argument.|exact
+CHK|stem_f_lw|double[1 1] 2|exact
+CHK|stem_f_name|MATLAB:checkpvpairs:EvenPropValuePairs|exact
+CHK|stem_f_name_msg|Incorrect number of inputs for property-value pairs.|exact
+CHK|plot_str|MATLAB:plot:InvalidFirstInput|exact
+CHK|plot_str_msg|Invalid data argument.|exact
+CHK|plot_str_ax|MATLAB:plot:InvalidFirstInput|exact
+CHK|plot_str_ax_msg|Invalid data argument.|exact
+CHK|plot_char|MATLAB:plot:InvalidFirstInput|exact
+CHK|plot_char_msg|Invalid first data argument.|exact
+CHK|plot_str_only|MATLAB:plot:InvalidFirstInput|exact
+CHK|plot_str_only_msg|Invalid data argument.|exact
+CHK|plot_strarr|MATLAB:plot:InvalidFirstInput|exact
+CHK|plot_strarr_msg|Invalid data argument.|exact
+CHK|semilogx_str|MATLAB:plot:InvalidFirstInput|exact
+CHK|semilogx_str_msg|Invalid data argument.|exact
+CHK|loglog_str|MATLAB:plot:InvalidFirstInput|exact
+CHK|loglog_str_msg|Invalid data argument.|exact
+CHK|plot3_str|MATLAB:plot3:InvalidFirstInput|exact
+CHK|plot3_str_msg|Invalid data argument.|exact
+CHK|plot_str_one|MATLAB:minrhs|exact
+CHK|plot_str_one_msg|Not enough input arguments.|exact
+CHK|plot_str_ax_one|MATLAB:minrhs|exact
+CHK|plot_str_ax_one_msg|Not enough input arguments.|exact
+CHK|plot_str_spec|double[1 1] 1|exact
+CHK|plot_str_pair|double[1 3] [1 0 0]|exact
+CHK|line_str|double[1 1] 1|exact
+CHK|xscale_heatmap|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|xscale_heatmap_msg|Using xscale with heatmap is not supported.|exact
+CHK|xscale_heatmap_get|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|xscale_heatmap_get_msg|Using xscale with heatmap is not supported.|exact
+CHK|yscale_heatmap|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|yscale_heatmap_msg|Using yscale with heatmap is not supported.|exact
+CHK|zscale_heatmap|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|zscale_heatmap_msg|Using zscale with heatmap is not supported.|exact
+CHK|xscale_gca_heatmap|MATLAB:Chart:UnsupportedConvenienceFunction|exact
+CHK|xscale_gca_heatmap_msg|Using xscale with heatmap is not supported.|exact
+CHK|xscale_panel|MATLAB:rulerFunctions:InvalidObject|exact
+CHK|xscale_panel_msg|Invalid or deleted graphics object.|exact
+CHK|tbl_num_y|double[1 1] 2|exact
+CHK|tbl_num_x|double[1 1] 1|exact
+CHK|tbl_num_ydata|double[1 3] [7 8 9]|exact
+CHK|tbl_numv_y|cell[2 1]{double[1 1] 2;double[1 1] 3}|exact
+CHK|tbl_numv_x|cell[2 1]{char[1 4]'Var1';char[1 4]'Var1'}|exact
+CHK|tbl_char_y|char[1 4]'Var2'|exact
+CHK|tbl_num_set|double[1 1] 3|exact
+CHK|tbl_name_set|char[1 4]'Var3'|exact
+CHK|tbl_logical_x|double[1 1] 1|exact
+CHK|tbl_s3_z|double[1 1] 3|exact
+CHK|pcd_mode0|char[1 6]'manual'|exact
+CHK|pcd_mode_auto|char[1 4]'auto'|exact
+CHK|pcd_cdata_after|double[3 1] [1;2;3]|exact
+CHK|pcd_fvc_after|double[3 1] [1;2;3]|exact
+CHK|pcd_mode_manual|char[1 6]'manual'|exact
+CHK|pcd_mode_set_cdata|char[1 6]'manual'|exact
+CHK|pcd_r_mode|char[1 4]'auto'|exact
+CHK|pcd_r_mode_auto|char[1 4]'auto'|exact
+CHK|pcd_s_mode_auto|cell[1 2]{char[1 4]'auto';double[1 1] 5}|exact
+CHK|pcd_ctor_auto|char[1 4]'auto'|exact
+CHK|pfc_flat|cell[1 2]{char[1 4]'flat';double[1 1 3] nd [0.12941176470588237 0.12941176470588237 0.12941176470588237]}|exact
+CHK|pfc_r|double[1 3] [1 0 0]|exact
+CHK|pfc_s_g|cell[1 2]{double[1 3] [0 1 0];double[1 1] 5}|exact
+CHK|pfc_v_none|cell[1 2]{char[1 4]'none';double[3 1] [1;2;3]}|exact
+CHK|fill_fc_flat|cell[1 2]{char[1 4]'flat';double[1 1 3] nd [0.12941176470588237 0.12941176470588237 0.12941176470588237]}|exact
+CHK|fill_fc_r|double[1 3] [1 0 0]|exact
+CHK|pec_b_r|cell[1 2]{double[1 3] [0 0 1];double[1 3] [1 0 0]}|exact
+CHK|pfc_set_flat|char[1 4]'flat'|exact
+CHK|pfc_set_back|double[1 3] [0 1 0]|exact
+CHK|pedge_color|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|pedge_width|double[1 1] 0.5|exact
+CHK|fedge_color|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|fedge_width|double[1 1] 0.5|exact
+CHK|pedge_nv_color|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|pedge_nv_width|double[1 1] 0.5|exact
+CHK|pedge_fv_color|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|f3edge_color|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|f3edge_width|double[1 1] 0.5|exact
+CHK|p3edge_color|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|pedge_given|cell[1 2]{double[1 3] [0 0 1];double[1 1] 2}|exact
+CHK|surf_mec|char[1 4]'auto'|exact
+CHK|surf_mfc|char[1 4]'none'|exact
+CHK|surf_mec_none|char[1 4]'none'|exact
+CHK|surf_mec_auto|char[1 4]'auto'|exact
+CHK|surf_mec_red|double[1 3] [1 0 0]|exact
+CHK|surf_mec_auto2|char[1 4]'auto'|exact
+CHK|surface_mec|char[1 4]'auto'|exact
+CHK|mesh_mec|char[1 4]'auto'|exact
+CHK|pcolor_mec|char[1 4]'auto'|exact
+CHK|patch_mec|cell[1 2]{char[1 4]'auto';char[1 4]'none'}|exact
+CHK|patch_mec_none|char[1 4]'none'|exact
+CHK|hist_empty3_edges|double[1 4] [0 1 2 3]|exact
+CHK|hist_empty3_values|double[1 3] [0 0 0]|exact
+CHK|hist_empty3_lim|double[1 2] [0 3]|exact
+CHK|hist_empty3_width|double[1 1] 1|exact
+CHK|hist_empty_edges|double[1 2] [0 1]|exact
+CHK|hist_empty1_edges|double[1 2] [0 1]|exact
+CHK|hist_empty5_edges|double[1 6] [0 1 2 3 4 5]|exact
+CHK|histcounts_empty3|double[1 4] [0 1 2 3]|exact
+CHK|histcounts_empty|double[1 2] [0 1]|exact
+CHK|histcounts_nan3|double[1 4] [0 1 2 3]|exact
+CHK|hist_empty3_lims_edges|double[1 4] [1 2 3 4]|exact
+CHK|hist_nan3_edges|double[1 4] [0 1 2 3]|exact

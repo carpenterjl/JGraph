@@ -181,17 +181,27 @@ internal static partial class JgsBuiltins
         {
             legend.ClearUnnamedRows();
         }
-        else if (legend.BeingDeleted)
+        else
         {
-            // A deleted legend's handle stays dead; the new one is a new object (R2025b), with an
-            // empty title of its own (open item 141): a replacing plot deletes a legend too.
-            JgsHandleRegistry.Retire(legend);
-            JgsLegendTitle.Forget(legend);
+            if (legend.BeingDeleted)
+            {
+                // A deleted legend's handle stays dead; the new one is a new object (R2025b), with an
+                // empty title of its own (open item 141): a replacing plot deletes a legend too.
+                JgsHandleRegistry.Retire(legend);
+                JgsLegendTitle.Forget(legend);
+            }
+
+            legend.Tag = "legend"; // a new legend's own Tag in R2025b (open item 326, ADR 0372)
         }
 
         legend.NamesUnnamed = true;
         legend.SyncEntries(LegendablePlots(axes), whenFixed: true);
         List<PlotObject> rows = [.. legend.Entries.Select(static e => e.Plot).OfType<PlotObject>()];
+        if (subset is null && axes.Groups.Count > 0)
+        {
+            rows = RowsLeavingGroupsOut(rows, ref groups);
+        }
+
         List<PlotObject> chosen = subset ?? (labels.Count > 0 ? [.. rows.Take(labels.Count)] : rows);
         if (labels.Count > chosen.Count)
         {
@@ -220,6 +230,41 @@ internal static partial class JgsBuiltins
         }
 
         legend.NameUnnamedRows();
+    }
+
+    /// <summary>
+    /// The rows a legend made of everything takes when the axes holds groups: R2025b lists only what
+    /// is in no group, and a group whose icon is <c>'on'</c> as one row standing for it, drawn with its
+    /// first member a legend can show (open item 326, ADR 0372; probe p6a). A member stands for its
+    /// outermost group.
+    /// </summary>
+    private static List<PlotObject> RowsLeavingGroupsOut(List<PlotObject> rows, ref Dictionary<PlotObject, JgsGraphicsGroup>? groups)
+    {
+        var kept = new List<PlotObject>(rows.Count);
+        var shown = new HashSet<JgsGraphicsGroup>(ReferenceEqualityComparer.Instance);
+        foreach (PlotObject plot in rows)
+        {
+            if (JgsGraphicsProperties.GroupOwning(plot) is not { } owner)
+            {
+                kept.Add(plot);
+                continue;
+            }
+
+            JgsGraphicsGroup outer = owner;
+            while (outer.Outer is { } further)
+            {
+                outer = further;
+            }
+
+            if (outer.Annotation.LegendInformation.IconDisplayStyle == LegendIconDisplay.On && shown.Add(outer)
+                && FirstLegendableMember(outer, rows) is { } swatch)
+            {
+                kept.Add(swatch);
+                (groups ??= new(ReferenceEqualityComparer.Instance))[swatch] = outer;
+            }
+        }
+
+        return kept;
     }
 
     /// <summary>The series a legend can show: what has a legend key and was not left out of legends.</summary>

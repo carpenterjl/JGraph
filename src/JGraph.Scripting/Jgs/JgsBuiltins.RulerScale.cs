@@ -1,5 +1,6 @@
 using JGraph.Api;
 using JGraph.Core.Model;
+using JGraph.Objects;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -74,6 +75,12 @@ internal static partial class JgsBuiltins
         {
             switch (target)
             {
+                // A heatmap is a chart, and so is the axes this build draws one in (open item 326,
+                // ADR 0372): gca is the heatmap in R2025b.
+                case HeatmapPlot:
+                case AxesModel held when held.Plots.Any(static p => p is HeatmapPlot):
+                    throw new JgsRuntimeException(line, col, "MATLAB:Chart:UnsupportedConvenienceFunction",
+                        $"Using {verb} with heatmap is not supported.");
                 case ColorbarModel:
                     throw new JgsRuntimeException(line, col, "MATLAB:rulerFunctions:ColorBar", $"{verb} is not supported for colorbars.");
                 case AxesModel { IsPolar: true }:
@@ -118,7 +125,7 @@ internal static partial class JgsBuiltins
     private static JgsRuntimeException TooManyScaleOutputs(int line, int col) =>
         new(line, col, "MATLAB:nargoutchk:tooManyOutputs", "Too many output arguments.");
 
-    /// <summary>The axes and colour bars a first argument names, or null when it names none of them.</summary>
+    /// <summary>The axes, colour bars and heatmaps a first argument names, or null when it names none of them.</summary>
     private static List<GraphObject>? ScaleTargets(JgsValue value)
     {
         int count = value.Type == JgsType.Array ? value.ArrayLength : 1;
@@ -131,7 +138,7 @@ internal static partial class JgsBuiltins
         for (int i = 0; i < count; i++)
         {
             if (!JgsHandleRegistry.TryGet(value.Type == JgsType.Array ? value.ElementAt(i) : value, out JgsHandleEntry? entry)
-                || entry.Target is not (AxesModel or ColorbarModel))
+                || entry.Target is not (AxesModel or ColorbarModel or HeatmapPlot))
             {
                 return null;
             }

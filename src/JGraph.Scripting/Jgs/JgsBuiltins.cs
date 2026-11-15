@@ -2274,7 +2274,9 @@ internal static partial class JgsBuiltins
             {
                 var fresh = new FigureModel();
                 foreach (var property in typeof(FigureModel).GetProperties())
-                    if (property.CanWrite && property.Name is not ("Position" or "Size" or "PaperUnits" or "PaperPosition" or "PositionSpecified" or "ToolBar" or "WindowState" or "SelectionType" or "CurrentPointPx" or "IsUiFigure" or "IntegerHandle" or "Units" or "ComponentFrameInFlight"))
+                    // R2025b's clf reset keeps MenuBar too (open item 326, ADR 0372; probe p6j).
+                    if (property.CanWrite && property.Name is not ("Position" or "Size" or "PaperUnits" or "PaperPosition" or "PositionSpecified" or "ToolBar" or "WindowState" or "SelectionType" or "CurrentPointPx" or "IsUiFigure" or "IntegerHandle" or "Units" or "ComponentFrameInFlight")
+                        && !(property.Name == "MenuBar" && JgsRunningDialect.ThreadIsMatlab))
                         property.SetValue(figure,property.GetValue(fresh));
                 JgsHandleRegistry.ResetEntry(figure);
             }
@@ -2495,6 +2497,14 @@ internal static partial class JgsBuiltins
         env.Builtins.Register("colorbar", JgsValue.Function(new BuiltinFunction("colorbar", OnNamedAxes((args, line, col) =>
         {
             JgsHandleEntry entry = JgsHandleRegistry.EntryFor(JG.Gca().Colorbar);
+
+            // A new colour bar's own Tag in R2025b is 'Colorbar' (open item 326, ADR 0372); a pair
+            // in the call writes over it.
+            if (JgsRunningDialect.ThreadIsMatlab && !JG.Gca().Colorbar.Visible)
+            {
+                JG.Gca().Colorbar.Tag = "Colorbar";
+            }
+
             if (args.Count >= 2 && args.Count % 2 == 0)
             {
                 for (int i = 0; i < args.Count; i += 2)
@@ -3883,6 +3893,11 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static JgsValue Stem(IReadOnlyList<JgsValue> args, JgsDialect dialect, int line, int col)
     {
+        if (dialect.IsMatlab)
+        {
+            args = WholeFilledWord(args);
+        }
+
         // A LineSpec has to come off before the options are read: 'r--s' is not an option name, and
         // the parser is right to say so about every word that is not one.
         // It may sit anywhere among the words — stem(x, y, 'filled', 'r--s', 'LineWidth', 2) is
@@ -3928,6 +3943,41 @@ internal static partial class JgsBuiltins
         }
         finally { JG.Hold(held); }
         return HandlesFor(created);
+    }
+
+    /// <summary>
+    /// stem's leading words with any start of <c>filled</c>, in any case, written out whole: R2025b's
+    /// parseparams reads <c>'f'</c>, <c>'fil'</c> and <c>'FILL'</c> as the flag (open item 326, ADR 0372).
+    /// Only the first two words are leading ones (a flag and a line spec); a word after a pair's name
+    /// is that pair's value.
+    /// </summary>
+    private static IReadOnlyList<JgsValue> WholeFilledWord(IReadOnlyList<JgsValue> args)
+    {
+        JgsValue[]? copy = null;
+        int words = 0;
+        for (int i = 0; i < args.Count && words < 2; i++)
+        {
+            if (!IsTextScalar(args[i]))
+            {
+                if (words > 0)
+                {
+                    break;
+                }
+
+                continue;
+            }
+
+            words++;
+            string word = TextOf(args[i]);
+            if (word.Length > 0 && word.Length < "filled".Length
+                && "filled".StartsWith(word, StringComparison.OrdinalIgnoreCase))
+            {
+                copy ??= [.. args];
+                copy[i] = JgsValue.Str("filled");
+            }
+        }
+
+        return copy ?? args;
     }
 
     /// <summary>The spec first, then the named options, so a name always wins over a shorthand.</summary>
@@ -4391,7 +4441,9 @@ internal static partial class JgsBuiltins
         else if (data is not null && requested is { } named && width is null && limits is null)
         {
             (double low, double high, bool any) = PackedMath.FiniteRange(ManagedBuffer.Adopt(data));
-            edges = any ? Binning.CountedEdges(low, high, named) : Binning.CountedEdges(0, 1, named);
+            edges = any ? Binning.CountedEdges(low, high, named)
+                : JgsRunningDialect.ThreadIsMatlab ? Binning.UnitEdges(named) // R2025b's 0:n (open item 327, ADR 0372)
+                : Binning.CountedEdges(0, 1, named);
         }
         else
         {

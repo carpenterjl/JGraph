@@ -1520,9 +1520,10 @@ internal static partial class JgsBuiltins
         }
 
         var names = new string[wanted];
+        var given = new JgsValue?[wanted];
         for (int i = 0; i < wanted; i++)
         {
-            names[i] = SourceVariable(verb, table, Str(verb, rest, i + 1, line, col), line, col);
+            (names[i], given[i]) = TableChannel(verb, table, rest, i + 1, line, col);
         }
 
         int next = wanted + 1;
@@ -1542,14 +1543,18 @@ internal static partial class JgsBuiltins
             ColorVariable = colorVariable,
         };
 
+        source.Remember("XVariable", given[0]);
+        source.Remember("YVariable", given[1]);
         int at = 2;
         if (spatial)
         {
+            source.Remember("ZVariable", given[at]);
             source.ZVariable = names[at++];
         }
 
         if (sized)
         {
+            source.Remember("SizeVariable", given[at]);
             source.SizeVariable = names[at];
         }
 
@@ -1571,6 +1576,51 @@ internal static partial class JgsBuiltins
         }
 
         return (rewritten, source);
+    }
+
+    /// <summary>
+    /// One channel's variable: a name, or in the MATLAB dialect a variable number counted from one or
+    /// a logical vector picking one variable, which the channel reads back as the number (open item
+    /// 326, ADR 0372; R2025b reads <c>logical([1 0 0])</c> back as <c>1</c>). The second answer is
+    /// what the channel reads back when it is not the name, else null.
+    /// </summary>
+    private static (string Name, JgsValue? Given) TableChannel(string verb, Table table, IReadOnlyList<JgsValue> args, int at, int line, int col)
+    {
+        if (JgsRunningDialect.ThreadIsMatlab && NumberedVariable(table, args[at]) is { } number)
+        {
+            return (table.ColumnNames[number - 1], JgsValue.Number(number));
+        }
+
+        return (SourceVariable(verb, table, Str(verb, args, at, line, col), line, col), null);
+    }
+
+    /// <summary>The one variable a number or a logical vector picks, counted from one, or null.</summary>
+    internal static int? NumberedVariable(Table table, JgsValue value)
+    {
+        if (value.Type is not (JgsType.Number or JgsType.Array) || value.IsCharMatrix || value.IsStringArray || value.IsCategorical)
+        {
+            return null;
+        }
+
+        double[] picked;
+        try
+        {
+            picked = ToDoubles("variable", value, 0, 0);
+        }
+        catch (JgsRuntimeException)
+        {
+            return null;
+        }
+
+        if (IsLogicalValue(value))
+        {
+            int[] on = [.. picked.Select(static (v, i) => (v, i)).Where(static p => p.v != 0).Select(static p => p.i + 1)];
+            return on.Length == 1 && picked.Length <= table.ColumnNames.Count ? on[0] : null;
+        }
+
+        return picked.Length == 1 && picked[0] == System.Math.Floor(picked[0]) && picked[0] >= 1 && picked[0] <= table.ColumnNames.Count
+            ? (int)picked[0]
+            : null;
     }
 
     /// <summary>

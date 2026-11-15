@@ -59,7 +59,9 @@ internal static partial class JgsGraphicsProperties
                 continue;
             }
 
-            if (!JgsHandleRegistry.TryGetEntry(child, out JgsHandleEntry? entry) || entry.HandleVisible)
+            // A figure's default menu entry or tool no search has reached yet is hidden all the same
+            // (open item 326, ADR 0372).
+            if (JgsHandleRegistry.TryGetEntry(child, out JgsHandleEntry? entry) ? entry.HandleVisible : !(JgsFigureChrome.IsChrome(child) || child is JgsAnnotationPane))
             {
                 shown.Add(child);
             }
@@ -74,6 +76,9 @@ internal static partial class JgsGraphicsProperties
         AxesModel { Container: { } container } => container,
         JgsGraphicsGroup group => (GraphObject?)group.Outer ?? group.Home, // the group or axes it was made in (items 89, 166)
         JgsAnnotationPane pane => pane.Figure,
+
+        // A figure's default menus and toolbar stand in no list of its own (open item 326, ADR 0372).
+        MenuItemModel or UiToolbarModel when JgsFigureChrome.OwnerOf(target) is { } chromeOwner => chromeOwner,
 
         // A legend and the colour bars are the children of their axes' figure or panel in a
         // MATLAB-dialect script, as R2025b's are (open item 297, probe p297b).

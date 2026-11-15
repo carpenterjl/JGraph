@@ -383,7 +383,13 @@ internal static partial class JgsFigFile
             var plots = new List<double>();
             foreach (LegendEntryModel row in legend.Entries)
             {
-                if (row.Plot is { } plot && (!matlab || row.Visible) && _handles.ContainsKey(plot))
+                // A row standing for a group names the group, as R2025b's file does (open item 326,
+                // ADR 0372); it used to name the group's first member.
+                if (row.Group is { } group && (!matlab || row.Visible) && _handles.ContainsKey(group))
+                {
+                    plots.Add(HandleOf(group));
+                }
+                else if (row.Plot is { } plot && (!matlab || row.Visible) && _handles.ContainsKey(plot))
                 {
                     plots.Add(HandleOf(plot));
                 }

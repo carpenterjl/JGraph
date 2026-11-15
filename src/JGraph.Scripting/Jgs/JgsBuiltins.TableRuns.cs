@@ -67,7 +67,12 @@ internal static partial class JgsBuiltins
             var args = new List<JgsValue>(rest.Count) { rest[0] };
             for (int c = 0; c < channels; c++)
             {
-                args.Add(JgsValue.Str(names[c][names[c].Length == 1 ? 0 : k]));
+                // A channel named by variable numbers passes each number on, which the chart reads
+                // back (open item 326, ADR 0372).
+                string name = names[c][names[c].Length == 1 ? 0 : k];
+                bool numbered = rest[c + 1].Type is JgsType.Number or JgsType.Array && !rest[c + 1].IsCharMatrix
+                    && !rest[c + 1].IsStringArray && !IsLogicalValue(rest[c + 1]) && rest[c + 1].Type != JgsType.Cell;
+                args.Add(numbered ? JgsValue.Number(IndexOfVariable(table, name) + 1) : JgsValue.Str(name));
             }
 
             args.AddRange(rest.Skip(channels + 1));
@@ -112,6 +117,20 @@ internal static partial class JgsBuiltins
         }
 
         return null;
+    }
+
+    private static int IndexOfVariable(Table table, string name)
+    {
+        IReadOnlyList<string> columns = table.ColumnNames;
+        for (int i = 0; i < columns.Count; i++)
+        {
+            if (columns[i] == name)
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     /// <summary>Makes one chart per run, each held beside the last, named by its varying variable.</summary>

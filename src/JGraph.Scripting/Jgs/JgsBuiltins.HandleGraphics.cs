@@ -265,6 +265,22 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "MATLAB:graphics:GetMethodUnknown",
                 $"Cannot find 'get' method for {args[0].ObjectClass.Name} class.");
         }
+
+        // get([], 'Type'), get(gobjects(0), ...), get('', ...) and get([]) answer [] in R2025b, and a
+        // cell of names a 0-by-1 cell (open item 326, ADR 0372).
+        if (JgsRunningDialect.ThreadIsMatlab
+            && ((args[0].Type == JgsType.Array && args[0].ArrayLength == 0) || (args[0].Type == JgsType.String && args[0].AsString.Length == 0)))
+        {
+            if (args.Count == 2 && args[1].Type == JgsType.Cell)
+            {
+                JgsValue none = JgsValue.Cell([]);
+                none.Reshape(0, 1);
+                return none;
+            }
+
+            return JgsMatrix.FromColumnMajor([], 0, 0);
+        }
+
         List<JgsHandleEntry> targets = HandleList("get", args[0], line, col);
 
         if (args.Count == 1)
@@ -1525,7 +1541,7 @@ internal static partial class JgsBuiltins
             case JgsAnnotationPane pane:
                 GraphObjectLifecycle.NotifyDeleting(pane);
                 pane.Figure.Annotations.Clear();
-                JgsAnnotationPane.Forget(pane.Figure);
+                JgsAnnotationPane.ForgetDeleted(pane.Figure);
                 return;
 
             // The legend reconciles its own rows against the plots before each layout, so taking the
@@ -1548,6 +1564,10 @@ internal static partial class JgsBuiltins
 
             case ContextMenuModel menu when menu.Parent is FigureModel owner:
                 owner.ContextMenus.Remove(menu);
+                return;
+
+            // A figure's default menu or toolbar leaves it; R2025b's go with delete too (open item 326).
+            case MenuItemModel or UiToolbarModel when JgsFigureChrome.Remove(target):
                 return;
 
             case MenuItemModel item when item.Parent is ContextMenuModel menu:

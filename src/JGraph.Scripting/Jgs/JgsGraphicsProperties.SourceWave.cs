@@ -80,11 +80,26 @@ internal static partial class JgsGraphicsProperties
     {
         string spelling = name;
         Put(table, spelling,
-            entry => JgsValue.Str(entry.ScatterSource is { } source ? read(source) : string.Empty),
+            entry => entry.ScatterSource is { } source
+                ? source.Given is { } given && given.TryGetValue(spelling, out JgsValue? kept) ? kept : JgsValue.Str(read(source))
+                : JgsValue.Str(string.Empty),
             (entry, value, line, col) =>
             {
-                write(RequireScatterSource(entry, spelling, line, col),
-                    JgsBuiltins.StrOf(spelling, value, line, col));
+                ScatterSource source = RequireScatterSource(entry, spelling, line, col);
+
+                // A variable number is kept and reads back as the number (open item 326, ADR 0372).
+                if (JgsRunningDialect.ThreadIsMatlab && source.Table.Type == JgsType.Table
+                    && JgsBuiltins.NumberedVariable(source.Table.AsTable, value) is { } number)
+                {
+                    write(source, source.Table.AsTable.ColumnNames[number - 1]);
+                    source.Remember(spelling, JgsValue.Number(number));
+                }
+                else
+                {
+                    write(source, JgsBuiltins.StrOf(spelling, value, line, col));
+                    source.Remember(spelling, null);
+                }
+
                 JgsBuiltins.ReplotFromSource(entry, line, col);
             });
     }

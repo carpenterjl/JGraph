@@ -761,6 +761,23 @@ public static class Binning
     /// the suite asks for.
     /// </para>
     /// </remarks>
+    /// <summary>
+    /// R2025b's bins for a count over no readings (none, or none finite): <c>0:n</c>, unit bins from
+    /// zero, binpicker.m's empty-input branch (open item 327, ADR 0372). The MATLAB dialect's
+    /// <c>histogram(x, n)</c> and <c>histcounts(x, n)</c> take these; JGS keeps (0, 1) cut in n.
+    /// </summary>
+    public static double[] UnitEdges(int count)
+    {
+        int bins = System.Math.Max(1, count);
+        var edges = new double[bins + 1];
+        for (int i = 0; i <= bins; i++)
+        {
+            edges[i] = i;
+        }
+
+        return edges;
+    }
+
     public static double[] CountedEdges(double low, double high, int count)
     {
         int bins = System.Math.Max(1, count);

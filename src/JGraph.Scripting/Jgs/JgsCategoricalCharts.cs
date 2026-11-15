@@ -104,9 +104,14 @@ internal static class JgsCategoricalCharts
             string verb = textVerb;
             Wrap(env, verb, (inner, args, wanted, line, col) =>
             {
-                RefuseTextData(verb, args, line, col);
+                // Only the plot family reads a string first otherwise than a char row; every other
+                // verb sees the char row it always saw (open item 326, ADR 0372).
+                int at = args.Count > 0 && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? named) && named.Target is AxesModel ? 1 : 0;
+                bool stringFirst = at < args.Count && JgsBuiltins.IsStringScalar(args[at]);
+                RefuseTextData(verb, [.. args.Select(static a => JgsBuiltins.IsStringScalar(a) ? a.ElementAt(0) : a)], stringFirst, line, col);
                 return null;
-            }, alsoWhen: static args => args.Any(static a => a.Type is JgsType.Cell or JgsType.String || a.IsStringArray));
+            }, alsoWhen: static args => args.Any(static a => a.Type is JgsType.Cell or JgsType.String || a.IsStringArray),
+            keepStrings: true); // a string first is refused in other words than a char row (open item 326, ADR 0372)
         }
 
         // axis asks its rulers first (open item 126, probe_126 and probe_126b).
@@ -133,7 +138,7 @@ internal static class JgsCategoricalCharts
     /// <c>scatter</c>, <c>area</c> and <c>stem</c> want numbers, times or categories; <c>line</c> reads
     /// its arguments as names and values.
     /// </summary>
-    private static void RefuseTextData(string verb, IReadOnlyList<JgsValue> args, int line, int col)
+    private static void RefuseTextData(string verb, IReadOnlyList<JgsValue> args, bool stringFirst, int line, int col)
     {
         int start = args.Count > 0 && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? entry) && entry.Target is AxesModel ? 1 : 0;
         if (start >= args.Count)
@@ -155,9 +160,12 @@ internal static class JgsCategoricalCharts
             // and its relatives alike (open item 313, probe p313; R2025b 25.2).
             case "plot" when firstText && args.Count - start == 2:
                 throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+            // A string first (the wrapper keeps it one) is "Invalid data argument.", and plot3 names
+            // itself in the identifier then (open item 326, ADR 0372).
             case "plot" or "semilogx" or "semilogy" or "loglog" or "plot3" when firstText:
-                throw new JgsRuntimeException(line, col, "MATLAB:plot:InvalidFirstInput",
-                    start == 0 && first.Type == JgsType.String ? "Invalid first data argument." : "Invalid data argument.");
+                throw new JgsRuntimeException(line, col,
+                    verb == "plot3" && stringFirst ? "MATLAB:plot3:InvalidFirstInput" : "MATLAB:plot:InvalidFirstInput",
+                    start == 0 && first.Type == JgsType.String && !stringFirst ? "Invalid first data argument." : "Invalid data argument.");
             case "plot" when start + 1 < args.Count && (args[start + 1].Type == JgsType.Cell || (args[start + 1].IsStringArray && args[start + 1].ArrayLength > 1)):
                 throw new JgsRuntimeException(line, col, "MATLAB:plot:InvalidSecondInput", "Invalid data argument.");
             case "scatter" or "area" or "stem" when listText || (first.IsStringArray && args.Count - start > 1):
@@ -274,7 +282,7 @@ internal static class JgsCategoricalCharts
 
     private delegate JgsValue[]? Body(IJgsCallable inner, IReadOnlyList<JgsValue> args, int wanted, int line, int col);
 
-    private static void Wrap(JgsEnvironment env, string name, Body body, Func<IReadOnlyList<JgsValue>, bool>? alsoWhen = null)
+    private static void Wrap(JgsEnvironment env, string name, Body body, Func<IReadOnlyList<JgsValue>, bool>? alsoWhen = null, bool keepStrings = false)
     {
         if (!env.Builtins.TryGet(name, out JgsValue existing) || existing.Type != JgsType.Function)
         {
@@ -301,7 +309,9 @@ internal static class JgsCategoricalCharts
             KnowsWhenDiscarded = inner is BuiltinFunction { KnowsWhenDiscarded: true },
             TakesOutputCount = inner is BuiltinFunction { TakesOutputCount: true },
         };
-        if (inner is BuiltinFunction { KeepsStringArguments: true })
+        // A wrapper that keeps string scalars sees them as given; the verb under it demotes them
+        // itself, as every call of it does.
+        if (keepStrings || inner is BuiltinFunction { KeepsStringArguments: true })
         {
             wrapper.KeepsStringArguments = true;
         }

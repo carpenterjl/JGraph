@@ -758,7 +758,7 @@ internal static partial class JgsBuiltins
             {
                 JgsGraphicsRoot => JgsGraphicsProperties.RootFigures(hidden: true),
                 UiComponentContainerModel => [], // what a custom component's setup built is its own (U10)
-                _ => JgsGraphicsProperties.ChildrenOf(entry.Target),
+                _ => JgsGraphicsProperties.AllChildrenOf(entry.Target), // a figure's default menus and toolbar too (open item 326)
             };
             var handles = new double[children.Count];
             for (int i = 0; i < children.Count; i++)

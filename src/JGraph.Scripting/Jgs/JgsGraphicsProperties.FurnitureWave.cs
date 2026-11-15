@@ -402,7 +402,8 @@ internal static partial class JgsGraphicsProperties
             entry => Sheet(entry).MarkerEdgeColor,
             (entry, ink) => Sheet(entry).MarkerEdgeColor = ink,
             entry => Sheet(entry).MarkerFaceColor,
-            (entry, ink) => Sheet(entry).MarkerFaceColor = ink);
+            (entry, ink) => Sheet(entry).MarkerFaceColor = ink,
+            edgeAutoWhenUnset: true);
 
         AddWordProperty(table, "EdgeLighting",
             entry => LightingWord(Sheet(entry).EdgeLighting),
@@ -807,12 +808,56 @@ internal static partial class JgsGraphicsProperties
 
     // --- The patch ------------------------------------------------------------------------------
 
+    /// <summary>The patches whose <c>CDataMode</c> a script wrote 'auto' since their colours were last written.</summary>
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<PatchPlot, object> PatchCDataWrittenAuto = new();
+
+    private static readonly object PatchCDataAutoMark = new();
+
+    /// <summary>
+    /// The patches a MATLAB-dialect script told to colour their faces by data ('flat' or 'interp')
+    /// while they had none: R2025b reads the word back and fills with the factory 33/255 grey of the
+    /// unset CData (open item 327, ADR 0372; <c>patch(x, y, 'b', 'FaceColor', 'flat')</c>).
+    /// </summary>
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<PatchPlot, object> PatchFaceByWord = new();
+
+    /// <summary>
+    /// <c>FaceColor</c> 'flat' or 'interp' written to a patch: its own colour goes, and in the MATLAB
+    /// dialect a patch with no colour data reads the word back and is filled in the grey of its unset
+    /// CData, as R2025b's is (open item 327, ADR 0372).
+    /// </summary>
+    internal static void SetPatchFaceByData(PatchPlot patch, bool interp)
+    {
+        patch.FaceColor = null;
+        patch.FaceVisible = true;
+        patch.Shading = interp ? PatchShading.Interp : PatchShading.Flat;
+        if (JgsRunningDialect.ThreadIsMatlab && patch.ColorData is null && patch.ColorTable is null)
+        {
+            PatchFaceByWord.AddOrUpdate(patch, PatchCDataAutoMark);
+            Color grey = Color.FromRgb(33, 33, 33);
+            patch.FaceColors = [.. Enumerable.Repeat(grey, System.Math.Max(1, patch.Faces.Count))];
+        }
+    }
+
+    /// <summary>A colour or 'none' written for a patch's faces: the word is no longer read back.</summary>
+    internal static void ForgetPatchFaceByData(PatchPlot patch)
+    {
+        if (PatchFaceByWord.TryGetValue(patch, out _))
+        {
+            PatchFaceByWord.Remove(patch);
+            if (patch.ColorTable is null)
+            {
+                patch.FaceColors = null;
+            }
+        }
+    }
+
     /// <summary>
     /// Writes a patch's colour data and the shading it implies: a value per vertex interpolates, a
     /// value per face or one value is flat, as R2025b reads <c>FaceColor</c> back (open item 114).
     /// </summary>
     internal static void SetPatchColorData(PatchPlot patch, double[] given)
     {
+        PatchCDataWrittenAuto.Remove(patch); // colours written are chosen again (open item 327)
         patch.ColorTable = null;
         patch.VertexColors = null;
         patch.ColorData = given.Length == 0 ? null : given;
@@ -907,7 +952,7 @@ internal static partial class JgsGraphicsProperties
         Put(table, "FaceColor",
             entry => Shape(entry) is var shape && !shape.FaceVisible ? JgsValue.Str("none")
                 : shape.FaceColor is { } chosen ? ColorRow(chosen)
-                : shape.ColorData is not null
+                : shape.ColorData is not null || PatchFaceByWord.TryGetValue(shape, out _)
                     ? JgsValue.Str(shape.Shading == PatchShading.Interp ? "interp" : "flat")
                     : ColorRow(JgsBuiltins.PaletteColorFor(shape)),
             (entry, value, line, col) =>
@@ -918,6 +963,7 @@ internal static partial class JgsGraphicsProperties
                     string word = JgsBuiltins.TextOf(value);
                     if (word.Equals("none", StringComparison.OrdinalIgnoreCase))
                     {
+                        ForgetPatchFaceByData(shape);
                         shape.FaceVisible = false;
                         return;
                     }
@@ -925,16 +971,14 @@ internal static partial class JgsGraphicsProperties
                     if (word.Equals("flat", StringComparison.OrdinalIgnoreCase)
                         || word.Equals("interp", StringComparison.OrdinalIgnoreCase))
                     {
-                        shape.FaceColor = null;
-                        shape.FaceVisible = true;
-                        shape.Shading = word.Equals("interp", StringComparison.OrdinalIgnoreCase)
-                            ? PatchShading.Interp
-                            : PatchShading.Flat;
+                        SetPatchFaceByData(shape, word.Equals("interp", StringComparison.OrdinalIgnoreCase));
                         return;
                     }
                 }
 
-                shape.FaceColor = JgsBuiltins.OptionColor(value, line, col, "patch");
+                Color chosen = JgsBuiltins.OptionColor(value, line, col, "patch");
+                ForgetPatchFaceByData(shape);
+                shape.FaceColor = chosen;
                 shape.FaceVisible = true;
             });
 
@@ -953,11 +997,13 @@ internal static partial class JgsGraphicsProperties
         // Values given for the patch to colour by are chosen colour data; a colour named for the face
         // is not (probe sf1: patch(x, y, 5) and a value per vertex read 'manual', 'r' and [1 0 0]
         // 'auto'; ADR 0361). Writing either word leaves the colours as they are: R2025b's patch keeps
-        // CData 5 after CDataMode 'auto' and draws by it (it then reads 'auto', which is not tracked).
+        // CData 5 after CDataMode 'auto' and draws by it, and reads 'auto' until colours are written
+        // again (open item 327, ADR 0372; the JGS dialect keeps reading the colours' presence).
         AddNullableMode(table, "CDataMode",
-            entry => Shape(entry).ColorData is not null,
-            static _ => { },
-            static _ => { });
+            entry => Shape(entry).ColorData is not null
+                && !(JgsRunningDialect.ThreadIsMatlab && PatchCDataWrittenAuto.TryGetValue(Shape(entry), out _)),
+            entry => PatchCDataWrittenAuto.Remove(Shape(entry)),
+            entry => PatchCDataWrittenAuto.AddOrUpdate(Shape(entry), PatchCDataAutoMark));
 
         // The same array under the name that says what indexes it. One property, two spellings, as
         // MATLAB has them — CData is the short way of naming a patch's colours and this is the long.
@@ -1080,7 +1126,8 @@ internal static partial class JgsGraphicsProperties
             entry => Shape(entry).MarkerEdgeColor,
             (entry, ink) => Shape(entry).MarkerEdgeColor = ink,
             entry => Shape(entry).MarkerFaceColor,
-            (entry, ink) => Shape(entry).MarkerFaceColor = ink);
+            (entry, ink) => Shape(entry).MarkerFaceColor = ink,
+            edgeAutoWhenUnset: true);
 
         AddWordProperty(table, "EdgeLighting",
             entry => LightingWord(Shape(entry).EdgeLighting),
@@ -1180,6 +1227,9 @@ internal static partial class JgsGraphicsProperties
         return ((ay * bz) - (az * by), (az * bx) - (ax * bz), (ax * by) - (ay * bx));
     }
 
+    /// <summary>The surfaces and patches whose marker edge a script wrote 'none' (open item 327, ADR 0372).</summary>
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<GraphObject, object> MarkerEdgeWrittenNone = new();
+
     /// <summary>The four marker words, over whatever slots the object keeps them in.</summary>
     private static void AddMarkerBlock(
         IDictionary<string, GraphicsProperty> table,
@@ -1190,7 +1240,8 @@ internal static partial class JgsGraphicsProperties
         Func<JgsHandleEntry, Color?> readEdge,
         Action<JgsHandleEntry, Color?> writeEdge,
         Func<JgsHandleEntry, Color?> readFill,
-        Action<JgsHandleEntry, Color?> writeFill)
+        Action<JgsHandleEntry, Color?> writeFill,
+        bool edgeAutoWhenUnset = false)
     {
         Put(table, "Marker",
             entry => JgsValue.Str(JgsBuiltins.MarkerWord(readMarker(entry))),
@@ -1210,9 +1261,37 @@ internal static partial class JgsGraphicsProperties
                 writeSize(entry, size);
             });
 
+        // A surface's and a patch's unset marker edge follows the edge, R2025b's 'auto', which a
+        // MATLAB-dialect script reads back; 'none' written is remembered beside the model's one null
+        // (open item 327, ADR 0372). The JGS dialect reads the null as 'none', as it always has.
+        bool autoWhenUnset = edgeAutoWhenUnset;
         Put(table, "MarkerEdgeColor",
-            entry => OptionalColorRow(readEdge(entry)),
-            (entry, value, line, col) => writeEdge(entry, NoneOrColor(value, line, col, "marker")));
+            entry => autoWhenUnset && JgsRunningDialect.ThreadIsMatlab && readEdge(entry) is null
+                && !MarkerEdgeWrittenNone.TryGetValue(entry.Target, out _)
+                    ? JgsValue.Str("auto")
+                    : OptionalColorRow(readEdge(entry)),
+            (entry, value, line, col) =>
+            {
+                if (autoWhenUnset && JgsRunningDialect.ThreadIsMatlab && value.Type == JgsType.String
+                    && value.AsString.Equals("auto", StringComparison.OrdinalIgnoreCase))
+                {
+                    MarkerEdgeWrittenNone.Remove(entry.Target);
+                    writeEdge(entry, null);
+                    return;
+                }
+
+                Color? ink = NoneOrColor(value, line, col, "marker");
+                if (autoWhenUnset && ink is null)
+                {
+                    MarkerEdgeWrittenNone.AddOrUpdate(entry.Target, PatchCDataAutoMark);
+                }
+                else
+                {
+                    MarkerEdgeWrittenNone.Remove(entry.Target);
+                }
+
+                writeEdge(entry, ink);
+            });
 
         Put(table, "MarkerFaceColor",
             entry => OptionalColorRow(readFill(entry)),

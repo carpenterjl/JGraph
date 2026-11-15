@@ -449,6 +449,7 @@ internal static partial class JgsBuiltins
                 made.FaceColor = Colors.DarkGray;
             }
 
+            MatlabPatchEdge(made);
             ApplyPatchOptions(verb, made, byName.Options, line, col);
             JgsHandleEntry entry = JgsHandleRegistry.EntryFor(made);
             foreach ((string name, JgsValue value) in byName.Others)
@@ -490,6 +491,7 @@ internal static partial class JgsBuiltins
             ? FromFacesAndVertices(verb, options, line, col)
             : FromCoordinates(verb, data, line, col, dimensions);
 
+        MatlabPatchEdge(patch);
         ApplyPatchOptions(verb, patch, options, line, col);
 
         // A patch that carries heights is a three-dimensional object, and an axes holding one has to
@@ -784,6 +786,20 @@ internal static partial class JgsBuiltins
         JgsGraphicsProperties.SetPatchColorData(patch, values); // and the shading the data implies (open item 114)
     }
 
+    /// <summary>
+    /// A patch's and a fill's own edge in the MATLAB dialect: R2025b's factory 33/255 grey, half a
+    /// point wide (open item 327, ADR 0372; probe p6a). The model's default stays the black 0.75 the
+    /// JGS dialect and the <c>.graph</c> document have always had; options in the call apply after.
+    /// </summary>
+    private static void MatlabPatchEdge(PatchPlot patch)
+    {
+        if (JgsRunningDialect.ThreadIsMatlab)
+        {
+            patch.EdgeColor = Color.FromRgb(33, 33, 33);
+            patch.EdgeWidth = 0.5;
+        }
+    }
+
     private static void ApplyPatchOptions(
         string verb, PatchPlot patch, List<(string Name, JgsValue Value)> options, int line, int col)
     {
@@ -794,7 +810,15 @@ internal static partial class JgsBuiltins
                 case "faces":
                 case "vertices":
                     break; // already consumed by the constructor
+                // In the MATLAB dialect the words take the face off the colour argument before them:
+                // patch(x, y, 'b', 'FaceColor', 'flat') reads 'flat' (open item 327, ADR 0372).
+                case "facecolor" when JgsRunningDialect.ThreadIsMatlab && value.Type == JgsType.String
+                    && (value.AsString.Equals("flat", StringComparison.OrdinalIgnoreCase)
+                        || value.AsString.Equals("interp", StringComparison.OrdinalIgnoreCase)):
+                    JgsGraphicsProperties.SetPatchFaceByData(patch, value.AsString.Equals("interp", StringComparison.OrdinalIgnoreCase));
+                    break;
                 case "facecolor":
+                    JgsGraphicsProperties.ForgetPatchFaceByData(patch);
                     if (IsNone(value))
                     {
                         patch.FaceColor = Colors.Transparent;

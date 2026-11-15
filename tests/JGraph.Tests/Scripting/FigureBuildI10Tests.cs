@@ -86,14 +86,15 @@ public sealed class FigureBuildI10Tests : IDisposable
         assert(isequal(h.Values, histcounts(x, linspace(-5, 5, 11))));
         """);
 
+    /// <summary>A count over no readings is R2025b's binpicker: 0:n (open item 327, ADR 0372; probe p6a).</summary>
     [Fact]
     public async Task AHistogramOfTheFewAndTheMissingIsWhatItWas() => await Asserts("""
         h = histogram([1 2 2 3 3 3], 3);
         assert(isequal(h.Values, [1 2 3]));
         h = histogram(zeros(1, 0), 4);
-        assert(isequal(h.Values, [0 0 0 0]) && isequal(h.BinEdges, [0 0.25 0.5 0.75 1]));
+        assert(isequal(h.Values, [0 0 0 0]) && isequal(h.BinEdges, 0:4));
         h = histogram([NaN NaN], 4);
-        assert(isequal(h.Values, [0 0 0 0]) && isequal(h.BinEdges, [0 0.25 0.5 0.75 1]));
+        assert(isequal(h.Values, [0 0 0 0]) && isequal(h.BinEdges, 0:4));
         h = histogram([1 NaN 2 Inf 2 -Inf 3], 2);
         [n, e] = histcounts([1 NaN 2 Inf 2 -Inf 3], 2);
         assert(isequal(h.Values, n) && isequal(h.BinEdges, e));

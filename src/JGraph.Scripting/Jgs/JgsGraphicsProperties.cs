@@ -836,6 +836,47 @@ internal static partial class JgsGraphicsProperties
     }
 
     /// <summary>
+    /// What <c>allchild</c> lists: <see cref="ChildrenOf"/>, and for a figure in a MATLAB-dialect script
+    /// its default menus and toolbar (open item 326, ADR 0372; probe p6b).
+    /// </summary>
+    internal static IReadOnlyList<GraphObject> AllChildrenOf(GraphObject target)
+    {
+        IReadOnlyList<GraphObject> children = ChildrenOf(target);
+        return target is FigureModel figure && JgsFigureChrome.ListedFor(figure) is { Count: > 0 } chrome
+            ? WithChrome(children, chrome)
+            : children;
+    }
+
+    /// <summary>
+    /// A figure's children, back first, with its default menus and toolbar standing behind its own
+    /// components and in front of its axes and annotation pane, where R2025b's <c>allchild</c> lists
+    /// them (probe p6b: a uimenu a script made, the toolbar, the six menus, the pane, the axes).
+    /// </summary>
+    private static List<GraphObject> WithChrome(IReadOnlyList<GraphObject> children, IReadOnlyList<GraphObject> chrome)
+    {
+        int at = 0;
+        while (at < children.Count
+            && children[at] is AxesModel or LegendModel or ColorbarModel or BubbleLegendModel or JgsAnnotationPane or AnnotationObject)
+        {
+            at++;
+        }
+
+        var all = new List<GraphObject>(children.Count + chrome.Count);
+        for (int i = 0; i < at; i++)
+        {
+            all.Add(children[i]);
+        }
+
+        all.AddRange(chrome);
+        for (int i = at; i < children.Count; i++)
+        {
+            all.Add(children[i]);
+        }
+
+        return all;
+    }
+
+    /// <summary>
     /// The axes a figure or a panel holds, oldest first, each followed in a MATLAB-dialect script by
     /// its shown legend, colour bar and bubble legend, oldest showing first: R2025b lists each axes'
     /// furniture just in front of it among its figure's children, newest first (open item 297, probe
@@ -882,6 +923,12 @@ internal static partial class JgsGraphicsProperties
             // A legend's title and a colour bar's label are no search's to reach (probe p297).
             case LegendModel or ColorbarModel or BubbleLegendModel:
                 return [];
+
+            // A figure's default menus and toolbar are reached from the first search on (open item
+            // 326, ADR 0372).
+            case FigureModel figure:
+                _ = JgsFigureChrome.ListedFor(figure);
+                return DescendantsOf(target).Reverse();
             case not AxesModel:
                 return DescendantsOf(target).Reverse();
         }
@@ -916,7 +963,11 @@ internal static partial class JgsGraphicsProperties
     /// </summary>
     public static IReadOnlyList<GraphObject> DescendantsOf(GraphObject target)
     {
-        var all = new List<GraphObject>(ChildrenOf(target));
+        // A figure's default menus and toolbar, once a MATLAB-dialect script reached them, keep their
+        // handles alive whatever runs the sweep (open item 326, ADR 0372).
+        var all = target is FigureModel withChrome && JgsFigureChrome.ExistingFor(withChrome) is { Count: > 0 } chrome
+            ? WithChrome(ChildrenOf(target), chrome)
+            : new List<GraphObject>(ChildrenOf(target));
         if (target is AxesModel axes)
         {
             // The toolbar and its buttons are the axes' own parts, exactly as the rulers are. They

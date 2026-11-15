@@ -61,6 +61,26 @@ internal sealed class ScatterSource
     public string ColorVariable { get; set; } = string.Empty;
 
     public string AlphaVariable { get; set; } = string.Empty;
+
+    /// <summary>
+    /// A channel's variable as a MATLAB-dialect script gave it, by property name, where that was not
+    /// the name: R2025b reads <c>YVariable</c> back as the number <c>2</c> that named it (open item
+    /// 326, ADR 0372). Null, or a missing name, reads the name.
+    /// </summary>
+    public Dictionary<string, JgsValue>? Given { get; set; }
+
+    /// <summary>Records how a channel was named: a number kept, a name forgotten.</summary>
+    public void Remember(string property, JgsValue? given)
+    {
+        if (given is { } value)
+        {
+            (Given ??= new(StringComparer.OrdinalIgnoreCase))[property] = value;
+        }
+        else
+        {
+            Given?.Remove(property);
+        }
+    }
 }
 
 internal sealed class JgsHandleEntry
@@ -410,7 +430,9 @@ internal static class JgsHandleRegistry
             // figure's annotation pane (open item 143, probe pa_pane).
             Entries[handle] = new JgsHandleEntry(target)
             {
-                HandleVisibility = (target is AxisModel && JgsRunningDialect.ThreadIsMatlab) || target is JgsAnnotationPane ? "off" : "on",
+                // ...and a figure's default menus, toolbar and tools (open item 326, ADR 0372).
+                HandleVisibility = (target is AxisModel && JgsRunningDialect.ThreadIsMatlab) || target is JgsAnnotationPane
+                    || JgsFigureChrome.IsChrome(target) ? "off" : "on",
             };
             Handles[target] = handle;
             return JgsValue.Number(handle);
