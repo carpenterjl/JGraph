@@ -104,6 +104,10 @@ internal static partial class JgsBuiltins
                 {
                     RefuseUnsupportedZoneLetters(format, line, col);
                 }
+                else if (args[0].IsDuration)
+                {
+                    RefuseDurationDisplayFormat(format, line, col); // open item 342, ADR 0375
+                }
 
                 tag = tag with { Format = format };
             }

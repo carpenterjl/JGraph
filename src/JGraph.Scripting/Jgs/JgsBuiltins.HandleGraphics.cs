@@ -476,6 +476,13 @@ internal static partial class JgsBuiltins
             return FindAmongObjects(verb, args, line, col);
         }
 
+        // findobj(mc.PropertyList, 'Name', 'A'): a search of a metadata array (open item 342, ADR 0375).
+        if (verb == "findobj" && args.Count > 0 && JgsRunningDialect.ThreadIsMatlab
+            && IsMetadataValue(args[0]) && args[0].ClassName != MetaClassName)
+        {
+            return FindAmongMetadata(args, line, col);
+        }
+
         int first = 0;
         var roots = new List<GraphObject>();
 

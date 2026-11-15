@@ -667,6 +667,15 @@ internal static partial class JgsBuiltins
                 "Number of field names must match number of fields in new structure.");
         }
 
+        // A name past namelengthmax is cut with R2025b's warning (ADR 0375).
+        for (int i = 0; i < names.Length; i++)
+        {
+            if (names[i] is { Length: > NameLengthMax } longName && longName != NonVectorFieldName)
+            {
+                names[i] = FieldNameWithinLimit(longName);
+            }
+        }
+
         // Every name is checked before any is compared with another (measured: {'b', 'b', '1a'} is
         // refused for '1a').
         foreach (string? name in names)

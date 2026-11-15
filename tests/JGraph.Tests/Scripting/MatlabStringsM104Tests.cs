@@ -487,7 +487,7 @@ public class MatlabStringsM104Tests : IDisposable
             caught = err.message;
         end
         assert(strcmp(caught, ...
-            'The following are not valid variable names: ''1x'', ''2y'', and ''3z''.'), caught);
+            'These are not valid variable names: ''1x'', ''2y'', and ''3z''.'), caught);
         caught2 = '';
         try
             mustBeValidVariableName({'1x','2y'});
@@ -495,7 +495,7 @@ public class MatlabStringsM104Tests : IDisposable
             caught2 = err.message;
         end
         assert(strcmp(caught2, ...
-            'The following are not valid variable names: ''1x'' and ''2y''.'), caught2);
+            'These are not valid variable names: ''1x'' and ''2y''.'), caught2);
         """);
 
     [Fact]

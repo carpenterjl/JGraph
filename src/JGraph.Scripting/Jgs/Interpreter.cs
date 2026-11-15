@@ -10916,7 +10916,7 @@ internal sealed partial class Interpreter
                 // dot meets what it is on (open item 130, probe_b22a).
                 if (name.IsStringArray && name.ArrayLength == 1 && name.ElementAt(0).AsString != JgsBuiltins.MissingSentinel)
                 {
-                    return name.ElementAt(0).AsString;
+                    return JgsBuiltins.FieldNameWithinLimit(name.ElementAt(0).AsString); // cut past namelengthmax (ADR 0375)
                 }
 
                 // A missing string names nothing on anything, a table included; a string array of
@@ -10956,7 +10956,7 @@ internal sealed partial class Interpreter
                 $"A dynamic field name must be a string, but got a {name.TypeName}.");
         }
 
-        return name.AsString;
+        return JgsBuiltins.FieldNameWithinLimit(name.AsString); // cut past namelengthmax in the MATLAB dialect (ADR 0375)
     }
 
     /// <summary>

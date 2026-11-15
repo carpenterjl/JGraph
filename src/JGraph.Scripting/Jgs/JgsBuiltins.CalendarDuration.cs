@@ -47,10 +47,12 @@ internal static partial class JgsBuiltins
         // The single-unit constructors. caldays and calweeks moved here from the unit family: they had
         // been plain durations, on the argument that an unzoned datetime has no daylight saving to
         // shorten a day. M82's zones made that argument expire, and MATLAB calls them calendar units.
+        // calweeks and calquarters write in weeks and quarters, R2025b's 'ymwdt' and 'qmdt' (open item
+        // 342, ADR 0375, probe p7e3 cv5, cv6).
         CalendarUnit(Define, "calyears", static n => (n * 12, 0.0));
-        CalendarUnit(Define, "calquarters", static n => (n * 3, 0.0));
+        CalendarUnit(Define, "calquarters", static n => (n * 3, 0.0), "qmdt");
         CalendarUnit(Define, "calmonths", static n => (n, 0.0));
-        CalendarUnit(Define, "calweeks", static n => (0.0, n * 7));
+        CalendarUnit(Define, "calweeks", static n => (0.0, n * 7), "ymwdt");
         CalendarUnit(Define, "caldays", static n => (0.0, n));
 
         Define("calendarDuration", (args, line, col) =>
@@ -204,7 +206,7 @@ internal static partial class JgsBuiltins
     /// <summary>Declares one single-unit calendar constructor, and its reader for the round trip.</summary>
     private static void CalendarUnit(
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define,
-        string name, Func<double, (double Months, double Days)> build) =>
+        string name, Func<double, (double Months, double Days)> build, string format = "ymdt") =>
         define(name, (args, line, col) =>
         {
             Arity(name, args, 1, line, col);
@@ -233,7 +235,7 @@ internal static partial class JgsBuiltins
                 elements[i] = CalendarElement(months, days, 0);
             }
 
-            return CalendarValue(elements, args[0]);
+            return CalendarValue(elements, args[0], format);
         });
 
     /// <summary>One element: three numbers that do not collapse into each other.</summary>
@@ -249,12 +251,17 @@ internal static partial class JgsBuiltins
     internal static (double Months, double Days, double Millis) ReadCalendar(JgsStructArray payload, int index)
     {
         Dictionary<string, JgsValue> element = payload.Elements[index];
-        double Read(string field) => element.TryGetValue(field, out JgsValue? value) ? value.AsNumber : 0;
+        // A gap a growth left holds [] in each field, which R2025b writes as 0d (open item 342, ADR 0375).
+        double Read(string field) => element.TryGetValue(field, out JgsValue? value) && !JgsEmpty.IsEmptyArray(value) ? value.AsNumber : 0;
         return (Read("months"), Read("days"), Read("millis"));
     }
 
     /// <summary>A calendar duration over <paramref name="elements"/>, shaped like <paramref name="model"/>.</summary>
-    internal static JgsValue CalendarValue(Dictionary<string, JgsValue>[] elements, JgsValue model)
+    /// <remarks>
+    /// The display format is <paramref name="format"/>, else a calendar model's own, else <c>ymdt</c>
+    /// (open item 342, ADR 0375): arithmetic on a span of weeks still writes weeks.
+    /// </remarks>
+    internal static JgsValue CalendarValue(Dictionary<string, JgsValue>[] elements, JgsValue model, string? format = null)
     {
         JgsValue built = JgsValue.StructArray(elements);
         if (model.Type == JgsType.Array && model.ArrayLength == elements.Length && elements.Length > 1)
@@ -262,7 +269,27 @@ internal static partial class JgsBuiltins
             built.TakeShapeOf(model);
         }
 
-        return built.MarkTime(new JgsTimeTag(JgsTimeKind.CalendarDuration, "ymdt"));
+        format ??= model.TimeTag is { Kind: JgsTimeKind.CalendarDuration } tag ? tag.Format : "ymdt";
+        return built.MarkTime(new JgsTimeTag(JgsTimeKind.CalendarDuration, format));
+    }
+
+    /// <summary>
+    /// The display format two calendar durations combine to, in a sum or a concatenation: every unit
+    /// either writes, in R2025b's order (probe p7e5: <c>caldays(10) + calweeks(0)</c> is <c>1w 3d</c>,
+    /// <c>calmonths(15) + calquarters(0)</c> <c>1y 1q</c>, <c>[caldays(1) calweeks(1)]</c> writes weeks).
+    /// </summary>
+    internal static string CalendarFormatUnion(string left, string right)
+    {
+        var built = new System.Text.StringBuilder(6);
+        foreach (char unit in "yqmwdt")
+        {
+            if (left.Contains(unit, StringComparison.Ordinal) || right.Contains(unit, StringComparison.Ordinal))
+            {
+                built.Append(unit);
+            }
+        }
+
+        return built.ToString();
     }
 
     /// <summary>Reads a matrix of Y/M/D or Y/M/D/h/m/s rows as calendar durations.</summary>
@@ -525,15 +552,21 @@ internal static partial class JgsBuiltins
             elements[i] = CalendarElement(months, days, millis);
         }
 
-        return CalendarValue(elements, a.Length >= b.Length ? left : right);
+        return CalendarValue(elements, a.Length >= b.Length ? left : right,
+            CalendarFormatUnion(left.TimeTag?.Format ?? "ymdt", right.TimeTag?.Format ?? "ymdt"));
     }
 
     /// <summary>How one calendar duration writes itself, in MATLAB's own composition.</summary>
-    internal static string FormatCalendar(double months, double days, double millis)
+    internal static string FormatCalendar(double months, double days, double millis, string format = "ymdt")
     {
         if (double.IsNaN(months) || double.IsNaN(days) || double.IsNaN(millis))
         {
             return "NaN";
+        }
+
+        if (JgsRunningDialect.ThreadIsMatlab)
+        {
+            return FormatCalendarMatlab(months, days, millis, format);
         }
 
         var parts = new List<string>(4);
@@ -557,6 +590,63 @@ internal static partial class JgsBuiltins
         if (millis != 0)
         {
             parts.Add(JgsTime.Format(millis, JgsTime.DurationTag()));
+        }
+
+        return parts.Count == 0 ? "0d" : string.Join(" ", parts);
+    }
+
+    /// <summary>
+    /// A calendar duration as R2025b writes it (open item 342, ADR 0375, probes p7e3 and p7e5): the
+    /// units its format names, each a count truncated toward zero with the rest carried to the next
+    /// (years, quarters, months; weeks, days), a unit with a zero count left out; a time of day as
+    /// <c>4h 5m 6s</c>, all three written when there is any time, the hours whole, the seconds to five
+    /// significant digits as <c>%.5g</c> writes them; nothing at all is <c>0d</c>.
+    /// </summary>
+    private static string FormatCalendarMatlab(double months, double days, double millis, string format)
+    {
+        var parts = new List<string>(6);
+        void Count(double count, string unit)
+        {
+            if (count != 0)
+            {
+                parts.Add(count.ToString("0.####", CultureInfo.InvariantCulture) + unit);
+            }
+        }
+
+        double leftMonths = months;
+        if (format.Contains('y', StringComparison.Ordinal))
+        {
+            double years = System.Math.Truncate(leftMonths / 12);
+            leftMonths -= years * 12;
+            Count(years, "y");
+        }
+
+        if (format.Contains('q', StringComparison.Ordinal))
+        {
+            double quarters = System.Math.Truncate(leftMonths / 3);
+            leftMonths -= quarters * 3;
+            Count(quarters, "q");
+        }
+
+        Count(leftMonths, "mo");
+        double leftDays = days;
+        if (format.Contains('w', StringComparison.Ordinal))
+        {
+            double weeks = System.Math.Truncate(leftDays / 7);
+            leftDays -= weeks * 7;
+            Count(weeks, "w");
+        }
+
+        Count(leftDays, "d");
+        if (millis != 0)
+        {
+            double totalSeconds = millis / JgsTime.MsPerSecond;
+            long hours = (long)System.Math.Truncate(totalSeconds / 3600);
+            double rest = totalSeconds - (hours * 3600.0);
+            long minutes = (long)System.Math.Truncate(rest / 60);
+            double seconds = rest - (minutes * 60.0);
+            string secondText = seconds.ToString("G5", CultureInfo.InvariantCulture).Replace('E', 'e');
+            parts.Add($"{hours}h {minutes}m {secondText}s");
         }
 
         return parts.Count == 0 ? "0d" : string.Join(" ", parts);

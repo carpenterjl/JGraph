@@ -582,7 +582,7 @@ internal static partial class JgsBuiltins
             // the variable reads it (open item 202, ADR 0351; Interpreter.ThroughParen).
             if (JgsRunningDialect.ThreadIsMatlab)
             {
-                name = Deblanked(name);
+                name = FieldNameWithinLimit(Deblanked(name)); // cut past namelengthmax (ADR 0375)
                 if (IsMetadataValue(args[0]) && name == "DefaultValue")
                 {
                     MetadataMember(args[0], name, null, line, col); // a missing default raises here too (open item 319, ADR 0358)
@@ -608,7 +608,7 @@ internal static partial class JgsBuiltins
             string name = IsStringScalar(args[1]) ? TextOf(args[1]) : Str("setfield", args, 1, line, col);
             if (JgsRunningDialect.ThreadIsMatlab)
             {
-                name = Deblanked(name);
+                name = FieldNameWithinLimit(Deblanked(name)); // cut past namelengthmax (ADR 0375)
                 if (!IsValidFieldName(name))
                 {
                     throw new JgsRuntimeException(line, col, "MATLAB:AddField:InvalidFieldName", $"Invalid field name: '{name}'.");
@@ -1292,6 +1292,20 @@ internal static partial class JgsBuiltins
             names[i] = StructNameArgument(args[i * 2], i * 2, line, col);
         }
 
+        // A name given twice, or twice once cut to namelengthmax, is R2025b's refusal (open item 342,
+        // ADR 0375, probe p7e4 sd1, p7e1 w10); it kept the last value here.
+        if (JgsRunningDialect.ThreadIsMatlab)
+        {
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+            foreach (string name in names)
+            {
+                if (!seen.Add(name))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:DuplicateFieldName", $"Duplicate field name \"{name}\"");
+                }
+            }
+        }
+
         // The element count is the size of the cell values, which must agree; a non-cell value is
         // the same in every element, and all-scalar arguments make a 1-by-1.
         int count = 1;
@@ -1362,6 +1376,7 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, $"struct expects argument {index + 1} to be a string, but got a {value.TypeName}.");
         }
 
+        name = FieldNameWithinLimit(name); // cut past namelengthmax with R2025b's warning (ADR 0375)
         return matlab && !IsValidFieldName(name)
             ? throw new JgsRuntimeException(line, col, "MATLAB:Cell2Struct:InvalidFieldName", $"Invalid field name \"{name}\".")
             : name;
@@ -1390,7 +1405,11 @@ internal static partial class JgsBuiltins
             string trimmed = Deblanked(names[i]);
             if (System.Array.IndexOf(present, trimmed) < 0 && (!one || present.Length > 0))
             {
-                throw new JgsRuntimeException(line, col, "MATLAB:rmfield:InvalidFieldname", $"A field named '{names[i]}' doesn't exist.");
+                // A name past namelengthmax is not cut here: rmfield.m refuses it as too long (ADR 0375).
+                throw names[i].Length > NameLengthMax
+                    ? new JgsRuntimeException(line, col, "MATLAB:rmfield:FieldnameTooLong",
+                        $"The string '{names[i]}' is longer than the maximum MATLAB name length.  It is not a valid fieldname.")
+                    : new JgsRuntimeException(line, col, "MATLAB:rmfield:InvalidFieldname", $"A field named '{names[i]}' doesn't exist.");
             }
 
             names[i] = trimmed;

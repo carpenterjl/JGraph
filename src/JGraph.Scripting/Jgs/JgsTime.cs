@@ -245,7 +245,35 @@ internal static class JgsTime
 
     /// <summary>The offset from UTC at a stored instant, for a zoned value.</summary>
     public static TimeSpan OffsetAt(double ms, TimeZoneInfo zone) =>
-        UtcOffset(zone, DateTime.SpecifyKind(ToDateTime(ms), DateTimeKind.Utc));
+        UtcOffset(zone, DateTime.SpecifyKind(ToDateTime(WithinNetRange(ms)), DateTimeKind.Utc));
+
+    /// <summary>
+    /// A moment moved by whole four-hundred-year cycles into the years .NET holds, for a zone's
+    /// offset at a year before 1 or past 9999, which the calendar repeats (open item 342, ADR 0375:
+    /// <c>datetime(-5, 3, 1, 'TimeZone', 'UTC')</c> was refused as un-representable).
+    /// </summary>
+    private static double WithinNetRange(double ms)
+    {
+        double earliest = (DateTime.MinValue - Epoch).TotalMilliseconds + MsPerDay;
+        double latest = (DateTime.MaxValue - Epoch).TotalMilliseconds - MsPerDay;
+        if (ms >= earliest && ms <= latest)
+        {
+            return ms;
+        }
+
+        double cycle = 146097 * MsPerDay;
+        while (ms < earliest)
+        {
+            ms += cycle;
+        }
+
+        while (ms > latest)
+        {
+            ms -= cycle;
+        }
+
+        return ms;
+    }
 
     /// <summary>
     /// The wall-clock moment a stored value reads as in its own zone — the lens every calendar
@@ -321,7 +349,7 @@ internal static class JgsTime
 
     /// <summary>The storage a wall-clock reading in <paramref name="zone"/> stands for.</summary>
     public static double ToUtc(double wallMs, TimeZoneInfo zone) =>
-        wallMs - UtcOffset(zone, DateTime.SpecifyKind(ToDateTime(wallMs), DateTimeKind.Unspecified))
+        wallMs - UtcOffset(zone, DateTime.SpecifyKind(ToDateTime(WithinNetRange(wallMs)), DateTimeKind.Unspecified))
             .TotalMilliseconds;
 
     /// <summary>The storage value for a year/month/day and an optional time of day.</summary>
@@ -409,7 +437,8 @@ internal static class JgsTime
         // The wall clock in the value's own zone, which for an unzoned value is the stored moment
         // itself. Only the reading moves; the storage stays the instant (M82).
         DateTime moment = WallClock(ms, tag);
-        string net = ToNetFormat(WithNameTokens(WithZoneTokens(tag.Format, ms, tag), moment, culture ?? CultureInfo.InvariantCulture));
+        int year = moment.Year - (100 * centuriesOn); // the moment's own year, 0 and before included (open item 342, ADR 0375)
+        string net = ToNetFormat(WithNameTokens(WithZoneTokens(tag.Format, ms, tag), moment, culture ?? CultureInfo.InvariantCulture, year));
 
         // One letter alone is a standard format to .NET ('d' its short date); '%' makes it the
         // custom field it is in MATLAB's format (open item 316, ADR 0359).
@@ -426,13 +455,6 @@ internal static class JgsTime
         catch (FormatException)
         {
             text = moment.ToString(ToNetFormat(DefaultDatetimeFormat), CultureInfo.InvariantCulture);
-        }
-
-        if (centuriesOn != 0)
-        {
-            int year = moment.Year - (100 * centuriesOn);
-            text = text.Replace(
-                moment.Year.ToString("0000", CultureInfo.InvariantCulture), year.ToString("0000", CultureInfo.InvariantCulture), StringComparison.Ordinal);
         }
 
         return text;
@@ -547,7 +569,7 @@ internal static class JgsTime
     /// not hold keeps .NET's, and without a locale only the narrow forms are replaced, .NET's
     /// invariant names being R2025b's en_US ones. <c>MM</c> stays .NET's. Quoted text is literal.
     /// </remarks>
-    private static string WithNameTokens(string format, DateTime moment, CultureInfo culture)
+    private static string WithNameTokens(string format, DateTime moment, CultureInfo culture, int year)
     {
         bool matlab = JgsRunningDialect.ThreadIsMatlab;
         if (format.IndexOfAny(['M', 'e', 'a', 'y', 'u']) < 0 && !(matlab && format.IndexOfAny(['G', 'Q', 'D', 'W']) >= 0))
@@ -579,13 +601,13 @@ internal static class JgsTime
             }
 
             string? text = null;
-            if (c is 'y' or 'u' && run == 1)
+            if (c is 'y' or 'u')
             {
-                text = moment.Year.ToString(CultureInfo.InvariantCulture); // .NET's 'y' is the year mod 100
+                text = YearToken(c, run, year); // .NET's 'y' is the year mod 100, and it has no year before 1
             }
             else if (matlab && c is 'G' or 'Q' or 'D' or 'W')
             {
-                text = EraQuarterDayWeek(c, run, moment, invariant || culture.TwoLetterISOLanguageName == "en");
+                text = c == 'G' && year < 1 ? "BCE" : EraQuarterDayWeek(c, run, moment, invariant || culture.TwoLetterISOLanguageName == "en");
             }
             else if (c is 'M' or 'e' or 'a')
             {
@@ -633,6 +655,23 @@ internal static class JgsTime
         }
 
         return built?.ToString() ?? format;
+    }
+
+    /// <summary>
+    /// A year field as R2025b prints it (open item 342, ADR 0375, probe p7e2 y1 to y62): <c>u</c> is the
+    /// signed year (0 is the year before 1, -5 prints <c>-5</c>, <c>uu</c> <c>-05</c>, <c>uuuu</c>
+    /// <c>-0005</c>), <c>y</c> the year of the era (year 0 is 1 BCE, -5 is 6 BCE); two letters are the
+    /// last two digits, any other count the whole number padded to the run. A year past 9999 is written
+    /// whole.
+    /// </summary>
+    private static string YearToken(char letter, int run, int year)
+    {
+        int shown = letter == 'y' && year < 1 ? 1 - year : year;
+        string sign = shown < 0 ? "-" : string.Empty;
+        int magnitude = System.Math.Abs(shown);
+        return run == 2
+            ? sign + (magnitude % 100).ToString("00", CultureInfo.InvariantCulture)
+            : sign + magnitude.ToString(new string('0', System.Math.Min(run, 9)), CultureInfo.InvariantCulture);
     }
 
     /// <summary>
@@ -738,7 +777,12 @@ internal static class JgsTime
     /// and <c>'HH:MM'</c> is "14:35". The marker is written upper-case however it was spelled, which
     /// is measured rather than chosen.
     /// </remarks>
-    public static string FormatDatestr(DateTime moment, string format)
+    /// <remarks>
+    /// <paramref name="year"/> is the moment's own year when <paramref name="moment"/> was read
+    /// four hundred years on (a year before 100 or past 9999), and <paramref name="dayZero"/> writes
+    /// R2025b's day 0 (open item 342, ADR 0375).
+    /// </remarks>
+    public static string FormatDatestr(DateTime moment, string format, int? year = null, bool dayZero = false)
     {
         bool twelveHour = HasMeridiem(format);
         var built = new System.Text.StringBuilder(format.Length + 8);
@@ -763,8 +807,13 @@ internal static class JgsTime
             switch (c)
             {
                 case 'y':
-                    built.Append((moment.Year % (run >= 4 ? 10000 : 100))
-                        .ToString(new string('0', run), CultureInfo.InvariantCulture));
+                    // yyyy is the whole year, signed (R2025b's formatdate.m writes mod(year, 10000):
+                    // 9999 for the year -1, 2345 for 12345; ADR 0375's divergence); yy its last two
+                    // digits of the year's magnitude, as formatdate.m writes them.
+                    int shownYear = year ?? moment.Year;
+                    built.Append(run >= 4
+                        ? (shownYear < 0 ? "-" : string.Empty) + System.Math.Abs(shownYear).ToString(new string('0', run), CultureInfo.InvariantCulture)
+                        : (System.Math.Abs(shownYear) % 100).ToString(new string('0', run), CultureInfo.InvariantCulture));
                     break;
                 case 'Q' when run >= 2:
                     built.Append('Q').Append(((moment.Month - 1) / 3) + 1);
@@ -773,7 +822,7 @@ internal static class JgsTime
                     built.Append(MonthToken(moment, run));
                     break;
                 case 'd':
-                    built.Append(DayToken(moment, run));
+                    built.Append(dayZero && run == 2 ? "00" : DayToken(moment, run));
                     break;
                 case 'H':
                     built.Append(twelveHour
@@ -1031,6 +1080,8 @@ internal static class JgsTime
         {
             "hh:mm" => $"{totalHours:00}:{minutes:00}",
             "mm:ss" => $"{totalMinutes:00}:{seconds:00}{fraction}",
+            // R2025b leaves the day out when there is none (open item 342, ADR 0375, probe p7e4 dd1 to dd16).
+            "dd:hh:mm:ss" when totalHours < 24 => $"{totalHours:00}:{minutes:00}:{seconds:00}{fraction}",
             "dd:hh:mm:ss" => $"{totalHours / 24:00}:{totalHours % 24:00}:{minutes:00}:{seconds:00}{fraction}",
             _ => $"{totalHours:00}:{minutes:00}:{seconds:00}{fraction}",
         };
@@ -1225,6 +1276,21 @@ internal static class JgsTime
     /// </summary>
     internal static JgsTimeTag ConcatTag(JgsTimeTag first, IEnumerable<JgsValue> pieces)
     {
+        // Calendar durations joined write every unit any of them writes (open item 342, ADR 0375).
+        if (first.Kind == JgsTimeKind.CalendarDuration)
+        {
+            string format = first.Format;
+            foreach (JgsValue piece in pieces)
+            {
+                if (piece.TimeTag is { Kind: JgsTimeKind.CalendarDuration } tag)
+                {
+                    format = JgsBuiltins.CalendarFormatUnion(format, tag.Format);
+                }
+            }
+
+            return first with { Format = format };
+        }
+
         if (first.Kind != JgsTimeKind.Datetime || first.FormatSet || first.Format is not (DefaultDatetimeFormat or DateOnlyFormat))
         {
             return first;

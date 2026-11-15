@@ -26,8 +26,18 @@ internal sealed partial class Interpreter
             picked.SetClassName(target.ClassName);
         }
 
-        return picked;
+        return KeptCalendar(picked, target);
     }
+
+    /// <summary>
+    /// A struct array made from a calendarDuration's elements is a calendarDuration still: an index,
+    /// an element write or deletion, a transpose (open item 342, ADR 0375, probe p7e3 cv13 to cv21).
+    /// Its storage is a struct array, and these roads made a plain one.
+    /// </summary>
+    private static JgsValue KeptCalendar(JgsValue made, JgsValue source) =>
+        source.TimeTag is { Kind: JgsTimeKind.CalendarDuration } tag && made.Type == JgsType.Struct && made.TimeTag is null
+            ? made.MarkTime(tag)
+            : made;
 
     private JgsValue IndexStructElements(JgsValue target, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
     {
@@ -339,7 +349,7 @@ internal sealed partial class Interpreter
             written.SetClassName(existing.ClassName);
         }
 
-        StoreBack(target, written, at, env);
+        StoreBack(target, KeptCalendar(written, existing), at, env);
         return rhs;
     }
 
@@ -402,7 +412,7 @@ internal sealed partial class Interpreter
         }
 
         JgsValue written = JgsValue.StructArray(new JgsStructArray(elements, payload.EmptyFields), newRows, newCols);
-        StoreBack(target, written, at, env);
+        StoreBack(target, KeptCalendar(written, existing), at, env);
         return rhs;
     }
 

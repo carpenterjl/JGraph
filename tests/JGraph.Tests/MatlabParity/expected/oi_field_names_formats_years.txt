@@ -1,0 +1,526 @@
+CHK|w1|double [1 1] double:2048  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w2|double [1 1] double:2048  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w3|double [1 1] double:2048  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w4|double [1 1] double:2048  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w5|double [1 1] double:7  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w6|double [1 1] double:7  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w7|logical [1 1] logical:false|exact
+CHK|w8|ERR MATLAB:rmfield:FieldnameTooLong / The string 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' is longer than the maximum MATLAB name length.  It is not a valid fieldname.|exact
+CHK|w9|double [1 1] double:2048  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w10|ERR MATLAB:DuplicateFieldName / Duplicate field name "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w11|cell [1 1] {double:2}  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w12|double [1 1] double:2048  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w13|double [1 1] double:2048  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w15|double [1 1] double:2048  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w16|ERR MATLAB:nonExistentField / Unrecognized field name "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w17|ERR MATLAB:nonExistentField / Unrecognized field name "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w18|logical [1 2] logical:[false true]|exact
+CHK|w19|ERR MATLAB:rmfield:FieldnameTooLong / The string 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' is longer than the maximum MATLAB name length.  It is not a valid fieldname.|exact
+CHK|w20|ERR MATLAB:rmfield:FieldnameTooLong / The string 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' is longer than the maximum MATLAB name length.  It is not a valid fieldname.|exact
+CHK|w21|cell [1 2] {'<2048 chars>','b'}  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w22|double [1 1] double:8  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w23|cell [1 1] {double:8}  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w24|double [1 2] double:[1 2]  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w25|struct [1 1] {<2048 chars>} <<2048 chars>=double:7>|exact
+CHK|w26|double [1 1] double:2  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w29|logical [1 1] logical:false|exact
+CHK|w30|char [1 3] '111'  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w31|double [1 1] double:1  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w33|double [1 1] double:7  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w34|double [1 1] double:2048  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|o1|cell [1 3] {'matlab.metadata.Property',double:[1 1],'A'}|exact
+CHK|o2|cell [1 3] {'matlab.metadata.Property',double:[1 1],'C'}|exact
+CHK|o3|cell [1 2] {'matlab.metadata.Property',double:[0 0]}|exact
+CHK|o4|cell [1 2] {'matlab.metadata.Property',double:[3 1]}|exact
+CHK|o5|cell [1 2] {'matlab.metadata.Method',double:[1 1]}|exact
+CHK|o6|cell [1 2] {'matlab.metadata.Property',double:[2 1]}|exact
+CHK|o7|cell [1 3] {'matlab.metadata.Property',double:[1 1],'A'}|exact
+CHK|o8|cell [1 2] {'matlab.metadata.Property',double:[2 1]}|exact
+CHK|o9|cell [1 2] {'matlab.metadata.Property',double:[0 0]}|exact
+CHK|o10|cell [1 2] {'matlab.metadata.Property',double:[0 0]}|exact
+CHK|o11|cell [1 2] {'matlab.metadata.Property',double:[2 1]}|exact
+CHK|o12|cell [1 2] {'matlab.metadata.Property',double:[3 1]}|exact
+CHK|o13|cell [1 2] {'matlab.metadata.Property',double:[3 1]}|exact
+CHK|o14|cell [1 2] {'matlab.metadata.Property',double:[1 1]}|exact
+CHK|o15|cell [1 2] {'matlab.metadata.Property',double:[0 0]}|exact
+CHK|t1|char [1 22] '['a' char(10) '';'bc']'|exact
+CHK|t2|char [1 18] '['a' char(10) 'b']'|exact
+CHK|t3|char [1 5] ''a\tb''|exact
+CHK|t4|char [1 11] '['ab';'cd']'|exact
+CHK|t5|char [1 18] '['a' char(13) 'b']'|exact
+CHK|t6|char [1 28] '['' char(10) '' char(10) '']'|exact
+CHK|t7|char [1 15] '['' char(0) '']'|exact
+CHK|t8|char [1 22] '['' char(10) 'x';'yz']'|exact
+CHK|t9|char [1 16] '['' char(10) '']'|exact
+CHK|t10|char [1 33] '['a' char(10) '';'b' char(10) '']'|exact
+CHK|t11|char [1 18] '['''' char(10) '']'|exact
+CHK|t12|char [1 35] '['a' char(10) 'b';'cd' char(10) '']'|exact
+CHK|t13|char [1 15] 'compose("a\nb")'|exact
+CHK|t14|char [1 22] '['a' char(13) '';'bc']'|exact
+CHK|t15|char [1 10] 'zeros(2,0)'|exact
+CHK|v1|ERR MATLAB:validators:mustBeValidVariableName / These are not valid variable names: '1a'.|exact
+CHK|v2|ERR MATLAB:validators:mustBeValidVariableName / These are not valid variable names: '1a' and '2c'.|exact
+CHK|v3|ERR MATLAB:validators:mustBeValidVariableName / These are not valid variable names: '1a' and 'x y'.|exact
+CHK|v4|ERR MATLAB:validators:mustBeNonzeroLengthText / Value must be text with one or more characters.|exact
+CHK|v5|ERR MATLAB:validators:mustBeNonzeroLengthText / Value must be text with one or more characters.|exact
+CHK|v6|ERR MATLAB:validators:mustBeNonzeroLengthText / Value must be text with one or more characters.|exact
+CHK|v7|double [1 1] double:1|exact
+CHK|v8|ERR MATLAB:validators:mustBeNonzeroLengthText / Value must be text with one or more characters.|exact
+CHK|v9|ERR MATLAB:validators:mustBeValidVariableName / These are not valid variable names: 'for'.|exact
+CHK|v10|double [1 1] double:1|exact
+CHK|v11|ERR MATLAB:validators:mustBeNonzeroLengthText / Value must be text with one or more characters.|exact
+CHK|v12|ERR MATLAB:validators:mustBeNonzeroLengthText / Value must be text with one or more characters.|exact
+CHK|v13|ERR MATLAB:validators:mustBeValidVariableName / These are not valid variable names: '1a' and '2b'.|exact
+CHK|k1|ERR MATLAB:Containers:Map:KeyUnsupportedType / Unsupported KeyType 'uint8' specified.  See documentation for valid key types.|exact
+CHK|k2|ERR MATLAB:Containers:Map:KeyUnsupportedType / Unsupported KeyType 'int8' specified.  See documentation for valid key types.|exact
+CHK|k3|ERR MATLAB:Containers:Map:KeyUnsupportedType / Unsupported KeyType 'int16' specified.  See documentation for valid key types.|exact
+CHK|k4|ERR MATLAB:Containers:Map:KeyUnsupportedType / Unsupported KeyType 'uint16' specified.  See documentation for valid key types.|exact
+CHK|k5|char [1 5] 'int32'|exact
+CHK|k6|char [1 6] 'uint32'|exact
+CHK|k7|char [1 5] 'int64'|exact
+CHK|k8|char [1 6] 'uint64'|exact
+CHK|k9|char [1 6] 'single'|exact
+CHK|k10|char [1 6] 'double'|exact
+CHK|k11|char [1 4] 'char'|exact
+CHK|k12|ERR MATLAB:Containers:Map:KeyUnsupportedType / Unsupported KeyType 'logical' specified.  See documentation for valid key types.|exact
+CHK|k13|ERR MATLAB:Containers:Map:KeyUnsupportedType / Unsupported KeyType 'string' specified.  See documentation for valid key types.|exact
+CHK|k14|ERR MATLAB:Containers:Map:KeyUnsupportedType / Unsupported KeyType 'cell' specified.  See documentation for valid key types.|exact
+CHK|k15|ERR MATLAB:Containers:Map:KeyUnsupportedType / Unsupported KeyType 'any' specified.  See documentation for valid key types.|exact
+CHK|k16|char [1 4] 'char'|exact
+CHK|k17|char [1 6] 'double'|exact
+CHK|k18|char [1 6] 'uint32'|exact
+CHK|k19|ERR MATLAB:string:MustBeStringScalarOrCharacterVector / Argument must be a text scalar.|exact
+CHK|k20|ERR MATLAB:Containers:Map:KeyUnsupportedType / Unsupported KeyType 'struct' specified.  See documentation for valid key types.|exact
+CHK|k21|char [1 6] 'double'|exact
+CHK|k22|char [1 6] 'double'|exact
+CHK|k23|char [1 6] 'double'|exact
+CHK|k24|char [1 6] 'double'|exact
+CHK|k25|char [1 5] 'int64'|exact
+CHK|k26|char [1 6] 'uint32'|exact
+CHK|k27|char [1 6] 'single'|exact
+CHK|k28|char [1 6] 'double'|exact
+CHK|k29|char [1 4] 'char'|exact
+CHK|k30|ERR MATLAB:Containers:Map:KeyUnsupportedType / Unsupported KeyType 'uint8' specified.  See documentation for valid key types.|exact
+CHK|k31|ERR MATLAB:Containers:Map:ValueUnsupportedType / Unsupported ValueType 'string' specified.  See documentation for valid value types.|exact
+CHK|k32|ERR MATLAB:Containers:Map:ValueUnsupportedType / Unsupported ValueType 'cell' specified.  See documentation for valid value types.|exact
+CHK|k33|ERR MATLAB:Containers:Map:ValueUnsupportedType / Unsupported ValueType 'struct' specified.  See documentation for valid value types.|exact
+CHK|k34|char [1 5] 'int64'|exact
+CHK|k35|char [1 6] 'double'|exact
+CHK|k36|char [1 6] 'uint16'|exact
+CHK|k40|char [1 4] 'char'|exact
+CHK|q1|double [1 6] double:[0 0 0 0 0 0]|exact
+CHK|q2|double [1 6] double:[0 0 0 12 0 0]|exact
+CHK|q3|char [1 8] '12:00 PM'|exact
+CHK|q5|char [1 10] '0000-01-00'|exact
+CHK|q6|char [1 12] '31-Dec--0001'|exact
+CHK|q7|char [1 12] '30-Dec--0001'|exact
+CHK|q8|double [1 6] double:[-2 12 30 0 0 0]|exact
+CHK|q10|char [1 11] '01-Jan-0001'|exact
+CHK|q11|char [1 11] '31-Dec-0000'|exact
+CHK|q12|double [1 6] double:[0 1 1 0 0 0]|exact
+CHK|q14|char [1 2] '01'|exact
+CHK|q15|ERR MATLAB:formatdate:yearFormat / Unrecognized year format. Format: yyy.|exact
+CHK|q16|ERR MATLAB:formatdate:yearFormat / Unrecognized year format. Format: y.|exact
+CHK|q17|ERR MATLAB:formatdate:yearFormat / Unrecognized year format. Format: yyyyy.|exact
+CHK|q18|char [1 2] '45'|exact
+CHK|q19|char [1 2] '23'|exact
+CHK|q20|char [1 2] '05'|exact
+CHK|q21|char [1 14] 'Sunday January'|exact
+CHK|q22|double [1 1] double:4509077|exact
+CHK|q23|double [1 1] double:-1766|exact
+CHK|q24|double [1 1] double:-1765.5|exact
+CHK|q25|double [1 1] double:-1765.5|exact
+CHK|q26|char [1 11] ' 1:04:05 PM'|exact
+CHK|q27|char [1 8] '12/30/01'|exact
+CHK|q29|char [1 2] '05'|exact
+CHK|q35|double [1 6] double:[12345 6 7 0 0 0]|exact
+CHK|u1|ERR MATLAB:validators:mustBeFile / These files do not exist: 'nofile_x7e.qq'.|exact
+CHK|u2|ERR MATLAB:validators:mustBeFolder / These folders do not exist: 'nodir_x7e_qq'.|exact
+CHK|u3|ERR MATLAB:validators:mustBeFile / These files do not exist: 'nofile_a7e.qq' and 'nofile_b7e.qq'.|exact
+CHK|u4|double [1 1] double:1|exact
+CHK|u5|double [1 1] double:1|exact
+CHK|u6|ERR MATLAB:validators:mustBeNonzeroLengthText / Value must be text with one or more characters.|exact
+CHK|u7|ERR MATLAB:validators:mustBeNonzeroLengthText / Value must be text with one or more characters.|exact
+CHK|u8|double [1 1] double:1|exact
+CHK|u9|double [1 1] double:1|exact
+CHK|u10|ERR MATLAB:validators:mustBeNonzeroLengthText / Value must be text with one or more characters.|exact
+CHK|u11|ERR MATLAB:validators:mustBeValidVariableName / These are not valid variable names: '1a', '2b', and '3c'.|exact
+CHK|u12|ERR MATLAB:validators:mustBeNonzeroLengthText / Value must be text with one or more characters.|exact
+CHK|u13|ERR MATLAB:validators:mustBeNonzeroLengthText / Value must be text with one or more characters.|exact
+CHK|u14|ERR MATLAB:validators:mustBeValidVariableName / These are not valid variable names: 'a b'.|exact
+CHK|u15|ERR MATLAB:validators:mustBeNonzeroLengthText / Value must be text with one or more characters.|exact
+CHK|u16|ERR MATLAB:string:MustBeCharCellArrayOrString / First argument must be text.|exact
+CHK|vt1|char [1 3] 'any'|exact
+CHK|vt2|char [1 4] 'char'|exact
+CHK|vt3|char [1 7] 'logical'|exact
+CHK|vt4|char [1 6] 'single'|exact
+CHK|vt5|char [1 4] 'int8'|exact
+CHK|vt6|char [1 5] 'uint8'|exact
+CHK|vt7|char [1 5] 'int16'|exact
+CHK|vt8|char [1 5] 'int32'|exact
+CHK|vt9|char [1 6] 'uint32'|exact
+CHK|vt10|char [1 6] 'uint64'|exact
+CHK|vt11|ERR MATLAB:Containers:Map:ValueUnsupportedType / Unsupported ValueType 'function_handle' specified.  See documentation for valid value types.|exact
+CHK|vt12|char [1 3] 'any'|exact
+CHK|vt14|ERR MATLAB:Containers:Map:KeyUnsupportedType / Unsupported KeyType 'uint8' specified.  See documentation for valid key types.|exact
+CHK|vt15|char [1 6] 'single'|exact
+CHK|vt16|ERR MATLAB:Containers:Map:KeyUnsupportedType / Unsupported KeyType 'uint8' specified.  See documentation for valid key types.|exact
+CHK|vt17|ERR MATLAB:Containers:Map:KeyUnsupportedType / Unsupported KeyType ' char' specified.  See documentation for valid key types.|exact
+CHK|vt18|ERR MATLAB:Containers:Map:KeyUnsupportedType / Unsupported KeyType 'ch' specified.  See documentation for valid key types.|exact
+CHK|vt19|ERR MATLAB:string:MustBeStringScalarOrCharacterVector / Argument must be a text scalar.|exact
+CHK|vt20|ERR MATLAB:Containers:Map:ValueUnsupportedType / Unsupported ValueType 'numeric' specified.  See documentation for valid value types.|exact
+CHK|vt21|double [1 1] double:3|exact
+CHK|vt22|cell [1 1] {uint32:5}|exact
+CHK|mk1|cell [1 1] {int64:1}|exact
+CHK|mk2|cell [1 2] {uint32:1,uint32:2}|exact
+CHK|mk3|cell [1 1] {single:1.5}|exact
+CHK|mk4|cell [1 1] {double:1}|exact
+CHK|mk5|char [1 6] 'double'  WARN MATLAB:Containers:Map:Convert64BitIntToDouble|exact
+CHK|mk6|char [1 5] 'int32'|exact
+CHK|mk7|char [1 6] 'double'|exact
+CHK|mk8|cell [1 2] {int64:1,int64:3}|exact
+CHK|mk9|char [1 5] 'int32'|exact
+CHK|mk10|char [1 6] 'uint64'|exact
+CHK|cv1|char [1 8] '1h 2m 3s'|exact
+CHK|cv2|cell [1 1] {'1y 2mo 3d 4h 5m 6s'}|exact
+CHK|cv4|char [1 2] '2w'|exact
+CHK|cv5|char [1 5] 'ymwdt'|exact
+CHK|cv6|char [1 4] 'qmdt'|exact
+CHK|cv7|char [1 4] 'ymdt'|exact
+CHK|cv8|char [1 4] 'ymdt'|exact
+CHK|cv9|string [1 1] "2w 1d"|exact
+CHK|cv10|string [1 2] "2w","1d"|exact
+CHK|cv11|string [1 1] "1w 3d"|exact
+CHK|cv13|string [1 3] "1mo","4d","3mo"|exact
+CHK|cv14|string [1 5] "1mo","2mo","3mo","0d","4d"|exact
+CHK|cv15|string [1 2] "2mo","3mo"|exact
+CHK|cv16|string [2 1] "1mo","2d"|exact
+CHK|cv17|string [1 2] "1mo","3mo"|exact
+CHK|cv19|string [3 1] "1mo","2mo","3mo"|exact
+CHK|cv20|string [1 2] "3mo","1mo"|exact
+CHK|cv22|string [1 1] "1y 2mo 3d 4h 5m 6.25s"|exact
+CHK|cv23|string [1 1] "1d 0h 0m 1.5s"|exact
+CHK|cv24|string [1 1] "1d -1h 0m 0s"|exact
+CHK|cv25|string [1 1] "0h 0m 0.001s"|exact
+CHK|cv26|string [1 1] "1h 0m 0s"|exact
+CHK|cv27|string [1 1] "0h 0m 30s"|exact
+CHK|cv28|string [1 1] "1y 0h 30m 0s"|exact
+CHK|cv29|string [1 1] "-1h -2m -3s"|exact
+CHK|cv30|string [1 1] "3h 25m 45.678s"|exact
+CHK|yp3|char [1 12] '01-Mar--0005'|exact
+CHK|yp4|char [1 21] '01-Mar--0005 12:00:00'|exact
+CHK|dd1|char [1 11] '01:01:02:03'|exact
+CHK|dd2|char [1 14] '02:01:02:03.25'|exact
+CHK|dd3|char [1 12] '-01:00:57:57'|exact
+CHK|dd4|char [1 11] '10:00:00:00'|exact
+CHK|dd5|char [1 12] '100:00:00:00'|exact
+CHK|dd6|char [2 11] '   01:00:00'/'01:01:00:00'|exact
+CHK|dd7|char [1 8] '00:00:03'|exact
+CHK|dd8|char [1 8] '23:59:59'|exact
+CHK|dd9|char [1 11] '01:00:00:00'|exact
+CHK|dd10|string [2 1] "01:00:00","01:01:00:00"|exact
+CHK|dd11|char [1 3] 'NaN'|exact
+CHK|dd12|char [1 3] 'Inf'|exact
+CHK|dd13|char [1 8] '00:00:00'|exact
+CHK|dd14|char [1 8] '25:02:03'|exact
+CHK|dd15|char [1 7] '1502:03'|exact
+CHK|dd16|char [1 11] '01:01:02:03'|exact
+CHK|dd17|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh:mm.' is not valid.|exact
+CHK|dd18|ERR MATLAB:duration:UnrecognizedFormat / The format 'HH:MM:SS' is not valid.|exact
+CHK|dd19|char [1 4] 'char'|exact
+CHK|dd20|ERR MATLAB:duration:UnrecognizedFormat / The format 'Hh:mm:ss' is not valid.|exact
+CHK|di1|char [1 8] '01:02:03'|exact
+CHK|di2|char [1 8] '01:02:00'|exact
+CHK|di3|char [1 8] '00:01:02'|exact
+CHK|di4|char [1 8] '25:02:03'|exact
+CHK|di5|char [1 8] '01:02:03'|exact
+CHK|di6|ERR MATLAB:duration:UnrecognizedInputFormat / Unsupported format 's'. See the documentation of 'InputFormat' for valid formats.|exact
+CHK|di7|ERR MATLAB:duration:UnrecognizedInputFormat / Unsupported format 'h'. See the documentation of 'InputFormat' for valid formats.|exact
+CHK|di8|char [1 8] '01:02:03'|exact
+CHK|di9|ERR MATLAB:duration:UnrecognizedInputFormat / Unsupported format 'HH:MM:SS'. See the documentation of 'InputFormat' for valid formats.|exact
+CHK|di10|ERR MATLAB:duration:InvalidInputFormat / A duration InputFormat must be a character vector or string scalar.|exact
+CHK|di11|ERR MATLAB:duration:InvalidFormat / A duration display format must be a character vector or string scalar.|exact
+CHK|di12|char [1 12] '01:02:03.000'|exact
+CHK|di13|ERR MATLAB:duration:UnrecognizedFormat / The format 'Q' is not valid.|exact
+CHK|di14|ERR MATLAB:duration:UnrecognizedFormat / The format 'HH' is not valid.|exact
+CHK|di15|ERR MATLAB:duration:UnrecognizedFormat / The format 'xx' is not valid.|exact
+CHK|sd1|ERR MATLAB:DuplicateFieldName / Duplicate field name "a"|exact
+CHK|sd2|ERR MATLAB:DuplicateFieldName / Duplicate field name "a"|exact
+CHK|ms1|char [1 6] '"a""b"'|exact
+CHK|ms2|char [1 12] '["a""b" "c"]'|exact
+CHK|ms3|char [1 21] 'compose(["a" "b\nc"])'|exact
+CHK|ms4|char [1 18] 'compose("a\\b\nc")'|exact
+CHK|ms5|char [1 11] '["x\ty" "z"]'|exact
+CHK|ms6|char [1 15] 'compose("a\rb")'|exact
+CHK|ms7|char [1 31] 'compose([string(missing) "\n"])'|exact
+CHK|ms8|char [1 13] 'compose("\0")'|exact
+CHK|ms9|char [1 15] 'compose("""\n")'|exact
+CHK|ms10|char [1 31] '['a' char(11) 'b' char(12) 'c']'|exact
+CHK|ms12|char [2 2] 'a\n'/'bc'|exact
+CHK|ms13|char [1 21] '['it''s' char(10) '']'|exact
+CHK|ms14|char [1 5] '"a\b"'|exact
+CHK|ct1|string [1 1] "0h 0m 0.33333s"|exact
+CHK|ct2|string [1 1] "3h 25m 45.679s"|exact
+CHK|ct3|string [1 1] "0h 0m 0.0001s"|exact
+CHK|ct4|string [1 1] "0h 0m 60s"|exact
+CHK|ct6|string [1 1] "100h 0m 0s"|exact
+CHK|ct7|string [1 1] "34h 17m 36.5s"|exact
+CHK|ct8|string [1 1] "0h 0m -0.5s"|exact
+CHK|ct9|string [1 1] "0h 0m 1e-07s"|exact
+CHK|ct10|string [1 1] "0h 0m 7.1235s"|exact
+CHK|cq1|string [1 1] "1q 1mo"|exact
+CHK|cq2|string [1 1] "5q"|exact
+CHK|cq3|string [1 1] "1y 1q"|exact
+CHK|cq4|string [1 1] "1y 1q"|exact
+CHK|cq6|string [1 2] "1d","1w"|exact
+CHK|cq8|string [1 1] "1q 10d"|exact
+CHK|cq9|string [1 1] "1q 1w"|exact
+CHK|cq11|string [1 1] "3w"|exact
+CHK|cq13|string [1 1] "-1w -3d"|exact
+CHK|cq14|string [1 1] "-5q"|exact
+CHK|cq15|string [1 1] "1q 2h 0m 0s"|exact
+CHK|cq16|string [1 1] "2w"|exact
+CHK|cq17|string [1 1] "0d"|exact
+CHK|cq18|string [1 1] "0d"|exact
+CHK|cq19|string [1 1] "1w 3d"|exact
+CHK|cq20|string [1 1] "1y 1q"|exact
+CHK|yf1|ERR MATLAB:formatdate:yearFormat / Unrecognized year format. Format: dd-yyy.|exact
+CHK|yf2|ERR MATLAB:formatdate:yearFormat / Unrecognized year format. Format: yyy-mm.|exact
+CHK|yf3|ERR MATLAB:formatdate:yearFormat / Unrecognized year format. Format: yyyyyy.|exact
+CHK|yf4|ERR MATLAB:formatdate:yearFormat / Unrecognized year format. Format: y mmm.|exact
+CHK|yf5|ERR MATLAB:formatdate:yearFormat / Unrecognized year format. Format: yyyy yyy.|exact
+CHK|yf6|ERR MATLAB:formatdate:yearFormat / Unrecognized year format. Format: yy yyyy.|exact
+CHK|yf7|char [1 7] '28 2020'|exact
+CHK|yf8|char [1 4] '2020'|exact
+CHK|dx1|ERR MATLAB:duration:UnrecognizedFormat / The format 'E' is not valid.|exact
+CHK|dx2|char [1 5] '00:00'|exact
+CHK|dx3|char [1 12] '-01:02:05.50'|exact
+CHK|dx4|char [1 11] '0.0625 days'|exact
+CHK|dx5|ERR MATLAB:duration:InvalidFormat / A duration display format must be a character vector or string scalar.|exact
+CHK|dx6|ERR MATLAB:duration:UnrecognizedFormat / The format 'E' is not valid.|exact
+CHK|dx7|ERR MATLAB:duration:UnrecognizedInputFormat / Unsupported format 'E'. See the documentation of 'InputFormat' for valid formats.|exact
+CHK|dx8|ERR MATLAB:duration:UnrecognizedFormat / The format 'E' is not valid.|exact
+CHK|dx9|ERR MATLAB:duration:UnrecognizedFormat / The format 'E' is not valid.|exact
+CHK|dx10|ERR MATLAB:duration:UnrecognizedFormat / The format 'Q' is not valid.|exact
+CHK|dx11|char [1 5] '01:00'|exact
+CHK|dx12|string [1 1] "90 min"|exact
+CHK|dx13|ERR MATLAB:duration:UnrecognizedFormat / The format 'E' is not valid.|exact
+CHK|dx14|char [1 12] '01:00:00.000'|exact
+CHK|dx15|char [1 18] '01:00:00.000000000'|exact
+CHK|cd1|string [1 3] "1mo","2mo","3mo"|exact
+CHK|cd2|string [1 2] "1d","2d"|exact
+CHK|cd3|string [1 2] "1y","2mo"|exact
+CHK|cd4|string [1 1] "1y 2mo 3d"|exact
+CHK|cd5|string [2 1] "1y 3mo 5d","2y 4mo 6d"|exact
+CHK|cd6|string [1 1] "1h 2m 3s"|exact
+CHK|cd7|string [1 1] "1y 2mo 3d 4h 5m 6s"|exact
+CHK|cd8|string [1 1] "1y 2mo 3d 4h 5m 6.5s"|exact
+CHK|cd9|string [2 2] "1mo","3mo","2mo","4mo"|exact
+CHK|cd10|string [1 2] "1w","2w"|exact
+CHK|cd11|string [1 2] "1q","2q"|exact
+CHK|cd12|string [1 1] "-1y -2mo -3d"|exact
+CHK|cd16|char [3 3] '1mo'/'2mo'/'3mo'|exact
+CHK|cd17|cell [1 3] {'1mo','2mo','3mo'}|exact
+CHK|cd18|string [1 1] "0d"|exact
+CHK|cd21|string [1 1] "1y 2mo"|exact
+CHK|cd22|string [1 1] "1d 25h 0m 0s"|exact
+CHK|cd23|string [1 2] "1mo 3d","2mo 3d"|exact
+CHK|y1|char [1 11] '01-Jan-0000'|exact
+CHK|y2|char [1 12] '15-Jun--0001'|exact
+CHK|y3|char [1 10] '0101-01-01'|exact
+CHK|y4|char [1 11] '-0100-01-01'|exact
+CHK|y5|char [1 14] 'BCE 0001-01-01'|exact
+CHK|y6|char [1 5] 'BCE 6'|exact
+CHK|y7|char [1 2] '-5'|exact
+CHK|y8|char [1 2] '06'|exact
+CHK|y9|char [1 3] '-05'|exact
+CHK|y10|char [1 8] 'BCE 0006'|exact
+CHK|y11|char [1 8] 'BCE 0006'|exact
+CHK|y12|char [1 11] '01-Jan-0000'|exact
+CHK|y14|char [1 11] '00-Jan-0000'|exact
+CHK|y15|char [1 11] '01-Jan-0000'|exact
+CHK|y19|double [1 1] double:1|exact
+CHK|y20|double [1 1] double:-364|exact
+CHK|y21|double [1 1] double:-5|exact
+CHK|y22|double [1 2] double:[3 1]|exact
+CHK|y23|double [1 1] double:-1766|exact
+CHK|y24|double [1 1] double:7|exact
+CHK|y25|char [1 11] '29-Feb-0000'|exact
+CHK|y26|char [1 12] '29-Feb--0004'|exact
+CHK|y27|char [1 12] '01-Mar--0001'|exact
+CHK|y28|char [1 11] '01-Jan-0001'|exact
+CHK|y29|char [1 11] '31-Dec-0000'|exact
+CHK|y30|double [1 1] double:366|exact
+CHK|y31|string [1 1] "15-Mar--0044"|exact
+CHK|y32|char [1 26] 'Thursday, March 15, 45 BCE'|exact
+CHK|y33|char [1 2] '75'|exact
+CHK|y35|char [1 2] '44'|exact
+CHK|y37|char [1 11] '01-Mar-0000'|exact
+CHK|y39|double [1 6] double:[-5 3 1 4 5 6]|exact
+CHK|y40|double [1 6] double:[-1 12 30 0 0 0]|exact
+CHK|y41|char [1 13] '01-Jan--12345'|exact
+CHK|y42|char [1 5] '00006'|exact
+CHK|y43|char [1 6] '-00005'|exact
+CHK|y44|char [1 4] '1 Q1'|exact
+CHK|y45|char [1 5] 'Sat 7'|exact
+CHK|y46|char [1 1] '1'|exact
+CHK|y47|char [1 23] '0002-12-31 23:59:59.500'|exact
+CHK|y48|char [1 3] '+00'|exact
+CHK|y49|string [1 1] "Mar 6"|exact
+CHK|y50|cell [1 3] {'01-Mar--0005','01-Mar-0000','01-Mar-0001'}|exact
+CHK|y52|char [1 11] '01-Jan-0000'|exact
+CHK|y53|char [1 8] '0006 BCE'|exact
+CHK|y54|ERR MATLAB:datetime:UnsupportedSymbol / The format 'Y' contains an unsupported symbol: 'Y'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y59|logical [1 1] logical:false|exact
+CHK|y60|char [1 12] '01-Jan-10000'|exact
+CHK|y61|char [1 11] '12345-06-07'|exact
+CHK|dl_A|ERR MATLAB:duration:UnrecognizedFormat / The format 'A' is not valid.|exact
+CHK|dl_B|ERR MATLAB:duration:UnrecognizedFormat / The format 'B' is not valid.|exact
+CHK|dl_C|ERR MATLAB:duration:UnrecognizedFormat / The format 'C' is not valid.|exact
+CHK|dl_D|ERR MATLAB:duration:UnrecognizedFormat / The format 'D' is not valid.|exact
+CHK|dl_E|ERR MATLAB:duration:UnrecognizedFormat / The format 'E' is not valid.|exact
+CHK|dl_F|ERR MATLAB:duration:UnrecognizedFormat / The format 'F' is not valid.|exact
+CHK|dl_G|ERR MATLAB:duration:UnrecognizedFormat / The format 'G' is not valid.|exact
+CHK|dl_H|ERR MATLAB:duration:UnrecognizedFormat / The format 'H' is not valid.|exact
+CHK|dl_I|ERR MATLAB:duration:UnrecognizedFormat / The format 'I' is not valid.|exact
+CHK|dl_J|ERR MATLAB:duration:UnrecognizedFormat / The format 'J' is not valid.|exact
+CHK|dl_K|ERR MATLAB:duration:UnrecognizedFormat / The format 'K' is not valid.|exact
+CHK|dl_L|ERR MATLAB:duration:UnrecognizedFormat / The format 'L' is not valid.|exact
+CHK|dl_M|ERR MATLAB:duration:UnrecognizedFormat / The format 'M' is not valid.|exact
+CHK|dl_N|ERR MATLAB:duration:UnrecognizedFormat / The format 'N' is not valid.|exact
+CHK|dl_O|ERR MATLAB:duration:UnrecognizedFormat / The format 'O' is not valid.|exact
+CHK|dl_P|ERR MATLAB:duration:UnrecognizedFormat / The format 'P' is not valid.|exact
+CHK|dl_Q|ERR MATLAB:duration:UnrecognizedFormat / The format 'Q' is not valid.|exact
+CHK|dl_R|ERR MATLAB:duration:UnrecognizedFormat / The format 'R' is not valid.|exact
+CHK|dl_S|ERR MATLAB:duration:UnrecognizedFormat / The format 'S' is not valid.|exact
+CHK|dl_T|ERR MATLAB:duration:UnrecognizedFormat / The format 'T' is not valid.|exact
+CHK|dl_U|ERR MATLAB:duration:UnrecognizedFormat / The format 'U' is not valid.|exact
+CHK|dl_V|ERR MATLAB:duration:UnrecognizedFormat / The format 'V' is not valid.|exact
+CHK|dl_W|ERR MATLAB:duration:UnrecognizedFormat / The format 'W' is not valid.|exact
+CHK|dl_X|ERR MATLAB:duration:UnrecognizedFormat / The format 'X' is not valid.|exact
+CHK|dl_Y|ERR MATLAB:duration:UnrecognizedFormat / The format 'Y' is not valid.|exact
+CHK|dl_Z|ERR MATLAB:duration:UnrecognizedFormat / The format 'Z' is not valid.|exact
+CHK|dl_a|ERR MATLAB:duration:UnrecognizedFormat / The format 'a' is not valid.|exact
+CHK|dl_b|ERR MATLAB:duration:UnrecognizedFormat / The format 'b' is not valid.|exact
+CHK|dl_c|ERR MATLAB:duration:UnrecognizedFormat / The format 'c' is not valid.|exact
+CHK|dl_d|char [1 13] '0.043096 days'|exact
+CHK|dl_e|ERR MATLAB:duration:UnrecognizedFormat / The format 'e' is not valid.|exact
+CHK|dl_f|ERR MATLAB:duration:UnrecognizedFormat / The format 'f' is not valid.|exact
+CHK|dl_g|ERR MATLAB:duration:UnrecognizedFormat / The format 'g' is not valid.|exact
+CHK|dl_h|char [1 9] '1.0343 hr'|exact
+CHK|dl_i|ERR MATLAB:duration:UnrecognizedFormat / The format 'i' is not valid.|exact
+CHK|dl_j|ERR MATLAB:duration:UnrecognizedFormat / The format 'j' is not valid.|exact
+CHK|dl_k|ERR MATLAB:duration:UnrecognizedFormat / The format 'k' is not valid.|exact
+CHK|dl_l|ERR MATLAB:duration:UnrecognizedFormat / The format 'l' is not valid.|exact
+CHK|dl_m|char [1 10] '62.058 min'|exact
+CHK|dl_n|ERR MATLAB:duration:UnrecognizedFormat / The format 'n' is not valid.|exact
+CHK|dl_o|ERR MATLAB:duration:UnrecognizedFormat / The format 'o' is not valid.|exact
+CHK|dl_p|ERR MATLAB:duration:UnrecognizedFormat / The format 'p' is not valid.|exact
+CHK|dl_q|ERR MATLAB:duration:UnrecognizedFormat / The format 'q' is not valid.|exact
+CHK|dl_r|ERR MATLAB:duration:UnrecognizedFormat / The format 'r' is not valid.|exact
+CHK|dl_s|char [1 10] '3723.5 sec'|exact
+CHK|dl_t|ERR MATLAB:duration:UnrecognizedFormat / The format 't' is not valid.|exact
+CHK|dl_u|ERR MATLAB:duration:UnrecognizedFormat / The format 'u' is not valid.|exact
+CHK|dl_v|ERR MATLAB:duration:UnrecognizedFormat / The format 'v' is not valid.|exact
+CHK|dl_w|ERR MATLAB:duration:UnrecognizedFormat / The format 'w' is not valid.|exact
+CHK|dl_x|ERR MATLAB:duration:UnrecognizedFormat / The format 'x' is not valid.|exact
+CHK|dl_y|char [1 14] '0.00011799 yrs'|exact
+CHK|dl_z|ERR MATLAB:duration:UnrecognizedFormat / The format 'z' is not valid.|exact
+CHK|dc1|char [1 14] '0.00011799 yrs'|exact
+CHK|dc2|char [1 13] '0.043096 days'|exact
+CHK|dc3|char [1 9] '1.0343 hr'|exact
+CHK|dc4|char [1 10] '62.058 min'|exact
+CHK|dc5|char [1 10] '3723.5 sec'|exact
+CHK|dc6|char [1 8] '01:02:03'|exact
+CHK|dc7|char [1 8] '01:02:03'|exact
+CHK|dc8|char [1 5] '62:03'|exact
+CHK|dc9|char [1 5] '01:02'|exact
+CHK|dc10|char [1 12] '01:02:03.500'|exact
+CHK|dc11|char [1 10] '01:02:03.5'|exact
+CHK|dc12|char [1 18] '01:02:03.500000000'|exact
+CHK|dc13|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh:mm:ss.SSSSSSSSSS' is not valid.|exact
+CHK|dc14|char [1 11] '01:02:03.50'|exact
+CHK|dc15|char [1 9] '62:03.500'|exact
+CHK|dc16|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh:mm.SSS' is not valid.|exact
+CHK|dc17|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh' is not valid.|exact
+CHK|dc18|ERR MATLAB:duration:UnrecognizedFormat / The format 'mm' is not valid.|exact
+CHK|dc19|ERR MATLAB:duration:UnrecognizedFormat / The format 'ss' is not valid.|exact
+CHK|dc20|ERR MATLAB:duration:UnrecognizedFormat / The format 'dd' is not valid.|exact
+CHK|dc21|ERR MATLAB:duration:UnrecognizedFormat / The format 'yy' is not valid.|exact
+CHK|dc22|ERR MATLAB:duration:UnrecognizedFormat / The format 'hhh' is not valid.|exact
+CHK|dc23|ERR MATLAB:duration:UnrecognizedFormat / The format 'h:m:s' is not valid.|exact
+CHK|dc24|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh:mm:ss ' is not valid.|exact
+CHK|dc25|ERR MATLAB:duration:UnrecognizedFormat / The format ' hh:mm:ss' is not valid.|exact
+CHK|dc26|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh-mm-ss' is not valid.|exact
+CHK|dc27|ERR MATLAB:duration:UnrecognizedFormat / The format 'dd:hh' is not valid.|exact
+CHK|dc28|ERR MATLAB:duration:UnrecognizedFormat / The format 'dd:hh:mm' is not valid.|exact
+CHK|dc29|ERR MATLAB:duration:UnrecognizedFormat / The format 'yy:dd' is not valid.|exact
+CHK|dc30|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh:ss' is not valid.|exact
+CHK|dc31|ERR MATLAB:duration:UnrecognizedFormat / The format 'd:h' is not valid.|exact
+CHK|dc32|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh:mm:ss.sss' is not valid.|exact
+CHK|dc33|ERR MATLAB:duration:UnrecognizedFormat / The format 'y.SSS' is not valid.|exact
+CHK|dc34|ERR MATLAB:duration:UnrecognizedFormat / The format 'd.S' is not valid.|exact
+CHK|dc35|ERR MATLAB:duration:UnrecognizedFormat / The format 'h.SS' is not valid.|exact
+CHK|dc36|ERR MATLAB:duration:UnrecognizedFormat / The format 'm.S' is not valid.|exact
+CHK|dc37|ERR MATLAB:duration:UnrecognizedFormat / The format 's.SSS' is not valid.|exact
+CHK|dc38|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh:MM:ss' is not valid.|exact
+CHK|dc39|ERR MATLAB:duration:UnrecognizedFormat / The format 'HH:mm:ss' is not valid.|exact
+CHK|dc40|ERR MATLAB:duration:UnrecognizedFormat / The format 'mm:hh' is not valid.|exact
+CHK|dc41|ERR MATLAB:duration:UnrecognizedFormat / The format 'ss:mm:hh' is not valid.|exact
+CHK|dc42|ERR MATLAB:duration:UnrecognizedFormat / The format '' is not valid.|exact
+CHK|dc43|char [1 8] '01:02:03'|exact
+CHK|dc44|ERR MATLAB:duration:UnrecognizedFormat / The format 'h m s' is not valid.|exact
+CHK|dc45|ERR MATLAB:duration:UnrecognizedFormat / The format 'E' is not valid.|exact
+CHK|dc46|char [1 13] '01:02:03.5000'|exact
+CHK|dc47|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh;mm;ss' is not valid.|exact
+CHK|dk1|char [1 1] 'y'|exact
+CHK|dk2|char [1 1] 'd'|exact
+CHK|dk3|char [1 1] 'h'|exact
+CHK|dk4|char [1 1] 'm'|exact
+CHK|dk5|char [1 1] 's'|exact
+CHK|dk6|char [1 11] 'dd:hh:mm:ss'|exact
+CHK|dk7|char [1 8] 'hh:mm:ss'|exact
+CHK|dk8|char [1 5] 'mm:ss'|exact
+CHK|dk9|char [1 5] 'hh:mm'|exact
+CHK|dk10|char [1 12] 'hh:mm:ss.SSS'|exact
+CHK|dk11|char [1 10] 'hh:mm:ss.S'|exact
+CHK|dk12|char [1 18] 'hh:mm:ss.SSSSSSSSS'|exact
+CHK|dk13|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh:mm:ss.SSSSSSSSSS' is not valid.|exact
+CHK|dk14|char [1 14] 'dd:hh:mm:ss.SS'|exact
+CHK|dk15|char [1 9] 'mm:ss.SSS'|exact
+CHK|dk16|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh:mm.SSS' is not valid.|exact
+CHK|dk17|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh' is not valid.|exact
+CHK|dk18|ERR MATLAB:duration:UnrecognizedFormat / The format 'mm' is not valid.|exact
+CHK|dk19|ERR MATLAB:duration:UnrecognizedFormat / The format 'ss' is not valid.|exact
+CHK|dk20|ERR MATLAB:duration:UnrecognizedFormat / The format 'dd' is not valid.|exact
+CHK|dk21|ERR MATLAB:duration:UnrecognizedFormat / The format 'yy' is not valid.|exact
+CHK|dk22|ERR MATLAB:duration:UnrecognizedFormat / The format 'hhh' is not valid.|exact
+CHK|dk23|ERR MATLAB:duration:UnrecognizedFormat / The format 'h:m:s' is not valid.|exact
+CHK|dk24|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh:mm:ss ' is not valid.|exact
+CHK|dk25|ERR MATLAB:duration:UnrecognizedFormat / The format ' hh:mm:ss' is not valid.|exact
+CHK|dk26|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh-mm-ss' is not valid.|exact
+CHK|dk27|ERR MATLAB:duration:UnrecognizedFormat / The format 'dd:hh' is not valid.|exact
+CHK|dk28|ERR MATLAB:duration:UnrecognizedFormat / The format 'dd:hh:mm' is not valid.|exact
+CHK|dk29|ERR MATLAB:duration:UnrecognizedFormat / The format 'yy:dd' is not valid.|exact
+CHK|dk30|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh:ss' is not valid.|exact
+CHK|dk31|ERR MATLAB:duration:UnrecognizedFormat / The format 'd:h' is not valid.|exact
+CHK|dk32|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh:mm:ss.sss' is not valid.|exact
+CHK|dk33|ERR MATLAB:duration:UnrecognizedFormat / The format 'y.SSS' is not valid.|exact
+CHK|dk34|ERR MATLAB:duration:UnrecognizedFormat / The format 'd.S' is not valid.|exact
+CHK|dk35|ERR MATLAB:duration:UnrecognizedFormat / The format 'h.SS' is not valid.|exact
+CHK|dk36|ERR MATLAB:duration:UnrecognizedFormat / The format 'm.S' is not valid.|exact
+CHK|dk37|ERR MATLAB:duration:UnrecognizedFormat / The format 's.SSS' is not valid.|exact
+CHK|dk38|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh:MM:ss' is not valid.|exact
+CHK|dk39|ERR MATLAB:duration:UnrecognizedFormat / The format 'HH:mm:ss' is not valid.|exact
+CHK|dk40|ERR MATLAB:duration:UnrecognizedFormat / The format 'mm:hh' is not valid.|exact
+CHK|dk41|ERR MATLAB:duration:UnrecognizedFormat / The format 'ss:mm:hh' is not valid.|exact
+CHK|dk42|ERR MATLAB:duration:UnrecognizedFormat / The format '' is not valid.|exact
+CHK|dk43|char [1 9] 'hh:mm:ss.'|exact
+CHK|dk44|ERR MATLAB:duration:UnrecognizedFormat / The format 'h m s' is not valid.|exact
+CHK|dk45|ERR MATLAB:duration:UnrecognizedFormat / The format 'E' is not valid.|exact
+CHK|dk46|char [1 13] 'hh:mm:ss.SSSS'|exact
+CHK|dk47|ERR MATLAB:duration:UnrecognizedFormat / The format 'hh;mm;ss' is not valid.|exact
+CHK|w_msg|string [1 1] "MATLAB:namelengthmaxexceeded '<2049>' exceeds MATLAB's maximum name length of 2048 characters and has been truncated to '<2048>'."  WARN MATLAB:namelengthmaxexceeded|exact
+CHK|w_rmmsg|string [1 1] "MATLAB:rmfield:FieldnameTooLong The string '<2049>' is longer than the maximum MATLAB name length.  It is not a valid fieldname."|exact
+CHK|div_datestr_negative_year|char [1 11] '30-Dec-9999'|div=ADR0375|diverges|char [1 12] '30-Dec--0001'
+CHK|div_datestr_five_digit_year|char [1 11] '07-Jun-2345'|div=ADR0375|diverges|char [1 12] '07-Jun-12345'

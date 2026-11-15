@@ -663,20 +663,21 @@ internal static partial class JgsBuiltins
         // text ask first whether there is any, and say so in mustBeNonzeroLengthText's words.
         Whole("mustBeNonsparse", static v => v.Type != JgsType.Sparse, "not sparse");
 
+        // R2025b's sentences begin "These are" and "These files", JGS keeps its own (open item 342, ADR 0375).
         Define("mustBeValidVariableName", (args, line, col) =>
             NamesMustHold("mustBeValidVariableName", args,
                 static name => IsValidVariableName(name),
-                "The following are not valid variable names", line, col));
+                JgsRunningDialect.ThreadIsMatlab ? "These are not valid variable names" : "The following are not valid variable names", line, col));
 
         Define("mustBeFile", (args, line, col) =>
             NamesMustHold("mustBeFile", args,
                 static path => System.IO.File.Exists(path),
-                "The following files do not exist", line, col));
+                JgsRunningDialect.ThreadIsMatlab ? "These files do not exist" : "The following files do not exist", line, col));
 
         Define("mustBeFolder", (args, line, col) =>
             NamesMustHold("mustBeFolder", args,
                 static path => System.IO.Directory.Exists(path),
-                "The following folders do not exist", line, col));
+                JgsRunningDialect.ThreadIsMatlab ? "These folders do not exist" : "The following folders do not exist", line, col));
     }
 
     /// <summary>The elements <c>mustBeMember</c> checks: a cell's entries, an array's, or the value itself.</summary>
@@ -723,7 +724,31 @@ internal static partial class JgsBuiltins
         int line, int col)
     {
         Arity(name, args, 1, line, col);
-        string[]? texts = TextElementsOf(args[0]);
+        JgsValue value = args[0];
+        if (JgsRunningDialect.ThreadIsMatlab)
+        {
+            // R2025b (open item 342, ADR 0375, probe p7e3 u4 to u16): an empty cell or string array
+            // names nothing and passes; a char matrix and a missing string are not text with
+            // characters; a cell holding a char matrix is string's own refusal.
+            if ((value.Type == JgsType.Cell && value.AsCell.Length == 0) || (value.IsStringArray && value.ArrayLength == 0))
+            {
+                return JgsValue.Null;
+            }
+
+            if (value.Type == JgsType.Cell && System.Array.Exists(value.AsCell, static c => c.IsCharMatrix && c.Rows > 1))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:string:MustBeCharCellArrayOrString", "First argument must be text.");
+            }
+
+            if ((value.IsCharMatrix && value.Rows > 1)
+                || (!(value.Type == JgsType.Cell) && TextElementsOf(value) is { } given && System.Array.Exists(given, static t => t == MissingSentinel)))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeNonzeroLengthText",
+                    "Value must be text with one or more characters.");
+            }
+        }
+
+        string[]? texts = TextElementsOf(value);
         if (texts is null || texts.Length == 0 || System.Array.Exists(texts, static t => t.Length == 0))
         {
             throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeNonzeroLengthText",

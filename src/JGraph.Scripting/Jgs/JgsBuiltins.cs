@@ -468,6 +468,15 @@ internal static partial class JgsBuiltins
             double hour = components.Length > 3 ? components[3] : 0;
             double minute = components.Length > 4 ? components[4] : 0;
             double second = components.Length > 5 ? components[5] : 0;
+
+            // A year .NET's OLE dates do not reach, before 100 or past 9999, is counted by the
+            // calendar's own repeat, as a datetime is (open item 342, ADR 0375: datenum(0, 1, 1) is 1,
+            // datenum(-1, 1, 1) -364; it was refused or clamped to year 1).
+            if (JgsRunningDialect.ThreadIsMatlab && (components[0] < 100 || components[0] > 9999))
+            {
+                return JgsValue.Number(JgsTime.ToDatenum(JgsTime.FromComponents(components[0], components[1], components[2], hour, minute, second)));
+            }
+
             return JgsValue.Number(SerialFromComponents(components[0], components[1], components[2], hour, minute, second));
         });
 
@@ -492,19 +501,50 @@ internal static partial class JgsBuiltins
                     : ToDoubles("datestr", args[0], line, col);
 
             var moments = new DateTime[serials.Length];
+            var years = new int[serials.Length];
+            var dayZero = new bool[serials.Length];
             for (int i = 0; i < serials.Length; i++)
             {
                 double oaDate = serials[i] - matlabDatenumOffset;
-                if (double.IsNaN(oaDate) || oaDate < -657435.0 || oaDate > 2958465.99999999)
+                if (double.IsNaN(oaDate) || double.IsInfinity(oaDate))
                 {
                     throw new JgsRuntimeException(line, col, "datestr: the serial date number is out of range.");
                 }
 
-                moments[i] = DateTime.FromOADate(oaDate);
+                if (oaDate >= -657435.0 && oaDate <= 2958465.99999999)
+                {
+                    moments[i] = DateTime.FromOADate(oaDate);
+                    years[i] = moments[i].Year;
+                    continue;
+                }
+
+                if (!JgsRunningDialect.ThreadIsMatlab)
+                {
+                    throw new JgsRuntimeException(line, col, "datestr: the serial date number is out of range.");
+                }
+
+                // A moment before year 100 or past 9999 (open item 342, ADR 0375): read where the
+                // calendar repeats, its year written as it is. A serial in [0, 1) is R2025b's day 0 of
+                // January in year 0 (datevec(0) is [0 0 0 0 0 0], datestr(0) 00-Jan-0000).
+                dayZero[i] = System.Math.Floor(serials[i]) == 0;
+                double ms = System.Math.Round(JgsTime.FromDatenum(dayZero[i] ? serials[i] + 1 : serials[i])); // to the millisecond, as FromOADate reads one
+                moments[i] = JgsTime.WallClock(ms, null, out int cycles);
+                years[i] = JgsTime.YearOf(moments[i], cycles);
             }
 
-            string shape = DatestrShape("datestr", args, moments, line, col);
-            string[] written = System.Array.ConvertAll(moments, m => JgsTime.FormatDatestr(m, shape));
+            string shape = DatestrShape("datestr", args, moments, line, col, serials);
+
+            // formatdate.m writes a year of two or four letters only, counted over the whole format
+            // (open item 342, ADR 0375, probe p7e6: 'yyy', 'y mmm' and 'yy yyyy' are refused).
+            if (JgsRunningDialect.ThreadIsMatlab && shape.Count(static c => c == 'y') is not (0 or 2 or 4))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:formatdate:yearFormat", $"Unrecognized year format. Format: {shape}.");
+            }
+            string[] written = new string[moments.Length];
+            for (int i = 0; i < moments.Length; i++)
+            {
+                written[i] = JgsTime.FormatDatestr(moments[i], shape, years[i], dayZero[i]);
+            }
             return written.Length == 1 ? JgsValue.Str(written[0]) : PadIntoCharMatrix(written);
         });
 
@@ -7212,10 +7252,18 @@ internal static partial class JgsBuiltins
     /// time otherwise, which is R2025b's rule for the bare call.
     /// </summary>
     private static string DatestrShape(
-        string name, IReadOnlyList<JgsValue> args, DateTime[] moments, int line, int col)
+        string name, IReadOnlyList<JgsValue> args, DateTime[] moments, int line, int col, double[]? serials = null)
     {
         if (args.Count < 2)
         {
+            // Times of day alone, every serial in [0, 1) and not all whole, are datestr.m's format 16
+            // (open item 342, ADR 0375: datestr(0.5) is 12:00 PM).
+            if (serials is { Length: > 0 } && System.Array.TrueForAll(serials, static s => System.Math.Floor(s) == 0)
+                && !System.Array.TrueForAll(serials, static s => s == System.Math.Floor(s)))
+            {
+                return JgsTime.DatestrPattern(16)!;
+            }
+
             foreach (DateTime moment in moments)
             {
                 if (moment.TimeOfDay != TimeSpan.Zero)

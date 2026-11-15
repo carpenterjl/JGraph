@@ -1048,4 +1048,28 @@ internal static partial class JgsBuiltins
 
         return true;
     }
+
+    /// <summary>
+    /// A struct field name as R2025b writes or reads it (open item 342, ADR 0375, probe p7e1 rows
+    /// w1 to w34): one past <c>namelengthmax</c> characters is cut to that length with the warning
+    /// <c>MATLAB:namelengthmaxexceeded</c>, in <c>s.(f) = v</c>, <c>s.(f)</c>, <c>struct</c>,
+    /// <c>setfield</c>, <c>getfield</c> and <c>cell2struct</c>. <c>isfield</c> and <c>rmfield</c> do not
+    /// cut. The MATLAB dialect only; JGS keeps a name whole.
+    /// </summary>
+    internal static string FieldNameWithinLimit(string name)
+    {
+        if (name.Length <= NameLengthMax || !JgsRunningDialect.ThreadIsMatlab)
+        {
+            return name;
+        }
+
+        string kept = name[..NameLengthMax];
+        if ((JgsLifetime.Current?.Interpreter.Host ?? JgsCallbackDispatcher.Current?.Interpreter?.Host) is { } host)
+        {
+            Warn(host, "MATLAB:namelengthmaxexceeded",
+                $"'{name}' exceeds MATLAB's maximum name length of {NameLengthMax} characters and has been truncated to '{kept}'.");
+        }
+
+        return kept;
+    }
 }

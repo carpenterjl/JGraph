@@ -304,8 +304,24 @@ internal static partial class JgsBuiltins
         // containers.Map('KeyType', 'char', 'ValueType', 'any') declares the types and stays empty.
         if (args.Count == 4 && IsTextScalar(args[0]) && TextOf(args[0]).Equals("KeyType", StringComparison.OrdinalIgnoreCase))
         {
-            fields["KeyType"] = JgsValue.Str(TextOf(args[1]));
-            fields["ValueType"] = JgsValue.Str(TextOf(args[3]));
+            if (className == MapClassName && JgsRunningDialect.ThreadIsMatlab)
+            {
+                (fields["KeyType"], fields["ValueType"]) = MapDeclaredTypes(args[1], args[3], line, col);
+                return map;
+            }
+
+            fields["KeyType"] = JgsValue.Str(DeclaredTypeText(args[1], line, col));
+            fields["ValueType"] = JgsValue.Str(DeclaredTypeText(args[3], line, col));
+            return map;
+        }
+
+        // The pair the other way round, containers.Map('ValueType', 'double', 'KeyType', 'single'), in
+        // the MATLAB dialect (open item 342, ADR 0375, probe p7e3 vt14, vt15).
+        if (args.Count == 4 && className == MapClassName && JgsRunningDialect.ThreadIsMatlab
+            && IsTextScalar(args[0]) && TextOf(args[0]).Equals("ValueType", StringComparison.OrdinalIgnoreCase)
+            && IsTextScalar(args[2]) && TextOf(args[2]).Equals("KeyType", StringComparison.OrdinalIgnoreCase))
+        {
+            (fields["KeyType"], fields["ValueType"]) = MapDeclaredTypes(args[3], args[1], line, col);
             return map;
         }
 
@@ -330,6 +346,12 @@ internal static partial class JgsBuiltins
                 $"{className}: {keys.Length} keys were given {given.Length} values.");
         }
 
+        string? numericKeyType = className == MapClassName && JgsRunningDialect.ThreadIsMatlab ? MapKeyTypeOfKeys(keys, args[0]) : null;
+        if (numericKeyType is not null)
+        {
+            keys = System.Array.ConvertAll(keys, k => MapKeyAs(numericKeyType, k, line, col));
+        }
+
         for (int i = 0; i < keys.Length; i++)
         {
             Put(map, keys[i], RetainedForEntry(given.Length == 1 ? given[0] : given[i], sharesOnStore), line, col);
@@ -337,11 +359,81 @@ internal static partial class JgsBuiltins
 
         if (keys.Length > 0)
         {
-            fields["KeyType"] = JgsValue.Str(IsTextScalar(keys[0]) ? "char" : "double");
+            fields["KeyType"] = JgsValue.Str(numericKeyType ?? (IsTextScalar(keys[0]) ? "char" : "double"));
             fields["ValueType"] = JgsValue.Str(className == DictionaryClassName ? ValueKind(ValueCell(map)[0]) : MapValueType(given));
         }
 
         return map;
+    }
+
+    /// <summary>The key types R2025b's containers.Map declares (open item 342, ADR 0375, probe p7e1 k1 to k20).</summary>
+    private static readonly string[] MapKeyTypes = ["char", "double", "single", "int32", "uint32", "int64", "uint64"];
+
+    /// <summary>The value types R2025b's containers.Map declares (probe p7e3 vt1 to vt20).</summary>
+    private static readonly string[] MapValueTypes =
+        ["any", "char", "logical", "double", "single", "int8", "uint8", "int16", "uint16", "int32", "uint32", "int64", "uint64"];
+
+    /// <summary>
+    /// <c>containers.Map('KeyType', k, 'ValueType', v)</c>'s two types in the MATLAB dialect: each a text
+    /// scalar, matched in any case and kept in lower case; the key's refusal first, then the value's,
+    /// in R2025b's words (open item 342, ADR 0375). R2025b refuses a uint8, int8, int16, uint16,
+    /// logical, string, cell or struct key and a string, cell, struct or function_handle value.
+    /// </summary>
+    private static (JgsValue KeyType, JgsValue ValueType) MapDeclaredTypes(JgsValue keyType, JgsValue valueType, int line, int col)
+    {
+        string key = DeclaredTypeText(keyType, line, col);
+        string value = DeclaredTypeText(valueType, line, col);
+        string? keyFound = System.Array.Find(MapKeyTypes, t => t.Equals(key, StringComparison.OrdinalIgnoreCase));
+        if (keyFound is null)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:Containers:Map:KeyUnsupportedType",
+                $"Unsupported KeyType '{key}' specified.  See documentation for valid key types.");
+        }
+
+        string? valueFound = System.Array.Find(MapValueTypes, t => t.Equals(value, StringComparison.OrdinalIgnoreCase));
+        return valueFound is null
+            ? throw new JgsRuntimeException(line, col, "MATLAB:Containers:Map:ValueUnsupportedType",
+                $"Unsupported ValueType '{value}' specified.  See documentation for valid value types.")
+            : (JgsValue.Str(keyFound), JgsValue.Str(valueFound));
+    }
+
+    /// <summary>A declared key or value type's text; anything but a text scalar is R2025b's refusal (it was a crash).</summary>
+    private static string DeclaredTypeText(JgsValue value, int line, int col) =>
+        IsTextScalar(value)
+            ? TextOf(value)
+            : throw new JgsRuntimeException(line, col, "MATLAB:string:MustBeStringScalarOrCharacterVector", "Argument must be a text scalar.");
+
+    /// <summary>
+    /// The key type a containers.Map takes from numeric keys in the MATLAB dialect (open item 342, ADR
+    /// 0375, probe p7e3 mk1 to mk10): keys all of one class among single, int32, uint32, int64 and uint64
+    /// keep it; any other mix is double (an int8, uint8, int16, uint16 or logical key too), with R2025b's
+    /// warning when a 64-bit integer is converted. Null when a key is not a real numeric scalar or is NaN,
+    /// which keeps the road it had.
+    /// </summary>
+    private static string? MapKeyTypeOfKeys(JgsValue[] keys, JgsValue given)
+    {
+        if (keys.Length == 0 || System.Array.Exists(keys, static k => IsTextScalar(k) || MapScalarNumber(k) is not double n || double.IsNaN(n)))
+        {
+            return null;
+        }
+
+        // An array of keys is of its own class; a boxed element of it may not say so.
+        string[] classes = given.Type == JgsType.Array
+            ? System.Array.ConvertAll(keys, _ => ClassOf(given, JgsDialect.Matlab))
+            : System.Array.ConvertAll(keys, static k => ClassOf(k, JgsDialect.Matlab));
+        if (System.Array.TrueForAll(classes, c => c == classes[0]) && classes[0] is "single" or "int32" or "uint32" or "int64" or "uint64")
+        {
+            return classes[0];
+        }
+
+        if (System.Array.Exists(classes, static c => c is "int64" or "uint64")
+            && (JgsLifetime.Current?.Interpreter.Host ?? JgsCallbackDispatcher.Current?.Interpreter?.Host) is { } host)
+        {
+            Warn(host, "MATLAB:Containers:Map:Convert64BitIntToDouble",
+                "One or more of the input arrays will be converted from a 64 bit integer to double.  This may result in a loss of precision.");
+        }
+
+        return "double";
     }
 
     /// <summary>

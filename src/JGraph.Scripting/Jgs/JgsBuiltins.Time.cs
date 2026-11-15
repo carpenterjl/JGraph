@@ -467,6 +467,20 @@ internal static partial class JgsBuiltins
     private static JgsValue Duration(IReadOnlyList<JgsValue> args, int line, int col)
     {
         (List<JgsValue> positional, Dictionary<string, JgsValue> options) = SplitTimeOptions("duration", args, line, col);
+        if (JgsRunningDialect.ThreadIsMatlab)
+        {
+            // R2025b's formats only (open item 342, ADR 0375): the display format first, then the input one.
+            if (options.TryGetValue("format", out JgsValue? givenFormat))
+            {
+                DurationDisplayFormat(givenFormat, line, col);
+            }
+
+            if (options.TryGetValue("inputformat", out JgsValue? givenInput))
+            {
+                RefuseDurationInputFormat(givenInput, line, col);
+            }
+        }
+
         string? displayFormat = OptionText("duration", options, "format", line, col);
 
         double[] values;
@@ -480,8 +494,20 @@ internal static partial class JgsBuiltins
         else if (positional.Count == 1 && TextElementsOf(positional[0]) is string[] texts)
         {
             values = new double[texts.Length];
+            bool hoursMinutes = JgsRunningDialect.ThreadIsMatlab && options.TryGetValue("inputformat", out JgsValue? read)
+                && IsTextScalar(read) && TextOf(read) == "hh:mm";
             for (int i = 0; i < texts.Length; i++)
             {
+                // 'InputFormat', 'hh:mm' reads two fields as hours and minutes, where two alone are
+                // minutes and seconds (open item 342, ADR 0375, probe p7e4 di2).
+                if (hoursMinutes && texts[i].Split(':') is [var h, var m]
+                    && double.TryParse(h, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double hours)
+                    && double.TryParse(m, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double minutes))
+                {
+                    values[i] = (hours * JgsTime.MsPerHour) + (minutes * JgsTime.MsPerMinute);
+                    continue;
+                }
+
                 if (!JgsTime.TryParseDuration(texts[i], out values[i]))
                 {
                     throw new JgsRuntimeException(line, col,
@@ -772,7 +798,9 @@ internal static partial class JgsBuiltins
         JgsTimeTag tag = value.TimeTag!;
         if (field == "Format")
         {
-            string format = TextOfArgument("Format", written, line, col);
+            string format = value.IsDuration && JgsRunningDialect.ThreadIsMatlab
+                ? DurationDisplayFormat(written, line, col) // R2025b's formats only (open item 342, ADR 0375)
+                : TextOfArgument("Format", written, line, col);
             if (value.IsDatetime)
             {
                 // 'default' goes back to the format worked out from the moments, and nothing is no
@@ -927,7 +955,7 @@ internal static partial class JgsBuiltins
         if (IsCalendarDuration(value))
         {
             (double months, double days, double millis) = ReadCalendar(value.AsStructArray, index);
-            return FormatCalendar(months, days, millis);
+            return FormatCalendar(months, days, millis, value.TimeTag!.Format);
         }
 
         return JgsTime.Format(value.ElementAt(index).AsNumber, value.TimeTag!);

@@ -285,7 +285,7 @@ public class MatlabM82TimeTests : IDisposable
         Assert.Equal("3mo", Text(result, "e"));
         Assert.Equal("1y", Text(result, "f"));
         Assert.Equal("3d", Text(result, "g"));
-        Assert.Equal("14d", Text(result, "h"));
+        Assert.Equal("2w", Text(result, "h")); // calweeks writes weeks, R2025b's ymwdt (open item 342, ADR 0375)
         Assert.Equal("1y 2mo 3d", Text(result, "i"));
     }
 
@@ -310,7 +310,7 @@ public class MatlabM82TimeTests : IDisposable
         Assert.Equal("1mo 2d", Text(result, "d"));
         Assert.Equal("2mo", Text(result, "e"));
         Assert.Equal("6mo", Text(result, "f"));
-        Assert.Equal("1mo 05:00:00", Text(result, "g"));
+        Assert.Equal("1mo 5h 0m 0s", Text(result, "g")); // R2025b writes a time as 5h 0m 0s (open item 342, ADR 0375)
         Assert.Equal(3, Number(result, "h"));
     }
 

@@ -1107,6 +1107,8 @@ internal static partial class JgsBuiltins
 
         var rows = new List<string>(text.Rows);
         bool nul = false;
+        bool escapes = doubled && JgsRunningDialect.ThreadIsMatlab
+            && System.Array.Exists(text.Texts, static t => t != MissingSentinel && t.AsSpan().IndexOfAny(MatStrSpecialCharacters) >= 0);
         for (int r = 0; r < System.Math.Max(text.Rows, 1); r++)
         {
             var pieces = new List<string>(System.Math.Max(text.Cols, 1));
@@ -1114,21 +1116,96 @@ internal static partial class JgsBuiltins
             {
                 int at = r + (c * text.Rows);
                 string piece = at < text.Texts.Length ? text.Texts[at] : string.Empty;
-                // Character 0 cannot sit inside quotes: R2025b writes it as a call between two pieces,
-                // mat2str(char(0)) being ['' char(0) ''] (k9_argument_messages, measured).
-                nul |= !doubled && piece.Contains(' ', StringComparison.Ordinal);
+                // Characters 0 and 10 to 13 cannot sit inside quotes: R2025b writes each as a call between
+                // two pieces, mat2str(char(0)) being ['' char(0) ''] (k9_argument_messages, measured) and a
+                // newline ['a' char(10) 'b'] (mat2str.m's dangerousPattern; open item 342, ADR 0375). A string
+                // holding one is written as compose of its escapes, below.
+                nul |= !doubled && (piece.Contains(' ', StringComparison.Ordinal)
+                    || (JgsRunningDialect.ThreadIsMatlab && piece.AsSpan().IndexOfAny(MatStrSpecialCharacters) >= 0));
                 pieces.Add(doubled
-                    ? (piece == MissingSentinel ? "string(missing)" : "\"" + piece + "\"")
-                    : "'" + piece.Replace("'", "''", StringComparison.Ordinal).Replace(" ", "' char(0) '", StringComparison.Ordinal) + "'");
+                    ? (piece == MissingSentinel ? "string(missing)" : "\"" + MatStrStringPiece(piece, escapes) + "\"")
+                    : "'" + MatStrCharPiece(piece) + "'");
             }
 
             rows.Add(string.Join(" ", pieces));
         }
 
         // One piece stands on its own; several are a literal with the brackets that build it.
-        return text.Texts.Length == 1 && text.Rows <= 1 && !nul
+        string written = text.Texts.Length == 1 && text.Rows <= 1 && !nul
             ? rows[0]
             : "[" + string.Join(";", rows) + "]";
+        return escapes ? "compose(" + written + ")" : written;
+    }
+
+    /// <summary>The characters mat2str.m cannot leave inside quotes: 0 and 10 to 13 (ADR 0375).</summary>
+    private static readonly System.Buffers.SearchValues<char> MatStrSpecialCharacters =
+        System.Buffers.SearchValues.Create("\0\n\v\f\r");
+
+    /// <summary>
+    /// One char row inside single quotes: a quote doubled, and in the MATLAB dialect each of
+    /// characters 0 and 10 to 13 written as a call between two pieces, <c>' char(10) '</c>, as
+    /// mat2str.m's regexprep writes it (open item 342, ADR 0375). JGS writes only character 0 so.
+    /// </summary>
+    private static string MatStrCharPiece(string piece)
+    {
+        string quoted = piece.Replace("'", "''", StringComparison.Ordinal);
+        if (quoted.AsSpan().IndexOfAny(MatStrSpecialCharacters) < 0)
+        {
+            return quoted;
+        }
+
+        bool matlab = JgsRunningDialect.ThreadIsMatlab;
+        var built = new System.Text.StringBuilder(quoted.Length + 16);
+        foreach (char c in quoted)
+        {
+            if (c == '\0' || (matlab && c is >= '\n' and <= '\r'))
+            {
+                built.Append("' char(").Append((int)c).Append(") '");
+            }
+            else
+            {
+                built.Append(c);
+            }
+        }
+
+        return built.ToString();
+    }
+
+    /// <summary>
+    /// One string inside double quotes, as mat2str.m writes it in the MATLAB dialect: a double quote
+    /// doubled, and when any element of the array holds character 0 or 10 to 13, those and the
+    /// backslash written as compose's escapes (the whole literal is then wrapped in <c>compose</c>;
+    /// open item 342, ADR 0375). JGS writes the text as it stands.
+    /// </summary>
+    private static string MatStrStringPiece(string piece, bool escapes)
+    {
+        if (!JgsRunningDialect.ThreadIsMatlab)
+        {
+            return piece;
+        }
+
+        if (!escapes)
+        {
+            return piece.Replace("\"", "\"\"", StringComparison.Ordinal);
+        }
+
+        var built = new System.Text.StringBuilder(piece.Length + 8);
+        foreach (char c in piece)
+        {
+            built.Append(c switch
+            {
+                '\0' => "\\0",
+                '\n' => "\\n",
+                '\v' => "\\v",
+                '\f' => "\\f",
+                '\r' => "\\r",
+                '\\' => "\\\\",
+                '"' => "\"\"",
+                _ => c.ToString(),
+            });
+        }
+
+        return built.ToString();
     }
 
     /// <summary>

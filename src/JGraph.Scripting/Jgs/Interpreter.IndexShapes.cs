@@ -335,7 +335,7 @@ internal sealed partial class Interpreter
             result.ReshapeDims(written.Dims);
         }
 
-        StoreBack(target, result, at, env);
+        StoreBack(target, KeptCalendar(result, existing), at, env);
         return rhs;
     }
 
@@ -358,7 +358,7 @@ internal sealed partial class Interpreter
             }
         }
 
-        return JgsValue.StructArray(new JgsStructArray(stood, payload.EmptyFields), cols, rows);
+        return KeptCalendar(JgsValue.StructArray(new JgsStructArray(stood, payload.EmptyFields), cols, rows), structs);
     }
 
     /// <summary><paramref name="offset"/> onward, <paramref name="count"/> of them, laid out in <paramref name="dims"/>.</summary>

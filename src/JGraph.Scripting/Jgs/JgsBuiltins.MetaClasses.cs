@@ -262,6 +262,96 @@ internal static partial class JgsBuiltins
         return context.RenderProperty(found, MetaDepth);
     }
 
+    /// <summary>
+    /// <c>findobj(list, ...)</c> over a metadata array, a member list (open item 342, ADR 0375, probe
+    /// p7e1 o1 to o15): the elements a search keeps, as a column of the list's class, or a 0-by-0 when
+    /// none is kept. A property name and its value match a field of that exact name holding an equal
+    /// value (text in its case); <c>-property</c>, <c>-regexp</c>, <c>-not</c>, <c>-and</c>, <c>-or</c>
+    /// and <c>-xor</c> read left to right; an absent property matches nothing.
+    /// </summary>
+    private static JgsValue FindAmongMetadata(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        JgsValue source = args[0];
+        JgsStructArray array = source.AsStructArray;
+        var kept = new List<Dictionary<string, JgsValue>>();
+        foreach (Dictionary<string, JgsValue> element in array.Elements)
+        {
+            if (MetadataSearchKeeps(element, args, line, col))
+            {
+                var copy = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+                foreach ((string name, JgsValue held) in element)
+                {
+                    copy[name] = JgsValue.Share(held);
+                }
+
+                kept.Add(copy);
+            }
+        }
+
+        return kept.Count == 0
+            ? EmptyMetaArray(source.ClassName!, array.FieldNames, 0, 0)
+            : MetaColumn(kept, array.FieldNames, source.ClassName!);
+    }
+
+    /// <summary>Whether one element of a metadata array answers a <c>findobj</c> search's terms, read left to right.</summary>
+    private static bool MetadataSearchKeeps(Dictionary<string, JgsValue> element, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        bool? result = null;
+        string join = "-and";
+        bool negate = false;
+        int i = 1;
+        while (i < args.Count)
+        {
+            string word = StrOf("findobj", args[i], line, col);
+            string lower = word.ToLowerInvariant();
+            if (lower is "-and" or "-or" or "-xor")
+            {
+                join = lower;
+                i++;
+                continue;
+            }
+
+            if (lower == "-not")
+            {
+                negate = !negate;
+                i++;
+                continue;
+            }
+
+            int needs = lower switch { "-regexp" => 3, _ => 2 };
+            if (i + needs > args.Count)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:findobj:InvalidInput", $"'{word}' needs {(needs == 3 ? "a property name and a pattern" : "a value")} after it.");
+            }
+
+            bool term = lower switch
+            {
+                "-depth" => true, // a member list is flat
+                "-property" => element.ContainsKey(StrOf("findobj", args[i + 1], line, col)),
+                "-regexp" => element.TryGetValue(StrOf("findobj", args[i + 1], line, col), out JgsValue? text) && IsTextScalar(text)
+                    && System.Text.RegularExpressions.Regex.IsMatch(TextOf(text), StrOf("findobj", args[i + 2], line, col)),
+                _ => element.TryGetValue(word, out JgsValue? held) && JgsStdlib.DeepEquals(held, args[i + 1]),
+            };
+            i += needs;
+            if (lower == "-depth")
+            {
+                continue;
+            }
+
+            if (negate)
+            {
+                term = !term;
+                negate = false;
+            }
+
+            result = result is not bool sofar ? term
+                : join switch { "-or" => sofar || term, "-xor" => sofar ^ term, _ => sofar && term };
+            join = "-and";
+        }
+
+        return result ?? true;
+    }
+
     /// <summary>A 0-by-0 of a metadata class with no fields: an empty <c>Namespace</c>, an empty <c>Validation.Class</c>.</summary>
     private static JgsValue EmptyMetaArray(string className, string[] fields, int rows, int cols)
     {

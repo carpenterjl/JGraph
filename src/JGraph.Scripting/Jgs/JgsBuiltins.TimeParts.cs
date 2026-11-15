@@ -66,6 +66,14 @@ internal static partial class JgsBuiltins
             {
                 DateTime at = JgsTime.WallClock(source[r], zone, out int cycles);
                 double[] row = [JgsTime.YearOf(at, cycles), at.Month, at.Day, at.Hour, at.Minute, JgsTime.SecondsOf(at)];
+
+                // A serial in [0, 1) is R2025b's year 0, month 0, day 0 and its time (open item 342,
+                // ADR 0375, probe p7e3 q1, q2).
+                if (zone is null && !args[0].IsDatetime && JgsRunningDialect.ThreadIsMatlab
+                    && System.Math.Floor(JgsTime.ToDatenum(source[r])) == 0)
+                {
+                    row[0] = row[1] = row[2] = 0;
+                }
                 for (int c = 0; c < 6; c++)
                 {
                     values[(c * source.Length) + r] = row[c];   // column-major
