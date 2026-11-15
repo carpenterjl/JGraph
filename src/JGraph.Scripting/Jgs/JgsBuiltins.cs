@@ -1457,7 +1457,7 @@ internal static partial class JgsBuiltins
                     written = System.Text.Encoding.UTF8.GetByteCount(text);
                     break;
                 case 2:
-                    host.WriteErr(text);
+                    host.WriteErrFromCode(text); // evalc takes it, as R2025b's does (open item 318)
                     written = System.Text.Encoding.UTF8.GetByteCount(text);
                     break;
                 default:

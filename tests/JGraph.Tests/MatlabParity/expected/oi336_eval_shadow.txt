@@ -1,0 +1,27 @@
+CHK|shadow_pi|3.14159265358979 # char # MATLAB:lang:ExternalShadowedInEval # Identifier 'pi' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported.|exact
+CHK|shadow_sin0|0 # char # MATLAB:lang:ExternalShadowedInEval # Identifier 'sin' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported.|exact
+CHK|shadow_sin1|0.841470984807897 # char #  # |exact
+CHK|shadow_max|2 # char # MATLAB:lang:ExternalShadowedInEval # Identifier 'max' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported.|exact
+CHK|shadow_pathfile|42 # char # MATLAB:lang:ExternalShadowedInEval # Identifier 'oi336helper' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported.|exact
+CHK|shadow_localfn|77 # char # MATLAB:lang:LocalFunctionShadowedInEval # Identifier 'loc336' in the evaluated statement does not refer to the local function. In a future release, using an identifier different to how it is used in the file will not be supported.|exact
+CHK|shadow_undefined|5 # char #  # |exact
+CHK|shadow_true_call|true # char # MATLAB:lang:ExternalShadowedInEval # Identifier 'true' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported.|exact
+CHK|shadow_multi|3.14159265358979 # char # MATLAB:lang:ExternalShadowedInEval # Identifier 'pi' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported.|exact
+CHK|shadow_for|3.14159265358979 # char # MATLAB:lang:ExternalShadowedInEval # Identifier 'pi' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported.|exact
+CHK|shadow_exist_eval|[1 7 3.14159265358979] # char # MATLAB:lang:PoofedVariableShadowsExternal # Function 'pi' in the evaluated statement is shadowed by a workspace variable. In a future release, the function would be given preference.|exact
+CHK|shadow_evalc|3.14159265358979 # char #  # |exact
+CHK|shadow_twice|3.14159265358979 # char # MATLAB:lang:ExternalShadowedInEval # Identifier 'pi' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported.|exact
+CHK|shadow_nomention|7 # char #  # |exact
+CHK|shadow_handle_only|0 # char # MATLAB:lang:ExternalShadowedInEval # Identifier 'sin' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported.|exact
+CHK|shadow_binds|7 # char #  # |exact
+CHK|shadow_toolbox_file|MATLAB:minrhs # char # MATLAB:lang:ExternalShadowedInEval # Identifier 'linspace' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported.|exact
+CHK|shadow_error_state|3.14159265358979 # char #  # |exact
+CHK|shadow_script|7 # |exact
+CHK|which_pi_builtin|1|exact
+CHK|which_pi_printed|1|exact
+CHK|which_eps_builtin|1|exact
+CHK|which_pi_text|built-in (C:\Program Files\MATLAB\R2025b\toolbox\matlab\elmat\pi)|div=ADR0378|diverges|pi is a built-in function.
+CHK|hotlinks|logical # false|exact
+CHK|hotlinks_case|logical # false|exact
+CHK|hotlinks_set|logical # false|exact
+CHK|hotlinks_in_evalc|1|div=ADR0378|diverges|0

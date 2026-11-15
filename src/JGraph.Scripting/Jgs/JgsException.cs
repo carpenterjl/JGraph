@@ -120,6 +120,7 @@ public sealed class JgsRuntimeException : JgsException
             error.PlaceAt(statement.Line, statement.Column);
         }
 
+        error.AnchorStatement(statement); // getReport's caret under a call made as a statement (open item 336)
         return false;
     }
 
@@ -147,6 +148,127 @@ public sealed class JgsRuntimeException : JgsException
         _frames.Add((name, file, line));
         _lineForNextFrame = callLine;
     }
+
+    /// <summary>
+    /// The frame the error is leaving is one R2025b's stack leaves out (an anonymous body whose text holds
+    /// <c>&gt;%</c>; open item 336, ADR 0378): the caller is reached from <paramref name="callLine"/> with no
+    /// frame recorded, and what the body's expressions anchored is forgotten, so the caller's call anchors.
+    /// </summary>
+    internal void SkipFrame(int callLine)
+    {
+        if (_frames.Count == 0)
+        {
+            PlacedOutsideFrame = true; // raised in the body: its place is not the caller's
+        }
+
+        _lineForNextFrame = callLine;
+        ForgetAnchor();
+    }
+
+    /// <summary>
+    /// The names R2025b's report writes for the frames, by frame index, where the stack's name alone does
+    /// not say it: a class method (<c>pk.C.stat</c>, <c>pk.C/inst</c>, the constructor <c>pk.C</c>; open
+    /// item 336, ADR 0378). Null until a frame needs one.
+    /// </summary>
+    private Dictionary<int, string>? _shownNames;
+
+    /// <summary>Names the frame <see cref="PushFrame(string, string, int, int)"/> recorded last as R2025b's report writes it.</summary>
+    internal void ShowLastFrameAs(string shown) =>
+        (_shownNames ??= [])[_frames.Count - 1] = shown;
+
+    /// <summary>The report's name for the frame at <paramref name="index"/>, or null when the stack's name says it.</summary>
+    internal string? ShownNameAt(int index) =>
+        _shownNames is not null && _shownNames.TryGetValue(index, out string? shown) ? shown : null;
+
+    /// <summary>
+    /// Where the expression each frame was running when the error left it begins, by frame index: what
+    /// R2025b's <c>getReport</c> underlines under each "Error in" line (open item 336, ADR 0378). The
+    /// frame an exception filter runs in is the one at <see cref="Frames"/>' count, since every frame
+    /// unwound before it was pushed by a catch; the innermost expression's filter runs first and keeps it.
+    /// </summary>
+    private Dictionary<int, ReportAnchor>? _anchors;
+
+    /// <summary>The anchor recorded for the frame at <paramref name="index"/>, or null.</summary>
+    internal ReportAnchor? AnchorAt(int index) =>
+        _anchors is not null && _anchors.TryGetValue(index, out ReportAnchor anchor) ? anchor : null;
+
+    /// <summary>
+    /// An exception filter around the evaluation of <paramref name="expression"/>, a call or a name called
+    /// bare: anchors the running frame at it unless an expression inside it has, and never catches. In the
+    /// frame the error was raised in, an error placed inside the call's argument list came from an argument
+    /// that anchors nothing itself (a name, an operator), and is anchored where it was raised.
+    /// </summary>
+    internal bool AnchorAt(Expr expression)
+    {
+        int index = _frames.Count;
+        if (_anchors is not null && _anchors.ContainsKey(index))
+        {
+            return false;
+        }
+
+        (int line, int column) = ReportAnchor.StartOf(expression);
+        bool raisedHere = index == 0 && Line > 0 && Column > 0 && !PlacedOutsideFrame
+            && (Line != expression.Line || Column > expression.Column);
+        (_anchors ??= [])[index] = raisedHere
+            ? new ReportAnchor(Line, Column, Chain: false)
+            : new ReportAnchor(line, column, Chain: true);
+        return false;
+    }
+
+    /// <summary>
+    /// The statement loop's half of <see cref="AnchorAt(Expr)"/>: a call written as a statement, or the call
+    /// an assignment's right side is, anchors a frame whose expressions anchored nothing on the way out.
+    /// </summary>
+    internal void AnchorStatement(Stmt? statement)
+    {
+        Expr? called = statement switch
+        {
+            ExprStmt { Expression: CallExpr or VariableExpr } bare => bare.Expression,
+            ExprStmt { Expression: AssignExpr { Value: CallExpr or VariableExpr } assign } => assign.Value,
+            MultiAssignStmt multi => multi.Call,
+            _ => null,
+        };
+
+        if (called is not null)
+        {
+            AnchorAt(called);
+        }
+    }
+
+    /// <summary>
+    /// The anchor of the running frame is forgotten: the expression that set it was eval'd text, whose
+    /// columns are not the file's, or a frame R2025b leaves out (<see cref="SkipFrame"/>).
+    /// </summary>
+    internal void ForgetAnchor() => _anchors?.Remove(_frames.Count);
+
+    /// <summary>
+    /// <c>eval</c>'s exception filter: an error leaving eval'd text forgets what the text anchored, so the
+    /// <c>eval</c> call anchors the frame (R2025b underlines <c>eval(...)</c>), and an error raised in the text
+    /// itself keeps its frame among the "Error in" lines, as R2025b's report does (measured). Never catches.
+    /// </summary>
+    internal bool LeavesEvalText()
+    {
+        ForgetAnchor();
+        if (_frames.Count == 0)
+        {
+            ShowsRaisingFrame = true;
+            PlacedOutsideFrame = true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// The error's place is not in the frame the report starts from - it was raised in eval'd text, whose
+    /// columns count in the text, or in a body <see cref="SkipFrame"/> left out - so no anchor is taken from it.
+    /// </summary>
+    internal bool PlacedOutsideFrame { get; private set; }
+
+    /// <summary>
+    /// The error was raised in eval'd text in the frame that ran the <c>eval</c>: R2025b's report lists that
+    /// frame under "Error in" although its header names it too (open item 336, measured).
+    /// </summary>
+    internal bool ShowsRaisingFrame { get; private set; }
 
     /// <summary>
     /// The line that was running in the frame the error has reached but not yet left: its own line

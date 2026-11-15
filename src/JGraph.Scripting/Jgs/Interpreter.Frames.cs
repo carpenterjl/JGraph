@@ -55,8 +55,35 @@ internal sealed partial class Interpreter
     internal void UnwindOtherFrame(JgsRuntimeException error)
     {
         (string name, string file, int line, int callLine) = OtherFrame(_otherFrames.Count - 1, error.PendingLine);
+        if (HiddenFrame(name))
+        {
+            error.SkipFrame(callLine);
+            return;
+        }
+
         error.PushFrame(name, file, callLine, line);
     }
+
+    /// <summary>
+    /// Whether R2025b leaves the frame named <paramref name="name"/> out of <c>ME.stack</c> and <c>dbstack</c>:
+    /// an anonymous body whose text holds <c>&gt;%</c> (open item 336, ADR 0378, measured: <c>@(x)
+    /// error('id', 'x&gt;%d', 1)</c>, <c>@(x) [x(3) '&gt;%']</c> and <c>@() dbstack(numel('&gt;%') * 0)</c> have no
+    /// frame, where <c>'%&gt;'</c>, <c>'x&gt;a%d'</c>, <c>'x&gt; %d'</c> and <c>['&gt;' '%']</c> have theirs). Its
+    /// caller is reached as if the body were part of the call.
+    /// </summary>
+    internal static bool HiddenFrame(string name) =>
+        name.StartsWith('@') && name.Contains(">%", StringComparison.Ordinal);
+
+    /// <summary>
+    /// The stack's name for a function that is no class method: <c>outer/inner</c> for a MATLAB nested
+    /// function (R2025b, open item 336, measured), its own name otherwise.
+    /// </summary>
+    private static string FrameNameOf(FnStmt function) =>
+        function.Dialect.IsMatlab ? function.StackName : function.Name;
+
+    /// <summary>Whether <paramref name="name"/> is a property's set or get method's (<c>set.V</c>, <c>get.V</c>).</summary>
+    private static bool IsAccessorName(string name) =>
+        name.StartsWith("set.", StringComparison.Ordinal) || name.StartsWith("get.", StringComparison.Ordinal);
 
     /// <summary>
     /// <c>run('s.m')</c> of a MATLAB file holds R2025b's own <c>run.m</c> as a frame between the file and the

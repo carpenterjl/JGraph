@@ -1006,6 +1006,10 @@ internal sealed class JgsClass
     internal bool DeclaresMethod(FnStmt function) =>
         _own.TryGetValue(function.Name, out ClassMethod? method) && ReferenceEquals(method.Function, function) && method.File is null;
 
+    /// <summary>Whether <paramref name="function"/> is a method this classdef declares <c>(Static)</c> (open item 336).</summary>
+    internal bool IsStaticMethod(FnStmt function) =>
+        _own.TryGetValue(function.Name, out ClassMethod? method) && ReferenceEquals(method.Function, function) && method.Static;
+
     /// <summary>Whether <paramref name="function"/> is this class's constructor - the one place an immutable property is written.</summary>
     internal bool IsConstructor(FnStmt? function) =>
         function is not null && _own.TryGetValue(Declaration.Name, out ClassMethod? constructor) && ReferenceEquals(constructor.Function, function);

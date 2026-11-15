@@ -257,19 +257,31 @@ internal sealed partial class Interpreter
     /// and that function's callers, each at the line it called from, as R2025b's stack does.
     /// <c>throwAsCaller</c> leaves out the frame that called it.
     /// </remarks>
-    private JgsValue StackOf(JgsRuntimeException error)
+    private JgsValue StackOf(JgsRuntimeException error) => StackOf(error, out _);
+
+    /// <summary>
+    /// <see cref="StackOf(JgsRuntimeException)"/>, and what its report needs beside the stack (open item 336,
+    /// ADR 0378): each frame's report name where the stack's does not say it, and the anchor of the expression
+    /// it ran - the frames the error left and the one that caught it, whose filters saw the error go by.
+    /// </summary>
+    private JgsValue StackOf(JgsRuntimeException error, out ReportInfo report)
     {
         var listed = new List<(string Name, string File, int Line)>(error.Frames.Count);
-        foreach ((string name, string file, int at) in error.Frames)
+        var marks = new List<(string? Shown, ReportAnchor? Anchor)>(error.Frames.Count + 2);
+        for (int f = 0; f < error.Frames.Count; f++)
         {
+            (string name, string file, int at) = error.Frames[f];
             listed.Add((name, FileOfFrame(file), at));
+            marks.Add((error.ShownNameAt(f), error.AnchorAt(f)));
         }
 
         if (error.DropsThrowingFrame && listed.Count > 0)
         {
             listed.RemoveAt(0);
+            marks.RemoveAt(0);
         }
 
+        int caught = error.Frames.Count; // the frame whose try caught the error, the first one still running
         int line = error.PendingLine;
         int other = _otherFrames.Count - 1;
         for (int i = _activeFunctions.Count - 1; i >= -1; i--)
@@ -278,8 +290,14 @@ internal sealed partial class Interpreter
             for (; OtherFrameDepth(other) == i + 1; other--)
             {
                 (string otherName, string otherFile, int otherLine, int callLine) = OtherFrame(other, line);
-                listed.Add((otherName, otherFile, otherLine));
                 line = callLine;
+                if (HiddenFrame(otherName))
+                {
+                    continue; // R2025b lists no frame for it (open item 336)
+                }
+
+                listed.Add((otherName, otherFile, otherLine));
+                marks.Add((null, marks.Count == caught - (error.DropsThrowingFrame ? 1 : 0) ? error.AnchorAt(caught) : null));
             }
 
             if (i < 0)
@@ -287,7 +305,8 @@ internal sealed partial class Interpreter
                 break;
             }
 
-            listed.Add((_activeFunctions[i].Name, FileOfFrame(_activeFunctions[i].SourceId), line));
+            listed.Add((FrameNameOf(_activeFunctions[i]), FileOfFrame(_activeFunctions[i].SourceId), line));
+            marks.Add((null, marks.Count == caught - (error.DropsThrowingFrame ? 1 : 0) ? error.AnchorAt(caught) : null));
             line = _activeCallLines[i];
         }
 
@@ -298,8 +317,16 @@ internal sealed partial class Interpreter
                 && frame.Name == Path.GetFileNameWithoutExtension(MainScriptPath)))
         {
             listed.Add((Path.GetFileNameWithoutExtension(MainScriptPath), MainScriptPath, line));
+            marks.Add((null, marks.Count == caught - (error.DropsThrowingFrame ? 1 : 0) ? error.AnchorAt(caught) : null));
         }
 
+        var frames = new (string Name, int Line, string? Shown, ReportAnchor? Anchor)[listed.Count];
+        for (int f = 0; f < frames.Length; f++)
+        {
+            frames[f] = (listed[f].Name, listed[f].Line, marks[f].Shown, marks[f].Anchor);
+        }
+
+        report = new ReportInfo(frames, error.ShowsRaisingFrame, error.PlacedOutsideFrame ? 0 : error.Line, error.Column);
         return JgsBuiltins.StackValue(listed);
     }
 
@@ -307,7 +334,7 @@ internal sealed partial class Interpreter
     /// The functions running now, innermost first, each with the line executing in it (<c>dbstack</c>, App
     /// Designer window plan W11): the innermost at <paramref name="line"/>, the line the call was made from,
     /// and every caller at the call it is waiting on; the script whose top level is running last, as
-    /// <see cref="StackOf"/> lists it for an error. Empty at a prompt with nothing running.
+    /// <see cref="StackOf(JgsRuntimeException)"/> lists it for an error. Empty at a prompt with nothing running.
     /// </summary>
     internal List<(string Name, string File, int Line)> CurrentStack(int line)
     {
@@ -320,8 +347,11 @@ internal sealed partial class Interpreter
             for (; OtherFrameDepth(other) == i + 1; other--)
             {
                 (string otherName, string otherFile, int otherLine, int callLine) = OtherFrame(other, line);
-                listed.Add((otherName, otherFile, otherLine));
                 line = callLine;
+                if (!HiddenFrame(otherName)) // R2025b's dbstack leaves it out (open item 336)
+                {
+                    listed.Add((otherName, otherFile, otherLine));
+                }
             }
 
             if (i < 0)
@@ -332,7 +362,7 @@ internal sealed partial class Interpreter
             FnStmt active = _activeFunctions[i];
             string name = AnyClasses && CurrentFrame.ClassContext is { } running && i == _activeFunctions.Count - 1 && running.DeclaresMethod(active)
                 ? $"{running.StackName}.{active.Name}" // W.stkn for a method of pkg.W (P2, measured)
-                : active.Name;
+                : FrameNameOf(active);
             listed.Add((name, FileOfFrame(active.SourceId), line));
             line = _activeCallLines[i];
         }
@@ -874,7 +904,7 @@ internal sealed partial class Interpreter
             throw ClassdefInEval();
         }
 
-        WarnEvalBindsLiteralWord(program, env); // eval('true = 7;') in a function that reads the built-in (open item 329)
+        WarnEvalBindsLiteralWord(program, env, code); // eval('true = 7;') in a function that reads the built-in (open item 329)
         JgsValue result = JgsValue.Null;
         JgsEnvironment? outerEval = _evalEnv;
         _evalEnv = env; // the text's names resolve as text does, see InEvalText (P3)
@@ -895,6 +925,10 @@ internal sealed partial class Interpreter
 
                 Execute(program[i], env);
             }
+        }
+        catch (JgsRuntimeException error) when (error.LeavesEvalText())
+        {
+            throw; // never reached: the report anchors at the eval call, not inside its text (open item 336)
         }
         finally
         {
@@ -1237,6 +1271,7 @@ internal sealed partial class Interpreter
         {
             if (statement is FnStmt nested)
             {
+                nested.NestedIn ??= declaration; // its frame is outer/inner (open item 336)
                 local.DeclareFunction(nested.Name, JgsValue.Function(new UserFunction(nested, local, this) { IsNested = true }));
             }
         }
@@ -1273,10 +1308,24 @@ internal sealed partial class Interpreter
             // innermost, and the call it was waiting on for everything outside.
             // A method's frame is named Class.method, as R2025b's stack names it (U7, measured) - by
             // the class's short name for a class in a package (W.err for pkg.W, measured in P2).
-            string frameName = AnyClasses && local.ClassContext is { } running && running.DeclaresMethod(declaration)
-                ? $"{running.StackName}.{declaration.Name}"
-                : declaration.Name;
+            // A property's set or get method is one too (P7H.set.V, measured; open item 336).
+            bool method = AnyClasses && local.ClassContext is { } running
+                && (running.DeclaresMethod(declaration) || (declaration.Dialect.IsMatlab && IsAccessorName(declaration.Name)));
+            string frameName = method
+                ? $"{local.ClassContext!.StackName}.{declaration.Name}"
+                : FrameNameOf(declaration);
             error.PushFrame(frameName, FileOfFrame(declaration.SourceId), callLine);
+
+            // R2025b's report names a method by its whole class name: pk.C.stat for a static method,
+            // pk.C/inst for an instance method and pk.C for the constructor (open item 336, measured).
+            if (method)
+            {
+                JgsClass owner = local.ClassContext!;
+                error.ShowLastFrameAs(owner.IsConstructor(declaration) ? owner.Name
+                    : owner.IsStaticMethod(declaration) ? $"{owner.Name}.{declaration.Name}"
+                    : $"{owner.Name}/{declaration.Name}");
+            }
+
             error.AttributeTo(declaration.SourceId);
             throw;
         }
@@ -2795,9 +2844,11 @@ internal sealed partial class Interpreter
         {
             // V6: a thrown MException arrives whole. rethrow keeps the stack it had; throw and
             // throwAsCaller take the stack of where they threw from. Anything else is built here.
+            JgsValue stack = StackOf(error, out ReportInfo report);
             JgsValue caught = error.Carried is JgsValue carried
-                ? JgsBuiltins.CaughtException(carried, error.KeepsStack ? null : StackOf(error))
-                : JgsBuiltins.MakeException(error.Identifier, error.Message, StackOf(error));
+                ? JgsBuiltins.CaughtException(carried, error.KeepsStack ? null : stack)
+                : JgsBuiltins.MakeException(error.Identifier, error.Message, stack);
+            JgsBuiltins.NoteReport(caught, report); // getReport's "Error in" lines (open item 336)
             if (error.Raised)
             {
                 JgsBuiltins.MarkRaised(caught);
@@ -3182,6 +3233,18 @@ internal sealed partial class Interpreter
     /// multiple assignment can tell a builtin's shortfall (<c>MATLAB:maxlhs</c>) from the rest.
     /// </summary>
     private JgsValue[] EvaluateForOutputs(Expr call, int wanted, JgsEnvironment env, out IJgsCallable? callee)
+    {
+        try
+        {
+            return EvaluateForOutputsCore(call, wanted, env, out callee);
+        }
+        catch (JgsRuntimeException error) when (call is CallExpr or VariableExpr && error.AnchorAt(call))
+        {
+            throw; // never reached: the filter only anchors a frame's report (open item 336)
+        }
+    }
+
+    private JgsValue[] EvaluateForOutputsCore(Expr call, int wanted, JgsEnvironment env, out IJgsCallable? callee)
     {
         callee = null;
 
@@ -3776,7 +3839,7 @@ internal sealed partial class Interpreter
                 return EvaluateIndex(index, env);
 
             case CallExpr call:
-                return EvaluateCall(call, env);
+                return EvaluateCallAnchored(call, env);
 
             case AssignExpr assign:
                 return EvaluateAssign(assign, env);
@@ -8271,6 +8334,22 @@ internal sealed partial class Interpreter
         return IndexInto(target, indexExpr.Indices, indexExpr, env);
     }
 
+    /// <summary>
+    /// <see cref="EvaluateCall"/> under the exception filter that anchors a frame's report at the call an
+    /// error left (open item 336, ADR 0378); the filter never catches, so the call pays nothing more.
+    /// </summary>
+    private JgsValue EvaluateCallAnchored(CallExpr call, JgsEnvironment env)
+    {
+        try
+        {
+            return EvaluateCall(call, env);
+        }
+        catch (JgsRuntimeException error) when (error.AnchorAt(call))
+        {
+            throw; // never reached: the filter only anchors
+        }
+    }
+
     private JgsValue EvaluateCall(CallExpr call, JgsEnvironment env)
     {
         // A plain name: Invoke mode, both phases (M145). A function — nested, local, a built-in
@@ -11178,9 +11257,11 @@ internal sealed partial class Interpreter
         // item 69, recorded in u9b_bridge): e.EventName = 'x' is R2025b's SetProhibited, and a name it
         // does not have is no property of it.
         // So are a metaclass's and its members' (open item 196, ADR 0353: m.Name = 'x' on a matlab.metadata.Method).
+        // So are an MException's (R2025b: ME.Correction = x, ME.message = x are SetProhibited; open item 318).
         if (Dialect.IsMatlab && member.Target is VariableExpr eventTarget
             && LookUp(eventTarget.Name, env, out JgsValue heldEvent)
-            && (JgsUiEventData.IsBuiltinEventData(heldEvent) || JgsBuiltins.IsMetadataValue(heldEvent)))
+            && (JgsUiEventData.IsBuiltinEventData(heldEvent) || JgsBuiltins.IsMetadataValue(heldEvent)
+                || (heldEvent.Type == JgsType.Struct && heldEvent.ClassName == "MException" && !heldEvent.IsStructArray)))
         {
             string eventField = FieldName(member, env);
             string className = heldEvent.ClassName!;

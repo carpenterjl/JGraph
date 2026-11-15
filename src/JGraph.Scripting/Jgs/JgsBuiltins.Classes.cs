@@ -338,28 +338,7 @@ internal static partial class JgsBuiltins
                 return MetaClassOfDevice(device, interpreter);
             }
 
-            // Any other value: its class's name, and its methods and properties as the listings name them,
-            // each a metamethod or metaproperty (open item 196, ADR 0353); matlab.metadata.Class is R2025b's
-            // name (open item 123).
-            return MetaClassOfValue(
-                ClassOf(args[0], JgsDialect.Matlab),
-                ListedOrNone(() => PropertyNames("metaclass", args[0], interpreter, line, col)),
-                ListedOrNone(() => MethodNames("metaclass", args[0], interpreter, line, col)),
-                interpreter);
-
-            // A number, a cell or a char has no listing here, and its metaclass lists none (R2025b's double has
-            // no properties, measured).
-            static string[] ListedOrNone(Func<IEnumerable<string>> listing)
-            {
-                try
-                {
-                    return [.. listing()];
-                }
-                catch (JgsRuntimeException)
-                {
-                    return [];
-                }
-            }
+            return MetaClassOfPlainValue(args[0], interpreter, line, col);
         });
 
         Define("addCause", (args, line, col) =>
@@ -471,6 +450,53 @@ internal static partial class JgsBuiltins
         value.Type == JgsType.Struct && value.ClassName is null && value.TimeTag is null;
 
     /// <summary>The property names of whatever <paramref name="value"/> is, in declaration order.</summary>
+    /// <summary>
+    /// The metaclass of a value that is no object of a class here (a double, a cell, an MException): its class's
+    /// name, and its methods and properties as the listings name them, each a metamethod or metaproperty (open
+    /// item 196, ADR 0353); matlab.metadata.Class is R2025b's name (open item 123). A value with no listing
+    /// lists none (R2025b's double has no properties, measured).
+    /// </summary>
+    internal static JgsValue MetaClassOfPlainValue(JgsValue value, Interpreter interpreter, int line, int col)
+    {
+        return MetaClassOfValue(
+            ClassOf(value, JgsDialect.Matlab),
+            ListedOrNone(() => PropertyNames("metaclass", value, interpreter, line, col)),
+            ListedOrNone(() => MethodNames("metaclass", value, interpreter, line, col)),
+            interpreter);
+
+        static string[] ListedOrNone(Func<IEnumerable<string>> listing)
+        {
+            try
+            {
+                return [.. listing()];
+            }
+            catch (JgsRuntimeException)
+            {
+                return [];
+            }
+        }
+    }
+
+    /// <summary>
+    /// A value of the built-in class <paramref name="name"/>, for <c>?double</c>, <c>?MException</c> and
+    /// <c>meta.class.fromName</c> of a class that is no classdef here (open item 318, ADR 0378): R2025b answers
+    /// a metaclass for each; this build makes it as <c>metaclass</c> of such a value. Null for any other name.
+    /// </summary>
+    internal static JgsValue? SampleOfBuiltinClass(string name, Interpreter interpreter) => name switch
+    {
+        "double" => JgsValue.Number(0),
+        "logical" => JgsValue.Bool(false),
+        "char" => JgsValue.Str("a"),
+        "cell" => JgsValue.Cell([]),
+        "struct" => JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)),
+        "string" => JgsValue.StringScalar(string.Empty),
+        "function_handle" => interpreter.Resolver.BuiltinOf("sin"),
+        ExceptionClass => MakeException("a:b", "c"),
+        _ => JgsNumericClasses.Parse(name) is { } numeric && name != "double"
+            ? JgsNumericClasses.Stamp(JgsValue.Number(0), numeric)
+            : null,
+    };
+
     private static IEnumerable<string> PropertyNames(
         string builtin, JgsValue value, Interpreter interpreter, int line, int col)
     {

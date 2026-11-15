@@ -115,10 +115,12 @@ over anonymous frames: it reads the functions alone, as before.
   holds `<a href="matlab:...">` links even in -batch, where the printed output has none; JGraph's
   `evalc` holds what it prints. A link to the MATLAB desktop's help and editor means nothing here, and
   the fixtures strip them.
-- **A call of the word reads an eval'd variable.** After `eval('true = 8;')` in a function that names
-  `true` and never binds it, `true(1)` indexes the 8 here, where R2025b calls the built-in; the bare
-  word reads the built-in in both (ADR 0363). It is the general gap ADR 0363 named for every built-in's
-  name (`pi(1)` after `eval('pi = 7;')`), which the resolver does not decide from a function's text.
+
+Closed since: a call of the word no longer reads an eval'd variable. After `eval('true = 8;')` in a
+function that names `true` and never binds it, `true(1)` calls the built-in, as R2025b's does, and so
+for every other name a function reads as a function (`sin(1)` after `eval('sin = [5 6];')`); the frame
+remembers the names such an eval bound and the resolver passes over them for the function's own text
+(ADR 0378, open item 336). Fixture row `oi329_true_names2.call_form_read` agrees.
 
 ## Still open
 

@@ -981,6 +981,14 @@ internal static partial class JgsBuiltins
                 where.Add(unloadable);
             }
 
+            // A built-in constant (pi, eps, Inf) is a built-in function in R2025b, which names it as it
+            // names sin; this build held it as a value and named nothing (open item 336, ADR 0378).
+            if (interpreter.Dialect.IsMatlab && (where.Count == 0 || all)
+                && interpreter.Resolver.BuiltinOf(name) is { } constant && constant.Type != JgsType.Function)
+            {
+                where.Add($"{name} is a built-in function.");
+            }
+
             // Thing/extent: a class folder's method file by its slash name, read off the folder
             // without loading the class (stage P4, measured: Lone/method1 answers with no Lone.m).
             if (where.Count == 0 && JgsFunctionPath.SlashForm(name) is { } slashed

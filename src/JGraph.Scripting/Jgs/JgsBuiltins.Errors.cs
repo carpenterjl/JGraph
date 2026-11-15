@@ -178,18 +178,154 @@ internal static partial class JgsBuiltins
         }
     }
 
-    /// <summary>
-    /// A stack frame's name as R2025b's report header writes it: a local function of a file is
-    /// <c>file&gt;local</c>, a file's own function its name (open item 13, measured).
-    /// </summary>
-    private static string FrameShownName(Dictionary<string, JgsValue> frame)
+    /// <summary>What each caught exception's report needs beside its stack (open item 336), by its payload.</summary>
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<object, ReportInfo> Reports = new();
+
+    /// <summary>Keeps <paramref name="report"/> with a caught exception for its <c>getReport</c>.</summary>
+    internal static void NoteReport(JgsValue exception, ReportInfo report)
     {
+        if (exception.Type == JgsType.Struct)
+        {
+            Reports.AddOrUpdate(exception.AsStructArray, report);
+        }
+    }
+
+    /// <summary>
+    /// A stack frame's name as R2025b's report writes it (open items 13 and 336, measured): a local function
+    /// of a file is <c>file&gt;local</c>, an anonymous body <c>file&gt;@(x)...</c>, a file's own function or a
+    /// nested one (<c>f/inner</c>) its name, each after its package (<c>pk.f</c>, <c>pk.f&gt;local</c>); a class
+    /// method is <paramref name="shown"/>, the name its frame was given as it unwound (<c>pk.C.stat</c>,
+    /// <c>pk.C/inst</c>), or <c>pk.C.method</c> when there is none.
+    /// </summary>
+    private static string FrameShownName(Dictionary<string, JgsValue> frame, string? shown = null)
+    {
+        if (shown is not null)
+        {
+            return shown;
+        }
+
         string name = frame["name"].AsString;
-        string stem = frame.TryGetValue("file", out JgsValue? file) && file.Type == JgsType.String
-            ? Path.GetFileNameWithoutExtension(file.AsString)
-            : string.Empty;
-        // An anonymous frame's name is its text, which may hold a '>' of its own (open item 334).
-        return stem.Length > 0 && stem != name && (name.StartsWith('@') || !name.Contains('>', StringComparison.Ordinal)) ? $"{stem}>{name}" : name;
+        string path = frame.TryGetValue("file", out JgsValue? file) && file.Type == JgsType.String ? file.AsString : string.Empty;
+        string stem = Path.GetFileNameWithoutExtension(path);
+        if (stem.Length == 0)
+        {
+            return name;
+        }
+
+        string package = PackagePrefix(path);
+        if (name.StartsWith('@'))
+        {
+            return $"{package}{stem}>{name}"; // an anonymous frame's text may hold a '>' of its own (open item 334)
+        }
+
+        if (name == stem || name.StartsWith(stem + "/", StringComparison.Ordinal) || name.StartsWith(stem + ".", StringComparison.Ordinal))
+        {
+            return name == $"{stem}.{stem}" ? package + stem : package + name;
+        }
+
+        return name.Contains('>', StringComparison.Ordinal) ? name : $"{package}{stem}>{name}";
+    }
+
+    /// <summary>The package a file's folders name, dotted and ending in a dot (<c>pk.sub.</c> for <c>+pk\+sub\f.m</c>), or "".</summary>
+    internal static string PackagePrefix(string path)
+    {
+        var parts = new List<string>();
+        for (string? folder = Path.GetDirectoryName(path); !string.IsNullOrEmpty(folder); folder = Path.GetDirectoryName(folder))
+        {
+            string leaf = Path.GetFileName(folder);
+            if (leaf.Length < 2 || leaf[0] != '+')
+            {
+                break;
+            }
+
+            parts.Insert(0, leaf[1..]);
+        }
+
+        return parts.Count == 0 ? string.Empty : string.Join('.', parts) + ".";
+    }
+
+    /// <summary>
+    /// <c>getReport</c>'s text for <paramref name="exception"/> (open item 336): the header and message, and
+    /// unless the form asked for is 'basic' the "Error in" blocks and the causes, in the MATLAB dialect. The
+    /// JGS dialect keeps its own report: the header over the message in every form but 'basic'.
+    /// </summary>
+    private static string Report(JgsValue exception, IReadOnlyList<JgsValue> args, JgsRunningDialect dialect, int line, int col)
+    {
+        (_, string message) = ReadErrorValue("getReport", exception, line, col);
+        bool basic = args.Count > 1 && IsTextScalar(args[1])
+            && string.Equals(TextOf(args[1]), "basic", StringComparison.OrdinalIgnoreCase);
+        JgsValue? stack = Field(exception, "stack");
+        Dictionary<string, JgsValue>[] frames = stack is { Type: JgsType.Struct } ? stack.AsStructArray.Elements : [];
+        ReportInfo? info = exception.Type == JgsType.Struct && Reports.TryGetValue(exception.AsStructArray, out ReportInfo? held) ? held : null;
+
+        // The report's view of frame k is the stack's, with what the catch kept beside it when the
+        // stack still names the same frame at the same line.
+        (string? Shown, ReportAnchor? Anchor) Mark(int k) =>
+            info is not null && k < info.Frames.Length && k < frames.Length
+                && info.Frames[k].Name == frames[k]["name"].AsString && info.Frames[k].Line == frames[k]["line"].AsNumber
+                ? (info.Frames[k].Shown, info.Frames[k].Anchor)
+                : (null, null);
+
+        // A NET.NetException keeps its "Error using" line under 'basic' too (R2025b, net_exceptions;
+        // ADR 0174): the .NET message is three lines of its own below it.
+        bool net = exception.ClassName == Net.NetInvoke.NetExceptionClass;
+        string? header = null;
+        int listedFrom = 0;
+        if (exception.Type == JgsType.Struct && UsingNames.TryGetValue(exception.AsStructArray, out string? usingName))
+        {
+            header = $"Error using {usingName}"; // a warning raised as an error (open item 306)
+        }
+        else if ((IsRaised(exception) || net || (!basic && !dialect.IsMatlab)) && frames.Length > 0)
+        {
+            // A handle made from text is at line 0, and its header names no line (open item 334, measured).
+            Dictionary<string, JgsValue> top = frames[0];
+            string shownTop = FrameShownName(top, Mark(0).Shown);
+            header = top["line"].AsNumber == 0 && top["name"].AsString.StartsWith('@')
+                ? $"Error using {shownTop}"
+                : $"Error using {shownTop} (line {top["line"].AsNumber:0})";
+            listedFrom = info is { ShowsRaisingFrame: true } ? 0 : 1;
+        }
+
+        string text = header is null ? message : $"{header}\n{message}";
+        if (basic || !dialect.IsMatlab)
+        {
+            return text;
+        }
+
+        var listed = new List<(string Shown, string Name, string File, int Line, ReportAnchor? Anchor, string? Inner, (int Line, int Column)? Raised)>();
+        for (int k = listedFrom; k < frames.Length; k++)
+        {
+            Dictionary<string, JgsValue> frame = frames[k];
+            (string? shown, ReportAnchor? anchor) = Mark(k);
+            listed.Add((FrameShownName(frame, shown), frame["name"].AsString,
+                frame.TryGetValue("file", out JgsValue? file) && file.Type == JgsType.String ? file.AsString : string.Empty,
+                (int)frame["line"].AsNumber, anchor, k > 0 ? frames[k - 1]["name"].AsString : null,
+                k == 0 && info is { ErrorLine: > 0 } ? (info.ErrorLine, info.ErrorColumn) : null));
+        }
+
+        string blocks = JgsErrorReport.ErrorInBlocks(listed);
+        if (blocks.Length > 0)
+        {
+            text += "\n\n" + blocks;
+        }
+
+        // The causes, each its own 'basic' report indented under "Caused by:" (measured).
+        JgsValue[] causes = ExistingCauses(exception);
+        if (causes.Length > 0)
+        {
+            var caused = new System.Text.StringBuilder(blocks.Length > 0 ? "\nCaused by:" : "\n\nCaused by:");
+            foreach (JgsValue cause in causes)
+            {
+                string causeText = cause.Type == JgsType.Struct
+                    ? Report(cause, [cause, JgsValue.Str("basic")], dialect, line, col)
+                    : cause.Display();
+                caused.Append("\n    ").Append(causeText.Replace("\n", "\n    ", StringComparison.Ordinal));
+            }
+
+            text += caused.ToString();
+        }
+
+        return text;
     }
 
     /// <summary>Declares <c>error</c>, <c>MException</c>, and the three throwing verbs.</summary>
@@ -285,42 +421,15 @@ internal static partial class JgsBuiltins
         DefineThrow("rethrow");
         DefineThrow("throwAsCaller");
 
-        // getReport(ME): the message, under the line that names where it was thrown from when the
-        // exception has a stack; 'basic' is the message alone (measured).
+        // getReport(ME): R2025b's report (open items 13, 306 and 336, measured). 'basic' is the header and
+        // the message; the default, 'extended', adds an "Error in" block for each frame the error unwound
+        // through and the causes. The header names the frame error() or a throw verb raised it in, or the
+        // built-in that refused (Error using warning); a refusal of the runtime's (an index past the end)
+        // has none. 'hyperlinks' is taken and ignored: this build writes no links (ADR 0368).
         Define("getReport", (args, line, col) =>
         {
             ArityRange("getReport", args, 1, 8, line, col);
-            (_, string message) = ReadErrorValue("getReport", args[0], line, col);
-            bool basic = args.Count > 1 && args[1].Type == JgsType.String
-                && string.Equals(args[1].AsString, "basic", StringComparison.OrdinalIgnoreCase);
-            JgsValue? stack = Field(args[0], "stack");
-
-            // A NET.NetException keeps its "Error using" line under 'basic' too (R2025b,
-            // net_exceptions; ADR 0174): the .NET message is three lines of its own below it.
-            basic &= args[0].ClassName != Net.NetInvoke.NetExceptionClass;
-
-            // An error error() or throw raised keeps its header under 'basic' too in R2025b; a refusal
-            // of the runtime's (an index past the end) is its message alone (open item 13, measured).
-            basic &= !IsRaised(args[0]);
-
-            // A warning raised as an error is headed with the built-in that raised it in every form,
-            // as R2025b's "Error using warning" (open item 306, measured; its "Error in" lines are
-            // not written here, as for every other report).
-            if (args[0].Type == JgsType.Struct && UsingNames.TryGetValue(args[0].AsStructArray, out string? usingName))
-            {
-                return JgsValue.Str($"Error using {usingName}\n{message}");
-            }
-
-            if (basic || stack is not { Type: JgsType.Struct } || stack.AsStructArray.Length == 0)
-            {
-                return JgsValue.Str(message);
-            }
-
-            // A handle made from text is at line 0, and its header names no line (open item 334, measured).
-            Dictionary<string, JgsValue> top = stack.AsStructArray.Elements[0];
-            return top["line"].AsNumber == 0 && top["name"].AsString.StartsWith('@')
-                ? JgsValue.Str($"Error using {FrameShownName(top)}\n{message}")
-                : JgsValue.Str($"Error using {FrameShownName(top)} (line {top["line"].AsNumber:0})\n{message}");
+            return JgsValue.Str(Report(args[0], args, dialect, line, col));
         });
 
         Define("lasterror", (args, line, col) =>

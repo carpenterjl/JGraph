@@ -30,7 +30,22 @@ internal sealed class JgsWarningState
         // included, the retired warning legacy scripts query and switch off before dividing by
         // zero on purpose — starts on.
         Set("verbose", false);
+
+        // R2025b's fresh table holds six identifiers off, in this order, which s = warning lists after
+        // 'all' and the printed table lists sorted; warning('on', 'all') forgets them (open item 318,
+        // ADR 0378, measured). verbose and backtrace are settings, not identifiers: neither is listed.
+        foreach (string factoryOff in FactoryOff)
+        {
+            Set(factoryOff, false);
+        }
     }
+
+    /// <summary>The identifiers a fresh R2025b session has off (measured, open item 318).</summary>
+    internal static readonly string[] FactoryOff =
+    [
+        "MATLAB:RandStream:ReadingInactiveLegacyGeneratorState", "MATLAB:JavaComponentThreading", "MATLAB:JavaEDTAutoDelegation",
+        "MATLAB:RandStream:ActivatingLegacyGenerators", "MATLAB:class:DynPropDuplicatesMethod", "MATLAB:mir_warning_unrecognized_pragma",
+    ];
 
     /// <summary>The state an identifier that has never been set explicitly is in.</summary>
     public bool DefaultOn { get; private set; } = true;

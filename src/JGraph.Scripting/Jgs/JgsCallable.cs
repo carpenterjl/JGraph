@@ -351,6 +351,21 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
     /// <inheritdoc />
     public string Name => _declaration.Name;
 
+    /// <summary>
+    /// The name R2025b's "Error using" line gives this function when a call of it is refused before it runs
+    /// (open item 336, measured: <c>probe2&gt;localnargs</c> for a local function, <c>k10addtwo</c> for a file's
+    /// own, each after its package); a method and a nested function keep their own name.
+    /// </summary>
+    internal string ReportName
+    {
+        get
+        {
+            string file = _declaration.SourceId.Length > 0 ? _declaration.SourceId : _interpreter.MainScriptPath;
+            string stem = Owner is null && file.Length > 0 ? Path.GetFileNameWithoutExtension(file) : string.Empty;
+            return stem.Length == 0 || stem == Name || IsNested ? Name : $"{JgsBuiltins.PackagePrefix(file)}{stem}>{Name}";
+        }
+    }
+
     /// <summary>The <c>fn</c> declaration behind this function — the debugger uses it to refresh a
     /// function's body when its source file is live-edited.</summary>
     public FnStmt Declaration => _declaration;
@@ -461,7 +476,7 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
             throw _declaration.Dialect.MatlabFunctions
                 ? new JgsRuntimeException(line, column, Owner is null ? "MATLAB:TooManyInputs" : "MATLAB:maxrhs", "Too many input arguments.")
                 {
-                    UsingName = Name,
+                    UsingName = ReportName,
                 }
                 : new JgsRuntimeException(line, column,
                     $"Function '{Name}' expects {parameters.Count} argument(s) but got {arguments.Count}.");

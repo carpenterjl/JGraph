@@ -79,7 +79,23 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         });
 
-        Define("fwrite", (args, line, col) => Write(host, args, line, col));
+        // A statement writing to the console answers nothing, so no ans is shown (R2025b, open item 318,
+        // measured: evalc('fwrite(1, ''ab'')') is 'ab'); one writing to a file answers its count, shown.
+        static JgsValue[] Fwrite(JGraphScriptGlobals host, IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+        {
+            JgsValue written = Write(host, args, line, col);
+            return wanted == 0 && JgsRunningDialect.ThreadIsMatlab && args.Count > 0
+                && args[0].Type is JgsType.Number or JgsType.Bool && args[0].AsNumber is 1 or 2
+                ? []
+                : [written];
+        }
+
+        env.Builtins.Register("fwrite", JgsValue.Function(new BuiltinFunction("fwrite",
+            (args, line, col) => Fwrite(host, args, 1, line, col)[0])
+        {
+            MultiOutput = (args, wanted, line, col) => Fwrite(host, args, wanted, line, col),
+            TakesOutputCount = true,
+        }));
 
         DefineMany("fread", (args, wanted, line, col) => Read(host, args, wanted, line, col));
 
@@ -358,26 +374,39 @@ internal static partial class JgsBuiltins
     }
 
     private static int WidthOf(string name, string precision, int line, int col) =>
-        PrecisionWidths.TryGetValue(precision, out int width)
+        PrecisionWidths.TryGetValue(CanonicalPrecision(precision), out int width)
             ? width
-            : throw new JgsRuntimeException(line, col,
-                $"{name} does not support the precision '{precision}'. Try uint8, int16, int32, single, or double.");
+            : JgsRunningDialect.ThreadIsMatlab
+                ? throw new JgsRuntimeException(line, col, "MATLAB:badprecision_mx", "Invalid precision.") // R2025b (open item 318)
+                : throw new JgsRuntimeException(line, col,
+                    $"{name} does not support the precision '{precision}'. Try uint8, int16, int32, single, or double.");
 
+    /// <summary>
+    /// The bytes of <paramref name="value"/> in <paramref name="precision"/>: an integer class rounds half away
+    /// from zero and saturates, as R2025b's fwrite does (<c>65.7</c> is 66, <c>-1</c> as uint8 is 0; open
+    /// item 318, measured), and int64 and uint64 are written as integers.
+    /// </summary>
     private static byte[] EncodeValue(double value, string precision, int width) =>
-        precision.ToLowerInvariant() switch
+        CanonicalPrecision(precision) switch
         {
-            "uint8" or "char" => [(byte)value],
-            "int8" => [unchecked((byte)(sbyte)value)],
-            "uint16" => BitConverter.GetBytes((ushort)value),
-            "int16" => BitConverter.GetBytes((short)value),
-            "uint32" => BitConverter.GetBytes((uint)value),
-            "int32" => BitConverter.GetBytes((int)value),
-            "single" or "float32" => BitConverter.GetBytes((float)value),
+            "uint8" or "char" => [(byte)Saturated(value, byte.MinValue, byte.MaxValue)],
+            "int8" => [unchecked((byte)(sbyte)Saturated(value, sbyte.MinValue, sbyte.MaxValue))],
+            "uint16" => BitConverter.GetBytes((ushort)Saturated(value, ushort.MinValue, ushort.MaxValue)),
+            "int16" => BitConverter.GetBytes((short)Saturated(value, short.MinValue, short.MaxValue)),
+            "uint32" => BitConverter.GetBytes((uint)Saturated(value, uint.MinValue, uint.MaxValue)),
+            "int32" => BitConverter.GetBytes((int)Saturated(value, int.MinValue, int.MaxValue)),
+            "int64" => BitConverter.GetBytes(double.IsNaN(value) ? 0L : value >= long.MaxValue ? long.MaxValue : value <= long.MinValue ? long.MinValue : (long)System.Math.Round(value, MidpointRounding.AwayFromZero)),
+            "uint64" => BitConverter.GetBytes(double.IsNaN(value) || value <= 0 ? 0UL : value >= ulong.MaxValue ? ulong.MaxValue : (ulong)System.Math.Round(value, MidpointRounding.AwayFromZero)),
+            "single" => BitConverter.GetBytes((float)value),
             _ => BitConverter.GetBytes(value),
         };
 
+    /// <summary><paramref name="value"/> rounded half away from zero into [<paramref name="low"/>, <paramref name="high"/>], NaN as 0.</summary>
+    private static double Saturated(double value, double low, double high) =>
+        double.IsNaN(value) ? 0 : System.Math.Clamp(System.Math.Round(value, MidpointRounding.AwayFromZero), low, high);
+
     private static double DecodeValue(byte[] bytes, string precision) =>
-        precision.ToLowerInvariant() switch
+        CanonicalPrecision(precision) switch
         {
             "uint8" or "char" => bytes[0],
             "int8" => (sbyte)bytes[0],
@@ -385,7 +414,9 @@ internal static partial class JgsBuiltins
             "int16" => BitConverter.ToInt16(bytes),
             "uint32" => BitConverter.ToUInt32(bytes),
             "int32" => BitConverter.ToInt32(bytes),
-            "single" or "float32" => BitConverter.ToSingle(bytes),
+            "int64" => BitConverter.ToInt64(bytes),
+            "uint64" => BitConverter.ToUInt64(bytes),
+            "single" => BitConverter.ToSingle(bytes),
             _ => BitConverter.ToDouble(bytes),
         };
 }

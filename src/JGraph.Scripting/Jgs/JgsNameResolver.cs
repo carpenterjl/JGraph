@@ -163,8 +163,17 @@ internal sealed class JgsNameResolver
 
         if (env.TryGetScope(name, out JgsEnvironment? scope, out JgsValue value) && !scope.IsBuiltinLayer)
         {
-            Resolution bound = Classify(name, scope, value);
-            return bound.Layer != ResolutionLayer.Bound && Imported(name, env, explicitOnly: true) is { } over ? over : bound;
+            if (scope.EvalShadowed is not { } shadowed || !shadowed.Contains(name) || _interpreter.InEvalText(env))
+            {
+                Resolution bound = Classify(name, scope, value);
+                return bound.Layer != ResolutionLayer.Bound && Imported(name, env, explicitOnly: true) is { } over ? over : bound;
+            }
+
+            // A variable an eval made over a function the frame's own text reads is not that text's:
+            // the walk goes on to the functions (open item 336, ADR 0378, measured: pi, sin(1), max,
+            // a path file and a local function all answer the function after eval('name = ...')).
+            value = BuiltinOf(name) ?? value;
+            scope = BuiltinOf(name) is null ? null : _interpreter.Globals;
         }
 
         if (_interpreter.AnyImports && Imported(name, env, explicitOnly: true) is { } explicitly)
@@ -699,6 +708,9 @@ internal sealed class JgsNameResolver
         resolution = Resolution.None;
         return false;
     }
+
+    /// <summary>Whether a file on the search path defines <paramref name="name"/> (open item 336).</summary>
+    internal bool OnPath(string name) => FromFile(name).Found;
 
     /// <summary>A file on the search path: the current folder before the <c>addpath</c> folders.</summary>
     private Resolution FromFile(string name)

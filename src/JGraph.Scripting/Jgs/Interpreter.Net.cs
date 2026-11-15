@@ -305,6 +305,12 @@ internal sealed partial class Interpreter
             return JgsBuiltins.MetaClassOfHandle(this); // open item 196, ADR 0353
         }
 
+        // ?double, ?MException: a built-in class's metaclass, as metaclass of one of its values (open item 318).
+        if (Dialect.IsMatlab && JgsBuiltins.SampleOfBuiltinClass(meta.Name, this) is { } sample)
+        {
+            return JgsBuiltins.MetaClassOfPlainValue(sample, this, meta.Line, meta.Column);
+        }
+
         throw Unresolved(meta.Name, meta);
     }
 
@@ -319,6 +325,8 @@ internal sealed partial class Interpreter
         // handle's own metaclass, and a 0-by-0 metaclass for a name that is no class (open item 196, ADR 0353).
         return ClassForLoad(name) is { } definition ? JgsBuiltins.MetaClassOf(definition)
             : name == "handle" ? JgsBuiltins.MetaClassOfHandle(this)
+            : Dialect.IsMatlab && JgsBuiltins.SampleOfBuiltinClass(name, this) is { } sample
+                ? JgsBuiltins.MetaClassOfPlainValue(sample, this, 0, 0) // a built-in class (open item 318)
             : JgsBuiltins.EmptyMetaClass();
     }
 

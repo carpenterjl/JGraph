@@ -50,7 +50,7 @@ internal static partial class JgsBuiltins
                     JgsValue.Str(entry.Path),
                     JgsValue.Str(entry.Permission),
                     JgsValue.Str(entry.MachineFormat),
-                    JgsValue.Str(entry.Encoding.WebName.ToUpperInvariant()),
+                    JgsValue.Str(JGraphScriptGlobals.MatlabEncodingName(entry.Encoding)), // UTF-16LE, windows-1252 (open item 318)
                 ];
         }
 
@@ -158,6 +158,7 @@ internal static partial class JgsBuiltins
         }
 
         (string source, string target) = PrecisionParts("fread", precision, line, col);
+        target = CanonicalPrecision(target); // '*uchar' answers uint8 (open item 318, measured)
         int width = WidthOf("fread", source, line, col);
 
         int rows = -1;
@@ -174,7 +175,20 @@ internal static partial class JgsBuiltins
 
         var values = new List<double>();
         var element = new byte[width];
-        while (values.Count < limit)
+
+        // MATLAB code reading 'char' reads characters in the file's encoding, as R2025b does: a UTF-8 é is
+        // one element, 'char=>uint8' its code, and a count is of characters (open item 318, ADR 0378,
+        // measured). 'uchar', 'schar' and 'uint8=>char' read bytes.
+        bool characters = CanonicalPrecision(source) == "char" && JgsRunningDialect.ThreadIsMatlab && skip == 0;
+        if (characters)
+        {
+            foreach (char c in ReadCharacters(entry, limit))
+            {
+                values.Add(c);
+            }
+        }
+
+        while (!characters && values.Count < limit)
         {
             int got = stream.Read(element, 0, width);
             if (got < width)
@@ -213,7 +227,7 @@ internal static partial class JgsBuiltins
             int across = down == 0 ? 0 : (values.Count + down - 1) / down;
             if (down <= 1 || across == 0)
             {
-                answer = JgsValue.Str(new string([.. values.Select(static v => (char)v)]));
+                answer = JgsValue.Str(new string([.. values.Select(CharOfCode)]));
             }
             else
             {
@@ -225,7 +239,7 @@ internal static partial class JgsBuiltins
                     var row = new char[across];
                     for (int c = 0; c < across; c++)
                     {
-                        row[c] = (char)codes[(c * down) + r];
+                        row[c] = CharOfCode(codes[(c * down) + r]);
                     }
 
                     rowTexts[r] = new string(row);
@@ -247,6 +261,21 @@ internal static partial class JgsBuiltins
     private static JgsValue Write(JGraphScriptGlobals host, IReadOnlyList<JgsValue> args, int line, int col)
     {
         ArityRange("fwrite", args, 2, 5, line, col);
+        bool matlab = JgsRunningDialect.ThreadIsMatlab;
+
+        // A cell or a struct has no bytes (R2025b, measured; open item 318).
+        if (matlab && args[1].Type is JgsType.Cell or JgsType.Struct)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:fwrite:UnsupportedClass",
+                $"Cannot write value: unsupported class {ClassOf(args[1], JgsDialect.Matlab)}");
+        }
+
+        // fwrite(1, ...) and fwrite(2, ...) write to the console (open item 318, ADR 0378).
+        if (matlab && args[0].Type is JgsType.Number or JgsType.Bool && args[0].AsNumber is 0 or 1 or 2)
+        {
+            return WriteToConsole(host, args, line, col);
+        }
+
         JGraphScriptGlobals.FileEntry entry = EntryOf(host, "fwrite", args, line, col);
         FileStream stream = entry.Stream;
 
@@ -277,25 +306,7 @@ internal static partial class JgsBuiltins
         (string source, _) = PrecisionParts("fwrite", precision, line, col);
         int width = WidthOf("fwrite", source, line, col);
 
-        // Text writes the characters it stands for, which is what a script saving a header expects
-        // and what fwrite(fid, 'hello') meant before it was an error.
-        double[] values;
-        if (args[1].Type == JgsType.String)
-        {
-            string text = args[1].AsString;
-            values = new double[text.Length];
-            for (int i = 0; i < text.Length; i++)
-            {
-                values[i] = text[i];
-            }
-        }
-        else
-        {
-            values = args[1].Type is JgsType.Number or JgsType.Bool
-                ? [args[1].AsNumber]
-                : ToDoubles("fwrite", args[1], line, col);
-        }
-
+        double[] values = FwriteValues(args[1], line, col);
         foreach (double value in values)
         {
             stream.Write(Ordered(EncodeValue(value, source, width), format));
@@ -307,6 +318,133 @@ internal static partial class JgsBuiltins
 
         return JgsValue.Number(values.Length);
     }
+
+    /// <summary>
+    /// The numbers <c>fwrite</c> writes for <paramref name="data"/>: text writes the characters it stands for
+    /// (a char row, or a string scalar in MATLAB code), which is what a script saving a header expects.
+    /// </summary>
+    private static double[] FwriteValues(JgsValue data, int line, int col)
+    {
+        if (data.Type == JgsType.String || (data.IsStringArray && data.ArrayLength == 1))
+        {
+            string text = data.Type == JgsType.String ? data.AsString : TextOf(data);
+            var codes = new double[text.Length];
+            for (int i = 0; i < text.Length; i++)
+            {
+                codes[i] = text[i];
+            }
+
+            return codes;
+        }
+
+        return data.Type is JgsType.Number or JgsType.Bool ? [data.AsNumber] : ToDoubles("fwrite", data, line, col);
+    }
+
+    /// <summary>
+    /// <c>fwrite(1, ...)</c> and <c>fwrite(2, ...)</c> in MATLAB code (open item 318, ADR 0378, measured in
+    /// R2025b): the bytes the precision makes of each value, rounded and saturated, written to the console as
+    /// one character a byte with every zero byte dropped (<c>[65 0 66]</c> and <c>uint16</c> 65 66 both show
+    /// <c>AB</c>); id 2 goes to the error console, and <c>evalc</c> takes both. The answer is the count of
+    /// elements. Id 0 and a skip are R2025b's notimplemented refusal.
+    /// </summary>
+    private static JgsValue WriteToConsole(JGraphScriptGlobals host, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        int id = (int)args[0].AsNumber;
+        string precision = "uint8";
+        bool skips = false;
+        for (int at = 2; at < args.Count; at++)
+        {
+            if (IsTextScalar(args[at]))
+            {
+                string word = TextOf(args[at]);
+                if (!IsMachineFormat(word))
+                {
+                    precision = word;
+                }
+
+                continue;
+            }
+
+            skips = true;
+        }
+
+        if (id == 0 || skips)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:notimplemented_mx",
+                "Operation is not implemented for requested file identifier.");
+        }
+
+        (string source, _) = PrecisionParts("fwrite", precision, line, col);
+        int width = WidthOf("fwrite", source, line, col);
+        double[] values = FwriteValues(args[1], line, col);
+        var text = new StringBuilder();
+        foreach (double value in values)
+        {
+            foreach (byte b in EncodeValue(value, source, width))
+            {
+                if (b != 0)
+                {
+                    text.Append((char)b);
+                }
+            }
+        }
+
+        if (id == 1)
+        {
+            host.WriteOut(text.ToString());
+        }
+        else
+        {
+            host.WriteErrFromCode(text.ToString());
+        }
+
+        return JgsValue.Number(values.Length);
+    }
+
+    /// <summary>
+    /// Up to <paramref name="limit"/> characters from where <paramref name="entry"/>'s stream stands, decoded
+    /// in its encoding, the stream left after the bytes they took (open item 318, ADR 0378).
+    /// </summary>
+    private static string ReadCharacters(JGraphScriptGlobals.FileEntry entry, int limit)
+    {
+        FileStream stream = entry.Stream;
+        long start = stream.Position;
+        long remaining = System.Math.Max(0, stream.Length - start);
+        bool whole = limit == int.MaxValue || (long)limit * 4 + 8 >= remaining;
+        int size = (int)(whole ? remaining : (long)limit * 4 + 8);
+        var bytes = new byte[size];
+        int read = stream.ReadAtLeast(bytes, size, throwOnEndOfStream: false);
+        string text = entry.Encoding.GetString(bytes, 0, read);
+        if (text.Length <= limit && whole)
+        {
+            stream.Position = start + read;
+            return text;
+        }
+
+        text = text[..System.Math.Min(limit, text.Length)];
+        stream.Position = start + entry.Encoding.GetByteCount(text);
+        return text;
+    }
+
+    /// <summary>A character code as a char: below zero is 0 and above 65535 is 65535, as R2025b's conversion saturates (<c>'int8=&gt;char'</c>, measured).</summary>
+    private static char CharOfCode(double code) =>
+        double.IsNaN(code) || code <= 0 ? '\0' : code >= char.MaxValue ? char.MaxValue : (char)System.Math.Round(code);
+
+    /// <summary>The class a precision word reads and writes as: <c>uchar</c> is uint8, <c>schar</c> int8, <c>char*1</c> char, <c>short</c> int16, and so on.</summary>
+    private static string CanonicalPrecision(string precision) => precision.Trim().ToLowerInvariant() switch
+    {
+        "uchar" or "unsigned char" => "uint8",
+        "schar" or "signed char" or "integer*1" => "int8",
+        "char*1" => "char",
+        "short" or "integer*2" => "int16",
+        "ushort" => "uint16",
+        "int" or "long" or "integer*4" => "int32",
+        "uint" or "ulong" => "uint32",
+        "float" or "float32" or "real*4" => "single",
+        "float64" or "real*8" => "double",
+        "integer*8" => "int64",
+        string other => other,
+    };
 
     private static bool IsMachineFormat(string word) => word.ToLowerInvariant()
         is "n" or "native" or "l" or "b" or "s" or "a"

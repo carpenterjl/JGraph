@@ -482,6 +482,9 @@ internal sealed class FnStmt(
     /// </summary>
     internal HashSet<string>? MentionedNames;
 
+    /// <summary>The names this body binds as variables, cached by <see cref="NameMentions.Binds"/> (open item 336).</summary>
+    internal HashSet<string>? BoundNames;
+
     /// <summary>
     /// The <c>import</c> statements written in this body outside its nested functions, collected
     /// the first time the function is called (ADR 0176); empty for nearly every function.
@@ -503,6 +506,15 @@ internal sealed class FnStmt(
     /// warning an <c>eval</c> binding one of them gives (open item 329, ADR 0368).
     /// </summary>
     internal int LiteralMentions;
+
+    /// <summary>
+    /// The function this one is nested in, set when that function's call hoists it, or null: R2025b's stack
+    /// names a nested function by the path down to it, <c>outer/inner</c> (open item 336, measured).
+    /// </summary>
+    internal FnStmt? NestedIn;
+
+    /// <summary>The name R2025b's stack gives this function: its own, or <c>outer/inner</c> for a nested one.</summary>
+    internal string StackName => NestedIn is { } outer ? $"{outer.StackName}/{Name}" : Name;
 
     /// <summary>What the body's leading <c>arguments</c> blocks declare (stage K9), read once; null when it has none.</summary>
     internal ArgumentsSignature? Signature

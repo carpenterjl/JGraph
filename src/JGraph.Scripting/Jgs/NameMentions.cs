@@ -22,6 +22,114 @@ internal static class NameMentions
     public static bool Mentions(this FnStmt function, string name) =>
         (function.MentionedNames ??= Collect(function)).Contains(name);
 
+    /// <summary>The variable names <paramref name="statements"/> mention, in the order first met (eval'd text; open item 336).</summary>
+    public static IEnumerable<string> MentionedIn(IReadOnlyList<Stmt> statements)
+    {
+        var names = new HashSet<string>(StringComparer.Ordinal);
+        Visit(statements, names);
+        return names;
+    }
+
+    /// <summary>
+    /// Whether <paramref name="function"/>'s own text binds <paramref name="name"/> as a variable: a parameter,
+    /// an output, an assignment's or a loop's target, a declared global or persistent, a caught exception
+    /// (open item 336, ADR 0378: a name it mentions and never binds is read as a function, whatever an
+    /// <c>eval</c> puts there).
+    /// </summary>
+    public static bool Binds(this FnStmt function, string name)
+    {
+        if (function.BoundNames is null)
+        {
+            var bound = new HashSet<string>(function.Parameters, StringComparer.Ordinal);
+            bound.UnionWith(function.Outputs);
+            CollectBound(function.Body, bound);
+            function.BoundNames = bound;
+        }
+
+        return function.BoundNames.Contains(name);
+    }
+
+    private static void CollectBound(IReadOnlyList<Stmt>? statements, HashSet<string> bound)
+    {
+        foreach (Stmt statement in statements ?? [])
+        {
+            switch (statement)
+            {
+                case ExprStmt { Expression: AssignExpr assign }:
+                    AddRoot(assign.Target, bound);
+                    break;
+                case MultiAssignStmt multi:
+                    foreach (Expr? target in multi.Targets)
+                    {
+                        AddRoot(target, bound);
+                    }
+
+                    break;
+                case ForStmt loop:
+                    bound.Add(loop.Variable);
+                    CollectBound(loop.Body, bound);
+                    break;
+                case IfStmt branch:
+                    CollectBound(branch.Then, bound);
+                    CollectBound(branch.Else, bound);
+                    break;
+                case WhileStmt loop:
+                    CollectBound(loop.Body, bound);
+                    break;
+                case SwitchStmt choice:
+                    foreach (SwitchCase arm in choice.Cases)
+                    {
+                        CollectBound(arm.Body, bound);
+                    }
+
+                    CollectBound(choice.Otherwise, bound);
+                    break;
+                case TryStmt attempt:
+                    CollectBound(attempt.Body, bound);
+                    if (attempt.ErrorVariable is { } caught)
+                    {
+                        bound.Add(caught);
+                    }
+
+                    CollectBound(attempt.Handler, bound);
+                    break;
+                case GlobalStmt global:
+                    bound.UnionWith(global.Names);
+                    break;
+                case PersistentStmt persistent:
+                    bound.UnionWith(persistent.Names);
+                    break;
+            }
+        }
+    }
+
+    private static void AddRoot(Expr? target, HashSet<string> bound)
+    {
+        while (true)
+        {
+            switch (target)
+            {
+                case VariableExpr variable:
+                    bound.Add(variable.Name);
+                    return;
+                case CallExpr call:
+                    target = call.Callee;
+                    continue;
+                case IndexExpr index:
+                    target = index.Target;
+                    continue;
+                case BraceIndexExpr brace:
+                    target = brace.Target;
+                    continue;
+                case MemberExpr member:
+                    target = member.Target;
+                    continue;
+                default:
+                    return;
+            }
+        }
+    }
+
     private static HashSet<string> Collect(FnStmt function)
     {
         var names = new HashSet<string>(StringComparer.Ordinal);

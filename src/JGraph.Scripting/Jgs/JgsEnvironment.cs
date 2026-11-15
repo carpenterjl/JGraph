@@ -255,6 +255,13 @@ internal sealed class JgsEnvironment
         }
     }
 
+    /// <summary>
+    /// The names an <c>eval</c> bound in this function's frame over a function its text reads by that name
+    /// (open item 336, ADR 0378): the function's own text still reads the function, eval'd text the variable.
+    /// Null for nearly every frame.
+    /// </summary>
+    internal HashSet<string>? EvalShadowed { get; set; }
+
     /// <summary>The function whose call this scope is, or sits inside: the nearest frame outward, stopping at a class scope.</summary>
     internal FnStmt? EnclosingFunction
     {

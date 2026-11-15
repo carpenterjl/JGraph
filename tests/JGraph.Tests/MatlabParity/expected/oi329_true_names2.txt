@@ -50,7 +50,7 @@ CHK|warn_eval_after_read|logical|exact
 CHK|warn_evalc|MATLAB:lang:ExternalShadowedInEval / Identifier 'true' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported. # logical|exact
 CHK|warn_bound_fn| /  # 8|exact
 CHK|warn_call_form|MATLAB:lang:ExternalShadowedInEval / Identifier 'true' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported.|exact
-CHK|call_form_read|logical|div=ADR0368|diverges|double
+CHK|call_form_read|logical|exact
 CHK|warn_unmentioned| /  # 8|exact
 CHK|warn_assignin| /  # logical|exact
 CHK|warn_evalin_caller| /  # logical|exact

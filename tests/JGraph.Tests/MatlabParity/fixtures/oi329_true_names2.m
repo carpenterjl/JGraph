@@ -61,7 +61,7 @@ chk('warn_evalc', evalcbind());
 chk('warn_bound_fn', evalboundfn());
 [a1, a2] = evalcallform();
 chk('warn_call_form', a1);
-chk('call_form_read', a2, 'div=ADR0368');
+chk('call_form_read', a2);
 chk('warn_unmentioned', evalunmentioned());
 chk('warn_assignin', assigninbind());
 chk('warn_evalin_caller', evalincaller());

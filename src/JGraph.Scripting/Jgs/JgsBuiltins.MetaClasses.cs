@@ -221,7 +221,14 @@ internal static partial class JgsBuiltins
     private static JgsValue MetaClassOfValue(string className, IEnumerable<string> properties, IEnumerable<string> methods, Interpreter interpreter)
     {
         var model = new MetaModel(className);
-        model.Properties.AddRange(properties.Select(p => new MetaPropertyModel(p, className)));
+        // An MException's properties are read-only to a script: message's set access is protected, the
+        // rest's private (R2025b's ?MException, measured; open item 318).
+        model.Properties.AddRange(properties.Select(p => new MetaPropertyModel(p, className)
+        {
+            Set = className == ExceptionClass
+                ? new MemberAccess(p == "message" ? MemberAccessKind.Protected : MemberAccessKind.Private)
+                : MemberAccess.Public,
+        }));
         model.Methods.AddRange(methods.Select(m => new MetaMethodModel(m, className, MemberAccess.Public, [], [])));
         var context = new MetaContext(interpreter);
         context.Seed(model);

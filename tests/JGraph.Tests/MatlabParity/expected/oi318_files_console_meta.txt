@@ -1,0 +1,189 @@
+CHK|fresh_table|7 # all:on,MATLAB:RandStream:ReadingInactiveLegacyGeneratorState:off,MATLAB:JavaComponentThreading:off,MATLAB:JavaEDTAutoDelegation:off,MATLAB:RandStream:ActivatingLegacyGenerators:off,MATLAB:class:DynPropDuplicatesMethod:off,MATLAB:mir_warning_unrecognized_pragma:off|exact
+CHK|fresh_printed|The default warning state is 'on'. Warnings not set to the default are//State  Warning Identifier//    off  MATLAB:JavaComponentThreading/    off  MATLAB:JavaEDTAutoDelegation/    off  MATLAB:RandStream:ActivatingLegacyGenerators/    off  MATLAB:RandStream:ReadingInactiveLegacyGeneratorState/    off  MATLAB:class:DynPropDuplicatesMethod/    off  MATLAB:mir_warning_unrecognized_pragma//|exact
+CHK|fresh_verbose|off|exact
+CHK|fresh_one_off|off|exact
+CHK|printed_sorted|The default warning state is 'on'. Warnings not set to the default are//State  Warning Identifier//    off  MATLAB:JavaComponentThreading/    off  MATLAB:JavaEDTAutoDelegation/    off  MATLAB:RandStream:ActivatingLegacyGenerators/    off  MATLAB:RandStream:ReadingInactiveLegacyGeneratorState/    off  MATLAB:class:DynPropDuplicatesMethod/    off  MATLAB:mir_warning_unrecognized_pragma/    off  oi318:z//|exact
+CHK|after_on_all|1 # all:on|exact
+CHK|enc_utf8|UTF-8|exact
+CHK|fgetl_utf8|[72 233 108]/50|exact
+CHK|fgets_utf8|[72 233 108 10]|exact
+CHK|fscanf_c_utf8|[72 233 108 10 50 10]|exact
+CHK|fscanf_s_utf8|[72 233 108 50]|exact
+CHK|fread_char_utf8|[72 233 108 10 50 10]|exact
+CHK|fread_c2c_utf8|[72 233 108 10 50 10]|exact
+CHK|fread_dbl_utf8|[72 233 108 10 50 10]|exact
+CHK|fread_u8_utf8|[72 195 169 108 10 50 10]|exact
+CHK|textscan_utf8|[72 233 108 32 35 32 50]|exact
+CHK|r_fgetl_utf8|[72 233 108]|exact
+CHK|rt_fgetl_utf8|[72 233 108]|exact
+CHK|named1252_fgetl_utf8|windows-1252 # [72 195 169 108]|exact
+CHK|partial_utf8|[72 233]/108|exact
+CHK|enc_cp1252|windows-1252|exact
+CHK|fgetl_cp1252|[72 233 108]/50|exact
+CHK|fgets_cp1252|[72 233 108 10]|exact
+CHK|fscanf_c_cp1252|[72 233 108 10 50 10]|exact
+CHK|fscanf_s_cp1252|[72 233 108 50]|exact
+CHK|fread_char_cp1252|[72 233 108 10 50 10]|exact
+CHK|fread_c2c_cp1252|[72 233 108 10 50 10]|exact
+CHK|fread_dbl_cp1252|[72 233 108 10 50 10]|exact
+CHK|fread_u8_cp1252|[72 233 108 10 50 10]|exact
+CHK|textscan_cp1252|[72 233 108 32 35 32 50]|exact
+CHK|r_fgetl_cp1252|[72 233 108]|exact
+CHK|rt_fgetl_cp1252|[72 233 108]|exact
+CHK|named1252_fgetl_cp1252|windows-1252 # [72 233 108]|exact
+CHK|partial_cp1252|[72 233]/108|exact
+CHK|enc_bom|UTF-8|exact
+CHK|fgetl_bom|[65279 72 233]/50|exact
+CHK|fgets_bom|[65279 72 233 10]|exact
+CHK|fscanf_c_bom|[65279 72 233 10 50 10]|exact
+CHK|fscanf_s_bom|[65279 72 233 50]|exact
+CHK|fread_char_bom|[65279 72 233 10 50 10]|exact
+CHK|fread_c2c_bom|[65279 72 233 10 50 10]|exact
+CHK|fread_dbl_bom|[65279 72 233 10 50 10]|exact
+CHK|fread_u8_bom|[239 187 191 72 195 169 10 50 10]|exact
+CHK|textscan_bom|[65279 72 233 32 35 32 50]|exact
+CHK|r_fgetl_bom|[65279 72 233]|exact
+CHK|rt_fgetl_bom|[65279 72 233]|exact
+CHK|named1252_fgetl_bom|windows-1252 # [239 187 191 72 195 169]|exact
+CHK|partial_bom|[65279 72]/233|exact
+CHK|enc_ascii|UTF-8|exact
+CHK|fgetl_ascii|[72 105]/50|exact
+CHK|fgets_ascii|[72 105 10]|exact
+CHK|fscanf_c_ascii|[72 105 10 50 10]|exact
+CHK|fscanf_s_ascii|[72 105 50]|exact
+CHK|fread_char_ascii|[72 105 10 50 10]|exact
+CHK|fread_c2c_ascii|[72 105 10 50 10]|exact
+CHK|fread_dbl_ascii|[72 105 10 50 10]|exact
+CHK|fread_u8_ascii|[72 105 10 50 10]|exact
+CHK|textscan_ascii|[72 105 32 35 32 50]|exact
+CHK|r_fgetl_ascii|[72 105]|exact
+CHK|rt_fgetl_ascii|[72 105]|exact
+CHK|named1252_fgetl_ascii|windows-1252 # [72 105]|exact
+CHK|partial_ascii|[72 105]/[]|exact
+CHK|enc_broken|windows-1252|exact
+CHK|fgetl_broken|[72 195 169 233 65]/50|exact
+CHK|fgets_broken|[72 195 169 233 65 10]|exact
+CHK|fscanf_c_broken|[72 195 169 233 65 10 50 10]|exact
+CHK|fscanf_s_broken|[72 195 169 233 65 50]|exact
+CHK|fread_char_broken|[72 195 169 233 65 10 50 10]|exact
+CHK|fread_c2c_broken|[72 195 169 233 65 10 50 10]|exact
+CHK|fread_dbl_broken|[72 195 169 233 65 10 50 10]|exact
+CHK|fread_u8_broken|[72 195 169 233 65 10 50 10]|exact
+CHK|textscan_broken|[72 195 169 233 65 32 35 32 50]|exact
+CHK|r_fgetl_broken|[72 195 169 233 65]|exact
+CHK|rt_fgetl_broken|[72 195 169 233 65]|exact
+CHK|named1252_fgetl_broken|windows-1252 # [72 195 169 233 65]|exact
+CHK|partial_broken|[72 195]/[169 233 65]|exact
+CHK|enc_cutend|UTF-8|exact
+CHK|fgetl_cutend|[72 233 65533]/-1|exact
+CHK|fgets_cutend|[72 233 65533]|exact
+CHK|fscanf_c_cutend|[72 233 65533]|exact
+CHK|fscanf_s_cutend|[72 233 65533]|exact
+CHK|fread_char_cutend|[72 233 65533]|exact
+CHK|fread_c2c_cutend|[72 233 65533]|exact
+CHK|fread_dbl_cutend|[72 233 65533]|exact
+CHK|fread_u8_cutend|[72 195 169 233]|exact
+CHK|textscan_cutend|[72 233 65533]|exact
+CHK|r_fgetl_cutend|[72 233 65533]|exact
+CHK|rt_fgetl_cutend|[72 233 65533]|exact
+CHK|named1252_fgetl_cutend|windows-1252 # [72 195 169 233]|exact
+CHK|partial_cutend|[72 233]/65533|exact
+CHK|enc_u16|UTF-16LE|exact
+CHK|fgetl_u16|[65279 72 105]/-1|exact
+CHK|fgets_u16|[65279 72 105 10]|exact
+CHK|fscanf_c_u16|[65279 72 105 10]|exact
+CHK|fscanf_s_u16|[65279 72 105]|exact
+CHK|fread_char_u16|[65279 72 105 10]|exact
+CHK|fread_c2c_u16|[65279 72 105 10]|exact
+CHK|fread_dbl_u16|[65279 72 105 10]|exact
+CHK|fread_u8_u16|[255 254 72 0 105 0 10 0]|exact
+CHK|textscan_u16|[65279 72 105]|exact
+CHK|r_fgetl_u16|[65279 72 105]|exact
+CHK|rt_fgetl_u16|[65279 72 105]|exact
+CHK|named1252_fgetl_u16|windows-1252 # [255 254 72 0 105 0]|exact
+CHK|partial_u16|[65279 72]/105|exact
+CHK|enc_late|windows-1252|exact
+CHK|fgetl_late|65/[66 233]|exact
+CHK|fgets_late|[65 10]|exact
+CHK|fscanf_c_late|[65 10 66 233 10]|exact
+CHK|fscanf_s_late|[65 66 233]|exact
+CHK|fread_char_late|[65 10 66 233 10]|exact
+CHK|fread_c2c_late|[65 10 66 233 10]|exact
+CHK|fread_dbl_late|[65 10 66 233 10]|exact
+CHK|fread_u8_late|[65 10 66 233 10]|exact
+CHK|textscan_late|[65 32 35 32 66 233]|exact
+CHK|r_fgetl_late|65|exact
+CHK|rt_fgetl_late|65|exact
+CHK|named1252_fgetl_late|windows-1252 # 65|exact
+CHK|partial_late|[65 10]/[66 233]|exact
+CHK|ftell_after_chars|[72 233] # 3|exact
+CHK|ftell_after_line|[72 233 108] # 5|exact
+CHK|fread_count|72 # [233 108 10 50 10] # 5|exact
+CHK|precision_1|uchar # double # [72 195 169 108 10 50 10]|exact
+CHK|precision_2|schar # double # [72 -61 -87 108 10 50 10]|exact
+CHK|precision_3|char*1 # double # [72 233 108 10 50 10]|exact
+CHK|precision_4|uint8=>char # char # [72 195 169 108 10 50 10]|exact
+CHK|precision_5|int8 # double # [72 -61 -87 108 10 50 10]|exact
+CHK|precision_6|char=>uint8 # uint8 # [72 233 108 10 50 10]|exact
+CHK|precision_7|uchar=>char # char # [72 195 169 108 10 50 10]|exact
+CHK|precision_8|*uchar # uint8 # [72 195 169 108 10 50 10]|exact
+CHK|precision_9|int8=>char # char # [72 0 0 108 10 50 10]|exact
+CHK|precision_bogus|ERR MATLAB:badprecision_mx Invalid precision.|exact
+CHK|rplus|windows-1252 # [72 233 108]|exact
+CHK|seek_then_line|[233 108]|exact
+CHK|enc_w|UTF-8|exact
+CHK|enc_empty|UTF-8 # -1|exact
+CHK|named_1|latin1 # ISO-8859-1 # [72 195 169 108]|exact
+CHK|named_2|ISO-8859-1 # ISO-8859-1 # [72 195 169 108]|exact
+CHK|named_3|US-ASCII # US-ASCII # [72 65533 65533 108]|exact
+CHK|named_4|UTF-16BE # UTF-16BE # [18627 43372 2610 65533]|exact
+CHK|named_5|UTF-16LE # UTF-16LE # [49992 27817 12810 65533]|exact
+CHK|named_6|UTF-8 # UTF-8 # [72 233 108]|exact
+CHK|named_7|windows-1252 # windows-1252 # [72 195 169 108]|exact
+CHK|named_8|cp1252 # windows-1252 # [72 195 169 108]|exact
+CHK|named_9| # UTF-8 # [72 233 108]|exact
+CHK|fw1|abc|exact
+CHK|fw1_codes|Hi\n|exact
+CHK|fw1_count|xyz<3>|exact
+CHK|fw1_nul|[65 66]|exact
+CHK|fw1_uint16|[65 66]|exact
+CHK|fw1_double|66|exact
+CHK|fw1_high|233|exact
+CHK|fw1_neg|[]|exact
+CHK|fw1_string|[97 98]|exact
+CHK|fw1_logical|1|exact
+CHK|fw2|err|exact
+CHK|fw2_count|e2<2>|exact
+CHK|fprintf2|to err|exact
+CHK|fw_refused_1|MATLAB:notimplemented_mx Operation is not implemented for requested file identifier.|exact
+CHK|fw_refused_2|MATLAB:fwrite:UnsupportedClass Cannot write value: unsupported class cell|exact
+CHK|fw_refused_3|MATLAB:badprecision_mx Invalid precision.|exact
+CHK|fw_refused_4|MATLAB:notimplemented_mx Operation is not implemented for requested file identifier.|exact
+CHK|fw_refused_5|MATLAB:maxlhs Too many output arguments.|exact
+CHK|meta_MException|matlab.metadata.Class # [1 1] # MException|exact
+CHK|meta_double|matlab.metadata.Class # [1 1] # double|exact
+CHK|meta_char|matlab.metadata.Class # [1 1] # char|exact
+CHK|meta_cell|matlab.metadata.Class # [1 1] # cell|exact
+CHK|meta_struct|matlab.metadata.Class # [1 1] # struct|exact
+CHK|meta_function_handle|matlab.metadata.Class # [1 1] # function_handle|exact
+CHK|meta_logical|matlab.metadata.Class # [1 1] # logical|exact
+CHK|meta_string|matlab.metadata.Class # [1 1] # string|exact
+CHK|meta_int8|matlab.metadata.Class # [1 1] # int8|exact
+CHK|meta_single|matlab.metadata.Class # [1 1] # single|exact
+CHK|meta_uint64|matlab.metadata.Class # [1 1] # uint64|exact
+CHK|meta_mex_correction|private # public|exact
+CHK|meta_mex_message|protected # public|exact
+CHK|meta_fromname|matlab.metadata.Class # MException|exact
+CHK|meta_fromname_double|double|exact
+CHK|mex_set_Correction|MATLAB:class:SetProhibited Unable to set the 'Correction' property of class ''MException'' because it is read-only.|exact
+CHK|mex_set_message|MATLAB:class:SetProhibited Unable to set the 'message' property of class ''MException'' because it is read-only.|exact
+CHK|mex_set_identifier|MATLAB:class:SetProhibited Unable to set the 'identifier' property of class ''MException'' because it is read-only.|exact
+CHK|mex_set_stack|MATLAB:class:SetProhibited Unable to set the 'stack' property of class ''MException'' because it is read-only.|exact
+CHK|checkcode_unused|cell # 1 # MATLAB:mlint:UnusedArgs # The following arguments were ignored: extra.|exact
+CHK|checkcode_unused_error_state|ERR MATLAB:mlint:UnusedArgs The following arguments were ignored: extra.|exact
+CHK|error_format_1|x%>|exact
+CHK|error_format_2|x |exact
+CHK|error_format_3|50|exact
+CHK|error_format_4|100% sure|exact
+CHK|warning_format|x%y|exact
+CHK|mexception_format|p%q|exact

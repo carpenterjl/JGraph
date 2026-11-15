@@ -142,7 +142,7 @@ internal static partial class JgsBuiltins
             files.AddRange(listed);
             if (rest.Count > 0)
             {
-                host.Warnings.Record("MATLAB:mlint:UnusedArgs", "The following arguments were ignored: " + string.Join(" ", rest) + ".");
+                Warn(host, "MATLAB:mlint:UnusedArgs", "The following arguments were ignored: " + string.Join(" ", rest) + "."); // shown, and raised in the error state (open item 318)
             }
         }
         else if (asText)

@@ -437,8 +437,16 @@ internal static partial class JgsBuiltins
                 return JgsValue.Number(JGraph.Numerics.LinearAlgebra.Native.ProcessorTopology.PhysicalCoreCount() ?? Environment.ProcessorCount);
             }
 
+            // feature('hotlinks'): whether printed text carries links, logical false as in R2025b's
+            // -batch session, and always here, where nothing writes one (open item 336, ADR 0378). A second
+            // argument sets it in R2025b and the old value is answered; here it stays false.
+            if (IsTextScalar(args[0]) && TextOf(args[0]).Equals("hotlinks", StringComparison.OrdinalIgnoreCase) && args.Count <= 2)
+            {
+                return JgsValue.Bool(false);
+            }
+
             throw new JgsRuntimeException(line, col, "JGraph:feature:unsupported",
-                "JGraph answers feature('getpid') and feature('numcores') and no other feature key.");
+                "JGraph answers feature('getpid'), feature('numcores') and feature('hotlinks') and no other feature key.");
         });
 
         Define("fieldnames", (args, line, col) =>
@@ -1539,6 +1547,23 @@ internal static partial class JgsBuiltins
 
         if (!hasData)
         {
+            // After an identifier the message is a format with nothing to read: %% is one percent, and a
+            // conversion reads nothing (R2025b, open item 336, measured: error('id', 'x%%>') is x%>,
+            // 'x %d' is 'x ', '50%' is '50', warning('id', 'x%%y') is x%y).
+            if (identified && dialect.IsMatlab && format.Contains('%', StringComparison.Ordinal))
+            {
+                try
+                {
+                    // A lone % at the end is dropped ('50%' is '50').
+                    int trailing = format.Length - format.TrimEnd('%').Length;
+                    return JgsSprintf.FormatMatlab(trailing % 2 == 1 ? format[..^1] : format, []);
+                }
+                catch (FormatException)
+                {
+                    return format;
+                }
+            }
+
             return format;
         }
 
@@ -1739,7 +1764,9 @@ internal static partial class JgsBuiltins
         // indented and the rows by two, a blank line after the rows; the two settings are not
         // identifiers and are not listed; and with nothing to list, one line saying so.
         string defaultState = state.DefaultOn ? "on" : "off";
-        var rows = state.Explicit().Where(e => e.State != defaultState && e.Identifier is not ("backtrace" or "verbose")).ToList();
+        // The rows sorted by identifier, as R2025b prints them (open item 318, measured).
+        var rows = state.Explicit().Where(e => e.State != defaultState && e.Identifier is not ("backtrace" or "verbose"))
+            .OrderBy(e => e.Identifier, StringComparer.Ordinal).ToList();
         if (rows.Count == 0)
         {
             host.print($"All warnings have the state '{defaultState}'.");
@@ -1776,7 +1803,10 @@ internal static partial class JgsBuiltins
         var rows = new List<Dictionary<string, JgsValue>> { WarningFields("all", state.DefaultOn ? "on" : "off") };
         foreach ((string id, string setting) in state.Explicit())
         {
-            rows.Add(WarningFields(id, setting));
+            if (id is not ("backtrace" or "verbose")) // settings, not identifiers: R2025b lists neither (open item 318)
+            {
+                rows.Add(WarningFields(id, setting));
+            }
         }
 
         return JgsValue.StructArray(new JgsStructArray([.. rows]), rows.Count, 1);

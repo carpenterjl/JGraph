@@ -1069,10 +1069,16 @@ internal static partial class JgsBuiltins
         Encoding reader = encoding ?? Encoding.UTF8;
         var bytes = new List<byte>();
         int next;
+
+        // A UTF-16 file's newline is a two-byte unit, 0A 00 or 00 0A (open item 318: R2025b detects one by
+        // its byte-order mark and reads it by lines).
+        int unit = reader is UnicodeEncoding ? 2 : 1;
+        bool bigEndian = reader.CodePage == 1201;
         while ((next = stream.ReadByte()) >= 0)
         {
             bytes.Add((byte)next);
-            if (next == '\n')
+            if (unit == 1 ? next == '\n'
+                : bytes.Count % 2 == 0 && (bigEndian ? bytes[^2] == 0 && bytes[^1] == '\n' : bytes[^2] == '\n' && bytes[^1] == 0))
             {
                 break;
             }

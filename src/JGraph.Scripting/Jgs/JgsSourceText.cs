@@ -103,6 +103,31 @@ public static class JgsSourceText
             : Windows1252(span);
     }
 
+    /// <summary>
+    /// The encoding <see cref="DecodeDetected"/> reads <paramref name="bytes"/> in, as R2025b's <c>fopen</c> with
+    /// no encoding named chooses it for a file opened to read (open item 318, ADR 0378, measured): UTF-16 by
+    /// its byte-order mark, UTF-8 by ICU's recogniser or when no byte is past 127 (<c>fopen(fid)</c> names a
+    /// plain ASCII file UTF-8), Windows-1252 otherwise.
+    /// </summary>
+    public static Encoding DetectedEncoding(byte[] bytes)
+    {
+        ArgumentNullException.ThrowIfNull(bytes);
+        ReadOnlySpan<byte> span = bytes;
+        if (span.StartsWith((ReadOnlySpan<byte>)[0xFF, 0xFE]))
+        {
+            return Encoding.Unicode;
+        }
+
+        if (span.StartsWith((ReadOnlySpan<byte>)[0xFE, 0xFF]))
+        {
+            return Encoding.BigEndianUnicode;
+        }
+
+        return span.IndexOfAnyInRange((byte)0x80, (byte)0xFF) < 0 || RecognisedAsUtf8(span)
+            ? new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)
+            : JgsWindows1252Encoding.Instance;
+    }
+
     /// <summary>The bytes as Windows-1252 text, every byte one character (the undefined five as C1 controls).</summary>
     internal static string Windows1252Text(byte[] bytes) => Windows1252(bytes);
 

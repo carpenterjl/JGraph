@@ -145,6 +145,23 @@ public sealed class JGraphScriptGlobals
     }
 
     /// <summary>
+    /// Writes raw text to the error console from MATLAB code's file id 2 (<c>fprintf(2, ...)</c>,
+    /// <c>fwrite(2, ...)</c>): into <c>evalc</c>'s capture while one runs, as R2025b's <c>evalc</c> takes
+    /// what id 2 writes (open item 318, ADR 0378, measured), else to the error console.
+    /// </summary>
+    internal void WriteErrFromCode(string text)
+    {
+        text = Blanked(text);
+        if (_capture is { } buffer)
+        {
+            buffer.Append(text);
+            return;
+        }
+
+        WriteErr(text);
+    }
+
+    /// <summary>
     /// What the console shows of <paramref name="text"/>: R2025b's console and <c>evalc</c> show the
     /// NUL character as a blank (measured, open item 308, ADR 0352: <c>evalc('fprintf(''a%sb'',
     /// char(0))')</c> is <c>'a b'</c>, and so for disp, a display and a warning). A file written with
@@ -658,7 +675,69 @@ public sealed class JGraphScriptGlobals
     /// ask this build what it had opened.
     /// </summary>
     internal sealed record FileEntry(
-        FileStream Stream, string Path, string Permission, string MachineFormat, Encoding Encoding);
+        FileStream Stream, string Path, string Permission, string MachineFormat, Encoding Encoding)
+    {
+        private Encoding _encoding = Encoding;
+        private bool _detects;
+
+        /// <summary>
+        /// Whether the encoding is still to be detected from the file's bytes, the first time a reader or
+        /// <c>fopen(fid)</c> asks for it: MATLAB code opened the file to read with no encoding named, and
+        /// R2025b's <c>fopen</c> then detects one as <c>fileread</c> does (open item 318, ADR 0378).
+        /// </summary>
+        internal bool DetectsEncoding { get => _detects; init => _detects = value; }
+
+        /// <summary>The encoding the file's text is read and written in.</summary>
+        public Encoding Encoding
+        {
+            get
+            {
+                if (_detects)
+                {
+                    _detects = false;
+                    _encoding = Detected(Stream) ?? _encoding;
+                }
+
+                return _encoding;
+            }
+
+            init => _encoding = value;
+        }
+
+        /// <summary>The encoding the whole file's bytes are in by R2025b's detection, the stream left where it was; null when it cannot be read.</summary>
+        private static Encoding? Detected(FileStream stream)
+        {
+            if (!stream.CanRead || !stream.CanSeek)
+            {
+                return null;
+            }
+
+            long at = stream.Position;
+            try
+            {
+                stream.Position = 0;
+                var bytes = new byte[stream.Length];
+                stream.ReadExactly(bytes);
+                return Jgs.JgsSourceText.DetectedEncoding(bytes);
+            }
+            finally
+            {
+                stream.Position = at;
+            }
+        }
+    }
+
+    /// <summary>
+    /// The name R2025b's <c>fopen(fid)</c> gives an encoding (open item 318, measured): <c>UTF-8</c>,
+    /// <c>UTF-16LE</c>, <c>UTF-16BE</c>, <c>windows-1252</c>, <c>ISO-8859-1</c>, <c>US-ASCII</c>.
+    /// </summary>
+    internal static string MatlabEncodingName(Encoding encoding) => encoding.WebName.ToLowerInvariant() switch
+    {
+        "utf-16" => "UTF-16LE",
+        "utf-16be" => "UTF-16BE",
+        "windows-1252" => "windows-1252",
+        string other => other.ToUpperInvariant(),
+    };
 
     private readonly Dictionary<int, FileEntry> _openFiles = new();
     private int _nextFileId = 3; // MATLAB reserves 0-2 for stdin/stdout/stderr
@@ -734,7 +813,12 @@ public sealed class JGraphScriptGlobals
             };
 
             int id = _nextFileId++;
-            _openFiles[id] = new FileEntry(stream, Resolve(path), mode, format, chosen);
+            _openFiles[id] = new FileEntry(stream, Resolve(path), mode, format, chosen)
+            {
+                // MATLAB code reading with no encoding named reads in the one R2025b's fopen detects
+                // (open item 318, ADR 0378); JGS keeps UTF-8.
+                DetectsEncoding = encoding.Length == 0 && stream.CanRead && trimmed is "r" or "r+" && Jgs.JgsRunningDialect.ThreadIsMatlab,
+            };
             return (id, string.Empty);
         }
         catch (IOException ex)
@@ -758,8 +842,12 @@ public sealed class JGraphScriptGlobals
         return name.Replace("-", string.Empty, StringComparison.Ordinal).ToLowerInvariant() switch
         {
             "utf8" => new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
-            "latin1" or "iso88591" or "windows1252" => Encoding.Latin1,
-            "usascii" or "ascii" => Encoding.ASCII,
+            "latin1" or "iso88591" => Encoding.Latin1,
+
+            // windows-1252 is the real code page and US-ASCII reads a byte past 127 as U+FFFD, as
+            // R2025b's fopen reads them (open item 318, ADR 0378; ADR 0352 for fileread).
+            "windows1252" or "cp1252" => Jgs.JgsWindows1252Encoding.Instance,
+            "usascii" or "ascii" => Encoding.GetEncoding("us-ascii", EncoderFallback.ReplacementFallback, new DecoderReplacementFallback("�")),
             "utf16le" or "unicode" => Encoding.Unicode,
             "utf16be" => Encoding.BigEndianUnicode,
             _ => throw new ArgumentException(

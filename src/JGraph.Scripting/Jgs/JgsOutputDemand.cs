@@ -42,7 +42,7 @@ internal static class JgsOutputDemand
         throw new JgsRuntimeException(
             line, column, builtin ? "MATLAB:maxlhs" : "MATLAB:TooManyOutputs", "Too many output arguments.")
         {
-            UsingName = callee.Name,
+            UsingName = callee is UserFunction user ? user.ReportName : callee.Name, // probe2>localone (open item 336)
         };
     }
 

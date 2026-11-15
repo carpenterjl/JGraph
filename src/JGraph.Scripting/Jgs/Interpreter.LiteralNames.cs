@@ -106,13 +106,22 @@ internal sealed partial class Interpreter
     /// <summary>
     /// <c>eval('true = 7;')</c> (or <c>evalc</c>'s) in the frame of a function whose text mentions the
     /// word and does not bind it: the binding is made and the function still reads the built-in, and
-    /// R2025b says so with <c>MATLAB:lang:ExternalShadowedInEval</c>, each time (open item 329,
-    /// measured). Not in a script, nor for text another function's <c>evalin('caller', ...)</c> runs
-    /// here, nor through <c>assignin</c>. R2025b gives the warning for every name a function reads
-    /// as a function (<c>pi</c>, <c>sin</c>); JGraph decides only these two words from a function's
-    /// text, so it gives it for them alone (ADR 0368).
+    /// R2025b says so with <c>MATLAB:lang:ExternalShadowedInEval</c> (open item 329, measured). Not in a
+    /// script, nor for text another function's <c>evalin('caller', ...)</c> runs here, nor through
+    /// <c>assignin</c> (ADR 0368). The warning comes the first time a function evals a given text, and not
+    /// again for the same text in that function in the session, the error state included (open item 336,
+    /// measured: a second call with <c>'pi = 7;'</c> is silent, <c>'pi = 8;'</c> or another function warns).
     /// </summary>
-    private void WarnEvalBindsLiteralWord(IReadOnlyList<Stmt> program, JgsEnvironment env)
+    /// <remarks>
+    /// Every other name a function's text mentions and never binds is read the same way when a function
+    /// answers it (open item 336, ADR 0378, measured): a built-in (<c>pi</c>, <c>sin</c>, <c>max</c>) or a file
+    /// on the path warns <c>ExternalShadowedInEval</c>, a local function of the file
+    /// <c>MATLAB:lang:LocalFunctionShadowedInEval</c> ("... does not refer to the local function. ..."), and the
+    /// function's text goes on reading the function, bare or called (<c>sin(1)</c>, <c>pi(1)</c> refused as
+    /// too many inputs); eval'd text, <c>exist</c> and <c>who</c> see the variable. A name nothing answers is
+    /// an ordinary variable. The frame keeps the names in <see cref="JgsEnvironment.EvalShadowed"/>.
+    /// </remarks>
+    private void WarnEvalBindsLiteralWord(IReadOnlyList<Stmt> program, JgsEnvironment env, string code)
     {
         if (!Dialect.IsMatlab || _inScript || _currentFunction is not { } running || Host is not { } host
             || !ReferenceEquals(env.EnclosingFunction, running))
@@ -120,39 +129,95 @@ internal sealed partial class Interpreter
             return;
         }
 
-        int bound = 0;
+        bool warns = (_evalTextsWarned ??= []).Add((running, code));
+
+        var names = new List<string>();
         foreach (Stmt statement in program)
         {
             switch (statement)
             {
-                case ExprStmt { Expression: AssignExpr assign }:
-                    bound |= Parser.LiteralBits(TargetRootName(assign.Target));
+                case ExprStmt { Expression: AssignExpr assign } when TargetRootName(assign.Target) is { } root:
+                    names.Add(root);
                     break;
                 case MultiAssignStmt multi:
                     foreach (Expr? target in multi.Targets)
                     {
-                        bound |= target is null ? 0 : Parser.LiteralBits(TargetRootName(target));
+                        if (target is not null && TargetRootName(target) is { } each)
+                        {
+                            names.Add(each);
+                        }
                     }
 
                     break;
                 case ForStmt loop:
-                    bound |= Parser.LiteralBits(loop.Variable);
+                    names.Add(loop.Variable);
                     break;
             }
         }
 
-        bound &= ~running.LiteralBindings;
-        foreach (string word in (string[])["true", "false"])
+        const string Rest = " In a future release, using an identifier different to how it is used in the file will not be supported.";
+        var warned = new HashSet<string>(StringComparer.Ordinal);
+        foreach (string name in names)
         {
-            int bit = Parser.LiteralBits(word);
-            if ((bound & bit) != 0 && MentionsLiteralWord(running, word))
+            if (!warned.Add(name))
             {
-                JgsBuiltins.Warn(host, "MATLAB:lang:ExternalShadowedInEval",
-                    $"Identifier '{word}' in the evaluated statement does not refer to the external function. "
-                    + "In a future release, using an identifier different to how it is used in the file will not be supported.");
+                continue;
+            }
+
+            int bit = Parser.LiteralBits(name);
+            if (bit != 0)
+            {
+                if ((bit & running.LiteralBindings) == 0 && MentionsLiteralWord(running, name))
+                {
+                    (env.EvalShadowed ??= new HashSet<string>(StringComparer.Ordinal)).Add(name); // true(1) calls the built-in
+                    if (warns)
+                    {
+                        JgsBuiltins.Warn(host, "MATLAB:lang:ExternalShadowedInEval",
+                            $"Identifier '{name}' in the evaluated statement does not refer to the external function." + Rest);
+                    }
+                }
+
+                continue;
+            }
+
+            if (!running.Mentions(name) || running.Binds(name))
+            {
+                continue;
+            }
+
+            bool local = TryGetFileFunction(name, out _, out _, out bool isMain) && !isMain;
+            if (!local && _resolver.BuiltinOf(name) is null && !_resolver.OnPath(name))
+            {
+                continue; // nothing answers the name: the eval makes an ordinary variable
+            }
+
+            (env.EvalShadowed ??= new HashSet<string>(StringComparer.Ordinal)).Add(name);
+            if (!warns)
+            {
+                continue;
+            }
+
+            JgsBuiltins.Warn(host, local ? "MATLAB:lang:LocalFunctionShadowedInEval" : "MATLAB:lang:ExternalShadowedInEval",
+                $"Identifier '{name}' in the evaluated statement does not refer to the {(local ? "local" : "external")} function." + Rest);
+        }
+
+        // eval'd text that reads such a variable reads it, and R2025b says the function will be preferred one
+        // day (open item 336, measured: eval('pi') after eval('pi = 7;') is 7 under PoofedVariableShadowsExternal).
+        if (warns && env.EvalShadowed is { } shadowed)
+        {
+            foreach (string read in NameMentions.MentionedIn(program))
+            {
+                if (shadowed.Contains(read) && !names.Contains(read))
+                {
+                    JgsBuiltins.Warn(host, "MATLAB:lang:PoofedVariableShadowsExternal",
+                        $"Function '{read}' in the evaluated statement is shadowed by a workspace variable. In a future release, the function would be given preference.");
+                }
             }
         }
     }
+
+    /// <summary>The (function, text) pairs whose eval has warned already: R2025b warns once for each (open item 336).</summary>
+    private HashSet<(FnStmt Function, string Text)>? _evalTextsWarned;
 
     /// <summary>Whether <paramref name="function"/>'s own text names <paramref name="word"/>: bare, or as a call or an index.</summary>
     private static bool MentionsLiteralWord(FnStmt function, string word) =>
