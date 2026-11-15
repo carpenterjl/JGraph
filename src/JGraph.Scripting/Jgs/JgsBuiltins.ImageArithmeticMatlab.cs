@@ -1,3 +1,4 @@
+using System.Numerics;
 using JGraph.Imaging;
 
 namespace JGraph.Scripting.Jgs;
@@ -121,7 +122,8 @@ internal static partial class JgsBuiltins
         bool logical = IsLogicalValue(value);
         bool numeric = !logical && IsNumericValue(value);
         bool isChar = className == "char";
-        bool complex = value.Type == JgsType.Complex || value.IsPackedComplex;
+        // A boxed array with a complex element is complex too (open item 335: [1+2i 3; 0.5 2i]).
+        bool complex = value.Type == JgsType.Complex || value.IsPackedComplex || HasComplexElements(value);
         bool sparse = value.Type == JgsType.Sparse;
         double[] data = [];
         int[] dims = [0, 0];
@@ -613,8 +615,9 @@ internal static partial class JgsBuiltins
 
     /// <summary>
     /// <c>imcomplement(im)</c>, as imcomplement.m: <c>~im</c>, <c>intmax - im</c>, <c>bitcmp(im)</c>
-    /// or <c>1 - im</c> by class. A complex double is refused here (R2025b answers it by a rule not
-    /// measured).
+    /// or <c>1 - im</c> by class. A complex double is <c>1 - im</c> too (imcomplement(1+2i) is 0-2i,
+    /// and a result with no imaginary part left is real, as the operator narrows it: open item 335,
+    /// ADR 0373); any other complex class is refused.
     /// </summary>
     private static JgsValue MatlabImcomplement(IReadOnlyList<JgsValue> args, int line, int col)
     {
@@ -624,9 +627,28 @@ internal static partial class JgsBuiltins
             real: false, nonsparse: true, line, col);
         if (im.IsComplex)
         {
-            throw im.ClassName == "double"
-                ? new JgsRuntimeException(line, col, "imcomplement of a complex double array is not supported here.")
-                : new JgsRuntimeException(line, col, "images:imcomplement:complexInput", "Input array must be real.");
+            if (im.ClassName != "double")
+            {
+                throw new JgsRuntimeException(line, col, "images:imcomplement:complexInput", "Input array must be real.");
+            }
+
+            Complex[] flat = ColumnComplex("imcomplement", args[0], line, col);
+            var complemented = new Complex[flat.Length];
+            bool anyImaginary = false;
+            for (int i = 0; i < flat.Length; i++)
+            {
+                complemented[i] = Complex.One - flat[i];
+                anyImaginary |= complemented[i].Imaginary != 0;
+            }
+
+            if (!anyImaginary)
+            {
+                return ImArrayOut(Array.ConvertAll(complemented, static z => z.Real), im.Dims, JgsNumericClass.Double, logical: false);
+            }
+
+            return complemented.Length == 1 && im.Dims.All(static d => d == 1)
+                ? JgsValue.ComplexNum(complemented[0])
+                : ComplexStorage(complemented, im.Dims);
         }
 
         ImRequireData(im, line, col);
@@ -797,10 +819,13 @@ internal static partial class JgsBuiltins
     /// grid, answered as an array of the frames' class. The first frame sets the thumbnail size and any
     /// other frame is resized to it (bicubic by default); frames of different classes go to double, a
     /// grey frame among colour ones is repeated across three planes, and a logical first frame in a
-    /// cell becomes uint8. A background colour makes every frame uint8 RGB. File names and a colour map
-    /// are not read here.
+    /// cell becomes uint8. A background colour makes every frame uint8 RGB. Frames may be named by
+    /// file (a char row, a string array or a cell of names, read as imread reads them and expanded
+    /// through the file's own colour map), and an indexed image's colour map may follow the frames
+    /// (open item 335, ADR 0373).
     /// </summary>
-    private static JgsValue MatlabImtile(IReadOnlyList<JgsValue> args, int line, int col)
+    private static JgsValue MatlabImtile(
+        IReadOnlyList<JgsValue> args, int line, int col, Func<string, string> resolve, JgsRunningDialect dialect)
     {
         if (args.Count == 0)
         {
@@ -818,15 +843,39 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "MATLAB:badsubscript", "Index exceeds array bounds.");
         }
 
-        if (source.Type == JgsType.String || IsStringScalar(source) || source.IsStringArray
-            || (source.Type == JgsType.Cell && source.AsCell.Any(static v => v.Type == JgsType.String || v.IsStringArray)))
+        static bool IsName(JgsValue v) => v.Type == JgsType.String || v.IsStringArray;
+        if (source.Type == JgsType.Cell)
         {
-            throw new JgsRuntimeException(line, col, "imtile: reading frames from image files is not supported here; read them with imread first.");
+            bool names = IsName(source.AsCell[0]);
+            if (source.AsCell.Any(v => IsName(v) != names))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:images:montage:mixedInput",
+                    "Cannot mix workspace variables with filenames.");
+            }
         }
 
-        if (args.Count > 1 && args[1].Type != JgsType.String && !IsStringScalar(args[1]))
+        // parse_inputs: the first char argument after the frames starts the name-value pairs; a
+        // second argument before it is the colour map.
+        int charStart = -1;
+        for (int k = 1; k < args.Count; k++)
         {
-            throw new JgsRuntimeException(line, col, "imtile: an indexed image's colour map is not supported here; convert with ind2rgb first.");
+            if (args[k].Type == JgsType.String || IsStringScalar(args[k]))
+            {
+                charStart = k;
+                break;
+            }
+        }
+
+        JgsValue? cmapValue = null;
+        if ((charStart < 0 && args.Count == 2) || charStart == 2)
+        {
+            cmapValue = args[1];
+        }
+
+        if (charStart < 0 && args.Count > 2)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:images:montage:nonCharParam",
+                "Parameter names must be character arrays.");
         }
 
         double[]? gridSize = null;
@@ -836,7 +885,7 @@ internal static partial class JgsBuiltins
         double[]? frames = null;
         Geometry.Interpolation method = Geometry.Interpolation.Bicubic;
         string[] parameters = ["GridSize", "Frames", "ThumbnailSize", "ThumbnailInterpolation", "BorderSize", "BackgroundColor"];
-        for (int k = 1; k < args.Count; k += 2)
+        for (int k = charStart < 0 ? args.Count : charStart; k < args.Count; k += 2)
         {
             string word = TextOf(args[k]);
             string? parameter = parameters.FirstOrDefault(p => p.StartsWith(word, StringComparison.OrdinalIgnoreCase) && word.Length > 0)
@@ -854,6 +903,7 @@ internal static partial class JgsBuiltins
             switch (parameter)
             {
                 case "GridSize":
+                    ImtileNumericParameter(value, k + 2, "GridSize", line, col);
                     gridSize = ToDoubles("imtile", value, line, col);
                     if (gridSize.Length != 2)
                     {
@@ -867,6 +917,13 @@ internal static partial class JgsBuiltins
 
                     break;
                 case "ThumbnailSize":
+                    // validateattributes(..., {'numeric'}) on a nonempty value: "auto" is a char here
+                    // and refused, as R2025b's imtile refuses it (createMontage's "auto" is montage's).
+                    if (!ImIsEmptyValue(value))
+                    {
+                        ImtileNumericParameter(value, k + 2, "ThumbnailSize", line, col);
+                    }
+
                     thumbnailSize = ToDoubles("imtile", value, line, col);
                     if (thumbnailSize.Length == 0 || thumbnailSize.All(static t => !double.IsFinite(t)))
                     {
@@ -920,22 +977,52 @@ internal static partial class JgsBuiltins
 
         // The frames, each an array of its own class, at most three planes.
         var frameList = new List<ImArray>();
-        bool fromCell = source.Type == JgsType.Cell;
+        ImArray? cmap = cmapValue is null ? null : ReadImArray(cmapValue);
+        if (cmap is not null && cmap.Count == 0)
+        {
+            cmap = null;
+        }
+
+        // getImages' sources: a cell of arrays or of file names, and a string array or char row of names.
+        List<JgsValue>? items = source.Type == JgsType.Cell ? [.. source.AsCell]
+            : source.IsStringArray ? [.. Enumerable.Range(0, source.ArrayLength).Select(source.ElementAt)]
+            : source.Type == JgsType.String ? [source]
+            : null;
+        bool fromCell = items is not null;
         if (fromCell)
         {
-            foreach (JgsValue element in source.AsCell)
+            foreach (JgsValue element in items!)
             {
-                ImArray frame = ReadImArray(element.Type == JgsType.Image ? ImageNumbers(element) : element);
+                ImArray frame;
+                double[,]? fileMap = null;
+                if (IsName(element))
+                {
+                    (frame, fileMap) = ImtileReadFile(TextOf(element), resolve, dialect, line, col);
+                }
+                else
+                {
+                    frame = ReadImArray(element.Type == JgsType.Image ? ImageNumbers(element) : element);
+                }
+
                 if (frame.IsEmpty)
                 {
                     frame = ReadImArray(JgsValue.Number(0));
                 }
 
-                ImtileCheckFrame(frame, line, col);
-                if (frame.Dims.Length > 3 || (frame.Dims.Length == 3 && frame.Dims[2] != 3 && frame.Dims[2] != 1))
+                if (frame.Dims.Length > 3 || (frame.Dims.Length == 3 && frame.Dims[2] != 3))
                 {
-                    throw new JgsRuntimeException(line, col,
-                        "imtile: a frame in a cell is M-by-N or M-by-N-by-3.");
+                    throw new JgsRuntimeException(line, col, "MATLAB:images:imageDisplayValidateParams:unsupportedDimension",
+                        "Multi-plane image inputs must be RGB images of size MxNx3.");
+                }
+
+                ImtileCheckFrame(frame, line, col);
+                if (frame.Dims.Length < 3 && cmap is not null)
+                {
+                    frame = ImIndexToRgb(frame, ImMapRows(cmap), line, col);
+                }
+                else if (frame.Dims.Length < 3 && fileMap is not null)
+                {
+                    frame = ImIndexToRgb(frame, fileMap, line, col);
                 }
 
                 frameList.Add(frame);
@@ -945,6 +1032,19 @@ internal static partial class JgsBuiltins
         {
             ImArray stack = ReadImArray(source.Type == JgsType.Image ? ImageNumbers(source) : source);
             ImtileCheckFrame(stack, line, col);
+            if (stack.Class == JgsNumericClass.Int16 && stack.IsNumeric && cmap is not null)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:images:montage:invalidIndexedImage",
+                    "An indexed image can only be uint8, uint16, double, single, or logical.");
+            }
+
+            if (cmapValue is not null && ClassOf(cmapValue, JgsDialect.Matlab) != "double")
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:createMontage:invalidType",
+                    "Expected input number 1, MAP, to be one of these types:\n\ndouble\n\n"
+                    + $"Instead its type was {ClassOf(cmapValue, JgsDialect.Matlab)}.");
+            }
+
             if (stack.IsEmpty)
             {
                 return JgsMatrix.FromColumnMajor(new double[0], 0, 0);
@@ -980,7 +1080,7 @@ internal static partial class JgsBuiltins
             int frameSize = rows * cols * bands;
             for (int f = 0; f < count; f++)
             {
-                frameList.Add(new ImArray
+                var slice = new ImArray
                 {
                     ClassName = stack.ClassName,
                     Data = stack.Data.AsSpan(f * frameSize, frameSize).ToArray(),
@@ -988,7 +1088,8 @@ internal static partial class JgsBuiltins
                     Class = stack.Class,
                     IsNumeric = stack.IsNumeric,
                     IsLogical = stack.IsLogical,
-                });
+                };
+                frameList.Add(bands == 1 && cmap is not null ? ImIndexToRgb(slice, ImMapRows(cmap), line, col) : slice);
             }
         }
 
@@ -1083,6 +1184,102 @@ internal static partial class JgsBuiltins
 
         int[] dims = planes == 3 ? [bigRows, bigCols, 3] : [bigRows, bigCols];
         return ImArrayOut(big, dims, sample.Class, sample.IsLogical);
+    }
+
+    /// <summary>validateattributes(value, {'numeric'}, ..., 'imtile', name, number): the class check.</summary>
+    private static void ImtileNumericParameter(JgsValue value, int number, string name, int line, int col)
+    {
+        if (!IsNumericValue(value) || IsLogicalValue(value))
+        {
+            throw ImTypeRefusal("imtile", number, name, ImNumericTypes, ClassOf(value, JgsDialect.Matlab), line, col);
+        }
+    }
+
+    /// <summary><c>isempty(value)</c> for a parameter value.</summary>
+    private static bool ImIsEmptyValue(JgsValue value) =>
+        value.Type == JgsType.String ? value.AsString.Length == 0
+        : value.Type == JgsType.Array && value.ArrayLength == 0;
+
+    /// <summary>
+    /// images.internal.getImageFromFile: a missing file is refused by name (as given), and otherwise the
+    /// file is read as imread reads it, with its colour map (null for a file without one).
+    /// </summary>
+    private static (ImArray Frame, double[,]? Map) ImtileReadFile(
+        string name, Func<string, string> resolve, JgsRunningDialect dialect, int line, int col)
+    {
+        string path = resolve(name);
+        if (!File.Exists(path))
+        {
+            throw new JgsRuntimeException(line, col, "images:getImageFromFile:fileDoesNotExist",
+                $"Cannot find the specified file: \"{name}\".");
+        }
+
+        try
+        {
+            (ImageBuffer image, double[,]? palette, ImageBuffer? alpha) = ReadImageFileSamples(path, 0);
+            alpha?.Dispose();
+            JgsValue picture = ImreadPicture(image, dialect);
+            ImArray frame = ReadImArray(picture.Type == JgsType.Image ? ImageNumbers(picture) : picture);
+            return (frame, palette is { Length: > 0 } ? palette : null);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException
+                                      or InvalidDataException or ArgumentOutOfRangeException)
+        {
+            throw new JgsRuntimeException(line, col, $"imread: cannot read '{path}': {ex.Message}");
+        }
+    }
+
+    /// <summary>A colour map argument as rows of three.</summary>
+    private static double[,] ImMapRows(ImArray map)
+    {
+        int rows = map.Dims[0];
+        int cols = map.Dims.Length > 1 ? map.Dims[1] : 1;
+        var rgb = new double[rows, 3];
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < Math.Min(cols, 3); c++)
+            {
+                rgb[r, c] = map.Data[(c * rows) + r];
+            }
+        }
+
+        return rgb;
+    }
+
+    /// <summary>
+    /// ind2rgb, as matlab.images.internal.ind2rgb: an integer or logical index is zero-based and a
+    /// float one-based, each clamped to the map, and the answer a double M-by-N-by-3 array.
+    /// </summary>
+    private static ImArray ImIndexToRgb(ImArray indices, double[,] map, int line, int col)
+    {
+        int entries = map.GetLength(0);
+        int count = indices.Count;
+        var data = new double[count * 3];
+        bool floating = indices.IsNumeric && indices.Class is JgsNumericClass.Double or JgsNumericClass.Single && !indices.IsLogical;
+        for (int i = 0; i < count; i++)
+        {
+            double index = floating ? indices.Data[i] : indices.Data[i] + 1;
+            index = double.IsNaN(index) ? entries : Math.Max(1, Math.Min(index, entries));
+            if (index != Math.Floor(index))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:badsubscript",
+                    "Array indices must be positive integers or logical values.");
+            }
+
+            for (int p = 0; p < 3; p++)
+            {
+                data[(p * count) + i] = map[(int)index - 1, p];
+            }
+        }
+
+        return new ImArray
+        {
+            ClassName = "double",
+            Data = data,
+            Dims = [indices.Dims[0], indices.Dims.Length > 1 ? indices.Dims[1] : 1, 3],
+            Class = JgsNumericClass.Double,
+            IsNumeric = true,
+        };
     }
 
     /// <summary>A frame must be one of the classes montage takes.</summary>
@@ -1271,7 +1468,7 @@ internal static partial class JgsBuiltins
                 {
                     double v = resized[r, c, p];
                     data[(p * newRows * newCols) + (c * newRows) + r] = frame.IsLogical
-                        ? (v >= 0.5 ? 1 : 0)
+                        ? (Math.Round(v * 255.0, MidpointRounding.AwayFromZero) > 128 ? 1 : 0)
                         : ImFinish(frame.IsSingle ? (float)v : v, frame.Class);
                 }
             }

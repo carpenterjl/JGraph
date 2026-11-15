@@ -241,32 +241,6 @@ internal static partial class JgsBuiltins
             }
         });
 
-        // What imread answers for the file's samples. Under MATLAB it is the plain array R2025b
-        // answers: a logical matrix for a 1-bit greyscale file (open item 273), and otherwise a
-        // uint8 or uint16 M-by-N or M-by-N-by-3 array (open item 292, ADR 0356), so that operators,
-        // indexing, assignment and reductions take it as they take any array of that class. Under
-        // JGS it stays the picture value its image verbs take. A sample count other than one or
-        // three (a CMYK TIFF page) is left a picture, as before.
-        static JgsValue ReadPicture(ImageBuffer image, JgsRunningDialect dialect)
-        {
-            if (!dialect.IsMatlab || image.Channels is not (1 or 3))
-            {
-                return JgsValue.Image(image);
-            }
-
-            if (image.Class == ImageClass.Logical && image.Channels == 1)
-            {
-                using (image)
-                {
-                    return ImageNumbers(JgsValue.Image(image));
-                }
-            }
-
-            // NumbersOut owns and disposes the buffer it is handed, so the read buffer goes in
-            // directly rather than through ImageNumbers' copy.
-            return NumbersOut(image, image.Channels == 3 ? ImgShape.Planes : ImgShape.Matrix, image.Class);
-        }
-
         // [X, map, alpha] = imread(path). The map is always empty: Skia decodes a palettized file
         // straight to truecolour and never exposes the palette, which is MATLAB's own answer for a
         // non-indexed file and a recorded divergence for a genuinely indexed one.
@@ -279,10 +253,7 @@ internal static partial class JgsBuiltins
             if (readOptions.Named("Index") is { } index) frame = (int)index.AsNumber - dialect.IndexBase;
             try
             {
-                ImageBuffer image; ImageBuffer? alpha; double[,]? palette = null;
-                if (TiffCodec.IsTiff(path)) (image, palette, alpha) = TiffCodec.Read(path, frame);
-                else if (IndexedPng.IsIndexed(path)) (image, palette, alpha) = IndexedPng.Read(path);
-                else (image, alpha) = ImageCodec.ReadWithAlpha(path, frame);
+                (ImageBuffer image, double[,]? palette, ImageBuffer? alpha) = ReadImageFileSamples(path, frame);
                 if (readOptions.Named("PixelRegion") is { } region)
                 {
                     ImageBuffer cropped = CropReadRegion(image, region, line, col); image.Dispose(); image = cropped;
@@ -293,7 +264,7 @@ internal static partial class JgsBuiltins
                     image = ImageCodec.AutoOrient(path, image);
                     if (alpha is not null) alpha = ImageCodec.AutoOrient(path, alpha);
                 }
-                JgsValue picture = ReadPicture(image, dialect);
+                JgsValue picture = ImreadPicture(image, dialect);
                 if (wanted < 2)
                 {
                     alpha?.Dispose();
@@ -312,7 +283,7 @@ internal static partial class JgsBuiltins
                 [
                     picture,
                     map,
-                    alpha is null ? JgsMatrix.Build(0, 0, static (_, _) => 0.0) : ReadPicture(alpha, dialect),
+                    alpha is null ? JgsMatrix.Build(0, 0, static (_, _) => 0.0) : ImreadPicture(alpha, dialect),
                 ];
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException
@@ -321,5 +292,59 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, $"imread: cannot read '{path}': {ex.Message}");
             }
         });
+    }
+
+    // What imread answers for the file's samples. Under MATLAB it is the plain array R2025b
+    // answers: a logical matrix for a 1-bit greyscale file (open item 273), and otherwise a
+    // uint8 or uint16 M-by-N or M-by-N-by-3 array (open item 292, ADR 0356), so that operators,
+    // indexing, assignment and reductions take it as they take any array of that class. Under
+    // JGS it stays the picture value its image verbs take. A sample count other than one or
+    // three (a CMYK TIFF page) is left a picture, as before.
+    private static JgsValue ImreadPicture(ImageBuffer image, JgsRunningDialect dialect)
+    {
+        if (!dialect.IsMatlab || image.Channels is not (1 or 3))
+        {
+            return JgsValue.Image(image);
+        }
+
+        if (image.Class == ImageClass.Logical && image.Channels == 1)
+        {
+            using (image)
+            {
+                return ImageNumbers(JgsValue.Image(image));
+            }
+        }
+
+        // NumbersOut owns and disposes the buffer it is handed, so the read buffer goes in
+        // directly rather than through ImageNumbers' copy.
+        return NumbersOut(image, image.Channels == 3 ? ImgShape.Planes : ImgShape.Matrix, image.Class);
+    }
+
+    /// <summary>
+    /// A file's samples, its palette (null for a file without one) and its opacity plane: a TIFF page,
+    /// an indexed PNG or an indexed BMP keep their indices and palette (open item 335, ADR 0373: a 1-bit
+    /// BMP's indices are a logical matrix, as R2025b's readbmp answers), anything else decodes to
+    /// colours.
+    /// </summary>
+    private static (ImageBuffer Image, double[,]? Palette, ImageBuffer? Alpha) ReadImageFileSamples(string path, int frame)
+    {
+        if (TiffCodec.IsTiff(path))
+        {
+            return TiffCodec.Read(path, frame);
+        }
+
+        if (IndexedPng.IsIndexed(path))
+        {
+            return IndexedPng.Read(path);
+        }
+
+        if (IndexedBmp.IsIndexed(path))
+        {
+            (ImageBuffer indices, double[,] map) = IndexedBmp.Read(path);
+            return (indices, map, null);
+        }
+
+        (ImageBuffer image, ImageBuffer? alpha) = ImageCodec.ReadWithAlpha(path, frame);
+        return (image, null, alpha);
     }
 }

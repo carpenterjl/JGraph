@@ -26,7 +26,7 @@ internal static partial class JgsBuiltins
     {
         // In MATLAB code imtile answers an array of the frames' class (open item 322, ADR 0367).
         define("imtile", (args, line, col) =>
-            dialect.IsMatlab ? MatlabImtile(args, line, col) : TileImages(args, line, col));
+            dialect.IsMatlab ? MatlabImtile(args, line, col, host.Resolve, dialect) : TileImages(args, line, col));
         // --- File IO -------------------------------------------------------------------------
         define("imread", (args, line, col) =>
         {
@@ -56,6 +56,7 @@ internal static partial class JgsBuiltins
                 double[,]? palette = null; ImageBuffer? alpha = null; ImageBuffer decoded;
                 if (TiffCodec.IsTiff(path)) (decoded, palette, alpha) = TiffCodec.Read(path,page);
                 else if (IndexedPng.IsIndexed(path)) (decoded,palette,alpha) = IndexedPng.Read(path);
+                else if (IndexedBmp.IsIndexed(path)) (decoded, palette) = IndexedBmp.Read(path);
                 else decoded = ImageCodec.Read(path,page);
                 using ImageBuffer probe = decoded; alpha?.Dispose();
                 var info = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
@@ -104,6 +105,8 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "imwrite needs an image and a path.");
             }
 
+            IReadOnlyList<JgsValue> positional = parsed.Positional;
+
             // In MATLAB code an integer class a format's writer does not take is refused by that
             // writer's own words (open item 322, ADR 0367): int16 is no PNG's, TIFF's, JPEG's, BMP's
             // or GIF's class in R2025b, where it was written here from its normalized samples.
@@ -111,18 +114,24 @@ internal static partial class JgsBuiltins
                 && parsed.Positional[1].Type == JgsType.String)
             {
                 RefuseMatlabImwriteClass(parsed.Positional[0], parsed.Positional[1].AsString, line, col);
+                // writejpg's own checks, and its uint8(255 * double(x)) for a class it reads as a
+                // fraction (uint32 and uint64 among them: open item 335, ADR 0373).
+                if (Path.GetExtension(parsed.Positional[1].AsString).ToLowerInvariant() is ".jpg" or ".jpeg")
+                {
+                    positional = [MatlabJpegData(parsed.Positional[0], parsed, line, col), .. parsed.Positional.Skip(1)];
+                }
             }
 
             // A class no image format stores is refused by name. Before this the array's class was not
             // read at all, so an int32 picture went out as whatever a [0, 1] reading of 0-255 makes,
             // which is white; saying so is better than writing that.
-            if (UnstorableClass(parsed.Positional[0]) is { } refused)
+            if (UnstorableClass(positional[0]) is { } refused)
             {
                 throw new JgsRuntimeException(line, col,
                     $"imwrite: an image is logical, uint8, uint16, int16, single or double, but this one is {refused}.");
             }
 
-            using ImgArg source = ImgLike("imwrite", parsed.Positional, 0, line, col);
+            using ImgArg source = ImgLike("imwrite", positional, 0, line, col);
             ImageBuffer image = source.Buffer;
             string path = host.ResolveForWrite(Str("imwrite", parsed.Positional, 1, line, col));
 
@@ -184,9 +193,34 @@ internal static partial class JgsBuiltins
                     "imwrite: only a GIF holds more than one frame, so 'append' needs a .gif path.");
             }
 
+            // writebmp's own refusal: a logical picture is a 1-bit file, whose palette has two entries
+            // (a logical RGB picture meets it too: open item 335, ADR 0373).
+            bool bmp = Path.GetExtension(path).Equals(".bmp", StringComparison.OrdinalIgnoreCase);
+            if (dialect.IsMatlab && bmp && image.Class == ImageClass.Logical
+                && (image.Channels != 1 || (map is not null && map.GetLength(0) != 2)))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:imagesci:writebmp:wrongNumberOfColormapEntriesFor1D",
+                    "1-bit BMP colormaps must have 2 entries.");
+            }
+
             if (map is not null)
             {
                 if (Path.GetExtension(path).Equals(".png",StringComparison.OrdinalIgnoreCase)) { IndexedPng.Write(path,image,map); return JgsValue.Null; }
+                // In MATLAB code an indexed BMP keeps its indices and palette, as writebmp writes it.
+                if (dialect.IsMatlab && bmp && image.Channels == 1)
+                {
+                    try
+                    {
+                        IndexedBmp.Write(path, image, map);
+                    }
+                    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
+                    {
+                        throw new JgsRuntimeException(line, col, $"imwrite: cannot write '{path}': {ex.Message}");
+                    }
+
+                    return JgsValue.Null;
+                }
+
                 // Outside a GIF a map is applied rather than stored, because none of the other formats
                 // written here is an indexed one: the picture is painted through the map and saved as
                 // the colours it then has, which is the same picture.
@@ -868,6 +902,11 @@ internal static partial class JgsBuiltins
                 {
                     outputSize = target;
                 }
+            }
+
+            if (dialect.IsMatlab && source.Shape != ImgShape.Image)
+            {
+                return MatlabResize(source, outputSize, scale, method, antialias, line, col);
             }
 
             (int newHeight, int newWidth) = outputSize is not null
@@ -1736,15 +1775,16 @@ internal static partial class JgsBuiltins
     /// and RGB 8 or 16. Before this a depth outside the list was quietly written at eight bits.
     /// </summary>
     /// <summary>
-    /// The refusal R2025b's writer for a path's format gives an integer class it does not take
-    /// (measured for int8, int16, int32, int64, uint32 and uint64 into .png, .tif, .jpg, .bmp and
-    /// .gif). The classes every one of those writers takes, and an unsigned class into JPEG (which
-    /// R2025b writes), are left to the writers.
+    /// The refusal R2025b's writer for a path's format gives a class it does not take (measured for
+    /// every numeric class and logical into .png, .tif, .jpg, .bmp and .gif: open items 322 and 335,
+    /// ADR 0367 and ADR 0373). PNG takes double, single, logical, uint8 and uint16; TIFF logical,
+    /// uint8, uint16 and double; BMP logical, uint8, single and double; GIF logical, uint8 and double;
+    /// JPEG refuses a signed class here and leaves the rest to <see cref="MatlabJpegData"/>.
     /// </summary>
     private static void RefuseMatlabImwriteClass(JgsValue image, string path, int line, int col)
     {
         string className = ClassOf(image, JgsDialect.Matlab);
-        if (className is "uint8" or "uint16" || JgsNumericClasses.Parse(className) is not { } numeric || !numeric.IsInteger())
+        if (className != "logical" && JgsNumericClasses.Parse(className) is null)
         {
             return;
         }
@@ -1752,25 +1792,105 @@ internal static partial class JgsBuiltins
         bool signed = className.StartsWith("int", StringComparison.Ordinal);
         switch (Path.GetExtension(path).ToLowerInvariant())
         {
-            case ".png":
+            case ".png" when className is not ("double" or "single" or "logical" or "uint8" or "uint16"):
                 throw new JgsRuntimeException(line, col, "MATLAB:invalidType",
                     "Expected input to be one of these types:\n\ndouble, single, logical, uint8, uint16\n\n"
                     + $"Instead its type was {className}.");
-            case ".tif" or ".tiff":
+            case ".tif" or ".tiff" when className is not ("logical" or "uint8" or "uint16" or "double"):
                 throw new JgsRuntimeException(line, col, "MATLAB:imagesci:writetif:unsupportedDataType",
                     $"Writing {className} image data to a TIFF file is not supported with IMWRITE.  Use Tiff instead.  "
                     + "Type \"help Tiff\" for more information.");
             case ".jpg" or ".jpeg" when signed:
                 throw new JgsRuntimeException(line, col, "MATLAB:imagesci:imwrite:signedJPEGNotSupported",
                     "Signed integer data not supported in JPEG format.");
-            case ".bmp":
+            case ".bmp" when className is not ("logical" or "uint8" or "single" or "double"):
                 throw new JgsRuntimeException(line, col, "MATLAB:invalidType",
                     $"Expected X to be one of these types:\n\nlogical, uint8, single, double\n\nInstead its type was {className}.");
-            case ".gif":
+            case ".gif" when className is not ("logical" or "uint8" or "double"):
                 throw new JgsRuntimeException(line, col, "MATLAB:invalidType",
                     "The value of 'mat' is invalid. Expected input to be one of these types:\n\nlogical, uint8, double\n\n"
                     + $"Instead its type was {className}.");
         }
+    }
+
+    /// <summary>
+    /// writejpg's checks and its conversion, in MATLAB code (open item 335, ADR 0373): a BitDepth of
+    /// 8, 12 or 16 (<c>badBitDepth</c>), a Mode of lossy or lossless (lossless by default for uint16),
+    /// uint16 only at 12 or 16 bits (<c>bitdepthNotSpecifiedAt16</c>), 16 bits only for a greyscale,
+    /// lossless picture. A class other than uint8 or logical is <c>uint8(255 * double(x))</c>, so a
+    /// uint32 or uint64 array is written (any sample of 1 or more is 255). A file of more than eight
+    /// bits, or a lossless one, is refused in JGraph's words: only eight-bit lossy JPEG is written here.
+    /// </summary>
+    private static JgsValue MatlabJpegData(JgsValue data, ParsedArgs parsed, int line, int col)
+    {
+        string className = ClassOf(data, JgsDialect.Matlab);
+        if (className != "logical" && JgsNumericClasses.Parse(className) is null)
+        {
+            return data;
+        }
+
+        double bits = 8;
+        if (parsed.Named("BitDepth") is { } depthValue)
+        {
+            bits = ToDoubles("imwrite", depthValue, line, col) is [var only] ? only : double.NaN;
+            if (bits is not (8 or 12 or 16))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:imagesci:writejpg:badBitDepth",
+                    "'BitDepth' value must be 8, 12, or 16.");
+            }
+        }
+
+        string mode = className == "uint16" ? "lossless" : "lossy";
+        if (parsed.Named("Mode") is { } modeValue)
+        {
+            string word = TextOf(modeValue);
+            string[] modes = ["lossy", "lossless"];
+            string[] matches = word.Length == 0 ? [] : [.. modes.Where(m => m.StartsWith(word, StringComparison.OrdinalIgnoreCase))];
+            mode = matches.Length == 1 ? matches[0]
+                : modes.FirstOrDefault(m => m.Equals(word, StringComparison.OrdinalIgnoreCase))
+                    ?? throw new JgsRuntimeException(line, col, "MATLAB:unrecognizedStringChoice",
+                        $"Expected input to match one of these values:\n\n'lossy', 'lossless'\n\nThe input, '{word}', did not match any of the valid values.");
+        }
+
+        if (className == "uint16" && bits is not (12 or 16))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:imagesci:writejpg:bitdepthNotSpecifiedAt16",
+                "UINT16 image data requires bitdepth specifically set to either 12 or 16.");
+        }
+
+        int[] dims = SizeDims(data);
+        int planes = dims.Length > 2 ? dims[2] : 1;
+        if (bits > 12 && planes > 1)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:imagesci:writejpg:tooManyBitsForColor",
+                $"Only grayscale images supported with {bits} bit data.");
+        }
+
+        if (bits > 12 && mode == "lossy")
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:imagesci:writejpg:tooManyBitsForLossy",
+                $"Lossy compression not supported for {bits} bit data.");
+        }
+
+        if (bits > 8 || mode == "lossless")
+        {
+            throw new JgsRuntimeException(line, col,
+                $"imwrite: JGraph writes eight-bit lossy JPEG files only; a {bits}-bit {mode} JPEG is not written here.");
+        }
+
+        if (className is "uint32" or "uint64")
+        {
+            ImArray samples = ReadImArray(data);
+            var bytes = new double[samples.Data.Length];
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                bytes[i] = JgsNumericClasses.Convert(255.0 * samples.Data[i], JgsNumericClass.UInt8);
+            }
+
+            return ImArrayOut(bytes, samples.Dims, JgsNumericClass.UInt8, logical: false);
+        }
+
+        return data;
     }
 
     private static void RefusePngBitDepth(double depth, int channels, bool hasAlpha, int line, int col)
@@ -1835,7 +1955,7 @@ internal static partial class JgsBuiltins
     private static readonly OptionSpec WriteSpec = new(
         "imwrite",
         Flags: [],
-        Names: ["Quality", "BitDepth", "Alpha", "WriteMode", "DelayTime", "LoopCount", "Comment"],
+        Names: ["Quality", "BitDepth", "Alpha", "WriteMode", "DelayTime", "LoopCount", "Comment", "Mode"],
         StringPositionals: 2);
 
     private static readonly OptionSpec ShowSpec = new(
@@ -1901,6 +2021,109 @@ internal static partial class JgsBuiltins
         return (
             Math.Max(1, (int)Math.Ceiling((image.Height * rowScale) - 1e-9)),
             Math.Max(1, (int)Math.Ceiling((image.Width * colScale) - 1e-9)));
+    }
+
+    /// <summary>
+    /// <c>imresize</c> of an array in MATLAB code, sized and scaled as R2025b's resizeParseInputs does
+    /// it (open item 335, ADR 0373): a size's NaN is filled from the aspect ratio and every size is
+    /// rounded up (<c>[3 NaN]</c> of a 5-by-7 is 3-by-5, where it was rounded to 3-by-4), and then
+    /// <c>r / size(A, 1)</c> is the scale of both directions (the other way round for <c>[NaN c]</c>);
+    /// a size with no NaN scales each direction by its own ratio; a scale is applied as given, the
+    /// size being <c>ceil(scale .* size(A))</c>. A logical array is resized as uint8(255 * A) and
+    /// answered as the samples above 128, as postprocessImage does, where it was a double before.
+    /// </summary>
+    private static JgsValue MatlabResize(
+        ImgArg source, double[]? outputSize, double[]? scale,
+        Geometry.Interpolation method, bool antialias, int line, int col)
+    {
+        ImageBuffer image = source.Buffer;
+        double rows = image.Height;
+        double cols = image.Width;
+        double rowScale;
+        double colScale;
+        double newRows;
+        double newCols;
+        if (outputSize is not null)
+        {
+            if (outputSize.Length != 2)
+            {
+                throw new JgsRuntimeException(line, col, "imresize size must be a [rows, cols] pair.");
+            }
+
+            newRows = outputSize[0];
+            newCols = outputSize[1];
+            if (double.IsNaN(newRows) && double.IsNaN(newCols))
+            {
+                throw new JgsRuntimeException(line, col, "imresize: only one of the two sizes may be NaN.");
+            }
+
+            int sizeDim = -1;
+            if (double.IsNaN(newRows))
+            {
+                newRows = newCols * rows / cols;
+                sizeDim = 1;
+            }
+            else if (double.IsNaN(newCols))
+            {
+                newCols = newRows * cols / rows;
+                sizeDim = 0;
+            }
+
+            newRows = Math.Ceiling(newRows);
+            newCols = Math.Ceiling(newCols);
+            if (!(newRows >= 1) || !(newCols >= 1))
+            {
+                throw new JgsRuntimeException(line, col, "imresize: the output size must be at least one pixel.");
+            }
+
+            rowScale = sizeDim switch { 0 => newRows / rows, 1 => newCols / cols, _ => newRows / rows };
+            colScale = sizeDim switch { 0 => newRows / rows, 1 => newCols / cols, _ => newCols / cols };
+        }
+        else
+        {
+            if (scale is null)
+            {
+                throw new JgsRuntimeException(line, col,
+                    "imresize needs a scale, a [rows, cols] size, or an 'OutputSize'/'Scale' option.");
+            }
+
+            if (scale.Length is not (1 or 2))
+            {
+                throw new JgsRuntimeException(line, col, "imresize: the scale is one number or a [sy sx] pair.");
+            }
+
+            rowScale = scale[0];
+            colScale = scale[^1];
+            if (!(rowScale > 0) || !(colScale > 0))
+            {
+                throw new JgsRuntimeException(line, col, "imresize scale must be positive.");
+            }
+
+            newRows = Math.Max(1, Math.Ceiling(rowScale * rows));
+            newCols = Math.Max(1, Math.Ceiling(colScale * cols));
+        }
+
+        ImageBuffer resized = Geometry.ResizeByScale(image, (int)newRows, (int)newCols, rowScale, colScale, method, antialias);
+        if (image.Class != ImageClass.Logical || resized.Channels != 1)
+        {
+            return ImgLikeOut(resized, source);
+        }
+
+        using (resized)
+        {
+            int count = resized.Height * resized.Width;
+            var mask = new double[count];
+            for (int c = 0; c < resized.Width; c++)
+            {
+                for (int r = 0; r < resized.Height; r++)
+                {
+                    double level = Math.Round(resized[r, c, 0] * 255.0, MidpointRounding.AwayFromZero);
+                    mask[(c * resized.Height) + r] = level > 128 ? 1 : 0;
+                }
+            }
+
+            return ImArrayOut(mask, [resized.Height, resized.Width], JgsNumericClass.Double, logical: true);
+        }
     }
 
     /// <summary>

@@ -226,6 +226,9 @@ public static partial class ImageCodec
         byte[] bytes = File.ReadAllBytes(path);
         if (bytes.Length > 25 && bytes.AsSpan(0, 8).SequenceEqual(PngChunks.Signature))
             return bytes[25] is 0 or 4 ? 1 : 3;
+        // A BMP of 16 bits or more holds colours whatever their values (open item 335, ADR 0373).
+        if (IndexedBmp.BitCount(bytes) is int bmpBits)
+            return bmpBits >= 16 ? 3 : null;
         if (bytes.Length < 2 || bytes[0] != 255 || bytes[1] != 216)
             return null;
         for (int i = 2; i + 3 < bytes.Length;)

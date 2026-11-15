@@ -246,6 +246,22 @@ public static partial class ImageCodec
         {
             Write8BitPng(path,image,alpha); return;
         }
+
+        // Skia does not encode a BMP, so every BMP write failed; IndexedBmp writes what R2025b's
+        // writebmp writes (open item 335, ADR 0373).
+        if (format == SKEncodedImageFormat.Bmp)
+        {
+            IndexedBmp.Write(path, image);
+            return;
+        }
+
+        // A greyscale JPEG is a one-component file, as R2025b's writer makes it, so it reads back as
+        // one plane here and there (open item 335, ADR 0373); it was three components before.
+        if (format == SKEncodedImageFormat.Jpeg && image.Channels == 1 && alpha is null)
+        {
+            WriteGrayJpeg(path, image, quality);
+            return;
+        }
         var info = new SKImageInfo(image.Width, image.Height, SKColorType.Rgba8888, SKAlphaType.Unpremul);
         using var bitmap = new SKBitmap(info);
 
@@ -273,6 +289,35 @@ public static partial class ImageCodec
 
         using SKImage skImage = SKImage.FromBitmap(bitmap);
         using SKData? data = skImage.Encode(format, quality);
+        if (data is null)
+        {
+            throw new InvalidDataException($"failed to encode image to '{path}'.");
+        }
+
+        using FileStream output = File.Create(path);
+        data.SaveTo(output);
+    }
+
+    /// <summary>A one-plane picture as a one-component (greyscale) JPEG.</summary>
+    private static void WriteGrayJpeg(string path, ImageBuffer image, int quality)
+    {
+        var info = new SKImageInfo(image.Width, image.Height, SKColorType.Gray8, SKAlphaType.Opaque);
+        using var bitmap = new SKBitmap(info);
+        int rowBytes = bitmap.RowBytes;
+        byte[] samples = new byte[rowBytes * image.Height];
+        ReadOnlySpan<double> pixels = image.Pixels;
+        for (int r = 0; r < image.Height; r++)
+        {
+            for (int c = 0; c < image.Width; c++)
+            {
+                samples[(r * rowBytes) + c] = ToByte(pixels[(r * image.Width) + c]);
+            }
+        }
+
+        GC.KeepAlive(image);
+        System.Runtime.InteropServices.Marshal.Copy(samples, 0, bitmap.GetPixels(), samples.Length);
+        using SKImage skImage = SKImage.FromBitmap(bitmap);
+        using SKData? data = skImage.Encode(SKEncodedImageFormat.Jpeg, quality);
         if (data is null)
         {
             throw new InvalidDataException($"failed to encode image to '{path}'.");

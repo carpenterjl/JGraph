@@ -1,0 +1,200 @@
+CHK|ic_c|double[1 1] 0-2i|exact
+CHK|ic_c_real|logical[1 1] 1|exact
+CHK|ic_c_real_val|double[1 2] [0 -1]|exact
+CHK|ic_c_mat|double[2 2] [0-2i -2+1i;0.5 1-2i]|exact
+CHK|ic_c_isreal_mat|logical[1 1] 0|exact
+CHK|ic_c_single|images:imcomplement:complexInput|exact
+CHK|ic_c_single_msg|Input array must be real.|exact
+CHK|rs_nan|double[3 5] [2.7391304299999999 11.242461710000001 19.695652169999999 28.31884058 30.83961811;4.4492753599999997 12.952606640000001 21.405797100000001 30.028985509999998 32.549763030000001;6.1594202899999999 14.66275156 23.115942029999999 31.739130429999999 34.25990796]|exact
+CHK|rs_nan2|double[3 4] [2.9794785899999998 11.84404792 20.815778269999999 29.680347609999998;4.7756916199999999 13.64026095 22.6119913 31.476560639999999;6.4928915800000002 15.35746091 24.329191260000002 33.193760589999997]|exact
+CHK|rs_nan_sizes|double[1 6] [3 5 5 3 2 5]|exact
+CHK|rs_scale03|double[2 3] [7.46631774 25.350337119999999 28.17091564;9.9664657699999992 27.850485150000001 30.671063660000002]|exact
+CHK|rs_scale07|double[4 5] [2.2313139299999998 9.2642129299999993 16.614422810000001 23.787506359999998 30.718009330000001;3.63789373 10.670792730000001 18.02100261 25.194086160000001 32.124589129999997;5.1594892799999998 12.19238829 19.542598160000001 26.715681709999998 33.646184689999998;6.1236109599999997 13.156509959999999 20.506719839999999 27.67980339 34.610306360000003]|exact
+CHK|rs_scale_tenth|double[1 2] [3 3]|exact
+CHK|rs_scale_pair|double[1 1] 18|exact
+CHK|rs_scale_vec|double[1 2] [3 3]|exact
+CHK|rs_nearest_nan|double[3 5] [1 11 21 26 31;3 13 23 28 33;5 15 25 30 35]|exact
+CHK|rs_bilinear_nan|double[3 5] [3.25 11.375 20.125 27.625 30.26388889;4.875 13 21.75 29.25 31.88888889;6.5 14.625 23.375 30.875 33.513888889999997]|exact
+CHK|rs_u8_nan|uint8[3 5] [19 79 138 198 216;31 91 150 210 228;43 103 162 222 240]|exact
+CHK|rs_logical|logical[2 4] [1 1 1 0;1 0 0 1]|exact
+CHK|rs_logical_up|logical[4 4] [1 1 0 0;1 1 0 0;0 0 1 1;0 0 1 1]|exact
+CHK|rs_size_both|double[3 4] [2.9394205599999998 11.803989899999999 20.775720249999999 29.640289580000001;4.6495654899999996 13.514134820000001 22.485865180000001 31.350434509999999;6.3597104199999999 15.224279750000001 24.196010099999999 33.060579439999998]|exact
+CHK|rs_outsize|double[3 5] [2.7391304299999999 11.242461710000001 19.695652169999999 28.31884058 30.83961811;4.4492753599999997 12.952606640000001 21.405797100000001 30.028985509999998 32.549763030000001;6.1594202899999999 14.66275156 23.115942029999999 31.739130429999999 34.25990796]|exact
+CHK|rs_scale_opt|double[2 3] [7.46631774 25.350337119999999 28.17091564;9.9664657699999992 27.850485150000001 30.671063660000002]|exact
+CHK|rs_up|double[3 3] [0.79166667000000002 1.36111111 1.9305555599999999;1.9305555599999999 2.5 3.0694444399999998;3.0694444399999998 3.63888889 4.2083333300000003]|exact
+CHK|rs_frac_size|double[1 2] [3 4]|exact
+CHK|tile_files|uint8[2 4 3] nd [10 30 20 40 1 3 2 4 10 30 20 40 5 7 6 8 10 30 20 40 9 11 10 12]|exact
+CHK|tile_files_str|uint8[2 4 3] nd [10 30 20 40 1 3 2 4 10 30 20 40 5 7 6 8 10 30 20 40 9 11 10 12]|exact
+CHK|tile_file_char|uint8[2 2] [10 20;30 40]|exact
+CHK|tile_file_indexed|double[2 2 3] nd [0 0 1 1 0 0 0.50196078431372548 0.50196078431372548 0 1 0 0]|exact
+CHK|tile_file_bmp|double[2 2 3] nd [0 1 0.50196078431372548 0.25098039215686274 0 1 0.50196078431372548 0.25098039215686274 0 1 0.50196078431372548 0.25098039215686274]|exact
+CHK|tile_files_grid|uint8[2 6] [10 20 10 20 10 20;30 40 30 40 30 40]|exact
+CHK|tile_files_mixed|MATLAB:images:montage:mixedInput|exact
+CHK|tile_files_mixed_msg|Cannot mix workspace variables with filenames.|exact
+CHK|tile_files_mixed2|MATLAB:images:montage:mixedInput|exact
+CHK|tile_files_mixed2_msg|Cannot mix workspace variables with filenames.|exact
+CHK|tile_files_missing|images:getImageFromFile:fileDoesNotExist|exact
+CHK|tile_files_missing_msg|Cannot find the specified file: "oi335_nope.png".|exact
+CHK|tile_map|double[2 2 3] nd [0 0 1 0 0 0 0.5 0 0 1 0 0]|exact
+CHK|tile_map_stack|double[2 4 3] nd [0 0 1 0 1 0 1 0 0 0 0.5 0 0.5 0 0.5 0 0 1 0 0 0 0 0 1]|exact
+CHK|tile_map_u8|double[2 2 3] nd [0 0 1 0 0 0 0.5 0 0 1 0 0]|exact
+CHK|tile_map_logical|double[2 2 3] nd [0 1 1 0 0 0.5 0.5 0 0 0 0 0]|exact
+CHK|tile_map_clamp|double[2 2 3] nd [0 1 0 0 0 0.5 0 0 0 0 1 0]|exact
+CHK|tile_map_cell|double[2 4 3] nd [0 0 1 0 1 0 1 0 0 0 0.5 0 0.5 0 0.5 0 0 1 0 0 0 0 0 1]|exact
+CHK|tile_map_grid|double[4 2 3] nd [0 0 0 0 1 0 1 0 0 0 0 0 0.5 0 0.5 0 0 1 0 1 0 0 0 0]|exact
+CHK|tile_map_i16|MATLAB:images:montage:invalidIndexedImage|exact
+CHK|tile_map_i16_msg|An indexed image can only be uint8, uint16, double, single, or logical.|exact
+CHK|tile_map_single|MATLAB:createMontage:invalidType|exact
+CHK|tile_map_single_msg|Expected input number 1, MAP, to be one of these types: double Instead its type was single.|exact
+CHK|tile_map_rgb|double[4 4 3] nd [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]|exact
+CHK|tile_nonchar|MATLAB:images:montage:nonCharParam|exact
+CHK|tile_nonchar_msg|Parameter names must be character arrays.|exact
+CHK|tile_auto|MATLAB:imtile:invalidType|exact
+CHK|tile_auto_msg|Expected input number 3, ThumbnailSize, to be one of these types: double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64|exact
+CHK|tile_auto_str|MATLAB:imtile:invalidType|exact
+CHK|tile_auto_str_msg|Expected input number 3, ThumbnailSize, to be one of these types: double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64|exact
+CHK|tile_thumb_logical|MATLAB:imtile:invalidType|exact
+CHK|tile_thumb_logical_msg|Expected input number 3, ThumbnailSize, to be one of these types: double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 Instead its type was logical.|exact
+CHK|tile_thumb_empty|double[2 4] [1 2 1 2;3 1 3 1]|exact
+CHK|tile_grid_char|MATLAB:imtile:invalidType|exact
+CHK|tile_grid_char_msg|Expected input number 3, GridSize, to be one of these types: double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64|exact
+CHK|tile_logical_resize|double[2 4] [1 1 1 1;1 1 1 0]|exact
+CHK|tile_logical_resize2|double[4 8] [1 1 1 1 1 0 0 1;1 1 1 1 1 1 0 0;1 1 1 1 1 1 0 1;1 1 1 1 0 0 0 0]|exact
+CHK|tile_thumb|double[3 10] [2.7391304299999999 11.242461710000001 19.695652169999999 28.31884058 30.83961811 0 4.5992509400000001 7.09387671 7.6367041200000001 0;4.4492753599999997 12.952606640000001 21.405797100000001 30.028985509999998 32.549763030000001 0 16.60299625 19.09762203 19.640449440000001 0;6.1594202899999999 14.66275156 23.115942029999999 31.739130429999999 34.25990796 0 28.606741570000001 31.10136735 31.644194760000001 0]|exact
+CHK|tile_four_planes|MATLAB:images:imageDisplayValidateParams:unsupportedDimension|exact
+CHK|tile_four_planes_msg|Multi-plane image inputs must be RGB images of size MxNx3.|exact
+CHK|w_logical_png|logical[2 3] [0 1 1;1 0 1]|exact
+CHK|w_logical_bmp|logical[2 3] [0 1 1;1 0 1]|exact
+CHK|w_logical_jpg|char[1 11]'uint8 [2 3]'|exact
+CHK|w_uint8_png|uint8[2 3] [0 1 2;3 4 5]|exact
+CHK|w_uint8_tif|uint8[2 3] [0 1 2;3 4 5]|exact
+CHK|w_uint8_bmp|uint8[2 3] [0 1 2;3 4 5]|exact
+CHK|w_uint8_gif|uint8[2 3] [0 1 2;3 4 5]|exact
+CHK|w_uint8_jpg|char[1 11]'uint8 [2 3]'|exact
+CHK|w_uint16_png|uint16[2 3] [0 1 2;3 4 5]|exact
+CHK|w_uint16_tif|uint16[2 3] [0 1 2;3 4 5]|exact
+CHK|w_uint16_bmp|MATLAB:invalidType|exact
+CHK|w_uint16_bmp_msg|Expected X to be one of these types: logical, uint8, single, double Instead its type was uint16.|exact
+CHK|w_uint16_gif|MATLAB:invalidType|exact
+CHK|w_uint16_gif_msg|The value of 'mat' is invalid. Expected input to be one of these types: logical, uint8, double Instead its type was uint16.|exact
+CHK|w_uint16_jpg|MATLAB:imagesci:writejpg:bitdepthNotSpecifiedAt16|exact
+CHK|w_uint16_jpg_msg|UINT16 image data requires bitdepth specifically set to either 12 or 16.|exact
+CHK|w_uint32_png|MATLAB:invalidType|exact
+CHK|w_uint32_png_msg|Expected input to be one of these types: double, single, logical, uint8, uint16 Instead its type was uint32.|exact
+CHK|w_uint32_tif|MATLAB:imagesci:writetif:unsupportedDataType|exact
+CHK|w_uint32_tif_msg|Writing uint32 image data to a TIFF file is not supported with IMWRITE. Use Tiff instead. Type "help Tiff" for more information.|exact
+CHK|w_uint32_bmp|MATLAB:invalidType|exact
+CHK|w_uint32_bmp_msg|Expected X to be one of these types: logical, uint8, single, double Instead its type was uint32.|exact
+CHK|w_uint32_gif|MATLAB:invalidType|exact
+CHK|w_uint32_gif_msg|The value of 'mat' is invalid. Expected input to be one of these types: logical, uint8, double Instead its type was uint32.|exact
+CHK|w_uint32_jpg|char[1 11]'uint8 [2 3]'|exact
+CHK|w_uint64_png|MATLAB:invalidType|exact
+CHK|w_uint64_png_msg|Expected input to be one of these types: double, single, logical, uint8, uint16 Instead its type was uint64.|exact
+CHK|w_uint64_tif|MATLAB:imagesci:writetif:unsupportedDataType|exact
+CHK|w_uint64_tif_msg|Writing uint64 image data to a TIFF file is not supported with IMWRITE. Use Tiff instead. Type "help Tiff" for more information.|exact
+CHK|w_uint64_bmp|MATLAB:invalidType|exact
+CHK|w_uint64_bmp_msg|Expected X to be one of these types: logical, uint8, single, double Instead its type was uint64.|exact
+CHK|w_uint64_gif|MATLAB:invalidType|exact
+CHK|w_uint64_gif_msg|The value of 'mat' is invalid. Expected input to be one of these types: logical, uint8, double Instead its type was uint64.|exact
+CHK|w_uint64_jpg|char[1 11]'uint8 [2 3]'|exact
+CHK|w_int8_png|MATLAB:invalidType|exact
+CHK|w_int8_png_msg|Expected input to be one of these types: double, single, logical, uint8, uint16 Instead its type was int8.|exact
+CHK|w_int8_tif|MATLAB:imagesci:writetif:unsupportedDataType|exact
+CHK|w_int8_tif_msg|Writing int8 image data to a TIFF file is not supported with IMWRITE. Use Tiff instead. Type "help Tiff" for more information.|exact
+CHK|w_int8_bmp|MATLAB:invalidType|exact
+CHK|w_int8_bmp_msg|Expected X to be one of these types: logical, uint8, single, double Instead its type was int8.|exact
+CHK|w_int8_gif|MATLAB:invalidType|exact
+CHK|w_int8_gif_msg|The value of 'mat' is invalid. Expected input to be one of these types: logical, uint8, double Instead its type was int8.|exact
+CHK|w_int8_jpg|MATLAB:imagesci:imwrite:signedJPEGNotSupported|exact
+CHK|w_int8_jpg_msg|Signed integer data not supported in JPEG format.|exact
+CHK|w_int16_png|MATLAB:invalidType|exact
+CHK|w_int16_png_msg|Expected input to be one of these types: double, single, logical, uint8, uint16 Instead its type was int16.|exact
+CHK|w_int16_tif|MATLAB:imagesci:writetif:unsupportedDataType|exact
+CHK|w_int16_tif_msg|Writing int16 image data to a TIFF file is not supported with IMWRITE. Use Tiff instead. Type "help Tiff" for more information.|exact
+CHK|w_int16_bmp|MATLAB:invalidType|exact
+CHK|w_int16_bmp_msg|Expected X to be one of these types: logical, uint8, single, double Instead its type was int16.|exact
+CHK|w_int16_gif|MATLAB:invalidType|exact
+CHK|w_int16_gif_msg|The value of 'mat' is invalid. Expected input to be one of these types: logical, uint8, double Instead its type was int16.|exact
+CHK|w_int16_jpg|MATLAB:imagesci:imwrite:signedJPEGNotSupported|exact
+CHK|w_int16_jpg_msg|Signed integer data not supported in JPEG format.|exact
+CHK|w_int32_png|MATLAB:invalidType|exact
+CHK|w_int32_png_msg|Expected input to be one of these types: double, single, logical, uint8, uint16 Instead its type was int32.|exact
+CHK|w_int32_tif|MATLAB:imagesci:writetif:unsupportedDataType|exact
+CHK|w_int32_tif_msg|Writing int32 image data to a TIFF file is not supported with IMWRITE. Use Tiff instead. Type "help Tiff" for more information.|exact
+CHK|w_int32_bmp|MATLAB:invalidType|exact
+CHK|w_int32_bmp_msg|Expected X to be one of these types: logical, uint8, single, double Instead its type was int32.|exact
+CHK|w_int32_gif|MATLAB:invalidType|exact
+CHK|w_int32_gif_msg|The value of 'mat' is invalid. Expected input to be one of these types: logical, uint8, double Instead its type was int32.|exact
+CHK|w_int32_jpg|MATLAB:imagesci:imwrite:signedJPEGNotSupported|exact
+CHK|w_int32_jpg_msg|Signed integer data not supported in JPEG format.|exact
+CHK|w_int64_png|MATLAB:invalidType|exact
+CHK|w_int64_png_msg|Expected input to be one of these types: double, single, logical, uint8, uint16 Instead its type was int64.|exact
+CHK|w_int64_tif|MATLAB:imagesci:writetif:unsupportedDataType|exact
+CHK|w_int64_tif_msg|Writing int64 image data to a TIFF file is not supported with IMWRITE. Use Tiff instead. Type "help Tiff" for more information.|exact
+CHK|w_int64_bmp|MATLAB:invalidType|exact
+CHK|w_int64_bmp_msg|Expected X to be one of these types: logical, uint8, single, double Instead its type was int64.|exact
+CHK|w_int64_gif|MATLAB:invalidType|exact
+CHK|w_int64_gif_msg|The value of 'mat' is invalid. Expected input to be one of these types: logical, uint8, double Instead its type was int64.|exact
+CHK|w_int64_jpg|MATLAB:imagesci:imwrite:signedJPEGNotSupported|exact
+CHK|w_int64_jpg_msg|Signed integer data not supported in JPEG format.|exact
+CHK|w_single_png|uint8[2 3] [0 128 255;64 191 255]|exact
+CHK|w_single_tif|MATLAB:imagesci:writetif:unsupportedDataType|exact
+CHK|w_single_tif_msg|Writing single image data to a TIFF file is not supported with IMWRITE. Use Tiff instead. Type "help Tiff" for more information.|exact
+CHK|w_single_bmp|uint8[2 3] [0 128 255;64 191 255]|exact
+CHK|w_single_gif|MATLAB:invalidType|exact
+CHK|w_single_gif_msg|The value of 'mat' is invalid. Expected input to be one of these types: logical, uint8, double Instead its type was single.|exact
+CHK|w_single_jpg|char[1 11]'uint8 [2 3]'|exact
+CHK|w_double_png|uint8[2 3] [0 128 255;64 191 255]|exact
+CHK|w_double_tif|uint8[2 3] [0 128 255;64 191 255]|exact
+CHK|w_double_bmp|uint8[2 3] [0 128 255;64 191 255]|exact
+CHK|w_double_jpg|char[1 11]'uint8 [2 3]'|exact
+CHK|jpg_flat_u8|uint8[8 8] [100 100 100 100 100 100 100 100;100 100 100 100 100 100 100 100;100 100 100 100 100 100 100 100;100 100 100 100 100 100 100 100;100 100 100 100 100 100 100 100;100 100 100 100 100 100 100 100;100 100 100 100 100 100 100 100;100 100 100 100 100 100 100 100]|exact
+CHK|jpg_flat_rgb|double[1 3] [8 8 3]|exact
+CHK|jpg_flat_logical|uint8[8 8] [255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255]|exact
+CHK|jpg_flat_single|uint8[8 8] [128 128 128 128 128 128 128 128;128 128 128 128 128 128 128 128;128 128 128 128 128 128 128 128;128 128 128 128 128 128 128 128;128 128 128 128 128 128 128 128;128 128 128 128 128 128 128 128;128 128 128 128 128 128 128 128;128 128 128 128 128 128 128 128]|exact
+CHK|jpg_flat_double|uint8[8 8] [64 64 64 64 64 64 64 64;64 64 64 64 64 64 64 64;64 64 64 64 64 64 64 64;64 64 64 64 64 64 64 64;64 64 64 64 64 64 64 64;64 64 64 64 64 64 64 64;64 64 64 64 64 64 64 64;64 64 64 64 64 64 64 64]|exact
+CHK|jpg_flat_u32|uint8[8 8] [255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255]|exact
+CHK|jpg_flat_u64|uint8[8 8] [255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255;255 255 255 255 255 255 255 255]|exact
+CHK|jpg_flat_u32_zero|uint8[8 8] [0 0 0 0 0 0 0 0;0 0 0 0 0 0 0 0;0 0 0 0 0 0 0 0;0 0 0 0 0 0 0 0;0 0 0 0 0 0 0 0;0 0 0 0 0 0 0 0;0 0 0 0 0 0 0 0;0 0 0 0 0 0 0 0]|exact
+CHK|jpg_u16|MATLAB:imagesci:writejpg:bitdepthNotSpecifiedAt16|exact
+CHK|jpg_u16_msg|UINT16 image data requires bitdepth specifically set to either 12 or 16.|exact
+CHK|jpg_u16_bd8|MATLAB:imagesci:writejpg:bitdepthNotSpecifiedAt16|exact
+CHK|jpg_u16_bd8_msg|UINT16 image data requires bitdepth specifically set to either 12 or 16.|exact
+CHK|jpg_bd10|MATLAB:imagesci:writejpg:badBitDepth|exact
+CHK|jpg_bd10_msg|'BitDepth' value must be 8, 12, or 16.|exact
+CHK|jpg_mode_bad|MATLAB:unrecognizedStringChoice|exact
+CHK|jpg_mode_bad_msg|Expected input to match one of these values: 'lossy', 'lossless' The input, 'zz', did not match any of the valid values.|exact
+CHK|jpg_rgb_bd16|MATLAB:imagesci:writejpg:tooManyBitsForColor|exact
+CHK|jpg_rgb_bd16_msg|Only grayscale images supported with 16 bit data.|exact
+CHK|jpg_bd16_lossy|MATLAB:imagesci:writejpg:tooManyBitsForLossy|exact
+CHK|jpg_bd16_lossy_msg|Lossy compression not supported for 16 bit data.|exact
+CHK|jpg_info_grey|char[1 11]'8 grayscale'|exact
+CHK|jpg_info_logical|char[1 11]'8 grayscale'|exact
+CHK|jpg_info_rgb|char[1 12]'24 truecolor'|exact
+CHK|jpg_u16_bd12|uint16 [8 8]|div=ADR0373|diverges|ERR
+CHK|jpg_u16_bd16|uint16 [8 8]|div=ADR0373|diverges|ERR
+CHK|jpg_u8_bd12|uint16 [8 8]|div=ADR0373|diverges|ERR
+CHK|jpg_lossless8|uint8 [8 8]|div=ADR0373|diverges|ERR
+CHK|bmp_rgb_u8|uint8[2 2 3] nd [1 3 2 4 5 7 6 8 9 11 10 12]|exact
+CHK|bmp_rgb_d|uint8[2 2 3] nd [0 255 128 64 255 0 255 0 51 153 102 204]|exact
+CHK|bmp_rgb_grey|double[1 3] [2 2 3]|exact
+CHK|bmp_grey_d|uint8[2 3] [0 128 255;64 191 255]|exact
+CHK|bmp_grey_d_neg|uint8[1 3] [0 128 0]|exact
+CHK|bmp_grey_s|uint8[1 3] [0 128 255]|exact
+CHK|bmp_grey_u8|uint8[2 3] [0 7 255;128 1 2]|exact
+CHK|bmp_logical_wide|logical[1 33] [1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1]|exact
+CHK|bmp_rgb_odd|uint8[3 5 3] nd [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45]|exact
+CHK|bmp_info_grey|char[1 9]'8 indexed'|exact
+CHK|bmp_info_rgb|char[1 12]'24 truecolor'|exact
+CHK|bmp_info_logical|char[1 9]'1 indexed'|exact
+CHK|bmp_bytes_grey|char[1 150]'66 77 62 4 0 0 0 0 0 0 54 4 0 0 40 0 0 0 3 0 0 0 2 0 0 0 1 0 8 0 0 0 0 0 8 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 1 1 0 2 2 2 0 3 3 3 0 1086 '|exact
+CHK|bmp_bytes_rgb|char[1 153]'66 77 70 0 0 0 0 0 0 0 54 0 0 0 40 0 0 0 2 0 0 0 2 0 0 0 1 0 24 0 0 0 0 0 16 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 11 7 3 12 8 4 0 0 9 5 1 10 6 2 0 0 70 '|exact
+CHK|bmp_bytes_logical|char[1 157]'66 77 70 0 0 0 0 0 0 0 62 0 0 0 40 0 0 0 3 0 0 0 2 0 0 0 1 0 1 0 0 0 0 0 8 0 0 0 0 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0 255 255 255 0 96 0 0 0 160 0 0 0 70 '|exact
+CHK|bmp_map_read|cell[1 3]{uint8[2 2] [0 1;2 1];double[1 2] [256 3];double[2 3] [0 0 0;0.0039215686274509803 0.0039215686274509803 0.0039215686274509803]}|exact
+CHK|bmp_map_write|cell[1 3]{uint8[2 2] [0 1;2 1];double[1 2] [256 3];double[2 3] [0 0 0;1 0 0]}|exact
+CHK|bmp_map_write_d|cell[1 3]{uint8[2 2] [0 1;2 1];double[1 2] [256 3];double[2 3] [0 0 0;1 0 0]}|exact
+CHK|bmp_map_write_lg|cell[1 3]{logical[2 2] [0 1;1 0];double[1 2] [2 3];double[2 3] [1 0 0;0 0 1]}|exact
+CHK|bmp_map_lg3|MATLAB:imagesci:writebmp:wrongNumberOfColormapEntriesFor1D|exact
+CHK|bmp_map_lg3_msg|1-bit BMP colormaps must have 2 entries.|exact
+CHK|bmp_logical_rgb|MATLAB:imagesci:writebmp:wrongNumberOfColormapEntriesFor1D|exact
+CHK|bmp_logical_rgb_msg|1-bit BMP colormaps must have 2 entries.|exact
