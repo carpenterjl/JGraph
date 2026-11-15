@@ -905,7 +905,6 @@ internal static class JgsMpsProtobuf
                 }
             }
 
-            _ = kind; // a logical or single sparse array is double in JGraph (ADR 0266)
             int rows = shape[0];
             int cols = shape[1];
             if (jc.Count != cols + 1 || jc[0] != 0)
@@ -932,7 +931,14 @@ internal static class JgsMpsProtobuf
                 }
             }
 
-            return JgsValue.Sparse(CscMatrix.FromTriplets(rows, cols, triplets));
+            // A logical or single sparse array keeps its class (in.sparse.logical, in.sparse.single; ADR 0374).
+            var matrix = CscMatrix.FromTriplets(rows, cols, triplets);
+            return kind switch
+            {
+                1 => JgsBuiltins.LogicalSparseOf(matrix),
+                2 => JgsBuiltins.SingleSparseOf(matrix),
+                _ => JgsValue.Sparse(matrix),
+            };
         }
 
         /// <summary>The <c>stringTable.stringEntry</c> list of <c>sharedData</c> (in.enum.*).</summary>
@@ -1202,7 +1208,7 @@ internal static class JgsMpsProtobuf
                 case JgsType.Table:
                     return Object(value.AsTable.RowTimes is null ? "table" : "timetable", [1, 1], [[]]);
                 case JgsType.Sparse:
-                    return Sparse(value.AsSparse);
+                    return Sparse(value.AsSparse, value.IsLogicalSparse ? 1UL : JgsBuiltins.IsSingleSparse(value) ? 2UL : 0UL);
                 case JgsType.External:
                     if (value.AsExternalOrNull() is OnOffSwitchStateValue onOff)
                     {
@@ -1501,11 +1507,15 @@ internal static class JgsMpsProtobuf
             return Tail(MwType.Struct, dims, complex: false, FStruct, payload);
         }
 
-        /// <summary>A sparse array: the compressed column form, <c>type</c> DOUBLE, <c>ir</c>, <c>jc</c> and the values in <c>mwsparsedouble</c> (out.sparse).</summary>
-        private static Parts Sparse(CscMatrix matrix)
+        /// <summary>
+        /// A sparse array: the compressed column form, <c>type</c> DOUBLE (0), LOGICAL (1) or SINGLE
+        /// (2), <c>ir</c>, <c>jc</c> and the values in <c>mwsparsedouble</c>, <c>logical</c> or
+        /// <c>mwsparsesingle</c> (out.sparse, out.sparselogical; ADR 0374).
+        /// </summary>
+        private static Parts Sparse(CscMatrix matrix, ulong kind)
         {
             var payload = new Writer();
-            payload.VarintField(1, 0UL);
+            payload.VarintField(1, kind);
             var ir = new Writer();
             var jc = new Writer();
             var values = new double[matrix.NonZeroCount];
@@ -1522,7 +1532,15 @@ internal static class JgsMpsProtobuf
             jc.WriteVarint((ulong)matrix.ColumnStarts[matrix.Cols]);
             payload.PackedField(2, ir);
             payload.PackedField(3, jc, always: true);
-            payload.MessageField(16, NumericPayload(MwType.Double, values, null));
+            if (kind == 1)
+            {
+                payload.MessageField(17, LogicalPayload(values));
+            }
+            else
+            {
+                payload.MessageField(kind == 2 ? 18 : 16, NumericPayload(kind == 2 ? MwType.Single : MwType.Double, values, null));
+            }
+
             return Tail(MwType.Sparse, [matrix.Rows, matrix.Cols], complex: false, FSparse, payload);
         }
 

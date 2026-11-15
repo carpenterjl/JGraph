@@ -611,10 +611,10 @@ internal static partial class JgsBuiltins
         // dropped, a fractional size refused, and 'like' read off the end.
         if (args.Count >= 2 && IsTextScalar(args[^2]) && TextOf(args[^2]).Equals("like", StringComparison.OrdinalIgnoreCase))
         {
-            // A sparse prototype is taken: this build's sparse storage keeps no logical flag to check,
-            // and the answer is dense (ADR 0213, Divergences).
-            bool sparseLogical = args[^1].Type == JgsType.Sparse;
-            if (!IsLogicalValue(args[^1]) && !sparseLogical)
+            // A logical sparse prototype makes the answer logical sparse; any other sparse prototype is
+            // refused as a double one is (probe p7b_a; ADR 0374 closes ADR 0213's divergence).
+            bool sparseLogical = args[^1].IsLogicalSparse;
+            if (!sparseLogical && (args[^1].Type == JgsType.Sparse || !IsLogicalValue(args[^1])))
             {
                 string word = value ? "True" : "False";
                 throw new JgsRuntimeException(line, col, $"MATLAB:{word}:invalidInputClass",
@@ -622,6 +622,11 @@ internal static partial class JgsBuiltins
             }
 
             args = args.Take(args.Count - 2).ToList();
+            if (sparseLogical)
+            {
+                JgsValue dense = LogicalConstructor(name, value, args, line, col);
+                return SparseLikePrototype(name, dense, JgsValue.LogicalSparse(JGraph.Numerics.Sparse.CscMatrix.FromTriplets(1, 1, [])), line, col);
+            }
         }
         else if (args.Count >= 1 && IsTextScalar(args[^1]))
         {

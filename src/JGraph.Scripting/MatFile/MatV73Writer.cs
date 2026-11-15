@@ -193,7 +193,7 @@ internal static class MatV73Writer
         {
             if (value.Type == JgsType.Sparse)
             {
-                return Sparse(value.AsSparse);
+                return Sparse(value);
             }
 
             if (value.Type == JgsType.Cell)
@@ -390,29 +390,75 @@ internal static class MatV73Writer
             return Group(children, [ClassAttribute("struct"), FieldsAttribute(fields)], out _, out _);
         }
 
-        private long Sparse(JGraph.Numerics.Sparse.CscMatrix matrix)
+        /// <summary>
+        /// A sparse matrix of any class, as R2025b writes one (probe p7b_mat, ADR 0374): a logical
+        /// matrix is class <c>logical</c> with <c>MATLAB_int_decode</c> 1 and one uint8 a value, a single
+        /// one class <c>single</c> with four-byte floats, and a complex one stores its values as the
+        /// compound of <c>real</c> and <c>imag</c> in its class's width.
+        /// </summary>
+        private long Sparse(JgsValue value)
         {
-            int nonzeros = matrix.NonZeroCount;
+            bool complex = value.IsComplexSparse;
+            bool logical = value.IsLogicalSparse;
+            bool single = value.NumericClass == JgsNumericClass.Single;
+            JgsComplexSparse? entries = complex ? value.AsComplexSparse : null;
+            JGraph.Numerics.Sparse.CscMatrix? matrix = complex ? null : value.AsSparse;
+            int matrixRows = entries?.Rows ?? matrix!.Rows;
+            int matrixCols = entries?.Cols ?? matrix!.Cols;
+            int[] starts = entries?.ColumnStarts ?? matrix!.ColumnStarts;
+            int[] rowIndices = entries?.RowIndices ?? matrix!.RowIndices;
+            int nonzeros = starts[matrixCols];
             var children = new List<(string Name, long Header)>
             {
-                ("jc", Dataset(Fixed(8, signed: false), [matrix.Cols + 1], UInt64s(matrix.ColumnStarts, matrix.Cols + 1), [])),
+                ("jc", Dataset(Fixed(8, signed: false), [matrixCols + 1], UInt64s(starts, matrixCols + 1), [])),
             };
             if (nonzeros > 0)
             {
-                children.Add(("ir", Dataset(Fixed(8, signed: false), [nonzeros], UInt64s(matrix.RowIndices, nonzeros), [])));
-                var values = new byte[nonzeros * 8];
+                children.Add(("ir", Dataset(Fixed(8, signed: false), [nonzeros], UInt64s(rowIndices, nonzeros), [])));
+                int width = logical ? 1 : single ? 4 : 8;
+                var values = new byte[nonzeros * width * (complex ? 2 : 1)];
                 for (int i = 0; i < nonzeros; i++)
                 {
-                    BinaryPrimitives.WriteDoubleLittleEndian(values.AsSpan(i * 8), matrix.Values[i]);
+                    if (complex)
+                    {
+                        Complex z = entries!.Values[i];
+                        WritePart(values.AsSpan(i * width * 2, width), z.Real);
+                        WritePart(values.AsSpan((i * width * 2) + width, width), z.Imaginary);
+                    }
+                    else if (logical)
+                    {
+                        values[i] = (byte)(matrix!.Values[i] != 0 ? 1 : 0);
+                    }
+                    else
+                    {
+                        WritePart(values.AsSpan(i * width, width), matrix!.Values[i]);
+                    }
                 }
 
-                children.Add(("data", Dataset(Float(8), [nonzeros], values, [])));
+                byte[] part = single ? Float(4) : Float(8);
+                byte[] type = logical ? Fixed(1, signed: false) : complex ? Compound(part, width) : part;
+                children.Add(("data", Dataset(type, [nonzeros], values, [])));
             }
 
             var rows = new byte[8];
-            BinaryPrimitives.WriteUInt64LittleEndian(rows, (ulong)matrix.Rows);
+            BinaryPrimitives.WriteUInt64LittleEndian(rows, (ulong)matrixRows);
             Message sparse = Attribute("MATLAB_sparse", Fixed(8, signed: false), Dataspace([]), rows);
-            return Group(children, [ClassAttribute("double"), sparse], out _, out _);
+            List<Message> attributes = logical
+                ? [ClassAttribute("logical"), IntDecode(1), sparse]
+                : [ClassAttribute(single ? "single" : "double"), sparse];
+            return Group(children, attributes, out _, out _);
+
+            void WritePart(Span<byte> into, double number)
+            {
+                if (into.Length == 4)
+                {
+                    BinaryPrimitives.WriteSingleLittleEndian(into, (float)number);
+                }
+                else
+                {
+                    BinaryPrimitives.WriteDoubleLittleEndian(into, number);
+                }
+            }
 
             static byte[] UInt64s(int[] values, int count)
             {

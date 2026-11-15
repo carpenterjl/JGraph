@@ -49,6 +49,14 @@ internal static partial class JgsBuiltins
                     if (JgsRunningDialect.ThreadIsMatlab)
                     {
                         RequireSparseClass(args[2], third: true, line, col); // open item 331
+
+                        // i and j of one class: single, double (a logical or char reads as one) or
+                        // one integer class (probes p7b_a, p7b_c; ADR 0374).
+                        if (SubscriptClassWord(args[0]) != SubscriptClassWord(args[1]))
+                        {
+                            throw new JgsRuntimeException(line, col, "MATLAB:sparse:constructorMixedType",
+                                "Subscripts must be the same data type (single, double, or integer).");
+                        }
                     }
 
                     double[] i = ToDoubles("sparse", args[0], line, col);

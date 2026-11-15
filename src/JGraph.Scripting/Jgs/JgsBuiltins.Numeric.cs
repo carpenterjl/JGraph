@@ -733,8 +733,8 @@ internal static partial class JgsBuiltins
             }
 
             // Complex, flag and all (open item 298, ADR 0364); a logical or single matrix in its class
-            // (open item 331, ADR 0369).
-            return SparseDense(args[0]);
+            // (open item 331, ADR 0369); one real entry the scalar it is (ADR 0374).
+            return SparseDenseScalar(args[0]);
         });
 
         Define("nnz", (args, line, col) =>

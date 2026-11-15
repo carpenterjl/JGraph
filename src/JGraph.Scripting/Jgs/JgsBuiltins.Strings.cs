@@ -468,6 +468,11 @@ internal static partial class JgsBuiltins
                 // M2: a collected answer may be a wrapper the function handed back rather than
                 // minted — `@(x) x` answers its own parameter — and the slot it lands in is an
                 // entry, so it takes a share. For a minted answer that only over-counts.
+                if (uniform && answers[o].Type == JgsType.Sparse)
+                {
+                    answers[o] = UniformSparseAnswer("cellfun", answers[o], k, line, col); // ADR 0374
+                }
+
                 collected[o][k] = JgsValue.Share(answers[o]);
                 if (uniform)
                 {

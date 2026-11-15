@@ -60,23 +60,36 @@ internal static partial class JgsBuiltins
         Define("uminus", (args, line, col) =>
         {
             Arity("uminus", args, 1, line, col);
-            return interpreter.ApplyOperator(TokenType.Minus, JgsValue.Number(0), args[0], line, col);
+
+            // -S of a sparse matrix is sparse, as the unary operator answers it (0 - S is not; ADR 0374).
+            return args[0].Type == JgsType.Sparse
+                ? SparseNegated(args[0])
+                : interpreter.ApplyOperator(TokenType.Minus, JgsValue.Number(0), args[0], line, col);
         });
 
         Define("uplus", (args, line, col) =>
         {
             Arity("uplus", args, 1, line, col);
+
+            // +S is S; +L of a logical one is double (c_uplus_l; ADR 0374).
+            if (args[0].Type == JgsType.Sparse)
+            {
+                return args[0].IsLogicalSparse ? JgsValue.Sparse(args[0].AsSparse) : args[0];
+            }
+
             return interpreter.ApplyOperator(TokenType.Plus, JgsValue.Number(0), args[0], line, col);
         });
 
         // xor has no operator to defer to; it is the one member of the family defined here.
         Define("xor", (args, line, col) =>
         {
-            // Of sparse matrices, a logical sparse matrix (open item 331, R2025b's l_xor).
+            // Of sparse matrices, a logical sparse matrix (open item 331, R2025b's l_xor); a sparse
+            // matrix beside a dense value reads full and answers dense (b_xor_f, ADR 0374).
             if (args.Count == 2 && (args[0].Type == JgsType.Sparse || args[1].Type == JgsType.Sparse))
             {
-                JgsValue full = Logical2("xor", [.. args.Select(static a => a.Type == JgsType.Sparse ? SparseDense(a) : a)], line, col, static (a, b) => a ^ b);
-                return DenseAsSparse(full, "xor", line, col);
+                JgsValue[] read = [.. args.Select(static a => a.Type == JgsType.Sparse ? SparseDense(a) : a)];
+                JgsValue full = LogicalVerbShaped(Logical2("xor", read, line, col, static (a, b) => a ^ b), read);
+                return args[0].Type == JgsType.Sparse && args[1].Type == JgsType.Sparse ? DenseAsSparse(full, "xor", line, col) : full;
             }
 
             return Logical2("xor", args, line, col, static (a, b) => a ^ b);

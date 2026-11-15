@@ -171,7 +171,10 @@ internal static partial class JgsBuiltins
     {
         int line = at.Line;
         int col = at.Column;
-        if (IsSparseArithmetic(op) && (left.NumericClass.IsInteger() || right.NumericClass.IsInteger()))
+        // An integer beside a sparse matrix is refused by every arithmetic, relational and
+        // elementwise logical operator (open item 340, probe p7b_a; ADR 0374).
+        if ((IsSparseArithmetic(op) || IsRelationalOperator(op) || op is TokenType.Amp or TokenType.Pipe)
+            && (left.NumericClass.IsInteger() || right.NumericClass.IsInteger()))
         {
             throw new JgsRuntimeException(line, col, "MATLAB:sparseInteger",
                 "Sparse integer array arithmetic operations are not supported.");
@@ -536,6 +539,9 @@ internal static partial class JgsBuiltins
         "sqrt", "exp", "log", "log2", "log10", "log1p", "expm1",
         "sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
         "floor", "ceil", "round", "fix", "sign", "isnan", "isinf",
+        // ADR 0374 (probes p7b_b, p7b_c): the degree forms, the angle conversions and the powers of two.
+        "sind", "cosd", "tand", "asind", "acosd", "atand", "rad2deg", "deg2rad", "nextpow2", "pow2", "factorial",
+        "sec", "csc", "cot",
     ];
 
     /// <summary>
@@ -547,6 +553,11 @@ internal static partial class JgsBuiltins
     [
         "max", "min", "mod", "rem", "atan2", "tril", "triu", "reshape", "kron", "inv", "repmat",
         "diag", "spones", "spfun",
+        // ADR 0374 (probes p7b_a, p7b_b, p7b_c): the statistics, the rearrangements and the
+        // functions of one argument whose dense form reads the matrix as values.
+        "median", "mode", "std", "var", "sort", "unique", "diff", "circshift", "flip", "fliplr", "flipud",
+        "rot90", "permute", "rescale", "normalize", "cummax",
+        "cummin", "trapz", "cumtrapz", "angle", "nthroot", "realpow", "gcd", "lcm",
     ];
 
     /// <summary>
@@ -556,6 +567,7 @@ internal static partial class JgsBuiltins
     private static readonly string[] SparseDensified =
     [
         "isfinite", "hypot", "trace", "norm", "det", "int2str", "num2str",
+        "issorted", "ismember", "polyval", "isprime", // ADR 0374 (probes p7b_a, p7b_b)
     ];
 
     /// <summary>
@@ -565,55 +577,13 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static void WrapSparseFunctions(JgsEnvironment env)
     {
-        void Wrap(string name, Func<BuiltinFunction, IReadOnlyList<JgsValue>, int, int, int, JgsValue[]?> sparse)
-        {
-            if (!env.Builtins.TryGet(name, out JgsValue existing) || existing.Type != JgsType.Function
-                || existing.AsCallable is not BuiltinFunction inner)
-            {
-                return;
-            }
+        void Wrap(string name, Func<BuiltinFunction, IReadOnlyList<JgsValue>, int, int, int, JgsValue[]?> sparse) =>
+            WrapOverSparse(env, name, sparse);
 
-            static bool AnySparse(IReadOnlyList<JgsValue> args)
-            {
-                for (int i = 0; i < args.Count; i++)
-                {
-                    if (args[i].Type == JgsType.Sparse)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
-                AnySparse(args) && sparse(inner, args, 1, line, col) is { Length: > 0 } one ? one[0] : inner.Call(args, line, col))
-            {
-                MultiOutput = inner.MultiOutput is null ? null : (args, wanted, line, col) =>
-                    AnySparse(args) && sparse(inner, args, wanted, line, col) is { } some ? some : inner.MultiOutput(args, wanted, line, col),
-                KeepsStringArguments = inner.KeepsStringArguments,
-                BindsAnsAsStatement = inner.BindsAnsAsStatement,
-                AutoCallsBare = inner.AutoCallsBare,
-                KnowsWhenDiscarded = inner.KnowsWhenDiscarded,
-                TakesOutputCount = inner.TakesOutputCount,
-            }));
-        }
-
-        static JgsValue[] Full(IReadOnlyList<JgsValue> args)
-        {
-            var full = new JgsValue[args.Count];
-            for (int i = 0; i < full.Length; i++)
-            {
-                full[i] = args[i].Type == JgsType.Sparse ? SparseDense(args[i]) : args[i];
-            }
-
-            return full;
-        }
+        static JgsValue[] Full(IReadOnlyList<JgsValue> args) => SparseArgumentsFull(args);
 
         static JgsValue[] Answer(BuiltinFunction inner, JgsValue[] args, int wanted, int line, int col) =>
-            wanted <= 1 || inner.MultiOutput is null
-                ? [inner.Call(args, line, col)]
-                : inner.MultiOutput(args, wanted, line, col);
+            SparseCallAnswers(inner, args, wanted, line, col);
 
         foreach (string name in SparseElementwise)
         {
@@ -660,7 +630,7 @@ internal static partial class JgsBuiltins
 
                 // The answer is sparse when a data argument is: max(S(1, 1), 0) is, and
                 // repmat(7, 1, S(1, 1)) is not (R2025b's o_max2, o_repmat).
-                int data = fn is "max" or "min" or "mod" or "rem" or "atan2" or "kron" ? 2 : 1;
+                int data = fn is "max" or "min" or "mod" or "rem" or "atan2" or "kron" or "gcd" or "lcm" ? 2 : 1;
                 bool sparseData = false;
                 for (int i = 0; i < Math.Min(data, args.Count); i++)
                 {
@@ -742,6 +712,8 @@ internal static partial class JgsBuiltins
                 ? throw new JgsRuntimeException(line, col, "MATLAB:unimplementedSparseType", "Attempt to convert to unimplemented sparse type")
                 : null);
         }
+
+        WrapSparseLeftovers(env); // ADR 0374: the shapes, casts, logical verbs and refusals over a sparse argument
     }
 
     /// <summary>

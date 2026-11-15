@@ -172,7 +172,6 @@ name from a file, not its statement (`run-k14.ps1` writes the build statement to
 - **A too-many-outputs call of `compiler.build.productionServerArchive` ends its message without R2025b's line break.**
 - **A complex integer array is refused** (ADR 0266).
 - **An int64 or uint64 past 2^53 loses its last digits**, in the fixture and in the server's answers (ADR 0174, ADR 0355).
-- **A sparse logical array is a sparse double** (ADR 0266).
 - **A char array of three dimensions is refused** in JGraph's words; R2025b holds it.
 - **`inputParser` is not a class JGraph has**; the fixture's stand-in, an `MException`, is refused by its own name.
 - **`nargout('mps.json.decode')` answers 1**; R2025b refuses a built-in method's count.
@@ -208,6 +207,13 @@ none encoded as real.** ADR 0364 (open item 298) keeps the complex flag of `comp
 `decode` reads with each value's real and imaginary parts in turn, so fixture rows
 `e_c_zero_imag_small`, `e_c_zero_imag_large`, `e_c_empty_small`, `e_c_empty_large`,
 `e_sp_complex_small`, `e_sp_complex_large`, `e_sp_complex_round` and `y_sparse_complex` agree.
+
+Closed since: **A sparse logical array is a sparse double.** ADR 0369 gave the sparse storage a
+logical class, and ADR 0374 (open item 337) makes `mps.json.encode` write a logical sparse array as
+`mwtype` `logical` with its rows and columns alone and `decode` read one back logical (a single one
+as `mwtype` `single`), so fixture rows `e_sp_logical_small`, `e_sp_logical_large`,
+`e_sp_logical_round` and `y_sparse_logical` agree (rewritten by hand; to be confirmed by a run of
+`k14_mps_json`).
 
 ## Still open
 

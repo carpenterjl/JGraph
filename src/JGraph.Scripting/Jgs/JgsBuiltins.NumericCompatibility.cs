@@ -177,7 +177,7 @@ internal static partial class JgsBuiltins
             built.SetNumericClass(asked ?? JgsNumericClass.Double);
         }
         if (like && args[^1].Type == JgsType.Sparse)
-            built = JgsValue.Sparse(CscFromDense(name, built, line, col));
+            return SparseLikePrototype(name, built, args[^1], line, col); // its class and complexity too (ADR 0374)
         if (like && IsLogicalValue(args[^1]) || args.Count > 0 && IsTextScalar(args[^1]) && TextOf(args[^1]).Equals("logical", StringComparison.OrdinalIgnoreCase)) built = AsMask(built);
         return built;
     }

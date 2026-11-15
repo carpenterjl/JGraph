@@ -164,8 +164,7 @@ What the recording measured of muserve, beyond the schema (`k16_server`):
 - **A char array of three dimensions is refused** (in.char.nd; ADR 0270, seen again).
 - **int64 and uint64 past 2^53 are doubles** (ADR 0174, seen again: in.int64.row, in.uint64.row,
   out.int64, the .NET and C clients' 64-bit cases).
-- **A sparse logical, single or complex array is double** (ADR 0266, seen again: out.sparselogical,
-  in.sparse.logical, in.sparse.single, the C client's sparse cases).
+- **A sparse complex array is refused** (ADR 0266, seen again: the C client's in.sparse.complex).
 - **A handle reference names JGraph's own session and object** (out.handle, out.map); muserve's
   names its worker's, and no client reads either back.
 - **A table and a dictionary are bare objects**: the class name and no properties, where muserve
@@ -183,6 +182,14 @@ What the recording measured of muserve, beyond the schema (`k16_server`):
   it in the recording where an earlier run read garbage, so the .NET and C clients' `state.*` counts
   start again where JGraph's worker, which refused the request, counts on.
 - **`?mode=async` starts an asynchronous request** (query.async); muserve has none (ADR 0271).
+
+Closed since: the logical and single part of **a sparse logical, single or complex array is
+double**. ADR 0369 gave the sparse storage logical and single classes, and ADR 0374 (open item 337)
+writes the sparse message's `type` LOGICAL or SINGLE with the `logical` or `mwsparsesingle` payload
+and reads them back in their class, so out.sparselogical, in.sparse.logical and in.sparse.single
+(and the C client's logical cases, through the runtime conversion) are expected to agree; the
+`record-k16.ps1` comparison has not been run since (it serves sockets), and compare-k16.py's KNOWN
+entries for them stay until it is.
 
 ## Still open
 

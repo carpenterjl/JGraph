@@ -88,7 +88,7 @@ internal static class MatV73Reader
         {
             if (node.Attributes.ContainsKey("MATLAB_sparse"))
             {
-                return ReadSparse(node, name);
+                return ReadSparse(node, name, matlabClass);
             }
 
             return matlabClass == "struct"
@@ -164,14 +164,38 @@ internal static class MatV73Reader
     }
 
     /// <summary>A sparse matrix: its column starts, row indices and values, and its row count in <c>MATLAB_sparse</c> (open item 131).</summary>
-    private static JgsValue ReadSparse(Hdf5Object node, string name)
+    /// <remarks>
+    /// The class attribute says what it is a sparse matrix of: <c>logical</c> loads a logical sparse
+    /// matrix, <c>single</c> a single one, and a compound <c>data</c> a complex one, flag and all (probe
+    /// p7b_mat, ADR 0374).
+    /// </remarks>
+    private static JgsValue ReadSparse(Hdf5Object node, string name, string matlabClass)
     {
         int rows = (int)node.Attributes["MATLAB_sparse"].AsNumber();
         Hdf5Object jc = node.Child("jc") ?? throw new InvalidDataException($"MAT-file variable '{name}' holds a sparse matrix with no columns.");
         double[] starts = Numbers(jc);
         double[] rowIndices = node.Child("ir") is { } ir ? Numbers(ir) : [];
-        double[] values = node.Child("data") is { } data ? Numbers(data) : [];
         int cols = starts.Length - 1;
+        Hdf5Object? dataNode = node.Child("data");
+        if (dataNode is not null && dataNode.Datatype.Class == Hdf5Datatype.ClassCompound)
+        {
+            Complex[] parts = CompoundParts(dataNode);
+            var entries = new List<(int Row, int Col, Complex Value)>(parts.Length);
+            for (int c = 0; c < cols; c++)
+            {
+                for (int k = (int)starts[c]; k < (int)starts[c + 1] && k < parts.Length; k++)
+                {
+                    entries.Add(((int)rowIndices[k], c, parts[k]));
+                }
+            }
+
+            var complexMatrix = JgsComplexSparse.FromTriplets(rows, Math.Max(cols, 0), entries);
+            return matlabClass == "single"
+                ? JgsBuiltins.SingleSparseOf(complexMatrix, keepFlag: true)
+                : JgsValue.ComplexSparse(complexMatrix);
+        }
+
+        double[] values = dataNode is not null ? Numbers(dataNode) : [];
         var triplets = new List<(int Row, int Col, double Value)>(values.Length);
         for (int c = 0; c < cols; c++)
         {
@@ -181,7 +205,34 @@ internal static class MatV73Reader
             }
         }
 
-        return JgsValue.Sparse(JGraph.Numerics.Sparse.CscMatrix.FromTriplets(rows, Math.Max(cols, 0), triplets));
+        var matrix = JGraph.Numerics.Sparse.CscMatrix.FromTriplets(rows, Math.Max(cols, 0), triplets);
+        return matlabClass switch
+        {
+            "logical" => JgsBuiltins.LogicalSparseOf(matrix),
+            "single" => JgsBuiltins.SingleSparseOf(matrix),
+            _ => JgsValue.Sparse(matrix),
+        };
+    }
+
+    /// <summary>A compound dataset's real and imaginary parts, one complex number an element.</summary>
+    private static Complex[] CompoundParts(Hdf5Object node)
+    {
+        Hdf5Datatype type = node.Datatype;
+        if (type.Members.Count != 2)
+        {
+            throw new InvalidDataException("Malformed version 7.3 MAT-file: a complex variable has no parts.");
+        }
+
+        (string _, int realAt, Hdf5Datatype realType) = type.Members[0];
+        (string _, int imagAt, Hdf5Datatype imagType) = type.Members[1];
+        byte[] data = node.ReadData();
+        var parts = new Complex[(int)node.ElementCount];
+        for (int i = 0; i < parts.Length; i++)
+        {
+            parts[i] = new Complex(realType.ElementAt(data, (i * type.Size) + realAt), imagType.ElementAt(data, (i * type.Size) + imagAt));
+        }
+
+        return parts;
     }
 
     /// <summary>

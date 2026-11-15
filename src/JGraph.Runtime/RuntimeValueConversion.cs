@@ -71,7 +71,9 @@ internal static class RuntimeValueConversion
                     }
                 }
 
-                return JgsValue.Sparse(JGraph.Numerics.Sparse.CscMatrix.FromTriplets(dims[0], dims[1], triplets));
+                // A logical one comes in logical: the engine holds logical sparse matrices since ADR 0369 (ADR 0374).
+                var matrix = JGraph.Numerics.Sparse.CscMatrix.FromTriplets(dims[0], dims[1], triplets);
+                return sparse.ClassName == "logical" ? JgsBuiltins.LogicalSparseOf(matrix) : JgsValue.Sparse(matrix);
             }
 
             default:

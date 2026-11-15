@@ -388,9 +388,9 @@ CHK|e_sp_3x4_round|double [3 4] eq=1 / double [3 4] eq=1|exact
 CHK|e_sp_two_small|{"mwdata":[[0,2],[1,3],[5,6]],"mwsize":[3,4],"mwsparse":true,"mwtype":"double"}|exact
 CHK|e_sp_two_large|{"mwdata":[[0,2],[1,3],[5,6]],"mwsize":[3,4],"mwsparse":true,"mwtype":"double"}|exact
 CHK|e_sp_two_round|double [3 4] eq=1 / double [3 4] eq=1|exact
-CHK|e_sp_logical_small|{"mwdata":[[1,0],[0,1]],"mwsize":[2,2],"mwsparse":true,"mwtype":"logical"}|div=ADR0270|diverges|{"mwdata":[[1,0],[0,1],[1,1]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}
-CHK|e_sp_logical_large|{"mwdata":[[1,0],[0,1]],"mwsize":[2,2],"mwsparse":true,"mwtype":"logical"}|div=ADR0270|diverges|{"mwdata":[[1,0],[0,1],[1,1]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}
-CHK|e_sp_logical_round|logical [2 2] eq=1 / logical [2 2] eq=1|div=ADR0270|diverges|double [2 2] eq=1 / double [2 2] eq=1
+CHK|e_sp_logical_small|{"mwdata":[[1,0],[0,1]],"mwsize":[2,2],"mwsparse":true,"mwtype":"logical"}|exact
+CHK|e_sp_logical_large|{"mwdata":[[1,0],[0,1]],"mwsize":[2,2],"mwsparse":true,"mwtype":"logical"}|exact
+CHK|e_sp_logical_round|logical [2 2] eq=1 / logical [2 2] eq=1|exact
 CHK|e_sp_complex_small|{"mwcomplex":true,"mwdata":[[0,1],[0,1],[1,2,3,0]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}|exact
 CHK|e_sp_complex_large|{"mwcomplex":true,"mwdata":[[0,1],[0,1],[1,2,3,0]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}|exact
 CHK|e_sp_complex_round|double [2 2] eq=1 / double [2 2] eq=1|exact
@@ -936,7 +936,7 @@ CHK|y_struct_nested|struct [1 1] {"mwdata":{"s":[{"mwdata":{"t":[{"mwdata":[1,2]
 CHK|y_sparse|double [2 2] real=1 sparse=1 {"mwdata":[[0,1],[0,1],[1,2]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}|exact
 CHK|y_sparse_3x4|double [3 4] real=1 sparse=1 {"mwdata":[[1],[2],[7]],"mwsize":[3,4],"mwsparse":true,"mwtype":"double"}|exact
 CHK|y_sparse_empty|double [2 2] real=1 sparse=1 {"mwdata":[[],[],[]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}|exact
-CHK|y_sparse_logical|logical [2 2] {"mwdata":[[1,0],[0,1]],"mwsize":[2,2],"mwsparse":true,"mwtype":"logical"}|div=ADR0270|diverges|double [2 2] real=1 sparse=1 {"mwdata":[[1,0],[0,1],[1,1]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}
+CHK|y_sparse_logical|logical [2 2] {"mwdata":[[1,0],[0,1]],"mwsize":[2,2],"mwsparse":true,"mwtype":"logical"}|exact
 CHK|y_sparse_complex|double [2 2] real=0 sparse=1 {"mwcomplex":true,"mwdata":[[0,1],[0,1],[1,2,3,0]],"mwsize":[2,2],"mwsparse":true,"mwtype":"double"}|exact
 CHK|y_sparse_false|double [1 2] real=1 sparse=0 {"mwdata":[1,2],"mwsize":[1,2],"mwtype":"double"}|exact
 CHK|y_sparse_int8|MPS:MATLAB:JSON:DecodeInvalidIntegralElem|exact

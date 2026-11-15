@@ -50,6 +50,12 @@ internal static partial class JgsBuiltins
         int i = 1;
         while (i < args.Count && !IsArrayOptionName(args, i))
         {
+            // R2025b walks no sparse matrix (probe p7b_a, ADR 0374).
+            if (args[i].Type == JgsType.Sparse && JgsRunningDialect.ThreadIsMatlab)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:arrayfun:SparseInputNotSupported", "Sparse inputs are not supported by ARRAYFUN.");
+            }
+
             // A categorical is walked one categorical element at a time, not code by code (open item 122).
             inputs.Add(args[i].IsCategorical ? JgsCategorical.Elements(args[i]) : ElementsOf("arrayfun", args[i]));
             i++;
@@ -157,6 +163,11 @@ internal static partial class JgsBuiltins
 
             for (int o = 0; o < gathered; o++)
             {
+                if (uniform && answers[o].Type == JgsType.Sparse)
+                {
+                    answers[o] = UniformSparseAnswer("arrayfun", answers[o], k, line, col); // ADR 0374
+                }
+
                 if (uniform && !IsUniformScalar(answers[o]) && !(JgsRunningDialect.ThreadIsMatlab && IsGatheredKind(answers[o])))
                 {
                     throw JgsRunningDialect.ThreadIsMatlab

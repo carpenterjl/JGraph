@@ -101,11 +101,14 @@ residue, `mat2str(char(zeros(0, 3)))`, belongs to item 31 (a real 1-by-0 and 0-b
 
 ## Divergences
 
-- `true(n, 'like', p)` with a sparse prototype answers a dense logical, and takes any sparse
-  prototype, because this build's sparse storage keeps no logical flag (`oi_silent_answers`,
-  `true_like_sparse` checks the class only).
 - A subscript refusal (`x(2.5)`, `M(1.5, :)`) and a size mismatch (`'ab' + 'cde'`) keep JGraph's words
   and no identifier; open item 79 and the remediation plan's item 7 give them R2025b's.
+
+Closed since: `true(n, 'like', p)` with a sparse prototype answered a dense logical and took any
+sparse prototype. ADR 0369 gave the sparse storage a logical class, and ADR 0374 (open item 337)
+makes `true` and `false` answer logical sparse for a logical sparse prototype and refuse any other
+sparse one, as R2025b does (`sparse_leftovers`' `k_true_like*`, `c_true_like*`; `true_like_sparse`
+agrees as before).
 
 ## Consequences
 

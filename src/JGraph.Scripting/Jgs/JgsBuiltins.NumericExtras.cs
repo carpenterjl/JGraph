@@ -36,8 +36,6 @@ internal static partial class JgsBuiltins
     private static JgsValue KroneckerProduct(IReadOnlyList<JgsValue> args, int line, int col)
     {
         Arity("kron", args, 2, line, col);
-        double[] a = FlattenColumnMajor("kron", args[0], line, col);
-        double[] b = FlattenColumnMajor("kron", args[1], line, col);
         int[] da = SizeDims(args[0]);
         int[] db = SizeDims(args[1]);
         if (da.Length > 2 || db.Length > 2)
@@ -52,6 +50,34 @@ internal static partial class JgsBuiltins
 
         int rows = m * p;
         int cols = n * q;
+
+        // A complex factor makes a complex product, real again when nothing imaginary is left
+        // (open item 337, probe p7b_c: c_kron_*; ADR 0374).
+        if (IsComplexDense(args[0]) || IsComplexDense(args[1]))
+        {
+            System.Numerics.Complex[] za = ColumnComplex("kron", args[0], line, col);
+            System.Numerics.Complex[] zb = ColumnComplex("kron", args[1], line, col);
+            var product = new System.Numerics.Complex[rows * cols];
+            for (int j = 0; j < n; j++)
+            {
+                for (int i = 0; i < m; i++)
+                {
+                    System.Numerics.Complex scale = za[i + (j * m)];
+                    for (int l = 0; l < q; l++)
+                    {
+                        for (int k = 0; k < p; k++)
+                        {
+                            product[(i * p) + k + (((j * q) + l) * rows)] = scale * zb[k + (l * p)];
+                        }
+                    }
+                }
+            }
+
+            return ComplexStorage(product, [rows, cols]);
+        }
+
+        double[] a = FlattenColumnMajor("kron", args[0], line, col);
+        double[] b = FlattenColumnMajor("kron", args[1], line, col);
         var result = new double[rows * cols];
         for (int j = 0; j < n; j++)
         {

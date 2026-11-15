@@ -708,18 +708,17 @@ end
 end
 
 function chk(name, fn)
-% u2_chk, with the rule div=ADR0270 on the lines ADR 0270 records as divergences: a complex integer, a char
-% array of three dimensions and a logical sparse array, which JGraph holds otherwise (ADR 0266); int64 and
+% u2_chk, with the rule div=ADR0270 on the lines ADR 0270 records as divergences: a complex integer and a char
+% array of three dimensions, which JGraph holds otherwise (ADR 0266); int64 and
 % uint64 past 2^53, which JGraph holds as doubles (ADR 0174, ADR 0355); inputParser, which JGraph has not;
 % and nargout of mps.json.decode, which R2025b refuses as a built-in method's. The intmax of int64 and
 % uint64 agree since ADR 0359; a complex array that is empty or has zero imaginary parts, and a complex
-% sparse array, since ADR 0364; a decoded complex empty since open item 330.
+% sparse array, since ADR 0364; a decoded complex empty since open item 330; a logical sparse array since
+% ADR 0374.
 diverging = {'e_c_int16_small', 'e_c_int16_large', 'e_c_int16_round', ...
     'e_ch_2x2x2_round', 'e_f_int64_big_small', 'e_f_int64_big_large', ...
-    'e_sp_logical_small', 'e_sp_logical_large', ...
-    'e_sp_logical_round', 'e_u_inputparser_small', 'e_u_inputparser_large', 'e_u_inputparser_round', ...
-    'i_11', 'o_decode_nargout', 'y_char_3d', 'y_int64_big', ...
-    'y_sparse_logical'};
+    'e_u_inputparser_small', 'e_u_inputparser_large', 'e_u_inputparser_round', ...
+    'i_11', 'o_decode_nargout', 'y_char_3d', 'y_int64_big'};
 if ~any(strcmp(name, diverging))
     u2_chk(name, fn);
     return;

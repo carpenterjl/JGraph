@@ -192,7 +192,9 @@ internal static class JgsMpsJson
                 case JgsType.Image:
                     throw Unsupported("image");
                 case JgsType.Sparse:
-                    return value.IsComplexSparse ? ComplexSparse(value.AsComplexSparse) : Sparse(value.AsSparse);
+                    return value.IsComplexSparse ? ComplexSparse(value.AsComplexSparse, JgsBuiltins.IsSingleSparse(value))
+                        : value.IsLogicalSparse ? LogicalSparse(value.AsSparse)
+                        : Sparse(value.AsSparse, JgsBuiltins.IsSingleSparse(value));
                 case JgsType.External:
                     if (value.AsExternalOrNull() is OnOffSwitchStateValue onOff)
                     {
@@ -476,11 +478,12 @@ internal static class JgsMpsJson
             return Wrap("struct", dims, new Obj(members));
         }
 
-        private Node Sparse(CscMatrix matrix)
+        private Node Sparse(CscMatrix matrix, bool single)
         {
             // Zero-based rows, zero-based columns and the values, each stored entry in column-major
-            // order (e_sp_*); a logical sparse array has no value list in R2025b, which JGraph does
-            // not hold (every sparse array is double here).
+            // order (e_sp_*); a single one is mwtype single, its values in single's notation (probe
+            // p7b_mps, ADR 0374).
+            JgsNumericClass numericClass = single ? JgsNumericClass.Single : JgsNumericClass.Double;
             var rows = new List<Node>(matrix.NonZeroCount);
             var cols = new List<Node>(matrix.NonZeroCount);
             var values = new List<Node>(matrix.NonZeroCount);
@@ -490,15 +493,36 @@ internal static class JgsMpsJson
                 {
                     rows.Add(new Num(matrix.RowIndices[k].ToString(CultureInfo.InvariantCulture)));
                     cols.Add(new Num(c.ToString(CultureInfo.InvariantCulture)));
-                    values.Add(Number(matrix.Values[k], JgsNumericClass.Double, inSmall: false));
+                    values.Add(Number(matrix.Values[k], numericClass, inSmall: false));
                 }
             }
 
-            return Wrap("double", [matrix.Rows, matrix.Cols], new Arr([new Arr(rows), new Arr(cols), new Arr(values)]), sparse: true);
+            return Wrap(single ? "single" : "double", [matrix.Rows, matrix.Cols], new Arr([new Arr(rows), new Arr(cols), new Arr(values)]), sparse: true);
         }
 
-        private Node ComplexSparse(JgsComplexSparse matrix)
+        /// <summary>
+        /// A logical sparse array: mwtype logical and the rows and columns alone, no value list
+        /// (e_sp_logical_*, probe p7b_mps; ADR 0374).
+        /// </summary>
+        private static Node LogicalSparse(CscMatrix matrix)
         {
+            var rows = new List<Node>(matrix.NonZeroCount);
+            var cols = new List<Node>(matrix.NonZeroCount);
+            for (int c = 0; c < matrix.Cols; c++)
+            {
+                for (int k = matrix.ColumnStarts[c]; k < matrix.ColumnStarts[c + 1]; k++)
+                {
+                    rows.Add(new Num(matrix.RowIndices[k].ToString(CultureInfo.InvariantCulture)));
+                    cols.Add(new Num(c.ToString(CultureInfo.InvariantCulture)));
+                }
+            }
+
+            return Wrap("logical", [matrix.Rows, matrix.Cols], new Arr([new Arr(rows), new Arr(cols)]), sparse: true);
+        }
+
+        private Node ComplexSparse(JgsComplexSparse matrix, bool single)
+        {
+            JgsNumericClass numericClass = single ? JgsNumericClass.Single : JgsNumericClass.Double;
             // As Sparse, with each value's real and imaginary parts in turn and mwcomplex true
             // (e_sp_complex_*, ADR 0364).
             var rows = new List<Node>(matrix.NonZeroCount);
@@ -510,12 +534,12 @@ internal static class JgsMpsJson
                 {
                     rows.Add(new Num(matrix.RowIndices[k].ToString(CultureInfo.InvariantCulture)));
                     cols.Add(new Num(c.ToString(CultureInfo.InvariantCulture)));
-                    values.Add(Number(matrix.Values[k].Real, JgsNumericClass.Double, inSmall: false));
-                    values.Add(Number(matrix.Values[k].Imaginary, JgsNumericClass.Double, inSmall: false));
+                    values.Add(Number(matrix.Values[k].Real, numericClass, inSmall: false));
+                    values.Add(Number(matrix.Values[k].Imaginary, numericClass, inSmall: false));
                 }
             }
 
-            return Wrap("double", [matrix.Rows, matrix.Cols], new Arr([new Arr(rows), new Arr(cols), new Arr(values)]), complex: true, sparse: true);
+            return Wrap(single ? "single" : "double", [matrix.Rows, matrix.Cols], new Arr([new Arr(rows), new Arr(cols), new Arr(values)]), complex: true, sparse: true);
         }
 
         private Node Enumeration(string className, string[] names, int[] dims) =>
@@ -1576,7 +1600,7 @@ internal static class JgsMpsJson
 
         private JgsValue Sparse(string type, int[] dims, Node data, bool complex)
         {
-            if (type != "double" && type != "logical")
+            if (type is not ("double" or "logical" or "single"))
             {
                 // R2025b reads the type's elements first and refuses them as it would in a full array.
                 throw type == "char"
@@ -1593,7 +1617,9 @@ internal static class JgsMpsJson
 
             // R2025b's decoder ends the process on a malformed sparse mwdata; JGraph refuses with the
             // text it printed as it went (ADR 0270).
-            if (data is not Arr lists || lists.Items.Any(static l => l is not Arr) || lists.Items.Count is not (2 or 3) || (lists.Items.Count == 2 && type != "logical"))
+            // A logical one has the rows and columns alone: R2025b refuses a value list there too
+            // (probe p7b_mps, ADR 0374).
+            if (data is not Arr lists || lists.Items.Any(static l => l is not Arr) || lists.Items.Count != (type == "logical" ? 2 : 3))
             {
                 throw Unsupported("Sparse array expects a row array, column array, and an optional data array inside \"mwdata\". Unexpected data found");
             }
@@ -1621,10 +1647,13 @@ internal static class JgsMpsJson
                 {
                     int r = Index(rows.Items[k], "Row Range Check", dims[0]);
                     int c = Index(cols.Items[k], "Column Range Check", dims[1]);
-                    entries.Add((r, c, new System.Numerics.Complex(Floating(values!.Items[2 * k], "double"), Floating(values.Items[2 * k + 1], "double"))));
+                    entries.Add((r, c, new System.Numerics.Complex(Floating(values!.Items[2 * k], type), Floating(values.Items[2 * k + 1], type))));
                 }
 
-                return JgsValue.ComplexSparse(JgsComplexSparse.FromTriplets(dims[0], dims[1], entries));
+                var complexMatrix = JgsComplexSparse.FromTriplets(dims[0], dims[1], entries);
+                return type == "single"
+                    ? JgsBuiltins.SingleSparseOf(complexMatrix, keepFlag: true) // e_sp_single_c_round (ADR 0374)
+                    : JgsValue.ComplexSparse(complexMatrix);
             }
 
             var triplets = new List<(int Row, int Col, double Value)>(rows.Items.Count);
@@ -1632,11 +1661,18 @@ internal static class JgsMpsJson
             {
                 int r = Index(rows.Items[k], "Row Range Check", dims[0]);
                 int c = Index(cols.Items[k], "Column Range Check", dims[1]);
-                double v = values is null ? 1 : type == "logical" ? (Floating(values.Items[k], "double") != 0 ? 1 : 0) : Floating(values.Items[k], "double");
+                double v = values is null ? 1 : Floating(values.Items[k], type);
                 triplets.Add((r, c, v));
             }
 
-            return JgsValue.Sparse(CscMatrix.FromTriplets(dims[0], dims[1], triplets));
+            // A logical or single one keeps its class (y_sparse_logical, y_sparse_single; ADR 0374).
+            var matrix = CscMatrix.FromTriplets(dims[0], dims[1], triplets);
+            return type switch
+            {
+                "logical" => JgsBuiltins.LogicalSparseOf(matrix),
+                "single" => JgsBuiltins.SingleSparseOf(matrix),
+                _ => JgsValue.Sparse(matrix),
+            };
         }
 
         private JgsValue Enumeration(string type, int[] dims, Node data)

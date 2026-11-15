@@ -1,0 +1,410 @@
+CHK|m_v73_logical|logical [3 2] real=1 sparse=1 re=[1 0 1 0 1 1] im=[0 0 0 0 0 0]|exact
+CHK|m_v73_logical_whos|char logical 1 0 [3 2]|exact
+CHK|m_v73_logical_empty|logical [2 3] real=1 sparse=1 re=[0 0 0 0 0 0] im=[0 0 0 0 0 0]|exact
+CHK|m_v73_single|single [2 3] real=1 sparse=1 re=[1.5 0 0 0 2 -3] im=[0 0 0 0 0 0]|exact
+CHK|m_v73_single_whos|char single 1 0 [2 3]|exact
+CHK|m_v73_complex|double [3 2] real=0 sparse=1 re=[1 0 0 0 3 0] im=[2 0 -1 0 0 0]|exact
+CHK|m_v73_complex_whos|char double 1 1 [3 2]|exact
+CHK|m_v73_complex_single|single [1 3] real=0 sparse=1 re=[1 0 4] im=[2 0 0]|exact
+CHK|m_v73_complex_flag|double [1 3] real=0 sparse=1 re=[1 0 2] im=[0 0 0]|exact
+CHK|m_v73_double|double [2 2] real=1 sparse=1 re=[0 3 2 0] im=[0 0 0 0]|exact
+CHK|m_v73_cell|single [1 2] real=1 sparse=1 re=[3 2] im=[0 0]|exact
+CHK|m_v73_rand_like|ERR MATLAB:rand:sparsePrototype Sparse input following "like" is not supported.|exact
+CHK|m_v73_randn_like|ERR MATLAB:randn:sparsePrototype Sparse input following "like" is not supported.|exact
+CHK|f_num2str|char 3|exact
+CHK|f_num2str_fmt|char 3.00|exact
+CHK|f_int2str|char 3|exact
+CHK|f_string|ERR MATLAB:invalidConversion Conversion to string from sparse double is not possible.|exact
+CHK|f_char|ERR MATLAB:unimplementedSparseType Attempt to convert to unimplemented sparse type|exact
+CHK|f_mat2str|char sparse(1, 1, 3, 1, 1)|exact
+CHK|f_abs|double [1 1] real=1 sparse=1 re=3 im=0|exact
+CHK|f_absS|double [2 3] real=1 sparse=1 re=[1 0 0 3 2 0] im=[0 0 0 0 0 0]|exact
+CHK|f_real|double [1 1] real=1 sparse=1 re=3 im=0|exact
+CHK|f_imag|double [1 1] real=1 sparse=1 re=0 im=0|exact
+CHK|f_conj|double [1 1] real=1 sparse=1 re=3 im=0|exact
+CHK|f_angle|double [1 1] real=1 sparse=1 re=0 im=0|exact
+CHK|f_isreal|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|f_isnumeric|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|f_isscalar|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|f_isvector|logical [1 1] real=1 sparse=0 re=0 im=0|exact
+CHK|f_ismatrix|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|f_isrow|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|f_isa|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|f_isfloat|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|f_length|double [1 1] real=1 sparse=0 re=3 im=0|exact
+CHK|f_ndims|double [1 1] real=1 sparse=0 re=2 im=0|exact
+CHK|f_size|double [1 2] real=1 sparse=0 re=[1 1] im=[0 0]|exact
+CHK|f_isequal|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|f_isequalS|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|f_isequalSS|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|f_ismember|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|f_ismemberS|logical [2 3] real=1 sparse=0 re=[1 0 0 1 0 0] im=[0 0 0 0 0 0]|exact
+CHK|f_any|logical [1 1] real=1 sparse=1 re=1 im=0|exact
+CHK|f_all|logical [1 3] real=1 sparse=1 re=[0 0 0] im=[0 0 0]|exact
+CHK|f_max|double [1 3] real=1 sparse=1 re=[1 3 2] im=[0 0 0]|exact
+CHK|f_maxs|double [1 1] real=1 sparse=1 re=3 im=0|exact
+CHK|f_min|double [2 1] real=1 sparse=1 re=[0 0] im=[0 0]|exact
+CHK|f_sum|double [1 3] real=1 sparse=1 re=[1 3 2] im=[0 0 0]|exact
+CHK|f_mean|double [1 3] real=1 sparse=1 re=[0.5 1.5 1] im=[0 0 0]|exact
+CHK|f_median|double [1 3] real=1 sparse=1 re=[0.5 1.5 1] im=[0 0 0]|exact
+CHK|f_mode|double [1 3] real=1 sparse=1 re=[0 0 0] im=[0 0 0]|exact
+CHK|f_std|double [1 3] real=1 sparse=1 re=[0.70710678118654757 2.1213203435596424 1.4142135623730951] im=[0 0 0]|exact
+CHK|f_var|double [1 3] real=1 sparse=1 re=[0.5 4.5 2] im=[0 0 0]|exact
+CHK|f_sort|double [2 3] real=1 sparse=1 re=[0 0 1 0 2 3] im=[0 0 0 0 0 0]|exact
+CHK|f_sorts|double [1 1] real=1 sparse=1 re=3 im=0|exact
+CHK|f_unique|double [4 1] real=1 sparse=1 re=[0 1 2 3] im=[0 0 0 0]|exact
+CHK|f_cumsum|double [2 3] real=1 sparse=1 re=[1 0 1 3 3 3] im=[0 0 0 0 0 0]|exact
+CHK|f_diff|double [2 2] real=1 sparse=1 re=[-1 3 2 -3] im=[0 0 0 0]|exact
+CHK|f_fliplr|double [2 3] real=1 sparse=1 re=[2 0 0 3 1 0] im=[0 0 0 0 0 0]|exact
+CHK|f_flipud|double [2 3] real=1 sparse=1 re=[0 1 3 0 0 2] im=[0 0 0 0 0 0]|exact
+CHK|f_rot90|double [3 2] real=1 sparse=1 re=[2 0 1 0 3 0] im=[0 0 0 0 0 0]|exact
+CHK|f_circshift|double [2 3] real=1 sparse=1 re=[2 0 1 0 0 3] im=[0 0 0 0 0 0]|exact
+CHK|f_permute|double [3 2] real=1 sparse=1 re=[1 0 2 0 3 0] im=[0 0 0 0 0 0]|exact
+CHK|f_squeeze|double [2 3] real=1 sparse=1 re=[1 0 0 3 2 0] im=[0 0 0 0 0 0]|exact
+CHK|f_power|double [1 1] real=1 sparse=1 re=9 im=0|exact
+CHK|f_times|double [1 1] real=1 sparse=1 re=6 im=0|exact
+CHK|f_plus|double [1 1] real=1 sparse=0 re=4 im=0|exact
+CHK|f_minus|double [2 3] real=1 sparse=1 re=[0 0 0 0 0 0] im=[0 0 0 0 0 0]|exact
+CHK|f_mtimes|double [2 2] real=1 sparse=1 re=[5 0 0 9] im=[0 0 0 0]|exact
+CHK|f_rdivide|double [2 3] real=1 sparse=1 re=[0.5 0 0 1.5 1 0] im=[0 0 0 0 0 0]|exact
+CHK|f_uminus|double [1 1] real=1 sparse=1 re=-3 im=0|exact
+CHK|f_transpose|double [3 2] real=1 sparse=1 re=[1 0 2 0 3 0] im=[0 0 0 0 0 0]|exact
+CHK|f_nnz|double [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|f_nonzeros|double [3 1] real=1 sparse=0 re=[1 3 2] im=[0 0 0]|exact
+CHK|f_find|double [3 1] real=1 sparse=0 re=[1 4 5] im=[0 0 0]|exact
+CHK|f_numel|double [1 1] real=1 sparse=0 re=6 im=0|exact
+CHK|f_full|double [1 1] real=1 sparse=0 re=3 im=0|exact
+CHK|f_double|double [2 3] real=1 sparse=1 re=[1 0 0 3 2 0] im=[0 0 0 0 0 0]|exact
+CHK|f_doubles|double [1 1] real=1 sparse=1 re=3 im=0|exact
+CHK|f_logical|logical [1 1] real=1 sparse=1 re=1 im=0|exact
+CHK|f_cast|double [1 1] real=1 sparse=1 re=3 im=0|exact
+CHK|f_cell|double [1 1] real=1 sparse=0 re=3 im=0|exact
+CHK|f_num2cell|double [1 1] real=1 sparse=1 re=3 im=0|exact
+CHK|f_cellfun|double [1 1] real=1 sparse=1 re=6 im=0|exact
+CHK|f_cellfunU|ERR MATLAB:cellfun:SparseNotSupported Sparse Arrays are not supported. See SPFUN.|exact
+CHK|f_arrayfun|ERR MATLAB:arrayfun:SparseInputNotSupported Sparse inputs are not supported by ARRAYFUN.|exact
+CHK|f_struct|double [1 1] real=1 sparse=1 re=3 im=0|exact
+CHK|f_interp1|ERR MATLAB:griddedInterpolant:SparseDataPtErrId Sparse input coordinates are not supported.|exact
+CHK|f_polyval|double [1 1] real=1 sparse=0 re=5 im=0|exact
+CHK|f_linspace|double [1 3] real=1 sparse=0 re=[0 0.5 1] im=[0 0 0]|exact
+CHK|f_logspace|double [1 3] real=1 sparse=0 re=[1 3.1622776601683795 10] im=[0 0 0]|exact
+CHK|f_colon|double [1 3] real=1 sparse=0 re=[1 2 3] im=[0 0 0]|exact
+CHK|f_zeros|double [3 3] real=1 sparse=0 re=[0 0 0 0 0 0 0 0 0] im=[0 0 0 0 0 0 0 0 0]|exact
+CHK|f_eye|double [3 3] real=1 sparse=0 re=[1 0 0 0 1 0 0 0 1] im=[0 0 0 0 0 0 0 0 0]|exact
+CHK|f_rand|double [1 2] real=1 sparse=0 re=[3 1] im=[0 0]|exact
+CHK|f_nan|double [1 3] real=1 sparse=0 re=[NaN NaN NaN] im=[0 0 0]|exact
+CHK|f_idx|double [1 1] real=1 sparse=0 re=30 im=0|exact
+CHK|f_idx_range|double [1 3] real=1 sparse=0 re=[30 40 50] im=[0 0 0]|exact
+CHK|f_assign_idx|double [1 4] real=1 sparse=0 re=[0 0 7 0] im=[0 0 0 0]|exact
+CHK|f_while|double [1 1] real=1 sparse=0 re=3 im=0|exact
+CHK|f_if_cmp|double [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|f_floor|double [1 1] real=1 sparse=1 re=1 im=0|exact
+CHK|f_round2|double [1 1] real=1 sparse=1 re=0.42999999999999999 im=0|exact
+CHK|f_fix|double [1 1] real=1 sparse=1 re=-1 im=0|exact
+CHK|f_sqrt_neg|double [1 1] real=0 sparse=1 re=0 im=1.7320508075688772|exact
+CHK|f_nthroot|double [1 1] real=1 sparse=1 re=1.4422495703074083 im=0|exact
+CHK|f_hypot|double [1 1] real=1 sparse=0 re=5 im=0|exact
+CHK|f_exp|double [2 3] real=1 sparse=1 re=[2.7182818284590451 1 1 20.085536923187668 7.3890560989306504 1] im=[0 0 0 0 0 0]|exact
+CHK|f_power_m|double [1 1] real=1 sparse=1 re=1.7320508075688772 im=0|exact
+CHK|f_prod|double [1 3] real=1 sparse=1 re=[0 0 0] im=[0 0 0]|exact
+CHK|f_cumprod|double [2 3] real=1 sparse=1 re=[1 0 0 0 2 0] im=[0 0 0 0 0 0]|exact
+CHK|f_dot|double [1 1] real=1 sparse=1 re=5 im=0|exact
+CHK|f_cross|double [1 3] real=1 sparse=0 re=[-2 0 1] im=[0 0 0]|exact
+CHK|f_norm|double [1 1] real=1 sparse=0 re=3 im=0|exact
+CHK|f_numelcolon|double [6 1] real=1 sparse=1 re=[1 0 0 3 2 0] im=[0 0 0 0 0 0]|exact
+CHK|f_reshape|double [3 2] real=1 sparse=1 re=[1 0 0 3 2 0] im=[0 0 0 0 0 0]|exact
+CHK|f_repmat|double [4 3] real=1 sparse=1 re=[1 0 1 0 0 3 0 3 2 0 2 0] im=[0 0 0 0 0 0 0 0 0 0 0 0]|exact
+CHK|f_kron|double [2 6] real=1 sparse=1 re=[1 0 1 0 0 3 0 3 2 0 2 0] im=[0 0 0 0 0 0 0 0 0 0 0 0]|exact
+CHK|f_floordiv|ERR MATLAB:unimplementedSparseType Attempt to convert to unimplemented sparse type|exact
+CHK|f_isinteger|logical [1 1] real=1 sparse=0 re=0 im=0|exact
+CHK|f_islogical|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|f_nnzlog|double [1 1] real=1 sparse=0 re=3 im=0|exact
+CHK|f_histc|ERR MATLAB:histc:InvalidFirstInput First Input must be a real non-sparse numeric array.|exact
+CHK|f_discretize|double [1 1] real=1 sparse=0 re=2 im=0|exact
+CHK|f_floorS|double [2 3] real=1 sparse=1 re=[0 0 0 1 1 0] im=[0 0 0 0 0 0]|exact
+CHK|f_sign|double [2 3] real=1 sparse=1 re=[-1 0 0 -1 -1 0] im=[0 0 0 0 0 0]|exact
+CHK|f_mean2|double [2 1] real=1 sparse=1 re=[1 1] im=[0 0]|exact
+CHK|f_mean_all|double [1 1] real=1 sparse=1 re=1 im=0|exact
+CHK|f_sum_all|double [1 1] real=1 sparse=1 re=6 im=0|exact
+CHK|f_max_all|double [1 1] real=1 sparse=1 re=3 im=0|exact
+CHK|f_sum2|double [1 1] real=1 sparse=1 re=6 im=0|exact
+CHK|f_trapz|double [1 1] real=1 sparse=1 re=1.5 im=0|exact
+CHK|f_bounds|double [1 1] real=1 sparse=1 re=0 im=0|exact
+CHK|f_rescale|double [2 3] real=1 sparse=1 re=[0.33333333333333331 0 0 1 0.66666666666666663 0] im=[0 0 0 0 0 0]|exact
+CHK|f_normalize|double [1 3] real=1 sparse=1 re=[0 -1 1] im=[0 0 0]|exact
+CHK|f_cummax|double [2 3] real=1 sparse=1 re=[1 0 1 3 2 3] im=[0 0 0 0 0 0]|exact
+CHK|f_issorted|logical [1 1] real=1 sparse=0 re=0 im=0|exact
+CHK|f_isempty|logical [1 1] real=1 sparse=0 re=0 im=0|exact
+CHK|f_strcat|char a3|exact
+CHK|f_containers|uint64 [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|f_switch|double [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|f_nested_idx|double [1 1] real=1 sparse=0 re=7 im=0|exact
+CHK|f_field_idx|double [1 1] real=1 sparse=0 re=3 im=0|exact
+CHK|f_str_idx|char c|exact
+CHK|f_end_arith|double [1 1] real=1 sparse=0 re=2 im=0|exact
+CHK|f_realmax|logical [1 1] real=1 sparse=1 re=1 im=0|exact
+CHK|f_min2|double [1 1] real=1 sparse=1 re=2 im=0|exact
+CHK|f_bitand|ERR MATLAB:Bitand:sparseArgs Inputs must be full.|exact
+CHK|f_floor_neg|double [2 3] real=1 sparse=1 re=[-1 0 0 -3 -2 0] im=[0 0 0 0 0 0]|exact
+CHK|f_isinf|logical [2 3] real=1 sparse=0 re=[0 1 1 0 0 1] im=[0 0 0 0 0 0]|exact
+CHK|f_tic|double [1 1] real=1 sparse=0 re=3 im=0|exact
+CHK|k_mixedtype|ERR MATLAB:sparse:constructorMixedType Subscripts must be the same data type (single, double, or integer).|exact
+CHK|k_mixedtype2|ERR MATLAB:sparse:constructorMixedType Subscripts must be the same data type (single, double, or integer).|exact
+CHK|k_mixedtype3|double [2 2] real=1 sparse=1 re=[3 0 0 4] im=[0 0 0 0]|exact
+CHK|k_mixedtype4|ERR MATLAB:sparse:constructorMixedType Subscripts must be the same data type (single, double, or integer).|exact
+CHK|k_mixedtype5|ERR MATLAB:sparse:constructorMixedType Subscripts must be the same data type (single, double, or integer).|exact
+CHK|k_mixedtype6|double [1 2] real=1 sparse=1 re=[3 4] im=[0 0]|exact
+CHK|k_mixedtype7|ERR MATLAB:sparse:constructorMixedType Subscripts must be the same data type (single, double, or integer).|exact
+CHK|k_mixedtype8|double [3 3] real=1 sparse=1 re=[3 0 0 0 4 0 0 0 0] im=[0 0 0 0 0 0 0 0 0]|exact
+CHK|k_kron_c|double [2 2] real=0 sparse=0 re=[1 0 0 -2] im=[0 1 2 0]|exact
+CHK|k_kron_cs|double [2 2] real=0 sparse=1 re=[1 0 0 -2] im=[0 1 2 0]|exact
+CHK|k_kron_cs2|double [2 4] real=0 sparse=1 re=[1 0 1 0 0 0 0 0] im=[0 0 0 0 0 2 0 2]|exact
+CHK|k_kron_rc|double [1 4] real=0 sparse=0 re=[0 3 0 6] im=[1 0 2 0]|exact
+CHK|k_true_like|logical [2 2] real=1 sparse=1 re=[1 1 1 1] im=[0 0 0 0]|exact
+CHK|k_true_like_d|ERR MATLAB:True:invalidInputClass Argument following "like" must be a variable with a data type that supports TRUE, such as a logical variable.|exact
+CHK|k_false_like|logical [2 3] real=1 sparse=1 re=[0 0 0 0 0 0] im=[0 0 0 0 0 0]|exact
+CHK|k_zeros_like|double [2 2] real=1 sparse=1 re=[0 0 0 0] im=[0 0 0 0]|exact
+CHK|k_ones_like|double [2 2] real=1 sparse=1 re=[1 1 1 1] im=[0 0 0 0]|exact
+CHK|k_eye_like|double [2 2] real=1 sparse=1 re=[1 0 0 1] im=[0 0 0 0]|exact
+CHK|k_zeros_like_l|logical [2 2] real=1 sparse=1 re=[0 0 0 0] im=[0 0 0 0]|exact
+CHK|k_ones_like_c|double [2 2] real=0 sparse=1 re=[1 1 1 1] im=[0 0 0 0]|exact
+CHK|k_true_like_s|ERR MATLAB:True:invalidInputClass Argument following "like" must be a variable with a data type that supports TRUE, such as a logical variable.|exact
+CHK|k_zeros_like_s|single [2 2] real=1 sparse=1 re=[0 0 0 0] im=[0 0 0 0]|exact
+CHK|k_double_sp|double [1 3] real=1 sparse=1 re=[1 0 2] im=[0 0 0]|exact
+CHK|k_double_spl|double [1 2] real=1 sparse=1 re=[1 0] im=[0 0]|exact
+CHK|k_double_sps|double [1 3] real=1 sparse=1 re=[1 0 2] im=[0 0 0]|exact
+CHK|k_single_spl|single [1 2] real=1 sparse=1 re=[1 0] im=[0 0]|exact
+CHK|k_logical_sps|logical [1 3] real=1 sparse=1 re=[1 0 1] im=[0 0 0]|exact
+CHK|k_double_spc|double [1 3] real=0 sparse=1 re=[0 0 2] im=[1 0 0]|exact
+CHK|i_times|ERR MATLAB:sparseInteger Sparse integer array arithmetic operations are not supported.|exact
+CHK|i_plus|ERR MATLAB:sparseInteger Sparse integer array arithmetic operations are not supported.|exact
+CHK|i_dtimes|ERR MATLAB:sparseInteger Sparse integer array arithmetic operations are not supported.|exact
+CHK|i_eq|ERR MATLAB:sparseInteger Sparse integer array arithmetic operations are not supported.|exact
+CHK|i_lt|ERR MATLAB:sparseInteger Sparse integer array arithmetic operations are not supported.|exact
+CHK|i_and|ERR MATLAB:sparseInteger Sparse integer array arithmetic operations are not supported.|exact
+CHK|i_or|ERR MATLAB:sparseInteger Sparse integer array arithmetic operations are not supported.|exact
+CHK|i_minus|ERR MATLAB:sparseInteger Sparse integer array arithmetic operations are not supported.|exact
+CHK|i_div|ERR MATLAB:sparseInteger Sparse integer array arithmetic operations are not supported.|exact
+CHK|i_ldiv|ERR MATLAB:sparseInteger Sparse integer array arithmetic operations are not supported.|exact
+CHK|i_pow|ERR MATLAB:sparseInteger Sparse integer array arithmetic operations are not supported.|exact
+CHK|i_mpow|ERR MATLAB:sparseInteger Sparse integer array arithmetic operations are not supported.|exact
+CHK|i_rdiv|ERR MATLAB:sparseInteger Sparse integer array arithmetic operations are not supported.|exact
+CHK|i_ne|ERR MATLAB:sparseInteger Sparse integer array arithmetic operations are not supported.|exact
+CHK|i_cat|ERR MATLAB:UnableToConvert The following error occurred converting from double to int8: Attempt to convert to unimplemented sparse type|exact
+CHK|i_logical_times|double [1 1] real=1 sparse=1 re=2 im=0|exact
+CHK|i_char_times|double [1 1] real=1 sparse=1 re=194 im=0|exact
+CHK|i_char_plus|double [1 2] real=1 sparse=0 re=[98 100] im=[0 0]|exact
+CHK|i_single_times|single [1 1] real=1 sparse=1 re=6 im=0|exact
+CHK|a_amd3|double [1 3] real=1 sparse=0 re=[1 2 3] im=[0 0 0]|exact
+CHK|a_amd_eye|double [1 4] real=1 sparse=0 re=[1 2 3 4] im=[0 0 0 0]|exact
+CHK|a_amd_4|double [1 4] real=1 sparse=0 re=[1 2 3 4] im=[0 0 0 0]|exact
+CHK|b_flip|double [2 3] real=1 sparse=1 re=[0 1 3 0 0 2] im=[0 0 0 0 0 0]|exact
+CHK|b_flip2|double [2 3] real=1 sparse=1 re=[2 0 0 3 1 0] im=[0 0 0 0 0 0]|exact
+CHK|b_fliplr_s|double [1 2] real=1 sparse=1 re=[1 3] im=[0 0]|exact
+CHK|b_rot90_2|double [2 3] real=1 sparse=1 re=[0 2 3 0 0 1] im=[0 0 0 0 0 0]|exact
+CHK|b_ctranspose_f|double [3 2] real=1 sparse=1 re=[1 0 2 0 3 0] im=[0 0 0 0 0 0]|exact
+CHK|b_transpose_c|double [3 1] real=0 sparse=1 re=[0 0 2] im=[1 0 0]|exact
+CHK|b_uminus_S|double [2 3] real=1 sparse=1 re=[-1 0 0 -3 -2 0] im=[0 0 0 0 0 0]|exact
+CHK|b_uplus|double [2 3] real=1 sparse=1 re=[1 0 0 3 2 0] im=[0 0 0 0 0 0]|exact
+CHK|b_not_f|logical [2 3] real=1 sparse=1 re=[0 1 1 0 0 1] im=[0 0 0 0 0 0]|exact
+CHK|b_and_f|logical [2 3] real=1 sparse=1 re=[1 0 0 1 1 0] im=[0 0 0 0 0 0]|exact
+CHK|b_or_f|logical [2 3] real=1 sparse=0 re=[1 0 0 1 1 0] im=[0 0 0 0 0 0]|exact
+CHK|b_xor_f|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|b_eq_f|logical [2 3] real=1 sparse=1 re=[0 0 0 0 1 0] im=[0 0 0 0 0 0]|exact
+CHK|b_max2out|double [1 3] real=1 sparse=0 re=[1 2 1] im=[0 0 0]|exact
+CHK|b_sort2out|double [2 3] real=1 sparse=0 re=[2 1 1 3 3 2] im=[0 0 0 0 0 0]|exact
+CHK|b_sort_desc|double [2 3] real=1 sparse=1 re=[2 3 1 0 0 0] im=[0 0 0 0 0 0]|exact
+CHK|b_unique2|double [4 1] real=1 sparse=0 re=[2 1 5 4] im=[0 0 0 0]|exact
+CHK|b_unique3|double [6 1] real=1 sparse=0 re=[2 1 1 4 3 1] im=[0 0 0 0 0 0]|exact
+CHK|b_bounds2|double [1 1] real=1 sparse=1 re=2 im=0|exact
+CHK|b_median_all|double [1 1] real=1 sparse=1 re=0.5 im=0|exact
+CHK|b_std2|double [2 1] real=1 sparse=1 re=[1 1.7320508075688772] im=[0 0]|exact
+CHK|b_var1|double [1 3] real=1 sparse=1 re=[0.25 2.25 1] im=[0 0 0]|exact
+CHK|b_cummin|double [2 3] real=1 sparse=1 re=[1 0 0 0 0 0] im=[0 0 0 0 0 0]|exact
+CHK|b_diff1|double [1 3] real=1 sparse=1 re=[-1 3 -2] im=[0 0 0]|exact
+CHK|b_trapz2|double [2 1] real=1 sparse=1 re=[1.5 3] im=[0 0]|exact
+CHK|b_cumtrapz|double [1 3] real=1 sparse=1 re=[0 0.5 1.5] im=[0 0 0]|exact
+CHK|b_num2cell_size|double [1 2] real=1 sparse=0 re=[2 3] im=[0 0]|exact
+CHK|b_isvector_r|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|b_isrow_m|logical [1 1] real=1 sparse=0 re=0 im=0|exact
+CHK|b_iscolumn|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|b_iscolumn_m|logical [1 1] real=1 sparse=0 re=0 im=0|exact
+CHK|b_isscalar_m|logical [1 1] real=1 sparse=0 re=0 im=0|exact
+CHK|b_issquare|ERR MATLAB:UndefinedFunction Undefined function 'issquare' for input arguments of type 'double'.|exact
+CHK|b_length0|double [1 1] real=1 sparse=0 re=0 im=0|exact
+CHK|b_length_col|double [1 1] real=1 sparse=0 re=6 im=0|exact
+CHK|b_issorted_r|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|b_issorted_m|logical [1 1] real=1 sparse=0 re=0 im=0|exact
+CHK|b_ismember_sp2|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|b_ismember_2out|double [1 1] real=1 sparse=0 re=2 im=0|exact
+CHK|b_polyval_S|double [2 3] real=1 sparse=0 re=[1 0 0 3 2 0] im=[0 0 0 0 0 0]|exact
+CHK|b_polyval_p|double [1 1] real=1 sparse=0 re=3 im=0|exact
+CHK|b_angle_c|double [1 3] real=1 sparse=1 re=[1.5707963267948966 0 3.1415926535897931] im=[0 0 0]|exact
+CHK|b_cast_single|single [1 1] real=1 sparse=1 re=3 im=0|exact
+CHK|b_cast_int8|ERR MATLAB:unimplementedSparseType Attempt to convert to unimplemented sparse type|exact
+CHK|b_cast_logical|logical [1 1] real=1 sparse=1 re=1 im=0|exact
+CHK|b_cast_like|double [1 1] real=1 sparse=1 re=3 im=0|exact
+CHK|b_dot_dense|double [1 1] real=1 sparse=0 re=3 im=0|exact
+CHK|b_dot_m|double [1 3] real=1 sparse=1 re=[1 9 4] im=[0 0 0]|exact
+CHK|b_nthroot_S|double [2 3] real=1 sparse=1 re=[1 0 0 1.4422495703074083 1.2599210498948732 0] im=[0 0 0 0 0 0]|exact
+CHK|b_nthroot_neg|double [1 1] real=1 sparse=1 re=-1.4422495703074083 im=0|exact
+CHK|b_unique_row|double [1 2] real=1 sparse=1 re=[1 3] im=[0 0]|exact
+CHK|b_unique_stable|double [4 1] real=1 sparse=1 re=[1 0 3 2] im=[0 0 0 0]|exact
+CHK|b_rescale_r|double [2 3] real=1 sparse=1 re=[0.66666666666666663 0 0 2 1.3333333333333333 0] im=[0 0 0 0 0 0]|exact
+CHK|b_normalize_S|double [2 3] real=1 sparse=1 re=[0.70710678118654746 -0.70710678118654746 -0.70710678118654757 0.70710678118654757 0.70710678118654746 -0.70710678118654746] im=[0 0 0 0 0 0]|exact
+CHK|b_interp1_x|ERR MATLAB:griddedInterpolant:SparseDataPtErrId Sparse input coordinates are not supported.|exact
+CHK|b_interp1_y|ERR MATLAB:griddedInterpolant:SparseInterpValuesErrId Sparse sample values are not supported.|exact
+CHK|b_histc_e|ERR MATLAB:histc:InvalidSecondInput Second Input must be a real non-sparse numeric array.|exact
+CHK|b_histcounts|double [1 3] real=1 sparse=0 re=[3 1 2] im=[0 0 0]|exact
+CHK|b_bitand2|ERR MATLAB:Bitand:sparseArgs Inputs must be full.|exact
+CHK|b_bitor|ERR MATLAB:Bitor:sparseArgs Inputs must be full.|exact
+CHK|b_bitshift|ERR MATLAB:bitshift:sparseArgs Inputs must be full.|exact
+CHK|b_string_l|ERR MATLAB:invalidConversion Conversion to string from sparse logical is not possible.|exact
+CHK|b_string_f|ERR MATLAB:invalidConversion Conversion to string from sparse single is not possible.|exact
+CHK|b_string_c|ERR MATLAB:invalidConversion Conversion to string from sparse double is not possible.|exact
+CHK|b_char_l|ERR MATLAB:invalidConversion Conversion to char from logical is not possible.|exact
+CHK|b_cellfun_F|double [1 2] real=1 sparse=0 re=[1 3] im=[0 0]|exact
+CHK|b_cellfun_in|double [1 1] real=1 sparse=0 re=6 im=0|exact
+CHK|b_cellfun_numel|double [1 2] real=1 sparse=0 re=[6 1] im=[0 0]|exact
+CHK|b_cellfun_issparse|logical [1 2] real=1 sparse=0 re=[1 0] im=[0 0]|exact
+CHK|b_arrayfun_fn|double [1 2] real=1 sparse=0 re=[1 2] im=[0 0]|exact
+CHK|b_arrayfun_out|ERR MATLAB:arrayfun:SparseNotSupported Sparse Arrays are not supported. See SPFUN.|exact
+CHK|b_arrayfun_out_nu|double [1 1] real=1 sparse=1 re=2 im=0|exact
+CHK|b_arrayfun_sparse_nu|ERR MATLAB:arrayfun:SparseInputNotSupported Sparse inputs are not supported by ARRAYFUN.|exact
+CHK|b_factorial|double [1 1] real=1 sparse=1 re=6 im=0|exact
+CHK|b_nchoosek|double [1 1] real=1 sparse=0 re=10 im=0|exact
+CHK|b_primes|double [1 4] real=1 sparse=0 re=[2 3 5 7] im=[0 0 0 0]|exact
+CHK|b_isprime|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|b_gamma|ERR MATLAB:gamma:notFullReal Input must be real and full.|exact
+CHK|b_gcd|double [1 1] real=1 sparse=1 re=3 im=0|exact
+CHK|b_rad2deg|double [1 1] real=1 sparse=1 re=171.88733853924697 im=0|exact
+CHK|b_sind|double [1 1] real=1 sparse=1 re=1 im=0|exact
+CHK|b_realpow|double [1 1] real=1 sparse=1 re=9 im=0|exact
+CHK|b_nextpow2|double [1 1] real=1 sparse=1 re=2 im=0|exact
+CHK|b_pow2|double [1 1] real=1 sparse=1 re=8 im=0|exact
+CHK|b_blanks|char    |exact
+CHK|b_repmat_char|char aaa|exact
+CHK|b_char_code|char C|exact
+CHK|b_colon_step|double [1 3] real=1 sparse=0 re=[3 2 1] im=[0 0 0]|exact
+CHK|b_x_row|double [1 4] real=1 sparse=0 re=[9 7 6 12] im=[0 0 0 0]|exact
+CHK|b_x_range|double [1 3] real=1 sparse=0 re=[1 2 3] im=[0 0 0]|exact
+CHK|b_grow|double [1 1] real=1 sparse=0 re=3 im=0|exact
+CHK|b_grow_cell|double [1 1] real=1 sparse=1 re=3 im=0|exact
+CHK|b_dense_plus|double [1 3] real=1 sparse=0 re=[3 3 3] im=[0 0 0]|exact
+CHK|b_scal_ones|double [2 2] real=1 sparse=1 re=[3 3 3 3] im=[0 0 0 0]|exact
+CHK|b_mean_row|double [1 1] real=1 sparse=1 re=2 im=0|exact
+CHK|b_sum_colon|double [1 1] real=1 sparse=0 re=6 im=0|exact
+CHK|b_mod_if|double [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|b_isempty_find|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|b_logical_index|double [2 1] real=1 sparse=1 re=[3 2] im=[0 0]|exact
+CHK|b_logical_assign|double [2 3] real=1 sparse=1 re=[1 0 0 0 0 0] im=[0 0 0 0 0 0]|exact
+CHK|b_dense_logical_idx|double [1 2] real=1 sparse=0 re=[10 30] im=[0 0]|exact
+CHK|b_any_isnan|logical [1 1] real=1 sparse=1 re=0 im=0|exact
+CHK|b_max_abs|double [1 1] real=1 sparse=1 re=3 im=0|exact
+CHK|b_floor_log10|double [1 1] real=1 sparse=1 re=0 im=0|exact
+CHK|b_10pow|double [1 1] real=1 sparse=0 re=1000 im=0|exact
+CHK|b_atan2|double [1 1] real=1 sparse=1 re=1.2490457723982544 im=0|exact
+CHK|b_min_dim|double [1 3] real=1 sparse=1 re=[0 0 0] im=[0 0 0]|exact
+CHK|b_cumsum_row|double [1 2] real=1 sparse=1 re=[3 4] im=[0 0]|exact
+CHK|b_prod_dim|double [2 1] real=1 sparse=1 re=[0 0] im=[0 0]|exact
+CHK|b_numel_nz|double [1 1] real=1 sparse=0 re=3 im=0|exact
+CHK|b_columns|double [1 1] real=1 sparse=0 re=3 im=0|exact
+CHK|b_size3|double [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|b_ndgrid|double [3 3] real=1 sparse=0 re=[1 2 3 1 2 3 1 2 3] im=[0 0 0 0 0 0 0 0 0]|exact
+CHK|b_meshgrid|double [3 3] real=1 sparse=0 re=[1 2 3 1 2 3 1 2 3] im=[0 0 0 0 0 0 0 0 0]|exact
+CHK|b_floor_single|single [2 3] real=1 sparse=1 re=[0 0 0 1 1 0] im=[0 0 0 0 0 0]|exact
+CHK|b_sum_single|single [1 3] real=1 sparse=1 re=[1 3 2] im=[0 0 0]|exact
+CHK|b_mean_single|single [1 3] real=1 sparse=1 re=[0.5 1.5 1] im=[0 0 0]|exact
+CHK|b_median_single|single [1 3] real=1 sparse=1 re=[0.5 1.5 1] im=[0 0 0]|exact
+CHK|b_sort_logical|logical [2 3] real=1 sparse=1 re=[0 0 0 0 1 1] im=[0 0 0 0 0 0]|exact
+CHK|b_fliplr_logical|logical [2 3] real=1 sparse=1 re=[1 0 0 1 0 0] im=[0 0 0 0 0 0]|exact
+CHK|b_diff_logical|double [2 2] real=1 sparse=1 re=[0 1 1 -1] im=[0 0 0 0]|exact
+CHK|b_circshift_single|single [2 3] real=1 sparse=1 re=[2 0 1 0 0 3] im=[0 0 0 0 0 0]|exact
+CHK|b_kron_logical|double [2 6] real=1 sparse=1 re=[0 0 0 0 0 1 0 1 1 0 1 0] im=[0 0 0 0 0 0 0 0 0 0 0 0]|exact
+CHK|b_isequal_types|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|b_validate|double [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|b_mustBePositive|double [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|b_assert|double [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|b_isnumeric_l|logical [1 1] real=1 sparse=0 re=0 im=0|exact
+CHK|b_nnz_l|double [1 1] real=1 sparse=0 re=2 im=0|exact
+CHK|b_sum_l|double [1 3] real=1 sparse=1 re=[0 1 1] im=[0 0 0]|exact
+CHK|b_double_l|double [2 3] real=1 sparse=1 re=[0 0 0 2 2 0] im=[0 0 0 0 0 0]|exact
+CHK|b_sprintf_full|char 3|exact
+CHK|b_num2str_S|ERR MATLAB:strrep:MultiRowInput Char inputs must be row vectors.|exact
+CHK|b_mat2str_L|char sparse([2;1], [2;3], [true;true], 2, 3)|exact
+CHK|b_int2str_S|ERR MATLAB:strrep:MultiRowInput Char inputs must be row vectors.|exact
+CHK|c_mixed_third|ERR MATLAB:sparse:invalidThirdInput Third input must be single, double, or logical.|exact
+CHK|c_mixed_logical2|double [2 1] real=1 sparse=1 re=[3 4] im=[0 0]|exact
+CHK|c_mixed_single2|double [2 2] real=1 sparse=1 re=[3 0 0 4] im=[0 0 0 0]|exact
+CHK|c_mixed_two|double [2 3] real=1 sparse=1 re=[0 0 0 0 0 0] im=[0 0 0 0 0 0]|exact
+CHK|c_uplus_l|double [2 3] real=1 sparse=1 re=[0 0 0 1 1 0] im=[0 0 0 0 0 0]|exact
+CHK|c_uminus_l|double [2 3] real=1 sparse=1 re=[0 0 0 -1 -1 0] im=[0 0 0 0 0 0]|exact
+CHK|c_uminus_f|single [2 3] real=1 sparse=1 re=[-1 0 0 -3 -2 0] im=[0 0 0 0 0 0]|exact
+CHK|c_transpose_l|logical [3 2] real=1 sparse=1 re=[0 0 1 0 1 0] im=[0 0 0 0 0 0]|exact
+CHK|c_ctranspose_c|double [3 1] real=0 sparse=1 re=[0 0 2] im=[-1 0 0]|exact
+CHK|c_not_l|logical [2 3] real=1 sparse=1 re=[1 1 1 0 0 1] im=[0 0 0 0 0 0]|exact
+CHK|c_and_both|logical [2 3] real=1 sparse=1 re=[0 0 0 1 1 0] im=[0 0 0 0 0 0]|exact
+CHK|c_or_both|logical [2 3] real=1 sparse=1 re=[1 0 0 1 1 0] im=[0 0 0 0 0 0]|exact
+CHK|c_xor_both|logical [2 3] real=1 sparse=1 re=[1 0 0 0 0 0] im=[0 0 0 0 0 0]|exact
+CHK|c_and_dense|logical [2 3] real=1 sparse=1 re=[1 0 0 1 0 0] im=[0 0 0 0 0 0]|exact
+CHK|c_dot_c|double [1 1] real=1 sparse=1 re=5 im=0|exact
+CHK|c_asind|double [1 1] real=1 sparse=1 re=48.590377890729 im=0|exact
+CHK|c_acosd|double [2 3] real=1 sparse=1 re=[75.52248781407 90 90 41.409622109271 60 90] im=[0 0 0 0 0 0]|exact
+CHK|c_atand|double [1 1] real=1 sparse=1 re=71.56505117707799 im=0|exact
+CHK|c_cosd|double [2 3] real=1 sparse=1 re=[0.99984769515639127 1 1 0.99862953475457383 0.99939082701909576 1] im=[0 0 0 0 0 0]|exact
+CHK|c_tand|double [1 1] real=1 sparse=1 re=1 im=0|exact
+CHK|c_deg2rad|double [2 3] real=1 sparse=1 re=[0.017453292519943295 0 0 0.05235987755982989 0.034906585039886591 0] im=[0 0 0 0 0 0]|exact
+CHK|c_sec|double [1 1] real=1 sparse=1 re=-1.0101086659079939 im=0|exact
+CHK|c_csc|double [1 1] real=1 sparse=1 re=7.0861673957371867 im=0|exact
+CHK|c_cot|double [1 1] real=1 sparse=1 re=-7.0152525514345339 im=0|exact
+CHK|c_factorial_S|double [2 3] real=1 sparse=1 re=[1 1 1 6 2 1] im=[0 0 0 0 0 0]|exact
+CHK|c_pow2_S|double [2 3] real=1 sparse=1 re=[2 1 1 8 4 1] im=[0 0 0 0 0 0]|exact
+CHK|c_nextpow2_S|double [2 3] real=1 sparse=1 re=[0 0 0 2 1 0] im=[0 0 0 0 0 0]|exact
+CHK|c_lcm|double [1 1] real=1 sparse=1 re=12 im=0|exact
+CHK|c_gcd_dense|double [1 1] real=1 sparse=1 re=3 im=0|exact
+CHK|c_realpow_S|double [2 3] real=1 sparse=1 re=[1 0 0 9 4 0] im=[0 0 0 0 0 0]|exact
+CHK|c_gammaln|ERR MATLAB:gammaln:notFullReal Input must be real and full.|exact
+CHK|c_bitxor|ERR MATLAB:bitxor:sparseArgs Inputs must be full.|exact
+CHK|c_char_f|ERR MATLAB:unimplementedSparseType Attempt to convert to unimplemented sparse type|exact
+CHK|c_char_c|ERR MATLAB:noConversionComplexToChar Complex values cannot be converted to chars|exact
+CHK|c_string_S|ERR MATLAB:invalidConversion Conversion to string from sparse double is not possible.|exact
+CHK|c_cast_like_l|logical [1 1] real=1 sparse=1 re=1 im=0|exact
+CHK|c_cast_like_f|single [1 1] real=1 sparse=1 re=1 im=0|exact
+CHK|c_cast_S_like|single [2 3] real=1 sparse=0 re=[1 0 0 3 2 0] im=[0 0 0 0 0 0]|exact
+CHK|c_cast_S_like_i|ERR MATLAB:unimplementedSparseType Attempt to convert to unimplemented sparse type|exact
+CHK|c_num2cell_l|logical [1 1] real=1 sparse=1 re=1 im=0|exact
+CHK|c_num2cell_f|single [1 1] real=1 sparse=1 re=2 im=0|exact
+CHK|c_interp1_q|ERR MATLAB:griddedInterpolant:SparseDataPtErrId Sparse input coordinates are not supported.|exact
+CHK|c_interp1_v2|ERR MATLAB:griddedInterpolant:SparseInterpValuesErrId Sparse sample values are not supported.|exact
+CHK|c_interp1_both|ERR MATLAB:griddedInterpolant:SparseInterpValuesErrId Sparse sample values are not supported.|exact
+CHK|c_histc_both|ERR MATLAB:histc:InvalidFirstInput First Input must be a real non-sparse numeric array.|exact
+CHK|c_true_like_c|ERR MATLAB:True:invalidInputClass Argument following "like" must be a variable with a data type that supports TRUE, such as a logical variable.|exact
+CHK|c_true_like_lz|logical [0 3] real=1 sparse=1 re=zeros(1,0) im=zeros(1,0)|exact
+CHK|c_true_like_one|logical [1 1] real=1 sparse=1 re=1 im=0|exact
+CHK|c_false_like_one|logical [1 1] real=1 sparse=1 re=0 im=0|exact
+CHK|c_ones_like_f|single [2 1] real=1 sparse=1 re=[1 1] im=[0 0]|exact
+CHK|c_eye_like_l|logical [2 2] real=1 sparse=1 re=[1 0 0 1] im=[0 0 0 0]|exact
+CHK|c_zeros_like_c|double [1 2] real=0 sparse=1 re=[0 0] im=[0 0]|exact
+CHK|c_rand_like|ERR MATLAB:rand:sparsePrototype Sparse input following "like" is not supported.|exact
+CHK|c_cellfun_first|ERR MATLAB:cellfun:SparseNotSupported Sparse Arrays are not supported. See SPFUN.|exact
+CHK|c_cellfun_full|double [1 1] real=1 sparse=0 re=6 im=0|exact
+CHK|c_cellfun_two|ERR MATLAB:cellfun:NotAScalarOutput Non-scalar in Uniform output, at index 2, output 1. Set 'UniformOutput' to false.|exact
+CHK|c_arrayfun_late|double [1 2] real=1 sparse=0 re=[1 2] im=[0 0]|exact
+CHK|c_length_l|double [1 1] real=1 sparse=0 re=3 im=0|exact
+CHK|c_isvector_e|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|c_isscalar_s|logical [1 1] real=1 sparse=0 re=1 im=0|exact
+CHK|c_isrow_e|logical [1 1] real=1 sparse=0 re=0 im=0|exact
+CHK|c_issorted_c|logical [1 1] real=1 sparse=0 re=0 im=0|exact
+CHK|c_ismember_rows|logical [2 1] real=1 sparse=0 re=[1 0] im=[0 0]|exact
+CHK|c_unique_l|logical [2 1] real=1 sparse=1 re=[0 1] im=[0 0]|exact
+CHK|c_sort_c|double [1 3] real=0 sparse=1 re=[0 0 2] im=[0 1 0]|exact
+CHK|c_mean_c|double [1 1] real=0 sparse=1 re=0.66666666666666663 im=0.33333333333333331|exact
+CHK|c_flip_c|double [1 3] real=0 sparse=1 re=[2 0 0] im=[0 0 1]|exact
+CHK|c_angle_S|double [2 3] real=1 sparse=1 re=[3.1415926535897931 0 0 3.1415926535897931 3.1415926535897931 0] im=[0 0 0 0 0 0]|exact
+CHK|c_kron_cd|double [2 2] real=0 sparse=0 re=[2 1 0 0] im=[0 0 2 1]|exact
+CHK|c_kron_cc|double [1 4] real=0 sparse=0 re=[-1 3 0 6] im=[1 3 2 0]|exact
+CHK|c_kron_cm|double [2 4] real=0 sparse=0 re=[1 3 0 0 0 4 2 0] im=[0 0 -1 -3 2 0 0 -4]|exact
+CHK|c_kron_sc|double [1 4] real=0 sparse=1 re=[0 1 0 2] im=[1 0 2 0]|exact
+CHK|c_kron_cs3|double [2 4] real=0 sparse=1 re=[0 0 -1 0 0 0 0 0] im=[0 0 0 0 0 0 0 2]|exact
+CHK|c_kron_flag|double [1 4] real=1 sparse=0 re=[1 1 2 2] im=[0 0 0 0]|exact
+CHK|c_kron_single_c|single [1 4] real=0 sparse=0 re=[2 1 0 0] im=[0 0 2 1]|exact
