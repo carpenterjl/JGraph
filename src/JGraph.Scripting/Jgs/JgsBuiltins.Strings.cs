@@ -508,9 +508,21 @@ internal static partial class JgsBuiltins
     private static JgsValue FailureRecord(JgsRuntimeException failure, int index)
     {
         string message = failure.Message;
-        if (failure.Frames.Count > 0 && !message.StartsWith("Error using ", StringComparison.Ordinal))
+        // The header names the first function the error left: an anonymous body's frame (ADR 0368) is
+        // not one, and R2025b heads an error raised in the handle itself by the refused built-in
+        // ("Error using error") or by nothing (errorhandler_records h_message_*).
+        int named = -1;
+        for (int i = 0; i < failure.Frames.Count && named < 0; i++)
         {
-            (string name, string file, int at) = failure.Frames[0];
+            if (!failure.Frames[i].Name.StartsWith('@'))
+            {
+                named = i;
+            }
+        }
+
+        if (named >= 0 && !message.StartsWith("Error using ", StringComparison.Ordinal))
+        {
+            (string name, string file, int at) = failure.Frames[named];
             string stem = Path.GetFileNameWithoutExtension(file);
             string shown = stem.Length == 0 || string.Equals(stem, name, StringComparison.Ordinal) ? name : $"{stem}>{name}";
             message = $"Error using {shown} (line {at})\n{message}";
