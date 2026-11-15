@@ -111,7 +111,7 @@ internal sealed partial class Interpreter
             string kind = JgsBuiltins.IsLogicalValue(target) ? "logical"
                 : target.IsCharMatrix ? "char"
                 : target.NumericClass.MatlabName();
-            throw new JgsRuntimeException(at.Line, at.Column, $"Conversion to {kind} from cell is not possible.");
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:invalidConversion", $"Conversion to {kind} from cell is not possible."); // the identifier: open item 320
         }
 
         // A datetime or a duration has no place in a numeric array (V6; measured: x = []; x(2) = datetime(...)).
@@ -230,7 +230,7 @@ internal sealed partial class Interpreter
         : JgsBuiltins.StringElementOf(value);
 
     private static JgsRuntimeException NotConvertible(string from, string to, Node at) =>
-        new(at.Line, at.Column,
+        new(at.Line, at.Column, "MATLAB:UnableToConvert", // R2025b's identifier (open item 320, measured: x = "a"; x(2) = struct(...))
             $"Unable to perform assignment because value of type '{from}' is not convertible to '{to}'.");
 
     /// <summary>MATLAB's word for a value's class, for the messages that name one.</summary>

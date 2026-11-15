@@ -388,22 +388,28 @@ internal static partial class JgsBuiltins
 
     private static JgsValue[] Dbstack(Interpreter interpreter, JGraphScriptGlobals host, IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
-        string[] words = DebugWords(args, line, col);
         bool completeNames = false;
         int skip = 0;
-        foreach (string word in words)
+        if (interpreter.Dialect.IsMatlab)
         {
-            if (word.Equals("-completenames", StringComparison.OrdinalIgnoreCase))
+            (completeNames, skip) = DbstackArguments(args, line, col);
+        }
+        else
+        {
+            foreach (string word in DebugWords(args, line, col))
             {
-                completeNames = true;
-            }
-            else if (int.TryParse(word, NumberStyles.None, CultureInfo.InvariantCulture, out int n))
-            {
-                skip = n;
-            }
-            else
-            {
-                throw BadOption(line, col);
+                if (word.Equals("-completenames", StringComparison.OrdinalIgnoreCase))
+                {
+                    completeNames = true;
+                }
+                else if (int.TryParse(word, NumberStyles.None, CultureInfo.InvariantCulture, out int n))
+                {
+                    skip = n;
+                }
+                else
+                {
+                    throw BadOption(line, col);
+                }
             }
         }
 
@@ -424,8 +430,19 @@ internal static partial class JgsBuiltins
             {
                 // The printed frame is qualified by its package and a local function by its file
                 // (pkg.stkloc>inner), where the struct's name stays bare (R2025b, measured in P1).
-                string shown = completeNames && file.Length > 0 ? $"{file}>{name}" : interpreter.PrintedFrameName(name, file);
-                text.Append($"> In {shown} (line {at})").Append('\n');
+                // An anonymous function's frame is its file's and has no line; only the frame
+                // running now is marked, and not when dbstack N left it out (open item 302, measured).
+                bool anonymous = name.StartsWith('@');
+                string shown = completeNames && file.Length > 0 ? $"{file}>{name}"
+                    : anonymous ? AnonymousFrameName(name, file)
+                    : interpreter.PrintedFrameName(name, file);
+                text.Append(text.Length == 0 && skip == 0 ? "> In " : "In ").Append(shown);
+                if (!anonymous)
+                {
+                    text.Append($" (line {at})");
+                }
+
+                text.Append('\n');
             }
 
             if (text.Length > 0)
@@ -436,8 +453,61 @@ internal static partial class JgsBuiltins
             return [];
         }
 
+        // The struct names each frame's file by its name alone, and in full under -completenames
+        // (open item 302, measured: file 'p302.m'); ME.stack's file is always in full.
+        if (!completeNames)
+        {
+            frames = [.. frames.Select(static f => (f.Name, Path.GetFileName(f.File), f.Line))];
+        }
+
         return wanted >= 2 ? [StackValue(frames), JgsValue.Number(1)] : [StackValue(frames)];
     }
+
+    /// <summary>
+    /// R2025b's arguments to <c>dbstack</c> (open item 302, measured): a nonnegative integer of any numeric
+    /// class and <c>'-completenames'</c> as written, at most one of each. The count as text (<c>dbstack 1</c>),
+    /// any other text, a logical or a cell is <c>MATLAB:err_illegal_dbstack_argument</c>; a numeric array
+    /// or empty <c>MATLAB:ScalIntReq</c>, a fraction <c>MATLAB:IntVal</c>.
+    /// </summary>
+    private static (bool CompleteNames, int Skip) DbstackArguments(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        JgsRuntimeException Illegal() => new(line, col, "MATLAB:err_illegal_dbstack_argument",
+            "Arguments must consist of a nonnegative integer, '-completenames', or a single instance of each.");
+        bool completeNames = false;
+        int? skip = null;
+        foreach (JgsValue arg in args)
+        {
+            if (IsTextScalar(arg))
+            {
+                completeNames = !completeNames && TextOf(arg) == "-completenames" ? true : throw Illegal();
+                continue;
+            }
+
+            if (skip is not null || arg.Type == JgsType.Complex || !IsNumericValue(arg) || IsLogicalValue(arg))
+            {
+                throw Illegal();
+            }
+
+            if (ElementCount(arg) != 1)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:ScalIntReq", "Scalar integer value required, but value is an array.");
+            }
+
+            double n = arg.Type == JgsType.Number ? arg.AsNumber : ToDoubles("dbstack", arg, line, col)[0];
+            if (n != Math.Floor(n))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:IntVal", "Scalar integer value required, but value is not integral");
+            }
+
+            skip = n >= 0 ? (int)Math.Min(n, int.MaxValue) : throw Illegal();
+        }
+
+        return (completeNames, skip ?? 0);
+    }
+
+    /// <summary>An anonymous function's frame as dbstack prints it: <c>file&gt;@()body</c>, by the file that wrote it (and its package).</summary>
+    private static string AnonymousFrameName(string text, string file) =>
+        file.Length > 0 ? $"{JgsCodeTree.PackagePrefix(file)}{Path.GetFileNameWithoutExtension(file)}>{text}" : text;
 
     // --- dbtype ---------------------------------------------------------------------------------------
 

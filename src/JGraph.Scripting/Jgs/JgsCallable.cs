@@ -853,12 +853,24 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
         // it calls sees that workspace as its caller, and its file as the current file — and the
         // invoker's pair comes back afterwards. The parameters it bound are released with the
         // frame (V10), at the invoker's next statement boundary.
+        // In the MATLAB dialect the body is a frame of dbstack's (open item 302, ADR 0366).
+        bool framed = code.IsMatlab;
+        if (framed)
+        {
+            _interpreter.EnterAnonymousFrame(this, line);
+        }
+
         try
         {
             return _interpreter.EvaluateForOutputsInContext(_declaration.Body, wanted, local, _file, Text, line, code);
         }
         finally
         {
+            if (framed)
+            {
+                _interpreter.LeaveOtherFrame();
+            }
+
             _interpreter.Lifetimes.FrameExited(local);
         }
     }

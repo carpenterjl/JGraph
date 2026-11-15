@@ -1,0 +1,53 @@
+CHK|anon|n=2 @()dbstack@6(oi302_dbstack_frames.m) ; oi302_dbstack_frames@7(oi302_dbstack_frames.m)|exact
+CHK|direct|n=1 oi302_dbstack_frames@8(oi302_dbstack_frames.m)|exact
+CHK|callit|n=3 @()dbstack@9(oi302_dbstack_frames.m) ; callit@107(oi302_dbstack_frames.m) ; oi302_dbstack_frames@9(oi302_dbstack_frames.m)|exact
+CHK|nested|n=3 @()dbstack@10(oi302_dbstack_frames.m) ; @()feval(@()dbstack)@10(oi302_dbstack_frames.m) ; oi302_dbstack_frames@11(oi302_dbstack_frames.m)|exact
+CHK|skip1|n=1 oi302_dbstack_frames@13(oi302_dbstack_frames.m)|exact
+CHK|complete|n=2 @()dbstack('-completenames')@14(<DIR>\oi302_dbstack_frames.m) ; oi302_dbstack_frames@14(<DIR>\oi302_dbstack_frames.m)|exact
+CHK|index|2 1|exact
+CHK|cellfun|n=2 @(x)dbstack@17(oi302_dbstack_frames.m) ; oi302_dbstack_frames@17(oi302_dbstack_frames.m)|exact
+CHK|localanon|n=3 @()dbstack@119(oi302_dbstack_frames.m) ; makeanon@120(oi302_dbstack_frames.m) ; oi302_dbstack_frames@18(oi302_dbstack_frames.m)|exact
+CHK|localdirect|n=2 localdirect@128(oi302_dbstack_frames.m) ; oi302_dbstack_frames@19(oi302_dbstack_frames.m)|exact
+CHK|arrayfun_local|n=3 localdirect@128(oi302_dbstack_frames.m) ; @(x)localdirect()@20(oi302_dbstack_frames.m) ; oi302_dbstack_frames@20(oi302_dbstack_frames.m)|exact
+CHK|madeelsewhere|n=3 @()dbstack@124(oi302_dbstack_frames.m) ; callit@107(oi302_dbstack_frames.m) ; oi302_dbstack_frames@22(oi302_dbstack_frames.m)|exact
+CHK|count|3|exact
+CHK|args_count|2|exact
+CHK|spaced_name|@(v)frame2name(v,'x')|exact
+CHK|str2func|n=2 @()dbstack@0(oi302_dbstack_frames.m) ; oi302_dbstack_frames@28(oi302_dbstack_frames.m)|exact
+CHK|eval_made|n=2 @()dbstack@0(oi302_dbstack_frames.m) ; oi302_dbstack_frames@30(oi302_dbstack_frames.m)|exact
+CHK|continued|n=2 @()dbstack@32(oi302_dbstack_frames.m) ; oi302_dbstack_frames@31(oi302_dbstack_frames.m)|exact
+CHK|printed_anon|> In oi302_dbstack_frames>@()dbstack / In oi302_dbstack_frames>callp (line 111) / In oi302_dbstack_frames (line 35)|exact
+CHK|printed_local|> In oi302_dbstack_frames>innerp (line 115) / In oi302_dbstack_frames>@()innerp() / In oi302_dbstack_frames>callp (line 111) / In oi302_dbstack_frames (line 36)|exact
+CHK|printed_complete|> In <DIR>\oi302_dbstack_frames.m>@()dbstack('-completenames') / In <DIR>\oi302_dbstack_frames.m>callp (line 111) / In <DIR>\oi302_dbstack_frames.m>oi302_dbstack_frames (line 37)|exact
+CHK|printed_direct|> In oi302_dbstack_frames>innerp (line 115) / In oi302_dbstack_frames (line 38)|exact
+CHK|printed_skip|In oi302_dbstack_frames>callp (line 111) / In oi302_dbstack_frames (line 39)|exact
+CHK|arg dbstack 1|MATLAB:err_illegal_dbstack_argument / Arguments must consist of a nonnegative integer, '-completenames', or a single instance of each.|exact
+CHK|arg dbstack -completenames|ok 1|exact
+CHK|arg dbstack -foo|MATLAB:err_illegal_dbstack_argument / Arguments must consist of a nonnegative integer, '-completenames', or a single instance of each.|exact
+CHK|arg dbstack('-completenames', 1)|ok 0|exact
+CHK|arg dbstack(1, '-completenames')|ok 0|exact
+CHK|arg dbstack(1, 1)|MATLAB:err_illegal_dbstack_argument / Arguments must consist of a nonnegative integer, '-completenames', or a single instance of each.|exact
+CHK|arg dbstack(int8(1))|ok 0|exact
+CHK|arg dbstack(single(0))|ok 1|exact
+CHK|arg dbstack('-COMPLETENAMES')|MATLAB:err_illegal_dbstack_argument / Arguments must consist of a nonnegative integer, '-completenames', or a single instance of each.|exact
+CHK|arg dbstack({1})|MATLAB:err_illegal_dbstack_argument / Arguments must consist of a nonnegative integer, '-completenames', or a single instance of each.|exact
+CHK|arg dbstack([])|MATLAB:ScalIntReq / Scalar integer value required, but value is an array.|exact
+CHK|arg dbstack('-completenames', '-completenames')|MATLAB:err_illegal_dbstack_argument / Arguments must consist of a nonnegative integer, '-completenames', or a single instance of each.|exact
+CHK|arg dbstack(2.5)|MATLAB:IntVal / Scalar integer value required, but value is not integral|exact
+CHK|arg dbstack(-1)|MATLAB:err_illegal_dbstack_argument / Arguments must consist of a nonnegative integer, '-completenames', or a single instance of each.|exact
+CHK|arg dbstack([1 2])|MATLAB:ScalIntReq / Scalar integer value required, but value is an array.|exact
+CHK|arg dbstack("1")|MATLAB:err_illegal_dbstack_argument / Arguments must consist of a nonnegative integer, '-completenames', or a single instance of each.|exact
+CHK|arg dbstack(true)|MATLAB:err_illegal_dbstack_argument / Arguments must consist of a nonnegative integer, '-completenames', or a single instance of each.|exact
+CHK|arg dbstack('1')|MATLAB:err_illegal_dbstack_argument / Arguments must consist of a nonnegative integer, '-completenames', or a single instance of each.|exact
+CHK|inmem_main|oi302_dbstack_frames|exact
+CHK|script|n=2 oi302s@1(oi302s.m) ; oi302_dbstack_frames@65(oi302_dbstack_frames.m)|exact
+CHK|script_anon|n=3 @()dbstack@2(oi302s.m) ; oi302s@2(oi302s.m) ; oi302_dbstack_frames@65(oi302_dbstack_frames.m)|exact
+CHK|inmem_in_script|oi302_dbstack_frames,oi302s|exact
+CHK|inmem_after_script|oi302_dbstack_frames,oi302s|exact
+CHK|inmem_after_function|oi302_dbstack_frames,oi302s,oi302f|exact
+CHK|inmem_in_run|oi302_dbstack_frames,oi302s,oi302f,oi302r|exact
+CHK|inmem_after_run|oi302_dbstack_frames,oi302s,oi302f,oi302r|exact
+CHK|inmem_complete_main|1|exact
+CHK|inmem_clear_name|oi302_dbstack_frames,oi302f,oi302r|exact
+CHK|inmem_clear_functions|oi302_dbstack_frames|exact
+CHK|script_in_anon|n=4 oi302t@1(oi302t.m) ; @()oi302t@137(oi302_dbstack_frames.m) ; scriptinanon@138(oi302_dbstack_frames.m) ; oi302_dbstack_frames@81(oi302_dbstack_frames.m)|exact

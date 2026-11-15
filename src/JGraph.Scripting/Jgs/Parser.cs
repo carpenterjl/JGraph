@@ -2182,6 +2182,7 @@ internal sealed partial class Parser
             Column = start.Column,
             Dialect = Dialect,
             MatlabText = MatlabTextOf(first, _pos),
+            InText = _sourceId == "eval", // eval's and str2func's text: dbstack's line 0 (open item 302)
         };
     }
 

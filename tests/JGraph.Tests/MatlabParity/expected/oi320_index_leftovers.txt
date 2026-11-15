@@ -1,0 +1,160 @@
+CHK|s1|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|s2|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|s3|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|s4|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|s5|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|s6|double [1 2] [2 2]|exact
+CHK|s7|double [1 2] [1 3]|exact
+CHK|s8|struct [1 1] {a} <a=1>|exact
+CHK|s9|struct [1 1] {a} <a=1>|exact
+CHK|s10|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|s11|ERR MATLAB:invalidConversion / Conversion to cell from struct is not possible.|exact
+CHK|s12|ERR MATLAB:invalidConversion / Conversion to char from struct is not possible.|exact
+CHK|s13|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|s14|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|s15|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|s16|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|s17|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|s18|ERR MATLAB:invalidConversion / Conversion to double from cell is not possible.|exact
+CHK|s19|ERR MATLAB:invalidConversion / Conversion to int8 from struct is not possible.|exact
+CHK|s20|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|s21|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|s22|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|c1|ERR MATLAB:index:expected_one_output_for_assignment / Assigning to 2 elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.|exact
+CHK|c2|ERR MATLAB:index:expected_one_output_for_assignment / Assigning to 2 elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.|exact
+CHK|c3|ERR MATLAB:index:expected_one_output_for_assignment / Assigning to 2 elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.|exact
+CHK|c4|double [1 1] 5|exact
+CHK|c5|double [1 3] [1 1 2]|exact
+CHK|c6|ERR MATLAB:index:expected_one_output_for_assignment / Assigning to 4 elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.|exact
+CHK|c7|ERR MATLAB:index:expected_one_output_for_assignment / Assigning to 2 elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.|exact
+CHK|c8|double [1 1] 5|exact
+CHK|c9|ERR MATLAB:index:expected_one_output_for_assignment / Assigning to 0 elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.|exact
+CHK|c10|ERR MATLAB:index:expected_one_output_for_assignment / Assigning to 2 elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.|exact
+CHK|c11|ERR MATLAB:index:expected_one_output_for_assignment / Assigning to 2 elements using a simple assignment statement is not supported. Consider using comma-separated list assignment.|exact
+CHK|f1|ERR MATLAB:scalarStrucRequired / Scalar structure required for this assignment.|exact
+CHK|f2|ERR MATLAB:structAssToNonStruct / Unable to perform assignment because dot indexing is not supported for variables of this type.|exact
+CHK|f3|ERR MATLAB:structAssToNonStruct / Unable to perform assignment because dot indexing is not supported for variables of this type.|exact
+CHK|f4|ERR MATLAB:emptyDotAssignment / A dot name structure assignment is illegal when the structure is empty.  Use a subscript on the structure.|exact
+CHK|f5|ERR MATLAB:noPublicFieldForClass / Unrecognized property 'f' for class 'string'.|exact
+CHK|f6|ERR MATLAB:structAssToNonStruct / Unable to perform assignment because dot indexing is not supported for variables of this type.|exact
+CHK|f7|ERR MATLAB:structAssToNonStruct / Unable to perform assignment because dot indexing is not supported for variables of this type.|exact
+CHK|f8|ERR MATLAB:scalarStrucRequired / Scalar structure required for this assignment.|exact
+CHK|f9|ERR MATLAB:emptyDotAssignment / A dot name structure assignment is illegal when the structure is empty.  Use a subscript on the structure.|exact
+CHK|f10|double [1 1] 1|exact
+CHK|f11|double [1 1] 5|exact
+CHK|f12|ERR MATLAB:scalarStrucRequired / Scalar structure required for this assignment.|exact
+CHK|f13|ERR MATLAB:structAssToNonStruct / Unable to perform assignment because dot indexing is not supported for variables of this type.|exact
+CHK|f14|ERR MATLAB:structAssToNonStruct / Unable to perform assignment because dot indexing is not supported for variables of this type.|exact
+CHK|f15|ERR MATLAB:structAssToNonStruct / Unable to perform assignment because dot indexing is not supported for variables of this type.|exact
+CHK|f16|ERR MATLAB:structAssToNonStruct / Unable to perform assignment because dot indexing is not supported for variables of this type.|exact
+CHK|f17|ERR MATLAB:structAssToNonStruct / Unable to perform assignment because dot indexing is not supported for variables of this type.|exact
+CHK|f18|ERR MATLAB:scalarStrucRequired / Scalar structure required for this assignment.|exact
+CHK|n1|cell [2 2 2] {[],[],[],[],[],[],[],[]}|exact
+CHK|n2|cell [2 3 0] {}|exact
+CHK|n3|cell [2 2 2] {[],[],[],[],[],[],[],[]}|exact
+CHK|n4|double [1 4] [1 2 3 4]|exact
+CHK|n5|double [1 2] [2 2]|exact
+CHK|n6|double [1 3] [2 0 2]|exact
+CHK|n7|ERR MATLAB:NonIntegerInput / Size inputs must be integers.|exact
+CHK|k1|char [1 3] 'abc'|exact
+CHK|k2|char [1 3] 'ace'|exact
+CHK|k3|ERR MATLAB:colon:mixedCharOperands / For colon operator with char operands, first and last operands must be char.|exact
+CHK|k4|ERR MATLAB:colon:mixedCharOperands / For colon operator with char operands, first and last operands must be char.|exact
+CHK|k5|ERR MATLAB:colon:inputsMustBeNumericCharLogical / Inputs must be numeric, char, or logical.|exact
+CHK|k6|char [1 0] ''|exact
+CHK|k7|ERR MATLAB:colon:mixedCharOperands / For colon operator with char operands, first and last operands must be char.|exact
+CHK|k8|ERR MATLAB:colon:operandsNotRealScalar / Colon operands must be real scalars.|exact
+CHK|k9|ERR MATLAB:colon:scalarDoubleMustBeIntegerValued / Double operands interacting with char operands must have integer values.|exact
+CHK|k10|ERR MATLAB:colon:mixedCharOperands / For colon operator with char operands, first and last operands must be char.|exact
+CHK|k11|char [1 1] 'a'|exact
+CHK|k12|ERR MATLAB:colon:mixedCharOperands / For colon operator with char operands, first and last operands must be char.|exact
+CHK|r1|ERR MATLAB:getReshapeDims:notSameNumel / Number of elements must not change. Use [] as one of the size inputs to automatically calculate the appropriate size for that dimension.|exact
+CHK|r2|ERR MATLAB:getReshapeDims:notDivisible / Product of known dimensions, 4, not divisible into total number of elements, 6.|exact
+CHK|r3|ERR MATLAB:getReshapeDims:notSameNumel / Number of elements must not change. Use [] as one of the size inputs to automatically calculate the appropriate size for that dimension.|exact
+CHK|r4|ERR MATLAB:getReshapeDims:unknownDim / Size can only have one unknown dimension.|exact
+CHK|r5|ERR MATLAB:getReshapeDims:notSameNumel / Number of elements must not change. Use [] as one of the size inputs to automatically calculate the appropriate size for that dimension.|exact
+CHK|r6|ERR MATLAB:getReshapeDims:notSameNumel / Number of elements must not change. Use [] as one of the size inputs to automatically calculate the appropriate size for that dimension.|exact
+CHK|r7|ERR MATLAB:getReshapeDims:notSameNumel / Number of elements must not change. Use [] as one of the size inputs to automatically calculate the appropriate size for that dimension.|exact
+CHK|r8|ERR MATLAB:checkDimCommon:nonnegativeSize / Size vector elements should be nonnegative.|exact
+CHK|r9|ERR MATLAB:getReshapeDims:notRealInt / Size arguments must be real integers.|exact
+CHK|r10|ERR MATLAB:getReshapeDims:sizeVector / Size vector must have at least two elements.|exact
+CHK|b1|ERR MATLAB:badsubscript / Index in position 1 exceeds array bounds. Index must not exceed 2.|exact
+CHK|b2|ERR MATLAB:badsubscript / Index in position 1 exceeds array bounds. Index must not exceed 2.|exact
+CHK|b3|ERR MATLAB:badsubscript / Index in position 2 exceeds array bounds. Index must not exceed 2.|exact
+CHK|b4|ERR MATLAB:badsubscript / Index exceeds the number of array elements. Index must not exceed 4.|exact
+CHK|b5|ERR MATLAB:badsubscript / Index in position 3 exceeds array bounds. Index must not exceed 1.|exact
+CHK|b6|ERR MATLAB:badsubscript / Index in position 3 exceeds array bounds. Index must not exceed 2.|exact
+CHK|b7|ERR MATLAB:badsubscript / Index in position 1 is invalid. Array indices must be positive integers or logical values.|exact
+CHK|b8|ERR MATLAB:badsubscript / Index in position 1 is invalid. Array indices must be positive integers or logical values.|exact
+CHK|b9|ERR MATLAB:badsubscript / Index in position 2 exceeds array bounds. Index must not exceed 2.|exact
+CHK|b10|ERR MATLAB:badsubscript / Index in position 1 exceeds array bounds. Index must not exceed 2.|exact
+CHK|t1|table [1 1] [p] 2|exact
+CHK|t2|table [2 1] [q] [3;4]|exact
+CHK|t3|table [1 2] [p,q] [2 4]|exact
+CHK|t4|double [1 1] 2|exact
+CHK|t5|ERR MATLAB:table:UnrecognizedVarName / Unrecognized table variable name 'z'.|exact
+CHK|t6|double [2 1] [1;9]|exact
+CHK|t7|ERR MATLAB:table:UnrecognizedRowName / Unrecognized table row name '1'.|exact
+CHK|t8|table [1 1] [p] 2|exact
+CHK|t9|table [1 1] [p] 2|exact
+CHK|v1|ERR MATLAB:noPublicFieldForClass / Unrecognized property 'f' for class 'string'.|exact
+CHK|v2|ERR MATLAB:structAssToNonStruct / Unable to perform assignment because dot indexing is not supported for variables of this type.|exact
+CHK|v3|ERR MATLAB:structAssToNonStruct / Unable to perform assignment because dot indexing is not supported for variables of this type.|exact
+CHK|v4|ERR MATLAB:scalarStrucRequired / Scalar structure required for this assignment.|exact
+CHK|v5|ERR MATLAB:structAssToNonStruct / Unable to perform assignment because dot indexing is not supported for variables of this type.|exact
+CHK|v6|ERR MATLAB:noSuchMethodOrField / Unrecognized method, property, or field 'g' for class 'string'.|exact
+CHK|v7|ERR MATLAB:structAssToNonStruct / Unable to perform assignment because dot indexing is not supported for variables of this type.|exact
+CHK|v8|ERR MATLAB:scalarStrucRequired / Scalar structure required for this assignment.|exact
+CHK|v9|ERR MATLAB:noPublicFieldForClass / Unrecognized property 'f' for class 'string'.|exact
+CHK|v10|ERR MATLAB:noPublicFieldForClass / Unrecognized property 'f' for class 'string'.|exact
+CHK|v11|struct [1 1] {t} <t=<f=1>>|exact
+CHK|v12|struct [1 1] {t} <t=<f=1>>|exact
+CHK|v13|struct [1 1] {t} <t=<f=1>>|exact
+CHK|v14|struct [1 1] {t} <t=<f=1>>|exact
+CHK|v15|ERR MATLAB:emptyDotAssignment / A dot name structure assignment is illegal when the structure is empty.  Use a subscript on the structure.|exact
+CHK|e1|struct [1 1] {f} <f=1>|exact
+CHK|e2|struct [1 1] {f} <f=1>|exact
+CHK|e3|struct [1 1] {f} <f=1>|exact
+CHK|e4|struct [1 1] {f} <f=1>|exact
+CHK|e5|ERR MATLAB:noSuchMethodOrField / Unrecognized method, property, or field 'f' for class 'string'.|exact
+CHK|e6|ERR MATLAB:noPublicFieldForClass / Unrecognized property 'f' for class 'string'.|exact
+CHK|e7|struct [1 1] {f} <f=1>|exact
+CHK|e8|struct [1 1] {f} <f=1>|exact
+CHK|e9|struct [1 1] {f} <f=1>|exact
+CHK|e10|struct [1 1] {f} <f=1>|exact
+CHK|e11|struct [1 1] {f} <f=1>|exact
+CHK|e12|struct [1 1] {f} <f=1>|exact
+CHK|e13|struct [1 1] {f} <f=1>|exact
+CHK|e14|struct [1 1] {f} <f=<g=1>>|exact
+CHK|g1|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|g2|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|g3|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|g4|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|g5|ERR MATLAB:UnableToConvert / Unable to perform assignment because value of type 'struct' is not convertible to 'string'.|exact
+CHK|g6|ERR MATLAB:invalidConversion / Conversion to logical from struct is not possible.|exact
+CHK|g7|ERR MATLAB:heterogeneousStrucAssignment / Subscripted assignment between dissimilar structures.|exact
+CHK|g8|struct [1 2] {a} <a=[]> ; <a=1>|exact
+CHK|g9|ERR MATLAB:invalidConversion / Conversion to double from struct is not possible.|exact
+CHK|h1|ERR MATLAB:table:UnrecognizedVarName / Unrecognized table variable name 'z'.|exact
+CHK|h2|ERR MATLAB:table:UnrecognizedVarName / Unrecognized table variable name 'z'.|exact
+CHK|h3|ERR MATLAB:table:UnrecognizedRowName / Unrecognized table row name 'a'.|exact
+CHK|h4|ERR MATLAB:table:UnrecognizedVarName / Unrecognized table variable name 'z'.|exact
+CHK|h5|ERR MATLAB:table:UnrecognizedVarName / Unrecognized table variable name 'z'.|exact
+CHK|h6|ERR MATLAB:table:UnrecognizedVarName / Unrecognized table variable name 'P'.|exact
+CHK|l1|char [1 8] 'a-b-c-d-'|exact
+CHK|l2|double [1 3] [97 98 99]|exact
+CHK|l3|double [1 3] [97 98 99]|exact
+CHK|l4|double [1 1] 26|exact
+CHK|z1|double [1 2] [3 3]|exact
+CHK|z2|double [1 2] [0 0]|exact
+CHK|z3|double [1 2] [0 0]|exact
+CHK|z4|double [1 2] [2 3]|exact
+CHK|z5|double [1 2] [4 4]|exact
+CHK|z6|double [1 2] [2 3]|exact
+CHK|z7|double [1 3] [2 2 2]|exact
+CHK|z8|double [1 2] [0 0]|exact
+CHK|z9|double [1 2] [2 0]|exact
+CHK|z10|ERR MATLAB:nonaninf / NaN and Inf not allowed.|exact
+CHK|z11|ERR MATLAB:nonaninf / NaN and Inf not allowed.|exact
+CHK|paren_colon_paren|ERR MATLAB:mir_paren_index_must_be_last / Error:  Invalid array indexing.|div=ADR0366|diverges|double [3 1] [1;2;3]
+CHK|paren_one_paren|ERR MATLAB:mir_paren_index_must_be_last / Error:  Invalid array indexing.|div=ADR0366|diverges|double [1 1] 1

@@ -197,8 +197,11 @@ internal sealed partial class Interpreter
                     return LevelKind.Ordinary;
                 }
 
+                // A slot holding an empty cell or char under a field write is created as [] is (open
+                // item 320, measured: c = {{}}; c{1}.f = 1 makes a struct).
                 if (!nothing && TryPeekStep(held!, step, out JgsValue slot)
-                    && !(slot.Type == JgsType.Array && slot.ArrayLength == 0 && !slot.IsStringArray))
+                    && !(slot.Type == JgsType.Array && slot.ArrayLength == 0 && !slot.IsStringArray)
+                    && !(rest > 0 && chain[level + 1] is MemberExpr && IsEmptyDotHolder(slot)))
                 {
                     next = slot;
                     return LevelKind.Continue;

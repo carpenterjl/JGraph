@@ -164,8 +164,14 @@ internal sealed partial class Interpreter
     /// function the file holds that is not its main one — which R2025b's <c>dbstack</c> prints as
     /// <c>file&gt;name</c>.
     /// </summary>
+    /// <remarks>
+    /// A -batch run's own file has its storage under no source id (<see cref="FileOfFrame"/> names it by
+    /// <see cref="MainScriptPath"/>): its local functions print as <c>script&gt;loc</c> too (open item 302, measured).
+    /// </remarks>
     internal bool IsLocalFunctionOf(string file, string name) =>
-        file.Length > 0 && _files.TryGetValue(file, out FunctionFile? storage)
+        file.Length > 0
+        && (_files.TryGetValue(file, out FunctionFile? storage)
+            || (string.Equals(file, MainScriptPath, StringComparison.Ordinal) && _files.TryGetValue(string.Empty, out storage)))
         && storage.TryGet(name, out _) && !storage.IsMain(name);
 
     /// <summary>

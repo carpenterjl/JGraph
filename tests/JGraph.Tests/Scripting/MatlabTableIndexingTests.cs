@@ -130,7 +130,7 @@ public class MatlabTableIndexingTests : IDisposable
         try
             T(:, 'NOPE');
         catch err
-            ok = ok + ~isempty(strfind(err.message, "no variable 'NOPE'"));
+            ok = ok + ~isempty(strfind(err.message, "Unrecognized table variable name 'NOPE'.")) + strcmp(err.identifier, 'MATLAB:table:UnrecognizedVarName') - 1;
         end
         assert(ok == 1);
         """);

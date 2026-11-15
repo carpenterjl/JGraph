@@ -145,8 +145,11 @@ their file is not already listed, and they are C.
 - **`userpath`'s default folder is not put on the search path when a session starts**, as R2025b's is,
   and a setter's change lasts for the session, where R2025b saves it.
 - **`inmem` lists the program's files alone**, where R2025b's list starts with its own toolbox files;
-  JGraph's builtins are not files. A script that is running is not listed either (R2025b lists it):
-  the path's loaded files hold functions and classes, not a script run by name.
+  JGraph's builtins are not files.
+
+Closed since: **a script that is running was not listed** (R2025b lists it). ADR 0366 (open item 302)
+lists the -batch file and each script `run` reads, in load order with the path's files, as R2025b's
+`inmem` does.
 
 ## Still open
 

@@ -298,8 +298,23 @@ internal sealed partial class Interpreter
     internal List<(string Name, string File, int Line)> CurrentStack(int line)
     {
         var listed = new List<(string Name, string File, int Line)>();
-        for (int i = _activeFunctions.Count - 1; i >= 0; i--)
+        int other = _otherFrames.Count - 1;
+        for (int i = _activeFunctions.Count - 1; i >= -1; i--)
         {
+            // An anonymous body or a script run by name entered while function i was innermost sits
+            // above it (open item 302, ADR 0366).
+            for (; OtherFrameDepth(other) == i + 1; other--)
+            {
+                (string otherName, string otherFile, int otherLine, int callLine) = OtherFrame(other, line);
+                listed.Add((otherName, otherFile, otherLine));
+                line = callLine;
+            }
+
+            if (i < 0)
+            {
+                break;
+            }
+
             FnStmt active = _activeFunctions[i];
             string name = AnyClasses && CurrentFrame.ClassContext is { } running && i == _activeFunctions.Count - 1 && running.DeclaresMethod(active)
                 ? $"{running.StackName}.{active.Name}" // W.stkn for a method of pkg.W (P2, measured)
@@ -1041,6 +1056,7 @@ internal sealed partial class Interpreter
         using FileContext entered = EnterFile(file);
         Completion completion;
         _runningScripts.Add(file);
+        NoteScriptRun(file); // inmem lists it (open item 302)
         bool wasScript = _inScript;
         _inScript = true;
         JgsLifetime? outerLifetimes = JgsLifetime.Current;
@@ -1078,9 +1094,10 @@ internal sealed partial class Interpreter
     /// the file's storage, visible to the script's statements and to nothing else — not to the
     /// caller, whose same-named function they no longer overwrite, and not as nested functions of a
     /// caller that is a function. An error that escapes is attributed to <paramref name="sourceId"/>,
-    /// the file's path, so it is not read as a line of the caller's.
+    /// the file's path, so it is not read as a line of the caller's. A <paramref name="callLine"/> of 0 or
+    /// more is the line that named the script, and makes the run a frame of dbstack's (open item 302).
     /// </summary>
-    internal void RunScriptFile(IReadOnlyList<Stmt> program, JgsEnvironment scope, string sourceId)
+    internal void RunScriptFile(IReadOnlyList<Stmt> program, JgsEnvironment scope, string sourceId, int callLine = -1)
     {
         using DialectContext code = EnterDialect(DialectOf(program)); // the file's own dialect (V11)
         HoistAll(program, sourceId);
@@ -1098,6 +1115,12 @@ internal sealed partial class Interpreter
         // statements see them and the caller's list never shows them (P3, measured).
         JgsImports? outerImports = scope.Imports;
         scope.Imports = new JgsImports(dynamic: true) { Outer = outerImports };
+        bool framed = callLine >= 0 && Dialect.IsMatlab;
+        if (framed)
+        {
+            EnterScriptFrame(sourceId, callLine);
+        }
+
         try
         {
             HoistImports(program, scope); // the whole file's, from its first line (measured)
@@ -1114,6 +1137,10 @@ internal sealed partial class Interpreter
             JgsLifetime.Current = outerLifetimes;
             _inScript = wasScript;
             _runningScripts.RemoveAt(_runningScripts.Count - 1);
+            if (framed)
+            {
+                LeaveOtherFrame();
+            }
         }
 
         if (completion.Kind is CompletionKind.Break or CompletionKind.Continue)
@@ -3484,10 +3511,12 @@ internal sealed partial class Interpreter
         JgsValue startValue = Evaluate(range.Start, env);
         JgsValue stepValue = range.Step is null ? JgsValue.Number(1) : Evaluate(range.Step, env);
         JgsValue stopValue = Evaluate(range.Stop, env);
-        if (startValue.TimeTag is not null || stepValue.TimeTag is not null || stopValue.TimeTag is not null)
+        if (startValue.TimeTag is not null || stepValue.TimeTag is not null || stopValue.TimeTag is not null
+            || (Dialect.IsMatlab && (IsColonText(startValue) || IsColonText(stopValue) || IsColonText(stepValue))))
         {
             // A range of instants is a range of instants whichever spelling reaches it; the walk
-            // over the built array is the one that knows how to carry the tag.
+            // over the built array is the one that knows how to carry the tag. So is a range of
+            // characters, for c = 'a':'d' (open item 320).
             return ExecuteForOverArray(statement, RangeFromValues(range, startValue, stepValue, stopValue), env);
         }
 
@@ -3820,6 +3849,11 @@ internal sealed partial class Interpreter
         {
             throw new JgsRuntimeException(range.Line, range.Column, "MATLAB:colon:inputsMustBeNumericCharLogical",
                 "Inputs must be numeric, char, or logical."); // open item 115
+        }
+
+        if (Dialect.IsMatlab && (IsColonText(startValue) || IsColonText(stopValue) || IsColonText(stepValue)))
+        {
+            return CharRange(range, startValue, stepValue, stopValue); // 'a':'c' (open item 320)
         }
 
         JgsTimeTag? time = startValue.TimeTag ?? stopValue.TimeTag ?? stepValue.TimeTag;
@@ -6783,6 +6817,7 @@ internal sealed partial class Interpreter
         // The conjuring happens here, after the right-hand side and the subscripts have run (M16):
         // a global one of them cleared is created afresh (#158), and a right-hand side that reads
         // the name it is written into still finds nothing there, as it should.
+        RefuseStructIntoData(container, assign.Op, rhs, assign, env); // x = []; x(2) = s (open item 320)
         JgsEnvironment? conjuredScope = null;
         string? conjuredName = null;
         if (assign.Op == TokenType.Assign && !Dialect.RequireLet)
@@ -9140,8 +9175,9 @@ internal sealed partial class Interpreter
                 JgsValue startValue = Evaluate(range.Start, env);
                 JgsValue stepValue = range.Step is null ? JgsValue.Number(1) : Evaluate(range.Step, env);
                 JgsValue stopValue = Evaluate(range.Stop, env);
-                return RoundedIndexRange(range, startValue, stepValue, stopValue)
+                JgsValue built = RoundedIndexRange(range, startValue, stepValue, stopValue)
                     ?? RangeFromValues(range, startValue, stepValue, stopValue);
+                return !named && IsColonText(built) ? PositionalIndex(built, range) : built; // x('a':'c') (open item 320)
             }
 
             // A lone true or false is a one-element mask, as MATLAB reads it: x(true) is x(1) and
@@ -10281,9 +10317,9 @@ internal sealed partial class Interpreter
             int cols = cell.Cols;
             int[] extents = [rows, cols];
             int[] rowPicks = BracePicks(
-                EvaluateIndexArgument(subscripts[0], extents, 0, env), rows, "cell row", at);
+                EvaluateIndexArgument(subscripts[0], extents, 0, env), rows, "cell row", at, position: 1);
             int[] colPicks = BracePicks(
-                EvaluateIndexArgument(subscripts[1], extents, 1, env), cols, "cell column", at);
+                EvaluateIndexArgument(subscripts[1], extents, 1, env), cols, "cell column", at, position: 2);
 
             // Column-major, so a two-subscript list runs down each column in turn — the same order
             // c(:) reads in, which is what makes c{:, 1} and c{:} agree on a single-column cell.
@@ -10324,7 +10360,7 @@ internal sealed partial class Interpreter
         int total = 1;
         for (int i = 0; i < count; i++)
         {
-            picks[i] = BracePicks(EvaluateIndexArgument(subscripts[i], extents, i, env), extents[i], what, at);
+            picks[i] = BracePicks(EvaluateIndexArgument(subscripts[i], extents, i, env), extents[i], what, at, position: i + 1);
             shape[i] = picks[i].Length;
             total = checked(total * picks[i].Length);
         }
@@ -10376,10 +10412,25 @@ internal sealed partial class Interpreter
 
     /// <summary>
     /// The slots one brace subscript names along an extent: null is ':' (all of them), an array
-    /// gathers or masks, and anything else is the single element it names.
+    /// gathers or masks, and anything else is the single element it names. With several subscripts,
+    /// <paramref name="position"/> is this one's place, which a MATLAB refusal names (open item 320).
     /// </summary>
-    private int[] BracePicks(JgsValue? index, int extent, string targetName, Node at)
+    private int[] BracePicks(JgsValue? index, int extent, string targetName, Node at, int position = 0)
     {
+        if (position > 0 && Dialect.IsMatlab && index is not null)
+        {
+            int saved = PackedOps.SubscriptPosition;
+            PackedOps.SubscriptPosition = position;
+            try
+            {
+                return BracePicks(index, extent, targetName, at);
+            }
+            finally
+            {
+                PackedOps.SubscriptPosition = saved;
+            }
+        }
+
         if (index is null)
         {
             var all = new int[extent];
@@ -10961,7 +11012,7 @@ internal sealed partial class Interpreter
         string? named = member.Target is VariableExpr unborn && !LookUp(unborn.Name, env, out _)
             ? WritableFieldName(FieldName(member, env), member)
             : null;
-        JgsValue container = ResolveStructForWrite(member.Target, env, out JgsStructArray? owner);
+        JgsValue container = ResolveStructForWrite(member.Target, env, out JgsStructArray? owner, member.Field);
         string field = named ?? WritableFieldName(FieldName(member, env), member); // open item 202
         Dictionary<string, JgsValue> fields = container.WritableStruct(); // M7: the write gate
         fields.TryGetValue(field, out JgsValue? replaced);
@@ -11119,7 +11170,9 @@ internal sealed partial class Interpreter
     /// that stands alone. The caller needs it to give every sibling the field being written (M65):
     /// a struct array where one element has a field the others lack is not a value the type allows.
     /// </param>
-    private JgsValue ResolveStructForWrite(Expr expr, JgsEnvironment env, out JgsStructArray? owner)
+    /// <param name="into">The field the caller writes into the answer (open item 320), named by a string's refusal.</param>
+    /// <param name="last">Whether that field is the write's last one: a string refuses it as no property, and as no field to read on the way.</param>
+    private JgsValue ResolveStructForWrite(Expr expr, JgsEnvironment env, out JgsStructArray? owner, string? into = null, bool last = true)
     {
         owner = null;
         switch (expr)
@@ -11129,8 +11182,9 @@ internal sealed partial class Interpreter
                 {
                     // [] is the empty of every container, a struct included: s = []; s.f = 1 is
                     // MATLAB's own way of starting one (and what a cleared-then-redeclared global
-                    // holds, #158).
-                    if (existing.Type == JgsType.Array && existing.ArrayLength == 0 && !existing.IsStringArray)
+                    // holds, #158). In the MATLAB dialect an empty cell or char does as well (open
+                    // item 320, measured: x = {}; x.f = 1 is a struct).
+                    if ((existing.Type == JgsType.Array && existing.ArrayLength == 0 && !existing.IsStringArray) || IsEmptyDotHolder(existing))
                     {
                         JgsValue started = JgsValue.EmptyStruct();
                         Rebind(variable.Name, started, env);
@@ -11141,6 +11195,11 @@ internal sealed partial class Interpreter
                     {
                         throw new JgsRuntimeException(variable.Line, variable.Column, "MATLAB:categorical:FieldAssignmentNotAllowed",
                             "Attempt to assign field of non-structure array."); // open item 123
+                    }
+
+                    if (Dialect.IsMatlab && existing.IsStringArray)
+                    {
+                        throw StringFieldWriteRefusal(into, last, variable); // open item 320
                     }
 
                     if (existing.Type != JgsType.Struct)
@@ -11205,7 +11264,7 @@ internal sealed partial class Interpreter
                     return child;
                 }
 
-                JgsValue parent = ResolveStructForWrite(nested.Target, env, out _);
+                JgsValue parent = ResolveStructForWrite(nested.Target, env, out _, field, last: false);
                 field = WritableFieldName(field, nested); // s.('1bad').f = v (open item 202)
 
                 // M3: the write detaches at every level on the way down, and the entry holds this
@@ -11215,10 +11274,16 @@ internal sealed partial class Interpreter
                 {
                     // V6: a field that holds text, a number or a cell is not a struct to write a
                     // field onto, and R2025b says so. It was replaced by an empty struct without a
-                    // word - st.t = 'ab'; st.t.f = 1 lost the text.
+                    // word - st.t = 'ab'; st.t.f = 1 lost the text. The identifiers are the variable
+                    // level's, and a string's refusal is its own (open item 320, measured).
+                    if (child is not null && Dialect.IsMatlab && child.IsStringArray)
+                    {
+                        throw StringFieldWriteRefusal(into, last, nested);
+                    }
+
                     if (child is not null && RefusesDots(child))
                     {
-                        throw new JgsRuntimeException(nested.Line, nested.Column, DotNotSupported);
+                        throw FieldWriteRefusal(nested, DotNotSupported);
                     }
 
                     child = JgsValue.EmptyStruct();
@@ -11226,7 +11291,7 @@ internal sealed partial class Interpreter
                 }
                 else if (child.IsStructArray && Dialect.IsMatlab)
                 {
-                    throw new JgsRuntimeException(nested.Line, nested.Column, "Scalar structure required for this assignment.");
+                    throw ScalarStructRequired(child, nested); // open item 320: st.t.f = v over a struct array
                 }
 
                 return child;
@@ -11271,6 +11336,15 @@ internal sealed partial class Interpreter
                 {
                     throw new JgsRuntimeException(expr.Line, expr.Column, "MATLAB:categorical:FieldAssignmentNotAllowed",
                         "Attempt to assign field of non-structure array."); // open item 123
+                }
+
+                // c{1}.a = v: R2025b's identifiers, as a variable's (open item 320, measured).
+                bool plainStructs = evaluated.Type == JgsType.Struct && evaluated.ClassName is null;
+                if (Dialect.IsMatlab && (plainStructs || evaluated.IsStringArray || RefusesDots(evaluated)))
+                {
+                    throw plainStructs ? ScalarStructRequired(evaluated, expr)
+                        : evaluated.IsStringArray ? StringFieldWriteRefusal(into, last, expr)
+                        : FieldWriteRefusal(expr, DotNotSupported);
                 }
 
                 throw new JgsRuntimeException(expr.Line, expr.Column,
@@ -11322,9 +11396,13 @@ internal sealed partial class Interpreter
     /// number, a logical, a cell, or an array that holds something. The empty <c>[]</c> is what a
     /// struct starts from, and an object, a handle, a table and a time value have dots of their own.
     /// </summary>
+    /// <remarks>
+    /// Open item 320 (measured): an empty cell or char starts a struct as <c>[]</c> does, and a function
+    /// handle refuses as text does.
+    /// </remarks>
     private bool RefusesDots(JgsValue held) =>
-        Dialect.IsMatlab && !held.IsTime && !JgsHandleRegistry.TryGet(held, out _)
-        && (held.Type is JgsType.Number or JgsType.Bool or JgsType.Complex or JgsType.String or JgsType.Cell
+        Dialect.IsMatlab && !held.IsTime && !JgsHandleRegistry.TryGet(held, out _) && !IsEmptyDotHolder(held)
+        && (held.Type is JgsType.Number or JgsType.Bool or JgsType.Complex or JgsType.String or JgsType.Cell or JgsType.Function
             || (held.Type == JgsType.Array && held.ArrayLength > 0));
 
     /// <summary>
@@ -11523,6 +11601,7 @@ internal sealed partial class Interpreter
         // grows the cell and places the slot.
         if (brace.Indices.Count > 2)
         {
+            RequireOneBracePlace(target, brace, env); // c{:, 1, 1} = v names several (open item 320)
             IndexWrite(brace.Target, brace.Indices, TokenType.Assign, JgsValue.Cell(new[] { value }), brace, env);
             return value;
         }

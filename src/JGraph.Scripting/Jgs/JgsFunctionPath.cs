@@ -22,7 +22,11 @@ namespace JGraph.Scripting.Jgs;
 internal sealed class JgsFunctionPath
 {
     /// <summary>A loaded file: what it resolved to, when it was last written, the callable built from it, and for a class file in an <c>@Class</c> folder the folder as it was read (stage P4).</summary>
-    private sealed record Loaded(string Path, DateTime Written, JgsValue Value, JgsClassFolder? Folder = null);
+    private sealed record Loaded(string Path, DateTime Written, JgsValue Value, JgsClassFolder? Folder = null)
+    {
+        /// <summary>Its place in the load order <c>inmem</c> lists by (open item 302).</summary>
+        public long Order { get; init; }
+    }
 
     // The class folders whose class-folder-wins warning has been raised (PD3: once per session per name).
     private readonly HashSet<string> _warnedClassFolders = new(StringComparer.Ordinal);
@@ -207,6 +211,7 @@ internal sealed class JgsFunctionPath
             }
         }
 
+        _interpreter.ForgetScriptsRun(null); // the scripts run as programs, but a running one (open item 302)
         _index.Invalidate(null);
     }
 
@@ -214,25 +219,25 @@ internal sealed class JgsFunctionPath
     /// The files loaded now, as <c>inmem</c> lists them (open item 169): each plain name, then each
     /// package member by its dotted name, then each private file as <c>folder\private\name</c> after
     /// the folder that holds <c>private</c> (R2025b's <c>scratch\private\f1priv</c>, measured), each with
-    /// its path.
+    /// its path and its place in the load order (open item 302).
     /// </summary>
-    internal IEnumerable<(string Name, string Path)> LoadedFiles()
+    internal IEnumerable<(string Name, string Path, long Order)> LoadedFiles()
     {
         foreach ((string name, Loaded loaded) in _loaded)
         {
-            yield return (name, loaded.Path);
+            yield return (name, loaded.Path, loaded.Order);
         }
 
         foreach ((string name, Loaded loaded) in _dotted)
         {
-            yield return (name, loaded.Path);
+            yield return (name, loaded.Path, loaded.Order);
         }
 
-        foreach ((string path, Loaded _) in _private)
+        foreach ((string path, Loaded loaded) in _private)
         {
             string? privateFolder = System.IO.Path.GetDirectoryName(path);
             string owner = System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(privateFolder ?? string.Empty) ?? string.Empty);
-            yield return ($"{owner}{System.IO.Path.DirectorySeparatorChar}private{System.IO.Path.DirectorySeparatorChar}{System.IO.Path.GetFileNameWithoutExtension(path)}", path);
+            yield return ($"{owner}{System.IO.Path.DirectorySeparatorChar}private{System.IO.Path.DirectorySeparatorChar}{System.IO.Path.GetFileNameWithoutExtension(path)}", path, loaded.Order);
         }
     }
 
@@ -254,6 +259,8 @@ internal sealed class JgsFunctionPath
         {
             _dotted.Remove(name);
         }
+
+        _interpreter.ForgetScriptsRun(name); // a script run as a program by that name (open item 302)
 
         // clear name for a class file forgets the class too (W11: App Designer's Run clears the
         // app's class and runs the file as saved); objects made before keep the class they were made with.
@@ -784,7 +791,7 @@ internal sealed class JgsFunctionPath
             throw new JgsRuntimeException(0, 0, $"Previously accessible file \"{path}\" is now inaccessible.");
         }
 
-        loaded = new Loaded(path, written, value, folder);
+        loaded = new Loaded(path, written, value, folder) { Order = _interpreter.NextLoadOrder() };
         return true;
     }
 
@@ -941,11 +948,12 @@ internal sealed class JgsFunctionPath
                 // packages plan P1: x = pkg.s, pkg.s(1)).
                 new(line, column, "MATLAB:scriptNotAFunction", $"Execution of script {name} as a function is not supported:\n{path}");
 
-            void RunScript()
+            void RunScript(int line)
             {
                 // The script's statements carry the MATLAB dialect they were parsed in, and the run
-                // enters it (V11, ADR 0172) - whoever named the script.
-                _interpreter.RunScriptFile(program, _interpreter.CurrentFrame, path);
+                // enters it (V11, ADR 0172) - whoever named the script. It is a frame of dbstack's,
+                // entered from the line that named it (open item 302, ADR 0366).
+                _interpreter.RunScriptFile(program, _interpreter.CurrentFrame, path, line);
             }
 
             // The single-output road is a value wanted (x = s): refused, as R2025b refuses; a
@@ -962,7 +970,7 @@ internal sealed class JgsFunctionPath
                         throw NotAFunction(line, column);
                     }
 
-                    RunScript();
+                    RunScript(line);
                     return [];
                 },
             });

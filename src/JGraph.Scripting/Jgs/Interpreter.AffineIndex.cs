@@ -143,7 +143,9 @@ internal sealed partial class Interpreter
                 return new SubscriptSlot(selector, scalar: false);
             }
 
-            return new SubscriptSlot(RangeFromValues(range, startValue, stepValue, stopValue));
+            // x('a':'c') reads the codes the char range spells (open item 320, measured).
+            JgsValue built = RangeFromValues(range, startValue, stepValue, stopValue);
+            return new SubscriptSlot(Dialect.IsMatlab && IsColonText(built) ? PositionalIndex(built, range) : built);
         }
 
         JgsValue? index = EvaluateIndexArgument(argument, extents, slot, env);

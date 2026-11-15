@@ -180,7 +180,7 @@ public class MatlabBuiltinTests : IDisposable
             disp(isfield(t, 'name'))
             """);
 
-        Assert.Contains("3", output, StringComparison.Ordinal);
+        Assert.Contains("9", output, StringComparison.Ordinal); // cell(3) is 3-by-3, as R2025b's (open item 320)
         Assert.Contains("2", output, StringComparison.Ordinal);
         Assert.Contains("width", output, StringComparison.Ordinal);
         Assert.Contains("true", output, StringComparison.Ordinal);

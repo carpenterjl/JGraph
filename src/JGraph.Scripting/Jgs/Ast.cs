@@ -319,6 +319,12 @@ internal sealed class AnonymousFnExpr(IReadOnlyList<string> parameters, Expr bod
     public string? MatlabText { get; set; }
 
     /// <summary>
+    /// Whether the handle was written in text <c>eval</c> or <c>str2func</c> read, which is no line of a
+    /// file: R2025b's <c>dbstack</c> gives its frame line 0 (open item 302, ADR 0366, measured).
+    /// </summary>
+    public bool InText { get; init; }
+
+    /// <summary>
     /// The body's free names, in the order a handle's creation captures them; worked out once per
     /// declaration (the every-row plan's I2, ADR 0325) since a handle made in a loop asked per pass.
     /// </summary>

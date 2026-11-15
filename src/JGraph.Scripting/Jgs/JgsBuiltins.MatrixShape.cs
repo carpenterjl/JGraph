@@ -845,6 +845,28 @@ internal static partial class JgsBuiltins
 
         double[] flat = FlattenColumnMajor("reshape", args[0], line, col);
 
+        // The refusals are R2025b's in the MATLAB dialect (open item 320, ADR 0366, measured); a JGS
+        // script keeps its own words.
+        bool matlab = JgsRunningDialect.ThreadIsMatlab;
+        JgsRuntimeException Refusal(string identifier, string matlabWords, string jgsWords) =>
+            matlab ? new(line, col, identifier, matlabWords) : new(line, col, jgsWords);
+        JgsRuntimeException TooFewDims() => Refusal("MATLAB:getReshapeDims:sizeVector",
+            "Size vector must have at least two elements.", "reshape expects a size with at least two dimensions.");
+        int Dim(double raw, int index)
+        {
+            if (matlab && (raw != Math.Floor(raw) || !double.IsFinite(raw)))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:getReshapeDims:notRealInt", "Size arguments must be real integers.");
+            }
+
+            if (matlab && raw < 0)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:checkDimCommon:nonnegativeSize", "Size vector elements should be nonnegative.");
+            }
+
+            return index < 0 ? (int)raw : Count("reshape", args, index, line, col);
+        }
+
         // Collect the requested size; -1 marks the (at most one) [] wildcard.
         var dims = new List<int>();
         int wild = -1;
@@ -853,12 +875,12 @@ internal static partial class JgsBuiltins
             double[] size = ToDoubles("reshape", args[1], line, col);
             if (size.Length < 2)
             {
-                throw new JgsRuntimeException(line, col, "reshape expects a size with at least two dimensions.");
+                throw TooFewDims();
             }
 
             foreach (double dim in size)
             {
-                dims.Add((int)dim);
+                dims.Add(Dim(dim, -1));
             }
         }
         else
@@ -869,7 +891,8 @@ internal static partial class JgsBuiltins
                 {
                     if (wild >= 0)
                     {
-                        throw new JgsRuntimeException(line, col, "reshape can infer at most one dimension from [].");
+                        throw Refusal("MATLAB:getReshapeDims:unknownDim", "Size can only have one unknown dimension.",
+                            "reshape can infer at most one dimension from [].");
                     }
 
                     wild = dims.Count;
@@ -877,13 +900,13 @@ internal static partial class JgsBuiltins
                 }
                 else
                 {
-                    dims.Add(Count("reshape", args, i, line, col));
+                    dims.Add(Dim(args[i].Type == JgsType.Number ? args[i].AsNumber : 0, i));
                 }
             }
 
             if (dims.Count < 2)
             {
-                throw new JgsRuntimeException(line, col, "reshape expects a size with at least two dimensions.");
+                throw TooFewDims();
             }
         }
 
@@ -900,7 +923,8 @@ internal static partial class JgsBuiltins
 
             if (known == 0 || flat.Length % known != 0)
             {
-                throw new JgsRuntimeException(line, col,
+                throw Refusal("MATLAB:getReshapeDims:notDivisible",
+                    $"Product of known dimensions, {known}, not divisible into total number of elements, {flat.Length}.",
                     $"reshape cannot infer the [] dimension: {flat.Length} element(s) do not divide by {known}.");
             }
 
@@ -915,7 +939,8 @@ internal static partial class JgsBuiltins
 
         if (product != flat.Length)
         {
-            throw new JgsRuntimeException(line, col,
+            throw Refusal("MATLAB:getReshapeDims:notSameNumel",
+                "Number of elements must not change. Use [] as one of the size inputs to automatically calculate the appropriate size for that dimension.",
                 $"reshape must keep the element count: {flat.Length} element(s) do not fill {string.Join("x", dims)}.");
         }
 

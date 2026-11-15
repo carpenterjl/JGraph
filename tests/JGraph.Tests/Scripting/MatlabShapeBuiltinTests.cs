@@ -86,7 +86,7 @@ public class MatlabShapeBuiltinTests : IDisposable
             "reshape(1:6, 4, 2);", sourceId: "", CancellationToken.None);
 
         Assert.False(result.Success);
-        Assert.Contains("element count", _output.ErrorText, StringComparison.Ordinal);
+        Assert.Contains("Number of elements must not change.", _output.ErrorText, StringComparison.Ordinal); // R2025b's words (open item 320)
     }
 
     [Fact]

@@ -276,14 +276,20 @@ internal static partial class JgsBuiltins
         bool complete = args.Count > 0 && TextOf(args[0]) == "-completenames";
         var names = new List<string>();
         var seen = new HashSet<string>(JgsFunctionPath.PathComparer);
+
+        // The scripts run as programs (the -batch file, run('s.m')) are loaded files too, in their place in
+        // the load order (open item 302, measured: p302, p302s, p302f, p302r).
+        IEnumerable<(string Name, string Path, long Order)> loadedFiles = interpreter.ScriptsRun;
         if (host.FunctionPath is { } path)
         {
-            foreach ((string name, string file) in path.LoadedFiles())
+            loadedFiles = loadedFiles.Concat(path.LoadedFiles());
+        }
+
+        foreach ((string name, string file, _) in loadedFiles.OrderBy(static f => f.Order))
+        {
+            if (seen.Add(file))
             {
-                if (seen.Add(file))
-                {
-                    names.Add(complete ? file : name);
-                }
+                names.Add(complete ? file : name);
             }
         }
 

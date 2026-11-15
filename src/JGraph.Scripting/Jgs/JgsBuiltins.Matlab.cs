@@ -270,6 +270,11 @@ internal static partial class JgsBuiltins
         // --- Cells and structs ------------------------------------------------------------------
         Define("cell", (args, line, col) =>
         {
+            if (JgsRunningDialect.ThreadIsMatlab && args.Count > 0 && args.All(static a => IsNumericValue(a) && a.Type != JgsType.Complex))
+            {
+                return MatlabCell(args, line, col);
+            }
+
             ArityRange("cell", args, 1, 2, line, col);
             if (args.Count == 1 && args[0].Type == JgsType.External)
             {

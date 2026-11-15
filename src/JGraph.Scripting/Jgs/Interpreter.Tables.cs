@@ -842,7 +842,9 @@ internal sealed partial class Interpreter
 
             picks[i] = found >= 0
                 ? found
-                : throw new JgsRuntimeException(at.Line, at.Column, $"Unrecognized row name '{name}'.");
+                : throw (Dialect.IsMatlab // R2025b's words (open item 320, measured: T("1", "p"))
+                    ? new JgsRuntimeException(at.Line, at.Column, "MATLAB:table:UnrecognizedRowName", $"Unrecognized table row name '{name}'.")
+                    : new JgsRuntimeException(at.Line, at.Column, $"Unrecognized row name '{name}'."));
         }
 
         return picks;
@@ -854,6 +856,12 @@ internal sealed partial class Interpreter
         if (index.Type == JgsType.String)
         {
             return [TableColumnByName(table, index.AsString, at)];
+        }
+
+        // T(2, "p") and T(2, ["p" "q"]): a string names variables as a char row does (open item 320, measured).
+        if (index.IsStringArray)
+        {
+            return System.Array.ConvertAll(index.BoxedElements(), name => TableColumnByName(table, name.AsString, at));
         }
 
         if (index.Type == JgsType.Cell)
@@ -879,15 +887,20 @@ internal sealed partial class Interpreter
 
     private static int TableColumnByName(Table table, string name, Node at)
     {
+        // R2025b matches a variable subscript's case (open item 320, measured: T(2, "P") on a variable p is refused).
+        StringComparison match = JgsRunningDialect.ThreadIsMatlab ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
         for (int i = 0; i < table.ColumnCount; i++)
         {
-            if (string.Equals(table[i].Name, name, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(table[i].Name, name, match))
             {
                 return i;
             }
         }
 
-        throw new JgsRuntimeException(at.Line, at.Column,
-            $"The table has no variable '{name}'. Its variables are: {string.Join(", ", table.ColumnNames)}.");
+        // R2025b's words in the MATLAB dialect (open item 320, measured: T(2, "z") and T(2, 'z')).
+        throw JgsRunningDialect.ThreadIsMatlab
+            ? new JgsRuntimeException(at.Line, at.Column, "MATLAB:table:UnrecognizedVarName", $"Unrecognized table variable name '{name}'.")
+            : new JgsRuntimeException(at.Line, at.Column,
+                $"The table has no variable '{name}'. Its variables are: {string.Join(", ", table.ColumnNames)}.");
     }
 }
