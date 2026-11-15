@@ -141,6 +141,9 @@ internal static partial class JgsBuiltins
         "mod", "rem", "idivide", "bitand", "bitor", "bitxor", "bitshift",
         "hypot", "atan2", "dot", "nthroot", "conv", "conv2",
         "trapz", "cumtrapz", "interp1", "linspace",
+
+        // pow2(f, e) and atan2d(y, x) answer single when either operand is (measured, item 321).
+        "pow2", "atan2d",
     ];
 
     /// <summary>
@@ -172,6 +175,15 @@ internal static partial class JgsBuiltins
         "sin", "cos", "tan", "asin", "acos", "atan", "atan2", "sec", "csc", "cot",
         "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
         "erf", "erfc", "gamma",
+
+        // The rest of the floating family, which R2025b answers in single for a single and which
+        // answered double here (open item 321, ADR 0365): the reciprocal trigonometric and
+        // hyperbolic functions and their inverses, every degree function, and the special functions.
+        // An integer never reaches these in MATLAB code (MATLAB:math:mustBeFloat refuses it first).
+        "asec", "acsc", "acot", "sech", "csch", "coth", "asech", "acsch", "acoth",
+        "sind", "cosd", "tand", "secd", "cscd", "cotd", "asind", "acosd", "atand", "asecd", "acscd", "acotd",
+        "atan2d", "deg2rad", "rad2deg",
+        "gammaln", "erfinv", "erfcinv", "erfcx", "reallog", "realsqrt", "pow2", "psi",
     ];
 
     /// <summary>
@@ -206,7 +218,11 @@ internal static partial class JgsBuiltins
 
             // `cat` is the one name whose leading argument is a dimension rather than data, so a
             // classed first argument there would be a coincidence rather than the answer's class.
-            int from = name == "cat" ? 1 : 0;
+            // psi(k, x) is the other: its order k never decides the class (psi(single(1), 2) is a
+            // double in R2025b, psi(1, single(2)) a single; item 321).
+            bool orderFirst = name == "psi";
+            int fixedFrom = name == "cat" ? 1 : 0;
+            int FromOf(IReadOnlyList<JgsValue> args) => orderFirst && args.Count >= 2 ? 1 : fixedFrom;
             bool product = name == "cumprod";
             bool accumulates = product || name == "cumsum";
             bool masks = Array.IndexOf(LogicalCarryingBuiltins, name) >= 0;
@@ -214,6 +230,7 @@ internal static partial class JgsBuiltins
 
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
+                int from = FromOf(args);
                 JgsNumericClass carried = ClassOf(args, from, subjects, carry);
                 if (name is "sum" or "prod" or "mean" or "cumsum" or "cumprod")
                 {
@@ -239,6 +256,7 @@ internal static partial class JgsBuiltins
                 KnowsWhenDiscarded = inner.KnowsWhenDiscarded,
                 MultiOutput = inner.MultiOutput is null ? null : (args, wanted, line, col) =>
                 {
+                    int from = FromOf(args);
                     JgsNumericClass carried = ClassOf(args, from, subjects, carry);
                     JgsValue[] outputs = inner.MultiOutput(args, wanted, line, col);
 

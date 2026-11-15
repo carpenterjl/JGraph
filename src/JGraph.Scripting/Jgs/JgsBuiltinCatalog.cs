@@ -2203,7 +2203,7 @@ public static class JgsBuiltinCatalog
         Add("isequalwithequalnans", "The pre-R2012a name for isequaln.", P("a"), P("b"));
         Add("isfinite", "Whether x is finite, element-wise over arrays.", P("x"));
         Add("isinf", "Whether x is infinite, element-wise over arrays.", P("x"));
-        Add("isfloat", "True for a value stored as floating point — every JGraph number.", P("x"));
+        Add("isfloat", "True for a double or a single (not a logical, a char or an integer class).", P("x"));
         Add("isinteger", "True for an integer class; always false, since JGraph numbers are doubles.", P("x"));
         Add("isreal", "True when a value carries no imaginary part.", P("x"));
         Add("isscalar", "True for a single value rather than an array.", P("x"));

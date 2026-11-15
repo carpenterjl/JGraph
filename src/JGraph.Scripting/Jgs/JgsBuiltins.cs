@@ -199,7 +199,7 @@ internal static partial class JgsBuiltins
         // leaves the reals.
         MathX(Define, "exp", System.Math.Exp, Always, Complex.Exp, PackedMath.UnaryOp.Exp);
         MathX(Define, "log", System.Math.Log, NonNegative, Complex.Log, PackedMath.UnaryOp.Log);
-        MathX(Define, "sqrt", System.Math.Sqrt, NonNegative, Complex.Sqrt, PackedMath.UnaryOp.Sqrt);
+        MathX(Define, "sqrt", SqrtPlusZero, NonNegative, ComplexSqrtPlusZero, PackedMath.UnaryOp.Sqrt);
 
         Define("pow", (args, line, col) =>
         {

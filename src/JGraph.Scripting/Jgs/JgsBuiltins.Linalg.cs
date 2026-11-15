@@ -74,6 +74,44 @@ internal static partial class JgsBuiltins
         Define("trace", (args, line, col) =>
         {
             Arity("trace", args, 1, line, col);
+            if (!dialect.IsMatlab)
+            {
+                return TraceOf(args[0], line, col);
+            }
+
+            // R2025b's trace.m is sum(diag(A)) behind one refusal: a logical, a char or an integer
+            // sums to a double and a single to a single, and anything not a square matrix is
+            // MATLAB:trace:square (open item 321, ADR 0365).
+            JgsValue subject = args[0];
+            bool single = subject.NumericClass == JgsNumericClass.Single;
+            if (subject.Type == JgsType.String && !subject.IsStringArray)
+            {
+                string text = subject.AsString;
+                subject = text.Length == 1 ? JgsValue.Number(text[0])
+                    : text.Length == 0 ? JgsMatrix.FromColumnMajorDims([], [0, 0])
+                    : throw new JgsRuntimeException(line, col, "MATLAB:trace:square", "Matrix must be square.");
+            }
+
+            int[] dims = subject.Type == JgsType.Array ? JgsMatrix.DimsOf(subject) : [1, 1];
+            if (dims.Length > 2 || dims[0] != dims[1])
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:trace:square", "Matrix must be square.");
+            }
+
+            JgsValue sum = single ? SingleTrace(subject, line, col) : TraceOf(subject, line, col);
+            return sum.Type switch
+            {
+                JgsType.Bool => JgsValue.Number(sum.AsBool ? 1 : 0),
+                JgsType.Number when sum.NumericClass != (single ? JgsNumericClass.Single : JgsNumericClass.Double)
+                    => JgsNumericClasses.Stamp(JgsValue.Number(sum.AsNumber), single ? JgsNumericClass.Single : JgsNumericClass.Double),
+                JgsType.Complex => JgsNumericClasses.Stamp(sum, single ? JgsNumericClass.Single : JgsNumericClass.Double),
+                _ => sum,
+            };
+        });
+
+        JgsValue TraceOf(JgsValue subject, int line, int col)
+        {
+            JgsValue[] args = [subject];
             if (args[0].Type is JgsType.Number or JgsType.Bool or JgsType.Complex)
             {
                 return args[0]; // the trace of a 1x1 is itself
@@ -97,7 +135,27 @@ internal static partial class JgsBuiltins
             }
 
             return JgsValue.ComplexNum(sum);
-        });
+        }
+
+        // A single's diagonal summed in single arithmetic, each step rounded as R2025b's sum rounds it.
+        static JgsValue SingleTrace(JgsValue subject, int line, int col)
+        {
+            if (subject.Type is JgsType.Number or JgsType.Complex)
+            {
+                return subject;
+            }
+
+            Complex[,] a = ComplexSquareOf("trace", subject, line, col);
+            float re = 0;
+            float im = 0;
+            for (int i = 0; i < a.GetLength(0); i++)
+            {
+                re += (float)a[i, i].Real;
+                im += (float)a[i, i].Imaginary;
+            }
+
+            return JgsValue.ComplexNum(new Complex(re, im));
+        }
 
         Define("norm", (args, line, col) => Norm(args, line, col));
 

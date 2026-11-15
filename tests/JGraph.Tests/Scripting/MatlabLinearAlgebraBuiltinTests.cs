@@ -154,9 +154,15 @@ public class MatlabLinearAlgebraBuiltinTests : IDisposable
     public Task SingularMatrices_ReportClearErrors() => RunExpectingError(
         "warning('error', 'MATLAB:singularMatrix'); inv([1 2; 2 4]);", "singular"); // a warning in R2025b (ADR 0355)
 
+    // A matrix to a fractional power is R2025b's mpower.m road, not a refusal (open item 321,
+    // ADR 0365): its square is the matrix again.
     [Fact]
-    public Task NonIntegerMatrixPower_IsAnError() => RunExpectingError(
-        "[1 2; 3 4] ^ 0.5;", "integer");
+    public Task NonIntegerMatrixPower_IsTheMatrixPower() => RunAsserting("""
+        A = [1 2; 3 4];
+        Z = A ^ 0.5;
+        assert(norm(Z * Z - A, 1) < 1e-12);
+        assert(isequal([4 0; 0 9] ^ 0.5, [2 0; 0 3]));
+        """);
 
     [Fact]
     public Task CaretBetweenArrays_PointsAtTheElementwiseSpelling() => RunExpectingError(

@@ -1,0 +1,649 @@
+CHK|c_mld|double[2 1] re [NaN;NaN] im [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|c_mld_ones|double[2 1] re [NaN;Inf] im [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|c_mld_eye|double[2 2] re [NaN NaN;Inf -Inf] im [NaN NaN;NaN NaN] WARN MATLAB:singularMatrix|exact
+CHK|c_mld_upper|double[2 1] re [NaN;Inf] im [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|c_mld_upper_zero_rhs|double[2 1] re [NaN;NaN] im [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|c_mld_lower|double[2 1] re [Inf;NaN] im [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|c_mld_diag|double[2 1] re [0;Inf] im [-1;NaN] WARN MATLAB:singularMatrix|exact
+CHK|c_mld_tiny|double[2 1] re [1;0] im [0;-1e+17] WARN MATLAB:nearlySingularMatrix|exact
+CHK|c_mld_nan|double[2 1] re [NaN;NaN] im [NaN;NaN] WARN MATLAB:illConditionedMatrix|exact
+CHK|c_mld_ones_mat|double[2 1] re [NaN;NaN] im [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|c_mld_single|single[2 1] re [NaN;NaN] im [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|c_mld_upper_inf|double[2 1] re [NaN;1] im [NaN;0]|exact
+CHK|c_mld_lower_nan|double[2 1] re [0;NaN] im [-1;NaN]|exact
+CHK|c_mrd|double[1 2] re [NaN NaN] im [NaN NaN] WARN MATLAB:singularMatrix|exact
+CHK|c_mrd_upper|double[1 2] re [0 Inf] im [-1 Inf] WARN MATLAB:singularMatrix|exact
+CHK|c_mld_fn|double[2 1] re [NaN;NaN] im [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|c_mrd_fn|double[1 2] re [NaN NaN] im [NaN NaN] WARN MATLAB:singularMatrix|exact
+CHK|c_mpower_neg|double[2 2] re [Inf Inf;Inf Inf]|exact
+CHK|rc_full|double[2 1] re [Inf;-Inf] im [-Inf;Inf] WARN MATLAB:singularMatrix|exact
+CHK|rc_upper|double[2 1] re [-Inf;Inf] im [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|rc_lower|double[2 1] re [0;Inf] im [1;-Inf] WARN MATLAB:singularMatrix|exact
+CHK|rc_diag|double[2 1] re [0;Inf] im [1;NaN] WARN MATLAB:singularMatrix|exact
+CHK|rc_tiny|double[2 1] re [-1e+17;1e+17] im [1;0] WARN MATLAB:nearlySingularMatrix|exact
+CHK|rc_nan|double[2 1] re [NaN;NaN] im [NaN;NaN] WARN MATLAB:illConditionedMatrix|exact
+CHK|rc_single|single[2 1] re [-Inf;Inf] im [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|rc_mrd_upper|double[1 2] re [0 Inf] im [1 -Inf] WARN MATLAB:singularMatrix|exact
+CHK|rc_mrd_full|double[1 2] re [Inf -Inf] im [-Inf Inf] WARN MATLAB:singularMatrix|exact
+CHK|c_scalar_zero|double[1 1] re 0 im -2|exact
+CHK|c_single_class|char[1 6] re [115 105 110 103 108 101]|exact
+CHK|c_fine_shape|[2 1] 0|exact
+CHK|c_fine_1_re|0.59999999999999998|rel=1e-14
+CHK|c_fine_1_im|-0.20000000000000001|rel=1e-14
+CHK|c_fine_2_re|0.40000000000000002|rel=1e-14
+CHK|c_fine_2_im|0.20000000000000001|rel=1e-14
+CHK|rc_fine_shape|[2 1] 0|exact
+CHK|rc_fine_1_re|-0.40000000000000002|rel=1e-14
+CHK|rc_fine_1_im|0.59999999999999998|rel=1e-14
+CHK|rc_fine_2_re|0.80000000000000004|rel=1e-14
+CHK|rc_fine_2_im|-0.20000000000000001|rel=1e-14
+CHK|c_single_fine_shape|[2 1] 0|exact
+CHK|c_single_fine_1_re|0.60000002384185791|rel=1e-06
+CHK|c_single_fine_1_im|-0.20000000298023224|rel=1e-06
+CHK|c_single_fine_2_re|0.40000000596046448|rel=1e-06
+CHK|c_single_fine_2_im|0.20000000298023224|rel=1e-06
+CHK|c_sing_text|MATLAB:singularMatrix Matrix is singular to working precision.|exact
+CHK|c_near_text|MATLAB:nearlySingularMatrix Matrix is close to singular or badly scaled. Results may be inaccurate. RCOND =  1.000000e-17.|exact
+CHK|c_nan_text|MATLAB:illConditionedMatrix Matrix is singular, close to singular or badly scaled. Results may be inaccurate. RCOND = NaN.|exact
+CHK|c_off_mld|double[2 1] re [NaN;NaN] im [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|c_error_mld|MATLAB:singularMatrix|exact
+CHK|c_error_mld_msg|Matrix is singular to working precision.|exact
+CHK|c_error_mrd|MATLAB:singularMatrix|exact
+CHK|c_error_mrd_msg|Matrix is singular to working precision.|exact
+CHK|rc_error_mld|MATLAB:singularMatrix|exact
+CHK|rc_error_mld_msg|Matrix is singular to working precision.|exact
+CHK|isfloat_true|logical[1 1] 0|exact
+CHK|isfloat_mask|logical[1 1] 0|exact
+CHK|isfloat_empty_logical|logical[1 1] 0|exact
+CHK|isfloat_int|logical[1 1] 0|exact
+CHK|isfloat_char|logical[1 1] 0|exact
+CHK|isfloat_single|logical[1 1] 1|exact
+CHK|isfloat_double|logical[1 1] 1|exact
+CHK|isfloat_cplx|logical[1 1] 1|exact
+CHK|isfloat_cell|logical[1 1] 0|exact
+CHK|isfloat_string|logical[1 1] 0|exact
+CHK|sqrt_m0|0000000000000000|exact
+CHK|sqrt_m0_vec|000000000000000000000000000000000000000040000000|exact
+CHK|sqrt_m0_single|00000000|exact
+CHK|realsqrt_m0|0000000000000000|exact
+CHK|sqrt_m0_negvec|00000000000000000000000000000000 00000000000000000000000040000000|exact
+CHK|sqrt_m0_loop|0000000000000000|exact
+CHK|sqrt_m0_long|0|exact
+CHK|single_asec|single 1|exact
+CHK|single_acsc|single 1|exact
+CHK|single_acot|single 1|exact
+CHK|single_asech|single 1|exact
+CHK|single_acsch|single 1|exact
+CHK|single_acoth|single 1|exact
+CHK|single_sec|single 1|exact
+CHK|single_csc|single 1|exact
+CHK|single_cot|single 1|exact
+CHK|single_sech|single 1|exact
+CHK|single_csch|single 1|exact
+CHK|single_coth|single 1|exact
+CHK|single_asecd|single 1|exact
+CHK|single_acscd|single 1|exact
+CHK|single_acotd|single 1|exact
+CHK|single_secd|single 1|exact
+CHK|single_cscd|single 1|exact
+CHK|single_cotd|single 1|exact
+CHK|single_sind|single 1|exact
+CHK|single_cosd|single 1|exact
+CHK|single_tand|single 1|exact
+CHK|single_asind|single 1|exact
+CHK|single_acosd|single 1|exact
+CHK|single_atand|single 1|exact
+CHK|single_deg2rad|single 1|exact
+CHK|single_rad2deg|single 1|exact
+CHK|single_gammaln|single 1|exact
+CHK|single_erfinv|single 1|exact
+CHK|single_erfcinv|single 1|exact
+CHK|single_erfcx|single 1|exact
+CHK|single_reallog|single 1|exact
+CHK|single_realsqrt|single 1|exact
+CHK|single_pow2|single 1|exact
+CHK|single_psi|single 1|exact
+CHK|atan2d_single|char[1 6]'single'|exact
+CHK|atan2d_first|char[1 6]'single'|exact
+CHK|atan2d_second|char[1 6]'single'|exact
+CHK|pow2_two_single|single[1 1] 12|exact
+CHK|pow2_two_first|single[1 1] 12|exact
+CHK|pow2_two_second|single[1 1] 12|exact
+CHK|psi_k_x_single|char[1 6]'single'|exact
+CHK|psi_k_single|char[1 6]'double'|exact
+CHK|sind_single_exact|single[1 5] [0 0.5 1 0 0]|exact
+CHK|cosd_single_exact|single[1 4] [1 0.5 0 0]|exact
+CHK|tand_single_exact|single[1 5] [0 1 Inf -1 0]|exact
+CHK|cotd_single_exact|single[1 4] [Inf 1 0 -Inf]|exact
+CHK|deg2rad_single_v|single[1 1] 3.1415927410125732|exact
+CHK|rad2deg_single_v|single[1 1] 180|exact
+CHK|pow2_single_vals|single[1 6] [0.5 1 2 1024 1.4012984643248171e-45 Inf]|exact
+CHK|erfinv_single_edges|single[1 4] [NaN Inf -Inf 0]|exact
+CHK|erfcinv_single_edges|single[1 3] [Inf 0 -Inf]|exact
+CHK|reallog_single_vals|single[1 2] [-Inf 0]|exact
+CHK|realsqrt_single_vals|single[1 2] [0 2]|exact
+CHK|reallog_single_empty|single[0 0]|exact
+CHK|acot_single_cplx|char[1 6]'single'|exact
+CHK|asecd_single_cplx|char[1 6]'single'|exact
+CHK|sec_single_cplx|char[1 6]'single'|exact
+CHK|sind_single_mixed|char[1 6]'single'|exact
+CHK|asec_single_complex_class|char[1 6]'single'|exact
+CHK|trace_true|double[1 1] 1|exact
+CHK|trace_mask|double[1 1] 2|exact
+CHK|trace_int|double[1 1] 200|exact
+CHK|trace_uint8|double[1 1] 400|exact
+CHK|trace_int_scalar|double[1 1] 7|exact
+CHK|trace_char|MATLAB:trace:square|exact
+CHK|trace_char_msg|Matrix must be square.|exact
+CHK|trace_char_one|double[1 1] 97|exact
+CHK|trace_single|single[1 1] 5|exact
+CHK|trace_single_scalar|single[1 1] 2.5|exact
+CHK|trace_cplx|double[1 1] 4+1i|exact
+CHK|trace_empty_logical|double[1 1] 0|exact
+CHK|trace_empty|double[1 1] 0|exact
+CHK|trace_rect|MATLAB:trace:square|exact
+CHK|trace_rect_msg|Matrix must be square.|exact
+CHK|trace_nd|MATLAB:trace:square|exact
+CHK|trace_nd_msg|Matrix must be square.|exact
+CHK|trace_double|double[1 1] 15|exact
+CHK|fill_true|MATLAB:minrhs|exact
+CHK|fill_true_msg|Not enough input arguments.|exact
+CHK|fill_dbl|MATLAB:minrhs|exact
+CHK|fill_dbl_msg|Not enough input arguments.|exact
+CHK|fill_none|MATLAB:minrhs|exact
+CHK|fill_none_msg|Not enough input arguments.|exact
+CHK|fill_int|MATLAB:minrhs|exact
+CHK|fill_int_msg|Not enough input arguments.|exact
+CHK|fill_cell|MATLAB:minrhs|exact
+CHK|fill_cell_msg|Not enough input arguments.|exact
+CHK|fill_char|MATLAB:minrhs|exact
+CHK|fill_char_msg|Not enough input arguments.|exact
+CHK|mp_diag_half|double[2 2] [2 0;0 3]|exact
+CHK|mp_fn|double[2 2] [2 0;0 3]|exact
+CHK|mp_diag_15|double[2 2] [8 0;0 27]|exact
+CHK|mp_nilp_half|double[2 2] [0 Inf;0 0]|exact
+CHK|mp_jordan_half|double[2 2] [2 0.25;0 2]|exact
+CHK|mp_jordan_15|double[2 2] [8 3;0 8]|exact
+CHK|mp_single|single[2 2] [2 0;0 3]|exact
+CHK|mp_single_exp|single[2 2] [2 0;0 3]|exact
+CHK|mp_neg_eig|double[2 2] [0+2i 0;0 3]|exact
+CHK|mp_cplx_base_diag|double[2 2] [1.4142135623730951+1.4142135623730951i 0;0 3]|exact
+CHK|mp_logical|double[2 2] [1 0;0 1]|exact
+CHK|mp_zero_half|double[2 2] [0 0;0 0]|exact
+CHK|mp_zero_neghalf|double[2 2] [NaN NaN;NaN NaN]|exact
+CHK|mp_neg_zero_eig|double[2 2] [Inf NaN;NaN NaN]|exact
+CHK|mp_empty_half|double[0 0]|exact
+CHK|mp_nan|double[2 2] [NaN NaN;NaN NaN]|exact
+CHK|mp_inf_entry|double[2 2] [NaN NaN;NaN NaN]|exact
+CHK|mp_nan_gen|double[2 2] [NaN NaN;NaN NaN]|exact
+CHK|mp_inf_exp|double[2 2] [Inf NaN;NaN Inf]|exact
+CHK|mp_nan_exp|double[2 2] [NaN NaN;NaN NaN]|exact
+CHK|mp_gen_inf|double[2 2] [Inf Inf;Inf Inf]|exact
+CHK|mp_rect|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|mp_rect_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|mp_nd|MATLAB:mpower:inputsMustBe2D|exact
+CHK|mp_nd_msg|Arguments must be 2-D. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|mp_int_frac|MATLAB:mpower:integerNotSupported|exact
+CHK|mp_int_frac_msg|MPOWER (^) is not fully supported for integer classes. Both arguments must be scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|mp_int_square|MATLAB:mpower:integerNotSupported|exact
+CHK|mp_int_square_msg|MPOWER (^) is not fully supported for integer classes. Both arguments must be scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|mp_diag_complex_exp|double[2 2] [0.36691394948660344+1.9660554808224875i 0;0 -1.758764802874057+2.4303798814529753i]|exact
+CHK|mp_upper_half_shape|[2 2] 1|exact
+CHK|mp_upper_half_1_re|2|rel=1e-12
+CHK|mp_upper_half_1_im|0|rel=1e-12
+CHK|mp_upper_half_2_re|0|rel=1e-12
+CHK|mp_upper_half_2_im|0|rel=1e-12
+CHK|mp_upper_half_3_re|0.20000000000000001|rel=1e-12
+CHK|mp_upper_half_3_im|0|rel=1e-12
+CHK|mp_upper_half_4_re|3.0000000000000004|rel=1e-12
+CHK|mp_upper_half_4_im|0|rel=1e-12
+CHK|mp_spd_half_shape|[2 2] 1|exact
+CHK|mp_spd_half_1_re|1.3763819204711731|rel=1e-12
+CHK|mp_spd_half_1_im|0|rel=1e-12
+CHK|mp_spd_half_2_re|0.32491969623290617|rel=1e-12
+CHK|mp_spd_half_2_im|0|rel=1e-12
+CHK|mp_spd_half_3_re|0.32491969623290606|rel=1e-12
+CHK|mp_spd_half_3_im|0|rel=1e-12
+CHK|mp_spd_half_4_re|1.7013016167040795|rel=1e-12
+CHK|mp_spd_half_4_im|0|rel=1e-12
+CHK|mp_gen_half_shape|[2 2] 0|exact
+CHK|mp_gen_half_1_re|0.55368856714591119|rel=1e-12
+CHK|mp_gen_half_1_im|0.46439416283907076|rel=1e-12
+CHK|mp_gen_half_2_re|1.2104410905198244|rel=1e-12
+CHK|mp_gen_half_2_im|-0.31863971814960307|rel=1e-12
+CHK|mp_gen_half_3_re|0.80696072701321631|rel=1e-12
+CHK|mp_gen_half_3_im|-0.21242647876640203|rel=1e-12
+CHK|mp_gen_half_4_re|1.7641296576657357|rel=1e-12
+CHK|mp_gen_half_4_im|0.14575444468946766|rel=1e-12
+CHK|mp_spd_15_shape|[2 2] 1|exact
+CHK|mp_spd_15_1_re|3.0776835371752522|rel=1e-12
+CHK|mp_spd_15_1_im|0|rel=1e-12
+CHK|mp_spd_15_2_re|2.3511410091698917|rel=1e-12
+CHK|mp_spd_15_2_im|0|rel=1e-12
+CHK|mp_spd_15_3_re|2.3511410091698921|rel=1e-12
+CHK|mp_spd_15_3_im|0|rel=1e-12
+CHK|mp_spd_15_4_re|5.4288245463451448|rel=1e-12
+CHK|mp_spd_15_4_im|0|rel=1e-12
+CHK|mp_spd_third_shape|[2 2] 1|exact
+CHK|mp_spd_third_1_re|1.2303116934622587|rel=1e-12
+CHK|mp_spd_third_1_im|0|rel=1e-12
+CHK|mp_spd_third_2_re|0.18841513838381535|rel=1e-12
+CHK|mp_spd_third_2_im|0|rel=1e-12
+CHK|mp_spd_third_3_re|0.18841513838381535|rel=1e-12
+CHK|mp_spd_third_3_im|0|rel=1e-12
+CHK|mp_spd_third_4_re|1.4187268318460742|rel=1e-12
+CHK|mp_spd_third_4_im|0|rel=1e-12
+CHK|mp_gen_third_shape|[2 2] 0|exact
+CHK|mp_gen_third_1_re|0.6921466438848618|rel=1e-12
+CHK|mp_gen_third_1_im|0.4741752070206236|rel=1e-12
+CHK|mp_gen_third_2_re|0.72679929872230331|rel=1e-12
+CHK|mp_gen_third_2_im|-0.3253508902758101|rel=1e-12
+CHK|mp_gen_third_3_re|0.48453286581486887|rel=1e-12
+CHK|mp_gen_third_3_im|-0.2169005935172067|rel=1e-12
+CHK|mp_gen_third_4_re|1.4189459426071651|rel=1e-12
+CHK|mp_gen_third_4_im|0.14882431674481353|rel=1e-12
+CHK|mp_spd_negh_shape|[2 2] 1|exact
+CHK|mp_spd_negh_1_re|0.76084521303612274|rel=1e-12
+CHK|mp_spd_negh_1_im|0|rel=1e-12
+CHK|mp_spd_negh_2_re|-0.1453085056010722|rel=1e-12
+CHK|mp_spd_negh_2_im|0|rel=1e-12
+CHK|mp_spd_negh_3_re|-0.14530850560107214|rel=1e-12
+CHK|mp_spd_negh_3_im|0|rel=1e-12
+CHK|mp_spd_negh_4_re|0.61553670743505051|rel=1e-12
+CHK|mp_spd_negh_4_im|0|rel=1e-12
+CHK|mp_gen_25_shape|[2 2] 0|exact
+CHK|mp_gen_25_1_re|15.980230875219624|rel=1e-12
+CHK|mp_gen_25_1_im|0.064361958377464584|rel=1e-12
+CHK|mp_gen_25_2_re|34.935032498624807|rel=1e-12
+CHK|mp_gen_25_2_im|-0.044161356705206163|rel=1e-12
+CHK|mp_gen_25_3_re|23.290021665749872|rel=1e-12
+CHK|mp_gen_25_3_im|-0.029440904470137443|rel=1e-12
+CHK|mp_gen_25_4_re|50.915263373844432|rel=1e-12
+CHK|mp_gen_25_4_im|0.020200601672258425|rel=1e-12
+CHK|mp_gen_m15_shape|[2 2] 0|exact
+CHK|mp_gen_m15_1_re|0.019184393002950207|rel=1e-12
+CHK|mp_gen_m15_1_im|3.3507671909888965|rel=1e-12
+CHK|mp_gen_m15_2_re|0.04193978161252597|rel=1e-12
+CHK|mp_gen_m15_2_im|-2.2990976174083206|rel=1e-12
+CHK|mp_gen_m15_3_re|0.027959854408350651|rel=1e-12
+CHK|mp_gen_m15_3_im|-1.5327317449388802|rel=1e-12
+CHK|mp_gen_m15_4_re|0.06112417461547618|rel=1e-12
+CHK|mp_gen_m15_4_im|1.0516695735805759|rel=1e-12
+CHK|mp_upper_15_shape|[2 2] 1|exact
+CHK|mp_upper_15_1_re|8|rel=1e-12
+CHK|mp_upper_15_1_im|0|rel=1e-12
+CHK|mp_upper_15_2_re|0|rel=1e-12
+CHK|mp_upper_15_2_im|0|rel=1e-12
+CHK|mp_upper_15_3_re|3.8000000000000007|rel=1e-12
+CHK|mp_upper_15_3_im|0|rel=1e-12
+CHK|mp_upper_15_4_re|27|rel=1e-12
+CHK|mp_upper_15_4_im|0|rel=1e-12
+CHK|mp_lower_half_shape|[2 2] 1|exact
+CHK|mp_lower_half_1_re|2|rel=1e-12
+CHK|mp_lower_half_1_im|0|rel=1e-12
+CHK|mp_lower_half_2_re|0.20000000000000001|rel=1e-12
+CHK|mp_lower_half_2_im|0|rel=1e-12
+CHK|mp_lower_half_3_re|0|rel=1e-12
+CHK|mp_lower_half_3_im|0|rel=1e-12
+CHK|mp_lower_half_4_re|3|rel=1e-12
+CHK|mp_lower_half_4_im|0|rel=1e-12
+CHK|mp_herm_neg_eig_shape|[2 2] 0|exact
+CHK|mp_herm_neg_eig_1_re|0.86602540378443849|rel=1e-12
+CHK|mp_herm_neg_eig_1_im|0.49999999999999989|rel=1e-12
+CHK|mp_herm_neg_eig_2_re|0.86602540378443849|rel=1e-12
+CHK|mp_herm_neg_eig_2_im|-0.49999999999999989|rel=1e-12
+CHK|mp_herm_neg_eig_3_re|0.86602540378443849|rel=1e-12
+CHK|mp_herm_neg_eig_3_im|-0.49999999999999989|rel=1e-12
+CHK|mp_herm_neg_eig_4_re|0.86602540378443849|rel=1e-12
+CHK|mp_herm_neg_eig_4_im|0.49999999999999989|rel=1e-12
+CHK|mp_rot_real_shape|[2 2] 1|exact
+CHK|mp_rot_real_1_re|1.7553173018244279|rel=1e-12
+CHK|mp_rot_real_1_im|0|rel=1e-12
+CHK|mp_rot_real_2_re|0.28484878459314106|rel=1e-12
+CHK|mp_rot_real_2_im|0|rel=1e-12
+CHK|mp_rot_real_3_re|-0.28484878459314106|rel=1e-12
+CHK|mp_rot_real_3_im|0|rel=1e-12
+CHK|mp_rot_real_4_re|1.7553173018244279|rel=1e-12
+CHK|mp_rot_real_4_im|0|rel=1e-12
+CHK|mp_pos_nonsym_shape|[2 2] 1|exact
+CHK|mp_pos_nonsym_1_re|1.9621165057908916|rel=1e-12
+CHK|mp_pos_nonsym_1_im|0|rel=1e-12
+CHK|mp_pos_nonsym_2_re|0.54790294341779644|rel=1e-12
+CHK|mp_pos_nonsym_2_im|0|rel=1e-12
+CHK|mp_pos_nonsym_3_re|0.27395147170889822|rel=1e-12
+CHK|mp_pos_nonsym_3_im|0|rel=1e-12
+CHK|mp_pos_nonsym_4_re|1.6881650340819934|rel=1e-12
+CHK|mp_pos_nonsym_4_im|0|rel=1e-12
+CHK|mp_cplx_half_shape|[2 2] 0|exact
+CHK|mp_cplx_half_1_re|0.75037643394182263|rel=1e-12
+CHK|mp_cplx_half_1_im|1.0243118733482144|rel=1e-12
+CHK|mp_cplx_half_2_re|0.95290207142200345|rel=1e-12
+CHK|mp_cplx_half_2_im|-0.42284432811617828|rel=1e-12
+CHK|mp_cplx_half_3_re|0.63526804761466904|rel=1e-12
+CHK|mp_cplx_half_3_im|-0.28189621874411891|rel=1e-12
+CHK|mp_cplx_half_4_re|1.879964419799101|rel=1e-12
+CHK|mp_cplx_half_4_im|0.1428854120526423|rel=1e-12
+CHK|mp_cplx_herm_half_shape|[2 2] 0|exact
+CHK|mp_cplx_herm_half_1_re|1.3763819204711731|rel=1e-12
+CHK|mp_cplx_herm_half_1_im|0|rel=1e-12
+CHK|mp_cplx_herm_half_2_re|0|rel=1e-12
+CHK|mp_cplx_herm_half_2_im|-0.32491969623290617|rel=1e-12
+CHK|mp_cplx_herm_half_3_re|0|rel=1e-12
+CHK|mp_cplx_herm_half_3_im|0.32491969623290612|rel=1e-12
+CHK|mp_cplx_herm_half_4_re|1.7013016167040795|rel=1e-12
+CHK|mp_cplx_herm_half_4_im|0|rel=1e-12
+CHK|mp_skew_half_shape|[2 2] 1|exact
+CHK|mp_skew_half_1_re|0.70710678118654746|rel=1e-12
+CHK|mp_skew_half_1_im|0|rel=1e-12
+CHK|mp_skew_half_2_re|-0.70710678118654746|rel=1e-12
+CHK|mp_skew_half_2_im|0|rel=1e-12
+CHK|mp_skew_half_3_re|0.70710678118654746|rel=1e-12
+CHK|mp_skew_half_3_im|0|rel=1e-12
+CHK|mp_skew_half_4_re|0.70710678118654746|rel=1e-12
+CHK|mp_skew_half_4_im|0|rel=1e-12
+CHK|mp_m3_gen_shape|[3 3] 1|exact
+CHK|mp_m3_gen_1_re|1.9846455172138984|rel=1e-12
+CHK|mp_m3_gen_1_im|0|rel=1e-12
+CHK|mp_m3_gen_2_re|0.2454819702988405|rel=1e-12
+CHK|mp_m3_gen_2_im|0|rel=1e-12
+CHK|mp_m3_gen_3_re|-0.037163959577348527|rel=1e-12
+CHK|mp_m3_gen_3_im|0|rel=1e-12
+CHK|mp_m3_gen_4_re|0.24548197029884056|rel=1e-12
+CHK|mp_m3_gen_4_im|0|rel=1e-12
+CHK|mp_m3_gen_5_re|2.1557995683580407|rel=1e-12
+CHK|mp_m3_gen_5_im|0|rel=1e-12
+CHK|mp_m3_gen_6_re|0.66211799174182473|rel=1e-12
+CHK|mp_m3_gen_6_im|0|rel=1e-12
+CHK|mp_m3_gen_7_re|-0.024775973051565585|rel=1e-12
+CHK|mp_m3_gen_7_im|0|rel=1e-12
+CHK|mp_m3_gen_8_re|0.44141199449455004|rel=1e-12
+CHK|mp_m3_gen_8_im|0|rel=1e-12
+CHK|mp_m3_gen_9_re|2.3888935521310986|rel=1e-12
+CHK|mp_m3_gen_9_im|0|rel=1e-12
+CHK|mp_m3_spd_shape|[3 3] 1|exact
+CHK|mp_m3_spd_1_re|1.9837210851388423|rel=1e-12
+CHK|mp_m3_spd_1_im|0|rel=1e-12
+CHK|mp_m3_spd_2_re|0.25413707582034284|rel=1e-12
+CHK|mp_m3_spd_2_im|0|rel=1e-12
+CHK|mp_m3_spd_3_re|-0.016278914861156735|rel=1e-12
+CHK|mp_m3_spd_3_im|0|rel=1e-12
+CHK|mp_m3_spd_4_re|0.25413707582034284|rel=1e-12
+CHK|mp_m3_spd_4_im|0|rel=1e-12
+CHK|mp_m3_spd_5_re|1.9674421702776848|rel=1e-12
+CHK|mp_m3_spd_5_im|0|rel=1e-12
+CHK|mp_m3_spd_6_re|0.25413707582034317|rel=1e-12
+CHK|mp_m3_spd_6_im|0|rel=1e-12
+CHK|mp_m3_spd_7_re|-0.016278914861156735|rel=1e-12
+CHK|mp_m3_spd_7_im|0|rel=1e-12
+CHK|mp_m3_spd_8_re|0.25413707582034328|rel=1e-12
+CHK|mp_m3_spd_8_im|0|rel=1e-12
+CHK|mp_m3_spd_9_re|1.9837210851388418|rel=1e-12
+CHK|mp_m3_spd_9_im|0|rel=1e-12
+CHK|mp_m3_def_shape|[3 3] 1|exact
+CHK|mp_m3_def_1_re|1.4142135623730951|rel=1e-12
+CHK|mp_m3_def_1_im|0|rel=1e-12
+CHK|mp_m3_def_2_re|0|rel=1e-12
+CHK|mp_m3_def_2_im|0|rel=1e-12
+CHK|mp_m3_def_3_re|0|rel=1e-12
+CHK|mp_m3_def_3_im|0|rel=1e-12
+CHK|mp_m3_def_4_re|0.35355339059327373|rel=1e-12
+CHK|mp_m3_def_4_im|0|rel=1e-12
+CHK|mp_m3_def_5_re|1.4142135623730951|rel=1e-12
+CHK|mp_m3_def_5_im|0|rel=1e-12
+CHK|mp_m3_def_6_re|0|rel=1e-12
+CHK|mp_m3_def_6_im|0|rel=1e-12
+CHK|mp_m3_def_7_re|-0.044194173824159216|rel=1e-12
+CHK|mp_m3_def_7_im|0|rel=1e-12
+CHK|mp_m3_def_8_re|0.35355339059327373|rel=1e-12
+CHK|mp_m3_def_8_im|0|rel=1e-12
+CHK|mp_m3_def_9_re|1.4142135623730951|rel=1e-12
+CHK|mp_m3_def_9_im|0|rel=1e-12
+CHK|mp_m3_def_15_shape|[3 3] 1|exact
+CHK|mp_m3_def_15_1_re|2.8284271247461903|rel=1e-12
+CHK|mp_m3_def_15_1_im|0|rel=1e-12
+CHK|mp_m3_def_15_2_re|0|rel=1e-12
+CHK|mp_m3_def_15_2_im|0|rel=1e-12
+CHK|mp_m3_def_15_3_re|0|rel=1e-12
+CHK|mp_m3_def_15_3_im|0|rel=1e-12
+CHK|mp_m3_def_15_4_re|2.1213203435596428|rel=1e-12
+CHK|mp_m3_def_15_4_im|0|rel=1e-12
+CHK|mp_m3_def_15_5_re|2.8284271247461903|rel=1e-12
+CHK|mp_m3_def_15_5_im|0|rel=1e-12
+CHK|mp_m3_def_15_6_re|0|rel=1e-12
+CHK|mp_m3_def_15_6_im|0|rel=1e-12
+CHK|mp_m3_def_15_7_re|0.2651650429449553|rel=1e-12
+CHK|mp_m3_def_15_7_im|0|rel=1e-12
+CHK|mp_m3_def_15_8_re|2.1213203435596428|rel=1e-12
+CHK|mp_m3_def_15_8_im|0|rel=1e-12
+CHK|mp_m3_def_15_9_re|2.8284271247461903|rel=1e-12
+CHK|mp_m3_def_15_9_im|0|rel=1e-12
+CHK|mp_m3_def_neg_shape|[3 3] 1|exact
+CHK|mp_m3_def_neg_1_re|0.70710678118654746|rel=1e-12
+CHK|mp_m3_def_neg_1_im|0|rel=1e-12
+CHK|mp_m3_def_neg_2_re|0|rel=1e-12
+CHK|mp_m3_def_neg_2_im|0|rel=1e-12
+CHK|mp_m3_def_neg_3_re|0|rel=1e-12
+CHK|mp_m3_def_neg_3_im|0|rel=1e-12
+CHK|mp_m3_def_neg_4_re|-0.17677669529663687|rel=1e-12
+CHK|mp_m3_def_neg_4_im|0|rel=1e-12
+CHK|mp_m3_def_neg_5_re|0.70710678118654746|rel=1e-12
+CHK|mp_m3_def_neg_5_im|0|rel=1e-12
+CHK|mp_m3_def_neg_6_re|0|rel=1e-12
+CHK|mp_m3_def_neg_6_im|0|rel=1e-12
+CHK|mp_m3_def_neg_7_re|0.066291260736238838|rel=1e-12
+CHK|mp_m3_def_neg_7_im|0|rel=1e-12
+CHK|mp_m3_def_neg_8_re|-0.17677669529663687|rel=1e-12
+CHK|mp_m3_def_neg_8_im|0|rel=1e-12
+CHK|mp_m3_def_neg_9_re|0.70710678118654746|rel=1e-12
+CHK|mp_m3_def_neg_9_im|0|rel=1e-12
+CHK|mp_m3_def_m25_shape|[3 3] 1|exact
+CHK|mp_m3_def_m25_1_re|0.17677669529663687|rel=1e-12
+CHK|mp_m3_def_m25_1_im|0|rel=1e-12
+CHK|mp_m3_def_m25_2_re|0|rel=1e-12
+CHK|mp_m3_def_m25_2_im|0|rel=1e-12
+CHK|mp_m3_def_m25_3_re|0|rel=1e-12
+CHK|mp_m3_def_m25_3_im|0|rel=1e-12
+CHK|mp_m3_def_m25_4_re|-0.22097086912079608|rel=1e-12
+CHK|mp_m3_def_m25_4_im|0|rel=1e-12
+CHK|mp_m3_def_m25_5_re|0.17677669529663687|rel=1e-12
+CHK|mp_m3_def_m25_5_im|0|rel=1e-12
+CHK|mp_m3_def_m25_6_re|0|rel=1e-12
+CHK|mp_m3_def_m25_6_im|0|rel=1e-12
+CHK|mp_m3_def_m25_7_re|0.19334951048069657|rel=1e-12
+CHK|mp_m3_def_m25_7_im|0|rel=1e-12
+CHK|mp_m3_def_m25_8_re|-0.22097086912079608|rel=1e-12
+CHK|mp_m3_def_m25_8_im|0|rel=1e-12
+CHK|mp_m3_def_m25_9_re|0.17677669529663687|rel=1e-12
+CHK|mp_m3_def_m25_9_im|0|rel=1e-12
+CHK|mp_m3_def_third_shape|[3 3] 1|exact
+CHK|mp_m3_def_third_1_re|1.2599210498948732|rel=1e-12
+CHK|mp_m3_def_third_1_im|0|rel=1e-12
+CHK|mp_m3_def_third_2_re|0|rel=1e-12
+CHK|mp_m3_def_third_2_im|0|rel=1e-12
+CHK|mp_m3_def_third_3_re|0|rel=1e-12
+CHK|mp_m3_def_third_3_im|0|rel=1e-12
+CHK|mp_m3_def_third_4_re|0.20998684164914549|rel=1e-12
+CHK|mp_m3_def_third_4_im|0|rel=1e-12
+CHK|mp_m3_def_third_5_re|1.2599210498948732|rel=1e-12
+CHK|mp_m3_def_third_5_im|0|rel=1e-12
+CHK|mp_m3_def_third_6_re|0|rel=1e-12
+CHK|mp_m3_def_third_6_im|0|rel=1e-12
+CHK|mp_m3_def_third_7_re|-0.034997806941524254|rel=1e-12
+CHK|mp_m3_def_third_7_im|0|rel=1e-12
+CHK|mp_m3_def_third_8_re|0.20998684164914549|rel=1e-12
+CHK|mp_m3_def_third_8_im|0|rel=1e-12
+CHK|mp_m3_def_third_9_re|1.2599210498948732|rel=1e-12
+CHK|mp_m3_def_third_9_im|0|rel=1e-12
+CHK|mp_m3_def_full_shape|[3 3] 1|exact
+CHK|mp_m3_def_full_1_re|1.7677669534292419|rel=1e-06
+CHK|mp_m3_def_full_1_im|0|rel=1e-06
+CHK|mp_m3_def_full_2_re|-0.3535533910561468|rel=1e-06
+CHK|mp_m3_def_full_2_im|0|rel=1e-06
+CHK|mp_m3_def_full_3_re|0|rel=1e-06
+CHK|mp_m3_def_full_3_im|0|rel=1e-06
+CHK|mp_m3_def_full_4_re|0.35355339105614692|rel=1e-06
+CHK|mp_m3_def_full_4_im|0|rel=1e-06
+CHK|mp_m3_def_full_5_re|1.0606601713169481|rel=1e-06
+CHK|mp_m3_def_full_5_im|0|rel=1e-06
+CHK|mp_m3_def_full_6_re|0|rel=1e-06
+CHK|mp_m3_def_full_6_im|0|rel=1e-06
+CHK|mp_m3_def_full_7_re|0.30935921936156036|rel=1e-06
+CHK|mp_m3_def_full_7_im|0|rel=1e-06
+CHK|mp_m3_def_full_8_re|0.044194175712040484|rel=1e-06
+CHK|mp_m3_def_full_8_im|0|rel=1e-06
+CHK|mp_m3_def_full_9_re|1.4142135623730951|rel=1e-06
+CHK|mp_m3_def_full_9_im|0|rel=1e-06
+CHK|mp_m4_def_shape|[4 4] 1|exact
+CHK|mp_m4_def_1_re|1|rel=1e-12
+CHK|mp_m4_def_1_im|0|rel=1e-12
+CHK|mp_m4_def_2_re|0|rel=1e-12
+CHK|mp_m4_def_2_im|0|rel=1e-12
+CHK|mp_m4_def_3_re|0|rel=1e-12
+CHK|mp_m4_def_3_im|0|rel=1e-12
+CHK|mp_m4_def_4_re|0|rel=1e-12
+CHK|mp_m4_def_4_im|0|rel=1e-12
+CHK|mp_m4_def_5_re|0.29999999999999999|rel=1e-12
+CHK|mp_m4_def_5_im|0|rel=1e-12
+CHK|mp_m4_def_6_re|1|rel=1e-12
+CHK|mp_m4_def_6_im|0|rel=1e-12
+CHK|mp_m4_def_7_re|0|rel=1e-12
+CHK|mp_m4_def_7_im|0|rel=1e-12
+CHK|mp_m4_def_8_re|0|rel=1e-12
+CHK|mp_m4_def_8_im|0|rel=1e-12
+CHK|mp_m4_def_9_re|-0.105|rel=1e-12
+CHK|mp_m4_def_9_im|0|rel=1e-12
+CHK|mp_m4_def_10_re|0.29999999999999999|rel=1e-12
+CHK|mp_m4_def_10_im|0|rel=1e-12
+CHK|mp_m4_def_11_re|1|rel=1e-12
+CHK|mp_m4_def_11_im|0|rel=1e-12
+CHK|mp_m4_def_12_re|0|rel=1e-12
+CHK|mp_m4_def_12_im|0|rel=1e-12
+CHK|mp_m4_def_13_re|0.05949999999999999|rel=1e-12
+CHK|mp_m4_def_13_im|0|rel=1e-12
+CHK|mp_m4_def_14_re|-0.105|rel=1e-12
+CHK|mp_m4_def_14_im|0|rel=1e-12
+CHK|mp_m4_def_15_re|0.29999999999999999|rel=1e-12
+CHK|mp_m4_def_15_im|0|rel=1e-12
+CHK|mp_m4_def_16_re|1|rel=1e-12
+CHK|mp_m4_def_16_im|0|rel=1e-12
+CHK|mp_m2_def_rot_shape|[2 2] 1|exact
+CHK|mp_m2_def_rot_1_re|1.7677669534292419|rel=1e-07
+CHK|mp_m2_def_rot_1_im|0|rel=1e-07
+CHK|mp_m2_def_rot_2_re|-0.3535533910561468|rel=1e-07
+CHK|mp_m2_def_rot_2_im|0|rel=1e-07
+CHK|mp_m2_def_rot_3_re|0.35355339105614692|rel=1e-07
+CHK|mp_m2_def_rot_3_im|0|rel=1e-07
+CHK|mp_m2_def_rot_4_re|1.0606601713169481|rel=1e-07
+CHK|mp_m2_def_rot_4_im|0|rel=1e-07
+CHK|mp_m2_def_third_shape|[2 2] 1|exact
+CHK|mp_m2_def_third_1_re|1.4699078921229032|rel=1e-07
+CHK|mp_m2_def_third_1_im|0|rel=1e-07
+CHK|mp_m2_def_third_2_re|-0.20998684222802966|rel=1e-07
+CHK|mp_m2_def_third_2_im|0|rel=1e-07
+CHK|mp_m2_def_third_3_re|0.20998684222802977|rel=1e-07
+CHK|mp_m2_def_third_3_im|0|rel=1e-07
+CHK|mp_m2_def_third_4_re|1.0499342076668434|rel=1e-07
+CHK|mp_m2_def_third_4_im|0|rel=1e-07
+CHK|mp_triu_def_cplx_shape|[2 2] 0|exact
+CHK|mp_triu_def_cplx_1_re|0|rel=1e-12
+CHK|mp_triu_def_cplx_1_im|2|rel=1e-12
+CHK|mp_triu_def_cplx_2_re|0|rel=1e-12
+CHK|mp_triu_def_cplx_2_im|0|rel=1e-12
+CHK|mp_triu_def_cplx_3_re|0|rel=1e-12
+CHK|mp_triu_def_cplx_3_im|-0.25|rel=1e-12
+CHK|mp_triu_def_cplx_4_re|0|rel=1e-12
+CHK|mp_triu_def_cplx_4_im|2|rel=1e-12
+CHK|mp_triu_def_m_shape|[3 3] 1|exact
+CHK|mp_triu_def_m_1_re|2|rel=1e-12
+CHK|mp_triu_def_m_1_im|0|rel=1e-12
+CHK|mp_triu_def_m_2_re|0|rel=1e-12
+CHK|mp_triu_def_m_2_im|0|rel=1e-12
+CHK|mp_triu_def_m_3_re|0|rel=1e-12
+CHK|mp_triu_def_m_3_im|0|rel=1e-12
+CHK|mp_triu_def_m_4_re|0.25|rel=1e-12
+CHK|mp_triu_def_m_4_im|0|rel=1e-12
+CHK|mp_triu_def_m_5_re|2|rel=1e-12
+CHK|mp_triu_def_m_5_im|0|rel=1e-12
+CHK|mp_triu_def_m_6_re|0|rel=1e-12
+CHK|mp_triu_def_m_6_im|0|rel=1e-12
+CHK|mp_triu_def_m_7_re|0.36999999999999988|rel=1e-12
+CHK|mp_triu_def_m_7_im|0|rel=1e-12
+CHK|mp_triu_def_m_8_re|0.59999999999999998|rel=1e-12
+CHK|mp_triu_def_m_8_im|0|rel=1e-12
+CHK|mp_triu_def_m_9_re|3|rel=1e-12
+CHK|mp_triu_def_m_9_im|0|rel=1e-12
+CHK|mp_single_gen_shape|[2 2] 0|exact
+CHK|mp_single_gen_1_re|0.55368858575820923|rel=1e-06
+CHK|mp_single_gen_1_im|0.46439406275749207|rel=1e-06
+CHK|mp_single_gen_2_re|1.2104411125183105|rel=1e-06
+CHK|mp_single_gen_2_im|-0.31863963603973389|rel=1e-06
+CHK|mp_single_gen_3_re|0.80696076154708862|rel=1e-06
+CHK|mp_single_gen_3_im|-0.21242645382881165|rel=1e-06
+CHK|mp_single_gen_4_re|1.764129638671875|rel=1e-06
+CHK|mp_single_gen_4_im|0.14575439691543579|rel=1e-06
+CHK|mp_char_shape|[2 2] 0|exact
+CHK|mp_char_1_re|6.9111529272868673|rel=1e-12
+CHK|mp_char_1_im|0.051145072381042926|rel=1e-12
+CHK|mp_char_2_re|7.0529127867582373|rel=1e-12
+CHK|mp_char_2_im|-0.050628481974680895|rel=1e-12
+CHK|mp_char_3_re|6.9816712434576491|rel=1e-12
+CHK|mp_char_3_im|-0.050117083166855828|rel=1e-12
+CHK|mp_char_4_re|7.1248775571886345|rel=1e-12
+CHK|mp_char_4_im|0.049610875957567718|rel=1e-12
+CHK|mp_complex_exp_shape|[2 2] 0|exact
+CHK|mp_complex_exp_1_re|-0.14820387657610731|rel=1e-12
+CHK|mp_complex_exp_1_im|1.2857526829868196|rel=1e-12
+CHK|mp_complex_exp_2_re|-0.30464139996858564|rel=1e-12
+CHK|mp_complex_exp_2_im|2.7814697572775859|rel=1e-12
+CHK|mp_complex_exp_3_re|-0.20309426664572375|rel=1e-12
+CHK|mp_complex_exp_3_im|1.8543131715183907|rel=1e-12
+CHK|mp_complex_exp_4_re|-0.45284527654469298|rel=1e-12
+CHK|mp_complex_exp_4_im|4.0672224402644055|rel=1e-12
+CHK|mp_ci_neg_shape|[2 2] 0|exact
+CHK|mp_ci_neg_1_re|0.16272189349112429|rel=1e-12
+CHK|mp_ci_neg_1_im|0.39053254437869817|rel=1e-12
+CHK|mp_ci_neg_2_re|-0.035502958579881658|rel=1e-12
+CHK|mp_ci_neg_2_im|-0.23520710059171596|rel=1e-12
+CHK|mp_ci_neg_3_re|-0.023668639053254462|rel=1e-12
+CHK|mp_ci_neg_3_im|-0.15680473372781065|rel=1e-12
+CHK|mp_ci_neg_4_re|0.036982248520710075|rel=1e-12
+CHK|mp_ci_neg_4_im|0.088757396449704151|rel=1e-12
+CHK|mp_ci_zero|double[2 2] [1 0;0 1]|exact
+CHK|mp_ci_zero_nan|double[2 2] [NaN NaN;NaN NaN]|exact
+CHK|mp_ci_three|double[2 2] [24+11i 42+8i;63+12i 112+6i]|exact
+CHK|mp_ci_square|double[2 2] [5 8+2i;12+3i 22]|exact
+CHK|mp_ci_sing_neg|double[2 2] [Inf Inf;Inf Inf]|exact
+CHK|mp_ci_single|single[2 2] [5 8+2i;12+3i 22]|exact
+CHK|mp_sing_no_warning||exact
+CHK|mix_int_single|MATLAB:mixedClasses|exact
+CHK|mix_int_single_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_int8_true|MATLAB:mixedClasses|exact
+CHK|mix_int8_true_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_int8_single_whole|MATLAB:mixedClasses|exact
+CHK|mix_int8_single_whole_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_single_int8|MATLAB:mixedClasses|exact
+CHK|mix_single_int8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_true_int8|MATLAB:mixedClasses|exact
+CHK|mix_true_int8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_int8_int16|MATLAB:mixedClasses|exact
+CHK|mix_int8_int16_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mpower_int_single|MATLAB:mixedClasses|exact
+CHK|mix_mpower_int_single_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mpower_int_true|MATLAB:mixedClasses|exact
+CHK|mix_mpower_int_true_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mpower_true_int|MATLAB:mixedClasses|exact
+CHK|mix_mpower_true_int_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_power_fn|MATLAB:mixedClasses|exact
+CHK|mix_power_fn_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_vec|MATLAB:mixedClasses|exact
+CHK|mix_vec_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_vec_true|MATLAB:mixedClasses|exact
+CHK|mix_vec_true_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_empty|MATLAB:mixedClasses|exact
+CHK|mix_empty_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_int_single_neg|MATLAB:mixedClasses|exact
+CHK|mix_int_single_neg_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_int8_char|int8[1 1] 127|exact
+CHK|mix_char_int8|int8[1 1] 97|exact
+CHK|mix_int_dbl_whole|int8[1 1] 4|exact
+CHK|mix_int_same|int8[1 1] 8|exact

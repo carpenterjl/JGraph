@@ -399,7 +399,7 @@ internal static partial class JgsBuiltins
         void Real1(string name, Func<double, bool> valid, Func<double, double> f, string complaint) =>
             Math1(name, x => valid(x) ? f(x) : throw new JgsRuntimeException(0, 0, $"{name}: {complaint}"));
 
-        Real1("realsqrt", static x => x >= 0, Math.Sqrt, "the argument must not be negative.");
+        Real1("realsqrt", static x => x >= 0, SqrtPlusZero, "the argument must not be negative.");
         Real1("reallog", static x => x >= 0, Math.Log, "the argument must not be negative.");
         Math2("realpow", static (x, y) =>
         {

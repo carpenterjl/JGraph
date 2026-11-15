@@ -81,10 +81,13 @@ public class MatlabComplexAndPencilM91Tests : IDisposable
             """);
     }
 
+    // A singular complex system warns and answers in R2025b, as a real one does; it refuses only
+    // under warning('error', 'MATLAB:singularMatrix') (open item 321, ADR 0365).
     [Fact]
     public void ASingularComplexSystemIsRefusedWithTheSingularMessage()
     {
         string message = RunExpectingFailure("""
+            warning('error', 'MATLAB:singularMatrix');
             A = [1+1i, 2+2i; 2+2i, 4+4i];
             x = A \ [1; 2];
             """);

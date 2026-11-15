@@ -277,8 +277,9 @@ internal static partial class JgsBuiltins
 
         // Storage is always doubles, but a value remembers the class it was asked for (M47), so these
         // read the tag: isinteger is true exactly for a value that went through one of the eight
-        // integer constructors, and isfloat is true for everything else numeric.
-        Predicate("isfloat", static v => IsNumericValue(v) && !v.NumericClass.IsInteger());
+        // integer constructors, and isfloat is true for everything else numeric but a logical, which
+        // is no more floating point than an integer is (R2025b: isfloat(true) is false; item 321).
+        Predicate("isfloat", static v => IsNumericValue(v) && !IsLogicalValue(v) && !v.NumericClass.IsInteger());
         Predicate("isinteger", static v => v.NumericClass.IsInteger());
         // In the MATLAB dialect anything but a number, a char or a logical is not real, as R2025b
         // answers for a cell, struct, string, function handle, table, datetime or categorical (stage K8).

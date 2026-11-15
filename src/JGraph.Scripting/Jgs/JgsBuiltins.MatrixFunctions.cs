@@ -320,6 +320,32 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
+    /// <c>A ^ p</c> for a square matrix where the real repeated product does not serve: a power that
+    /// is not a finite real whole number, which R2025b's mpower.m takes through the eigenvalues or
+    /// the Schur–Padé algorithm, or a whole power of a complex matrix, which it takes by repeated
+    /// squaring (open item 321, ADR 0365). The shape has been checked by the caller.
+    /// </summary>
+    internal static JgsValue MatrixScalarPower(JgsValue matrix, Complex exponent, bool wholePower, int line, int col)
+    {
+        if (JgsMatrix.RowCount(matrix) == 0)
+        {
+            return JgsMatrix.BuildValues(0, 0, static (r, c) => JgsValue.Number(0));
+        }
+
+        Complex[,] a = ComplexSquareOf("'^'", matrix, line, col);
+        try
+        {
+            return FromComplexRect(wholePower
+                ? FractionalMatrixPower.IntegerPower(a, exponent.Real)
+                : FractionalMatrixPower.Evaluate(a, exponent, real: !HasComplexElements(matrix)));
+        }
+        catch (InvalidOperationException ex)
+        {
+            throw new JgsRuntimeException(line, col, ex.Message);
+        }
+    }
+
+    /// <summary>
     /// One scalar raised to another under MATLAB's own domain rule, which is the rule <c>.^</c>
     /// already follows: a negative base with a whole exponent stays real, and everything else that
     /// leaves the reals answers a complex number rather than <c>Math.Pow</c>'s NaN.
@@ -342,12 +368,19 @@ internal static partial class JgsBuiltins
     /// the rank it settled on so the caller can say so when it fell short.
     /// </summary>
     internal static JgsValue ComplexMatrixSolve(JgsValue coefficients, JgsValue rhs, bool divide, int line, int col) =>
-        ComplexMatrixSolve(coefficients, rhs, divide, line, col, out _, out _, out _);
+        ComplexMatrixSolve(coefficients, rhs, divide, line, col, out _, out _, out _, out _, out _);
 
     /// <inheritdoc cref="ComplexMatrixSolve(JgsValue, JgsValue, bool, int, int)"/>
+    /// <remarks>
+    /// A square system answers where it is singular, and reports how well it went in
+    /// <paramref name="condition"/> and <paramref name="rcond"/> for the caller to warn with, as the
+    /// real square solve does (open item 321, ADR 0365).
+    /// </remarks>
     internal static JgsValue ComplexMatrixSolve(JgsValue coefficients, JgsValue rhs, bool divide, int line, int col,
-        out int rank, out int limit, out double tolerance)
+        out int rank, out int limit, out double tolerance, out SquareCondition condition, out double rcond)
     {
+        condition = SquareCondition.Fine;
+        rcond = double.PositiveInfinity;
         string name = divide ? "'/'" : "'\\'";
         Complex[,] a = ComplexRectOf(name, coefficients, line, col);
         Complex[,] b = ComplexRectOf(name, rhs, line, col);
@@ -376,11 +409,14 @@ internal static partial class JgsBuiltins
         Complex[,] solution;
         if (rows == cols)
         {
-            if (!ComplexLinear.TrySolve(a, b, out solution))
-            {
-                throw new JgsRuntimeException(line, col, "The matrix is singular to working precision.");
-            }
-
+            // R2025b warns and answers a singular complex system as it does a real one (measured).
+            // A real matrix with a complex right-hand side is two real systems there, one for each
+            // part, so its Inf and NaN are the real substitutions' ([1 2; 0 0] \ [1i; 2] is
+            // [-Inf + NaN·i; Inf + NaN·i], where one complex solve would give NaN + NaN·i above).
+            bool single = coefficients.NumericClass == JgsNumericClass.Single || rhs.NumericClass == JgsNumericClass.Single;
+            condition = HasComplexElements(coefficients)
+                ? ComplexSquareSystems.Solve(a, b, single, out solution, out rcond)
+                : SolveRealByParts(a, b, single, out solution, out rcond);
             rank = cols;
             tolerance = 0.0;
         }
@@ -400,6 +436,47 @@ internal static partial class JgsBuiltins
         }
 
         return FromComplexRect(divide ? TransposePlain(solution) : solution);
+    }
+
+    /// <summary>
+    /// A real square matrix against a complex right-hand side: the real parts and the imaginary
+    /// parts side by side as one real system, so the matrix is factored once.
+    /// </summary>
+    private static SquareCondition SolveRealByParts(Complex[,] a, Complex[,] b, bool single,
+        out Complex[,] solution, out double rcond)
+    {
+        int n = a.GetLength(0);
+        int nrhs = b.GetLength(1);
+        var flat = new double[(long)n * n];
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                flat[((long)c * n) + r] = a[r, c].Real;
+            }
+        }
+
+        var parts = new double[(long)n * nrhs * 2];
+        for (int c = 0; c < nrhs; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                parts[((long)c * n) + r] = b[r, c].Real;
+                parts[((long)(nrhs + c) * n) + r] = b[r, c].Imaginary;
+            }
+        }
+
+        SquareCondition condition = SquareSystems.Solve(flat, n, parts, nrhs * 2, out rcond, single);
+        solution = new Complex[n, nrhs];
+        for (int c = 0; c < nrhs; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                solution[r, c] = new Complex(parts[((long)c * n) + r], parts[((long)(nrhs + c) * n) + r]);
+            }
+        }
+
+        return condition;
     }
 
     /// <summary>

@@ -5454,7 +5454,17 @@ internal sealed partial class Interpreter
             && (left.NumericClass.IsInteger() || right.NumericClass.IsInteger())
             && !(IsScalarOperand(left) && IsScalarOperand(right)))
         {
-            throw new JgsRuntimeException(at.Line, at.Column, JgsBuiltins.MPowerIntegerRefusal);
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:mpower:integerNotSupported", JgsBuiltins.MPowerIntegerRefusal);
+        }
+
+        // R2025b raises an integer only with its own class or a double: a single or a logical on
+        // the other side, or another integer class, is MATLAB:mixedClasses for ^ and .^, empty or
+        // not (measured: int32(4) .^ single(0.5), int8(2) .^ true, true ^ int8(2); open item 321).
+        if (Dialect.IsMatlab && op is (TokenType.Caret or TokenType.DotCaret)
+            && JgsBuiltins.PowerMixesClasses(left, right))
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:mixedClasses",
+                "Integers can only be combined with integers of the same class, or scalar doubles.");
         }
 
         JgsNumericClass numericClass =
@@ -5773,12 +5783,12 @@ internal sealed partial class Interpreter
                 // scalar one for '^', which is exactly the shape that reaches here.
                 return JgsBuiltins.ScalarMatrixPower(left, right, at.Line, at.Column);
             }
-            else if (op == TokenType.Caret && !ScalarForm(op) && IsMatrix(left) && rightScalar
-                     && !JgsBuiltins.HasComplexElements(right))
+            else if (op == TokenType.Caret && !ScalarForm(op) && IsMatrix(left) && rightScalar)
             {
                 // The exponent is read before the general matrix branch below, so a 1-by-1 array
-                // raises a matrix to a power exactly as the number it holds does.
-                return MatrixPower(left, ScalarValue(right), at);
+                // raises a matrix to a power exactly as the number it holds does. A complex one
+                // is a matrix power too, not the elementwise one it used to fall through to.
+                return MatrixPower(left, right, at);
             }
             else if (op is TokenType.Star or TokenType.Slash or TokenType.Caret
                      && !ScalarForm(op)
@@ -9384,7 +9394,9 @@ internal sealed partial class Interpreter
             if (JgsBuiltins.HasComplexElements(left) || JgsBuiltins.HasComplexElements(right))
             {
                 JgsValue answer = JgsBuiltins.ComplexMatrixSolve(left, right, divide: false, at.Line, at.Column,
-                    out int solvedRank, out int rankLimit, out double rankTolerance);
+                    out int solvedRank, out int rankLimit, out double rankTolerance,
+                    out JGraph.Numerics.LinearAlgebra.SquareCondition squareCondition, out double squareRcond);
+                WarnIfSingular(squareCondition, squareRcond);
                 WarnIfRankDeficient(solvedRank, rankLimit, rankTolerance);
                 return answer;
             }
@@ -9408,7 +9420,9 @@ internal sealed partial class Interpreter
             if (JgsBuiltins.HasComplexElements(left) || JgsBuiltins.HasComplexElements(right))
             {
                 JgsValue answer = JgsBuiltins.ComplexMatrixSolve(right, left, divide: true, at.Line, at.Column,
-                    out int solvedRank, out int rankLimit, out double rankTolerance);
+                    out int solvedRank, out int rankLimit, out double rankTolerance,
+                    out JGraph.Numerics.LinearAlgebra.SquareCondition squareCondition, out double squareRcond);
+                WarnIfSingular(squareCondition, squareRcond);
                 WarnIfRankDeficient(solvedRank, rankLimit, rankTolerance);
                 return answer;
             }
@@ -9760,27 +9774,33 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>MATLAB's <c>A^p</c>: an integer matrix power (negative p inverts first).</summary>
-    private JgsValue MatrixPower(JgsValue matrix, double exponent, Node at)
+    private JgsValue MatrixPower(JgsValue matrix, JgsValue exponentValue, Node at)
     {
-        if (System.Math.Abs(exponent - System.Math.Round(exponent)) > 1e-12)
-        {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                "'^' on a matrix supports integer exponents only. Use '.^' for the elementwise power.");
-        }
-
         // An N-D base is refused for having pages, not for the shape of one of them, and MATLAB
         // says so in its own sentence — the same one `s ^ A` draws for an N-D exponent (M142).
         if (JgsMatrix.DimsOf(matrix).Length > 2)
         {
-            throw new JgsRuntimeException(at.Line, at.Column, JgsBuiltins.MPowerDimensionRefusal);
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:mpower:inputsMustBe2D", JgsBuiltins.MPowerDimensionRefusal);
         }
 
-        double[,] a = Rect(AsRows(matrix), at);
-        if (a.GetLength(0) != a.GetLength(1))
+        if (JgsMatrix.RowCount(matrix) != JgsMatrix.ColCount(matrix))
         {
-            throw new JgsRuntimeException(at.Line, at.Column, "'^' needs a square matrix.");
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:mpower:notScalarAndSquareMatrix", JgsBuiltins.MPowerShapeRefusal);
         }
 
+        // R2025b's mpower.m: a finite real whole power is repeated squaring, anything else goes
+        // through the eigenvalues or the Schur-Pade algorithm, and so does a complex matrix's whole
+        // power, which this engine squares in complex arithmetic (open item 321, ADR 0365).
+        JgsValue held = exponentValue.Type == JgsType.Array ? exponentValue.ElementAt(0) : exponentValue;
+        System.Numerics.Complex p = held.Type == JgsType.Complex ? held.AsComplex : new System.Numerics.Complex(held.AsNumber, 0);
+        bool whole = p.Imaginary == 0 && double.IsFinite(p.Real) && System.Math.Round(p.Real) == p.Real;
+        if (!whole || JgsBuiltins.HasComplexElements(matrix) || System.Math.Abs(p.Real) > int.MaxValue)
+        {
+            return JgsBuiltins.MatrixScalarPower(matrix, p, whole, at.Line, at.Column);
+        }
+
+        double exponent = p.Real;
+        double[,] a = Rect(AsRows(matrix), at);
         try
         {
             return MatrixResult(JGraph.Numerics.LinearAlgebra.Linear.Power(a, (int)System.Math.Round(exponent)));

@@ -1246,7 +1246,12 @@ public static class PackedMath
         {
             case UnaryOp.Negate: TensorPrimitives.Negate<double>(x, d); break;
             case UnaryOp.Abs: TensorPrimitives.Abs<double>(x, d); break;
-            case UnaryOp.Sqrt: TensorPrimitives.Sqrt<double>(x, d); break;
+            case UnaryOp.Sqrt:
+                // +0 first, so the root of -0 is +0 as R2025b's sqrt(-0) is (open item 321); the
+                // tile is already in cache, and adding zero changes no other element.
+                TensorPrimitives.Add<double>(x, 0.0, d);
+                TensorPrimitives.Sqrt<double>(d, d);
+                break;
             case UnaryOp.Floor: TensorPrimitives.Floor<double>(x, d); break;
             case UnaryOp.Ceiling: TensorPrimitives.Ceiling<double>(x, d); break;
             case UnaryOp.Round:
@@ -1272,7 +1277,7 @@ public static class PackedMath
         {
             case UnaryOp.Negate: for (int i = 0; i < len; i++) { d[i] = -x[i]; } break;
             case UnaryOp.Abs: for (int i = 0; i < len; i++) { d[i] = Math.Abs(x[i]); } break;
-            case UnaryOp.Sqrt: for (int i = 0; i < len; i++) { d[i] = Math.Sqrt(x[i]); } break;
+            case UnaryOp.Sqrt: for (int i = 0; i < len; i++) { d[i] = Math.Sqrt(x[i] + 0.0); } break;
             case UnaryOp.Floor: for (int i = 0; i < len; i++) { d[i] = Math.Floor(x[i]); } break;
             case UnaryOp.Ceiling: for (int i = 0; i < len; i++) { d[i] = Math.Ceiling(x[i]); } break;
             case UnaryOp.Round: for (int i = 0; i < len; i++) { d[i] = Math.Round(x[i]); } break;

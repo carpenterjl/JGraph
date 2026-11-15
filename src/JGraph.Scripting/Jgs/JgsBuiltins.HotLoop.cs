@@ -42,7 +42,7 @@ internal static partial class JgsBuiltins
             "floor" => (System.Math.Floor, null),
             "ceil" => (System.Math.Ceiling, null),
             "round" => (RoundAwayFromZero, null),
-            "sqrt" => (System.Math.Sqrt, NonNegative),
+            "sqrt" => (SqrtPlusZero, NonNegative),
             "log" => (System.Math.Log, NonNegative),
             "log10" => (System.Math.Log10, NonNegative),
             "asin" => (System.Math.Asin, InsideUnit),

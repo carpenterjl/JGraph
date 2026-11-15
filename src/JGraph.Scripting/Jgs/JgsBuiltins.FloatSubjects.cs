@@ -111,6 +111,12 @@ internal static partial class JgsBuiltins
             {
                 if (args.Count < least)
                 {
+                    // filloutliers with no fill is R2025b's minrhs, whatever the data's type (item 321).
+                    if (least > 1)
+                    {
+                        throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+                    }
+
                     return;
                 }
 

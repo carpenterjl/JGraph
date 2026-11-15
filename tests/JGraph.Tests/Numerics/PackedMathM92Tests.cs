@@ -116,7 +116,8 @@ public class PackedMathM92Tests
         [
             (PackedMath.UnaryOp.Negate, static x => -x),
             (PackedMath.UnaryOp.Abs, Math.Abs),
-            (PackedMath.UnaryOp.Sqrt, Math.Sqrt),
+            // The boxed sqrt adds +0 first, so the root of -0 is +0 (open item 321, ADR 0365).
+            (PackedMath.UnaryOp.Sqrt, static x => Math.Sqrt(x + 0.0)),
             (PackedMath.UnaryOp.Floor, Math.Floor),
             (PackedMath.UnaryOp.Ceiling, Math.Ceiling),
             (PackedMath.UnaryOp.Sin, Math.Sin),
@@ -199,12 +200,14 @@ public class PackedMathM92Tests
     [Fact]
     public void AtLeastAcceptsNegativeZeroAsBeingAtTheBound()
     {
-        // -0.0 is not less than 0, and sqrt(-0.0) is -0.0 rather than a complex number, which is why
-        // the domain predicate this replaces admitted it too.
+        // -0.0 is not less than 0, and sqrt(-0.0) is a zero rather than a complex number, which is
+        // why the domain predicate this replaces admitted it too. The zero is +0, as R2025b's
+        // sqrt(-0) is (open item 321, ADR 0365).
         using var input = From(-0.0, 1.0, 4.0);
         using var dest = new ManagedBuffer(3);
         Assert.True(PackedMath.TryUnaryAtLeast(PackedMath.UnaryOp.Sqrt, 0, input, dest));
-        Assert.True(double.IsNegative(Values(dest)[0]));
+        Assert.Equal(0.0, Values(dest)[0]);
+        Assert.False(double.IsNegative(Values(dest)[0]));
     }
 
     // --- Comparison ------------------------------------------------------------------------------

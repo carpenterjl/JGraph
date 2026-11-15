@@ -167,3 +167,9 @@ rectangular solve carries `MATLAB:rankDeficientMatrix`.
   the first four refuse a non-float in other words, and the last two do not exist here.
 - **`[4 0; 0 9] ^ 0.5`** (a matrix to a fractional power) is refused here; R2025b answers `sqrtm`.
 - **`isfloat(true)`** answers true here (seen in passing); R2025b answers false.
+
+Closed since: ADR 0365 (open item 321) answers a singular complex system under R2025b's warnings,
+makes `sqrt(-0)` +0, keeps single through the reciprocal, degree and special functions, raises a
+matrix to a fractional power by mpower.m's roads, refuses `int32(4) .^ single(0.5)` and
+`int8(2) .^ true` as `MATLAB:mixedClasses`, and makes `isfloat(true)` false. The symmetric roads, the
+`[1 2 3; 4 5 6; 7 8 9]` pivot, the sparse roads and `expint` and its kin stay open.

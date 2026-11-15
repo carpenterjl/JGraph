@@ -173,6 +173,16 @@ internal static partial class JgsBuiltins
         a >= 0 || double.IsNaN(a) || double.IsNaN(b) || b == System.Math.Floor(b);
 
     /// <summary>
+    /// <c>sqrt</c> of one real: <c>Math.Sqrt(x + 0.0)</c>, because R2025b's <c>sqrt(-0)</c> is +0 and
+    /// IEEE's is -0; adding zero turns -0 into +0 and leaves every other value, a NaN's payload
+    /// included, alone (open item 321, ADR 0365).
+    /// </summary>
+    internal static double SqrtPlusZero(double x) => System.Math.Sqrt(x + 0.0);
+
+    /// <summary>The complex <c>sqrt</c>, with a -0 real part read as +0 the same way.</summary>
+    private static Complex ComplexSqrtPlusZero(Complex z) => Complex.Sqrt(new Complex(z.Real + 0.0, z.Imaginary));
+
+    /// <summary>
     /// The power operator's complex road: <c>z.^0.5</c> is <c>sqrt(z)</c> and <c>z.^-1</c> is
     /// <c>1./z</c>, to the bit, as R2025b answers them (open item 272, ADR 0355) — so
     /// <c>(-4).^0.5</c> is exactly <c>2i</c> and <c>(-Inf).^0.5</c> is <c>Inf·i</c>, where the
@@ -194,6 +204,32 @@ internal static partial class JgsBuiltins
         }
 
         return Complex.Pow(z, exponent);
+    }
+
+    /// <summary>
+    /// Whether a power pairs an integer class with a single, a logical or a different integer class,
+    /// which R2025b refuses as <c>MATLAB:mixedClasses</c> (open item 321, ADR 0365). A char is read
+    /// as its codes and a double combines, so neither is a mix.
+    /// </summary>
+    internal static bool PowerMixesClasses(JgsValue left, JgsValue right)
+    {
+        JgsNumericClass l = left.NumericClass;
+        JgsNumericClass r = right.NumericClass;
+        bool li = l.IsInteger();
+        bool ri = r.IsInteger();
+        if (li && ri)
+        {
+            return l != r;
+        }
+
+        if (!li && !ri)
+        {
+            return false;
+        }
+
+        JgsValue other = li ? right : left;
+        JgsNumericClass otherClass = li ? r : l;
+        return otherClass == JgsNumericClass.Single || IsLogicalValue(other);
     }
 
     /// <summary>
