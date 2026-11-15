@@ -210,9 +210,11 @@ Callbacks are script-side state and are not saved, as with every other object.
   first time R2025b called a panel's two to five times, and on a figure resize once before the
   figure's own and twice after; JGraph calls each once, the figure's first.
 
-- **`allchild` and `findall` do not report R2025b's `scribeOverlay`.** R2025b keeps an annotation
-  pane beside every set of axes and lists it; JGraph has none (`u2_tree`,
-  `allchild_count_with_furniture`).
+Closed since: **`allchild` and `findall` did not report R2025b's `scribeOverlay`**, the annotation
+pane R2025b keeps beside every set of axes. A figure lists its pane from its first axes on (open
+item 326, ADR 0372), and a panel or a tab holding an axes lists one of its own (open item 343,
+ADR 0376); `u2_tree`'s `allchild_count_with_furniture` agrees.
+
 - **`Scrollable` is kept and nothing scrolls.** R2025b shows scroll bars in a `uifigure` container
   whose children overflow it. It arrives with the grid (U5).
 - **A `uifigure` cannot be given a figure number.** R2025b's `IntegerHandle 'on'` numbers it;

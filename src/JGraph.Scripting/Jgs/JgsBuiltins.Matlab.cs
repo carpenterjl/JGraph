@@ -209,7 +209,22 @@ internal static partial class JgsBuiltins
         // --- Strings ----------------------------------------------------------------------------
         // strcmp, strcmpi and strtrim are declared in JgsBuiltins.TextFamily.cs.
         Define("strsplit", (args, line, col) => SplitText(args, 1, line, col)[0]);
-        Define("strjoin", (args, line, col) => JoinText(args, line, col));
+        Define("strjoin", (args, line, col) =>
+        {
+            // R2025b joins a cell of char vectors or a string array and refuses a char array or a
+            // number (open item 343, ADR 0376; probe p7fa); JGS keeps joining a char column's rows.
+            // A list of texts this build's own verbs answer (colnames) joins as before.
+            if (JgsRunningDialect.ThreadIsMatlab && args.Count > 0
+                && !args[0].IsStringArray && !args[0].IsCategorical && !args[0].IsObjectArray
+                && (args[0].Type is JgsType.String or JgsType.Number || args[0].IsCharMatrix
+                    || (args[0].Type == JgsType.Array && args[0].ArrayLength > 0 && args[0].ElementAt(0).Type == JgsType.Number)))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:strjoin:InvalidCellType",
+                    "First input must be a string array or cell array of character vectors.");
+            }
+
+            return JoinText(args, line, col);
+        });
         Define("num2str", (args, line, col) => NumberText(FirstWithoutZeroImag(args), line, col)); // num2str and mat2str write complex(1, 0) as 1 (R2025b; ADR 0364)
 
         // num2str writes a number for a person to read; mat2str writes one for the language to read

@@ -97,7 +97,7 @@ public sealed class AxesModel : GraphObject
             {
                 if (e.PropertyName == nameof(Visible) && shown.Visible)
                 {
-                    _shownAt[shown] = Interlocked.Increment(ref _shownCount);
+                    _shownAt[shown] = NextOrder(); // on the creation clock, so a tiled layout can list furniture among tiles (ADR 0376)
                 }
             };
         }
@@ -190,13 +190,14 @@ public sealed class AxesModel : GraphObject
     /// </summary>
     public GraphObjectCollection<LightModel> Lights { get; }
 
-    private static long _shownCount;
     private readonly Dictionary<GraphObject, long> _shownAt = new(ReferenceEqualityComparer.Instance);
 
     /// <summary>
     /// When the legend, the colour bar or the bubble legend was last shown, as a number that grows
     /// with every showing: R2025b lists them among their figure's children newest first (open item
-    /// 297, probe p297b). Zero for one never shown.
+    /// 297, probe p297b). Zero for one never shown. The number is read off the clock
+    /// <see cref="GraphObject.CreationOrder"/> is, so it orders a showing among objects made
+    /// (a tiled layout's children, ADR 0376).
     /// </summary>
     public long ShownOrder(GraphObject furniture) =>
         _shownAt.TryGetValue(furniture, out long at) ? at : 0;

@@ -442,11 +442,14 @@ internal static partial class JgsBuiltins
             static bool Named(IEnumerable<(string Name, JgsValue Value)> pairs, string name) =>
                 pairs.Any(o => o.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
             if (!Named(byName.Options, "FaceColor") && !Named(byName.Options, "CData") && !Named(byName.Options, "FaceVertexCData")
-                && !Named(byName.Options, "Parent") && !Named(byName.Others, "Parent"))
+                && (JgsRunningDialect.ThreadIsMatlab
+                    ? !JgsGraphicsProperties.HoldsDefault(made, "FaceColor")
+                    : !Named(byName.Options, "Parent") && !Named(byName.Others, "Parent")))
             {
-                // No colour named: R2025b fills with the ink when the axes came first (probe_114),
-                // and with the colour order's blue when the axes came as 'Parent' (oi_findprop_detach_computed).
-                made.FaceColor = Colors.DarkGray;
+                // No colour named: R2025b fills with its factory 33/255 grey however the axes came, and
+                // with a DefaultPatchFaceColor held above when there is one (probe_114,
+                // oi_findprop_detach_computed; open item 343, ADR 0376). The JGS dialect keeps its ink.
+                made.FaceColor = JgsRunningDialect.ThreadIsMatlab ? MatlabFactoryEdge : Colors.DarkGray;
             }
 
             MatlabPatchEdge(made);
@@ -490,6 +493,15 @@ internal static partial class JgsBuiltins
         PatchPlot patch = data.Count == 0
             ? FromFacesAndVertices(verb, options, line, col)
             : FromCoordinates(verb, data, line, col, dimensions);
+
+        // patch('Faces', ..., 'Vertices', ...) with no colour named is R2025b's factory 33/255 grey, or
+        // a DefaultPatchFaceColor held above (open item 343, ADR 0376; probe p7fa).
+        if (JgsRunningDialect.ThreadIsMatlab && verb == "patch" && data.Count == 0
+            && !options.Any(static o => o.Name.ToLowerInvariant() is "facecolor" or "cdata" or "facevertexcdata")
+            && !JgsGraphicsProperties.HoldsDefault(patch, "FaceColor"))
+        {
+            patch.FaceColor = MatlabFactoryEdge;
+        }
 
         MatlabPatchEdge(patch);
         ApplyPatchOptions(verb, patch, options, line, col);

@@ -82,6 +82,7 @@ public sealed class GraphicsGroupIndex
             return (x, y, z);
         }
 
+        matrix = WithoutRotationResidue(matrix);
         DataRange zz = z.IsEmpty ? new DataRange(0, 0) : z;
         double xMin = double.PositiveInfinity, xMax = double.NegativeInfinity;
         double yMin = double.PositiveInfinity, yMax = double.NegativeInfinity;
@@ -104,5 +105,48 @@ public sealed class GraphicsGroupIndex
         }
 
         return (new DataRange(xMin, xMax), new DataRange(yMin, yMax), z.IsEmpty ? z : new DataRange(zMin, zMax));
+    }
+
+    /// <summary>
+    /// A matrix whose 3-by-3 part is exactly orthogonal - a rotation, <c>M'M</c> the identity to the
+    /// bit - with that part's entries under one eps written as zero, as R2025b fits them: a rotation by
+    /// <c>pi/2</c> leaves <c>cos(pi/2) = 6e-17</c>, which R2025b fits as a zero span (<c>[-1 1]</c>)
+    /// where a shear or a scaling of the same size keeps its span, and so does a rotation's own
+    /// cancellation (<c>pi/4</c>: <c>[0 1.1e-16]</c>) and an entry of <c>1e-15</c> (open item 343, ADR
+    /// 0376; probe p7fe, 25 matrices). The translation is left as it is.
+    /// </summary>
+    private static double[,] WithoutRotationResidue(double[,] matrix)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                double dot = 0;
+                for (int k = 0; k < 3; k++)
+                {
+                    dot += matrix[k, i] * matrix[k, j];
+                }
+
+                if (dot != (i == j ? 1.0 : 0.0))
+                {
+                    return matrix;
+                }
+            }
+        }
+
+        double[,]? cleaned = null;
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (matrix[i, j] != 0 && System.Math.Abs(matrix[i, j]) < 2.220446049250313e-16)
+                {
+                    cleaned ??= (double[,])matrix.Clone();
+                    cleaned[i, j] = 0;
+                }
+            }
+        }
+
+        return cleaned ?? matrix;
     }
 }

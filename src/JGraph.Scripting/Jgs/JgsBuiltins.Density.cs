@@ -152,6 +152,11 @@ internal static partial class JgsBuiltins
                 plot.NumBins = counted;
             }
 
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                plot.EdgeColor = MatlabFactoryEdge; // R2025b's 33/255, where the model's own is 38/255 (open item 343, ADR 0376)
+            }
+
             Histogram2Options(plot, options, line, col);
             return Handle(plot);
         });

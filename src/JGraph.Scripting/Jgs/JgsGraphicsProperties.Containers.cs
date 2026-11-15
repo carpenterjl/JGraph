@@ -74,8 +74,9 @@ internal static partial class JgsGraphicsProperties
     internal static GraphObject? ParentOf(GraphObject target) => target switch
     {
         AxesModel { Container: { } container } => container,
+        AxesModel tile when LayoutHolding(tile) is { } layout => layout, // a tile's is its layout (open item 343, ADR 0376)
         JgsGraphicsGroup group => (GraphObject?)group.Outer ?? group.Home, // the group or axes it was made in (items 89, 166)
-        JgsAnnotationPane pane => pane.Figure,
+        JgsAnnotationPane pane => pane.Owner,
 
         // A figure's default menus and toolbar stand in no list of its own (open item 326, ADR 0372).
         MenuItemModel or UiToolbarModel when JgsFigureChrome.OwnerOf(target) is { } chromeOwner => chromeOwner,

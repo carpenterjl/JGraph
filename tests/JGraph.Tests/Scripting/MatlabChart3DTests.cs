@@ -59,12 +59,13 @@ public class MatlabChart3DTests : IDisposable
             disp(get(h, 'LineWidth'));
             disp(get(h, 'BaseValue'));
 
-            % 'filled' means the marker takes the stem's colour inside, whatever the spec made it.
+            % 'filled' means the marker takes the stem's colour inside, whatever the spec made it;
+            % R2025b reads that face back as 'auto' (open item 343, ADR 0376).
             disp(get(h, 'MarkerFaceColor'));
             """);
 
         Assert.Equal(
-            new[] { "stem", "[1, 0, 0]", "--", "star", "3", "1", "[1, 0, 0]" },
+            new[] { "stem", "[1, 0, 0]", "--", "star", "3", "1", "auto" },
             _output.NormalLines);
     }
 

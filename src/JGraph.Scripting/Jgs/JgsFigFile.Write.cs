@@ -244,6 +244,25 @@ internal static partial class JgsFigFile
                 return;
             }
 
+            // A tiled layout stands for its tiles in a MATLAB-dialect script's tree; the file keeps
+            // hgsave's form, its tiles as the figure's axes where the layout placed them, and the
+            // .graph document beside it the layout itself (open item 343, ADR 0376). A panel's
+            // annotation pane holds nothing to write.
+            if (target is TiledLayoutModel layout)
+            {
+                foreach (GraphObject tile in JgsGraphicsProperties.ChildrenOf(layout))
+                {
+                    Append(siblings, tile);
+                }
+
+                return;
+            }
+
+            if (target is JgsAnnotationPane)
+            {
+                return;
+            }
+
             if (Word(target) is not { } word)
             {
                 Skipped.Add(JgsGraphicsProperties.TypeNameOf(target));

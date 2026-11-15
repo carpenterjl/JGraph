@@ -114,10 +114,16 @@ internal static partial class JgsBuiltins
             // the line spec has had its say about what that colour is.
             if (filled)
             {
-                plot.MarkerFaceColor = plot.Color;
+                plot.MarkerFaceColor = plot.Color ?? (JgsRunningDialect.ThreadIsMatlab ? PaletteColorFor(plot) : null);
             }
 
             Stem3Options(plot, rest, optionStart, line, col);
+
+            // R2025b's 'filled' face reads 'auto' (open item 343, ADR 0376), unless the call named one.
+            if (filled && !rest.Skip(optionStart).Any(a => IsTextScalar(a) && TextOf(a).Equals("MarkerFaceColor", StringComparison.OrdinalIgnoreCase)))
+            {
+                JgsGraphicsProperties.MarkMarkerFaceAuto(plot);
+            }
             return Handle(plot);
         });
     }

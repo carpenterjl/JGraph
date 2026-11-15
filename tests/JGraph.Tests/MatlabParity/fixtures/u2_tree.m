@@ -30,7 +30,7 @@ fprintf('CHK|findobj_property|%s|exact\n', u2_tags(findobj(f, '-property', 'Bord
 fprintf('CHK|allchild_figure|%s|exact\n', u2_tags(allchild(f)));
 fprintf('CHK|allchild_panel|%s|exact\n', u2_tags(allchild(p1)));
 fprintf('CHK|allchild_is_column|%d|exact\n', size(allchild(p1), 2));
-fprintf('CHK|allchild_count_with_furniture|%d|div=ADR0199\n', numel(allchild(p1)));
+fprintf('CHK|allchild_count_with_furniture|%d|exact\n', numel(allchild(p1)));
 
 % --- uistack -------------------------------------------------------------------------------------
 steps = {

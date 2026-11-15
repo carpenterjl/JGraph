@@ -766,15 +766,21 @@ internal static partial class JgsGraphicsProperties
                 children.AddRange(group.Members.Where(member => member is JgsGraphicsGroup || member.Parent is not null));
                 break;
             case JgsAnnotationPane pane:
-                children.AddRange(pane.Figure.Annotations);
+                // A panel's or a tab's pane holds nothing here (open item 343, ADR 0376).
+                if (!pane.InContainer)
+                {
+                    children.AddRange(pane.Figure.Annotations);
+                }
+
                 break;
             case JgsGraphicsRoot:
                 // Every figure; a search or a listing leaves out the ones whose handles are hidden.
                 children.AddRange(RootFigures(hidden: true));
                 break;
             case FigureModel figure:
-                // The axes placed in the figure itself; one placed in a panel is the panel's child.
-                AddAxesAndFurniture(children, figure.TopLevelAxes());
+                // The axes placed in the figure itself; one placed in a panel is the panel's child. In a
+                // MATLAB-dialect script a tiled layout stands among them for its tiles (open item 343, ADR 0376).
+                AddFigureAxes(children, figure);
 
                 // In a MATLAB-dialect script the annotations sit in a pane whose handle is hidden,
                 // in front of the axes (open item 143, probe pa_pane).
@@ -811,7 +817,21 @@ internal static partial class JgsGraphicsProperties
                 break;
             case UiContainerModel container:
                 AddAxesAndFurniture(children, container.ContainedAxes());
+
+                // A panel or a tab that held an axes has its own pane in a MATLAB-dialect script, in
+                // front of its axes and behind its components (open item 343, ADR 0376; probe p7fc).
+                if (JgsAnnotationPane.ListedIn(container) is { } containerPane)
+                {
+                    children.Add(containerPane);
+                }
+
                 children.AddRange(container.Components);
+                break;
+
+            // A tiled layout's tiles and their legends and colour bars, in a MATLAB-dialect script
+            // (open item 343, ADR 0376).
+            case TiledLayoutModel layout when JgsRunningDialect.ThreadIsMatlab:
+                children.AddRange(LayoutChildren(layout));
                 break;
             case ContextMenuModel menu:
                 children.AddRange(menu.Items);
@@ -856,7 +876,7 @@ internal static partial class JgsGraphicsProperties
     {
         int at = 0;
         while (at < children.Count
-            && children[at] is AxesModel or LegendModel or ColorbarModel or BubbleLegendModel or JgsAnnotationPane or AnnotationObject)
+            && children[at] is AxesModel or LegendModel or ColorbarModel or BubbleLegendModel or JgsAnnotationPane or AnnotationObject or TiledLayoutModel)
         {
             at++;
         }
@@ -1008,6 +1028,17 @@ internal static partial class JgsGraphicsProperties
             {
                 all.Add(pane);
             }
+
+            // So does a tiled layout a MATLAB-dialect script made (open item 343, ADR 0376).
+            if (!JgsRunningDialect.ThreadIsMatlab && withDialogs.TiledLayout is { } layout && MadeInMatlab(layout))
+            {
+                all.Add(layout);
+            }
+        }
+
+        if (!JgsRunningDialect.ThreadIsMatlab && target is UiContainerModel holder && JgsAnnotationPane.ExistingIn(holder) is { } heldPane)
+        {
+            all.Add(heldPane);
         }
 
         all.AddRange(JgsTextLabel.Existing(target));

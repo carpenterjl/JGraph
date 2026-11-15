@@ -384,6 +384,7 @@ internal static partial class JgsBuiltins
             MarkRectangle(patch, box, written); // a scalar reads back as written
             patch.FaceVisible = false;
             patch.EdgeColor = Colors.Black;
+            MatlabChartEdge(c => patch.EdgeColor = c, w => patch.EdgeWidth = w); // R2025b's 33/255, 0.5 (open item 343, ADR 0376)
 
             JgsHandleEntry entry = JgsHandleRegistry.EntryFor(patch);
             if (parsed.Named("FaceColor") is { } face)
@@ -495,6 +496,12 @@ internal static partial class JgsBuiltins
         // #103). A figure that is not current stays so: the axes joins it as its latest, which is
         // the one gca answers once the figure is made current — MATLAB's CurrentAxes, without a
         // second bookkeeping of it here. A handle to anything else is refused in MATLAB's words.
+        // axes(t) and axes('Parent', t) make the layout's next tile in R2025b (open item 343, ADR 0376).
+        if (JgsRunningDialect.ThreadIsMatlab && AxesInLayout(args, line, col) is { } tiled)
+        {
+            return tiled;
+        }
+
         int start = 0;
         FigureModel? parent = null;
         UiContainerModel? container = null;

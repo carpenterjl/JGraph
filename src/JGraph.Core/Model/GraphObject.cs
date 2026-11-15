@@ -34,6 +34,12 @@ public abstract class GraphObject : INotifyPropertyChanged
     [Browsable(false)]
     public long CreationOrder { get; } = Interlocked.Increment(ref _made);
 
+    /// <summary>
+    /// The next tick of the clock <see cref="CreationOrder"/> is read from, for an event that orders
+    /// among objects made: a legend shown after an axes was made stands in front of it (ADR 0376).
+    /// </summary>
+    public static long NextOrder() => Interlocked.Increment(ref _made);
+
     /// <summary>The parent object in the figure tree, or null if this is a root or detached.</summary>
     [Browsable(false)]
     public GraphObject? Parent { get; private set; }

@@ -55,7 +55,8 @@ public class MatlabBarAndStairsTests : IDisposable
             disp(get(h, 'Horizontal'));
             """);
 
-        Assert.Equal(new[] { "bar", "0.8", "0", "1", "-", "    off" }, _output.NormalLines);
+        // R2025b's bar edge is half a point (open item 343, ADR 0376; probe p7fa).
+        Assert.Equal(new[] { "bar", "0.8", "0", "0.5", "-", "    off" }, _output.NormalLines);
     }
 
     [Fact]

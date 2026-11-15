@@ -71,6 +71,20 @@ internal static partial class JgsBuiltins
                 return [handle];
             }
 
+            // title(t, 'words') titles a tiled layout's grid. Before ADR 0376 the layout's handle number
+            // was read as the current axes' title and the words as its subtitle, making an axes beside
+            // the layout (open item 343, probe p7fd).
+            if (args.Count >= 1 && !IsTextScalar(args[0]) && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? grid) && grid.Target is TiledLayoutModel)
+            {
+                if (args.Count != 2)
+                {
+                    throw new JgsRuntimeException(line, col, "title of a tiled layout takes the layout and its text: title(t, txt).");
+                }
+
+                JgsGraphicsProperties.Set(grid, "Title", args[1], line, col);
+                return [JgsHandleRegistry.For(grid.Target)];
+            }
+
             var (axes, rest) = PeelAxes(args);
             return OnAxes(axes, () =>
             {

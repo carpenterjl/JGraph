@@ -1266,8 +1266,10 @@ internal static partial class JgsGraphicsProperties
         // (open item 327, ADR 0372). The JGS dialect reads the null as 'none', as it always has.
         bool autoWhenUnset = edgeAutoWhenUnset;
         Put(table, "MarkerEdgeColor",
-            entry => autoWhenUnset && JgsRunningDialect.ThreadIsMatlab && readEdge(entry) is null
-                && !MarkerEdgeWrittenNone.TryGetValue(entry.Target, out _)
+            entry => autoWhenUnset && MarkerWordOf(MarkerEdgeWord, entry.Target) is { } edgeWord
+                ? JgsValue.Str(edgeWord)
+                : autoWhenUnset && JgsRunningDialect.ThreadIsMatlab && readEdge(entry) is null
+                    && !MarkerEdgeWrittenNone.TryGetValue(entry.Target, out _)
                     ? JgsValue.Str("auto")
                     : OptionalColorRow(readEdge(entry)),
             (entry, value, line, col) =>
@@ -1276,8 +1278,24 @@ internal static partial class JgsGraphicsProperties
                     && value.AsString.Equals("auto", StringComparison.OrdinalIgnoreCase))
                 {
                     MarkerEdgeWrittenNone.Remove(entry.Target);
+                    MarkerEdgeWord.Remove(entry.Target);
                     writeEdge(entry, null);
                     return;
+                }
+
+                // 'flat' is a surface's and a patch's word too, and a word naming no colour is refused in
+                // R2025b's words (open item 343, ADR 0376).
+                if (autoWhenUnset && WritesMarkerWord(MarkerEdgeWord, entry.Target, value, face: false))
+                {
+                    MarkerEdgeWrittenNone.Remove(entry.Target);
+                    writeEdge(entry, null);
+                    return;
+                }
+
+                if (autoWhenUnset && JgsRunningDialect.ThreadIsMatlab
+                    && MarkerColourRefusal(entry, "MarkerEdgeColor", value, SurfaceMarkerWords, line, col) is { } refusal)
+                {
+                    throw refusal;
                 }
 
                 Color? ink = NoneOrColor(value, line, col, "marker");
@@ -1294,8 +1312,25 @@ internal static partial class JgsGraphicsProperties
             });
 
         Put(table, "MarkerFaceColor",
-            entry => OptionalColorRow(readFill(entry)),
-            (entry, value, line, col) => writeFill(entry, NoneOrColor(value, line, col, "marker")));
+            entry => autoWhenUnset && MarkerWordOf(MarkerFaceWord, entry.Target) is { } faceWord
+                ? JgsValue.Str(faceWord)
+                : OptionalColorRow(readFill(entry)),
+            (entry, value, line, col) =>
+            {
+                if (autoWhenUnset && WritesMarkerWord(MarkerFaceWord, entry.Target, value, face: true))
+                {
+                    writeFill(entry, null);
+                    return;
+                }
+
+                if (autoWhenUnset && JgsRunningDialect.ThreadIsMatlab
+                    && MarkerColourRefusal(entry, "MarkerFaceColor", value, SurfaceMarkerWords, line, col) is { } refusal)
+                {
+                    throw refusal;
+                }
+
+                writeFill(entry, NoneOrColor(value, line, col, "marker"));
+            });
     }
 
     /// <summary>

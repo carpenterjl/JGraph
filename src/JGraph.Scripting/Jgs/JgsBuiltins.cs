@@ -1790,7 +1790,6 @@ internal static partial class JgsBuiltins
         // Until M80 this was three integers and a flag in this closure, which is why a script could
         // not name the layout: t.TileSpacing, nexttile(span) and tiledlayout(parent, …) all need a t.
         // The state now lives on the figure, and these two verbs are the doors to it.
-        int tiledCursor = 0;
         DefineSilent("tiledlayout", (args, line, col) =>
         {
             (FigureModel figure, IReadOnlyList<JgsValue> rest) = PeelLayoutParent(args);
@@ -1831,8 +1830,10 @@ internal static partial class JgsBuiltins
                 JgsGraphicsProperties.Set(entry, name, value, line, col);
             }
 
+            // R2025b's tiledlayout takes the axes and the layout the figure held (open item 343, ADR 0376).
+            ClearForLayout(figure);
             figure.TiledLayout = layout;
-            tiledCursor = 0;
+            JgsGraphicsProperties.LayoutMade(layout);
             return JgsHandleRegistry.For(layout);
         });
         // `ax = nexttile` with no brackets is the ordinary way to write it, so a bare name has to be
@@ -1874,34 +1875,7 @@ internal static partial class JgsBuiltins
                 }
             }
 
-            if (location is { } asked)
-            {
-                tiledCursor = asked;
-            }
-            else if (layout.Flow)
-            {
-                // A flowing layout never wraps: it grows until it holds the tile just asked for. The
-                // fixed grid's wrap would pin the cursor at 1 while a 1-by-1 grid stayed 1-by-1, so
-                // four tiles would be one tile asked for four times.
-                tiledCursor++;
-                layout.GrowToHold(tiledCursor + ((rowSpan * columnSpan) - 1));
-            }
-            else
-            {
-                tiledCursor = (tiledCursor % layout.TileCount) + 1;
-            }
-
-            AxesModel placed = JG.NewAxes();
-            placed.LayoutTile = tiledCursor;
-            placed.LayoutRowSpan = rowSpan;
-            placed.LayoutColumnSpan = columnSpan;
-            layout.Adopt(placed);
-
-            // Every tile already handed out belongs to the grid as it is now rather than as it was
-            // when that tile was made. Laying them all out again is what makes a flowing layout flow
-            // instead of pile up, and costs nothing on a fixed one.
-            layout.Arrange();
-            return JgsHandleRegistry.For(placed);
+            return JgsHandleRegistry.For(PlaceTile(layout, location, rowSpan, columnSpan));
         })
         { BindsAnsAsStatement = false, AutoCallsBare = true }));
 
@@ -2305,7 +2279,11 @@ internal static partial class JgsBuiltins
             foreach (FigureModel figure in figures)
             {
             foreach (var child in JgsGraphicsProperties.ChildrenOf(figure).ToArray())
-                if (reset || !JgsHandleRegistry.TryGetEntry(child,out var e) || e.HandleVisible) Remove(child,host);
+                // R2025b's clf reset lists the pane its axes made again at once (open item 343, ADR 0376; p7fc).
+                if (reset && child is JgsAnnotationPane { InContainer: false } kept && JgsRunningDialect.ThreadIsMatlab && JgsAnnotationPane.CameWithAxes(figure))
+                    foreach (var shape in JgsGraphicsProperties.ChildrenOf(kept).ToArray()) Remove(shape,host);
+                // A pane no listing has minted is hidden all the same: a plain clf keeps it (ADR 0376; p7fc's pane_clf).
+                else if (reset || (!JgsHandleRegistry.TryGetEntry(child,out var e) ? child is not JgsAnnotationPane : e.HandleVisible)) Remove(child,host);
                 // A plain clf keeps the hidden annotation pane and deletes what is in it (open item 143, pa_pane).
                 else if (child is JgsAnnotationPane pane)
                     foreach (var shape in JgsGraphicsProperties.ChildrenOf(pane).ToArray())
@@ -3144,6 +3122,14 @@ internal static partial class JgsBuiltins
                 return HandlesFor(created);
             }
             ArityRange(verb, args, 3, 4, line, col);
+            if (dialect.IsMatlab && verb == "plot")
+            {
+                // Variable numbers, several y variables, and each line keeping its table (open item 343, ADR 0376).
+                created.AddRange(MatlabTablePlot(verb, args, line, col));
+                ApplyPlotOptions(verb, created, options, line, col);
+                return HandlesFor(created);
+            }
+
             Table table = Tbl(verb, args, 0, line, col);
             string xColumn = Str(verb, args, 1, line, col);
             string yColumn = Str(verb, args, 2, line, col);
@@ -4047,6 +4033,13 @@ internal static partial class JgsBuiltins
         if (parsed.Has("filled"))
         {
             plot.MarkerFaceColor = plot.Color ?? PaletteColorFor(plot);
+
+            // R2025b's 'filled' writes the face 'auto', which a MATLAB-dialect script reads back (open
+            // item 343, ADR 0376); a face named in the call is its own.
+            if (parsed.Named("MarkerFaceColor") is null)
+            {
+                JgsGraphicsProperties.MarkMarkerFaceAuto(plot);
+            }
         }
 
         if (parsed.Named("Color") is { } stemColor)
@@ -4601,6 +4594,18 @@ internal static partial class JgsBuiltins
         if (parsed.Named("FaceColor") is { } face)
         {
             plot.FaceColor = OptionColor(face, line, col, "histogram");
+        }
+
+        // R2025b's own edge, 33/255 grey half a point wide, on a histogram of bars; its stairs keep
+        // their edge and take the width (open item 343, ADR 0376).
+        if (JgsRunningDialect.ThreadIsMatlab)
+        {
+            if (plot.DisplayStyle == HistogramDisplayStyle.Bar)
+            {
+                plot.EdgeColor = MatlabFactoryEdge;
+            }
+
+            plot.LineWidth = MatlabFactoryEdgeWidth;
         }
 
         if (parsed.Named("EdgeColor") is { } edge)

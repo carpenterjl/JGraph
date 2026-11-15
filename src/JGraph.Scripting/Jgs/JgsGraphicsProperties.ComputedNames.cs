@@ -145,7 +145,7 @@ internal static partial class JgsGraphicsProperties
     /// <summary>The table a chart was made from: R2025b's 0-by-0 one for a chart made from arrays.</summary>
     private static void AddSourceTable(IDictionary<string, GraphicsProperty> table) =>
         Put(table, "SourceTable",
-            entry => WrittenValue(entry.Target, "SourceTable") ?? JgsValue.Table(new Table([])),
+            entry => WrittenValue(entry.Target, "SourceTable") ?? entry.ScatterSource?.Table ?? JgsValue.Table(new Table([])), // a line plot(tbl, ...) drew (ADR 0376)
             (entry, value, line, col) => Write(entry.Target, "SourceTable", value.Type == JgsType.Table
                 ? value
                 : throw new JgsRuntimeException(line, col, "MATLAB:datatypes:InvalidTable", "SourceTable must be a table.")));

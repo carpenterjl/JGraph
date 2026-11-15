@@ -148,6 +148,11 @@ and `JgsRulerTicks` answers the theta ruler's ticks by the 30/15/5-degree rule.
 
   Closed since: a patch's unset `CData` and `FaceVertexCData` read R2025b's 33/255 grey (open item
   314, ADR 0361); the fixture's ten CData and FaceVertexCData rows agree.
+
+  Closed since: the face of a patch given no colour - `patch('XData', ..., 'YData', ...)`,
+  `patch()` and `patch('Faces', ..., 'Vertices', ...)`, its axes first or as `'Parent'` - is R2025b's
+  33/255 grey, and a held `DefaultPatchFaceColor` where there is one (open item 343, ADR 0376);
+  `patchxy_facecolor` agrees. A text's default `Color` is still this build's.
 - **A column write of `XData` onto a two-face patch keeps the vertices it uses**: R2025b keeps all
   eight of the old vertex list after `p.XData = [5; 6; 7; 8]`; this build keeps the four the one
   face names.

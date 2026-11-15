@@ -35,6 +35,7 @@ internal static partial class JgsGraphicsProperties
             AddDataSources(table, "ZDataSource");
             AddPolarChannels(table);
             AddLineBlock(table);
+            AddLineSourceBlock(table); // open item 343, ADR 0376
         }
 
         if (typeof(ScatterPlot).IsAssignableFrom(type))
@@ -77,7 +78,8 @@ internal static partial class JgsGraphicsProperties
                 static (plot, ink) => plot.MarkerFaceColor = ink,
                 static plot => plot.MarkerEdgeColor ?? plot.Color,
                 static (plot, ink) => plot.MarkerEdgeColor = ink,
-                "stem");
+                "stem",
+                static plot => plot.MarkerEdgeColor);
         }
 
         if (typeof(StemPlot).IsAssignableFrom(type))
@@ -336,19 +338,37 @@ internal static partial class JgsGraphicsProperties
         Action<T, Color?> writeFill,
         Func<T, Color?> readEdge,
         Action<T, Color?> writeEdge,
-        string what)
+        string what,
+        Func<T, Color?>? readOwnEdge = null)
         where T : PlotObject
     {
+        // A stem's face filled by 'filled' or written 'auto', and its unset edge, read R2025b's 'auto'
+        // in the MATLAB dialect (open item 343, ADR 0376).
         Put(table, "MarkerFaceColor",
-            entry => readFill(target(entry)) is { } fill ? ColorRow(fill) : JgsValue.Str("none"),
+            entry => ReadsMarkerFaceAuto(entry.Target) ? JgsValue.Str("auto")
+                : readFill(target(entry)) is { } fill ? ColorRow(fill) : JgsValue.Str("none"),
             (entry, value, line, col) =>
-                writeFill(target(entry), NoneOrColor(value, line, col, what)));
+            {
+                T plot = target(entry);
+                if (readOwnEdge is not null
+                    && WritesMarkerFaceAuto(plot, value, readEdge(plot) ?? JgsBuiltins.PaletteColorFor(plot)) is { } auto)
+                {
+                    writeFill(plot, auto);
+                    return;
+                }
+
+                writeFill(plot, NoneOrColor(value, line, col, what));
+            });
 
         Put(table, "MarkerEdgeColor",
-            entry => ColorRow(readEdge(target(entry))
-                ?? JgsBuiltins.PaletteColorFor(target(entry))),
+            entry => readOwnEdge is not null && JgsRunningDialect.ThreadIsMatlab && readOwnEdge(target(entry)) is null
+                ? JgsValue.Str("auto")
+                : ColorRow(readEdge(target(entry))
+                    ?? JgsBuiltins.PaletteColorFor(target(entry))),
             (entry, value, line, col) =>
-                writeEdge(target(entry), JgsBuiltins.OptionColor(value, line, col, what)));
+                writeEdge(target(entry), readOwnEdge is not null && JgsRunningDialect.ThreadIsMatlab && IsAutoWord(value)
+                    ? null
+                    : JgsBuiltins.OptionColor(value, line, col, what)));
     }
 
     /// <summary>
@@ -363,9 +383,14 @@ internal static partial class JgsGraphicsProperties
         // The model calls these what MATLAB calls them since M86; what this entry still adds over the
         // reflected one is the word — 'none' is an unfilled marker rather than a colour, and no
         // reflected colour property knows that.
+        // 'auto', R2025b's face in the axes' own colour, is a MATLAB-dialect word read back as written
+        // (open item 343, ADR 0376).
         Put(table, "MarkerFaceColor",
-            entry => Line(entry).MarkerFaceColor is { } fill ? ColorRow(fill) : JgsValue.Str("none"),
-            (entry, value, line, col) => Line(entry).MarkerFaceColor = NoneOrColor(value, line, col, "line"));
+            entry => ReadsMarkerFaceAuto(entry.Target) ? JgsValue.Str("auto")
+                : Line(entry).MarkerFaceColor is { } fill ? ColorRow(fill) : JgsValue.Str("none"),
+            (entry, value, line, col) => Line(entry).MarkerFaceColor =
+                WritesMarkerFaceAuto(Line(entry), value, Line(entry).Axes?.Background ?? Colors.White)
+                ?? NoneOrColor(value, line, col, "line"));
         // An edge left to follow the line reads R2025b's 'auto' in the MATLAB dialect (open item 100);
         // the JGS dialect keeps answering the colour it is drawn in.
         Put(table, "MarkerEdgeColor",
@@ -375,7 +400,10 @@ internal static partial class JgsGraphicsProperties
                     ?? JgsBuiltins.PaletteColorFor(Line(entry))),
             (entry, value, line, col) => Line(entry).MarkerEdgeColor = IsAutoWord(value)
                 ? null
-                : JgsBuiltins.OptionColor(value, line, col, "line"));
+                : JgsRunningDialect.ThreadIsMatlab
+                    && MarkerColourRefusal(entry, "MarkerEdgeColor", value, LineMarkerWords, line, col) is { } refusal
+                        ? throw refusal // 'flat' is not a line's word (open item 343, ADR 0376)
+                        : JgsBuiltins.OptionColor(value, line, col, "line"));
 
         // Counted from one at the surface and from zero underneath, like every other index here.
         Put(table, "MarkerIndices",
@@ -700,18 +728,34 @@ internal static partial class JgsGraphicsProperties
                     JgsBuiltins.StrOf("Marker", value, line, col), plot.Marker);
             });
 
+        // A face filled by 'filled' or written 'auto' reads R2025b's 'auto' in the MATLAB dialect, and an
+        // edge left to follow the stem reads 'auto' there too (open item 343, ADR 0376).
         Put(table, "MarkerFaceColor",
-            entry => Stem(entry).MarkerFaceColor is { } fill ? ColorRow(fill) : JgsValue.Str("none"),
-            (entry, value, line, col) => Stem(entry).MarkerFaceColor =
-                value.Type == JgsType.String
-                && value.AsString.Equals("none", StringComparison.OrdinalIgnoreCase)
+            entry => ReadsMarkerFaceAuto(entry.Target) ? JgsValue.Str("auto")
+                : Stem(entry).MarkerFaceColor is { } fill ? ColorRow(fill) : JgsValue.Str("none"),
+            (entry, value, line, col) =>
+            {
+                StemPlot plot = Stem(entry);
+                if (WritesMarkerFaceAuto(plot, value, plot.Color ?? JgsBuiltins.PaletteColorFor(plot)) is { } auto)
+                {
+                    plot.MarkerFaceColor = auto;
+                    return;
+                }
+
+                plot.MarkerFaceColor = value.Type == JgsType.String
+                    && value.AsString.Equals("none", StringComparison.OrdinalIgnoreCase)
+                        ? null
+                        : JgsBuiltins.OptionColor(value, line, col, "stem");
+            });
+        Put(table, "MarkerEdgeColor",
+            entry => Stem(entry).MarkerEdgeColor is null && JgsRunningDialect.ThreadIsMatlab
+                ? JgsValue.Str("auto")
+                : ColorRow(Stem(entry).MarkerEdgeColor ?? Stem(entry).Color
+                    ?? JgsBuiltins.PaletteColorFor(Stem(entry))),
+            (entry, value, line, col) => Stem(entry).MarkerEdgeColor =
+                JgsRunningDialect.ThreadIsMatlab && IsAutoWord(value)
                     ? null
                     : JgsBuiltins.OptionColor(value, line, col, "stem"));
-        Put(table, "MarkerEdgeColor",
-            entry => ColorRow(Stem(entry).MarkerEdgeColor ?? Stem(entry).Color
-                ?? JgsBuiltins.PaletteColorFor(Stem(entry))),
-            (entry, value, line, col) => Stem(entry).MarkerEdgeColor =
-                JgsBuiltins.OptionColor(value, line, col, "stem"));
 
         // The same two flags a line carries: solid and none are both defaults and choices, so
         // neither can be read off the value.

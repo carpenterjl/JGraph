@@ -88,7 +88,11 @@ internal static partial class JgsGraphicsProperties
         AddLayoutText(table, "XLabel", entry => Grid(entry).XLabel, (grid, text) => grid.XLabel = text);
         AddLayoutText(table, "YLabel", entry => Grid(entry).YLabel, (grid, text) => grid.YLabel = text);
 
-        Put(table, "Children", entry => HandleRow([.. Grid(entry).Tiles]));
+        // In a MATLAB-dialect script its tiles and their legends and colour bars, as the tree lists
+        // them (open item 343, ADR 0376).
+        Put(table, "Children", entry => JgsRunningDialect.ThreadIsMatlab
+            ? HandleRow(VisibleChildrenOf(entry.Target))
+            : HandleRow([.. Grid(entry).Tiles]));
 
         // A layout sits in a figure rather than in another layout, so its own Layout is empty and its
         // rectangle is the figure's own — the two names MATLAB gives every container.

@@ -196,7 +196,7 @@ function d = oi_divs()
 % 0.251 (open item 105); a two-face patch keeps stale vertices after a column write; a uiaxes'
 % font is 12 there and 11 here; a subplot's box is a few pixels wider there; and the short-ruler
 % and polar tick counts under R2025b's density score (open item 119, still open).
-d = {'fig_300_200_ylim', 'fig_300_200_yt', 'font_auto_again', 'font_small_title', 'font_small_xlabel', 'patch2f_written_col', 'patchxy_facecolor', 'pie_text_color', 'polar_0_25', 'polar_small_0_25', 'sq100_y_0_0p5', 'sq180_x_0_0p5', 'sq217_y_0_0p15', 'sub33_fs', 'text_color', 'uiaxes_small_fs'}; % OI_DIVS
+d = {'fig_300_200_ylim', 'fig_300_200_yt', 'font_auto_again', 'font_small_title', 'font_small_xlabel', 'patch2f_written_col', 'pie_text_color', 'polar_0_25', 'polar_small_0_25', 'sq100_y_0_0p5', 'sq180_x_0_0p5', 'sq217_y_0_0p15', 'sub33_fs', 'text_color', 'uiaxes_small_fs'}; % OI_DIVS
 end
 
 function out = xwrite(p, v)

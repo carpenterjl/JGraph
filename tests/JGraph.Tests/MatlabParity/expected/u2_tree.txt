@@ -12,7 +12,7 @@ CHK|findobj_property|p1 p2|exact
 CHK|allchild_figure|c2 p1 c1 a2 a1|exact
 CHK|allchild_panel|p2 c3 a3|exact
 CHK|allchild_is_column|1|exact
-CHK|allchild_count_with_furniture|4|div=ADR0199|diverges|3
+CHK|allchild_count_with_furniture|4|exact
 CHK|uistack_1|c1 c2 p1 a2 a1|exact
 CHK|uistack_2|c2 p1 c1 a2 a1|exact
 CHK|uistack_3|p1 c2 c1 a2 a1|exact

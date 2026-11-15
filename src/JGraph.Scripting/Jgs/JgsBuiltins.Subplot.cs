@@ -55,6 +55,8 @@ internal static partial class JgsBuiltins
         if (options.Count==1 && options[0].Type==JgsType.String)
             throw new JgsRuntimeException(line,col,
                 $"subplot: '{options[0].AsString}' is not a layout word; the fourth word is 'replace' or 'align'.");
+        // R2025b's subplot takes a tiled layout the figure held, tiles and all (open item 343, ADR 0376; probe p7fd).
+        if (JgsRunningDialect.ThreadIsMatlab && figure.TiledLayout is { } heldLayout) RemoveLayout(heldLayout);
         AxesModel? axes=supplied;
         foreach (var existing in figure.Axes.ToArray())
         {

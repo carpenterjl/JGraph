@@ -125,6 +125,8 @@ internal static partial class JgsBuiltins
                 {
                     plot.BaseValue = floor;
                 }
+
+                MatlabChartEdge(c => plot.EdgeColor = c, w => plot.LineWidth = w); // open item 343, ADR 0376
             }
 
             AreaOptions(created, rest, optionStart, line, col);
@@ -258,6 +260,8 @@ internal static partial class JgsBuiltins
                     plot.BarWidthFraction = 1.0;
                     plot.PositionOffset = style == "histc" ? 0.5 : 0.0;
                 }
+
+                MatlabChartEdge(c => plot.EdgeColor = c, w => plot.EdgeWidth = w); // open item 343, ADR 0376
             }
 
             BarOptions(name, created, rest, optionStart, line, col);
@@ -294,6 +298,7 @@ internal static partial class JgsBuiltins
                         break;
                     case "edgecolor" when IsNoneWord(value):
                         plot.EdgeWidth = 0;
+                        plot.EdgeColor = null; // reads 'none' over the MATLAB dialect's grey (ADR 0376)
                         break;
                     case "facecolor":
                         plot.FillColor = OptionColor(value, line, col, name);
@@ -1682,6 +1687,11 @@ internal static partial class JgsBuiltins
                 spatial.ColorData = Channel(table, source.ColorVariable, "ColorVariable", xs.Length, line, col);
                 break;
             }
+
+            // A line drawn by plot(tbl, ...) in the MATLAB dialect (open item 343, ADR 0376).
+            case LinePlot drawn:
+                drawn.SetData(xs, ys);
+                break;
 
             case ScatterPlot plot:
                 plot.SetData(xs, ys);

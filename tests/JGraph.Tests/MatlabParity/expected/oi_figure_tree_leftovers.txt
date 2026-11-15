@@ -1,0 +1,188 @@
+CHK|stem_filled_mfc|char[1 4]'auto'|exact
+CHK|stem_filled_mec|char[1 4]'auto'|exact
+CHK|stem_filled_marker|char[1 1]'o'|exact
+CHK|stem_filled_mec_auto|char[1 4]'auto'|exact
+CHK|stem_plain_mfc|char[1 4]'none'|exact
+CHK|stem_plain_mec|char[1 4]'auto'|exact
+CHK|stem_filled_red_mfc|double[1 3] [1 0 0]|exact
+CHK|stem_set_auto_mfc|char[1 4]'auto'|exact
+CHK|stem_set_none_mfc|char[1 4]'none'|exact
+CHK|stem_set_auto_again|char[1 4]'auto'|exact
+CHK|stem_filled_two_mfc|cell[2 1]{char[1 4]'auto';char[1 4]'auto'}|exact
+CHK|stem_fi_mfc|char[1 4]'auto'|exact
+CHK|stem3_filled_mfc|char[1 4]'auto'|exact
+CHK|stem3_filled_mec|char[1 4]'auto'|exact
+CHK|stem3_set_auto_mfc|double[1 3] [1 0 0]|exact
+CHK|line_set_auto_mfc|char[1 4]'auto'|exact
+CHK|area_edge|cell[1 2]{double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237];double[1 1] 0.5}|exact
+CHK|area_two_edge|cell[2 1]{double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237];double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]}|exact
+CHK|bar_edge|cell[1 2]{double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237];double[1 1] 0.5}|exact
+CHK|bar_two_edge|cell[2 1]{double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237];double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]}|exact
+CHK|bar_two_lw|cell[2 1]{double[1 1] 0.5;double[1 1] 0.5}|exact
+CHK|bar_edge_none|char[1 4]'none'|exact
+CHK|bar_edge_given|cell[1 2]{double[1 3] [1 0 0];double[1 1] 2}|exact
+CHK|barh_edge|cell[1 2]{double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237];double[1 1] 0.5}|exact
+CHK|hist_edge|cell[1 3]{double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237];double[1 1] 0.5;double[1 1] 1}|exact
+CHK|hist_stairs_lw|double[1 1] 0.5|exact
+CHK|histcat_edge|cell[1 2]{double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237];double[1 1] 0.5}|exact
+CHK|hist2_edge|cell[1 2]{double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237];double[1 1] 0.5}|exact
+CHK|rect_edge|cell[1 4]{double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237];double[1 1] 0.5;char[1 4]'none';char[1 1]'-'}|exact
+CHK|rect_curv_edge|cell[1 2]{double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237];double[1 1] 0.5}|exact
+CHK|patch_xy_face|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|patch_xy_edge|cell[1 2]{double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237];double[1 1] 0.5}|exact
+CHK|patch_xy_cdata|double[1 1 3] nd [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|patch_vf_face|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|patch_vf_edge|cell[1 2]{double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237];double[1 1] 0.5}|exact
+CHK|patch_none_face|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|patch_xy_parent_face|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|patch_xy_red_face|double[1 3] [1 0 0]|exact
+CHK|patch_pos_face|double[1 3] [1 0 0]|exact
+CHK|surf_mec_flat|char[1 4]'flat'|exact
+CHK|surf_mfc_flat|char[1 4]'flat'|exact
+CHK|surf_mec_auto|char[1 4]'auto'|exact
+CHK|surf_mfc_auto|char[1 4]'auto'|exact
+CHK|surf_mec_interp|MATLAB:datatypes:RGBAColor:ParseError|exact
+CHK|surf_mec_interp_msg|Error setting property 'MarkerEdgeColor' of class 'Surface': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', 'white', 'flat', 'auto', and 'none'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.|exact
+CHK|surf_mec_flat_opt|char[1 4]'flat'|exact
+CHK|mesh_mec_flat|char[1 4]'flat'|exact
+CHK|patch_mec_flat|char[1 4]'flat'|exact
+CHK|patch_mfc_flat|char[1 4]'flat'|exact
+CHK|patch_mec_interp|MATLAB:datatypes:RGBAColor:ParseError|exact
+CHK|patch_mec_interp_msg|Error setting property 'MarkerEdgeColor' of class 'Patch': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', 'white', 'flat', 'auto', and 'none'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.|exact
+CHK|line_mec_flat|MATLAB:datatypes:RGBAColor:ParseError|exact
+CHK|line_mec_flat_msg|Error setting property 'MarkerEdgeColor' of class 'Line': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', 'white', 'auto', and 'none'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.|exact
+CHK|plot_tbl_12|cell[1 5]{double[1 1] 1;double[1 1] 1;double[1 1] 2;double[1 3] [1 2 3];double[1 3] [4 5 6]}|exact
+CHK|plot_tbl_a2|cell[1 5]{double[1 1] 1;char[1 1]'a';double[1 1] 2;double[1 3] [1 2 3];double[1 3] [4 5 6]}|exact
+CHK|plot_tbl_1b|cell[1 5]{double[1 1] 1;double[1 1] 1;char[1 1]'b';double[1 3] [1 2 3];double[1 3] [4 5 6]}|exact
+CHK|plot_tbl_ab|cell[1 5]{double[1 1] 1;char[1 1]'a';char[1 1]'b';double[1 3] [1 2 3];double[1 3] [4 5 6]}|exact
+CHK|plot_tbl_1_23_n|double[1 1] 2|exact
+CHK|plot_tbl_1_23_yvar|cell[2 1]{double[1 1] 2;double[1 1] 3}|exact
+CHK|plot_tbl_1_23_ydata|cell[2 1]{double[1 3] [4 5 6];double[1 3] [7 8 9]}|exact
+CHK|plot_tbl_logical|cell[1 5]{double[1 1] 1;double[1 1] 1;double[1 1] 2;double[1 3] [1 2 3];double[1 3] [4 5 6]}|exact
+CHK|plot_tbl_4|MATLAB:graphics:chart:SubscriptOutOfBounds|exact
+CHK|plot_tbl_4_msg|Invalid subscript for Y. Index exceeds array bounds.|exact
+CHK|plot_tbl_15|MATLAB:graphics:chart:InvalidSubscriptValue|exact
+CHK|plot_tbl_15_msg|Invalid subscript for X. Specify a numeric subscript as a positive integer.|exact
+CHK|plot_tbl_12_labels|cell[1 2]{char[0 0]'';char[0 0]''}|exact
+CHK|plot_tbl_ab_fresh_labels|cell[1 2]{char[0 0]'';char[0 0]''}|exact
+CHK|plot_tbl_ab_gca_labels|cell[1 2]{char[0 0]'';char[0 0]''}|exact
+CHK|plot_tbl_set_yvar_num|cell[1 2]{double[1 1] 3;double[1 3] [7 8 9]}|exact
+CHK|strjoin_col|MATLAB:strjoin:InvalidCellType|exact
+CHK|strjoin_col_msg|First input must be a string array or cell array of character vectors.|exact
+CHK|strjoin_row|MATLAB:strjoin:InvalidCellType|exact
+CHK|strjoin_row_msg|First input must be a string array or cell array of character vectors.|exact
+CHK|strjoin_col_delim|MATLAB:strjoin:InvalidCellType|exact
+CHK|strjoin_col_delim_msg|First input must be a string array or cell array of character vectors.|exact
+CHK|strjoin_mat|MATLAB:strjoin:InvalidCellType|exact
+CHK|strjoin_mat_msg|First input must be a string array or cell array of character vectors.|exact
+CHK|strjoin_empty|MATLAB:strjoin:InvalidCellType|exact
+CHK|strjoin_empty_msg|First input must be a string array or cell array of character vectors.|exact
+CHK|strjoin_num|MATLAB:strjoin:InvalidCellType|exact
+CHK|strjoin_num_msg|First input must be a string array or cell array of character vectors.|exact
+CHK|strjoin_cellcol|char[1 3]'a b'|exact
+CHK|strjoin_strcol|string[1 1]"a b"|exact
+CHK|t_parent_isfig|logical[1 1] 1|exact
+CHK|t_children_n0|double[1 1] 0|exact
+CHK|fig_children_types0|char[1 11]'tiledlayout'|exact
+CHK|ax_parent_ist|logical[1 1] 1|exact
+CHK|ax_parent_type|char[1 11]'tiledlayout'|exact
+CHK|ax_get_parent_type|char[1 11]'tiledlayout'|exact
+CHK|ax_ancestor_fig|logical[1 1] 1|exact
+CHK|ax_ancestor_t|logical[1 1] 1|exact
+CHK|fig_children_types1|char[1 11]'tiledlayout'|exact
+CHK|t_children_types1|char[1 4]'axes'|exact
+CHK|t_children_order2|logical[1 1] 1|exact
+CHK|lg_parent_ist|logical[1 1] 1|exact
+CHK|cb_parent_ist|logical[1 1] 1|exact
+CHK|t_children_tags3|char[1 21]'Colorbar legend a2 a1'|exact
+CHK|fig_children_types3|char[1 11]'tiledlayout'|exact
+CHK|fig_allchild_types3|char[1 78]'uitoolbar uimenu uimenu uimenu uimenu uimenu uimenu annotationpane tiledlayout'|exact
+CHK|t_allchild_tags3|char[1 21]'Colorbar legend a2 a1'|exact
+CHK|fig_findobj_tags3|char[1 50]'figure tiledlayout Colorbar legend a2 a1 line line'|exact
+CHK|fig_findall_axes_n|double[1 1] 2|exact
+CHK|fig_findobj_layout|char[1 11]'tiledlayout'|exact
+CHK|t_findobj_tags|char[1 43]'tiledlayout Colorbar legend a2 a1 line line'|exact
+CHK|t_findall_tags|char[1 43]'tiledlayout Colorbar legend a2 a1 line line'|exact
+CHK|fig_findobj_depth1|char[1 18]'figure tiledlayout'|exact
+CHK|findobj_parent_t|double[1 1] 4|exact
+CHK|gca_is_ax2|logical[1 1] 1|exact
+CHK|lg_ancestor_fig|logical[1 1] 1|exact
+CHK|t_children_plus_ax3|char[1 24]'a3 Colorbar legend a2 a1'|exact
+CHK|t_children_plus_cb3|char[1 33]'Colorbar a3 Colorbar legend a2 a1'|exact
+CHK|t_children_plus_lg2|char[1 40]'legend Colorbar a3 Colorbar legend a2 a1'|exact
+CHK|t_children_lg1_off|char[1 33]'legend Colorbar a3 Colorbar a2 a1'|exact
+CHK|t_children_lg1_again|char[1 40]'legend legend Colorbar a3 Colorbar a2 a1'|exact
+CHK|fig_findall_tags|char[1 83]'figure scribeOverlay tiledlayout legend legend Colorbar a3 Colorbar a2 a1 line line'|exact
+CHK|fig_allchild_types|char[1 78]'uitoolbar uimenu uimenu uimenu uimenu uimenu uimenu annotationpane tiledlayout'|exact
+CHK|del_ax2_cb_valid|logical[1 1] 0|exact
+CHK|del_ax2_lg2_valid|logical[1 1] 0|exact
+CHK|del_ax2_t_children|char[1 21]'legend Colorbar a3 a1'|exact
+CHK|del_t_ax1_valid|logical[1 1] 0|exact
+CHK|del_t_ax3_valid|logical[1 1] 0|exact
+CHK|del_t_cb3_valid|logical[1 1] 0|exact
+CHK|del_t_fig_children|char[0 0]''|exact
+CHK|del_t_fig_findall_n|double[1 1] 0|exact
+CHK|cb_then_lg|char[1 20]'legend Colorbar axes'|exact
+CHK|clf_t_valid|logical[1 1] 0|exact
+CHK|clf_ax_valid|logical[1 1] 0|exact
+CHK|clf_fig_children|char[0 0]''|exact
+CHK|clfr_t_valid|logical[1 1] 0|exact
+CHK|clfr_fig_children|char[0 0]''|exact
+CHK|axes_in_t_parent|logical[1 1] 1|exact
+CHK|axes_in_t_tile|double[1 1] 1|exact
+CHK|axes_in_t_children|double[1 1] 1|exact
+CHK|layout_then_free|char[1 16]'axes tiledlayout'|exact
+CHK|layout_then_free_t_valid|logical[1 1] 1|exact
+CHK|t_again_old_valid|logical[1 1] 0|exact
+CHK|t_again_fig_children|char[1 11]'tiledlayout'|exact
+CHK|free_then_layout|char[1 11]'tiledlayout'|exact
+CHK|free_then_layout_valid|logical[1 1] 0|exact
+CHK|layout_then_subplot|char[1 4]'axes'|exact
+CHK|layout_then_subplot_t_valid|logical[1 1] 0|exact
+CHK|implicit_parent_type|char[1 11]'tiledlayout'|exact
+CHK|implicit_fig_children|char[1 11]'tiledlayout'|exact
+CHK|implicit_gca_parent|char[1 11]'tiledlayout'|exact
+CHK|save_fig_children|char[1 11]'tiledlayout'|exact
+CHK|save_t_children|char[1 25]'colorbar axes legend axes'|exact
+CHK|open_fig_children|char[1 11]'tiledlayout'|exact
+CHK|open_t_n|double[1 1] 1|exact
+CHK|open_t_children_sorted|char[1 25]'axes axes colorbar legend'|exact
+CHK|open_t_spacing|char[1 7]'compact'|exact
+CHK|open_lg_string|cell[1 1]{char[1 2]'up'}|exact
+CHK|pane_clfreset|char[1 66]'uitoolbar uimenu uimenu uimenu uimenu uimenu uimenu annotationpane'|exact
+CHK|pane_clfreset_same|logical[1 2] [1 1]|exact
+CHK|pane_clfreset_axes|char[1 71]'uitoolbar uimenu uimenu uimenu uimenu uimenu uimenu annotationpane axes'|exact
+CHK|pane_fresh_clfreset|char[1 51]'uitoolbar uimenu uimenu uimenu uimenu uimenu uimenu'|exact
+CHK|pane_clf_then_reset|char[1 66]'uitoolbar uimenu uimenu uimenu uimenu uimenu uimenu annotationpane'|exact
+CHK|pane_reset_twice|char[1 66]'uitoolbar uimenu uimenu uimenu uimenu uimenu uimenu annotationpane'|exact
+CHK|pane_ann_clfreset|char[1 51]'uitoolbar uimenu uimenu uimenu uimenu uimenu uimenu'|exact
+CHK|pane_ann_clfreset_oldvalid|logical[1 1] 0|exact
+CHK|pane_deleted_reset|char[0 0]''|exact
+CHK|panel_empty_allchild|char[0 0]''|exact
+CHK|panel_ax_allchild|char[1 19]'annotationpane axes'|exact
+CHK|panel_ax_children|char[1 4]'axes'|exact
+CHK|panel_ax_fig_allchild|char[1 7]'uipanel'|exact
+CHK|panel_ax_findall|char[1 34]'figure uipanel annotationpane axes'|exact
+CHK|panel_pane_tag|char[1 13]'scribeOverlay'|exact
+CHK|panel_pane_parent|logical[1 1] 1|exact
+CHK|panel_ax_deleted|char[1 14]'annotationpane'|exact
+CHK|panel_plot_allchild|char[1 26]'annotationpane legend axes'|exact
+CHK|tab_ax_allchild|char[1 19]'annotationpane axes'|exact
+CHK|tiled_fig_allchild|char[1 26]'annotationpane tiledlayout'|exact
+CHK|tiled_t_allchild|char[1 4]'axes'|exact
+CHK|findall_eq_h|logical[1 1] 1|exact
+CHK|findall_ltype|char[1 4]'line'|exact
+CHK|findall_empty_size|double[1 2] [0 0]|exact
+CHK|findobj_empty_size|double[1 2] [0 0]|exact
+CHK|findobj_empty_root_size|double[1 2] [0 0]|exact
+CHK|findall_num_eq|logical[1 1] 1|exact
+CHK|allchild_empty_size|double[1 2] [0 0]|exact
+CHK|rot90_lims|double[1 4] [-1 1 0 1]|exact
+CHK|rot90_y01_lims|double[1 4] [-1 0 -1 1]|exact
+CHK|rot90_y5_lims|double[1 4] [-6 -4 0 1]|exact
+CHK|rot180_lims|double[1 4] [-1 0 -1 1]|exact
+CHK|rot270_lims|double[1 4] [-1 1 -1 0]|exact
+CHK|rot1e17_lims|double[1 4] [0 1 -1 1]|exact
+CHK|shear1e17_lims|double[1 4] [0 1.0000000000000001e-17 0 1]|exact
+CHK|shear6e17_lims|double[1 4] [0 1 0 6.0000000000000001e-17]|exact
+CHK|scale6e17_lims|double[1 4] [0 6.0000000000000001e-17 0 1]|exact

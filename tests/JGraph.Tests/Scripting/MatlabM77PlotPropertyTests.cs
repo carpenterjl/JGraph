@@ -399,7 +399,7 @@ public class MatlabM77PlotPropertyTests : IDisposable
         Assert.Equal("--", Text(result, "style"));
         Assert.Equal(1, Number(result, "base"));
         Assert.Equal([0, 0, 1], Row(result, "edge"));
-        Assert.Equal([1, 0, 0], Row(result, "face"));  // 'filled' takes the stem's own colour
+        Assert.Equal("auto", Text(result, "face"));  // 'filled' takes the stem's own colour, read as R2025b's 'auto' (ADR 0376)
     }
 
     // --- Lines and error bars -------------------------------------------------------------------

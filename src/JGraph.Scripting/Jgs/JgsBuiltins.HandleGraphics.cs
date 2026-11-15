@@ -602,8 +602,11 @@ internal static partial class JgsBuiltins
         }
 
         // A column, which is the shape MATLAB's findobj answers in and what a for-loop over the
-        // result expects.
-        return JgsMatrix.FromColumnMajor(handles, handles.Length, 1);
+        // result expects; nothing found is R2025b's 0-by-0 in the MATLAB dialect (open item 343,
+        // ADR 0376; probe p7fc).
+        return handles.Length == 0 && JgsRunningDialect.ThreadIsMatlab
+            ? JgsMatrix.FromColumnMajor(handles, 0, 0)
+            : JgsMatrix.FromColumnMajor(handles, handles.Length, 1);
     }
 
     /// <summary>
@@ -1516,6 +1519,12 @@ internal static partial class JgsBuiltins
                 owner.Axes.Remove(axes);
                 return;
 
+            // A tiled layout goes with its tiles, and their legends and colour bars with them, as
+            // R2025b's does (open item 343, ADR 0376; probe p7fb).
+            case TiledLayoutModel layout:
+                RemoveLayout(layout);
+                return;
+
             // A legend, colorbar or bubble legend belongs to its axes for the axes' whole life, so
             // deleting one is hiding it — but the deletion is real to the script, so it is announced
             // as one. An ordinary set(h, 'Visible', 'off') never comes through here and fires nothing.
@@ -1545,6 +1554,12 @@ internal static partial class JgsBuiltins
 
             // A figure's annotation pane goes with its annotations; the next one makes a new pane
             // (open item 143, probe pa_pane).
+            // A panel's or a tab's pane holds nothing; its next axes makes a new one (open item 343).
+            case JgsAnnotationPane { Owner: UiContainerModel holder } containerPane:
+                GraphObjectLifecycle.NotifyDeleting(containerPane);
+                JgsAnnotationPane.ForgetDeleted(holder);
+                return;
+
             case JgsAnnotationPane pane:
                 GraphObjectLifecycle.NotifyDeleting(pane);
                 pane.Figure.Annotations.Clear();

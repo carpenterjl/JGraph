@@ -78,6 +78,7 @@ internal static partial class JgsBuiltins
 
         var layout = new TiledLayoutModel { Flow = true };
         figure.TiledLayout = layout;
+        JgsGraphicsProperties.LayoutMade(layout);
         return layout;
     }
 
