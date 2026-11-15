@@ -1306,6 +1306,15 @@ internal static class JgsMpsJson
                 }
 
                 int n = parts.Length / 2;
+                if (n == 0)
+                {
+                    // An empty complex array keeps its complex flag (y_complex_empty), as complex(zeros(0, 0), 0) does (ADR 0364).
+                    JgsValue empty = JgsMatrix.Like(JgsMatrix.FromColumnMajorDims([], dims),
+                        JgsValue.PackedComplexArray(new JgsPackedComplex(JgsPacking.Allocate(0), JgsPacking.Allocate(0), preserveComplex: true)));
+                    empty.SetNumericClass(numericClass);
+                    return empty;
+                }
+
                 if (n == 1)
                 {
                     JgsValue scalar = JgsValue.ComplexNum(new Complex(parts[0], parts[1]));

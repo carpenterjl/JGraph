@@ -858,7 +858,7 @@ CHK|y_complex_logical|MPS:MATLAB:JSON:DecodeMismatchedMWSize|exact
 CHK|y_complex_logical_msg|Number of elements in "mwdata" does not match "mwsize" specified.|exact
 CHK|y_complex_char|char [1 2] {"mwdata":["ab"],"mwsize":[1,2],"mwtype":"char"}|exact
 CHK|y_complex_single|single [1 1] real=0 sparse=0 {"mwcomplex":true,"mwdata":[1,2],"mwsize":[1,1],"mwtype":"single"}|exact
-CHK|y_complex_empty|double [0 0] real=0 sparse=0 {"mwcomplex":true,"mwdata":[],"mwsize":[0,0],"mwtype":"double"}|div=ADR0270|diverges|double [0 0] real=1 sparse=0 {"mwdata":[],"mwsize":[0,0],"mwtype":"double"}
+CHK|y_complex_empty|double [0 0] real=0 sparse=0 {"mwcomplex":true,"mwdata":[],"mwsize":[0,0],"mwtype":"double"}|exact
 CHK|y_single|single [1 2] real=1 sparse=0 {"mwdata":[1.5,2],"mwsize":[1,2],"mwtype":"single"}|exact
 CHK|y_single_nan|single [1 1] real=1 sparse=0 {"mwdata":["NaN"],"mwsize":[1,1],"mwtype":"single"}|exact
 CHK|y_single_big|MPS:MATLAB:JSON:DecodeInvalidFloatingElem|exact

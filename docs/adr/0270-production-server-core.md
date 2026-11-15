@@ -170,7 +170,7 @@ name from a file, not its statement (`run-k14.ps1` writes the build statement to
 - **A discovery file's JSON fault is R2025b's `E0008` text when a value lacks its quotes, and .NET's words otherwise**; a routes file's JSON fault and a regular expression's fault are .NET's words.
 - **`ObfuscateArchive` builds nothing**: JGraph builds no encrypted archives (decision K3b, ADR 0259).
 - **A too-many-outputs call of `compiler.build.productionServerArchive` ends its message without R2025b's line break.**
-- **A complex integer array is refused**, and a decoded complex array that is empty comes out real (ADR 0266).
+- **A complex integer array is refused** (ADR 0266).
 - **An int64 or uint64 past 2^53 loses its last digits**, in the fixture and in the server's answers (ADR 0174, ADR 0355).
 - **A sparse logical array is a sparse double** (ADR 0266).
 - **A char array of three dimensions is refused** in JGraph's words; R2025b holds it.
@@ -182,6 +182,10 @@ name from a file, not its statement (`run-k14.ps1` writes the build statement to
 - **The deployed function `k14quiet` answers `on`**: the in-MATLAB server inherits the probe's `beep('off')`; JGraph's worker is a fresh runtime.
 - **A number printed with `%.17g` carries JGraph's own digits** (the client's `in.big.number` and `in.tiny.number`).
 - **An options or results object displays in JGraph's layout** (open item 194), and **a warning prints without `> In` lines** (open item 170).
+
+Closed since: **A decoded complex array that is empty comes out real.** Open item 330 (chips wave 6)
+made the decoder keep the complex flag on an empty array, as `complex(zeros(0, 0), 0)` keeps it
+since ADR 0364, so fixture row `y_complex_empty` agrees.
 
 Closed since: **`intmin('int64')` encoded as a double.** ADR 0355 (open item 199) made `intmin` and
 `intmax` answer in their class, so `intmin('int64')` encodes as R2025b's `-9223372036854775808` and

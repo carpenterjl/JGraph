@@ -211,6 +211,15 @@ public sealed class ServerHost : IAsyncDisposable
         long limit = Instance.Config.RequestSizeLimit;
         if (request.ContentLength is { } declared && declared > limit)
         {
+            // The body is read and dropped before the answer, as a real HTTP server lingers (open item 315):
+            // closing with the client still sending resets the connection, and a loaded machine's client then
+            // reads ConnectionResetError instead of the 413. A body past DrainLimit is not read; the
+            // connection is closed after the answer.
+            if (!await DrainAsync(context, declared).ConfigureAwait(false))
+            {
+                response.Headers.Connection = "close";
+            }
+
             Refuse(413, $"Content-Length exceeds size limit of {limit.ToString(CultureInfo.InvariantCulture)} bytes");
             return;
         }
@@ -360,6 +369,39 @@ public sealed class ServerHost : IAsyncDisposable
         if (bytes.Length > 0)
         {
             await context.Response.Body.WriteAsync(bytes, context.RequestAborted).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>The most of a refused body <see cref="DrainAsync"/> reads before a 413.</summary>
+    private const long DrainLimit = 16L * 1024 * 1024;
+
+    /// <summary>
+    /// Reads and drops a body declared past the size limit, up to <see cref="DrainLimit"/> and for at most ten
+    /// seconds, lifting this request's Kestrel limit to do so; false when it was not (or not wholly) read.
+    /// </summary>
+    private static async Task<bool> DrainAsync(HttpContext context, long declared)
+    {
+        if (declared > DrainLimit
+            || context.Features.Get<IHttpMaxRequestBodySizeFeature>() is not { IsReadOnly: false } size)
+        {
+            return false;
+        }
+
+        size.MaxRequestBodySize = null;
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(context.RequestAborted);
+        timeout.CancelAfter(TimeSpan.FromSeconds(10));
+        byte[] scratch = new byte[81920];
+        try
+        {
+            while (await context.Request.Body.ReadAsync(scratch, timeout.Token).ConfigureAwait(false) > 0)
+            {
+            }
+
+            return true;
+        }
+        catch (Exception ex) when (ex is OperationCanceledException or BadHttpRequestException or IOException)
+        {
+            return false;
         }
     }
 
