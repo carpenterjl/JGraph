@@ -201,6 +201,13 @@ internal static partial class JgsBuiltins
             {
                 return Complex.One / z;
             }
+
+            // z^1 is z, to the bit: Complex.Pow goes through the logarithm and answered
+            // (1+2i) .^ 1 as 1.0000000000000002+2i (open item 330, ADR 0370).
+            if (exponent.Real == 1)
+            {
+                return z;
+            }
         }
 
         return Complex.Pow(z, exponent);

@@ -2917,6 +2917,7 @@ internal static partial class JgsBuiltins
         WrapShapeVerbsOverObjects(env); // after every verb is in, so an array of objects reaches each (open item 116)
         RegisterCategoricalBuiltins(env, text => host.print(text)); // over the verbs it teaches (open item 115)
         WrapSparseVerbs(env); // real, imag, abs, conj, nonzeros and nzmax of a sparse matrix (open item 298)
+        WrapComplexFlagVerbs(env, dialect); // the zero-imaginary flag's verbs and ADR 0365's refusals (open items 330, 333)
         WrapSparseFunctions(env); // the elementwise family and the class conversions over a sparse argument (open item 331)
         RefuseGroupsAtAxesVerbs(env); // last, round whatever each axes verb ended up as (open item 168)
         RefuseDeadTargetsAtAxesVerbs(env); // and a deleted object first (open item 313)

@@ -42,6 +42,45 @@ internal sealed partial class Interpreter
             ? JoinAsBracket(rows[0], across: true, line, col)
             : AssembleMatrix(new MatrixLiteral([]) { Line = line, Column = col }, rows);
 
+    /// <summary>
+    /// R2025b's cell2mat.m over a 2-D cell (open item 330, ADR 0370): nothing is <c>[]</c>, one
+    /// piece is itself, and otherwise the bracket joins each column of pieces top to bottom and then
+    /// the columns side by side, or each row side by side and then the rows top to bottom when there
+    /// are fewer rows than columns — so the pieces keep their zero-imaginary flags as a bracket does.
+    /// </summary>
+    internal JgsValue CellContentsJoined(JgsValue cell, int line, int col)
+    {
+        JgsValue[] pieces = cell.AsCell;
+        if (pieces.Length == 0)
+        {
+            return EmptyBracket();
+        }
+
+        if (pieces.Length == 1)
+        {
+            return pieces[0];
+        }
+
+        int rows = Math.Max(cell.Rows, 1);
+        int cols = pieces.Length / rows;
+        bool byRows = rows < cols;
+        int outer = byRows ? rows : cols;
+        int inner = byRows ? cols : rows;
+        var joined = new JgsValue[outer];
+        for (int o = 0; o < outer; o++)
+        {
+            var run = new JgsValue[inner];
+            for (int i = 0; i < inner; i++)
+            {
+                run[i] = byRows ? pieces[o + (i * rows)] : pieces[i + (o * rows)];
+            }
+
+            joined[o] = JoinAsBracket(run, across: byRows, line, col);
+        }
+
+        return JoinAsBracket(joined, across: !byRows, line, col);
+    }
+
     private static JgsValue WithTime(JgsValue built, JgsValue[] elements)
     {
         // A datetime joins as a datetime, as it does in the bracket (M82).
@@ -71,6 +110,14 @@ internal static partial class JgsBuiltins
             IJgsCallable plain = cellToMat.AsCallable;
             env.Builtins.Register("cell2mat", JgsValue.Function(new BuiltinFunction("cell2mat", (args, line, col) =>
             {
+                // A piece with the zero-imaginary flag keeps it in the join (open item 330, ADR 0370).
+                if (JgsRunningDialect.ThreadIsMatlab && args.Count == 1 && args[0].Type == JgsType.Cell && !args[0].IsNd
+                    && Array.Exists(args[0].AsCell, IsZeroImagFlagged)
+                    && !Array.Exists(args[0].AsCell, static e => e.Type == JgsType.Cell))
+                {
+                    return interpreter.CellContentsJoined(args[0], line, col);
+                }
+
                 if (!JgsRunningDialect.ThreadIsMatlab || args.Count != 1 || args[0].Type != JgsType.Cell
                     || !args[0].AsCell.Any(static e => e.Type == JgsType.Object) || args[0].IsNd)
                 {

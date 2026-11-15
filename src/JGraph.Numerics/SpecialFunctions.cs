@@ -56,7 +56,9 @@ public static class SpecialFunctions
             return double.NaN;
         }
 
-        if (x <= 0 && x == Math.Floor(x))
+        // ln Γ grows without bound: the Lanczos form below reaches ∞ - ∞ there and answered NaN
+        // (open item 333, ADR 0370; R2025b's gammaln(Inf) is Inf).
+        if (double.IsPositiveInfinity(x) || (x <= 0 && x == Math.Floor(x)))
         {
             return double.PositiveInfinity;
         }

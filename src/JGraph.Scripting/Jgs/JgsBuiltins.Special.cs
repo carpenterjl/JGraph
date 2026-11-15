@@ -81,10 +81,21 @@ internal static partial class JgsBuiltins
         {
             ArityRange("psi", args, 1, 2, line, col);
 
-            // psi(x) is the digamma function; psi(k, x) is its k-th derivative.
-            return args.Count == 1
-                ? MapNumeric("psi", args[0], SpecialFunctions.Digamma, line, col)
-                : MapNumeric("psi", args[1], x => SpecialFunctions.Polygamma(Count("psi", args, 0, line, col), x), line, col);
+            // psi(x) is the digamma function; psi(k, x) is its k-th derivative. R2025b's digamma at
+            // zero is the limit from the right, -Inf, where JGS answers the pole's +Inf (open item
+            // 333, ADR 0370); a negative argument has been refused before MATLAB code gets here.
+            Func<double, double> digamma = JgsRunningDialect.ThreadIsMatlab
+                ? static x => x == 0 ? double.NegativeInfinity : SpecialFunctions.Digamma(x)
+                : SpecialFunctions.Digamma;
+            if (args.Count == 1)
+            {
+                return MapNumeric("psi", args[0], digamma, line, col);
+            }
+
+            int order = Count("psi", args, 0, line, col);
+            return order == 0
+                ? MapNumeric("psi", args[1], digamma, line, col)
+                : MapNumeric("psi", args[1], x => SpecialFunctions.Polygamma(order, x), line, col);
         });
 
         RegisterBesselBuiltins(Define);

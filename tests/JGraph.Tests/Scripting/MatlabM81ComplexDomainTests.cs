@@ -280,9 +280,10 @@ public class MatlabM81ComplexDomainTests : IDisposable
     public async Task TheRealOnlyFamilyStillRefuses()
     {
         await RefusesEach(
-            ("x = realsqrt(-1);", "must not be negative"),
-            ("x = reallog(-1);", "must not be negative"),
-            ("x = realpow(-8, 0.5);", "not a real number"),
+            // R2025b's words in MATLAB code (open item 333, ADR 0370).
+            ("x = realsqrt(-1);", "Realsqrt produced complex result."),
+            ("x = reallog(-1);", "Reallog produced complex result."),
+            ("x = realpow(-8, 0.5);", "Realpow produced complex result."),
             ("x = nthroot(-8, 2);", "no real even root"),
             ("x = mod(1i, 2);", "complex"),
             ("x = rem(1i, 2);", "complex"));

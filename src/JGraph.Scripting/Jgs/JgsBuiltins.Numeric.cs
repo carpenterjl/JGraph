@@ -351,9 +351,6 @@ internal static partial class JgsBuiltins
 
     private static void RegisterElementaryMath(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
     {
-        void Math1(string name, Func<double, double> f) =>
-            Define(name, (args, line, col) => { Arity(name, args, 1, line, col); return MapNumeric(name, args[0], f, line, col); });
-
         void Math2(string name, Func<double, double, double> f) =>
             Define(name, (args, line, col) => { Arity(name, args, 2, line, col); return Zip(name, args[0], args[1], f, line, col); });
 
@@ -396,17 +393,48 @@ internal static partial class JgsBuiltins
 
         // The real* family is the "I know this must stay real" spelling: where sqrt(-1) hands back a
         // complex number, realsqrt(-1) is an error, which catches the bug at its source.
+        // MATLAB code is refused in R2025b's words (open item 333, ADR 0370): a complex argument is
+        // MATLAB:validators:mustBeReal at its position, a complex answer MATLAB:<name>:complexResult.
+        static void RefuseComplexArguments(string name, IReadOnlyList<JgsValue> args, int line, int col)
+        {
+            for (int i = 0; i < args.Count; i++)
+            {
+                if (JgsRunningDialect.ThreadIsMatlab && HasComplexPart(args[i]))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeReal",
+                        $"Invalid argument at position {i + 1}. Value must be real.");
+                }
+            }
+        }
+
+        static JgsRuntimeException ComplexResult(string name, bool matlab, string complaint) => matlab
+            ? new JgsRuntimeException(0, 0, $"MATLAB:{name}:complexResult",
+                $"{char.ToUpperInvariant(name[0])}{name[1..]} produced complex result.")
+            : new JgsRuntimeException(0, 0, $"{name}: {complaint}");
+
         void Real1(string name, Func<double, bool> valid, Func<double, double> f, string complaint) =>
-            Math1(name, x => valid(x) ? f(x) : throw new JgsRuntimeException(0, 0, $"{name}: {complaint}"));
+            Define(name, (args, line, col) =>
+            {
+                Arity(name, args, 1, line, col);
+                RefuseComplexArguments(name, args, line, col);
+                bool matlab = JgsRunningDialect.ThreadIsMatlab;
+                return MapNumeric(name, args[0], x => valid(x) ? f(x) : throw ComplexResult(name, matlab, complaint), line, col);
+            });
 
         Real1("realsqrt", static x => x >= 0, SqrtPlusZero, "the argument must not be negative.");
         Real1("reallog", static x => x >= 0, Math.Log, "the argument must not be negative.");
-        Math2("realpow", static (x, y) =>
+        Define("realpow", (args, line, col) =>
         {
-            double result = Math.Pow(x, y);
-            return double.IsNaN(result) && !double.IsNaN(x) && !double.IsNaN(y)
-                ? throw new JgsRuntimeException(0, 0, "realpow: that power is not a real number.")
-                : result;
+            Arity("realpow", args, 2, line, col);
+            RefuseComplexArguments("realpow", args, line, col);
+            bool matlab = JgsRunningDialect.ThreadIsMatlab;
+            return Zip("realpow", args[0], args[1], (x, y) =>
+            {
+                double result = Math.Pow(x, y);
+                return double.IsNaN(result) && !double.IsNaN(x) && !double.IsNaN(y)
+                    ? throw ComplexResult("realpow", matlab, "that power is not a real number.")
+                    : result;
+            }, line, col);
         });
 
         Define("complex", (args, line, col) =>

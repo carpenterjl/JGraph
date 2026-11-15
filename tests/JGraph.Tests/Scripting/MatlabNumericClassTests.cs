@@ -112,7 +112,8 @@ public sealed class MatlabNumericClassTests : IDisposable
                 z = uint8(1) + int8(1);
             catch err
                 failed = true;
-                assert(~isempty(strfind(err.message, 'uint8')), 'the message does not name the classes');
+                % R2025b's identifier and words, which name no class (open item 333, ADR 0370).
+                assert(strcmp(err.identifier, 'MATLAB:mixedClasses'), 'the refusal is not R2025b''s');
             end
             assert(failed, 'two different integer classes combined silently');
 

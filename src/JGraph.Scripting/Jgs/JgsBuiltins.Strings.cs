@@ -1121,7 +1121,12 @@ internal static partial class JgsBuiltins
             }
 
             string imaginary = OneNumber(Math.Abs(z.Imaginary), precision);
-            return real + (z.Imaginary < 0 ? "-" : "+") + imaginary + "i";
+
+            // An infinite or NaN imaginary part is written as a product, which reads back: R2025b's
+            // mat2str(complex(Inf, NaN)) is Inf+1i*NaN, where InfNaNi is no number (open item 333, ADR 0370).
+            return double.IsFinite(z.Imaginary)
+                ? real + (z.Imaginary < 0 ? "-" : "+") + imaginary + "i"
+                : real + (z.Imaginary < 0 ? "-" : "+") + "1i*" + imaginary;
         }
 
         if (subject.Type is JgsType.Complex or JgsType.Number or JgsType.Bool)

@@ -185,6 +185,68 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
+    /// An elementwise product as R2025b forms it when one factor is real (open item 325, ADR 0370):
+    /// a factor with no imaginary part is a real number, whose product with a complex one is not the
+    /// promoted complex product <see cref="MultiplyC99"/> forms. Two complex factors are its.
+    /// </summary>
+    /// <remarks>
+    /// Measured over every real factor in {Inf, -Inf, NaN, 0, -0, 2} against every complex one with
+    /// parts in {0, -0, 1, Inf, -Inf, NaN} (216 cases, five spellings each, all alike; lane 6C's
+    /// probe 5). For a real x and a complex a+bi: no imaginary part is the real product x·a; no real
+    /// part is x·b imaginary, with a real part x·a unless x·b is not finite, when it is +0
+    /// (<c>Inf*1i</c> is <c>0+Infi</c>, <c>NaN*1i</c> is <c>0+NaNi</c>); otherwise each part is
+    /// multiplied, and a NaN in either makes both NaN, except that a signed zero times an infinity in
+    /// both parts leaves one part zero by the sign of the three factors' product
+    /// (<c>0*complex(Inf, Inf)</c> is <c>0+NaNi</c>, <c>-0*complex(Inf, Inf)</c> a real NaN).
+    /// </remarks>
+    internal static Complex MultiplyMatlab(Complex x, Complex y)
+    {
+        if (x.Imaginary == 0 && y.Imaginary != 0)
+        {
+            return RealTimesComplex(x.Real, y);
+        }
+
+        if (y.Imaginary == 0 && x.Imaginary != 0)
+        {
+            return RealTimesComplex(y.Real, x);
+        }
+
+        if (x.Imaginary == 0 && y.Imaginary == 0)
+        {
+            return new Complex(x.Real * y.Real, 0);
+        }
+
+        return MultiplyC99(x, y);
+    }
+
+    /// <summary>A real number times a complex one with a non-zero imaginary part, as <see cref="MultiplyMatlab"/> describes.</summary>
+    private static Complex RealTimesComplex(double x, Complex z)
+    {
+        double a = z.Real;
+        double b = z.Imaginary;
+        if (a == 0)
+        {
+            double imaginary = x * b;
+            return new Complex(double.IsFinite(imaginary) ? x * a : 0.0, imaginary);
+        }
+
+        double re = x * a;
+        double im = x * b;
+        if (!double.IsNaN(re) && !double.IsNaN(im))
+        {
+            return new Complex(re, im);
+        }
+
+        if (x == 0 && double.IsInfinity(a) && double.IsInfinity(b))
+        {
+            bool negative = double.IsNegative(x) ^ (a < 0) ^ (b < 0);
+            return negative ? new Complex(double.NaN, 0) : new Complex(0, double.NaN);
+        }
+
+        return new Complex(double.NaN, double.NaN);
+    }
+
+    /// <summary>
     /// The matrix product when either operand holds complex elements — a boxed gather multiply
     /// with the same single-flip vector leniency the real path applies.
     /// </summary>
@@ -292,14 +354,14 @@ internal static partial class JgsBuiltins
     {
         if (JgsMatrix.DimsOf(matrix).Length > 2)
         {
-            throw new JgsRuntimeException(line, col, MPowerDimensionRefusal);
+            throw new JgsRuntimeException(line, col, "MATLAB:mpower:inputsMustBe2D", MPowerDimensionRefusal);
         }
 
         int rows = JgsMatrix.RowCount(matrix);
         int cols = JgsMatrix.ColCount(matrix);
         if (rows != cols)
         {
-            throw new JgsRuntimeException(line, col, MPowerShapeRefusal);
+            throw new JgsRuntimeException(line, col, "MATLAB:mpower:notScalarAndSquareMatrix", MPowerShapeRefusal);
         }
 
         if (rows == 0)

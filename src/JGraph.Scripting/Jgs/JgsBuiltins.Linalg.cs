@@ -28,11 +28,29 @@ internal static partial class JgsBuiltins
             if (HasComplexElements(args[0]))
             {
                 Complex[,] square = ComplexSquareOf("inv", args[0], line, col);
+                int size = square.GetLength(0);
+
+                // A NaN anywhere inverts to NaN throughout under MATLAB:illConditionedMatrix, and a
+                // nearly singular matrix warns with its RCOND, as the real road does (open item 333,
+                // ADR 0370; R2025b's inv([1 NaN; 1i 2]) and inv([1 0; 0 1e-17i])).
+                if (square.Cast<Complex>().Any(static z => double.IsNaN(z.Real) || double.IsNaN(z.Imaginary)))
+                {
+                    WarnSquareCondition(host, SquareCondition.IllConditioned, double.NaN);
+                    return ComplexStorage(Enumerable.Repeat(new Complex(double.NaN, double.NaN), size * size).ToArray(), [size, size]);
+                }
+
                 if (!ComplexLinear.TryInvert(square, out _))
                 {
                     WarnSquareCondition(host, SquareCondition.Singular, 0);
                     int order = square.GetLength(0);
                     return FromColumnMajorRect(Enumerable.Repeat(double.PositiveInfinity, order * order).ToArray(), order, order);
+                }
+
+                double complexRcond = ComplexSquareSystems.ReciprocalCondition(square);
+                double threshold = args[0].NumericClass == JgsNumericClass.Single ? 1.1920928955078125e-07 : 2.220446049250313e-16;
+                if (complexRcond < threshold)
+                {
+                    WarnSquareCondition(host, SquareCondition.NearlySingular, complexRcond);
                 }
 
                 return ComplexInverse("inv", args[0], line, col);

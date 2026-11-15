@@ -1714,9 +1714,12 @@ internal sealed partial class Parser
         if (Check(TokenType.Plus))
         {
             // Unary plus. It has no effect on a number, but MATLAB accepts it and scripts written
-            // for symmetry (+a versus -a) should not trip over it.
-            Advance();
-            return ParseUnary();
+            // for symmetry (+a versus -a) should not trip over it. MATLAB's is uplus, which turns a
+            // char or a logical into a double and drops the zero-imaginary flag, so the MATLAB
+            // dialect keeps the node (open item 330, ADR 0370); JGS still drops it.
+            Token plus = Advance();
+            Expr operand = ParseUnary();
+            return _matlab ? new UnaryExpr(TokenType.Plus, operand) { Line = plus.Line, Column = plus.Column } : operand;
         }
 
         if (Check(TokenType.PlusPlus) || Check(TokenType.MinusMinus))

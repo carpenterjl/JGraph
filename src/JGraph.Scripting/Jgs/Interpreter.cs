@@ -5040,6 +5040,11 @@ internal sealed partial class Interpreter
             operand = CharCodes(operand);
         }
 
+        if (unary.Op == TokenType.Plus)
+        {
+            return UnaryPlus(operand, unary);
+        }
+
         if (unary.Op == TokenType.Bang)
         {
             // MATLAB's ~ is element-wise over arrays (~mask negates the mask, M43); JGS keeps
@@ -5076,6 +5081,33 @@ internal sealed partial class Interpreter
             MapNumeric(operand, static v => -v, "-", unary.Line, unary.Column, static c => -c,
                 PackedMath.UnaryOp.Negate),
             operand.NumericClass);
+    }
+
+    /// <summary>
+    /// MATLAB's <c>+x</c>, which only the MATLAB parser keeps (open item 330, ADR 0370): R2025b's
+    /// uplus, so a char or a logical is a double, the zero-imaginary flag is dropped
+    /// (<c>+complex(1, 0)</c> is real), and a string, cell, struct or function handle is
+    /// <c>MATLAB:math:mustBeNumericCharOrLogical</c>. A char has been read as its codes already. A
+    /// sparse matrix, a time and anything else this does not judge is handed back as it came, as
+    /// the parser that dropped the + handed it back.
+    /// </summary>
+    private JgsValue UnaryPlus(JgsValue operand, UnaryExpr unary)
+    {
+        if (operand.IsStringArray || operand.Type is JgsType.Cell or JgsType.Struct or JgsType.Function)
+        {
+            throw new JgsRuntimeException(unary.Line, unary.Column, "MATLAB:math:mustBeNumericCharOrLogical",
+                "Invalid data type. Argument must be numeric, char, or logical.");
+        }
+
+        bool numeric = operand.Type is JgsType.Number or JgsType.Bool or JgsType.Complex
+            || (operand.Type == JgsType.Array && !operand.IsTime && !operand.IsCategorical);
+        if (!numeric || operand.Type == JgsType.Sparse)
+        {
+            return operand;
+        }
+
+        // -0 + x is x to the bit, signed zeros included, in x's class.
+        return ApplyBinary(TokenType.Plus, JgsValue.Number(-0.0), operand, unary);
     }
 
     private JgsValue EvaluateLogical(LogicalExpr logical, JgsEnvironment env)
@@ -5527,6 +5559,17 @@ internal sealed partial class Interpreter
             return JgsBuiltins.SparseOperator(op, left, right, at, (o, l, r) => ApplyBinary(o, l, r, at));
         }
 
+        // An integer class combines only with its own class or a scalar double under every arithmetic
+        // operator, and R2025b says so before it looks at the shapes: a logical, a single, another
+        // integer class or a double array is MATLAB:mixedClasses, a complex partner
+        // MATLAB:complexInts, and the matrix operators ask about their shapes first (open item 333,
+        // ADR 0370). The powers are asked below, after their own mpower refusal.
+        if (Dialect.IsMatlab && IsArithmetic(op) && op is not (TokenType.Caret or TokenType.DotCaret)
+            && JgsBuiltins.IntegerPairRefusal(op, left, right) is { } integerRefusal)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, integerRefusal.Id, integerRefusal.Message);
+        }
+
         // Two arrays whose shapes do not expand into each other, under an elementwise operator, are
         // R2025b's MATLAB:sizeDimensionsMustMatch before any kernel says so in its own words (ADR 0214).
         if (Dialect.IsMatlab && left.Type == JgsType.Array && right.Type == JgsType.Array
@@ -5556,6 +5599,13 @@ internal sealed partial class Interpreter
             && !(IsScalarOperand(left) && IsScalarOperand(right)))
         {
             throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:mpower:integerNotSupported", JgsBuiltins.MPowerIntegerRefusal);
+        }
+
+        // A complex partner of an integer power is MATLAB:complexInts first (open item 333, ADR 0370).
+        if (Dialect.IsMatlab && op is (TokenType.Caret or TokenType.DotCaret)
+            && JgsBuiltins.IntegerPairRefusal(op, left, right) is { } powerRefusal)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, powerRefusal.Id, powerRefusal.Message);
         }
 
         // R2025b raises an integer only with its own class or a double: a single or a logical on
@@ -5832,6 +5882,15 @@ internal sealed partial class Interpreter
                 _ => false,
             };
 
+            // x .^ 1 hands a flagged array back complex, as R2025b does; a scalar, any other exponent
+            // and an exponent of another class drop the flag (open item 330, ADR 0370).
+            if (op == TokenType.DotCaret && right.Type == JgsType.Number && right.NumericClass == JgsNumericClass.Double
+                && right.AsNumber == 1 && left.Type == JgsType.Array && left.ArrayLength > 1
+                && JgsBuiltins.IsZeroImagFlagged(left))
+            {
+                return JgsBuiltins.FlaggedToFirstPower(left);
+            }
+
             if (op == TokenType.DotBackslash)
             {
                 // a .\ b is b ./ a — elementwise division read the other way around. Mapping onto
@@ -5883,6 +5942,14 @@ internal sealed partial class Interpreter
                 // power this used to fall through to (M142). ScalarForm says the left side is the
                 // scalar one for '^', which is exactly the shape that reaches here.
                 return JgsBuiltins.ScalarMatrixPower(left, right, at.Line, at.Column);
+            }
+            else if (op == TokenType.Caret && !ScalarForm(op) && rightScalar && left.Type == JgsType.Array
+                     && !IsMatrix(left) && JgsMatrix.RowCount(left) != JgsMatrix.ColCount(left))
+            {
+                // A vector (or an empty that is not 0-by-0) is no square matrix, and R2025b's mpower
+                // says so rather than raising each element (open item 333, ADR 0370): [1 2 3] ^ 2 is
+                // MATLAB:mpower:notScalarAndSquareMatrix. MatrixPower words the refusal.
+                return MatrixPower(left, right, at);
             }
             else if (op == TokenType.Caret && !ScalarForm(op) && IsMatrix(left) && rightScalar)
             {
@@ -5995,7 +6062,8 @@ internal sealed partial class Interpreter
             case TokenType.Minus:
                 return NumericBinary(left, right, (a, b) => a - b, "-", at.Line, at.Column, static (a, b) => a - b);
             case TokenType.Star:
-                return NumericBinary(left, right, (a, b) => a * b, "*", at.Line, at.Column, JgsBuiltins.MultiplyC99);
+                return NumericBinary(left, right, (a, b) => a * b, "*", at.Line, at.Column,
+                    Dialect.IsMatlab ? JgsBuiltins.MultiplyMatlab : JgsBuiltins.MultiplyC99);
             case TokenType.Slash:
                 return NumericBinary(left, right, (a, b) => a / b, "/", at.Line, at.Column, static (a, b) => a / b);
             case TokenType.Percent:
@@ -9495,7 +9563,7 @@ internal sealed partial class Interpreter
             // Two matrices are neither a base with a scalar exponent nor a scalar with a matrix
             // one, which is the only complaint MATLAB has about them and now the only one made
             // here: the two shapes that '^' does read answer above, in MATLAB's own words (M142).
-            throw new JgsRuntimeException(at.Line, at.Column, JgsBuiltins.MPowerShapeRefusal);
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:mpower:notScalarAndSquareMatrix", JgsBuiltins.MPowerShapeRefusal);
         }
 
         if (op == TokenType.Backslash)

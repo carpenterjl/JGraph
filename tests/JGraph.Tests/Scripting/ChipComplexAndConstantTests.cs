@@ -350,7 +350,7 @@ public class ChipComplexAndConstantTests : IDisposable
 
     [Fact]
     public Task LogicalStillRefusesAComplexAsMatlabDoes() =>
-        Refuses("x = logical(1+2i);", "but got a complex");
+        Refuses("x = logical(1+2i);", "Complex values cannot be converted to logicals."); // R2025b's words (ADR 0370)
 
     [Fact]
     public void DoubleOfAComplexReadsTheSameInBothLanes() => AssertParity("""

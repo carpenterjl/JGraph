@@ -1,0 +1,866 @@
+CHK|uplus_scalar|double[1 1] real 1|exact
+CHK|uplus_array|double[1 3] real [3 1 2]|exact
+CHK|uplus_single|single[1 2] real [2 1]|exact
+CHK|uplus_fn|double[1 3] real [3 1 2]|exact
+CHK|uplus_char|double[1 1] real 97|exact
+CHK|uplus_charrow|double[1 2] real [97 98]|exact
+CHK|uplus_true|double[1 1] real 1|exact
+CHK|uplus_mask|double[1 2] real [1 0]|exact
+CHK|uplus_int8|int8[1 1] real 3|exact
+CHK|uplus_single_real|single[1 1] real 3|exact
+CHK|uplus_cplx|double[1 1] complex re 1 im 2|exact
+CHK|uplus_neg|double[1 3] real [-3 -1 -2]|exact
+CHK|uplus_paren|double[1 3] real [3 1 2]|exact
+CHK|uplus_in_sum|double[1 3] real [4 2 3]|exact
+CHK|uplus_empty|double[0 0] real []|exact
+CHK|uplus_neg_zero|double[1 1] real -Inf|exact
+CHK|uplus_str|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|uplus_str_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|uplus_cell|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|uplus_cell_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|uplus_struct|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|uplus_struct_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|uplus_fh|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|uplus_fh_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|uplus_bound|double[1 3] real [3 1 2]|exact
+CHK|sort_arr|double[1 3] complex re [1 2 3] im [0 0 0]|exact
+CHK|sort_desc|double[1 3] complex re [3 2 1] im [0 0 0]|exact
+CHK|sort_mat|double[2 2] complex re [2 1;3 4] im [0 0;0 0]|exact
+CHK|sort_mat_dim2|double[2 2] complex re [1 3;2 4] im [0 0;0 0]|exact
+CHK|sort_scalar|double[1 1] complex re 1 im 0|exact
+CHK|sort_single|single[1 2] complex re [1 2] im [0 0]|exact
+CHK|sort_neg|double[1 5] complex re [1 1 -1 2 -3] im [0 0 0 0 0]|exact
+CHK|sort_neg_desc|double[1 5] complex re [-3 2 -1 1 1] im [0 0 0 0 0]|exact
+CHK|sort_neg_real|double[1 5] complex re [-3 -1 1 1 2] im [0 0 0 0 0]|exact
+CHK|sort_nan|double[1 3] complex re [1 -2 NaN] im [0 0 0]|exact
+CHK|sort_nan_desc|double[1 3] complex re [NaN -2 1] im [0 0 0]|exact
+CHK|sort_col|double[3 1] complex re [1;2;3] im [0;0;0]|exact
+CHK|sort_mat_neg|double[2 2] complex re [2 1;-3 -1] im [0 0;0 0]|exact
+CHK|sort_mat_neg_dim2|double[2 2] complex re [-3 1;2 -1] im [0 0;0 0]|exact
+CHK|sort_empty|double[0 0] complex re [] im []|exact
+CHK|sort_two_s|double[1 5] complex re [1 1 -1 2 -3] im [0 0 0 0 0]|exact
+CHK|sort_two_i|double[1 5] real [2 5 3 4 1]|exact
+CHK|unique_arr|double[1 3] complex re [1 2 3] im [0 0 0]|exact
+CHK|unique_dup|double[1 2] complex re [1 2] im [0 0]|exact
+CHK|unique_scalar|double[1 1] complex re 1 im 0|exact
+CHK|unique_stable|double[1 2] complex re [2 1] im [0 0]|exact
+CHK|unique_mat|double[4 1] complex re [1;2;3;4] im [0;0;0;0]|exact
+CHK|unique_col|double[2 1] complex re [1;3] im [0;0]|exact
+CHK|unique_single|single[1 2] complex re [1 2] im [0 0]|exact
+CHK|unique_neg|double[1 4] complex re [1 -1 2 -3] im [0 0 0 0]|exact
+CHK|unique_single_neg|single[1 3] complex re [1 2 -2] im [0 0 0]|exact
+CHK|unique_zeros|double[1 2] complex re [0 1] im [0 0]|exact
+CHK|unique_nan|double[1 3] complex re [1 NaN NaN] im [0 0 0]|exact
+CHK|unique_three_u|double[1 4] complex re [1 -1 2 -3] im [0 0 0 0]|exact
+CHK|unique_three_ia|double[4 1] real [2;3;4;1]|exact
+CHK|unique_three_ic|double[5 1] real [4;1;2;3;1]|exact
+CHK|unique_last_u|double[1 4] complex re [1 -1 2 -3] im [0 0 0 0]|exact
+CHK|unique_last_ia|double[4 1] real [5;3;4;1]|exact
+CHK|unique_last_ic|double[5 1] real [4;1;2;3;1]|exact
+CHK|unique_stable_u|double[1 4] complex re [-3 1 -1 2] im [0 0 0 0]|exact
+CHK|unique_stable_ia|double[4 1] real [1;2;3;4]|exact
+CHK|unique_stable_ic|double[5 1] real [1;2;3;4;2]|exact
+CHK|cell2mat_scalar|double[1 1] complex re 1 im 0|exact
+CHK|cell2mat_arr|double[1 3] complex re [3 1 2] im [0 0 0]|exact
+CHK|cell2mat_two|double[1 2] complex re [1 2] im [0 0]|exact
+CHK|cell2mat_two_rev|double[1 2] complex re [2 1] im [0 0]|exact
+CHK|cell2mat_col|double[2 1] complex re [1;1] im [0;0]|exact
+CHK|cell2mat_three|double[3 1] complex re [1;1;1] im [0;0;0]|exact
+CHK|cell2mat_grid|double[2 2] complex re [1 1;1 1] im [0 0;0 0]|exact
+CHK|cell2mat_rows|double[2 2] complex re [1 2;3 4] im [0 0;0 0]|exact
+CHK|cell2mat_single|single[1 2] complex re [1 2] im [0 0]|exact
+CHK|cell2mat_cplx|double[1 2] complex re [1 1] im [2 0]|exact
+CHK|cell2mat_int|int8[1 2] real [1 1]|exact
+CHK|cell2mat_mismatch|MATLAB:catenate:dimensionMismatch|exact
+CHK|cell2mat_mismatch_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|pow1_arr|double[1 3] complex re [3 1 2] im [0 0 0]|exact
+CHK|pow1_scalar|double[1 1] real 1|exact
+CHK|pow1_mat|double[2 2] complex re [3 1;2 4] im [0 0;0 0]|exact
+CHK|pow1_single|single[1 2] complex re [2 1] im [0 0]|exact
+CHK|pow1_col|double[2 1] complex re [1;2] im [0;0]|exact
+CHK|pow1_neg|double[1 2] complex re [-1 -2] im [0 0]|exact
+CHK|pow1_nan|double[1 2] complex re [NaN 1] im [0 0]|exact
+CHK|pow1_fn|double[1 3] complex re [3 1 2] im [0 0 0]|exact
+CHK|pow1_empty|double[0 0] real []|exact
+CHK|pow1_exp_single|single[1 3] real [3 1 2]|exact
+CHK|pow1_exp_true|double[1 3] real [3 1 2]|exact
+CHK|pow1_exp_flagged|double[1 3] real [3 1 2]|exact
+CHK|pow1_exp_vector|double[1 3] real [3 1 2]|exact
+CHK|pow1_exp_int8|MATLAB:complexInts|exact
+CHK|pow1_exp_int8_msg|Complex integer arithmetic is not supported.|exact
+CHK|pow2_arr|double[1 3] real [9 1 4]|exact
+CHK|pow0_arr|double[1 3] real [1 1 1]|exact
+CHK|powm1_arr|double[1 3] real [0.33333333333333331 1 0.5]|exact
+CHK|mpow1_mat|double[2 2] real [3 1;2 4]|exact
+CHK|pow1_cplx_exact|double[1 2] complex re [1 3] im [2 0]|exact
+CHK|logical_flag|MATLAB:nologicalcomplex|exact
+CHK|logical_flag_msg|Complex values cannot be converted to logicals.|exact
+CHK|logical_flag_arr|MATLAB:nologicalcomplex|exact
+CHK|logical_flag_arr_msg|Complex values cannot be converted to logicals.|exact
+CHK|logical_flag_empty|MATLAB:nologicalcomplex|exact
+CHK|logical_flag_empty_msg|Complex values cannot be converted to logicals.|exact
+CHK|logical_flag_single|MATLAB:nologicalcomplex|exact
+CHK|logical_flag_single_msg|Complex values cannot be converted to logicals.|exact
+CHK|logical_cplx|MATLAB:nologicalcomplex|exact
+CHK|logical_cplx_msg|Complex values cannot be converted to logicals.|exact
+CHK|logical_cplx_arr|MATLAB:nologicalcomplex|exact
+CHK|logical_cplx_arr_msg|Complex values cannot be converted to logicals.|exact
+CHK|complex_str_re|MATLAB:complex:realPartInputNonNumericOrNonReal|exact
+CHK|complex_str_re_msg|Input for real part must be a real numeric value.|exact
+CHK|complex_str_im|MATLAB:complex:imagPartInputNonNumericOrNonReal|exact
+CHK|complex_str_im_msg|Input for imaginary part must be a real numeric value.|exact
+CHK|complex_str_one|MATLAB:complex:expectsNumeric|exact
+CHK|complex_str_one_msg|First input must be numeric.|exact
+CHK|complex_str_arr|MATLAB:complex:realPartInputNonNumericOrNonReal|exact
+CHK|complex_str_arr_msg|Input for real part must be a real numeric value.|exact
+CHK|complex_str_both|MATLAB:complex:realPartInputNonNumericOrNonReal|exact
+CHK|complex_str_both_msg|Input for real part must be a real numeric value.|exact
+CHK|complex_str_empty|MATLAB:complex:realPartInputNonNumericOrNonReal|exact
+CHK|complex_str_empty_msg|Input for real part must be a real numeric value.|exact
+CHK|complex_char|double[1 1] complex re 97 im 0|exact
+CHK|complex_char_one|double[1 1] complex re 97 im 0|exact
+CHK|zflag_mld|double[2 1] complex re [Inf;NaN] im [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|zflag_mld_eye|double[2 2] complex re [Inf NaN;NaN NaN] im [NaN NaN;NaN NaN] WARN MATLAB:singularMatrix|exact
+CHK|zflag_mld_cplx_rhs|double[2 1] complex re [NaN;NaN] im [Inf;NaN] WARN MATLAB:singularMatrix|exact
+CHK|zflag_imag_mld|double[2 1] real [Inf;NaN] WARN MATLAB:singularMatrix|exact
+CHK|eflag_mld|double[2 1] real [1;2]|exact
+CHK|eflag_rhs|double[2 1] real [1;2]|exact
+CHK|zflag_scalar|double[1 1] real Inf|exact
+CHK|uflag_mld|double[2 1] complex re [NaN;Inf] im [NaN;NaN] WARN MATLAB:singularMatrix|exact
+CHK|vpow_2|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_2_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_half|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_half_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_1|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_1_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_0|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_0_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_m1|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_m1_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_col|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_col_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_col_half|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_col_half_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_neg_row|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_neg_row_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_cplx_exp|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_cplx_exp_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_fn|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_fn_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_single|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_single_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_logical|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_logical_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_char|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_char_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_cplx_base|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_cplx_base_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_empty_row|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_empty_row_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_empty_col|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_empty_col_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_empty_square|double[0 0] real []|exact
+CHK|vpow_inf|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_inf_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_nan|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_nan_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_nonsquare|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_nonsquare_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_nd|MATLAB:mpower:inputsMustBe2D|exact
+CHK|vpow_nd_msg|Arguments must be 2-D. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_int|MATLAB:mpower:integerNotSupported|exact
+CHK|vpow_int_msg|MPOWER (^) is not fully supported for integer classes. Both arguments must be scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_scalar_base|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_scalar_base_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_vec_vec|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_vec_vec_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_mat_mat|MATLAB:mpower:notScalarAndSquareMatrix|exact
+CHK|vpow_mat_mat_msg|Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and the power is a scalar. To operate on each element of the matrix individually, use POWER (.^) for elementwise power.|exact
+CHK|vpow_scalar_bool|double[1 1] real 1|exact
+CHK|vpow_scalar_int|int8[1 1] real 4|exact
+CHK|mix_plus_i8_l|MATLAB:mixedClasses|exact
+CHK|mix_plus_i8_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_plus_l_i8|MATLAB:mixedClasses|exact
+CHK|mix_plus_l_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_plus_i8_s|MATLAB:mixedClasses|exact
+CHK|mix_plus_i8_s_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_plus_s_i8|MATLAB:mixedClasses|exact
+CHK|mix_plus_s_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_plus_i8_i16|MATLAB:mixedClasses|exact
+CHK|mix_plus_i8_i16_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_plus_i8_c|int8[1 1] real 99|exact
+CHK|mix_plus_c_i8|int8[1 1] real 99|exact
+CHK|mix_plus_i8_d|int8[1 1] real 5|exact
+CHK|mix_plus_i8_lv|MATLAB:mixedClasses|exact
+CHK|mix_plus_i8_lv_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_plus_i8v_l|MATLAB:mixedClasses|exact
+CHK|mix_plus_i8v_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_plus_i8_le|MATLAB:mixedClasses|exact
+CHK|mix_plus_i8_le_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_plus_i8_se|MATLAB:mixedClasses|exact
+CHK|mix_plus_i8_se_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_plus_i8e_l|MATLAB:mixedClasses|exact
+CHK|mix_plus_i8e_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_plus_i8_dv|MATLAB:mixedClasses|exact
+CHK|mix_plus_i8_dv_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_plus_i8_cs|MATLAB:complexInts|exact
+CHK|mix_plus_i8_cs_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_plus_i8_cd|MATLAB:complexInts|exact
+CHK|mix_plus_i8_cd_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_plus_i8_flag|MATLAB:complexInts|exact
+CHK|mix_plus_i8_flag_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_plus_i8_de|MATLAB:mixedClasses|exact
+CHK|mix_plus_i8_de_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_plus_i8e_d|int8[0 0] real []|exact
+CHK|mix_minus_i8_l|MATLAB:mixedClasses|exact
+CHK|mix_minus_i8_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_minus_l_i8|MATLAB:mixedClasses|exact
+CHK|mix_minus_l_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_minus_i8_s|MATLAB:mixedClasses|exact
+CHK|mix_minus_i8_s_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_minus_s_i8|MATLAB:mixedClasses|exact
+CHK|mix_minus_s_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_minus_i8_i16|MATLAB:mixedClasses|exact
+CHK|mix_minus_i8_i16_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_minus_i8_c|int8[1 1] real -95|exact
+CHK|mix_minus_c_i8|int8[1 1] real 95|exact
+CHK|mix_minus_i8_d|int8[1 1] real -1|exact
+CHK|mix_minus_i8_lv|MATLAB:mixedClasses|exact
+CHK|mix_minus_i8_lv_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_minus_i8v_l|MATLAB:mixedClasses|exact
+CHK|mix_minus_i8v_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_minus_i8_le|MATLAB:mixedClasses|exact
+CHK|mix_minus_i8_le_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_minus_i8_se|MATLAB:mixedClasses|exact
+CHK|mix_minus_i8_se_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_minus_i8e_l|MATLAB:mixedClasses|exact
+CHK|mix_minus_i8e_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_minus_i8_dv|MATLAB:mixedClasses|exact
+CHK|mix_minus_i8_dv_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_minus_i8_cs|MATLAB:complexInts|exact
+CHK|mix_minus_i8_cs_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_minus_i8_cd|MATLAB:complexInts|exact
+CHK|mix_minus_i8_cd_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_minus_i8_flag|MATLAB:complexInts|exact
+CHK|mix_minus_i8_flag_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_minus_i8_de|MATLAB:mixedClasses|exact
+CHK|mix_minus_i8_de_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_minus_i8e_d|int8[0 0] real []|exact
+CHK|mix_times_i8_l|MATLAB:mixedClasses|exact
+CHK|mix_times_i8_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_times_l_i8|MATLAB:mixedClasses|exact
+CHK|mix_times_l_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_times_i8_s|MATLAB:mixedClasses|exact
+CHK|mix_times_i8_s_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_times_s_i8|MATLAB:mixedClasses|exact
+CHK|mix_times_s_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_times_i8_i16|MATLAB:mixedClasses|exact
+CHK|mix_times_i8_i16_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_times_i8_c|int8[1 1] real 127|exact
+CHK|mix_times_c_i8|int8[1 1] real 127|exact
+CHK|mix_times_i8_d|int8[1 1] real 5|exact
+CHK|mix_times_i8_lv|MATLAB:mixedClasses|exact
+CHK|mix_times_i8_lv_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_times_i8v_l|MATLAB:mixedClasses|exact
+CHK|mix_times_i8v_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_times_i8_le|MATLAB:mixedClasses|exact
+CHK|mix_times_i8_le_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_times_i8_se|MATLAB:mixedClasses|exact
+CHK|mix_times_i8_se_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_times_i8e_l|MATLAB:mixedClasses|exact
+CHK|mix_times_i8e_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_times_i8_dv|MATLAB:mixedClasses|exact
+CHK|mix_times_i8_dv_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_times_i8_cs|MATLAB:complexInts|exact
+CHK|mix_times_i8_cs_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_times_i8_cd|MATLAB:complexInts|exact
+CHK|mix_times_i8_cd_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_times_i8_flag|MATLAB:complexInts|exact
+CHK|mix_times_i8_flag_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_times_i8_de|MATLAB:mixedClasses|exact
+CHK|mix_times_i8_de_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_times_i8e_d|int8[0 0] real []|exact
+CHK|mix_rdivide_i8_l|MATLAB:mixedClasses|exact
+CHK|mix_rdivide_i8_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_rdivide_l_i8|MATLAB:mixedClasses|exact
+CHK|mix_rdivide_l_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_rdivide_i8_s|MATLAB:mixedClasses|exact
+CHK|mix_rdivide_i8_s_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_rdivide_s_i8|MATLAB:mixedClasses|exact
+CHK|mix_rdivide_s_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_rdivide_i8_i16|MATLAB:mixedClasses|exact
+CHK|mix_rdivide_i8_i16_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_rdivide_i8_c|int8[1 1] real 0|exact
+CHK|mix_rdivide_c_i8|int8[1 1] real 49|exact
+CHK|mix_rdivide_i8_d|int8[1 1] real 1|exact
+CHK|mix_rdivide_i8_lv|MATLAB:mixedClasses|exact
+CHK|mix_rdivide_i8_lv_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_rdivide_i8v_l|MATLAB:mixedClasses|exact
+CHK|mix_rdivide_i8v_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_rdivide_i8_le|MATLAB:mixedClasses|exact
+CHK|mix_rdivide_i8_le_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_rdivide_i8_se|MATLAB:mixedClasses|exact
+CHK|mix_rdivide_i8_se_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_rdivide_i8e_l|MATLAB:mixedClasses|exact
+CHK|mix_rdivide_i8e_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_rdivide_i8_dv|MATLAB:mixedClasses|exact
+CHK|mix_rdivide_i8_dv_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_rdivide_i8_cs|MATLAB:complexInts|exact
+CHK|mix_rdivide_i8_cs_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_rdivide_i8_cd|MATLAB:complexInts|exact
+CHK|mix_rdivide_i8_cd_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_rdivide_i8_flag|MATLAB:complexInts|exact
+CHK|mix_rdivide_i8_flag_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_rdivide_i8_de|MATLAB:mixedClasses|exact
+CHK|mix_rdivide_i8_de_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_rdivide_i8e_d|int8[0 0] real []|exact
+CHK|mix_ldivide_i8_l|MATLAB:mixedClasses|exact
+CHK|mix_ldivide_i8_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_ldivide_l_i8|MATLAB:mixedClasses|exact
+CHK|mix_ldivide_l_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_ldivide_i8_s|MATLAB:mixedClasses|exact
+CHK|mix_ldivide_i8_s_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_ldivide_s_i8|MATLAB:mixedClasses|exact
+CHK|mix_ldivide_s_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_ldivide_i8_i16|MATLAB:mixedClasses|exact
+CHK|mix_ldivide_i8_i16_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_ldivide_i8_c|int8[1 1] real 49|exact
+CHK|mix_ldivide_c_i8|int8[1 1] real 0|exact
+CHK|mix_ldivide_i8_d|int8[1 1] real 1|exact
+CHK|mix_ldivide_i8_lv|MATLAB:mixedClasses|exact
+CHK|mix_ldivide_i8_lv_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_ldivide_i8v_l|MATLAB:mixedClasses|exact
+CHK|mix_ldivide_i8v_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_ldivide_i8_le|MATLAB:mixedClasses|exact
+CHK|mix_ldivide_i8_le_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_ldivide_i8_se|MATLAB:mixedClasses|exact
+CHK|mix_ldivide_i8_se_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_ldivide_i8e_l|MATLAB:mixedClasses|exact
+CHK|mix_ldivide_i8e_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_ldivide_i8_dv|MATLAB:mixedClasses|exact
+CHK|mix_ldivide_i8_dv_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_ldivide_i8_cs|MATLAB:complexInts|exact
+CHK|mix_ldivide_i8_cs_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_ldivide_i8_cd|MATLAB:complexInts|exact
+CHK|mix_ldivide_i8_cd_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_ldivide_i8_flag|MATLAB:complexInts|exact
+CHK|mix_ldivide_i8_flag_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_ldivide_i8_de|MATLAB:mixedClasses|exact
+CHK|mix_ldivide_i8_de_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_ldivide_i8e_d|int8[0 0] real []|exact
+CHK|mix_mtimes_i8_l|MATLAB:mixedClasses|exact
+CHK|mix_mtimes_i8_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mtimes_l_i8|MATLAB:mixedClasses|exact
+CHK|mix_mtimes_l_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mtimes_i8_s|MATLAB:mixedClasses|exact
+CHK|mix_mtimes_i8_s_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mtimes_s_i8|MATLAB:mixedClasses|exact
+CHK|mix_mtimes_s_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mtimes_i8_i16|MATLAB:mixedClasses|exact
+CHK|mix_mtimes_i8_i16_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mtimes_i8_c|int8[1 1] real 127|exact
+CHK|mix_mtimes_c_i8|int8[1 1] real 127|exact
+CHK|mix_mtimes_i8_d|int8[1 1] real 5|exact
+CHK|mix_mtimes_i8_lv|MATLAB:mixedClasses|exact
+CHK|mix_mtimes_i8_lv_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mtimes_i8v_l|MATLAB:mixedClasses|exact
+CHK|mix_mtimes_i8v_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mtimes_i8_le|MATLAB:mixedClasses|exact
+CHK|mix_mtimes_i8_le_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mtimes_i8_se|MATLAB:mixedClasses|exact
+CHK|mix_mtimes_i8_se_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mtimes_i8e_l|MATLAB:mixedClasses|exact
+CHK|mix_mtimes_i8e_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mtimes_i8_dv|MATLAB:mtimes:integerNotSupported|exact
+CHK|mix_mtimes_i8_dv_msg|MTIMES (*) is not fully supported for integer classes. At least one argument must be scalar.|exact
+CHK|mix_mtimes_i8_cs|MATLAB:complexInts|exact
+CHK|mix_mtimes_i8_cs_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_mtimes_i8_cd|MATLAB:complexInts|exact
+CHK|mix_mtimes_i8_cd_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_mtimes_i8_flag|MATLAB:complexInts|exact
+CHK|mix_mtimes_i8_flag_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_mtimes_i8_de|MATLAB:mixedClasses|exact
+CHK|mix_mtimes_i8_de_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mtimes_i8e_d|int8[0 0] real []|exact
+CHK|mix_mrdivide_i8_l|MATLAB:mixedClasses|exact
+CHK|mix_mrdivide_i8_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mrdivide_l_i8|MATLAB:mixedClasses|exact
+CHK|mix_mrdivide_l_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mrdivide_i8_s|MATLAB:mixedClasses|exact
+CHK|mix_mrdivide_i8_s_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mrdivide_s_i8|MATLAB:mixedClasses|exact
+CHK|mix_mrdivide_s_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mrdivide_i8_i16|MATLAB:mixedClasses|exact
+CHK|mix_mrdivide_i8_i16_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mrdivide_i8_c|int8[1 1] real 0|exact
+CHK|mix_mrdivide_c_i8|int8[1 1] real 49|exact
+CHK|mix_mrdivide_i8_d|int8[1 1] real 1|exact
+CHK|mix_mrdivide_i8_lv|MATLAB:mrdivide:integerLinearAlgebra|exact
+CHK|mix_mrdivide_i8_lv_msg|Linear algebra is not supported for integer data types. To operate on each element of the matrix individually, use RDIVIDE (./) for elementwise right division.|exact
+CHK|mix_mrdivide_i8v_l|MATLAB:mixedClasses|exact
+CHK|mix_mrdivide_i8v_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mrdivide_i8_le|MATLAB:mrdivide:integerLinearAlgebra|exact
+CHK|mix_mrdivide_i8_le_msg|Linear algebra is not supported for integer data types. To operate on each element of the matrix individually, use RDIVIDE (./) for elementwise right division.|exact
+CHK|mix_mrdivide_i8_se|MATLAB:mrdivide:integerLinearAlgebra|exact
+CHK|mix_mrdivide_i8_se_msg|Linear algebra is not supported for integer data types. To operate on each element of the matrix individually, use RDIVIDE (./) for elementwise right division.|exact
+CHK|mix_mrdivide_i8e_l|MATLAB:mixedClasses|exact
+CHK|mix_mrdivide_i8e_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mrdivide_i8_dv|MATLAB:mrdivide:integerLinearAlgebra|exact
+CHK|mix_mrdivide_i8_dv_msg|Linear algebra is not supported for integer data types. To operate on each element of the matrix individually, use RDIVIDE (./) for elementwise right division.|exact
+CHK|mix_mrdivide_i8_cs|MATLAB:complexInts|exact
+CHK|mix_mrdivide_i8_cs_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_mrdivide_i8_cd|MATLAB:complexInts|exact
+CHK|mix_mrdivide_i8_cd_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_mrdivide_i8_flag|MATLAB:complexInts|exact
+CHK|mix_mrdivide_i8_flag_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_mrdivide_i8_de|MATLAB:mrdivide:integerLinearAlgebra|exact
+CHK|mix_mrdivide_i8_de_msg|Linear algebra is not supported for integer data types. To operate on each element of the matrix individually, use RDIVIDE (./) for elementwise right division.|exact
+CHK|mix_mrdivide_i8e_d|int8[0 0] real []|exact
+CHK|mix_mldivide_i8_l|MATLAB:mixedClasses|exact
+CHK|mix_mldivide_i8_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mldivide_l_i8|MATLAB:mixedClasses|exact
+CHK|mix_mldivide_l_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mldivide_i8_s|MATLAB:mixedClasses|exact
+CHK|mix_mldivide_i8_s_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mldivide_s_i8|MATLAB:mixedClasses|exact
+CHK|mix_mldivide_s_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mldivide_i8_i16|MATLAB:mixedClasses|exact
+CHK|mix_mldivide_i8_i16_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mldivide_i8_c|int8[1 1] real 49|exact
+CHK|mix_mldivide_c_i8|int8[1 1] real 0|exact
+CHK|mix_mldivide_i8_d|int8[1 1] real 1|exact
+CHK|mix_mldivide_i8_lv|MATLAB:mixedClasses|exact
+CHK|mix_mldivide_i8_lv_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mldivide_i8v_l|MATLAB:mldivide:integerLinearAlgebra|exact
+CHK|mix_mldivide_i8v_l_msg|Linear algebra is not supported for integer data types. To operate on each element of the matrix individually, use LDIVIDE (.) for elementwise left division.|exact
+CHK|mix_mldivide_i8_le|MATLAB:mixedClasses|exact
+CHK|mix_mldivide_i8_le_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mldivide_i8_se|MATLAB:mixedClasses|exact
+CHK|mix_mldivide_i8_se_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mldivide_i8e_l|MATLAB:mldivide:integerLinearAlgebra|exact
+CHK|mix_mldivide_i8e_l_msg|Linear algebra is not supported for integer data types. To operate on each element of the matrix individually, use LDIVIDE (.) for elementwise left division.|exact
+CHK|mix_mldivide_i8_dv|MATLAB:mldivide:integerLinearAlgebra|exact
+CHK|mix_mldivide_i8_dv_msg|Linear algebra is not supported for integer data types. To operate on each element of the matrix individually, use LDIVIDE (.) for elementwise left division.|exact
+CHK|mix_mldivide_i8_cs|MATLAB:complexInts|exact
+CHK|mix_mldivide_i8_cs_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_mldivide_i8_cd|MATLAB:complexInts|exact
+CHK|mix_mldivide_i8_cd_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_mldivide_i8_flag|MATLAB:complexInts|exact
+CHK|mix_mldivide_i8_flag_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_mldivide_i8_de|MATLAB:mixedClasses|exact
+CHK|mix_mldivide_i8_de_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mldivide_i8e_d|MATLAB:mldivide:integerLinearAlgebra|exact
+CHK|mix_mldivide_i8e_d_msg|Linear algebra is not supported for integer data types. To operate on each element of the matrix individually, use LDIVIDE (.) for elementwise left division.|exact
+CHK|mix_op_plus|MATLAB:mixedClasses|exact
+CHK|mix_op_plus_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_op_plus_single|MATLAB:mixedClasses|exact
+CHK|mix_op_plus_single_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_op_times|MATLAB:mixedClasses|exact
+CHK|mix_op_times_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_op_ldivide|MATLAB:mixedClasses|exact
+CHK|mix_op_ldivide_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_op_cat|int8[1 2] real [2 1]|exact
+CHK|mix_vec_dvec|MATLAB:mixedClasses|exact
+CHK|mix_vec_dvec_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_vec_dcol|MATLAB:mixedClasses|exact
+CHK|mix_vec_dcol_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_vec_dempty|MATLAB:mixedClasses|exact
+CHK|mix_vec_dempty_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_vec_charrow|MATLAB:mixedClasses|exact
+CHK|mix_vec_charrow_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_vec_char|int8[1 2] real [97 127]|exact
+CHK|mix_vec_dscalar|int8[1 2] real [3 4]|exact
+CHK|mix_vec_d11|int8[1 2] real [2 3]|exact
+CHK|mix_vec_cplx|MATLAB:complexInts|exact
+CHK|mix_vec_cplx_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_nd|MATLAB:mixedClasses|exact
+CHK|mix_nd_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_uint8|MATLAB:mixedClasses|exact
+CHK|mix_uint8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_same|int8[1 2] real [2 4]|exact
+CHK|mix_la_mtimes_dmat|MATLAB:mtimes:integerNotSupported|exact
+CHK|mix_la_mtimes_dmat_msg|MTIMES (*) is not fully supported for integer classes. At least one argument must be scalar.|exact
+CHK|mix_la_mtimes_lv|MATLAB:mtimes:integerNotSupported|exact
+CHK|mix_la_mtimes_lv_msg|MTIMES (*) is not fully supported for integer classes. At least one argument must be scalar.|exact
+CHK|mix_la_mtimes_l|MATLAB:mixedClasses|exact
+CHK|mix_la_mtimes_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_la_mrdivide_dmat|MATLAB:mrdivide:integerLinearAlgebra|exact
+CHK|mix_la_mrdivide_dmat_msg|Linear algebra is not supported for integer data types. To operate on each element of the matrix individually, use RDIVIDE (./) for elementwise right division.|exact
+CHK|mix_la_mldivide_dmat|MATLAB:mldivide:integerLinearAlgebra|exact
+CHK|mix_la_mldivide_dmat_msg|Linear algebra is not supported for integer data types. To operate on each element of the matrix individually, use LDIVIDE (.) for elementwise left division.|exact
+CHK|mix_la_mldivide_cd|MATLAB:mldivide:integerLinearAlgebra|exact
+CHK|mix_la_mldivide_cd_msg|Linear algebra is not supported for integer data types. To operate on each element of the matrix individually, use LDIVIDE (.) for elementwise left division.|exact
+CHK|mix_la_mtimes_cd|MATLAB:mtimes:integerNotSupported|exact
+CHK|mix_la_mtimes_cd_msg|MTIMES (*) is not fully supported for integer classes. At least one argument must be scalar.|exact
+CHK|mix_la_mtimes_i16|MATLAB:mtimes:integerNotSupported|exact
+CHK|mix_la_mtimes_i16_msg|MTIMES (*) is not fully supported for integer classes. At least one argument must be scalar.|exact
+CHK|la_mldivide_same|MATLAB:mldivide:integerLinearAlgebra|exact
+CHK|la_mldivide_same_msg|Linear algebra is not supported for integer data types. To operate on each element of the matrix individually, use LDIVIDE (.) for elementwise left division.|exact
+CHK|la_mrdivide_same|MATLAB:mrdivide:integerLinearAlgebra|exact
+CHK|la_mrdivide_same_msg|Linear algebra is not supported for integer data types. To operate on each element of the matrix individually, use RDIVIDE (./) for elementwise right division.|exact
+CHK|la_mtimes_same|MATLAB:mtimes:integerNotSupported|exact
+CHK|la_mtimes_same_msg|MTIMES (*) is not fully supported for integer classes. At least one argument must be scalar.|exact
+CHK|la_mldivide_dscalar|MATLAB:mldivide:integerLinearAlgebra|exact
+CHK|la_mldivide_dscalar_msg|Linear algebra is not supported for integer data types. To operate on each element of the matrix individually, use LDIVIDE (.) for elementwise left division.|exact
+CHK|la_mrdivide_dscalar|MATLAB:mrdivide:integerLinearAlgebra|exact
+CHK|la_mrdivide_dscalar_msg|Linear algebra is not supported for integer data types. To operate on each element of the matrix individually, use RDIVIDE (./) for elementwise right division.|exact
+CHK|la_mrdivide_by_scalar|int8[2 2] real [1 1;2 2]|exact
+CHK|la_mldivide_scalar_left|int8[2 2] real [1 1;2 2]|exact
+CHK|la_mtimes_scalar|int8[2 2] real [2 4;6 8]|exact
+CHK|la_empty_mldivide|MATLAB:mldivide:integerLinearAlgebra|exact
+CHK|la_empty_mldivide_msg|Linear algebra is not supported for integer data types. To operate on each element of the matrix individually, use LDIVIDE (.) for elementwise left division.|exact
+CHK|mix_power_cplx|MATLAB:complexInts|exact
+CHK|mix_power_cplx_msg|Complex integer arithmetic is not supported.|exact
+CHK|mix_power_dvec|MATLAB:mixedClasses|exact
+CHK|mix_power_dvec_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_power_dempty|MATLAB:mixedClasses|exact
+CHK|mix_power_dempty_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_power_vec_scalar|int8[1 2] real [1 4]|exact
+CHK|mix_power_char|MATLAB:mixedClasses|exact
+CHK|mix_power_char_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|mix_mpower_cplx|MATLAB:complexInts|exact
+CHK|mix_mpower_cplx_msg|Complex integer arithmetic is not supported.|exact
+CHK|gammaln_m1|MATLAB:gammaln:negativeVal|exact
+CHK|gammaln_m1_msg|Input must be nonnegative.|exact
+CHK|gammaln_mhalf|MATLAB:gammaln:negativeVal|exact
+CHK|gammaln_mhalf_msg|Input must be nonnegative.|exact
+CHK|gammaln_vec|MATLAB:gammaln:negativeVal|exact
+CHK|gammaln_vec_msg|Input must be nonnegative.|exact
+CHK|gammaln_nanvec|MATLAB:gammaln:negativeVal|exact
+CHK|gammaln_nanvec_msg|Input must be nonnegative.|exact
+CHK|gammaln_single_m1|MATLAB:gammaln:negativeVal|exact
+CHK|gammaln_single_m1_msg|Input must be nonnegative.|exact
+CHK|gammaln_minf|MATLAB:gammaln:negativeVal|exact
+CHK|gammaln_minf_msg|Input must be nonnegative.|exact
+CHK|gammaln_inf|double[1 1] real Inf|exact
+CHK|gammaln_single_inf|single[1 1] real Inf|exact
+CHK|gammaln_nan|double[1 1] real NaN|exact
+CHK|gammaln_0|double[1 1] real Inf|exact
+CHK|gammaln_m0|double[1 1] real Inf|exact
+CHK|gammaln_big|double[1 2] real [Inf Inf]|exact
+CHK|gammaln_cplx|MATLAB:gammaln:notFullReal|exact
+CHK|gammaln_cplx_msg|Input must be real and full.|exact
+CHK|gammaln_sparse|MATLAB:gammaln:notFullReal|exact
+CHK|gammaln_sparse_msg|Input must be real and full.|exact
+CHK|gammaln_int|MATLAB:math:mustBeFloat|exact
+CHK|gammaln_int_msg|Invalid data type. Argument must be double or single.|exact
+CHK|gammaln_empty|double[0 0] real []|exact
+CHK|psi_m1|MATLAB:psi:negativeX|exact
+CHK|psi_m1_msg|X must be nonnegative.|exact
+CHK|psi_mhalf|MATLAB:psi:negativeX|exact
+CHK|psi_mhalf_msg|X must be nonnegative.|exact
+CHK|psi_vec_neg|MATLAB:psi:negativeX|exact
+CHK|psi_vec_neg_msg|X must be nonnegative.|exact
+CHK|psi_single_m1|MATLAB:psi:negativeX|exact
+CHK|psi_single_m1_msg|X must be nonnegative.|exact
+CHK|psi_minf|MATLAB:psi:negativeX|exact
+CHK|psi_minf_msg|X must be nonnegative.|exact
+CHK|psi_0|double[1 1] real -Inf|exact
+CHK|psi_m0|double[1 1] real -Inf|exact
+CHK|psi_single_0|single[1 1] real -Inf|exact
+CHK|psi_vec_0|double[1 2] real [-Inf -Inf]|exact
+CHK|psi_inf|double[1 1] real Inf|exact
+CHK|psi_nan|double[1 1] real NaN|exact
+CHK|psi_k_m1|MATLAB:psi:negativeX|exact
+CHK|psi_k_m1_msg|X must be nonnegative.|exact
+CHK|psi_k0_m1|MATLAB:psi:negativeX|exact
+CHK|psi_k0_m1_msg|X must be nonnegative.|exact
+CHK|psi_k_single_m1|MATLAB:psi:negativeX|exact
+CHK|psi_k_single_m1_msg|X must be nonnegative.|exact
+CHK|psi_k_0|double[1 1] real Inf|exact
+CHK|psi_k0_0|double[1 1] real -Inf|exact
+CHK|psi_k_neg|MATLAB:psi:validOrder|exact
+CHK|psi_k_neg_msg|Order must be nonnegative integer value smaller than 2^31-1.|exact
+CHK|psi_cplx|MATLAB:psi:notReal|exact
+CHK|psi_cplx_msg|Input must be real.|exact
+CHK|psi_int|MATLAB:math:mustBeFloat|exact
+CHK|psi_int_msg|Invalid data type. Argument must be double or single.|exact
+CHK|reallog_m1|MATLAB:reallog:complexResult|exact
+CHK|reallog_m1_msg|Reallog produced complex result.|exact
+CHK|reallog_single_m1|MATLAB:reallog:complexResult|exact
+CHK|reallog_single_m1_msg|Reallog produced complex result.|exact
+CHK|reallog_vec|MATLAB:reallog:complexResult|exact
+CHK|reallog_vec_msg|Reallog produced complex result.|exact
+CHK|reallog_minf|MATLAB:reallog:complexResult|exact
+CHK|reallog_minf_msg|Reallog produced complex result.|exact
+CHK|reallog_m0|double[1 1] real -Inf|exact
+CHK|reallog_ok|double[1 3] real [0 -Inf Inf]|exact
+CHK|reallog_cplx|MATLAB:validators:mustBeReal|exact
+CHK|reallog_cplx_msg|Invalid argument at position 1. Value must be real.|exact
+CHK|realsqrt_m1|MATLAB:realsqrt:complexResult|exact
+CHK|realsqrt_m1_msg|Realsqrt produced complex result.|exact
+CHK|realsqrt_single_m1|MATLAB:realsqrt:complexResult|exact
+CHK|realsqrt_single_m1_msg|Realsqrt produced complex result.|exact
+CHK|realsqrt_vec|MATLAB:realsqrt:complexResult|exact
+CHK|realsqrt_vec_msg|Realsqrt produced complex result.|exact
+CHK|realsqrt_minf|MATLAB:realsqrt:complexResult|exact
+CHK|realsqrt_minf_msg|Realsqrt produced complex result.|exact
+CHK|realsqrt_cplx|MATLAB:validators:mustBeReal|exact
+CHK|realsqrt_cplx_msg|Invalid argument at position 1. Value must be real.|exact
+CHK|realpow_m1|MATLAB:realpow:complexResult|exact
+CHK|realpow_m1_msg|Realpow produced complex result.|exact
+CHK|realpow_cplx|MATLAB:validators:mustBeReal|exact
+CHK|realpow_cplx_msg|Invalid argument at position 1. Value must be real.|exact
+CHK|realpow_cplx2|MATLAB:validators:mustBeReal|exact
+CHK|realpow_cplx2_msg|Invalid argument at position 2. Value must be real.|exact
+CHK|realpow_nan|double[1 1] real NaN|exact
+CHK|m2s_inf_nan|char[1 10] 'Inf+1i*NaN'|exact
+CHK|m2s_inf_inf|char[1 10] 'Inf+1i*Inf'|exact
+CHK|m2s_1_inf|char[1 8] '1+1i*Inf'|exact
+CHK|m2s_1_minf|char[1 8] '1-1i*Inf'|exact
+CHK|m2s_1_nan|char[1 8] '1+1i*NaN'|exact
+CHK|m2s_nan_1|char[1 6] 'NaN+1i'|exact
+CHK|m2s_nan_nan|char[1 10] 'NaN+1i*NaN'|exact
+CHK|m2s_minf_minf|char[1 11] '-Inf-1i*Inf'|exact
+CHK|m2s_vec|char[1 13] '[1+2i Inf+1i]'|exact
+CHK|m2s_mat|char[1 25] '[1+1i*Inf 2;3 NaN-1i*Inf]'|exact
+CHK|m2s_inf_0|char[1 3] 'Inf'|exact
+CHK|m2s_0_inf|char[1 8] '0+1i*Inf'|exact
+CHK|m2s_prec|char[1 10] 'Inf+1i*NaN'|exact
+CHK|m2s_single|char[1 8] '1+1i*Inf'|exact
+CHK|m2s_class|char[1 16] 'double(1+1i*Inf)'|exact
+CHK|m2s_frac|char[1 10] '0.5-1i*Inf'|exact
+CHK|m2s_finite|char[1 4] '2-1i'|exact
+CHK|inv_near|double[2 2] complex re [1 0;0 0] im [0 0;0 -1e+17] WARN MATLAB:nearlySingularMatrix|exact
+CHK|inv_near_single|single[2 2] complex re [1 0;0 0] im [0 0;0 -99999998430674944] WARN MATLAB:nearlySingularMatrix|exact
+CHK|inv_sing|double[2 2] real [Inf Inf;Inf Inf] WARN MATLAB:singularMatrix|exact
+CHK|inv_fine|double[2 2] complex re [0.5 0;0 0.25] im [0 -0.125;0 0]|exact
+CHK|inv_nan|double[2 2] complex re [NaN NaN;NaN NaN] im [NaN NaN;NaN NaN] WARN MATLAB:illConditionedMatrix|exact
+CHK|inv_hermitian|double[2 2] complex re [0.59999999999999998 0;0 0.40000000000000002] im [0 -0.20000000000000001;0.20000000000000001 0]|exact
+CHK|inv_real_near|double[2 2] real [1 0;0 1e+17] WARN MATLAB:nearlySingularMatrix|exact
+CHK|inv_near_text|MATLAB:nearlySingularMatrix Matrix is close to singular or badly scaled. Results may be inaccurate. RCOND =  1.000000e-17.|exact
+CHK|inv_near_off|double[2 2] complex re [1 0;0 0] im [0 0;0 -1e+17] WARN MATLAB:nearlySingularMatrix|exact
+CHK|inv_near_error|MATLAB:nearlySingularMatrix|exact
+CHK|inv_near_error_msg|Matrix is close to singular or badly scaled. Results may be inaccurate. RCOND = 1.000000e-17.|exact
+CHK|lit_inf_1i|double[1 1] complex re 0 im Inf|exact
+CHK|lit_1i_inf|double[1 1] complex re 0 im Inf|exact
+CHK|lit_neg_inf_1i|double[1 1] complex re 0 im -Inf|exact
+CHK|lit_nan_1i|double[1 1] complex re 0 im NaN|exact
+CHK|lit_inf_2i|double[1 1] complex re 0 im Inf|exact
+CHK|var_inf_1i|double[1 1] complex re 0 im Inf|exact
+CHK|var_1i_inf|double[1 1] complex re 0 im Inf|exact
+CHK|var_times|double[1 1] complex re 0 im Inf|exact
+CHK|var_mtimes|double[1 1] complex re 0 im Inf|exact
+CHK|rc_inf_inf_inf|real NaN 1|exact
+CHK|rc_inf_inf_minf|real NaN 1|exact
+CHK|rc_inf_inf_nan|complex 0 Inf 1|exact
+CHK|rc_inf_inf_zero|complex 0 Inf 1|exact
+CHK|rc_inf_inf_mzero|complex 0 -Inf 1|exact
+CHK|rc_inf_inf_two|complex 0 NaN 1|exact
+CHK|rc_inf_minf_inf|real NaN 1|exact
+CHK|rc_inf_minf_minf|real NaN 1|exact
+CHK|rc_inf_minf_nan|complex 0 Inf 1|exact
+CHK|rc_inf_minf_zero|complex 0 Inf 1|exact
+CHK|rc_inf_minf_mzero|complex 0 -Inf 1|exact
+CHK|rc_inf_minf_two|complex 0 NaN 1|exact
+CHK|rc_inf_nan_inf|real Inf 1|exact
+CHK|rc_inf_nan_minf|real Inf 1|exact
+CHK|rc_inf_nan_nan|complex Inf Inf 1|exact
+CHK|rc_inf_nan_zero|complex Inf Inf 1|exact
+CHK|rc_inf_nan_mzero|complex Inf -Inf 1|exact
+CHK|rc_inf_nan_two|complex NaN NaN 1|exact
+CHK|rc_inf_zero_inf|real Inf 1|exact
+CHK|rc_inf_zero_minf|real Inf 1|exact
+CHK|rc_inf_zero_nan|complex Inf Inf 1|exact
+CHK|rc_inf_zero_zero|complex Inf Inf 1|exact
+CHK|rc_inf_zero_mzero|complex Inf -Inf 1|exact
+CHK|rc_inf_zero_two|complex NaN NaN 1|exact
+CHK|rc_inf_mzero_inf|real -Inf 1|exact
+CHK|rc_inf_mzero_minf|real -Inf 1|exact
+CHK|rc_inf_mzero_nan|complex -Inf Inf 1|exact
+CHK|rc_inf_mzero_zero|complex -Inf Inf 1|exact
+CHK|rc_inf_mzero_mzero|complex -Inf -Inf 1|exact
+CHK|rc_inf_mzero_two|complex NaN NaN 1|exact
+CHK|rc_inf_two_inf|real NaN 1|exact
+CHK|rc_inf_two_minf|real NaN 1|exact
+CHK|rc_inf_two_nan|complex NaN NaN 1|exact
+CHK|rc_inf_two_zero|complex NaN NaN 1|exact
+CHK|rc_inf_two_mzero|complex NaN NaN 1|exact
+CHK|rc_inf_two_two|complex NaN NaN 1|exact
+CHK|rc_minf_inf_inf|real NaN 1|exact
+CHK|rc_minf_inf_minf|real NaN 1|exact
+CHK|rc_minf_inf_nan|complex 0 -Inf 1|exact
+CHK|rc_minf_inf_zero|complex 0 -Inf 1|exact
+CHK|rc_minf_inf_mzero|complex 0 Inf 1|exact
+CHK|rc_minf_inf_two|complex 0 NaN 1|exact
+CHK|rc_minf_minf_inf|real NaN 1|exact
+CHK|rc_minf_minf_minf|real NaN 1|exact
+CHK|rc_minf_minf_nan|complex 0 -Inf 1|exact
+CHK|rc_minf_minf_zero|complex 0 -Inf 1|exact
+CHK|rc_minf_minf_mzero|complex 0 Inf 1|exact
+CHK|rc_minf_minf_two|complex 0 NaN 1|exact
+CHK|rc_minf_nan_inf|real -Inf 1|exact
+CHK|rc_minf_nan_minf|real -Inf 1|exact
+CHK|rc_minf_nan_nan|complex -Inf -Inf 1|exact
+CHK|rc_minf_nan_zero|complex -Inf -Inf 1|exact
+CHK|rc_minf_nan_mzero|complex -Inf Inf 1|exact
+CHK|rc_minf_nan_two|complex NaN NaN 1|exact
+CHK|rc_minf_zero_inf|real -Inf 1|exact
+CHK|rc_minf_zero_minf|real -Inf 1|exact
+CHK|rc_minf_zero_nan|complex -Inf -Inf 1|exact
+CHK|rc_minf_zero_zero|complex -Inf -Inf 1|exact
+CHK|rc_minf_zero_mzero|complex -Inf Inf 1|exact
+CHK|rc_minf_zero_two|complex NaN NaN 1|exact
+CHK|rc_minf_mzero_inf|real Inf 1|exact
+CHK|rc_minf_mzero_minf|real Inf 1|exact
+CHK|rc_minf_mzero_nan|complex Inf -Inf 1|exact
+CHK|rc_minf_mzero_zero|complex Inf -Inf 1|exact
+CHK|rc_minf_mzero_mzero|complex Inf Inf 1|exact
+CHK|rc_minf_mzero_two|complex NaN NaN 1|exact
+CHK|rc_minf_two_inf|real NaN 1|exact
+CHK|rc_minf_two_minf|real NaN 1|exact
+CHK|rc_minf_two_nan|complex NaN NaN 1|exact
+CHK|rc_minf_two_zero|complex NaN NaN 1|exact
+CHK|rc_minf_two_mzero|complex NaN NaN 1|exact
+CHK|rc_minf_two_two|complex NaN NaN 1|exact
+CHK|rc_nan_inf_inf|real NaN 1|exact
+CHK|rc_nan_inf_minf|real NaN 1|exact
+CHK|rc_nan_inf_nan|complex 0 NaN 1|exact
+CHK|rc_nan_inf_zero|complex 0 NaN 1|exact
+CHK|rc_nan_inf_mzero|complex 0 NaN 1|exact
+CHK|rc_nan_inf_two|complex 0 NaN 1|exact
+CHK|rc_nan_minf_inf|real NaN 1|exact
+CHK|rc_nan_minf_minf|real NaN 1|exact
+CHK|rc_nan_minf_nan|complex 0 NaN 1|exact
+CHK|rc_nan_minf_zero|complex 0 NaN 1|exact
+CHK|rc_nan_minf_mzero|complex 0 NaN 1|exact
+CHK|rc_nan_minf_two|complex 0 NaN 1|exact
+CHK|rc_nan_nan_inf|real NaN 1|exact
+CHK|rc_nan_nan_minf|real NaN 1|exact
+CHK|rc_nan_nan_nan|complex NaN NaN 1|exact
+CHK|rc_nan_nan_zero|complex NaN NaN 1|exact
+CHK|rc_nan_nan_mzero|complex NaN NaN 1|exact
+CHK|rc_nan_nan_two|complex NaN NaN 1|exact
+CHK|rc_nan_zero_inf|real NaN 1|exact
+CHK|rc_nan_zero_minf|real NaN 1|exact
+CHK|rc_nan_zero_nan|complex NaN NaN 1|exact
+CHK|rc_nan_zero_zero|complex NaN NaN 1|exact
+CHK|rc_nan_zero_mzero|complex NaN NaN 1|exact
+CHK|rc_nan_zero_two|complex NaN NaN 1|exact
+CHK|rc_nan_mzero_inf|real NaN 1|exact
+CHK|rc_nan_mzero_minf|real NaN 1|exact
+CHK|rc_nan_mzero_nan|complex NaN NaN 1|exact
+CHK|rc_nan_mzero_zero|complex NaN NaN 1|exact
+CHK|rc_nan_mzero_mzero|complex NaN NaN 1|exact
+CHK|rc_nan_mzero_two|complex NaN NaN 1|exact
+CHK|rc_nan_two_inf|real NaN 1|exact
+CHK|rc_nan_two_minf|real NaN 1|exact
+CHK|rc_nan_two_nan|complex NaN NaN 1|exact
+CHK|rc_nan_two_zero|complex NaN NaN 1|exact
+CHK|rc_nan_two_mzero|complex NaN NaN 1|exact
+CHK|rc_nan_two_two|complex NaN NaN 1|exact
+CHK|rc_zero_inf_inf|real 0 1|exact
+CHK|rc_zero_inf_minf|real 0 1|exact
+CHK|rc_zero_inf_nan|real 0 1|exact
+CHK|rc_zero_inf_zero|complex 0 NaN 1|exact
+CHK|rc_zero_inf_mzero|complex 0 NaN 1|exact
+CHK|rc_zero_inf_two|complex 0 NaN 1|exact
+CHK|rc_zero_minf_inf|real 0 1|exact
+CHK|rc_zero_minf_minf|real 0 1|exact
+CHK|rc_zero_minf_nan|real 0 1|exact
+CHK|rc_zero_minf_zero|complex 0 NaN 1|exact
+CHK|rc_zero_minf_mzero|complex 0 NaN 1|exact
+CHK|rc_zero_minf_two|complex 0 NaN 1|exact
+CHK|rc_zero_nan_inf|real 0 1|exact
+CHK|rc_zero_nan_minf|real 0 1|exact
+CHK|rc_zero_nan_nan|real 0 1|exact
+CHK|rc_zero_nan_zero|complex NaN NaN 1|exact
+CHK|rc_zero_nan_mzero|complex NaN NaN 1|exact
+CHK|rc_zero_nan_two|complex NaN NaN 1|exact
+CHK|rc_zero_zero_inf|real NaN 1|exact
+CHK|rc_zero_zero_minf|real NaN 1|exact
+CHK|rc_zero_zero_nan|complex NaN NaN 1|exact
+CHK|rc_zero_zero_zero|complex 0 NaN 1|exact
+CHK|rc_zero_zero_mzero|real NaN 1|exact
+CHK|rc_zero_zero_two|complex NaN NaN 1|exact
+CHK|rc_zero_mzero_inf|real NaN 1|exact
+CHK|rc_zero_mzero_minf|real NaN 1|exact
+CHK|rc_zero_mzero_nan|complex NaN NaN 1|exact
+CHK|rc_zero_mzero_zero|real NaN 1|exact
+CHK|rc_zero_mzero_mzero|complex 0 NaN 1|exact
+CHK|rc_zero_mzero_two|complex NaN NaN 1|exact
+CHK|rc_zero_two_inf|real NaN 1|exact
+CHK|rc_zero_two_minf|real NaN 1|exact
+CHK|rc_zero_two_nan|complex NaN NaN 1|exact
+CHK|rc_zero_two_zero|complex NaN NaN 1|exact
+CHK|rc_zero_two_mzero|complex NaN NaN 1|exact
+CHK|rc_zero_two_two|complex NaN NaN 1|exact
+CHK|rc_mzero_inf_inf|real 0 1|exact
+CHK|rc_mzero_inf_minf|real 0 1|exact
+CHK|rc_mzero_inf_nan|real 0 1|exact
+CHK|rc_mzero_inf_zero|complex 0 NaN 1|exact
+CHK|rc_mzero_inf_mzero|complex 0 NaN 1|exact
+CHK|rc_mzero_inf_two|complex 0 NaN 1|exact
+CHK|rc_mzero_minf_inf|real 0 1|exact
+CHK|rc_mzero_minf_minf|real 0 1|exact
+CHK|rc_mzero_minf_nan|real 0 1|exact
+CHK|rc_mzero_minf_zero|complex 0 NaN 1|exact
+CHK|rc_mzero_minf_mzero|complex 0 NaN 1|exact
+CHK|rc_mzero_minf_two|complex 0 NaN 1|exact
+CHK|rc_mzero_nan_inf|real 0 1|exact
+CHK|rc_mzero_nan_minf|real 0 1|exact
+CHK|rc_mzero_nan_nan|real 0 1|exact
+CHK|rc_mzero_nan_zero|complex NaN NaN 1|exact
+CHK|rc_mzero_nan_mzero|complex NaN NaN 1|exact
+CHK|rc_mzero_nan_two|complex NaN NaN 1|exact
+CHK|rc_mzero_zero_inf|real NaN 1|exact
+CHK|rc_mzero_zero_minf|real NaN 1|exact
+CHK|rc_mzero_zero_nan|complex NaN NaN 1|exact
+CHK|rc_mzero_zero_zero|real NaN 1|exact
+CHK|rc_mzero_zero_mzero|complex 0 NaN 1|exact
+CHK|rc_mzero_zero_two|complex NaN NaN 1|exact
+CHK|rc_mzero_mzero_inf|real NaN 1|exact
+CHK|rc_mzero_mzero_minf|real NaN 1|exact
+CHK|rc_mzero_mzero_nan|complex NaN NaN 1|exact
+CHK|rc_mzero_mzero_zero|complex 0 NaN 1|exact
+CHK|rc_mzero_mzero_mzero|real NaN 1|exact
+CHK|rc_mzero_mzero_two|complex NaN NaN 1|exact
+CHK|rc_mzero_two_inf|real NaN 1|exact
+CHK|rc_mzero_two_minf|real NaN 1|exact
+CHK|rc_mzero_two_nan|complex NaN NaN 1|exact
+CHK|rc_mzero_two_zero|complex NaN NaN 1|exact
+CHK|rc_mzero_two_mzero|complex NaN NaN 1|exact
+CHK|rc_mzero_two_two|complex NaN NaN 1|exact
+CHK|rc_two_inf_inf|real 0 1|exact
+CHK|rc_two_inf_minf|real 0 1|exact
+CHK|rc_two_inf_nan|complex 0 2 1|exact
+CHK|rc_two_inf_zero|complex 0 Inf 1|exact
+CHK|rc_two_inf_mzero|complex 0 -Inf 1|exact
+CHK|rc_two_inf_two|complex 0 NaN 1|exact
+CHK|rc_two_minf_inf|real 0 1|exact
+CHK|rc_two_minf_minf|real 0 1|exact
+CHK|rc_two_minf_nan|complex 0 2 1|exact
+CHK|rc_two_minf_zero|complex 0 Inf 1|exact
+CHK|rc_two_minf_mzero|complex 0 -Inf 1|exact
+CHK|rc_two_minf_two|complex 0 NaN 1|exact
+CHK|rc_two_nan_inf|real 2 1|exact
+CHK|rc_two_nan_minf|real 2 1|exact
+CHK|rc_two_nan_nan|complex 2 2 1|exact
+CHK|rc_two_nan_zero|complex 2 Inf 1|exact
+CHK|rc_two_nan_mzero|complex 2 -Inf 1|exact
+CHK|rc_two_nan_two|complex NaN NaN 1|exact
+CHK|rc_two_zero_inf|real Inf 1|exact
+CHK|rc_two_zero_minf|real Inf 1|exact
+CHK|rc_two_zero_nan|complex Inf 2 1|exact
+CHK|rc_two_zero_zero|complex Inf Inf 1|exact
+CHK|rc_two_zero_mzero|complex Inf -Inf 1|exact
+CHK|rc_two_zero_two|complex NaN NaN 1|exact
+CHK|rc_two_mzero_inf|real -Inf 1|exact
+CHK|rc_two_mzero_minf|real -Inf 1|exact
+CHK|rc_two_mzero_nan|complex -Inf 2 1|exact
+CHK|rc_two_mzero_zero|complex -Inf Inf 1|exact
+CHK|rc_two_mzero_mzero|complex -Inf -Inf 1|exact
+CHK|rc_two_mzero_two|complex NaN NaN 1|exact
+CHK|rc_two_two_inf|real NaN 1|exact
+CHK|rc_two_two_minf|real NaN 1|exact
+CHK|rc_two_two_nan|complex NaN NaN 1|exact
+CHK|rc_two_two_zero|complex NaN NaN 1|exact
+CHK|rc_two_two_mzero|complex NaN NaN 1|exact
+CHK|rc_two_two_two|complex NaN NaN 1|exact
+CHK|rc_array|double[1 4] complex re [0 0 0 0] im [Inf 0 NaN 2]|exact
+CHK|rc_array_dot|double[1 4] complex re [0 0 0 Inf] im [Inf 0 NaN 2]|exact
+CHK|rc_scalar_array|double[1 3] complex re [0 Inf NaN] im [Inf Inf 0]|exact
+CHK|rc_single|single[1 1] complex re 0 im Inf|exact
+CHK|rc_single_cplx|single[1 1] complex re 0 im Inf|exact
+CHK|rc_flagged|double[1 1] complex re 0 im Inf|exact
+CHK|rc_logical|double[1 1] complex re Inf im 1|exact
