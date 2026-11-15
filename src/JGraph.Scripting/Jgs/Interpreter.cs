@@ -7699,11 +7699,18 @@ internal sealed partial class Interpreter
                 }
             }
 
+            // A Map converts or refuses the key and value by its KeyType and ValueType (ADR 0371).
+            JgsValue entry = rhs;
+            if (Dialect.IsMatlab && callee.ClassName == JgsBuiltins.MapClassName)
+            {
+                (key, entry) = JgsBuiltins.MapEntryAs(callee, key, rhs, at.Line, at.Column);
+            }
+
             // M2 (appendix A #2): the collection's value is an entry, so it takes a counted share
             // in the MATLAB dialect and the caller's own wrapper in JGS (M17).
             JgsBuiltins.Put(
                 callee, key,
-                JgsBuiltins.RetainedForEntry(rhs, Dialect.CopyOnAssign), at.Line, at.Column);
+                JgsBuiltins.RetainedForEntry(entry, Dialect.CopyOnAssign), at.Line, at.Column);
             return rhs;
         }
 

@@ -999,12 +999,18 @@ internal static partial class JgsBuiltins
     // --- variable names -----------------------------------------------------------------------
 
     /// <summary>
+    /// R2025b's <c>namelengthmax</c>: 2048, and <c>isvarname</c> true to that length (open item 325,
+    /// ADR 0371, probe p6d). It was 63 here, an older release's limit.
+    /// </summary>
+    internal const int NameLengthMax = 2048;
+
+    /// <summary>
     /// Whether a piece of text is a name MATLAB would let a variable have: a letter, then letters,
     /// digits and underscores, no longer than <c>namelengthmax</c>, and not one of the keywords.
     /// </summary>
     private static bool IsValidVariableName(string name)
     {
-        if (name.Length == 0 || name.Length > 63 || !char.IsAsciiLetter(name[0]))
+        if (name.Length == 0 || name.Length > NameLengthMax || !char.IsAsciiLetter(name[0]))
         {
             return false;
         }

@@ -85,8 +85,8 @@ internal sealed partial class Interpreter
                 "Indexing a struct array takes one subscript or two (a row and a column).");
         }
 
-        int[] picks = StructPicks(
-            EvaluateIndexArgument(subscripts[0], payload.Length, env), payload.Length, "struct array", at);
+        JgsValue? index = EvaluateIndexArgument(subscripts[0], payload.Length, env);
+        int[] picks = StructPicks(index, payload.Length, "struct array", at);
         var chosen = new Dictionary<string, JgsValue>[picks.Length];
         for (int i = 0; i < picks.Length; i++)
         {
@@ -94,7 +94,13 @@ internal sealed partial class Interpreter
             JgsHolders.Share(chosen[i]); // M2 (#12): the selection is a second holder
         }
 
-        // A selection out of a column stays a column, as it does for every other container.
+        // A selection out of a column stays a column, as it does for every other container; s(:) is
+        // a column whatever s's shape, 0-by-1 for an empty one (open item 324, ADR 0371, probe p6d).
+        if (index is null && Dialect.IsMatlab)
+        {
+            return JgsValue.StructArray(new JgsStructArray(chosen, payload.EmptyFields), picks.Length, 1);
+        }
+
         bool column = target.Cols == 1 && target.Rows > 1;
         return JgsValue.StructArray(
             new JgsStructArray(chosen, payload.EmptyFields),

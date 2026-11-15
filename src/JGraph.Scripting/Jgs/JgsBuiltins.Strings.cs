@@ -469,6 +469,11 @@ internal static partial class JgsBuiltins
                 // minted — `@(x) x` answers its own parameter — and the slot it lands in is an
                 // entry, so it takes a share. For a minted answer that only over-counts.
                 collected[o][k] = JgsValue.Share(answers[o]);
+                if (uniform)
+                {
+                    // A cell, struct, handle, time apiece is R2025b's to collect or refuse (ADR 0371).
+                    CheckGatheredAnswer("cellfun", collected[o][0], collected[o][k], k + 1, o + 1, line, col);
+                }
             }
         }
 
@@ -610,6 +615,12 @@ internal static partial class JgsBuiltins
             return JgsEmpty.Shaped(rows, columns);
         }
 
+        if (GatheredAnswers(values) is { } gatheredKind)
+        {
+            gatheredKind.Reshape(rows, columns); // a cell, struct or time apiece (ADR 0371)
+            return gatheredKind;
+        }
+
         bool characters = true;
         foreach (JgsValue value in values)
         {
@@ -662,7 +673,7 @@ internal static partial class JgsBuiltins
                 // private function answering a char row under the uniform default).
                 throw JgsRunningDialect.ThreadIsMatlab
                     ? new JgsRuntimeException(line, col, $"MATLAB:{name}:NotAScalarOutput",
-                        $"Non-scalar in Uniform output, at index {i + 1}, output 1. Set 'UniformOutput' to false.")
+                        $"Non-scalar in Uniform output, at index {i + 1}, output 1.\nSet 'UniformOutput' to false.")
                     : new JgsRuntimeException(line, col,
                         $"{name}: element {i + 1} produced a {values[i].TypeName}. " +
                         "Add 'UniformOutput', false to collect a cell.");
@@ -738,7 +749,9 @@ internal static partial class JgsBuiltins
         bool countIgnored = args.Count == 2 && args[1].Type != JgsType.String
             && subject.NumericClass.IsInteger() && !IsLogicalValue(subject);
         string[] text = args.Count == 2 && args[1].Type == JgsType.String
-            ? Num2StrFormatted(args[1].AsString, rows, line, col)
+            ? Num2StrFormatted(
+                JgsRunningDialect.ThreadIsMatlab ? JgsFormatEscapes.Decode(args[1].AsString, out _) : args[1].AsString, // sprintfc reads escapes (ADR 0371)
+                rows, line, col)
             : AlignedRows(rows, args.Count == 2 && !countIgnored ? Count("num2str", args, 1, line, col) : null);
 
         // Several rows are a char matrix, which is what MATLAB answers and what the aligned columns

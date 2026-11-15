@@ -443,13 +443,14 @@ public class MatlabStringsM104Tests : IDisposable
         """);
 
     [Fact]
-    public Task ANameMayBeSixtyThreeCharactersAndNoMore() => Asserts("""
-        sixtyThree = repmat('a', 1, 63);
-        sixtyFour = [sixtyThree 'a'];
-        assert(numel(sixtyThree) == 63 && numel(sixtyFour) == 64);
-        assert(isvarname(char(sixtyThree)));
-        assert(~isvarname(char(sixtyFour)));
-        assert(namelengthmax == 63);
+    public Task ANameMayBeNamelengthmaxCharactersAndNoMore() => Asserts("""
+        longest = repmat('a', 1, 2048);
+        tooLong = [longest 'a'];
+        assert(numel(longest) == 2048 && numel(tooLong) == 2049);
+        assert(isvarname(repmat('a', 1, 64)));
+        assert(isvarname(char(longest)));
+        assert(~isvarname(char(tooLong)));
+        assert(namelengthmax == 2048);
         """);
 
     // --- the four validators ------------------------------------------------------------------

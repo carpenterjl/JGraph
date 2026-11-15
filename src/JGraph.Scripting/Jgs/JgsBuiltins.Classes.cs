@@ -240,7 +240,7 @@ internal static partial class JgsBuiltins
 
             if (target.Type == JgsType.Struct && target.ClassName is not null)
             {
-                return JgsValue.Bool(!target.IsStructArray && target.AsStruct.ContainsKey(name));
+                return JgsValue.Bool(!target.IsStructArray && MetadataPropertyNames(target).Contains(name, StringComparer.Ordinal));
             }
 
             if (JgsHandleRegistry.TryGet(target, out JgsHandleEntry? handle))
@@ -520,7 +520,7 @@ internal static partial class JgsBuiltins
 
         if (value.Type == JgsType.Struct)
         {
-            return value.AsStructArray.FieldNames;
+            return MetadataPropertyNames(value);
         }
 
         // A graphics handle's, R2025b's in its order, or this build's own where none were recorded (open item 68).

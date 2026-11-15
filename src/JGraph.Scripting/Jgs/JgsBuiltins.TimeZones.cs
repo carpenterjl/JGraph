@@ -184,38 +184,54 @@ internal static partial class JgsBuiltins
     /// count as an unsupported symbol, and four or more <c>z</c> as the unsupported identifier
     /// <c>zzzz</c>. Quoted text is literal and is not read.
     /// </summary>
+    /// <remarks>
+    /// In the MATLAB dialect every letter outside R2025b's set (<c>G y u Q M d D e a h H m s S W x X
+    /// z Z</c>) is an unsupported symbol, and six or more <c>e</c> the unsupported identifier
+    /// <c>eeeeee</c> (open item 325, ADR 0371, probes p6d to p6d3: <c>E</c>, <c>L</c>, <c>c</c>,
+    /// <c>w</c>, <c>F</c> and the rest of the alphabet). The identifiers are read across the whole
+    /// format before any symbol (<c>'E zzzz'</c> names <c>zzzz</c>), the symbols in order
+    /// (<c>'E O'</c> names <c>E</c>).
+    /// </remarks>
     private static void RefuseUnsupportedZoneLetters(string format, int line, int col)
     {
-        int i = 0;
-        while (i < format.Length)
+        bool matlab = JgsRunningDialect.ThreadIsMatlab;
+        for (int pass = 0; pass < 2; pass++)
         {
-            char c = format[i];
-            if (c == '\'')
+            int i = 0;
+            while (i < format.Length)
             {
-                int close = format.IndexOf('\'', i + 1);
-                i = close < 0 ? format.Length : close + 1;
-                continue;
-            }
+                char c = format[i];
+                if (c == '\'')
+                {
+                    int close = format.IndexOf('\'', i + 1);
+                    i = close < 0 ? format.Length : close + 1;
+                    continue;
+                }
 
-            int run = 1;
-            while (i + run < format.Length && format[i + run] == c)
-            {
-                run++;
-            }
+                int run = 1;
+                while (i + run < format.Length && format[i + run] == c)
+                {
+                    run++;
+                }
 
-            if (c == 'O')
-            {
-                throw new JgsRuntimeException(line, col, "MATLAB:datetime:UnsupportedSymbol",
-                    $"The format '{format}' contains an unsupported symbol: 'O'. See the <a href=\"matlab:doc('datetime.Format')\">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.");
-            }
+                string? identifier = (c == 'z' && run >= 4) ? "zzzz" : (matlab && c == 'e' && run >= 6) ? "eeeeee" : null;
+                if (pass == 0 && identifier is not null)
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:datetime:UnsupportedIdentifier",
+                        $"The format '{format}' contains an unsupported identifier: '{identifier}'. See the <a href=\"matlab:doc('datetime.Format')\">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.");
+                }
 
-            if (c == 'z' && run >= 4)
-            {
-                throw new JgsRuntimeException(line, col, "MATLAB:datetime:UnsupportedIdentifier",
-                    $"The format '{format}' contains an unsupported identifier: 'zzzz'. See the <a href=\"matlab:doc('datetime.Format')\">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.");
-            }
+                if (pass == 1 && (c == 'O' || (matlab && char.IsAsciiLetter(c) && !DatetimeFormatLetters.Contains(c))))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:datetime:UnsupportedSymbol",
+                        $"The format '{format}' contains an unsupported symbol: '{c}'. See the <a href=\"matlab:doc('datetime.Format')\">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.");
+                }
 
-            i += run;
+                i += run;
+            }
         }
     }
+
+    /// <summary>The letters a datetime format may hold in R2025b (probes p6d2, p6d3; ADR 0371).</summary>
+    private const string DatetimeFormatLetters = "GyuQMdDeahHmsSWxXzZ";
 }

@@ -124,7 +124,13 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static string[] Num2StrFormatted(string format, double[][] rows, int line, int col)
     {
-        if (Num2StrConversions(format) is not [var spec])
+        List<Num2StrSpec> conversions = Num2StrConversions(format);
+        if (conversions.Count >= 2 && JgsRunningDialect.ThreadIsMatlab)
+        {
+            return Num2StrSeveralConversions(format, conversions.Count, rows, line, col);
+        }
+
+        if (conversions is not [var spec])
         {
             return FormattedRows(format, rows, line, col);
         }
@@ -154,6 +160,65 @@ internal static partial class JgsBuiltins
         }
 
         return Num2StrPadded(columns, widths, 0, padWithSpace: false, rows.Length);
+    }
+
+    /// <summary>
+    /// <c>num2str(A, fmt)</c> under a format with <paramref name="count"/> conversions, two or more, as
+    /// R2025b's sprintfc lays it out for num2str.m (open item 325, ADR 0371, probes p6d to p6d3): each
+    /// row is cut into cells of <paramref name="count"/> elements, the last one short (printing stops
+    /// at the conversion that finds no value, <c>'%d,%d'</c> of 3 is <c>3,</c>); each column of cells
+    /// is right-justified as <c>strjust</c> does it, padded on the left to the widest column, and the
+    /// whole trimmed. A row shorter than the format is R2025b's warning
+    /// <c>MATLAB:num2str:badConversion</c>.
+    /// </summary>
+    private static string[] Num2StrSeveralConversions(string format, int count, double[][] rows, int line, int col)
+    {
+        int n = rows.Length == 0 ? 0 : rows[0].Length;
+        if (n < count)
+        {
+            Num2StrWarning("MATLAB:num2str:badConversion", "Not enough arguments for format.");
+        }
+
+        int cellsPerRow = (n + count - 1) / count;
+        var columns = new string[cellsPerRow][];
+        var widths = new int[cellsPerRow];
+        for (int c = 0; c < cellsPerRow; c++)
+        {
+            var cells = new string[rows.Length];
+            for (int r = 0; r < rows.Length; r++)
+            {
+                int from = c * count;
+                int to = Math.Min(from + count, n);
+                var values = new JgsValue[to - from];
+                for (int k = from; k < to; k++)
+                {
+                    values[k - from] = JgsValue.Number(rows[r][k]);
+                }
+
+                try
+                {
+                    cells[r] = JgsSprintf.FormatMatlab(format, values);
+                }
+                catch (FormatException ex)
+                {
+                    throw new JgsRuntimeException(line, col, ex.Message);
+                }
+            }
+
+            columns[c] = Num2StrJustify(cells, left: false);
+            widths[c] = rows.Length == 0 ? 0 : columns[c][0].Length;
+        }
+
+        return Num2StrPadded(columns, widths, 0, padWithSpace: false, rows.Length);
+    }
+
+    /// <summary>A num2str warning, to the run on this thread (none outside a run).</summary>
+    private static void Num2StrWarning(string identifier, string text)
+    {
+        if ((JgsLifetime.Current?.Interpreter.Host ?? JgsCallbackDispatcher.Current?.Interpreter?.Host) is { } host)
+        {
+            Warn(host, identifier, text);
+        }
     }
 
     /// <summary>Whether a part is whole as <c>isequaln(x, fix(x))</c> reads it: NaN and Inf are.</summary>

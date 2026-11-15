@@ -229,7 +229,7 @@ public class MatlabEvalBuiltinTests : IDisposable
     public Task MachineQuestions_AnswerAboutThisComputer() => RunAsserting("""
         % Exactly one family is true, whichever machine this is.
         assert(ispc() + isunix() == 1);
-        assert(namelengthmax() == 63);
+        assert(namelengthmax() == 2048);
         assert(cputime() >= 0);
 
         setenv('JGRAPH_TEST_VALUE', 'set');

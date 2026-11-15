@@ -1,0 +1,371 @@
+CHK|m1|ERR MATLAB:Containers:TypeMismatch / Specified value type does not match the type expected for this container.|exact
+CHK|m2|double [1 1] double:7|exact
+CHK|m3|logical [1 1] logical:true|exact
+CHK|m4|int32 [1 1] int32:2|exact
+CHK|m5|ERR MATLAB:Containers:TypeMismatch / Specified value type does not match the type expected for this container.|exact
+CHK|m6|ERR MATLAB:Containers:TypeMismatch / Specified value type does not match the type expected for this container.|exact
+CHK|m7|ERR MATLAB:Containers:TypeMismatch / Specified value type does not match the type expected for this container.|exact
+CHK|m8|ERR MATLAB:Containers:TypeMismatch / Specified key type does not match the type expected for this container.|exact
+CHK|m9|cell [1 1] {int32:2}|exact
+CHK|m10|double [1 1] double:1|exact
+CHK|m11|ERR MATLAB:Containers:TypeMismatch / Specified value type does not match the type expected for this container.|exact
+CHK|m12|char [1 1] 's'|exact
+CHK|m13|single [1 1] single:2|exact
+CHK|m14|ERR MATLAB:Containers:TypeMismatch / Specified value type does not match the type expected for this container.|exact
+CHK|m15|ERR MATLAB:Containers:TypeMismatch / Specified value type does not match the type expected for this container.|exact
+CHK|m16|logical [1 1] logical:false|exact
+CHK|m17|uint8 [1 1] uint8:0|exact
+CHK|m18|cell [1 1] {double:3}|exact
+CHK|m19|ERR MATLAB:Containers:TypeMismatch / Specified key type does not match the type expected for this container.|exact
+CHK|m20|cell [1 1] {double:1}|exact
+CHK|m21|double [1 1] double:NaN|exact
+CHK|m22|ERR MATLAB:IntVal / Scalar integer value required, but value is not integral|exact
+CHK|m23|int8 [1 1] int8:0|exact
+CHK|m24|ERR MATLAB:Containers:TypeMismatch / Specified value type does not match the type expected for this container.|exact
+CHK|m25|ERR MATLAB:Containers:TypeMismatch / Specified value type does not match the type expected for this container.|exact
+CHK|m26|ERR MATLAB:Containers:TypeMismatch / Specified value type does not match the type expected for this container.|exact
+CHK|m27|ERR MATLAB:Containers:TypeMismatch / Specified value type does not match the type expected for this container.|exact
+CHK|m28|ERR MATLAB:Containers:TypeMismatch / Specified value type does not match the type expected for this container.|exact
+CHK|m29|ERR MATLAB:Containers:TypeMismatch / Specified key type does not match the type expected for this container.|exact
+CHK|m30|ERR MATLAB:Containers:TypeMismatch / Specified value type does not match the type expected for this container.|exact
+CHK|st2|char [1 6] 'struct'|exact
+CHK|st3|char [1 1] 'A'|exact
+CHK|st6|double [1 2] double:[1 1]|exact
+CHK|d2|logical [1 1] logical:true|exact
+CHK|d3|double [1 1] double:3|exact
+CHK|d4|logical [1 1] logical:true|exact
+CHK|d5|logical [1 1] logical:false|exact
+CHK|d6|char [1 4] 'cell'|exact
+CHK|c1|double [1 2] double:[3 1]|exact
+CHK|c2|double [1 2] double:[3 1]|exact
+CHK|c3|double [1 2] double:[4 1]|exact
+CHK|c4|double [1 2] double:[1 3]|exact
+CHK|c5|double [1 2] double:[3 1]|exact
+CHK|c6|double [1 3] double:[1 2 3]|exact
+CHK|c7|double [1 2] double:[0 1]|exact
+CHK|c8|double [1 2] double:[1 1]|exact
+CHK|c9|double [1 2] double:[6 1]|exact
+CHK|c10|double [1 2] double:[1 3]|exact
+CHK|c11|double [1 2] double:[1 3]|exact
+CHK|c12|double [1 2] double:[1 3]|exact
+CHK|c13|double [1 2] double:[3 1]|exact
+CHK|c14|double [1 2] double:[3 1]|exact
+CHK|c15|double [1 2] double:[3 1]|exact
+CHK|c16|double [1 1] double:3|exact
+CHK|c17|double [1 2] double:[1 3]|exact
+CHK|c18|double [1 2] double:[1 3]|exact
+CHK|a1|cell [1 3] {double:1,double:2,double:3}|exact
+CHK|a2|struct [1 3] {v} <v=double:1> ; <v=double:2> ; <v=double:3>|exact
+CHK|a3|string [1 3] "s","s","s"|exact
+CHK|a4|ERR MATLAB:arrayfun:NotAScalarOutput / Non-scalar in Uniform output, at index 1, output 1. / Set 'UniformOutput' to false.|exact
+CHK|a5|ERR MATLAB:arrayfun:NotAScalarOutput / Non-scalar in Uniform output, at index 1, output 1. / Set 'UniformOutput' to false.|exact
+CHK|a6|cell [2 2] {double:1,double:3,double:2,double:4}|exact
+CHK|a7|cell [1 2] {double:1,double:2}|exact
+CHK|a8|struct [1 2] {v} <v=double:1> ; <v=double:2>|exact
+CHK|a9|ERR MATLAB:arrayfun:UnimplementedOutputArrayType / function_handle output type is not supported. Set 'UniformOutput' to false.|exact
+CHK|a10|double [1 0] double:zeros(1,0)|exact
+CHK|a11|struct [1 2] {v} <v=double:1> ; <v=double:2>|exact
+CHK|a12|datetime [1 2] [01-Jan-2026,02-Jan-2026]|exact
+CHK|a13|categorical [1 2] [a,a]|exact
+CHK|a14|ERR MATLAB:arrayfun:SubsasgnProblem / Unable to assign into output array 1 at index 1. Set 'UniformOutput' to false.|exact
+CHK|a15|Lv324Cls [1 2] <Lv324Cls [1 2]>|exact
+CHK|a16|ERR MATLAB:arrayfun:NotAScalarOutput / Non-scalar in Uniform output, at index 1, output 1. / Set 'UniformOutput' to false.|exact
+CHK|a17|ERR MATLAB:arrayfun:NotAScalarOutput / Non-scalar in Uniform output, at index 1, output 1. / Set 'UniformOutput' to false.|exact
+CHK|a18|char [1 2] 'aa'|exact
+CHK|a19|duration [1 2] [01:00:00,02:00:00]|exact
+CHK|a20|ERR MATLAB:arrayfun:SubsasgnProblem / Unable to assign into output array 1 at index 1. Set 'UniformOutput' to false.|exact
+CHK|a21|struct [1 2] {v,w} <v=double:1,w=double:1> ; <v=double:2,w=double:1>|exact
+CHK|a22|cell [1 3] {double:1,double:2,double:3}|exact
+CHK|a23|cell [1 2] {double:1,double:2}|exact
+CHK|a24|cell [1 2] {double:1,double:2}|exact
+CHK|f1|ERR MATLAB:datetime:UnsupportedIdentifier / The format 'eeeeee' contains an unsupported identifier: 'eeeeee'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f2|ERR MATLAB:datetime:UnsupportedIdentifier / The format 'eeeeeee' contains an unsupported identifier: 'eeeeee'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f3|ERR MATLAB:datetime:UnsupportedSymbol / The format 'E' contains an unsupported symbol: 'E'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f4|ERR MATLAB:datetime:UnsupportedSymbol / The format 'EEEE' contains an unsupported symbol: 'E'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f5|ERR MATLAB:datetime:UnsupportedSymbol / The format 'L' contains an unsupported symbol: 'L'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f6|ERR MATLAB:datetime:UnsupportedSymbol / The format 'LLLL' contains an unsupported symbol: 'L'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f7|ERR MATLAB:datetime:UnsupportedSymbol / The format 'c' contains an unsupported symbol: 'c'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f8|ERR MATLAB:datetime:UnsupportedSymbol / The format 'cccc' contains an unsupported symbol: 'c'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f9|ERR MATLAB:datetime:UnsupportedSymbol / The format 'E' contains an unsupported symbol: 'E'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f10|ERR MATLAB:datetime:UnsupportedIdentifier / The format 'eeeeee' contains an unsupported identifier: 'eeeeee'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f11|ERR MATLAB:datetime:UnsupportedSymbol / The format 'yyyy E' contains an unsupported symbol: 'E'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f12|ERR MATLAB:datetime:UnsupportedSymbol / The format 'EEEEE' contains an unsupported symbol: 'E'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f13|ERR MATLAB:datetime:UnsupportedSymbol / The format 'EEEEEE' contains an unsupported symbol: 'E'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f14|ERR MATLAB:datetime:UnsupportedSymbol / The format 'ccccc' contains an unsupported symbol: 'c'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f15|ERR MATLAB:datetime:UnsupportedSymbol / The format 'LLLLL' contains an unsupported symbol: 'L'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f16|char [1 1] 'T'|exact
+CHK|f17|char [1 12] '2026-11-03 E'|exact
+CHK|f18|ERR MATLAB:datetime:UnsupportedSymbol / The format 'E' contains an unsupported symbol: 'E'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f19|ERR MATLAB:datetime:UnsupportedSymbol / The format 'yyyy-MM-dd E' contains an unsupported symbol: 'E'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f20|char [1 2] 'CE'|exact
+CHK|f21|char [1 1] '4'|exact
+CHK|f22|ERR MATLAB:datetime:UnsupportedSymbol / The format 'w' contains an unsupported symbol: 'w'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f23|ERR MATLAB:datetime:UnsupportedSymbol / The format 'F' contains an unsupported symbol: 'F'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f24|char [1 3] '307'|exact
+CHK|f25|ERR MATLAB:datetime:UnsupportedSymbol / The format 'l' contains an unsupported symbol: 'l'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f26|ERR MATLAB:datetime:UnsupportedIdentifier / The format 'eeeeee' contains an unsupported identifier: 'eeeeee'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f27|ERR MATLAB:datetime:UnsupportedSymbol / The format 'b' contains an unsupported symbol: 'b'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|f28|char [1 5] '2026#'|exact
+CHK|f29|ERR MATLAB:datetime:UnsupportedSymbol / The format 'qqqq' contains an unsupported symbol: 'q'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|e1|datetime [1 0] []|exact
+CHK|e2|datetime [1 0] []|exact
+CHK|e3|datetime [1 0] []|exact
+CHK|e4|datetime [1 0] []|exact
+CHK|e5|datetime [0 1] []|exact
+CHK|e6|datetime [0 3] []|exact
+CHK|e7|ERR MATLAB:datetime:InputSizeMismatch / Data inputs must be the same size, or any of them can be a scalar.|exact
+CHK|e8|ERR MATLAB:datetime:InputSizeMismatch / Data inputs must be the same size, or any of them can be a scalar.|exact
+CHK|e9|datetime [1 0] []|exact
+CHK|e10|duration [1 0] []|exact
+CHK|e11|datetime [0 1] []|exact
+CHK|e12|datetime [0 0] []|exact
+CHK|e13|datetime [1 0] []|exact
+CHK|n1|char [1 6] '1,23,4'|exact
+CHK|n2|char [2 3] '1,2'/'3,4'|exact
+CHK|n3|char [1 6] '1,2 3,'|exact
+CHK|n4|char [1 7] '1 2 3 4'|exact
+CHK|n5|char [4 2] '1,'/'2,'/'3,'/'4,'|exact
+CHK|n6|char [2 6] '1 2  3'/'4 5  6'|exact
+CHK|n7|char [1 8] '1.5!2.25'|exact
+CHK|n8|char [1 12] '10-2003000-4'|exact
+CHK|n9|char [4 8] '16,23,13'/'5,1110,8'/' 9,76,12'/'4,1415,1'|exact
+CHK|n10|char [1 10] '1 2 34 5 6'|exact
+CHK|n11|char [2 5] 'x1y2z'/'x3y4z'|exact
+CHK|n12|char [1 2] '5,'|exact
+CHK|n13|char [3 3] '1,2'/'3,4'/'5,6'|exact
+CHK|n14|char [2 6] '1,2 3,'/'4,5 6,'|exact
+CHK|n15|char [0 0] ''|exact
+CHK|n16|char [1 16] '1   -2    3    4'|exact
+CHK|n18|char [1 6] '1,23,4'|exact
+CHK|n19|char [2 3] '1\t2'/'3\t4'|exact
+CHK|n20|char [2 3] '1\n2'/'3\n4'|exact
+CHK|n21|char [2 3] '1,1'/'1,1'|exact
+CHK|n22|char [1 10] '1,%,23,%,4'|exact
+CHK|l1|double [1 1] double:2048|exact
+CHK|l2|logical [1 1] logical:true|exact
+CHK|l3|logical [1 1] logical:true|exact
+CHK|l4|logical [1 1] logical:false|exact
+CHK|l8|double [1 1] double:100|exact
+CHK|l9|double [1 1] double:100|exact
+CHK|l14|double [1 1] double:100|exact
+CHK|l15|double [1 1] double:100|exact
+CHK|l17|logical [1 1] logical:true|exact
+CHK|v1|char [1 6] 'double'|exact
+CHK|v2|char [1 6] 'double'|exact
+CHK|v3|char [1 3] 'any'|exact
+CHK|v4|char [1 4] 'int8'|exact
+CHK|v5|char [1 6] 'double'|exact
+CHK|v6|char [1 4] 'char'|exact
+CHK|v7|char [1 6] 'double'|exact
+CHK|v8|char [1 3] 'any'|exact
+CHK|v9|char [1 7] 'logical'|exact
+CHK|v10|char [1 4] 'char'|exact
+CHK|v11|char [1 3] 'any'|exact
+CHK|v12|char [1 3] 'any'|exact
+CHK|v13|char [1 6] 'single'|exact
+CHK|v14|char [1 3] 'any'|exact
+CHK|v15|char [1 6] 'double'|exact
+CHK|v16|char [1 6] 'double'|exact
+CHK|v17|cell [1 2] {double:1,double:2}|exact
+CHK|v18|ERR MATLAB:Containers:TypeMismatch / Specified value type does not match the type expected for this container.|exact
+CHK|v19|double [1 1] double:5|exact
+CHK|v20|cell [1 1] {'a'}|exact
+CHK|v21|double [1 1] double:200|exact
+CHK|v22|logical [1 1] logical:true|exact
+CHK|v23|ERR MATLAB:IntVal / Scalar integer value required, but value is not integral|exact
+CHK|v24|ERR MATLAB:IntVal / Scalar integer value required, but value is not integral|exact
+CHK|v25|logical [1 1] logical:true|exact
+CHK|v26|char [1 4] 'acbd'|exact
+CHK|v27|char [0 0] ''|exact
+CHK|v28|ERR MATLAB:Containers:TypeMismatch / Specified value type does not match the type expected for this container.|exact
+CHK|v30|ERR MATLAB:Containers:NaNNotAllowed / NaN-valued key is not allowed for this container.|exact
+CHK|v31|double [1 1] double:1.5|exact
+CHK|v32|ERR MATLAB:Containers:TypeMismatch / Specified value type does not match the type expected for this container.|exact
+CHK|v33|double [1 1] double:4.61168601842739e+18|exact
+CHK|v34|ERR MATLAB:Containers:TypeMismatch / Specified key type does not match the type expected for this container.|exact
+CHK|v35|logical [1 1] logical:true|exact
+CHK|v36|ERR MATLAB:Containers:TypeMismatch / Specified key type does not match the type expected for this container.|exact
+CHK|v37|cell [1 1] {''}|exact
+CHK|h1|logical [1 1] logical:false|exact
+CHK|h2|cell [1 18] {'Name','Description','DetailedDescription','Hidden','Sealed','Abstract','Enumeration','ConstructOnLoad','HandleCompatible','InferiorClasses','Namespace','Aliases','RestrictsSubclassing','PropertyList','MethodList','EventList','EnumerationMemberList','SuperclassList'}|exact
+CHK|h3|logical [1 1] logical:true|exact
+CHK|h4|cell [1 18] {'Name','Description','DetailedDescription','Hidden','Sealed','Abstract','Enumeration','ConstructOnLoad','HandleCompatible','InferiorClasses','Namespace','Aliases','RestrictsSubclassing','PropertyList','MethodList','EventList','EnumerationMemberList','SuperclassList'}|exact
+CHK|h5|cell [1 18] {'Name','Description','DetailedDescription','Hidden','Sealed','Abstract','Enumeration','ConstructOnLoad','HandleCompatible','InferiorClasses','Namespace','Aliases','RestrictsSubclassing','PropertyList','MethodList','EventList','EnumerationMemberList','SuperclassList'}|exact
+CHK|h6|logical [1 1] logical:false|exact
+CHK|h7|logical [1 1] logical:false|exact
+CHK|h8|cell [1 22] {'Name','Description','DetailedDescription','GetAccess','SetAccess','Dependent','Constant','Abstract','Transient','Hidden','GetObservable','SetObservable','AbortSet','NonCopyable','WeakHandle','PartialMatchPriority','HasDefault','DefaultValue','GetMethod','SetMethod','Validation','DefiningClass'}|exact
+CHK|h9|logical [1 1] logical:false|exact
+CHK|h10|logical [1 1] logical:true|exact
+CHK|h11|logical [1 1] logical:true|exact
+CHK|h12|logical [1 1] logical:true|exact
+CHK|sm4|double [1 1] double:1|exact
+CHK|sm5|char [1 21] 'matlab.metadata.Class'|exact
+CHK|sm10|char [1 26] 'matlab.metadata.Validation'|exact
+CHK|sm11|double [1 2] double:[1 1]|exact
+CHK|sm12|ERR MATLAB:nonExistentField / Unrecognized field name "DefaultValue".|exact
+CHK|sm14|char [1 6] 'public'|exact
+CHK|sm16|double [1 1] double:1|exact
+CHK|sm18|char [1 6] 'struct'|exact
+CHK|sm19|ERR MATLAB:Cell2Struct:NonStringFieldNames / Field names must be non-empty character vectors or string scalars.|exact
+CHK|x2|ERR MATLAB:cellfun:MismatchInOutputTypes / Mismatch in type of outputs, at index 2, output 1 (double versus cell). / Set 'UniformOutput' to false.|exact
+CHK|x3|ERR MATLAB:cellfun:MismatchInOutputTypes / Mismatch in type of outputs, at index 2, output 1 (cell versus double). / Set 'UniformOutput' to false.|exact
+CHK|x4|ERR MATLAB:cellfun:structFieldNameMismatch / At index 2, output 1, the name of struct field 'b' does not match previous name 'a'. Set 'UniformOutput' to false.|exact
+CHK|x5|ERR MATLAB:cellfun:MismatchInOutputTypes / Mismatch in type of outputs, at index 2, output 1 (struct versus double). / Set 'UniformOutput' to false.|exact
+CHK|x6|cell [1 2] {double:1,'a'}|exact
+CHK|x9|ERR MATLAB:cellfun:MismatchInOutputTypes / Mismatch in type of outputs, at index 2, output 1 (datetime versus double). / Set 'UniformOutput' to false.|exact
+CHK|x10|ERR MATLAB:cellfun:MismatchInOutputTypes / Mismatch in type of outputs, at index 2, output 1 (double versus datetime). / Set 'UniformOutput' to false.|exact
+CHK|x12|cell [3 1] {double:1,double:2,double:3}|exact
+CHK|x13|cell [1 1] {double:5}|exact
+CHK|x14|double [0 0] double:[]|exact
+CHK|x15|double [1 0] double:zeros(1,0)|exact
+CHK|x16|categorical [1 2] [1,2]|exact
+CHK|x17|struct [1 2] {a} <a=double:1> ; <a=double:2>|exact
+CHK|x18|duration [1 2] [1 sec,2 sec]|exact
+CHK|x20|string [1 2] "1","2"|exact
+CHK|x21|cell [1 2] {double:1,double:2}|exact
+CHK|x22|ERR MATLAB:cellfun:MismatchInOutputTypes / Mismatch in type of outputs, at index 2, output 1 (double versus cell). / Set 'UniformOutput' to false.|exact
+CHK|x26|double [1 2] double:[1 0+2i]|exact
+CHK|k1|char [1 9] '1,23,4 5,'|exact
+CHK|k2|char [1 3] '1 2'|exact
+CHK|k3|char [1 4] '1234'|exact
+CHK|k4|char [1 12] '1 22333 4444'|exact
+CHK|k5|char [2 9] '1.5, 2.25'/'     3, 4'|exact
+CHK|k6|char [2 4] '-1 2'/'3 -4'|exact
+CHK|k7|char [2 3] '1 2'/'3 4'|exact
+CHK|k8|char [1 8] '1,2,3,4,'|exact
+CHK|k9|char [2 1] '1'/'2'|exact
+CHK|k10|char [2 3] '1\t2'/'3\t4'|exact
+CHK|k11|char [1 5] '3.142'|exact
+CHK|k12|char [3 5] '1 2 3'/'4 5 6'/'7 8 9'|exact
+CHK|k13|char [2 3] '123'/'456'|exact
+CHK|k14|char [2 4] '10 2'/'3 40'|exact
+CHK|k15|char [1 10] '1 NaN3 Inf'|exact
+CHK|k16|char [1 6] '1 23 4'|exact
+CHK|k17|char [1 4] 'ABCD'|exact
+CHK|k18|char [1 12] '[1][2][3][4]'|exact
+CHK|k19|char [1 11] 'a1 b2 a3 b4'|exact
+CHK|k20|char [1 4] '1+2i'|exact
+CHK|y1|char [1 2] 'CE'|exact
+CHK|y2|char [1 2] 'Q4'|exact
+CHK|y3|char [1 11] '4th quarter'|exact
+CHK|y4|char [1 3] '307'|exact
+CHK|y5|char [1 1] '3'|exact
+CHK|y6|char [1 2] '03'|exact
+CHK|y7|char [1 2] 'CE'|exact
+CHK|y8|char [1 1] '4'|exact
+CHK|y9|char [1 2] '04'|exact
+CHK|y10|char [1 1] '4'|exact
+CHK|y11|char [1 1] '1'|exact
+CHK|y12|ERR MATLAB:datetime:UnsupportedSymbol / The format 'g' contains an unsupported symbol: 'g'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y13|ERR MATLAB:datetime:UnsupportedSymbol / The format 'A' contains an unsupported symbol: 'A'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y14|ERR MATLAB:datetime:UnsupportedSymbol / The format 'K' contains an unsupported symbol: 'K'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y15|ERR MATLAB:datetime:UnsupportedSymbol / The format 'k' contains an unsupported symbol: 'k'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y16|ERR MATLAB:datetime:UnsupportedSymbol / The format 'Y' contains an unsupported symbol: 'Y'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y17|ERR MATLAB:datetime:UnsupportedSymbol / The format 'r' contains an unsupported symbol: 'r'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y18|ERR MATLAB:datetime:UnsupportedSymbol / The format 'U' contains an unsupported symbol: 'U'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y19|ERR MATLAB:datetime:UnsupportedSymbol / The format 'n' contains an unsupported symbol: 'n'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y20|ERR MATLAB:datetime:UnsupportedSymbol / The format 'j' contains an unsupported symbol: 'j'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y21|ERR MATLAB:datetime:UnsupportedSymbol / The format 'J' contains an unsupported symbol: 'J'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y22|ERR MATLAB:datetime:UnsupportedSymbol / The format 'C' contains an unsupported symbol: 'C'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y23|ERR MATLAB:datetime:UnsupportedSymbol / The format 'O' contains an unsupported symbol: 'O'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y24|ERR MATLAB:datetime:UnsupportedSymbol / The format 'v' contains an unsupported symbol: 'v'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y25|ERR MATLAB:datetime:UnsupportedSymbol / The format 'V' contains an unsupported symbol: 'V'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y26|ERR MATLAB:datetime:UnsupportedSymbol / The format 'f' contains an unsupported symbol: 'f'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y27|ERR MATLAB:datetime:UnsupportedSymbol / The format 'i' contains an unsupported symbol: 'i'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y28|ERR MATLAB:datetime:UnsupportedSymbol / The format 'o' contains an unsupported symbol: 'o'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y29|ERR MATLAB:datetime:UnsupportedSymbol / The format 'p' contains an unsupported symbol: 'p'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y30|ERR MATLAB:datetime:UnsupportedSymbol / The format 't' contains an unsupported symbol: 't'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y31|ERR MATLAB:datetime:UnsupportedSymbol / The format 'I' contains an unsupported symbol: 'I'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y32|ERR MATLAB:datetime:UnsupportedSymbol / The format 'N' contains an unsupported symbol: 'N'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y33|ERR MATLAB:datetime:UnsupportedSymbol / The format 'P' contains an unsupported symbol: 'P'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y34|ERR MATLAB:datetime:UnsupportedSymbol / The format 'R' contains an unsupported symbol: 'R'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y35|ERR MATLAB:datetime:UnsupportedSymbol / The format 'T' contains an unsupported symbol: 'T'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y40|ERR MATLAB:datetime:UnsupportedIdentifier / The format 'eeeeee yyyy E' contains an unsupported identifier: 'eeeeee'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y41|ERR MATLAB:datetime:UnsupportedIdentifier / The format 'E eeeeee' contains an unsupported identifier: 'eeeeee'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y42|ERR MATLAB:datetime:UnsupportedSymbol / The format 'L' contains an unsupported symbol: 'L'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y43|char [1 9] '2026 L 11'|exact
+CHK|y44|char [1 1] '0'|exact
+CHK|y45|char [1 1] '0'|exact
+CHK|y46|char [1 3] '000'|exact
+CHK|y47|ERR MATLAB:datetime:UnsupportedSymbol / The format 'B' contains an unsupported symbol: 'B'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|y48|ERR MATLAB:datetime:UnsupportedSymbol / The format 'ww' contains an unsupported symbol: 'w'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|zt1|ERR MATLAB:datetime:UnsupportedSymbol / The format 'E' contains an unsupported symbol: 'E'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|zt2|ERR MATLAB:datetime:UnsupportedSymbol / The format 'E' contains an unsupported symbol: 'E'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|zt3|ERR MATLAB:datetime:UnsupportedIdentifier / The format 'eeeeee' contains an unsupported identifier: 'eeeeee'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|zt4|ERR MATLAB:datetime:UnsupportedSymbol / The format 'yyyy-MM-dd L' contains an unsupported symbol: 'L'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|zt7|char [1 14] 'Q1 1st quarter'|exact
+CHK|zt8|char [1 11] '2nd quarter'|exact
+CHK|zt9|char [1 11] '3rd quarter'|exact
+CHK|zt10|char [1 7] '365 365'|exact
+CHK|zt11|char [1 1] '5'|exact
+CHK|zt14|char [1 4] '0307'|exact
+CHK|zt15|char [1 2] '01'|exact
+CHK|zt17|char [1 1] '4'|exact
+CHK|zt18|char [1 2] 'CE'|exact
+CHK|zt19|ERR MATLAB:datetime:UnsupportedIdentifier / The format 'zzzz E' contains an unsupported identifier: 'zzzz'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|zt20|ERR MATLAB:datetime:UnsupportedIdentifier / The format 'E zzzz' contains an unsupported identifier: 'zzzz'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|zt21|ERR MATLAB:datetime:UnsupportedSymbol / The format 'O E' contains an unsupported symbol: 'O'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|zt22|ERR MATLAB:datetime:UnsupportedSymbol / The format 'E O' contains an unsupported symbol: 'E'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|zt23|ERR MATLAB:datetime:UnsupportedIdentifier / The format 'O eeeeee' contains an unsupported identifier: 'eeeeee'. See the <a href="matlab:doc('datetime.Format')">datetime.Format property</a> for a complete description of the identifiers used in datetime formats.|exact
+CHK|zt24|char [1 3] '001'|exact
+CHK|zs1|ERR MATLAB:cellfun:structFieldNumberMismatch / At index 2, output 1, the number of struct fields does not match previous number of fields. Set 'UniformOutput' to false.|exact
+CHK|zs2|ERR MATLAB:cellfun:structFieldNumberMismatch / At index 2, output 1, the number of struct fields does not match previous number of fields. Set 'UniformOutput' to false.|exact
+CHK|zs3|ERR MATLAB:cellfun:structFieldNameMismatch / At index 2, output 1, the name of struct field 'b' does not match previous name 'a'. Set 'UniformOutput' to false.|exact
+CHK|zs4|struct [1 2] {a} <a=double:1> ; <a=double:2>|exact
+CHK|zs5|ERR MATLAB:arrayfun:structFieldNameMismatch / At index 2, output 2, the name of struct field 'b' does not match previous name 'a'. Set 'UniformOutput' to false.|exact
+CHK|zs6|struct [1 2] {} <> ; <>|exact
+CHK|zs7|ERR MATLAB:cellfun:NotAScalarOutput / Non-scalar in Uniform output, at index 1, output 1. / Set 'UniformOutput' to false.|exact
+CHK|zs8|struct [1 2] {a} <a={double:1}> ; <a={double:2}>|exact
+CHK|zs9|struct [1 2] {a} <a=double:1> ; <a=double:2>|exact
+CHK|zs10|cell [1 2] {double:1,double:2}|exact
+CHK|zs11|cell [1 2] {{double:1},{double:2}}|exact
+CHK|zs12|ERR MATLAB:cellfun:MismatchInOutputTypes / Mismatch in type of outputs, at index 2, output 1 (cell versus double). / Set 'UniformOutput' to false.|exact
+CHK|zs13|duration [2 2] [1 sec,3 sec,2 sec,4 sec]|exact
+CHK|zs14|datetime [1 2] [2026,2026]|exact
+CHK|zs15|char [1 3] 'UTC'|exact
+CHK|zs16|ERR MATLAB:cellfun:MismatchInOutputTypes / Mismatch in type of outputs, at index 2, output 1 (datetime versus duration). / Set 'UniformOutput' to false.|exact
+CHK|zs18|char [1 6] 'double'|exact
+CHK|zs19|ERR MATLAB:cellfun:NotAScalarOutput / Non-scalar in Uniform output, at index 1, output 1. / Set 'UniformOutput' to false.|exact
+CHK|zs20|ERR MATLAB:cellfun:UnimplementedOutputArrayType / function_handle output type is not supported. Set 'UniformOutput' to false.|exact
+CHK|zs21|ERR MATLAB:cellfun:MismatchInOutputTypes / Mismatch in type of outputs, at index 2, output 1 (double versus function_handle). / Set 'UniformOutput' to false.|exact
+CHK|zs22|ERR MATLAB:cellfun:UnimplementedOutputArrayType / function_handle output type is not supported. Set 'UniformOutput' to false.|exact
+CHK|zs23|ERR MATLAB:cellfun:MismatchInOutputTypes / Mismatch in type of outputs, at index 2, output 1 (cell versus function_handle). / Set 'UniformOutput' to false.|exact
+CHK|zs24|ERR MATLAB:cellfun:SubsasgnProblem / Unable to assign into output array 1 at index 1. Set 'UniformOutput' to false.|exact
+CHK|zs25|ERR MATLAB:cellfun:MismatchInOutputTypes / Mismatch in type of outputs, at index 2, output 1 (double versus containers.Map). / Set 'UniformOutput' to false.|exact
+CHK|zs26|ERR MATLAB:cellfun:SubsasgnProblem / Unable to assign into output array 1 at index 1. Set 'UniformOutput' to false.|exact
+CHK|zw5|logical [1 1] logical:false|exact
+CHK|zw11|logical [1 1] logical:true|exact
+CHK|zw12|logical [1 1] logical:true|exact
+CHK|zn1|cell [1 2] {'Not enough arguments for format.','MATLAB:num2str:badConversion'}|exact
+CHK|zn2|cell [1 2] {'',''}|exact
+CHK|zn3|cell [1 2] {'Not enough arguments for format.','MATLAB:num2str:badConversion'}|exact
+CHK|zn4|char [2 4] '1  2'/'3  4'|exact
+CHK|zn5|char [2 7] '1   !22'/' 333 !4'|exact
+CHK|zn6|char [1 8] '1%2%3%4%'|exact
+CHK|zn7|char [1 10] '1.5/2  3/4'|exact
+CHK|zn8|char [1 4] '1010'|exact
+CHK|zn9|char [1 1] '%'|exact
+CHK|zn10|char [1 7] '1,2\n3,4'|exact
+CHK|zn11|char [1 16] '0.5 1.001.5 2.00'|exact
+CHK|zn12|char [1 10] '-1 -2-3 -4'|exact
+CHK|ze1|datetime [0 0] []|exact
+CHK|ze2|datetime [1 0] []|exact
+CHK|ze3|char [1 20] 'dd-MMM-uuuu HH:mm:ss'|exact
+CHK|ze4|datetime [0 1] []|exact
+CHK|ze5|ERR MATLAB:datetime:InvalidNumericData / Numeric input data must be a matrix with three or six columns, or else three, six, or seven separate numeric arrays. You can also create datetimes from a single numeric array using the 'ConvertFrom' parameter.|exact
+CHK|ze6|duration [0 1] []|exact
+CHK|ze7|duration [1 0] []|exact
+CHK|ze8|duration [1 0] []|exact
+CHK|ze10|datetime [0 1 2] []|exact
+CHK|ze12|datetime [1 0] []|exact
+CHK|ze13|ERR MATLAB:datetime:InputSizeMismatch / Data inputs must be the same size, or any of them can be a scalar.|exact
+CHK|zv1|double [1 1] double:1|exact
+CHK|zv2|char [1 41] 'MATLAB:validators:mustBeValidVariableName'|exact
+CHK|zm1|char [1 1] 's'|exact
+CHK|zm2|ERR MATLAB:IntVal / Scalar integer value required, but value is not integral|exact
+CHK|zm3|cell [1 2] {double:1,double:4}|exact
+CHK|zs17|char [1 22] 'calendarDuration [1 2]'|exact
+CHK|zst1|char [1 21] 'MATLAB:structOnObject'|exact
+CHK|zst2|char [1 8] 'Lv324Cls'|exact
+CHK|div_struct_metaproperty|double [1 1] double:26|div=ADR0371|diverges|double [1 1] double:22
+CHK|div_empty_get_method|char [1 15] 'function_handle'|div=ADR0371|diverges|char [1 6] 'double'

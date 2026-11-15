@@ -78,6 +78,18 @@ internal static partial class JgsBuiltins
                 length = System.Math.Max(length, parts[i].Length);
             }
 
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                // An empty part too: calendarDuration(1, 1:0, 1) is a 1-by-0 (ADR 0371, probe p6d3).
+                length = ComponentLength("calendarDuration", parts, args, line, col, out JgsValue shapeModel);
+                if (length == 0)
+                {
+                    JgsValue none = JgsValue.StructArray(new JgsStructArray([], [.. CalendarFields]), 0, 0);
+                    none.TakeShapeOf(shapeModel);
+                    return none.MarkTime(new JgsTimeTag(JgsTimeKind.CalendarDuration, "ymdt"));
+                }
+            }
+
             var elements = new Dictionary<string, JgsValue>[length];
             for (int i = 0; i < length; i++)
             {

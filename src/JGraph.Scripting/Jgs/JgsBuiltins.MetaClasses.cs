@@ -156,6 +156,45 @@ internal static partial class JgsBuiltins
         return null;
     }
 
+    /// <summary>
+    /// The names a struct-held value answers to <c>fieldnames</c>, <c>properties</c> and <c>isprop</c>:
+    /// its fields, but a metaclass rendered past <see cref="MetaDepth"/> names its member lists too, in
+    /// R2025b's order, since a read makes them (open item 324, ADR 0371, probe p6d2).
+    /// </summary>
+    internal static IEnumerable<string> MetadataPropertyNames(JgsValue value) =>
+        value.ClassName == "matlab.metadata.Class" && !value.IsStructArray && MetaListFields.Any(f => !value.AsStruct.ContainsKey(f))
+            ? MetaClassFieldNames
+            : value.AsStructArray.FieldNames;
+
+    /// <summary>
+    /// <c>struct(m)</c> of a metadata value in the MATLAB dialect (open item 324, ADR 0371, probe p6d2): a
+    /// plain struct of its first element's properties, 1-by-1 for an array as for any object array,
+    /// with no <c>DefaultValue</c> where it has no default. R2025b's struct also holds the hidden
+    /// properties this build does not model (<c>Access</c>, <c>Type</c>, <c>NeverAmbiguous</c>,
+    /// <c>Sealed</c> of a metaproperty; seventeen of a metaclass).
+    /// </summary>
+    internal static JgsValue MetadataAsStruct(JgsValue value)
+    {
+        JgsStructArray payload = value.AsStructArray;
+        if (payload.Length == 0)
+        {
+            return JgsValue.StructArray(new JgsStructArray([], payload.EmptyFields), 0, 0);
+        }
+
+        var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+        Dictionary<string, JgsValue> first = payload.Elements[0];
+        bool noDefault = first.TryGetValue("HasDefault", out JgsValue? has) && has.Type == JgsType.Bool && has.AsNumber == 0;
+        foreach ((string name, JgsValue held) in first)
+        {
+            if (!(noDefault && name == "DefaultValue"))
+            {
+                fields[name] = JgsValue.Share(held);
+            }
+        }
+
+        return JgsValue.Struct(fields);
+    }
+
     /// <summary>The <c>matlab.metadata.Class</c> of a class: <c>?C</c>, <c>metaclass(obj)</c>, <c>meta.class.fromName('C')</c>.</summary>
     internal static JgsValue MetaClassOf(JgsClass definition)
     {

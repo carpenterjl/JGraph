@@ -301,6 +301,10 @@ internal static partial class JgsBuiltins
         (List<JgsValue> positional, Dictionary<string, JgsValue> options) = SplitTimeOptions("datetime", args, line, col);
 
         string? inputFormat = OptionText("datetime", options, "inputformat", line, col);
+        if (inputFormat is not null && JgsRunningDialect.ThreadIsMatlab)
+        {
+            RefuseUnsupportedZoneLetters(inputFormat, line, col); // an InputFormat's letters too (ADR 0371, probe p6d3)
+        }
         // The zone as R2025b reads and names it: '+0200' is '+02:00', 'GMT' is 'UTC' (open item 209).
         string? timeZone = options.TryGetValue("timezone", out JgsValue? zoneGiven)
             ? ReadTimeZoneArgument(zoneGiven, line, col)
@@ -350,8 +354,11 @@ internal static partial class JgsBuiltins
             int cols = matrix.Cols;
             if (cols is not (3 or 6))
             {
-                throw new JgsRuntimeException(line, col,
-                    "datetime: a single numeric argument must be a matrix of date vectors with 3 or 6 columns.");
+                throw JgsRunningDialect.ThreadIsMatlab
+                    ? new JgsRuntimeException(line, col, "MATLAB:datetime:InvalidNumericData",
+                        "Numeric input data must be a matrix with three or six columns, or else three, six, or seven separate numeric arrays. You can also create datetimes from a single numeric array using the 'ConvertFrom' parameter.")
+                    : new JgsRuntimeException(line, col,
+                        "datetime: a single numeric argument must be a matrix of date vectors with 3 or 6 columns.");
             }
 
             values = new double[rows];
@@ -362,9 +369,16 @@ internal static partial class JgsBuiltins
             }
 
             shapeModel = JgsValue.Number(0);
+            if (JgsRunningDialect.ThreadIsMatlab && rows != 1)
+            {
+                // One moment a row: a column, 0-by-1 for no rows (ADR 0371, probe p6d).
+                shapeModel = Numbers(new double[rows]);
+                shapeModel.Reshape(rows, 1);
+            }
         }
-        else if (positional.Count is 3 or 6)
+        else if (positional.Count is 3 or 6 || (positional.Count == 7 && JgsRunningDialect.ThreadIsMatlab))
         {
+            // Seven parts: the last is milliseconds (ADR 0371, probe p6d).
             values = ComponentwiseMoments("datetime", positional, line, col, out shapeModel);
         }
         else
@@ -494,6 +508,12 @@ internal static partial class JgsBuiltins
                     + (matrix.ElementAt(rows + r).AsNumber * JgsTime.MsPerMinute)
                     + (matrix.ElementAt((2 * rows) + r).AsNumber * JgsTime.MsPerSecond);
             }
+
+            if (JgsRunningDialect.ThreadIsMatlab && rows != 1)
+            {
+                shapeModel = Numbers(new double[rows]); // a column, 0-by-1 for no rows (ADR 0371, probe p6d3)
+                shapeModel.Reshape(rows, 1);
+            }
         }
         else if (positional.Count is 3 or 4)
         {
@@ -507,6 +527,11 @@ internal static partial class JgsBuiltins
                 {
                     shapeModel = positional[i];
                 }
+            }
+
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                length = ComponentLength("duration", parts, positional, line, col, out shapeModel); // an empty part too (ADR 0371)
             }
 
             values = new double[length];
@@ -555,6 +580,11 @@ internal static partial class JgsBuiltins
             }
         }
 
+        if (JgsRunningDialect.ThreadIsMatlab)
+        {
+            length = ComponentLength(name, parts, positional, line, col, out shapeModel);
+        }
+
         foreach (double[] part in parts)
         {
             if (part.Length != 1 && part.Length != length)
@@ -572,10 +602,46 @@ internal static partial class JgsBuiltins
                 Part(0), Part(1), Part(2),
                 positional.Count > 3 ? Part(3) : 0,
                 positional.Count > 4 ? Part(4) : 0,
-                positional.Count > 5 ? Part(5) : 0);
+                positional.Count > 5 ? Part(5) + (positional.Count > 6 ? Part(6) / 1000 : 0) : 0);
         }
 
         return values;
+    }
+
+    /// <summary>
+    /// The element count of a componentwise build in the MATLAB dialect (open item 325, ADR 0371,
+    /// probes p6d, p6d3): the parts that are not scalars must agree, and the first of them - an empty
+    /// one too - gives the answer its size, so <c>datetime(2026, 1, 1:0)</c> is a 1-by-0 datetime and
+    /// <c>datetime(2026, [], 1)</c> a 0-by-0. Parts of different lengths are R2025b's
+    /// <c>InputSizeMismatch</c> for a datetime.
+    /// </summary>
+    private static int ComponentLength(string name, double[][] parts, IReadOnlyList<JgsValue> positional, int line, int col, out JgsValue shapeModel)
+    {
+        shapeModel = JgsValue.Number(0);
+        int length = 1;
+        bool found = false;
+        for (int i = 0; i < parts.Length; i++)
+        {
+            if (parts[i].Length == 1)
+            {
+                continue;
+            }
+
+            if (!found)
+            {
+                found = true;
+                length = parts[i].Length;
+                shapeModel = positional[i];
+            }
+            else if (parts[i].Length != length)
+            {
+                throw name == "datetime"
+                    ? new JgsRuntimeException(line, col, "MATLAB:datetime:InputSizeMismatch", "Data inputs must be the same size, or any of them can be a scalar.")
+                    : new JgsRuntimeException(line, col, $"{name}: the parts must all be scalars or all the same length.");
+            }
+        }
+
+        return length;
     }
 
     // --- Shared argument reading ------------------------------------------------------------------

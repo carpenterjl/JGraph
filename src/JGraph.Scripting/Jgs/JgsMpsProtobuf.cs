@@ -731,7 +731,8 @@ internal static class JgsMpsProtobuf
             foreach (string name in names)
             {
                 // A name MATLAB cannot hold (in.struct.badname: muserve's worker makes the struct and fails on its use) or one twice (in.struct.dupname: 400).
-                if (name.Length == 0 || name.Length > 63 || !char.IsAsciiLetter(name[0]) || name.Any(static c => !(char.IsAsciiLetterOrDigit(c) || c == '_'))
+                // The length is mps.json's measured limit, one past namelengthmax (ADR 0359; ADR 0371: it was 63, unmeasured on a server).
+                if (name.Length == 0 || name.Length > JgsBuiltins.NameLengthMax + 1 ||!char.IsAsciiLetter(name[0]) || name.Any(static c => !(char.IsAsciiLetterOrDigit(c) || c == '_'))
                     || names.Count(n => n == name) > 1)
                 {
                     throw new Unreadable("a field name");

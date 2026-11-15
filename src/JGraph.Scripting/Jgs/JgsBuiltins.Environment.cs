@@ -1126,7 +1126,7 @@ internal static partial class JgsBuiltins
         Query("namelengthmax", (args, line, col) =>
         {
             ArityRange("namelengthmax", args, 0, 0, line, col);
-            return JgsValue.Number(63); // MATLAB's limit, which JGraph matches so scripts agree
+            return JgsValue.Number(NameLengthMax); // R2025b's limit, which JGraph matches so scripts agree (ADR 0371)
         });
 
         Query("cputime", (args, line, col) =>

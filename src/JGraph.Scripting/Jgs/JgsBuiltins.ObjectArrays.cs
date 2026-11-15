@@ -316,7 +316,7 @@ internal static partial class JgsBuiltins
             {
                 int at = Array.FindIndex(values, v => v.Type != values[0].Type);
                 throw new JgsRuntimeException(line, col, $"MATLAB:{verb}:MismatchInOutputTypes",
-                    $"Mismatch in type of outputs, at index {at + 1}, output 1 ({ClassOf(values[0], JgsDialect.Matlab)} versus {ClassOf(values[at], JgsDialect.Matlab)}). Set 'UniformOutput' to false.");
+                    $"Mismatch in type of outputs, at index {at + 1}, output 1 ({ClassOf(values[0], JgsDialect.Matlab)} versus {ClassOf(values[at], JgsDialect.Matlab)}).\nSet 'UniformOutput' to false.");
             }
 
             return null;
@@ -329,13 +329,13 @@ internal static partial class JgsBuiltins
             if (!ReferenceEquals(values[i].ObjectClass, definition))
             {
                 throw new JgsRuntimeException(line, col, $"MATLAB:{verb}:MismatchInOutputTypes",
-                    $"Mismatch in type of outputs, at index {i + 1}, output 1 ({definition.Name} versus {values[i].ObjectClass.Name}). Set 'UniformOutput' to false.");
+                    $"Mismatch in type of outputs, at index {i + 1}, output 1 ({definition.Name} versus {values[i].ObjectClass.Name}).\nSet 'UniformOutput' to false.");
             }
 
             if (values[i].IsObjectArray)
             {
                 throw new JgsRuntimeException(line, col, $"MATLAB:{verb}:NotAScalarOutput",
-                    $"Non-scalar in Uniform output, at index {i + 1}, output 1. Set 'UniformOutput' to false.");
+                    $"Non-scalar in Uniform output, at index {i + 1}, output 1.\nSet 'UniformOutput' to false.");
             }
 
             elements[i] = values[i].AsObject;

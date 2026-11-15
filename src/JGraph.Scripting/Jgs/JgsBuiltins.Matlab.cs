@@ -324,6 +324,16 @@ internal static partial class JgsBuiltins
                 return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal) { ["Data"] = states.Logical() });
             }
 
+            // struct(m) of a metadata value: its properties, with the warning any object gives (ADR 0371).
+            if (args.Count == 1 && JgsRunningDialect.ThreadIsMatlab && IsMetadataValue(args[0]))
+            {
+                Warn(host, "MATLAB:structOnObject",
+                    "Calling STRUCT on an object prevents the object from hiding its implementation details and should " +
+                    "thus be avoided. Use DISP or DISPLAY to see the visible public details of an object. See 'help " +
+                    "struct' for more information.");
+                return MetadataAsStruct(args[0]);
+            }
+
             if (args.Count == 1 && args[0].IsCategorical && JgsRunningDialect.ThreadIsMatlab)
             {
                 Warn(host, "MATLAB:structOnObject",
@@ -431,6 +441,8 @@ internal static partial class JgsBuiltins
                     ? LibPropertyNames(args[0].AsExternal)
                     : IsDeviceValue(args[0].AsExternalOrNull())
                     ? DevicePropertyNames(args[0].AsExternal)
+                    : IsMetadataValue(args[0])
+                    ? MetadataPropertyNames(args[0]) // a deep metaclass's lists too (ADR 0371)
                     : StructOf("fieldnames", args[0], line, col).Keys;
             JgsValue names = JgsValue.Cell(listed.Select(JgsValue.Str).ToArray());
             names.Reshape(names.AsCell.Length, 1);
@@ -443,6 +455,14 @@ internal static partial class JgsBuiltins
             if (args[0].Type != JgsType.Struct)
             {
                 return JgsValue.Bool(false);
+            }
+
+            // A metadata value is an object in R2025b, which has no fields (ADR 0371, probe p6d2).
+            if (JgsRunningDialect.ThreadIsMatlab && IsMetadataValue(args[0]))
+            {
+                return args[1].Type == JgsType.Cell
+                    ? JgsValue.Shaped(Array.ConvertAll(args[1].AsCell, static _ => JgsValue.Bool(false)), args[1].Rows, args[1].Cols)
+                    : JgsValue.Bool(false);
             }
 
             // A cell of names asks about each in turn, and the answer is a logical of the same shape.

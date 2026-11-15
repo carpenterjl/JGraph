@@ -549,7 +549,8 @@ internal static class JgsTime
     /// </remarks>
     private static string WithNameTokens(string format, DateTime moment, CultureInfo culture)
     {
-        if (format.IndexOfAny(['M', 'e', 'a', 'y', 'u']) < 0)
+        bool matlab = JgsRunningDialect.ThreadIsMatlab;
+        if (format.IndexOfAny(['M', 'e', 'a', 'y', 'u']) < 0 && !(matlab && format.IndexOfAny(['G', 'Q', 'D', 'W']) >= 0))
         {
             return format;
         }
@@ -581,6 +582,10 @@ internal static class JgsTime
             if (c is 'y' or 'u' && run == 1)
             {
                 text = moment.Year.ToString(CultureInfo.InvariantCulture); // .NET's 'y' is the year mod 100
+            }
+            else if (matlab && c is 'G' or 'Q' or 'D' or 'W')
+            {
+                text = EraQuarterDayWeek(c, run, moment, invariant || culture.TwoLetterISOLanguageName == "en");
             }
             else if (c is 'M' or 'e' or 'a')
             {
@@ -628,6 +633,30 @@ internal static class JgsTime
         }
 
         return built?.ToString() ?? format;
+    }
+
+    /// <summary>
+    /// The era, quarter, day-of-year and week-of-month fields as R2025b prints them (open item 325,
+    /// ADR 0371, probes p6d2, p6d3), which .NET has no letter for: <c>G</c> in any count is <c>CE</c>;
+    /// <c>Q</c> and <c>QQ</c> the quarter's number padded, <c>QQQ</c> <c>Q4</c> (in German too),
+    /// <c>QQQQ</c> <c>4th quarter</c> in English (null elsewhere, unmeasured), five or more the
+    /// number; <c>D</c> the day of the year and <c>W</c> the week of the month counted from the
+    /// Sunday on or before the 1st, each padded to the run.
+    /// </summary>
+    private static string? EraQuarterDayWeek(char letter, int run, DateTime moment, bool english)
+    {
+        int quarter = ((moment.Month - 1) / 3) + 1;
+        string padding = new('0', Math.Min(run, 9));
+        return letter switch
+        {
+            'G' => "CE",
+            'Q' when run <= 2 => quarter.ToString(padding, CultureInfo.InvariantCulture),
+            'Q' when run == 3 => "Q" + quarter.ToString(CultureInfo.InvariantCulture),
+            'Q' when run == 4 => english ? quarter switch { 1 => "1st", 2 => "2nd", 3 => "3rd", _ => "4th" } + " quarter" : null,
+            'Q' => quarter.ToString(CultureInfo.InvariantCulture),
+            'D' => moment.DayOfYear.ToString(padding, CultureInfo.InvariantCulture),
+            _ => (((moment.Day - 1 + (int)new DateTime(moment.Year, moment.Month, 1).DayOfWeek) / 7) + 1).ToString(padding, CultureInfo.InvariantCulture),
+        };
     }
 
     /// <summary>

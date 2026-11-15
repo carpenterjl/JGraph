@@ -172,7 +172,23 @@ internal static partial class JgsBuiltins
         return merged;
     }
 
-    /// <summary>A key written into a map of <paramref name="keyType"/>: text into a char map, a number converted into a numeric one.</summary>
+    /// <summary>
+    /// <c>m(k) = v</c> on a <c>containers.Map</c> in the MATLAB dialect (open item 324, ADR 0371): the
+    /// key and the value converted to the map's <c>KeyType</c> and <c>ValueType</c>, or refused, as
+    /// the merge converts them (probe p6d: a char into a double map is refused, 5 into a logical map is
+    /// true, an int32 into a double map a double, 1.5 into an int32 map 2). The key is read first.
+    /// </summary>
+    internal static (JgsValue Key, JgsValue Value) MapEntryAs(JgsValue map, JgsValue key, JgsValue value, int line, int col)
+    {
+        Dictionary<string, JgsValue> fields = map.AsStruct;
+        JgsValue convertedKey = MapKeyAs(fields["KeyType"].AsString, key, line, col);
+        return (convertedKey, MapValueAs(fields["ValueType"].AsString, value, line, col));
+    }
+
+    /// <summary>
+    /// A key written into a map of <paramref name="keyType"/>: text into a char map, a real number
+    /// converted into a numeric one; a NaN is R2025b's own refusal (probe p6d2).
+    /// </summary>
     private static JgsValue MapKeyAs(string keyType, JgsValue key, int line, int col)
     {
         bool text = IsTextScalar(key);
@@ -181,9 +197,14 @@ internal static partial class JgsBuiltins
             return text ? key : throw MapTypeMismatch("key", line, col);
         }
 
-        return !text && MapScalarNumber(key) is double number
-            ? MapNumberOfClass(number, keyType)
-            : throw MapTypeMismatch("key", line, col);
+        if (text || MapScalarNumber(key) is not double number)
+        {
+            throw MapTypeMismatch("key", line, col);
+        }
+
+        return double.IsNaN(number)
+            ? throw new JgsRuntimeException(line, col, "MATLAB:Containers:NaNNotAllowed", "NaN-valued key is not allowed for this container.")
+            : MapNumberOfClass(number, keyType);
     }
 
     /// <summary>A real number held as a scalar or a 1-by-1 numeric or logical array; null for anything else.</summary>
@@ -196,7 +217,10 @@ internal static partial class JgsBuiltins
     /// <summary>
     /// A value written into a map of <paramref name="valueType"/> (probe p317b): anything into 'any',
     /// text into 'char', a real scalar converted into a numeric or logical one (5 into a logical map is
-    /// true, an int32 into a double map a double).
+    /// true, an int32 into a double map a double). Probe p6d2: a string scalar into a char map is its
+    /// char row and a char matrix the row of its characters in storage order (<c>['ab'; 'cd']</c> is
+    /// <c>'acbd'</c>); a logical map takes a whole number only (NaN, Inf, 0.5 are
+    /// <c>MATLAB:IntVal</c>; -1 is true).
     /// </summary>
     private static JgsValue MapValueAs(string valueType, JgsValue value, int line, int col)
     {
@@ -207,7 +231,17 @@ internal static partial class JgsBuiltins
 
         if (valueType == "char")
         {
-            return value.Type == JgsType.String || value.IsCharMatrix || IsEmptyCharRow(value) ? value : throw MapTypeMismatch("value", line, col);
+            if (value.IsCharMatrix)
+            {
+                return JgsValue.Str(value.CharMatrixText());
+            }
+
+            if (value.IsStringArray && value.ArrayLength == 1 && IsTextScalar(value))
+            {
+                return JgsValue.Str(TextOf(value));
+            }
+
+            return value.Type == JgsType.String || IsEmptyCharRow(value) ? value : throw MapTypeMismatch("value", line, col);
         }
 
         if (MapScalarNumber(value) is not double number)
@@ -215,7 +249,14 @@ internal static partial class JgsBuiltins
             throw MapTypeMismatch("value", line, col);
         }
 
-        return valueType == "logical" ? JgsValue.Bool(number != 0) : MapNumberOfClass(number, valueType);
+        if (valueType == "logical")
+        {
+            return double.IsFinite(number) && number == Math.Truncate(number)
+                ? JgsValue.Bool(number != 0)
+                : throw new JgsRuntimeException(line, col, "MATLAB:IntVal", "Scalar integer value required, but value is not integral");
+        }
+
+        return MapNumberOfClass(number, valueType);
     }
 
     private static JgsValue MapNumberOfClass(double number, string className) =>

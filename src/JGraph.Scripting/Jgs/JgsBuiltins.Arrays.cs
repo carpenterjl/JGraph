@@ -157,13 +157,19 @@ internal static partial class JgsBuiltins
 
             for (int o = 0; o < gathered; o++)
             {
-                if (uniform && !IsUniformScalar(answers[o]))
+                if (uniform && !IsUniformScalar(answers[o]) && !(JgsRunningDialect.ThreadIsMatlab && IsGatheredKind(answers[o])))
                 {
                     throw JgsRunningDialect.ThreadIsMatlab
                         ? new JgsRuntimeException(line, col, "MATLAB:arrayfun:NotAScalarOutput",
-                            $"Non-scalar in Uniform output, at index {k + 1}, output {o + 1}. Set 'UniformOutput' to false.")
+                            $"Non-scalar in Uniform output, at index {k + 1}, output {o + 1}.\nSet 'UniformOutput' to false.")
                         : new JgsRuntimeException(line, col,
                             "arrayfun: the function returned something that is not a number — pass 'UniformOutput', false.");
+                }
+
+                if (uniform)
+                {
+                    // A cell, struct, handle, time apiece is R2025b's to collect or refuse (ADR 0371).
+                    CheckGatheredAnswer("arrayfun", k == 0 ? answers[o] : collected[o][0], answers[o], k + 1, o + 1, line, col);
                 }
 
                 collected[o][k] = JgsValue.Share(answers[o]); // M2, as cellfun: the slot is an entry
@@ -176,7 +182,9 @@ internal static partial class JgsBuiltins
             // The uniform result takes the first array's shape — 2-D or N-D — the way MATLAB's does.
             // Objects collected uniformly are an array of objects (open item 116).
             outputs[o] = uniform
-                ? ObjectsAsArray("arrayfun", collected[o], 1, length, line, col) is { } objects
+                ? GatheredAnswers(collected[o]) is { } gatheredKind
+                    ? JgsMatrix.Like(args[1], gatheredKind)
+                : ObjectsAsArray("arrayfun", collected[o], 1, length, line, col) is { } objects
                     ? JgsMatrix.Like(args[1], objects)
                     : UniformComplex(collected[o], [1, length]) is { } complex
                         ? JgsMatrix.Like(args[1], complex)
@@ -614,6 +622,7 @@ internal static partial class JgsBuiltins
     /// dimension past the cell's own is a slice of one. The names are a cell of char rows, a char
     /// matrix's rows as they stand (a padded row is refused) or a string array.
     /// </summary>
+    // audit: mints — both returns build the struct here from new element dictionaries (open item 324, ADR 0371)
     private static JgsValue CellToStructAlong(IReadOnlyList<JgsValue> args, int line, int col)
     {
         if (args.Count < 2)
