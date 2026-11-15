@@ -447,12 +447,15 @@ internal static class DesignRun
     /// not give, as R2025b's <c>isBadNumberOfArguments</c> reads the stack (the startup function's
     /// frame right under the constructor's, depth 1 for <c>MATLAB:minrhs</c>): the innermost frame a
     /// method of the app's class that declares inputs beyond <c>app</c>, entered from the constructor.
-    /// An anonymous function pushes no frame here, so one the startup calls short of arguments is told
+    /// The anonymous functions' frames are passed over, so one the startup calls short of arguments is told
     /// apart by the startup's own parameters, which an error of its own would need.
     /// </summary>
     private static bool RaisedByStartup(JgsRuntimeException ex, JgsObject app)
     {
-        if (ex.Frames.Count < 2)
+        // The anonymous bodies the error left are frames of ME.stack since open item 334 (ADR 0368);
+        // this reading counts the functions alone, as it always has.
+        var frames = ex.Frames.Where(static f => !f.Name.StartsWith('@')).ToList();
+        if (frames.Count < 2)
         {
             return false;
         }
@@ -460,8 +463,8 @@ internal static class DesignRun
         // A packaged app's frames carry its short name (P2's measured forms), a plain one's its name.
         string className = app.Class.StackName;
         string Method(string frame) => frame.StartsWith(className + ".", StringComparison.Ordinal) ? frame[(className.Length + 1)..] : frame;
-        string inner = Method(ex.Frames[0].Name);
-        return inner != className && Method(ex.Frames[1].Name) == className
+        string inner = Method(frames[0].Name);
+        return inner != className && Method(frames[1].Name) == className
             && app.Class.TryMethod(inner, out ClassMethod? method) && !method.Static && method.Function.Parameters.Count > 1;
     }
 

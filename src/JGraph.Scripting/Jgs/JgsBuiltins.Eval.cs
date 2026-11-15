@@ -8,6 +8,9 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal static partial class JgsBuiltins
 {
+    /// <summary>What <c>which</c> answers for a variable as a value (R2025b, open item 329).</summary>
+    private const string WhichVariable = "variable";
+
     /// <summary>
     /// Every name <see cref="RegisterEvalBuiltins"/> declares that <c>CreateGlobals</c> does not, so
     /// the editor's name list can be told about them the same way it is told about <c>run</c>.
@@ -347,16 +350,17 @@ internal static partial class JgsBuiltins
             {
                 try
                 {
-                    return interpreter.EvaluateSource(Str("eval", args, 0, line, col), interpreter.CurrentFrame, line, col, asStatement);
+                    return interpreter.EvaluateSource(Str("eval", args, 0, line, col), interpreter.CurrentFrame, line, col, asStatement, bareWordIsBuiltin: !asStatement);
                 }
                 catch (JgsRuntimeException error)
                 {
                     interpreter.LastError = error.Message;
-                    return interpreter.EvaluateSource(Str("eval", args, 1, line, col), interpreter.CurrentFrame, line, col, asStatement);
+                    return interpreter.EvaluateSource(Str("eval", args, 1, line, col), interpreter.CurrentFrame, line, col, asStatement, bareWordIsBuiltin: !asStatement);
                 }
             }
 
-            return interpreter.EvaluateSource(Str("eval", args, 0, line, col), interpreter.CurrentFrame, line, col, asStatement);
+            // Asked for a value, the bare text 'true' answers the built-in past a true.m (R2025b, open item 329).
+            return interpreter.EvaluateSource(Str("eval", args, 0, line, col), interpreter.CurrentFrame, line, col, asStatement, bareWordIsBuiltin: !asStatement);
         }
 
         env.Builtins.Register("eval", JgsValue.Function(new BuiltinFunction(
@@ -464,7 +468,7 @@ internal static partial class JgsBuiltins
             {
                 Arity("evalin", args, 2, line, col);
                 return interpreter.EvaluateSourceIn(
-                    Str("evalin", args, 1, line, col), WorkspaceNamed("evalin", args, 0, interpreter, line, col), line, col);
+                    Str("evalin", args, 1, line, col), WorkspaceNamed("evalin", args, 0, interpreter, line, col), line, col, bareWordIsBuiltin: true);
             })
         {
             // As a statement the text runs as statements in the named workspace (V9.1).
@@ -479,7 +483,7 @@ internal static partial class JgsBuiltins
                 }
 
                 return [interpreter.EvaluateSourceIn(
-                    Str("evalin", args, 1, line, col), WorkspaceNamed("evalin", args, 0, interpreter, line, col), line, col)];
+                    Str("evalin", args, 1, line, col), WorkspaceNamed("evalin", args, 0, interpreter, line, col), line, col, bareWordIsBuiltin: true)];
             },
             TakesOutputCount = true,
         }));
@@ -942,6 +946,13 @@ internal static partial class JgsBuiltins
                 _ => throw new JgsRuntimeException(line, col, $"which: '{second}' is not an option; only '-all' is."),
             };
 
+            // A variable of the workspace is what which names first in MATLAB: 'variable' as a value,
+            // "x is a variable." as a statement (open item 329, measured; ADR 0368).
+            if (!all && interpreter.Dialect.IsMatlab && interpreter.IsWorkspaceVariable(name))
+            {
+                return JgsValue.Str(WhichVariable);
+            }
+
             // which extent(t): the argument form names the method the call would dispatch to,
             // with the class after a comment sign (stage P4, measured: "<file>  % Thing method").
             if (!all && WhichOfCall(interpreter, name, line, col) is { } dispatched)
@@ -1092,6 +1103,10 @@ internal static partial class JgsBuiltins
                     {
                         host.print(TextOf(row));
                     }
+                }
+                else if (TextOf(found) == WhichVariable && interpreter.Dialect.IsMatlab && args.Count == 1 && IsTextScalar(args[0]))
+                {
+                    host.print($"{TextOf(args[0])} is a variable.");
                 }
                 else if (TextOf(found).Length > 0)
                 {

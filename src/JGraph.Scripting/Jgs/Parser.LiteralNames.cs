@@ -25,6 +25,16 @@ internal sealed partial class Parser
     {
         private readonly List<BoolLiteral> _pending = [];
         private readonly List<FnStmt> _functions = [];
+        private readonly List<BoolLiteral> _spelled = [];
+
+        /// <summary>Which words the body itself (not its nested functions) mentions bare (1 true, 2 false).</summary>
+        public int Mentions { get; set; }
+
+        /// <summary>Which words a function nested in this body is named after (1 true, 2 false).</summary>
+        public int NestedFunctions { get; set; }
+
+        /// <summary>A literal spelled in the body or a function nested in it.</summary>
+        public void Spell(BoolLiteral literal) => _spelled.Add(literal);
 
         /// <summary>Which words the body binds so far (1 true, 2 false), its enclosing bodies' included.</summary>
         public int Binds { get; set; } = binds | (outer?.Binds ?? 0);
@@ -44,6 +54,20 @@ internal sealed partial class Parser
             {
                 inner.LiteralBindings |= Binds;
             }
+
+            function.LiteralMentions |= Mentions;
+
+            // A nested function named after the word answers the mentions in the body it is nested
+            // in - its own, its siblings' - and no other function's of the file (open item 329).
+            foreach (BoolLiteral literal in _spelled)
+            {
+                if ((NestedFunctions & LiteralBit(literal.Value)) != 0)
+                {
+                    literal.Shadow |= LiteralShadow.Function;
+                }
+            }
+
+            outer?._spelled.AddRange(_spelled);
 
             foreach (BoolLiteral literal in _pending)
             {
@@ -101,6 +125,12 @@ internal sealed partial class Parser
     {
         var literal = new BoolLiteral(word.Text == "true") { Line = word.Line, Column = word.Column, Shadow = LiteralShadow.File };
         (_spelledLiterals ??= []).Add(literal);
+        if (_literalScope is not null)
+        {
+            _literalScope.Spell(literal);
+            _literalScope.Mentions |= LiteralBits(word.Text);
+        }
+
         if (_literalScope is null || (_literalScope.Binds & LiteralBits(word.Text)) != 0)
         {
             literal.Shadow |= LiteralShadow.Variable;

@@ -2016,6 +2016,7 @@ public static class JgsBuiltinCatalog
         Add("hex2num", "The double whose bits a run of hexadecimal digits spells: x = hex2num('400921fb54442d18').", P("hexStr"));
         Add("num2hex", "The hexadecimal spelling of a number's own bits: s = num2hex(pi).", P("X"));
         Add("isvarname", "Whether the text is a name a variable could have.", P("s"));
+        Add("iskeyword", "Whether the text is one of MATLAB's keywords, which no variable may be named; with no argument, the list of them as a cell column.", Opt("s"));
         Add("mustBeNonsparse", "Errors if the value is sparse.", P("value"));
         Add("mustBeValidVariableName", "Errors unless every name could be a variable's.", P("value"));
         Add("mustBeFile", "Errors unless every path names a file that exists.", P("path"));

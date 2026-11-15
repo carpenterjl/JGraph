@@ -271,8 +271,22 @@ internal sealed partial class Interpreter
         }
 
         int line = error.PendingLine;
-        for (int i = _activeFunctions.Count - 1; i >= 0; i--)
+        int other = _otherFrames.Count - 1;
+        for (int i = _activeFunctions.Count - 1; i >= -1; i--)
         {
+            // The anonymous bodies and scripts still running above function i (open item 334, ADR 0368).
+            for (; OtherFrameDepth(other) == i + 1; other--)
+            {
+                (string otherName, string otherFile, int otherLine, int callLine) = OtherFrame(other, line);
+                listed.Add((otherName, otherFile, otherLine));
+                line = callLine;
+            }
+
+            if (i < 0)
+            {
+                break;
+            }
+
             listed.Add((_activeFunctions[i].Name, FileOfFrame(_activeFunctions[i].SourceId), line));
             line = _activeCallLines[i];
         }
@@ -826,7 +840,7 @@ internal sealed partial class Interpreter
     /// a nargout of 0 and binds <c>ans</c> as the written statement would, where
     /// <c>x = eval('np()')</c> asks the expression for one.
     /// </summary>
-    internal JgsValue EvaluateSource(string code, JgsEnvironment env, int line, int column, bool asStatement)
+    internal JgsValue EvaluateSource(string code, JgsEnvironment env, int line, int column, bool asStatement, bool bareWordIsBuiltin = false)
     {
         // A class is defined by its file and nowhere else: R2025b refuses classdef in eval'd text
         // as a misused keyword, whole or not (open item 81, measured on stess_40).
@@ -860,6 +874,7 @@ internal sealed partial class Interpreter
             throw ClassdefInEval();
         }
 
+        WarnEvalBindsLiteralWord(program, env); // eval('true = 7;') in a function that reads the built-in (open item 329)
         JgsValue result = JgsValue.Null;
         JgsEnvironment? outerEval = _evalEnv;
         _evalEnv = env; // the text's names resolve as text does, see InEvalText (P3)
@@ -869,6 +884,11 @@ internal sealed partial class Interpreter
             {
                 if (!asStatement && i == program.Count - 1 && program[i] is ExprStmt tail && tail.Expression is not AssignExpr)
                 {
+                    if (bareWordIsBuiltin && program.Count == 1)
+                    {
+                        BareWordSkipsFile(code, tail.Expression); // x = eval('true') (open item 329, ADR 0368)
+                    }
+
                     result = Evaluate(tail.Expression, env);
                     continue;
                 }
@@ -907,13 +927,13 @@ internal sealed partial class Interpreter
     /// the file that called <c>evalin</c>, the same as <c>eval</c>, and only its variables from the
     /// target.
     /// </summary>
-    internal JgsValue EvaluateSourceIn(string code, JgsEnvironment workspace, int line, int column)
+    internal JgsValue EvaluateSourceIn(string code, JgsEnvironment workspace, int line, int column, bool bareWordIsBuiltin = false)
     {
         JgsEnvironment frame = CurrentFrame;
         CurrentFrame = workspace;
         try
         {
-            return EvaluateSource(code, workspace, line, column);
+            return EvaluateSource(code, workspace, line, column, asStatement: false, bareWordIsBuiltin);
         }
         finally
         {
@@ -1128,6 +1148,11 @@ internal sealed partial class Interpreter
         }
         catch (JgsException error)
         {
+            if (framed && error is JgsRuntimeException unwinding)
+            {
+                UnwindOtherFrame(unwinding); // the script is a frame of ME.stack (open item 334)
+            }
+
             error.AttributeTo(sourceId);
             throw;
         }

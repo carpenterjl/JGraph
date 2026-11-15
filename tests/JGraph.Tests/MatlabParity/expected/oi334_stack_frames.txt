@@ -1,0 +1,33 @@
+CHK|cellfun|n=2 @(x)error('oi334:a','boom')@32(<DIR>\oi334_stack_frames.m) ; oi334_stack_frames@32(<DIR>\oi334_stack_frames.m) # Error using oi334_stack_frames>@(x)error('oi334:a','boom') (line 32) / boom|exact
+CHK|direct|n=2 @()error('oi334:b','boom')@37(<DIR>\oi334_stack_frames.m) ; oi334_stack_frames@38(<DIR>\oi334_stack_frames.m) # Error using oi334_stack_frames>@()error('oi334:b','boom') (line 37) / boom|exact
+CHK|callit|n=3 @()error('oi334:c','boom')@43(<DIR>\oi334_stack_frames.m) ; callit@187(<DIR>\oi334_stack_frames.m) ; oi334_stack_frames@43(<DIR>\oi334_stack_frames.m) # Error using oi334_stack_frames>@()error('oi334:c','boom') (line 43) / boom|exact
+CHK|nested|n=3 @()error('oi334:d','boom')@48(<DIR>\oi334_stack_frames.m) ; @()feval(@()error('oi334:d','boom'))@48(<DIR>\oi334_stack_frames.m) ; oi334_stack_frames@49(<DIR>\oi334_stack_frames.m) # Error using oi334_stack_frames>@()error('oi334:d','boom') (line 48) / boom|exact
+CHK|arrayfun_local|n=3 failing@195(<DIR>\oi334_stack_frames.m) ; @(x)failing(x)@54(<DIR>\oi334_stack_frames.m) ; oi334_stack_frames@54(<DIR>\oi334_stack_frames.m) # Error using oi334_stack_frames>failing (line 195) / boom|exact
+CHK|str2func|n=2 @()error('oi334:e','boom')@0(<DIR>\oi334_stack_frames.m) ; oi334_stack_frames@60(<DIR>\oi334_stack_frames.m) # Error using oi334_stack_frames>@()error('oi334:e','boom') / boom|exact
+CHK|eval_made|n=2 @()error('oi334:f','boom')@0(<DIR>\oi334_stack_frames.m) ; oi334_stack_frames@66(<DIR>\oi334_stack_frames.m) # Error using oi334_stack_frames>@()error('oi334:f','boom') / boom|exact
+CHK|madeelsewhere|n=2 @()error('oi334:m','boom')@199(<DIR>\oi334_stack_frames.m) ; oi334_stack_frames@72(<DIR>\oi334_stack_frames.m) # Error using oi334_stack_frames>@()error('oi334:m','boom') (line 199) / boom|exact
+CHK|runtime_refusal|n=2 @(x)x(5)@77(<DIR>\oi334_stack_frames.m) ; oi334_stack_frames@78(<DIR>\oi334_stack_frames.m) # Index exceeds the number of array elements. Index must not exceed 2.|exact
+CHK|innercatch_inside|n=3 innercatch@204(<DIR>\oi334_stack_frames.m) ; @(x)innercatch(x)@83(<DIR>\oi334_stack_frames.m) ; oi334_stack_frames@83(<DIR>\oi334_stack_frames.m) # Error using oi334_stack_frames>innercatch (line 204) / boom|exact
+CHK|caught_inside|n=3 @(x)error('oi334:ci','boom')@213(<DIR>\oi334_stack_frames.m) ; caughtinside@213(<DIR>\oi334_stack_frames.m) ; oi334_stack_frames@87(<DIR>\oi334_stack_frames.m)|exact
+CHK|continued|n=2 @()error('oi334:g','boom')@90(<DIR>\oi334_stack_frames.m) ; oi334_stack_frames@89(<DIR>\oi334_stack_frames.m) # Error using oi334_stack_frames>@()error('oi334:g','boom') (line 90) / boom|exact
+CHK|throwascaller|n=1 oi334_stack_frames@96(<DIR>\oi334_stack_frames.m) # Error using oi334_stack_frames (line 96) / boom|exact
+CHK|rethrow_anon|n=3 @()error('oi334:rt','boom')@229(<DIR>\oi334_stack_frames.m) ; rethrowit@229(<DIR>\oi334_stack_frames.m) ; oi334_stack_frames@101(<DIR>\oi334_stack_frames.m) # Error using oi334_stack_frames>@()error('oi334:rt','boom') (line 229) / boom|exact
+CHK|script_byname|n=2 oi334s@7(<LIB>\oi334s.m) ; oi334_stack_frames@108(<DIR>\oi334_stack_frames.m) # Error using oi334s (line 7) / from script|exact
+CHK|script_inner_caught|n=2 oi334s@2(<LIB>\oi334s.m) ; oi334_stack_frames@108(<DIR>\oi334_stack_frames.m)|exact
+CHK|run_dbstack|n=3 oi334r@1(oi334r.m) ; run@112(run.m) ; oi334_stack_frames@113(oi334_stack_frames.m)|exact
+CHK|run_inner_caught|n=3 oi334r@3(<LIB>\oi334r.m) ; run@112(<ML>\toolbox\matlab\lang\run.m) ; oi334_stack_frames@113(<DIR>\oi334_stack_frames.m)|exact
+CHK|run_error|n=3 oi334e@2(<LIB>\oi334e.m) ; run@112(<ML>\toolbox\matlab\lang\run.m) ; oi334_stack_frames@117(<DIR>\oi334_stack_frames.m) # Error using oi334e (line 2) / from run|exact
+CHK|run_function_file|n=3 oi334fn@2(oi334fn.m) ; run@112(run.m) ; oi334_stack_frames@121(oi334_stack_frames.m)|exact
+CHK|run_nested|n=5 oi334ri@1(oi334ri.m) ; run@112(run.m) ; oi334rr@1(oi334rr.m) ; run@112(run.m) ; oi334_stack_frames@123(oi334_stack_frames.m)|exact
+CHK|run_deeper_error|n=4 oi334fail@2(<LIB>\oi334fail.m) ; oi334rf@2(<LIB>\oi334rf.m) ; run@112(<ML>\toolbox\matlab\lang\run.m) ; oi334_stack_frames@126(<DIR>\oi334_stack_frames.m) # Error using oi334fail (line 2) / deep|exact
+CHK|printed_run|> In oi334ds (line 1) / In run (line 112) / In oi334_stack_frames (line 130)|exact
+CHK|printed_script|> In oi334ds (line 1) / In oi334_stack_frames (line 131)|exact
+CHK|printed_anon|> In oi334_stack_frames>@()dbstack / In oi334_stack_frames>callp (line 191) / In oi334_stack_frames (line 132)|exact
+CHK|printed_href|1|div=ADR0368|diverges|0
+CHK|pkg_dbstack|n=2 pf@2(pf.m) ; oi334_stack_frames@136(oi334_stack_frames.m)|exact
+CHK|pkg_local_dbstack|n=3 loc@5(pf2.m) ; pf2@2(pf2.m) ; oi334_stack_frames@137(oi334_stack_frames.m)|exact
+CHK|class_static_dbstack|n=2 OI334C.stat@9(OI334C.m) ; oi334_stack_frames@138(oi334_stack_frames.m)|exact
+CHK|class_inst_dbstack|n=2 OI334C.inst@4(OI334C.m) ; oi334_stack_frames@140(oi334_stack_frames.m)|exact
+CHK|pkg_complete|pf.m|exact
+CHK|pkg_error|n=2 pferr@2(<LIB>\+oi334pk\pferr.m) ; oi334_stack_frames@143(<DIR>\oi334_stack_frames.m)|exact
+CHK|class_error|n=2 OI334C.staterr@12(<LIB>\OI334C.m) ; oi334_stack_frames@148(<DIR>\oi334_stack_frames.m)|exact

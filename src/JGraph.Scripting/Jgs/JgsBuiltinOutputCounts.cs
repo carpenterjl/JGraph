@@ -860,6 +860,7 @@ internal static class JgsBuiltinOutputCounts
         ["ishold"] = (1, true),
         ["isinf"] = (1, false),
         ["isinteger"] = (1, false),
+        ["iskeyword"] = (1, true),
         ["isletter"] = (1, false),
         ["islinphase"] = (1, true),
         ["islocalmax"] = (2, true),

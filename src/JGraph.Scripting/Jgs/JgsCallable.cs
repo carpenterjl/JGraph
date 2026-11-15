@@ -864,6 +864,11 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
         {
             return _interpreter.EvaluateForOutputsInContext(_declaration.Body, wanted, local, _file, Text, line, code);
         }
+        catch (JgsRuntimeException error) when (framed)
+        {
+            _interpreter.UnwindOtherFrame(error); // the body is a frame of ME.stack (open item 334, ADR 0368)
+            throw;
+        }
         finally
         {
             if (framed)

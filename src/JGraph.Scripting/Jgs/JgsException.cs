@@ -135,9 +135,16 @@ public sealed class JgsRuntimeException : JgsException
     /// and each carries the line that was executing <em>in it</em>: the innermost failed where the
     /// error is, and every outer one failed at the call it was waiting on.
     /// </summary>
-    internal void PushFrame(string name, string file, int callLine)
+    internal void PushFrame(string name, string file, int callLine) =>
+        PushFrame(name, file, callLine, PendingLine);
+
+    /// <summary>
+    /// <see cref="PushFrame(string, string, int)"/> with the frame's own <paramref name="line"/> given: an
+    /// anonymous function made from text is at line 0 whatever ran in it (open item 334, ADR 0368).
+    /// </summary>
+    internal void PushFrame(string name, string file, int callLine, int line)
     {
-        _frames.Add((name, file, _lineForNextFrame < 0 ? Line : _lineForNextFrame));
+        _frames.Add((name, file, line));
         _lineForNextFrame = callLine;
     }
 

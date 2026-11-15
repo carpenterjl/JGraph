@@ -19,7 +19,7 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 ## Where it stands
 
-**349 of 377 names implemented**, and
+**350 of 377 names implemented**, and
 **724 of 1036 documented syntax forms accepted**.
 
 | Folder | Names | Forms documented | Forms accepted | Names missing |
@@ -36,7 +36,7 @@ below is — and that is why an entire folder could sit at nought implemented wi
 | `datatypes` | 14 / 22 | 40 | 3 | 8 |
 | `elfun` | 19 / 19 | 25 | 19 | 0 |
 | `timefun` | 10 / 12 | 42 | 3 | 2 |
-| `lang` | 3 / 10 | 22 | 2 | 7 |
+| `lang` | 4 / 10 | 22 | 2 | 6 |
 | `optimfun` | 6 / 6 | 30 | 8 | 0 |
 | `ops` | 2 / 4 | 5 | 2 | 2 |
 | `randfun` | 1 / 1 | 3 | 3 | 0 |
@@ -60,9 +60,9 @@ command that quite rightly rejects it.
 
 `celldisp` `cellplot` `formattedDisplayText` `isUnderlyingType` `iscom` `isinterface` `mat2cell` `swapbytes`
 
-### `lang` — 7
+### `lang` — 6
 
-`clearAllMemoizedCaches` `details` `genvarname` `iskeyword` `javachk` `memoize` `validatestring`
+`clearAllMemoizedCaches` `details` `genvarname` `javachk` `memoize` `validatestring`
 
 ### `ops` — 2
 

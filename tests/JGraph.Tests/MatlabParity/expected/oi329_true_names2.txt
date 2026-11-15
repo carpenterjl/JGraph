@@ -1,0 +1,92 @@
+CHK|kw_list|cell [20 1] break,case,catch,classdef,continue,else,elseif,end,for,function,global,if,otherwise,parfor,persistent,return,spmd,switch,try,while|exact
+CHK|kw iskeyword('for')|logical [1 1] 1|exact
+CHK|kw iskeyword('true')|logical [1 1] 0|exact
+CHK|kw iskeyword("for")|logical [1 1] 1|exact
+CHK|kw iskeyword({'for'})|logical [1 1] 1|exact
+CHK|kw iskeyword({'for','x'})|logical [1 1] 0|exact
+CHK|kw iskeyword(["for" "x"])|logical [1 1] 0|exact
+CHK|kw iskeyword(5)|logical [1 1] 0|exact
+CHK|kw iskeyword([])|logical [1 1] 0|exact
+CHK|kw iskeyword('For')|logical [1 1] 0|exact
+CHK|kw iskeyword(' for')|logical [1 1] 0|exact
+CHK|kw iskeyword('for ')|logical [1 1] 0|exact
+CHK|kw iskeyword('for', 1)|MATLAB:TooManyInputs / Too many input arguments.|exact
+CHK|kw iskeyword({})|logical [1 1] 0|exact
+CHK|kw iskeyword('end')|logical [1 1] 1|exact
+CHK|kw iskeyword('parfor')|logical [1 1] 1|exact
+CHK|kw iskeyword('spmd')|logical [1 1] 1|exact
+CHK|kw iskeyword('arguments')|logical [1 1] 0|exact
+CHK|kw iskeyword('methods')|logical [1 1] 0|exact
+CHK|kw iskeyword('properties')|logical [1 1] 0|exact
+CHK|kw iskeyword('enumeration')|logical [1 1] 0|exact
+CHK|kw iskeyword({'for'; 'if'})|logical [1 1] 0|exact
+CHK|kw iskeyword(string.empty)|logical [1 1] 0|exact
+CHK|kw iskeyword(char([102 111 114]))|logical [1 1] 1|exact
+CHK|kw iskeyword(categorical({'for'}))|logical [1 1] 0|exact
+CHK|kw iskeyword(iskeyword)|logical [1 1] 1|exact
+CHK|kw iskeyword({5})|logical [1 1] 0|exact
+CHK|kw iskeyword({"for"})|logical [1 1] 0|exact
+CHK|kw iskeyword(['' 'for'; 'if '])|logical [1 1] 0|exact
+CHK|kw iskeyword(string(missing))|logical [1 1] 0|exact
+CHK|kw_ans|logical 1|exact
+CHK|kw_nargout|MATLAB:TooManyOutputs / Too many output arguments.|exact
+CHK|which_builtin|1|exact
+CHK|which_var_printed|true is a variable.|exact
+CHK|which_var_value|variable|exact
+CHK|which_var_exist|1|exact
+CHK|which_cleared|1|exact
+CHK|which_other_var|zz329 is a variable.|exact
+CHK|which_other_value|variable|exact
+CHK|which_shadowing_var|max is a variable.|exact
+CHK|which_in_fn_bound|true is a variable.|exact
+CHK|which_in_fn_free|zzf is a variable.|exact
+CHK|warn_eval_true|MATLAB:lang:ExternalShadowedInEval / Identifier 'true' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported.|exact
+CHK|warn_eval_true_read|logical|exact
+CHK|warn_eval_true_evalread|logical|exact
+CHK|warn_eval_false|MATLAB:lang:ExternalShadowedInEval / Identifier 'false' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported.|exact
+CHK|warn_eval_false_read|logical|exact
+CHK|warn_eval_after|MATLAB:lang:ExternalShadowedInEval / Identifier 'true' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported.|exact
+CHK|warn_eval_after_read|logical|exact
+CHK|warn_evalc|MATLAB:lang:ExternalShadowedInEval / Identifier 'true' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported. # logical|exact
+CHK|warn_bound_fn| /  # 8|exact
+CHK|warn_call_form|MATLAB:lang:ExternalShadowedInEval / Identifier 'true' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported.|exact
+CHK|call_form_read|logical|div=ADR0368|diverges|double
+CHK|warn_unmentioned| /  # 8|exact
+CHK|warn_assignin| /  # logical|exact
+CHK|warn_evalin_caller| /  # logical|exact
+CHK|warn_multi|MATLAB:lang:ExternalShadowedInEval / Identifier 'true' in the evaluated statement does not refer to the external function. In a future release, using an identifier different to how it is used in the file will not be supported. # logical|exact
+CHK|warn_script| / |exact
+CHK|warn_script_read|7|exact
+CHK|nested_outer|char 'nested'|exact
+CHK|nested_sibling_nested|char 'nested'|exact
+CHK|nested_sib|logical [1 1] true|exact
+CHK|nested_main|logical [1 1] true|exact
+CHK|nested_sib_call|logical [1 2] [true true]|exact
+CHK|nested_main_call|logical|exact
+CHK|file_eval_out|logical [1 1] true|exact
+CHK|file_eval_noout|char 'file'|exact
+CHK|file_eval_false|logical [1 1] false|exact
+CHK|file_eval_spaced|logical [1 1] true|exact
+CHK|file_eval_semi|logical [1 1] true|exact
+CHK|file_eval_comma|char 'file'|exact
+CHK|file_eval_parens|char 'file'|exact
+CHK|file_eval_call|char 'file'|exact
+CHK|file_eval_arg|char 'file'|exact
+CHK|file_eval_bracket|char 'file'|exact
+CHK|file_eval_string|logical [1 1] true|exact
+CHK|file_eval_stmt|char 'file'|exact
+CHK|file_evalin_base|logical [1 1] true|exact
+CHK|file_evalin_stmt|char 'file'|exact
+CHK|file_eval_catch|logical [1 1] true|exact
+CHK|file_evalc|char 'file'|exact
+CHK|file_script|char 'file'|exact
+CHK|file_fn_eval|logical [1 1] true|exact
+CHK|file_fn_evalin_caller|logical [1 1] true|exact
+CHK|file_fn_evalin_base|logical [1 1] true|exact
+CHK|file_fn_stmt|char 'file'|exact
+CHK|file_anon_eval|logical [1 1] true|exact
+CHK|file_eval_cellout|logical [1 1] true|exact
+CHK|file_eval_in_cell|logical [1 1] true|exact
+CHK|file_eval_var|double [1 1] 5|exact
+CHK|file_eval_bound_fn|double [1 1] 4|exact
+CHK|which_with_file|<LIB>\true.m|exact

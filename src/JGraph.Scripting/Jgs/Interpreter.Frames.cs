@@ -11,17 +11,18 @@ internal sealed partial class Interpreter
     /// <summary>
     /// The running frames that are no function call, innermost last: the handle or the script's path,
     /// how many functions were running when it was entered (its place among <see cref="_activeFunctions"/>),
-    /// and the line of the code that entered it.
+    /// the line of the code that entered it, and the line it stands at whatever runs above it (-1 for the
+    /// line running in it; <c>run</c>'s own frame is at a line of R2025b's <c>run.m</c>).
     /// </summary>
-    private readonly List<(AnonymousFunction? Anonymous, string Script, int Depth, int CallLine)> _otherFrames = [];
+    private readonly List<(AnonymousFunction? Anonymous, string Script, int Depth, int CallLine, int Line)> _otherFrames = [];
 
     /// <summary>An anonymous function's body is running, entered from <paramref name="callLine"/>; <see cref="LeaveOtherFrame"/> ends it.</summary>
     internal void EnterAnonymousFrame(AnonymousFunction anonymous, int callLine) =>
-        _otherFrames.Add((anonymous, string.Empty, _activeFunctions.Count, callLine));
+        _otherFrames.Add((anonymous, string.Empty, _activeFunctions.Count, callLine, -1));
 
     /// <summary>A script named by its file <paramref name="path"/> is running, entered from <paramref name="callLine"/>.</summary>
     internal void EnterScriptFrame(string path, int callLine) =>
-        _otherFrames.Add((null, path, _activeFunctions.Count, callLine));
+        _otherFrames.Add((null, path, _activeFunctions.Count, callLine, -1));
 
     /// <summary>The innermost frame <see cref="EnterAnonymousFrame"/> or <see cref="EnterScriptFrame"/> entered has ended.</summary>
     internal void LeaveOtherFrame() => _otherFrames.RemoveAt(_otherFrames.Count - 1);
@@ -34,15 +35,75 @@ internal sealed partial class Interpreter
     /// </summary>
     private (string Name, string File, int Line, int CallLine) OtherFrame(int index, int line)
     {
-        (AnonymousFunction? anonymous, string script, _, int callLine) = _otherFrames[index];
+        (AnonymousFunction? anonymous, string script, _, int callLine, int fixedLine) = _otherFrames[index];
         if (anonymous is not null)
         {
             string text = anonymous.Declaration.MatlabText ?? anonymous.Text;
             return (text, FileOfFrame(anonymous.File), anonymous.Declaration.InText ? 0 : line, callLine);
         }
 
-        return (Path.GetFileNameWithoutExtension(script), script, line, callLine);
+        return (Path.GetFileNameWithoutExtension(script), script, fixedLine >= 0 ? fixedLine : line, callLine);
     }
+
+    /// <summary>
+    /// An error is leaving the innermost frame <see cref="EnterAnonymousFrame"/> or <see cref="EnterScriptFrame"/>
+    /// entered: it is a frame of <c>ME.stack</c>, as a function's is, named and placed as <c>dbstack</c> lists
+    /// it (open item 334, ADR 0368; measured: <c>cellfun(@(x) error('p334:a', 'boom'), {1})</c> is
+    /// <c>@(x)error('p334:a','boom')</c> at its line over the script, a script named in a statement is a frame
+    /// at its own line, and a handle made from text is at line 0).
+    /// </summary>
+    internal void UnwindOtherFrame(JgsRuntimeException error)
+    {
+        (string name, string file, int line, int callLine) = OtherFrame(_otherFrames.Count - 1, error.PendingLine);
+        error.PushFrame(name, file, callLine, line);
+    }
+
+    /// <summary>
+    /// <c>run('s.m')</c> of a MATLAB file holds R2025b's own <c>run.m</c> as a frame between the file and the
+    /// code that ran it, at the line where <c>run.m</c> evaluates the script (<c>run@112(run.m)</c>,
+    /// measured; open item 334, ADR 0368): two frames, <see cref="LeaveRunFrames"/> ends them. The file's
+    /// path is where it sits under a MATLAB installation, read from this one's root, which holds no such file.
+    /// </summary>
+    /// <remarks>
+    /// A script's frame is entered only for a script (<paramref name="script"/>): a function file run so is
+    /// its main function's frame over <c>run</c>'s (measured: <c>p334fn@2 ; run@112 ; p334b@3</c>).
+    /// </remarks>
+    internal void EnterRunFrames(string path, bool script, int callLine)
+    {
+        _otherFrames.Add((null, RunFramePath, _activeFunctions.Count, callLine, RunFrameLine));
+        if (script)
+        {
+            EnterScriptFrame(path, RunFrameLine);
+        }
+    }
+
+    /// <summary>The frames <see cref="EnterRunFrames"/> entered have ended.</summary>
+    internal void LeaveRunFrames(bool script)
+    {
+        LeaveOtherFrame();
+        if (script)
+        {
+            LeaveOtherFrame();
+        }
+    }
+
+    /// <summary>An error is leaving the run of a file: the file's frame and <c>run</c>'s, as <see cref="UnwindOtherFrame"/> records one.</summary>
+    internal void UnwindRunFrames(JgsRuntimeException error, bool script)
+    {
+        UnwindOtherFrame(error);
+        if (script)
+        {
+            (string name, string file, int line, int callLine) = OtherFrame(_otherFrames.Count - 2, error.PendingLine);
+            error.PushFrame(name, file, callLine, line);
+        }
+    }
+
+    /// <summary>The line of R2025b's <c>run.m</c> that evaluates the script it runs (measured).</summary>
+    private const int RunFrameLine = 112;
+
+    /// <summary><c>run.m</c>'s place under the installation's root (R2025b: <c>toolbox\matlab\lang\run.m</c>).</summary>
+    private static string RunFramePath { get; } =
+        Path.Combine(AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar), "toolbox", "matlab", "lang", "run.m");
 
     /// <summary>The depth (count of running functions) the innermost other frame was entered at, or -1 when there is none left.</summary>
     private int OtherFrameDepth(int index) => index >= 0 ? _otherFrames[index].Depth : -1;

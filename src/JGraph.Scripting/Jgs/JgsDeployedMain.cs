@@ -149,7 +149,14 @@ internal static class JgsDeployedMain
 
         for (int i = unwound; i < frames.Count; i++)
         {
-            report.Append("Error in ").Append(Shown(frames[i])).Append(" (line ").Append(frames[i].Line).Append(")\n\n");
+            // A handle made from text is at line 0 and names no line (open item 334, measured).
+            report.Append("Error in ").Append(Shown(frames[i]));
+            if (frames[i].Line != 0 || !frames[i].Name.StartsWith('@'))
+            {
+                report.Append(" (line ").Append(frames[i].Line).Append(')');
+            }
+
+            report.Append("\n\n");
         }
 
         if (handler)

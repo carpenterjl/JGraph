@@ -427,8 +427,33 @@ internal static class JgsRunner
                 IReadOnlyList<Stmt> program = source is null
                     ? JgsPcode.Load(fullPath)
                     : Parser.Parse(source, fullPath, included);
-                interpreter.Run(program);
-                InvokeMainIfFunctionFile(program, interpreter);
+
+                // R2025b's run.m is a frame of dbstack's and ME.stack's, and the script one over it
+                // (open item 334, ADR 0368).
+                bool framed = included.IsMatlab;
+                bool script = framed && !IsFunctionFile(program) && !program.Any(static s => s is ClassdefStmt);
+                if (framed)
+                {
+                    interpreter.EnterRunFrames(fullPath, script, line);
+                }
+
+                try
+                {
+                    interpreter.Run(program);
+                    InvokeMainIfFunctionFile(program, interpreter);
+                }
+                catch (JgsRuntimeException error) when (framed)
+                {
+                    interpreter.UnwindRunFrames(error, script);
+                    throw;
+                }
+                finally
+                {
+                    if (framed)
+                    {
+                        interpreter.LeaveRunFrames(script);
+                    }
+                }
             }
             finally
             {

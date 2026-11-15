@@ -188,7 +188,8 @@ internal static partial class JgsBuiltins
         string stem = frame.TryGetValue("file", out JgsValue? file) && file.Type == JgsType.String
             ? Path.GetFileNameWithoutExtension(file.AsString)
             : string.Empty;
-        return stem.Length > 0 && stem != name && !name.Contains('>', StringComparison.Ordinal) ? $"{stem}>{name}" : name;
+        // An anonymous frame's name is its text, which may hold a '>' of its own (open item 334).
+        return stem.Length > 0 && stem != name && (name.StartsWith('@') || !name.Contains('>', StringComparison.Ordinal)) ? $"{stem}>{name}" : name;
     }
 
     /// <summary>Declares <c>error</c>, <c>MException</c>, and the three throwing verbs.</summary>
@@ -315,8 +316,11 @@ internal static partial class JgsBuiltins
                 return JgsValue.Str(message);
             }
 
+            // A handle made from text is at line 0, and its header names no line (open item 334, measured).
             Dictionary<string, JgsValue> top = stack.AsStructArray.Elements[0];
-            return JgsValue.Str($"Error using {FrameShownName(top)} (line {top["line"].AsNumber:0})\n{message}");
+            return top["line"].AsNumber == 0 && top["name"].AsString.StartsWith('@')
+                ? JgsValue.Str($"Error using {FrameShownName(top)}\n{message}")
+                : JgsValue.Str($"Error using {FrameShownName(top)} (line {top["line"].AsNumber:0})\n{message}");
         });
 
         Define("lasterror", (args, line, col) =>

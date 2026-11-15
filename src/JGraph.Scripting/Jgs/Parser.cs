@@ -1263,8 +1263,16 @@ internal sealed partial class Parser
 
         // One-line bodies spell 'function f(), body; end' — the comma is the ordinary MATLAB
         // statement separator, consumed by the body's own separator skipping.
-        _literalFunctions |= LiteralBits(name.Text);
         LiteralScope? outerLiterals = _literalScope;
+        if (outerLiterals is null)
+        {
+            _literalFunctions |= LiteralBits(name.Text); // a file's function: every mention in the file
+        }
+        else
+        {
+            outerLiterals.NestedFunctions |= LiteralBits(name.Text); // a nested one: its body's (open item 329)
+        }
+
         var literals = new LiteralScope(outerLiterals, LiteralBits(parameters) | LiteralBits(outputs));
         _literalScope = literals;
         _functionDepth++;

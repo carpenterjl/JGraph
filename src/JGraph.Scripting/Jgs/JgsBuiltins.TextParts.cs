@@ -96,6 +96,7 @@ internal static partial class JgsBuiltins
                 && IsTextScalar(args[0])
                 && IsValidVariableName(TextOf(args[0])));
         });
+        Define("iskeyword", IsKeyword); // open item 329, ADR 0368
     }
 
     // --- reading and rebuilding a container of text -------------------------------------------

@@ -498,6 +498,12 @@ internal sealed class FnStmt(
     /// </summary>
     internal int LiteralBindings;
 
+    /// <summary>
+    /// Which of the two words this function's own text mentions bare (1 true, 2 false), for the
+    /// warning an <c>eval</c> binding one of them gives (open item 329, ADR 0368).
+    /// </summary>
+    internal int LiteralMentions;
+
     /// <summary>What the body's leading <c>arguments</c> blocks declare (stage K9), read once; null when it has none.</summary>
     internal ArgumentsSignature? Signature
     {
