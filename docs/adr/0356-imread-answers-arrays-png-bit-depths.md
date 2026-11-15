@@ -134,7 +134,9 @@ In both dialects.
 - **A logical written at BitDepth 16 is 0 and 1 here.** R2025b writes the logical's bytes as if they
   were 16-bit samples, so it reads back what lies past the array in memory (`[256 1 27949 29793]`
   for `logical([0 1 1 0])`). Its answer at every other depth is the logical's own 0 or 1, and that is
-  what is written here. There is no fixture row, because R2025b's answer is not stable.
+  what is written here. There is no fixture row, because R2025b's answer is not stable. (Since
+  ADR 0367 it has one, `oi322_image_arith/lg16_head`, over the first half of the file, which is the
+  array's own bytes and is stable.)
 
 ## Still open
 
@@ -145,3 +147,7 @@ In both dialects.
 - **`imtile`** answers a picture value in MATLAB code. R2025b answers an array.
 - **imread of a 2048-square PNG** (open item 273 (a)) now also pays the conversion to an array in
   MATLAB code. That is one pass over the samples on top of the decode, and was not timed.
+
+Closed since: the first three, by ADR 0367 (open item 322). `imadd` and its siblings take every
+array in MATLAB code by R2025b's class rules, an int16 array is refused by R2025b's writers at every
+depth and multiplies in its own units, and `imtile` answers an array.

@@ -24,7 +24,9 @@ internal static partial class JgsBuiltins
         Random random,
         JgsRunningDialect dialect)
     {
-        define("imtile", TileImages);
+        // In MATLAB code imtile answers an array of the frames' class (open item 322, ADR 0367).
+        define("imtile", (args, line, col) =>
+            dialect.IsMatlab ? MatlabImtile(args, line, col) : TileImages(args, line, col));
         // --- File IO -------------------------------------------------------------------------
         define("imread", (args, line, col) =>
         {
@@ -100,6 +102,15 @@ internal static partial class JgsBuiltins
             if (parsed.Positional.Count < 2)
             {
                 throw new JgsRuntimeException(line, col, "imwrite needs an image and a path.");
+            }
+
+            // In MATLAB code an integer class a format's writer does not take is refused by that
+            // writer's own words (open item 322, ADR 0367): int16 is no PNG's, TIFF's, JPEG's, BMP's
+            // or GIF's class in R2025b, where it was written here from its normalized samples.
+            if (dialect.IsMatlab && parsed.Positional[0].Type != JgsType.Image
+                && parsed.Positional[1].Type == JgsType.String)
+            {
+                RefuseMatlabImwriteClass(parsed.Positional[0], parsed.Positional[1].AsString, line, col);
             }
 
             // A class no image format stores is refused by name. Before this the array's class was not
@@ -407,6 +418,14 @@ internal static partial class JgsBuiltins
                     for (int i = 0; i < samples.Length; i++)
                     {
                         double sample = keep ? samples[i] : Math.Clamp(samples[i], 0, 1);
+
+                        // R2025b's im2int16 rounds onto uint16's 65535 steps first and then moves
+                        // down by 32768, so 0.5 is 0 and not -1 (open item 322, ADR 0367).
+                        if (target == ImageClass.Int16 && dialect.IsMatlab)
+                        {
+                            sample = Math.Round(sample * 65535, MidpointRounding.AwayFromZero) / 65535;
+                        }
+
                         samples[i] = target == ImageClass.Single ? (float)sample : sample;
                     }
 
@@ -653,16 +672,27 @@ internal static partial class JgsBuiltins
         // --- Arithmetic ----------------------------------------------------------------------
         // Clamping to [0, 1] is the normalized form of MATLAB's saturating integer arithmetic, and the
         // output class follows the first image, so uint8 + uint8 stays uint8 and lands on 1/255 steps.
-        define("imadd", (args, line, col) =>
-            ImageArithmetic("imadd", args, line, col, PointOps.Add, PointOps.AddScalar, dialect, scalarIsLevel: true));
-        define("imsubtract", (args, line, col) =>
-            ImageArithmetic("imsubtract", args, line, col, PointOps.Subtract, PointOps.SubtractScalar, dialect, scalarIsLevel: true));
-        define("immultiply", (args, line, col) =>
-            ImageArithmetic("immultiply", args, line, col, PointOps.Multiply, PointOps.MultiplyScalar, dialect, scalarIsLevel: false));
-        define("imdivide", (args, line, col) =>
-            ImageArithmetic("imdivide", args, line, col, Arithmetic.Divide, Arithmetic.DivideScalar, dialect, scalarIsLevel: false));
+        // That is the picture value's arithmetic. In MATLAB code an array (all imread answers there)
+        // takes R2025b's own class rules instead (open item 322, ADR 0367): TakesMatlabImageRoad.
+        define("imadd", (args, line, col) => TakesMatlabImageRoad(args, dialect)
+            ? MatlabImadd(args, line, col)
+            : ImageArithmetic("imadd", args, line, col, PointOps.Add, PointOps.AddScalar, dialect, scalarIsLevel: true));
+        define("imsubtract", (args, line, col) => TakesMatlabImageRoad(args, dialect)
+            ? MatlabImsubtract(args, line, col)
+            : ImageArithmetic("imsubtract", args, line, col, PointOps.Subtract, PointOps.SubtractScalar, dialect, scalarIsLevel: true));
+        define("immultiply", (args, line, col) => TakesMatlabImageRoad(args, dialect)
+            ? MatlabImmultiply(args, line, col)
+            : ImageArithmetic("immultiply", args, line, col, PointOps.Multiply, PointOps.MultiplyScalar, dialect, scalarIsLevel: false));
+        define("imdivide", (args, line, col) => TakesMatlabImageRoad(args, dialect)
+            ? MatlabImdivide(args, line, col)
+            : ImageArithmetic("imdivide", args, line, col, Arithmetic.Divide, Arithmetic.DivideScalar, dialect, scalarIsLevel: false));
         define("imabsdiff", (args, line, col) =>
         {
+            if (TakesMatlabImageRoad(args, dialect))
+            {
+                return MatlabImabsdiff(args, line, col);
+            }
+
             Arity("imabsdiff", args, 2, line, col);
             using ImgArg first = ImgLike("imabsdiff", args, 0, line, col);
             using ImgArg second = ImgLike("imabsdiff", args, 1, line, col);
@@ -678,6 +708,11 @@ internal static partial class JgsBuiltins
 
         define("imlincomb", (args, line, col) =>
         {
+            if (TakesMatlabImageRoad(args, dialect))
+            {
+                return MatlabImlincomb(args, line, col);
+            }
+
             if (args.Count < 2)
             {
                 throw new JgsRuntimeException(line, col, "imlincomb takes weight, image pairs: imlincomb(k1, A, k2, B).");
@@ -725,6 +760,11 @@ internal static partial class JgsBuiltins
 
         define("imcomplement", (args, line, col) =>
         {
+            if (TakesMatlabImageRoad(args, dialect))
+            {
+                return MatlabImcomplement(args, line, col);
+            }
+
             Arity("imcomplement", args, 1, line, col);
             using ImgArg source = ImgLike("imcomplement", args, 0, line, col);
             return ImgLikeOut(PointOps.Complement(source.Buffer), source);
@@ -1539,12 +1579,6 @@ internal static partial class JgsBuiltins
         bool scalarIsLevel)
     {
         Arity(name, args, 2, line, col);
-        if (args[0].Type != JgsType.Image && dialect.IsMatlab
-            && CarriedClass(args[0]) is ImageClass.UInt8 or ImageClass.UInt16)
-        {
-            return IntegerArrayArithmetic(name, args, line, col, combine, scalar, scalarIsLevel);
-        }
-
         ImageBuffer image = Img(name, args, 0, line, col);
         if (args[1].Type == JgsType.Image)
         {
@@ -1575,48 +1609,6 @@ internal static partial class JgsBuiltins
         {
             throw new JgsRuntimeException(line, col, ex.Message);
         }
-    }
-
-    /// <summary>
-    /// <c>imadd</c> and its siblings on a plain uint8 or uint16 array under MATLAB, which is what
-    /// <c>imread</c> answers there (open item 292, ADR 0356): the array is read in its class's units,
-    /// combined as a picture is, saturated to the class's range, and handed back as an array of the
-    /// class. A float array is still refused here: MATLAB's imadd of doubles does not clamp, which
-    /// the picture arithmetic does.
-    /// </summary>
-    private static JgsValue IntegerArrayArithmetic(
-        string name, IReadOnlyList<JgsValue> args, int line, int col,
-        Func<ImageBuffer, ImageBuffer, ImageBuffer> combine,
-        Func<ImageBuffer, double, ImageBuffer> scalar,
-        bool scalarIsLevel)
-    {
-        using ImgArg first = ImgLike(name, args, 0, line, col);
-        ImageBuffer result;
-        try
-        {
-            if (args[1].Type is JgsType.Number or JgsType.Bool)
-            {
-                double value = args[1].AsNumber;
-                result = scalar(first.Buffer, scalarIsLevel ? value / first.Buffer.Class.Scale() : value);
-            }
-            else
-            {
-                using ImgArg second = ImgLike(name, args, 1, line, col);
-                result = combine(first.Buffer, second.Buffer);
-            }
-        }
-        catch (ArgumentException ex)
-        {
-            throw new JgsRuntimeException(line, col, ex.Message);
-        }
-
-        Span<double> samples = result.Pixels;
-        for (int i = 0; i < samples.Length; i++)
-        {
-            samples[i] = double.IsNaN(samples[i]) ? 0 : Math.Clamp(samples[i], 0, 1);
-        }
-
-        return ImgLikeOut(result, first);
     }
 
     /// <summary>
@@ -1743,6 +1735,44 @@ internal static partial class JgsBuiltins
     /// (open item 294, ADR 0356): greyscale takes 1, 2, 4, 8 or 16, greyscale with alpha 8 or 16,
     /// and RGB 8 or 16. Before this a depth outside the list was quietly written at eight bits.
     /// </summary>
+    /// <summary>
+    /// The refusal R2025b's writer for a path's format gives an integer class it does not take
+    /// (measured for int8, int16, int32, int64, uint32 and uint64 into .png, .tif, .jpg, .bmp and
+    /// .gif). The classes every one of those writers takes, and an unsigned class into JPEG (which
+    /// R2025b writes), are left to the writers.
+    /// </summary>
+    private static void RefuseMatlabImwriteClass(JgsValue image, string path, int line, int col)
+    {
+        string className = ClassOf(image, JgsDialect.Matlab);
+        if (className is "uint8" or "uint16" || JgsNumericClasses.Parse(className) is not { } numeric || !numeric.IsInteger())
+        {
+            return;
+        }
+
+        bool signed = className.StartsWith("int", StringComparison.Ordinal);
+        switch (Path.GetExtension(path).ToLowerInvariant())
+        {
+            case ".png":
+                throw new JgsRuntimeException(line, col, "MATLAB:invalidType",
+                    "Expected input to be one of these types:\n\ndouble, single, logical, uint8, uint16\n\n"
+                    + $"Instead its type was {className}.");
+            case ".tif" or ".tiff":
+                throw new JgsRuntimeException(line, col, "MATLAB:imagesci:writetif:unsupportedDataType",
+                    $"Writing {className} image data to a TIFF file is not supported with IMWRITE.  Use Tiff instead.  "
+                    + "Type \"help Tiff\" for more information.");
+            case ".jpg" or ".jpeg" when signed:
+                throw new JgsRuntimeException(line, col, "MATLAB:imagesci:imwrite:signedJPEGNotSupported",
+                    "Signed integer data not supported in JPEG format.");
+            case ".bmp":
+                throw new JgsRuntimeException(line, col, "MATLAB:invalidType",
+                    $"Expected X to be one of these types:\n\nlogical, uint8, single, double\n\nInstead its type was {className}.");
+            case ".gif":
+                throw new JgsRuntimeException(line, col, "MATLAB:invalidType",
+                    "The value of 'mat' is invalid. Expected input to be one of these types:\n\nlogical, uint8, double\n\n"
+                    + $"Instead its type was {className}.");
+        }
+    }
+
     private static void RefusePngBitDepth(double depth, int channels, bool hasAlpha, int line, int col)
     {
         if (channels == 1 && !hasAlpha)

@@ -1,0 +1,261 @@
+CHK|add_dd|double[2 2] [0.75 1.25;1.25 1.25]|exact
+CHK|add_d_scalar|double[2 2] [2.25 2.5;2.75 3]|exact
+CHK|add_d_size|images:imadd:invalidInput|exact
+CHK|add_d_size_msg|X and Y must have the same size and class or Y must be a scalar double.|exact
+CHK|add_d_scalar_first|images:imadd:invalidInput|exact
+CHK|add_d_scalar_first_msg|X and Y must have the same size and class or Y must be a scalar double.|exact
+CHK|add_ss|single[2 2] [0.75 1.25;1.25 1.25]|exact
+CHK|add_s_scalar|single[2 2] [0.34999999403953552 0.60000002384185791;0.85000002384185791 1.1000000238418579]|exact
+CHK|add_ds|images:imadd:invalidInput|exact
+CHK|add_ds_msg|X and Y must have the same size and class or Y must be a scalar double.|exact
+CHK|add_uu|uint8[2 2] [30 255;255 255]|exact
+CHK|add_u_scalar|uint8[2 2] [61 251;179 255]|exact
+CHK|add_u_neg|uint8[2 2] [0 180;108 235]|exact
+CHK|add_u_logical|images:imadd:invalidInput|exact
+CHK|add_u_logical_msg|X and Y must have the same size and class or Y must be a scalar double.|exact
+CHK|add_u_single_scalar|images:imadd:invalidInput|exact
+CHK|add_u_single_scalar_msg|X and Y must have the same size and class or Y must be a scalar double.|exact
+CHK|add_ii|int16[2 2] [-32768 -2;0 32767]|exact
+CHK|add_i_scalar|int16[2 2] [-32768 -3006;-2994 27000]|exact
+CHK|add_ll|double[2 2] [2 1;1 2]|exact
+CHK|add_l_scalar|double[2 2] [3.5 2.5;3.5 3.5]|exact
+CHK|add_l_u|images:imlincomb:mismatchedArrayClass|exact
+CHK|add_l_u_msg|Function imlincomb expected its array input arguments (A1, A2, ...) to have the same class.|exact
+CHK|add_out_u16|uint16[2 2] [30 300;256 256]|exact
+CHK|add_out_double|double[2 2] [30 300;256 256]|exact
+CHK|add_d_out_u8|uint8[2 2] [76 126;126 125]|exact
+CHK|add_out_bad|MATLAB:imlincomb:unrecognizedStringChoice|exact
+CHK|add_out_bad_msg|Expected input number 5, OUTPUT_CLASS, to match one of these values: 'uint8', 'uint16', 'uint32', 'int8', 'int16', 'int32', 'single', 'double' The input, 'logical', did not match any of the valid values.|exact
+CHK|add_char|MATLAB:imadd:invalidType|exact
+CHK|add_char_msg|Expected input number 1, X, to be one of these types: double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64, logical|exact
+CHK|add_nan_u8|double[2 2] [NaN NaN;NaN NaN]|exact
+CHK|add_rgb|uint8[2 2 2] nd [110 228 255 255 120 228 200 101]|exact
+CHK|add_empty|double[0 3]|exact
+CHK|sub_dd|double[2 2] [-0.25 -0.25;0.25 0.75]|exact
+CHK|sub_d_scalar|double[2 2] [-1.75 -1.5;-1.25 -1]|exact
+CHK|sub_uu|uint8[2 2] [10 0;0 0]|exact
+CHK|sub_u_scalar|uint8[2 2] [0 190;118 245]|exact
+CHK|sub_ii|int16[2 2] [-20000 -8;14 20000]|exact
+CHK|sub_i_scalar|int16[2 2] [-32768 -5005;-4993 25000]|exact
+CHK|sub_ss|single[2 2] [-0.25 -0.25;0.25 0.75]|exact
+CHK|sub_ll|double[2 2] [0 -1;1 0]|exact
+CHK|sub_l_scalar|double[2 2] [0.5 -0.5;0.5 0.5]|exact
+CHK|sub_u_logical|images:imsubtract:invalidInput|exact
+CHK|sub_u_logical_msg|X and Y must have the same size and class, or Y must be a scalar double.|exact
+CHK|sub_size|images:imsubtract:invalidInput|exact
+CHK|sub_size_msg|X and Y must have the same size and class, or Y must be a scalar double.|exact
+CHK|mul_dd|double[2 2] [0.125 0.375;0.375 0.25]|exact
+CHK|mul_d_scalar|double[2 2] [0.75 1.5;2.25 3]|exact
+CHK|mul_uu|uint8[2 2] [200 255;255 255]|exact
+CHK|mul_u_scalar|uint8[2 2] [5 100;64 128]|exact
+CHK|mul_u_scalar_big|uint8[2 2] [15 255;192 255]|exact
+CHK|mul_ii|int16[2 2] [-32768 15;28 30000]|exact
+CHK|mul_i_scalar|int16[2 2] [15000 3;-4 -15000]|exact
+CHK|mul_ss|single[2 2] [0.125 0.375;0.375 0.25]|exact
+CHK|mul_ll|logical[2 2] [1 0;0 1]|exact
+CHK|mul_l_u|uint8[2 2] [10 0;128 255]|exact
+CHK|mul_u_l|uint8[2 2] [10 200;0 255]|exact
+CHK|mul_l_d|double[2 2] [0.25 0;0.75 1]|exact
+CHK|mul_l_scalar|images:immultiply:mismatchedSize|exact
+CHK|mul_l_scalar_msg|X and Y must be the same size.|exact
+CHK|mul_l_size|images:immultiply:mismatchedSize|exact
+CHK|mul_l_size_msg|X and Y must be the same size.|exact
+CHK|mul_class|images:checkForSameSizeAndClass:mismatchedClass|exact
+CHK|mul_class_msg|X and Y must have the same class.|exact
+CHK|mul_size|images:checkForSameSizeAndClass:mismatchedSize|exact
+CHK|mul_size_msg|X and Y must be the same size.|exact
+CHK|mul_empty|double[0 2]|exact
+CHK|div_dd|double[2 2] [0.5 0.66666666666666663;1.5 4]|exact
+CHK|div_d_scalar|double[2 2] [0.0625 0.125;0.1875 0.25]|exact
+CHK|div_uu|uint8[2 2] [1 2;1 255]|exact
+CHK|div_u_zero|uint8[2 2] [255 255;128 255]|exact
+CHK|div_u_scalar|uint8[2 2] [3 50;32 64]|exact
+CHK|div_ii|int16[2 2] [3 -2;-1 3]|exact
+CHK|div_i_zero|int16[2 2] [-32768 -32768;32767 32767]|exact
+CHK|div_ss|single[2 2] [0.5 0.66666668653488159;1.5 4]|exact
+CHK|div_ll|double[2 2] [1 0;Inf 1]|exact
+CHK|div_l_scalar|double[2 2] [0.25 0;0.25 0.25]|exact
+CHK|div_l_d|MATLAB:imdivide:invalidType|exact
+CHK|div_l_d_msg|Expected input number 1, X, to be one of these types: double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 Instead its type was logical.|exact
+CHK|div_class|images:checkForSameSizeAndClass:mismatchedClass|exact
+CHK|div_class_msg|X and Y must have the same class.|exact
+CHK|abs_dd|double[2 2] [0.25 0.25;0.25 0.75]|exact
+CHK|abs_uu|uint8[2 2] [10 100;0 254]|exact
+CHK|abs_ii|int16[2 2] [20000 8;14 20000]|exact
+CHK|abs_i8|int8[1 2] [127 127]|exact
+CHK|abs_ss|single[2 2] [0.25 0.25;0.25 0.75]|exact
+CHK|abs_ll|logical[2 2] [0 1;1 0]|exact
+CHK|abs_class|images:checkForSameSizeAndClass:mismatchedClass|exact
+CHK|abs_class_msg|X and Y must have the same class.|exact
+CHK|abs_size|images:checkForSameSizeAndClass:mismatchedSize|exact
+CHK|abs_size_msg|X and Y must be the same size.|exact
+CHK|abs_scalar|images:checkForSameSizeAndClass:mismatchedSize|exact
+CHK|abs_scalar_msg|X and Y must be the same size.|exact
+CHK|cmp_d|double[2 2] [0.75 0.5;0.25 0]|exact
+CHK|cmp_d_out|double[1 2] [-1 2]|exact
+CHK|cmp_s|single[2 2] [0.75 0.5;0.25 0]|exact
+CHK|cmp_u8|uint8[2 2] [245 55;127 0]|exact
+CHK|cmp_u16|uint16[1 3] [65535 64535 0]|exact
+CHK|cmp_i16|int16[2 2] [29999 4;-8 -30001]|exact
+CHK|cmp_i8|int8[1 3] [127 -1 -128]|exact
+CHK|cmp_l|logical[2 2] [0 1;0 0]|exact
+CHK|lin_uu|uint8[2 2] [30 255;255 255]|exact
+CHK|lin_u_half|uint8[1 4] [1 2 3 128]|exact
+CHK|lin_u_const|uint8[2 2] [15 110;74 138]|exact
+CHK|lin_u_out|double[2 2] [5 100;64 127.5]|exact
+CHK|lin_u_out_single|single[2 2] [5 100;64 127.5]|exact
+CHK|lin_dd|double[2 2] [0 0.25;1 1.75]|exact
+CHK|lin_d_out_u8|uint8[2 2] [25 50;75 100]|exact
+CHK|lin_ii|int16[2 2] [25000 7;-11 -25000]|exact
+CHK|lin_ll|double[2 2] [2 1;1 2]|exact
+CHK|lin_plus|uint8[2 2] [30 255;255 255]|exact
+CHK|lin_minus|uint8[2 2] [0 100;0 254]|exact
+CHK|lin_class|MATLAB:mixedClasses|exact
+CHK|lin_class_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|lin_size|double[2 2] [1.25 2.5;1.75 3]|exact
+CHK|lin_ss|single[2 2] [0.25 0.4375;0.5 0.5625]|exact
+CHK|lin_s_double|double[2 2] [0.125 0.25;0.375 0.5]|exact
+CHK|lin_three|double[2 2] [0.375 0.75;1.125 1.5]|exact
+CHK|lin_size_c|images:imlincomb:mismatchedArraySize|exact
+CHK|lin_size_c_msg|Function imlincomb expected its array input arguments (A1, A2, ...) to be the same size.|exact
+CHK|lin_class_c|images:imlincomb:mismatchedArrayClass|exact
+CHK|lin_class_c_msg|Function imlincomb expected its array input arguments (A1, A2, ...) to have the same class.|exact
+CHK|lin_class_l|images:imlincomb:mismatchedArrayClass|exact
+CHK|lin_class_l_msg|Function imlincomb expected its array input arguments (A1, A2, ...) to have the same class.|exact
+CHK|lin_d_l|double[2 2] [1.25 0.5;1.75 2]|exact
+CHK|lin_k_single|MATLAB:imlincomb:invalidType|exact
+CHK|lin_k_single_msg|Expected input number 1, K1, to be one of these types: double Instead its type was single.|exact
+CHK|lin_k_vector|MATLAB:imlincomb:expectedScalar|exact
+CHK|lin_k_vector_msg|Expected input number 1, K1, to be a scalar.|exact
+CHK|lin_out_ambiguous|MATLAB:imlincomb:ambiguousStringChoice|exact
+CHK|lin_out_ambiguous_msg|Expected input number 3, OUTPUT_CLASS, to match one of these values: 'uint8', 'uint16', 'uint32', 'int8', 'int16', 'int32', 'single', 'double' The input, 'int', matched more than one valid value.|exact
+CHK|lin_out_prefix|double[2 2] [0.25 0.5;0.75 1]|exact
+CHK|lin_expand_bad|MATLAB:sizeDimensionsMustMatch|exact
+CHK|lin_expand_bad_msg|Arrays have incompatible sizes for this operation.|exact
+CHK|lin_expand_single|single[2 2] [1.25 2.5;1.75 3]|exact
+CHK|lin_u_scalar|uint8[2 2] [13 203;131 255]|exact
+CHK|lin_l_const|double[2 2] [3 2;3 3]|exact
+CHK|lin_s_u8|uint8[2 2] [1 2;2 3]|exact
+CHK|lin_nan_u8|uint8[2 2] [0 0;0 0]|exact
+CHK|lin_mixed_l|MATLAB:mixedClasses|exact
+CHK|lin_mixed_l_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|lin_too_few|MATLAB:narginchk:notEnoughInputs|exact
+CHK|lin_too_few_msg|Not enough input arguments.|exact
+CHK|add_out_doub|double[2 2] [30 300;256 256]|exact
+CHK|add_out_ambiguous|MATLAB:imlincomb:ambiguousStringChoice|exact
+CHK|add_out_ambiguous_msg|Expected input number 5, OUTPUT_CLASS, to match one of these values: 'uint8', 'uint16', 'uint32', 'int8', 'int16', 'int32', 'single', 'double' The input, 'uint', matched more than one valid value.|exact
+CHK|add_out_scalar|MATLAB:imlincomb:unrecognizedStringChoice|exact
+CHK|add_out_scalar_msg|Expected input number 4, OUTPUT_CLASS, to match one of these values: 'uint8', 'uint16', 'uint32', 'int8', 'int16', 'int32', 'single', 'double' The input, 'logical', did not match any of the valid values.|exact
+CHK|add_out_number|uint8[2 2] [35 255;255 255]|exact
+CHK|add_complex_x|MATLAB:imadd:expectedReal|exact
+CHK|add_complex_x_msg|Expected input number 1, X, to be real.|exact
+CHK|add_complex_y|MATLAB:imadd:expectedReal|exact
+CHK|add_complex_y_msg|Expected input number 2, Y, to be real.|exact
+CHK|add_cell|MATLAB:imadd:invalidType|exact
+CHK|add_cell_msg|Expected input number 1, X, to be one of these types: double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64, logical Instead its type was cell.|exact
+CHK|add_one_arg|MATLAB:minrhs|exact
+CHK|add_one_arg_msg|Not enough input arguments.|exact
+CHK|add_four_args|MATLAB:TooManyInputs|exact
+CHK|add_four_args_msg|Too many input arguments.|exact
+CHK|add_int_classes|images:imadd:invalidInput|exact
+CHK|add_int_classes_msg|X and Y must have the same size and class or Y must be a scalar double.|exact
+CHK|sub_l_u|images:imlincomb:mismatchedArrayClass|exact
+CHK|sub_l_u_msg|Function imlincomb expected its array input arguments (A1, A2, ...) to have the same class.|exact
+CHK|sub_char|MATLAB:imsubtract:invalidType|exact
+CHK|sub_char_msg|Expected input number 1, X, to be one of these types: double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64, logical|exact
+CHK|sub_i8|int8[1 2] [-128 127]|exact
+CHK|mul_char|MATLAB:immultiply:invalidType|exact
+CHK|mul_char_msg|Expected input number 1, Y, to be one of these types: double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64, logical|exact
+CHK|mul_complex|MATLAB:immultiply:expectedReal|exact
+CHK|mul_complex_msg|Expected input number 1, X, to be real.|exact
+CHK|mul_l_single|single[2 2] [0.25 0;0.75 1]|exact
+CHK|div_char|double[1 2] [97 98]|exact
+CHK|div_char_y|MATLAB:imdivide:invalidType|exact
+CHK|div_char_y_msg|Expected input number 2, Y, to be one of these types: double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64|exact
+CHK|div_single_scalar|images:checkForSameSizeAndClass:mismatchedClass|exact
+CHK|div_single_scalar_msg|X and Y must have the same class.|exact
+CHK|div_l_u|MATLAB:imdivide:invalidType|exact
+CHK|div_l_u_msg|Expected input number 1, X, to be one of these types: double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 Instead its type was logical.|exact
+CHK|div_u_by_zero|uint8[2 2] [255 255;255 255]|exact
+CHK|div_i_neg_zero|int16[1 1] -32768|exact
+CHK|div_i_zero_zero|int16[1 1] 0|exact
+CHK|abs_char|MATLAB:imabsdiff:invalidType|exact
+CHK|abs_char_msg|Expected input number 1, X, to be one of these types: double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64, logical|exact
+CHK|abs_one_arg|MATLAB:narginchk:notEnoughInputs|exact
+CHK|abs_one_arg_msg|Not enough input arguments.|exact
+CHK|abs_i32|int32[1 2] [10 2147483647]|exact
+CHK|abs_empty|uint8[0 0]|exact
+CHK|cmp_char|MATLAB:imcomplement:invalidType|exact
+CHK|cmp_char_msg|Expected input to be one of these types: logical, double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64|exact
+CHK|cmp_cell|MATLAB:imcomplement:invalidType|exact
+CHK|cmp_cell_msg|Expected input to be one of these types: logical, double, single, uint8, uint16, uint32, uint64, int8, int16, int32, int64 Instead its type was cell.|exact
+CHK|cmp_complex_single|images:imcomplement:complexInput|exact
+CHK|cmp_complex_single_msg|Input array must be real.|exact
+CHK|cmp_u32|uint32[1 2] [4294967295 4294967290]|exact
+CHK|cmp_empty|double[0 0]|exact
+CHK|i16_depth16|MATLAB:invalidType|exact
+CHK|i16_depth16_msg|Expected input to be one of these types: double, single, logical, uint8, uint16 Instead its type was int16.|exact
+CHK|i16_depth8|MATLAB:invalidType|exact
+CHK|i16_depth8_msg|Expected input to be one of these types: double, single, logical, uint8, uint16 Instead its type was int16.|exact
+CHK|i16_depth4|MATLAB:invalidType|exact
+CHK|i16_depth4_msg|Expected input to be one of these types: double, single, logical, uint8, uint16 Instead its type was int16.|exact
+CHK|i16_depth2|MATLAB:invalidType|exact
+CHK|i16_depth2_msg|Expected input to be one of these types: double, single, logical, uint8, uint16 Instead its type was int16.|exact
+CHK|i16_depth1|MATLAB:invalidType|exact
+CHK|i16_depth1_msg|Expected input to be one of these types: double, single, logical, uint8, uint16 Instead its type was int16.|exact
+CHK|i16_default|MATLAB:invalidType|exact
+CHK|i16_default_msg|Expected input to be one of these types: double, single, logical, uint8, uint16 Instead its type was int16.|exact
+CHK|i16_tif|MATLAB:imagesci:writetif:unsupportedDataType|exact
+CHK|i16_tif_msg|Writing int16 image data to a TIFF file is not supported with IMWRITE. Use Tiff instead. Type "help Tiff" for more information.|exact
+CHK|i16_jpg|MATLAB:imagesci:imwrite:signedJPEGNotSupported|exact
+CHK|i16_jpg_msg|Signed integer data not supported in JPEG format.|exact
+CHK|i16_bmp|MATLAB:invalidType|exact
+CHK|i16_bmp_msg|Expected X to be one of these types: logical, uint8, single, double Instead its type was int16.|exact
+CHK|i8_png|MATLAB:invalidType|exact
+CHK|i8_png_msg|Expected input to be one of these types: double, single, logical, uint8, uint16 Instead its type was int8.|exact
+CHK|u32_png|MATLAB:invalidType|exact
+CHK|u32_png_msg|Expected input to be one of these types: double, single, logical, uint8, uint16 Instead its type was uint32.|exact
+CHK|i8_tif|MATLAB:imagesci:writetif:unsupportedDataType|exact
+CHK|i8_tif_msg|Writing int8 image data to a TIFF file is not supported with IMWRITE. Use Tiff instead. Type "help Tiff" for more information.|exact
+CHK|i32_jpg|MATLAB:imagesci:imwrite:signedJPEGNotSupported|exact
+CHK|i32_jpg_msg|Signed integer data not supported in JPEG format.|exact
+CHK|u32_bmp|MATLAB:invalidType|exact
+CHK|u32_bmp_msg|Expected X to be one of these types: logical, uint8, single, double Instead its type was uint32.|exact
+CHK|i16_gif|MATLAB:invalidType|exact
+CHK|i16_gif_msg|The value of 'mat' is invalid. Expected input to be one of these types: logical, uint8, double Instead its type was int16.|exact
+CHK|u16_mul_read|uint16[1 3] [200 600 65535]|exact
+CHK|i16_mul_im2|int16[2 2] [-32768 0;32766 32767]|exact
+CHK|i16_mul_im2_arr|int16[2 2] [-16384 0;32766 -32768]|exact
+CHK|i16_add_im2|int16[2 2] [-16484 -100;16283 32667]|exact
+CHK|tile_u8|uint8[2 4] [10 200 20 100;128 255 128 1]|exact
+CHK|tile_u8_class|char[1 5]'uint8'|exact
+CHK|tile_d3|double[4 4] [0.25 0.5 0.5 0.75;0.75 1 0.5 0.25;0.25 0.5 0 0;0.75 1 0 0]|exact
+CHK|tile_d4|double[4 4] [0.25 0.5 0.5 0.75;0.75 1 0.5 0.25;0.25 0.5 0.5 0.75;0.75 1 0.5 0.25]|exact
+CHK|tile_grid|double[2 6] [0.25 0.5 0.5 0.75 0.25 0.5;0.75 1 0.5 0.25 0.75 1]|exact
+CHK|tile_grid_nan|double[4 4] [0.25 0.5 0.5 0.75;0.75 1 0.5 0.25;0.25 0.5 0 0;0.75 1 0 0]|exact
+CHK|tile_border|uint8[4 8] [0 0 0 0 0 0 0 0;0 10 200 0 0 20 100 0;0 128 255 0 0 128 1 0;0 0 0 0 0 0 0 0]|exact
+CHK|tile_mixed|double[2 4] [0.039215686274509803 0.78431372549019607 0.25 0.5;0.50196078431372548 1 0.75 1]|exact
+CHK|tile_logical|double[2 4] [1 0 1 1;1 1 0 1]|exact
+CHK|tile_rgb|double[1 3] [2 4 3]|exact
+CHK|tile_rgb_vals|uint8[2 4 3] nd [10 128 200 255 20 128 100 1 20 128 100 1 20 128 100 1 10 128 200 255 20 128 100 1]|exact
+CHK|tile_array3|double[2 4] [0.25 0.5 0.5 0.75;0.75 1 0.5 0.25]|exact
+CHK|tile_i16|int16[2 4] [-30000 -5 -10000 3;7 30000 -7 10000]|exact
+CHK|tile_single|char[1 6]'single'|exact
+CHK|tile_bg|uint8[2 6 3] nd [10 128 200 255 20 128 100 1 255 255 255 255 10 128 200 255 20 128 100 1 0 0 0 0 10 128 200 255 20 128 100 1 0 0 0 0]|exact
+CHK|tile_one|uint8[2 2] [10 200;128 255]|exact
+CHK|tile_one_logical|uint8[2 2] [255 0;255 255]|exact
+CHK|tile_logical_stack|logical[2 4] [1 0 1 1;1 1 0 1]|exact
+CHK|tile_u16_u8|double[2 4] [1.5259021896696422e-05 3.0518043793392844e-05 0.039215686274509803 0.78431372549019607;4.5777065690089265e-05 6.1036087586785687e-05 0.50196078431372548 1]|exact
+CHK|tile_border_2|double[4 12] [0 0 0 0 0 0 0 0 0 0 0 0;0 0 0.25 0.5 0 0 0 0 0.25 0.5 0 0;0 0 0.75 1 0 0 0 0 0.75 1 0 0;0 0 0 0 0 0 0 0 0 0 0 0]|exact
+CHK|tile_resize|double[2 4] [0.25 0.5 2.1250000000000009 3.6435185185185204;0.75 1 4.2407407407407414 5.7592592592592622]|exact
+CHK|tile_empty|MATLAB:badsubscript|exact
+CHK|tile_empty_msg|Index exceeds array bounds.|exact
+CHK|tile_grid_one|uint8[4 4] [10 200 0 0;128 255 0 0;0 0 0 0;0 0 0 0]|exact
+CHK|tile_scalar|double[1 1] 5|exact
+CHK|tile_grid_nan_cols|double[4 6] [0.25 0.5 0.25 0.5 0.25 0.5;0.75 1 0.75 1 0.75 1;0.25 0.5 0.25 0.5 0 0;0.75 1 0.75 1 0 0]|exact
+CHK|tile_grid_short|double[2 4] [0.25 0.5 0.25 0.5;0.75 1 0.75 1]|exact
+CHK|tile_stack3|double[4 4] [0.25 0.5 0.25 0.5;0.75 1 0.75 1;0.25 0.5 0 0;0.75 1 0 0]|exact
+CHK|tile_stack4_rgb|double[2 4 3] nd [0.25 0.75 0.5 1 0.25 0.75 0.5 1 0.25 0.75 0.5 1 0.25 0.75 0.5 1 0.25 0.75 0.5 1 0.25 0.75 0.5 1]|exact
+CHK|tile_bg_border|uint8[4 8 3] nd [0 0 0 0 0 10 128 0 0 200 255 0 0 0 0 0 0 0 0 0 0 10 128 0 0 200 255 0 0 0 0 0 255 255 255 255 255 10 128 255 255 200 255 255 255 255 255 255 255 255 255 255 255 10 128 255 255 200 255 255 255 255 255 255 0 0 0 0 0 10 128 0 0 200 255 0 0 0 0 0 0 0 0 0 0 10 128 0 0 200 255 0 0 0 0 0]|exact
+CHK|tile_bg_name|uint8[2 4 3] nd [64 191 128 255 64 191 128 255 64 191 128 255 64 191 128 255 64 191 128 255 64 191 128 255]|exact
+CHK|lg16_head|uint16[1 4] [256 1 1 256]|div=ADR0367|diverges|uint16[1 4] [0 1 1 0]

@@ -48,12 +48,31 @@ public static class Geometry
         bool? antialiasing = null)
     {
         ArgumentNullException.ThrowIfNull(image);
+        return ResizeByScale(
+            image, newHeight, newWidth, newHeight / (double)image.Height, newWidth / (double)image.Width,
+            method, antialiasing);
+    }
+
+    /// <summary>
+    /// Resizes with the scale of each direction given rather than read from the sizes. MATLAB's
+    /// <c>imresize(A, [rows NaN])</c> applies one scale, <c>rows / size(A, 1)</c>, to both directions
+    /// and rounds the other size up, so a direction can change scale without changing length
+    /// (open item 322, ADR 0367: <c>imtile</c>'s thumbnails).
+    /// </summary>
+    public static ImageBuffer ResizeByScale(
+        ImageBuffer image,
+        int newHeight,
+        int newWidth,
+        double rowScale,
+        double colScale,
+        Interpolation method = Interpolation.Bicubic,
+        bool? antialiasing = null)
+    {
+        ArgumentNullException.ThrowIfNull(image);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(newHeight);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(newWidth);
 
         bool antialias = antialiasing ?? method != Interpolation.Nearest;
-        double rowScale = newHeight / (double)image.Height;
-        double colScale = newWidth / (double)image.Width;
 
         (double[][] rowWeights, int[][] rowIndices) =
             Contributions(image.Height, newHeight, rowScale, method, antialias);
