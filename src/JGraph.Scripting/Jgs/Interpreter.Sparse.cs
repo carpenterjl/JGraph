@@ -14,15 +14,15 @@ internal sealed partial class Interpreter
         Expr target, JgsValue held, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at,
         JgsEnvironment env)
     {
-        var matrix = held.AsSparse;
+        (int rows, int cols) = held.SparseExtent; // real or complex (open item 331)
         if (subscripts.Count > 2)
         {
             throw new JgsRuntimeException(at.Line, at.Column, "N-dimensional indexing allowed for full matrices only.");
         }
 
         int[] extents = subscripts.Count == 1
-            ? [checked(matrix.Rows * matrix.Cols)]
-            : [matrix.Rows, matrix.Cols];
+            ? [checked(rows * cols)]
+            : [rows, cols];
         var indices = new JgsValue?[subscripts.Count];
         for (int i = 0; i < indices.Length; i++)
         {
@@ -42,8 +42,9 @@ internal sealed partial class Interpreter
                 JgsBuiltins.SparseSubscript(held, read, Dialect, at.Line, at.Column), rhs, at);
         }
 
-        var rebuilt = JgsBuiltins.SparseAssigned(matrix, indices, rhs, Dialect, at.Line, at.Column);
-        StoreBack(target, JgsValue.Sparse(rebuilt), at, env);
+        // A complex matrix, or a complex value written into a real one, is written part by part; a
+        // logical or single matrix keeps its class (open item 331, ADR 0369).
+        StoreBack(target, JgsBuiltins.SparseAssignedAnyKind(held, indices, rhs, Dialect, at.Line, at.Column), at, env);
         return rhs;
     }
 }

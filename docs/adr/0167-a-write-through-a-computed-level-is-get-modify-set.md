@@ -272,11 +272,6 @@ which retires the line and this entry — fails the fixture.
 - **`isvalid` of a plain number answers false** (`h_isvalid_number`, `handle_lifetime`). R2025b refuses
   "Undefined function 'isvalid' for input arguments of type 'double'."; a graphics handle here is a
   number, so a number that names nothing is a dead handle and `isvalid` says so.
-- **A sparse matrix holds real values** (`s_rhs_complex`, `sparse_indexed_assign`; #26, #165).
-  `S(2) = 2i` is refused — "A sparse matrix here holds real values; a complex value cannot be
-  assigned into one." — where R2025b makes the matrix complex; and a sparse comparison mask
-  (`sparse([1 0 2]) > 1`) answers class `double`, not `logical`, because `CscMatrix` has one value
-  class. It indexes and counts as a mask.
 - **The default `LineWidth` is 1.5** (`a141_line_width_default`, `a141_handle_array_element_prop_write`,
   `value_isolation_graphics`; #141). R2025b's is 0.5 points. 1.5 is the model's, the renderer's and
   the figure file's default by design, and moving it would move every golden image and every saved
@@ -289,3 +284,8 @@ which retires the line and this entry — fails the fixture.
   `r_matfile_cell_brace_read`, `save_load_roundtrip`). `m.st.a` and `m.c{2}` answer the field and the
   content here — the variable is read whole and indexed — where R2025b refuses "Cannot index into
   'st' because MatFile objects only support '()' indexing.": an accepted superset.
+
+Closed since: **a sparse matrix held real values** (`s_rhs_complex`, `sparse_indexed_assign`; #26,
+#165): `S(2) = 2i` was refused, and a sparse comparison mask answered class `double`. Open item 331
+(ADR 0369) writes a complex value into a sparse matrix part by part, as R2025b makes it complex, and
+a comparison answers a logical sparse mask; `s_rhs_complex` agrees.

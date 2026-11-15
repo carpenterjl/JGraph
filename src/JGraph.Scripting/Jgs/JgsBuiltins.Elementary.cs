@@ -744,7 +744,7 @@ internal static partial class JgsBuiltins
         JgsType.Function => "function_handle",
         JgsType.Table => value.AsTable.RowTimes is null ? "table" : "timetable", // a timetable is its own class (V6)
         JgsType.Image => dialect.IsMatlab ? value.AsImage.Class.MatlabName() : "image",
-        JgsType.Sparse => "double", // MATLAB: sparsity is an attribute, not a class
+        JgsType.Sparse => value.NumericClass.MatlabName(), // sparsity is an attribute; double or single (open item 331)
         // An instance of a user class answers with its own class name (M68). It reads the same
         // property a tagged struct does, which is why this line is the whole of the change.
         JgsType.Object => value.ClassName ?? "object",
@@ -763,6 +763,7 @@ internal static partial class JgsBuiltins
         // because the milliseconds underneath are storage rather than the value's meaning.
         && !value.IsTime
         && !value.IsCategorical
+        && !value.IsLogicalSparse // a logical sparse matrix is logical (open item 331)
         && value.Type is JgsType.Number or JgsType.Complex or JgsType.Bool or JgsType.Array or JgsType.Sparse;
 
     /// <summary>
@@ -786,6 +787,11 @@ internal static partial class JgsBuiltins
         if (value.Type == JgsType.Image)
         {
             return value.AsImage.Class == JGraph.Imaging.ImageClass.Logical;
+        }
+
+        if (value.Type == JgsType.Sparse)
+        {
+            return value.IsLogicalSparse; // open item 331, ADR 0369
         }
 
         // An empty logical is one too: strcmp({}, {}) is a 0-by-0 logical (measured), which only the

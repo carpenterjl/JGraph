@@ -172,8 +172,8 @@ struct(), struct('a', struct('b', 1)), {int8(1)}, sparse(logical([1 0; 0 1])), '
 zeros(2, 3, 4), {1, 2}, cell(2, 2), struct('a', {}), {struct('a', 1)}, true, single(1), int64([1 2 3]), 1:0, ...
 struct('a', {1, 2, 3}), {[1 2 3]}, sparse(3, 3), {''}};
 for k = 1:numel(vals)
-oi_chk(sprintf('wh_file_%02d', k), @() whfb(vals{k}), {'wh_file_12'});
-oi_chk(sprintf('wh_mem_%02d', k), @() whm(vals{k}), {'wh_mem_12'});
+oi_chk(sprintf('wh_file_%02d', k), @() whfb(vals{k}), {});
+oi_chk(sprintf('wh_mem_%02d', k), @() whm(vals{k}), {});
 end
 u9b_chk('wh_disp_order', @() whdisp());
 u9b_chk('wh_disp_wide', @() whdispwide());

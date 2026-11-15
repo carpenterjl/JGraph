@@ -1112,9 +1112,15 @@ internal static partial class JgsBuiltins
         // billion places should cost a thousand.
         if (args.Count > 0 && args[0].Type == JgsType.Sparse)
         {
-            return args[0].IsComplexSparse
+            JgsValue[] found = args[0].IsComplexSparse
                 ? ComplexSparseFind(args[0].AsComplexSparse, outputs, dialect)
                 : SparseFind(args[0].AsSparse, outputs, dialect, line, col);
+            if (found.Length == 3)
+            {
+                found[2] = SparseInClassOf(found[2], args[0]); // a logical matrix's values are logical (open item 331)
+            }
+
+            return found;
         }
 
         (int origin, int? wanted, bool fromEnd) = FindLimit("find", args, dialect, line, col);

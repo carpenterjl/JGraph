@@ -181,16 +181,21 @@ internal static partial class JgsBuiltins
             case JgsType.Sparse when value.IsComplexSparse:
             {
                 // Two values and a row index per stored entry (open item 298, ADR 0364).
+                // A single one's values are four bytes each (open item 331, ADR 0369; s_whos_c).
                 JgsComplexSparse complexMatrix = value.AsComplexSparse;
                 long stored = Math.Max(complexMatrix.NonZeroCount, 1);
-                return (stored * 24) + ((complexMatrix.Cols + 1L) * 8);
+                long width = value.NumericClass == JgsNumericClass.Single ? 8 : 16;
+                return (stored * (width + 8)) + ((complexMatrix.Cols + 1L) * 8);
             }
 
             case JgsType.Sparse:
             {
+                // A row index and a value per stored entry: eight bytes for a double, four for a
+                // single and one for a logical (open item 331, ADR 0369; measured).
                 var matrix = value.AsSparse;
                 long nzmax = Math.Max(matrix.NonZeroCount, 1);
-                return (nzmax * 16) + ((matrix.Cols + 1L) * 8);
+                long width = value.IsLogicalSparse ? 1 : value.NumericClass == JgsNumericClass.Single ? 4 : 8;
+                return (nzmax * (width + 8)) + ((matrix.Cols + 1L) * 8);
             }
 
             case JgsType.Cell:

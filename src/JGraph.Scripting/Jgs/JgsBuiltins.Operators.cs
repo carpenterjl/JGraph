@@ -70,7 +70,17 @@ internal static partial class JgsBuiltins
         });
 
         // xor has no operator to defer to; it is the one member of the family defined here.
-        Define("xor", (args, line, col) => Logical2("xor", args, line, col, static (a, b) => a ^ b));
+        Define("xor", (args, line, col) =>
+        {
+            // Of sparse matrices, a logical sparse matrix (open item 331, R2025b's l_xor).
+            if (args.Count == 2 && (args[0].Type == JgsType.Sparse || args[1].Type == JgsType.Sparse))
+            {
+                JgsValue full = Logical2("xor", [.. args.Select(static a => a.Type == JgsType.Sparse ? SparseDense(a) : a)], line, col, static (a, b) => a ^ b);
+                return DenseAsSparse(full, "xor", line, col);
+            }
+
+            return Logical2("xor", args, line, col, static (a, b) => a ^ b);
+        });
 
         Define("colon", (args, line, col) =>
         {

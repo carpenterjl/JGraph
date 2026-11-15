@@ -704,13 +704,9 @@ internal static partial class JgsBuiltins
                 return args[0]; // dense stays dense
             }
 
-            if (args[0].IsComplexSparse)
-            {
-                return SparseDense(args[0]); // complex, flag and all (open item 298, ADR 0364)
-            }
-
-            JGraph.Numerics.Sparse.CscMatrix sparse = args[0].AsSparse;
-            return JgsMatrix.FromColumnMajorDims(sparse.ToColumnMajor(), [sparse.Rows, sparse.Cols]);
+            // Complex, flag and all (open item 298, ADR 0364); a logical or single matrix in its class
+            // (open item 331, ADR 0369).
+            return SparseDense(args[0]);
         });
 
         Define("nnz", (args, line, col) =>

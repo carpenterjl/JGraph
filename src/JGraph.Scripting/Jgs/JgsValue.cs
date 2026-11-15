@@ -311,6 +311,16 @@ internal sealed class JgsValue
     /// <summary>Wraps a complex sparse matrix (open item 298, ADR 0364).</summary>
     internal static JgsValue ComplexSparse(JgsComplexSparse matrix) => new(JgsType.Sparse, 0, matrix);
 
+    /// <summary>
+    /// Wraps a logical sparse matrix (open item 331, ADR 0369): the stored entries are ones, and the
+    /// kind rides <see cref="PackedKind"/>, which a sparse value has no other use for.
+    /// </summary>
+    internal static JgsValue LogicalSparse(JGraph.Numerics.Sparse.CscMatrix matrix) =>
+        new(JgsType.Sparse, 0, matrix, JgsPackedKind.Bool);
+
+    /// <summary>Whether this is a logical sparse matrix (open item 331, ADR 0369).</summary>
+    internal bool IsLogicalSparse => Type == JgsType.Sparse && _packedKind == JgsPackedKind.Bool;
+
     /// <summary>Whether this is a complex sparse matrix.</summary>
     internal bool IsComplexSparse => _reference is JgsComplexSparse;
 
@@ -1407,11 +1417,29 @@ internal sealed class JgsValue
         // An OnOffSwitchState is the logical it is (open item 129). A .NET object is no condition:
         // `if obj` refuses as R2025b's conversion to logical does, rather than reading true as a
         // value of unknown kind would (ADR 0174).
+        // A sparse matrix is true when it is not empty and every entry is non-zero, as an array is
+        // (open item 331, ADR 0369): `if S(1, 1)` reads the 1-by-1 sparse matrix a subscript answers.
+        JgsType.Sparse => SparseAllNonZero(),
         JgsType.External when _reference is OnOffSwitchStateValue states => states.AllOn,
         JgsType.External => throw new JgsRuntimeException(0, 0, "MATLAB:invalidConversion",
             $"Conversion to logical from {AsExternal.ClassName} is not possible."),
         _ => true,
     };
+
+    /// <summary>Whether a sparse matrix, real or complex, is non-empty with every entry stored non-zero.</summary>
+    private bool SparseAllNonZero()
+    {
+        (int rows, int cols) = SparseExtent;
+        long total = (long)rows * cols;
+        if (total == 0)
+        {
+            return false;
+        }
+
+        return _reference is JgsComplexSparse complex
+            ? complex.NonZeroCount == total
+            : AsSparse.NonZeroCount == total && System.Array.TrueForAll(AsSparse.Values, static v => v != 0);
+    }
 
     /// <summary>An element is falsy only when both planes are exactly zero (it reads as Number 0).</summary>
     private static bool AllComplexNonZero(JgsPackedComplex complex)
@@ -1535,7 +1563,7 @@ internal sealed class JgsValue
         JgsType.Struct when _time is not null => FormatTime(this),
         JgsType.Struct => FormatStructValue(this),
         JgsType.Sparse when _reference is JgsComplexSparse complexSparse => FormatComplexSparse(complexSparse),
-        JgsType.Sparse => FormatSparse(AsSparse),
+        JgsType.Sparse => FormatSparse(AsSparse, IsLogicalSparse ? "logical" : _numericClass == JgsNumericClass.Single ? "single" : "double"),
         JgsType.Object when _reference is JgsObjectArray objects => FormatObjectArray(objects, Dims),
         JgsType.Object => FormatObject(AsObject),
         JgsType.External => AsExternal.Display(),
@@ -1816,11 +1844,11 @@ internal sealed class JgsValue
     private static string Truncate(string text) => text.ReplaceLineEndings(" ");
 
     /// <summary>Formats a sparse matrix the way MATLAB does: one <c>(r,c)  v</c> line per nonzero.</summary>
-    private static string FormatSparse(JGraph.Numerics.Sparse.CscMatrix matrix)
+    private static string FormatSparse(JGraph.Numerics.Sparse.CscMatrix matrix, string className)
     {
         var sb = new StringBuilder();
         sb.Append(matrix.Rows).Append('x').Append(matrix.Cols)
-          .Append(" sparse double, ").Append(matrix.NonZeroCount).Append(" nonzeros");
+          .Append(" sparse ").Append(className).Append(", ").Append(matrix.NonZeroCount).Append(" nonzeros");
         int shown = 0;
         for (int c = 0; c < matrix.Cols && shown < DisplayMaxElements; c++)
         {

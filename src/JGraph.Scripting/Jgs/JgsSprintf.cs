@@ -75,9 +75,13 @@ internal static class JgsSprintf
 
         void AddEmpty() => Add(JgsValue.Str(string.Empty), EmptyGroup);
 
-        foreach (JgsValue arg in args)
+        foreach (JgsValue given in args)
         {
             group++;
+
+            // A sparse matrix prints as the values it stands for, where R2025b refuses one
+            // (MATLAB:printf:invalidInputAttribute): an accepted superset (open item 331, ADR 0369).
+            JgsValue arg = given.Type == JgsType.Sparse ? JgsBuiltins.SparseDense(given) : given;
 
             // A char matrix feeds one piece of text, not one value per code point (M105) — and the
             // text is its storage order, so fprintf('%s', ['a  '; 'bcd']) prints 'ab c d' exactly as

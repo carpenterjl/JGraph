@@ -2917,6 +2917,7 @@ internal static partial class JgsBuiltins
         WrapShapeVerbsOverObjects(env); // after every verb is in, so an array of objects reaches each (open item 116)
         RegisterCategoricalBuiltins(env, text => host.print(text)); // over the verbs it teaches (open item 115)
         WrapSparseVerbs(env); // real, imag, abs, conj, nonzeros and nzmax of a sparse matrix (open item 298)
+        WrapSparseFunctions(env); // the elementwise family and the class conversions over a sparse argument (open item 331)
         RefuseGroupsAtAxesVerbs(env); // last, round whatever each axes verb ended up as (open item 168)
         RefuseDeadTargetsAtAxesVerbs(env); // and a deleted object first (open item 313)
 
@@ -6733,6 +6734,13 @@ internal static partial class JgsBuiltins
             return sole;
         }
 
+        // A 1-by-1 sparse matrix, what a subscript of one entry answers in MATLAB: zeros(S(2, 2), 1)
+        // (open item 331, ADR 0369).
+        if (TrySparseScalar(value, out double held))
+        {
+            return held;
+        }
+
         throw (index == 0 ? Net.NetBuiltinConversions.NotNumeric(name, value, line, col) : null)
             ?? new JgsRuntimeException(line, col, $"{name} expects argument {index + 1} to be a number, but got a {value.TypeName}.");
     }
@@ -7210,6 +7218,13 @@ internal static partial class JgsBuiltins
         if (array.Type is JgsType.Number or JgsType.Bool)
         {
             return [array.AsNumber]; // a scalar is a 1-by-1 array — see ScalarAsArray
+        }
+
+        // A real sparse matrix reads as the values it stands for, in column-major order (open item
+        // 331, ADR 0369): cell(1, S(1, 1)) and the other readers of a list of numbers.
+        if (array.Type == JgsType.Sparse && !array.IsComplexSparse)
+        {
+            return array.AsSparse.ToColumnMajor();
         }
 
         if (array.Type != JgsType.Array)

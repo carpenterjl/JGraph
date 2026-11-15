@@ -294,7 +294,7 @@ internal static class MatFileWriter
                 WriteComplexSparse(w, name, value.AsComplexSparse); // open item 298, ADR 0364
                 break;
             case JgsType.Sparse:
-                WriteSparse(w, name, value.AsSparse);
+                WriteSparse(w, name, value.AsSparse, value.IsLogicalSparse, value.NumericClass == JgsNumericClass.Single);
                 break;
             case JgsType.Cell:
                 WriteCell(session, w, name, value);
@@ -482,19 +482,23 @@ internal static class MatFileWriter
         WriteDataElement(w, Array.Exists(rows, static row => row.AsSpan().ContainsAnyExceptInRange('\0', '\x7F')) ? MiUtf16 : MiUInt16, bytes);
     }
 
-    private static void WriteSparse(BinaryWriter w, string name, JGraph.Numerics.Sparse.CscMatrix matrix)
+    private static void WriteSparse(BinaryWriter w, string name, JGraph.Numerics.Sparse.CscMatrix matrix,
+        bool logical = false, bool single = false)
     {
-        // The array-flags word carries nzmax for a sparse array, where it is unused otherwise.
+        // The array-flags word carries nzmax for a sparse array, where it is unused otherwise. A
+        // logical matrix is the sparse class with the logical bit and its values one byte each; a
+        // single one is the single class with the sparse-data bit and its values four bytes each, as
+        // R2025b writes them (-v6, open item 331, ADR 0369).
         w.Write(MiUInt32);
         w.Write(8);
-        w.Write(MxSparse);
+        w.Write(logical ? MxSparse | FlagLogical | FlagSparseData : single ? MxSingle | FlagSparseData : MxSparse);
         w.Write(Math.Max(matrix.NonZeroCount, 1));
 
         WriteDimensions(w, [matrix.Rows, matrix.Cols]);
         WriteName(w, name);
         WriteInt32Data(w, matrix.RowIndices, matrix.NonZeroCount);
         WriteInt32Data(w, matrix.ColumnStarts, matrix.Cols + 1);
-        WriteTypedData(w, matrix.Values.AsSpan(0, matrix.NonZeroCount).ToArray(), MiDouble);
+        WriteTypedData(w, matrix.Values.AsSpan(0, matrix.NonZeroCount).ToArray(), logical ? MiUInt8 : single ? MiSingle : MiDouble);
     }
 
     /// <summary>A complex sparse array: the real sparse layout with the complex flag and an imaginary part.</summary>

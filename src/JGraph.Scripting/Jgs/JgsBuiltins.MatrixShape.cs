@@ -1629,17 +1629,34 @@ internal static partial class JgsBuiltins
             if (name == "median") return MedianReduction(args, line, col);
             var normalized = args.ToArray();
             bool sparse = args.Count > 0 && args[0].Type == JgsType.Sparse;
-            if (sparse && name == "sum")
+            if (sparse && name == "sum" && !args[0].IsComplexSparse)
             {
                 var parsed = Split(args, line, col);
                 if (parsed.Extra.Length == 0)
-                    return SparseSum(args[0].AsSparse, parsed.Dim, parsed.Vecdim, parsed.All, parsed.OmitNan, line, col);
+                {
+                    JgsValue summed = SparseSum(args[0].AsSparse, parsed.Dim, parsed.Vecdim, parsed.All, parsed.OmitNan, line, col);
+                    return IsSingleSparse(args[0]) ? SparseInClassOf(summed, args[0]) : summed; // a single sum is single (open item 331)
+                }
             }
-            if (sparse) normalized[0] = SparseAsDense(args[0].AsSparse);
+
+            // Complex, logical and single matrices read full in their class (open item 331, ADR 0369).
+            if (sparse) normalized[0] = SparseDense(args[0]);
+
+            // any and all ask only which entries are stored, which a complex matrix answers as its
+            // pattern (R2025b's r_cany, r_call).
+            if (sparse && args[0].IsComplexSparse && name is "any" or "all")
+                normalized[0] = SparseDense(JgsValue.Sparse(args[0].AsComplexSparse.MapReal(static _ => 1)));
             JgsValue result = SingleCore(normalized, line, col);
             if (spec.Words.HasFlag(TailWords.Outtype) && args.Skip(1).Any(v => IsTextScalar(v) && TextOf(v).Equals("native", StringComparison.OrdinalIgnoreCase)))
                 result = IsLogicalValue(args[0]) ? AsMask(result) : ToNumericClass(name, args[0].NumericClass, result, line, col);
-            if (sparse && name is "sum" or "prod" or "mean") result = JgsValue.Sparse(CscFromDense(name, result, line, col));
+
+            // R2025b answers these sparse for a sparse argument (probes p6b_a, p6b_b: r_csum, r_cany,
+            // r_ccumsum, o_any_m, o_cumsum); the complex answers since open item 331, any, all, cumsum
+            // and cumprod of a real matrix too.
+            if (sparse && name is "sum" or "prod" or "mean")
+                result = DenseAsSparse(result, name, line, col);
+            else if (sparse && name is "any" or "all" or "cumsum" or "cumprod")
+                result = DenseAsSparse(result, name, line, col);
             return result;
         }
 

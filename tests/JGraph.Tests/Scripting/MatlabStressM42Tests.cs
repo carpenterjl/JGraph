@@ -104,12 +104,17 @@ public class MatlabStressM42Tests : IDisposable
     }
 
     [Fact]
-    public void SparseUnsupportedOperatorPointsAtFull()
+    public void SparseElementwiseQuotientIsSparseLikeMatlabs()
     {
-        ScriptRunResult result = RunMatlab("S = sparse(eye(3));\nT = S ./ S;");
+        // Refused here until open item 331 (ADR 0369): R2025b's S ./ S is sparse, with 0/0 = NaN
+        // stored off the diagonal (probe p6b_b's o_rdivide_ss).
+        string output = RunAndRead("""
+            S = sparse(eye(2));
+            T = S ./ S;
+            fprintf('%d %d %d\n', issparse(T), nnz(T), isnan(full(T(1, 2))));
+            """);
 
-        Assert.False(result.Success);
-        Assert.Contains("full", result.Message!, StringComparison.Ordinal);
+        Assert.Contains("1 4 1", output, StringComparison.Ordinal);
     }
 
     // --- eigs -----------------------------------------------------------------------------------

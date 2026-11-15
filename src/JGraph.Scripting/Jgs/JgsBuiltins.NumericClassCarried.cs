@@ -332,6 +332,14 @@ internal static partial class JgsBuiltins
     /// </remarks>
     private static JgsValue Finish(JgsValue answer, JgsNumericClass numericClass, bool mask)
     {
+        // A sparse answer takes its class through the sparse wrapper (open item 331, ADR 0369).
+        if (answer.Type == JgsType.Sparse)
+        {
+            return mask && numericClass == JgsNumericClass.Double && !answer.IsComplexSparse ? LogicalSparseOf(answer.AsSparse)
+                : numericClass == JgsNumericClass.Single ? SparseInClassOf(answer, SingleLike)
+                : answer;
+        }
+
         if (mask && numericClass == JgsNumericClass.Double)
         {
             return AsMask(answer);

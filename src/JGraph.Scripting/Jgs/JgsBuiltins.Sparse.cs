@@ -28,10 +28,17 @@ internal static partial class JgsBuiltins
             {
                 case 1 when args[0].Type == JgsType.Sparse:
                     return args[0];
-                case 1 when IsComplexDense(args[0]):
-                    return ComplexSparseFromDense("sparse", args[0], line, col); // open item 298, ADR 0364
                 case 1:
-                    return JgsValue.Sparse(CscFromDense("sparse", args[0], line, col));
+                    // R2025b stores single, double and logical sparse, and refuses the rest; a single
+                    // or logical input keeps its class (open item 331, ADR 0369).
+                    if (JgsRunningDialect.ThreadIsMatlab)
+                    {
+                        RequireSparseClass(args[0], third: false, line, col);
+                    }
+
+                    return SparseInClassOfDense(IsComplexDense(args[0])
+                        ? ComplexSparseFromDense("sparse", args[0], line, col) // open item 298, ADR 0364
+                        : JgsValue.Sparse(CscFromDense("sparse", args[0], line, col)), args[0]);
                 case 2:
                     return JgsValue.Sparse(CscMatrix.FromTriplets(
                         Count("sparse", args, 0, line, col), Count("sparse", args, 1, line, col), []));
@@ -39,6 +46,11 @@ internal static partial class JgsBuiltins
                 case 5:
                 case 6:
                 {
+                    if (JgsRunningDialect.ThreadIsMatlab)
+                    {
+                        RequireSparseClass(args[2], third: true, line, col); // open item 331
+                    }
+
                     double[] i = ToDoubles("sparse", args[0], line, col);
                     double[] j = ToDoubles("sparse", args[1], line, col);
                     // Complex values make a complex matrix, real when nothing imaginary is left
@@ -60,7 +72,7 @@ internal static partial class JgsBuiltins
                     int cols = args.Count >= 5 ? Count("sparse", args, 4, line, col) : (j.Length == 0 ? 0 : (int)j.Max());
                     if (complexValues is not null)
                     {
-                        return ComplexSparseFromTriplets(i, j, complexValues, rows, cols, line, col);
+                        return SparseInClassOfDense(ComplexSparseFromTriplets(i, j, complexValues, rows, cols, line, col), args[2]);
                     }
 
                     var triplets = new (int, int, double)[i.Length];
@@ -74,7 +86,7 @@ internal static partial class JgsBuiltins
 
                     var matrix = CscMatrix.FromTriplets(rows, cols, triplets);
                     if (args.Count == 6) matrix = matrix.WithReservedCapacity(Count("sparse", args, 5, line, col));
-                    return JgsValue.Sparse(matrix);
+                    return SparseInClassOfDense(JgsValue.Sparse(matrix), args[2]); // a single or logical v keeps its class (open item 331)
                 }
                 default:
                     throw new JgsRuntimeException(line, col,
@@ -214,12 +226,22 @@ internal static partial class JgsBuiltins
     /// <c>issparse</c> still says what it should.
     /// </summary>
     internal static JgsValue SparseSubscript(
+        JgsValue value, IReadOnlyList<JgsValue> subscripts, JgsDialect dialect, int line, int col) =>
+        SparseInClassOf(SparseSubscriptOfAnyClass(value, subscripts, dialect, line, col), value); // open item 331
+
+    private static JgsValue SparseSubscriptOfAnyClass(
         JgsValue value, IReadOnlyList<JgsValue> subscripts, JgsDialect dialect, int line, int col)
     {
         if (value.IsComplexSparse)
         {
             return ComplexSparseSubscript(value, subscripts, dialect, line, col); // open item 298
         }
+
+        // One entry is a 1-by-1 sparse matrix in MATLAB (R2025b's w_sub_one, open item 331); the JGS
+        // dialect keeps its number.
+        JgsValue OneEntry(double entry) => dialect.IsMatlab
+            ? JgsValue.Sparse(CscMatrix.FromColumnMajor([entry], 1, 1))
+            : JgsValue.Number(entry);
 
         CscMatrix matrix = value.AsSparse;
         if (subscripts.Count == 2 && IsScalarSubscript(subscripts[0]) && IsScalarSubscript(subscripts[1]))
@@ -235,7 +257,7 @@ internal static partial class JgsBuiltins
                     $"{matrix.Rows}x{matrix.Cols} matrix.");
             }
 
-            return JgsValue.Number(matrix.At(r, c));
+            return OneEntry(matrix.At(r, c));
         }
 
         if (subscripts.Count == 1 && IsScalarSubscript(subscripts[0]))
@@ -249,7 +271,7 @@ internal static partial class JgsBuiltins
                     $"Index {subscripts[0].AsNumber} is outside a {matrix.Rows}x{matrix.Cols} matrix.");
             }
 
-            return JgsValue.Number(matrix.At((int)(index % matrix.Rows), (int)(index / matrix.Rows)));
+            return OneEntry(matrix.At((int)(index % matrix.Rows), (int)(index / matrix.Rows)));
         }
 
         void Validate(double index, int extent)
@@ -279,7 +301,9 @@ internal static partial class JgsBuiltins
             return JgsValue.Sparse(CscMatrix.FromColumnMajor(values, rows, rows == 0 ? 0 : values.Length / rows));
         }
         if (subscripts.Count != 2)
-            throw new JgsRuntimeException(line, col, "Sparse matrices support one or two subscripts.");
+            throw dialect.IsMatlab
+                ? new JgsRuntimeException(line, col, "MATLAB:ndFullOnly", "N-dimensional indexing allowed for full matrices only.")
+                : new JgsRuntimeException(line, col, "Sparse matrices support one or two subscripts.");
         int[] rp = Picks(subscripts[0], matrix.Rows), cp = Picks(subscripts[1], matrix.Cols);
         var entries = new List<(int, int, double)>();
         var selectedRows = new Dictionary<int, List<int>>();
@@ -334,7 +358,7 @@ internal static partial class JgsBuiltins
         JgsValue Column(List<double> from)
         {
             JgsValue built = Numbers([.. from]);
-            built.Reshape(from.Count, from.Count == 0 ? 0 : 1);
+            built.Reshape(matrix.Rows == 1 ? 1 : from.Count, matrix.Rows == 1 ? from.Count : from.Count == 0 ? 0 : 1); // a row vector answers rows (open item 331)
             return built;
         }
 
@@ -432,56 +456,8 @@ internal static partial class JgsBuiltins
             }
         }
 
-        // A comparison with a scalar is a sparse mask (V6: S(S > 1) = 0 needs one). Where zero
-        // itself compares false only the stored entries can answer true, so the pattern is walked;
-        // where zero compares true the answer is mostly ones and is built over every position.
+        // A comparison is a logical sparse mask, answered by SparseLogicalOperator (open item 331).
         JgsValue scalarSide = left.Type == JgsType.Sparse ? right : left;
-        if (scalarSide.Type is JgsType.Number or JgsType.Bool
-            && op is TokenType.Greater or TokenType.GreaterEqual or TokenType.Less or TokenType.LessEqual
-                or TokenType.EqualEqual or TokenType.BangEqual)
-        {
-            CscMatrix matrix = (left.Type == JgsType.Sparse ? left : right).AsSparse;
-            double scalar = scalarSide.Type == JgsType.Bool ? (scalarSide.AsBool ? 1 : 0) : scalarSide.AsNumber;
-            bool sparseOnLeft = left.Type == JgsType.Sparse;
-            bool Holds(double entry)
-            {
-                double a = sparseOnLeft ? entry : scalar, b = sparseOnLeft ? scalar : entry;
-                return op switch
-                {
-                    TokenType.Greater => a > b,
-                    TokenType.GreaterEqual => a >= b,
-                    TokenType.Less => a < b,
-                    TokenType.LessEqual => a <= b,
-                    TokenType.EqualEqual => a == b,
-                    _ => a != b,
-                };
-            }
-
-            if (Holds(0))
-            {
-                double[] flat = matrix.ToColumnMajor();
-                for (int i = 0; i < flat.Length; i++)
-                {
-                    flat[i] = Holds(flat[i]) ? 1 : 0;
-                }
-
-                return JgsValue.Sparse(CscMatrix.FromColumnMajor(flat, matrix.Rows, matrix.Cols));
-            }
-
-            var truths = new List<(int, int, double)>();
-            for (int c = 0; c < matrix.Cols; c++)
-            {
-                for (int k = matrix.ColumnStarts[c]; k < matrix.ColumnStarts[c + 1]; k++)
-                {
-                    if (Holds(matrix.Values[k]))
-                    {
-                        truths.Add((matrix.RowIndices[k], c, 1));
-                    }
-                }
-            }
-
-            return JgsValue.Sparse(CscMatrix.FromTriplets(matrix.Rows, matrix.Cols, truths));
-        }
 
         // Scalar scaling keeps the pattern: s*A, A*s, A/s, A.*s.
         if (scalarSide.Type is JgsType.Number or JgsType.Bool &&

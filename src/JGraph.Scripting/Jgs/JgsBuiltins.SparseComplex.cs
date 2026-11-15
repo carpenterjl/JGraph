@@ -38,13 +38,21 @@ internal static partial class JgsBuiltins
     /// </summary>
     internal static JgsValue SparseDense(JgsValue sparse)
     {
+        JgsValue dense;
         if (!sparse.IsComplexSparse)
         {
-            return SparseAsDense(sparse.AsSparse);
+            dense = SparseAsDense(sparse.AsSparse);
+        }
+        else
+        {
+            JgsComplexSparse matrix = sparse.AsComplexSparse;
+            dense = ComplexStorage(matrix.ToColumnMajor(), [matrix.Rows, matrix.Cols], preserveComplex: !matrix.AnyImaginary);
         }
 
-        JgsComplexSparse matrix = sparse.AsComplexSparse;
-        return ComplexStorage(matrix.ToColumnMajor(), [matrix.Rows, matrix.Cols], preserveComplex: !matrix.AnyImaginary);
+        // A logical matrix reads full as a logical one, a single one as single (open item 331).
+        return sparse.IsLogicalSparse ? AsMask(dense)
+            : IsSingleSparse(sparse) ? JgsNumericClasses.Stamp(dense, JgsNumericClass.Single)
+            : dense;
     }
 
     /// <summary>Whether a dense value is complex: an imaginary part anywhere, or the flag.</summary>
@@ -104,13 +112,13 @@ internal static partial class JgsBuiltins
         JgsValue Column(List<double> from)
         {
             JgsValue built = Numbers([.. from]);
-            built.Reshape(from.Count, from.Count == 0 ? 0 : 1);
+            built.Reshape(matrix.Rows == 1 ? 1 : from.Count, matrix.Rows == 1 ? from.Count : from.Count == 0 ? 0 : 1); // a row vector answers rows (open item 331)
             return built;
         }
 
         // The values are complex when any is (R2025b's s6c); a flagged matrix's are real (spf13).
         JgsValue Values() => values.Exists(static v => v.Imaginary != 0)
-            ? ComplexStorage([.. values], [values.Count, values.Count == 0 ? 0 : 1])
+            ? ComplexStorage([.. values], matrix.Rows == 1 ? [1, values.Count] : [values.Count, values.Count == 0 ? 0 : 1])
             : Column(values.ConvertAll(static v => v.Real));
 
         return wanted <= 1
@@ -132,7 +140,7 @@ internal static partial class JgsBuiltins
         JgsValue imagPart = SparseSubscript(JgsValue.Sparse(matrix.MapReal(static v => v.Imaginary)), subscripts, dialect, line, col);
         if (realPart.Type != JgsType.Sparse)
         {
-            return JgsValue.ComplexNum(new Complex(realPart.AsNumber, imagPart.AsNumber));
+            return JgsValue.ComplexNum(new Complex(realPart.AsNumber, imagPart.AsNumber)); // the JGS dialect's scalar
         }
 
         CscMatrix re = realPart.AsSparse;
@@ -144,13 +152,13 @@ internal static partial class JgsBuiltins
     /// <c>'</c> and <c>.'</c> of a complex sparse matrix: the flag is kept (R2025b's spf2, spf10).
     /// </summary>
     internal static JgsValue ComplexSparseTransposed(JgsValue value, bool conjugate) =>
-        JgsValue.ComplexSparse(value.AsComplexSparse.Transpose(conjugate));
+        SparseInClassOf(JgsValue.ComplexSparse(value.AsComplexSparse.Transpose(conjugate)), value);
 
     /// <summary>Unary minus of a sparse matrix, real or complex; the flag is dropped (R2025b's spf3).</summary>
     internal static JgsValue SparseNegated(JgsValue value) =>
-        value.IsComplexSparse
+        SparseInClassOf(value.IsComplexSparse
             ? SparseOfComplex(value.AsComplexSparse.Map(static v => -v))
-            : JgsValue.Sparse(value.AsSparse.Scale(-1));
+            : JgsValue.Sparse(value.AsSparse.Scale(-1)), value, keepLogical: false); // a single stays single (open item 331)
 
     /// <summary>
     /// The binary operators where a complex sparse matrix is an operand, or a real sparse matrix meets
@@ -222,31 +230,7 @@ internal static partial class JgsBuiltins
                     sparseLeft ? right : DenseOfComplexSparse(matrix), line, col);
             }
 
-            // A comparison with a scalar is a sparse mask (R2025b's s44): == and ~= compare the
-            // complex values, the orderings their real parts, as R2025b's relational operators do.
-            if (scalar && op is TokenType.EqualEqual or TokenType.BangEqual or TokenType.Greater
-                    or TokenType.GreaterEqual or TokenType.Less or TokenType.LessEqual)
-            {
-                Complex given = ScalarComplex(OpName(op), other, line, col);
-                Complex[] flat = matrix.ToColumnMajor();
-                var mask = new double[flat.Length];
-                for (int k = 0; k < flat.Length; k++)
-                {
-                    Complex a = sparseLeft ? flat[k] : given, b = sparseLeft ? given : flat[k];
-                    bool holds = op switch
-                    {
-                        TokenType.EqualEqual => a == b,
-                        TokenType.BangEqual => a != b,
-                        TokenType.Greater => a.Real > b.Real,
-                        TokenType.GreaterEqual => a.Real >= b.Real,
-                        TokenType.Less => a.Real < b.Real,
-                        _ => a.Real <= b.Real,
-                    };
-                    mask[k] = holds ? 1 : 0;
-                }
-
-                return JgsValue.Sparse(CscMatrix.FromColumnMajor(mask, matrix.Rows, matrix.Cols));
-            }
+            // A comparison is a logical sparse mask, answered by SparseLogicalOperator (open item 331).
         }
         catch (ArgumentException ex)
         {
@@ -360,9 +344,10 @@ internal static partial class JgsBuiltins
         Wrap("nonzeros", static s =>
         {
             Complex[] values = [.. ComplexEntriesOf(s).Entries().Select(static e => e.Value)];
-            return Array.Exists(values, static v => v.Imaginary != 0)
+            JgsValue column = Array.Exists(values, static v => v.Imaginary != 0)
                 ? ComplexStorage(values, [values.Length, values.Length == 0 ? 0 : 1])
                 : JgsMatrix.FromColumnMajor(Array.ConvertAll(values, static v => v.Real), values.Length, values.Length == 0 ? 0 : 1);
+            return SparseInClassOf(column, s); // a logical matrix's are logical (open item 331)
         });
         Wrap("nzmax", static s => s.IsComplexSparse
             ? JgsValue.Number(Math.Max(1, s.AsComplexSparse.NonZeroCount))

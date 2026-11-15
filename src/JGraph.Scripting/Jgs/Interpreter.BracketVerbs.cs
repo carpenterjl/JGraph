@@ -128,6 +128,13 @@ internal static partial class JgsBuiltins
                             return interpreter.JoinAsBracket([.. args.Skip(1)], across: args[0].AsNumber == 2, line, col);
                         }
 
+                        // A sparse matrix has two dimensions (open item 331, R2025b's j_cat3).
+                        if (args.Count >= 2 && args.Skip(1).Any(static a => a.Type == JgsType.Sparse))
+                        {
+                            throw new JgsRuntimeException(line, col, "MATLAB:catenate:sparseDimensionBad",
+                                "Dimension for sparse matrix concatenation must be <= 2.");
+                        }
+
                         return inner.Call(args, line, col);
                 }
             }

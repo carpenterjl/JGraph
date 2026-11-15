@@ -396,7 +396,11 @@ internal sealed class MatFileReader
             MxChar => ReadChar(ref at, rows, (int)count),
             MxCell => ReadCellArray(ref at, end, (int)count, dims),
             MxStruct => ReadStruct(ref at, end, (int)count, dims),
+            // A logical sparse array carries the logical bit, a single one is the single class with
+            // the sparse-data bit (open item 331, ADR 0369; R2025b's -v6 files).
+            MxSparse when isLogical && !isComplex => JgsBuiltins.LogicalSparseOf(ReadSparse(ref at, rows, cols, false).AsSparse),
             MxSparse => ReadSparse(ref at, rows, cols, isComplex),
+            MxSingle when (flags & FlagSparseData) != 0 => SingleSparseRead(ReadSparse(ref at, rows, cols, isComplex)),
             MxObject => ReadObject(ref at, end, name, second, (flags & FlagDeletedHandle) != 0),
             MxFunction => ReadFunction(ref at, end, name),
             MxDouble or MxSingle or MxInt8 or MxUInt8 or MxInt16 or MxUInt16
@@ -483,6 +487,12 @@ internal sealed class MatFileReader
         MxUInt64 => JgsNumericClass.UInt64,
         _ => JgsNumericClass.Double,
     };
+
+    /// <summary>A sparse array read from a single sparse element, in the single class.</summary>
+    private static JgsValue SingleSparseRead(JgsValue sparse) =>
+        sparse.IsComplexSparse
+            ? JgsBuiltins.SingleSparseOf(sparse.AsComplexSparse, keepFlag: true)
+            : JgsBuiltins.SingleSparseOf(sparse.AsSparse);
 
     private JgsValue ReadSparse(ref int at, int rows, int cols, bool isComplex)
     {

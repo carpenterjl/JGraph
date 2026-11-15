@@ -51,6 +51,13 @@ internal static class MatConstants
     public const int FlagLogical = 0x0200;
 
     /// <summary>
+    /// The bit R2025b sets on a logical or single sparse array (open item 331, ADR 0369, measured
+    /// from -v6 files): the sparse class with the logical bit, or the single class holding sparse
+    /// data. It shares its value with <see cref="FlagDeletedHandle"/>, which only an object reads.
+    /// </summary>
+    public const int FlagSparseData = 0x1000;
+
+    /// <summary>
     /// JGraph's own bit on an object element (V6, ADR 0167): the handle object was deleted when it
     /// was saved, so it loads deleted, as R2025b loads one. MATLAB's own flags stop at 0x0800.
     /// </summary>

@@ -2639,6 +2639,21 @@ internal sealed partial class Interpreter
     /// </summary>
     private static bool SwitchMatches(JgsValue subject, JgsValue candidate, Node at)
     {
+        // A sparse value matches as the value it stands for: switch S(1, 1) (open item 331).
+        static JgsValue Full(JgsValue value)
+        {
+            if (value.Type != JgsType.Sparse)
+            {
+                return value;
+            }
+
+            JgsValue dense = JgsBuiltins.SparseDense(value);
+            return dense.Type == JgsType.Array && dense.ArrayLength == 1 ? dense.ElementAt(0) : dense;
+        }
+
+        subject = Full(subject);
+        candidate = Full(candidate);
+
         // An enumeration member matches its member or its name (stage K9, measured).
         if (JgsBuiltins.IsEnumerationValue(subject) || JgsBuiltins.IsEnumerationValue(candidate))
         {
@@ -3967,6 +3982,8 @@ internal sealed partial class Interpreter
 
     private static double RangeBoundValue(JgsValue value, Expr bound, string what, ref JgsNumericClass carried)
     {
+        // A sparse bound is the value it stands for: 1:S(2, 2) (open item 331).
+        value = value.Type == JgsType.Sparse ? JgsBuiltins.SparseDense(value) : value;
         JgsNumericClass numericClass = value.NumericClass;
 
         // MATLAB has no 1-by-1 array that is not a scalar, so `1:N` reads N whether it was written
@@ -4062,6 +4079,13 @@ internal sealed partial class Interpreter
         if (Dialect.ConcatenatesBrackets && rows.Count == 1 && rows[0] is [{ Type: JgsType.External } only])
         {
             return only; // [p] is p, as a bracket around one value is that value
+        }
+
+        // A sparse piece makes the answer sparse, in the class the pieces combine to (open item 331,
+        // ADR 0369).
+        if (rows.Exists(static row => Array.Exists(row, static e => e.Type == JgsType.Sparse)))
+        {
+            return JgsBuiltins.ConcatenateSparse(rows, matrix.Line, matrix.Column);
         }
 
         // A table joins as a table (V6, #121): [T; U] stacks rows, [T U] puts variables side by
@@ -4388,6 +4412,12 @@ internal sealed partial class Interpreter
         // In JGS a bracket literal is a list, so [[1, 2], [3, 4]] is a matrix by nesting — the
         // spelling its own scripts and guide have always used. Only MATLAB concatenates here.
         concatenating &= Dialect.ConcatenatesBrackets;
+
+        // A sparse piece makes the row sparse (open item 331, ADR 0369).
+        if (Dialect.ConcatenatesBrackets && Array.Exists(elements, static e => e.Type == JgsType.Sparse))
+        {
+            return JgsBuiltins.ConcatenateSparse([elements], array.Line, array.Column);
+        }
 
         // A bracket holding any table joins tables (V6, #121): [T U] puts the variables side by
         // side, and a cell beside a table is read as a table. Asked before every other kind, as
@@ -5020,6 +5050,11 @@ internal sealed partial class Interpreter
                     kernel: PackedMath.MaskTest.IsZero);
             }
 
+            if (Dialect.IsMatlab && operand.Type == JgsType.Sparse)
+            {
+                return JgsBuiltins.SparseNot(operand, unary.Line, unary.Column); // a logical sparse matrix (open item 331)
+            }
+
             return JgsValue.Bool(!operand.IsTruthy);
         }
 
@@ -5485,6 +5520,13 @@ internal sealed partial class Interpreter
                 "Invalid data type. Argument must be numeric, char, or logical.");
         }
 
+        // A sparse operand of any class takes the sparse road before the class machinery below, which
+        // has no sparse storage to stamp (open item 331, ADR 0369).
+        if (left.Type == JgsType.Sparse || right.Type == JgsType.Sparse)
+        {
+            return JgsBuiltins.SparseOperator(op, left, right, at, (o, l, r) => ApplyBinary(o, l, r, at));
+        }
+
         // Two arrays whose shapes do not expand into each other, under an elementwise operator, are
         // R2025b's MATLAB:sizeDimensionsMustMatch before any kernel says so in its own words (ADR 0214).
         if (Dialect.IsMatlab && left.Type == JgsType.Array && right.Type == JgsType.Array
@@ -5755,7 +5797,7 @@ internal sealed partial class Interpreter
         // Sparse operands route through their own kernels (M42) before any dense machinery sees them.
         if (left.Type == JgsType.Sparse || right.Type == JgsType.Sparse)
         {
-            return JgsBuiltins.SparseBinary(op, left, right, at);
+            return JgsBuiltins.SparseOperator(op, left, right, at, (o, l, r) => ApplyBinary(o, l, r, at)); // open item 331
         }
 
         // Time arithmetic resolves before every numeric reading of the operands (M64), which has to
@@ -7032,7 +7074,7 @@ internal sealed partial class Interpreter
         // A sparse right-hand side written into anything else goes in as the values it stands for.
         if (rhs.Type == JgsType.Sparse)
         {
-            rhs = JgsBuiltins.SparseAsDense(rhs.AsSparse);
+            rhs = JgsBuiltins.SparseDense(rhs); // complex, logical or single (open item 331)
         }
 
         if (callee.Type != JgsType.Array)
@@ -7655,7 +7697,7 @@ internal sealed partial class Interpreter
         // A sparse right-hand side written into anything else goes in as the values it stands for.
         if (rhs.Type == JgsType.Sparse)
         {
-            rhs = JgsBuiltins.SparseAsDense(rhs.AsSparse);
+            rhs = JgsBuiltins.SparseDense(rhs); // complex, logical or single (open item 331)
         }
 
         if (callee.Type != JgsType.Array)
@@ -8776,7 +8818,7 @@ internal sealed partial class Interpreter
         // A sparse right-hand side written into anything else goes in as the values it stands for.
         if (rhs.Type == JgsType.Sparse)
         {
-            rhs = JgsBuiltins.SparseAsDense(rhs.AsSparse);
+            rhs = JgsBuiltins.SparseDense(rhs); // complex, logical or single (open item 331)
         }
 
         if (callee.Type == JgsType.Cell)
@@ -9217,6 +9259,13 @@ internal sealed partial class Interpreter
             if (index.Type == JgsType.String && !index.IsStringArray && index.AsString == ":")
             {
                 return null;
+            }
+
+            // A sparse subscript is the value it stands for: x(S(2, 2)) a position, x(S > 1) a mask
+            // (open item 331, ADR 0369).
+            if (index.Type == JgsType.Sparse)
+            {
+                index = JgsBuiltins.SparseDense(index);
             }
 
             return index.Type == JgsType.Bool ? JgsValue.Shaped([index], 1, 1, JgsPackedKind.Bool)
@@ -11852,7 +11901,7 @@ internal sealed partial class Interpreter
         {
             return value.IsComplexSparse
                 ? JgsBuiltins.ComplexSparseTransposed(value, transpose.Conjugate) // open item 298
-                : JgsValue.Sparse(value.AsSparse.Transpose());
+                : JgsBuiltins.SparseInClassOf(JgsValue.Sparse(value.AsSparse.Transpose()), value); // its class kept (open item 331)
         }
 
         // A quoted word is 1-by-n characters in MATLAB, so it stands up like any other row (M122).
