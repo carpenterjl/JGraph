@@ -117,6 +117,13 @@ public sealed class ScriptContext
     public string? ScriptPath { get; init; }
 
     /// <summary>
+    /// The width in characters of the console the run writes to, or null for a host with none. R2025b
+    /// wraps a long error message in a report at its command window's width (180 under <c>-batch</c>,
+    /// measured; open item 350, ADR 0385); a host that reports no width has nothing wrapped.
+    /// </summary>
+    public int? ConsoleWidth { get; init; }
+
+    /// <summary>
     /// The workspace path resolver script file access flows through, or null to resolve against
     /// <see cref="WorkingDirectory"/>. Invoked on the engine's background thread.
     /// </summary>

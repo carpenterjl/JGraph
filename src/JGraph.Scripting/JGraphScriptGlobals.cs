@@ -76,6 +76,9 @@ public sealed class JGraphScriptGlobals
     /// <summary>The file the current run came from, or null when the code came from the prompt.</summary>
     internal string? RunScriptPath => _runScriptPath ?? _context.ScriptPath;
 
+    /// <summary>The console's width in characters, or null when the host reports none (open item 350, ADR 0385).</summary>
+    internal int? ConsoleWidth => _context.ConsoleWidth;
+
     /// <summary>The host's table window (<c>methodsview</c>), or null when the host prints the table (ADR 0183).</summary>
     internal IScriptTableViewer? TableViewer => _context.TableViewer;
 
@@ -731,7 +734,9 @@ public sealed class JGraphScriptGlobals
     /// The name R2025b's <c>fopen(fid)</c> gives an encoding (open item 318, measured): <c>UTF-8</c>,
     /// <c>UTF-16LE</c>, <c>UTF-16BE</c>, <c>windows-1252</c>, <c>ISO-8859-1</c>, <c>US-ASCII</c>.
     /// </summary>
-    internal static string MatlabEncodingName(Encoding encoding) => encoding.WebName.ToLowerInvariant() switch
+    internal static string MatlabEncodingName(Encoding encoding) => encoding is Jgs.JgsMatlabEncoding named
+        ? named.MatlabName // Shift_JIS, iso-8859_11-2001, KSC_5601 (open item 350, ADR 0385)
+        : encoding.WebName.ToLowerInvariant() switch
     {
         "utf-16" => "UTF-16LE",
         "utf-16be" => "UTF-16BE",
@@ -806,14 +811,18 @@ public sealed class JGraphScriptGlobals
                 "a" => new FileStream(ResolveForWrite(path), FileMode.Append, FileAccess.Write),
                 "r+" => new FileStream(Resolve(path), FileMode.Open, FileAccess.ReadWrite),
                 "w+" => new FileStream(ResolveForWrite(path), FileMode.Create, FileAccess.ReadWrite),
-                "a+" => new FileStream(ResolveForWrite(path), FileMode.Append, FileAccess.Write),
+                "a+" => new AppendingFileStream(ResolveForWrite(path)), // reads anywhere, writes at the end (open item 350)
                 "A" => new FileStream(ResolveForWrite(path), FileMode.Append, FileAccess.Write),
                 "W" => new FileStream(ResolveForWrite(path), FileMode.Create, FileAccess.Write),
                 _ => throw new ArgumentException($"the mode '{mode}' is not one it opens."),
             };
 
             int id = _nextFileId++;
-            _openFiles[id] = new FileEntry(stream, Resolve(path), mode, format, chosen)
+            // R2025b's fopen(fid) names a permission with neither 'b' nor 't' as binary: 'a+' is 'ab+' (open item 350).
+            string shown = Jgs.JgsRunningDialect.ThreadIsMatlab && mode.Length > 0 && !mode.Contains('b') && !mode.Contains('t')
+                ? mode[..1] + "b" + mode[1..]
+                : mode;
+            _openFiles[id] = new FileEntry(stream, Resolve(path), shown, format, chosen)
             {
                 // MATLAB code reading with no encoding named reads in the one R2025b's fopen detects
                 // (open item 318, ADR 0378); JGS keeps UTF-8.
@@ -839,7 +848,22 @@ public sealed class JGraphScriptGlobals
             return new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
         }
 
-        return name.Replace("-", string.Empty, StringComparison.Ordinal).ToLowerInvariant() switch
+        // MATLAB code writes a character these three pages do not hold as R2025b's substitution byte 0x1A, not
+        // '?'; their bytes read as before (open item 350, ADR 0385, measured).
+        string word = name.Replace("-", string.Empty, StringComparison.Ordinal).ToLowerInvariant();
+        if (Jgs.JgsRunningDialect.ThreadIsMatlab && word switch
+            {
+                "latin1" or "iso88591" => "ISO-8859-1",
+                "windows1252" or "cp1252" => "windows-1252",
+                "usascii" or "ascii" => "US-ASCII",
+                _ => null,
+            } is { } pageName
+            && Jgs.JgsMatlabEncoding.Named(pageName) is { } table)
+        {
+            return table;
+        }
+
+        return word switch
         {
             "utf8" => new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
             "latin1" or "iso88591" => Encoding.Latin1,
@@ -850,10 +874,46 @@ public sealed class JGraphScriptGlobals
             "usascii" or "ascii" => Encoding.GetEncoding("us-ascii", EncoderFallback.ReplacementFallback, new DecoderReplacementFallback("�")),
             "utf16le" or "unicode" => Encoding.Unicode,
             "utf16be" => Encoding.BigEndianUnicode,
+
+            // The other code pages R2025b's fopen knows, its own reading of each (open item 350, ADR 0385).
+            _ when Jgs.JgsMatlabEncoding.Named(name) is { } page => page,
             _ => throw new ArgumentException(
                 $"there is no encoding called '{name}' here. It reads UTF-8, ISO-8859-1, " +
                 "windows-1252, US-ASCII, UTF-16LE and UTF-16BE."),
         };
+    }
+
+    /// <summary>
+    /// A file <c>fopen</c> opened with <c>'a+'</c> (open item 350, ADR 0385, measured in R2025b): it reads anywhere,
+    /// starts at the end, and every write goes to the end whatever <c>fseek</c> did, as C's <c>"a+"</c>.
+    /// </summary>
+    private sealed class AppendingFileStream : FileStream
+    {
+        internal AppendingFileStream(string path)
+            : base(path, FileMode.OpenOrCreate, FileAccess.ReadWrite)
+        {
+            Seek(0, SeekOrigin.End); // ftell is the file's length at once
+        }
+
+        private void ToEnd() => Seek(0, SeekOrigin.End);
+
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            ToEnd();
+            base.Write(buffer, offset, count);
+        }
+
+        public override void Write(ReadOnlySpan<byte> buffer)
+        {
+            ToEnd();
+            base.Write(buffer);
+        }
+
+        public override void WriteByte(byte value)
+        {
+            ToEnd();
+            base.WriteByte(value);
+        }
     }
 
     /// <summary>

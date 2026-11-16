@@ -293,7 +293,29 @@ public sealed class JgsRuntimeException : JgsException
     /// <c>ErrorHandler</c>'s record puts it under R2025b's "Error using &lt;name&gt;" header the way
     /// a frame's name would go; the message itself stays what <c>ME.message</c> reports.
     /// </summary>
-    internal string? UsingName { get; init; }
+    internal string? UsingName { get; set; }
+
+    /// <summary>
+    /// The interpreter raised this error for a name nothing answers (<c>MATLAB:UndefinedFunction</c>), not a
+    /// built-in that was handed one (<c>feval('nosuch')</c>): R2025b heads the first, raised in eval'd text,
+    /// "Error using eval" (open item 350, ADR 0385).
+    /// </summary>
+    internal bool NamesNothing { get; init; }
+
+    /// <summary>
+    /// The filter of <c>eval</c>, <c>evalc</c> and <c>evalin</c> (open item 350, ADR 0385, measured): a name
+    /// nothing answers in the text itself, before any frame unwound, is headed with the verb's name
+    /// (<c>Error using eval</c>); one in a function the text called keeps its frame's report. Never catches.
+    /// </summary>
+    internal bool HeadsEvalText(string verb)
+    {
+        if (NamesNothing && _frames.Count == 0 && UsingName is null && !Raised && Carried is null)
+        {
+            UsingName = verb;
+        }
+
+        return false;
+    }
 
     /// <summary><c>throwAsCaller</c>: the stack leaves out the frame that called it.</summary>
     internal bool DropsThrowingFrame { get; init; }

@@ -131,29 +131,7 @@ internal sealed partial class Interpreter
 
         bool warns = (_evalTextsWarned ??= []).Add((running, code));
 
-        var names = new List<string>();
-        foreach (Stmt statement in program)
-        {
-            switch (statement)
-            {
-                case ExprStmt { Expression: AssignExpr assign } when TargetRootName(assign.Target) is { } root:
-                    names.Add(root);
-                    break;
-                case MultiAssignStmt multi:
-                    foreach (Expr? target in multi.Targets)
-                    {
-                        if (target is not null && TargetRootName(target) is { } each)
-                        {
-                            names.Add(each);
-                        }
-                    }
-
-                    break;
-                case ForStmt loop:
-                    names.Add(loop.Variable);
-                    break;
-            }
-        }
+        List<string> names = EvalTextBinds(program);
 
         const string Rest = " In a future release, using an identifier different to how it is used in the file will not be supported.";
         var warned = new HashSet<string>(StringComparer.Ordinal);

@@ -904,6 +904,7 @@ internal sealed partial class Interpreter
             throw ClassdefInEval();
         }
 
+        RefuseStaticWorkspaceAdds(program, env, line, column); // eval('pi = 7;') in a function with nested functions (open item 350)
         WarnEvalBindsLiteralWord(program, env, code); // eval('true = 7;') in a function that reads the built-in (open item 329)
         JgsValue result = JgsValue.Null;
         JgsEnvironment? outerEval = _evalEnv;
@@ -2065,7 +2066,7 @@ internal sealed partial class Interpreter
                 JgsValue answered = Dialect.IsMatlab
                     ? FirstOrNull(CallMultipleHeld(callee, given, 0, named.Line, named.Column))
                     : CallHeld(callee, given, named.Line, named.Column);
-                if (BindsAns(resolvedCall.Value))
+                if (BindsAns(resolvedCall.Value) || (Dialect.IsMatlab && JgsBuiltins.PrintsToFile(callee, given)))
                 {
                     BindAns(statement, answered, env, owned: MintsAnswer(callee));
                 }
@@ -2222,6 +2223,14 @@ internal sealed partial class Interpreter
             && call.Arguments.Count == 1 && _resolver.BuiltinOf(name) is { Type: JgsType.Function } counting)
         {
             resolved = new Resolution(ResolutionLayer.Builtin, counting, null);
+        }
+
+        // pi, i and j are functions of no input in R2025b: pi(1), i(2), pi('single') are MATLAB:maxrhs, headed
+        // "Error using pi" (open item 350, ADR 0385, measured); a variable of the name is indexed as ever.
+        if (Dialect.IsMatlab && call.Arguments.Count > 0 && resolved.Layer == ResolutionLayer.Builtin
+            && name is "pi" or "i" or "j" && resolved.Value.Type != JgsType.Function)
+        {
+            throw new JgsRuntimeException(call.Line, call.Column, "MATLAB:maxrhs", "Too many input arguments.") { UsingName = name };
         }
 
         if (resolved.Layer == ResolutionLayer.Bound || (resolved.Found && resolved.Value.Type != JgsType.Function))
@@ -2650,7 +2659,7 @@ internal sealed partial class Interpreter
         JgsBuiltins.IsUnsupportedMatlabFunction(name, out _)
             ? UndefinedError(name, at)
             : new JgsRuntimeException(at.Line, at.Column, "MATLAB:UndefinedFunction",
-                $"Undefined function '{name}' for input arguments of type '{JgsBuiltins.ClassOf(first, JgsDialect.Matlab)}'.");
+                $"Undefined function '{name}' for input arguments of type '{JgsBuiltins.ClassOf(first, JgsDialect.Matlab)}'.") { NamesNothing = true };
 
     /// <summary>
     /// Whether <paramref name="name"/> is a parameter of the MATLAB function whose frame this is that
@@ -2666,7 +2675,7 @@ internal sealed partial class Interpreter
     /// <summary>The error for a name that resolves to nothing (see <see cref="Undefined"/>).</summary>
     private JgsRuntimeException UndefinedError(string name, Node at) =>
         Dialect.IsMatlab
-            ? new JgsRuntimeException(at.Line, at.Column, "MATLAB:UndefinedFunction", Undefined(name))
+            ? new JgsRuntimeException(at.Line, at.Column, "MATLAB:UndefinedFunction", Undefined(name)) { NamesNothing = true }
             : new JgsRuntimeException(at.Line, at.Column, Undefined(name));
 
     /// <summary>

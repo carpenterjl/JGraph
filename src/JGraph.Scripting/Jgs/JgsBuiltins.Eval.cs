@@ -340,7 +340,20 @@ internal static partial class JgsBuiltins
         // eval takes the count it was asked for (V9.1): as a statement the text's last line runs as
         // the statement it is (`eval('np();')` gives np a nargout of 0), as an expression the last
         // line's value is the answer.
+        // A name nothing answers in the text itself is headed "Error using eval" (open item 350, ADR 0385).
         JgsValue Eval(IReadOnlyList<JgsValue> args, bool asStatement, int line, int col)
+        {
+            try
+            {
+                return EvalText(args, asStatement, line, col);
+            }
+            catch (JgsRuntimeException error) when (error.HeadsEvalText("eval"))
+            {
+                throw; // never reached: the filter only names the verb
+            }
+        }
+
+        JgsValue EvalText(IReadOnlyList<JgsValue> args, bool asStatement, int line, int col)
         {
             ArityRange("eval", args, 1, 2, line, col);
 
@@ -442,6 +455,10 @@ internal static partial class JgsBuiltins
                 // The text runs as statements: evalc answers what they printed, never a value.
                 interpreter.EvaluateSource(Str("evalc", args, 0, line, col), interpreter.CurrentFrame, line, col, asStatement: true);
             }
+            catch (JgsRuntimeException error) when (error.HeadsEvalText("evalc"))
+            {
+                throw; // never reached: "Error using evalc" (open item 350)
+            }
             finally
             {
                 // The buffer is closed even when the code failed part way through: leaving it open
@@ -464,17 +481,19 @@ internal static partial class JgsBuiltins
         // the text calls sees it as its caller (M145); the text's own names still resolve from the
         // file that called evalin, as MATLAB's do.
         env.Builtins.Register("evalin", JgsValue.Function(new BuiltinFunction(
-            "evalin", (args, line, col) =>
-            {
-                Arity("evalin", args, 2, line, col);
-                return interpreter.EvaluateSourceIn(
-                    Str("evalin", args, 1, line, col), WorkspaceNamed("evalin", args, 0, interpreter, line, col), line, col, bareWordIsBuiltin: true);
-            })
+            "evalin", (args, line, col) => EvalIn(args, 1, line, col)[0])
         {
             // As a statement the text runs as statements in the named workspace (V9.1).
-            MultiOutput = (args, wanted, line, col) =>
+            MultiOutput = (args, wanted, line, col) => EvalIn(args, wanted, line, col),
+            TakesOutputCount = true,
+        }));
+
+        // A name nothing answers in the text itself is headed "Error using evalin" (open item 350, ADR 0385).
+        JgsValue[] EvalIn(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+        {
+            Arity("evalin", args, 2, line, col);
+            try
             {
-                Arity("evalin", args, 2, line, col);
                 if (wanted == 0)
                 {
                     interpreter.ExecuteSourceIn(
@@ -484,9 +503,12 @@ internal static partial class JgsBuiltins
 
                 return [interpreter.EvaluateSourceIn(
                     Str("evalin", args, 1, line, col), WorkspaceNamed("evalin", args, 0, interpreter, line, col), line, col, bareWordIsBuiltin: true)];
-            },
-            TakesOutputCount = true,
-        }));
+            }
+            catch (JgsRuntimeException error) when (error.HeadsEvalText("evalin"))
+            {
+                throw; // never reached
+            }
+        }
 
         Define("assignin", (args, line, col) =>
         {
@@ -499,6 +521,15 @@ internal static partial class JgsBuiltins
             if (target.IsStaticWorkspace && !target.IsBoundWithinStaticWorkspace(name))
             {
                 throw new JgsRuntimeException(line, col, $"Attempt to add \"{name}\" to a static workspace.");
+            }
+
+            // So is the frame of a function with nested functions, a name its text never binds (open item
+            // 350, ADR 0385, measured): R2025b's report heads it "Error using assignin".
+            if (interpreter.Dialect.IsMatlab && Interpreter.AddsToStaticWorkspace(target, name))
+            {
+                JgsRuntimeException refused = Interpreter.StaticWorkspaceViolation(name, line, col);
+                refused.UsingName = "assignin";
+                throw refused;
             }
 
             // M2: the named workspace's binding is an entry of its own, so it takes a counted

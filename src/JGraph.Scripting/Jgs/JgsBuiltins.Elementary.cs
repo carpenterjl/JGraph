@@ -85,6 +85,23 @@ internal static partial class JgsBuiltins
 
         Constant("eps", (args, line, col) =>
         {
+            // R2025b (open item 350, ADR 0385, measured): eps('single') is a single, eps('like', p) the eps of p's
+            // class, and two inputs whose first is not "like" are MATLAB:eps:mustBeLike.
+            if (dialect.IsMatlab && args.Count == 2)
+            {
+                if (!IsTextScalar(args[0]) || !TextOf(args[0]).Equals("like", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:eps:mustBeLike", "With two input arguments, the first argument must be \"like\".");
+                }
+
+                args = [JgsValue.Str(args[1].NumericClass == JgsNumericClass.Single ? "single" : "double")];
+            }
+
+            if (dialect.IsMatlab && args.Count == 1 && IsTextScalar(args[0]) && TextOf(args[0]) == "single")
+            {
+                return ToNumericClass("eps", JgsNumericClass.Single, JgsValue.Number(SingleEps), line, col);
+            }
+
             ArityRange("eps", args, 0, 1, line, col);
             if (args.Count == 0)
             {
@@ -116,16 +133,29 @@ internal static partial class JgsBuiltins
             }, line, col);
         });
 
+        // A single's limit is a single in R2025b (open item 350, measured: realmax('single') is single).
+        JgsValue Limit(bool single, double value, string name, int line, int col) =>
+            single && dialect.IsMatlab ? ToNumericClass(name, JgsNumericClass.Single, JgsValue.Number(value), line, col) : JgsValue.Number(value);
+
         Constant("realmax", (args, line, col) =>
-            JgsValue.Number(SinglePrecisionAsked("realmax", args, line, col) ? float.MaxValue : double.MaxValue));
+        {
+            bool single = SinglePrecisionAsked("realmax", args, line, col);
+            return Limit(single, single ? float.MaxValue : double.MaxValue, "realmax", line, col);
+        });
 
         Constant("realmin", (args, line, col) =>
-            JgsValue.Number(SinglePrecisionAsked("realmin", args, line, col)
+        {
+            bool single = SinglePrecisionAsked("realmin", args, line, col);
+            return Limit(single, single
                 ? BitConverter.Int32BitsToSingle(0x00800000) // 2⁻¹²⁶, the smallest normalized float
-                : BitConverter.Int64BitsToDouble(0x0010000000000000L))); // 2⁻¹⁰²², the double equivalent
+                : BitConverter.Int64BitsToDouble(0x0010000000000000L), "realmin", line, col); // 2⁻¹⁰²², the double equivalent
+        });
 
         Constant("flintmax", (args, line, col) =>
-            JgsValue.Number(SinglePrecisionAsked("flintmax", args, line, col) ? 16777216.0 : 9007199254740992.0));
+        {
+            bool single = SinglePrecisionAsked("flintmax", args, line, col);
+            return Limit(single, single ? 16777216.0 : 9007199254740992.0, "flintmax", line, col);
+        });
 
         // MATLAB answers in the class it names (int32 with none), so arithmetic on the limit
         // saturates (open item 199, ADR 0355). JGS code keeps the plain double it always had; the
@@ -201,6 +231,14 @@ internal static partial class JgsBuiltins
     private static bool SinglePrecisionAsked(string name, IReadOnlyList<JgsValue> args, int line, int col)
     {
         ArityRange(name, args, 0, 1, line, col);
+
+        // realmax(1) and realmax('int8') name no class it supports (R2025b, open item 350, measured).
+        if (args.Count == 1 && JgsRunningDialect.ThreadIsMatlab
+            && !(IsTextScalar(args[0]) && TextOf(args[0]) is "double" or "single"))
+        {
+            throw new JgsRuntimeException(line, col, $"MATLAB:{name}:invalidClassName",
+                $"Class name must be a class that supports {name.ToUpperInvariant()}, such as \"double\" or \"single\".");
+        }
         return args.Count == 1 && !PrecisionOf(name, Str(name, args, 0, line, col), line, col);
     }
 

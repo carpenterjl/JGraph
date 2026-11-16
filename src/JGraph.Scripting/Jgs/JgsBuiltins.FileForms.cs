@@ -71,7 +71,27 @@ internal static partial class JgsBuiltins
         string format = args.Count >= 3 ? Str("fopen", args, 2, line, col) : string.Empty;
         string encoding = args.Count >= 4 ? Str("fopen", args, 3, line, col) : string.Empty;
 
+        // R2025b refuses a name its converters do not know, and opens with a warning one it knows and does
+        // not support (open item 350, ADR 0385, measured).
+        Encoding? named = null;
+        if (JgsRunningDialect.ThreadIsMatlab && encoding.Length > 0)
+        {
+            try
+            {
+                named = JGraphScriptGlobals.EncodingNamed(encoding);
+            }
+            catch (ArgumentException)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:iofun:InvalidEncoding", $"The encoding '{encoding}' is not valid.");
+            }
+        }
+
         (int id, string error) = host.OpenFile(first, mode, format, encoding);
+        if (id > 0 && named is JgsMatlabEncoding { Supported: false } unsupported)
+        {
+            Warn(host, "MATLAB:iofun:UnsupportedEncoding", $"The encoding '{unsupported.MatlabName}' is not supported.\nSee the documentation for FOPEN.");
+        }
+
         return wanted <= 1
             ? [JgsValue.Number(id)]
             : [JgsValue.Number(id), JgsValue.Str(error)];
@@ -119,6 +139,12 @@ internal static partial class JgsBuiltins
         ArityRange("fread", args, 1, 5, line, col);
         JGraphScriptGlobals.FileEntry entry = EntryOf(host, "fread", args, line, col);
         FileStream stream = entry.Stream;
+
+        // A file opened to write only ('a', 'w') reads nothing in R2025b: [] and a count of 0 (open item 350).
+        if (!stream.CanRead && JgsRunningDialect.ThreadIsMatlab)
+        {
+            return wanted <= 1 ? [JgsEmpty.Zero()] : [JgsEmpty.Zero(), JgsValue.Number(0)];
+        }
 
         string precision = "uint8";
         double[]? size = null;

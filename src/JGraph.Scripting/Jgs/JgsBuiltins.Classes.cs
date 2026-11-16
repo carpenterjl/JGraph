@@ -528,6 +528,13 @@ internal static partial class JgsBuiltins
             return ["ExceptionObject", "identifier", "message", "cause", "stack", "Correction"];
         }
 
+        // properties('MException') lists the public five, as properties(ME) does (R2025b, open item 350).
+        if (value.Type == JgsType.String && value.AsString == ExceptionClass && JgsRunningDialect.ThreadIsMatlab
+            && !interpreter.Classes.ContainsKey(ExceptionClass))
+        {
+            return ["identifier", "message", "cause", "stack", "Correction"];
+        }
+
         if (NamedClass(value, interpreter) is { } definition)
         {
             return definition.ListedProperties.Select(static p => p.Spec.Name);

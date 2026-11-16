@@ -297,7 +297,7 @@ u9b_chk('cat_protected_cat_with_other', @() [categorical({'a'}, {'a', 'b'}, 'Pro
 u9b_chk('cat_protected_cat_with_other_cats', @() categories([categorical({'a'}, {'a', 'b'}, 'Protected', true) categorical({'b'})]));
 u9b_chk('cat_protected_addcats', @() categories(addcats(categorical({'a'}, {'a', 'b'}, 'Protected', true), 'c')));
 u9b_chk('cat_protected_removecats', @() categories(removecats(categorical({'a'}, {'a', 'b'}, 'Protected', true), 'b')));
-u9b_chkdiv('cat_protected_display', @() oi_try( @() evalc('pp = categorical({''a''}, {''a'', ''b''}, ''Protected'', true)')), 'ADR0232');
+u9b_chk('cat_protected_display', @() oi_try( @() evalc('pp = categorical({''a''}, {''a'', ''b''}, ''Protected'', true)'))); % an anonymous workspace is static (ADR 0385)
 u9b_chk('cat_protected_cats_after_cat', @() isprotected([categorical({'a'}, {'a', 'b'}, 'Protected', true) categorical({'b'}, {'a', 'b'}, 'Protected', true)]));
 u9b_chkdiv('cat_ord_display_ordering', @() oi_try( @() evalc('summary(o)')), 'ADR0232');
 u9b_chk('cat_num_input_valueset_missing', @() categorical([1 2 3], [1 2]));

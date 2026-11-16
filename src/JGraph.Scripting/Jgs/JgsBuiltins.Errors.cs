@@ -249,9 +249,16 @@ internal static partial class JgsBuiltins
     /// unless the form asked for is 'basic' the "Error in" blocks and the causes, in the MATLAB dialect. The
     /// JGS dialect keeps its own report: the header over the message in every form but 'basic'.
     /// </summary>
-    private static string Report(JgsValue exception, IReadOnlyList<JgsValue> args, JgsRunningDialect dialect, int line, int col)
+    private static string Report(JgsValue exception, IReadOnlyList<JgsValue> args, JgsRunningDialect dialect, int line, int col, int? width = null)
     {
         (_, string message) = ReadErrorValue("getReport", exception, line, col);
+
+        // A long message wraps at the console's width, as R2025b's report does; a host with none wraps nothing (open item 350).
+        if (width is { } columns && dialect.IsMatlab)
+        {
+            message = JgsErrorReport.WrapToConsole(message, columns);
+        }
+
         bool basic = args.Count > 1 && IsTextScalar(args[1])
             && string.Equals(TextOf(args[1]), "basic", StringComparison.OrdinalIgnoreCase);
         JgsValue? stack = Field(exception, "stack");
@@ -319,7 +326,8 @@ internal static partial class JgsBuiltins
                 string causeText = cause.Type == JgsType.Struct
                     ? Report(cause, [cause, JgsValue.Str("basic")], dialect, line, col)
                     : cause.Display();
-                caused.Append("\n    ").Append(causeText.Replace("\n", "\n    ", StringComparison.Ordinal));
+                string indented = "    " + causeText.Replace("\n", "\n    ", StringComparison.Ordinal);
+                caused.Append('\n').Append(width is { } wide ? JgsErrorReport.WrapToConsole(indented, wide) : indented); // the indent counts (open item 350)
             }
 
             text += caused.ToString();
@@ -429,7 +437,7 @@ internal static partial class JgsBuiltins
         Define("getReport", (args, line, col) =>
         {
             ArityRange("getReport", args, 1, 8, line, col);
-            return JgsValue.Str(Report(args[0], args, dialect, line, col));
+            return JgsValue.Str(Report(args[0], args, dialect, line, col, host.ConsoleWidth));
         });
 
         Define("lasterror", (args, line, col) =>

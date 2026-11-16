@@ -221,18 +221,58 @@ internal static partial class JgsBuiltins
     private static JgsValue MetaClassOfValue(string className, IEnumerable<string> properties, IEnumerable<string> methods, Interpreter interpreter)
     {
         var model = new MetaModel(className);
-        // An MException's properties are read-only to a script: message's set access is protected, the
-        // rest's private (R2025b's ?MException, measured; open item 318).
-        model.Properties.AddRange(properties.Select(p => new MetaPropertyModel(p, className)
+        if (className == ExceptionClass)
         {
-            Set = className == ExceptionClass
-                ? new MemberAccess(p == "message" ? MemberAccessKind.Protected : MemberAccessKind.Private)
-                : MemberAccess.Public,
-        }));
+            model.Properties.AddRange(ExceptionMetaProperties()); // R2025b's ten (open item 350)
+        }
+        else
+        {
+            model.Properties.AddRange(properties.Select(p => new MetaPropertyModel(p, className)));
+        }
+
         model.Methods.AddRange(methods.Select(m => new MetaMethodModel(m, className, MemberAccess.Public, [], [])));
         var context = new MetaContext(interpreter);
         context.Seed(model);
         return context.Render(model, MetaDepth);
+    }
+
+    /// <summary>
+    /// R2025b's <c>?MException</c> property list (open items 318 and 350, ADR 0385, measured): ten in this order,
+    /// <c>type</c> and <c>arguments</c> hidden, three more not public to read; a script reads none it may set
+    /// (<c>message</c>'s set access protected, the rest's private), <c>stack</c> is dependent, and
+    /// <c>arguments</c> and <c>Correction</c> have no default.
+    /// </summary>
+    private static IEnumerable<MetaPropertyModel> ExceptionMetaProperties()
+    {
+        MemberAccess Kind(char k) => k switch
+        {
+            'u' => MemberAccess.Public,
+            'o' => new MemberAccess(MemberAccessKind.Protected),
+            _ => new MemberAccess(MemberAccessKind.Private),
+        };
+
+        // name, hidden, get, set, dependent, has a default
+        (string Name, bool Hidden, char Get, char Set, bool Dependent, bool HasDefault)[] rows =
+        [
+            ("type", true, 'o', 'o', false, true),
+            ("hasBeenCaught", false, 'p', 'p', false, true),
+            ("identifier", false, 'u', 'p', false, true),
+            ("message", false, 'u', 'o', false, true),
+            ("cause", false, 'u', 'p', false, true),
+            ("stack", false, 'u', 'p', true, true),
+            ("defaultstack", false, 'p', 'p', false, true),
+            ("enhancedstack", false, 'o', 'p', false, true),
+            ("arguments", true, 'u', 'p', false, false),
+            ("Correction", false, 'u', 'p', false, false),
+        ];
+        return rows.Select(r => new MetaPropertyModel(r.Name, ExceptionClass)
+        {
+            Hidden = r.Hidden,
+            Get = Kind(r.Get),
+            Set = Kind(r.Set),
+            DependentFlag = r.Dependent,
+            HasDefaultFlag = r.HasDefault,
+        });
     }
 
     /// <summary>A device class's metaclass (stage K20): its properties with their access, its superclasses, its methods.</summary>
@@ -496,6 +536,15 @@ internal static partial class JgsBuiltins
         public string? SetWord { get; init; }
 
         public bool Hidden { get; init; }
+
+        /// <summary>The get access of a property described by name alone (an MException's), or null for the declared one's.</summary>
+        public MemberAccess? Get { get; init; }
+
+        /// <summary>Whether a property described by name alone is dependent, or null for the declared one's.</summary>
+        public bool? DependentFlag { get; init; }
+
+        /// <summary>Whether a property described by name alone has a default, or null for the declared one's.</summary>
+        public bool? HasDefaultFlag { get; init; }
     }
 
     private sealed record MetaEventModel(string Name, string Definer, MemberAccess Notify, MemberAccess Listen, bool Hidden)
@@ -951,16 +1000,16 @@ internal static partial class JgsBuiltins
         {
             ClassProperty? property = model.Property;
             bool constant = property?.Constant ?? false;
-            bool dependent = property?.Dependent ?? false;
+            bool dependent = property?.Dependent ?? model.DependentFlag ?? false;
             bool isAbstract = property?.Abstract ?? false;
-            bool hasDefault = property is { Spec.Default: not null } && !dependent && !isAbstract;
+            bool hasDefault = model.HasDefaultFlag ?? (property is { Spec.Default: not null } && !dependent && !isAbstract);
             JgsClass? owner = model.Owner;
             return new Dictionary<string, JgsValue>(StringComparer.Ordinal)
             {
                 ["Name"] = JgsValue.Str(model.Name),
                 ["Description"] = JgsValue.Str(model.Description),
                 ["DetailedDescription"] = JgsValue.Str(model.Detailed),
-                ["GetAccess"] = Access(property?.GetAccess ?? MemberAccess.Public, depth),
+                ["GetAccess"] = Access(property?.GetAccess ?? model.Get ?? MemberAccess.Public, depth),
                 ["SetAccess"] = model.SetWord is { } word ? JgsValue.Str(word) : Access(model.Set, depth),
                 ["Dependent"] = JgsValue.Bool(dependent),
                 ["Constant"] = JgsValue.Bool(constant),

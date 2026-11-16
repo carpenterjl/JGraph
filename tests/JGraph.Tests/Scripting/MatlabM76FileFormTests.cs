@@ -72,7 +72,7 @@ public class MatlabM76FileFormTests : IDisposable
 
         [name, permission, format, encoding] = fopen(fid);
         assert(~isempty(strfind(name, 'grid.txt')));
-        assert(strcmp(permission, 'r'));
+        assert(strcmp(permission, 'rb')); % R2025b names a permission with neither b nor t binary (open item 350)
         assert(strcmp(format, 'ieee-le'));
         assert(strcmp(encoding, 'UTF-8'));
 

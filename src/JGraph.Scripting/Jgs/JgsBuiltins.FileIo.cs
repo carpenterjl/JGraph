@@ -14,6 +14,14 @@ namespace JGraph.Scripting.Jgs;
 internal static partial class JgsBuiltins
 {
     /// <summary>
+    /// Whether a statement call is the built-in <c>fprintf</c> writing to a file: R2025b binds and shows
+    /// <c>ans</c> as the count of bytes it wrote (<c>fprintf(fid, 'abc')</c> shows <c>ans = 3</c>), where one
+    /// writing to the console (ids 1 and 2, or no id) shows nothing (open item 350, ADR 0385, measured).
+    /// </summary>
+    internal static bool PrintsToFile(IJgsCallable callee, IReadOnlyList<JgsValue> given) =>
+        callee is BuiltinFunction { Name: "fprintf" } && given.Count > 1
+        && given[0].Type is JgsType.Number or JgsType.Bool && given[0].AsNumber is not (1 or 2);
+    /// <summary>
     /// The width in bytes of each precision word <c>fread</c> and <c>fwrite</c> take. M76 widened
     /// this from eleven names to the whole documented set except the bit-width ones, which need a
     /// bit-level cursor this reader has not got and are refused by name rather than rounded up.

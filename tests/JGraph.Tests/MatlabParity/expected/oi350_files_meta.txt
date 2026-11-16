@@ -1,0 +1,131 @@
+CHK|fprintf_file_nosemi|shows ans 1 # ans 3|exact
+CHK|fprintf_file_semi|shows ans 0 # ans 3|exact
+CHK|fprintf_file_vector|shows ans 1 # ans 6|exact
+CHK|fprintf_file_empty|shows ans 1 # ans 0|exact
+CHK|fprintf_file_comma|shows ans 1 # ans 3|exact
+CHK|fprintf_console_1|shows ans 0 # ans -1|exact
+CHK|fprintf_console_var|shows ans 0 # ans -1|exact
+CHK|fprintf_console_bare|shows ans 0 # ans -1|exact
+CHK|fprintf_sprintf_nosemi|shows ans 1 # ans 'abc'|exact
+CHK|fprintf_fwrite_file|shows ans 1 # ans 3|exact
+CHK|fprintf_fwrite_console|shows ans 0 # ans -1|exact
+CHK|fprintf_assigned|shows ans 0 # ans -1|exact
+CHK|fprintf_file_text|abcabc1\n2\n3\nxyabcq|exact
+CHK|ap_tell0|3|exact
+CHK|ap_read_at_end|0 # 0|exact
+CHK|ap_write|3 6|exact
+CHK|ap_read_all|abcxyz|exact
+CHK|ap_seek_then_write|1 7|exact
+CHK|ap_seek_then_read|b 2|exact
+CHK|ap_after_fprintf|abcxyzQ42|exact
+CHK|ap_perm|ab+|exact
+CHK|ap_file|abcxyzQ42|exact
+CHK|ap_new_tell|0|exact
+CHK|ap_new_read|hi|exact
+CHK|perm_r|rb # 97  98 # 2|exact
+CHK|perm_w|wb #  # 0|exact
+CHK|perm_a|ab #  # 0|exact
+CHK|perm_r_|rb+ # 97  98 # 2|exact
+CHK|perm_w_|wb+ #  # 0|exact
+CHK|perm_a_|ab+ #  # 0|exact
+CHK|perm_rb|rb # 97  98 # 2|exact
+CHK|perm_wt|wt #  # 0|exact
+CHK|perm_at_|at+ #  # 0|exact
+CHK|perm_a_t|a+t #  # 0|exact
+CHK|perm_rt|rt # 97  98 # 2|exact
+CHK|enc_Big5|Big5 #  # [65 63 63 164 233 163 225] # [65 63 63 26085 8364]|exact
+CHK|enc_GB18030|GB18030 #  # [65 168 166 167 168 200 213 162 227] # [65 233 1046 26085 8364]|exact
+CHK|enc_GB2312|GB2312 #  # [65 168 166 167 168 200 213 161 161] # [65 233 1046 26085 12288]|exact
+CHK|enc_GBK|GBK #  # [65 168 166 167 168 200 213 128] # [65 233 1046 26085 8364]|exact
+CHK|enc_EUC_KR|EUC-KR #  # [65 26 172 168 236 237 175 254] # [65 26 1046 26085 65533]|div=ADR0385|diverges|EUC-KR #  # [65 26 172 168 236 237 175 254] # [65 26 1046 26085 63721 63722]
+CHK|enc_windows_949|KSC_5601 #  # [65 63 172 168 236 237 162 230] # [65 63 1046 26085 8364]|exact
+CHK|enc_Shift_JIS|Shift_JIS #  # [65 252 252 132 71 147 250 252 252] # [65 65533 1046 26085 65533]|exact
+CHK|enc_IBM866|IBM866 #  # [65 127 134 127 127] # [65 26 1046 26 26]|exact
+CHK|enc_KOI8_R|KOI8-R #  # [65 26 246 26 26] # [65 26 1046 26 26]|exact
+CHK|enc_KOI8_U|KOI8-U #  # [65 26 246 26 26] # [65 26 1046 26 26]|exact
+CHK|enc_Macintosh|macintosh #  # [65 142 63 63 219] # [65 233 63 63 8364]|exact
+CHK|enc_US_ASCII|US-ASCII #  # [65 26 26 26 26] # [65 26 26 26 26]|exact
+CHK|enc_UTF_8|UTF-8 #  # [65 195 169 208 150 230 151 165 226 130 172] # [65 233 1046 26085 8364]|exact
+CHK|enc_ISO_8859_1|ISO-8859-1 #  # [65 233 26 26 26] # [65 233 26 26 26]|exact
+CHK|enc_ISO_8859_2|ISO-8859-2 #  # [65 233 26 26 26] # [65 233 26 26 26]|exact
+CHK|enc_ISO_8859_3|ISO-8859-3 #  # [65 233 26 26 26] # [65 233 26 26 26]|exact
+CHK|enc_ISO_8859_4|ISO-8859-4 #  # [65 233 26 26 26] # [65 233 26 26 26]|exact
+CHK|enc_ISO_8859_5|ISO-8859-5 #  # [65 26 182 26 26] # [65 26 1046 26 26]|exact
+CHK|enc_ISO_8859_6|ISO-8859-6 #  # [65 26 26 26 26] # [65 26 26 26 26]|exact
+CHK|enc_ISO_8859_7|ISO-8859-7 #  # [65 26 26 26 164] # [65 26 26 26 8364]|exact
+CHK|enc_ISO_8859_8|ISO-8859-8 #  # [65 26 26 26 26] # [65 26 26 26 26]|exact
+CHK|enc_ISO_8859_9|ISO-8859-9 #  # [65 233 26 26 26] # [65 233 26 26 26]|exact
+CHK|enc_ISO_8859_10|ISO-8859-10 #  # [65 233 26 26 26] # [65 233 26 26 26]|exact
+CHK|enc_ISO_8859_11|iso-8859_11-2001 #  # [65 26 26 26 26] # [65 26 26 26 26]|exact
+CHK|enc_ISO_8859_13|ISO-8859-13 #  # [65 233 26 26 26] # [65 233 26 26 26]|exact
+CHK|enc_ISO_8859_14|ISO-8859-14 #  # [65 233 26 26 26] # [65 233 26 26 26]|exact
+CHK|enc_ISO_8859_15|ISO-8859-15 #  # [65 233 26 26 164] # [65 233 26 26 8364]|exact
+CHK|enc_ISO_8859_16|ERR MATLAB:iofun:InvalidEncoding The encoding 'ISO-8859-16' is not valid.|exact
+CHK|enc_windows_874|windows-874 #  # [65 63 63 63 128] # [65 63 63 63 8364]|exact
+CHK|enc_windows_932|Shift_JIS #  # [65 252 252 132 71 147 250 252 252] # [65 65533 1046 26085 65533]|exact
+CHK|enc_windows_936|GBK #  # [65 168 166 167 168 200 213 128] # [65 233 1046 26085 8364]|exact
+CHK|enc_windows_950|Big5 #  # [65 63 63 164 233 163 225] # [65 63 63 26085 8364]|exact
+CHK|enc_windows_1250|windows-1250 #  # [65 233 26 26 128] # [65 233 26 26 8364]|exact
+CHK|enc_windows_1251|windows-1251 #  # [65 26 198 26 136] # [65 26 1046 26 8364]|exact
+CHK|enc_windows_1252|windows-1252 #  # [65 233 26 26 128] # [65 233 26 26 8364]|exact
+CHK|enc_windows_1253|windows-1253 #  # [65 26 26 26 128] # [65 26 26 26 8364]|exact
+CHK|enc_windows_1254|windows-1254 #  # [65 233 26 26 128] # [65 233 26 26 8364]|exact
+CHK|enc_windows_1255|windows-1255 #  # [65 26 26 26 128] # [65 26 26 26 8364]|exact
+CHK|enc_windows_1256|windows-1256 #  # [65 233 26 26 128] # [65 233 26 26 8364]|exact
+CHK|enc_windows_1257|windows-1257 #  # [65 233 26 26 128] # [65 233 26 26 8364]|exact
+CHK|enc_windows_1258|windows-1258 #  # [65 233 26 26 128] # [65 233 26 26 8364]|exact
+CHK|enc_UTF_16LE|UTF-16LE #  # [65 0 233 0 22 4 229 101 172 32] # [65 233 1046 26085 8364]|exact
+CHK|enc_UTF_32LE|UTF-32LE #  # [65 0 0 0 233 0 0 0 22 4 0 0 229 101 0 0 172 32 0 0] # [65 233 1046 26085 8364]|exact
+CHK|enc_UTF_32BE|UTF-32BE #  # [0 0 0 65 0 0 0 233 0 0 4 22 0 0 101 229 0 0 32 172] # [65 233 1046 26085 8364]|exact
+CHK|enc_latin1|ISO-8859-1 #  # [65 233 26 26 26] # [65 233 26 26 26]|exact
+CHK|enc_sjis|Shift_JIS #  # [65 252 252 132 71 147 250 252 252] # [65 65533 1046 26085 65533]|exact
+CHK|enc_cp932|Shift_JIS #  # [65 252 252 132 71 147 250 252 252] # [65 65533 1046 26085 65533]|exact
+CHK|enc_shift_jis|Shift_JIS #  # [65 252 252 132 71 147 250 252 252] # [65 65533 1046 26085 65533]|exact
+CHK|enc_ascii|US-ASCII #  # [65 26 26 26 26] # [65 26 26 26 26]|exact
+CHK|enc_utf8|UTF-8 #  # [65 195 169 208 150 230 151 165 226 130 172] # [65 233 1046 26085 8364]|exact
+CHK|enc_cp1251|windows-1251 #  # [65 26 198 26 136] # [65 26 1046 26 8364]|exact
+CHK|enc_CP1252|windows-1252 #  # [65 233 26 26 128] # [65 233 26 26 8364]|exact
+CHK|enc_ISO8859_1|ISO-8859-1 #  # [65 233 26 26 26] # [65 233 26 26 26]|exact
+CHK|enc_Latin_1|ISO-8859-1 #  # [65 233 26 26 26] # [65 233 26 26 26]|exact
+CHK|enc_gb2312|GB2312 #  # [65 168 166 167 168 200 213 161 161] # [65 233 1046 26085 12288]|exact
+CHK|enc_big5|Big5 #  # [65 63 63 164 233 163 225] # [65 63 63 26085 8364]|exact
+CHK|enc_euc_kr|EUC-KR #  # [65 26 172 168 236 237 175 254] # [65 26 1046 26085 65533]|div=ADR0385|diverges|EUC-KR #  # [65 26 172 168 236 237 175 254] # [65 26 1046 26085 63721 63722]
+CHK|enc_koi8_r|KOI8-R #  # [65 26 246 26 26] # [65 26 1046 26 26]|exact
+CHK|enc_ms932|Shift_JIS #  # [65 252 252 132 71 147 250 252 252] # [65 65533 1046 26085 65533]|exact
+CHK|enc_cp936|GBK #  # [65 168 166 167 168 200 213 128] # [65 233 1046 26085 8364]|exact
+CHK|enc_x_mac_roman|macintosh #  # [65 142 63 63 219] # [65 233 63 63 8364]|exact
+CHK|enc_IBM437|IBM437 # MATLAB:iofun:UnsupportedEncoding # [65 130 127 127 127] # [65 233 26 26 26]|exact
+CHK|enc_cp437|IBM437 # MATLAB:iofun:UnsupportedEncoding # [65 130 127 127 127] # [65 233 26 26 26]|exact
+CHK|enc_IBM850|IBM850 # MATLAB:iofun:UnsupportedEncoding # [65 130 127 127 127] # [65 233 26 26 26]|exact
+CHK|enc_windows_31j|Shift_JIS #  # [65 252 252 132 71 147 250 252 252] # [65 65533 1046 26085 65533]|exact
+CHK|enc_ISO_2022_JP|ISO-2022-JP # MATLAB:iofun:UnsupportedEncoding # [65 26 27 36 66 39 40 70 124 27 40 66 26] # [65 26 1046 26085 26]|exact
+CHK|enc_EUC_CN|GB2312 #  # [65 168 166 167 168 200 213 161 161] # [65 233 1046 26085 12288]|exact
+CHK|enc_TIS_620|windows-874 #  # [65 63 63 63 128] # [65 63 63 63 8364]|exact
+CHK|enc_bogus_enc|ERR MATLAB:iofun:InvalidEncoding The encoding 'bogus-enc' is not valid.|exact
+CHK|enc_system|ERR MATLAB:iofun:InvalidEncoding The encoding 'system' is not valid.|exact
+CHK|enc_native|ERR MATLAB:iofun:InvalidEncoding The encoding 'native' is not valid.|exact
+CHK|enc_Big5_HKSCS|Big5-HKSCS #  # [65 136 109 199 250 164 233 163 225] # [65 233 1046 26085 8364]|div=ADR0385|diverges|Big5-HKSCS #  # [65 161 72 161 72 164 233 163 225] # [65 65311 65311 26085 8364]
+CHK|enc_EUC_JP|EUC-JP #  # [65 143 171 177 167 168 198 252 244 254] # [65 233 1046 26085 65533]|div=ADR0385|diverges|EUC-JP #  # [65 244 254 167 168 198 252 244 254] # [65 65533 1046 26085 65533]
+CHK|enc_EUC_TW|euc-tw-2014 #  # [65 26 142 173 163 199 197 202 194 194] # [65 26 1046 26085 8364]|div=ADR0385|diverges|ERR MATLAB:iofun:InvalidEncoding The encoding 'EUC-TW' is not valid.
+CHK|enc_CP949|ibm-949_P110-1999 #  # [65 127 172 168 236 237 175 254] # [65 26 1046 26085 65533]|div=ADR0385|diverges|ibm-949_P110-1999 #  # [65 127 172 168 236 237 175 254] # [65 127 1046 26085 65533]
+CHK|enc_cp950|ibm-950_P110-1999 # MATLAB:iofun:UnsupportedEncoding # [65 127 199 250 164 233 200 254] # [65 26 1046 26085 65533]|div=ADR0385|diverges|ibm-950_P110-1999 # MATLAB:iofun:UnsupportedEncoding # [65 127 127 164 233 163 225] # [65 127 127 26085 8364]
+CHK|enc_UTF_16|UTF-16 # MATLAB:iofun:UnsupportedEncoding # [65 0 233 0 22 4 229 101 172 32] # [16640 59648 5636 58725 44064]|div=ADR0385|diverges|UTF-16 # MATLAB:iofun:UnsupportedEncoding # [65 0 233 0 22 4 229 101 172 32] # [65 233 1046 26085 8364]
+CHK|enc_UTF_16BE|UTF-16BE #  # [65 0 233 0 22 4 229 101 172 32] # [16640 59648 5636 58725 44064]|div=ADR0385|diverges|UTF-16BE #  # [0 65 0 233 4 22 101 229 32 172] # [65 233 1046 26085 8364]
+CHK|enc_UTF_32|UTF-32 # MATLAB:iofun:UnsupportedEncoding # [255 254 0 0 65 0 0 0 233 0 0 0 22 4 0 0 229 101 0 0 172 32 0 0] # [65 233 1046 26085 8364]|div=ADR0385|diverges|UTF-32 # MATLAB:iofun:UnsupportedEncoding # [65 0 0 0 233 0 0 0 22 4 0 0 229 101 0 0 172 32 0 0] # [65 233 1046 26085 8364]
+CHK|enc_UTF_7|UTF-7 # MATLAB:iofun:UnsupportedEncoding # [65 43 65 79 107 69 70 109 88 108 73 75] # [65 233 1046 26085 65533]|div=ADR0385|diverges|ERR MATLAB:iofun:InvalidEncoding The encoding 'UTF-7' is not valid.
+CHK|enc_unsupported_warning|MATLAB:iofun:UnsupportedEncoding # The encoding 'IBM437' is not supported. / See the documentation for FOPEN.|exact
+CHK|mex_nprops|10|exact
+CHK|mex_prop1|type # hidden=1 # get=protected # set=protected # dependent=0 # constant=0 # hasdefault=1 # MException|exact
+CHK|mex_prop2|hasBeenCaught # hidden=0 # get=private # set=private # dependent=0 # constant=0 # hasdefault=1 # MException|exact
+CHK|mex_prop3|identifier # hidden=0 # get=public # set=private # dependent=0 # constant=0 # hasdefault=1 # MException|exact
+CHK|mex_prop4|message # hidden=0 # get=public # set=protected # dependent=0 # constant=0 # hasdefault=1 # MException|exact
+CHK|mex_prop5|cause # hidden=0 # get=public # set=private # dependent=0 # constant=0 # hasdefault=1 # MException|exact
+CHK|mex_prop6|stack # hidden=0 # get=public # set=private # dependent=1 # constant=0 # hasdefault=1 # MException|exact
+CHK|mex_prop7|defaultstack # hidden=0 # get=private # set=private # dependent=0 # constant=0 # hasdefault=1 # MException|exact
+CHK|mex_prop8|enhancedstack # hidden=0 # get=protected # set=private # dependent=0 # constant=0 # hasdefault=1 # MException|exact
+CHK|mex_prop9|arguments # hidden=1 # get=public # set=private # dependent=0 # constant=0 # hasdefault=0 # MException|exact
+CHK|mex_prop10|Correction # hidden=0 # get=public # set=private # dependent=0 # constant=0 # hasdefault=0 # MException|exact
+CHK|mex_visible|hasBeenCaught,identifier,message,cause,stack,defaultstack,enhancedstack,Correction|exact
+CHK|mex_properties_name|identifier,message,cause,stack,Correction|exact
+CHK|mex_properties_value|identifier,message,cause,stack,Correction|exact
+CHK|mex_fromname|10|exact

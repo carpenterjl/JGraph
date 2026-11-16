@@ -214,6 +214,11 @@ and `JgsRulerTicks` answers the theta ruler's ticks by the 30/15/5-degree rule.
 - **`isenum` and `istabular` are not registered.**
 - **A categorical answers `isequal(c, string(c))` false, as R2025b does, but `isequal(c, cellstr(c))` true**: both as measured.
 
+Closed since: row `cat_protected_display` of `oi_categorical`, filed under the display of a categorical, is
+no display in R2025b: its `evalc('pp = ...')` runs inside an anonymous function, whose workspace is static,
+and is refused with `MATLAB:err_static_workspace_violation`; ADR 0385 refuses it too, and the row agrees.
+The rest of that divergence stands.
+
 ## Consequences
 
 - Patch property shapes change in both dialects: a script reading `p.XData` gets a column, and

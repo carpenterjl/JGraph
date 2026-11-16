@@ -9,6 +9,9 @@ namespace JGraph.Scripting.Startup;
 /// </summary>
 public static class BatchRunner
 {
+    /// <summary>The command window width R2025b reports under <c>-batch</c> (<c>get(0, 'CommandWindowSize')</c> is [180 45]; open item 350).</summary>
+    public const int BatchConsoleWidth = 180;
+
     /// <summary>
     /// Resolves the statement, picks the engine, runs it, and maps the outcome to an exit code.
     /// </summary>
@@ -220,6 +223,10 @@ public static class BatchRunner
         {
             ScriptPath = resolved.SourcePath,
             Deployment = deployment,
+
+            // R2025b's -batch reports a 180-by-45 command window, redirected or not, and wraps a report's
+            // long message to it (open item 350, ADR 0385). A deployed program's console was not measured.
+            ConsoleWidth = deployment is null ? BatchConsoleWidth : null,
         };
 
         IScriptSession? session = inSession && engine is IScriptRepl repl ? repl.CreateSession(context) : null;

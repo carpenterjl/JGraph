@@ -54,6 +54,91 @@ internal sealed record ReportInfo(
 /// </summary>
 internal static class JgsErrorReport
 {
+    /// <summary>
+    /// <paramref name="text"/> wrapped as R2025b wraps a report's message at a console <paramref name="width"/>
+    /// characters wide (open item 350, ADR 0385, measured at 180 under -batch): a line holds at most width - 1
+    /// characters and breaks at the last space or tab that keeps it so, the run of blanks there dropped; a word
+    /// longer than that stays whole and breaks at the first blank after it; a continuation line starts with
+    /// the leading spaces of the line it continues (a cause's four included); a carriage return starts the
+    /// count again. Each line of the text is wrapped on its own.
+    /// </summary>
+    internal static string WrapToConsole(string text, int width)
+    {
+        int most = width - 1;
+        if (most < 1 || text.Length <= most)
+        {
+            return text;
+        }
+
+        string[] lines = text.Split('\n');
+        for (int k = 0; k < lines.Length; k++)
+        {
+            if (lines[k].Length > most)
+            {
+                lines[k] = string.Join('\r', lines[k].Split('\r').Select(segment => WrapLine(segment, most)));
+            }
+        }
+
+        return string.Join('\n', lines);
+    }
+
+    private static string WrapLine(string line, int most)
+    {
+        static bool Blank(char c) => c is ' ' or '\t';
+        int indentLength = 0;
+        while (indentLength < line.Length && line[indentLength] == ' ')
+        {
+            indentLength++;
+        }
+
+        string indent = line[..indentLength];
+        var wrapped = new StringBuilder();
+        string rest = line;
+        while (rest.Length > most)
+        {
+            // The last run of blanks starting within the line's room, then the first one after it.
+            int cut = -1;
+            for (int i = most; i > indentLength; i--)
+            {
+                if (Blank(rest[i]) && !Blank(rest[i - 1]))
+                {
+                    cut = i;
+                    break;
+                }
+            }
+
+            if (cut < 0)
+            {
+                for (int i = most + 1; i < rest.Length; i++)
+                {
+                    if (Blank(rest[i]))
+                    {
+                        cut = i;
+                        break;
+                    }
+                }
+            }
+
+            if (cut < 0)
+            {
+                break; // one word longer than the line: it stays whole
+            }
+
+            string head = rest[..cut].TrimEnd(' ', '\t');
+            string tail = rest[cut..].TrimStart(' ', '\t');
+            wrapped.Append(head);
+            if (tail.Length == 0)
+            {
+                return wrapped.ToString();
+            }
+
+            wrapped.Append('\n');
+            rest = indent + tail;
+        }
+
+        return wrapped.Append(rest).ToString();
+    }
+
     /// <summary>The source lines of the files read for reports, by path, with the time each was read at.</summary>
     private static readonly Dictionary<string, (DateTime Written, string[] Lines)> Sources = new(StringComparer.OrdinalIgnoreCase);
 
