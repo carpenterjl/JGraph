@@ -142,7 +142,8 @@ public class OpenItemsBatch16Tests : IDisposable
             disp([n held m stillHeld]);
             """);
 
-        Assert.Equal(["[2, false, 5, true]"], _output.NormalLines);
+        // [n held m stillHeld] joins numbers and logicals as a double, as R2025b does (ADR 0386).
+        Assert.Equal(["[2, 0, 5, 1]"], _output.NormalLines);
     }
 
     // --- 112: JGS keeps its own charts ----------------------------------------------------------

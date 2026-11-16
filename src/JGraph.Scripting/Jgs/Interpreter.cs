@@ -4171,6 +4171,14 @@ internal sealed partial class Interpreter
             return only; // [p] is p, as a bracket around one value is that value
         }
 
+        // An N-D piece, or numbers, logicals and text of more than one kind, join by R2025b's class
+        // and shape rules (open item 346, ADR 0386).
+        if (Dialect.ConcatenatesBrackets && Dialect.IsMatlab
+            && JgsBuiltins.TryMatlabBracketJoin(rows, matrix.Line, matrix.Column, out JgsValue matlabJoined))
+        {
+            return matlabJoined;
+        }
+
         // A sparse piece makes the answer sparse, in the class the pieces combine to (open item 331,
         // ADR 0369).
         if (rows.Exists(static row => Array.Exists(row, static e => e.Type == JgsType.Sparse)))
@@ -4475,6 +4483,14 @@ internal sealed partial class Interpreter
         if (Dialect.ConcatenatesBrackets && elements is [{ Type: JgsType.External } only])
         {
             return only; // [p] is p, as a bracket around one value is that value
+        }
+
+        // An N-D piece, or numbers, logicals and text of more than one kind, join by R2025b's class
+        // and shape rules (open item 346, ADR 0386).
+        if (Dialect.ConcatenatesBrackets && Dialect.IsMatlab
+            && JgsBuiltins.TryMatlabBracketJoin([elements], array.Line, array.Column, out JgsValue matlabJoined))
+        {
+            return matlabJoined;
         }
 
         bool concatenating = false;

@@ -1,0 +1,1297 @@
+CHK|h_ch_ch|char[1 2] [97 97]|exact
+CHK|v_ch_ch|char[2 1] [97;97]|exact
+CHK|c3_ch_ch|char[1 1 2] [97 97]|exact
+CHK|h_ch_lg|MATLAB:UnableToConvert|exact
+CHK|h_ch_lg_msg|The following error occurred converting from logical to char: Conversion to char from logical is not possible.|exact
+CHK|v_ch_lg|MATLAB:UnableToConvert|exact
+CHK|v_ch_lg_msg|The following error occurred converting from logical to char: Conversion to char from logical is not possible.|exact
+CHK|c3_ch_lg|MATLAB:UnableToConvert|exact
+CHK|c3_ch_lg_msg|The following error occurred converting from logical to char: Conversion to char from logical is not possible.|exact
+CHK|h_ch_db|char[1 2] [97 2]|exact
+CHK|v_ch_db|char[2 1] [97;2]|exact
+CHK|c3_ch_db|char[1 1 2] [97 2]|exact
+CHK|h_ch_sg|char[1 2] [97 2]|exact
+CHK|v_ch_sg|char[2 1] [97;2]|exact
+CHK|c3_ch_sg|char[1 1 2] [97 2]|exact
+CHK|h_ch_i8|char[1 2] [97 3]|exact
+CHK|v_ch_i8|char[2 1] [97;3]|exact
+CHK|c3_ch_i8|char[1 1 2] [97 3]|exact
+CHK|h_ch_i16|char[1 2] [97 300]|exact
+CHK|v_ch_i16|char[2 1] [97;300]|exact
+CHK|c3_ch_i16|char[1 1 2] [97 300]|exact
+CHK|h_ch_u8|char[1 2] [97 5]|exact
+CHK|v_ch_u8|char[2 1] [97;5]|exact
+CHK|c3_ch_u8|char[1 1 2] [97 5]|exact
+CHK|h_ch_i64|char[1 2] [97 6]|exact
+CHK|v_ch_i64|char[2 1] [97;6]|exact
+CHK|c3_ch_i64|char[1 1 2] [97 6]|exact
+CHK|h_ch_u64|char[1 2] [97 7]|exact
+CHK|v_ch_u64|char[2 1] [97;7]|exact
+CHK|c3_ch_u64|char[1 1 2] [97 7]|exact
+CHK|h_ch_zd|MATLAB:UnableToConvert|exact
+CHK|h_ch_zd_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|v_ch_zd|MATLAB:UnableToConvert|exact
+CHK|v_ch_zd_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|c3_ch_zd|MATLAB:UnableToConvert|exact
+CHK|c3_ch_zd_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|h_ch_zs|MATLAB:UnableToConvert|exact
+CHK|h_ch_zs_msg|The following error occurred converting from single to char: Complex values cannot be converted to chars|exact
+CHK|v_ch_zs|MATLAB:UnableToConvert|exact
+CHK|v_ch_zs_msg|The following error occurred converting from single to char: Complex values cannot be converted to chars|exact
+CHK|c3_ch_zs|MATLAB:UnableToConvert|exact
+CHK|c3_ch_zs_msg|The following error occurred converting from single to char: Complex values cannot be converted to chars|exact
+CHK|h_ch_fd|MATLAB:UnableToConvert|exact
+CHK|h_ch_fd_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|v_ch_fd|MATLAB:UnableToConvert|exact
+CHK|v_ch_fd_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|c3_ch_fd|MATLAB:UnableToConvert|exact
+CHK|c3_ch_fd_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|h_ch_ech|char[1 1] 97|exact
+CHK|v_ch_ech|char[1 1] 97|exact
+CHK|c3_ch_ech|char[1 1] 97|exact
+CHK|h_ch_edb|char[1 1] 97|exact
+CHK|v_ch_edb|char[1 1] 97|exact
+CHK|c3_ch_edb|char[1 1] 97|exact
+CHK|h_ch_ei16|char[1 1] 97|exact
+CHK|v_ch_ei16|char[1 1] 97|exact
+CHK|c3_ch_ei16|char[1 1] 97|exact
+CHK|h_lg_ch|MATLAB:UnableToConvert|exact
+CHK|h_lg_ch_msg|The following error occurred converting from logical to char: Conversion to char from logical is not possible.|exact
+CHK|v_lg_ch|MATLAB:UnableToConvert|exact
+CHK|v_lg_ch_msg|The following error occurred converting from logical to char: Conversion to char from logical is not possible.|exact
+CHK|c3_lg_ch|MATLAB:UnableToConvert|exact
+CHK|c3_lg_ch_msg|The following error occurred converting from logical to char: Conversion to char from logical is not possible.|exact
+CHK|h_lg_lg|logical[1 2] real [1 1]|exact
+CHK|v_lg_lg|logical[2 1] real [1;1]|exact
+CHK|c3_lg_lg|logical[1 1 2] real [1 1]|exact
+CHK|h_lg_db|double[1 2] real [1 2.7000000000000002]|exact
+CHK|v_lg_db|double[2 1] real [1;2.7000000000000002]|exact
+CHK|c3_lg_db|double[1 1 2] real [1 2.7000000000000002]|exact
+CHK|h_lg_sg|single[1 2] real [1 2.5]|exact
+CHK|v_lg_sg|single[2 1] real [1;2.5]|exact
+CHK|c3_lg_sg|single[1 1 2] real [1 2.5]|exact
+CHK|h_lg_i8|int8[1 2] real [1 3]|exact
+CHK|v_lg_i8|int8[2 1] real [1;3]|exact
+CHK|c3_lg_i8|int8[1 1 2] real [1 3]|exact
+CHK|h_lg_i16|int16[1 2] real [1 300]|exact
+CHK|v_lg_i16|int16[2 1] real [1;300]|exact
+CHK|c3_lg_i16|int16[1 1 2] real [1 300]|exact
+CHK|h_lg_u8|uint8[1 2] real [1 5]|exact
+CHK|v_lg_u8|uint8[2 1] real [1;5]|exact
+CHK|c3_lg_u8|uint8[1 1 2] real [1 5]|exact
+CHK|h_lg_i64|int64[1 2] real [1 6]|exact
+CHK|v_lg_i64|int64[2 1] real [1;6]|exact
+CHK|c3_lg_i64|int64[1 1 2] real [1 6]|exact
+CHK|h_lg_u64|uint64[1 2] real [1 7]|exact
+CHK|v_lg_u64|uint64[2 1] real [1;7]|exact
+CHK|c3_lg_u64|uint64[1 1 2] real [1 7]|exact
+CHK|h_lg_zd|double[1 2] complex re [1 1] im [0 2]|exact
+CHK|v_lg_zd|double[2 1] complex re [1;1] im [0;2]|exact
+CHK|c3_lg_zd|double[1 1 2] complex re [1 1] im [0 2]|exact
+CHK|h_lg_zs|single[1 2] complex re [1 1] im [0 2]|exact
+CHK|v_lg_zs|single[2 1] complex re [1;1] im [0;2]|exact
+CHK|c3_lg_zs|single[1 1 2] complex re [1 1] im [0 2]|exact
+CHK|h_lg_fd|double[1 2] complex re [1 4] im [0 0]|exact
+CHK|v_lg_fd|double[2 1] complex re [1;4] im [0;0]|exact
+CHK|c3_lg_fd|double[1 1 2] complex re [1 4] im [0 0]|exact
+CHK|h_lg_ech|MATLAB:UnableToConvert|exact
+CHK|h_lg_ech_msg|The following error occurred converting from logical to char: Conversion to char from logical is not possible.|exact
+CHK|v_lg_ech|MATLAB:UnableToConvert|exact
+CHK|v_lg_ech_msg|The following error occurred converting from logical to char: Conversion to char from logical is not possible.|exact
+CHK|c3_lg_ech|MATLAB:UnableToConvert|exact
+CHK|c3_lg_ech_msg|The following error occurred converting from logical to char: Conversion to char from logical is not possible.|exact
+CHK|h_lg_edb|double[1 1] real 1|exact
+CHK|v_lg_edb|double[1 1] real 1|exact
+CHK|c3_lg_edb|double[1 1] real 1|exact
+CHK|h_lg_ei16|int16[1 1] real 1|exact
+CHK|v_lg_ei16|int16[1 1] real 1|exact
+CHK|c3_lg_ei16|int16[1 1] real 1|exact
+CHK|h_db_ch|char[1 2] [2 97]|exact
+CHK|v_db_ch|char[2 1] [2;97]|exact
+CHK|c3_db_ch|char[1 1 2] [2 97]|exact
+CHK|h_db_lg|double[1 2] real [2.7000000000000002 1]|exact
+CHK|v_db_lg|double[2 1] real [2.7000000000000002;1]|exact
+CHK|c3_db_lg|double[1 1 2] real [2.7000000000000002 1]|exact
+CHK|h_db_db|double[1 2] real [2.7000000000000002 2.7000000000000002]|exact
+CHK|v_db_db|double[2 1] real [2.7000000000000002;2.7000000000000002]|exact
+CHK|c3_db_db|double[1 1 2] real [2.7000000000000002 2.7000000000000002]|exact
+CHK|h_db_sg|single[1 2] real [2.7000000476837158 2.5]|exact
+CHK|v_db_sg|single[2 1] real [2.7000000476837158;2.5]|exact
+CHK|c3_db_sg|single[1 1 2] real [2.7000000476837158 2.5]|exact
+CHK|h_db_i8|int8[1 2] real [3 3]|exact
+CHK|v_db_i8|int8[2 1] real [3;3]|exact
+CHK|c3_db_i8|int8[1 1 2] real [3 3]|exact
+CHK|h_db_i16|int16[1 2] real [3 300]|exact
+CHK|v_db_i16|int16[2 1] real [3;300]|exact
+CHK|c3_db_i16|int16[1 1 2] real [3 300]|exact
+CHK|h_db_u8|uint8[1 2] real [3 5]|exact
+CHK|v_db_u8|uint8[2 1] real [3;5]|exact
+CHK|c3_db_u8|uint8[1 1 2] real [3 5]|exact
+CHK|h_db_i64|int64[1 2] real [3 6]|exact
+CHK|v_db_i64|int64[2 1] real [3;6]|exact
+CHK|c3_db_i64|int64[1 1 2] real [3 6]|exact
+CHK|h_db_u64|uint64[1 2] real [3 7]|exact
+CHK|v_db_u64|uint64[2 1] real [3;7]|exact
+CHK|c3_db_u64|uint64[1 1 2] real [3 7]|exact
+CHK|h_db_zd|double[1 2] complex re [2.7000000000000002 1] im [0 2]|exact
+CHK|v_db_zd|double[2 1] complex re [2.7000000000000002;1] im [0;2]|exact
+CHK|c3_db_zd|double[1 1 2] complex re [2.7000000000000002 1] im [0 2]|exact
+CHK|h_db_zs|single[1 2] complex re [2.7000000476837158 1] im [0 2]|exact
+CHK|v_db_zs|single[2 1] complex re [2.7000000476837158;1] im [0;2]|exact
+CHK|c3_db_zs|single[1 1 2] complex re [2.7000000476837158 1] im [0 2]|exact
+CHK|h_db_fd|double[1 2] complex re [2.7000000000000002 4] im [0 0]|exact
+CHK|v_db_fd|double[2 1] complex re [2.7000000000000002;4] im [0;0]|exact
+CHK|c3_db_fd|double[1 1 2] complex re [2.7000000000000002 4] im [0 0]|exact
+CHK|h_db_ech|char[1 1] 2|exact
+CHK|v_db_ech|char[1 1] 2|exact
+CHK|c3_db_ech|char[1 1] 2|exact
+CHK|h_db_edb|double[1 1] real 2.7000000000000002|exact
+CHK|v_db_edb|double[1 1] real 2.7000000000000002|exact
+CHK|c3_db_edb|double[1 1] real 2.7000000000000002|exact
+CHK|h_db_ei16|int16[1 1] real 3|exact
+CHK|v_db_ei16|int16[1 1] real 3|exact
+CHK|c3_db_ei16|int16[1 1] real 3|exact
+CHK|h_sg_ch|char[1 2] [2 97]|exact
+CHK|v_sg_ch|char[2 1] [2;97]|exact
+CHK|c3_sg_ch|char[1 1 2] [2 97]|exact
+CHK|h_sg_lg|single[1 2] real [2.5 1]|exact
+CHK|v_sg_lg|single[2 1] real [2.5;1]|exact
+CHK|c3_sg_lg|single[1 1 2] real [2.5 1]|exact
+CHK|h_sg_db|single[1 2] real [2.5 2.7000000476837158]|exact
+CHK|v_sg_db|single[2 1] real [2.5;2.7000000476837158]|exact
+CHK|c3_sg_db|single[1 1 2] real [2.5 2.7000000476837158]|exact
+CHK|h_sg_sg|single[1 2] real [2.5 2.5]|exact
+CHK|v_sg_sg|single[2 1] real [2.5;2.5]|exact
+CHK|c3_sg_sg|single[1 1 2] real [2.5 2.5]|exact
+CHK|h_sg_i8|int8[1 2] real [3 3]|exact
+CHK|v_sg_i8|int8[2 1] real [3;3]|exact
+CHK|c3_sg_i8|int8[1 1 2] real [3 3]|exact
+CHK|h_sg_i16|int16[1 2] real [3 300]|exact
+CHK|v_sg_i16|int16[2 1] real [3;300]|exact
+CHK|c3_sg_i16|int16[1 1 2] real [3 300]|exact
+CHK|h_sg_u8|uint8[1 2] real [3 5]|exact
+CHK|v_sg_u8|uint8[2 1] real [3;5]|exact
+CHK|c3_sg_u8|uint8[1 1 2] real [3 5]|exact
+CHK|h_sg_i64|int64[1 2] real [3 6]|exact
+CHK|v_sg_i64|int64[2 1] real [3;6]|exact
+CHK|c3_sg_i64|int64[1 1 2] real [3 6]|exact
+CHK|h_sg_u64|uint64[1 2] real [3 7]|exact
+CHK|v_sg_u64|uint64[2 1] real [3;7]|exact
+CHK|c3_sg_u64|uint64[1 1 2] real [3 7]|exact
+CHK|h_sg_zd|single[1 2] complex re [2.5 1] im [0 2]|exact
+CHK|v_sg_zd|single[2 1] complex re [2.5;1] im [0;2]|exact
+CHK|c3_sg_zd|single[1 1 2] complex re [2.5 1] im [0 2]|exact
+CHK|h_sg_zs|single[1 2] complex re [2.5 1] im [0 2]|exact
+CHK|v_sg_zs|single[2 1] complex re [2.5;1] im [0;2]|exact
+CHK|c3_sg_zs|single[1 1 2] complex re [2.5 1] im [0 2]|exact
+CHK|h_sg_fd|single[1 2] real [2.5 4]|exact
+CHK|v_sg_fd|single[2 1] real [2.5;4]|exact
+CHK|c3_sg_fd|single[1 1 2] real [2.5 4]|exact
+CHK|h_sg_ech|char[1 1] 2|exact
+CHK|v_sg_ech|char[1 1] 2|exact
+CHK|c3_sg_ech|char[1 1] 2|exact
+CHK|h_sg_edb|single[1 1] real 2.5|exact
+CHK|v_sg_edb|single[1 1] real 2.5|exact
+CHK|c3_sg_edb|single[1 1] real 2.5|exact
+CHK|h_sg_ei16|int16[1 1] real 3|exact
+CHK|v_sg_ei16|int16[1 1] real 3|exact
+CHK|c3_sg_ei16|int16[1 1] real 3|exact
+CHK|h_i8_ch|char[1 2] [3 97]|exact
+CHK|v_i8_ch|char[2 1] [3;97]|exact
+CHK|c3_i8_ch|char[1 1 2] [3 97]|exact
+CHK|h_i8_lg|int8[1 2] real [3 1]|exact
+CHK|v_i8_lg|int8[2 1] real [3;1]|exact
+CHK|c3_i8_lg|int8[1 1 2] real [3 1]|exact
+CHK|h_i8_db|int8[1 2] real [3 3]|exact
+CHK|v_i8_db|int8[2 1] real [3;3]|exact
+CHK|c3_i8_db|int8[1 1 2] real [3 3]|exact
+CHK|h_i8_sg|int8[1 2] real [3 3]|exact
+CHK|v_i8_sg|int8[2 1] real [3;3]|exact
+CHK|c3_i8_sg|int8[1 1 2] real [3 3]|exact
+CHK|h_i8_i8|int8[1 2] real [3 3]|exact
+CHK|v_i8_i8|int8[2 1] real [3;3]|exact
+CHK|c3_i8_i8|int8[1 1 2] real [3 3]|exact
+CHK|h_i8_i16|int8[1 2] real [3 127]|exact
+CHK|v_i8_i16|int8[2 1] real [3;127]|exact
+CHK|c3_i8_i16|int8[1 1 2] real [3 127]|exact
+CHK|h_i8_u8|int8[1 2] real [3 5]|exact
+CHK|v_i8_u8|int8[2 1] real [3;5]|exact
+CHK|c3_i8_u8|int8[1 1 2] real [3 5]|exact
+CHK|h_i8_i64|int8[1 2] real [3 6]|exact
+CHK|v_i8_i64|int8[2 1] real [3;6]|exact
+CHK|c3_i8_i64|int8[1 1 2] real [3 6]|exact
+CHK|h_i8_u64|int8[1 2] real [3 7]|exact
+CHK|v_i8_u64|int8[2 1] real [3;7]|exact
+CHK|c3_i8_u64|int8[1 1 2] real [3 7]|exact
+CHK|h_i8_fd|int8[1 2] real [3 4]|exact
+CHK|v_i8_fd|int8[2 1] real [3;4]|exact
+CHK|c3_i8_fd|int8[1 1 2] real [3 4]|exact
+CHK|h_i8_ech|char[1 1] 3|exact
+CHK|v_i8_ech|char[1 1] 3|exact
+CHK|c3_i8_ech|char[1 1] 3|exact
+CHK|h_i8_edb|int8[1 1] real 3|exact
+CHK|v_i8_edb|int8[1 1] real 3|exact
+CHK|c3_i8_edb|int8[1 1] real 3|exact
+CHK|h_i8_ei16|int8[1 1] real 3|exact
+CHK|v_i8_ei16|int8[1 1] real 3|exact
+CHK|c3_i8_ei16|int8[1 1] real 3|exact
+CHK|h_i16_ch|char[1 2] [300 97]|exact
+CHK|v_i16_ch|char[2 1] [300;97]|exact
+CHK|c3_i16_ch|char[1 1 2] [300 97]|exact
+CHK|h_i16_lg|int16[1 2] real [300 1]|exact
+CHK|v_i16_lg|int16[2 1] real [300;1]|exact
+CHK|c3_i16_lg|int16[1 1 2] real [300 1]|exact
+CHK|h_i16_db|int16[1 2] real [300 3]|exact
+CHK|v_i16_db|int16[2 1] real [300;3]|exact
+CHK|c3_i16_db|int16[1 1 2] real [300 3]|exact
+CHK|h_i16_sg|int16[1 2] real [300 3]|exact
+CHK|v_i16_sg|int16[2 1] real [300;3]|exact
+CHK|c3_i16_sg|int16[1 1 2] real [300 3]|exact
+CHK|h_i16_i8|int16[1 2] real [300 3]|exact
+CHK|v_i16_i8|int16[2 1] real [300;3]|exact
+CHK|c3_i16_i8|int16[1 1 2] real [300 3]|exact
+CHK|h_i16_i16|int16[1 2] real [300 300]|exact
+CHK|v_i16_i16|int16[2 1] real [300;300]|exact
+CHK|c3_i16_i16|int16[1 1 2] real [300 300]|exact
+CHK|h_i16_u8|int16[1 2] real [300 5]|exact
+CHK|v_i16_u8|int16[2 1] real [300;5]|exact
+CHK|c3_i16_u8|int16[1 1 2] real [300 5]|exact
+CHK|h_i16_i64|int16[1 2] real [300 6]|exact
+CHK|v_i16_i64|int16[2 1] real [300;6]|exact
+CHK|c3_i16_i64|int16[1 1 2] real [300 6]|exact
+CHK|h_i16_u64|int16[1 2] real [300 7]|exact
+CHK|v_i16_u64|int16[2 1] real [300;7]|exact
+CHK|c3_i16_u64|int16[1 1 2] real [300 7]|exact
+CHK|h_i16_fd|int16[1 2] real [300 4]|exact
+CHK|v_i16_fd|int16[2 1] real [300;4]|exact
+CHK|c3_i16_fd|int16[1 1 2] real [300 4]|exact
+CHK|h_i16_ech|char[1 1] 300|exact
+CHK|v_i16_ech|char[1 1] 300|exact
+CHK|c3_i16_ech|char[1 1] 300|exact
+CHK|h_i16_edb|int16[1 1] real 300|exact
+CHK|v_i16_edb|int16[1 1] real 300|exact
+CHK|c3_i16_edb|int16[1 1] real 300|exact
+CHK|h_i16_ei16|int16[1 1] real 300|exact
+CHK|v_i16_ei16|int16[1 1] real 300|exact
+CHK|c3_i16_ei16|int16[1 1] real 300|exact
+CHK|h_u8_ch|char[1 2] [5 97]|exact
+CHK|v_u8_ch|char[2 1] [5;97]|exact
+CHK|c3_u8_ch|char[1 1 2] [5 97]|exact
+CHK|h_u8_lg|uint8[1 2] real [5 1]|exact
+CHK|v_u8_lg|uint8[2 1] real [5;1]|exact
+CHK|c3_u8_lg|uint8[1 1 2] real [5 1]|exact
+CHK|h_u8_db|uint8[1 2] real [5 3]|exact
+CHK|v_u8_db|uint8[2 1] real [5;3]|exact
+CHK|c3_u8_db|uint8[1 1 2] real [5 3]|exact
+CHK|h_u8_sg|uint8[1 2] real [5 3]|exact
+CHK|v_u8_sg|uint8[2 1] real [5;3]|exact
+CHK|c3_u8_sg|uint8[1 1 2] real [5 3]|exact
+CHK|h_u8_i8|uint8[1 2] real [5 3]|exact
+CHK|v_u8_i8|uint8[2 1] real [5;3]|exact
+CHK|c3_u8_i8|uint8[1 1 2] real [5 3]|exact
+CHK|h_u8_i16|uint8[1 2] real [5 255]|exact
+CHK|v_u8_i16|uint8[2 1] real [5;255]|exact
+CHK|c3_u8_i16|uint8[1 1 2] real [5 255]|exact
+CHK|h_u8_u8|uint8[1 2] real [5 5]|exact
+CHK|v_u8_u8|uint8[2 1] real [5;5]|exact
+CHK|c3_u8_u8|uint8[1 1 2] real [5 5]|exact
+CHK|h_u8_i64|uint8[1 2] real [5 6]|exact
+CHK|v_u8_i64|uint8[2 1] real [5;6]|exact
+CHK|c3_u8_i64|uint8[1 1 2] real [5 6]|exact
+CHK|h_u8_u64|uint8[1 2] real [5 7]|exact
+CHK|v_u8_u64|uint8[2 1] real [5;7]|exact
+CHK|c3_u8_u64|uint8[1 1 2] real [5 7]|exact
+CHK|h_u8_fd|uint8[1 2] real [5 4]|exact
+CHK|v_u8_fd|uint8[2 1] real [5;4]|exact
+CHK|c3_u8_fd|uint8[1 1 2] real [5 4]|exact
+CHK|h_u8_ech|char[1 1] 5|exact
+CHK|v_u8_ech|char[1 1] 5|exact
+CHK|c3_u8_ech|char[1 1] 5|exact
+CHK|h_u8_edb|uint8[1 1] real 5|exact
+CHK|v_u8_edb|uint8[1 1] real 5|exact
+CHK|c3_u8_edb|uint8[1 1] real 5|exact
+CHK|h_u8_ei16|uint8[1 1] real 5|exact
+CHK|v_u8_ei16|uint8[1 1] real 5|exact
+CHK|c3_u8_ei16|uint8[1 1] real 5|exact
+CHK|h_i64_ch|char[1 2] [6 97]|exact
+CHK|v_i64_ch|char[2 1] [6;97]|exact
+CHK|c3_i64_ch|char[1 1 2] [6 97]|exact
+CHK|h_i64_lg|int64[1 2] real [6 1]|exact
+CHK|v_i64_lg|int64[2 1] real [6;1]|exact
+CHK|c3_i64_lg|int64[1 1 2] real [6 1]|exact
+CHK|h_i64_db|int64[1 2] real [6 3]|exact
+CHK|v_i64_db|int64[2 1] real [6;3]|exact
+CHK|c3_i64_db|int64[1 1 2] real [6 3]|exact
+CHK|h_i64_sg|int64[1 2] real [6 3]|exact
+CHK|v_i64_sg|int64[2 1] real [6;3]|exact
+CHK|c3_i64_sg|int64[1 1 2] real [6 3]|exact
+CHK|h_i64_i8|int64[1 2] real [6 3]|exact
+CHK|v_i64_i8|int64[2 1] real [6;3]|exact
+CHK|c3_i64_i8|int64[1 1 2] real [6 3]|exact
+CHK|h_i64_i16|int64[1 2] real [6 300]|exact
+CHK|v_i64_i16|int64[2 1] real [6;300]|exact
+CHK|c3_i64_i16|int64[1 1 2] real [6 300]|exact
+CHK|h_i64_u8|int64[1 2] real [6 5]|exact
+CHK|v_i64_u8|int64[2 1] real [6;5]|exact
+CHK|c3_i64_u8|int64[1 1 2] real [6 5]|exact
+CHK|h_i64_i64|int64[1 2] real [6 6]|exact
+CHK|v_i64_i64|int64[2 1] real [6;6]|exact
+CHK|c3_i64_i64|int64[1 1 2] real [6 6]|exact
+CHK|h_i64_u64|int64[1 2] real [6 7]|exact
+CHK|v_i64_u64|int64[2 1] real [6;7]|exact
+CHK|c3_i64_u64|int64[1 1 2] real [6 7]|exact
+CHK|h_i64_fd|int64[1 2] real [6 4]|exact
+CHK|v_i64_fd|int64[2 1] real [6;4]|exact
+CHK|c3_i64_fd|int64[1 1 2] real [6 4]|exact
+CHK|h_i64_ech|char[1 1] 6|exact
+CHK|v_i64_ech|char[1 1] 6|exact
+CHK|c3_i64_ech|char[1 1] 6|exact
+CHK|h_i64_edb|int64[1 1] real 6|exact
+CHK|v_i64_edb|int64[1 1] real 6|exact
+CHK|c3_i64_edb|int64[1 1] real 6|exact
+CHK|h_i64_ei16|int64[1 1] real 6|exact
+CHK|v_i64_ei16|int64[1 1] real 6|exact
+CHK|c3_i64_ei16|int64[1 1] real 6|exact
+CHK|h_u64_ch|char[1 2] [7 97]|exact
+CHK|v_u64_ch|char[2 1] [7;97]|exact
+CHK|c3_u64_ch|char[1 1 2] [7 97]|exact
+CHK|h_u64_lg|uint64[1 2] real [7 1]|exact
+CHK|v_u64_lg|uint64[2 1] real [7;1]|exact
+CHK|c3_u64_lg|uint64[1 1 2] real [7 1]|exact
+CHK|h_u64_db|uint64[1 2] real [7 3]|exact
+CHK|v_u64_db|uint64[2 1] real [7;3]|exact
+CHK|c3_u64_db|uint64[1 1 2] real [7 3]|exact
+CHK|h_u64_sg|uint64[1 2] real [7 3]|exact
+CHK|v_u64_sg|uint64[2 1] real [7;3]|exact
+CHK|c3_u64_sg|uint64[1 1 2] real [7 3]|exact
+CHK|h_u64_i8|uint64[1 2] real [7 3]|exact
+CHK|v_u64_i8|uint64[2 1] real [7;3]|exact
+CHK|c3_u64_i8|uint64[1 1 2] real [7 3]|exact
+CHK|h_u64_i16|uint64[1 2] real [7 300]|exact
+CHK|v_u64_i16|uint64[2 1] real [7;300]|exact
+CHK|c3_u64_i16|uint64[1 1 2] real [7 300]|exact
+CHK|h_u64_u8|uint64[1 2] real [7 5]|exact
+CHK|v_u64_u8|uint64[2 1] real [7;5]|exact
+CHK|c3_u64_u8|uint64[1 1 2] real [7 5]|exact
+CHK|h_u64_i64|uint64[1 2] real [7 6]|exact
+CHK|v_u64_i64|uint64[2 1] real [7;6]|exact
+CHK|c3_u64_i64|uint64[1 1 2] real [7 6]|exact
+CHK|h_u64_u64|uint64[1 2] real [7 7]|exact
+CHK|v_u64_u64|uint64[2 1] real [7;7]|exact
+CHK|c3_u64_u64|uint64[1 1 2] real [7 7]|exact
+CHK|h_u64_fd|uint64[1 2] real [7 4]|exact
+CHK|v_u64_fd|uint64[2 1] real [7;4]|exact
+CHK|c3_u64_fd|uint64[1 1 2] real [7 4]|exact
+CHK|h_u64_ech|char[1 1] 7|exact
+CHK|v_u64_ech|char[1 1] 7|exact
+CHK|c3_u64_ech|char[1 1] 7|exact
+CHK|h_u64_edb|uint64[1 1] real 7|exact
+CHK|v_u64_edb|uint64[1 1] real 7|exact
+CHK|c3_u64_edb|uint64[1 1] real 7|exact
+CHK|h_u64_ei16|uint64[1 1] real 7|exact
+CHK|v_u64_ei16|uint64[1 1] real 7|exact
+CHK|c3_u64_ei16|uint64[1 1] real 7|exact
+CHK|h_zd_ch|MATLAB:UnableToConvert|exact
+CHK|h_zd_ch_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|v_zd_ch|MATLAB:UnableToConvert|exact
+CHK|v_zd_ch_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|c3_zd_ch|MATLAB:UnableToConvert|exact
+CHK|c3_zd_ch_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|h_zd_lg|double[1 2] complex re [1 1] im [2 0]|exact
+CHK|v_zd_lg|double[2 1] complex re [1;1] im [2;0]|exact
+CHK|c3_zd_lg|double[1 1 2] complex re [1 1] im [2 0]|exact
+CHK|h_zd_db|double[1 2] complex re [1 2.7000000000000002] im [2 0]|exact
+CHK|v_zd_db|double[2 1] complex re [1;2.7000000000000002] im [2;0]|exact
+CHK|c3_zd_db|double[1 1 2] complex re [1 2.7000000000000002] im [2 0]|exact
+CHK|h_zd_sg|single[1 2] complex re [1 2.5] im [2 0]|exact
+CHK|v_zd_sg|single[2 1] complex re [1;2.5] im [2;0]|exact
+CHK|c3_zd_sg|single[1 1 2] complex re [1 2.5] im [2 0]|exact
+CHK|h_zd_zd|double[1 2] complex re [1 1] im [2 2]|exact
+CHK|v_zd_zd|double[2 1] complex re [1;1] im [2;2]|exact
+CHK|c3_zd_zd|double[1 1 2] complex re [1 1] im [2 2]|exact
+CHK|h_zd_zs|single[1 2] complex re [1 1] im [2 2]|exact
+CHK|v_zd_zs|single[2 1] complex re [1;1] im [2;2]|exact
+CHK|c3_zd_zs|single[1 1 2] complex re [1 1] im [2 2]|exact
+CHK|h_zd_fd|double[1 2] complex re [1 4] im [2 0]|exact
+CHK|v_zd_fd|double[2 1] complex re [1;4] im [2;0]|exact
+CHK|c3_zd_fd|double[1 1 2] complex re [1 4] im [2 0]|exact
+CHK|h_zd_ech|MATLAB:UnableToConvert|exact
+CHK|h_zd_ech_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|v_zd_ech|MATLAB:UnableToConvert|exact
+CHK|v_zd_ech_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|c3_zd_ech|MATLAB:UnableToConvert|exact
+CHK|c3_zd_ech_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|h_zd_edb|double[1 1] complex re 1 im 2|exact
+CHK|v_zd_edb|double[1 1] complex re 1 im 2|exact
+CHK|c3_zd_edb|double[1 1] complex re 1 im 2|exact
+CHK|h_zs_ch|MATLAB:UnableToConvert|exact
+CHK|h_zs_ch_msg|The following error occurred converting from single to char: Complex values cannot be converted to chars|exact
+CHK|v_zs_ch|MATLAB:UnableToConvert|exact
+CHK|v_zs_ch_msg|The following error occurred converting from single to char: Complex values cannot be converted to chars|exact
+CHK|c3_zs_ch|MATLAB:UnableToConvert|exact
+CHK|c3_zs_ch_msg|The following error occurred converting from single to char: Complex values cannot be converted to chars|exact
+CHK|h_zs_lg|single[1 2] complex re [1 1] im [2 0]|exact
+CHK|v_zs_lg|single[2 1] complex re [1;1] im [2;0]|exact
+CHK|c3_zs_lg|single[1 1 2] complex re [1 1] im [2 0]|exact
+CHK|h_zs_db|single[1 2] complex re [1 2.7000000476837158] im [2 0]|exact
+CHK|v_zs_db|single[2 1] complex re [1;2.7000000476837158] im [2;0]|exact
+CHK|c3_zs_db|single[1 1 2] complex re [1 2.7000000476837158] im [2 0]|exact
+CHK|h_zs_sg|single[1 2] complex re [1 2.5] im [2 0]|exact
+CHK|v_zs_sg|single[2 1] complex re [1;2.5] im [2;0]|exact
+CHK|c3_zs_sg|single[1 1 2] complex re [1 2.5] im [2 0]|exact
+CHK|h_zs_zd|single[1 2] complex re [1 1] im [2 2]|exact
+CHK|v_zs_zd|single[2 1] complex re [1;1] im [2;2]|exact
+CHK|c3_zs_zd|single[1 1 2] complex re [1 1] im [2 2]|exact
+CHK|h_zs_zs|single[1 2] complex re [1 1] im [2 2]|exact
+CHK|v_zs_zs|single[2 1] complex re [1;1] im [2;2]|exact
+CHK|c3_zs_zs|single[1 1 2] complex re [1 1] im [2 2]|exact
+CHK|h_zs_fd|single[1 2] complex re [1 4] im [2 0]|exact
+CHK|v_zs_fd|single[2 1] complex re [1;4] im [2;0]|exact
+CHK|c3_zs_fd|single[1 1 2] complex re [1 4] im [2 0]|exact
+CHK|h_zs_ech|MATLAB:UnableToConvert|exact
+CHK|h_zs_ech_msg|The following error occurred converting from single to char: Complex values cannot be converted to chars|exact
+CHK|v_zs_ech|MATLAB:UnableToConvert|exact
+CHK|v_zs_ech_msg|The following error occurred converting from single to char: Complex values cannot be converted to chars|exact
+CHK|c3_zs_ech|MATLAB:UnableToConvert|exact
+CHK|c3_zs_ech_msg|The following error occurred converting from single to char: Complex values cannot be converted to chars|exact
+CHK|h_zs_edb|single[1 1] complex re 1 im 2|exact
+CHK|v_zs_edb|single[1 1] complex re 1 im 2|exact
+CHK|c3_zs_edb|single[1 1] complex re 1 im 2|exact
+CHK|h_fd_ch|MATLAB:UnableToConvert|exact
+CHK|h_fd_ch_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|v_fd_ch|MATLAB:UnableToConvert|exact
+CHK|v_fd_ch_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|c3_fd_ch|MATLAB:UnableToConvert|exact
+CHK|c3_fd_ch_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|h_fd_lg|double[1 2] complex re [4 1] im [0 0]|exact
+CHK|v_fd_lg|double[2 1] complex re [4;1] im [0;0]|exact
+CHK|c3_fd_lg|double[1 1 2] complex re [4 1] im [0 0]|exact
+CHK|h_fd_db|double[1 2] complex re [4 2.7000000000000002] im [0 0]|exact
+CHK|v_fd_db|double[2 1] complex re [4;2.7000000000000002] im [0;0]|exact
+CHK|c3_fd_db|double[1 1 2] complex re [4 2.7000000000000002] im [0 0]|exact
+CHK|h_fd_sg|single[1 2] real [4 2.5]|exact
+CHK|v_fd_sg|single[2 1] real [4;2.5]|exact
+CHK|c3_fd_sg|single[1 1 2] real [4 2.5]|exact
+CHK|h_fd_i8|int8[1 2] real [4 3]|exact
+CHK|v_fd_i8|int8[2 1] real [4;3]|exact
+CHK|c3_fd_i8|int8[1 1 2] real [4 3]|exact
+CHK|h_fd_i16|int16[1 2] real [4 300]|exact
+CHK|v_fd_i16|int16[2 1] real [4;300]|exact
+CHK|c3_fd_i16|int16[1 1 2] real [4 300]|exact
+CHK|h_fd_u8|uint8[1 2] real [4 5]|exact
+CHK|v_fd_u8|uint8[2 1] real [4;5]|exact
+CHK|c3_fd_u8|uint8[1 1 2] real [4 5]|exact
+CHK|h_fd_i64|int64[1 2] real [4 6]|exact
+CHK|v_fd_i64|int64[2 1] real [4;6]|exact
+CHK|c3_fd_i64|int64[1 1 2] real [4 6]|exact
+CHK|h_fd_u64|uint64[1 2] real [4 7]|exact
+CHK|v_fd_u64|uint64[2 1] real [4;7]|exact
+CHK|c3_fd_u64|uint64[1 1 2] real [4 7]|exact
+CHK|h_fd_zd|double[1 2] complex re [4 1] im [0 2]|exact
+CHK|v_fd_zd|double[2 1] complex re [4;1] im [0;2]|exact
+CHK|c3_fd_zd|double[1 1 2] complex re [4 1] im [0 2]|exact
+CHK|h_fd_zs|single[1 2] complex re [4 1] im [0 2]|exact
+CHK|v_fd_zs|single[2 1] complex re [4;1] im [0;2]|exact
+CHK|c3_fd_zs|single[1 1 2] complex re [4 1] im [0 2]|exact
+CHK|h_fd_fd|double[1 2] complex re [4 4] im [0 0]|exact
+CHK|v_fd_fd|double[2 1] complex re [4;4] im [0;0]|exact
+CHK|c3_fd_fd|double[1 1 2] complex re [4 4] im [0 0]|exact
+CHK|h_fd_ech|MATLAB:UnableToConvert|exact
+CHK|h_fd_ech_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|v_fd_ech|MATLAB:UnableToConvert|exact
+CHK|v_fd_ech_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|c3_fd_ech|MATLAB:UnableToConvert|exact
+CHK|c3_fd_ech_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|h_fd_edb|double[1 1] complex re 4 im 0|exact
+CHK|v_fd_edb|double[1 1] complex re 4 im 0|exact
+CHK|c3_fd_edb|double[1 1] complex re 4 im 0|exact
+CHK|h_fd_ei16|int16[1 1] real 4|exact
+CHK|v_fd_ei16|int16[1 1] real 4|exact
+CHK|c3_fd_ei16|int16[1 1] real 4|exact
+CHK|h_ech_ch|char[1 1] 97|exact
+CHK|v_ech_ch|char[1 1] 97|exact
+CHK|c3_ech_ch|char[1 1] 97|exact
+CHK|h_ech_lg|MATLAB:UnableToConvert|exact
+CHK|h_ech_lg_msg|The following error occurred converting from logical to char: Conversion to char from logical is not possible.|exact
+CHK|v_ech_lg|MATLAB:UnableToConvert|exact
+CHK|v_ech_lg_msg|The following error occurred converting from logical to char: Conversion to char from logical is not possible.|exact
+CHK|c3_ech_lg|MATLAB:UnableToConvert|exact
+CHK|c3_ech_lg_msg|The following error occurred converting from logical to char: Conversion to char from logical is not possible.|exact
+CHK|h_ech_db|char[1 1] 2|exact
+CHK|v_ech_db|char[1 1] 2|exact
+CHK|c3_ech_db|char[1 1] 2|exact
+CHK|h_ech_sg|char[1 1] 2|exact
+CHK|v_ech_sg|char[1 1] 2|exact
+CHK|c3_ech_sg|char[1 1] 2|exact
+CHK|h_ech_i8|char[1 1] 3|exact
+CHK|v_ech_i8|char[1 1] 3|exact
+CHK|c3_ech_i8|char[1 1] 3|exact
+CHK|h_ech_i16|char[1 1] 300|exact
+CHK|v_ech_i16|char[1 1] 300|exact
+CHK|c3_ech_i16|char[1 1] 300|exact
+CHK|h_ech_u8|char[1 1] 5|exact
+CHK|v_ech_u8|char[1 1] 5|exact
+CHK|c3_ech_u8|char[1 1] 5|exact
+CHK|h_ech_i64|char[1 1] 6|exact
+CHK|v_ech_i64|char[1 1] 6|exact
+CHK|c3_ech_i64|char[1 1] 6|exact
+CHK|h_ech_u64|char[1 1] 7|exact
+CHK|v_ech_u64|char[1 1] 7|exact
+CHK|c3_ech_u64|char[1 1] 7|exact
+CHK|h_ech_zd|MATLAB:UnableToConvert|exact
+CHK|h_ech_zd_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|v_ech_zd|MATLAB:UnableToConvert|exact
+CHK|v_ech_zd_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|c3_ech_zd|MATLAB:UnableToConvert|exact
+CHK|c3_ech_zd_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|h_ech_zs|MATLAB:UnableToConvert|exact
+CHK|h_ech_zs_msg|The following error occurred converting from single to char: Complex values cannot be converted to chars|exact
+CHK|v_ech_zs|MATLAB:UnableToConvert|exact
+CHK|v_ech_zs_msg|The following error occurred converting from single to char: Complex values cannot be converted to chars|exact
+CHK|c3_ech_zs|MATLAB:UnableToConvert|exact
+CHK|c3_ech_zs_msg|The following error occurred converting from single to char: Complex values cannot be converted to chars|exact
+CHK|h_ech_fd|MATLAB:UnableToConvert|exact
+CHK|h_ech_fd_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|v_ech_fd|MATLAB:UnableToConvert|exact
+CHK|v_ech_fd_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|c3_ech_fd|MATLAB:UnableToConvert|exact
+CHK|c3_ech_fd_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|h_ech_ech|char[0 0] []|exact
+CHK|v_ech_ech|char[0 0] []|exact
+CHK|c3_ech_ech|char[0 0 2] zeros(1,0)|exact
+CHK|h_ech_edb|char[0 0] []|exact
+CHK|v_ech_edb|char[0 0] []|exact
+CHK|c3_ech_edb|char[0 0 2] zeros(1,0)|exact
+CHK|h_ech_ei16|char[0 0] []|exact
+CHK|v_ech_ei16|char[0 0] []|exact
+CHK|c3_ech_ei16|char[0 0 2] zeros(1,0)|exact
+CHK|h_edb_ch|char[1 1] 97|exact
+CHK|v_edb_ch|char[1 1] 97|exact
+CHK|c3_edb_ch|char[1 1] 97|exact
+CHK|h_edb_lg|double[1 1] real 1|exact
+CHK|v_edb_lg|double[1 1] real 1|exact
+CHK|c3_edb_lg|double[1 1] real 1|exact
+CHK|h_edb_db|double[1 1] real 2.7000000000000002|exact
+CHK|v_edb_db|double[1 1] real 2.7000000000000002|exact
+CHK|c3_edb_db|double[1 1] real 2.7000000000000002|exact
+CHK|h_edb_sg|single[1 1] real 2.5|exact
+CHK|v_edb_sg|single[1 1] real 2.5|exact
+CHK|c3_edb_sg|single[1 1] real 2.5|exact
+CHK|h_edb_i8|int8[1 1] real 3|exact
+CHK|v_edb_i8|int8[1 1] real 3|exact
+CHK|c3_edb_i8|int8[1 1] real 3|exact
+CHK|h_edb_i16|int16[1 1] real 300|exact
+CHK|v_edb_i16|int16[1 1] real 300|exact
+CHK|c3_edb_i16|int16[1 1] real 300|exact
+CHK|h_edb_u8|uint8[1 1] real 5|exact
+CHK|v_edb_u8|uint8[1 1] real 5|exact
+CHK|c3_edb_u8|uint8[1 1] real 5|exact
+CHK|h_edb_i64|int64[1 1] real 6|exact
+CHK|v_edb_i64|int64[1 1] real 6|exact
+CHK|c3_edb_i64|int64[1 1] real 6|exact
+CHK|h_edb_u64|uint64[1 1] real 7|exact
+CHK|v_edb_u64|uint64[1 1] real 7|exact
+CHK|c3_edb_u64|uint64[1 1] real 7|exact
+CHK|h_edb_zd|double[1 1] complex re 1 im 2|exact
+CHK|v_edb_zd|double[1 1] complex re 1 im 2|exact
+CHK|c3_edb_zd|double[1 1] complex re 1 im 2|exact
+CHK|h_edb_zs|single[1 1] complex re 1 im 2|exact
+CHK|v_edb_zs|single[1 1] complex re 1 im 2|exact
+CHK|c3_edb_zs|single[1 1] complex re 1 im 2|exact
+CHK|h_edb_fd|double[1 1] complex re 4 im 0|exact
+CHK|v_edb_fd|double[1 1] complex re 4 im 0|exact
+CHK|c3_edb_fd|double[1 1] complex re 4 im 0|exact
+CHK|h_edb_ech|char[0 0] []|exact
+CHK|v_edb_ech|char[0 0] []|exact
+CHK|c3_edb_ech|char[0 0 2] zeros(1,0)|exact
+CHK|h_edb_edb|double[0 0] real []|exact
+CHK|v_edb_edb|double[0 0] real []|exact
+CHK|c3_edb_edb|double[0 0 2] real zeros(1,0)|exact
+CHK|h_edb_ei16|int16[0 0] real []|exact
+CHK|v_edb_ei16|int16[0 0] real []|exact
+CHK|c3_edb_ei16|int16[0 0 2] real zeros(1,0)|exact
+CHK|h_ei16_ch|char[1 1] 97|exact
+CHK|v_ei16_ch|char[1 1] 97|exact
+CHK|c3_ei16_ch|char[1 1] 97|exact
+CHK|h_ei16_lg|int16[1 1] real 1|exact
+CHK|v_ei16_lg|int16[1 1] real 1|exact
+CHK|c3_ei16_lg|int16[1 1] real 1|exact
+CHK|h_ei16_db|int16[1 1] real 3|exact
+CHK|v_ei16_db|int16[1 1] real 3|exact
+CHK|c3_ei16_db|int16[1 1] real 3|exact
+CHK|h_ei16_sg|int16[1 1] real 3|exact
+CHK|v_ei16_sg|int16[1 1] real 3|exact
+CHK|c3_ei16_sg|int16[1 1] real 3|exact
+CHK|h_ei16_i8|int16[1 1] real 3|exact
+CHK|v_ei16_i8|int16[1 1] real 3|exact
+CHK|c3_ei16_i8|int16[1 1] real 3|exact
+CHK|h_ei16_i16|int16[1 1] real 300|exact
+CHK|v_ei16_i16|int16[1 1] real 300|exact
+CHK|c3_ei16_i16|int16[1 1] real 300|exact
+CHK|h_ei16_u8|int16[1 1] real 5|exact
+CHK|v_ei16_u8|int16[1 1] real 5|exact
+CHK|c3_ei16_u8|int16[1 1] real 5|exact
+CHK|h_ei16_i64|int16[1 1] real 6|exact
+CHK|v_ei16_i64|int16[1 1] real 6|exact
+CHK|c3_ei16_i64|int16[1 1] real 6|exact
+CHK|h_ei16_u64|int16[1 1] real 7|exact
+CHK|v_ei16_u64|int16[1 1] real 7|exact
+CHK|c3_ei16_u64|int16[1 1] real 7|exact
+CHK|h_ei16_fd|int16[1 1] real 4|exact
+CHK|v_ei16_fd|int16[1 1] real 4|exact
+CHK|c3_ei16_fd|int16[1 1] real 4|exact
+CHK|h_ei16_ech|char[0 0] []|exact
+CHK|v_ei16_ech|char[0 0] []|exact
+CHK|c3_ei16_ech|char[0 0 2] zeros(1,0)|exact
+CHK|h_ei16_edb|int16[0 0] real []|exact
+CHK|v_ei16_edb|int16[0 0] real []|exact
+CHK|c3_ei16_edb|int16[0 0 2] real zeros(1,0)|exact
+CHK|h_ei16_ei16|int16[0 0] real []|exact
+CHK|v_ei16_ei16|int16[0 0] real []|exact
+CHK|c3_ei16_ei16|int16[0 0 2] real zeros(1,0)|exact
+CHK|h3_i8_i16_ch|char[1 3] [1 2 97]|exact
+CHK|h3_ch_i16_i8|char[1 3] [97 2 1]|exact
+CHK|h3_db_i16_i8|int16[1 3] real [2 400 1]|exact
+CHK|h3_sg_u8_i8|uint8[1 3] real [3 200 1]|exact
+CHK|h3_lg_ch_db|MATLAB:UnableToConvert|exact
+CHK|h3_lg_ch_db_msg|The following error occurred converting from logical to char: Conversion to char from logical is not possible.|exact
+CHK|h3_e_i16_i8|int16[1 2] real [400 1]|exact
+CHK|h3_ei8_i16|int8[1 1] real 127|exact
+CHK|h3_ei8_i16_0|int8[1 1] real 127|exact
+CHK|v_e_ch|char[1 1] 2|exact
+CHK|ch_neg|char[1 2] [97 0]|exact
+CHK|ch_nan|char[1 2] [97 0]|exact
+CHK|ch_big|char[1 2] [97 65535]|exact
+CHK|ch_frac|char[1 2] [97 66]|exact
+CHK|ch_frac2|char[1 2] [97 66]|exact
+CHK|ch_cplx|MATLAB:UnableToConvert|exact
+CHK|ch_cplx_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|ch_i8neg|char[1 2] [97 0]|exact
+CHK|ch_u64|char[1 2] [97 66]|exact
+CHK|ch_negfrac|char[1 2] [97 0]|exact
+CHK|ch_sg|char[1 2] [97 66]|exact
+CHK|ch_inf|char[1 2] [97 65535]|exact
+CHK|ch_ninf|char[1 2] [97 0]|exact
+CHK|i8_sat|int8[1 8] real [1 127 -128 3 4 -3 0 127]|exact
+CHK|i8_round|int8[1 9] real [1 3 -3 4 0 -128 127 127 -128]|exact
+CHK|u8_round|uint8[1 6] real [1 3 0 0 0 255]|exact
+CHK|sg_round|single[1 4] real [1 0.10000000149011612 Inf -Inf]|exact
+CHK|u8_i8|uint8[1 2] real [250 0]|exact
+CHK|i8_u8|int8[1 2] real [-5 127]|exact
+CHK|i8_lg|int8[1 2] real [1 1]|exact
+CHK|i8_ch|char[1 2] [1 97]|exact
+CHK|u16_ch|char[1 2] [65535 97]|exact
+CHK|cat1_i8_i16|int8[2 1] real [1;2]|exact
+CHK|cat2_i16_i8|int16[1 2] real [1 2]|exact
+CHK|hc_i8_i16|int8[1 2] real [1 2]|exact
+CHK|vc_i8_i16|int8[2 1] real [1;2]|exact
+CHK|vc_ch_db|char[2 1] [97;2]|exact
+CHK|hc_ch_db|char[1 2] [97 2]|exact
+CHK|cat1_ch_db|char[2 1] [97;2]|exact
+CHK|cat3_ch_db|char[1 1 2] [97 66]|exact
+CHK|cell_mix|char[2 2] [97 1;2 3]|exact
+CHK|cell_int|int8[1 2] real [1 2]|exact
+CHK|fs_db|single[1 2] complex re [4 2.5] im [0 0]|exact
+CHK|db_fs|single[1 2] complex re [2.5 4] im [0 0]|exact
+CHK|fs_fs|single[1 2] complex re [4 4] im [0 0]|exact
+CHK|fs_sg|single[1 2] complex re [4 1] im [0 0]|exact
+CHK|fs_lg|single[1 2] complex re [4 1] im [0 0]|exact
+CHK|fs_fd|single[1 2] complex re [4 2] im [0 0]|exact
+CHK|fd_fs|single[1 2] complex re [2 4] im [0 0]|exact
+CHK|fs_i8|int8[1 2] real [4 1]|exact
+CHK|fs_z|single[1 2] complex re [4 0] im [0 1]|exact
+CHK|fd_alone|double[1 1] complex re 2 im 0|exact
+CHK|fd_e|double[1 1] complex re 2 im 0|exact
+CHK|fd_c3|double[1 2 2] complex re [1 2 3 4] im [0 0 0 0]|exact
+CHK|e2_h10|double[2 2] real [1 1;1 1]|exact
+CHK|e2_h10r|double[2 2] real [1 1;1 1]|exact
+CHK|e2_v01|double[2 2] real [1 1;1 1]|exact
+CHK|e2_h03|double[2 2] real [1 1;1 1]|exact
+CHK|e2_h20|double[2 2] real [1 1;1 1]|exact
+CHK|e2_h30|double[2 2] real [1 1;1 1]|exact
+CHK|e2_v03|double[2 2] real [1 1;1 1]|exact
+CHK|e2_v02|double[2 2] real [1 1;1 1]|exact
+CHK|e2_all1|double[2 0] real zeros(2,0)|exact
+CHK|e2_all2|double[0 3] real zeros(0,3)|exact
+CHK|e2_all3|double[0 5] real zeros(0,5)|exact
+CHK|e3_c3_10|MATLAB:catenate:dimensionMismatch|exact
+CHK|e3_c3_10_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|e3_c3_002|MATLAB:catenate:dimensionMismatch|exact
+CHK|e3_c3_002_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|e3_c3_220|double[2 2] real [1 1;1 1]|exact
+CHK|e3_c3_230|MATLAB:catenate:dimensionMismatch|exact
+CHK|e3_c3_230_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|e3_c3_all|MATLAB:catenate:dimensionMismatch|exact
+CHK|e3_c3_all_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|e3_c3_all2|double[1 0 2] real zeros(1,0)|exact
+CHK|e3_c3_00|double[0 0 2] real zeros(1,0)|exact
+CHK|e3_c3_00s|double[1 1] real 5|exact
+CHK|e3_c3_ch00|char[1 1] 97|exact
+CHK|e3_c4_e|MATLAB:catenate:dimensionMismatch|exact
+CHK|e3_c4_e_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|e3_c1_1|double[2 2 2] real [1 1 1 1 1 1 1 1]|exact
+CHK|e3_c1_2|MATLAB:catenate:dimensionMismatch|exact
+CHK|e3_c1_2_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|e3_h_nd_e|double[2 2 2] real [1 1 1 1 1 1 1 1]|exact
+CHK|e3_c3_lg_e|double[1 1] real 1|exact
+CHK|e3_c3_lg_lg|logical[1 1 2] real [1 0]|exact
+CHK|e3_c3_lg_e10|MATLAB:catenate:dimensionMismatch|exact
+CHK|e3_c3_lg_e10_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|e3_h_lg_e10|double[1 1] real 1|exact
+CHK|e3_h_lg_le|logical[1 1] real 1|exact
+CHK|e3_h_lg_i8e|int8[1 1] real 1|exact
+CHK|e3_h_ch_e10|char[1 1] 97|exact
+CHK|e3_v_ch_e|char[1 2] [97 98]|exact
+CHK|e3_v_ch_e00|char[1 2] [97 98]|exact
+CHK|e3_v_ech_ech|char[0 0] []|exact
+CHK|e3_v_ech_n|char[1 1] 5|exact
+CHK|e3_h_ech_n|char[1 1] 5|exact
+CHK|e3_v_n_ech|char[1 1] 5|exact
+CHK|e3_v_ech_db|char[0 0] []|exact
+CHK|e3_v_blk|char[1 1] 5|exact
+CHK|e3_h_blk_lg|MATLAB:UnableToConvert|exact
+CHK|e3_h_blk_lg_msg|The following error occurred converting from logical to char: Conversion to char from logical is not possible.|exact
+CHK|nd_h|double[2 3 2] real [1 1 1 1 1 1 1 1 1 1 1 1]|exact
+CHK|nd_v|double[3 2 2] real [1 1 1 1 1 1 1 1 1 1 1 1]|exact
+CHK|nd_h_mis|MATLAB:catenate:dimensionMismatch|exact
+CHK|nd_h_mis_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|nd_h_2d|MATLAB:catenate:dimensionMismatch|exact
+CHK|nd_h_2d_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|nd_h_e|double[2 2 2] real [1 1 1 1 1 1 1 1]|exact
+CHK|nd_h_e10|MATLAB:catenate:dimensionMismatch|exact
+CHK|nd_h_e10_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|nd_h_e20|MATLAB:catenate:dimensionMismatch|exact
+CHK|nd_h_e20_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|nd_h_e202|double[2 2 2] real [1 1 1 1 1 1 1 1]|exact
+CHK|nd_blk|double[3 3 2] real [1 1 3 1 1 3 2 2 3 1 1 3 1 1 3 2 2 3]|exact
+CHK|nd_vals|double[2 3 2] real [1 2 3 4 9 10 5 6 7 8 11 12]|exact
+CHK|nd_vvals|double[3 2 2] real [1 2 9 3 4 10 5 6 11 7 8 12]|exact
+CHK|nd_cplx|double[2 3 2] complex re [0 0 0 0 9 10 0 0 0 0 11 12] im [1 2 3 4 0 0 5 6 7 8 0 0]|exact
+CHK|nd_i8|int8[2 3 2] real [1 2 3 4 9 10 5 6 7 8 11 12]|exact
+CHK|nd_ch|char[1 3 2] [97 98 99 97 98 99]|exact
+CHK|nd_4d|double[1 2 1 2] real [1 2 1 2]|exact
+CHK|nd_4d_v|double[2 1 1 2] real [1 2 1 2]|exact
+CHK|nd_4d_3d|MATLAB:catenate:dimensionMismatch|exact
+CHK|nd_4d_3d_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|nd_vert_lg|logical[2 1 2] real [1 0 1 0]|exact
+CHK|nd_h_lg_db|double[1 2 2] real [1 1 1 1]|exact
+CHK|nd_h_ch_db|char[1 2 2] [97 66 97 66]|exact
+CHK|nd_h_i8_i16|int8[1 2 2] real [1 127 1 127]|exact
+CHK|nd_h_sg_z|single[1 2 2] complex re [1 0 1 0] im [0 1 0 1]|exact
+CHK|nd_h_e_nd|double[1 1 2] real [1 1]|exact
+CHK|nd_grid|double[2 2 2] real [1 3 2 3 1 3 2 3]|exact
+CHK|nd_grid_mis|MATLAB:catenate:dimensionMismatch|exact
+CHK|nd_grid_mis_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|nd_scalar|MATLAB:catenate:dimensionMismatch|exact
+CHK|nd_scalar_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|nd_trail1|double[2 3] real [1 1 1;1 1 1]|exact
+CHK|hc_nd|double[2 3 2] real [1 1 1 1 1 1 1 1 1 1 1 1]|exact
+CHK|vc_nd|double[3 2 2] real [1 1 1 1 1 1 1 1 1 1 1 1]|exact
+CHK|cat3_nd|double[2 2 3] real [1 1 1 1 1 1 1 1 1 1 1 1]|exact
+CHK|cat3_nd_mis|MATLAB:catenate:dimensionMismatch|exact
+CHK|cat3_nd_mis_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|cat4|double[1 2 1 2] real [1 2 3 4]|exact
+CHK|cat1_nd|double[3 2 2] real [1 1 2 1 1 2 1 1 2 1 1 2]|exact
+CHK|cat2_nd|double[2 3 2] real [1 1 1 1 2 2 1 1 1 1 2 2]|exact
+CHK|c3_zz|double[2 2 2] complex re [1 4 3 5 1 4 3 5] im [2 0 0 -1 2 0 0 -1]|exact
+CHK|c3_zr|double[2 2 2] complex re [1 4 3 5 1 3 2 4] im [2 0 0 -1 0 0 0 0]|exact
+CHK|c3_rz|double[2 2 2] complex re [1 3 2 4 1 4 3 5] im [0 0 0 0 2 0 0 -1]|exact
+CHK|c3_zs|single[2 2 2] complex re [1 4 3 5 1 4 3 5] im [2 0 0 -1 2 0 0 -1]|exact
+CHK|c1_zz|double[4 2] complex re [1 3;4 5;1 3;4 5] im [2 0;0 -1;2 0;0 -1]|exact
+CHK|c2_zz|double[2 4] complex re [1 3 1 3;4 5 4 5] im [2 0 2 0;0 -1 0 -1]|exact
+CHK|c4_zz|double[2 2 1 2] complex re [1 4 3 5 1 4 3 5] im [2 0 0 -1 2 0 0 -1]|exact
+CHK|c3_three|double[2 2 3] complex re [1 4 3 5 1 4 3 5 0 0 0 0] im [2 0 0 -1 2 0 0 -1 1 1 1 1]|exact
+CHK|c3_nd_z|double[2 2 3] complex re [1 4 3 5 1 4 3 5 1 4 3 5] im [2 0 0 -1 2 0 0 -1 2 0 0 -1]|exact
+CHK|h_nd_z|double[2 3 2] complex re [1 4 3 5 1 4 1 4 3 5 1 4] im [2 0 0 -1 2 0 2 0 0 -1 2 0]|exact
+CHK|c3_lg_z|double[2 2 2] complex re [1 1 1 1 1 4 3 5] im [0 0 0 0 2 0 0 -1]|exact
+CHK|c3_ch_z|MATLAB:UnableToConvert|exact
+CHK|c3_ch_z_msg|The following error occurred converting from double to char: Complex values cannot be converted to chars|exact
+CHK|c3_e_z|double[2 2] complex re [1 3;4 5] im [2 0;0 -1]|exact
+CHK|c3_one|double[2 2] complex re [1 3;4 5] im [2 0;0 -1]|exact
+CHK|catd_0|MATLAB:catenate:invalidDimension|exact
+CHK|catd_0_msg|Dimension argument must be a real, positive, integer scalar.|exact
+CHK|catd_frac|MATLAB:catenate:invalidDimension|exact
+CHK|catd_frac_msg|Dimension argument must be a real, positive, integer scalar.|exact
+CHK|catd_neg|MATLAB:catenate:invalidDimension|exact
+CHK|catd_neg_msg|Dimension argument must be a real, positive, integer scalar.|exact
+CHK|catd_vec|MATLAB:catenate:invalidDimension|exact
+CHK|catd_vec_msg|Dimension argument must be a real, positive, integer scalar.|exact
+CHK|catd_char|MATLAB:catenate:invalidDimension|exact
+CHK|catd_char_msg|Dimension argument must be a real, positive, integer scalar.|exact
+CHK|catd_only|double[0 0] real []|exact
+CHK|catd_none|MATLAB:minrhs|exact
+CHK|catd_none_msg|Not enough input arguments.|exact
+CHK|catd_one|double[1 1] real 1|exact
+CHK|catd_inf|MATLAB:catenate:maxNDims|exact
+CHK|catd_inf_msg|DIM input exceeds maximum number of dimensions.|exact
+CHK|catd_nan|MATLAB:catenate:invalidDimension|exact
+CHK|catd_nan_msg|Dimension argument must be a real, positive, integer scalar.|exact
+CHK|catd_int|double[1 1 2] real [1 2]|exact
+CHK|catd_true|MATLAB:catenate:invalidDimension|exact
+CHK|catd_true_msg|Dimension argument must be a real, positive, integer scalar.|exact
+CHK|catd_flag|MATLAB:catenate:invalidDimension|exact
+CHK|catd_flag_msg|Dimension argument must be a real, positive, integer scalar.|exact
+CHK|catd_cplx|MATLAB:catenate:invalidDimension|exact
+CHK|catd_cplx_msg|Dimension argument must be a real, positive, integer scalar.|exact
+CHK|catd_single|double[1 1 2] real [1 2]|exact
+CHK|catd_big|MATLAB:catenate:maxNDims|exact
+CHK|catd_big_msg|DIM input exceeds maximum number of dimensions.|exact
+CHK|n2c_single|char[1 6] [115 105 110 103 108 101]|exact
+CHK|n2c_single_v|single[1 1] real 2|exact
+CHK|n2c_int8_v|int8[1 1] real 2|exact
+CHK|n2c_u64_v|uint64[1 1] real 2|exact
+CHK|n2c_lg_v|logical[1 1] real 0|exact
+CHK|n2c_ch_v|char[1 1] 98|exact
+CHK|n2c_z_v|double[1 1] real 3|exact
+CHK|n2c_z1_v|double[1 1] complex re 1 im 2|exact
+CHK|n2c_flag_v|double[1 1] real 2|exact
+CHK|n2c_sz_v|single[1 1] complex re 1 im 2|exact
+CHK|n2c_dim1_size|double[1 2] real [1 3]|exact
+CHK|n2c_dim1_v|double[2 1] real [2;5]|exact
+CHK|n2c_dim2_size|double[1 2] real [2 1]|exact
+CHK|n2c_dim2_v|double[1 3] real [4 5 6]|exact
+CHK|n2c_dim12_size|double[1 2] real [1 1]|exact
+CHK|n2c_dim12_v|double[2 3] real [1 2 3;4 5 6]|exact
+CHK|n2c_dim21_size|double[1 2] real [1 1]|exact
+CHK|n2c_dim21_v|double[3 2] real [1 4;2 5;3 6]|exact
+CHK|n2c_dim3_size|double[1 2] real [2 3]|exact
+CHK|n2c_dim3_v|double[1 1] real 4|exact
+CHK|n2c_nd13_size|double[1 2] real [1 3]|exact
+CHK|n2c_nd13_v|double[2 1 4] real [3 4 9 10 15 16 21 22]|exact
+CHK|n2c_nd31_v|double[4 1 2] real [3 9 15 21 4 10 16 22]|exact
+CHK|n2c_nd2_size|double[1 3] real [2 1 4]|exact
+CHK|n2c_nd2_v|double[1 3] real [2 4 6]|exact
+CHK|n2c_nd3_v|double[1 1 4] real [2 8 14 20]|exact
+CHK|n2c_nd_size|double[1 3] real [2 3 4]|exact
+CHK|n2c_nd_v|double[1 1] real 2|exact
+CHK|n2c_sdim1_v|single[2 1] real [2;5]|exact
+CHK|n2c_i8dim2_v|int8[1 3] real [4 5 6]|exact
+CHK|n2c_zdim1_v|double[2 1] complex re [1;4] im [2;0]|exact
+CHK|n2c_fdim1_v|double[2 1] real [1;4]|exact
+CHK|n2c_lgdim2_v|logical[1 3] real [1 1 1]|exact
+CHK|n2c_chdim2_v|char[1 3] [97 98 99]|exact
+CHK|n2c_chmdim1_v|char[2 1] [97;99]|exact
+CHK|n2c_cell_dim|char[1 4] [99 101 108 108]|exact
+CHK|n2c_cell_dim_sz|double[1 2] real [1 2]|exact
+CHK|n2c_cell|double[1 2] real [1 2]|exact
+CHK|n2c_cell_inner|char[1 4] [99 101 108 108]|exact
+CHK|n2c_dim0|MATLAB:badsubscript|exact
+CHK|n2c_dim0_msg|Array indices must be positive integers or logical values.|exact
+CHK|n2c_dimfrac|MATLAB:badsubscript|exact
+CHK|n2c_dimfrac_msg|Array indices must be positive integers or logical values.|exact
+CHK|n2c_dimneg|MATLAB:badsubscript|exact
+CHK|n2c_dimneg_msg|Array indices must be positive integers or logical values.|exact
+CHK|n2c_dimbig|double[1 2] real [2 3]|exact
+CHK|n2c_dimbig_v|double[1 1] real 1|exact
+CHK|n2c_dimrep|MATLAB:permute:repeatedIndex|exact
+CHK|n2c_dimrep_msg|ORDER cannot contain repeated permutation indices.|exact
+CHK|n2c_dimempty|MATLAB:permute:tooFewIndices|exact
+CHK|n2c_dimempty_msg|ORDER must have at least N elements for an N-D array.|exact
+CHK|n2c_dimchar|MATLAB:permute:badIndexType|exact
+CHK|n2c_dimchar_msg|ORDER must be a numeric array.|exact
+CHK|n2c_empty|double[1 2] real [1 3]|exact
+CHK|n2c_empty_v|double[1 2] real [0 1]|exact
+CHK|n2c_empty2|double[1 2] real [0 3]|exact
+CHK|n2c_empty3|double[1 2] real [0 1]|exact
+CHK|n2c_str|char[1 6] [115 116 114 105 110 103]|exact
+CHK|n2c_str_dim|double[1 2] real [1 2]|exact
+CHK|n2c_struct|double[1 2] real [1 2]|exact
+CHK|n2c_struct_dim|double[1 2] real [1 2]|exact
+CHK|n2c_none|MATLAB:narginchk:notEnoughInputs|exact
+CHK|n2c_none_msg|Not enough input arguments.|exact
+CHK|n2c_three|MATLAB:TooManyInputs|exact
+CHK|n2c_three_msg|Too many input arguments.|exact
+CHK|mode_mf_m|double[1 1] real 3|exact
+CHK|mode_mf_f|double[1 1] real 3|exact
+CHK|mode_c_cls|char[1 4] [99 101 108 108]|exact
+CHK|mode_c_v|double[1 1] real 3|exact
+CHK|mode_tie_m|double[1 1] real 1|exact
+CHK|mode_tie_f|double[1 1] real 2|exact
+CHK|mode_tie_c|double[2 1] real [1;2]|exact
+CHK|mode_M_m|double[1 3] real [1 3 2]|exact
+CHK|mode_M_f|double[1 3] real [2 2 2]|exact
+CHK|mode_M_csize|double[1 2] real [1 3]|exact
+CHK|mode_M2_m|double[3 1] real [2;1;3]|exact
+CHK|mode_M2_f|double[3 1] real [2;1;1]|exact
+CHK|mode_M2_csize|double[1 2] real [3 1]|exact
+CHK|mode_M2_c1|double[1 1] real 2|exact
+CHK|mode_e_m|double[1 1] real NaN|exact
+CHK|mode_e_f|double[1 1] real 0|exact
+CHK|mode_e_c|char[1 4] [99 101 108 108]|exact
+CHK|mode_e_csize|double[1 2] real [1 1]|exact
+CHK|mode_e_c1|double[1 2] real [0 1]|exact
+CHK|mode_e3_m|double[1 3] real [NaN NaN NaN]|exact
+CHK|mode_e3_f|double[1 3] real [0 0 0]|exact
+CHK|mode_e3_csize|double[1 2] real [1 3]|exact
+CHK|mode_e3_c1|double[1 2] real [1 0]|exact
+CHK|mode_nan_m|double[1 1] real 1|exact
+CHK|mode_nan_f|double[1 1] real 1|exact
+CHK|mode_nan_c|double[3 1] real [1;NaN;NaN]|exact
+CHK|mode_allnan_m|double[1 1] real NaN|exact
+CHK|mode_allnan_f|double[1 1] real 1|exact
+CHK|mode_allnan_c|double[2 1] real [NaN;NaN]|exact
+CHK|mode_i8_m|int8[1 1] real 3|exact
+CHK|mode_i8_f|double[1 1] real 2|exact
+CHK|mode_i8_c|int8[1 1] real 3|exact
+CHK|mode_s_f|double[1 1] real 2|exact
+CHK|mode_s_c|single[1 1] real 3|exact
+CHK|mode_lg_m|logical[1 1] real 1|exact
+CHK|mode_lg_f|double[1 1] real 2|exact
+CHK|mode_lg_c|logical[1 1] real 1|exact
+CHK|mode_ch_m|char[1 1] 97|exact
+CHK|mode_ch_f|double[1 1] real 2|exact
+CHK|mode_ch_c|char[1 1] 97|exact
+CHK|mode_z_m|double[1 1] complex re 1 im 1|exact
+CHK|mode_z_f|double[1 1] real 2|exact
+CHK|mode_z_c|double[1 1] complex re 1 im 1|exact
+CHK|mode_all_m|double[1 1] real 2|exact
+CHK|mode_all_f|double[1 1] real 3|exact
+CHK|mode_all_c|double[1 1] real 2|exact
+CHK|mode_M3_f|double[3 3] real [1 1 1;1 1 1;1 1 1]|exact
+CHK|mode_M3_csize|double[1 2] real [3 3]|exact
+CHK|mode_M3_c1|double[1 1] real 1|exact
+CHK|mode_nd3_m|double[2 2] real [1 2;1 1]|exact
+CHK|mode_nd3_f|double[2 2] real [1 1;1 1]|exact
+CHK|mode_nd3_csize|double[1 2] real [2 2]|exact
+CHK|mode_nd3_c|double[2 1] real [1;3]|exact
+CHK|mode_nd_c|double[1 3] real [1 2 2]|exact
+CHK|mode_col_c|double[2 1] real [1;5]|exact
+CHK|mode_vec_m|double[1 1] real 3|exact
+CHK|mode_vec_f|double[1 1] real 3|exact
+CHK|mode_vec_c|double[1 1] real 2|exact
+CHK|mode_four|MATLAB:TooManyOutputs|exact
+CHK|mode_four_msg|Too many output arguments.|exact
+CHK|med_z|double[1 3] complex re [1.5 0 3] im [1 -1 -2]|exact
+CHK|med_z2|double[2 1] complex re [1;-1] im [-2;0]|exact
+CHK|med_zall|double[1 1] complex re 1.5 im -1|exact
+CHK|med_zrow|double[1 1] complex re 1.5 im -1|exact
+CHK|med_zodd|double[1 1] complex re 1 im -2|exact
+CHK|med_zflag|double[1 1] real 2|exact
+CHK|med_zflag4|double[1 1] real 2.5|exact
+CHK|med_znan|double[1 1] real NaN|exact
+CHK|med_znan_omit|double[1 1] complex re 1.5 im 0.5|exact
+CHK|med_znan_omit2|double[1 1] real 2|exact
+CHK|med_ztie|double[1 1] complex re 0.5 im 0.5|exact
+CHK|med_ztie2|double[1 1] real 2|exact
+CHK|med_zs|single[1 1] complex re 1.5 im -1|exact
+CHK|med_ze|double[1 3] complex re [NaN NaN NaN] im [0 0 0]|exact
+CHK|med_zinf|double[1 1] real 2|exact
+CHK|med_znd|double[1 2] complex re [1.5 1] im [0.5 -2]|exact
+CHK|med_zcol|double[1 1] complex re 1 im 1.5|exact
+CHK|med_zmean|double[1 1] real 2|exact
+CHK|med_zvec|double[1 1] complex re 1.5 im -1|exact
+CHK|med_zmat_nan|double[1 2] real [2 NaN]|exact
+CHK|med_zmat_omit|double[1 2] complex re [2 2.5] im [0 1.5]|exact
+CHK|c2m_nd_pages|double[1 2 2] real [1 2 3 4]|exact
+CHK|c2m_nd_2x1x2|double[2 2 2] real [1 3 2 4 5 7 6 8]|exact
+CHK|c2m_nd_2x2x2|double[2 2 2] real [1 2 3 4 5 6 7 8]|exact
+CHK|c2m_nd_blocks|double[2 4 2] real [1 1 2 2 2 2 2 2 3 3 4 4 4 4 4 4]|exact
+CHK|c2m_nd_deep|double[2 2 5] real [1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2]|exact
+CHK|c2m_4d|double[1 1 1 2] real [1 2]|exact
+CHK|c2m_nd_char|char[1 2 2] [97 98 99 100]|exact
+CHK|c2m_nd_i8|int8[1 1 2] real [1 2]|exact
+CHK|c2m_nd_bad|MATLAB:catenate:dimensionMismatch|exact
+CHK|c2m_nd_bad_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|c2m_nd_bad2|MATLAB:catenate:dimensionMismatch|exact
+CHK|c2m_nd_bad2_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|c2m_nd_cplx|double[1 1 2] complex re [0 2] im [1 0]|exact
+CHK|c2m_nd_empty|double[0 0] real []|exact
+CHK|c2m_nd_hole|MATLAB:catenate:dimensionMismatch|exact
+CHK|c2m_nd_hole_msg|Dimensions of arrays being concatenated are not consistent.|exact
+CHK|uq_z_u|double[4 2] complex re [2 0;-2 0;1 3;1 3] im [0 1;0 1;-2 0;2 0]|exact
+CHK|uq_z_i|double[4 1] real [5;4;2;1]|exact
+CHK|uq_z_j|double[5 1] real [4;3;4;2;1]|exact
+CHK|uq_zs_u|double[4 2] complex re [1 3;1 3;-2 0;2 0] im [2 0;-2 0;0 1;0 1]|exact
+CHK|uq_zs_i|double[4 1] real [1;2;4;5]|exact
+CHK|uq_zs_j|double[5 1] real [1;2;1;3;4]|exact
+CHK|uq_zl_u|double[4 2] complex re [2 0;-2 0;1 3;1 3] im [0 1;0 1;-2 0;2 0]|exact
+CHK|uq_zl_i|double[4 1] real [5;4;2;3]|exact
+CHK|uq_zl_j|double[5 1] real [4;3;4;2;1]|exact
+CHK|uq_zsort_u|double[4 2] complex re [2 0;-2 0;1 3;1 3] im [0 1;0 1;-2 0;2 0]|exact
+CHK|uq_z3|double[5 2] complex re [0 2;1 2;0 2;-1 2;0 0] im [-1 0;0 0;1 0;0 0;2 0]|exact
+CHK|uq_zinf|double[2 2] complex re [1 Inf;0 1] im [0 0;Inf 0]|exact
+CHK|uq_z_nan|double[3 2] complex re [1 1;NaN 1;NaN 1] im [0 0;1 0;1 0]|exact
+CHK|uq_z_neg0|double[2 2] complex re [0 1;0 1] im [0 0;1 0]|exact
+CHK|uq_z_single|single[4 2] complex re [2 0;-2 0;1 3;1 3] im [0 1;0 1;-2 0;2 0]|exact
+CHK|uq_z_mixed|double[4 1] complex re [0;1;0;-1] im [-1;0;1;0]|exact
+CHK|uq_z_plain|double[6 1] complex re [0;2;-2;1;1;3] im [1;0;0;-2;2;0]|exact
+CHK|uq_zv_u|double[1 6] complex re [0 1 1 3 NaN NaN] im [-1 -2 2 0 1 1]|exact
+CHK|uq_zv_i|double[6 1] real [5;2;3;1;6;7]|exact
+CHK|uq_zv_j|double[7 1] real [4;2;3;4;1;5;6]|exact
+CHK|uq_zv_stable|double[1 6] complex re [3 1 1 0 NaN NaN] im [0 -2 2 -1 1 1]|exact
+CHK|uq_zv_last|double[6 1] real [5;2;3;4;6;7]|exact
+CHK|uq_zv_col|double[6 1] complex re [0;1;1;3;NaN;NaN] im [-1;-2;2;0;1;1]|exact
+CHK|uq_zv_single|single[1 6] complex re [0 1 1 3 NaN NaN] im [-1 -2 2 0 1 1]|exact
+CHK|sr_z|double[5 2] complex re [2 0;-2 0;1 3;1 3;1 3] im [0 1;0 1;-2 0;2 0;2 0]|exact
+CHK|mul_01|0,0 R0 R0 R0 0,NaN 0,NaN 0,NaN R0 R-0 R-0 R0 0,NaN 0,NaN 0,NaN R-0 R0 R0 R0 NaN,NaN NaN,NaN NaN,NaN R0 R-0 R-0 R0 NaN,NaN NaN,NaN NaN,NaN R-0 RNaN NaN,NaN NaN,NaN 0,NaN RNaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN RNaN 0,NaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN R0 R0 R0 NaN,NaN NaN,NaN NaN,NaN R0 R0 R-0 R0 R-0 RNaN RNaN RNaN R0|exact
+CHK|mul_02|0,1 R0 R-1 R1 R-Inf RInf NaN,NaN R-2 R-0 R-1 R1 R-Inf RInf NaN,NaN R-2 0,1 -1,1 1,1 -Inf,1 Inf,1 NaN,NaN -2,1 -0,-1 -1,-1 1,-1 -Inf,-1 Inf,-1 NaN,NaN -2,-1 0,Inf -1,Inf 1,Inf -Inf,Inf Inf,Inf NaN,NaN -2,Inf 0,-Inf -1,-Inf 1,-Inf -Inf,-Inf Inf,-Inf NaN,NaN -2,-Inf 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,2 -1,2 1,2 -Inf,2 Inf,2 NaN,NaN -2,2 R0 R-0 0,1 -0,-1 0,Inf 0,-Inf 0,NaN 0,2|exact
+CHK|mul_03|0,-1 R0 R1 R-1 RInf R-Inf NaN,NaN R2 R0 R1 R-1 RInf R-Inf NaN,NaN R2 0,-1 1,-1 -1,-1 Inf,-1 -Inf,-1 NaN,NaN 2,-1 0,1 1,1 -1,1 Inf,1 -Inf,1 NaN,NaN 2,1 0,-Inf 1,-Inf -1,-Inf Inf,-Inf -Inf,-Inf NaN,NaN 2,-Inf 0,Inf 1,Inf -1,Inf Inf,Inf -Inf,Inf NaN,NaN 2,Inf 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,-2 1,-2 -1,-2 Inf,-2 -Inf,-2 NaN,NaN 2,-2 R0 R0 0,-1 0,1 0,-Inf 0,Inf 0,NaN 0,-2|exact
+CHK|mul_04|0,Inf 0,NaN R-Inf RInf R-Inf RInf NaN,NaN R-Inf 0,NaN R-Inf RInf R-Inf RInf NaN,NaN R-Inf 0,Inf -Inf,Inf Inf,Inf -Inf,Inf Inf,Inf NaN,NaN -Inf,Inf 0,-Inf -Inf,-Inf Inf,-Inf -Inf,-Inf Inf,-Inf NaN,NaN -Inf,-Inf 0,Inf -Inf,Inf Inf,Inf -Inf,Inf Inf,Inf NaN,NaN -Inf,Inf 0,-Inf -Inf,-Inf Inf,-Inf -Inf,-Inf Inf,-Inf NaN,NaN -Inf,-Inf 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,Inf -Inf,Inf Inf,Inf -Inf,Inf Inf,Inf NaN,NaN -Inf,Inf 0,NaN 0,NaN 0,Inf 0,-Inf 0,Inf 0,-Inf 0,NaN 0,Inf|exact
+CHK|mul_05|0,-Inf 0,NaN RInf R-Inf RInf R-Inf NaN,NaN RInf 0,NaN RInf R-Inf RInf R-Inf NaN,NaN RInf 0,-Inf Inf,-Inf -Inf,-Inf Inf,-Inf -Inf,-Inf NaN,NaN Inf,-Inf 0,Inf Inf,Inf -Inf,Inf Inf,Inf -Inf,Inf NaN,NaN Inf,Inf 0,-Inf Inf,-Inf -Inf,-Inf Inf,-Inf -Inf,-Inf NaN,NaN Inf,-Inf 0,Inf Inf,Inf -Inf,Inf Inf,Inf -Inf,Inf NaN,NaN Inf,Inf 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,-Inf Inf,-Inf -Inf,-Inf Inf,-Inf -Inf,-Inf NaN,NaN Inf,-Inf 0,NaN 0,NaN 0,-Inf 0,Inf 0,-Inf 0,Inf 0,NaN 0,-Inf|exact
+CHK|mul_06|0,NaN 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,NaN 0,NaN 0,NaN 0,NaN 0,NaN 0,NaN 0,NaN 0,NaN|exact
+CHK|mul_07|0,2 R0 R-2 R2 R-Inf RInf NaN,NaN R-4 R-0 R-2 R2 R-Inf RInf NaN,NaN R-4 0,2 -2,2 2,2 -Inf,2 Inf,2 NaN,NaN -4,2 -0,-2 -2,-2 2,-2 -Inf,-2 Inf,-2 NaN,NaN -4,-2 0,Inf -2,Inf 2,Inf -Inf,Inf Inf,Inf NaN,NaN -4,Inf 0,-Inf -2,-Inf 2,-Inf -Inf,-Inf Inf,-Inf NaN,NaN -4,-Inf 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,4 -2,4 2,4 -Inf,4 Inf,4 NaN,NaN -4,4 R0 R-0 0,2 -0,-2 0,Inf 0,-Inf 0,NaN 0,4|exact
+CHK|mul_08|-0,0 R-0 R-0 R0 0,NaN 0,NaN 0,NaN R-0 R0 R0 R0 0,NaN 0,NaN 0,NaN R0 R-0 R-0 R0 NaN,NaN NaN,NaN NaN,NaN R-0 R0 R0 R0 NaN,NaN NaN,NaN NaN,NaN R0 RNaN NaN,NaN NaN,NaN RNaN 0,NaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN 0,NaN RNaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN R-0 R-0 R0 NaN,NaN NaN,NaN NaN,NaN R-0 R-0 R0 R-0 R0 RNaN RNaN RNaN R-0|exact
+CHK|mul_09|-0,1 R-0 R-1 R1 R-Inf RInf NaN,NaN R-2 R0 R-1 R1 R-Inf RInf NaN,NaN R-2 -0,1 -1,1 1,1 -Inf,1 Inf,1 NaN,NaN -2,1 0,-1 -1,-1 1,-1 -Inf,-1 Inf,-1 NaN,NaN -2,-1 0,Inf -1,Inf 1,Inf -Inf,Inf Inf,Inf NaN,NaN -2,Inf 0,-Inf -1,-Inf 1,-Inf -Inf,-Inf Inf,-Inf NaN,NaN -2,-Inf 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN -0,2 -1,2 1,2 -Inf,2 Inf,2 NaN,NaN -2,2 R-0 R0 -0,1 0,-1 0,Inf 0,-Inf 0,NaN -0,2|exact
+CHK|mul_10|-0,-1 R0 R1 R-1 RInf R-Inf NaN,NaN R2 R0 R1 R-1 RInf R-Inf NaN,NaN R2 0,-1 1,-1 -1,-1 Inf,-1 -Inf,-1 NaN,NaN 2,-1 0,1 1,1 -1,1 Inf,1 -Inf,1 NaN,NaN 2,1 0,-Inf 1,-Inf -1,-Inf Inf,-Inf -Inf,-Inf NaN,NaN 2,-Inf 0,Inf 1,Inf -1,Inf Inf,Inf -Inf,Inf NaN,NaN 2,Inf 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,-2 1,-2 -1,-2 Inf,-2 -Inf,-2 NaN,NaN 2,-2 R0 R0 0,-1 0,1 0,-Inf 0,Inf 0,NaN 0,-2|exact
+CHK|mul_11|-0,Inf 0,NaN R-Inf RInf R-Inf RInf NaN,NaN R-Inf 0,NaN R-Inf RInf R-Inf RInf NaN,NaN R-Inf 0,Inf -Inf,Inf Inf,Inf -Inf,Inf Inf,Inf NaN,NaN -Inf,Inf 0,-Inf -Inf,-Inf Inf,-Inf -Inf,-Inf Inf,-Inf NaN,NaN -Inf,-Inf 0,Inf -Inf,Inf Inf,Inf -Inf,Inf Inf,Inf NaN,NaN -Inf,Inf 0,-Inf -Inf,-Inf Inf,-Inf -Inf,-Inf Inf,-Inf NaN,NaN -Inf,-Inf 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,Inf -Inf,Inf Inf,Inf -Inf,Inf Inf,Inf NaN,NaN -Inf,Inf 0,NaN 0,NaN 0,Inf 0,-Inf 0,Inf 0,-Inf 0,NaN 0,Inf|exact
+CHK|mul_12|-0,-Inf 0,NaN RInf R-Inf RInf R-Inf NaN,NaN RInf 0,NaN RInf R-Inf RInf R-Inf NaN,NaN RInf 0,-Inf Inf,-Inf -Inf,-Inf Inf,-Inf -Inf,-Inf NaN,NaN Inf,-Inf 0,Inf Inf,Inf -Inf,Inf Inf,Inf -Inf,Inf NaN,NaN Inf,Inf 0,-Inf Inf,-Inf -Inf,-Inf Inf,-Inf -Inf,-Inf NaN,NaN Inf,-Inf 0,Inf Inf,Inf -Inf,Inf Inf,Inf -Inf,Inf NaN,NaN Inf,Inf 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,-Inf Inf,-Inf -Inf,-Inf Inf,-Inf -Inf,-Inf NaN,NaN Inf,-Inf 0,NaN 0,NaN 0,-Inf 0,Inf 0,-Inf 0,Inf 0,NaN 0,-Inf|exact
+CHK|mul_13|-0,NaN 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 0,NaN 0,NaN 0,NaN 0,NaN 0,NaN 0,NaN 0,NaN 0,NaN|exact
+CHK|mul_14|-0,2 R-0 R-2 R2 R-Inf RInf NaN,NaN R-4 R0 R-2 R2 R-Inf RInf NaN,NaN R-4 -0,2 -2,2 2,2 -Inf,2 Inf,2 NaN,NaN -4,2 0,-2 -2,-2 2,-2 -Inf,-2 Inf,-2 NaN,NaN -4,-2 0,Inf -2,Inf 2,Inf -Inf,Inf Inf,Inf NaN,NaN -4,Inf 0,-Inf -2,-Inf 2,-Inf -Inf,-Inf Inf,-Inf NaN,NaN -4,-Inf 0,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN -0,4 -2,4 2,4 -Inf,4 Inf,4 NaN,NaN -4,4 R-0 R0 -0,2 0,-2 0,Inf 0,-Inf 0,NaN -0,4|exact
+CHK|mul_15|1,0 R0 0,1 0,-1 0,Inf 0,-Inf 0,NaN 0,2 R-0 -0,1 0,-1 0,Inf 0,-Inf 0,NaN -0,2 R1 1,1 1,-1 1,Inf 1,-Inf NaN,NaN 1,2 R-1 -1,1 -1,-1 -1,Inf -1,-Inf NaN,NaN -1,2 RInf Inf,1 Inf,-1 Inf,Inf Inf,-Inf NaN,NaN Inf,2 R-Inf -Inf,1 -Inf,-1 -Inf,Inf -Inf,-Inf NaN,NaN -Inf,2 RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN R2 2,1 2,-1 2,Inf 2,-Inf NaN,NaN 2,2 R0 R-0 R1 R-1 RInf R-Inf RNaN R2|exact
+CHK|mul_16|1,1 R0 -1,1 1,-1 -Inf,Inf Inf,-Inf NaN,NaN -2,2 R-0 -1,1 1,-1 -Inf,Inf Inf,-Inf NaN,NaN -2,2 1,1 0,2 R2 -Inf,Inf Inf,-Inf NaN,NaN -1,3 -1,-1 R-2 0,-2 -Inf,Inf Inf,-Inf NaN,NaN -3,1 Inf,Inf Inf,Inf Inf,Inf 0,Inf RInf NaN,NaN Inf,Inf -Inf,-Inf -Inf,-Inf -Inf,-Inf R-Inf 0,-Inf NaN,NaN -Inf,-Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 2,2 1,3 3,1 -Inf,Inf Inf,-Inf NaN,NaN 0,4 R0 R-0 1,1 -1,-1 Inf,Inf -Inf,-Inf NaN,NaN 2,2|exact
+CHK|mul_17|1,-1 R0 1,1 -1,-1 Inf,Inf -Inf,-Inf NaN,NaN 2,2 R0 1,1 -1,-1 Inf,Inf -Inf,-Inf NaN,NaN 2,2 1,-1 R2 0,-2 Inf,Inf -Inf,-Inf NaN,NaN 3,1 -1,1 0,2 R-2 Inf,Inf -Inf,-Inf NaN,NaN 1,3 Inf,-Inf Inf,-Inf Inf,-Inf RInf 0,-Inf NaN,NaN Inf,-Inf -Inf,Inf -Inf,Inf -Inf,Inf 0,Inf R-Inf NaN,NaN -Inf,Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 2,-2 3,-1 1,-3 Inf,Inf -Inf,-Inf NaN,NaN R4 R0 R0 1,-1 -1,1 Inf,-Inf -Inf,Inf NaN,NaN 2,-2|exact
+CHK|mul_18|1,Inf NaN,NaN -Inf,1 Inf,-1 -Inf,Inf Inf,-Inf NaN,NaN -Inf,2 NaN,NaN -Inf,1 Inf,-1 -Inf,Inf Inf,-Inf NaN,NaN -Inf,2 1,Inf -Inf,Inf Inf,Inf -Inf,Inf RInf NaN,NaN -Inf,Inf -1,-Inf -Inf,-Inf Inf,-Inf R-Inf Inf,-Inf NaN,NaN -Inf,-Inf Inf,Inf 0,Inf Inf,Inf -Inf,Inf Inf,Inf NaN,NaN 0,Inf -Inf,-Inf -Inf,-Inf 0,-Inf -Inf,-Inf Inf,-Inf NaN,NaN -Inf,-Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 2,Inf -Inf,Inf Inf,Inf -Inf,Inf RInf NaN,NaN -Inf,Inf NaN,NaN NaN,NaN 1,Inf -1,-Inf Inf,Inf -Inf,-Inf NaN,NaN 2,Inf|exact
+CHK|mul_19|1,-Inf NaN,NaN Inf,1 -Inf,-1 Inf,Inf -Inf,-Inf NaN,NaN Inf,2 NaN,NaN Inf,1 -Inf,-1 Inf,Inf -Inf,-Inf NaN,NaN Inf,2 1,-Inf Inf,-Inf -Inf,-Inf RInf -Inf,-Inf NaN,NaN Inf,-Inf -1,Inf Inf,Inf -Inf,Inf Inf,Inf R-Inf NaN,NaN Inf,Inf Inf,-Inf Inf,-Inf 0,-Inf Inf,-Inf -Inf,-Inf NaN,NaN Inf,-Inf -Inf,Inf 0,Inf -Inf,Inf Inf,Inf -Inf,Inf NaN,NaN 0,Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 2,-Inf Inf,-Inf -Inf,-Inf RInf -Inf,-Inf NaN,NaN Inf,-Inf NaN,NaN NaN,NaN 1,-Inf -1,Inf Inf,-Inf -Inf,Inf NaN,NaN 2,-Inf|exact
+CHK|mul_20|1,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN|exact
+CHK|mul_21|1,2 R0 -2,1 2,-1 -Inf,Inf Inf,-Inf NaN,NaN -4,2 R-0 -2,1 2,-1 -Inf,Inf Inf,-Inf NaN,NaN -4,2 1,2 -1,3 3,1 -Inf,Inf Inf,-Inf NaN,NaN -3,4 -1,-2 -3,-1 1,-3 -Inf,Inf Inf,-Inf NaN,NaN R-5 Inf,Inf Inf,Inf Inf,Inf -Inf,Inf Inf,Inf NaN,NaN Inf,Inf -Inf,-Inf -Inf,-Inf -Inf,-Inf -Inf,-Inf Inf,-Inf NaN,NaN -Inf,-Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 2,4 0,5 4,3 -Inf,Inf Inf,-Inf NaN,NaN -2,6 R0 R-0 1,2 -1,-2 Inf,Inf -Inf,-Inf NaN,NaN 2,4|exact
+CHK|mul_22|-1,0 R-0 -0,-1 0,1 0,-Inf 0,Inf 0,NaN -0,-2 R0 0,-1 0,1 0,-Inf 0,Inf 0,NaN 0,-2 R-1 -1,-1 -1,1 -1,-Inf -1,Inf NaN,NaN -1,-2 R1 1,-1 1,1 1,-Inf 1,Inf NaN,NaN 1,-2 R-Inf -Inf,-1 -Inf,1 -Inf,-Inf -Inf,Inf NaN,NaN -Inf,-2 RInf Inf,-1 Inf,1 Inf,-Inf Inf,Inf NaN,NaN Inf,-2 RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN R-2 -2,-1 -2,1 -2,-Inf -2,Inf NaN,NaN -2,-2 R-0 R0 R-1 R1 R-Inf RInf RNaN R-2|exact
+CHK|mul_23|-1,1 R-0 -1,-1 1,1 -Inf,-Inf Inf,Inf NaN,NaN -2,-2 R0 -1,-1 1,1 -Inf,-Inf Inf,Inf NaN,NaN -2,-2 -1,1 R-2 0,2 -Inf,-Inf Inf,Inf NaN,NaN -3,-1 1,-1 0,-2 R2 -Inf,-Inf Inf,Inf NaN,NaN -1,-3 -Inf,Inf -Inf,Inf -Inf,Inf R-Inf 0,Inf NaN,NaN -Inf,Inf Inf,-Inf Inf,-Inf Inf,-Inf 0,-Inf RInf NaN,NaN Inf,-Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN -2,2 -3,1 -1,3 -Inf,-Inf Inf,Inf NaN,NaN R-4 R-0 R0 -1,1 1,-1 -Inf,Inf Inf,-Inf NaN,NaN -2,2|exact
+CHK|mul_24|-1,-1 R0 1,-1 -1,1 Inf,-Inf -Inf,Inf NaN,NaN 2,-2 R0 1,-1 -1,1 Inf,-Inf -Inf,Inf NaN,NaN 2,-2 -1,-1 0,-2 R-2 Inf,-Inf -Inf,Inf NaN,NaN 1,-3 1,1 R2 0,2 Inf,-Inf -Inf,Inf NaN,NaN 3,-1 -Inf,-Inf -Inf,-Inf -Inf,-Inf 0,-Inf R-Inf NaN,NaN -Inf,-Inf Inf,Inf Inf,Inf Inf,Inf RInf 0,Inf NaN,NaN Inf,Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN -2,-2 -1,-3 -3,-1 Inf,-Inf -Inf,Inf NaN,NaN 0,-4 R0 R0 -1,-1 1,1 -Inf,-Inf Inf,Inf NaN,NaN -2,-2|exact
+CHK|mul_25|-1,Inf NaN,NaN -Inf,-1 Inf,1 -Inf,-Inf Inf,Inf NaN,NaN -Inf,-2 NaN,NaN -Inf,-1 Inf,1 -Inf,-Inf Inf,Inf NaN,NaN -Inf,-2 -1,Inf -Inf,Inf Inf,Inf R-Inf Inf,Inf NaN,NaN -Inf,Inf 1,-Inf -Inf,-Inf Inf,-Inf -Inf,-Inf RInf NaN,NaN -Inf,-Inf -Inf,Inf -Inf,Inf 0,Inf -Inf,Inf Inf,Inf NaN,NaN -Inf,Inf Inf,-Inf 0,-Inf Inf,-Inf -Inf,-Inf Inf,-Inf NaN,NaN 0,-Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN -2,Inf -Inf,Inf Inf,Inf R-Inf Inf,Inf NaN,NaN -Inf,Inf NaN,NaN NaN,NaN -1,Inf 1,-Inf -Inf,Inf Inf,-Inf NaN,NaN -2,Inf|exact
+CHK|mul_26|-1,-Inf NaN,NaN Inf,-1 -Inf,1 Inf,-Inf -Inf,Inf NaN,NaN Inf,-2 NaN,NaN Inf,-1 -Inf,1 Inf,-Inf -Inf,Inf NaN,NaN Inf,-2 -1,-Inf Inf,-Inf -Inf,-Inf Inf,-Inf R-Inf NaN,NaN Inf,-Inf 1,Inf Inf,Inf -Inf,Inf RInf -Inf,Inf NaN,NaN Inf,Inf -Inf,-Inf 0,-Inf -Inf,-Inf Inf,-Inf -Inf,-Inf NaN,NaN 0,-Inf Inf,Inf Inf,Inf 0,Inf Inf,Inf -Inf,Inf NaN,NaN Inf,Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN -2,-Inf Inf,-Inf -Inf,-Inf Inf,-Inf R-Inf NaN,NaN Inf,-Inf NaN,NaN NaN,NaN -1,-Inf 1,Inf -Inf,-Inf Inf,Inf NaN,NaN -2,-Inf|exact
+CHK|mul_27|-1,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN|exact
+CHK|mul_28|-1,2 R-0 -2,-1 2,1 -Inf,-Inf Inf,Inf NaN,NaN -4,-2 R0 -2,-1 2,1 -Inf,-Inf Inf,Inf NaN,NaN -4,-2 -1,2 -3,1 1,3 -Inf,-Inf Inf,Inf NaN,NaN R-5 1,-2 -1,-3 3,-1 -Inf,-Inf Inf,Inf NaN,NaN -3,-4 -Inf,Inf -Inf,Inf -Inf,Inf -Inf,Inf Inf,Inf NaN,NaN -Inf,Inf Inf,-Inf Inf,-Inf Inf,-Inf -Inf,-Inf Inf,-Inf NaN,NaN Inf,-Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN -2,4 -4,3 0,5 -Inf,-Inf Inf,Inf NaN,NaN -6,2 R-0 R0 -1,2 1,-2 -Inf,Inf Inf,-Inf NaN,NaN -2,4|exact
+CHK|mul_29|Inf,0 RNaN 0,Inf 0,-Inf 0,Inf 0,-Inf 0,NaN 0,Inf RNaN 0,Inf 0,-Inf 0,Inf 0,-Inf 0,NaN 0,Inf RInf Inf,Inf Inf,-Inf Inf,Inf Inf,-Inf NaN,NaN Inf,Inf R-Inf -Inf,Inf -Inf,-Inf -Inf,Inf -Inf,-Inf NaN,NaN -Inf,Inf RInf Inf,Inf Inf,-Inf Inf,Inf Inf,-Inf NaN,NaN Inf,Inf R-Inf -Inf,Inf -Inf,-Inf -Inf,Inf -Inf,-Inf NaN,NaN -Inf,Inf RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN RInf Inf,Inf Inf,-Inf Inf,Inf Inf,-Inf NaN,NaN Inf,Inf RNaN RNaN RInf R-Inf RInf R-Inf RNaN RInf|exact
+CHK|mul_30|Inf,1 NaN,NaN -1,Inf 1,-Inf -Inf,Inf Inf,-Inf NaN,NaN -2,Inf NaN,NaN -1,Inf 1,-Inf -Inf,Inf Inf,-Inf NaN,NaN -2,Inf Inf,1 Inf,Inf Inf,-Inf 0,Inf Inf,-Inf NaN,NaN Inf,Inf -Inf,-1 -Inf,Inf -Inf,-Inf -Inf,Inf 0,-Inf NaN,NaN -Inf,Inf Inf,Inf Inf,Inf RInf Inf,Inf Inf,-Inf NaN,NaN Inf,Inf -Inf,-Inf R-Inf -Inf,-Inf -Inf,Inf -Inf,-Inf NaN,NaN R-Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN Inf,2 Inf,Inf Inf,-Inf 0,Inf Inf,-Inf NaN,NaN Inf,Inf NaN,NaN NaN,NaN Inf,1 -Inf,-1 Inf,Inf -Inf,-Inf NaN,NaN Inf,2|exact
+CHK|mul_31|Inf,-1 NaN,NaN 1,Inf -1,-Inf Inf,Inf -Inf,-Inf NaN,NaN 2,Inf NaN,NaN 1,Inf -1,-Inf Inf,Inf -Inf,-Inf NaN,NaN 2,Inf Inf,-1 Inf,Inf Inf,-Inf Inf,Inf 0,-Inf NaN,NaN Inf,Inf -Inf,1 -Inf,Inf -Inf,-Inf 0,Inf -Inf,-Inf NaN,NaN -Inf,Inf Inf,-Inf RInf Inf,-Inf Inf,Inf Inf,-Inf NaN,NaN RInf -Inf,Inf -Inf,Inf R-Inf -Inf,Inf -Inf,-Inf NaN,NaN -Inf,Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN Inf,-2 Inf,Inf Inf,-Inf Inf,Inf 0,-Inf NaN,NaN Inf,Inf NaN,NaN NaN,NaN Inf,-1 -Inf,1 Inf,-Inf -Inf,Inf NaN,NaN Inf,-2|exact
+CHK|mul_32|Inf,Inf 0,NaN -Inf,Inf Inf,-Inf -Inf,Inf Inf,-Inf NaN,NaN -Inf,Inf RNaN -Inf,Inf Inf,-Inf -Inf,Inf Inf,-Inf NaN,NaN -Inf,Inf Inf,Inf 0,Inf RInf -Inf,Inf Inf,-Inf NaN,NaN -Inf,Inf -Inf,-Inf R-Inf 0,-Inf -Inf,Inf Inf,-Inf NaN,NaN -Inf,Inf Inf,Inf Inf,Inf Inf,Inf 0,Inf RInf NaN,NaN Inf,Inf -Inf,-Inf -Inf,-Inf -Inf,-Inf R-Inf 0,-Inf NaN,NaN -Inf,-Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN Inf,Inf Inf,Inf Inf,Inf -Inf,Inf Inf,-Inf NaN,NaN 0,Inf 0,NaN RNaN Inf,Inf -Inf,-Inf Inf,Inf -Inf,-Inf NaN,NaN Inf,Inf|exact
+CHK|mul_33|Inf,-Inf RNaN Inf,Inf -Inf,-Inf Inf,Inf -Inf,-Inf NaN,NaN Inf,Inf 0,NaN Inf,Inf -Inf,-Inf Inf,Inf -Inf,-Inf NaN,NaN Inf,Inf Inf,-Inf RInf 0,-Inf Inf,Inf -Inf,-Inf NaN,NaN Inf,Inf -Inf,Inf 0,Inf R-Inf Inf,Inf -Inf,-Inf NaN,NaN Inf,Inf Inf,-Inf Inf,-Inf Inf,-Inf RInf 0,-Inf NaN,NaN Inf,-Inf -Inf,Inf -Inf,Inf -Inf,Inf 0,Inf R-Inf NaN,NaN -Inf,Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN Inf,-Inf Inf,-Inf Inf,-Inf Inf,Inf -Inf,-Inf NaN,NaN RInf RNaN 0,NaN Inf,-Inf -Inf,Inf Inf,-Inf -Inf,Inf NaN,NaN Inf,-Inf|exact
+CHK|mul_34|Inf,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN|exact
+CHK|mul_35|Inf,2 NaN,NaN -2,Inf 2,-Inf -Inf,Inf Inf,-Inf NaN,NaN -4,Inf NaN,NaN -2,Inf 2,-Inf -Inf,Inf Inf,-Inf NaN,NaN -4,Inf Inf,2 Inf,Inf Inf,-Inf 0,Inf Inf,-Inf NaN,NaN Inf,Inf -Inf,-2 -Inf,Inf -Inf,-Inf -Inf,Inf 0,-Inf NaN,NaN -Inf,Inf Inf,Inf Inf,Inf RInf Inf,Inf Inf,-Inf NaN,NaN Inf,Inf -Inf,-Inf R-Inf -Inf,-Inf -Inf,Inf -Inf,-Inf NaN,NaN R-Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN Inf,4 Inf,Inf Inf,-Inf 0,Inf Inf,-Inf NaN,NaN Inf,Inf NaN,NaN NaN,NaN Inf,2 -Inf,-2 Inf,Inf -Inf,-Inf NaN,NaN Inf,4|exact
+CHK|mul_36|-Inf,0 RNaN 0,-Inf 0,Inf 0,-Inf 0,Inf 0,NaN 0,-Inf RNaN 0,-Inf 0,Inf 0,-Inf 0,Inf 0,NaN 0,-Inf R-Inf -Inf,-Inf -Inf,Inf -Inf,-Inf -Inf,Inf NaN,NaN -Inf,-Inf RInf Inf,-Inf Inf,Inf Inf,-Inf Inf,Inf NaN,NaN Inf,-Inf R-Inf -Inf,-Inf -Inf,Inf -Inf,-Inf -Inf,Inf NaN,NaN -Inf,-Inf RInf Inf,-Inf Inf,Inf Inf,-Inf Inf,Inf NaN,NaN Inf,-Inf RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN R-Inf -Inf,-Inf -Inf,Inf -Inf,-Inf -Inf,Inf NaN,NaN -Inf,-Inf RNaN RNaN R-Inf RInf R-Inf RInf RNaN R-Inf|exact
+CHK|mul_37|-Inf,1 NaN,NaN -1,-Inf 1,Inf -Inf,-Inf Inf,Inf NaN,NaN -2,-Inf NaN,NaN -1,-Inf 1,Inf -Inf,-Inf Inf,Inf NaN,NaN -2,-Inf -Inf,1 -Inf,-Inf -Inf,Inf -Inf,-Inf 0,Inf NaN,NaN -Inf,-Inf Inf,-1 Inf,-Inf Inf,Inf 0,-Inf Inf,Inf NaN,NaN Inf,-Inf -Inf,Inf R-Inf -Inf,Inf -Inf,-Inf -Inf,Inf NaN,NaN R-Inf Inf,-Inf Inf,-Inf RInf Inf,-Inf Inf,Inf NaN,NaN Inf,-Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN -Inf,2 -Inf,-Inf -Inf,Inf -Inf,-Inf 0,Inf NaN,NaN -Inf,-Inf NaN,NaN NaN,NaN -Inf,1 Inf,-1 -Inf,Inf Inf,-Inf NaN,NaN -Inf,2|exact
+CHK|mul_38|-Inf,-1 NaN,NaN 1,-Inf -1,Inf Inf,-Inf -Inf,Inf NaN,NaN 2,-Inf NaN,NaN 1,-Inf -1,Inf Inf,-Inf -Inf,Inf NaN,NaN 2,-Inf -Inf,-1 -Inf,-Inf -Inf,Inf 0,-Inf -Inf,Inf NaN,NaN -Inf,-Inf Inf,1 Inf,-Inf Inf,Inf Inf,-Inf 0,Inf NaN,NaN Inf,-Inf -Inf,-Inf -Inf,-Inf R-Inf -Inf,-Inf -Inf,Inf NaN,NaN -Inf,-Inf Inf,Inf RInf Inf,Inf Inf,-Inf Inf,Inf NaN,NaN RInf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN -Inf,-2 -Inf,-Inf -Inf,Inf 0,-Inf -Inf,Inf NaN,NaN -Inf,-Inf NaN,NaN NaN,NaN -Inf,-1 Inf,1 -Inf,-Inf Inf,Inf NaN,NaN -Inf,-2|exact
+CHK|mul_39|-Inf,Inf RNaN -Inf,-Inf Inf,Inf -Inf,-Inf Inf,Inf NaN,NaN -Inf,-Inf 0,NaN -Inf,-Inf Inf,Inf -Inf,-Inf Inf,Inf NaN,NaN -Inf,-Inf -Inf,Inf R-Inf 0,Inf -Inf,-Inf Inf,Inf NaN,NaN -Inf,-Inf Inf,-Inf 0,-Inf RInf -Inf,-Inf Inf,Inf NaN,NaN -Inf,-Inf -Inf,Inf -Inf,Inf -Inf,Inf R-Inf 0,Inf NaN,NaN -Inf,Inf Inf,-Inf Inf,-Inf Inf,-Inf 0,-Inf RInf NaN,NaN Inf,-Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN -Inf,Inf -Inf,Inf -Inf,Inf -Inf,-Inf Inf,Inf NaN,NaN R-Inf RNaN 0,NaN -Inf,Inf Inf,-Inf -Inf,Inf Inf,-Inf NaN,NaN -Inf,Inf|exact
+CHK|mul_40|-Inf,-Inf 0,NaN Inf,-Inf -Inf,Inf Inf,-Inf -Inf,Inf NaN,NaN Inf,-Inf RNaN Inf,-Inf -Inf,Inf Inf,-Inf -Inf,Inf NaN,NaN Inf,-Inf -Inf,-Inf 0,-Inf R-Inf Inf,-Inf -Inf,Inf NaN,NaN Inf,-Inf Inf,Inf RInf 0,Inf Inf,-Inf -Inf,Inf NaN,NaN Inf,-Inf -Inf,-Inf -Inf,-Inf -Inf,-Inf 0,-Inf R-Inf NaN,NaN -Inf,-Inf Inf,Inf Inf,Inf Inf,Inf RInf 0,Inf NaN,NaN Inf,Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN -Inf,-Inf -Inf,-Inf -Inf,-Inf Inf,-Inf -Inf,Inf NaN,NaN 0,-Inf 0,NaN RNaN -Inf,-Inf Inf,Inf -Inf,-Inf Inf,Inf NaN,NaN -Inf,-Inf|exact
+CHK|mul_41|-Inf,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN|exact
+CHK|mul_42|-Inf,2 NaN,NaN -2,-Inf 2,Inf -Inf,-Inf Inf,Inf NaN,NaN -4,-Inf NaN,NaN -2,-Inf 2,Inf -Inf,-Inf Inf,Inf NaN,NaN -4,-Inf -Inf,2 -Inf,-Inf -Inf,Inf -Inf,-Inf 0,Inf NaN,NaN -Inf,-Inf Inf,-2 Inf,-Inf Inf,Inf 0,-Inf Inf,Inf NaN,NaN Inf,-Inf -Inf,Inf R-Inf -Inf,Inf -Inf,-Inf -Inf,Inf NaN,NaN R-Inf Inf,-Inf Inf,-Inf RInf Inf,-Inf Inf,Inf NaN,NaN Inf,-Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN -Inf,4 -Inf,-Inf -Inf,Inf -Inf,-Inf 0,Inf NaN,NaN -Inf,-Inf NaN,NaN NaN,NaN -Inf,2 Inf,-2 -Inf,Inf Inf,-Inf NaN,NaN -Inf,4|exact
+CHK|mul_43|NaN,0 RNaN 0,NaN 0,NaN 0,NaN 0,NaN 0,NaN 0,NaN RNaN 0,NaN 0,NaN 0,NaN 0,NaN 0,NaN 0,NaN RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN RNaN RNaN RNaN RNaN RNaN RNaN RNaN RNaN|exact
+CHK|mul_44|NaN,1 NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN|exact
+CHK|mul_45|NaN,-1 NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN|exact
+CHK|mul_46|NaN,Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN|exact
+CHK|mul_47|NaN,-Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN|exact
+CHK|mul_48|NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN|exact
+CHK|mul_49|NaN,2 NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN|exact
+CHK|mul_50|2,0 R0 0,2 0,-2 0,Inf 0,-Inf 0,NaN 0,4 R-0 -0,2 0,-2 0,Inf 0,-Inf 0,NaN -0,4 R2 2,2 2,-2 2,Inf 2,-Inf NaN,NaN 2,4 R-2 -2,2 -2,-2 -2,Inf -2,-Inf NaN,NaN -2,4 RInf Inf,2 Inf,-2 Inf,Inf Inf,-Inf NaN,NaN Inf,4 R-Inf -Inf,2 -Inf,-2 -Inf,Inf -Inf,-Inf NaN,NaN -Inf,4 RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN R4 4,2 4,-2 4,Inf 4,-Inf NaN,NaN 4,4 R0 R-0 R2 R-2 RInf R-Inf RNaN R4|exact
+CHK|mul_51|2,1 R0 -1,2 1,-2 -Inf,Inf Inf,-Inf NaN,NaN -2,4 R-0 -1,2 1,-2 -Inf,Inf Inf,-Inf NaN,NaN -2,4 2,1 1,3 3,-1 -Inf,Inf Inf,-Inf NaN,NaN 0,5 -2,-1 -3,1 -1,-3 -Inf,Inf Inf,-Inf NaN,NaN -4,3 Inf,Inf Inf,Inf Inf,Inf Inf,Inf Inf,-Inf NaN,NaN Inf,Inf -Inf,-Inf -Inf,-Inf -Inf,-Inf -Inf,Inf -Inf,-Inf NaN,NaN -Inf,-Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 4,2 3,4 R5 -Inf,Inf Inf,-Inf NaN,NaN 2,6 R0 R-0 2,1 -2,-1 Inf,Inf -Inf,-Inf NaN,NaN 4,2|exact
+CHK|mul_52|2,-1 R0 1,2 -1,-2 Inf,Inf -Inf,-Inf NaN,NaN 2,4 R0 1,2 -1,-2 Inf,Inf -Inf,-Inf NaN,NaN 2,4 2,-1 3,1 1,-3 Inf,Inf -Inf,-Inf NaN,NaN 4,3 -2,1 -1,3 -3,-1 Inf,Inf -Inf,-Inf NaN,NaN 0,5 Inf,-Inf Inf,-Inf Inf,-Inf Inf,Inf Inf,-Inf NaN,NaN Inf,-Inf -Inf,Inf -Inf,Inf -Inf,Inf -Inf,Inf -Inf,-Inf NaN,NaN -Inf,Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 4,-2 R5 3,-4 Inf,Inf -Inf,-Inf NaN,NaN 6,2 R0 R0 2,-1 -2,1 Inf,-Inf -Inf,Inf NaN,NaN 4,-2|exact
+CHK|mul_53|2,Inf NaN,NaN -Inf,2 Inf,-2 -Inf,Inf Inf,-Inf NaN,NaN -Inf,4 NaN,NaN -Inf,2 Inf,-2 -Inf,Inf Inf,-Inf NaN,NaN -Inf,4 2,Inf -Inf,Inf Inf,Inf -Inf,Inf RInf NaN,NaN -Inf,Inf -2,-Inf -Inf,-Inf Inf,-Inf R-Inf Inf,-Inf NaN,NaN -Inf,-Inf Inf,Inf 0,Inf Inf,Inf -Inf,Inf Inf,Inf NaN,NaN 0,Inf -Inf,-Inf -Inf,-Inf 0,-Inf -Inf,-Inf Inf,-Inf NaN,NaN -Inf,-Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 4,Inf -Inf,Inf Inf,Inf -Inf,Inf RInf NaN,NaN -Inf,Inf NaN,NaN NaN,NaN 2,Inf -2,-Inf Inf,Inf -Inf,-Inf NaN,NaN 4,Inf|exact
+CHK|mul_54|2,-Inf NaN,NaN Inf,2 -Inf,-2 Inf,Inf -Inf,-Inf NaN,NaN Inf,4 NaN,NaN Inf,2 -Inf,-2 Inf,Inf -Inf,-Inf NaN,NaN Inf,4 2,-Inf Inf,-Inf -Inf,-Inf RInf -Inf,-Inf NaN,NaN Inf,-Inf -2,Inf Inf,Inf -Inf,Inf Inf,Inf R-Inf NaN,NaN Inf,Inf Inf,-Inf Inf,-Inf 0,-Inf Inf,-Inf -Inf,-Inf NaN,NaN Inf,-Inf -Inf,Inf 0,Inf -Inf,Inf Inf,Inf -Inf,Inf NaN,NaN 0,Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 4,-Inf Inf,-Inf -Inf,-Inf RInf -Inf,-Inf NaN,NaN Inf,-Inf NaN,NaN NaN,NaN 2,-Inf -2,Inf Inf,-Inf -Inf,Inf NaN,NaN 4,-Inf|exact
+CHK|mul_55|2,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN|exact
+CHK|mul_56|2,2 R0 -2,2 2,-2 -Inf,Inf Inf,-Inf NaN,NaN -4,4 R-0 -2,2 2,-2 -Inf,Inf Inf,-Inf NaN,NaN -4,4 2,2 0,4 R4 -Inf,Inf Inf,-Inf NaN,NaN -2,6 -2,-2 R-4 0,-4 -Inf,Inf Inf,-Inf NaN,NaN -6,2 Inf,Inf Inf,Inf Inf,Inf 0,Inf RInf NaN,NaN Inf,Inf -Inf,-Inf -Inf,-Inf -Inf,-Inf R-Inf 0,-Inf NaN,NaN -Inf,-Inf NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN 4,4 2,6 6,2 -Inf,Inf Inf,-Inf NaN,NaN 0,8 R0 R-0 2,2 -2,-2 Inf,Inf -Inf,-Inf NaN,NaN 4,4|exact
+CHK|mul_57|R0 R0 R0 R0 0,NaN 0,NaN 0,NaN R0 R-0 R-0 R0 0,NaN 0,NaN 0,NaN R-0 R0 R0 R0 NaN,NaN NaN,NaN NaN,NaN R0 R-0 R-0 R0 NaN,NaN NaN,NaN NaN,NaN R-0 RNaN NaN,NaN NaN,NaN 0,NaN RNaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN RNaN 0,NaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN R0 R0 R0 NaN,NaN NaN,NaN NaN,NaN R0 R0 R-0 R0 R-0 RNaN RNaN RNaN R0|exact
+CHK|mul_58|R-0 R-0 R-0 R0 0,NaN 0,NaN 0,NaN R-0 R0 R0 R0 0,NaN 0,NaN 0,NaN R0 R-0 R-0 R0 NaN,NaN NaN,NaN NaN,NaN R-0 R0 R0 R0 NaN,NaN NaN,NaN NaN,NaN R0 RNaN NaN,NaN NaN,NaN RNaN 0,NaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN 0,NaN RNaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN R-0 R-0 R0 NaN,NaN NaN,NaN NaN,NaN R-0 R-0 R0 R-0 R0 RNaN RNaN RNaN R-0|exact
+CHK|mul_59|R1 R0 0,1 0,-1 0,Inf 0,-Inf 0,NaN 0,2 R-0 -0,1 0,-1 0,Inf 0,-Inf 0,NaN -0,2 R1 1,1 1,-1 1,Inf 1,-Inf NaN,NaN 1,2 R-1 -1,1 -1,-1 -1,Inf -1,-Inf NaN,NaN -1,2 RInf Inf,1 Inf,-1 Inf,Inf Inf,-Inf NaN,NaN Inf,2 R-Inf -Inf,1 -Inf,-1 -Inf,Inf -Inf,-Inf NaN,NaN -Inf,2 RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN R2 2,1 2,-1 2,Inf 2,-Inf NaN,NaN 2,2 R0 R-0 R1 R-1 RInf R-Inf RNaN R2|exact
+CHK|mul_60|R-1 R-0 -0,-1 0,1 0,-Inf 0,Inf 0,NaN -0,-2 R0 0,-1 0,1 0,-Inf 0,Inf 0,NaN 0,-2 R-1 -1,-1 -1,1 -1,-Inf -1,Inf NaN,NaN -1,-2 R1 1,-1 1,1 1,-Inf 1,Inf NaN,NaN 1,-2 R-Inf -Inf,-1 -Inf,1 -Inf,-Inf -Inf,Inf NaN,NaN -Inf,-2 RInf Inf,-1 Inf,1 Inf,-Inf Inf,Inf NaN,NaN Inf,-2 RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN R-2 -2,-1 -2,1 -2,-Inf -2,Inf NaN,NaN -2,-2 R-0 R0 R-1 R1 R-Inf RInf RNaN R-2|exact
+CHK|mul_61|RInf RNaN 0,Inf 0,-Inf 0,Inf 0,-Inf 0,NaN 0,Inf RNaN 0,Inf 0,-Inf 0,Inf 0,-Inf 0,NaN 0,Inf RInf Inf,Inf Inf,-Inf Inf,Inf Inf,-Inf NaN,NaN Inf,Inf R-Inf -Inf,Inf -Inf,-Inf -Inf,Inf -Inf,-Inf NaN,NaN -Inf,Inf RInf Inf,Inf Inf,-Inf Inf,Inf Inf,-Inf NaN,NaN Inf,Inf R-Inf -Inf,Inf -Inf,-Inf -Inf,Inf -Inf,-Inf NaN,NaN -Inf,Inf RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN RInf Inf,Inf Inf,-Inf Inf,Inf Inf,-Inf NaN,NaN Inf,Inf RNaN RNaN RInf R-Inf RInf R-Inf RNaN RInf|exact
+CHK|mul_62|R-Inf RNaN 0,-Inf 0,Inf 0,-Inf 0,Inf 0,NaN 0,-Inf RNaN 0,-Inf 0,Inf 0,-Inf 0,Inf 0,NaN 0,-Inf R-Inf -Inf,-Inf -Inf,Inf -Inf,-Inf -Inf,Inf NaN,NaN -Inf,-Inf RInf Inf,-Inf Inf,Inf Inf,-Inf Inf,Inf NaN,NaN Inf,-Inf R-Inf -Inf,-Inf -Inf,Inf -Inf,-Inf -Inf,Inf NaN,NaN -Inf,-Inf RInf Inf,-Inf Inf,Inf Inf,-Inf Inf,Inf NaN,NaN Inf,-Inf RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN R-Inf -Inf,-Inf -Inf,Inf -Inf,-Inf -Inf,Inf NaN,NaN -Inf,-Inf RNaN RNaN R-Inf RInf R-Inf RInf RNaN R-Inf|exact
+CHK|mul_63|RNaN RNaN 0,NaN 0,NaN 0,NaN 0,NaN 0,NaN 0,NaN RNaN 0,NaN 0,NaN 0,NaN 0,NaN 0,NaN 0,NaN RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN RNaN RNaN RNaN RNaN RNaN RNaN RNaN RNaN|exact
+CHK|mul_64|R2 R0 0,2 0,-2 0,Inf 0,-Inf 0,NaN 0,4 R-0 -0,2 0,-2 0,Inf 0,-Inf 0,NaN -0,4 R2 2,2 2,-2 2,Inf 2,-Inf NaN,NaN 2,4 R-2 -2,2 -2,-2 -2,Inf -2,-Inf NaN,NaN -2,4 RInf Inf,2 Inf,-2 Inf,Inf Inf,-Inf NaN,NaN Inf,4 R-Inf -Inf,2 -Inf,-2 -Inf,Inf -Inf,-Inf NaN,NaN -Inf,4 RNaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN NaN,NaN R4 4,2 4,-2 4,Inf 4,-Inf NaN,NaN 4,4 R0 R-0 R2 R-2 RInf R-Inf RNaN R4|exact
+CHK|mul_arr_rc|char[1 4] [48 44 45 49]|exact
+CHK|mul_arr_dot|double[1 1] real Inf|exact
+CHK|mul_arr_scal|double[1 1] real Inf|exact
+CHK|cplx_negz|double[1 1] real -Inf|exact
+CHK|cplx_negz_arr|double[1 2] real [-Inf -Inf]|exact
+CHK|pow_anon_lit|double[1 3] complex re [3 1 2] im [0 0 0]|exact
+CHK|pow_anon_op|double[1 3] complex re [3 1 2] im [0 0 0]|exact
+CHK|pow_anon_opvar|double[1 3] real [3 1 2]|exact
+CHK|pow_fn_lit|double[1 3] complex re [3 1 2] im [0 0 0]|exact
+CHK|flagpow_2|double[1 1] real 1.2100000000000002|exact
+CHK|flagpow_3|double[1 1] real 1.3310000000000004|exact
+CHK|flagpow_5|double[1 1] real 1.6105100000000006|exact
+CHK|flagpow_7|double[1 1] real 1.9487171000000012|exact
+CHK|flagpow_10|double[1 1] real 2.5937424601000023|exact
+CHK|flagpow_17|double[1 1] real 5.054470284992945|exact
+CHK|flagpow_30|double[1 1] real 17.449402268886448|exact
+CHK|flagpow_-1|double[1 1] real 0.90909090909090906|exact
+CHK|flagpow_-2|double[1 1] real 0.82644628099173545|exact
+CHK|flagpow_-3|double[1 1] real 0.75131480090157754|exact
+CHK|flagpow_4|double[1 1] real 1.4641000000000006|div=ADR0386|diverges|double[1 1] real 1.4641000000000004
+CHK|flagpow_vec|double[1 3] real [1.3310000000000004 0.026999999999999996 -19.683000000000003]|exact
+CHK|flagpow_neg|double[1 1] real -1.3310000000000004|exact
+CHK|flagpow_half|double[1 1] real 1.0488088481701516|exact
+CHK|flagpow_negh|double[1 1] complex re 0 im 2|exact
+CHK|flagpow_ovf|double[1 1] real Inf|exact
+CHK|flagpow_s|single[1 1] real 1.3310000896453857|exact
+CHK|flagpow_zero|double[1 1] real 0|exact
+CHK|flagpow_inf|double[1 1] real Inf|exact
+CHK|flagpow_nan|double[1 1] real NaN|exact
+CHK|psi_0_1e-08|double[1 1] real -100000000.57721566|exact
+CHK|psi_0_0p25|double[1 1] real -4.2274535333762655|exact
+CHK|psi_0_0p5|double[1 1] real -1.9635100260214231|exact
+CHK|psi_0_0p75|double[1 1] real -1.0858608797864719|exact
+CHK|psi_0_1|double[1 1] real -0.57721566490153231|exact
+CHK|psi_0_1p25|double[1 1] real -0.2274535333762655|exact
+CHK|psi_0_1p5|double[1 1] real 0.036489973978576895|exact
+CHK|psi_0_1p75|double[1 1] real 0.24747245354686109|exact
+CHK|psi_0_2|double[1 1] real 0.42278433509846747|exact
+CHK|psi_0_2p5|double[1 1] real 0.70315664064524341|exact
+CHK|psi_0_3|double[1 1] real 0.92278433509846747|exact
+CHK|psi_0_3p5|double[1 1] real 1.1031566406452433|exact
+CHK|psi_0_5|double[1 1] real 1.5061176684318007|exact
+CHK|psi_0_7p25|double[1 1] real 1.9104535268837362|exact
+CHK|psi_0_9p1|double[1 1] real 2.1523242472040383|exact
+CHK|psi_0_12|double[1 1] real 2.4426616799758119|exact
+CHK|psi_0_25p1|double[1 1] real 3.202815275359479|exact
+CHK|psi_0_64p5|double[1 1] real 4.1588932554511517|exact
+CHK|psi_0_100|double[1 1] real 4.6001618527380881|exact
+CHK|psi_0_1000|double[1 1] real 6.907255195648812|exact
+CHK|psi_0_10000|double[1 1] real 9.2102903711428503|exact
+CHK|psi_0_1e+08|double[1 1] real 18.420680738952367|exact
+CHK|psi_1_1e-08|double[1 1] real 10000000000000034|exact
+CHK|psi_1_0p25|double[1 1] real 17.197329154507109|exact
+CHK|psi_1_0p5|double[1 1] real 4.934802200544679|exact
+CHK|psi_1_0p75|double[1 1] real 2.5418796476716063|exact
+CHK|psi_1_1|double[1 1] real 1.6449340668482264|exact
+CHK|psi_1_1p25|double[1 1] real 1.1973291545071105|exact
+CHK|psi_1_1p5|double[1 1] real 0.93480220054467933|exact
+CHK|psi_1_1p75|double[1 1] real 0.76410186989382867|exact
+CHK|psi_1_2|double[1 1] real 0.64493406684822641|exact
+CHK|psi_1_2p5|double[1 1] real 0.49035775610023491|exact
+CHK|psi_1_3|double[1 1] real 0.39493406684822635|exact
+CHK|psi_1_3p5|double[1 1] real 0.33035775610023488|exact
+CHK|psi_1_5|double[1 1] real 0.22132295573711527|exact
+CHK|psi_1_7p25|double[1 1] real 0.14787923315893214|exact
+CHK|psi_1_9p1|double[1 1] real 0.11614866754915648|exact
+CHK|psi_1_12|double[1 1] real 0.086901872871768385|exact
+CHK|psi_1_25p1|double[1 1] real 0.040644811988205805|exact
+CHK|psi_1_64p5|double[1 1] real 0.015624682135719535|exact
+CHK|psi_1_100|double[1 1] real 0.010050166663333566|exact
+CHK|psi_1_1000|double[1 1] real 0.0010005001666666335|exact
+CHK|psi_1_10000|double[1 1] real 0.00010000500016666658|exact
+CHK|psi_1_1e+08|double[1 1] real 1.0000000049999981e-08|exact
+CHK|psi_2_1e-08|double[1 1] real -2.0000000000000104e+24|exact
+CHK|psi_2_0p25|double[1 1] real -129.32773993753693|exact
+CHK|psi_2_0p5|double[1 1] real -16.82879664423432|exact
+CHK|psi_2_0p75|double[1 1] real -5.3026332163376395|exact
+CHK|psi_2_1|double[1 1] real -2.4041138063191885|exact
+CHK|psi_2_1p25|double[1 1] real -1.3277399375369203|exact
+CHK|psi_2_1p5|double[1 1] real -0.82879664423431998|exact
+CHK|psi_2_1p75|double[1 1] real -0.56189247559689892|exact
+CHK|psi_2_2|double[1 1] real -0.40411380631918858|exact
+CHK|psi_2_2p5|double[1 1] real -0.23620405164172742|exact
+CHK|psi_2_3|double[1 1] real -0.15411380631918856|exact
+CHK|psi_2_3p5|double[1 1] real -0.10820405164172742|exact
+CHK|psi_2_5|double[1 1] real -0.048789732245114487|exact
+CHK|psi_2_7p25|double[1 1] real -0.02182895229519774|exact
+CHK|psi_2_9p1|double[1 1] real -0.013475474109794071|exact
+CHK|psi_2_12|double[1 1] real -0.0075472053689989108|exact
+CHK|psi_2_25p1|double[1 1] real -0.0016517735534409088|exact
+CHK|psi_2_64p5|double[1 1] real -0.00024412572596038725|exact
+CHK|psi_2_100|double[1 1] real -0.00010100499983334991|exact
+CHK|psi_2_1000|double[1 1] real -1.0010004999998335e-06|exact
+CHK|psi_2_10000|double[1 1] real -1.0001000049999982e-08|exact
+CHK|psi_2_1e+08|double[1 1] real -1.0000000099999965e-16|exact
+CHK|psi_3_1e-08|double[1 1] real 6.0000000000000418e+32|exact
+CHK|psi_3_0p25|double[1 1] real 1538.7821440091884|exact
+CHK|psi_3_0p5|double[1 1] real 97.409091034002444|exact
+CHK|psi_3_0p75|double[1 1] real 19.763312534850598|exact
+CHK|psi_3_1|double[1 1] real 6.4939394022668289|exact
+CHK|psi_3_1p25|double[1 1] real 2.7821440091883964|exact
+CHK|psi_3_1p5|double[1 1] real 1.4090910340024372|exact
+CHK|psi_3_1p75|double[1 1] real 0.80034957188763689|exact
+CHK|psi_3_2|double[1 1] real 0.4939394022668292|exact
+CHK|psi_3_2p5|double[1 1] real 0.22390584881725206|exact
+CHK|psi_3_3|double[1 1] real 0.11893940226682916|exact
+CHK|psi_3_3p5|double[1 1] real 0.070305848817252048|exact
+CHK|psi_3_5|double[1 1] real 0.021427828192755075|exact
+CHK|psi_3_7p25|double[1 1] real 0.0064330375979401565|exact
+CHK|psi_3_9p1|double[1 1] real 0.0031233665612795322|exact
+CHK|psi_3_12|double[1 1] real 0.0013100932310708253|exact
+CHK|psi_3_25p1|double[1 1] real 0.00013423513931463304|exact
+CHK|psi_3_64p5|double[1 1] real 7.628463407555689e-06|exact
+CHK|psi_3_100|double[1 1] real 2.0301999900013305e-06|exact
+CHK|psi_3_1000|double[1 1] real 2.0030019999990012e-09|exact
+CHK|psi_3_10000|double[1 1] real 2.0003000199999944e-12|exact
+CHK|psi_3_1e+08|double[1 1] real 2.0000000299999899e-24|exact
+CHK|psi_4_1e-08|double[1 1] real -2.4000000000000377e+41|exact
+CHK|psi_4_0p25|double[1 1] real -24584.375388637935|exact
+CHK|psi_4_0p5|double[1 1] real -771.47424982666712|exact
+CHK|psi_4_0p75|double[1 1] real -102.80060581541747|exact
+CHK|psi_4_1|double[1 1] real -24.88626612344088|exact
+CHK|psi_4_1p25|double[1 1] real -8.3753886379337352|exact
+CHK|psi_4_1p5|double[1 1] real -3.4742498266672253|exact
+CHK|psi_4_1p75|double[1 1] real -1.66480334628167|exact
+CHK|psi_4_2|double[1 1] real -0.88626612344087818|exact
+CHK|psi_4_2p5|double[1 1] real -0.31375599950673139|exact
+CHK|psi_4_3|double[1 1] real -0.13626612344087824|exact
+CHK|psi_4_3p5|double[1 1] real -0.067995999506731367|exact
+CHK|psi_4_5|double[1 1] real -0.014063191342112799|exact
+CHK|psi_4_7p25|double[1 1] real -0.0028387579634221857|exact
+CHK|psi_4_9p1|double[1 1] real -0.0010847165281984081|exact
+CHK|psi_4_12|double[1 1] real -0.00034091005070108936|exact
+CHK|psi_4_25p1|double[1 1] real -1.636114052148193e-05|exact
+CHK|psi_4_64p5|double[1 1] real -3.5755513082649737e-07|exact
+CHK|psi_4_100|double[1 1] real -6.1209999300119853e-08|exact
+CHK|psi_4_1000|double[1 1] real -6.0120099999930069e-12|exact
+CHK|psi_4_10000|double[1 1] real -6.0012000999999781e-16|exact
+CHK|psi_4_1e+08|double[1 1] real -6.0000001199999598e-32|exact
+CHK|psi_5_1e-08|double[1 1] real 1.2000000000000126e+50|exact
+CHK|psi_5_0p25|double[1 1] real 491552.51376768126|exact
+CHK|psi_5_0p5|double[1 1] real 7691.113548602435|exact
+CHK|psi_5_0p75|double[1 1] real 678.75334287457974|exact
+CHK|psi_5_1|double[1 1] real 122.0811674381339|exact
+CHK|psi_5_1p25|double[1 1] real 32.513767681292045|exact
+CHK|psi_5_1p5|double[1 1] real 11.113548602435495|exact
+CHK|psi_5_1p75|double[1 1] real 4.5146597470076966|exact
+CHK|psi_5_2|double[1 1] real 2.0811674381338969|exact
+CHK|psi_5_2p5|double[1 1] real 0.57856917856718337|exact
+CHK|psi_5_3|double[1 1] real 0.20616743813389676|exact
+CHK|psi_5_3p5|double[1 1] real 0.087049178567183472|exact
+CHK|psi_5_5|double[1 1] real 0.01226150963595438|exact
+CHK|psi_5_7p25|double[1 1] real 0.001667357519228256|exact
+CHK|psi_5_9p1|double[1 1] real 0.00050173687524873451|exact
+CHK|psi_5_12|double[1 1] real 0.00011820829051081495|exact
+CHK|psi_5_25p1|double[1 1] real 2.6585212115371239e-06|exact
+CHK|psi_5_64p5|double[1 1] real 2.2344923298980466e-08|exact
+CHK|psi_5_100|double[1 1] real 2.4605999440119861e-09|exact
+CHK|psi_5_1000|double[1 1] real 2.4060059999944031e-14|exact
+CHK|psi_5_10000|double[1 1] real 2.4006000599999805e-19|exact
+CHK|psi_5_1e+08|double[1 1] real 2.400000059999963e-39|exact
+CHK|psi_6_1e-08|double[1 1] real -7.2000000000000367e+58|exact
+CHK|psi_6_0p25|double[1 1] real -11796633.687743694|exact
+CHK|psi_6_0p5|double[1 1] real -92203.457923803027|exact
+CHK|psi_6_0p75|double[1 1] real -5408.9265030953748|exact
+CHK|psi_6_1|double[1 1] real -726.01147971498449|exact
+CHK|psi_6_1p25|double[1 1] real -153.6877436916061|exact
+CHK|psi_6_1p5|double[1 1] real -43.457923803023284|exact
+CHK|psi_6_1p75|double[1 1] real -15.0170380747984|exact
+CHK|psi_6_2|double[1 1] real -6.0114797149844357|exact
+CHK|psi_6_2p5|double[1 1] real -1.3180061075500351|exact
+CHK|psi_6_3|double[1 1] real -0.38647971498443529|exact
+CHK|psi_6_3p5|double[1 1] real -0.13835810755003519|exact
+CHK|psi_6_5|double[1 1] real -0.013316295488550551|exact
+CHK|psi_6_7p25|double[1 1] real -0.0012220841223540663|exact
+CHK|psi_6_9p1|double[1 1] real -0.00028978680474116075|exact
+CHK|psi_6_12|double[1 1] real -5.1203486564177652e-05|exact
+CHK|psi_6_25p1|double[1 1] real -5.3990486693699492e-07|exact
+CHK|psi_6_64p5|double[1 1] real -1.7454841397674776e-09|exact
+CHK|psi_6_100|double[1 1] real -1.2364199496131914e-10|exact
+CHK|psi_6_1000|double[1 1] real -1.2036041999949616e-16|exact
+CHK|psi_6_10000|double[1 1] real -1.200360041999993e-22|exact
+CHK|psi_6_1e+08|double[1 1] real -1.2000000359999879e-46|exact
+CHK|psi_10_1e-08|double[1 1] real -3.6288000000000436e+94|exact
+CHK|psi_10_0p25|double[1 1] real -15220290667405.549|exact
+CHK|psi_10_0p5|double[1 1] real -7431824508.8587685|exact
+CHK|psi_10_0p75|double[1 1] real -85926737.208880424|exact
+CHK|psi_10_1|double[1 1] real -3630593.3116066284|exact
+CHK|psi_10_1p25|double[1 1] real -312205.54998136853|exact
+CHK|psi_10_1p5|double[1 1] real -42108.858768975493|exact
+CHK|psi_10_1p75|double[1 1] real -7752.6638415726256|exact
+CHK|psi_10_2|double[1 1] real -1793.311606628713|exact
+CHK|psi_10_2p5|double[1 1] real -156.22959659323297|exact
+CHK|psi_10_3|double[1 1] real -21.43660662871299|exact
+CHK|psi_10_3p5|double[1 1] real -4.0266930412329947|exact
+CHK|psi_10_5|double[1 1] real -0.086751075791965809|exact
+CHK|psi_10_7p25|double[1 1] real -0.0016787916731345106|exact
+CHK|psi_10_9p1|double[1 1] real -0.00015439601247165232|exact
+CHK|psi_10_12|double[1 1] real -8.6692442388418259e-06|exact
+CHK|psi_10_25p1|double[1 1] real -4.4374645460341532e-09|exact
+CHK|psi_10_64p5|double[1 1] real -3.1439642188759482e-13|exact
+CHK|psi_10_100|double[1 1] real -3.8135655355681086e-15|exact
+CHK|psi_10_1000|double[1 1] real -3.6469772639135222e-25|exact
+CHK|psi_10_10000|double[1 1] real -3.6306147326399339e-35|exact
+CHK|psi_10_1e+08|double[1 1] real -3.6288001814398892e-75|exact
+CHK|psi_half|double[1 1] real -1.9635100260214231|exact
+CHK|psi_three_halves|double[1 1] real 0.036489973978576895|exact
+CHK|psi_s|single[1 4] real [4.9348020553588867 0.93480217456817627 0.49035775661468506 0.099916957318782806]|exact

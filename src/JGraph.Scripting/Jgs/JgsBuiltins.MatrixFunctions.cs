@@ -208,8 +208,31 @@ internal static partial class JgsBuiltins
     /// is <c>0+Infi</c>). A zero imaginary part's sign joins the signed-zero rule above. Every pair
     /// agrees but for the sign of a zero part in 44 of them.
     /// </remarks>
+    /// <remarks>
+    /// The sign of a zero part (open item 349, ADR 0386; lane 8C's probe_mul, 5,184 pairs with parts in
+    /// {0, -0, 1, -1, Inf, -Inf, NaN, 2}, a real side included, every zero's sign read): two factors
+    /// with no imaginary part are the real product of their real parts; two finite factors are the
+    /// plain (ac - bd) + (ad + bc)i, a real factor read as x + 0i, so <c>1 * complex(-0, -1)</c> is
+    /// <c>0 - 1i</c>, not <c>-0 - 1i</c>. Only a product with an infinite or NaN part, or one that
+    /// overflows, takes the rules above. Every pair agrees to the zero's sign.
+    /// </remarks>
     internal static Complex MultiplyMatlab(Complex x, Complex y)
     {
+        if (x.Imaginary == 0 && y.Imaginary == 0)
+        {
+            return new Complex(x.Real * y.Real, 0);
+        }
+
+        if (double.IsFinite(x.Real) && double.IsFinite(x.Imaginary) && double.IsFinite(y.Real) && double.IsFinite(y.Imaginary))
+        {
+            double plainRe = (x.Real * y.Real) - (x.Imaginary * y.Imaginary);
+            double plainIm = (x.Real * y.Imaginary) + (x.Imaginary * y.Real);
+            if (!double.IsNaN(plainRe) && !double.IsNaN(plainIm))
+            {
+                return new Complex(plainRe, plainIm);
+            }
+        }
+
         if (x.Imaginary == 0 && y.Imaginary != 0)
         {
             return RealTimesComplex(x.Real, y, double.IsNegative(x.Imaginary));

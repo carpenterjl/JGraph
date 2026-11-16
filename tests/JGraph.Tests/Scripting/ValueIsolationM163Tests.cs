@@ -166,7 +166,7 @@ public class ValueIsolationM163Tests : IDisposable
     [InlineData("D = repmat(C, 1, 2);")]
     [InlineData("D = C([1 1]);")]
     [InlineData("D = [C(1), C(:)'];")]
-    [InlineData("D = num2cell(C); D = [D, D];")]
+    [InlineData("D = num2cell(C); D = [D{:}, D{:}];")] // num2cell of a cell wraps each slot in a cell (ADR 0386)
     public async Task ACellBuiltFromAnothersSlotsHoldsAShareInEverySlot(string build)
     {
         await using JgsReplSession session = await RunAsync("C = {ones(1, 3)}; " + build + " D{1}(1) = 7;");

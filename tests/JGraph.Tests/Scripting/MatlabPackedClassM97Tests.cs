@@ -155,7 +155,8 @@ public class MatlabPackedClassM97Tests : IDisposable
         AssertParity(Show + "int8([1 2]) + int16([1 2]);", expectSuccess: false);
         AssertParity(Show + "int8([1 2]) + [1 2];", expectSuccess: false);
         AssertParity(Show + "uint8([1 2]) .* int8([1 2]);", expectSuccess: false);
-        AssertParity(Show + "[int8(1) int16(2)];", expectSuccess: false);
+        // Two integer classes join in the leftmost one in R2025b (open item 346, ADR 0386).
+        Assert.Equal(AssertParity(Show + "show([int8(1) int16(300)]);"), AssertParity(Show + "show(int8([1 127]));"));
 
         // A char array is not a refusal: it converts through its codes, so int8('text') is the
         // int8 of [116 101 120 116]. What is refused is a value with no codes to convert.

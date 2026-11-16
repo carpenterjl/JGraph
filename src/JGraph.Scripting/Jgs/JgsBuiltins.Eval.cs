@@ -190,6 +190,7 @@ internal static partial class JgsBuiltins
         RegisterTableLeftovers(env, interpreter, host); // open item 128: over the missing-value verbs and summary
         JgsCategoricalCharts.Register(env); // open item 120: over every wrapper of the chart verbs
         RegisterBracketVerbs(env, interpreter); // open item 124: last, over every wrapper of the three
+        RegisterSlicesAndModes(env); // open item 346 (ADR 0386): num2cell, mode and a complex median in MATLAB code
         RegisterR2025bRefusals(env, interpreter, host); // open item 123: over every wrapper of the verbs it guards
 
         // refreshdata belongs with the handle verbs and is registered here only because it is the one

@@ -84,8 +84,10 @@ internal static partial class JgsBuiltins
             // psi(x) is the digamma function; psi(k, x) is its k-th derivative. R2025b's digamma at
             // zero is the limit from the right, -Inf, where JGS answers the pole's +Inf (open item
             // 333, ADR 0370); a negative argument has been refused before MATLAB code gets here.
-            Func<double, double> digamma = JgsRunningDialect.ThreadIsMatlab
-                ? static x => x == 0 ? double.NegativeInfinity : SpecialFunctions.DigammaSevenTerms(x) // open item 341, ADR 0377
+            // MATLAB code's psi is Amos's DPSIFN where it answers (open item 349, ADR 0386).
+            bool matlab = JgsRunningDialect.ThreadIsMatlab;
+            Func<double, double> digamma = matlab
+                ? static x => x == 0 ? double.NegativeInfinity : AmosPolygamma(0, x) ?? SpecialFunctions.DigammaSevenTerms(x) // open item 341, ADR 0377
                 : SpecialFunctions.Digamma;
             if (args.Count == 1)
             {
@@ -95,7 +97,7 @@ internal static partial class JgsBuiltins
             int order = Count("psi", args, 0, line, col);
             return order == 0
                 ? MapNumeric("psi", args[1], digamma, line, col)
-                : MapNumeric("psi", args[1], x => SpecialFunctions.Polygamma(order, x), line, col);
+                : MapNumeric("psi", args[1], x => (matlab ? AmosPolygamma(order, x) : null) ?? SpecialFunctions.Polygamma(order, x), line, col);
         });
 
         RegisterBesselBuiltins(Define);

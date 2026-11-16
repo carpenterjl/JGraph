@@ -486,8 +486,9 @@ internal static partial class JgsBuiltins
         {
             // complex(1, 0) stays complex (open item 298, ADR 0364): a zero imaginary part is the
             // one-element planar array whose flag says so, as complex([1 2], 0) is the two-element one.
+            // The zero's sign is kept: complex(1, -0) has a -0 imaginary part (ADR 0386).
             return imaginary.AsNumber == 0
-                ? ComplexStorage([new Complex(real.AsNumber, 0)], [1, 1], preserveComplex: true)
+                ? ComplexStorage([new Complex(real.AsNumber, imaginary.AsNumber)], [1, 1], preserveComplex: true)
                 : JgsValue.ComplexNum(new Complex(real.AsNumber, imaginary.AsNumber));
         }
 
@@ -515,7 +516,7 @@ internal static partial class JgsBuiltins
             var flagged = new Complex[length];
             for (int i = 0; i < length; i++)
             {
-                flagged[i] = new Complex(res[realScalar ? 0 : i], 0);
+                flagged[i] = new Complex(res[realScalar ? 0 : i], ims[imaginaryScalar ? 0 : i]); // a -0 kept (ADR 0386)
             }
 
             return ComplexStorage(flagged, SizeDims(shape), preserveComplex: true);

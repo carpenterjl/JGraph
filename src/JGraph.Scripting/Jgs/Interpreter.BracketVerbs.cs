@@ -61,6 +61,11 @@ internal sealed partial class Interpreter
             return pieces[0];
         }
 
+        if (cell.IsNd)
+        {
+            return NdCellContentsJoined(cell, line, col);
+        }
+
         int rows = Math.Max(cell.Rows, 1);
         int cols = pieces.Length / rows;
         bool byRows = rows < cols;
@@ -80,6 +85,57 @@ internal sealed partial class Interpreter
         }
 
         return outer == 1 ? joined[0] : JoinAsBracket(joined, across: !byRows, line, col);
+    }
+
+    /// <summary>
+    /// R2025b's cell2mat.m over an N-D cell (open item 349, ADR 0386): from the last dimension back to
+    /// the second, the pieces along each are joined by <c>cat</c> along it, one join per position of
+    /// the dimensions before it, and the column left is stacked by <c>cat(1, ...)</c>.
+    /// </summary>
+    private JgsValue NdCellContentsJoined(JgsValue cell, int line, int col)
+    {
+        int[] size = cell.Dims;
+        JgsValue[] current = cell.AsCell;
+        for (int dim = size.Length - 1; dim >= 1; dim--)
+        {
+            int lead = 1;
+            for (int d = 0; d < dim; d++)
+            {
+                lead *= size[d];
+            }
+
+            int along = size[dim];
+            var next = new JgsValue[lead];
+            for (int m = 0; m < lead; m++)
+            {
+                var run = new JgsValue[along];
+                for (int k = 0; k < along; k++)
+                {
+                    run[k] = current[m + (k * lead)];
+                }
+
+                next[m] = JoinAlongDimension(dim + 1, run, line, col);
+            }
+
+            current = next;
+        }
+
+        return JoinAlongDimension(1, current, line, col);
+    }
+
+    /// <summary><c>cat(dim, pieces{:})</c> in MATLAB code: the bracket along the first two dimensions, ADR 0386's engine past them.</summary>
+    private JgsValue JoinAlongDimension(int dim, JgsValue[] pieces, int line, int col)
+    {
+        if (pieces.Length == 1)
+        {
+            return pieces[0];
+        }
+
+        return dim <= 2
+            ? JoinAsBracket(pieces, across: dim == 2, line, col)
+            : JgsBuiltins.TryMatlabCatAlong(dim, pieces, line, col)
+              ?? throw new JgsRuntimeException(line, col, "MATLAB:catenate:dimensionMismatch",
+                  "Dimensions of arrays being concatenated are not consistent.");
     }
 
     private static JgsValue WithTime(JgsValue built, JgsValue[] elements)
@@ -119,7 +175,8 @@ internal static partial class JgsBuiltins
                 // A piece with the zero-imaginary flag keeps it in the join (open item 330, ADR 0370),
                 // and a cell of numbers, text or logicals is joined as R2025b's cell2mat.m joins it,
                 // not flattened (open item 341, ADR 0377).
-                if (JgsRunningDialect.ThreadIsMatlab && args.Count == 1 && args[0].Type == JgsType.Cell && !args[0].IsNd
+                if (JgsRunningDialect.ThreadIsMatlab && args.Count == 1 && args[0].Type == JgsType.Cell
+                    && (!args[0].IsNd || Array.TrueForAll(args[0].AsCell, IsMatlabCatPlain)) // an N-D cell of numbers and text (ADR 0386)
                     && ((Array.Exists(args[0].AsCell, IsZeroImagFlagged) && !Array.Exists(args[0].AsCell, static e => e.Type == JgsType.Cell))
                         || Array.TrueForAll(args[0].AsCell, JoinsAsCellContents)))
                 {
@@ -178,6 +235,29 @@ internal static partial class JgsBuiltins
                     case "cat" when args.Count >= 2 && AnyMatlabMap([[.. args.Skip(1)]]):
                         return CatMaps(args, line, col);
                     default:
+                        // cat's dimension and its numbers, logicals and text past the second
+                        // dimension, by R2025b's rules (open item 346, ADR 0386).
+                        if (args.Count == 0)
+                        {
+                            throw new JgsRuntimeException(line, col, "MATLAB:minrhs", "Not enough input arguments.");
+                        }
+
+                        if (!AnyMatlabMap([[.. args.Skip(1)]]) && MatlabCatDimensionRefusal(args[0], line, col) is { } badDimension)
+                        {
+                            throw badDimension;
+                        }
+
+                        if (args.Count == 1)
+                        {
+                            return JgsEmpty.Zero();
+                        }
+
+                        if (args[0].Type == JgsType.Number && args[0].AsNumber > 2
+                            && TryMatlabCatAlong((int)args[0].AsNumber, [.. args.Skip(1)], line, col) is { } along)
+                        {
+                            return along;
+                        }
+
                         if (args.Count >= 2 && args[0].Type == JgsType.Number && args[0].AsNumber is 1 or 2)
                         {
                             return interpreter.JoinAsBracket([.. args.Skip(1)], across: args[0].AsNumber == 2, line, col);
