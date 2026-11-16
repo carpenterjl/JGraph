@@ -90,6 +90,14 @@ public static class TiffCodec
     public static void Write(string path, ImageBuffer image, bool append = false, double[,]? map = null)
     {
         using Tiff tiff = Tiff.Open(path, append && File.Exists(path) ? "a" : "w") ?? throw new IOException("Cannot create TIFF.");
+        // A logical picture is a 1-bit file, as R2025b's writetif writes it: CCITT 1D, white is zero, and
+        // no palette even when a map is given; it reads back logical (open item 344, ADR 0380).
+        if (image.Class == ImageClass.Logical && image.Channels == 1)
+        {
+            WriteOneBit(tiff, image);
+            return;
+        }
+
         int bits = image.Class == ImageClass.UInt16 ? 16 : 8, samples = map is null ? image.Channels : 1;
         tiff.SetField(TiffTag.IMAGEWIDTH, image.Width);
         tiff.SetField(TiffTag.IMAGELENGTH, image.Height);
@@ -122,6 +130,34 @@ public static class TiffCodec
                     row[x * 2] = (byte)raw;
                     row[x * 2 + 1] = (byte)(raw >> 8);
                 }
+            }
+            if (!tiff.WriteScanline(row, r))
+                throw new IOException("Cannot write TIFF scanline.");
+        }
+        if (!tiff.WriteDirectory())
+            throw new IOException("Cannot write TIFF directory.");
+    }
+
+    private static void WriteOneBit(Tiff tiff, ImageBuffer image)
+    {
+        tiff.SetField(TiffTag.IMAGEWIDTH, image.Width);
+        tiff.SetField(TiffTag.IMAGELENGTH, image.Height);
+        tiff.SetField(TiffTag.SAMPLESPERPIXEL, 1);
+        tiff.SetField(TiffTag.BITSPERSAMPLE, 1);
+        tiff.SetField(TiffTag.ORIENTATION, Orientation.TOPLEFT);
+        tiff.SetField(TiffTag.PLANARCONFIG, PlanarConfig.CONTIG);
+        tiff.SetField(TiffTag.PHOTOMETRIC, Photometric.MINISWHITE);
+        tiff.SetField(TiffTag.COMPRESSION, Compression.CCITTRLE);
+        tiff.SetField(TiffTag.ROWSPERSTRIP, image.Height);
+        byte[] row = new byte[(image.Width + 7) / 8];
+        for (int r = 0; r < image.Height; r++)
+        {
+            Array.Clear(row);
+            for (int x = 0; x < image.Width; x++)
+            {
+                // White is zero: a set bit is a false (black) pixel.
+                if (image.Pixels[(r * image.Width) + x] == 0)
+                    row[x / 8] |= (byte)(0x80 >> (x % 8));
             }
             if (!tiff.WriteScanline(row, r))
                 throw new IOException("Cannot write TIFF scanline.");

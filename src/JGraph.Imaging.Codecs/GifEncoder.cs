@@ -116,6 +116,124 @@ public static class GifEncoder
         file.SetLength(file.Position);
     }
 
+    /// <summary>
+    /// Writes indices and their colour table as R2025b's writegif does (open item 344, ADR 0380): a new
+    /// file's table is its global one, sized to the power of two that holds it (two entries is one bit);
+    /// an appended frame carries the table as its own only when one is given, and otherwise uses the
+    /// file's. Each frame's graphic control block says "not specified" for disposal, and the loop block
+    /// is written only for a count of zero or more (writegif's -1 is none).
+    /// </summary>
+    /// <param name="path">Destination path.</param>
+    /// <param name="indices">One index a pixel, row by row.</param>
+    /// <param name="width">The frame's width.</param>
+    /// <param name="height">The frame's height.</param>
+    /// <param name="table">The colour table (n-by-3 in [0, 1]), or null to use the file's when appending.</param>
+    /// <param name="delayHundredths">The frame's delay in hundredths of a second.</param>
+    /// <param name="loopCount">The Netscape loop count, or -1 for no loop block.</param>
+    /// <param name="append">Whether to add a frame to the file rather than write a new one.</param>
+    public static void WriteIndexed(
+        string path, byte[] indices, int width, int height, double[,]? table, int delayHundredths, int loopCount, bool append)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(path);
+        ArgumentNullException.ThrowIfNull(indices);
+        byte[]? packedTable = null;
+        int bits = 1;
+        if (table is not null)
+        {
+            int entries = Math.Clamp(table.GetLength(0), 1, 256);
+            while (1 << bits < entries)
+            {
+                bits++;
+            }
+
+            packedTable = new byte[(1 << bits) * 3];
+            for (int i = 0; i < entries; i++)
+            {
+                for (int c = 0; c < 3; c++)
+                {
+                    packedTable[(i * 3) + c] = Level(table[i, c]);
+                }
+            }
+        }
+
+        if (append && File.Exists(path))
+        {
+            using var file = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            file.Position = 10;
+            int screen = file.ReadByte();
+            int globalBits = (screen & 7) + 1;
+            file.Position = file.Length - 1;
+            int last = file.ReadByte();
+            file.Position = last == Terminator ? file.Length - 1 : file.Length;
+            WriteIndexedFrame(file, width, height, indices, packedTable, packedTable is null ? globalBits : bits, delayHundredths);
+            file.WriteByte(Terminator);
+            file.SetLength(file.Position);
+            return;
+        }
+
+        packedTable ??= new byte[6];
+        using var output = new FileStream(path, FileMode.Create, FileAccess.Write);
+        output.Write("GIF89a"u8);
+        WriteUInt16(output, width);
+        WriteUInt16(output, height);
+        output.WriteByte((byte)(0x80 | ((bits - 1) << 4) | (bits - 1)));
+        output.WriteByte(0);
+        output.WriteByte(0);
+        output.Write(packedTable);
+        if (loopCount >= 0)
+        {
+            output.WriteByte(ExtensionIntroducer);
+            output.WriteByte(ApplicationLabel);
+            output.WriteByte(11);
+            output.Write("NETSCAPE2.0"u8);
+            output.WriteByte(3);
+            output.WriteByte(1);
+            WriteUInt16(output, loopCount);
+            output.WriteByte(0);
+        }
+
+        WriteIndexedFrame(output, width, height, indices, null, bits, delayHundredths);
+        output.WriteByte(Terminator);
+    }
+
+    /// <summary>A frame of indices: its control block, its descriptor (with a local table when given) and its pixels.</summary>
+    private static void WriteIndexedFrame(Stream file, int width, int height, byte[] indices, byte[]? localTable, int bits, int delayHundredths)
+    {
+        file.WriteByte(ExtensionIntroducer);
+        file.WriteByte(GraphicControlLabel);
+        file.WriteByte(4);
+        file.WriteByte(0x00);
+        WriteUInt16(file, Math.Clamp(delayHundredths, 0, 65535));
+        file.WriteByte(0);
+        file.WriteByte(0);
+
+        file.WriteByte(ImageSeparator);
+        WriteUInt16(file, 0);
+        WriteUInt16(file, 0);
+        WriteUInt16(file, width);
+        WriteUInt16(file, height);
+        file.WriteByte(localTable is null ? (byte)0x00 : (byte)(0x80 | (bits - 1)));
+        if (localTable is not null)
+        {
+            file.Write(localTable);
+        }
+
+        // The code size has to hold every index, even one past a smaller table's end.
+        int largest = 0;
+        foreach (byte index in indices)
+        {
+            largest = Math.Max(largest, index);
+        }
+
+        int codeBits = bits;
+        while (1 << codeBits <= largest)
+        {
+            codeBits++;
+        }
+
+        WriteLzw(file, indices, codeBits);
+    }
+
     /// <summary>One frame: how long to hold it, where it sits, its colours, and the compressed pixels.</summary>
     private static void WriteFrame(
         Stream file,

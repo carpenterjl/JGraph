@@ -131,3 +131,6 @@ which Skia writes as a one-component file.
 - The `MATLAB:imagesci:imwrite:signedPixelData` warning R2025b gives a signed class into PNG, BMP or
   GIF before the writer refuses it is not given here.
 - An RLE-compressed or bitfields BMP is read through Skia as colours, not as indices and a map.
+
+Taken since: all four by ADR 0380 (open item 344): the 1-bit logical TIFF, writegif's and readgif's
+indices, imfinfo's Format, the signedPixelData warning, and RLE and bitfields BMPs.

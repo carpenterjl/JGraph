@@ -253,7 +253,7 @@ internal static partial class JgsBuiltins
             if (readOptions.Named("Index") is { } index) frame = (int)index.AsNumber - dialect.IndexBase;
             try
             {
-                (ImageBuffer image, double[,]? palette, ImageBuffer? alpha) = ReadImageFileSamples(path, frame);
+                (ImageBuffer image, double[,]? palette, ImageBuffer? alpha) = ReadImageFileSamples(path, frame, dialect.IsMatlab, host);
                 if (readOptions.Named("PixelRegion") is { } region)
                 {
                     ImageBuffer cropped = CropReadRegion(image, region, line, col); image.Dispose(); image = cropped;
@@ -285,6 +285,10 @@ internal static partial class JgsBuiltins
                     map,
                     alpha is null ? JgsMatrix.Build(0, 0, static (_, _) => 0.0) : ImreadPicture(alpha, dialect),
                 ];
+            }
+            catch (ImageFileRefusal refusal)
+            {
+                throw new JgsRuntimeException(line, col, refusal.Identifier, refusal.Message);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException
                                           or InvalidDataException or ArgumentOutOfRangeException)
@@ -326,7 +330,8 @@ internal static partial class JgsBuiltins
     /// BMP's indices are a logical matrix, as R2025b's readbmp answers), anything else decodes to
     /// colours.
     /// </summary>
-    private static (ImageBuffer Image, double[,]? Palette, ImageBuffer? Alpha) ReadImageFileSamples(string path, int frame)
+    private static (ImageBuffer Image, double[,]? Palette, ImageBuffer? Alpha) ReadImageFileSamples(
+        string path, int frame, bool matlab = false, JGraphScriptGlobals? host = null)
     {
         if (TiffCodec.IsTiff(path))
         {
@@ -336,6 +341,13 @@ internal static partial class JgsBuiltins
         if (IndexedPng.IsIndexed(path))
         {
             return IndexedPng.Read(path);
+        }
+
+        // In MATLAB code every BMP readbmp takes and every GIF are read as R2025b reads them: indices
+        // and their map, RLE and bitfields BMPs included (open item 344, ADR 0380).
+        if (matlab && MatlabBmpOrGifSamples(path, frame, host) is { } samples)
+        {
+            return samples;
         }
 
         if (IndexedBmp.IsIndexed(path))

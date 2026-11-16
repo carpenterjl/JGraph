@@ -50,6 +50,13 @@ internal static partial class JgsBuiltins
             string path = host.Resolve(Str("imfinfo", args, 0, line, col));
             try
             {
+                // In MATLAB code a BMP and a GIF are described from their own headers, and Format is
+                // the format the bytes say, as R2025b's imfinfo answers it (open item 344, ADR 0380).
+                if (dialect.IsMatlab && MatlabImfinfoFromHeader(path) is { } described)
+                {
+                    return described;
+                }
+
                 var pages = new List<Dictionary<string, JgsValue>>();
                 for (int page = 0; page < ImageCodec.FrameCount(path); page++)
                 {
@@ -63,7 +70,8 @@ internal static partial class JgsBuiltins
                 {
                     ["Filename"] = JgsValue.Str(Path.GetFullPath(path)),
                     ["FileSize"] = JgsValue.Number(new FileInfo(path).Length),
-                    ["Format"] = JgsValue.Str(Path.GetExtension(path).TrimStart('.').ToUpperInvariant()),
+                    ["Format"] = JgsValue.Str(dialect.IsMatlab ? MatlabImageFormat(path)
+                        : Path.GetExtension(path).TrimStart('.').ToUpperInvariant()),
                     ["Width"] = JgsValue.Number(probe.Width),
                     ["Height"] = JgsValue.Number(probe.Height),
                     // A PNG's depth is its header's, so a 2- or 4-bit file says 2 or 4 (open item 294).
@@ -76,6 +84,10 @@ internal static partial class JgsBuiltins
                 pages.Add(info);
                 }
                 return JgsValue.StructArray(new JgsStructArray(pages.ToArray(), pages[0].Keys.ToArray()),pages.Count,1);
+            }
+            catch (ImageFileRefusal refusal)
+            {
+                throw new JgsRuntimeException(line, col, refusal.Identifier, refusal.Message);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
             {
@@ -113,6 +125,8 @@ internal static partial class JgsBuiltins
             if (dialect.IsMatlab && parsed.Positional[0].Type != JgsType.Image
                 && parsed.Positional[1].Type == JgsType.String)
             {
+                // imwrite's own warning comes before the writer's refusal (open item 344, ADR 0380).
+                WarnMatlabSignedPixels(host, parsed.Positional[0], parsed.Positional[1].AsString);
                 RefuseMatlabImwriteClass(parsed.Positional[0], parsed.Positional[1].AsString, line, col);
                 // writejpg's own checks, and its uint8(255 * double(x)) for a class it reads as a
                 // fraction (uint32 and uint64 among them: open item 335, ADR 0373).
@@ -151,9 +165,24 @@ internal static partial class JgsBuiltins
 
             if (TiffCodec.IsTiff(path))
             {
+                // writetif's refusal of a logical picture of more than one plane (open item 344, ADR 0380).
+                if (dialect.IsMatlab && image.Class == ImageClass.Logical && image.Channels != 1)
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:imagesci:writetif:unsupportedData",
+                        "1-bit TIFF images having more than 1 channel are not supported.");
+                }
+
                 TiffCodec.Write(path, image, mode.Equals("append", StringComparison.OrdinalIgnoreCase), map);
                 return JgsValue.Null;
             }
+
+            // In MATLAB code a GIF holds what writegif writes: the samples as indices (open item 344).
+            if (gif && dialect.IsMatlab && positional[0].Type != JgsType.Image
+                && MatlabGifWrite(positional[0], map, path, mode.Equals("append", StringComparison.OrdinalIgnoreCase), parsed, host, line, col))
+            {
+                return JgsValue.Null;
+            }
+
             if (gif)
             {
                 double delay = parsed.Scalar("DelayTime", 0.5);

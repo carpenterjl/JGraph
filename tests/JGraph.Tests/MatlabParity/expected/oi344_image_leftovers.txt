@@ -1,0 +1,131 @@
+CHK|g_lg|cell[1 3]{uint8[2 3] [0 1 1;1 0 1];double[1 2] [2 3];double[2 3] [0 0 0;1 1 1]}|exact
+CHK|g_lg_info|char[1 9]'1 indexed'|exact
+CHK|g_d|cell[1 3]{uint8[1 3] [0 0 0];double[1 2] [256 3];double[3 3] [0 0 0;0.0039215686274509803 0.0039215686274509803 0.0039215686274509803;0.0078431372549019607 0.0078431372549019607 0.0078431372549019607]} WARN MATLAB:imagesci:writegif:dataOutOfRange|exact
+CHK|g_d2|cell[1 3]{uint8[2 3] [0 1 2;3 5 255];double[1 2] [256 3];double[3 3] [0 0 0;0.0039215686274509803 0.0039215686274509803 0.0039215686274509803;0.0078431372549019607 0.0078431372549019607 0.0078431372549019607]} WARN MATLAB:imagesci:writegif:dataOutOfRange|exact
+CHK|g_d_nan|cell[1 3]{uint8[1 4] [0 0 1 255];double[1 2] [256 3];double[3 3] [0 0 0;0.0039215686274509803 0.0039215686274509803 0.0039215686274509803;0.0078431372549019607 0.0078431372549019607 0.0078431372549019607]} WARN MATLAB:imagesci:writegif:dataOutOfRange|exact
+CHK|g_d_info|char[1 9]'8 indexed'|exact
+CHK|g_u8|cell[1 3]{uint8[2 3] [0 1 2;3 4 255];double[1 2] [256 3];double[3 3] [0 0 0;0.0039215686274509803 0.0039215686274509803 0.0039215686274509803;0.0078431372549019607 0.0078431372549019607 0.0078431372549019607]}|exact
+CHK|g_u8_info|char[1 9]'8 indexed'|exact
+CHK|g_lg_map|cell[1 3]{uint8[2 2] [0 1;1 0];double[1 2] [2 3];double[2 3] [1 0 0;0 0 1]}|exact
+CHK|g_d_map|cell[1 3]{uint8[2 2] [0 1;2 1];double[1 2] [4 3];double[3 3] [1 0 0;0 1 0;0 0 1]}|exact
+CHK|g_u8_map|cell[1 3]{uint8[2 2] [0 1;2 1];double[1 2] [4 3];double[3 3] [1 0 0;0 1 0;0 0 1]}|exact
+CHK|g_u8_map_over|cell[1 3]{uint8[2 2] [0 1;2 1];double[1 2] [4 3];double[3 3] [1 0 0;0 1 0;0 0 1]} WARN MATLAB:imagesci:writegif:dataOutOfRange|exact
+CHK|g_rgb|MATLAB:imagesci:writegif:badSize|exact
+CHK|g_rgb_msg|3-D data is not supported for GIF files. Image data must be either 2-D (single-frame) or 4-D (multi-frame, with third dimension of 1), and either grayscale or indexed.|exact
+CHK|g_lg_one|cell[1 3]{uint8[2 2] [1 1;1 1];double[1 2] [2 3];double[2 3] [0 0 0;1 1 1]}|exact
+CHK|g_w_logical|uint8[2 3] [0 1 1;1 0 1]|exact
+CHK|g_w_double|uint8[2 3] [0 0 0;0 0 0] WARN MATLAB:imagesci:writegif:dataOutOfRange|exact
+CHK|anim_f1|cell[1 3]{uint8[2 2] [10 20;30 40];double[1 2] [256 3];double[3 3] [0 0 0;0.0039215686274509803 0.0039215686274509803 0.0039215686274509803;0.0078431372549019607 0.0078431372549019607 0.0078431372549019607]}|exact
+CHK|anim_f2|cell[1 3]{uint8[2 2] [50 60;70 80];double[1 2] [256 3];double[3 3] [0 0 0;0.0039215686274509803 0.0039215686274509803 0.0039215686274509803;0.0078431372549019607 0.0078431372549019607 0.0078431372549019607]}|exact
+CHK|anim_n|double[1 1] 2|exact
+CHK|anim2_f1|cell[1 3]{uint8[2 2] [0 1;2 0];double[1 2] [4 3];double[3 3] [1 0 0;0 1 0;0 0 1]}|exact
+CHK|anim2_f2|cell[1 3]{uint8[2 2] [0 3;3 0];double[1 2] [4 3];double[3 3] [1 0 0;0 1 0;0 0 1]}|exact
+CHK|anim2_info2|char[1 13]'GIF 1 indexed'|exact
+CHK|anim3_f2|cell[1 3]{uint8[2 2] [1 1;0 0];double[1 2] [2 3];double[2 3] [0 0 0;1 1 1]}|exact
+CHK|g_lg_single|uint8[2 2] [0 1;1 0]|exact
+CHK|g_big|logical[1 1] 1|exact
+CHK|g_magic|logical[1 1] 1|exact
+CHK|t_lg|cell[1 3]{logical[2 3] [0 1 1;1 0 1];double[1 2] [0 0];double[0 0]}|exact
+CHK|t_lg_info|char[1 11]'1 grayscale'|exact
+CHK|t_lg_wide|cell[1 3]{logical[1 21] [0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1];double[1 2] [0 0];double[0 0]}|exact
+CHK|t_lg_rgb|MATLAB:imagesci:writetif:unsupportedData|exact
+CHK|t_lg_rgb_msg|1-bit TIFF images having more than 1 channel are not supported.|exact
+CHK|t_lg_map|cell[1 3]{logical[2 2] [0 1;1 0];double[1 2] [0 0];double[0 0]}|exact
+CHK|t_lg_map_info|char[1 11]'1 grayscale'|exact
+CHK|t_lg_big|logical[1 1] 1|exact
+CHK|t_lg_class|char[1 7]'logical'|exact
+CHK|t_w_logical|logical[2 3] [0 1 1;1 0 1]|exact
+CHK|s_i16_png|char[1 60]'MATLAB:invalidType / MATLAB:imagesci:imwrite:signedPixelData' WARN MATLAB:imagesci:imwrite:signedPixelData|exact
+CHK|s_i8_png|char[1 60]'MATLAB:invalidType / MATLAB:imagesci:imwrite:signedPixelData' WARN MATLAB:imagesci:imwrite:signedPixelData|exact
+CHK|s_i16_bmp|char[1 60]'MATLAB:invalidType / MATLAB:imagesci:imwrite:signedPixelData' WARN MATLAB:imagesci:imwrite:signedPixelData|exact
+CHK|s_i8_bmp|char[1 60]'MATLAB:invalidType / MATLAB:imagesci:imwrite:signedPixelData' WARN MATLAB:imagesci:imwrite:signedPixelData|exact
+CHK|s_i16_gif|char[1 60]'MATLAB:invalidType / MATLAB:imagesci:imwrite:signedPixelData' WARN MATLAB:imagesci:imwrite:signedPixelData|exact
+CHK|s_i8_gif|char[1 60]'MATLAB:invalidType / MATLAB:imagesci:imwrite:signedPixelData' WARN MATLAB:imagesci:imwrite:signedPixelData|exact
+CHK|s_i16_tif|char[1 47]'MATLAB:imagesci:writetif:unsupportedDataType / '|exact
+CHK|s_i8_tif|char[1 47]'MATLAB:imagesci:writetif:unsupportedDataType / '|exact
+CHK|s_i16_jpg|char[1 49]'MATLAB:imagesci:imwrite:signedJPEGNotSupported / '|exact
+CHK|s_i8_jpg|char[1 49]'MATLAB:imagesci:imwrite:signedJPEGNotSupported / '|exact
+CHK|fmt_f_png|char[1 3]'png'|exact
+CHK|fmt_f_jpg|char[1 3]'jpg'|exact
+CHK|fmt_f_jpeg|char[1 3]'jpg'|exact
+CHK|fmt_f_tif|char[1 3]'tif'|exact
+CHK|fmt_f_tiff|char[1 3]'tif'|exact
+CHK|fmt_f_bmp|char[1 3]'bmp'|exact
+CHK|fmt_f_gif|char[1 3]'GIF'|exact
+CHK|fmt_pngnamed_jpg|char[1 3]'png'|exact
+CHK|fmt_PNGUP_PNG|char[1 3]'png'|exact
+CHK|rle8|cell[1 3]{uint8[3 4] [9 10 11 12;1 2 3 4;5 5 7 7];double[1 2] [16 3];double[3 3] [0 0 1;0.0039215686274509803 0.062745098039215685 0.93725490196078431;0.0078431372549019607 0.12549019607843137 0.87450980392156863]}|exact
+CHK|rle8_info|char[1 13]'bmp 8 indexed'|exact
+CHK|rle8_delta|cell[1 3]{uint8[3 4] [0 6 6 0;0 0 0 0;3 0 0 0];double[1 2] [16 3];double[3 3] [0 0 1;0.0039215686274509803 0.062745098039215685 0.93725490196078431;0.0078431372549019607 0.12549019607843137 0.87450980392156863]}|exact
+CHK|rle8_noend|cell[1 3]{uint8[2 2] [4 4;3 3];double[1 2] [16 3];double[3 3] [0 0 1;0.0039215686274509803 0.062745098039215685 0.93725490196078431;0.0078431372549019607 0.12549019607843137 0.87450980392156863]} WARN MATLAB:imagesci:bmpdrle:missingEndCode|exact
+CHK|rle4|cell[1 3]{uint8[2 5] [3 4 5 6 7;1 2 1 2 1];double[1 2] [16 3];double[3 3] [0 0 1;0.0039215686274509803 0.062745098039215685 0.93725490196078431;0.0078431372549019607 0.12549019607843137 0.87450980392156863]}|exact
+CHK|rle4_info|char[1 13]'bmp 4 indexed'|exact
+CHK|rle4_early_end|cell[1 3]{uint8[1 4] [2 1 2 0];double[1 2] [16 3];double[3 3] [0 0 1;0.0039215686274509803 0.062745098039215685 0.93725490196078431;0.0078431372549019607 0.12549019607843137 0.87450980392156863]} WARN MATLAB:imagesci:bmpdrle:prematureEndCode|exact
+CHK|v5_rle8|cell[1 3]{uint8[2 2] [2 3;1 1];double[1 2] [4 3];double[3 3] [0.039215686274509803 0.078431372549019607 0.11764705882352941;0.15686274509803921 0.19607843137254902 0.23529411764705882;0.27450980392156865 0.31372549019607843 0.35294117647058826]}|exact
+CHK|rle8_over|cell[1 3]{uint8[2 2] [4 4;3 3];double[1 2] [16 3];double[3 3] [0 0 1;0.0039215686274509803 0.062745098039215685 0.93725490196078431;0.0078431372549019607 0.12549019607843137 0.87450980392156863]}|exact
+CHK|rle_24|cell[1 3]{uint8[2 2] [4 4;3 3];double[1 2] [0 0];double[0 0]}|exact
+CHK|rle8_wrap|uint8[2 2] [3 4;3 3]|exact
+CHK|rle4_wrap|uint8[2 2] [2 1;2 1]|exact
+CHK|rle8_delta_out|uint8[2 2] [0 0;3 0] WARN MATLAB:imagesci:bmpdrle:indexExceedsOutputBufferLength|exact
+CHK|rle8_extra_rows|uint8[1 2] [3 3] WARN MATLAB:imagesci:bmpdrle:indexExceedsOutputBufferLength|exact
+CHK|rle8_trail|uint8[1 2] [3 3] WARN MATLAB:imagesci:bmpdrle:prematureEndCode|exact
+CHK|rle8_pad|cell[1 3]{uint8[1 2] [3 3];double[1 2] [16 3];double[3 3] [0 0 1;0.0039215686274509803 0.062745098039215685 0.93725490196078431;0.0078431372549019607 0.12549019607843137 0.87450980392156863]} WARN MATLAB:imagesci:bmpdrle:prematureEndCode|exact
+CHK|rle8_abs_short|uint8[1 4] [1 2 0 0] WARN MATLAB:imagesci:bmpdrle:missingEndCode|exact
+CHK|rle8_abs_short_first|cell[1 4]{double[0 0];char[1 38]'MATLAB:imagesci:bmpdrle:missingEndCode';char[1 53]'MATLAB:imagesci:bmpdrle:indexExceedsInputBufferLength';char[1 57]'Apparent RLE decoding failure; BMP file may be truncated.'} WARN MATLAB:imagesci:bmpdrle:indexExceedsInputBufferLength|exact
+CHK|rle8_run_short|cell[1 4]{double[0 0];char[1 38]'MATLAB:imagesci:bmpdrle:missingEndCode';char[1 53]'MATLAB:imagesci:bmpdrle:indexExceedsInputBufferLength';char[1 57]'Apparent RLE decoding failure; BMP file may be truncated.'} WARN MATLAB:imagesci:bmpdrle:indexExceedsInputBufferLength|exact
+CHK|rle8_esc_short|cell[1 4]{double[0 0];char[1 38]'MATLAB:imagesci:bmpdrle:missingEndCode';char[1 53]'MATLAB:imagesci:bmpdrle:indexExceedsInputBufferLength';char[1 57]'Apparent RLE decoding failure; BMP file may be truncated.'} WARN MATLAB:imagesci:bmpdrle:indexExceedsInputBufferLength|exact
+CHK|rle8_delta_short|cell[1 4]{double[0 0];char[1 38]'MATLAB:imagesci:bmpdrle:missingEndCode';char[1 53]'MATLAB:imagesci:bmpdrle:indexExceedsInputBufferLength';char[1 57]'Apparent RLE decoding failure; BMP file may be truncated.'} WARN MATLAB:imagesci:bmpdrle:indexExceedsInputBufferLength|exact
+CHK|rle8_eol_first|cell[1 3]{uint8[1 2] [0 0];double[1 2] [16 3];double[3 3] [0 0 1;0.0039215686274509803 0.062745098039215685 0.93725490196078431;0.0078431372549019607 0.12549019607843137 0.87450980392156863]} WARN MATLAB:imagesci:bmpdrle:indexExceedsOutputBufferLength|exact
+CHK|rle8_on_4bit|cell[1 3]{uint8[1 2] [7 7];double[1 2] [16 3];double[3 3] [0 0 1;0.0039215686274509803 0.062745098039215685 0.93725490196078431;0.0078431372549019607 0.12549019607843137 0.87450980392156863]}|exact
+CHK|rle8_on_4bit_info|char[1 13]'bmp 4 indexed'|exact
+CHK|rle8_delta_after_eol|uint8[2 8] [0 6 0 0 0 0 0 0;5 5 5 0 0 0 0 0]|exact
+CHK|rle8_delta_first|uint8[1 8] [0 0 0 6 0 0 0 0]|exact
+CHK|rle4_delta_after_run|uint8[1 8] [2 1 2 0 0 4 0 0]|exact
+CHK|rle4_abs_then_run|uint8[1 8] [1 2 3 5 5 0 0 0]|exact
+CHK|rle8_delta_after_run|uint8[1 8] [5 5 6 0 0 0 0 0]|div=ADR0380|diverges|uint8[1 8] [5 5 5 0 0 6 0 0]
+CHK|rle8_delta_after_abs|uint8[1 8] [1 2 3 0 6 0 0 0]|div=ADR0380|diverges|uint8[1 8] [1 2 3 0 0 6 0 0]
+CHK|rle8_delta_twice|uint8[1 8] [5 0 6 0 0 0 0 0]|div=ADR0380|diverges|uint8[1 8] [5 0 0 6 0 0 0 0]
+CHK|rle8_delta_up|uint8[2 4] [6 0 0 0;5 5 0 0]|div=ADR0380|diverges|uint8[2 4] [0 0 6 0;5 5 0 0]
+CHK|rgb16|cell[1 3]{uint8[2 2 3] nd [255 0 0 132 0 0 255 132 0 255 0 132];double[1 2] [0 0];double[0 0]}|exact
+CHK|rgb16_info|char[1 16]'bmp 16 truecolor'|exact
+CHK|rgb32|cell[1 3]{uint8[2 2 3] nd [255 0 3 0 0 0 2 255 0 255 1 0];double[1 2] [0 0];double[0 0]}|exact
+CHK|rgb32_info|char[1 16]'bmp 32 truecolor'|exact
+CHK|bf32|cell[1 3]{uint8[2 2 3] nd [255 0 3 0 0 0 2 255 0 255 1 0];double[1 2] [0 0];double[0 0]}|exact
+CHK|bf32_info|char[1 16]'bmp 32 truecolor'|exact
+CHK|bf32_swap|cell[1 3]{uint8[2 2 3] nd [0 255 1 0 0 0 2 255 255 0 3 0];double[1 2] [0 0];double[0 0]}|exact
+CHK|v4_bf32_alpha|cell[1 3]{uint8[2 2 3] nd [255 0 3 0 0 0 2 255 0 255 1 0];double[1 2] [0 0];double[0 0]}|exact
+CHK|v4_rgb16|MATLAB:imagesci:imbmpinfo:invalidBMPmetadata|exact
+CHK|v4_rgb16_msg|BMP Version 4 file appears to be corrupt.|exact
+CHK|v4_rgb32|MATLAB:imagesci:imbmpinfo:invalidBMPmetadata|exact
+CHK|v4_rgb32_msg|BMP Version 4 file appears to be corrupt.|exact
+CHK|v4_rgb32_info|MATLAB:imagesci:imbmpinfo:invalidBMPmetadata|exact
+CHK|v4_rgb32_info_msg|BMP Version 4 file appears to be corrupt.|exact
+CHK|bf565|uint8[2 3 3] nd [255 255 1 132 1 9 1 255 255 130 1 9 1 255 1 132 255 9]|div=ADR0380|diverges|uint8[2 3 3] nd [255 255 0 132 0 8 0 255 255 130 0 8 0 255 0 132 255 8]
+CHK|bf565_info|char[1 16]'bmp 16 truecolor'|exact
+CHK|bf555|uint8[2 2 3] nd [255 1 1 132 1 1 255 132 1 255 1 132]|div=ADR0380|diverges|uint8[2 2 3] nd [255 0 0 132 0 0 255 132 0 255 0 132]
+CHK|bf444|uint8[2 2 3] nd [255 1 1 137 1 1 255 137 1 255 1 137]|div=ADR0380|diverges|uint8[2 2 3] nd [255 0 0 136 0 0 255 136 0 255 0 136]
+CHK|bf16_black|uint8[1 2 3] nd [1 255 1 255 1 255]|div=ADR0380|diverges|uint8[1 2 3] nd [0 255 0 255 0 255]
+CHK|v4_bf565|uint8[2 2 3] nd [255 1 1 255 1 1 255 255 1 255 1 255]|div=ADR0380|diverges|uint8[2 2 3] nd [255 0 0 255 0 0 255 255 0 255 0 255]
+CHK|v4_bf565_info|char[1 16]'bmp 16 truecolor'|exact
+CHK|v4_bf32_a0|uint8[2 2 3] nd [0 0 4 0 255 0 3 0 0 0 2 255]|div=ADR0380|diverges|uint8[2 2 3] nd [255 0 3 0 0 0 2 255 0 255 1 0]
+CHK|v5_bf32_a0|uint8[2 2 3] nd [0 0 4 0 255 0 3 0 0 0 2 255]|div=ADR0380|diverges|uint8[2 2 3] nd [255 0 3 0 0 0 2 255 0 255 1 0]
+CHK|bf32_10bit|uint8[1 1 3] nd [248 0 1]|div=ADR0380|diverges|uint8[1 1 3] nd [255 128 0]
+CHK|v5_i8|cell[1 3]{uint8[2 2] [2 3;0 1];double[1 2] [4 3];double[3 3] [0.039215686274509803 0.078431372549019607 0.11764705882352941;0.15686274509803921 0.19607843137254902 0.23529411764705882;0.27450980392156865 0.31372549019607843 0.35294117647058826]}|exact
+CHK|v5_i8_info|char[1 13]'bmp 8 indexed'|exact
+CHK|topdown|cell[1 3]{uint8[2 2] [0 1;2 3];double[1 2] [4 3];double[3 3] [0.039215686274509803 0.078431372549019607 0.11764705882352941;0.15686274509803921 0.19607843137254902 0.23529411764705882;0.27450980392156865 0.31372549019607843 0.35294117647058826]}|exact
+CHK|clrused|cell[1 3]{uint8[1 2] [0 3];double[1 2] [4 3];double[3 3] [0.039215686274509803 0.078431372549019607 0.11764705882352941;0.15686274509803921 0.19607843137254902 0.23529411764705882;0.27450980392156865 0.31372549019607843 0.35294117647058826]}|exact
+CHK|i4|cell[1 3]{uint8[1 3] [1 2 3];double[1 2] [16 3];double[3 3] [0 0 1;0.0039215686274509803 0.062745098039215685 0.93725490196078431;0.0078431372549019607 0.12549019607843137 0.87450980392156863]}|exact
+CHK|pal24|cell[1 3]{uint8[1 1 3] nd [30 20 10];double[1 2] [2 3];double[2 3] [0.0039215686274509803 0.0078431372549019607 0.011764705882352941;0.015686274509803921 0.019607843137254902 0.023529411764705882]}|exact
+CHK|pal24_info|char[1 14]'bmp 24 indexed'|exact
+CHK|nopal8|cell[1 3]{uint8[1 2] [7 9];double[1 2] [0 0];double[0 0]}|exact
+CHK|nopal8_info|char[1 15]'bmp 8 grayscale'|exact
+CHK|os2|cell[1 3]{uint8[1 1] 1;double[1 2] [2 3];double[2 3] [1 0 0;1 1 1]}|exact
+CHK|os2_info|char[1 13]'bmp 8 indexed'|exact
+CHK|trunc8|cell[1 3]{uint8[2 4] [5 0 0 0;1 2 3 4];double[1 2] [16 3];double[3 3] [0 0 1;0.0039215686274509803 0.062745098039215685 0.93725490196078431;0.0078431372549019607 0.12549019607843137 0.87450980392156863]} WARN MATLAB:imagesci:readbmpdata:truncatedImageData|exact
+CHK|comp4|MATLAB:imagesci:readbmpdata:unsupportedCompressionScheme|exact
+CHK|comp4_msg|24-bit RLE compression not supported.|exact
+CHK|comp4_info|char[1 16]'bmp 24 truecolor'|exact
+CHK|comp5|MATLAB:imagesci:imbmpinfo:unrecognizedCompression|exact
+CHK|comp5_msg|Unrecognized compression value (5).|exact
+CHK|comp5_info|MATLAB:imagesci:imbmpinfo:unrecognizedCompression|exact
+CHK|comp5_info_msg|Unrecognized compression value (5).|exact

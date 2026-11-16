@@ -222,7 +222,7 @@ public sealed class MatlabImageBuiltinTests : IDisposable
             info = imfinfo('{file}');
             assert(info.Width == 2);
             assert(info.Height == 2);
-            assert(strcmp(info.Format, 'PNG'));
+            assert(strcmp(info.Format, 'png'));
             assert(info.BitDepth == 8);
             assert(strcmp(info.ColorType, 'grayscale'));
             """);

@@ -333,15 +333,15 @@ public class MatlabM72ParityTests : IDisposable
             string path = Path.Combine(folder, "anim.gif").Replace("\\", "/");
             ScriptRunResult result = await RunMatlab($$"""
                 for k = 1:4
-                  A = ones(20, 20) * (k / 5);
+                  A = uint8(ones(20, 20) * (k * 50));
                   if k == 1
                     imwrite(A, '{{path}}', 'LoopCount', Inf, 'DelayTime', 0.2);
                   else
                     imwrite(A, '{{path}}', 'WriteMode', 'append', 'DelayTime', 0.2);
                   end
                 end
-                first = mean(mean(im2mat(imread('{{path}}', 1))));
-                last = mean(mean(im2mat(imread('{{path}}', 4))));
+                first = mean(mean(double(imread('{{path}}', 1))));
+                last = mean(mean(double(imread('{{path}}', 4))));
                 """);
 
             Assert.True(result.Success, result.Message);

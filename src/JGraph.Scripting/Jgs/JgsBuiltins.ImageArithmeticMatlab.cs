@@ -1216,11 +1216,15 @@ internal static partial class JgsBuiltins
 
         try
         {
-            (ImageBuffer image, double[,]? palette, ImageBuffer? alpha) = ReadImageFileSamples(path, 0);
+            (ImageBuffer image, double[,]? palette, ImageBuffer? alpha) = ReadImageFileSamples(path, 0, dialect.IsMatlab);
             alpha?.Dispose();
             JgsValue picture = ImreadPicture(image, dialect);
             ImArray frame = ReadImArray(picture.Type == JgsType.Image ? ImageNumbers(picture) : picture);
             return (frame, palette is { Length: > 0 } ? palette : null);
+        }
+        catch (JGraph.Imaging.Codecs.ImageFileRefusal refusal)
+        {
+            throw new JgsRuntimeException(line, col, refusal.Identifier, refusal.Message);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException
                                       or InvalidDataException or ArgumentOutOfRangeException)
