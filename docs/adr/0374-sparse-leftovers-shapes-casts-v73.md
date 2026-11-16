@@ -174,3 +174,9 @@ logical sentence.
   `MATLAB:mixedClasses`; `sparse('ab', ...)` refuses a char subscript list R2025b reads as codes;
   `datestr(3, 'yyyy')` is refused (R2025b `0000`); `ReadComplex` in the v7.3 reader loads a complex
   single array as double.
+
+Closed since: ADR 0381 (open items 345 and 346, chips wave 8) made `amd` SuiteSparse AMD in MATLAB
+code, single sparse arithmetic accumulate in single, `ismember` of a one-element set and
+`accumarray` with sparse values answer sparse, version 5 and 7.3 MAT-files keep a complex single
+array single, the runtime hold single and complex sparse matrices and the protobuf encoder write
+and read a complex sparse array, and `sparse` read a char subscript list as codes.

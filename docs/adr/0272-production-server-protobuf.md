@@ -164,7 +164,6 @@ What the recording measured of muserve, beyond the schema (`k16_server`):
 - **A char array of three dimensions is refused** (in.char.nd; ADR 0270, seen again).
 - **int64 and uint64 past 2^53 are doubles** (ADR 0174, seen again: in.int64.row, in.uint64.row,
   out.int64, the .NET and C clients' 64-bit cases).
-- **A sparse complex array is refused** (ADR 0266, seen again: the C client's in.sparse.complex).
 - **A handle reference names JGraph's own session and object** (out.handle, out.map); muserve's
   names its worker's, and no client reads either back.
 - **A table and a dictionary are bare objects**: the class name and no properties, where muserve
@@ -190,6 +189,14 @@ and reads them back in their class, so out.sparselogical, in.sparse.logical and 
 (and the C client's logical cases, through the runtime conversion) are expected to agree; the
 `record-k16.ps1` comparison has not been run since (it serves sockets), and compare-k16.py's KNOWN
 entries for them stay until it is.
+
+Closed since: **a sparse complex array is refused** and the rest of the sparse cases. ADR 0381 (open
+item 345) gives the runtime's sparse value single and complex classes and the protobuf encoder a complex
+sparse array (isComplex, the imaginary parts in the values message), and its landing ran
+`ProductionServerTests.TheServerAnswersMathWorksClientsAsMuserveDid` against R2025b's recording with
+raw/in.sparse.logical, raw/in.sparse.single, raw/out.sparselogical, c/in.sparse.logical,
+c/in.sparse.complex and c/out.sparselogical off the divergence list: all six agree, so they left it
+and compare-k16.py's KNOWN.
 
 ## Still open
 

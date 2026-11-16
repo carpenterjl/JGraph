@@ -105,6 +105,10 @@ public sealed class RuntimeValueTests : IDisposable
         { "struct", "struct [1 1]" },
         { "struct array", "struct [1 2]" },
         { "sparse", "double [3 3]" },
+        { "sparse single", "single [3 3]" },
+        { "sparse logical", "logical [2 2]" },
+        { "sparse complex", "double [2 3]" },
+        { "sparse complex single", "single [2 3]" },
     };
 
     private static RuntimeValue Sample(string name) => name switch
@@ -141,6 +145,12 @@ public sealed class RuntimeValueTests : IDisposable
             ],
             [1, 2]),
         "sparse" => new RuntimeSparse(3, 3, [0, 2, 1], [0, 2, 2, 3], [1, 5, -2]),
+
+        // A single, logical or complex sparse matrix keeps its class through the engine (open item 345, ADR 0381).
+        "sparse single" => new RuntimeSparse("single", 3, 3, [0, 2, 1], [0, 2, 2, 3], [1.5, 0.1, -2], null),
+        "sparse logical" => new RuntimeSparse("logical", 2, 2, [0, 1], [0, 1, 2], [1, 1], null),
+        "sparse complex" => new RuntimeSparse("double", 2, 3, [0, 1, 1], [0, 1, 2, 3], [1, 0, 4], [2, -1, 0]),
+        "sparse complex single" => new RuntimeSparse("single", 2, 3, [0, 1], [0, 1, 1, 2], [0.1, 4], [2, 0]),
         _ => throw new ArgumentOutOfRangeException(nameof(name)),
     };
 
@@ -198,6 +208,9 @@ public sealed class RuntimeValueTests : IDisposable
         Assert.Throws<ArgumentException>(() => RuntimeChar.Matrix("ab", "c"));
         Assert.Throws<ArgumentException>(() => new RuntimeStruct(["a"], [new Dictionary<string, RuntimeValue> { ["b"] = RuntimeValue.Empty() }], [1, 1]));
         Assert.Throws<ArgumentException>(() => new RuntimeSparse(2, 2, [2], [0, 1, 1], [1]));
+        Assert.Throws<ArgumentException>(() => new RuntimeSparse("int8", 1, 1, [0], [0, 1], [1], null));
+        Assert.Throws<ArgumentException>(() => new RuntimeSparse("logical", 1, 1, [0], [0, 1], [1], [1]));
+        Assert.Throws<ArgumentException>(() => new RuntimeSparse("double", 1, 1, [0], [0, 1], [1], []));
 
         // A single keeps a single's precision, and a size drops its trailing singletons.
         Assert.Equal((double)(float)0.1, new RuntimeNumeric("single", [0.1], null, [1, 1]).ScalarValue);

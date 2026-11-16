@@ -279,7 +279,7 @@ internal static class MatFileWriter
                 break;
             case JgsType.Complex:
                 WriteNumeric(w, name, [value.AsComplex.Real], [value.AsComplex.Imaginary], [1, 1],
-                    JgsNumericClass.Double);
+                    value.NumericClass == JgsNumericClass.Single ? JgsNumericClass.Single : JgsNumericClass.Double); // open item 346, ADR 0381
                 break;
             case JgsType.String:
                 WriteChar(w, name, [value.AsString]);
@@ -291,7 +291,7 @@ internal static class MatFileWriter
                 WriteArray(w, name, value);
                 break;
             case JgsType.Sparse when value.IsComplexSparse:
-                WriteComplexSparse(w, name, value.AsComplexSparse); // open item 298, ADR 0364
+                WriteComplexSparse(w, name, value.AsComplexSparse, value.NumericClass == JgsNumericClass.Single); // open item 298, ADR 0364
                 break;
             case JgsType.Sparse:
                 WriteSparse(w, name, value.AsSparse, value.IsLogicalSparse, value.NumericClass == JgsNumericClass.Single);
@@ -393,9 +393,10 @@ internal static class MatFileWriter
             }
         }
 
-        // A complex array is always double: MATLAB has no complex integer class to land in.
+        // A complex array is double or single: there is no complex integer class here to write. A
+        // complex single is single, as R2025b writes it (open item 346, ADR 0381; probe p8b_b).
         WriteNumeric(w, name, real, imaginary, dims,
-            anyComplex ? JgsNumericClass.Double : value.NumericClass);
+            anyComplex && value.NumericClass != JgsNumericClass.Single ? JgsNumericClass.Double : value.NumericClass);
     }
 
     /// <summary>
@@ -501,20 +502,24 @@ internal static class MatFileWriter
         WriteTypedData(w, matrix.Values.AsSpan(0, matrix.NonZeroCount).ToArray(), logical ? MiUInt8 : single ? MiSingle : MiDouble);
     }
 
-    /// <summary>A complex sparse array: the real sparse layout with the complex flag and an imaginary part.</summary>
-    private static void WriteComplexSparse(BinaryWriter w, string name, JgsComplexSparse matrix)
+    /// <summary>
+    /// A complex sparse array: the real sparse layout with the complex flag and an imaginary part. A
+    /// single one is the single class with the sparse-data bit and both parts four bytes a value, as
+    /// R2025b writes it (open item 345, ADR 0381; its -v6 file's flags are 0x1807).
+    /// </summary>
+    private static void WriteComplexSparse(BinaryWriter w, string name, JgsComplexSparse matrix, bool single = false)
     {
         w.Write(MiUInt32);
         w.Write(8);
-        w.Write(MxSparse | FlagComplex);
+        w.Write(single ? MxSingle | FlagComplex | FlagSparseData : MxSparse | FlagComplex);
         w.Write(Math.Max(matrix.NonZeroCount, 1));
 
         WriteDimensions(w, [matrix.Rows, matrix.Cols]);
         WriteName(w, name);
         WriteInt32Data(w, matrix.RowIndices, matrix.NonZeroCount);
         WriteInt32Data(w, matrix.ColumnStarts, matrix.Cols + 1);
-        WriteTypedData(w, Array.ConvertAll(matrix.Values, static v => v.Real), MiDouble);
-        WriteTypedData(w, Array.ConvertAll(matrix.Values, static v => v.Imaginary), MiDouble);
+        WriteTypedData(w, Array.ConvertAll(matrix.Values, static v => v.Real), single ? MiSingle : MiDouble);
+        WriteTypedData(w, Array.ConvertAll(matrix.Values, static v => v.Imaginary), single ? MiSingle : MiDouble);
     }
 
     private static void WriteCell(Session session, BinaryWriter w, string name, JgsValue value)

@@ -367,5 +367,7 @@ internal static partial class JgsBuiltins
 
             return null;
         });
+
+        WrapSparseMembership(env); // open item 345, ADR 0381: ismember of a one-element set, accumarray's sparse answer
     }
 }

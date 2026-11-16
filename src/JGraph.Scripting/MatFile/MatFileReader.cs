@@ -446,7 +446,10 @@ internal sealed class MatFileReader
                 elements[i] = im == 0 ? JgsValue.Number(real[i]) : JgsValue.ComplexNum(new Complex(real[i], im));
             }
 
-            return elements.Length == 1 ? elements[0] : JgsMatrix.FromElements(elements, rows, cols);
+            JgsValue complex = elements.Length == 1 ? elements[0] : JgsMatrix.FromElements(elements, rows, cols);
+
+            // A complex single loads single (open item 346, ADR 0381; probe p8b_b's v5_c_single_dense).
+            return arrayClass == MxSingle ? JgsNumericClasses.Stamp(complex, JgsNumericClass.Single) : complex;
         }
 
         if (isLogical)

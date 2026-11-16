@@ -289,7 +289,7 @@ internal static class MatV73Reader
         if ((node.Attributes.TryGetValue("MATLAB_complex", out Hdf5Attribute? complex) && complex.AsNumber() != 0)
             || node.Datatype.Class == Hdf5Datatype.ClassCompound)
         {
-            return ReadComplex(node);
+            return ReadComplex(node, matlabClass);
         }
 
         double[] values = Numbers(node);
@@ -313,7 +313,7 @@ internal static class MatV73Reader
         return value;
     }
 
-    private static JgsValue ReadComplex(Hdf5Object node)
+    private static JgsValue ReadComplex(Hdf5Object node, string matlabClass)
     {
         Hdf5Datatype type = node.Datatype;
         if (type.Class != Hdf5Datatype.ClassCompound || type.Members.Count != 2)
@@ -338,12 +338,16 @@ internal static class MatV73Reader
         }
 
         // Every imaginary part zero: it loads complex, flag and all (R2025b; open item 298, ADR 0364).
+        // A complex single loads single (open item 346, ADR 0381); there is no complex integer class
+        // here to load an integer one in, so that stays double.
+        JgsNumericClass numericClass = matlabClass == "single" ? JgsNumericClass.Single : JgsNumericClass.Double;
         if (!anyImaginary)
         {
-            return JgsBuiltins.ZeroImagFlaggedOf(reals, Shape(node), JgsNumericClass.Double);
+            return JgsBuiltins.ZeroImagFlaggedOf(reals, Shape(node), numericClass);
         }
 
-        return Lay(elements, Shape(node));
+        JgsValue laid = Lay(elements, Shape(node));
+        return numericClass == JgsNumericClass.Single ? JgsNumericClasses.Stamp(laid, numericClass) : laid;
     }
 
     private static JgsValue ReadLogical(Hdf5Object node)

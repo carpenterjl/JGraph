@@ -859,6 +859,7 @@ internal static class JgsMpsProtobuf
             var ir = new List<ulong>();
             var jc = new List<ulong>();
             var values = new List<double>();
+            List<double>? imaginary = null;
             var reader = new Reader(payload);
             while (reader.Next(out int field, out int wireType))
             {
@@ -874,7 +875,7 @@ internal static class JgsMpsProtobuf
                         reader.Varints(wireType, jc);
                         break;
                     case 16 when wireType == Delimited:
-                        values.AddRange(NumericPayload(MwType.Double, reader.ReadBytes()).Real);
+                        Gather(NumericPayload(MwType.Double, reader.ReadBytes()));
                         break;
                     case 17 when wireType == Delimited:
                     {
@@ -897,12 +898,29 @@ internal static class JgsMpsProtobuf
                     }
 
                     case 18 when wireType == Delimited:
-                        values.AddRange(NumericPayload(MwType.Single, reader.ReadBytes()).Real);
+                        Gather(NumericPayload(MwType.Single, reader.ReadBytes()));
                         break;
                     default:
                         reader.Skip(wireType);
                         break;
                 }
+            }
+
+            // A complex one carries its imaginary parts beside the real ones (open item 345, ADR 0381).
+            void Gather((double[] Real, double[]? Imag) parts)
+            {
+                if (parts.Imag is not null)
+                {
+                    imaginary ??= [.. Enumerable.Repeat(0.0, values.Count)];
+                    imaginary.AddRange(parts.Imag);
+                }
+
+                values.AddRange(parts.Real);
+            }
+
+            if (imaginary is not null && imaginary.Count != values.Count)
+            {
+                throw new Unreadable("the imaginary parts");
             }
 
             int rows = shape[0];
@@ -929,6 +947,22 @@ internal static class JgsMpsProtobuf
 
                     triplets.Add(((int)ir[(int)k], c, values[(int)k]));
                 }
+            }
+
+            if (imaginary is not null && kind != 1)
+            {
+                var entries = new List<(int Row, int Col, System.Numerics.Complex Value)>(triplets.Count);
+                int at = 0;
+                for (int c = 0; c < cols; c++)
+                {
+                    for (ulong k = jc[c]; k < jc[c + 1]; k++, at++)
+                    {
+                        entries.Add((triplets[at].Row, c, new System.Numerics.Complex(values[(int)k], imaginary[(int)k])));
+                    }
+                }
+
+                JgsComplexSparse complex = JgsComplexSparse.FromTriplets(rows, cols, entries);
+                return kind == 2 ? JgsBuiltins.SingleSparseOf(complex, keepFlag: true) : JgsBuiltins.SparseOfComplex(complex, keepFlag: true);
             }
 
             // A logical or single sparse array keeps its class (in.sparse.logical, in.sparse.single; ADR 0374).
@@ -1207,6 +1241,8 @@ internal static class JgsMpsProtobuf
                     return HandleRef();
                 case JgsType.Table:
                     return Object(value.AsTable.RowTimes is null ? "table" : "timetable", [1, 1], [[]]);
+                case JgsType.Sparse when value.IsComplexSparse:
+                    return ComplexSparse(value.AsComplexSparse, JgsBuiltins.IsSingleSparse(value) ? 2UL : 0UL); // open item 345, ADR 0381
                 case JgsType.Sparse:
                     return Sparse(value.AsSparse, value.IsLogicalSparse ? 1UL : JgsBuiltins.IsSingleSparse(value) ? 2UL : 0UL);
                 case JgsType.External:
@@ -1542,6 +1578,38 @@ internal static class JgsMpsProtobuf
             }
 
             return Tail(MwType.Sparse, [matrix.Rows, matrix.Cols], complex: false, FSparse, payload);
+        }
+
+        /// <summary>
+        /// A complex sparse array (open item 345, ADR 0381): the real layout with <c>isComplex</c> set
+        /// and the imaginary parts in the values message's second field, as a dense complex array
+        /// carries them.
+        /// </summary>
+        private static Parts ComplexSparse(JgsComplexSparse matrix, ulong kind)
+        {
+            var payload = new Writer();
+            payload.VarintField(1, kind);
+            var ir = new Writer();
+            var jc = new Writer();
+            int stored = matrix.NonZeroCount;
+            var real = new double[stored];
+            var imag = new double[stored];
+            for (int c = 0; c < matrix.Cols; c++)
+            {
+                jc.WriteVarint((ulong)matrix.ColumnStarts[c]);
+                for (int k = matrix.ColumnStarts[c]; k < matrix.ColumnStarts[c + 1]; k++)
+                {
+                    ir.WriteVarint((ulong)matrix.RowIndices[k]);
+                    real[k] = matrix.Values[k].Real;
+                    imag[k] = matrix.Values[k].Imaginary;
+                }
+            }
+
+            jc.WriteVarint((ulong)matrix.ColumnStarts[matrix.Cols]);
+            payload.PackedField(2, ir);
+            payload.PackedField(3, jc, always: true);
+            payload.MessageField(kind == 2 ? 18 : 16, NumericPayload(kind == 2 ? MwType.Single : MwType.Double, real, imag));
+            return Tail(MwType.Sparse, [matrix.Rows, matrix.Cols], complex: true, FSparse, payload);
         }
 
         /// <summary>An enumeration array: the class and the members' names in the table, each element an <c>Object</c> naming its member (out.enum).</summary>

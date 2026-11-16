@@ -236,15 +236,27 @@ internal static class MatV73Writer
             // complex(1, 0) is written complex too (open item 298, ADR 0364).
             if (Array.Exists(elements, static e => e.Type == JgsType.Complex) || JgsBuiltins.IsZeroImagFlagged(value))
             {
-                var data = new byte[elements.Length * 16];
+                // A complex single is a compound of two four-byte floats, class single, as R2025b
+                // writes it (open item 346, ADR 0381; probe p8b_b's v73_c_single).
+                bool singleParts = value.NumericClass == JgsNumericClass.Single;
+                int part = singleParts ? 4 : 8;
+                var data = new byte[elements.Length * part * 2];
                 for (int i = 0; i < elements.Length; i++)
                 {
                     Complex c = elements[i].Type == JgsType.Complex ? elements[i].AsComplex : new Complex(elements[i].AsNumber, 0);
-                    BinaryPrimitives.WriteDoubleLittleEndian(data.AsSpan(i * 16), c.Real);
-                    BinaryPrimitives.WriteDoubleLittleEndian(data.AsSpan((i * 16) + 8), c.Imaginary);
+                    if (singleParts)
+                    {
+                        BinaryPrimitives.WriteSingleLittleEndian(data.AsSpan(i * 8), (float)c.Real);
+                        BinaryPrimitives.WriteSingleLittleEndian(data.AsSpan((i * 8) + 4), (float)c.Imaginary);
+                    }
+                    else
+                    {
+                        BinaryPrimitives.WriteDoubleLittleEndian(data.AsSpan(i * 16), c.Real);
+                        BinaryPrimitives.WriteDoubleLittleEndian(data.AsSpan((i * 16) + 8), c.Imaginary);
+                    }
                 }
 
-                return Dataset(Compound(Float(8), 8), Reversed(dims), data, [ClassAttribute("double")]);
+                return Dataset(Compound(Float(part), part), Reversed(dims), data, [ClassAttribute(singleParts ? "single" : "double")]);
             }
 
             JgsNumericClass numericClass = value.NumericClass;

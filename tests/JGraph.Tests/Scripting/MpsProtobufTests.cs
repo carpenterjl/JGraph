@@ -244,4 +244,32 @@ public class MpsProtobufTests
             Assert.Equal(Hex(result), Hex(JgsMpsProtobuf.EncodeResult([back])));
         }
     }
+
+    /// <summary>
+    /// A complex sparse array, double or single, is written with <c>isComplex</c> and its imaginary
+    /// parts in the values message's second field, and read back complex in its class (open item
+    /// 345, ADR 0381); before, the writer refused it and the reader dropped the imaginary parts.
+    /// </summary>
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void AComplexSparseArrayGoesRoundInItsClass(bool single)
+    {
+        JgsComplexSparse entries = JgsComplexSparse.FromTriplets(2, 3, [(0, 0, new Complex(1, 2)), (1, 2, new Complex(0, -1)), (1, 1, new Complex(4, 0))]);
+        JgsValue value = single ? JgsBuiltins.SingleSparseOf(entries, keepFlag: true) : JgsBuiltins.SparseOfComplex(entries, keepFlag: true);
+        byte[] result = JgsMpsProtobuf.EncodeResult([value]);
+        var reader = new JgsProtobufWire.Reader(result);
+        Assert.True(reader.Next(out int field, out int wireType));
+        Assert.Equal((1, JgsProtobufWire.Delimited), (field, wireType));
+        byte[] array = reader.ReadBytes().ToArray();
+        var request = new JgsProtobufWire.Writer();
+        request.VarintField(1, 1UL);
+        request.BytesField(2, array);
+        JgsValue back = Assert.Single(JgsMpsProtobuf.DecodeRequest(request.ToArray(), static _ => null).Arguments);
+
+        Assert.True(back.IsComplexSparse);
+        Assert.Equal(single, JgsBuiltins.IsSingleSparse(back));
+        Assert.Equal(entries.ToColumnMajor(), back.AsComplexSparse.ToColumnMajor());
+        Assert.Equal(Hex(result), Hex(JgsMpsProtobuf.EncodeResult([back])));
+    }
 }

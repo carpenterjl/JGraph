@@ -190,6 +190,12 @@ internal static partial class JgsBuiltins
             return SparseBinary(op, left, right, at); // its own refusal, in its own words
         }
 
+        // A matrix product with a single factor is formed in single (open item 345, ADR 0381).
+        if (op == TokenType.Star && SingleSparseProduct(left, right) is { } inSingle)
+        {
+            return inSingle;
+        }
+
         JgsValue answer = SparseKernelCovers(op, left, right)
             ? SparseBinary(op, left, right, at)
             : SparseByDense(op, left, right, at, dense);

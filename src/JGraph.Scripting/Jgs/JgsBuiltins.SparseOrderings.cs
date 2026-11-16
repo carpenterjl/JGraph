@@ -96,8 +96,14 @@ internal static partial class JgsBuiltins
         Define("symrcm", (args, line, col) =>
             PermutationValue(ReverseCuthillMcKee(SymmetricPattern(Sparse("symrcm", args, line, col))), dialect));
 
-        Define("amd", (args, line, col) =>
-            PermutationValue(MinimumDegree(SymmetricPattern(Sparse("amd", args, line, col))), dialect));
+        // MATLAB code gets SuiteSparse AMD, R2025b's ordering, ties and all (open item 345, ADR 0381);
+        // JGS code keeps the exact minimum-degree ordering.
+        Define("amd", (args, line, col) => dialect.IsMatlab
+                ? AmdOrdering(args, 1, line, col)[0]
+                : PermutationValue(MinimumDegree(SymmetricPattern(Sparse("amd", args, line, col))), dialect),
+            (args, wanted, line, col) => dialect.IsMatlab
+                ? AmdOrdering(args, wanted, line, col)
+                : [PermutationValue(MinimumDegree(SymmetricPattern(Sparse("amd", args, line, col))), dialect)]);
 
         Define("symamd", (args, line, col) =>
             PermutationValue(MinimumDegree(SymmetricPattern(Sparse("symamd", args, line, col))), dialect));

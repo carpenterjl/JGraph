@@ -924,6 +924,11 @@ internal static class ExcelConversion
             case RuntimeStruct record:
                 return ExcelStruct.Of(record, o.Flags, o.Owner, field => Convert(field, o with { Raw = true, Depth = 0 }));
 
+            case RuntimeSparse { IsComplex: true }:
+                // A complex sparse matrix has no VARIANT form (open item 345, ADR 0381).
+                throw new ComCallException(ComCallException.Fail, o.Owner.ProgId,
+                    "A complex sparse matrix cannot be returned to a COM client; return its real and imaginary parts.");
+
             case RuntimeSparse sparse:
                 return ExcelSparse.Of(sparse, isLogical: sparse.ClassName == "logical", o.Flags, o.Owner);
 

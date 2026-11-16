@@ -450,7 +450,7 @@ public static class JgsBuiltinCatalog
         Add("structfun", "Applies a function to each field of a struct.", P("f"), P("s"), Opt("option"));
         Add("struct2cell", "A struct's field values as a cell array.", P("s"));
         Add("cell2struct", "A struct built from a cell of values and a cell of field names.", P("values"), P("names"), Opt("dim"));
-        Add("accumarray", "Sums values into bins their subscripts name; a function handle reduces differently.", P("subs"), P("values"), Opt("size"), Opt("f"), Opt("fill"));
+        Add("accumarray", "Sums values into bins their subscripts name; a function handle reduces differently.", P("subs"), P("values"), Opt("size"), Opt("f"), Opt("fill"), Opt("issparse"));
         Add("cummax", "The running maximum so far at each position, down each column or along a named dimension.", P("x"), Opt("dim"));
         Add("cummin", "The running minimum so far at each position, down each column or along a named dimension.", P("x"), Opt("dim"));
         Add("maxk", "The k largest values of each slice, largest first: [b, i] = maxk(x, k, dim).", P("x"), P("k"), Opt("dim"));
@@ -1569,8 +1569,8 @@ public static class JgsBuiltinCatalog
         Add("speye", "A sparse identity: speye(n), speye(m, n), or speye([m n]).", P("n"), Opt("cols"));
         Add("nzmax", "How much room the stored entries take; here always the nonzero count itself.", P("S"));
         Add("symrcm", "The reverse Cuthill-McKee ordering, which gathers the nonzeros towards the diagonal.", P("S"));
-        Add("amd", "A minimum-degree ordering, which keeps elimination fill small.", P("S"));
-        Add("symamd", "A minimum-degree ordering of a symmetric matrix; the same ordering as amd here.", P("S"));
+        Add("amd", "A minimum-degree ordering, which keeps elimination fill small: SuiteSparse AMD in MATLAB code.", P("S"), Opt("opts"));
+        Add("symamd", "A minimum-degree ordering of a symmetric matrix: JGraph's exact one, which amd answers in JGS code.", P("S"));
         Add("dissect", "A nested-dissection ordering: each half first, the separator between them last.", P("S"));
         Add("dmperm", "A row permutation putting nonzeros on the diagonal, from a maximum matching; 0 where a column has none.", P("S"));
         Add("etree", "The elimination tree: [parent, postorder] = etree(S), with 0 marking a root.", P("S"));

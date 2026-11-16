@@ -502,12 +502,16 @@ public sealed class RuntimeStruct : RuntimeValue
     }
 }
 
-/// <summary>A sparse double or logical matrix in compressed sparse column form.</summary>
+/// <summary>
+/// A sparse double, single or logical matrix in compressed sparse column form; a double or single one
+/// can be complex (open item 345, ADR 0381).
+/// </summary>
 public sealed class RuntimeSparse : RuntimeValue
 {
     private readonly int[] _rowIndices;
     private readonly int[] _columnStarts;
     private readonly double[] _values;
+    private readonly double[]? _imaginary;
 
     /// <summary>Creates a sparse matrix.</summary>
     /// <param name="rows">The row count.</param>
@@ -516,18 +520,45 @@ public sealed class RuntimeSparse : RuntimeValue
     /// <param name="columnStarts">Where each column's values start in <paramref name="values"/>, with one more entry at the end.</param>
     /// <param name="values">The stored values, column by column.</param>
     public RuntimeSparse(int rows, int columns, IReadOnlyList<int> rowIndices, IReadOnlyList<int> columnStarts, IReadOnlyList<double> values)
-        : this(rows, columns, rowIndices, columnStarts, values, logical: false)
+        : this(RuntimeNumeric.DoubleClass, rows, columns, rowIndices, columnStarts, values, null)
     {
     }
 
     /// <summary>Creates a sparse matrix, a logical one (every stored value 1) when <paramref name="logical"/> says so.</summary>
     internal RuntimeSparse(int rows, int columns, IReadOnlyList<int> rowIndices, IReadOnlyList<int> columnStarts, IReadOnlyList<double> values, bool logical)
-        : base(logical ? "logical" : RuntimeNumeric.DoubleClass, [rows, columns])
+        : this(logical ? "logical" : RuntimeNumeric.DoubleClass, rows, columns, rowIndices, columnStarts, values, null)
+    {
+    }
+
+    /// <summary>Creates a sparse matrix of a class, complex when <paramref name="imaginary"/> is given.</summary>
+    /// <param name="className"><c>double</c>, <c>single</c> or <c>logical</c>; a single one's values are held to single precision.</param>
+    /// <param name="rows">The row count.</param>
+    /// <param name="columns">The column count.</param>
+    /// <param name="rowIndices">The zero-based row of each stored value.</param>
+    /// <param name="columnStarts">Where each column's values start in <paramref name="real"/>, with one more entry at the end.</param>
+    /// <param name="real">The stored values' real parts, column by column.</param>
+    /// <param name="imaginary">Their imaginary parts, or null for a real matrix; a logical one cannot be complex.</param>
+    /// <exception cref="ArgumentException">The class is not one a sparse matrix holds, or the compressed columns do not describe the values.</exception>
+    public RuntimeSparse(string className, int rows, int columns, IReadOnlyList<int> rowIndices, IReadOnlyList<int> columnStarts,
+        IReadOnlyList<double> real, IReadOnlyList<double>? imaginary)
+        : base(className, [rows, columns])
     {
         ArgumentNullException.ThrowIfNull(rowIndices);
         ArgumentNullException.ThrowIfNull(columnStarts);
-        ArgumentNullException.ThrowIfNull(values);
-        if (columnStarts.Count != columns + 1 || rowIndices.Count != values.Count || columnStarts[^1] != values.Count || columnStarts[0] != 0)
+        ArgumentNullException.ThrowIfNull(real);
+        if (className is not ("double" or "single" or "logical"))
+        {
+            throw new ArgumentException($"A sparse matrix is double, single or logical, not '{className}'.", nameof(className));
+        }
+
+        if (imaginary is not null && (className == "logical" || imaginary.Count != real.Count))
+        {
+            throw new ArgumentException(className == "logical"
+                ? "A logical sparse matrix cannot be complex."
+                : "The imaginary parts do not match the stored values.", nameof(imaginary));
+        }
+
+        if (columnStarts.Count != columns + 1 || rowIndices.Count != real.Count || columnStarts[^1] != real.Count || columnStarts[0] != 0)
         {
             throw new ArgumentException("The compressed columns do not describe the values.");
         }
@@ -547,7 +578,9 @@ public sealed class RuntimeSparse : RuntimeValue
 
         _rowIndices = [.. rowIndices];
         _columnStarts = [.. columnStarts];
-        _values = [.. values];
+        _values = className == "single" ? [.. real.Select(static v => (double)(float)v)] : [.. real];
+        _imaginary = imaginary is null ? null
+            : className == "single" ? [.. imaginary.Select(static v => (double)(float)v)] : [.. imaginary];
     }
 
     /// <summary>The zero-based row of each stored value.</summary>
@@ -556,15 +589,22 @@ public sealed class RuntimeSparse : RuntimeValue
     /// <summary>Where each column's values start, with one more entry at the end.</summary>
     public ReadOnlyCollection<int> ColumnStarts => Array.AsReadOnly(_columnStarts);
 
-    /// <summary>The stored values, column by column.</summary>
+    /// <summary>The stored values, column by column (their real parts, for a complex matrix).</summary>
     public ReadOnlyCollection<double> Values => Array.AsReadOnly(_values);
+
+    /// <summary>The stored values' imaginary parts, column by column, or null for a real matrix.</summary>
+    public ReadOnlyCollection<double>? Imaginary => _imaginary is null ? null : Array.AsReadOnly(_imaginary);
+
+    /// <summary>Whether the matrix is complex.</summary>
+    public bool IsComplex => _imaginary is not null;
 
     private protected override bool SameElements(RuntimeValue other)
     {
         var that = (RuntimeSparse)other;
         return _rowIndices.AsSpan().SequenceEqual(that._rowIndices)
             && _columnStarts.AsSpan().SequenceEqual(that._columnStarts)
-            && _values.AsSpan().SequenceEqual(that._values);
+            && _values.AsSpan().SequenceEqual(that._values)
+            && (_imaginary is null ? that._imaginary is null : that._imaginary is not null && _imaginary.AsSpan().SequenceEqual(that._imaginary));
     }
 }
 

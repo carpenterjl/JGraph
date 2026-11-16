@@ -659,7 +659,29 @@ public class MWNumericArray : MWIndexArray
         {
             if (_im is not null)
             {
-                throw new ArgumentException("JGraph's runtime takes no complex sparse matrix: pass it dense, or its real and imaginary parts.");
+                // A complex sparse matrix goes in complex (open item 345, ADR 0381): an entry is stored
+                // where either part is not zero.
+                var rowsAt = new List<int>();
+                var startsAt = new int[Dims[1] + 1];
+                var re = new List<double>();
+                var im = new List<double>();
+                for (int c = 0; c < Dims[1]; c++)
+                {
+                    for (int r = 0; r < Dims[0]; r++)
+                    {
+                        int at = r + (c * Dims[0]);
+                        if (_re[at] != 0 || _im[at] != 0)
+                        {
+                            rowsAt.Add(r);
+                            re.Add(_re[at]);
+                            im.Add(_im[at]);
+                        }
+                    }
+
+                    startsAt[c + 1] = re.Count;
+                }
+
+                return new RuntimeSparse("double", Dims[0], Dims[1], rowsAt, startsAt, re, im);
             }
 
             (int[] rows, int[] starts, double[] values) = NativeConversion.Compressed(Dims[0], Dims[1], _re);
@@ -676,12 +698,19 @@ public class MWNumericArray : MWIndexArray
     {
         if (value is RuntimeSparse sparse)
         {
-            var made = new MWNumericArray(MWArrayComplexity.Real, MWNumericType.Double, [sparse.Dimensions[0], sparse.Dimensions[1]]) { _sparse = true };
+            // A complex one comes out complex (open item 345, ADR 0381); a single one as double, the
+            // only sparse class this array holds.
+            var made = new MWNumericArray(sparse.IsComplex ? MWArrayComplexity.Complex : MWArrayComplexity.Real, MWNumericType.Double,
+                [sparse.Dimensions[0], sparse.Dimensions[1]]) { _sparse = true };
             for (int c = 0; c < sparse.Dimensions[1]; c++)
             {
                 for (int k = sparse.ColumnStarts[c]; k < sparse.ColumnStarts[c + 1]; k++)
                 {
                     made._re[sparse.RowIndices[k] + (c * sparse.Dimensions[0])] = sparse.Values[k];
+                    if (sparse.Imaginary is { } imaginary)
+                    {
+                        made._im![sparse.RowIndices[k] + (c * sparse.Dimensions[0])] = imaginary[k];
+                    }
                 }
             }
 

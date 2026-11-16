@@ -24,6 +24,18 @@ internal static partial class JgsBuiltins
 
         Define("sparse", (args, line, col) =>
         {
+            // MATLAB code reads a char subscript list or size as its codes, and a char third of three
+            // arguments as a class name (open item 346, ADR 0381).
+            if (JgsRunningDialect.ThreadIsMatlab && SparseTextArguments(args, line, col) is { } text)
+            {
+                if (text.Answer is { } typed)
+                {
+                    return typed;
+                }
+
+                args = text.Args;
+            }
+
             switch (args.Count)
             {
                 case 1 when args[0].Type == JgsType.Sparse:

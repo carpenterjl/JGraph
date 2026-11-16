@@ -60,6 +60,24 @@ internal static class RuntimeValueConversion
             case RuntimeStruct record:
                 return Struct(record, dims, owner);
 
+            case RuntimeSparse { IsComplex: true } complexSparse:
+            {
+                // A complex one comes in complex, flag and all, single when it is (open item 345, ADR 0381).
+                var entries = new List<(int Row, int Col, Complex Value)>(complexSparse.Values.Count);
+                for (int c = 0; c < dims[1]; c++)
+                {
+                    for (int k = complexSparse.ColumnStarts[c]; k < complexSparse.ColumnStarts[c + 1]; k++)
+                    {
+                        entries.Add((complexSparse.RowIndices[k], c, new Complex(complexSparse.Values[k], complexSparse.Imaginary![k])));
+                    }
+                }
+
+                JgsComplexSparse held = JgsComplexSparse.FromTriplets(dims[0], dims[1], entries);
+                return complexSparse.ClassName == "single"
+                    ? JgsBuiltins.SingleSparseOf(held, keepFlag: true)
+                    : JgsBuiltins.SparseOfComplex(held, keepFlag: true);
+            }
+
             case RuntimeSparse sparse:
             {
                 var triplets = new List<(int Row, int Col, double Value)>(sparse.Values.Count);
@@ -73,7 +91,12 @@ internal static class RuntimeValueConversion
 
                 // A logical one comes in logical: the engine holds logical sparse matrices since ADR 0369 (ADR 0374).
                 var matrix = JGraph.Numerics.Sparse.CscMatrix.FromTriplets(dims[0], dims[1], triplets);
-                return sparse.ClassName == "logical" ? JgsBuiltins.LogicalSparseOf(matrix) : JgsValue.Sparse(matrix);
+                return sparse.ClassName switch
+                {
+                    "logical" => JgsBuiltins.LogicalSparseOf(matrix),
+                    "single" => JgsBuiltins.SingleSparseOf(matrix), // open item 345, ADR 0381
+                    _ => JgsValue.Sparse(matrix),
+                };
             }
 
             default:
@@ -109,13 +132,25 @@ internal static class RuntimeValueConversion
                 return new RuntimeChar(value.AsString, dims);
             case "logical" when value.Type is JgsType.Bool or JgsType.Array:
                 return new RuntimeLogical([.. Elements(value, dims).Select(static e => e.AsNumber != 0)], dims);
-            case "double" or "logical" when value.Type == JgsType.Sparse:
+            case "double" or "single" when value.Type == JgsType.Sparse && value.IsComplexSparse:
+            {
+                // A complex sparse matrix goes out complex, a single one single (open item 345, ADR 0381).
+                JgsComplexSparse entries = value.AsComplexSparse;
+                int nonzeros = entries.NonZeroCount;
+                return new RuntimeSparse(
+                    cls, entries.Rows, entries.Cols,
+                    entries.RowIndices.AsSpan(0, nonzeros).ToArray(), entries.ColumnStarts,
+                    [.. entries.Values.Take(nonzeros).Select(static z => z.Real)],
+                    [.. entries.Values.Take(nonzeros).Select(static z => z.Imaginary)]);
+            }
+
+            case "double" or "single" or "logical" when value.Type == JgsType.Sparse:
             {
                 JGraph.Numerics.Sparse.CscMatrix matrix = value.AsSparse;
                 int stored = matrix.NonZeroCount;
                 return new RuntimeSparse(
-                    matrix.Rows, matrix.Cols,
-                    matrix.RowIndices.AsSpan(0, stored).ToArray(), matrix.ColumnStarts, matrix.Values.AsSpan(0, stored).ToArray(), cls == "logical");
+                    cls, matrix.Rows, matrix.Cols,
+                    matrix.RowIndices.AsSpan(0, stored).ToArray(), matrix.ColumnStarts, matrix.Values.AsSpan(0, stored).ToArray(), null);
             }
 
             case "cell" when value.Type == JgsType.Cell:

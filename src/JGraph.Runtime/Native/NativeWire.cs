@@ -534,6 +534,10 @@ internal static class NativeWire
 
                 return;
 
+            case RuntimeSparse { IsComplex: true }:
+                // The wire's complex sparse types are refused coming in, and are not written (ADR 0381).
+                throw new ArgumentException("JGraph has no complex sparse arrays on this wire: return the real and imaginary parts apart.");
+
             case RuntimeSparse sparse:
                 w.Header(SparseDouble, [.. sparse.Dimensions]);
                 w.U64((ulong)sparse.Values.Count);

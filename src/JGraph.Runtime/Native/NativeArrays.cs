@@ -303,6 +303,10 @@ internal static unsafe class NativeArrays
                 case RuntimeStruct record:
                     return Struct(record, dims.Length, shape);
 
+                case RuntimeSparse { IsComplex: true }:
+                    // The C API's sparse arrays are real here, as the ones it passes in are (ADR 0381).
+                    throw new ArgumentException("JGraph's C API returns no complex sparse arrays: return the real and imaginary parts apart.");
+
                 case RuntimeSparse sparse:
                 {
                     int stored = sparse.Values.Count;

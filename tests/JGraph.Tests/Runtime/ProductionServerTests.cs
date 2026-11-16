@@ -264,12 +264,12 @@ public sealed class ProductionServerTests : IDisposable
     {
         var set = new HashSet<string>(StringComparer.Ordinal)
         {
-            "raw/in.uint64.row", "raw/in.int64.row", "raw/in.sparse.logical", "raw/in.sparse.single", "raw/in.double.precise", "raw/in.single.row",
+            "raw/in.uint64.row", "raw/in.int64.row", "raw/in.double.precise", "raw/in.single.row",
             "raw/in.count.short", "raw/in.payload.absent", "raw/in.payload.two", "raw/in.type.mismatch", "raw/in.type.mismatch.char",
             "raw/in.complex.imag.short", "raw/in.sparse.badir", "raw/in.struct.badname", "proto/in.int64", "proto/out.int64", "raw/out.int64",
-            "raw/out.sparselogical", "raw/in.complex.zero.imag", "raw/in.char.nd", "raw/out.handle", "raw/out.map", "raw/out.table", "raw/out.dict",
-            "dotnet/in.longs", "dotnet/out.int64", "dotnet/typed.int64", "c/in.int64", "c/in.uint64", "c/out.int64", "c/in.sparse.logical",
-            "c/in.sparse.complex", "c/out.sparselogical", "raw/query.async", "raw/echo.twoenums", "dotnet/state.0", "dotnet/state.1", "c/state.0", "c/state.1",
+            "raw/in.complex.zero.imag", "raw/in.char.nd", "raw/out.handle", "raw/out.map", "raw/out.table", "raw/out.dict",
+            "dotnet/in.longs", "dotnet/out.int64", "dotnet/typed.int64", "c/in.int64", "c/in.uint64", "c/out.int64",
+            "raw/query.async", "raw/echo.twoenums", "dotnet/state.0", "dotnet/state.1", "c/state.0", "c/state.1",
         };
         foreach (string mode in new[] { "proto", "raw", "dotnet", "c", "hidden" })
         {

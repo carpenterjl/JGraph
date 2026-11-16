@@ -1634,6 +1634,15 @@ internal static partial class JgsBuiltins
             if (name == "median") return MedianReduction(args, line, col);
             var normalized = args.ToArray();
             bool sparse = args.Count > 0 && args[0].Type == JgsType.Sparse;
+
+            // A single sparse matrix reduces in single, entry after entry (open item 345, ADR 0381).
+            if (sparse && IsSingleSparse(args[0]) && name is "sum" or "prod" or "mean" or "cumsum" or "cumprod")
+            {
+                var reduced = Split(args, line, col);
+                if (SingleSparseReduction(name, args, reduced.Dim, reduced.Vecdim, reduced.Extra, reduced.All, reduced.OmitNan, reduced.Reverse) is { } inSingle)
+                    return inSingle;
+            }
+
             if (sparse && name == "sum" && !args[0].IsComplexSparse)
             {
                 var parsed = Split(args, line, col);

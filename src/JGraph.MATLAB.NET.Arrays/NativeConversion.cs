@@ -184,6 +184,12 @@ internal static class NativeConversion
 
             case RuntimeSparse sparse:
             {
+                // The native API has no .NET type for a complex value, sparse or dense (ADR 0381).
+                if (sparse.IsComplex)
+                {
+                    throw new InvalidDataException(Unsupported + " for output");
+                }
+
                 var dense = new double[sparse.Count];
                 for (int c = 0; c < dims[1]; c++)
                 {
