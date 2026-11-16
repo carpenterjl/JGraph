@@ -177,6 +177,60 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
+    /// A write target with every dynamic field name that reads only data (see <see cref="IsInert"/>)
+    /// replaced by the static name it holds now (open item 347, ADR 0384): <c>s.(f)(3) = 1</c> then
+    /// creates <c>s.(f)</c> as <c>s.a(3) = 1</c> creates <c>s.a</c>, a dynamic level being one the
+    /// roads could not peek at without evaluating its name twice. Reading an inert name first is
+    /// R2025b's order for every shape but a paren on a variable, which has no dynamic level. A target
+    /// with no such level is handed back as it is.
+    /// </summary>
+    private Expr WithInertNamesResolved(Expr target, JgsEnvironment env)
+    {
+        switch (target)
+        {
+            case MemberExpr member:
+            {
+                Expr inner = WithInertNamesResolved(member.Target, env);
+                if (member.Field is null && IsInert(member.FieldName!, env))
+                {
+                    return new MemberExpr(inner, FieldName(member, env), null) { Line = member.Line, Column = member.Column };
+                }
+
+                return ReferenceEquals(inner, member.Target)
+                    ? member
+                    : new MemberExpr(inner, member.Field, member.FieldName) { Line = member.Line, Column = member.Column };
+            }
+
+            case BraceIndexExpr brace:
+            {
+                Expr inner = WithInertNamesResolved(brace.Target, env);
+                return ReferenceEquals(inner, brace.Target)
+                    ? brace
+                    : new BraceIndexExpr(inner, brace.Indices) { Line = brace.Line, Column = brace.Column };
+            }
+
+            case CallExpr call:
+            {
+                Expr inner = WithInertNamesResolved(call.Callee, env);
+                return ReferenceEquals(inner, call.Callee)
+                    ? call
+                    : new CallExpr(inner, call.Arguments) { Line = call.Line, Column = call.Column };
+            }
+
+            case IndexExpr index:
+            {
+                Expr inner = WithInertNamesResolved(index.Target, env);
+                return ReferenceEquals(inner, index.Target)
+                    ? index
+                    : new IndexExpr(inner, index.Indices) { Line = index.Line, Column = index.Column };
+            }
+
+            default:
+                return target;
+        }
+    }
+
+    /// <summary>
     /// One level's subscripts, each evaluated exactly once (M15) with <c>end</c> bound to the
     /// container's extents as they are now; the container is read only when a subscript mentions
     /// <c>end</c>, and a container that does not exist yet has every extent zero.
@@ -440,6 +494,39 @@ internal sealed partial class Interpreter
                 : JgsMatrix.FromElements(System.Array.Empty<JgsValue>(), 0, 0);
 
     /// <summary>
+    /// The empty an index write conjures in the MATLAB dialect, a variable or a field: one of the
+    /// right-hand side's class, as R2025b's is (open item 347, ADR 0384; probe p8d3 e21 to e30, e36,
+    /// e37: <c>x(3) = 'x'</c> with no <c>x</c> is char, <c>s.a(2) = int8(3)</c> int8, where both were
+    /// double here). A complex right-hand side and every kind <see cref="EmptyOfKind"/> knows keep its empty.
+    /// </summary>
+    private JgsValue ConjuredEmptyOf(JgsValue rhs)
+    {
+        if (!Dialect.IsMatlab || rhs.IsStringArray || rhs.IsTime || rhs.IsCategorical)
+        {
+            return EmptyOfKind(rhs);
+        }
+
+        if (rhs.Type == JgsType.String || rhs.IsCharMatrix)
+        {
+            return JgsBuiltins.EmptyChar(0, 0);
+        }
+
+        if (rhs.Type is JgsType.Number or JgsType.Bool or JgsType.Array && JgsBuiltins.IsLogicalValue(rhs))
+        {
+            return JgsBuiltins.EmptyLogical(0, 0);
+        }
+
+        if (rhs.Type is JgsType.Number or JgsType.Array && rhs.NumericClass != JgsNumericClass.Double)
+        {
+            JgsValue typed = JgsMatrix.FromColumnMajor([], 0, 0);
+            typed.SetNumericClass(rhs.NumericClass);
+            return typed;
+        }
+
+        return EmptyOfKind(rhs);
+    }
+
+    /// <summary>
     /// Whether a field write target names a field its struct does not hold yet — or a struct that
     /// does not exist yet — so that <c>s.f(3) = 9</c> creates <c>s.f</c> before indexing into it.
     /// Only the shapes a peek can settle without evaluating anything twice answer true.
@@ -454,11 +541,102 @@ internal sealed partial class Interpreter
         return member.Target switch
         {
             VariableExpr variable => !LookUp(variable.Name, env, out JgsValue held)
-                || LacksField(held, member.Field),
+                || LacksField(held, member.Field) || IsEmptyDotHolder(held),
+
+            // s(2).a(3) = 1 with no field a in s, or no s (open item 347, ADR 0384).
+            CallExpr { Callee: VariableExpr elementOf, Arguments.Count: 1 } when Dialect.IsMatlab =>
+                !LookUp(elementOf.Name, env, out JgsValue structs) || IsEmptyDotHolder(structs)
+                || (structs.Type == JgsType.Array && structs.ArrayLength == 0 && !structs.IsStringArray)
+                || (structs.Type == JgsType.Struct && structs.ClassName is null && !structs.IsTime
+                    && !JgsBuiltins.IsKeyedCollection(structs) && !structs.AsStructArray.FieldNames.Contains(member.Field)),
             MemberExpr inner => IsAbsentField(inner, env)
                 || (TryPeekField(inner, env, out JgsValue held) && LacksField(held, member.Field)),
             _ => false,
         };
+    }
+
+    /// <summary>
+    /// R2025b's refusals of an indexed write into a variable's field (open item 347, ADR 0384; probes
+    /// p8d1 a3, a6, a16, a25, a41 and p8d3 e7 to e19): <c>s.a(3) = v</c> or <c>s.a{3} = v</c> where
+    /// <c>s</c> holds a value with no dots is the dot write's refusal, and where it is a struct array
+    /// one that wants a scalar struct; the <c>[]</c>, <c>{}</c> and <c>''</c> a struct starts from pass.
+    /// </summary>
+    private void RefuseFieldIndexWrite(Expr container, JgsEnvironment env)
+    {
+        if (!Dialect.IsMatlab || container is not MemberExpr { Field: not null } member)
+        {
+            return;
+        }
+
+        // s(2).a(3) = v on a value with no dots (probe p8d1 a12).
+        if (member.Target is CallExpr { Callee: VariableExpr elementOf, Arguments.Count: 1 }
+            && LookUp(elementOf.Name, env, out JgsValue elements) && RefusesDots(elements))
+        {
+            throw FieldWriteRefusal(member, DotNotSupported);
+        }
+
+        if (member.Target is not VariableExpr owner || !LookUp(owner.Name, env, out JgsValue held))
+        {
+            return;
+        }
+
+        if (held.Type == JgsType.Struct && held.IsStructArray && held.ClassName is null && !held.IsTime && !JgsBuiltins.IsKeyedCollection(held))
+        {
+            throw ScalarStructRequired(held, member);
+        }
+
+        if (RefusesDots(held))
+        {
+            throw FieldWriteRefusal(member, DotNotSupported);
+        }
+    }
+
+    /// <summary>
+    /// <c>s.a(end+1) = v</c> with no <c>s</c>: the <c>end</c> reads a name nothing holds, R2025b's
+    /// unresolved dotted name (open item 347, ADR 0384; probe p8d3 e1, e3), where it had been an empty.
+    /// </summary>
+    private void RefuseEndOfUnboundField(Expr container, JgsEnvironment env)
+    {
+        if (!Dialect.IsMatlab)
+        {
+            return;
+        }
+
+        var names = new List<string>();
+        Expr at = container;
+        while (at is MemberExpr { Field: { } field } member)
+        {
+            names.Add(field);
+            at = member.Target;
+        }
+
+        if (names.Count == 0 || at is not VariableExpr root)
+        {
+            return;
+        }
+
+        names.Reverse();
+        if (!LookUp(root.Name, env, out JgsValue held))
+        {
+            throw new JgsRuntimeException(container.Line, container.Column, "MATLAB:undefinedVarOrClass",
+                $"Unable to resolve the name '{root.Name}.{string.Join('.', names)}'.");
+        }
+
+        // A field the struct on the way does not hold is the read's own refusal (probe p8d3 e2, e5).
+        foreach (string name in names)
+        {
+            if (held.Type != JgsType.Struct || held.IsStructArray || held.ClassName is not null || held.IsTime)
+            {
+                return;
+            }
+
+            if (!held.AsStruct.TryGetValue(name, out JgsValue? child))
+            {
+                throw new JgsRuntimeException(container.Line, container.Column, "MATLAB:nonExistentField", $"Unrecognized field name \"{name}\".");
+            }
+
+            held = child;
+        }
     }
 
     /// <summary>Whether a value a field write lands in has no such field yet: a struct without it, or the [] a struct starts from.</summary>

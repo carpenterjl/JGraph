@@ -301,6 +301,18 @@ internal static partial class JgsBuiltins
             return FromNetDictionary(map, fields, entries, net.Type, sharesOnStore, line, col);
         }
 
+        // containers.Map's declared form takes the two types and nothing more, and its keys-and-values
+        // form one trailing 'UniformValues' pair (open item 347, ADR 0384, probe p8d1 m1 to m18).
+        bool? uniform = null;
+        if (className == MapClassName && JgsRunningDialect.ThreadIsMatlab)
+        {
+            uniform = MapUniformValues(ref args, line, col);
+            if (uniform is not null && args.Count == 0)
+            {
+                return map; // containers.Map('UniformValues', true) is an empty map
+            }
+        }
+
         // containers.Map('KeyType', 'char', 'ValueType', 'any') declares the types and stays empty.
         if (args.Count == 4 && IsTextScalar(args[0]) && TextOf(args[0]).Equals("KeyType", StringComparison.OrdinalIgnoreCase))
         {
@@ -363,7 +375,87 @@ internal static partial class JgsBuiltins
             fields["ValueType"] = JgsValue.Str(className == DictionaryClassName ? ValueKind(ValueCell(map)[0]) : MapValueType(given));
         }
 
+        if (uniform is bool asked)
+        {
+            fields["ValueType"] = asked ? JgsValue.Str(UniformMapValueType(given, line, col)) : JgsValue.Str("any");
+        }
+
         return map;
+    }
+
+    /// <summary>
+    /// containers.Map's trailing <c>'UniformValues', u</c> pair in the MATLAB dialect, taken off the
+    /// arguments: null when there is none. R2025b refuses it after a declared pair, and any other count
+    /// of arguments around it, as <c>IncorrectNumberInputs</c>; a declared form whose third argument is
+    /// not the other type's name is its <c>Param</c> refusal; <c>u</c> is a logical or numeric scalar
+    /// (open item 347, ADR 0384, probe p8d1 m1 to m18).
+    /// </summary>
+    private static bool? MapUniformValues(ref IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        static bool Named(JgsValue value, string name) => IsTextScalar(value) && TextOf(value).Equals(name, StringComparison.OrdinalIgnoreCase);
+
+        bool declared = Named(args[0], "KeyType") || Named(args[0], "ValueType");
+        bool trailing = args.Count >= 2 && Named(args[^2], "UniformValues");
+        if (declared && args.Count > 4)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:Containers:Map:IncorrectNumberInputs", "Incorrect number of inputs specified.");
+        }
+
+        if (declared && args.Count == 4 && !Named(args[2], Named(args[0], "KeyType") ? "ValueType" : "KeyType"))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:Containers:Map:Param",
+                "Missing parameter name 'KeyType' or 'ValueType'. \nUse syntax: newMap = containers.Map('KeyType', myKeyType, 'ValueType', myValueType).");
+        }
+
+        // Another name after the keys and values is ignored with R2025b's warning (probe p8d3 m1).
+        if (!declared && !trailing && args.Count == 4 && !IsTextScalar(args[0]) && IsTextScalar(args[2]))
+        {
+            if ((JgsLifetime.Current?.Interpreter.Host ?? JgsCallbackDispatcher.Current?.Interpreter?.Host) is { } host)
+            {
+                Warn(host, "MATLAB:Containers:Map:InvalidParameterName",
+                    $"Unknown parameter name {TextOf(args[2])} will be ignored.  Check documentation for list of known parameters.");
+            }
+
+            args = [args[0], args[1]];
+            return null;
+        }
+
+        if (declared || !trailing)
+        {
+            return null;
+        }
+
+        if (args.Count is not (2 or 4))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:Containers:Map:IncorrectNumberInputs", "Incorrect number of inputs specified.");
+        }
+
+        JgsValue flag = args[^1];
+        if (!(flag.Type is JgsType.Bool or JgsType.Number) || IsTextScalar(flag))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:Containers:Map:ExpectScalarLogical", "Expected 'UniformValues' to be a logical scalar.");
+        }
+
+        bool uniform = flag.Type == JgsType.Bool ? flag.AsBool : flag.AsNumber != 0;
+        args = args.Count == 2 ? [] : [args[0], args[1]];
+        return uniform;
+    }
+
+    /// <summary>
+    /// The value type of a map made with <c>'UniformValues', true</c>: R2025b's inferred type, or its
+    /// refusal of values that are not all char rows or all scalars of one class (open item 347, ADR 0384).
+    /// </summary>
+    private static string UniformMapValueType(JgsValue[] values, int line, int col)
+    {
+        string inferred = MapValueType(values);
+        if (inferred != "any")
+        {
+            return inferred;
+        }
+
+        const string Words = "When 'UniformValues' is true, values must be all character arrays or all scalars of matching type.";
+        bool nonScalar = System.Array.Exists(values, static v => v.Type == JgsType.Array && !v.IsStringArray && v.ArrayLength != 1);
+        throw new JgsRuntimeException(line, col, nonScalar ? "MATLAB:Containers:Map:UniformNonScalar" : "MATLAB:Containers:Map:UniformMismatch", Words);
     }
 
     /// <summary>The key types R2025b's containers.Map declares (open item 342, ADR 0375, probe p7e1 k1 to k20).</summary>

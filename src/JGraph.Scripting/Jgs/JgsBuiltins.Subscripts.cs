@@ -126,6 +126,102 @@ internal static partial class JgsBuiltins
             BindsAnsAsStatement = false,
             KeepsStringArguments = true,
         }));
+
+        // getfield and setfield past one name (open item 347, ADR 0384), as R2025b's getfield.m and
+        // setfield.m: a level a cell is a paren index, a text a field name losing its trailing blanks.
+        // getfield indexes one level at a time; setfield is one subsasgn whose refusal is rethrown as
+        // MATLAB:setfield. The plain forms stay the builtins' own, but for a value no field write
+        // takes (setfield(5, 'a', 1)) or a struct array, which are the dot write's refusals.
+        JgsValue OneLevel(string type, JgsValue subs) =>
+            JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal) { ["type"] = JgsValue.Str(type), ["subs"] = subs });
+
+        WrapFieldVerb("getfield", (args, line, col) =>
+        {
+            if (args.Count < 2)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:getfield:InsufficientInputs", "Not enough input arguments.");
+            }
+
+            if (args.Count == 2 && IsTextScalar(args[1]))
+            {
+                return null;
+            }
+
+            JgsValue f = args[0];
+            for (int k = 1; k < args.Count; k++)
+            {
+                JgsValue level = args[k].Type == JgsType.Cell ? OneLevel("()", args[k])
+                    : IsTextScalar(args[k]) ? OneLevel(".", JgsValue.Str(Deblanked(TextOf(args[k]))))
+                    : throw new JgsRuntimeException(line, col, "MATLAB:getfield:InvalidType", "Inputs must be strings, character vectors, or cell array of indices.");
+                f = Reference([f, level], 1, line, col)[0];
+            }
+
+            return f;
+        });
+
+        WrapFieldVerb("setfield", (args, line, col) =>
+        {
+            if (args.Count < 3)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:setfield:InsufficientInputs", "Not enough input arguments.");
+            }
+
+            bool plainTarget = args[0].Type == JgsType.Struct && !args[0].IsStructArray;
+            if (args.Count == 3 && (plainTarget || args[0].Type == JgsType.Object || !IsTextScalar(args[1])))
+            {
+                return null;
+            }
+
+            var levels = new List<Dictionary<string, JgsValue>>();
+            for (int k = 1; k < args.Count - 1; k++)
+            {
+                levels.Add(args[k].Type == JgsType.Cell
+                    ? new Dictionary<string, JgsValue>(StringComparer.Ordinal) { ["type"] = JgsValue.Str("()"), ["subs"] = args[k] }
+                    : IsTextScalar(args[k])
+                        ? new Dictionary<string, JgsValue>(StringComparer.Ordinal) { ["type"] = JgsValue.Str("."), ["subs"] = JgsValue.Str(Deblanked(TextOf(args[k]))) }
+                        : throw new JgsRuntimeException(line, col, "MATLAB:setfield:InvalidType", "Inputs must be string, character vectors, or cell array of indices."));
+            }
+
+            JgsValue chain = levels.Count == 1 ? JgsValue.Struct(levels[0]) : JgsValue.StructArray([.. levels]);
+
+            // A plain s.(name) = v is the dot write itself in setfield.m, and its refusal is its own.
+            if (args.Count == 3)
+            {
+                return Assign([args[0], chain, args[2]], line, col);
+            }
+
+            try
+            {
+                return Assign([args[0], chain, args[^1]], line, col);
+            }
+            catch (JgsRuntimeException refused)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:setfield", refused.Message);
+            }
+        });
+
+        void WrapFieldVerb(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue?> matlabForm)
+        {
+            if (!env.Builtins.TryGet(name, out JgsValue existing) || existing.Type != JgsType.Function
+                || existing.AsCallable is not BuiltinFunction inner)
+            {
+                return;
+            }
+
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
+                (JgsRunningDialect.ThreadIsMatlab ? matlabForm(args, line, col) : null) ?? inner.Call(args, line, col))
+            {
+                KeepsStringArguments = inner.KeepsStringArguments,
+                BindsAnsAsStatement = inner.BindsAnsAsStatement,
+                AutoCallsBare = inner.AutoCallsBare,
+                KnowsWhenDiscarded = inner.KnowsWhenDiscarded,
+                TakesOutputCount = inner.TakesOutputCount,
+                MultiOutput = inner.MultiOutput is null ? null : (args, wanted, line, col) =>
+                    JgsRunningDialect.ThreadIsMatlab && matlabForm(args, line, col) is { } answered
+                        ? [answered]
+                        : inner.MultiOutput(args, wanted, line, col),
+            }));
+        }
     }
 
     /// <summary>

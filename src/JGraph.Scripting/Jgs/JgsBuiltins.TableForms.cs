@@ -166,6 +166,7 @@ internal static partial class JgsBuiltins
         string[]? given = options.TryGetValue("NewVariableNames", out JgsValue? named)
             ? FieldNameList("addvars", named, line, col)
             : null;
+        RefuseLongTableNames(given ?? [], dimension: false, line, col); // open item 347, ADR 0384
         if (given is not null && given.Length != count)
         {
             throw new JgsRuntimeException(line, col,

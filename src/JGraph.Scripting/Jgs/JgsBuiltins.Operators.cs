@@ -63,6 +63,11 @@ internal static partial class JgsBuiltins
         Define("uminus", (args, line, col) =>
         {
             Arity("uminus", args, 1, line, col);
+            if (interpreter.Dialect.IsMatlab && IsCalendarDuration(args[0]))
+            {
+                return CalendarSign(args[0], negate: true); // open item 347, ADR 0384
+            }
+
             // -S of a sparse matrix is sparse, as the unary operator answers it (0 - S is not; ADR 0374).
             if (args[0].Type == JgsType.Sparse)
             {
@@ -81,6 +86,10 @@ internal static partial class JgsBuiltins
         Define("uplus", (args, line, col) =>
         {
             Arity("uplus", args, 1, line, col);
+            if (interpreter.Dialect.IsMatlab && IsCalendarDuration(args[0]))
+            {
+                return args[0]; // open item 347, ADR 0384
+            }
 
             // +S is S; +L of a logical one is double (c_uplus_l; ADR 0374).
             if (args[0].Type == JgsType.Sparse)

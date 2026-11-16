@@ -92,9 +92,21 @@ internal static partial class JgsBuiltins
                 for (int i = 0; i < texts.Length; i++)
                 {
                     // A missing time is the missing string in R2025b (open item 128: string(NaT)).
-                    texts[i] = JgsValue.Str(JgsRunningDialect.ThreadIsMatlab && !calendar && double.IsNaN(input.ElementAt(i).AsNumber)
+                    texts[i] = JgsValue.Str(JgsRunningDialect.ThreadIsMatlab && (calendar ? IsNaNCalendarElement(input, i) : double.IsNaN(input.ElementAt(i).AsNumber))
                         ? MissingSentinel
                         : TimeText(input, i));
+                }
+
+                // A calendarDuration's strings keep its shape, an empty one's too (open item 347, ADR 0384).
+                if (calendar && JgsRunningDialect.ThreadIsMatlab && texts.Length != 1)
+                {
+                    JgsValue shaped = JgsValue.StringArray(texts, input.Rows, input.Cols);
+                    if (input.IsNd)
+                    {
+                        shaped.ReshapeDims(input.Dims);
+                    }
+
+                    return shaped;
                 }
 
                 if (calendar)
@@ -277,10 +289,12 @@ internal static partial class JgsBuiltins
             JgsValue nameList = args[columnCount - 1];
             JgsValue[] nameValues = nameList.Type == JgsType.Cell ? nameList.AsCell
                 : nameList.Type == JgsType.Array ? nameList.BoxedElements()
+                : JgsRunningDialect.ThreadIsMatlab && IsTextScalar(nameList) ? [JgsValue.Str(TextOf(nameList))] // one name as text (open item 347)
                 : throw new JgsRuntimeException(line, col, $"{name}: 'VariableNames' takes a cell of names.");
             if (args[columnCount - 2].AsString == "RowNames") rowNames = Array.ConvertAll(nameValues, v => StringOf(v).AsString);
             else names = Array.ConvertAll(nameValues, v => StringOf(v).AsString);
             columnCount -= 2;
+            RefuseLongTableNames(names ?? [], dimension: false, line, col); // open item 347, ADR 0384
         }
 
         // The interpreter names a table's variables after the arguments it was handed, so a call
@@ -560,6 +574,7 @@ internal static partial class JgsBuiltins
         }
 
         string[] variableNames = NameList(given["VariableNames"], "VariableNames", line, col);
+        RefuseLongTableNames(variableNames, dimension: false, line, col);
         if (variableNames.Length != table.ColumnCount)
         {
             throw new JgsRuntimeException(line, col,
@@ -584,6 +599,7 @@ internal static partial class JgsBuiltins
         }
 
         string[] dimensionNames = NameList(given["DimensionNames"], "DimensionNames", line, col);
+        RefuseLongTableNames(dimensionNames, dimension: true, line, col);
         if (dimensionNames.Length != 2)
         {
             throw new JgsRuntimeException(line, col, "The DimensionNames property must be a two-element cell array of character vectors or string array.");
@@ -610,6 +626,28 @@ internal static partial class JgsBuiltins
                 : throw new JgsRuntimeException(line, col, "The Description property must be a character vector or string scalar."),
             UserData = given["UserData"],
         };
+    }
+
+    /// <summary>
+    /// A table's variable or dimension name past <c>namelengthmax</c>, refused in the MATLAB dialect in
+    /// R2025b's words (open item 347, ADR 0384), where a struct's field name is cut (ADR 0375).
+    /// </summary>
+    private static void RefuseLongTableNames(IEnumerable<string> names, bool dimension, int line, int col)
+    {
+        if (!JgsRunningDialect.ThreadIsMatlab)
+        {
+            return;
+        }
+
+        foreach (string name in names)
+        {
+            if (name.Length > NameLengthMax)
+            {
+                throw new JgsRuntimeException(line, col,
+                    dimension ? "MATLAB:table:DimNameLengthMax" : "MATLAB:table:VariableNameLengthMax",
+                    $"'{name}' is {name.Length} characters long, which is longer than the maximum allowed length for a table {(dimension ? "dimension" : "variable")} name, {NameLengthMax} characters.");
+            }
+        }
     }
 
     private static string[] NameList(JgsValue value, string property, int line, int col)

@@ -477,6 +477,13 @@ internal static partial class JgsBuiltins
         }
 
         // findobj(mc.PropertyList, 'Name', 'A'): a search of a metadata array (open item 342, ADR 0375).
+        // findobj(mc, ...): the class and its members (open item 347, ADR 0384).
+        if (verb == "findobj" && args.Count > 0 && JgsRunningDialect.ThreadIsMatlab
+            && args[0].Type == JgsType.Struct && !args[0].IsStructArray && args[0].ClassName is "matlab.metadata.Class" or MetaClassName)
+        {
+            return FindInMetaclass(args, line, col);
+        }
+
         if (verb == "findobj" && args.Count > 0 && JgsRunningDialect.ThreadIsMatlab
             && IsMetadataValue(args[0]) && args[0].ClassName != MetaClassName)
         {

@@ -362,6 +362,13 @@ internal static partial class JgsBuiltins
             }
 
             values = new double[rows];
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                // A date vector's first five columns are whole numbers (open item 347, ADR 0384).
+                double[] flat = ToDoubles("datetime", matrix, line, col);
+                RefuseFractionalDatetimeParts([flat[..System.Math.Min(flat.Length, rows * 5)]], line, col);
+            }
+
             for (int r = 0; r < rows; r++)
             {
                 double At(int c) => c < cols ? matrix.ElementAt((c * rows) + r).AsNumber : 0;
@@ -443,6 +450,25 @@ internal static partial class JgsBuiltins
         if (JgsTime.TryParse(text, inputFormat, out double ms))
         {
             return ms;
+        }
+
+        // A year before 1 or past 9999, which .NET's parser does not hold, and R2025b's refusal in
+        // its own words (open item 347, ADR 0384).
+        if (JgsRunningDialect.ThreadIsMatlab)
+        {
+            foreach (string shape in inputFormat is null ? SignedYearGuesses : [inputFormat])
+            {
+                if (SignedYearMoment(text, shape) is double signedYear)
+                {
+                    return signedYear;
+                }
+            }
+
+            if (inputFormat is not null)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:datetime:ParseErr",
+                    $"Unable to convert '{text}' to datetime using the format '{inputFormat}'.");
+            }
         }
 
         throw new JgsRuntimeException(line, col, inputFormat is null
@@ -587,6 +613,26 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
+    /// R2025b's refusal of a fractional year, month, day, hour or minute in a datetime built from its
+    /// components (open item 347, ADR 0384, probe p8d2 d1 to d20): the seconds and milliseconds may be
+    /// fractional, and NaN and Inf are a component's NaT and infinite moment, not fractions.
+    /// </summary>
+    private static void RefuseFractionalDatetimeParts(IReadOnlyList<double[]> parts, int line, int col)
+    {
+        for (int i = 0; i < parts.Count && i < 5; i++)
+        {
+            foreach (double part in parts[i])
+            {
+                if (double.IsFinite(part) && part != Math.Floor(part))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:datetime:MustBeInteger",
+                        "Year, month, day, hour, and minute components must be integer values.");
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// Builds one moment per element from the three or six component arguments, expanding scalars —
     /// which is what makes <c>datetime(2024, 1, 1:31)</c> a month of days.
     /// </summary>
@@ -609,6 +655,7 @@ internal static partial class JgsBuiltins
         if (JgsRunningDialect.ThreadIsMatlab)
         {
             length = ComponentLength(name, parts, positional, line, col, out shapeModel);
+            RefuseFractionalDatetimeParts(parts, line, col);
         }
 
         foreach (double[] part in parts)
@@ -800,7 +847,9 @@ internal static partial class JgsBuiltins
         {
             string format = value.IsDuration && JgsRunningDialect.ThreadIsMatlab
                 ? DurationDisplayFormat(written, line, col) // R2025b's formats only (open item 342, ADR 0375)
-                : TextOfArgument("Format", written, line, col);
+                : IsCalendarDuration(value) && JgsRunningDialect.ThreadIsMatlab
+                    ? CalendarDisplayFormat(written, line, col) // open item 347, ADR 0384
+                    : TextOfArgument("Format", written, line, col);
             if (value.IsDatetime)
             {
                 // 'default' goes back to the format worked out from the moments, and nothing is no
@@ -955,6 +1004,13 @@ internal static partial class JgsBuiltins
         if (IsCalendarDuration(value))
         {
             (double months, double days, double millis) = ReadCalendar(value.AsStructArray, index);
+
+            // A zero element writes the smallest unit the others write (open item 347, ADR 0384).
+            if (JgsRunningDialect.ThreadIsMatlab && months == 0 && days == 0 && millis == 0 && value.AsStructArray.Length > 1)
+            {
+                return ZeroCalendarText(CalendarZeroUnit(value));
+            }
+
             return FormatCalendar(months, days, millis, value.TimeTag!.Format);
         }
 

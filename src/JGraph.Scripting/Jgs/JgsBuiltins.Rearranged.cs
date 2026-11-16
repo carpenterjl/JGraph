@@ -313,7 +313,8 @@ internal static partial class JgsBuiltins
             gathered.ReshapeDims(positions.Dims);
         }
 
-        return gathered;
+        // A calendarDuration rearranged is one still (open item 347, ADR 0384: reshape dropped the type).
+        return IsCalendarDuration(source) ? gathered.MarkTime(source.TimeTag!) : gathered;
     }
 
     /// <summary>1 to N laid out in the container's own shape — what the verb is actually asked about.</summary>

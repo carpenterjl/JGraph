@@ -535,11 +535,14 @@ internal static partial class JgsBuiltins
             string shape = DatestrShape("datestr", args, moments, line, col, serials);
 
             // formatdate.m writes a year of two or four letters only, counted over the whole format
-            // (open item 342, ADR 0375, probe p7e6: 'yyy', 'y mmm' and 'yy yyyy' are refused).
-            if (JgsRunningDialect.ThreadIsMatlab && shape.Count(static c => c == 'y') is not (0 or 2 or 4))
+            // (open item 342, ADR 0375, probe p7e6: 'yyy', 'y mmm' and 'yy yyyy' are refused), reads
+            // Y, D, f, h, q and s as y, d, F, H, Q and S, and refuses a field of the wrong count (open
+            // item 347, ADR 0384).
+            if (JgsRunningDialect.ThreadIsMatlab)
             {
-                throw new JgsRuntimeException(line, col, "MATLAB:formatdate:yearFormat", $"Unrecognized year format. Format: {shape}.");
+                shape = CanonicalDatestrFormat(shape, line, col);
             }
+
             string[] written = new string[moments.Length];
             for (int i = 0; i < moments.Length; i++)
             {
@@ -2956,6 +2959,7 @@ internal static partial class JgsBuiltins
         WrapComplexFlagVerbs(env, dialect); // the zero-imaginary flag's verbs and ADR 0365's refusals (open items 330, 333)
         WrapMixedClassVerbs(env, dialect); // max/min/rem/mod/bit verbs/idivide's class rules, logical of a NaN (open items 340, 341; ADR 0379)
         WrapSparseFunctions(env); // the elementwise family and the class conversions over a sparse argument (open item 331)
+        WrapCalendarVerbs(env, dialect); // repmat, isnan, isinf, isfinite and ismissing of a calendarDuration (open item 347, ADR 0384)
         RefuseGroupsAtAxesVerbs(env); // last, round whatever each axes verb ended up as (open item 168)
         RefuseDeadTargetsAtAxesVerbs(env); // and a deleted object first (open item 313)
 

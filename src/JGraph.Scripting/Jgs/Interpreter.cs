@@ -5081,6 +5081,12 @@ internal sealed partial class Interpreter
     /// <summary>The unary operator itself, on an already-evaluated operand.</summary>
     private JgsValue ApplyUnary(UnaryExpr unary, JgsValue operand)
     {
+        // -x and +x of a calendarDuration (open item 347, ADR 0384).
+        if (Dialect.IsMatlab && unary.Op is TokenType.Minus or TokenType.Plus && JgsBuiltins.IsCalendarDuration(operand))
+        {
+            return JgsBuiltins.CalendarSign(operand, unary.Op == TokenType.Minus);
+        }
+
         if (operand.Type == JgsType.Struct && JgsBuiltins.TryDecompositionUnary(
             unary.Op switch
             {
@@ -6943,6 +6949,12 @@ internal sealed partial class Interpreter
             target = PrepareTarget(target, env);
         }
 
+        // s.(f)(3) = 1 creates the field as s.a(3) = 1 does (open item 347, ADR 0384).
+        if (Dialect.IsMatlab && target is not VariableExpr && !parenOnVariable)
+        {
+            target = WithInertNamesResolved(target, env);
+        }
+
         // Z2b (ADR 0173): a plain `v = v op E` or `v = E op v` may write into v's own payload.
         if (assign.Op == TokenType.Assign && target is VariableExpr updated && assign.Value is BinaryExpr update
             && JgsReuse.Enabled && Dialect.CopyOnAssign && _hook is null && JgsReuse.IsUpdateShape(update, updated.Name))
@@ -7036,6 +7048,7 @@ internal sealed partial class Interpreter
 
         if (target is BraceIndexExpr brace)
         {
+            RefuseFieldIndexWrite(brace.Target, env); // s.a{3} = v on a number or a struct array (open item 347, ADR 0384)
             if (assign.Op != TokenType.Assign)
             {
                 JgsValue current = EvaluateBraceIndex(brace, env);
@@ -7071,8 +7084,11 @@ internal sealed partial class Interpreter
         // neither is refused as the read it is, where the write itself would have created the field.
         if (AnyMentionsEnd(subscripts))
         {
+            RefuseEndOfUnboundField(container, env); // s.a(end+1) = v with no s (open item 347, ADR 0384)
             TryReadContainer(container, env, out _);
         }
+
+        RefuseFieldIndexWrite(container, env); // s.a(3) = v on a number or a struct array (open item 347, ADR 0384)
 
         // MATLAB conjures the variable an index write names: x(5) = 1 with no x makes [0 0 0 0 1],
         // the same grow-and-zero-fill an existing array gets. The write starts from [] and the growth
@@ -7096,12 +7112,13 @@ internal sealed partial class Interpreter
                 // What is conjured is an empty of the kind being written: x(1) = "a" with no x is a
                 // string array and c(1) = {5} a cell (measured), where x = []; x(1) = "a" is a double
                 // holding NaN. The empty here is the difference between those two scripts.
-                conjuredScope.Declare(conjuredName, EmptyOfKind(rhs));
+                // In MATLAB code it is of the right-hand side's class (open item 347, ADR 0384).
+                conjuredScope.Declare(conjuredName, ConjuredEmptyOf(rhs));
             }
             else if (container is MemberExpr { Field: not null } field && IsAbsentField(field, env))
             {
                 // s.f(3) = 9 with no f: the field is created empty, and the struct on the way to it.
-                AssignToMember(field, EmptyOfKind(rhs), env);
+                AssignToMember(field, ConjuredEmptyOf(rhs), env);
             }
             else if (container is BraceIndexExpr slot && IsAbsentSlot(slot, env))
             {
@@ -11782,10 +11799,14 @@ internal sealed partial class Interpreter
                 $"Index {(int)index.AsNumber} is out of range (indexing is {Dialect.IndexBase}-based).");
         }
 
-        if (!defined || (existing.Type == JgsType.Array && existing.ArrayLength == 0))
+        if (!defined || (existing.Type == JgsType.Array && existing.ArrayLength == 0) || IsEmptyDotHolder(existing))
         {
             existing = JgsValue.StructArray(new JgsStructArray([]), 0, 0);
             isStruct = true;
+        }
+        else if (!isStruct && RefusesDots(existing))
+        {
+            throw FieldWriteRefusal(at, DotNotSupported); // s = 5; s(2).a = 1 (open item 347, ADR 0384)
         }
         else if (!isStruct)
         {

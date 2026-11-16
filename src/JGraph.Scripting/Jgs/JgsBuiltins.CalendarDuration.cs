@@ -57,6 +57,30 @@ internal static partial class JgsBuiltins
 
         Define("calendarDuration", (args, line, col) =>
         {
+            // R2025b's argument rules and its 'Format' option (open item 347, ADR 0384).
+            if (JgsRunningDialect.ThreadIsMatlab && args.Count > 0)
+            {
+                string? givenFormat = CalendarConstructorOptions(args, out List<JgsValue> numbers, line, col);
+                RefuseFractionalCalendarParts(numbers.Count == 1
+                    ? (IsCalendarDuration(numbers[0]) ? [] : LeadingColumns(numbers[0], line, col))
+                    : numbers.Take(5).SelectMany(a => ToDoubles("calendarDuration", a, line, col)), line, col);
+                JgsValue made = CalendarDurationOf(numbers, line, col);
+                return givenFormat is null ? made : made.MarkTime(new JgsTimeTag(JgsTimeKind.CalendarDuration, givenFormat));
+            }
+
+            return CalendarDurationOf(args, line, col);
+        });
+
+        // A date vector's year, month, day, hour and minute columns, the ones that must be whole.
+        static IEnumerable<double> LeadingColumns(JgsValue matrix, int line, int col)
+        {
+            double[] flat = ToDoubles("calendarDuration", matrix, line, col);
+            int rows = matrix.Type is JgsType.Number or JgsType.Bool ? 1 : JgsMatrix.RowCount(matrix);
+            return flat.Take(rows * 5);
+        }
+
+        JgsValue CalendarDurationOf(IReadOnlyList<JgsValue> args, int line, int col)
+        {
             ArityRange("calendarDuration", args, 1, 6, line, col);
 
             // calendarDuration(Y, M, D) and calendarDuration(Y, M, D, h, m, s) are MATLAB's two shapes,
@@ -104,7 +128,7 @@ internal static partial class JgsBuiltins
             }
 
             return CalendarValue(elements, args[0]);
-        });
+        }
 
         // caldiff and between both answer with the calendar difference between two moments, and both
         // needed this type before they could exist. between takes the components it is asked for;
@@ -227,6 +251,7 @@ internal static partial class JgsBuiltins
                 return counts.Length == 1 ? JgsValue.Number(counts[0]) : Numbers(counts);
             }
 
+            RefuseCalendarUnitData(name, args[0], line, col); // open item 347, ADR 0384
             double[] source = ToDoubles(name, args[0], line, col);
             var elements = new Dictionary<string, JgsValue>[source.Length];
             for (int i = 0; i < source.Length; i++)
@@ -264,7 +289,9 @@ internal static partial class JgsBuiltins
     internal static JgsValue CalendarValue(Dictionary<string, JgsValue>[] elements, JgsValue model, string? format = null)
     {
         JgsValue built = JgsValue.StructArray(elements);
-        if (model.Type == JgsType.Array && model.ArrayLength == elements.Length && elements.Length > 1)
+        // An empty one keeps its shape in MATLAB code, calmonths(zeros(1, 0)) a 1-by-0 (open item 347, ADR 0384).
+        if (model.Type == JgsType.Array && model.ArrayLength == elements.Length
+            && (elements.Length > 1 || (elements.Length == 0 && JgsRunningDialect.ThreadIsMatlab)))
         {
             built.TakeShapeOf(model);
         }
@@ -465,6 +492,21 @@ internal static partial class JgsBuiltins
                 $"'{symbol}' cannot combine a calendarDuration with a {TimeClassName(other)}.");
         }
 
+        // R2025b divides no calendarDuration and multiplies one by whole numbers only (open item 347,
+        // ADR 0384, probe p8d2 r53, p8d3 u26 to u28); NaN and Inf scale it.
+        if (JgsRunningDialect.ThreadIsMatlab && op is TokenType.Slash or TokenType.DotSlash or TokenType.Backslash or TokenType.DotBackslash)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:math:mustBeNumericCharOrLogical", "Invalid data type. Argument must be numeric, char, or logical.");
+        }
+
+        if (JgsRunningDialect.ThreadIsMatlab && op is TokenType.Star or TokenType.DotStar
+            && other.Type is JgsType.Number or JgsType.Bool or JgsType.Array && !other.IsStringArray
+            && ToDoubles(symbol, other, line, col).Any(static f => double.IsFinite(f) && f != System.Math.Floor(f)))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:calendarDuration:NonIntegerMultiplier",
+                "Multiplication by non-integer values is not defined for calendarDuration arrays.");
+        }
+
         // A plain number scales every component. MATLAB allows it, and it is the one operation where
         // the components do not need to know anything about each other.
         if (op is TokenType.Star or TokenType.DotStar
@@ -476,7 +518,11 @@ internal static partial class JgsBuiltins
             {
                 double by = factors.Length == 1 ? factors[0] : factors[i];
                 double scale = dividing ? 1.0 / by : by;
-                return (element.Months * scale, element.Days * scale, element.Millis * scale);
+
+                // A component that is zero stays zero under Inf in R2025b (calmonths(1) * Inf is Inf,
+                // not NaN; open item 347, ADR 0384).
+                double Scaled(double part) => part == 0 && JgsRunningDialect.ThreadIsMatlab && !double.IsNaN(scale) ? 0 : part * scale;
+                return (Scaled(element.Months), Scaled(element.Days), Scaled(element.Millis));
             });
         }
 
@@ -604,6 +650,11 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static string FormatCalendarMatlab(double months, double days, double millis, string format)
     {
+        if (InfiniteCalendarText(months, days, millis) is { } infinite)
+        {
+            return infinite; // open item 347, ADR 0384
+        }
+
         var parts = new List<string>(6);
         void Count(double count, string unit)
         {

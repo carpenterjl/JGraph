@@ -985,7 +985,15 @@ internal static partial class JgsBuiltins
                 bool calendar = IsCalendarDuration(input);
                 JgsValue[] texts = [.. Enumerable.Range(0, calendar ? input.AsStructArray.Length : input.ArrayLength).Select(i => JgsValue.Str(TimeText(input, i)))];
                 JgsValue cell = JgsValue.Cell(texts);
-                cell.Reshape(JgsMatrix.RowCount(input), JgsMatrix.ColCount(input));
+                if (calendar)
+                {
+                    cell.Reshape(input.Rows, input.Cols); // an empty one's shape too (open item 347, ADR 0384)
+                }
+                else
+                {
+                    cell.Reshape(JgsMatrix.RowCount(input), JgsMatrix.ColCount(input));
+                }
+
                 return cell;
             }
 

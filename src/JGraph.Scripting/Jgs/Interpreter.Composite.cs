@@ -184,7 +184,8 @@ internal sealed partial class Interpreter
                     return LevelKind.Continue;
                 }
 
-                if (nothing || (plainStruct && !held!.IsStructArray))
+                // x = {}; x.a{2} = 1 starts a struct as [] does (open item 347, ADR 0384; probe p8d3 e14).
+                if (nothing || (plainStruct && !held!.IsStructArray) || (held is not null && IsEmptyDotHolder(held)))
                 {
                     return OrdinaryRoadsCreate(chain, level + 1) ? LevelKind.Ordinary : LevelKind.Create;
                 }
@@ -274,7 +275,7 @@ internal sealed partial class Interpreter
                     return LevelKind.Ordinary;
                 }
 
-                if (plainStruct && subscripts.Count == 1 && NamedPosition(subscripts[0]) is int position
+                if (plainStruct && subscripts.Count == 1 && (NamedPosition(subscripts[0]) ?? InertPosition(subscripts[0], held!, env)) is int position
                     && position >= 0 && position < held!.AsStructArray.Length)
                 {
                     next = JgsValue.Struct(held.AsStructArray.Elements[position]); // a peek, never written through
@@ -328,6 +329,24 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>The 0-based position a subscript names when it is a whole number already in hand, or null.</summary>
+    /// <summary>
+    /// The position an inert subscript names in a struct array, read now: <c>s(k).a(2) = 9</c> with a
+    /// variable <c>k</c> walks into the element <c>k</c> names, where it was taken for a new element and
+    /// the field it held was lost (open item 347, ADR 0384). Null when the subscript may run script code
+    /// (the target was then pre-evaluated, and <see cref="NamedPosition"/> reads it) or names no one position.
+    /// </summary>
+    private int? InertPosition(Expr subscript, JgsValue structs, JgsEnvironment env)
+    {
+        if (!Dialect.IsMatlab || !IsInert(subscript, env)
+            || EvaluateIndexArgument(subscript, structs.AsStructArray.Length, env) is not { Type: JgsType.Number } named
+            || named.AsNumber != Math.Floor(named.AsNumber))
+        {
+            return null;
+        }
+
+        return (int)named.AsNumber - Dialect.IndexBase;
+    }
+
     private int? NamedPosition(Expr subscript)
     {
         double named = subscript switch
