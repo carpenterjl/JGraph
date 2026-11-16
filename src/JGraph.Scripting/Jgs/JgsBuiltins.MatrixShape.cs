@@ -2388,6 +2388,14 @@ internal static partial class JgsBuiltins
 
         double best = values[0];
         int at = 0;
+
+        // A NaN in front is the answer under 'includenan' too: the scan below let the next number
+        // past it (max([NaN 2 1], [], 'includenan') was 2; open item 351, ADR 0383).
+        if (!omitNan && double.IsNaN(best))
+        {
+            return (double.NaN, 0);
+        }
+
         for (int i = 1; i < values.Length; i++)
         {
             double candidate = values[i];

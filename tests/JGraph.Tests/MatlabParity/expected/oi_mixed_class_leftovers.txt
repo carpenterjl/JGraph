@@ -1,0 +1,532 @@
+CHK|mx_row_z|double[1 2] complex re [1 3] im [2 0]|exact
+CHK|mn_row_z|double[1 2] complex re [2 1] im [0 2]|exact
+CHK|mx_z_row|double[1 2] complex re [1 3] im [2 0]|exact
+CHK|mx_t_i|double[1 1] complex re 0 im 1|exact
+CHK|mn_t_i|double[1 1] real 1|exact
+CHK|mx_ab_z|double[1 2] real [97 98]|exact
+CHK|mn_ab_z|double[1 2] complex re [1 1] im [2 2]|exact
+CHK|mx_z_ab|MATLAB:max:wrongSecondInputText|exact
+CHK|mx_z_ab_msg|Invalid second argument. To specify an additional argument, use max(A,[],...).|exact
+CHK|mx_s_z|single[1 1] complex re 1 im 2|exact
+CHK|mn_sr_i|single[1 2] complex re [1 0] im [0 1]|exact
+CHK|mx_z_s_flag|single[1 1] real 2|exact
+CHK|mx_ch_z|double[1 1] complex re 0 im 100|exact
+CHK|mx_tie_2_2i|double[1 1] complex re 0 im 2|exact
+CHK|mn_tie_2_2i|double[1 1] real 2|exact
+CHK|mx_tie_m2_2i|double[1 1] real -2|exact
+CHK|mn_tie_m2_2i|double[1 1] complex re 0 im 2|exact
+CHK|mx_tie_2_m2i|double[1 1] real 2|exact
+CHK|mn_tie_2_m2i|double[1 1] complex re 0 im -2|exact
+CHK|mx_tie_m2_2|double[1 1] real -2|exact
+CHK|mn_tie_m2_2|double[1 1] real 2|exact
+CHK|mx_neg_angle|double[1 1] real -1|exact
+CHK|mx_negz|double[1 1] complex re 0 im 1|exact
+CHK|mn_negz|double[1 1] complex re 0 im -1|exact
+CHK|mx_flag_3|double[1 2] real [3 5]|exact
+CHK|mn_flag_3|double[1 2] real [1 3]|exact
+CHK|mx_flag_flag|double[1 1] real 2|exact
+CHK|mx_eqz|double[1 1] complex re 1 im 1|exact
+CHK|mn_eqz|double[1 1] complex re 1 im -1|exact
+CHK|mx_inf|double[1 1] complex re 1 im Inf|exact
+CHK|mx_nan_omit|double[1 2] complex re [0 2] im [1 0]|exact
+CHK|mx_nan_inc|double[1 2] complex re [NaN 2] im [1 0]|exact
+CHK|mn_nan_inc|double[1 2] complex re [NaN 0] im [1 1]|exact
+CHK|mx_nan_both|double[1 1] real NaN|exact
+CHK|mx_nan_real|double[1 1] complex re 0 im 1|exact
+CHK|mx_nani|double[1 1] real 5|exact
+CHK|mx_zz_nan2|double[1 1] complex re NaN im 1|exact
+CHK|mx_zz_nan2i|double[1 1] complex re NaN im 1|exact
+CHK|mx_expand|double[2 2] complex re [3 0;3 0] im [0 1;0 2]|exact
+CHK|mx_size|MATLAB:sizeDimensionsMustMatch|exact
+CHK|mx_size_msg|Arrays have incompatible sizes for this operation.|exact
+CHK|mx_empty|double[0 0] real []|exact
+CHK|mx_empty2|double[1 0] real zeros(1,0)|exact
+CHK|mx_cell|MATLAB:max:wrongInput|exact
+CHK|mx_cell_msg|First input array is an invalid data type.|exact
+CHK|mx_str|MATLAB:max:wrongInput|exact
+CHK|mx_str_msg|First input array is an invalid data type.|exact
+CHK|mx_i8z|MATLAB:complexInts|exact
+CHK|mx_i8z_msg|Complex integer arithmetic is not supported.|exact
+CHK|mx_two_out|MATLAB:max:TwoInTwoOutCaseNotSupported|exact
+CHK|mx_two_out_msg|Two output arguments are not supported for two input arrays.|exact
+CHK|cm_real|double[1 2] real [1 1]|exact
+CHK|cm_abs|double[1 2] real [2 -3]|exact
+CHK|cm_abs_min|double[1 2] real [1 1]|exact
+CHK|cm_auto|double[1 2] complex re [0 -3] im [2 0]|exact
+CHK|cm_realtie|double[1 1] complex re 1 im 2|exact
+CHK|cm_realtie_min|double[1 1] complex re 1 im 1|exact
+CHK|cm_abs_tie|double[1 1] real -2|exact
+CHK|cm_abs_tie_min|double[1 1] real 2|exact
+CHK|cm_i8|int8[1 2] real [2 -3]|exact
+CHK|cm_nan|double[1 2] real [NaN NaN]|exact
+CHK|cm_lower|double[1 1] real -2|exact
+CHK|cm_partial|double[1 1] real -2|exact
+CHK|cm_bad|MATLAB:max:InvalidComparisonMethod|exact
+CHK|cm_bad_msg|Comparison method must be 'auto', 'abs', or 'real'.|exact
+CHK|cm_bad_min|MATLAB:min:InvalidComparisonMethod|exact
+CHK|cm_bad_min_msg|Comparison method must be 'auto', 'abs', or 'real'.|exact
+CHK|cm_nan_after|MATLAB:max:InvalidFlagPosition|exact
+CHK|cm_nan_after_msg|Specify comparison method last.|exact
+CHK|cm_nan_after_min|MATLAB:min:InvalidFlagPosition|exact
+CHK|cm_nan_after_min_msg|Specify comparison method last.|exact
+CHK|cm_nan_before|double[1 2] real [-2 NaN]|exact
+CHK|cm_nan_omit|double[1 2] real [1 1]|exact
+CHK|cm_novalue|MATLAB:max:keyWithoutValue|exact
+CHK|cm_novalue_msg|Incorrect number of input arguments. 'ComparisonMethod' must be followed by a corresponding value.|exact
+CHK|cm_novalue_min|MATLAB:min:keyWithoutValue|exact
+CHK|cm_novalue_min_msg|Incorrect number of input arguments. 'ComparisonMethod' must be followed by a corresponding value.|exact
+CHK|cm_str|double[1 1] real -2|exact
+CHK|cm_t|logical[1 1] real 1|exact
+CHK|cm_i8_d|int8[1 1] real -3|exact
+CHK|cm_i8_mixed|MATLAB:mixedClasses|exact
+CHK|cm_i8_mixed_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|cm_ch|double[1 1] real 97|exact
+CHK|cm_twice|double[1 1] real 1|exact
+CHK|cm_z_real|double[1 2] complex re [1 2] im [5 1]|exact
+CHK|cm_z_abs_tie|double[1 1] complex re 3 im 4|exact
+CHK|cm_s|single[1 1] real -3|exact
+CHK|cm_inf|double[1 1] real -Inf|exact
+CHK|r_mx|double[1 1] real -2|exact
+CHK|r_mn|double[1 1] complex re 0 im 1|exact
+CHK|r_mx_idx|char[1 25] 'double[1 1] real -2 idx 2'|exact
+CHK|r_mn_idx|char[1 35] 'double[1 1] complex re 0 im 1 idx 3'|exact
+CHK|r_mx_tie|char[1 25] 'double[1 1] real -2 idx 2'|exact
+CHK|r_mn_tie|char[1 36] 'double[1 1] complex re 0 im -2 idx 4'|exact
+CHK|r_mx_cm|char[1 35] 'double[1 1] complex re 1 im 1 idx 1'|exact
+CHK|r_mn_cm_realtie|char[1 36] 'double[1 1] complex re 1 im -3 idx 3'|exact
+CHK|r_mx_cm_abs|char[1 25] 'double[1 1] real -4 idx 2'|exact
+CHK|r_mx_d1|char[1 47] 'double[1 2] complex re [0 2] im [3 0] idx [2 1]'|exact
+CHK|r_mx_d2|char[1 47] 'double[2 1] complex re [2;0] im [0;3] idx [2;1]'|exact
+CHK|r_mx_all|double[1 1] complex re 0 im 3|exact
+CHK|r_mx_nan|char[1 24] 'double[1 1] real 2 idx 2'|exact
+CHK|r_mx_naninc|char[1 37] 'double[1 1] complex re NaN im 1 idx 1'|exact
+CHK|r_mn_naninc|char[1 37] 'double[1 1] complex re NaN im 1 idx 1'|exact
+CHK|r_mx_naninc1|double[1 1] complex re NaN im 1|exact
+CHK|r_mx_allnan|char[1 37] 'double[1 1] complex re NaN im 1 idx 1'|exact
+CHK|r_mx_nan_col|double[1 2] complex re [NaN 2] im [3 0]|exact
+CHK|r_mx_nan_row|double[2 1] complex re [NaN;2] im [3;0]|exact
+CHK|r_mx_nan_all|double[1 1] complex re NaN im 3|exact
+CHK|r_mx_flag|char[1 25] 'double[1 1] real -3 idx 2'|exact
+CHK|r_real_naninc|char[1 26] 'double[1 1] real NaN idx 1'|exact
+CHK|r_real_naninc_min|char[1 26] 'double[1 1] real NaN idx 1'|exact
+CHK|r_real_naninc_col|double[1 2] real [NaN NaN]|exact
+CHK|r_real_naninc_all|double[1 1] real NaN|exact
+CHK|aa_row_1|MATLAB:nonLogicalConditional|exact
+CHK|aa_row_1_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|aa_1_row|MATLAB:nonLogicalConditional|exact
+CHK|aa_1_row_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|oo_e_1|MATLAB:nonLogicalConditional|exact
+CHK|oo_e_1_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|oo_1_e|logical[1 1] real 1|exact
+CHK|oo_0_e|MATLAB:nonLogicalConditional|exact
+CHK|oo_0_e_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|aa_0_e|logical[1 1] real 0|exact
+CHK|aa_1_e|MATLAB:nonLogicalConditional|exact
+CHK|aa_1_e_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|oo_row_0|MATLAB:nonLogicalConditional|exact
+CHK|oo_row_0_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|aa_cell|MATLAB:invalidConversion|exact
+CHK|aa_cell_msg|Conversion to logical from cell is not possible.|exact
+CHK|aa_cellrow|MATLAB:invalidConversion|exact
+CHK|aa_cellrow_msg|Conversion to logical from cell is not possible.|exact
+CHK|aa_str|MATLAB:invalidConversion|exact
+CHK|aa_str_msg|Conversion to logical from string is not possible.|exact
+CHK|aa_strrow|MATLAB:invalidConversion|exact
+CHK|aa_strrow_msg|Conversion to logical from string is not possible.|exact
+CHK|aa_ch|logical[1 1] real 1|exact
+CHK|aa_ch0|logical[1 1] real 0|exact
+CHK|aa_chr|MATLAB:nonLogicalConditional|exact
+CHK|aa_chr_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|aa_nan|MATLAB:nologicalnan|exact
+CHK|aa_nan_msg|NaN values cannot be converted to logicals.|exact
+CHK|aa_0_nan|logical[1 1] real 0|exact
+CHK|aa_nanrow|MATLAB:nologicalnan|exact
+CHK|aa_nanrow_msg|NaN values cannot be converted to logicals.|exact
+CHK|aa_cplx|MATLAB:nologicalcomplex|exact
+CHK|aa_cplx_msg|Complex values cannot be converted to logicals.|exact
+CHK|aa_flag|MATLAB:nologicalcomplex|exact
+CHK|aa_flag_msg|Complex values cannot be converted to logicals.|exact
+CHK|aa_cplxrow|MATLAB:nologicalcomplex|exact
+CHK|aa_cplxrow_msg|Complex values cannot be converted to logicals.|exact
+CHK|aa_nancplx|MATLAB:nologicalcomplex|exact
+CHK|aa_nancplx_msg|Complex values cannot be converted to logicals.|exact
+CHK|aa_cplxe|MATLAB:nologicalcomplex|exact
+CHK|aa_cplxe_msg|Complex values cannot be converted to logicals.|exact
+CHK|aa_i8|logical[1 1] real 1|exact
+CHK|aa_i8row|MATLAB:nonLogicalConditional|exact
+CHK|aa_i8row_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|aa_s0|MATLAB:nonLogicalConditional|exact
+CHK|aa_s0_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|oo_t10|MATLAB:nonLogicalConditional|exact
+CHK|oo_t10_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|aa_sp|logical[1 1] real 1|exact
+CHK|aa_sprow|MATLAB:nonLogicalConditional|exact
+CHK|aa_sprow_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|aa_struct|MATLAB:invalidConversion|exact
+CHK|aa_struct_msg|Conversion to logical from struct is not possible.|exact
+CHK|aa_fh|MATLAB:invalidConversion|exact
+CHK|aa_fh_msg|Conversion to logical from function_handle is not possible.|exact
+CHK|aa_dt|MATLAB:invalidConversion|exact
+CHK|aa_dt_msg|Conversion to logical from datetime is not possible.|exact
+CHK|aa_dur|MATLAB:invalidConversion|exact
+CHK|aa_dur_msg|Conversion to logical from duration is not possible.|exact
+CHK|aa_cat|MATLAB:invalidConversion|exact
+CHK|aa_cat_msg|Conversion to logical from categorical is not possible.|exact
+CHK|aa_nd|MATLAB:nonLogicalConditional|exact
+CHK|aa_nd_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|aa_two|logical[1 1] real 1|exact
+CHK|oo_two|logical[1 1] real 1|exact
+CHK|if_row|double[1 1] real 1|exact
+CHK|if_cell|MATLAB:invalidConversion|exact
+CHK|if_cell_msg|Conversion to logical from cell is not possible.|exact
+CHK|if_str|MATLAB:invalidConversion|exact
+CHK|if_str_msg|Conversion to logical from string is not possible.|exact
+CHK|if_struct|MATLAB:invalidConversion|exact
+CHK|if_struct_msg|Conversion to logical from struct is not possible.|exact
+CHK|if_fh|MATLAB:invalidConversion|exact
+CHK|if_fh_msg|Conversion to logical from function_handle is not possible.|exact
+CHK|if_dt|MATLAB:invalidConversion|exact
+CHK|if_dt_msg|Conversion to logical from datetime is not possible.|exact
+CHK|if_ch|double[1 1] real 1|exact
+CHK|if_e|double[1 1] real 0|exact
+CHK|while_cell|MATLAB:invalidConversion|exact
+CHK|while_cell_msg|Conversion to logical from cell is not possible.|exact
+CHK|while_row|double[1 1] real 3|exact
+CHK|cond_and_row|MATLAB:nonLogicalConditional|exact
+CHK|cond_and_row_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|cond_and_e|MATLAB:nonLogicalConditional|exact
+CHK|cond_and_e_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|cond_and_str|MATLAB:invalidConversion|exact
+CHK|cond_and_str_msg|Conversion to logical from string is not possible.|exact
+CHK|cond_or_e|MATLAB:nonLogicalConditional|exact
+CHK|cond_or_e_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|cond_or_cplx|MATLAB:nologicalcomplex|exact
+CHK|cond_or_cplx_msg|Complex values cannot be converted to logicals.|exact
+CHK|cond_or_1|double[1 1] real 1|exact
+CHK|loop_and_row|MATLAB:nonLogicalConditional|exact
+CHK|loop_and_row_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|loop_and_e|MATLAB:nonLogicalConditional|exact
+CHK|loop_and_e_msg|Operands to the logical AND (&&) and OR (//) operators must be convertible to logical scalar values. Use the ANY or ALL functions to reduce operands to logical scalar values.|exact
+CHK|loop_and_1|double[1 1] real 12|exact
+CHK|loop_and_ch|double[1 1] real 12|exact
+CHK|rem_str|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|rem_str_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|mod_str|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|mod_str_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|rem_2_str|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|rem_2_str_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|mod_2_str|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|mod_2_str_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|rem_ch|double[1 1] real 1|exact
+CHK|rem_str_cplx|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|rem_str_cplx_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|rem_struct|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|rem_struct_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|rem_fh|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|rem_fh_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|mod_struct|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|mod_struct_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|rem_dt|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|rem_dt_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|bs_ch|MATLAB:bitshift:numericArg|exact
+CHK|bs_ch_msg|Inputs must be numeric.|exact
+CHK|bs_ch2|MATLAB:bitshift:numericArg|exact
+CHK|bs_ch2_msg|Inputs must be numeric.|exact
+CHK|bs_str|MATLAB:bitshift:numericArg|exact
+CHK|bs_str_msg|Inputs must be numeric.|exact
+CHK|bs_cell|MATLAB:bitshift:numericArg|exact
+CHK|bs_cell_msg|Inputs must be numeric.|exact
+CHK|bs_struct|MATLAB:bitshift:numericArg|exact
+CHK|bs_struct_msg|Inputs must be numeric.|exact
+CHK|bs_fh|MATLAB:bitshift:numericArg|exact
+CHK|bs_fh_msg|Inputs must be numeric.|exact
+CHK|bs_t|MATLAB:bitshift:numericArg|exact
+CHK|bs_t_msg|Inputs must be numeric.|exact
+CHK|bs_1_t|MATLAB:bitshift:numericArg|exact
+CHK|bs_1_t_msg|Inputs must be numeric.|exact
+CHK|bs_i8_t|MATLAB:bitshift:numericArg|exact
+CHK|bs_i8_t_msg|Inputs must be numeric.|exact
+CHK|bs_ch_cplx|MATLAB:bitshift:numericArg|exact
+CHK|bs_ch_cplx_msg|Inputs must be numeric.|exact
+CHK|bs_single|MATLAB:bitshift:firstArgNotInt|exact
+CHK|bs_single_msg|Invalid data type. First and second arguments must be integer or double.|exact
+CHK|bs_d_s|MATLAB:bitshift:firstArgNotInt|exact
+CHK|bs_d_s_msg|Invalid data type. First and second arguments must be integer or double.|exact
+CHK|bs_s_i8|MATLAB:bitshift:firstArgNotInt|exact
+CHK|bs_s_i8_msg|Invalid data type. First and second arguments must be integer or double.|exact
+CHK|bs_s_cplx|MATLAB:bitshift:firstArgNotInt|exact
+CHK|bs_s_cplx_msg|Invalid data type. First and second arguments must be integer or double.|exact
+CHK|bs_s_size|MATLAB:bitshift:firstArgNotInt|exact
+CHK|bs_s_size_msg|Invalid data type. First and second arguments must be integer or double.|exact
+CHK|bs_i8_s|int8[1 1] real 2|exact
+CHK|bs_cplx|MATLAB:bitshift:complexArgs|exact
+CHK|bs_cplx_msg|Inputs must be real.|exact
+CHK|bs_cplx2|MATLAB:bitshift:complexArgs|exact
+CHK|bs_cplx2_msg|Inputs must be real.|exact
+CHK|bs_cplx_size|MATLAB:bitshift:complexArgs|exact
+CHK|bs_cplx_size_msg|Inputs must be real.|exact
+CHK|bs_size|MATLAB:bitshift:sizeMismatch|exact
+CHK|bs_size_msg|Inputs must have same size.|exact
+CHK|bs_expand|MATLAB:bitshift:sizeMismatch|exact
+CHK|bs_expand_msg|Inputs must have same size.|exact
+CHK|bs_e_row|MATLAB:bitshift:sizeMismatch|exact
+CHK|bs_e_row_msg|Inputs must have same size.|exact
+CHK|bs_frac_size|MATLAB:bitshift:sizeMismatch|exact
+CHK|bs_frac_size_msg|Inputs must have same size.|exact
+CHK|bs_frac|MATLAB:bitshift:outOfRange|exact
+CHK|bs_frac_msg|Double inputs must have integer values in the range of ASSUMEDTYPE.|exact
+CHK|bs_neg|MATLAB:bitshift:outOfRange|exact
+CHK|bs_neg_msg|Double inputs must have integer values in the range of ASSUMEDTYPE.|exact
+CHK|bs_inf|MATLAB:bitshift:outOfRange|exact
+CHK|bs_inf_msg|Double inputs must have integer values in the range of ASSUMEDTYPE.|exact
+CHK|bs_nan|MATLAB:bitshift:outOfRange|exact
+CHK|bs_nan_msg|Double inputs must have integer values in the range of ASSUMEDTYPE.|exact
+CHK|bs_nfrac|MATLAB:bitshift:inputsMustBeIntegers|exact
+CHK|bs_nfrac_msg|Inputs must be integers.|exact
+CHK|bs_n_nan|MATLAB:bitshift:inputsMustBeIntegers|exact
+CHK|bs_n_nan_msg|Inputs must be integers.|exact
+CHK|bs_n_inf|MATLAB:bitshift:inputsMustBeIntegers|exact
+CHK|bs_n_inf_msg|Inputs must be integers.|exact
+CHK|bs_n_minf|MATLAB:bitshift:inputsMustBeIntegers|exact
+CHK|bs_n_minf_msg|Inputs must be integers.|exact
+CHK|bs_frac_nfrac|MATLAB:bitshift:outOfRange|exact
+CHK|bs_frac_nfrac_msg|Double inputs must have integer values in the range of ASSUMEDTYPE.|exact
+CHK|bs_i8_nfrac|MATLAB:bitshift:inputsMustBeIntegers|exact
+CHK|bs_i8_nfrac_msg|Inputs must be integers.|exact
+CHK|bs_i8_sfrac|MATLAB:bitshift:inputsMustBeIntegers|exact
+CHK|bs_i8_sfrac_msg|Inputs must be integers.|exact
+CHK|bs_scal|double[1 2] real [2 4]|exact
+CHK|bs_row_row|double[1 3] real [2 8 24]|exact
+CHK|bs_mat|double[2 2] real [2 4;6 8]|exact
+CHK|bs_empty|double[0 0] real []|exact
+CHK|bs_empty2|double[0 0] real []|exact
+CHK|bs_i8e|int8[0 0] real []|exact
+CHK|bs_i8_i16|int8[1 1] real 2|exact
+CHK|bs_i8_row|int8[1 2] real [2 4]|exact
+CHK|bs_i8a_d|int8[1 2] real [2 4]|exact
+CHK|bs_d_i8|double[1 1] real 2|exact
+CHK|bs_i8_i8a|int8[1 2] real [2 1]|exact
+CHK|bs_u8_nscalar|uint8[1 3] real [2 4 8]|exact
+CHK|bs_u8|uint8[1 1] real 254|exact
+CHK|bs_u8n|uint8[1 1] real 127|exact
+CHK|bs_u16_8|uint16[1 1] real 65280|exact
+CHK|bs_i8neg|int8[1 1] real -2|exact
+CHK|bs_i8negr|int8[1 1] real -4|exact
+CHK|bs_i8_64|int8[1 1] real -128|exact
+CHK|bs_i8_127|int8[1 1] real -2|exact
+CHK|bs_i8_m128r|int8[1 1] real -1|exact
+CHK|bs_i8_m128r8|int8[1 1] real -1|exact
+CHK|bs_i8_m1r|int8[1 1] real -1|exact
+CHK|bs_i8neg_n|int8[1 1] real -1|exact
+CHK|bs_i8_big|int8[1 1] real 0|exact
+CHK|bs_i32|int32[1 1] real -3|exact
+CHK|bs_u64|uint64[1 1] real 9.2233720368547758e+18|exact
+CHK|bs_i64|int64[1 1] real -4.6116860184273879e+18|exact
+CHK|bs_big|double[1 1] real 18014398509481984|exact
+CHK|bs_big2|double[1 1] real 9007199254740992|exact
+CHK|bs_big_n|double[1 1] real 1.152921504606847e+18|exact
+CHK|bs_2p63|double[1 1] real 0|exact
+CHK|bs_2p64|MATLAB:bitshift:outOfRange|exact
+CHK|bs_2p64_msg|Double inputs must have integer values in the range of ASSUMEDTYPE.|exact
+CHK|bs_3_63|double[1 1] real 9.2233720368547758e+18|exact
+CHK|bs_big_r|double[1 1] real 4503599627370497|exact
+CHK|bs_1_64|double[1 1] real 0|exact
+CHK|bs_1_m1|double[1 1] real 0|exact
+CHK|bs_5_m1|double[1 1] real 2|exact
+CHK|bs_1_m100|double[1 1] real 0|exact
+CHK|bs_1_100|double[1 1] real 0|exact
+CHK|bs_neg_n|double[1 1] real 2|exact
+CHK|bs_type|double[1 1] real 2|exact
+CHK|bs_type2|double[1 1] real 254|exact
+CHK|bs_256_u8|MATLAB:bitshift:outOfRange|exact
+CHK|bs_256_u8_msg|Double inputs must have integer values in the range of ASSUMEDTYPE.|exact
+CHK|bs_neg_i8t|double[1 1] real -2|exact
+CHK|bs_neg_i8tr|double[1 1] real -4|exact
+CHK|bs_64_i8t|double[1 1] real -128|exact
+CHK|bs_128_i8t|MATLAB:bitshift:outOfRange|exact
+CHK|bs_128_i8t_msg|Double inputs must have integer values in the range of ASSUMEDTYPE.|exact
+CHK|bs_type_u64|double[1 1] real 9.2233720368547758e+18|exact
+CHK|bs_type_i64|double[1 1] real -4.6116860184273879e+18|exact
+CHK|bs_type_str|double[1 1] real 2|exact
+CHK|bs_type_upper|double[1 1] real 2|exact
+CHK|bs_typen|MATLAB:bitshift:unknownTypeString|exact
+CHK|bs_typen_msg|ASSUMEDTYPE must be an integer type name.|exact
+CHK|bs_type_bad|MATLAB:bitshift:unknownTypeString|exact
+CHK|bs_type_bad_msg|ASSUMEDTYPE must be an integer type name.|exact
+CHK|bs_type_dbl|MATLAB:bitshift:unknownTypeString|exact
+CHK|bs_type_dbl_msg|ASSUMEDTYPE must be an integer type name.|exact
+CHK|bs_type_cell|MATLAB:bitshift:unknownTypeString|exact
+CHK|bs_type_cell_msg|ASSUMEDTYPE must be an integer type name.|exact
+CHK|bs_type_i8|MATLAB:bitshift:invalidTypeString|exact
+CHK|bs_type_i8_msg|Integer inputs cannot be assumed as any other types than their own types.|exact
+CHK|bs_type_i8ok|int8[1 1] real 2|exact
+CHK|bs_sp|MATLAB:bitshift:sparseArgs|exact
+CHK|bs_sp_msg|Inputs must be full.|exact
+CHK|bs_1arg|MATLAB:minrhs|exact
+CHK|bs_1arg_msg|Not enough input arguments.|exact
+CHK|bs_4arg|MATLAB:maxrhs|exact
+CHK|bs_4arg_msg|Too many input arguments.|exact
+CHK|at_i8_d|MATLAB:math:mustBeFloat|exact
+CHK|at_i8_d_msg|Invalid data type. Argument must be double or single.|exact
+CHK|at_t|MATLAB:math:mustBeFloat|exact
+CHK|at_t_msg|Invalid data type. Argument must be double or single.|exact
+CHK|at_ch|MATLAB:math:mustBeFloat|exact
+CHK|at_ch_msg|Invalid data type. Argument must be double or single.|exact
+CHK|at_str|MATLAB:math:mustBeFloat|exact
+CHK|at_str_msg|Invalid data type. Argument must be double or single.|exact
+CHK|at_cell|MATLAB:math:mustBeFloat|exact
+CHK|at_cell_msg|Invalid data type. Argument must be double or single.|exact
+CHK|at_i8_z|MATLAB:math:mustBeFloat|exact
+CHK|at_i8_z_msg|Invalid data type. Argument must be double or single.|exact
+CHK|at_z_cell|MATLAB:math:mustBeFloat|exact
+CHK|at_z_cell_msg|Invalid data type. Argument must be double or single.|exact
+CHK|at_cplx|MATLAB:math:mustBeReal|exact
+CHK|at_cplx_msg|Argument must be real.|exact
+CHK|at_flag|MATLAB:math:mustBeReal|exact
+CHK|at_flag_msg|Argument must be real.|exact
+CHK|at_z_size|MATLAB:math:mustBeReal|exact
+CHK|at_z_size_msg|Argument must be real.|exact
+CHK|at_size|MATLAB:sizeDimensionsMustMatch|exact
+CHK|at_size_msg|Arrays have incompatible sizes for this operation.|exact
+CHK|at_exp|double[2 2] real [0.78539816339744828 0.46364760900080609;1.1071487177940904 0.78539816339744828]|exact
+CHK|at_s|single[1 1] real 1.1071487665176392|exact
+CHK|at_e|double[0 0] real []|exact
+CHK|hy_i8_d|MATLAB:math:mustBeFloat|exact
+CHK|hy_i8_d_msg|Invalid data type. Argument must be double or single.|exact
+CHK|hy_u8|MATLAB:math:mustBeFloat|exact
+CHK|hy_u8_msg|Invalid data type. Argument must be double or single.|exact
+CHK|hy_t|MATLAB:math:mustBeFloat|exact
+CHK|hy_t_msg|Invalid data type. Argument must be double or single.|exact
+CHK|hy_ch|MATLAB:math:mustBeFloat|exact
+CHK|hy_ch_msg|Invalid data type. Argument must be double or single.|exact
+CHK|hy_cell|MATLAB:math:mustBeFloat|exact
+CHK|hy_cell_msg|Invalid data type. Argument must be double or single.|exact
+CHK|hy_i8_z|MATLAB:math:mustBeFloat|exact
+CHK|hy_i8_z_msg|Invalid data type. Argument must be double or single.|exact
+CHK|hy_cplx|double[1 1] real 5|exact
+CHK|hy_flag|double[1 1] real 5|exact
+CHK|hy_sz|single[1 1] real 5|exact
+CHK|hy_zz|double[1 1] real 5|exact
+CHK|hy_z_row|double[1 2] real [5.0990195135927845 5.3851648071345037]|exact
+CHK|hy_size|MATLAB:sizeDimensionsMustMatch|exact
+CHK|hy_size_msg|Arrays have incompatible sizes for this operation.|exact
+CHK|hy_z_size|MATLAB:sizeDimensionsMustMatch|exact
+CHK|hy_z_size_msg|Arrays have incompatible sizes for this operation.|exact
+CHK|hy_exp|double[2 2] real [3.1622776601683795 4.1231056256176606;3.6055512754639891 4.4721359549995796]|exact
+CHK|hy_s_d|single[1 2] real [5 5.8309516906738281]|exact
+CHK|anon_atan2_i8|MATLAB:math:mustBeFloat|exact
+CHK|anon_atan2_i8_msg|Invalid data type. Argument must be double or single.|exact
+CHK|arrayfun_hypot|MATLAB:math:mustBeFloat|exact
+CHK|arrayfun_hypot_msg|Invalid data type. Argument must be double or single.|exact
+CHK|id_i64_d|MATLAB:idivide:scalarDoubleWith64BitInt|exact
+CHK|id_i64_d_msg|Mixed 64-bit integer and scalar double inputs are not supported. 64-bit integers can only be combined with integers of the same class.|exact
+CHK|id_d_i64|MATLAB:idivide:scalarDoubleWith64BitInt|exact
+CHK|id_d_i64_msg|Mixed 64-bit integer and scalar double inputs are not supported. 64-bit integers can only be combined with integers of the same class.|exact
+CHK|id_u64_d|MATLAB:idivide:scalarDoubleWith64BitInt|exact
+CHK|id_u64_d_msg|Mixed 64-bit integer and scalar double inputs are not supported. 64-bit integers can only be combined with integers of the same class.|exact
+CHK|id_i64_dfrac|MATLAB:idivide:scalarDoubleWith64BitInt|exact
+CHK|id_i64_dfrac_msg|Mixed 64-bit integer and scalar double inputs are not supported. 64-bit integers can only be combined with integers of the same class.|exact
+CHK|id_i64a_d|MATLAB:idivide:scalarDoubleWith64BitInt|exact
+CHK|id_i64a_d_msg|Mixed 64-bit integer and scalar double inputs are not supported. 64-bit integers can only be combined with integers of the same class.|exact
+CHK|id_i64_cplx|MATLAB:idivide:scalarDoubleWith64BitInt|exact
+CHK|id_i64_cplx_msg|Mixed 64-bit integer and scalar double inputs are not supported. 64-bit integers can only be combined with integers of the same class.|exact
+CHK|id_i64_dz|MATLAB:idivide:scalarDoubleWith64BitInt|exact
+CHK|id_i64_dz_msg|Mixed 64-bit integer and scalar double inputs are not supported. 64-bit integers can only be combined with integers of the same class.|exact
+CHK|id_i64_drow|MATLAB:idivide:mixedClasses|exact
+CHK|id_i64_drow_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|id_i64_s|MATLAB:idivide:mixedClasses|exact
+CHK|id_i64_s_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|id_i64_i8|MATLAB:idivide:mixedClasses|exact
+CHK|id_i64_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|id_i64_t|MATLAB:idivide:mixedClasses|exact
+CHK|id_i64_t_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|id_i64_ch|MATLAB:idivide:mixedClasses|exact
+CHK|id_i64_ch_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|id_i64_dsize|MATLAB:idivide:dimagree|exact
+CHK|id_i64_dsize_msg|Matrix dimensions must agree.|exact
+CHK|id_i64_i64|int64[1 1] real 3|exact
+CHK|id_i64_i64z|int64[1 1] real 9.2233720368547758e+18|exact
+CHK|id_i64_i64nz|int64[1 1] real -9.2233720368547758e+18|exact
+CHK|id_i64_00|int64[1 1] real 0|exact
+CHK|id_u64_00|uint64[1 1] real 0|exact
+CHK|id_i64_floor|int64[1 2] real [3 -4]|exact
+CHK|id_i64_ceil|int64[1 2] real [4 -3]|exact
+CHK|id_i64_round|int64[1 2] real [4 -4]|exact
+CHK|id_i32_z|int32[1 1] real 2147483647|exact
+CHK|id_i32_nz|int32[1 1] real -2147483648|exact
+CHK|id_i32_00|int32[1 1] real 0|exact
+CHK|id_u8_z|uint8[1 1] real 255|exact
+CHK|id_i8_floor_z|int8[1 1] real -128|exact
+CHK|id_i8_ceil_z|int8[1 1] real 127|exact
+CHK|id_i8_round_z|int8[1 1] real 127|exact
+CHK|id_i8_dz|int8[1 1] real 127|exact
+CHK|id_d_i8z|int8[1 1] real 127|exact
+CHK|id_i32_dz_fl|int32[1 1] real -2147483648|exact
+CHK|kr_i8a_da|MATLAB:mixedClasses|exact
+CHK|kr_i8a_da_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|kr_da_i8a|MATLAB:mixedClasses|exact
+CHK|kr_da_i8a_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|kr_i8_d|int8[1 1] real 4|exact
+CHK|kr_i8a_d|int8[1 2] real [2 4]|exact
+CHK|kr_i8_da|MATLAB:mixedClasses|exact
+CHK|kr_i8_da_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|kr_d_i8a|int8[1 2] real [2 4]|exact
+CHK|kr_i8a_i8a|int8[1 4] real [1 2 2 4]|exact
+CHK|kr_i8_i16|MATLAB:mixedClasses|exact
+CHK|kr_i8_i16_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|kr_s_da|single[1 2] real [2 4]|exact
+CHK|kr_sa_da|single[1 4] real [1 2 2 4]|exact
+CHK|kr_t_da|double[1 2] real [1 2]|exact
+CHK|kr_ta_ta|double[1 4] real [1 1 0 0]|exact
+CHK|kr_tt|double[1 1] real 1|exact
+CHK|kr_ch_da|double[1 4] real [97 194 98 196]|exact
+CHK|kr_ch_ch|double[1 1] real 9506|exact
+CHK|kr_i8a_t|MATLAB:mixedClasses|exact
+CHK|kr_i8a_t_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|kr_i8_t|MATLAB:mixedClasses|exact
+CHK|kr_i8_t_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|kr_i8a_s|MATLAB:mixedClasses|exact
+CHK|kr_i8a_s_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|kr_s_i8|MATLAB:mixedClasses|exact
+CHK|kr_s_i8_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|kr_i8a_ch|int8[1 2] real [97 127]|exact
+CHK|kr_i8_ch2|MATLAB:mixedClasses|exact
+CHK|kr_i8_ch2_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|kr_i8col_da|MATLAB:mixedClasses|exact
+CHK|kr_i8col_da_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|kr_i8a_dcol|MATLAB:mixedClasses|exact
+CHK|kr_i8a_dcol_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|kr_i8m_d|MATLAB:mixedClasses|exact
+CHK|kr_i8m_d_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|kr_i8a_z|MATLAB:complexInts|exact
+CHK|kr_i8a_z_msg|Complex integer arithmetic is not supported.|exact
+CHK|kr_i8a_zrow|MATLAB:complexInts|exact
+CHK|kr_i8a_zrow_msg|Complex integer arithmetic is not supported.|exact
+CHK|kr_i8a_sz|MATLAB:complexInts|exact
+CHK|kr_i8a_sz_msg|Complex integer arithmetic is not supported.|exact
+CHK|kr_z_i8a|MATLAB:complexInts|exact
+CHK|kr_z_i8a_msg|Complex integer arithmetic is not supported.|exact
+CHK|kr_i8a_e|MATLAB:mixedClasses|exact
+CHK|kr_i8a_e_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|kr_e_i8a|MATLAB:mixedClasses|exact
+CHK|kr_e_i8a_msg|Integers can only be combined with integers of the same class, or scalar doubles.|exact
+CHK|kr_i8a_i8e|int8[0 0] real []|exact
+CHK|kr_e_e|double[0 0] real []|exact
+CHK|kr_u8_sat|uint8[1 2] real [255 6]|exact
+CHK|kr_nd|MATLAB:kron:TwoDInput|exact
+CHK|kr_nd_msg|Inputs must be 2-D.|exact
+CHK|kr_nd_cell|MATLAB:kron:TwoDInput|exact
+CHK|kr_nd_cell_msg|Inputs must be 2-D.|exact
+CHK|kr_cell|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|kr_cell_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|kr_cell_i8|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|kr_cell_i8_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|kr_str|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|kr_str_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|kr_struct|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|kr_struct_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|kr_fh|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|kr_fh_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|kr_dt|MATLAB:math:mustBeNumericCharOrLogical|exact
+CHK|kr_dt_msg|Invalid data type. Argument must be numeric, char, or logical.|exact
+CHK|kr_z|double[1 4] complex re [0 1 0 2] im [1 0 2 0]|exact

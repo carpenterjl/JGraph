@@ -243,13 +243,11 @@ internal static partial class JgsBuiltins
                 ? right
                 : null;
 
+        // A zero divisor is the quotient's infinity (or 0/0's NaN), which the integer class then
+        // saturates: intmax for a positive dividend, intmin for a negative one, 0 for 0/0, as
+        // integer division answers in MATLAB. It answered 0 for every zero divisor (open item 351, ADR 0383).
         JgsValue quotient = Zip("idivide", args[0], args[1], (a, b) =>
         {
-            if (b == 0)
-            {
-                return 0; // integer division by zero saturates at zero, as MATLAB's does
-            }
-
             double exact = a / b;
             return how switch
             {

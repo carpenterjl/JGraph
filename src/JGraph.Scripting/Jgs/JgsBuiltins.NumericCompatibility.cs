@@ -117,8 +117,83 @@ internal static partial class JgsBuiltins
         JgsValue[] answer = run(clean, wanted, line, col);
         double[] ranks = FlattenColumnMajor("max/min", answer[0], line, col);
         Complex[] restored = ranks.Select(v => double.IsNaN(v) ? new Complex(double.NaN, 0) : unique[(int)v - 1]).ToArray();
+        if (complex && !pair)
+        {
+            RestoreMissingExtremes(restored, ranks, values[0], subjects[0], clean, wanted, answer, run, line, col);
+        }
         answer[0] = complex ? ComplexStorage(restored, SizeDims(answer[0])) : ShapedNumbers(restored.Select(v => v.Real).ToArray(), SizeDims(answer[0]));
         return answer;
+    }
+
+    /// <summary>
+    /// A complex reduction's NaN answers as the elements they came from (<c>max([NaN+1i, 2],
+    /// [], 'includenan')</c> is <c>NaN+1i</c>, an all-NaN slice its first element; open item 351,
+    /// ADR 0383): the ranks carry no imaginary part, so each NaN is read back through the position the
+    /// reduction reports. A vector of dimensions has no position and keeps the real NaN.
+    /// </summary>
+    private static void RestoreMissingExtremes(Complex[] restored, double[] ranks, Complex[] elements, JgsValue subject,
+        List<JgsValue> clean, int wanted, JgsValue[] answer, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> run,
+        int line, int col)
+    {
+        if (!Array.Exists(ranks, double.IsNaN))
+        {
+            return;
+        }
+
+        bool linear = false;
+        int? dim = null;
+        for (int i = 1; i < clean.Count; i++)
+        {
+            if (IsTextScalar(clean[i]))
+            {
+                linear |= TextOf(clean[i]).ToLowerInvariant() is "all" or "linear";
+            }
+            else if (i == 2)
+            {
+                if (clean[i].Type is not (JgsType.Number or JgsType.Bool) && clean[i].ArrayLength != 1)
+                {
+                    return; // a vector of dimensions
+                }
+
+                dim = (int)FlattenColumnMajor("max/min", clean[i], line, col)[0];
+            }
+        }
+
+        JgsValue[] positioned = wanted >= 2 ? answer : run(clean, 2, line, col);
+        double[] positions = FlattenColumnMajor("max/min", positioned[1], line, col);
+        int[] dims = SizeDims(subject);
+        int along = (dim ?? JgsMatrix.DefaultDim(dims)) - 1;
+        int[] outer = SizeDims(answer[0]);
+        for (int p = 0; p < restored.Length; p++)
+        {
+            if (!double.IsNaN(ranks[p]))
+            {
+                continue;
+            }
+
+            int k = (int)positions[p] - 1;
+            int source = k;
+            if (!linear)
+            {
+                // The answer's position p over its own size, with the reduced dimension set to k.
+                source = 0;
+                int remaining = p;
+                int stride = 1;
+                for (int d = 0; d < Math.Max(dims.Length, along + 1); d++)
+                {
+                    int extent = d < outer.Length ? outer[d] : 1;
+                    int coordinate = extent == 0 ? 0 : remaining % extent;
+                    remaining = extent == 0 ? remaining : remaining / extent;
+                    source += (d == along ? k : coordinate) * stride;
+                    stride *= d < dims.Length ? dims[d] : 1;
+                }
+            }
+
+            if (source >= 0 && source < elements.Length)
+            {
+                restored[p] = elements[source];
+            }
+        }
     }
 
     private static JgsValue[] SvdFormatted(IReadOnlyList<JgsValue> args, int wanted, int line, int col)

@@ -6106,7 +6106,8 @@ internal static partial class JgsBuiltins
                 pairwise[i] = JgsValue.Bool(op(a[i].IsTruthy, b[i].IsTruthy));
             }
 
-            return JgsValue.Array(pairwise);
+            // In the left operand's shape: a matrix answered a flat row (open item 346, ADR 0383).
+            return JgsMatrix.Like(left, JgsValue.Array(pairwise));
         }
 
         bool arrayOnLeft = left.Type == JgsType.Array;
@@ -6119,7 +6120,7 @@ internal static partial class JgsBuiltins
             result[i] = JgsValue.Bool(arrayOnLeft ? op(element, scalar) : op(scalar, element));
         }
 
-        return JgsValue.Array(result);
+        return JgsMatrix.Like(arrayOnLeft ? left : right, JgsValue.Array(result));
     }
 
     // --- Argument helpers ------------------------------------------------------------------------

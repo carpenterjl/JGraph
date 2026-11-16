@@ -511,7 +511,7 @@ public static class ReduceKernels
     /// The extreme of every slice and the position it came from, replicating the boxed scan bit for
     /// bit: ties go to the first, under omit-NaN a NaN never wins (so an all-NaN slice answers its
     /// first element at position 0), and under include-NaN the scan stops at the first NaN it meets
-    /// past the start and reports <see cref="double.NaN"/> there. Positions are 0-based fold indices;
+    /// (the first element included) and reports <see cref="double.NaN"/> there. Positions are 0-based fold indices;
     /// the caller owns index bases and linearization.
     /// </summary>
     public static void Extreme(
@@ -860,6 +860,13 @@ public static class ReduceKernels
     {
         double best = x[0];
         int at = 0;
+
+        // Under include-NaN a NaN in front is the answer as well (it let the next number past it).
+        if (!omitNan && double.IsNaN(best))
+        {
+            return (double.NaN, 0);
+        }
+
         for (int j = 1; j < n; j++)
         {
             double candidate = x[j * stride];

@@ -374,15 +374,16 @@ public class ReduceKernelsM94Tests
     }
 
     [Fact]
-    public void TheIncludeNanScanStopsAtTheFirstNanExceptOneSittingInFirstPosition()
+    public void TheIncludeNanScanStopsAtTheFirstNanTheOpeningOneIncluded()
     {
-        // The boxed loop starts comparing at the second element, so a NaN opening the slice never
-        // triggers the include-NaN stop: the answer is the best of the rest. Anywhere else, the
-        // scan stops there and answers the canonical NaN at that position.
+        // The scan stops at the first NaN and answers the canonical NaN at that position. A NaN
+        // opening the slice is that NaN too: the boxed loop started comparing at the second element
+        // and answered the best of the rest, where R2025b's max([NaN 3 7], [], 'includenan') is NaN
+        // at 1 (open item 351, ADR 0383).
         using NumericBuffer leading = Adopt([double.NaN, 3, 7]);
         (double value, int at) = ReduceKernels.ExtremeFlat(leading, takeMin: false, omitNan: false);
-        Assert.Equal(7, value);
-        Assert.Equal(2, at);
+        Assert.Equal(BitConverter.DoubleToInt64Bits(double.NaN), BitConverter.DoubleToInt64Bits(value));
+        Assert.Equal(0, at);
 
         using NumericBuffer inside = Adopt([3, double.NaN, 7]);
         (value, at) = ReduceKernels.ExtremeFlat(inside, takeMin: false, omitNan: false);
@@ -561,6 +562,11 @@ public class ReduceKernelsM94Tests
     {
         double best = values[0];
         int at = 0;
+        if (!omitNan && double.IsNaN(best))
+        {
+            return (double.NaN, 0); // a NaN in front is the answer too (open item 351, ADR 0383)
+        }
+
         for (int i = 1; i < values.Length; i++)
         {
             double candidate = values[i];

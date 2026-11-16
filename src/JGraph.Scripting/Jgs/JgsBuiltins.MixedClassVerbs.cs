@@ -29,7 +29,7 @@ internal static partial class JgsBuiltins
     private static void WrapMixedClassVerbs(JgsEnvironment env, JgsRunningDialect dialect)
     {
         void Wrap(string name, Func<BuiltinFunction, IReadOnlyList<JgsValue>, int, int, JgsValue?> single,
-            Func<BuiltinFunction, IReadOnlyList<JgsValue>, int, int, int, JgsValue[]?>? multi = null)
+            Func<BuiltinFunction, IReadOnlyList<JgsValue>, int, int, int, JgsValue[]?>? multi = null, bool keepsStrings = false)
         {
             if (!env.Builtins.TryGet(name, out JgsValue existing) || existing.Type != JgsType.Function
                 || existing.AsCallable is not BuiltinFunction inner)
@@ -50,7 +50,8 @@ internal static partial class JgsBuiltins
                 KnowsWhenDiscarded = inner.KnowsWhenDiscarded,
                 TakesOutputCount = inner.TakesOutputCount,
                 ScriptFile = inner.ScriptFile,
-                KeepsStringArguments = inner.KeepsStringArguments,
+                // A wrapper that keeps a string sees it as one; the verb under it still gets its char.
+                KeepsStringArguments = keepsStrings || inner.KeepsStringArguments,
             };
             env.Builtins.Register(name, JgsValue.Function(wrapped));
 
@@ -74,13 +75,21 @@ internal static partial class JgsBuiltins
                 });
         }
 
-        Wrap("rem", (_, args, line, col) => McRemMod(false, args, line, col));
-        Wrap("mod", (_, args, line, col) => McRemMod(true, args, line, col));
+        // rem and mod keep a string to refuse it (open item 351, ADR 0383): it reached them as its char.
+        Wrap("rem", (_, args, line, col) => McRemMod(false, args, line, col), keepsStrings: true);
+        Wrap("mod", (_, args, line, col) => McRemMod(true, args, line, col), keepsStrings: true);
         Wrap("bitand", (_, args, line, col) => McBitwise("bitand", "MATLAB:Bitand", static (a, b) => a & b, args, line, col));
         Wrap("bitor", (_, args, line, col) => McBitwise("bitor", "MATLAB:Bitor", static (a, b) => a | b, args, line, col));
         Wrap("bitxor", (_, args, line, col) => McBitwise("bitxor", "MATLAB:bitxor", static (a, b) => a ^ b, args, line, col));
         Wrap("idivide", (_, args, line, col) => McIntegerDivide(args, line, col));
         Wrap("logical", (_, args, line, col) => McLogical(args, line, col));
+
+        // Open item 351 and item 346's kron (ADR 0383): bitshift's own refusals and arithmetic,
+        // kron's class rule, atan2's and hypot's complex and size rules.
+        Wrap("bitshift", (_, args, line, col) => McBitShift(args, line, col));
+        Wrap("kron", (inner, args, line, col) => McKron(inner, args, line, col), keepsStrings: true);
+        Wrap("atan2", (inner, args, line, col) => McAtan2Hypot(inner, "atan2", args, line, col));
+        Wrap("hypot", (inner, args, line, col) => McAtan2Hypot(inner, "hypot", args, line, col));
     }
 
     /// <summary>
@@ -346,10 +355,13 @@ internal static partial class JgsBuiltins
 
     // --- max and min of two arrays -------------------------------------------------------------
 
-    /// <summary>Whether a call is the two-array form: two arguments, or three with a NaN flag after a non-empty second.</summary>
+    /// <summary>
+    /// Whether a call is the two-array form: two arguments, or more with a NaN flag or
+    /// <c>'ComparisonMethod'</c> third (open item 351) after a second that is not the reducing <c>[]</c>.
+    /// </summary>
     private static bool McIsTwoArrayForm(IReadOnlyList<JgsValue> args) =>
         args.Count == 2
-        || (args.Count == 3 && McNanFlag(args[2]) is not null
+        || (args.Count >= 3 && (McNanFlag(args[2]) is not null || McIsComparisonMethodName(args[2]))
             && !(args[1].Type == JgsType.Array && args[1].ArrayLength == 0 && args[1].NumericClass == JgsNumericClass.Double
                 && !args[1].IsStringArray && !IsLogicalValue(args[1])));
 
@@ -370,9 +382,9 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
-    /// <c>max(a, b)</c> or <c>min(a, b)</c> (with an optional NaN flag) as R2025b answers it, or null
-    /// for a call it leaves to the verb: the reducing forms, a complex pair with no integer in it,
-    /// and any operand that is not a real number, logical or char row.
+    /// <c>max(a, b)</c> or <c>min(a, b)</c> (with an optional NaN flag and comparison method) as
+    /// R2025b answers it, or null for a call it leaves to the verb: the reducing forms, a sparse
+    /// operand, and any operand that is not a number, logical or char row.
     /// </summary>
     private static JgsValue? McTwoArrayExtreme(string name, bool takeMin, IReadOnlyList<JgsValue> args, int line, int col)
     {
@@ -407,6 +419,11 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, $"MATLAB:{name}:wrongInput", "First input array is an invalid data type.");
         }
 
+        if (McExtremeOptions(name, args, line, col) is not (bool includeNan, string method))
+        {
+            return null;
+        }
+
         if (McAnyComplex(left) || McAnyComplex(right))
         {
             if (left.NumericClass.IsInteger() || right.NumericClass.IsInteger())
@@ -414,7 +431,9 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "MATLAB:complexInts", "Complex integer arithmetic is not supported.");
             }
 
-            return null;
+            // By magnitude, then angle (or by real part, then imaginary), answered complex only
+            // when a picked value is (open item 351, ADR 0383).
+            return McComplexExtreme(takeMin, left, right, includeNan, method == "real", line, col);
         }
 
         if (McOperandOf(left) is not { } a || McOperandOf(right) is not { } b)
@@ -428,7 +447,7 @@ internal static partial class JgsBuiltins
         }
 
         int[] size = McBroadcastDims(a.Dims, b.Dims) ?? throw McSizesDiffer(line, col);
-        bool includeNan = args.Count == 3 && McNanFlag(args[2]) == true;
+        bool byMagnitude = method == "abs";
         double[] picked = McPairwise(a, b, size, (x, y) =>
         {
             if (double.IsNaN(x))
@@ -439,6 +458,13 @@ internal static partial class JgsBuiltins
             if (double.IsNaN(y))
             {
                 return includeNan ? y : x;
+            }
+
+            if (byMagnitude)
+            {
+                // 'abs' of real numbers: the magnitude, then the angle (a negative's is pi), the first on a tie.
+                int order = McRealMagnitudeOrder(y, x);
+                return (takeMin ? order < 0 : order > 0) ? y : x;
             }
 
             return takeMin ? Math.Min(x, y) : Math.Max(x, y);
@@ -506,7 +532,10 @@ internal static partial class JgsBuiltins
 
         JgsValue left = args[0];
         JgsValue right = args[1];
-        if (left.IsStringArray || right.IsStringArray || left.Type == JgsType.Cell || right.Type == JgsType.Cell)
+        // A string scalar too (the wrapper keeps it), a struct, a function handle and a datetime (open item 351).
+        static bool NotNumericCharOrLogical(JgsValue v) =>
+            v.IsStringArray || v.IsDatetime || v.Type is JgsType.Cell or JgsType.Struct or JgsType.Function;
+        if (NotNumericCharOrLogical(left) || NotNumericCharOrLogical(right))
         {
             throw new JgsRuntimeException(line, col, "MATLAB:math:mustBeNumericCharOrLogical",
                 "Invalid data type. Argument must be numeric, char, or logical.");
@@ -679,7 +708,10 @@ internal static partial class JgsBuiltins
             if (left.NumericClass is JgsNumericClass.Int64 or JgsNumericClass.UInt64
                 || right.NumericClass is JgsNumericClass.Int64 or JgsNumericClass.UInt64)
             {
-                return null; // scalarDoubleWith64BitInt: not measured, the verb's road
+                // Measured since (open item 351, ADR 0383): a double scalar beside int64 or uint64,
+                // a complex one included, is refused before the complex check.
+                throw new JgsRuntimeException(line, col, "MATLAB:idivide:scalarDoubleWith64BitInt",
+                    "Mixed 64-bit integer and scalar double inputs are not supported. 64-bit integers can only be combined with integers of the same class.");
             }
         }
 

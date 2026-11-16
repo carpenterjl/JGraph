@@ -193,6 +193,7 @@ internal sealed partial class Interpreter
     {
         if (Dialect.IsMatlab)
         {
+            RefuseLogicalConversion(condition, at);
             if (condition.Type != JgsType.Sparse && JgsBuiltins.HasComplexPart(condition))
             {
                 throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:nologicalcomplex",
@@ -208,14 +209,79 @@ internal sealed partial class Interpreter
         return condition.IsTruthy;
     }
 
-    /// <summary>An evaluated operand of <c>&amp;&amp;</c> or <c>||</c>: a NaN is refused in the MATLAB dialect (open item 341).</summary>
+    /// <summary>An evaluated operand of <c>&amp;&amp;</c> or <c>||</c>: R2025b's conversion in the MATLAB dialect (open items 341, 351).</summary>
     private bool ShortCircuitTruth(JgsValue operand, Node at)
     {
-        if (Dialect.IsMatlab && JgsBuiltins.McAnyNaN(operand))
+        if (Dialect.IsMatlab)
+        {
+            return MatlabShortCircuitTruth(operand, at);
+        }
+
+        return operand.IsTruthy;
+    }
+
+    /// <summary>
+    /// An operand of <c>&amp;&amp;</c> or <c>||</c> as R2025b converts it (open item 351, ADR 0383), in
+    /// this order: a cell, string, struct, function handle, datetime, duration or categorical is
+    /// <c>MATLAB:invalidConversion</c>; a complex value, flagged or empty included,
+    /// <c>MATLAB:nologicalcomplex</c>; a NaN <c>MATLAB:nologicalnan</c>; anything but one element
+    /// (an empty, a row, a two-character char) <c>MATLAB:nonLogicalConditional</c>. A char is its code
+    /// (<c>char(0) &amp;&amp; 1</c> is false). An object is left to its own truth.
+    /// </summary>
+    private static bool MatlabShortCircuitTruth(JgsValue operand, Node at)
+    {
+        RefuseLogicalConversion(operand, at);
+        if (operand.Type is JgsType.Object or JgsType.External)
+        {
+            return operand.IsTruthy;
+        }
+
+        if (operand.Type != JgsType.Sparse && (JgsBuiltins.McAnyComplex(operand) || JgsBuiltins.HasComplexPart(operand)))
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:nologicalcomplex",
+                "Complex values cannot be converted to logicals.");
+        }
+
+        if (JgsBuiltins.McAnyNaN(operand))
         {
             throw JgsBuiltins.NoLogicalNaN(at.Line, at.Column);
         }
 
-        return operand.IsTruthy;
+        int[] size = JgsBuiltins.SizeDims(operand);
+        if (Array.Exists(size, static d => d != 1))
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:nonLogicalConditional",
+                "Operands to the logical AND (&&) and OR (||) operators must be convertible to logical scalar values. "
+                + "Use the ANY or ALL functions to reduce operands to logical scalar values.");
+        }
+
+        return operand.Type == JgsType.String && !operand.IsCharMatrix
+            ? operand.AsString[0] != '\0'
+            : operand.IsTruthy;
+    }
+
+    /// <summary>
+    /// R2025b's refusal of a value no conversion to logical exists for, as a condition or an operand
+    /// of <c>&amp;&amp;</c> or <c>||</c> (open item 351, ADR 0383): a cell, string, struct, function
+    /// handle, datetime, duration or categorical is <c>MATLAB:invalidConversion</c>.
+    /// </summary>
+    private static void RefuseLogicalConversion(JgsValue value, Node at)
+    {
+        string? unconvertible = value.Type switch
+        {
+            JgsType.Cell => "cell",
+            JgsType.Struct => "struct",
+            JgsType.Function => "function_handle",
+            _ when value.IsStringArray => "string",
+            _ when value.IsDatetime => "datetime",
+            _ when value.IsDuration => "duration",
+            _ when value.IsCategorical => "categorical",
+            _ => null,
+        };
+        if (unconvertible is not null)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:invalidConversion",
+                $"Conversion to logical from {unconvertible} is not possible.");
+        }
     }
 }
