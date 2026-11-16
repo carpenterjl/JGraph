@@ -1,0 +1,274 @@
+CHK|h_fc|char[1 4]'auto'|exact
+CHK|h_ec|double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]|exact
+CHK|h_get_fc|char[1 4]'auto'|exact
+CHK|h_set_r|double[1 3] [1 0 0]|exact
+CHK|h_set_auto|char[1 4]'auto'|exact
+CHK|h_set_none|char[1 4]'none'|exact
+CHK|h_set_flat|MATLAB:datatypes:RGBAColor:ParseError|exact
+CHK|h_set_flat_msg|Error setting property 'FaceColor' of class 'Histogram': Invalid color name or hexadecimal color code. Valid names include: 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'black', 'white', 'auto', and 'none'. Valid hexadecimal color codes consist of '#' followed by three or six hexadecimal digits.|exact
+CHK|h_set_vec|double[1 3] [0 1 0]|exact
+CHK|h_ec_auto|char[1 4]'auto'|exact
+CHK|h_ec_none|char[1 4]'none'|exact
+CHK|h_ec_r|double[1 3] [1 0 0]|exact
+CHK|h_opt_g|double[1 3] [0 1 0]|exact
+CHK|hs_fc|char[1 4]'none'|exact
+CHK|hs_ec|char[1 4]'auto'|exact
+CHK|hs_ec_r|double[1 3] [1 0 0]|exact
+CHK|hs_ec_auto|char[1 4]'auto'|exact
+CHK|hs_fc_r|MATLAB:histogram:InvalidStairsFaceColor|exact
+CHK|hs_fc_r_msg|'FaceColor' value must be 'none' when 'DisplayStyle' value is 'stairs'.|exact
+CHK|hs_to_bar|char[1 3]'bar'|exact
+CHK|hs_to_bar_cols|cell[1 2]{char[1 4]'auto';double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]}|exact
+CHK|hb_to_stairs|char[1 6]'stairs'|exact
+CHK|hb_to_stairs_cols|cell[1 2]{char[1 4]'none';char[1 4]'auto'}|exact
+CHK|hs_opt_m|double[1 3] [1 0 1]|exact
+CHK|hc_cols|cell[1 2]{char[1 4]'auto';double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]}|exact
+CHK|hcs_ec|char[1 4]'auto'|exact
+CHK|h2_cols|cell[1 2]{char[1 4]'auto';double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]}|exact
+CHK|h_two_fc|cell[1 2]{char[1 4]'auto';char[1 4]'auto'}|exact
+CHK|sw_bar_rg_to_stairs|cell[1 2]{char[1 4]'none';char[1 4]'auto'}|exact
+CHK|sw_back_to_bar|cell[1 2]{double[1 3] [1 0 0];double[1 3] [0 1 0]}|exact
+CHK|sw_stairs_m_to_bar|cell[1 2]{char[1 4]'auto';double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]}|exact
+CHK|sw_stairs_m_back|cell[1 2]{char[1 4]'none';double[1 3] [1 0 1]}|exact
+CHK|sw_stairs_same|cell[1 2]{char[1 4]'none';char[1 4]'auto'}|exact
+CHK|sw_bar_same|cell[1 2]{char[1 4]'auto';double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]}|exact
+CHK|opt_fc_auto|char[1 4]'auto'|exact
+CHK|opt_ec_auto|char[1 4]'auto'|exact
+CHK|opt_ec_none|char[1 4]'none'|exact
+CHK|opt_fc_none|char[1 4]'none'|exact
+CHK|opt_stairs_fc_r|MATLAB:histogram:InvalidStairsFaceColor|exact
+CHK|opt_stairs_fc_r_msg|'FaceColor' value must be 'none' when 'DisplayStyle' value is 'stairs'.|exact
+CHK|opt_stairs_fc_none|char[1 4]'none'|exact
+CHK|opt_stairs_fc_auto|MATLAB:histogram:InvalidStairsFaceColor|exact
+CHK|opt_stairs_fc_auto_msg|'FaceColor' value must be 'none' when 'DisplayStyle' value is 'stairs'.|exact
+CHK|opt_fc_r_stairs|MATLAB:histogram:InvalidStairsFaceColor|exact
+CHK|opt_fc_r_stairs_msg|'FaceColor' value must be 'none' when 'DisplayStyle' value is 'stairs'.|exact
+CHK|st_set_fc_none|char[1 4]'none'|exact
+CHK|st_set_fc_auto|MATLAB:histogram:InvalidStairsFaceColor|exact
+CHK|st_set_fc_auto_msg|'FaceColor' value must be 'none' when 'DisplayStyle' value is 'stairs'.|exact
+CHK|st_set_ec_none|char[1 4]'none'|exact
+CHK|fa0_fc|cell[1 2]{char[1 4]'auto';double[1 1] 0}|exact
+CHK|horiz_fc|char[1 4]'auto'|exact
+CHK|counts_cols|cell[1 2]{char[1 4]'auto';double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237]}|exact
+CHK|h_get_all_fc|char[1 4]'auto'|exact
+CHK|h_set_case|char[1 4]'auto'|exact
+CHK|h_set_partial|char[1 4]'auto'|exact
+CHK|ax_children_size|double[1 2] [2 1]|exact
+CHK|ax_children_get_size|double[1 2] [2 1]|exact
+CHK|ax_children3_size|double[1 2] [3 1]|exact
+CHK|fig_children_size|double[1 2] [1 1]|exact
+CHK|fig_children2_size|double[1 2] [2 1]|exact
+CHK|fig_children2_get_size|double[1 2] [2 1]|exact
+CHK|hggroup_children_size|double[1 2] [2 1]|exact
+CHK|hgt_children_size|double[1 2] [2 1]|exact
+CHK|root_children_size|double[1 2] [1 1]|exact
+CHK|root_children2_size|double[1 2] [2 1]|exact
+CHK|panel_children_size|double[1 2] [2 1]|exact
+CHK|tl_children_size|double[1 2] [2 1]|exact
+CHK|tl_children_get_size|double[1 2] [2 1]|exact
+CHK|axes_children_none|double[1 2] [0 0]|exact
+CHK|axes_children_one_line|double[1 2] [1 1]|exact
+CHK|get_multi_children|logical[1 1] 1|exact
+CHK|get_multi_children_size|double[1 2] [5 0]|exact
+CHK|ax_children_iscol|logical[1 1] 1|exact
+CHK|ax_children_horzcat|double[1 2] [5 2]|exact
+CHK|rep_tag|char[0 0]''|exact
+CHK|rep_userdata|double[0 0]|exact
+CHK|rep_nextplot|char[1 7]'replace'|exact
+CHK|repc_tag|char[1 5]'mine2'|exact
+CHK|clareset_nextplot|char[1 7]'replace'|exact
+CHK|hold_tag|char[1 5]'mine3'|exact
+CHK|hold_off_tag|char[0 0]''|exact
+CHK|line_tag|char[1 5]'mine4'|exact
+CHK|scatter_tag|char[0 0]''|exact
+CHK|bar_tag|char[0 0]''|exact
+CHK|surf_tag|char[0 0]''|exact
+CHK|hist_tag|char[0 0]''|exact
+CHK|imagesc_tag|char[0 0]''|exact
+CHK|patch_tag|char[1 5]'mine9'|exact
+CHK|text_tag|char[1 6]'mine10'|exact
+CHK|area_tag|char[0 0]''|exact
+CHK|stem_tag|char[0 0]''|exact
+CHK|contour_tag|char[0 0]''|exact
+CHK|fill_tag|char[0 0]''|exact
+CHK|plot3_tag|char[0 0]''|exact
+CHK|errorbar_tag|char[0 0]''|exact
+CHK|stairs_tag|char[0 0]''|exact
+CHK|semilogy_tag|char[0 0]''|exact
+CHK|mesh_tag|char[0 0]''|exact
+CHK|image_tag|char[0 0]''|exact
+CHK|rectangle_tag|char[1 6]'mine21'|exact
+CHK|quiver_tag|char[0 0]''|exact
+CHK|pie_tag|char[0 0]''|exact
+CHK|gca_tag|char[0 0]''|exact
+CHK|fig_tag_after_plot|char[1 3]'fig'|exact
+CHK|tile_tag_after_plot|char[0 0]''|exact
+CHK|tp_name_dn|char[0 0]''|exact
+CHK|tp_num_dn|char[0 0]''|exact
+CHK|tp_two_dn|cell[2 1]{char[1 1]'b';char[1 1]'c'}|exact
+CHK|tp_two_str_dn|cell[2 1]{char[1 1]'b';char[1 1]'c'}|exact
+CHK|tp_legend|cell[1 1]{char[1 5]'data1'}|exact
+CHK|tp_dn_given|char[1 4]'mine'|exact
+CHK|dn_two_x|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|dn_num_two_y|cell[2 1]{char[1 1]'b';char[1 1]'c'}|exact
+CHK|dn_two_two|cell[2 1]{char[1 4]'a, b';char[1 4]'b, c'}|exact
+CHK|dn_logical|cell[2 1]{char[1 1]'b';char[1 1]'c'}|exact
+CHK|dn_cell_one|char[0 0]''|exact
+CHK|dn_cell_one_both|char[0 0]''|exact
+CHK|dn_after_yvar_set|cell[2 1]{char[1 1]'a';char[1 1]'c'}|exact
+CHK|dn_after_ydata_set|MATLAB:graphics:chart:TableToMatrixNotSupported|exact
+CHK|dn_after_ydata_set_msg|Setting the 'YData' property while the 'YVariable' property is non-empty is not supported.|exact
+CHK|line_zvariable|char[0 0]''|exact
+CHK|tp_bad_name|MATLAB:graphics:chart:VariableNotFound|exact
+CHK|tp_bad_name_msg|The variable 'zz' was not found.|exact
+CHK|tp_mismatch|MATLAB:graphics:chart:NumVariablesMismatch|exact
+CHK|tp_mismatch_msg|The number of variables specified for 'Y' did not match the number of variables specified in one of the previous arguments.|exact
+CHK|tp3_isa|logical[1 1] 1|exact
+CHK|tp3_props|cell[1 6]{char[1 1]'a';char[1 1]'b';char[1 1]'c';double[1 3] [1 2 3];double[1 3] [4 5 6];double[1 3] [7 8 9]}|exact
+CHK|tp3_dn|char[0 0]''|exact
+CHK|tp3_view|double[1 2] [-37.5 30]|exact
+CHK|tp3_src|logical[1 1] 1|exact
+CHK|tp3_set_z|char[1 1]'a'|exact
+CHK|tp3_set_z_data|double[1 3] [1 2 3]|exact
+CHK|tp3_set_x_num|double[1 1] 3|exact
+CHK|tp3_set_x_num_data|double[1 3] [7 8 9]|exact
+CHK|tp3_set_zdata|MATLAB:graphics:chart:TableToMatrixNotSupported|exact
+CHK|tp3_set_zdata_msg|Setting the 'ZData' property while the 'ZVariable' property is non-empty is not supported.|exact
+CHK|tp3_num|cell[1 4]{double[1 1] 1;double[1 1] 2;double[1 1] 3;double[1 3] [7 8 9]}|exact
+CHK|tp3_two|cell[1 2]{double[1 1] 2;cell[2 1]{char[1 1]'b';char[1 1]'c'}}|exact
+CHK|dn3_two_z|cell[2 1]{char[1 1]'b';char[1 1]'c'}|exact
+CHK|dn3_two_x|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|dn3_two_y|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|dn3_two_yz|cell[2 1]{char[1 4]'a, b';char[1 4]'b, c'}|exact
+CHK|dn3_after_set|cell[1 2]{double[1 3] [7 8 9];char[0 0]''}|exact
+CHK|tp3_logical|double[1 1] 1|exact
+CHK|tp3_bad|MATLAB:graphics:chart:VariableNotFound|exact
+CHK|tp3_bad_msg|The variable 'zz' was not found.|exact
+CHK|tp3_four|MATLAB:graphics:chart:SubscriptOutOfBounds|exact
+CHK|tp3_four_msg|Invalid subscript for Z. Index exceeds array bounds.|exact
+CHK|tp3_frac|MATLAB:graphics:chart:InvalidSubscriptValue|exact
+CHK|tp3_frac_msg|Invalid subscript for Z. Specify a numeric subscript as a positive integer.|exact
+CHK|tp3_two_args|MATLAB:plot3:InvalidTableArguments|exact
+CHK|tp3_two_args_msg|Invalid number of input arguments. Specify three table subscripts after the table.|exact
+CHK|tp3_spec|MATLAB:plot3:InvalidTableArguments|exact
+CHK|tp3_spec_msg|Invalid number of input arguments. Specify three table subscripts after the table.|exact
+CHK|tp3_mismatch|MATLAB:graphics:chart:NumVariablesMismatch|exact
+CHK|tp3_mismatch_msg|The number of variables specified for 'Y' did not match the number of variables specified in one of the previous arguments.|exact
+CHK|tp3_lw|cell[1 2]{double[1 1] 3;char[1 4]'none'}|exact
+CHK|tp3_color_opt|double[1 3] [1 0 0]|exact
+CHK|tp3_fresh_labels|cell[1 3]{char[0 0]'';char[0 0]'';char[0 0]''}|exact
+CHK|tp3_fresh_view|double[1 2] [-37.5 30]|exact
+CHK|tp_fresh_labels|cell[1 2]{char[0 0]'';char[0 0]''}|exact
+CHK|tt_isa|cell[1 3]{logical[1 1] 1;logical[1 1] 1;logical[1 1] 1}|exact
+CHK|tt_others_isa|cell[1 3]{logical[1 1] 1;logical[1 1] 1;logical[1 1] 1}|exact
+CHK|tt_string0|char[0 0]''|exact
+CHK|tt_props|char[1 151]'String FontName FontSize FontAngle FontWeight Rotation HorizontalAlignment VerticalAlignment Interpreter Color Children Parent Visible HandleVisibility'|exact
+CHK|tt_get_fields|char[1 151]'String FontName FontSize FontAngle FontWeight Rotation HorizontalAlignment VerticalAlignment Interpreter Color Children Parent Visible HandleVisibility'|exact
+CHK|tt_type|MATLAB:noSuchMethodOrField|exact
+CHK|tt_type_msg|Unrecognized method, property, or field 'Type' for class 'matlab.graphics.layout.Text'.|exact
+CHK|tt_parent_is_t|logical[1 1] 1|exact
+CHK|tt_same_handle|logical[1 1] 1|exact
+CHK|tt_isgraphics|logical[1 1] 1|exact
+CHK|tt_ishandle|logical[1 1] 1|exact
+CHK|tt_children|double[1 2] [0 0]|exact
+CHK|tt_title_children|double[1 2] [0 0]|exact
+CHK|tt_ancestor|logical[1 1] 1|exact
+CHK|lt_Title_get|struct[1 1]{(String=char[0 0]'',FontName=char[1 9]'Helvetica',FontSize=double[1 1] 13,FontAngle=char[1 6]'normal',FontWeight=char[1 6]'normal',Rotation=double[1 1] 0,HorizontalAlignment=char[1 6]'center',VerticalAlignment=char[1 6]'bottom',Interpreter=char[1 3]'tex',Color=double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237],Visible=onoff on,HandleVisibility=onoff off)}|exact
+CHK|lt_Subtitle_get|struct[1 1]{(String=char[0 0]'',FontName=char[1 9]'Helvetica',FontSize=double[1 1] 12,FontAngle=char[1 6]'normal',FontWeight=char[1 6]'normal',Rotation=double[1 1] 0,HorizontalAlignment=char[1 6]'center',VerticalAlignment=char[1 6]'bottom',Interpreter=char[1 3]'tex',Color=double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237],Visible=onoff on,HandleVisibility=onoff off)}|exact
+CHK|lt_XLabel_get|struct[1 1]{(String=char[0 0]'',FontName=char[1 9]'Helvetica',FontSize=double[1 1] 12,FontAngle=char[1 6]'normal',FontWeight=char[1 6]'normal',Rotation=double[1 1] 0,HorizontalAlignment=char[1 6]'center',VerticalAlignment=char[1 3]'top',Interpreter=char[1 3]'tex',Color=double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237],Visible=onoff on,HandleVisibility=onoff off)}|exact
+CHK|lt_YLabel_get|struct[1 1]{(String=char[0 0]'',FontName=char[1 9]'Helvetica',FontSize=double[1 1] 12,FontAngle=char[1 6]'normal',FontWeight=char[1 6]'normal',Rotation=double[1 1] 90,HorizontalAlignment=char[1 6]'center',VerticalAlignment=char[1 6]'bottom',Interpreter=char[1 3]'tex',Color=double[1 3] [0.12941176470588237 0.12941176470588237 0.12941176470588237],Visible=onoff on,HandleVisibility=onoff off)}|exact
+CHK|tt_set_string|char[1 5]'Hello'|exact
+CHK|tt_set_fs|double[1 1] 20|exact
+CHK|tt_fsmode2|char[1 6]'manual'|exact
+CHK|tt_set_color|double[1 3] [1 0 0]|exact
+CHK|tt_set_pos|MATLAB:class:InvalidProperty|exact
+CHK|tt_set_pos_msg|The name 'Position' is not an accessible property for an instance of class 'matlab.graphics.layout.Text'.|exact
+CHK|tt_set_rot|double[1 1] 30|exact
+CHK|tt_set_tag|MATLAB:class:InvalidProperty|exact
+CHK|tt_set_tag_msg|The name 'Tag' is not an accessible property for an instance of class 'matlab.graphics.layout.Text'.|exact
+CHK|tt_set_units|MATLAB:class:InvalidProperty|exact
+CHK|tt_set_units_msg|The name 'Units' is not an accessible property for an instance of class 'matlab.graphics.layout.Text'.|exact
+CHK|tt_set_halign|char[1 4]'left'|exact
+CHK|tt_set_bg|MATLAB:class:InvalidProperty|exact
+CHK|tt_set_bg_msg|The name 'BackgroundColor' is not an accessible property for an instance of class 'matlab.graphics.layout.Text'.|exact
+CHK|tt_set_bogus|MATLAB:class:InvalidProperty|exact
+CHK|tt_set_bogus_msg|The name 'Bogus' is not an accessible property for an instance of class 'matlab.graphics.layout.Text'.|exact
+CHK|tt_set_cellstr|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|tt_set_strobj|char[1 1]'s'|exact
+CHK|tt_set_num|char[1 1]'5'|exact
+CHK|tt_set_fs_bad|MATLAB:datatypes:OutsideRangeFiniteGreater0|exact
+CHK|tt_set_fs_bad_msg|Error setting property 'FontSize' of class 'Text': Value should be a finite number greater than 0|exact
+CHK|tt_set_interp_bad|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|tt_set_interp_bad_msg|Error setting property 'Interpreter' of class 'Text': 'bogus' is not a valid value. Use one of these values: 'none' / 'tex' / 'latex'.|exact
+CHK|tt_set_halign_bad|MATLAB:datatypes:InvalidEnumValue|exact
+CHK|tt_set_halign_bad_msg|Error setting property 'HorizontalAlignment' of class 'Text': 'bogus' is not a valid value. Use one of these values: 'left' / 'center' / 'right'.|exact
+CHK|tt_set_empty_cell|cell[0 0]{}|exact
+CHK|tt_set_weight|char[1 4]'bold'|exact
+CHK|tt_set_angle|char[1 6]'italic'|exact
+CHK|tt_set_name|char[1 7]'Courier'|exact
+CHK|tt_set_valign|char[1 6]'middle'|exact
+CHK|tt_set_visible|onoff off|exact
+CHK|tt_set_visible_on|onoff on|exact
+CHK|title_ret_is_title|logical[1 1] 1|exact
+CHK|title_ret_is_t|logical[1 1] 0|exact
+CHK|title_string|char[1 4]'Grid'|exact
+CHK|title_opts|logical[1 1] 1|exact
+CHK|title_opts_v|cell[1 2]{double[1 1] 9;char[1 2]'G2'}|exact
+CHK|title_opts_color_v|double[1 3] [0 0 1]|exact
+CHK|title_cell_v|cell[2 1]{char[1 1]'a';char[1 1]'b'}|exact
+CHK|title_none|MATLAB:title:InvalidNumberOfInputs|exact
+CHK|title_none_msg|Not enough input arguments.|exact
+CHK|title_opt_position|MATLAB:class:InvalidProperty|exact
+CHK|title_opt_position_msg|The name 'Position' is not an accessible property for an instance of class 'matlab.graphics.layout.Text'.|exact
+CHK|title_opt_bogus|MATLAB:hg:InvalidProperty|exact
+CHK|title_opt_bogus_msg|Unrecognized property Bogus for class Text.|exact
+CHK|title_weight|char[1 4]'bold'|exact
+CHK|subtitle_t|cell[1 3]{logical[1 1] 1;char[1 1]'S';double[1 3] [1 0 0]}|exact
+CHK|xlabel_t_v|char[1 1]'X'|exact
+CHK|ylabel_t_v|cell[1 2]{char[1 1]'Y';double[1 1] 90}|exact
+CHK|tt_get_struct_string|char[1 1]'Z'|exact
+CHK|tt_get_cell|cell[1 2]{char[1 1]'Z';double[1 1] 9}|exact
+CHK|tt_set_multi|cell[1 2]{char[1 1]'Q';double[1 1] 7}|exact
+CHK|t_title_set_whole|MATLAB:class:RequireClass|exact
+CHK|t_title_set_whole_msg|Error setting property 'Title' of class 'TiledChartLayout': Value must be 'matlab.graphics.layout.Text'.|exact
+CHK|tt_after_delete|cell[1 2]{char[1 1]'Q';logical[1 1] 1}|exact
+CHK|tt_findall_text|double[1 1] 0|exact
+CHK|tt_after_layout_delete|logical[1 1] 0|exact
+CHK|pt_isa|logical[1 1] 1|exact
+CHK|pt_parent_type|char[1 7]'uipanel'|exact
+CHK|pt_parent_is_p|logical[1 1] 1|exact
+CHK|pt_panel_children|char[1 11]'tiledlayout'|exact
+CHK|pt_fig_children|char[1 7]'uipanel'|exact
+CHK|pt_units|char[1 10]'normalized'|exact
+CHK|pt_outerpos|double[1 4] [0 0 1 1]|exact
+CHK|pt_ax_parent|char[1 11]'tiledlayout'|exact
+CHK|pt_ax_parent_is_t|logical[1 1] 1|exact
+CHK|pt_ax_ancestor_panel|logical[1 1] 1|exact
+CHK|pt_ax_ancestor_figure|logical[1 1] 1|exact
+CHK|pt_ax_units|char[1 10]'normalized'|exact
+CHK|pt_t_children|double[1 1] 2|exact
+CHK|pt_t_children_order|logical[1 1] 1|exact
+CHK|pt_findall_p|char[1 44]'uipanel annotationpane tiledlayout axes axes'|exact
+CHK|pt_findobj_layout|double[1 1] 1|exact
+CHK|pt_gca|logical[1 1] 1|exact
+CHK|pt_title|char[1 10]'Panel grid'|exact
+CHK|pt_again_isa|logical[1 1] 1|exact
+CHK|pt_panel_children2|char[1 11]'tiledlayout'|exact
+CHK|pt_ax_valid|logical[1 1] 0|exact
+CHK|pt_t_valid|logical[1 1] 0|exact
+CHK|pt_t2_children|double[1 1] 1|exact
+CHK|pt_delete_t2|cell[1 2]{logical[1 1] 0;char[0 0]''}|exact
+CHK|pt_t_valid_after_panel|logical[1 1] 0|exact
+CHK|pt_flow_children|double[1 1] 2|exact
+CHK|pt_tab|cell[1 3]{logical[1 1] 1;logical[1 1] 1;char[1 11]'tiledlayout'}|exact
+CHK|rot45_then_eye|double[1 4] [0 1 0 1]|exact
+CHK|rot45_then_translate|double[1 4] [5 6 0 1]|exact
+CHK|then_new_line|double[1 4] [5 6 0 2]|exact
+CHK|eye_first|double[1 4] [0 1 0 1]|exact
+CHK|eye_then_scale|double[1 4] [0 3 0 3]|exact
+CHK|eye_then_scale_then_data|double[1 4] [0 6 0 3]|exact
+CHK|rot30_line|double[1 4] [0 1.3999999999999999 0 2]|exact
+CHK|rot30_scatter|double[1 4] [0 1.3999999999999999 0 2]|exact
+CHK|rot30_patch|double[1 4] [0 1.8 0 2]|exact
+CHK|rot30_rect|double[1 4] [-0.5 2 0 2]|exact
+CHK|rot30_nan|double[1 4] [0 1.3999999999999999 0 6]|exact

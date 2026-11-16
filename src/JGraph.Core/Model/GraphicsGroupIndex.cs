@@ -108,6 +108,50 @@ public sealed class GraphicsGroupIndex
     }
 
     /// <summary>
+    /// The box around <paramref name="plot"/> moved by <paramref name="matrix"/>, as R2025b fits it: the
+    /// extents of its points moved, where the object gives its points (lines, marker charts, 3-D lines
+    /// and patches), else of its data box's eight corners (<see cref="Move"/>). Probe p8ec: a diagonal
+    /// line turned by <c>pi/4</c> fits <c>XLim [0 1.2e-16]</c> there where the box's corners gave
+    /// <c>[-0.8 0.8]</c>; a triangle, a scatter, a line with a gap all fit their points (open item 348,
+    /// ADR 0382).
+    /// </summary>
+    public static (DataRange X, DataRange Y, DataRange Z) MovePlot(double[,] matrix, PlotObject plot, DataRange z)
+    {
+        ArgumentNullException.ThrowIfNull(plot);
+        if (plot.TransformPoints() is { } points)
+        {
+            double[,] cleaned = WithoutRotationResidue(matrix);
+            double xMin = double.PositiveInfinity, xMax = double.NegativeInfinity;
+            double yMin = double.PositiveInfinity, yMax = double.NegativeInfinity;
+            double zMin = double.PositiveInfinity, zMax = double.NegativeInfinity;
+            bool any = false;
+            foreach ((double px, double py, double pz) in points)
+            {
+                if (!double.IsFinite(px) || !double.IsFinite(py) || !double.IsFinite(pz))
+                {
+                    continue;
+                }
+
+                (double mx, double my, double mz) = GraphicsGroupModel.Apply(cleaned, px, py, pz);
+                xMin = System.Math.Min(xMin, mx);
+                xMax = System.Math.Max(xMax, mx);
+                yMin = System.Math.Min(yMin, my);
+                yMax = System.Math.Max(yMax, my);
+                zMin = System.Math.Min(zMin, mz);
+                zMax = System.Math.Max(zMax, mz);
+                any = true;
+            }
+
+            if (any)
+            {
+                return (new DataRange(xMin, xMax), new DataRange(yMin, yMax), z.IsEmpty ? z : new DataRange(zMin, zMax));
+            }
+        }
+
+        return Move(matrix, plot.GetXDataBounds(), plot.GetYDataBounds(), z);
+    }
+
+    /// <summary>
     /// A matrix whose 3-by-3 part is exactly orthogonal - a rotation, <c>M'M</c> the identity to the
     /// bit - with that part's entries under one eps written as zero, as R2025b fits them: a rotation by
     /// <c>pi/2</c> leaves <c>cos(pi/2) = 6e-17</c>, which R2025b fits as a zero span (<c>[-1 1]</c>)

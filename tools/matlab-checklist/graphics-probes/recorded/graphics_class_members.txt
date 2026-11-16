@@ -593,3 +593,10 @@ STATIC|matlab.graphics.illustration.legend.Text|loadobj
 EVENTS|matlab.graphics.illustration.legend.Text|ObjectBeingDestroyed PropertyAdded PropertyRemoved
 LISTENS|matlab.graphics.illustration.legend.Text|ChildAdded ChildRemoved Error Hit MarkedClean MarkedDirty NodeChildAdded NodeChildRemoved ObjectBeingDestroyed PostUpdate PreUpdate PropertyAdded PropertyRemoved Reparent Reset VisibilityChanged
 OBSERVABLE|matlab.graphics.illustration.legend.Text|ApplicationData Copyable DefaultPropMap_Internal Description ErrorCallback HandleVisibility HitTest Internal NodeChildren NodeParent Parent PickableParts Selected SelectionHighlight Serializable Visible
+METHODS|matlab.graphics.layout.Text|Text addlistener addprop delete double eq findobj findprop ge get gt isprop isvalid java le listener loadobj lt ne notify reset set
+PROPS|matlab.graphics.layout.Text|String FontName FontSize FontAngle FontWeight Rotation HorizontalAlignment VerticalAlignment Interpreter Color Children Parent Visible HandleVisibility
+LISTED|matlab.graphics.layout.Text|Text addlistener addprop double eq findobj get isprop java ne reset set
+STATIC|matlab.graphics.layout.Text|loadobj
+EVENTS|matlab.graphics.layout.Text|ObjectBeingDestroyed PropertyAdded PropertyRemoved
+LISTENS|matlab.graphics.layout.Text|ChildAdded ChildRemoved Error MarkedClean MarkedDirty NodeChildAdded NodeChildRemoved ObjectBeingDestroyed PostUpdate PreUpdate PropertyAdded PropertyRemoved Reparent Reset VisibilityChanged
+OBSERVABLE|matlab.graphics.layout.Text|ApplicationData Copyable DefaultPropMap_Internal Description ErrorCallback HandleVisibility Internal NodeChildren NodeParent Parent Serializable Visible

@@ -144,6 +144,7 @@ internal static partial class JgsGraphicsClasses
         "matlab.ui.layout.GridLayoutOptions",
         "matlab.ui.control.HTML",
         "matlab.graphics.illustration.legend.Text",
+        "matlab.graphics.layout.Text",
     ];
 
     /// <summary>Each kind of object: its key, then the indices of its class and of each superclass, as R2025b lists them.</summary>
@@ -248,5 +249,6 @@ internal static partial class JgsGraphicsClasses
         ("buttonlayout", [136]),
         ("uihtml", [137, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14]),
         ("legendtitle", [138, 1, 2, 3, 4, 5, 6, 7, 8, 21, 23, 9, 25, 26, 14]),
+        ("layouttext", [139, 1, 2, 3, 4, 5, 6, 7, 8, 9, 25, 26, 13, 14]),
     ];
 }

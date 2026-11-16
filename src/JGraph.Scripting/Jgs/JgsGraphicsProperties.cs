@@ -153,6 +153,7 @@ internal static partial class JgsGraphicsProperties
             : "toolbarpushbutton",
         LegendModel => "legend",
         JgsLegendTitle => "legendtitle", // R2025b's has no Type; this names its row of classes (open item 141)
+        JgsLayoutText => "layouttext", // nor has a tiled layout's text (open item 348, ADR 0382)
         ColorbarModel => "colorbar",
         BubbleLegendModel => "bubblelegend",
         GridModel => "grid",
@@ -816,7 +817,7 @@ internal static partial class JgsGraphicsProperties
                 children.AddRange(node.Nodes);
                 break;
             case UiContainerModel container:
-                AddAxesAndFurniture(children, container.ContainedAxes());
+                AddContainerAxes348(children, container); // its tiled layout for its tiles (open item 348, ADR 0382)
 
                 // A panel or a tab that held an axes has its own pane in a MATLAB-dialect script, in
                 // front of its axes and behind its components (open item 343, ADR 0376; probe p7fc).
@@ -1282,7 +1283,7 @@ internal static partial class JgsGraphicsProperties
 
         // A ruler and a legend's title are got and set in R2025b's SetGet words, not a graphics
         // primitive's (probe_126b; oi141_title T3, T31).
-        if (!dot && JgsRunningDialect.ThreadIsMatlab && target is AxisModel or JgsLegendTitle && MatlabClassOf(target) is { } rulerClass)
+        if (!dot && JgsRunningDialect.ThreadIsMatlab && target is AxisModel or JgsLegendTitle or JgsLayoutText && MatlabClassOf(target) is { } rulerClass)
         {
             return reading
                 ? new JgsRuntimeException(line, col, "MATLAB:class:setgetPropertyNotFound",
@@ -1360,6 +1361,13 @@ internal static partial class JgsGraphicsProperties
         if (type == typeof(JgsLegendTitle))
         {
             AddLegendTitleBlock(table);
+            return table;
+        }
+
+        // And a tiled layout's text, to R2025b's 14 (open item 348, ADR 0382).
+        if (type == typeof(JgsLayoutText))
+        {
+            AddLayoutTextBlock348(table);
             return table;
         }
 
@@ -1476,7 +1484,7 @@ internal static partial class JgsGraphicsProperties
                     : JgsValue.Array([]),
             (entry, value, line, col) => Reparent(entry, value, line, col));
         Put(table, "Children",
-            entry => HandleRow(VisibleChildrenOf(entry.Target)),
+            entry => ChildrenList348(VisibleChildrenOf(entry.Target)), // a column in the MATLAB dialect (open item 348, ADR 0382)
             (entry, value, line, col) => SetChildren(entry, value, line, col));
 
         // The common callback and interaction block, on every object at once (M71). The callbacks
@@ -2888,6 +2896,7 @@ internal static partial class JgsGraphicsProperties
 
         AddPlotWaveNested(type, table);
         AddComputedNames(type, table); // open item 95
+        AddLeftovers348(type, table); // open item 348, ADR 0382
     }
 
     /// <summary>

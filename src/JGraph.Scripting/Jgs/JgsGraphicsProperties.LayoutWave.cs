@@ -91,7 +91,7 @@ internal static partial class JgsGraphicsProperties
         // In a MATLAB-dialect script its tiles and their legends and colour bars, as the tree lists
         // them (open item 343, ADR 0376).
         Put(table, "Children", entry => JgsRunningDialect.ThreadIsMatlab
-            ? HandleRow(VisibleChildrenOf(entry.Target))
+            ? ChildrenList348(VisibleChildrenOf(entry.Target)) // a column (open item 348, ADR 0382)
             : HandleRow([.. Grid(entry).Tiles]));
 
         // A layout sits in a figure rather than in another layout, so its own Layout is empty and its

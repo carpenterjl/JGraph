@@ -186,6 +186,10 @@ public sealed class LinePlot : XYPlot, IDrawable, ILegendItem
     }
 
     /// <inheritdoc />
+    public override IEnumerable<(double X, double Y, double Z)>? TransformPoints() =>
+        Steps == StepMode.None ? SamplePoints() : null; // a staircase's corners are not its samples (open item 348)
+
+    /// <inheritdoc />
     public override PlotHitResult? HitTest(Point2D pixelPoint, ICoordinateMapper mapper, double tolerancePixels)
     {
         if (!HitTestVisible || Data.Count == 0)

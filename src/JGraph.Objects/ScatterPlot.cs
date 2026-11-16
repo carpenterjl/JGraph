@@ -424,6 +424,16 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
         }
     }
 
+    /// <inheritdoc />
+    public override IEnumerable<(double X, double Y, double Z)>? TransformPoints()
+    {
+        IDataSeries shown = Displayed; // the points a transform moves are the ones drawn (open item 348)
+        for (int i = 0; i < shown.Count; i++)
+        {
+            yield return (shown.GetX(i), shown.GetY(i), 0);
+        }
+    }
+
     public override DataRange GetXDataBounds() => Displayed.XBounds;
 
     /// <inheritdoc />

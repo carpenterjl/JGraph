@@ -1792,6 +1792,12 @@ internal static partial class JgsBuiltins
         // The state now lives on the figure, and these two verbs are the doors to it.
         DefineSilent("tiledlayout", (args, line, col) =>
         {
+            // A panel or a tab for its parent (open item 348, ADR 0382).
+            if (TiledLayoutInContainer348(args, line, col) is { } inContainer)
+            {
+                return inContainer;
+            }
+
             (FigureModel figure, IReadOnlyList<JgsValue> rest) = PeelLayoutParent(args);
             var layout = new TiledLayoutModel();
 
@@ -1834,6 +1840,7 @@ internal static partial class JgsBuiltins
             ClearForLayout(figure);
             figure.TiledLayout = layout;
             JgsGraphicsProperties.LayoutMade(layout);
+            JgsGraphicsProperties.MatlabLayoutTextStyles348(layout); // R2025b's text defaults (open item 348, ADR 0382)
             return JgsHandleRegistry.For(layout);
         });
         // `ax = nexttile` with no brackets is the ordinary way to write it, so a bare name has to be
@@ -1843,7 +1850,8 @@ internal static partial class JgsBuiltins
         {
             (TiledLayoutModel? named, IReadOnlyList<JgsValue> rest) = PeelLayout(args);
             TiledLayoutModel layout = named ?? CurrentLayout();
-            if (named is not null && !ReferenceEquals(named, JG.CurrentFigure.TiledLayout))
+            if (named is not null && !ReferenceEquals(named, JG.CurrentFigure.TiledLayout)
+                && JgsGraphicsProperties.ContainerOfLayout348(named) is null) // a panel's layout (open item 348, ADR 0382)
             {
                 throw new JgsRuntimeException(line, col,
                     "nexttile(t, …) names a layout that is not the current figure's.");
@@ -4592,9 +4600,23 @@ internal static partial class JgsBuiltins
             ? HistogramOrientation.Horizontal
             : HistogramOrientation.Vertical;
 
+        // In the MATLAB dialect the colour words are the property's: 'auto', 'none', and a stairs
+        // histogram's face refused unless 'none' (open item 348, ADR 0382; probe p8ec).
+        if (JgsRunningDialect.ThreadIsMatlab && plot.DisplayStyle == HistogramDisplayStyle.Stairs)
+        {
+            JgsGraphicsProperties.HistogramMadeAsStairs348(plot);
+        }
+
         if (parsed.Named("FaceColor") is { } face)
         {
-            plot.FaceColor = OptionColor(face, line, col, "histogram");
+            if (JgsRunningDialect.ThreadIsMatlab)
+            {
+                JgsGraphicsProperties.WriteHistogramFace348(JgsHandleRegistry.EntryFor(plot), face, line, col);
+            }
+            else
+            {
+                plot.FaceColor = OptionColor(face, line, col, "histogram");
+            }
         }
 
         // R2025b's own edge, 33/255 grey half a point wide, on a histogram of bars; its stairs keep
@@ -4611,7 +4633,9 @@ internal static partial class JgsBuiltins
 
         if (parsed.Named("EdgeColor") is { } edge)
         {
-            plot.EdgeColor = OptionColor(edge, line, col, "histogram");
+            plot.EdgeColor = JgsRunningDialect.ThreadIsMatlab
+                ? JgsGraphicsProperties.HistogramColourWord348(JgsHandleRegistry.EntryFor(plot), "EdgeColor", edge, line, col) // open item 348
+                : OptionColor(edge, line, col, "histogram");
         }
 
         plot.FaceAlpha = parsed.Scalar("FaceAlpha", plot.FaceAlpha);

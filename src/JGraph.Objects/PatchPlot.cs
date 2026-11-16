@@ -622,6 +622,10 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
         }
     }
 
+    /// <inheritdoc />
+    public override IEnumerable<(double X, double Y, double Z)>? TransformPoints() =>
+        Enumerable.Range(0, System.Math.Min(_x.Length, _y.Length)).Select(i => (_x[i], _y[i], i < _z.Length ? _z[i] : 0));
+
     public override DataRange GetXDataBounds() => Vertices3D.Bounds(_x);
 
     /// <inheritdoc />

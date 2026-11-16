@@ -753,6 +753,15 @@ internal static partial class JgsGraphicsProperties
             "Interpreter InterpreterMode ~NodeChildren ~NodeParent Parent ~ParentMode PickableParts " +
             "~PickablePartsMode Selected ~SelectedMode SelectionHighlight ~SelectionHighlightMode " +
             "~Serializable ~SerializableMode String Visible ~VisibleMode"),
+        ("matlab.graphics.layout.Text",
+            "~ApplicationData ~Camera ~CameraMode Children ~ChildrenMode Color ~ColorMode ~Copyable " +
+            "~DefaultPropMap_Internal ~Description ~DescriptionMode ~ErrorCallback ~ErrorCallbackMode " +
+            "FontAngle ~FontAngleMode FontName ~FontNameMode FontSize ~FontSizeMode FontWeight " +
+            "~FontWeightMode HandleVisibility ~HandleVisibilityMode HorizontalAlignment " +
+            "~HorizontalAlignmentMode ~Internal Interpreter ~InterpreterMode ~NodeChildren " +
+            "~NodeParent Parent ~ParentMode Rotation ~RotationMode ~Serializable ~SerializableMode " +
+            "String ~StringMode ~Text ~TextMode VerticalAlignment ~VerticalAlignmentMode Visible " +
+            "~VisibleMode"),
         ("matlab.graphics.primitive.Group",
             "^Annotation ~ApplicationData ~Behavior ~BehaviorMode ^BeingDeleted BusyAction " +
             "ButtonDownFcn ~ButtonDownFcnMode Children ~ChildrenMode ~Clipping ~ClippingMode " +
@@ -2243,5 +2252,13 @@ internal static partial class JgsGraphicsProperties
         ("matlab.graphics.illustration.legend.Text", "SelectionHighlight", "on\toff"),
         ("matlab.graphics.illustration.legend.Text", "HitTest", "on\toff"),
         ("matlab.graphics.illustration.legend.Text", "PickableParts", "visible\tnone\tall"),
+        ("matlab.graphics.layout.Text", "FontAngle", "normal\titalic"),
+        ("matlab.graphics.layout.Text", "FontWeight", "normal\tbold"),
+        ("matlab.graphics.layout.Text", "HorizontalAlignment", "left\tcenter\tright"),
+        ("matlab.graphics.layout.Text", "VerticalAlignment", "baseline\ttop\tcap\tmiddle\tbottom"),
+        ("matlab.graphics.layout.Text", "Interpreter", "none\ttex\tlatex"),
+        ("matlab.graphics.layout.Text", "Color", ""),
+        ("matlab.graphics.layout.Text", "Visible", "on\toff"),
+        ("matlab.graphics.layout.Text", "HandleVisibility", "on\tcallback\toff"),
     ];
 }

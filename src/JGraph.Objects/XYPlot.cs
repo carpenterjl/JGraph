@@ -58,6 +58,20 @@ public abstract class XYPlot : PlotObject
         XImplied = false;
     }
 
+    /// <summary>
+    /// The samples as points in the plane, for a line's or a marker chart's <see cref="PlotObject.TransformPoints"/>
+    /// (open item 348); the charts whose drawn extent is not their samples' (bars, areas, stems, error
+    /// bars) give none.
+    /// </summary>
+    protected IEnumerable<(double X, double Y, double Z)> SamplePoints()
+    {
+        IDataSeries data = _data;
+        for (int i = 0; i < data.Count; i++)
+        {
+            yield return (data.GetX(i), data.GetY(i), 0);
+        }
+    }
+
     public override DataRange GetXDataBounds() => _data.XBounds;
 
     public override DataRange GetYDataBounds() => _data.YBounds;

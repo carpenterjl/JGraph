@@ -45,9 +45,10 @@ internal static partial class JgsBuiltins
             cursor.Value = (cursor.Value % layout.TileCount) + 1;
         }
 
-        AxesModel placed = layout.Parent is FigureModel home && !ReferenceEquals(home, JG.CurrentFigure)
-            ? home.AddAxes()
-            : JG.NewAxes();
+        AxesModel placed = TileInContainer348(layout) // a panel's layout (open item 348, ADR 0382)
+            ?? (layout.Parent is FigureModel home && !ReferenceEquals(home, JG.CurrentFigure)
+                ? home.AddAxes()
+                : JG.NewAxes());
         placed.LayoutTile = cursor.Value;
         placed.LayoutRowSpan = rowSpan;
         placed.LayoutColumnSpan = columnSpan;
@@ -145,6 +146,18 @@ internal static partial class JgsBuiltins
             }
         }
 
+        // A panel's or a tab's layout takes its tiles out of the container (open item 348, ADR 0382).
+        if (JgsGraphicsProperties.ContainerOfLayout348(layout) is { Figure: { } holderFigure } container)
+        {
+            foreach (AxesModel tile in layout.Tiles.Where(t => ReferenceEquals(t.Container, container)).ToList())
+            {
+                holderFigure.Axes.Remove(tile);
+            }
+
+            JgsGraphicsProperties.ForgetContainerLayout348(layout);
+        }
+
+        JgsLayoutText.Forget(layout); // its text objects go with it (open item 348)
         layout.Clear();
     }
 
@@ -182,12 +195,19 @@ internal static partial class JgsBuiltins
         int lines = System.Math.Max(xs.Count, ys.Count);
         if (xs.Count == 0 || ys.Count == 0 || (xs.Count != lines && xs.Count != 1) || (ys.Count != lines && ys.Count != 1))
         {
+            // R2025b's words when both name several (open item 348, ADR 0382; probe p8ea2).
+            if (xs.Count > 1 && ys.Count > 1)
+            {
+                TableLineCount348(line, col, ("X", xs.Count), ("Y", ys.Count));
+            }
+
             throw new JgsRuntimeException(line, col, "MATLAB:graphics:chart:InvalidSubscript",
                 "The X and Y subscripts must name the same number of variables, or one of them a single variable.");
         }
         string? spec = args.Count == 4 ? Str(verb, args, 3, line, col) : null;
 
         var created = new List<LinePlot>();
+        var sources = new List<ScatterSource>();
         bool holding = JG.IsHolding;
         try
         {
@@ -212,6 +232,7 @@ internal static partial class JgsBuiltins
                 source.Remember("YVariable", yGiven);
                 JgsHandleRegistry.EntryFor(plot).ScatterSource = source;
                 created.Add(plot);
+                sources.Add(source);
                 JG.Hold(true);
             }
         }
@@ -220,6 +241,8 @@ internal static partial class JgsBuiltins
             JG.Hold(holding);
         }
 
+        // One line is unnamed, several take the varying variables' names (open item 348, ADR 0382).
+        NameTableLines348(created, sources, VaryingOf348(("XVariable", xs.Count), ("YVariable", ys.Count)));
         return created;
     }
 
@@ -278,13 +301,13 @@ internal static partial class JgsBuiltins
         {
             foreach (string name in FieldNameList(verb, value, line, col))
             {
-                picked.Add((SourceVariable(verb, table, name, line, col), null));
+                picked.Add((TableVariable348(verb, table, name, line, col), null));
             }
 
             return picked;
         }
 
-        picked.Add((SourceVariable(verb, table, TextOf(value), line, col), null));
+        picked.Add((TableVariable348(verb, table, TextOf(value), line, col), null));
         return picked;
     }
 }

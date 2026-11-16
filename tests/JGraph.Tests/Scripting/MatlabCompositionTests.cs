@@ -203,7 +203,7 @@ public class MatlabCompositionTests : IDisposable
             disp(size(get(gcf, 'Children')));
             """);
 
-        Assert.Equal(new[] { "square", "[1, 0, 0]", "[1, 4]" }, _output.NormalLines);
+        Assert.Equal(new[] { "square", "[1, 0, 0]", "[4, 1]" }, _output.NormalLines); // Children is a column (open item 348, ADR 0382)
     }
 
     // --- plotyy ---------------------------------------------------------------------------------

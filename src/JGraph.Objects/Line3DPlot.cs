@@ -126,6 +126,10 @@ public sealed class Line3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendItem
     public string LegendLabel => DisplayName;
 
     /// <inheritdoc />
+    /// <inheritdoc />
+    public override IEnumerable<(double X, double Y, double Z)>? TransformPoints() =>
+        Enumerable.Range(0, System.Math.Min(_x.Length, System.Math.Min(_y.Length, _z.Length))).Select(i => (_x[i], _y[i], _z[i]));
+
     public override DataRange GetXDataBounds() => Vertices3D.Bounds(_x);
 
     /// <inheritdoc />

@@ -48,7 +48,12 @@ internal static partial class JgsBuiltins
         DefineBare("hgtransform", Making(GroupMade, (args, line, col) => Group("hgtransform", args, line, col)));
 
         // A replacing plot deletes the axes' groups, as cla does (open item 166).
-        JG.AxesEmptying = JgsGraphicsProperties.DeleteGroupsIn;
+        // In the MATLAB dialect it resets the axes' Tag and UserData too (open item 348, ADR 0382).
+        JG.AxesEmptying = axes =>
+        {
+            JgsGraphicsProperties.DeleteGroupsIn(axes);
+            ReplacingResets348(axes);
+        };
 
         Define("frame2im", Frame2Im);
         Define("im2frame", Im2Frame);

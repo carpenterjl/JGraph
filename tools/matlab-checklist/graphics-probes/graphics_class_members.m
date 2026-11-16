@@ -32,6 +32,7 @@ h{end+1} = animatedline(ax);
 h{end+1} = fplot(ax, @sin);
 h{end+1} = legend(ax);
 h{end+1} = h{end}.Title; % a legend's own text object (open item 141)
+h{end+1} = getfield(tiledlayout(figure('Visible', 'off'), 1, 1), 'Title'); % a tiled layout's text (open item 348)
 h{end+1} = colorbar(ax);
 h{end+1} = ax.XAxis;
 cf = figure('Visible', 'off'); cax = axes(cf); bar(cax, categorical({'a', 'b'}), [1 2]);

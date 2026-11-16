@@ -107,6 +107,7 @@ m = {
  'buttonlayout', @() u7_layout(g)
  'uihtml', @() uihtml(uf)
  'legendtitle', @() u7_legendtitle(ax)
+ 'layouttext', @() u7_layouttext()
  };
 % superclasses leaves out the bases MATLAB builds in (isa(ax, 'matlab.graphics.axis.AbstractAxes') is
 % true and the name is not listed), so the known ones are asked about one by one.
@@ -152,6 +153,12 @@ end
 function h = u7_layout(g)
 b = uibutton(g);
 h = b.Layout;
+end
+
+function h = u7_layouttext()
+% A tiled layout's Title is a matlab.graphics.layout.Text (open item 348, ADR 0382; probe p8eg).
+t = tiledlayout(figure('Visible', 'off'), 1, 1);
+h = t.Title;
 end
 
 function h = u7_legendtitle(ax)

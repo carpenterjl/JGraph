@@ -44,6 +44,13 @@ internal static partial class JgsBuiltins
         // --- The titling family --------------------------------------------------------------
         JgsValue[] Titles(IReadOnlyList<JgsValue> args, int line, int col, bool both = true)
         {
+            // title(t, ...) titles a tiled layout and answers its text object in the MATLAB dialect,
+            // taking the text's options (open item 348, ADR 0382; probe p8eb).
+            if (LayoutTextCall348("Title", args, line, col) is { } layoutTitle)
+            {
+                return [layoutTitle];
+            }
+
             // title(lg, 'words', ...) titles the legend and answers its title object, the options
             // that object's (open item 141, oi141_title T13 to T22). Before open-items batch 28 the
             // legend's handle number was read as the current axes' title text.
@@ -102,7 +109,17 @@ internal static partial class JgsBuiltins
         }
         env.Builtins.Register("title", JgsValue.Function(new BuiltinFunction("title", (a,l,c) => Titles(a,l,c, both: false)[0])
         { BindsAnsAsStatement = false, MultiOutput = (a,w,l,c) => Titles(a,l,c, both: w > 1) }));
-        DefineOnAxes("subtitle", (a,l,c) => WriteLabel(JgsTextLabel.For(JG.Gca(), "Subtitle"), a[0], a.Skip(1).ToArray(), l,c));
+        DefineSilent("subtitle", (args, line, col) =>
+        {
+            // subtitle(t, ...) names a tiled layout's subtitle (open item 348, ADR 0382).
+            if (LayoutTextCall348("Subtitle", args, line, col) is { } layoutSubtitle)
+            {
+                return layoutSubtitle;
+            }
+
+            (AxesModel? axes, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
+            return OnAxes(axes, () => WriteLabel(JgsTextLabel.For(JG.Gca(), "Subtitle"), rest[0], rest.Skip(1).ToArray(), line, col));
+        });
 
         // sgtitle names the figure, not an axes — but it still accepts a leading handle, which for
         // a figure is its number, and MATLAB's own sgtitle(fig, …) form passes exactly that.
@@ -132,6 +149,12 @@ internal static partial class JgsBuiltins
         void DefineLabel(string name, Func<AxesModel, AxisModel> otherwise) =>
             DefineSilent(name, (args, line, col) =>
             {
+                // xlabel(t, ...) and ylabel(t, ...) label a tiled layout (open item 348, ADR 0382).
+                if (name is "xlabel" or "ylabel" && LayoutTextCall348(name == "xlabel" ? "XLabel" : "YLabel", args, line, col) is { } layoutLabel)
+                {
+                    return layoutLabel;
+                }
+
                 (AxesModel? axes, AxisModel? aimed, IReadOnlyList<JgsValue> rest) = PeelRuler(args);
                 return OnAxes(axes, () =>
                 {

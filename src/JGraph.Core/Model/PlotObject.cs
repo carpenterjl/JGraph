@@ -193,6 +193,13 @@ public abstract class PlotObject : GraphObject
     {
     }
 
+    /// <summary>
+    /// The points a transform's matrix moves when the axes fits its limits around this object (open item
+    /// 348, ADR 0382): R2025b fits the moved points, not the moved corners of the data box. Null for an
+    /// object that gives none, whose data box's corners stand in.
+    /// </summary>
+    public virtual IEnumerable<(double X, double Y, double Z)>? TransformPoints() => null;
+
     /// <summary>The extent of this object's data along the X direction, or empty if it has no data.</summary>
     public abstract DataRange GetXDataBounds();
 

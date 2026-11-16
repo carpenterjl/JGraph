@@ -1785,7 +1785,7 @@ public sealed class AxesModel : GraphObject
                 DataRange plotBounds = zData.GetZDataBounds();
                 if (groups?.MatrixFor(plot) is { } moved)
                 {
-                    plotBounds = GraphicsGroupIndex.Move(moved, plot.GetXDataBounds(), plot.GetYDataBounds(), plotBounds).Z;
+                    plotBounds = GraphicsGroupIndex.MovePlot(moved, plot, plotBounds).Z; // its points, moved (open item 348)
                 }
 
                 if (!plotBounds.IsEmpty)
@@ -1807,7 +1807,7 @@ public sealed class AxesModel : GraphObject
     private static DataRange MovedBounds(double[,] matrix, PlotObject plot, bool isX)
     {
         DataRange z = plot is IHasZData zData ? zData.GetZDataBounds() : DataRange.Empty;
-        (DataRange x, DataRange y, _) = GraphicsGroupIndex.Move(matrix, plot.GetXDataBounds(), plot.GetYDataBounds(), z);
+        (DataRange x, DataRange y, _) = GraphicsGroupIndex.MovePlot(matrix, plot, z); // its points, moved (open item 348)
         return isX ? x : y;
     }
 

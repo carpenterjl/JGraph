@@ -9776,3 +9776,74 @@ SET|matlab.graphics.illustration.legend.Text|Selected|on	off
 SET|matlab.graphics.illustration.legend.Text|SelectionHighlight|on	off
 SET|matlab.graphics.illustration.legend.Text|HitTest|on	off
 SET|matlab.graphics.illustration.legend.Text|PickableParts|visible	none	all
+matlab.graphics.layout.Text|-|String|0|1
+matlab.graphics.layout.Text|-|StringMode|1|1
+matlab.graphics.layout.Text|-|String_I|1|1
+matlab.graphics.layout.Text|-|FontName|0|1
+matlab.graphics.layout.Text|-|FontNameMode|1|1
+matlab.graphics.layout.Text|-|FontName_I|1|1
+matlab.graphics.layout.Text|-|FontSize|0|1
+matlab.graphics.layout.Text|-|FontSizeMode|1|1
+matlab.graphics.layout.Text|-|FontSize_I|1|1
+matlab.graphics.layout.Text|-|FontAngle|0|1
+matlab.graphics.layout.Text|-|FontAngleMode|1|1
+matlab.graphics.layout.Text|-|FontAngle_I|1|1
+matlab.graphics.layout.Text|-|FontWeight|0|1
+matlab.graphics.layout.Text|-|FontWeightMode|1|1
+matlab.graphics.layout.Text|-|FontWeight_I|1|1
+matlab.graphics.layout.Text|-|Rotation|0|1
+matlab.graphics.layout.Text|-|RotationMode|1|1
+matlab.graphics.layout.Text|-|Rotation_I|1|1
+matlab.graphics.layout.Text|-|HorizontalAlignment|0|1
+matlab.graphics.layout.Text|-|HorizontalAlignmentMode|1|1
+matlab.graphics.layout.Text|-|HorizontalAlignment_I|1|1
+matlab.graphics.layout.Text|-|VerticalAlignment|0|1
+matlab.graphics.layout.Text|-|VerticalAlignmentMode|1|1
+matlab.graphics.layout.Text|-|VerticalAlignment_I|1|1
+matlab.graphics.layout.Text|-|Interpreter|0|1
+matlab.graphics.layout.Text|-|InterpreterMode|1|1
+matlab.graphics.layout.Text|-|Interpreter_I|1|1
+matlab.graphics.layout.Text|-|Color|0|1
+matlab.graphics.layout.Text|-|ColorMode|1|1
+matlab.graphics.layout.Text|-|Color_I|1|1
+matlab.graphics.layout.Text|-|Camera|1|1
+matlab.graphics.layout.Text|-|CameraMode|1|1
+matlab.graphics.layout.Text|-|Camera_I|1|1
+matlab.graphics.layout.Text|-|Text|1|1
+matlab.graphics.layout.Text|-|TextMode|1|1
+matlab.graphics.layout.Text|-|Text_I|1|1
+matlab.graphics.layout.Text|-|ChildrenMode|1|1
+matlab.graphics.layout.Text|-|Children_I|1|1
+matlab.graphics.layout.Text|-|Children|0|1
+matlab.graphics.layout.Text|-|Description|1|1
+matlab.graphics.layout.Text|-|DescriptionMode|1|1
+matlab.graphics.layout.Text|-|Description_I|1|1
+matlab.graphics.layout.Text|-|Parent|0|1
+matlab.graphics.layout.Text|-|ParentMode|1|1
+matlab.graphics.layout.Text|-|Parent_I|1|1
+matlab.graphics.layout.Text|-|Visible|0|1
+matlab.graphics.layout.Text|-|VisibleMode|1|1
+matlab.graphics.layout.Text|-|Visible_I|1|1
+matlab.graphics.layout.Text|-|Serializable|1|1
+matlab.graphics.layout.Text|-|SerializableMode|1|1
+matlab.graphics.layout.Text|-|Serializable_I|1|1
+matlab.graphics.layout.Text|-|HandleVisibility|0|1
+matlab.graphics.layout.Text|-|HandleVisibilityMode|1|1
+matlab.graphics.layout.Text|-|HandleVisibility_I|1|1
+matlab.graphics.layout.Text|-|ErrorCallback|1|1
+matlab.graphics.layout.Text|-|ErrorCallbackMode|1|1
+matlab.graphics.layout.Text|-|ErrorCallback_I|1|1
+matlab.graphics.layout.Text|-|Internal|1|1
+matlab.graphics.layout.Text|-|ApplicationData|1|1
+matlab.graphics.layout.Text|-|DefaultPropMap_Internal|1|1
+matlab.graphics.layout.Text|-|Copyable|1|0
+matlab.graphics.layout.Text|-|NodeParent|1|0
+matlab.graphics.layout.Text|-|NodeChildren|1|0
+SET|matlab.graphics.layout.Text|FontAngle|normal	italic
+SET|matlab.graphics.layout.Text|FontWeight|normal	bold
+SET|matlab.graphics.layout.Text|HorizontalAlignment|left	center	right
+SET|matlab.graphics.layout.Text|VerticalAlignment|baseline	top	cap	middle	bottom
+SET|matlab.graphics.layout.Text|Interpreter|none	tex	latex
+SET|matlab.graphics.layout.Text|Color|
+SET|matlab.graphics.layout.Text|Visible|on	off
+SET|matlab.graphics.layout.Text|HandleVisibility|on	callback	off

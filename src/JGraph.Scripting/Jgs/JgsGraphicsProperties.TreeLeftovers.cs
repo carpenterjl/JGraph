@@ -38,7 +38,7 @@ internal static partial class JgsGraphicsProperties
         JgsRunningDialect.ThreadIsMatlab && axes.Container is null
         && axes.Parent is FigureModel { TiledLayout: { } layout } && layout.Tiles.Contains(axes)
             ? layout
-            : null;
+            : JgsRunningDialect.ThreadIsMatlab ? ContainerLayoutHolding348(axes) : null; // a panel's layout (open item 348, ADR 0382)
 
     /// <summary>
     /// A figure's axes, each followed by its shown furniture, with its tiled layout standing for its tiles
@@ -88,9 +88,12 @@ internal static partial class JgsGraphicsProperties
     private static IEnumerable<GraphObject> LayoutChildren(TiledLayoutModel layout)
     {
         var held = new List<(long At, GraphObject Child)>();
+        UiContainerModel? holder = ContainerOfLayout348(layout); // a panel's or a tab's layout (open item 348, ADR 0382)
         foreach (AxesModel tile in layout.Tiles)
         {
-            if (tile.Parent is not FigureModel figure || !ReferenceEquals(figure.TiledLayout, layout) || tile.Container is not null)
+            bool inFigure = tile.Parent is FigureModel figure && ReferenceEquals(figure.TiledLayout, layout) && tile.Container is null;
+            bool inHolder = holder is not null && tile.Parent is FigureModel && ReferenceEquals(tile.Container, holder);
+            if (!inFigure && !inHolder)
             {
                 continue;
             }

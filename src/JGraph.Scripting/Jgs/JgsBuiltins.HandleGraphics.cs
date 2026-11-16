@@ -1369,6 +1369,12 @@ internal static partial class JgsBuiltins
         // 'reset' puts back everything a script had set on the axes itself, not only what it drew.
         axes.Title = string.Empty;
         axes.Hold = false;
+
+        // ...its NextPlot among them, an axes' 'replace' and a uiaxes' 'replacechildren' (open item 348, ADR 0382).
+        if (JgsRunningDialect.ThreadIsMatlab)
+        {
+            axes.ReplaceChildrenOnly = axes.IsUiAxes;
+        }
         axes.Colorbar.Visible = false;
 
         // ...and an axes yyaxis gave two sides is one-sided again, with the plain style cycle (item 106).
@@ -1535,6 +1541,10 @@ internal static partial class JgsBuiltins
             // R2025b empties a legend's title and keeps the object (open item 141, oi141_font F20).
             case JgsLegendTitle title:
                 title.Clear();
+                return;
+
+            // R2025b keeps a tiled layout's text and its words (open item 348, ADR 0382; probe p8ee).
+            case JgsLayoutText:
                 return;
 
             case ColorbarModel colorbar:

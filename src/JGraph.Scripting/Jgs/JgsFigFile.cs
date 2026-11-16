@@ -644,7 +644,18 @@ internal static partial class JgsFigFile
         FigNode root, Interpreter interpreter, bool? visible, List<string> skipped, int line, int col)
     {
         var builder = new Builder(interpreter, skipped, line, col);
-        return builder.Run(root, visible);
+
+        // A file's objects are rebuilt with the makers, and an axes' saved Tag and UserData are
+        // written before what it holds is drawn: no replacing maker may reset them (open item 348, ADR 0382).
+        JgsBuiltins.BuildingFigureFile348++;
+        try
+        {
+            return builder.Run(root, visible);
+        }
+        finally
+        {
+            JgsBuiltins.BuildingFigureFile348--;
+        }
     }
 
     private sealed class Builder(Interpreter interpreter, List<string> skipped, int line, int col)

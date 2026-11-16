@@ -106,6 +106,12 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static JgsValue Plot3(IReadOnlyList<JgsValue> args, int line, int col)
     {
+        // plot3 of a table in a MATLAB-dialect script (open item 348, ADR 0382).
+        if (MatlabTablePlot3_348(args, line, col) is { } fromTable)
+        {
+            return fromTable;
+        }
+
         (IReadOnlyList<JgsValue> data, List<(string Name, JgsValue Value)> options) =
             SplitTrailingOptions(args, LineOptionNames);
         if (data.Count < 3)

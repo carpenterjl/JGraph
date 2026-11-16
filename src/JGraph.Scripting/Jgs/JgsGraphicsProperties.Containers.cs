@@ -73,6 +73,11 @@ internal static partial class JgsGraphicsProperties
     /// <summary>What MATLAB's <c>Parent</c> answers: an axes placed in a panel belongs to the panel.</summary>
     internal static GraphObject? ParentOf(GraphObject target) => target switch
     {
+        // A tile of a panel's or a tab's layout is the layout's, the layout the container's, and a
+        // layout's text the layout's (open item 348, ADR 0382).
+        AxesModel { Container: not null } panelTile when JgsRunningDialect.ThreadIsMatlab && ContainerLayoutHolding348(panelTile) is { } panelLayout => panelLayout,
+        TiledLayoutModel inContainer when ContainerOfLayout348(inContainer) is { } holder => holder,
+        JgsLayoutText layoutText => layoutText.Layout,
         AxesModel { Container: { } container } => container,
         AxesModel tile when LayoutHolding(tile) is { } layout => layout, // a tile's is its layout (open item 343, ADR 0376)
         JgsGraphicsGroup group => (GraphObject?)group.Outer ?? group.Home, // the group or axes it was made in (items 89, 166)
@@ -673,7 +678,7 @@ internal static partial class JgsGraphicsProperties
             JG.CurrentFigureNumberOrZero > 0 && JG.TryGetFigure(JG.CurrentFigureNumberOrZero, out FigureModel current)
                 ? JgsHandleRegistry.For(current)
                 : JgsMatrix.FromColumnMajor([], 0, 0));
-        Put(table, "Children", static _ => HandleRow(RootFigures(hidden: false)));
+        Put(table, "Children", static _ => ChildrenList348(RootFigures(hidden: false))); // a column in the MATLAB dialect (open item 348, ADR 0382)
 
         // Four more R2025b lists (U12): what gcbo answers, read-only; the font a fixed-width text
         // default names; the pointer, in the root's Units, which a write moves; and a colour depth

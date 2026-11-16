@@ -768,6 +768,11 @@ internal static class JgsHandleRegistry
             }
         }
 
+        // A figure's or a container's tiled layout lives while its figure does, whichever dialect made
+        // it and whether or not a walk lists it (a JGS-dialect layout is in no tree walk, and the first
+        // sweep reaped its handle), and so does its text (open item 348, ADR 0382).
+        JgsGraphicsProperties.KeepLayoutsAlive348(live);
+
         var retired = new List<(double Handle, GraphObject Target)>();
         lock (Gate)
         {

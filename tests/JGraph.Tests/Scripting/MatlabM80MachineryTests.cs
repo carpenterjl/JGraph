@@ -202,10 +202,10 @@ public class MatlabM80MachineryTests : IDisposable
             t = tiledlayout(2, 2);
             a = nexttile;
             plain = get(a, 'Position');
-            set(t, 'Title', 'over the whole grid');
-            set(t, 'XLabel', 'shared');
+            title(t, 'over the whole grid');
+            xlabel(t, 'shared');
             titled = get(a, 'Position');
-            words = get(t, 'Title');
+            words = t.Title.String;
             """);
 
         Succeeded(result);

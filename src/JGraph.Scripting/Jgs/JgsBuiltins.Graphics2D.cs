@@ -1688,6 +1688,18 @@ internal static partial class JgsBuiltins
                 break;
             }
 
+            // A line drawn by plot3(tbl, ...) in the MATLAB dialect (open item 348, ADR 0382).
+            case Line3DPlot spatialLine:
+                double[] heights = SourceNumbers(table, source.ZVariable, "ZVariable", line, col);
+                if (heights.Length != xs.Length)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"'{source.ZVariable}' has {heights.Length} values where the line has {xs.Length} points.");
+                }
+
+                spatialLine.SetData(xs, ys, heights);
+                break;
+
             // A line drawn by plot(tbl, ...) in the MATLAB dialect (open item 343, ADR 0376).
             case LinePlot drawn:
                 drawn.SetData(xs, ys);

@@ -147,6 +147,13 @@ internal static class JgsCategoricalCharts
         }
 
         JgsValue first = args[start];
+
+        // A table first is the table form, whose channels may be cells of names (open item 348, ADR 0382).
+        if (first.Type == JgsType.Table)
+        {
+            return;
+        }
+
         bool firstText = first.Type == JgsType.String || first.IsStringArray;
         bool listText = first.Type == JgsType.Cell || (first.IsStringArray && first.ArrayLength > 1);
         switch (verb)
