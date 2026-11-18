@@ -157,7 +157,40 @@ public partial class PlotBrowserControl : UserControl
         });
     }
 
+    /// <summary>Whether a rebuild was skipped for the graphics gate and is waiting on it.</summary>
+    private bool _rebuildOwed;
+
     private void Rebuild()
+    {
+        // The tree is built by walking the figure's children, which a script holding the graphics
+        // gate may be adding to on its own thread ("Collection was modified", open item 361). The
+        // rebuild then waits for the gate.
+        if (!GraphicsGate.TryEnterDisplay())
+        {
+            if (!_rebuildOwed)
+            {
+                _rebuildOwed = true;
+                GraphicsGate.WhenFree(() => Dispatcher.BeginInvoke(() =>
+                {
+                    _rebuildOwed = false;
+                    Rebuild();
+                }));
+            }
+
+            return;
+        }
+
+        try
+        {
+            RebuildCore();
+        }
+        finally
+        {
+            GraphicsGate.ExitDisplay();
+        }
+    }
+
+    private void RebuildCore()
     {
         // Clearing the roots makes the TreeView deselect its containers, and the two-way IsSelected
         // binding writes that straight back into the shared SelectionManager — so the figure's

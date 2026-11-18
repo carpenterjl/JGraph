@@ -497,7 +497,12 @@ public sealed class JGraphScriptGlobals
             _shownThisRun.Add(number);
         }
 
-        _context.ShowFigure(number, figure);
+        // The window opens and reads the figure while the script waits for it (open item 361).
+        using (JGraph.Core.Model.GraphicsGate.Park())
+        {
+            _context.ShowFigure(number, figure);
+        }
+
         Interlocked.Increment(ref _figuresShown);
     }
 

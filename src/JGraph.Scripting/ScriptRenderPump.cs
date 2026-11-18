@@ -14,5 +14,18 @@ public static class ScriptRenderPump
     public static void SetFlusher(Action? flusher) => _flusher = flusher;
 
     /// <summary>Blocks until pending rendering has been shown, when a host can say so.</summary>
-    public static void Flush() => _flusher?.Invoke();
+    public static void Flush()
+    {
+        if (_flusher is not { } flusher)
+        {
+            return;
+        }
+
+        // The display paints while the script waits here, so the script lets go of the graphics gate
+        // for the wait (open item 361).
+        using (JGraph.Core.Model.GraphicsGate.Park())
+        {
+            flusher();
+        }
+    }
 }

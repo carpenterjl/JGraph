@@ -123,8 +123,12 @@ internal static partial class JgsBuiltins
             }
 
             // A device event wakes the wait at once (device classes plan); the rest wait out the slice.
-            WaitHandle.WaitAny([token.WaitHandle, Devices.DeviceEventQueue.Posted], TimeSpan.FromMilliseconds(
-                System.Math.Min(remaining, PumpSlice.TotalMilliseconds)));
+            // Windows repaint during the wait, as in R2025b's pause (open item 361).
+            using (JGraph.Core.Model.GraphicsGate.Park())
+            {
+                WaitHandle.WaitAny([token.WaitHandle, Devices.DeviceEventQueue.Posted], TimeSpan.FromMilliseconds(
+                    System.Math.Min(remaining, PumpSlice.TotalMilliseconds)));
+            }
             token.ThrowIfCancellationRequested();
             JgsComponentContainers.RunUpdates(); // U10
             dispatcher?.Drain();

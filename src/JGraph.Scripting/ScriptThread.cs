@@ -34,7 +34,13 @@ internal static class ScriptThread
         {
             try
             {
-                completion.TrySetResult(work());
+                // The script holds the graphics gate while it runs, so a window never paints a
+                // figure the script is halfway through changing (open item 361); its waits for the
+                // display open it.
+                using (JGraph.Core.Model.GraphicsGate.EnterScript())
+                {
+                    completion.TrySetResult(work());
+                }
             }
             catch (OperationCanceledException cancelled)
             {

@@ -67,21 +67,40 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
     /// <c>SizeChangedFcn</c>. Value-compared, because the model write invalidates a repaint and a
     /// repaint must not read as another resize.
     /// </summary>
-    private void OnViewportSizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
+    private void OnViewportSizeChanged(object sender, System.Windows.SizeChangedEventArgs e) =>
+        ApplyViewportSize(e.NewSize.Width, e.NewSize.Height);
+
+    private void ApplyViewportSize(double width, double height)
     {
-        if (Figure is not { } figure || e.NewSize.Width <= 0 || e.NewSize.Height <= 0)
+        if (Figure is not { } figure || width <= 0 || height <= 0)
         {
             return;
         }
 
-        var size = new Size2D(e.NewSize.Width, e.NewSize.Height);
-        if (figure.Size.Width == size.Width && figure.Size.Height == size.Height)
+        // The size is written into the figure, which a script holding the graphics gate may be
+        // changing; the write waits for the gate and then takes the size the viewport has by then
+        // (open item 361).
+        if (!GraphicsGate.TryEnterDisplay())
         {
+            GraphicsGate.WhenFree(() => Dispatcher.BeginInvoke(() => ApplyViewportSize(ActualWidth, ActualHeight)));
             return;
         }
 
-        figure.Size = size;
-        ViewportSizeChanged?.Invoke(this, EventArgs.Empty);
+        try
+        {
+            var size = new Size2D(width, height);
+            if (figure.Size.Width == size.Width && figure.Size.Height == size.Height)
+            {
+                return;
+            }
+
+            figure.Size = size;
+            ViewportSizeChanged?.Invoke(this, EventArgs.Empty);
+        }
+        finally
+        {
+            GraphicsGate.ExitDisplay();
+        }
     }
 
     /// <summary>Raised after a real viewport resize has been written to the model. The host decides
@@ -327,6 +346,119 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
     /// <inheritdoc />
     public void RequestRender() => InvalidateVisual();
 
+    // The pointer and the keyboard read and change the figure (hover, zoom, pan, selection). While a
+    // script holds the graphics gate it is changing that figure on its own thread, so the input is
+    // dropped, as R2025b holds it until the script reaches a drawnow (open item 361).
+    protected override void OnMouseDown(MouseButtonEventArgs e)
+    {
+        base.OnMouseDown(e);
+        if (!GraphicsGate.TryEnterDisplay())
+        {
+            return;
+        }
+
+        try
+        {
+            MouseDownCore(e);
+        }
+        finally
+        {
+            GraphicsGate.ExitDisplay();
+        }
+    }
+
+    protected override void OnLostMouseCapture(MouseEventArgs e)
+    {
+        base.OnLostMouseCapture(e);
+        if (!GraphicsGate.TryEnterDisplay())
+        {
+            _rightDown = null;
+            return;
+        }
+
+        try
+        {
+            LostMouseCaptureCore(e);
+        }
+        finally
+        {
+            GraphicsGate.ExitDisplay();
+        }
+    }
+
+    protected override void OnMouseMove(MouseEventArgs e)
+    {
+        base.OnMouseMove(e);
+        if (!GraphicsGate.TryEnterDisplay())
+        {
+            return;
+        }
+
+        try
+        {
+            MouseMoveCore(e);
+        }
+        finally
+        {
+            GraphicsGate.ExitDisplay();
+        }
+    }
+
+    protected override void OnMouseUp(MouseButtonEventArgs e)
+    {
+        base.OnMouseUp(e);
+        if (!GraphicsGate.TryEnterDisplay())
+        {
+            ReleaseMouseCapture();
+            return;
+        }
+
+        try
+        {
+            MouseUpCore(e);
+        }
+        finally
+        {
+            GraphicsGate.ExitDisplay();
+        }
+    }
+
+    protected override void OnMouseWheel(MouseWheelEventArgs e)
+    {
+        base.OnMouseWheel(e);
+        if (!GraphicsGate.TryEnterDisplay())
+        {
+            return;
+        }
+
+        try
+        {
+            MouseWheelCore(e);
+        }
+        finally
+        {
+            GraphicsGate.ExitDisplay();
+        }
+    }
+
+    protected override void OnKeyDown(System.Windows.Input.KeyEventArgs e)
+    {
+        base.OnKeyDown(e);
+        if (!GraphicsGate.TryEnterDisplay())
+        {
+            return;
+        }
+
+        try
+        {
+            KeyDownCore(e);
+        }
+        finally
+        {
+            GraphicsGate.ExitDisplay();
+        }
+    }
+
     protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
     {
         base.OnPaintSurface(e);
@@ -342,6 +474,15 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         double height = ActualHeight;
         if (width <= 0 || height <= 0)
         {
+            return;
+        }
+
+        // A script holding the graphics gate is changing this figure on its own thread; reading it now
+        // met "Collection was modified" (open item 361). The surface keeps what it last showed, and
+        // the paint comes once the script reaches a drawnow, a wait or its end.
+        if (!GraphicsGate.TryEnterDisplay())
+        {
+            OweRepaint();
             return;
         }
 
@@ -370,12 +511,30 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         {
             _isRendering = false;
             canvas.Restore();
+            GraphicsGate.ExitDisplay();
         }
     }
 
-    protected override void OnMouseDown(MouseButtonEventArgs e)
+    /// <summary>Whether a paint was skipped for the gate and is waiting on it (one wait at a time).</summary>
+    private int _repaintOwed;
+
+    /// <summary>Asks for a paint once no script holds the graphics gate.</summary>
+    private void OweRepaint()
     {
-        base.OnMouseDown(e);
+        if (Interlocked.Exchange(ref _repaintOwed, 1) == 1)
+        {
+            return;
+        }
+
+        GraphicsGate.WhenFree(() =>
+        {
+            Interlocked.Exchange(ref _repaintOwed, 0);
+            Dispatcher.BeginInvoke(InvalidateVisual);
+        });
+    }
+
+    private void MouseDownCore(MouseButtonEventArgs e)
+    {
         Focus();
         CaptureMouse();
         if (e.ChangedButton == MouseButton.Right)
@@ -404,9 +563,8 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
     /// the next plain mouse move, with nothing pressed, would go on panning or dragging the rubber
     /// band from the abandoned drag's origin. Abandoning it is the same thing Escape does.
     /// </summary>
-    protected override void OnLostMouseCapture(MouseEventArgs e)
+    private void LostMouseCaptureCore(MouseEventArgs e)
     {
-        base.OnLostMouseCapture(e);
         _rightDown = null;
 
         // Each mode's Cancel requests a render itself when it actually undoes something, and this
@@ -414,9 +572,8 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         _controller.CancelGesture();
     }
 
-    protected override void OnMouseMove(MouseEventArgs e)
+    private void MouseMoveCore(MouseEventArgs e)
     {
-        base.OnMouseMove(e);
         Point2D position = ToPoint(e);
         RaisePointerActivity(position, PointerAction.Moved, SelectionKind.Normal);
         UpdateHoveredAxes(position);
@@ -516,9 +673,8 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
     /// </summary>
     public event EventHandler<AxesToolbarButtonModel>? ToolbarButtonPressed;
 
-    protected override void OnMouseUp(MouseButtonEventArgs e)
+    private void MouseUpCore(MouseButtonEventArgs e)
     {
-        base.OnMouseUp(e);
         RaisePointerActivity(ToPoint(e), PointerAction.Released, SelectionOf(e));
         _controller.PointerUp(ToPointerArgs(e, ButtonOf(e)));
 
@@ -594,9 +750,8 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         }
     }
 
-    protected override void OnMouseWheel(MouseWheelEventArgs e)
+    private void MouseWheelCore(MouseWheelEventArgs e)
     {
-        base.OnMouseWheel(e);
 
         // A notch is a hundred and twenty units, and MATLAB counts a scroll toward the user as
         // positive where WPF's delta is negative there. The wheel keeps zooming as well: the
@@ -610,9 +765,8 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         e.Handled = true;
     }
 
-    protected override void OnKeyDown(System.Windows.Input.KeyEventArgs e)
+    private void KeyDownCore(System.Windows.Input.KeyEventArgs e)
     {
-        base.OnKeyDown(e);
         if (e.Key == Key.Escape)
         {
             _controller.KeyDown(new Interaction.KeyEventArgs(InteractionKey.Escape, CurrentModifiers()));

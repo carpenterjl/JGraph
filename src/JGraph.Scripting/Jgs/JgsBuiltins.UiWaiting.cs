@@ -109,8 +109,12 @@ internal static partial class JgsBuiltins
                     ScriptGraphicsCallbacks.WaitingChanged?.Invoke(verb);
                 }
 
-                WaitHandle.WaitAny([token.WaitHandle, Devices.DeviceEventQueue.Posted], TimeSpan.FromMilliseconds(
-                    System.Math.Min(remaining, PumpSlice.TotalMilliseconds)));
+                // The windows are the person's while the script waits (open item 361).
+                using (JGraph.Core.Model.GraphicsGate.Park())
+                {
+                    WaitHandle.WaitAny([token.WaitHandle, Devices.DeviceEventQueue.Posted], TimeSpan.FromMilliseconds(
+                        System.Math.Min(remaining, PumpSlice.TotalMilliseconds)));
+                }
                 token.ThrowIfCancellationRequested();
                 dispatcher?.Drain();
                 host.Timers?.Drain();
